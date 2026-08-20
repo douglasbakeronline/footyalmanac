@@ -1,0 +1,67 @@
+name: Rebuild and publish
+
+# Two triggers: a daily rebuild, and a manual button in the Actions tab for
+# when you have edited adjustments.json and want it live now.
+on:
+  schedule:
+    - cron: "15 6 * * *"   # 06:15 UTC daily. GitHub runs this late under load.
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # No pip install: the whole thing runs on the standard library.
+      - name: Build today's slate
+        run: python3 build.py --days 4 --top 50
+
+      # A build that returns nothing is a broken upstream, not a quiet
+      # publish of an empty page. Fail loudly and keep yesterday's site.
+      - name: Check the build is not empty
+        run: |
+          python3 - <<'PY'
+          import json, sys
+          d = json.load(open("data.json"))
+          n = sum(day["count"] for day in d["days"])
+          print(f"{n} fixtures across {len(d['days'])} days")
+          if n == 0:
+              sys.exit("build produced zero fixtures, refusing to publish")
+          PY
+
+      - name: Assemble the site
+        run: |
+          mkdir -p _site
+          cp dashboard.html _site/index.html   # the self-contained build
+          cp data.json _site/data.json         # handy if you want the raw numbers
+          cp README.md _site/README.md
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
