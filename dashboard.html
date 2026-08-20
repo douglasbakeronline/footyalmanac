@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Slate — fixture probabilities</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;800&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#14181d;
+  --ink-2:#3d464f;
+  --mute:#77828c;
+  --hair:#cfd6d2;
+  --hair-soft:#e0e5e1;
+  --ground:#e9ece9;
+  --surface:#ffffff;
+  --home:#12615b;
+  --home-soft:#d3e3e0;
+  --draw:#a8813a;
+  --draw-soft:#ece0cb;
+  --away:#8b2f45;
+  --away-soft:#eed7dc;
+
+  --sp:4px;
+  --rail:6px;
+
+  --f-display:'Archivo',system-ui,sans-serif;
+  --f-ui:'Barlow Semi Condensed','Barlow',system-ui,sans-serif;
+  --f-num:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:var(--f-ui);
+  font-size:15px;
+  line-height:1.4;
+  padding:0 20px 80px;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1180px;margin:0 auto}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- masthead ---------- */
+header{padding:34px 0 20px;border-bottom:2px solid var(--ink)}
+.brand{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+h1{
+  font-family:var(--f-display);font-weight:800;font-size:clamp(30px,5vw,46px);
+  letter-spacing:-.045em;line-height:.92;text-transform:uppercase;
+}
+h1 em{font-style:normal;color:var(--home)}
+.tag{
+  font-size:12px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--mute);font-weight:600;padding-bottom:3px;
+}
+.meta{
+  display:flex;gap:26px;flex-wrap:wrap;margin-top:18px;
+  font-size:12.5px;color:var(--ink-2);
+}
+.meta b{font-family:var(--f-num);font-weight:600;font-size:13px;color:var(--ink);display:block}
+.meta span{display:block;font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+
+/* ---------- honesty strip ---------- */
+.note{
+  margin-top:18px;padding:12px 15px;border-left:var(--rail) solid var(--draw);
+  background:var(--draw-soft);font-size:13.5px;color:#4b3a17;max-width:74ch;
+}
+.note b{font-weight:700}
+
+/* ---------- controls ---------- */
+.controls{
+  position:sticky;top:0;z-index:20;background:var(--ground);
+  padding:14px 0 12px;border-bottom:1px solid var(--hair);
+  display:flex;gap:18px;align-items:center;flex-wrap:wrap;
+}
+.chips{display:flex;gap:5px;flex-wrap:wrap}
+button.chip{
+  font-family:var(--f-ui);font-size:12.5px;font-weight:600;letter-spacing:.02em;
+  border:1px solid var(--hair);background:transparent;color:var(--ink-2);
+  padding:5px 10px;cursor:pointer;border-radius:2px;
+  transition:background .12s,color .12s,border-color .12s;
+}
+button.chip:hover{border-color:var(--ink-2)}
+button.chip[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+.seg{display:flex;border:1px solid var(--hair);border-radius:2px;overflow:hidden}
+.seg button{
+  font-family:var(--f-ui);font-size:12.5px;font-weight:600;border:0;background:transparent;
+  padding:5px 11px;cursor:pointer;color:var(--ink-2);border-right:1px solid var(--hair);
+}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.seg button:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.ctl-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
+
+/* ---------- day ---------- */
+.day{margin-top:34px}
+.day-head{display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--ink)}
+.day-head h2{
+  font-family:var(--f-display);font-weight:600;font-size:19px;
+  letter-spacing:-.02em;text-transform:uppercase;
+}
+.day-head .count{font-family:var(--f-num);font-size:12px;color:var(--mute);margin-left:auto}
+
+/* ---------- column ruler ---------- */
+.ruler{
+  display:grid;grid-template-columns:32px 46px 1fr 258px 74px 1fr 56px;
+  gap:10px;align-items:center;padding:9px 8px 6px;
+  font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
+}
+.ruler .r-bar{display:flex;justify-content:space-between}
+
+/* ---------- fixture row ---------- */
+.row{
+  display:grid;grid-template-columns:32px 46px 1fr 258px 74px 1fr 56px;
+  gap:10px;align-items:center;
+  background:var(--surface);border-bottom:1px solid var(--hair-soft);
+  padding:9px 8px;width:100%;text-align:left;border-left:0;border-right:0;border-top:0;
+  font-family:var(--f-ui);font-size:15px;color:var(--ink);cursor:pointer;
+}
+.row:hover{background:#f7f9f7}
+.row:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.row[aria-expanded="true"]{background:#f4f7f5}
+
+.rank{font-family:var(--f-num);font-size:12px;color:var(--mute);font-weight:500}
+.rank.top{color:var(--ink);font-weight:600}
+.ko{font-family:var(--f-num);font-size:12.5px;color:var(--ink-2)}
+.ko small{display:block;font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);
+  font-family:var(--f-ui);font-weight:600;white-space:nowrap;overflow:hidden}
+
+.side{min-width:0}
+.side.away{text-align:right}
+.club{
+  font-weight:600;font-size:16px;letter-spacing:-.005em;line-height:1.15;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.stat{font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:2px;white-space:nowrap}
+.stat i{font-style:normal}
+.stat .pos{color:var(--home)}
+.stat .neg{color:var(--away)}
+
+/* ---------- the bar: this is the whole point of the page ---------- */
+.bar{position:relative;height:26px;display:flex;background:#f0f2f0}
+.bar i{display:block;height:100%;position:relative;overflow:hidden}
+.bar .h{background:var(--home)}
+.bar .d{background:var(--draw)}
+.bar .a{background:var(--away)}
+.bar b{
+  font-family:var(--f-num);font-size:11px;font-weight:600;color:#fff;
+  position:absolute;top:50%;transform:translateY(-50%);left:6px;
+  letter-spacing:-.03em;
+}
+.bar .a b{left:auto;right:6px}
+.bar .d b{left:50%;transform:translate(-50%,-50%)}
+/* shared reference line: any home block reaching past it is odds-on */
+.bar::after{
+  content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
+  background:var(--ink);opacity:.5;
+}
+.conf{font-family:var(--f-num);font-size:14px;font-weight:600;text-align:right}
+.conf small{display:block;font-size:9.5px;letter-spacing:.06em;color:var(--mute);font-weight:400;text-transform:uppercase}
+
+/* ---------- expanded detail ---------- */
+.detail{background:#f4f7f5;border-bottom:1px solid var(--hair);padding:16px 18px 18px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.detail h3{
+  font-family:var(--f-display);font-size:12px;font-weight:600;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--mute);margin-bottom:8px;
+}
+table.sheet{border-collapse:collapse;width:100%;font-family:var(--f-num);font-size:12px}
+table.sheet th{
+  text-align:right;font-weight:500;color:var(--mute);padding:2px 7px 2px 0;
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+}
+table.sheet th:first-child{text-align:left}
+table.sheet td{text-align:right;padding:3px 7px 3px 0;border-top:1px solid var(--hair-soft)}
+table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.5px;font-weight:600}
+.why{
+  margin-top:14px;padding-top:12px;border-top:1px solid var(--hair);
+  font-size:13.5px;color:var(--ink-2);max-width:82ch;
+}
+.why em{font-style:normal;font-family:var(--f-num);font-size:12.5px;color:var(--ink)}
+.flag{
+  display:inline-block;font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  font-weight:600;padding:2px 6px;border-radius:2px;margin-right:6px;
+}
+.flag.carry{background:var(--draw-soft);color:#5f4715}
+.flag.live{background:var(--home-soft);color:#0d443f}
+
+.row.unrated{background:#fbfbfa}
+.row.unrated .club{color:var(--ink-2)}
+.row.unrated .bar{opacity:.42}
+.row.unrated .conf{color:var(--mute);font-weight:500}
+.stat.none{color:var(--away);opacity:.85}
+.flg{
+  width:15px;height:10.3px;flex:0 0 auto;border-radius:1px;
+  box-shadow:0 0 0 .5px rgba(20,24,29,.28);vertical-align:baseline;
+}
+.club{display:flex;align-items:center;gap:7px}
+.side.away .club{flex-direction:row-reverse}
+.club span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.xg{font-family:var(--f-num);font-size:12.5px;text-align:center;color:var(--ink-2);white-space:nowrap}
+.xg small{display:block;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-family:var(--f-ui);font-weight:600}
+.xg b{font-weight:600;color:var(--ink)}
+.flag.unrated{background:var(--away-soft);color:#6a1f31}
+.flag.manual{background:#dfe3f0;color:#2c3763}
+.empty{padding:40px 8px;color:var(--mute);font-size:14px}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--hair);font-size:12.5px;color:var(--mute);max-width:80ch}
+footer a{color:var(--ink-2)}
+
+@media (max-width:860px){
+  .ruler{display:none}
+  .row{grid-template-columns:28px 1fr 62px;grid-template-areas:
+    "rank home conf" "rank bar conf" "rank away conf" "rank xg xg";
+    row-gap:5px;padding:11px 8px;}
+  .xg{grid-area:xg;text-align:left;font-size:11.5px}
+  .xg small{display:inline;margin-left:5px}
+  .rank{grid-area:rank;align-self:start}
+  .ko{display:none}
+  .side{grid-area:home}
+  .side.away{grid-area:away;text-align:left}
+  .bar{grid-area:bar;margin:2px 0}
+  .side.away .club{flex-direction:row}
+  .conf{grid-area:conf;align-self:start}
+  .detail-grid{grid-template-columns:1fr;gap:18px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="f-eng" viewBox="0 0 16 11"><path fill="#fff" d="M0 0h16v11H0z"/><path stroke="#ce1124" stroke-width="2" d="M8 0v11M0 5.5h16"/></symbol><symbol id="f-sct" viewBox="0 0 16 11"><path fill="#0065bd" d="M0 0h16v11H0z"/><path stroke="#fff" stroke-width="1.7" d="M0 0l16 11M16 0L0 11"/></symbol><symbol id="f-esp" viewBox="0 0 16 11"><path fill="#c60b1e" d="M0 0h16v11H0z"/><path fill="#ffc400" d="M0 2.75h16v5.5H0z"/></symbol><symbol id="f-deu" viewBox="0 0 16 11"><path d="M0 0h16v3.67H0z"/><path fill="#dd0000" d="M0 3.67h16v3.66H0z"/><path fill="#ffce00" d="M0 7.33h16V11H0z"/></symbol><symbol id="f-ita" viewBox="0 0 16 11"><path fill="#009246" d="M0 0h5.33v11H0z"/><path fill="#fff" d="M5.33 0h5.34v11H5.33z"/><path fill="#ce2b37" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-fra" viewBox="0 0 16 11"><path fill="#002395" d="M0 0h5.33v11H0z"/><path fill="#fff" d="M5.33 0h5.34v11H5.33z"/><path fill="#ed2939" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-nld" viewBox="0 0 16 11"><path fill="#ae1c28" d="M0 0h16v3.67H0z"/><path fill="#fff" d="M0 3.67h16v3.66H0z"/><path fill="#21468b" d="M0 7.33h16V11H0z"/></symbol><symbol id="f-prt" viewBox="0 0 16 11"><path fill="#f00" d="M0 0h16v11H0z"/><path fill="#060" d="M0 0h6.4v11H0z"/><circle cx="6.4" cy="5.5" r="2.3" fill="#ff0"/><circle cx="6.4" cy="5.5" r="1.4" fill="#f00"/></symbol><symbol id="f-bel" viewBox="0 0 16 11"><path d="M0 0h5.33v11H0z"/><path fill="#fae042" d="M5.33 0h5.34v11H5.33z"/><path fill="#ed2939" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-tur" viewBox="0 0 16 11"><path fill="#e30a17" d="M0 0h16v11H0z"/><circle cx="6" cy="5.5" r="2.6" fill="#fff"/><circle cx="7" cy="5.5" r="2.1" fill="#e30a17"/><path fill="#fff" d="M9.7 5.5l2.3-.75-1.42 1.96V4.29L12 6.25z"/></symbol><symbol id="f-aut" viewBox="0 0 16 11"><path fill="#ed2939" d="M0 0h16v11H0z"/><path fill="#fff" d="M0 3.67h16v3.66H0z"/></symbol><symbol id="f-grc" viewBox="0 0 16 11"><path fill="#0d5eaf" d="M0 0h16v11H0z"/><path stroke="#fff" stroke-width="1.22" d="M0 1.83h16M0 4.28h16M0 6.72h16M0 9.17h16"/><path fill="#0d5eaf" d="M0 0h6.1v6.1H0z"/><path stroke="#fff" stroke-width="1.22" d="M3.05 0v6.1M0 3.05h6.1"/></symbol><symbol id="f-bra" viewBox="0 0 16 11"><path fill="#009b3a" d="M0 0h16v11H0z"/><path fill="#fedf00" d="M8 1.1l6.6 4.4L8 9.9 1.4 5.5z"/><circle cx="8" cy="5.5" r="2.4" fill="#002776"/></symbol></svg>
+<div class="wrap">
+
+<header>
+  <div class="brand">
+    <h1>The&nbsp;<em>Slate</em></h1>
+    <div class="tag" id="window">—</div>
+  </div>
+  <div class="meta" id="meta"></div>
+  <div class="note" id="note"></div>
+</header>
+
+<div class="controls">
+  <div>
+    <div class="ctl-label" style="margin-bottom:5px">Competition</div>
+    <div class="chips" id="chips"></div>
+  </div>
+  <div style="margin-left:auto">
+    <div class="ctl-label" style="margin-bottom:5px">Order by</div>
+    <div class="seg" id="sort">
+      <button data-sort="conf" aria-pressed="true">Most one-sided</button>
+      <button data-sort="upset" aria-pressed="false">Away edge</button>
+      <button data-sort="goals" aria-pressed="false">Goals</button>
+      <button data-sort="time" aria-pressed="false">Kick-off</button>
+    </div>
+  </div>
+</div>
+
+<main id="days"></main>
+
+<footer id="footer"></footer>
+</div>
+
+<script>window.__FIXTURE_DATA__={"generated":"2026-08-20T16:53:12","season":"2026-27","window":{"from":"2026-08-20","to":"2026-08-23"},"topPerDay":50,"leagues":[{"code":"en.1","iso":"eng","short":"EPL","name":"Premier League","country":"England","tier":1,"strength":1.0,"order":1,"haveFixtures":true,"haveHistory":true},{"code":"en.2","iso":"eng","short":"CHA","name":"Championship","country":"England","tier":2,"strength":0.78,"order":2,"haveFixtures":true,"haveHistory":true},{"code":"en.3","iso":"eng","short":"LG1","name":"League One","country":"England","tier":3,"strength":0.66,"order":3,"haveFixtures":false,"haveHistory":true},{"code":"en.4","iso":"eng","short":"LG2","name":"League Two","country":"England","tier":4,"strength":0.58,"order":4,"haveFixtures":false,"haveHistory":true},{"code":"sco.1","iso":"sct","short":"SPL","name":"Premiership","country":"Scotland","tier":1,"strength":0.76,"order":5,"haveFixtures":false,"haveHistory":true},{"code":"es.1","iso":"esp","short":"LAL","name":"La Liga","country":"Spain","tier":1,"strength":0.99,"order":6,"haveFixtures":true,"haveHistory":true},{"code":"es.2","iso":"esp","short":"LA2","name":"LaLiga 2","country":"Spain","tier":2,"strength":0.76,"order":7,"haveFixtures":false,"haveHistory":true},{"code":"de.1","iso":"deu","short":"BUN","name":"Bundesliga","country":"Germany","tier":1,"strength":0.97,"order":8,"haveFixtures":true,"haveHistory":true},{"code":"de.2","iso":"deu","short":"BU2","name":"2. Bundesliga","country":"Germany","tier":2,"strength":0.76,"order":9,"haveFixtures":false,"haveHistory":true},{"code":"it.1","iso":"ita","short":"SEA","name":"Serie A","country":"Italy","tier":1,"strength":0.97,"order":10,"haveFixtures":true,"haveHistory":true},{"code":"it.2","iso":"ita","short":"SEB","name":"Serie B","country":"Italy","tier":2,"strength":0.75,"order":11,"haveFixtures":false,"haveHistory":true},{"code":"fr.1","iso":"fra","short":"FR1","name":"Ligue 1","country":"France","tier":1,"strength":0.93,"order":12,"haveFixtures":true,"haveHistory":true},{"code":"fr.2","iso":"fra","short":"FR2","name":"Ligue 2","country":"France","tier":2,"strength":0.73,"order":13,"haveFixtures":false,"haveHistory":true},{"code":"nl.1","iso":"nld","short":"ERE","name":"Eredivisie","country":"Netherlands","tier":1,"strength":0.86,"order":14,"haveFixtures":true,"haveHistory":true},{"code":"pt.1","iso":"prt","short":"PRI","name":"Primeira Liga","country":"Portugal","tier":1,"strength":0.87,"order":15,"haveFixtures":true,"haveHistory":true},{"code":"be.1","iso":"bel","short":"BEL","name":"Pro League","country":"Belgium","tier":1,"strength":0.82,"order":16,"haveFixtures":true,"haveHistory":true},{"code":"tr.1","iso":"tur","short":"SUP","name":"Super Lig","country":"Turkey","tier":1,"strength":0.82,"order":17,"haveFixtures":false,"haveHistory":true},{"code":"at.1","iso":"aut","short":"AUT","name":"Bundesliga","country":"Austria","tier":1,"strength":0.78,"order":18,"haveFixtures":false,"haveHistory":true},{"code":"gr.1","iso":"grc","short":"GRE","name":"Super League","country":"Greece","tier":1,"strength":0.78,"order":19,"haveFixtures":false,"haveHistory":true},{"code":"br.1","iso":"bra","short":"BRA","name":"Serie A","country":"Brazil","tier":1,"strength":0.84,"order":20,"season":"2026","prev":["2025","2024"],"haveFixtures":true,"haveHistory":true}],"missing":["at.1 2026-27 (fix)","br.1 2024 (hist)","de.2 2026-27 (fix)","en.3 2026-27 (fix)","en.4 2026-27 (fix)","es.2 2026-27 (fix)","fr.2 2026-27 (fix)","gr.1 2026-27 (fix)","it.2 2026-27 (fix)","sco.1 2026-27 (fix)","tr.1 2026-27 (fix)"],"days":[{"date":"2026-08-21","count":2,"games":[{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-21","time":"20:00","home":{"name":"Arsenal","att":1.31,"def":0.583,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":26,"D":7,"L":5,"GF":71,"GA":27,"GD":44,"Pts":85,"PPG":2.237},"now":null},"away":{"name":"Coventry City","att":1.17,"def":1.004,"played":0,"unrated":false,"carriedFrom":"en.2","form":null,"adj":null,"last":{"P":46,"W":28,"D":11,"L":7,"GF":97,"GA":45,"GD":52,"Pts":95,"PPG":2.065},"now":null},"p":{"h":0.6227,"d":0.2266,"a":0.1507},"xg":[2.09,0.82],"score":[2,0],"confidence":0.6227,"evidence":"carryover","unrated":false,"rank":1},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-21","time":"20:45","home":{"name":"Standard de Li\u00e8ge","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"RAAL La Louvi\u00e8re","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4333,"d":0.281,"a":0.2857},"xg":[1.49,1.12],"score":[1,1],"confidence":0.4333,"evidence":"carryover","unrated":true,"rank":2}]},{"date":"2026-08-22","count":37,"games":[{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-22","time":"17:30","home":{"name":"Brentford","att":1.045,"def":0.996,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":11,"L":13,"GF":55,"GA":52,"GD":3,"Pts":53,"PPG":1.395},"now":null},"away":{"name":"Tottenham Hotspur","att":0.93,"def":1.079,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":10,"D":11,"L":17,"GF":48,"GA":57,"GD":-9,"Pts":41,"PPG":1.079},"now":null},"p":{"h":0.501,"d":0.2576,"a":0.2414},"xg":[1.79,1.11],"score":[1,1],"confidence":0.501,"evidence":"carryover","unrated":false,"rank":10},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-22","time":"12:30","home":{"name":"Hull City","att":0.909,"def":1.261,"played":0,"unrated":false,"carriedFrom":"en.2","form":null,"adj":null,"last":{"P":49,"W":23,"D":11,"L":15,"GF":73,"GA":66,"GD":7,"Pts":80,"PPG":1.633},"now":null},"away":{"name":"Manchester United","att":1.277,"def":0.963,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":20,"D":11,"L":7,"GF":69,"GA":50,"GD":19,"Pts":71,"PPG":1.868},"now":null},"p":{"h":0.2812,"d":0.2459,"a":0.4729},"xg":[1.39,1.93],"score":[1,1],"confidence":0.4729,"evidence":"carryover","unrated":false,"rank":12},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-22","time":"15:00","home":{"name":"Everton","att":0.913,"def":0.963,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":13,"D":10,"L":15,"GF":47,"GA":50,"GD":-3,"Pts":49,"PPG":1.289},"now":null},"away":{"name":"Crystal Palace","att":0.814,"def":0.979,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":12,"L":15,"GF":41,"GA":51,"GD":-10,"Pts":45,"PPG":1.184},"now":null},"p":{"h":0.4555,"d":0.2918,"a":0.2527},"xg":[1.42,0.94],"score":[1,1],"confidence":0.4555,"evidence":"carryover","unrated":false,"rank":17},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-22","time":"15:00","home":{"name":"Ipswich Town","att":1.014,"def":1.035,"played":0,"unrated":false,"carriedFrom":"en.2","form":null,"adj":null,"last":{"P":46,"W":23,"D":15,"L":8,"GF":80,"GA":47,"GD":33,"Pts":84,"PPG":1.826},"now":null},"away":{"name":"Sunderland","att":0.831,"def":0.93,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":12,"L":12,"GF":42,"GA":48,"GD":-6,"Pts":54,"PPG":1.421},"now":null},"p":{"h":0.4541,"d":0.2828,"a":0.2631},"xg":[1.5,1.03],"score":[1,1],"confidence":0.4541,"evidence":"carryover","unrated":false,"rank":18},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-22","time":"15:00","home":{"name":"Nottingham Forest","att":0.93,"def":0.979,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":11,"L":16,"GF":48,"GA":51,"GD":-3,"Pts":44,"PPG":1.158},"now":null},"away":{"name":"Leeds United","att":0.946,"def":1.062,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":14,"L":13,"GF":49,"GA":56,"GD":-7,"Pts":47,"PPG":1.237},"now":null},"p":{"h":0.4535,"d":0.2751,"a":0.2713},"xg":[1.57,1.11],"score":[1,1],"confidence":0.4535,"evidence":"carryover","unrated":false,"rank":19},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Southampton","att":1.285,"def":0.913,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":48,"W":22,"D":16,"L":10,"GF":82,"GA":56,"GD":26,"Pts":82,"PPG":1.708},"now":null},"away":{"name":"Stoke City","att":0.874,"def":0.948,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":15,"D":10,"L":21,"GF":51,"GA":56,"GD":-5,"Pts":55,"PPG":1.196},"now":null},"p":{"h":0.5586,"d":0.2519,"a":0.1895},"xg":[1.84,0.89],"score":[1,0],"confidence":0.5586,"evidence":"carryover","unrated":false,"rank":5},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"West Ham United","att":1.118,"def":0.956,"played":0,"unrated":false,"carriedFrom":"en.1","form":null,"adj":null,"last":{"P":38,"W":10,"D":9,"L":19,"GF":46,"GA":65,"GD":-19,"Pts":39,"PPG":1.026},"now":null},"away":{"name":"Charlton Athletic","att":0.77,"def":0.978,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":13,"D":14,"L":19,"GF":44,"GA":58,"GD":-14,"Pts":53,"PPG":1.152},"now":null},"p":{"h":0.5348,"d":0.2697,"a":0.1955},"xg":[1.65,0.82],"score":[1,0],"confidence":0.5348,"evidence":"carryover","unrated":false,"rank":7},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Wrexham","att":1.141,"def":1.082,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":19,"D":14,"L":13,"GF":69,"GA":65,"GD":4,"Pts":71,"PPG":1.543},"now":null},"away":{"name":"Watford","att":0.903,"def":1.082,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":14,"D":15,"L":17,"GF":53,"GA":65,"GD":-12,"Pts":57,"PPG":1.239},"now":null},"p":{"h":0.5204,"d":0.2515,"a":0.2281},"xg":[1.87,1.09],"score":[1,1],"confidence":0.5204,"evidence":"carryover","unrated":false,"rank":8},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Lincoln City","att":0.988,"def":0.958,"played":0,"unrated":false,"carriedFrom":"en.3","form":null,"adj":null,"last":{"P":30,"W":14,"D":8,"L":8,"GF":44,"GA":28,"GD":16,"Pts":50,"PPG":1.667},"now":null},"away":{"name":"Portsmouth","att":0.844,"def":1.067,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":14,"D":13,"L":19,"GF":49,"GA":64,"GD":-15,"Pts":55,"PPG":1.196},"now":null},"p":{"h":0.5033,"d":0.2758,"a":0.221},"xg":[1.59,0.9],"score":[1,1],"confidence":0.5033,"evidence":"carryover","unrated":false,"rank":9},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Millwall","att":1.027,"def":0.841,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":48,"W":24,"D":12,"L":12,"GF":64,"GA":51,"GD":13,"Pts":84,"PPG":1.75},"now":null},"away":{"name":"Norwich City","att":1.052,"def":0.948,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":19,"D":8,"L":19,"GF":63,"GA":56,"GD":7,"Pts":65,"PPG":1.413},"now":null},"p":{"h":0.4574,"d":0.2858,"a":0.2568},"xg":[1.47,0.99],"score":[1,1],"confidence":0.4574,"evidence":"carryover","unrated":false,"rank":16},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Preston North End","att":0.933,"def":1.037,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":15,"D":15,"L":16,"GF":55,"GA":62,"GD":-7,"Pts":60,"PPG":1.304},"now":null},"away":{"name":"Wolverhampton Wanderers","att":0.8,"def":0.987,"played":0,"unrated":false,"carriedFrom":"en.1","form":null,"adj":null,"last":{"P":38,"W":3,"D":11,"L":24,"GF":27,"GA":68,"GD":-41,"Pts":20,"PPG":0.526},"now":null},"p":{"h":0.4518,"d":0.2948,"a":0.2535},"xg":[1.39,0.92],"score":[1,1],"confidence":0.4518,"evidence":"carryover","unrated":false,"rank":20},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Swansea City","att":0.963,"def":0.993,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":18,"D":10,"L":18,"GF":57,"GA":59,"GD":-2,"Pts":64,"PPG":1.391},"now":null},"away":{"name":"Sheffield United","att":1.097,"def":1.097,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":18,"D":6,"L":22,"GF":66,"GA":66,"GD":0,"Pts":60,"PPG":1.304},"now":null},"p":{"h":0.4393,"d":0.2704,"a":0.2902},"xg":[1.6,1.21],"score":[1,1],"confidence":0.4393,"evidence":"carryover","unrated":false,"rank":24},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Birmingham City","att":0.963,"def":0.948,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":17,"D":13,"L":16,"GF":57,"GA":56,"GD":1,"Pts":64,"PPG":1.391},"now":null},"away":{"name":"Bristol City","att":0.993,"def":0.993,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":17,"D":11,"L":18,"GF":59,"GA":59,"GD":0,"Pts":62,"PPG":1.348},"now":null},"p":{"h":0.4382,"d":0.2865,"a":0.2754},"xg":[1.45,1.05],"score":[1,1],"confidence":0.4382,"evidence":"carryover","unrated":false,"rank":25},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Blackburn Rovers","att":0.74,"def":0.948,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":13,"D":13,"L":20,"GF":42,"GA":56,"GD":-14,"Pts":52,"PPG":1.13},"now":null},"away":{"name":"Middlesbrough","att":1.121,"def":0.784,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":49,"W":22,"D":16,"L":11,"GF":72,"GA":48,"GD":24,"Pts":82,"PPG":1.673},"now":null},"p":{"h":0.2727,"d":0.317,"a":0.4103},"xg":[0.88,1.18],"score":[0,1],"confidence":0.4103,"evidence":"carryover","unrated":false,"rank":27},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"West Bromwich Albion","att":0.829,"def":0.978,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":13,"D":14,"L":19,"GF":48,"GA":58,"GD":-10,"Pts":53,"PPG":1.152},"now":null},"away":{"name":"Burnley","att":0.984,"def":1.058,"played":0,"unrated":false,"carriedFrom":"en.1","form":null,"adj":null,"last":{"P":38,"W":4,"D":10,"L":24,"GF":38,"GA":75,"GD":-37,"Pts":22,"PPG":0.579},"now":null},"p":{"h":0.4056,"d":0.2952,"a":0.2992},"xg":[1.33,1.07],"score":[1,1],"confidence":0.4056,"evidence":"carryover","unrated":false,"rank":28},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Queens Park Rangers","att":1.022,"def":1.201,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":16,"D":10,"L":20,"GF":61,"GA":73,"GD":-12,"Pts":58,"PPG":1.261},"now":null},"away":{"name":"Bolton Wanderers","att":0.967,"def":0.917,"played":0,"unrated":false,"carriedFrom":"en.3","form":null,"adj":null,"last":{"P":31,"W":17,"D":10,"L":4,"GF":44,"GA":27,"GD":17,"Pts":61,"PPG":1.968},"now":null},"p":{"h":0.385,"d":0.2792,"a":0.3358},"xg":[1.42,1.29],"score":[1,1],"confidence":0.385,"evidence":"carryover","unrated":false,"rank":31},{"league":"en.2","leagueName":"Championship","short":"CHA","country":"England","iso":"eng","tier":2,"order":2,"round":"Matchday 2","date":"2026-08-22","time":"15:00","home":{"name":"Derby County","att":1.111,"def":0.993,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":46,"W":20,"D":9,"L":17,"GF":67,"GA":59,"GD":8,"Pts":69,"PPG":1.5},"now":null},"away":{"name":"Cardiff City","att":1.2,"def":0.746,"played":0,"unrated":false,"carriedFrom":"en.3","form":null,"adj":null,"last":{"P":30,"W":21,"D":6,"L":3,"GF":58,"GA":18,"GD":40,"Pts":69,"PPG":2.3},"now":null},"p":{"h":0.3418,"d":0.2865,"a":0.3717},"xg":[1.25,1.33],"score":[1,1],"confidence":0.3717,"evidence":"carryover","unrated":false,"rank":36},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Paris Saint-Germain","att":1.458,"def":0.662,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":24,"D":4,"L":6,"GF":74,"GA":29,"GD":45,"Pts":76,"PPG":2.235},"now":null},"away":{"name":"Stade Rennais FC 1901","att":1.193,"def":1.034,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":17,"D":8,"L":9,"GF":59,"GA":50,"GD":9,"Pts":59,"PPG":1.735},"now":null},"p":{"h":0.6523,"d":0.2007,"a":0.147},"xg":[2.46,0.97],"score":[2,0],"confidence":0.6523,"evidence":"carryover","unrated":false,"rank":1},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Racing Club de Lens","att":1.316,"def":0.768,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":22,"D":4,"L":8,"GF":66,"GA":35,"GD":31,"Pts":70,"PPG":2.059},"now":null},"away":{"name":"AJ Auxerre","att":0.751,"def":0.928,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":8,"D":10,"L":16,"GF":34,"GA":44,"GD":-10,"Pts":34,"PPG":1.0},"now":null},"p":{"h":0.6298,"d":0.2317,"a":0.1385},"xg":[1.99,0.71],"score":[2,0],"confidence":0.6298,"evidence":"carryover","unrated":false,"rank":3},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Olympique de Marseille","att":1.263,"def":0.945,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":18,"D":5,"L":11,"GF":63,"GA":45,"GD":18,"Pts":59,"PPG":1.735},"now":null},"away":{"name":"RC Strasbourg Alsace","att":1.175,"def":0.981,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":15,"D":8,"L":11,"GF":58,"GA":47,"GD":11,"Pts":53,"PPG":1.559},"now":null},"p":{"h":0.4962,"d":0.2399,"a":0.2639},"xg":[2.02,1.37],"score":[1,1],"confidence":0.4962,"evidence":"carryover","unrated":false,"rank":11},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"ES Troyes","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"Paris","att":0.981,"def":1.034,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":11,"D":11,"L":12,"GF":47,"GA":50,"GD":-3,"Pts":44,"PPG":1.294},"now":null},"p":{"h":0.46,"d":0.2642,"a":0.2758},"xg":[1.69,1.21],"score":[1,1],"confidence":0.46,"evidence":"carryover","unrated":true,"rank":15},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Angers SCO","att":0.662,"def":0.998,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":9,"D":9,"L":16,"GF":29,"GA":48,"GD":-19,"Pts":36,"PPG":1.059},"now":null},"away":{"name":"Lille OSC","att":1.069,"def":0.804,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":18,"D":7,"L":9,"GF":52,"GA":37,"GD":15,"Pts":61,"PPG":1.794},"now":null},"p":{"h":0.2514,"d":0.3043,"a":0.4443},"xg":[0.87,1.31],"score":[0,1],"confidence":0.4443,"evidence":"carryover","unrated":false,"rank":22},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Le Mans","att":0.837,"def":1.147,"played":0,"unrated":false,"carriedFrom":"fr.2","form":null,"adj":null,"last":{"P":13,"W":5,"D":5,"L":3,"GF":17,"GA":15,"GD":2,"Pts":20,"PPG":1.538},"now":null},"away":{"name":"Stade Brestois 29","att":0.91,"def":1.122,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":10,"D":9,"L":15,"GF":43,"GA":55,"GD":-12,"Pts":39,"PPG":1.147},"now":null},"p":{"h":0.4125,"d":0.2725,"a":0.315},"xg":[1.54,1.28],"score":[1,1],"confidence":0.4125,"evidence":"carryover","unrated":false,"rank":26},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"OGC Nice","att":0.804,"def":1.21,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":7,"D":11,"L":16,"GF":37,"GA":60,"GD":-23,"Pts":32,"PPG":0.941},"now":null},"away":{"name":"FC Lorient","att":0.998,"def":1.051,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":11,"D":12,"L":11,"GF":48,"GA":51,"GD":-3,"Pts":45,"PPG":1.324},"now":null},"p":{"h":0.3437,"d":0.2716,"a":0.3847},"xg":[1.38,1.49],"score":[1,1],"confidence":0.3847,"evidence":"carryover","unrated":false,"rank":32},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Toulouse","att":1.006,"def":0.988,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":33,"W":12,"D":8,"L":13,"GF":47,"GA":46,"GD":1,"Pts":44,"PPG":1.333},"now":null},"away":{"name":"Olympique Lyonnais","att":1.087,"def":0.857,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":18,"D":6,"L":10,"GF":53,"GA":40,"GD":13,"Pts":60,"PPG":1.765},"now":null},"p":{"h":0.3779,"d":0.2786,"a":0.3434},"xg":[1.41,1.32],"score":[1,1],"confidence":0.3779,"evidence":"carryover","unrated":false,"rank":33},{"league":"fr.1","leagueName":"Ligue 1","short":"FR1","country":"France","iso":"fra","tier":1,"order":12,"round":"Matchday 1","date":"2026-08-22","time":"17:00","home":{"name":"Le Havre","att":0.715,"def":0.928,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":7,"D":14,"L":13,"GF":32,"GA":44,"GD":-12,"Pts":35,"PPG":1.029},"now":null},"away":{"name":"AS Monaco","att":1.21,"def":1.104,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":16,"D":6,"L":12,"GF":60,"GA":54,"GD":6,"Pts":54,"PPG":1.588},"now":null},"p":{"h":0.3412,"d":0.2816,"a":0.3773},"xg":[1.29,1.38],"score":[1,1],"confidence":0.3773,"evidence":"carryover","unrated":false,"rank":34},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-22","time":"18:45","home":{"name":"NEC","att":1.361,"def":0.983,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":16,"D":11,"L":7,"GF":77,"GA":53,"GD":24,"Pts":59,"PPG":1.735},"now":null},"away":{"name":"SBV Excelsior","att":0.826,"def":1.03,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":10,"D":8,"L":16,"GF":43,"GA":56,"GD":-13,"Pts":38,"PPG":1.118},"now":null},"p":{"h":0.6397,"d":0.1978,"a":0.1625},"xg":[2.57,1.12],"score":[2,1],"confidence":0.6397,"evidence":"carryover","unrated":false,"rank":2},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-22","time":"21:00","home":{"name":"SC Heerenveen","att":1.073,"def":0.976,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":33,"W":14,"D":9,"L":10,"GF":57,"GA":51,"GD":6,"Pts":51,"PPG":1.545},"now":null},"away":{"name":"PEC Zwolle","att":0.842,"def":1.266,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":9,"D":10,"L":15,"GF":44,"GA":71,"GD":-27,"Pts":37,"PPG":1.088},"now":null},"p":{"h":0.6243,"d":0.204,"a":0.1716},"xg":[2.5,1.14],"score":[2,1],"confidence":0.6243,"evidence":"carryover","unrated":false,"rank":4},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-22","time":"20:00","home":{"name":"Sparta Rotterdam","att":0.779,"def":1.125,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":12,"D":7,"L":15,"GF":40,"GA":62,"GD":-22,"Pts":43,"PPG":1.265},"now":null},"away":{"name":"FC Utrecht","att":1.015,"def":0.81,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":15,"D":8,"L":11,"GF":55,"GA":42,"GD":13,"Pts":53,"PPG":1.559},"now":null},"p":{"h":0.281,"d":0.2732,"a":0.4458},"xg":[1.16,1.58],"score":[1,1],"confidence":0.4458,"evidence":"carryover","unrated":false,"rank":21},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-22","time":"16:30","home":{"name":"Fortuna Sittard","att":0.92,"def":1.14,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":11,"D":6,"L":17,"GF":49,"GA":63,"GD":-14,"Pts":39,"PPG":1.147},"now":null},"away":{"name":"AZ","att":1.062,"def":0.952,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":14,"D":10,"L":10,"GF":58,"GA":51,"GD":7,"Pts":52,"PPG":1.529},"now":null},"p":{"h":0.3611,"d":0.2537,"a":0.3852},"xg":[1.61,1.68],"score":[1,1],"confidence":0.3852,"evidence":"carryover","unrated":false,"rank":30},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-22","time":"20:45","home":{"name":"KAA Gent","att":1.214,"def":1.174,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":6,"D":2,"L":5,"GF":22,"GA":21,"GD":1,"Pts":20,"PPG":1.538},"now":null},"away":{"name":"OH Leuven","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4635,"d":0.2543,"a":0.2822},"xg":[1.81,1.32],"score":[1,1],"confidence":0.4635,"evidence":"carryover","unrated":true,"rank":14},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-22","time":"16:00","home":{"name":"SV Zulte Waregem","att":1.092,"def":1.092,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":5,"D":3,"L":5,"GF":19,"GA":19,"GD":0,"Pts":18,"PPG":1.385},"now":null},"away":{"name":"SK Beveren","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4432,"d":0.2683,"a":0.2886},"xg":[1.62,1.22],"score":[1,1],"confidence":0.4432,"evidence":"carryover","unrated":true,"rank":23},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-22","time":"18:15","home":{"name":"Sporting Charleroi","att":0.969,"def":1.133,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":4,"D":3,"L":6,"GF":16,"GA":20,"GD":-4,"Pts":15,"PPG":1.154},"now":null},"away":{"name":"KV Mechelen","att":1.051,"def":0.969,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":5,"D":5,"L":3,"GF":18,"GA":16,"GD":2,"Pts":20,"PPG":1.538},"now":null},"p":{"h":0.3733,"d":0.2785,"a":0.3482},"xg":[1.4,1.33],"score":[1,1],"confidence":0.3733,"evidence":"carryover","unrated":false,"rank":35},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-22","time":"20:45","home":{"name":"Royal Antwerp","att":0.724,"def":0.929,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":2,"D":5,"L":6,"GF":10,"GA":15,"GD":-5,"Pts":11,"PPG":0.846},"now":null},"away":{"name":"KRC Genk","att":1.051,"def":1.01,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":5,"D":4,"L":4,"GF":18,"GA":17,"GD":1,"Pts":19,"PPG":1.462},"now":null},"p":{"h":0.3429,"d":0.3119,"a":0.3451},"xg":[1.09,1.09],"score":[1,1],"confidence":0.3451,"evidence":"carryover","unrated":false,"rank":37},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-22","time":"16:00","home":{"name":"Fluminense","att":1.116,"def":0.912,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":5,"max":15,"seq":"LDWLD"},"adj":null,"last":{"P":38,"W":19,"D":7,"L":12,"GF":50,"GA":39,"GD":11,"Pts":64,"PPG":1.684},"now":{"P":18,"W":9,"D":4,"L":5,"GF":28,"GA":23,"GD":5,"Pts":31,"PPG":1.722}},"away":{"name":"Clube do Remo","att":0.926,"def":1.127,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":10,"max":15,"seq":"WDWLW"},"adj":null,"last":null,"now":{"P":18,"W":4,"D":6,"L":8,"GF":21,"GA":29,"GD":-8,"Pts":18,"PPG":1.0}},"p":{"h":0.54,"d":0.2554,"a":0.2046},"xg":[1.81,0.95],"score":[1,1],"confidence":0.54,"evidence":"current","unrated":false,"rank":6},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-22","time":"20:30","home":{"name":"Cruzeiro EC","att":1.052,"def":0.979,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":8,"max":15,"seq":"LWDWD"},"adj":null,"last":{"P":38,"W":19,"D":13,"L":6,"GF":55,"GA":31,"GD":24,"Pts":70,"PPG":1.842},"now":{"P":18,"W":6,"D":6,"L":6,"GF":24,"GA":28,"GD":-4,"Pts":24,"PPG":1.333}},"away":{"name":"CR Flamengo","att":1.441,"def":0.672,"played":17,"unrated":false,"carriedFrom":null,"form":{"pts":8,"max":15,"seq":"DWDLW"},"adj":null,"last":{"P":38,"W":23,"D":10,"L":5,"GF":78,"GA":27,"GD":51,"Pts":79,"PPG":2.079},"now":{"P":17,"W":10,"D":4,"L":3,"GF":31,"GA":16,"GD":15,"Pts":34,"PPG":2.0}},"p":{"h":0.2566,"d":0.2771,"a":0.4663},"xg":[1.04,1.56],"score":[1,1],"confidence":0.4663,"evidence":"current","unrated":false,"rank":13},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-22","time":"18:30","home":{"name":"SC Internacional","att":0.898,"def":1.016,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":7,"max":15,"seq":"WDWLL"},"adj":null,"last":{"P":38,"W":11,"D":11,"L":16,"GF":44,"GA":57,"GD":-13,"Pts":44,"PPG":1.158},"now":{"P":18,"W":5,"D":6,"L":7,"GF":21,"GA":22,"GD":-1,"Pts":21,"PPG":1.167}},"away":{"name":"CA Mineiro","att":0.916,"def":0.948,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":10,"max":15,"seq":"WDWLW"},"adj":null,"last":{"P":38,"W":12,"D":12,"L":14,"GF":43,"GA":44,"GD":-1,"Pts":48,"PPG":1.263},"now":{"P":18,"W":7,"D":3,"L":8,"GF":22,"GA":23,"GD":-1,"Pts":24,"PPG":1.333}},"p":{"h":0.3911,"d":0.3035,"a":0.3054},"xg":[1.24,1.04],"score":[1,1],"confidence":0.3911,"evidence":"current","unrated":false,"rank":29}]},{"date":"2026-08-23","count":45,"games":[{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-23","time":"14:00","home":{"name":"Manchester City","att":1.409,"def":0.715,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":{"att":0.94,"def":1.04,"why":"Guardiola resigned, first season of a new era"},"last":{"P":38,"W":23,"D":9,"L":6,"GF":77,"GA":35,"GD":42,"Pts":78,"PPG":2.053},"now":null},"away":{"name":"AFC Bournemouth","att":1.095,"def":1.029,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":13,"D":18,"L":7,"GF":58,"GA":54,"GD":4,"Pts":57,"PPG":1.5},"now":null},"p":{"h":0.6013,"d":0.2251,"a":0.1736},"xg":[2.16,0.97],"score":[2,0],"confidence":0.6013,"evidence":"carryover","unrated":false,"rank":8},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-23","time":"14:00","home":{"name":"Brighton & Hove Albion","att":0.996,"def":0.897,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":11,"L":13,"GF":52,"GA":46,"GD":6,"Pts":53,"PPG":1.395},"now":null},"away":{"name":"Aston Villa","att":1.062,"def":0.946,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":19,"D":8,"L":11,"GF":56,"GA":49,"GD":7,"Pts":65,"PPG":1.711},"now":null},"p":{"h":0.4316,"d":0.2798,"a":0.2886},"xg":[1.5,1.14],"score":[1,1],"confidence":0.4316,"evidence":"carryover","unrated":false,"rank":29},{"league":"en.1","leagueName":"Premier League","short":"EPL","country":"England","iso":"eng","tier":1,"order":1,"round":"Matchday 1","date":"2026-08-23","time":"16:30","home":{"name":"Newcastle United","att":1.012,"def":1.045,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":7,"L":17,"GF":53,"GA":55,"GD":-2,"Pts":49,"PPG":1.289},"now":null},"away":{"name":"Liverpool","att":1.178,"def":1.012,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":{"att":0.96,"def":1.06,"why":"Slot sacked May 2026, Iraola appointed, squad unsettled"},"last":{"P":38,"W":17,"D":9,"L":12,"GF":63,"GA":53,"GD":10,"Pts":60,"PPG":1.579},"now":null},"p":{"h":0.4288,"d":0.2573,"a":0.3139},"xg":[1.73,1.41],"score":[1,1],"confidence":0.4288,"evidence":"carryover","unrated":false,"rank":31},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Elche","att":0.963,"def":1.098,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":10,"D":13,"L":15,"GF":49,"GA":57,"GD":-8,"Pts":43,"PPG":1.132},"now":null},"away":{"name":"FC Barcelona","att":1.739,"def":0.744,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":31,"D":1,"L":6,"GF":95,"GA":36,"GD":59,"Pts":94,"PPG":2.474},"now":null},"p":{"h":0.1922,"d":0.2227,"a":0.585},"xg":[1.11,2.24],"score":[1,2],"confidence":0.585,"evidence":"carryover","unrated":false,"rank":10},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"RCD Espanyol de Barcelona","att":0.862,"def":1.064,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":12,"D":10,"L":16,"GF":43,"GA":55,"GD":-12,"Pts":46,"PPG":1.211},"now":null},"away":{"name":"Real Madrid","att":1.435,"def":0.727,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":27,"D":5,"L":6,"GF":77,"GA":35,"GD":42,"Pts":86,"PPG":2.263},"now":null},"p":{"h":0.2134,"d":0.2577,"a":0.5289},"xg":[0.97,1.79],"score":[1,1],"confidence":0.5289,"evidence":"carryover","unrated":false,"rank":13},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Real Betis Balompi\u00e9","att":1.132,"def":0.946,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":15,"D":15,"L":8,"GF":59,"GA":48,"GD":11,"Pts":60,"PPG":1.579},"now":null},"away":{"name":"Real Sociedad de F\u00fatbol","att":1.132,"def":1.165,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":13,"L":14,"GF":59,"GA":61,"GD":-2,"Pts":46,"PPG":1.211},"now":null},"p":{"h":0.5229,"d":0.2381,"a":0.2389},"xg":[2.05,1.25],"score":[1,1],"confidence":0.5229,"evidence":"carryover","unrated":false,"rank":15},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"CA Osasuna","att":0.879,"def":0.98,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":9,"L":18,"GF":44,"GA":50,"GD":-6,"Pts":42,"PPG":1.105},"now":null},"away":{"name":"Levante","att":0.929,"def":1.165,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":9,"L":18,"GF":47,"GA":61,"GD":-14,"Pts":42,"PPG":1.105},"now":null},"p":{"h":0.4675,"d":0.274,"a":0.2586},"xg":[1.59,1.07],"score":[1,1],"confidence":0.4675,"evidence":"carryover","unrated":false,"rank":21},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Rayo Vallecano de Madrid","att":0.828,"def":0.879,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":12,"D":14,"L":12,"GF":41,"GA":44,"GD":-3,"Pts":50,"PPG":1.316},"now":null},"away":{"name":"Deportivo Alav\u00e9s","att":0.879,"def":1.081,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":10,"L":17,"GF":44,"GA":56,"GD":-12,"Pts":43,"PPG":1.132},"now":null},"p":{"h":0.456,"d":0.2953,"a":0.2487},"xg":[1.39,0.9],"score":[1,1],"confidence":0.456,"evidence":"carryover","unrated":false,"rank":25},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Athletic Club","att":0.862,"def":1.115,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":13,"D":6,"L":19,"GF":43,"GA":58,"GD":-15,"Pts":45,"PPG":1.184},"now":null},"away":{"name":"Sevilla","att":0.912,"def":1.148,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":12,"D":7,"L":19,"GF":46,"GA":60,"GD":-14,"Pts":43,"PPG":1.132},"now":null},"p":{"h":0.4309,"d":0.2751,"a":0.294},"xg":[1.54,1.19],"score":[1,1],"confidence":0.4309,"evidence":"carryover","unrated":false,"rank":30},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Club Atl\u00e9tico de Madrid","att":1.182,"def":0.879,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":21,"D":6,"L":11,"GF":62,"GA":44,"GD":18,"Pts":69,"PPG":1.816},"now":null},"away":{"name":"Villarreal","att":1.351,"def":0.912,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":22,"D":6,"L":10,"GF":72,"GA":46,"GD":26,"Pts":72,"PPG":1.895},"now":null},"p":{"h":0.4233,"d":0.2606,"a":0.3162},"xg":[1.68,1.39],"score":[1,1],"confidence":0.4233,"evidence":"carryover","unrated":false,"rank":34},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"M\u00e1laga","att":0.791,"def":1.243,"played":0,"unrated":false,"carriedFrom":"es.2","form":null,"adj":null,"last":{"P":12,"W":4,"D":2,"L":6,"GF":14,"GA":15,"GD":-1,"Pts":14,"PPG":1.167},"now":null},"away":{"name":"RC Deportivo La Coru\u00f1a","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.3154,"d":0.2795,"a":0.4052},"xg":[1.23,1.46],"score":[1,1],"confidence":0.4052,"evidence":"carryover","unrated":true,"rank":38},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Valencia","att":0.912,"def":1.064,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":13,"D":10,"L":15,"GF":46,"GA":55,"GD":-9,"Pts":49,"PPG":1.289},"now":null},"away":{"name":"RC Celta de Vigo","att":1.03,"def":0.946,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":12,"L":12,"GF":53,"GA":48,"GD":5,"Pts":54,"PPG":1.421},"now":null},"p":{"h":0.3696,"d":0.2841,"a":0.3463},"xg":[1.34,1.29],"score":[1,1],"confidence":0.3696,"evidence":"carryover","unrated":false,"rank":42},{"league":"es.1","leagueName":"La Liga","short":"LAL","country":"Spain","iso":"esp","tier":1,"order":6,"round":"Matchday 2","date":"2026-08-23","time":"17:00","home":{"name":"Getafe","att":0.676,"def":0.777,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":15,"D":6,"L":17,"GF":32,"GA":38,"GD":-6,"Pts":51,"PPG":1.342},"now":null},"away":{"name":"Real Racing Club de Santander","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.3683,"d":0.328,"a":0.3037},"xg":[1.05,0.91],"score":[0,0],"confidence":0.3683,"evidence":"carryover","unrated":true,"rank":43},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"FC Internazionale Milano","att":1.804,"def":0.792,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":27,"D":6,"L":5,"GF":89,"GA":35,"GD":54,"Pts":87,"PPG":2.289},"now":null},"away":{"name":"AC Monza","att":0.947,"def":0.92,"played":0,"unrated":false,"carriedFrom":"it.2","form":null,"adj":null,"last":{"P":31,"W":19,"D":7,"L":5,"GF":49,"GA":25,"GD":24,"Pts":64,"PPG":2.065},"now":null},"p":{"h":0.6689,"d":0.204,"a":0.1271},"xg":[2.32,0.79],"score":[2,0],"confidence":0.6689,"evidence":"carryover","unrated":false,"rank":5},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"AS Roma","att":1.242,"def":0.717,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":23,"D":4,"L":11,"GF":59,"GA":31,"GD":28,"Pts":73,"PPG":1.921},"now":null},"away":{"name":"ACF Fiorentina","att":0.904,"def":1.073,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":9,"D":15,"L":14,"GF":41,"GA":50,"GD":-9,"Pts":42,"PPG":1.105},"now":null},"p":{"h":0.6113,"d":0.2442,"a":0.1445},"xg":[1.87,0.68],"score":[1,0],"confidence":0.6113,"evidence":"carryover","unrated":false,"rank":6},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Venezia","att":1.129,"def":0.942,"played":0,"unrated":false,"carriedFrom":"it.2","form":null,"adj":null,"last":{"P":31,"W":20,"D":7,"L":4,"GF":63,"GA":26,"GD":37,"Pts":67,"PPG":2.161},"now":null},"away":{"name":"US Lecce","att":0.661,"def":1.073,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":10,"D":8,"L":20,"GF":28,"GA":50,"GD":-22,"Pts":38,"PPG":1.0},"now":null},"p":{"h":0.5834,"d":0.2624,"a":0.1542},"xg":[1.7,0.66],"score":[1,0],"confidence":0.5834,"evidence":"carryover","unrated":false,"rank":11},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Atalanta BC","att":1.092,"def":0.811,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":15,"D":14,"L":9,"GF":51,"GA":36,"GD":15,"Pts":59,"PPG":1.553},"now":null},"away":{"name":"US Sassuolo Calcio","att":0.998,"def":1.073,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":7,"L":17,"GF":46,"GA":50,"GD":-4,"Pts":49,"PPG":1.289},"now":null},"p":{"h":0.5241,"d":0.2712,"a":0.2046},"xg":[1.64,0.85],"score":[1,0],"confidence":0.5241,"evidence":"carryover","unrated":false,"rank":14},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Udinese Calcio","att":0.979,"def":1.036,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":8,"L":16,"GF":45,"GA":48,"GD":-3,"Pts":50,"PPG":1.316},"now":null},"away":{"name":"Como 1907","att":1.354,"def":0.68,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":20,"D":11,"L":7,"GF":65,"GA":29,"GD":36,"Pts":71,"PPG":1.868},"now":null},"p":{"h":0.2433,"d":0.2863,"a":0.4704},"xg":[0.93,1.48],"score":[1,1],"confidence":0.4704,"evidence":"carryover","unrated":false,"rank":20},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Torino","att":0.961,"def":1.317,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":12,"D":9,"L":17,"GF":44,"GA":63,"GD":-19,"Pts":45,"PPG":1.184},"now":null},"away":{"name":"AC Milan","att":1.129,"def":0.792,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":20,"D":10,"L":8,"GF":53,"GA":35,"GD":18,"Pts":70,"PPG":1.842},"now":null},"p":{"h":0.2617,"d":0.2759,"a":0.4624},"xg":[1.07,1.57],"score":[1,1],"confidence":0.4624,"evidence":"carryover","unrated":false,"rank":22},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Genoa CFC","att":0.904,"def":1.092,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":10,"D":11,"L":17,"GF":41,"GA":51,"GD":-10,"Pts":41,"PPG":1.079},"now":null},"away":{"name":"SSC Napoli","att":1.223,"def":0.811,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":23,"D":7,"L":8,"GF":58,"GA":36,"GD":22,"Pts":76,"PPG":2.0},"now":null},"p":{"h":0.2758,"d":0.2902,"a":0.434},"xg":[1.03,1.41],"score":[1,1],"confidence":0.434,"evidence":"carryover","unrated":false,"rank":27},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Bologna FC 1909","att":1.054,"def":0.998,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":16,"D":8,"L":14,"GF":49,"GA":46,"GD":3,"Pts":56,"PPG":1.474},"now":null},"away":{"name":"SS Lazio","att":0.904,"def":0.886,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":14,"D":12,"L":12,"GF":41,"GA":40,"GD":1,"Pts":54,"PPG":1.421},"now":null},"p":{"h":0.4254,"d":0.3018,"a":0.2728},"xg":[1.31,0.95],"score":[1,1],"confidence":0.4254,"evidence":"carryover","unrated":false,"rank":33},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Frosinone Calcio","att":1.077,"def":1.051,"played":0,"unrated":false,"carriedFrom":"it.2","form":null,"adj":null,"last":{"P":31,"W":17,"D":11,"L":3,"GF":59,"GA":31,"GD":28,"Pts":62,"PPG":2.0},"now":null},"away":{"name":"Juventus","att":1.279,"def":0.773,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":19,"D":12,"L":7,"GF":61,"GA":34,"GD":27,"Pts":69,"PPG":1.816},"now":null},"p":{"h":0.3069,"d":0.2845,"a":0.4085},"xg":[1.17,1.42],"score":[1,1],"confidence":0.4085,"evidence":"carryover","unrated":false,"rank":35},{"league":"it.1","leagueName":"Serie A","short":"SEA","country":"Italy","iso":"ita","tier":1,"order":10,"round":"Matchday 1","date":"2026-08-23","time":"18:30","home":{"name":"Parma Calcio 1913","att":0.661,"def":0.998,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":12,"L":15,"GF":28,"GA":46,"GD":-18,"Pts":45,"PPG":1.184},"now":null},"away":{"name":"Cagliari Calcio","att":0.886,"def":1.129,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":38,"W":11,"D":10,"L":17,"GF":40,"GA":53,"GD":-13,"Pts":43,"PPG":1.132},"now":null},"p":{"h":0.3622,"d":0.327,"a":0.3107},"xg":[1.05,0.93],"score":[0,0],"confidence":0.3622,"evidence":"carryover","unrated":false,"rank":44},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-23","time":"14:30","home":{"name":"PSV","att":1.738,"def":0.857,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":27,"D":3,"L":4,"GF":101,"GA":45,"GD":56,"Pts":84,"PPG":2.471},"now":null},"away":{"name":"FC Groningen","att":0.92,"def":0.857,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":14,"D":6,"L":14,"GF":49,"GA":45,"GD":4,"Pts":48,"PPG":1.412},"now":null},"p":{"h":0.6708,"d":0.1849,"a":0.1443},"xg":[2.74,1.09],"score":[2,1],"confidence":0.6708,"evidence":"carryover","unrated":false,"rank":4},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-23","time":"12:15","home":{"name":"Go Ahead Eagles","att":0.999,"def":0.983,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":8,"D":14,"L":12,"GF":54,"GA":53,"GD":1,"Pts":38,"PPG":1.118},"now":null},"away":{"name":"ADO Den Haag","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4607,"d":0.2519,"a":0.2875},"xg":[1.83,1.36],"score":[1,1],"confidence":0.4607,"evidence":"carryover","unrated":true,"rank":24},{"league":"nl.1","leagueName":"Eredivisie","short":"ERE","country":"Netherlands","iso":"nld","tier":1,"order":14,"round":"Matchday 3","date":"2026-08-23","time":"16:45","home":{"name":"SC Cambuur-Leeuwarden","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"Feyenoord Rotterdam","att":1.251,"def":0.842,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":19,"D":8,"L":7,"GF":70,"GA":44,"GD":26,"Pts":65,"PPG":1.912},"now":null},"p":{"h":0.34,"d":0.2533,"a":0.4067},"xg":[1.55,1.73],"score":[1,1],"confidence":0.4067,"evidence":"carryover","unrated":true,"rank":37},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"Sporting Clube de Portugal","att":1.805,"def":0.596,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":25,"D":7,"L":2,"GF":89,"GA":24,"GD":65,"Pts":82,"PPG":2.412},"now":null},"away":{"name":"FC Alverca","att":0.801,"def":1.117,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":10,"D":9,"L":15,"GF":35,"GA":52,"GD":-17,"Pts":39,"PPG":1.147},"now":null},"p":{"h":0.8253,"d":0.1232,"a":0.0515},"xg":[3.13,0.56],"score":[3,0],"confidence":0.8253,"evidence":"carryover","unrated":false,"rank":1},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"FC Porto","att":1.377,"def":0.485,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":28,"D":4,"L":2,"GF":66,"GA":18,"GD":48,"Pts":88,"PPG":2.588},"now":null},"away":{"name":"FC Arouca","att":1.024,"def":1.34,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":12,"D":6,"L":16,"GF":47,"GA":64,"GD":-17,"Pts":42,"PPG":1.235},"now":null},"p":{"h":0.7917,"d":0.1441,"a":0.0642},"xg":[2.87,0.58],"score":[2,0],"confidence":0.7917,"evidence":"carryover","unrated":false,"rank":2},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"Gil Vicente","att":1.024,"def":0.856,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":13,"D":11,"L":10,"GF":47,"GA":38,"GD":9,"Pts":50,"PPG":1.471},"now":null},"away":{"name":"Casa Pia","att":0.745,"def":1.21,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":7,"D":11,"L":16,"GF":32,"GA":57,"GD":-25,"Pts":32,"PPG":0.941},"now":null},"p":{"h":0.6075,"d":0.2405,"a":0.1521},"xg":[1.92,0.75],"score":[2,0],"confidence":0.6075,"evidence":"carryover","unrated":false,"rank":7},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"Moreirense","att":0.838,"def":1.08,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":12,"D":6,"L":16,"GF":37,"GA":50,"GD":-13,"Pts":42,"PPG":1.235},"now":null},"away":{"name":"Sport Lisboa e Benfica","att":1.526,"def":0.615,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":23,"D":11,"L":0,"GF":74,"GA":25,"GD":49,"Pts":80,"PPG":2.353},"now":null},"p":{"h":0.1626,"d":0.2418,"a":0.5956},"xg":[0.8,1.93],"score":[0,2],"confidence":0.5956,"evidence":"carryover","unrated":false,"rank":9},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"GD Estoril Praia","att":1.154,"def":1.21,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":10,"D":9,"L":15,"GF":54,"GA":57,"GD":-3,"Pts":39,"PPG":1.147},"now":null},"away":{"name":"Rio Ave","att":0.801,"def":1.228,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":8,"D":11,"L":15,"GF":35,"GA":58,"GD":-23,"Pts":35,"PPG":1.029},"now":null},"p":{"h":0.5747,"d":0.2259,"a":0.1994},"xg":[2.2,1.13],"score":[2,1],"confidence":0.5747,"evidence":"carryover","unrated":false,"rank":12},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"CF Estrela da Amadora","att":0.856,"def":1.191,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":6,"D":12,"L":16,"GF":38,"GA":56,"GD":-18,"Pts":30,"PPG":0.882},"now":null},"away":{"name":"Sporting Clube de Braga","att":1.34,"def":0.819,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":16,"D":11,"L":7,"GF":64,"GA":36,"GD":28,"Pts":59,"PPG":1.735},"now":null},"p":{"h":0.2283,"d":0.2516,"a":0.5201},"xg":[1.09,1.87],"score":[1,1],"confidence":0.5201,"evidence":"carryover","unrated":false,"rank":16},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"CS Mar\u00edtimo","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"Acad\u00e9mico de Viseu","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4381,"d":0.2748,"a":0.2871},"xg":[1.55,1.17],"score":[1,1],"confidence":0.4381,"evidence":"carryover","unrated":true,"rank":26},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"Vit\u00f3ria Guimar\u00e3es","att":0.875,"def":1.098,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":12,"D":6,"L":16,"GF":39,"GA":51,"GD":-12,"Pts":42,"PPG":1.235},"now":null},"away":{"name":"CD Nacional","att":0.838,"def":0.987,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":9,"D":7,"L":18,"GF":37,"GA":45,"GD":-8,"Pts":34,"PPG":1.0},"now":null},"p":{"h":0.4081,"d":0.294,"a":0.2979},"xg":[1.34,1.08],"score":[1,1],"confidence":0.4081,"evidence":"carryover","unrated":false,"rank":36},{"league":"pt.1","leagueName":"Primeira Liga","short":"PRI","country":"Portugal","iso":"prt","tier":1,"order":15,"round":"Matchday 3","date":"2026-08-23","time":"16:00","home":{"name":"CD Santa Clara","att":0.745,"def":0.912,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":9,"D":9,"L":16,"GF":32,"GA":41,"GD":-9,"Pts":36,"PPG":1.059},"now":null},"away":{"name":"FC Famalic\u00e3o","att":0.931,"def":0.689,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":34,"W":15,"D":11,"L":8,"GF":42,"GA":29,"GD":13,"Pts":56,"PPG":1.647},"now":null},"p":{"h":0.282,"d":0.3425,"a":0.3755},"xg":[0.8,0.99],"score":[0,0],"confidence":0.3755,"evidence":"carryover","unrated":false,"rank":41},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-23","time":"13:30","home":{"name":"RSC Anderlecht","att":1.133,"def":0.847,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":6,"D":4,"L":3,"GF":20,"GA":13,"GD":7,"Pts":22,"PPG":1.692},"now":null},"away":{"name":"KV Kortrijk","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.5125,"d":0.267,"a":0.2205},"xg":[1.69,0.95],"score":[1,1],"confidence":0.5125,"evidence":"carryover","unrated":true,"rank":17},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-23","time":"16:00","home":{"name":"Lommel","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"KVC Westerlo","att":1.092,"def":1.214,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":4,"D":3,"L":6,"GF":19,"GA":22,"GD":-3,"Pts":15,"PPG":1.154},"now":null},"p":{"h":0.4811,"d":0.2555,"a":0.2634},"xg":[1.81,1.22],"score":[1,1],"confidence":0.4811,"evidence":"carryover","unrated":true,"rank":18},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-23","time":"18:30","home":{"name":"Club Brugge","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"Cercle Brugge","att":1.01,"def":1.092,"played":0,"unrated":false,"carriedFrom":null,"form":null,"adj":null,"last":{"P":13,"W":2,"D":6,"L":5,"GF":17,"GA":19,"GD":-2,"Pts":12,"PPG":0.923},"now":null},"p":{"h":0.4611,"d":0.2703,"a":0.2686},"xg":[1.62,1.13],"score":[1,1],"confidence":0.4611,"evidence":"carryover","unrated":true,"rank":23},{"league":"be.1","leagueName":"Pro League","short":"BEL","country":"Belgium","iso":"bel","tier":1,"order":16,"round":"3. Round","date":"2026-08-23","time":"18:30","home":{"name":"--:--  STVV","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"away":{"name":"Royale Union Saint-Gilloise","att":1.0,"def":1.0,"played":0,"unrated":true,"carriedFrom":null,"form":null,"adj":null,"last":null,"now":null},"p":{"h":0.4333,"d":0.281,"a":0.2857},"xg":[1.49,1.12],"score":[1,1],"confidence":0.4333,"evidence":"carryover","unrated":true,"rank":28},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"16:00","home":{"name":"SE Palmeiras","att":1.282,"def":0.618,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":9,"max":15,"seq":"DDDWW"},"adj":null,"last":{"P":38,"W":23,"D":7,"L":8,"GF":66,"GA":33,"GD":33,"Pts":76,"PPG":2.0},"now":{"P":18,"W":12,"D":5,"L":1,"GF":30,"GA":13,"GD":17,"Pts":41,"PPG":2.278}},"away":{"name":"CR Vasco da Gama","att":1.002,"def":1.213,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":4,"max":15,"seq":"DWLLL"},"adj":null,"last":{"P":38,"W":13,"D":6,"L":19,"GF":55,"GA":60,"GD":-5,"Pts":45,"PPG":1.184},"now":{"P":18,"W":5,"D":5,"L":8,"GF":22,"GA":29,"GD":-7,"Pts":20,"PPG":1.111}},"p":{"h":0.6925,"d":0.1996,"a":0.1079},"xg":[2.3,0.67],"score":[2,0],"confidence":0.6925,"evidence":"current","unrated":false,"rank":3},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"16:00","home":{"name":"RB Bragantino","att":1.005,"def":0.941,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":12,"max":15,"seq":"WLWWW"},"adj":null,"last":{"P":38,"W":14,"D":6,"L":18,"GF":45,"GA":57,"GD":-12,"Pts":48,"PPG":1.263},"now":{"P":18,"W":9,"D":2,"L":7,"GF":25,"GA":19,"GD":6,"Pts":29,"PPG":1.611}},"away":{"name":"Gr\u00eamio FBPA","att":0.894,"def":0.991,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":5,"max":15,"seq":"DLDWL"},"adj":null,"last":{"P":38,"W":13,"D":10,"L":15,"GF":47,"GA":50,"GD":-3,"Pts":49,"PPG":1.289},"now":{"P":18,"W":5,"D":6,"L":7,"GF":20,"GA":23,"GD":-3,"Pts":21,"PPG":1.167}},"p":{"h":0.4785,"d":0.285,"a":0.2365},"xg":[1.5,0.91],"score":[1,1],"confidence":0.4785,"evidence":"current","unrated":false,"rank":19},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"19:30","home":{"name":"Coritiba FBC","att":1.001,"def":1.001,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":7,"max":15,"seq":"LDWWL"},"adj":null,"last":null,"now":{"P":18,"W":7,"D":5,"L":6,"GF":24,"GA":24,"GD":0,"Pts":26,"PPG":1.444}},"away":{"name":"SC Corinthians Paulista","att":0.808,"def":0.869,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":9,"max":15,"seq":"LWLWW"},"adj":null,"last":{"P":38,"W":12,"D":11,"L":15,"GF":42,"GA":47,"GD":-5,"Pts":47,"PPG":1.237},"now":{"P":18,"W":6,"D":6,"L":6,"GF":18,"GA":19,"GD":-1,"Pts":24,"PPG":1.333}},"p":{"h":0.4271,"d":0.3075,"a":0.2654},"xg":[1.27,0.9],"score":[1,1],"confidence":0.4271,"evidence":"current","unrated":false,"rank":32},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"18:30","home":{"name":"Santos","att":1.03,"def":1.141,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":7,"max":15,"seq":"DWLLW"},"adj":null,"last":{"P":38,"W":12,"D":11,"L":15,"GF":45,"GA":50,"GD":-5,"Pts":47,"PPG":1.237},"now":{"P":18,"W":5,"D":6,"L":7,"GF":26,"GA":29,"GD":-3,"Pts":21,"PPG":1.167}},"away":{"name":"Mirassol","att":0.992,"def":0.969,"played":17,"unrated":false,"carriedFrom":null,"form":{"pts":7,"max":15,"seq":"WDLWL"},"adj":null,"last":{"P":38,"W":18,"D":13,"L":7,"GF":63,"GA":39,"GD":24,"Pts":67,"PPG":1.763},"now":{"P":17,"W":4,"D":4,"L":9,"GF":18,"GA":24,"GD":-6,"Pts":16,"PPG":0.941}},"p":{"h":0.4025,"d":0.2789,"a":0.3186},"xg":[1.46,1.25],"score":[1,1],"confidence":0.4025,"evidence":"current","unrated":false,"rank":39},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"18:30","home":{"name":"Chapecoense AF","att":0.854,"def":1.269,"played":17,"unrated":false,"carriedFrom":null,"form":{"pts":1,"max":15,"seq":"LDLLL"},"adj":null,"last":null,"now":{"P":17,"W":1,"D":6,"L":10,"GF":17,"GA":33,"GD":-16,"Pts":9,"PPG":0.529}},"away":{"name":"S\u00e3o Paulo","att":0.941,"def":0.894,"played":18,"unrated":false,"carriedFrom":null,"form":{"pts":2,"max":15,"seq":"DLLDL"},"adj":null,"last":{"P":38,"W":14,"D":9,"L":15,"GF":43,"GA":47,"GD":-4,"Pts":51,"PPG":1.342},"now":{"P":18,"W":7,"D":4,"L":7,"GF":23,"GA":20,"GD":3,"Pts":25,"PPG":1.389}},"p":{"h":0.3085,"d":0.2994,"a":0.3921},"xg":[1.07,1.27],"score":[1,1],"confidence":0.3921,"evidence":"current","unrated":false,"rank":40},{"league":"br.1","leagueName":"Serie A","short":"BRA","country":"Brazil","iso":"bra","tier":1,"order":20,"round":"Matchday 24","date":"2026-08-23","time":"16:00","home":{"name":"EC Vit\u00f3ria","att":0.862,"def":1.092,"played":17,"unrated":false,"carriedFrom":null,"form":{"pts":7,"max":15,"seq":"WDLWL"},"adj":null,"last":{"P":38,"W":11,"D":12,"L":15,"GF":35,"GA":52,"GD":-17,"Pts":45,"PPG":1.184},"now":{"P":17,"W":6,"D":4,"L":7,"GF":21,"GA":25,"GD":-4,"Pts":22,"PPG":1.294}},"away":{"name":"EC Bahia","att":1.077,"def":0.995,"played":17,"unrated":false,"carriedFrom":null,"form":{"pts":5,"max":15,"seq":"DLDLW"},"adj":null,"last":{"P":38,"W":17,"D":9,"L":12,"GF":50,"GA":46,"GD":4,"Pts":60,"PPG":1.579},"now":{"P":17,"W":7,"D":5,"L":5,"GF":25,"GA":23,"GD":2,"Pts":26,"PPG":1.529}},"p":{"h":0.3499,"d":0.2897,"a":0.3604},"xg":[1.25,1.28],"score":[1,1],"confidence":0.3604,"evidence":"current","unrated":false,"rank":45}]}],"model":{"blendK":12.0,"formCap":0.05,"rho":-0.06,"temperature":1.15,"homeMult":{"1":1.155,"2":1.17,"3":1.18,"4":1.185},"awayMult":{"1":0.87,"2":0.862,"3":0.855,"4":0.85}}};</script>
+<script>
+(function(){
+"use strict";
+const D = window.__FIXTURE_DATA__;
+if(!D || !D.days){
+  document.body.innerHTML = '<div class="wrap" style="padding:60px 0;max-width:60ch">'
+    + '<h1 style="font-family:var(--f-display);font-size:28px;letter-spacing:-.03em">No fixture data loaded</h1>'
+    + '<p style="margin-top:14px;font-size:15px;line-height:1.55">This page expects <code>data.js</code> '
+    + 'to sit next to it. Either open <b>dashboard.html</b> instead, which has the data built in, '
+    + 'or run <code>python3 build.py</code> and serve the folder:</p>'
+    + '<pre style="margin-top:14px;font-family:var(--f-num);font-size:13px;background:#fff;padding:12px;'
+    + 'border-left:6px solid var(--draw)">python3 build.py --days 4 --top 50\npython3 -m http.server 8000</pre></div>';
+  return;
+}
+const $ = s => document.querySelector(s);
+const pct = x => Math.round(x*100);
+const state = { leagues:new Set(), sort:"conf", open:null };
+
+/* ---------- header ---------- */
+const fmtDay = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
+  {weekday:"long", day:"numeric", month:"long"});
+const fmtShort = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
+  {day:"numeric", month:"short"});
+
+$("#window").textContent = fmtShort(D.window.from)+" – "+fmtShort(D.window.to)+" · "+D.season;
+
+const total = D.days.reduce((a,d)=>a+d.count,0);
+const live  = D.days.reduce((a,d)=>a+d.games.filter(g=>g.evidence!=="carryover").length,0);
+$("#meta").innerHTML = [
+  ["Fixtures priced", total],
+  ["Competitions", new Set(D.days.flatMap(d=>d.games.map(g=>g.league))).size],
+  ["Built from current-season results", live+" of "+total],
+  ["Data pulled", new Date(D.generated).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})],
+].map(([k,v])=>`<div><span>${k}</span><b>${v}</b></div>`).join("");
+
+$("#note").innerHTML = live===0
+  ? `<b>Nothing has been played yet.</b> Every number on this page comes from last season's completed results, carried across divisions for promoted and relegated sides. It knows nothing about this summer's transfers or managerial changes. Confidence is deliberately flattened until real results arrive.`
+  : `<b>${live} of ${total}</b> fixtures have some current-season evidence behind them. The rest are priced from last season alone.`;
+
+/* ---------- league chips ---------- */
+const present = [...new Set(D.days.flatMap(d=>d.games.map(g=>g.league)))]
+  .sort((a,b)=>D.leagues.find(l=>l.code===a).order - D.leagues.find(l=>l.code===b).order);
+const lname = c => D.leagues.find(l=>l.code===c);
+
+const chips = $("#chips");
+chips.innerHTML = `<button class="chip" data-league="*" aria-pressed="true">All</button>` +
+  present.map(c=>{
+    const L = lname(c);
+    return `<button class="chip" data-league="${c}" aria-pressed="false">${L.country} ${L.name}</button>`;
+  }).join("");
+
+chips.addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  const c = b.dataset.league;
+  if(c==="*"){ state.leagues.clear(); }
+  else { state.leagues.has(c) ? state.leagues.delete(c) : state.leagues.add(c); }
+  chips.querySelectorAll("button").forEach(x=>{
+    const k = x.dataset.league;
+    x.setAttribute("aria-pressed", k==="*" ? state.leagues.size===0 : state.leagues.has(k));
+  });
+  render();
+});
+
+$("#sort").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  state.sort = b.dataset.sort;
+  $("#sort").querySelectorAll("button").forEach(x=>
+    x.setAttribute("aria-pressed", x.dataset.sort===state.sort));
+  render();
+});
+
+/* ---------- row rendering ---------- */
+const rank = {
+  conf:  (a,b)=> b.confidence - a.confidence,
+  upset: (a,b)=> b.p.a - a.p.a,
+  goals: (a,b)=> (b.xg[0]+b.xg[1]) - (a.xg[0]+a.xg[1]),
+  time:  (a,b)=> (a.time||"99:99").localeCompare(b.time||"99:99") || b.confidence-a.confidence,
+};
+// Unrated fixtures always sink, whatever the ordering: a placeholder number
+// should never sit at the top of the slate pretending to be a read.
+const sortFns = Object.fromEntries(Object.entries(rank).map(([k,f])=>
+  [k,(a,b)=> (a.unrated-b.unrated) || f(a,b)]));
+
+function flag(iso, country){
+  if(!iso) return "";
+  return `<svg class="flg" role="img" aria-label="${country}"><use href="#f-${iso}"/></svg>`;
+}
+
+function sideStats(t){
+  const s = t.now && t.now.P ? t.now : t.last;
+  if(!s) return `<div class="stat none">not rated — no season on file</div>`;
+  const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
+  const f = t.form ? ` · ${t.form.seq}` : "";
+  return `<div class="stat">${s.PPG.toFixed(2)} ppg · ${s.W}-${s.D}-${s.L} · ${gd}${f}</div>`;
+}
+
+function bar(g){
+  const h=pct(g.p.h), d=pct(g.p.d), a=100-h-d;
+  const lbl=(v,min)=> v>=min ? `<b>${v}</b>` : "";
+  return `<div class="bar" role="img" aria-label="Home win ${h} per cent, draw ${d} per cent, away win ${a} per cent">
+    <i class="h" style="width:${h}%">${lbl(h,13)}</i>
+    <i class="d" style="width:${d}%">${lbl(d,13)}</i>
+    <i class="a" style="width:${a}%">${lbl(a,13)}</i>
+  </div>`;
+}
+
+function teamSheet(t, label){
+  const rows = [];
+  if(t.last) rows.push(["2025/26", t.last]);
+  if(t.now && t.now.P) rows.unshift(["This season", t.now]);
+  const body = rows.map(([k,s])=>`<tr>
+      <td>${k}</td><td>${s.P}</td><td>${s.W}</td><td>${s.D}</td><td>${s.L}</td>
+      <td>${s.GF}</td><td>${s.GA}</td><td>${s.GD>0?"+":""}${s.GD}</td>
+      <td>${s.Pts}</td><td>${s.PPG.toFixed(2)}</td></tr>`).join("");
+  const flags = [
+    t.unrated ? `<span class="flag unrated">not rated</span>` : "",
+    t.adj ? `<span class="flag manual">manual override</span>` : "",
+    t.carriedFrom ? `<span class="flag carry">carried from ${lname(t.carriedFrom).name}</span>` : "",
+    (t.now && t.now.P) ? `<span class="flag live">${t.now.P} played</span>` : "",
+  ].join("");
+  return `<div>
+    <h3>${label} — ${t.name}</h3>
+    ${flags}
+    <table class="sheet">
+      <tr><th>Record</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>PPG</th></tr>
+      ${body || `<tr><td colspan="10">No completed matches on record.</td></tr>`}
+    </table>
+    <div class="stat" style="margin-top:8px">
+      attack ${t.att.toFixed(2)} · defence ${t.def.toFixed(2)}
+      ${t.form ? " · last "+(t.form.max/3)+": "+t.form.pts+" pts ("+t.form.seq+")" : " · form: not yet available"}
+    </div>
+    ${t.adj ? `<div class="stat" style="margin-top:6px;color:#2c3763">
+        hand-adjusted: attack x${t.adj.att.toFixed(2)}, defence x${t.adj.def.toFixed(2)}${t.adj.why?" — "+t.adj.why:""}
+      </div>` : ""}
+  </div>`;
+}
+
+function detail(g){
+  const edge = g.p.h>g.p.a ? g.home : g.away;
+  const dir  = g.p.h>g.p.a ? "home" : "away";
+  const missing = [g.home,g.away].filter(t=>t.unrated).map(t=>t.name);
+
+  const why = missing.length
+    ? `<b>This fixture is not really priced.</b> ${missing.join(" and ")}
+       ${missing.length>1?"have":"has"} no season on file — almost certainly promoted from a
+       division this build does not yet cover — so the model substitutes a league-average rating
+       and the split below is close to what you would get from knowing nothing at all.
+       Treat the ${pct(g.confidence)}% as a placeholder, not a read.`
+    : `Model expects <em>${g.xg[0].toFixed(2)} – ${g.xg[1].toFixed(2)}</em> goals,
+       likeliest scoreline <em>${g.score[0]}–${g.score[1]}</em>.
+       The ${dir} edge comes from ${edge.name}'s attack rating of
+       <em>${edge.att.toFixed(2)}</em> against a defence rating of
+       <em>${(dir==="home"?g.away.def:g.home.def).toFixed(2)}</em>, before a home-ground
+       adjustment worth about a third of a goal.
+       ${g.evidence==="carryover"
+         ? " Nothing has been played this season, so this rests entirely on 2025/26 and takes no account of summer transfers."
+         : ""}`;
+
+  return `<div class="detail">
+    <div class="detail-grid">
+      ${teamSheet(g.home,"Home")}
+      ${teamSheet(g.away,"Away")}
+    </div>
+    <div class="why">${why}</div>
+  </div>`;
+}
+
+function render(){
+  const host = $("#days");
+  host.innerHTML = "";
+  let shown = 0;
+
+  D.days.forEach(day=>{
+    let games = day.games.filter(g=> state.leagues.size===0 || state.leagues.has(g.league));
+    if(!games.length) return;
+    games = games.slice().sort(sortFns[state.sort]);
+    shown += games.length;
+
+    const sec = document.createElement("section");
+    sec.className = "day";
+    sec.innerHTML = `
+      <div class="day-head">
+        <h2>${fmtDay(day.date)}</h2>
+        <div class="count">${games.length} fixture${games.length===1?"":"s"}</div>
+      </div>
+      <div class="ruler">
+        <div>#</div><div>K/O</div><div>Home</div>
+        <div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
+        <div style="text-align:center">xG</div>
+        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
+      </div>`;
+
+    games.forEach((g,i)=>{
+      const id = day.date+"|"+g.home.name+"|"+g.away.name;
+      const btn = document.createElement("button");
+      btn.className = "row" + (g.unrated ? " unrated" : "");
+      btn.setAttribute("aria-expanded", state.open===id ? "true":"false");
+      btn.innerHTML = `
+        <div class="rank ${i<3?"top":""}">${String(i+1).padStart(2,"0")}</div>
+        <div class="ko">${g.time||"TBC"}<small>${g.short}</small></div>
+        <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
+        ${bar(g)}
+        <div class="xg"><b>${g.xg[0].toFixed(2)}</b> – <b>${g.xg[1].toFixed(2)}</b></div>
+        <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
+        <div class="conf">${pct(g.confidence)}<small>${g.p.h>=g.p.a && g.p.h>=g.p.d?"home":(g.p.a>=g.p.d?"away":"draw")}</small></div>`;
+      btn.addEventListener("click", ()=>{ state.open = state.open===id ? null : id; render(); });
+      sec.appendChild(btn);
+      if(state.open===id){
+        const dv = document.createElement("div");
+        dv.innerHTML = detail(g);
+        sec.appendChild(dv.firstElementChild);
+      }
+    });
+    host.appendChild(sec);
+  });
+
+  if(!shown) host.innerHTML = `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`;
+}
+
+$("#footer").innerHTML = `
+  Probabilities come from a Dixon-Coles adjusted Poisson model over attack and defence ratings.
+  Backtested across ${'4,605'} matches in 2025/26: <b>49.3%</b> of top picks correct against a
+  43.3% always-back-the-home-side baseline. The most confident tenth of fixtures landed 73.5% of the time.
+  Fixtures and results from <a href="https://github.com/openfootball">openfootball</a>, public domain.
+  ${D.missing.length ? `<br><br>No current-season fixture list published yet for: ${D.missing.map(m=>m.split(" ")[0]).join(", ")}.` : ""}
+  <br><br>This is a model, not a tip sheet. It is worse than the betting market, which is what a
+  properly priced market is for.`;
+
+render();
+})();
+</script>
+</body>
+</html>
