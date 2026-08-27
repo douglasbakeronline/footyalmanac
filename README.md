@@ -117,21 +117,35 @@ def_new = def_old × (strength_new / strength_old)     # leakier defence going u
 Then shrink hard toward 1.0, because promoted and relegated sides are the least
 predictable teams on any weekend.
 
-**Blending in the current season.** Weight `w = played / (played + K)` with **K = 12**.
+**Blending in the current season.** Weight `w = played / (played + K)` with **K = 6**.
 
-K=12 was fitted, not guessed, and it is roughly double what intuition suggests:
+| games played this season | weight on this season | weight on last season |
+|---|---|---|
+| 0 | 0% | 100% |
+| 3 | 33% | 67% |
+| 6 | 50% | 50% |
+| 10 | 62% | 38% |
+| 20 | 77% | 23% |
+| 38 | 86% | 14% |
 
-| K | log loss |
-|---|---|
-| 2 | 1.0334 |
-| 6 | 1.0203 |
-| **12** | **1.0171** |
-| 20 | 1.0174 |
+K was originally fitted at 12, but that fit was made while current-season
+ratings were computed *without shrinkage*, so a single 5-0 win produced an
+attack rating of 4.10. New data genuinely was dangerous, and the fit correctly
+pushed back against it. With that bug fixed, re-fitting on the same walk-forward
+gives:
 
-In backtesting, last season's table beat the current season's until about a dozen matches
-had been played. Six games of new results is a small sample and the model does better
-distrusting it. This matters most in August, which is exactly when the dashboard is
-hardest to trust anyway.
+| K | log loss | accuracy |
+|---|---|---|
+| 3 | 1.0179 | 49.3% |
+| **6** | **1.0169** | **49.7%** |
+| 8 | 1.0169 | 49.6% |
+| 12 | 1.0173 | 49.7% |
+| 20 | 1.0187 | 49.7% |
+
+K=6 is both slightly better and twice as responsive. This season's form reaches
+equal weight after six matches instead of twelve, and roughly three quarters of
+the rating by twenty. Last season still carries the opening weeks, which is
+correct: it is a poor guide, but it beats having nothing at all.
 
 ### Stage 2 — the match
 

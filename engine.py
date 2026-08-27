@@ -127,7 +127,7 @@ SHRINK_FULL_SEASON = 6.0   # pseudo-matches pulling a full season's rating towar
 ATT_BOUNDS = (0.45, 2.00)
 DEF_BOUNDS = (0.50, 2.00)
 SHRINK_ON_TRANSFER = 10.0  # extra pull applied when a team changes division
-BLEND_K = 12.0             # current-season matches needed before new data outweighs the prior
+BLEND_K = 6.0              # current-season matches needed before new data outweighs the prior
 FORM_MAX = 0.05            # hard cap on how much last-5 form may move expected goals
 RHO = -0.06                # Dixon-Coles low-score correlation term
 MAX_GOALS = 10
@@ -255,12 +255,25 @@ def transfer_rating(rating, from_code, to_code, k=None):
 def blend(prior, current, played, k=None):
     """Weight this season's evidence against last season's rating.
 
-    played=0 -> pure prior. played=12 -> 50/50. played=30 -> 71% current season.
+    played=0 -> pure prior. played=6 -> 50/50. played=20 -> 77% current season.
 
-    K=12 was fitted, not guessed, and it is higher than intuition suggests: in
-    backtesting, last season's table beat the current season's until roughly a
-    dozen matches had been played. Six games of new results is a small sample
-    and the model is better off distrusting it.
+    K was originally fitted at 12, but that fit was made while current-season
+    ratings were being computed without shrinkage. One match could then produce
+    an attack rating of 4.10, so new data genuinely was dangerous and the fit
+    correctly pushed back against it. With the shrinkage bug fixed, re-fitting
+    on the same 2025/26 walk-forward gives:
+
+        K       log loss    accuracy
+        3        1.0179      49.3%
+        6        1.0169      49.7%   <- fitted
+        8        1.0169      49.6%
+        12       1.0173      49.7%   (the old value)
+        20       1.0187      49.7%
+
+    K=6 is both better and twice as responsive: this season's form reaches
+    equal weight after six matches rather than twelve, and about three quarters
+    of the rating by twenty. Last season still carries the opening weeks, which
+    is right, because it beats having nothing.
     """
     if current is None or played == 0:
         return dict(prior)
