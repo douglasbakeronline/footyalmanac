@@ -391,21 +391,43 @@ def fetch_espn(code, start, end, timeout=25, log=None):
         slugs = [slugs]
     a, b = start.isoformat(), end.isoformat()
     for slug in slugs:
-        rows = _espn_one(slug, start, end, timeout)
+        errs = []
+        rows = _espn_one(slug, start, end, timeout, errs)
         inwin = [r for r in rows if a <= r["date"] <= b]
         if log is not None:
-            log.append(f"{code}/{slug}: {len(rows)} returned, {len(inwin)} in window")
+            note = f"  ERROR {errs[0]}" if errs else ""
+            log.append(f"{code}/{slug}: {len(rows)} returned, {len(inwin)} in window{note}")
         if inwin:
             return inwin, True
     return [], False
 
 
-def _espn_one(slug, start, end, timeout):
+# ESPN rejects requests that do not look like a browser. Identifying honestly
+# as "football-almanac/1.0" returned an empty body for every single slug,
+# including ones that certainly had fixtures, which looked exactly like "this
+# competition has no data" in the logs. A normal browser User-Agent is what the
+# endpoint expects.
+ESPN_HEADERS = {
+    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/126.0.0.0 Safari/537.36"),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-GB,en;q=0.9",
+    "Referer": "https://www.espn.com/soccer/scoreboard",
+}
+
+
+def _espn_one(slug, start, end, timeout, errs=None):
     url = ESPN.format(slug=slug, a=start.strftime("%Y%m%d"), b=end.strftime("%Y%m%d"))
     try:
-        req = urllib.request.Request(url, headers={"User-Agent": "football-almanac/1.0"})
-        doc = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
-    except Exception:
+        req = urllib.request.Request(url, headers=ESPN_HEADERS)
+        raw = urllib.request.urlopen(req, timeout=timeout).read()
+        doc = json.loads(raw)
+    except Exception as e:
+        # Surface the reason. A blocked request and an empty competition are
+        # very different problems and must not look the same in the log.
+        if errs is not None:
+            errs.append(f"{slug}: {type(e).__name__} {e}")
         return []
 
     rows = []
