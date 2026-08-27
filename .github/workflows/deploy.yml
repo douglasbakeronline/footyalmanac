@@ -4,13 +4,20 @@ name: Rebuild and publish
 # when you have edited adjustments.json and want it live now.
 on:
   schedule:
-    - cron: "15 6 * * *"   # 06:15 UTC daily. GitHub runs this late under load.
+    # One run, early morning, so the day's slate is built before you are awake.
+    # 05:15 UTC also lands after late South American kick-offs have finished
+    # (Brazil is UTC-3, so a 20:00 local game runs past 23:00 UTC), which an
+    # end-of-UK-day build would miss.
+    #
+    # Note: cron is always UTC and does not follow British Summer Time, so this
+    # is 06:15 BST in summer and 05:15 GMT in winter.
+    - cron: "15 5 * * *"    # 05:15 UTC
   workflow_dispatch:
   push:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write        # predictions are committed back so the record survives
   pages: write
   id-token: write
 
@@ -30,7 +37,7 @@ jobs:
 
       # No pip install: the whole thing runs on the standard library.
       - name: Build today's slate
-        run: python3 build.py --days 4 --top 50
+        run: python3 build.py --days 5 --top 50
 
       # A build that returns nothing is a broken upstream, not a quiet
       # publish of an empty page. Fail loudly and keep yesterday's site.
@@ -45,12 +52,31 @@ jobs:
               sys.exit("build produced zero fixtures, refusing to publish")
           PY
 
+      # Grade every past prediction against results that have landed since.
+      # Runs before the build so the fresh record is inlined into the page.
+      - name: Score past predictions
+        run: python3 score.py
+
+      # Pages artifacts do not persist between runs, so the prediction archive
+      # has to live in the repository or the record resets to zero every day.
+      - name: Commit the archive
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A predictions record.json
+          git diff --staged --quiet || git commit -m "Archive predictions and record for $(date +%F)"
+          git push
+
+      - name: Rebuild with the updated record
+        run: python3 build.py --days 5 --top 50
+
       - name: Assemble the site
         run: |
           mkdir -p _site
           cp dashboard.html _site/index.html   # the self-contained build
           cp data.json _site/data.json         # handy if you want the raw numbers
           cp README.md _site/README.md
+          cp record.json _site/record.json
 
       - uses: actions/upload-pages-artifact@v3
         with:
