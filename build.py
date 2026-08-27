@@ -276,13 +276,27 @@ def main():
                 "celtic": ({"reasons": reasons, "early": early} if reasons else None),
             })
 
+    # Backstop against the same fixture arriving from two competitions or two
+    # sources. Keyed on the teams and the date, so a genuine two-legged tie on
+    # different days still shows both legs.
+    for d in by_day:
+        seen, unique = set(), []
+        for g in by_day[d]:
+            key = (g["home"]["name"], g["away"]["name"])
+            if key in seen:
+                continue
+            seen.add(key)
+            unique.append(g)
+        by_day[d] = unique
+
     days = []
     for d in sorted(by_day):
         # A fixture with an unrated side can look confident purely because the
         # placeholder rating flatters the other team. Rank those last so they
         # never occupy the top of the slate.
         games = sorted(by_day[d], key=lambda g: (g["unrated"], -g["confidence"]))[:args.top]
-        games.sort(key=lambda g: (g["order"], -g["confidence"]))
+        # Straight confidence order, most one-sided at the top of every day.
+        games.sort(key=lambda g: -g["confidence"])
         for i, g in enumerate(sorted(games, key=lambda g: -g["confidence"]), 1):
             g["rank"] = i
         days.append({"date": d, "count": len(games), "games": games})

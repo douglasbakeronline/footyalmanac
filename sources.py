@@ -382,12 +382,15 @@ ESPN_SLUGS = {
     "fr.1": ["fra.1"], "fr.2": ["fra.2"],
     "nl.1": ["ned.1"], "pt.1": ["por.1"], "be.1": ["bel.1"], "tr.1": ["tur.1"],
     "at.1": ["aut.1"], "gr.1": ["gre.1"], "sco.1": ["sco.1"], "br.1": ["bra.1"],
-    "eu.cl":  ["uefa.champions", "uefa.champions_qual"],
-    "eu.clq": ["uefa.champions_qual", "uefa.champions"],
-    "eu.el":  ["uefa.europa", "uefa.europa_qual"],
-    "eu.elq": ["uefa.europa_qual", "uefa.europa"],
-    "eu.ec":  ["uefa.europa.conf", "uefa.europa.conf_qual"],
-    "eu.ecq": ["uefa.europa.conf_qual", "uefa.europa.conf"],
+    # One slug each. Letting the main competition fall back to the qualifying
+    # slug meant the same tie was fetched twice under two codes and rendered as
+    # a duplicate row.
+    "eu.cl":  ["uefa.champions"],
+    "eu.clq": ["uefa.champions_qual"],
+    "eu.el":  ["uefa.europa"],
+    "eu.elq": ["uefa.europa_qual"],
+    "eu.ec":  ["uefa.europa.conf"],
+    "eu.ecq": ["uefa.europa.conf_qual"],
 }
 
 

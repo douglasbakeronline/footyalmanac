@@ -190,7 +190,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 
 /* ---------- day ---------- */
 .day{margin-top:24px}
-.day-head{display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--ink)}
+.day-head{
+  display:flex;align-items:baseline;gap:12px;padding:0 0 6px;
+  border-bottom:3px double var(--ink);
+}
 .day-head h2{
   font-family:var(--f-display);font-weight:400;font-size:16px;
   letter-spacing:.01em;text-transform:uppercase;
@@ -200,12 +203,20 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 /* ---------- column ruler ---------- */
 .ruler{
   display:grid;grid-template-columns:32px 46px 1fr 258px 74px 1fr 56px;
-  gap:10px;align-items:center;padding:9px 8px 6px;
+  gap:10px;align-items:center;padding:7px 8px 5px;
+  background:var(--paper);border-bottom:1px solid var(--rule);
   font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
 }
 .ruler .r-bar{display:flex;justify-content:space-between}
 
 /* ---------- fixture row ---------- */
+/* Row states, each carrying exactly one meaning:
+     default   parchment
+     alternate a half-tone band, so the eye can track across a wide row
+     unrated   faded, the model has no rating for a side
+     celtic    amber rail, the model is working blind
+     noread    muted type, the number is close to a guess
+   Nothing else changes the background, so a tint always means something. */
 .row{
   display:grid;grid-template-columns:32px 46px 1fr 258px 74px 1fr 56px;
   gap:10px;align-items:center;
@@ -213,9 +224,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   padding:9px 8px;width:100%;text-align:left;border-left:0;border-right:0;border-top:0;
   font-family:var(--f-ui);font-size:15px;color:var(--ink);cursor:pointer;
 }
-.row:hover{background:#f7f9f7}
+.row:hover{background:#f3ead6}
 .row:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
-.row[aria-expanded="true"]{background:#f4f7f5}
+.row[aria-expanded="true"]{background:#f3ead6;box-shadow:inset 0 0 0 1px var(--rule)}
 
 .rank{font-family:var(--f-num);font-size:12px;color:var(--mute);font-weight:500}
 .rank.top{color:var(--ink);font-weight:600}
@@ -283,7 +294,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .conf small{display:block;font-size:9.5px;letter-spacing:.06em;color:var(--mute);font-weight:400;text-transform:uppercase}
 
 /* ---------- expanded detail ---------- */
-.detail{background:#f4f7f5;border-bottom:1px solid var(--rule);padding:16px 18px 18px}
+.detail{background:#f3ead6;border-bottom:2px solid var(--ink);padding:16px 18px 18px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .detail h3{
   font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;
@@ -309,10 +320,11 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .flag.carry{background:var(--draw-soft);color:#5f4715}
 .flag.live{background:var(--home-soft);color:#0d443f}
 
-.row.unrated{background:#fbfbfa}
-.row.unrated .club{color:var(--ink-2)}
-.row.unrated .bar{opacity:.42}
+
+.row.unrated .club{color:var(--mute);font-weight:500}
+.row.unrated .bar{opacity:.38}
 .row.unrated .conf{color:var(--mute);font-weight:500}
+.row.unrated .stat{opacity:.8}
 .stat.none{color:var(--away);opacity:.85}
 .flg{
   width:15px;height:10.3px;flex:0 0 auto;border-radius:1px;
@@ -325,14 +337,23 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .xg small{display:block;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-family:var(--f-ui);font-weight:600}
 .xg b{font-weight:600;color:var(--ink)}
 .flag.unrated{background:var(--away-soft);color:#6a1f31}
-.flag.manual{background:#dfe3f0;color:#2c3763}
+.flag.manual{background:#d8dced;color:#2b3560}
 .flag.celtic{background:var(--draw-soft);color:#5f4715}
 .flag.out{background:var(--away-soft);color:#6a1f31}
 .outlist{margin-top:8px;font-family:var(--f-num);font-size:11.5px;color:var(--ink-2);line-height:1.65}
 .outlist i{font-style:normal;color:var(--away)}
 .outlist span{color:var(--mute)}
 .mini-out{color:var(--away);font-family:var(--f-ui);font-weight:600}
+/* Alternate rows carry a faint tint, as a printed results table does. It is
+   there to help the eye track across a wide row, so it must be weak enough to
+   read as texture rather than as meaning. Every state that DOES mean something
+   (flagged, unrated, no read) is signalled by rail, weight or opacity instead,
+   so nothing competes with it. */
+.row.alt{background:#f6efe0}
+.row.alt{background:#f6efdc}
 .row.celtic{box-shadow:inset 3px 0 0 var(--draw)}
+.row.unrated{opacity:.72}
+.row.celtic.alt{background:#f6efe0}
 .cl{
   display:inline-block;font-family:var(--f-num);font-size:9.5px;font-weight:600;
   color:var(--draw);border:1px solid var(--draw);border-radius:2px;
@@ -629,10 +650,10 @@ const rank = {
   goals: (a,b)=> (b.xg[0]+b.xg[1]) - (a.xg[0]+a.xg[1]),
   time:  (a,b)=> (a.time||"99:99").localeCompare(b.time||"99:99") || b.confidence-a.confidence,
 };
-// Unrated fixtures always sink, whatever the ordering: a placeholder number
-// should never sit at the top of the slate pretending to be a read.
-const sortFns = Object.fromEntries(Object.entries(rank).map(([k,f])=>
-  [k,(a,b)=> (a.unrated-b.unrated) || f(a,b)]));
+// Straight order, no special cases. Every day reads top to bottom by
+// confidence; unrated and flagged rows are marked visually instead of being
+// pushed around, so the ranking always means the same thing.
+const sortFns = rank;
 
 function flag(iso, country){
   if(!iso) return "";
@@ -692,7 +713,7 @@ function teamSheet(t, label){
       attack ${t.att.toFixed(2)} · defence ${t.def.toFixed(2)}
       ${t.form ? " · last "+(t.form.max/3)+": "+t.form.pts+" pts ("+t.form.seq+")" : " · form: not yet available"}
     </div>
-    ${t.adj ? `<div class="stat" style="margin-top:6px;color:#2c3763">
+    ${t.adj ? `<div class="stat" style="margin-top:6px;color:#2b3560">
         hand-adjusted: attack x${t.adj.att.toFixed(2)}, defence x${t.adj.def.toFixed(2)}${t.adj.why?" — "+t.adj.why:""}
       </div>` : ""}
     ${t.out ? `<div class="outlist">unavailable:
@@ -805,7 +826,8 @@ function render(){
       const btn = document.createElement("button");
       const btts = state.board === "btts";
       const T = btts ? bttsTier(g) : tier(g);
-      btn.className = "row" + (g.unrated ? " unrated" : "") + (g.celtic ? " celtic" : "")
+      btn.className = "row" + (i % 2 ? " alt" : "")
+                    + (g.unrated ? " unrated" : "") + (g.celtic ? " celtic" : "")
                     + (T.k === 0 ? " noread" : "");
       btn.setAttribute("aria-expanded", state.open===id ? "true":"false");
       btn.innerHTML = `
