@@ -81,14 +81,19 @@ def main():
     gaps = [c for c in CODES if c not in fixtures
             and not E.LEAGUES[c].get("ratingsOnly")]
     if gaps:
-        got = []
+        got, tried = [], []
         for c in gaps:
-            rows, ok = S.fetch_espn(c, start, end)
+            rows, ok = S.fetch_espn(c, start, end, log=tried)
             if ok:
                 fixtures[c] = rows
                 got.append(f"{c}({len(rows)})")
-        if got:
-            print(f"  live fallback supplied: {', '.join(got)}", file=sys.stderr)
+        # Log every attempt, not just the wins. A silent fallback that returns
+        # nothing is indistinguishable from one that was never called, which
+        # cost a day of debugging.
+        for line in tried:
+            print(f"    espn {line}", file=sys.stderr)
+        print(f"  live fallback supplied: {', '.join(got) if got else 'nothing'}",
+              file=sys.stderr)
 
     last_league = team_pool(history, fixtures)
 

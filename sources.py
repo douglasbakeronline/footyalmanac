@@ -348,6 +348,10 @@ def fetch_all(codes, season, prev_seasons, cache_dir=None, workers=10):
 
 ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={a}-{b}&limit=300"
 
+# Several slugs per competition, tried in order. ESPN splits qualifying rounds
+# onto their own slug, and does not always open a new season on the main slug
+# until the league phase starts, so the qualifying slug is the one carrying
+# August ties.
 ESPN_SLUGS = {
     "en.1": "eng.1", "en.2": "eng.2", "en.3": "eng.3", "en.4": "eng.4",
     "en.fa": "eng.fa", "en.lc": "eng.league_cup",
@@ -357,27 +361,52 @@ ESPN_SLUGS = {
     "fr.1": "fra.1", "fr.2": "fra.2",
     "nl.1": "ned.1", "pt.1": "por.1", "be.1": "bel.1", "tr.1": "tur.1",
     "at.1": "aut.1", "gr.1": "gre.1", "sco.1": "sco.1", "br.1": "bra.1",
-    "eu.cl":  "uefa.champions",      "eu.clq": "uefa.champions_qual",
-    "eu.el":  "uefa.europa",         "eu.elq": "uefa.europa_qual",
-    "eu.ec":  "uefa.europa.conf",    "eu.ecq": "uefa.europa.conf_qual",
+    "eu.cl":  ["uefa.champions", "uefa.champions_qual"],
+    "eu.clq": ["uefa.champions_qual", "uefa.champions"],
+    "eu.el":  ["uefa.europa", "uefa.europa_qual"],
+    "eu.elq": ["uefa.europa_qual", "uefa.europa"],
+    "eu.ec":  ["uefa.europa.conf", "uefa.europa.conf_qual"],
+    "eu.ecq": ["uefa.europa.conf_qual", "uefa.europa.conf"],
 }
 
 
-def fetch_espn(code, start, end, timeout=25):
+def fetch_espn(code, start, end, timeout=25, log=None):
     """Fixtures for one competition between two dates (datetime.date objects).
 
     Returns the same row shape as parse_fixture_txt so callers cannot tell the
     difference: {date, time, round, home, away, hg, ag}.
+
+    Two hard-won details. ESPN silently ignores the `dates` filter when the
+    requested range falls outside a competition's published calendar: asking
+    uefa.europa for late August 2026 returns the previous season's final in
+    May, not an empty list. So the window is enforced here rather than trusted,
+    and a response with nothing inside it counts as no data. Second, each
+    competition tries several slugs, because qualifying rounds live on their
+    own slug and the main one may not have opened the new season yet.
     """
-    slug = ESPN_SLUGS.get(code)
-    if not slug:
+    slugs = ESPN_SLUGS.get(code)
+    if not slugs:
         return [], False
+    if isinstance(slugs, str):
+        slugs = [slugs]
+    a, b = start.isoformat(), end.isoformat()
+    for slug in slugs:
+        rows = _espn_one(slug, start, end, timeout)
+        inwin = [r for r in rows if a <= r["date"] <= b]
+        if log is not None:
+            log.append(f"{code}/{slug}: {len(rows)} returned, {len(inwin)} in window")
+        if inwin:
+            return inwin, True
+    return [], False
+
+
+def _espn_one(slug, start, end, timeout):
     url = ESPN.format(slug=slug, a=start.strftime("%Y%m%d"), b=end.strftime("%Y%m%d"))
     try:
         req = urllib.request.Request(url, headers={"User-Agent": "football-almanac/1.0"})
         doc = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
     except Exception:
-        return [], False
+        return []
 
     rows = []
     for ev in doc.get("events") or []:
@@ -410,7 +439,7 @@ def fetch_espn(code, start, end, timeout=25):
             })
         except Exception:
             continue
-    return rows, bool(rows)
+    return rows
 
 
 # --- reconciling ESPN's club names with openfootball's ---------------------
