@@ -1,0 +1,3 @@
+{
+  "_comment": "Optional hand-entered absences. Left empty: the pipeline is fully automatic. There is no free injury feed, so this stays unused unless you add a paid one. See README."
+}

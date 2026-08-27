@@ -1,0 +1,3 @@
+{
+  "_comment": "Optional manual overrides on expected goals. Left empty: the pipeline is fully automatic. See README if you ever want to use it."
+}

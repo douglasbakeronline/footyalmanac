@@ -1,4 +1,4 @@
-# The Slate
+# Football Almanac
 
 A fixture-probability dashboard. It rates every team in twenty competitions from
 completed results, prices each upcoming fixture as a home win / draw / away win split,
@@ -218,6 +218,95 @@ and a row in `FIXTURE_FILES`:
 Note that **ratings are the binding constraint, not fixtures.** A fixture you cannot rate
 both sides of is worthless — it renders as "not rated" and sorts last. Adding a league
 means adding at least one completed prior season for it too.
+
+## Injuries and absences
+
+There is no free, open, machine-readable injury feed. Every source is either behind a
+paid API or on a site whose terms forbid scraping. So absences are entered by hand in
+`absences.json`:
+
+```json
+{
+  "Arsenal": {
+    "out": [
+      { "name": "Saka", "role": "forward", "importance": "star", "why": "hamstring, 3 weeks" }
+    ]
+  }
+}
+```
+
+`role` decides where the hit lands — `forward` and `attack` hit the attack rating,
+`goalkeeper` and `defence` hit the defence rating, `midfield` splits it. `importance`
+is `star`, `key` or `squad`.
+
+The magnitudes are deliberately modest. Published work puts even an outstanding player
+at roughly a fifth to a third of a goal per game, because squads are deep and a
+replacement is rarely worthless. A star forward out moves the attack rating by about
+11%; a squad player barely registers. Effects compound rather than add, so the fifth
+absentee matters less than the first — a linear tally produces nonsense ratings once
+an injury list gets long.
+
+**If your entries move a fixture by more than about ten points, you have overstated
+them.** Two absences at Manchester City (a star midfielder and a key defender) took a
+fixture from 60% to 55%. That is the right order of magnitude.
+
+Any team with absences automatically triggers Celtic's Law on that fixture.
+
+**To automate this**, API-Football has an injuries endpoint on its paid tier (~$19/mo).
+It would replace the hand-entered file with a fetch in `sources.py`; the conversion in
+`engine.absence_factors` stays as it is.
+
+## Cup competitions
+
+Registered: FA Cup, League Cup, Copa del Rey, DFB-Pokal, Coppa Italia, Champions
+League, Europa League.
+
+**openfootball has not published 2026/27 cup schedules yet**, so these resolve to
+nothing today and simply do not appear on the site. They switch themselves on the
+first day a schedule lands, with no code change — `sources.py` lists every path
+openfootball has historically used for each one.
+
+The pricing is genuinely different from a league fixture, and worth understanding.
+In a league match both sides are rated against the same average, so the ratings are
+directly comparable and the league strength coefficient cancels out entirely. In a
+cup tie it does not: Barnsley's rating is measured against League One and Arsenal's
+against the Premier League, and comparing them raw is meaningless.
+
+So both sides are converted into a shared frame sitting at the midpoint of the two
+competitions, which keeps the conversion symmetric — neither side is treated as the
+home standard. Verified against the 2025/26 DFB-Pokal:
+
+```
+Arsenal  (Premier League) v Barnsley (League One)   78% / 14% /  7%
+Barnsley (League One)     v Arsenal  (Premier)      15% / 22% / 63%
+```
+
+**The honest caveat**: a cup price leans entirely on the hand-set league strength
+coefficients. In a league fixture they cancel out and their accuracy does not matter.
+In a cup tie they *are* the answer. Any cross-division tie is therefore flagged under
+Celtic's Law with the reason stated plainly, and this is the strongest argument for
+fitting those coefficients properly rather than leaving them as judgement.
+
+## Celtic's Law
+
+Some fixtures are ones the model is structurally blind to, and it is possible to say
+which **before kick-off**. A fixture is flagged when either side has changed division,
+has no rating on file, is missing players, or carries a manual override.
+
+This is not a post-hoc excuse. Applied afterwards to whatever the model got wrong, it
+would explain everything and predict nothing. It counts because it is declared in
+advance — and it is measurable:
+
+| | fixtures | top pick correct |
+|---|---|---|
+| Settled (both sides same division) | 2,932 | **50.4%** |
+| Flagged | 1,673 | **47.2%** |
+| Flagged, first ten games | 649 | **43.8%** |
+| Settled, first ten games | 1,116 | **48.8%** |
+
+Flagged fixtures are marked with an amber rail and a `CL` badge but are **not** demoted
+in the ranking, unlike unrated ones. A promoted side still carries real information,
+just less reliable information.
 
 ## Data sources
 
