@@ -12,7 +12,7 @@ same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
 import json, os, re, urllib.request, concurrent.futures
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
 MONTHS = {m: i + 1 for i, m in enumerate(
@@ -29,6 +29,7 @@ FIXTURE_FILES = {
     "en.2":  ["england/master/{s}/2-championship.txt"],
     "en.3":  ["england/master/{s}/3-league1.txt"],
     "en.4":  ["england/master/{s}/4-league2.txt"],
+    "en.5":  ["england/master/{s}/5-nationalleague.txt"],
     "es.1":  ["espana/master/{s}/1-liga.txt"],
     "es.2":  ["espana/master/{s}/2-liga2.txt"],
     "de.1":  ["deutschland/master/{s}/1-bundesliga.txt"],
@@ -346,21 +347,41 @@ def fetch_all(codes, season, prev_seasons, cache_dir=None, workers=10):
 # appear, exactly as it does today.
 # ---------------------------------------------------------------------------
 
-ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={a}-{b}&limit=300"
+# Two hosts serving the same payload. site.api is the usual one; site.web.api
+# is what espn.com itself calls and sometimes answers when the other refuses.
+ESPN_HOSTS = ["https://site.api.espn.com", "https://site.web.api.espn.com"]
+ESPN_PATH = "/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={d}&limit=400"
+
+# Requests are made one date at a time. A range ("20260827-20260831") is
+# accepted by some competitions and silently ignored by others, which is how a
+# whole week of fixtures went missing without a single error being raised.
+# Single dates are the form ESPN's own site uses and the only one that behaves
+# consistently across every slug.
+
+ESPN_HEADERS = {
+    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/126.0.0.0 Safari/537.36"),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-GB,en;q=0.9",
+    "Referer": "https://www.espn.com/soccer/scoreboard",
+    "Origin": "https://www.espn.com",
+}
 
 # Several slugs per competition, tried in order. ESPN splits qualifying rounds
 # onto their own slug, and does not always open a new season on the main slug
 # until the league phase starts, so the qualifying slug is the one carrying
 # August ties.
 ESPN_SLUGS = {
-    "en.1": "eng.1", "en.2": "eng.2", "en.3": "eng.3", "en.4": "eng.4",
-    "en.fa": "eng.fa", "en.lc": "eng.league_cup",
-    "es.1": "esp.1", "es.2": "esp.2", "es.cup": "esp.copa_del_rey",
-    "de.1": "ger.1", "de.2": "ger.2", "de.cup": "ger.dfb_pokal",
-    "it.1": "ita.1", "it.2": "ita.2", "it.cup": "ita.coppa_italia",
-    "fr.1": "fra.1", "fr.2": "fra.2",
-    "nl.1": "ned.1", "pt.1": "por.1", "be.1": "bel.1", "tr.1": "tur.1",
-    "at.1": "aut.1", "gr.1": "gre.1", "sco.1": "sco.1", "br.1": "bra.1",
+    "en.1": ["eng.1"], "en.2": ["eng.2"], "en.3": ["eng.3"], "en.4": ["eng.4"],
+    "en.5": ["eng.5"],
+    "en.fa": ["eng.fa"], "en.lc": ["eng.league_cup"],
+    "es.1": ["esp.1"], "es.2": ["esp.2"], "es.cup": ["esp.copa_del_rey"],
+    "de.1": ["ger.1"], "de.2": ["ger.2"], "de.cup": ["ger.dfb_pokal"],
+    "it.1": ["ita.1"], "it.2": ["ita.2"], "it.cup": ["ita.coppa_italia"],
+    "fr.1": ["fra.1"], "fr.2": ["fra.2"],
+    "nl.1": ["ned.1"], "pt.1": ["por.1"], "be.1": ["bel.1"], "tr.1": ["tur.1"],
+    "at.1": ["aut.1"], "gr.1": ["gre.1"], "sco.1": ["sco.1"], "br.1": ["bra.1"],
     "eu.cl":  ["uefa.champions", "uefa.champions_qual"],
     "eu.clq": ["uefa.champions_qual", "uefa.champions"],
     "eu.el":  ["uefa.europa", "uefa.europa_qual"],
@@ -370,98 +391,85 @@ ESPN_SLUGS = {
 }
 
 
+def _espn_day(slug, day, timeout, errs):
+    """One competition, one date. Returns a list of raw event dicts."""
+    d = day.strftime("%Y%m%d")
+    last = None
+    for host in ESPN_HOSTS:
+        url = host + ESPN_PATH.format(slug=slug, d=d)
+        try:
+            req = urllib.request.Request(url, headers=ESPN_HEADERS)
+            return json.loads(urllib.request.urlopen(req, timeout=timeout).read()).get("events") or []
+        except Exception as e:
+            last = f"{type(e).__name__} {e}"
+    if last:
+        errs.append(f"{slug} {d}: {last}")
+    return []
+
+
+def _row(ev):
+    """One ESPN event -> the same row shape parse_fixture_txt produces."""
+    comp = (ev.get("competitions") or [{}])[0]
+    sides = comp.get("competitors") or []
+    home = next((c for c in sides if c.get("homeAway") == "home"), None)
+    away = next((c for c in sides if c.get("homeAway") == "away"), None)
+    if not home or not away:
+        return None
+    iso = comp.get("date") or ev.get("date") or ""
+    if len(iso) < 10:
+        return None
+    done = bool(((comp.get("status") or {}).get("type") or {}).get("completed"))
+    hg = ag = None
+    if done:
+        try:
+            hg, ag = int(home.get("score")), int(away.get("score"))
+        except (TypeError, ValueError):
+            hg = ag = None
+    return {
+        "date": iso[:10],
+        "time": iso[11:16] if len(iso) >= 16 else None,
+        "round": (ev.get("season") or {}).get("slug"),
+        "home": clean_name((home.get("team") or {}).get("displayName") or ""),
+        "away": clean_name((away.get("team") or {}).get("displayName") or ""),
+        "hg": hg, "ag": ag,
+    }
+
+
 def fetch_espn(code, start, end, timeout=25, log=None):
-    """Fixtures for one competition between two dates (datetime.date objects).
+    """Fixtures for one competition across a date range, queried day by day.
 
     Returns the same row shape as parse_fixture_txt so callers cannot tell the
-    difference: {date, time, round, home, away, hg, ag}.
-
-    Two hard-won details. ESPN silently ignores the `dates` filter when the
-    requested range falls outside a competition's published calendar: asking
-    uefa.europa for late August 2026 returns the previous season's final in
-    May, not an empty list. So the window is enforced here rather than trusted,
-    and a response with nothing inside it counts as no data. Second, each
-    competition tries several slugs, because qualifying rounds live on their
-    own slug and the main one may not have opened the new season yet.
+    difference. Failures are reported through `log` rather than swallowed: a
+    blocked request and an empty competition are different problems and must
+    not look identical.
     """
     slugs = ESPN_SLUGS.get(code)
     if not slugs:
         return [], False
-    if isinstance(slugs, str):
-        slugs = [slugs]
-    a, b = start.isoformat(), end.isoformat()
+    days = []
+    d = start
+    while d <= end:
+        days.append(d)
+        d += timedelta(days=1)
+
     for slug in slugs:
-        errs = []
-        rows = _espn_one(slug, start, end, timeout, errs)
-        inwin = [r for r in rows if a <= r["date"] <= b]
+        rows, errs, seen = [], [], set()
+        for day in days:
+            for ev in _espn_day(slug, day, timeout, errs):
+                r = _row(ev)
+                if not r:
+                    continue
+                key = (r["date"], r["home"], r["away"])
+                if key not in seen:
+                    seen.add(key)
+                    rows.append(r)
+        inwin = [r for r in rows if start.isoformat() <= r["date"] <= end.isoformat()]
         if log is not None:
             note = f"  ERROR {errs[0]}" if errs else ""
             log.append(f"{code}/{slug}: {len(rows)} returned, {len(inwin)} in window{note}")
         if inwin:
             return inwin, True
     return [], False
-
-
-# ESPN rejects requests that do not look like a browser. Identifying honestly
-# as "football-almanac/1.0" returned an empty body for every single slug,
-# including ones that certainly had fixtures, which looked exactly like "this
-# competition has no data" in the logs. A normal browser User-Agent is what the
-# endpoint expects.
-ESPN_HEADERS = {
-    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
-                   "AppleWebKit/537.36 (KHTML, like Gecko) "
-                   "Chrome/126.0.0.0 Safari/537.36"),
-    "Accept": "application/json, text/plain, */*",
-    "Accept-Language": "en-GB,en;q=0.9",
-    "Referer": "https://www.espn.com/soccer/scoreboard",
-}
-
-
-def _espn_one(slug, start, end, timeout, errs=None):
-    url = ESPN.format(slug=slug, a=start.strftime("%Y%m%d"), b=end.strftime("%Y%m%d"))
-    try:
-        req = urllib.request.Request(url, headers=ESPN_HEADERS)
-        raw = urllib.request.urlopen(req, timeout=timeout).read()
-        doc = json.loads(raw)
-    except Exception as e:
-        # Surface the reason. A blocked request and an empty competition are
-        # very different problems and must not look the same in the log.
-        if errs is not None:
-            errs.append(f"{slug}: {type(e).__name__} {e}")
-        return []
-
-    rows = []
-    for ev in doc.get("events") or []:
-        try:
-            comp = (ev.get("competitions") or [{}])[0]
-            sides = comp.get("competitors") or []
-            home = next((c for c in sides if c.get("homeAway") == "home"), None)
-            away = next((c for c in sides if c.get("homeAway") == "away"), None)
-            if not home or not away:
-                continue
-            iso = (comp.get("date") or ev.get("date") or "")
-            if len(iso) < 10:
-                continue
-            # ESPN stamps UTC; the date and kick-off are taken as given rather
-            # than converted, which matches how openfootball publishes them.
-            d, t = iso[:10], (iso[11:16] if len(iso) >= 16 else None)
-            done = bool(((comp.get("status") or {}).get("type") or {}).get("completed"))
-            hg = ag = None
-            if done:
-                try:
-                    hg, ag = int(home.get("score")), int(away.get("score"))
-                except (TypeError, ValueError):
-                    hg = ag = None
-            rows.append({
-                "date": d, "time": t,
-                "round": ((ev.get("season") or {}).get("slug") or None),
-                "home": clean_name((home.get("team") or {}).get("displayName") or ""),
-                "away": clean_name((away.get("team") or {}).get("displayName") or ""),
-                "hg": hg, "ag": ag,
-            })
-        except Exception:
-            continue
-    return rows
 
 
 # --- reconciling ESPN's club names with openfootball's ---------------------

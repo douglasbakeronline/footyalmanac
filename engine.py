@@ -27,6 +27,7 @@ LEAGUES = {
     "en.2": {"iso": "eng", "short": "CHA", "name": "Championship",     "country": "England",     "tier": 2, "strength": 0.78, "order": 2},
     "en.3": {"iso": "eng", "short": "LG1", "name": "League One",       "country": "England",     "tier": 3, "strength": 0.66, "order": 3},
     "en.4": {"iso": "eng", "short": "LG2", "name": "League Two",       "country": "England",     "tier": 4, "strength": 0.58, "order": 4},
+    "en.5": {"iso": "eng", "short": "NLG", "name": "National League", "country": "England", "tier": 5, "strength": 0.50, "order": 5},
     "sco.1": {"iso": "sct", "short": "SPL", "name": "Premiership",      "country": "Scotland",    "tier": 1, "strength": 0.76, "order": 5},
     "es.1": {"iso": "esp", "short": "LAL", "name": "La Liga",          "country": "Spain",       "tier": 1, "strength": 0.99, "order": 6},
     "es.2": {"iso": "esp", "short": "LA2", "name": "LaLiga 2",         "country": "Spain",       "tier": 2, "strength": 0.76, "order": 7},
@@ -113,8 +114,8 @@ LEAGUES = {
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly
 # higher (smaller crowds, worse pitches, but less travel-adjusted squad depth).
-HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185}
-AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850}
+HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190}
+AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845}
 
 SHRINK_FULL_SEASON = 6.0   # pseudo-matches pulling a full season's rating toward league average
 
