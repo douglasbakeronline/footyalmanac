@@ -67,6 +67,46 @@ LEAGUES = {
     "eu.el":  {"iso": "eur", "short": "UEL", "name": "Europa League",    "country": "Europe",  "tier": 1, "strength": 0.95, "order": 29, "cup": True},
     "eu.ecq": {"iso": "eur", "short": "UECQ","name": "Conference qualifying",        "country": "Europe", "tier": 1, "strength": 0.76, "order": 30, "cup": True},
     "eu.ec":  {"iso": "eur", "short": "UECL","name": "Conference League","country": "Europe",  "tier": 1, "strength": 0.84, "order": 31, "cup": True},
+
+    # Rating sources only. These leagues have no fixture list on the site, but
+    # their clubs turn up constantly in European qualifying, and without a
+    # rating every such tie renders as "not rated". Cheap to carry: one
+    # historical file each, no fixtures fetched.
+    "nor.1": {"iso": "nor", "short": "NOR", "name": "Eliteserien", "country": "Norway", "tier": 1, "strength": 0.74, "order": 40, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "cze.1": {"iso": "cze", "short": "CZE", "name": "First League", "country": "Czechia", "tier": 1, "strength": 0.75, "order": 41, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "pol.1": {"iso": "pol", "short": "POL", "name": "Ekstraklasa", "country": "Poland", "tier": 1, "strength": 0.72, "order": 42, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "dnk.1": {"iso": "dnk", "short": "DEN", "name": "Superliga", "country": "Denmark", "tier": 1, "strength": 0.76, "order": 43, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "swe.1": {"iso": "swe", "short": "SWE", "name": "Allsvenskan", "country": "Sweden", "tier": 1, "strength": 0.72, "order": 44, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "ukr.1": {"iso": "ukr", "short": "UKR", "name": "Premier League", "country": "Ukraine", "tier": 1, "strength": 0.73, "order": 45, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "srb.1": {"iso": "srb", "short": "SRB", "name": "SuperLiga", "country": "Serbia", "tier": 1, "strength": 0.7, "order": 46, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "hrv.1": {"iso": "hrv", "short": "CRO", "name": "HNL", "country": "Croatia", "tier": 1, "strength": 0.73, "order": 47, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "rou.1": {"iso": "rou", "short": "ROU", "name": "Liga I", "country": "Romania", "tier": 1, "strength": 0.68, "order": 48, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "cyp.1": {"iso": "cyp", "short": "CYP", "name": "First Division", "country": "Cyprus", "tier": 1, "strength": 0.7, "order": 49, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "hun.1": {"iso": "hun", "short": "HUN", "name": "NB I", "country": "Hungary", "tier": 1, "strength": 0.65, "order": 50, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "bgr.1": {"iso": "bgr", "short": "BUL", "name": "First League", "country": "Bulgaria", "tier": 1, "strength": 0.65, "order": 51, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "svk.1": {"iso": "svk", "short": "SVK", "name": "Super Liga", "country": "Slovakia", "tier": 1, "strength": 0.64, "order": 52, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "svn.1": {"iso": "svn", "short": "SVN", "name": "PrvaLiga", "country": "Slovenia", "tier": 1, "strength": 0.64, "order": 53, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "isr.1": {"iso": "isr", "short": "ISR", "name": "Ligat ha'Al", "country": "Israel", "tier": 1, "strength": 0.7, "order": 54, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "fin.1": {"iso": "fin", "short": "FIN", "name": "Veikkausliiga", "country": "Finland", "tier": 1, "strength": 0.6, "order": 55, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "irl.1": {"iso": "irl", "short": "IRL", "name": "Premier Division", "country": "Ireland", "tier": 1, "strength": 0.58, "order": 56, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "isl.1": {"iso": "isl", "short": "ISL", "name": "Besta deild", "country": "Iceland", "tier": 1, "strength": 0.56, "order": 57, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "bih.1": {"iso": "bih", "short": "BIH", "name": "Premijer Liga", "country": "Bosnia", "tier": 1, "strength": 0.58, "order": 58, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "alb.1": {"iso": "alb", "short": "ALB", "name": "Kategoria Superiore", "country": "Albania", "tier": 1, "strength": 0.56, "order": 59, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "arm.1": {"iso": "arm", "short": "ARM", "name": "Premier League", "country": "Armenia", "tier": 1, "strength": 0.54, "order": 60, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "geo.1": {"iso": "geo", "short": "GEO", "name": "Erovnuli Liga", "country": "Georgia", "tier": 1, "strength": 0.56, "order": 61, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "ltu.1": {"iso": "ltu", "short": "LTU", "name": "A Lyga", "country": "Lithuania", "tier": 1, "strength": 0.52, "order": 62, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "lva.1": {"iso": "lva", "short": "LVA", "name": "Virsliga", "country": "Latvia", "tier": 1, "strength": 0.5, "order": 63, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "est.1": {"iso": "est", "short": "EST", "name": "Meistriliiga", "country": "Estonia", "tier": 1, "strength": 0.5, "order": 64, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "mkd.1": {"iso": "mkd", "short": "MKD", "name": "First League", "country": "North Macedonia", "tier": 1, "strength": 0.54, "order": 65, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "mne.1": {"iso": "mne", "short": "MNE", "name": "First League", "country": "Montenegro", "tier": 1, "strength": 0.52, "order": 66, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "aze.1": {"iso": "aze", "short": "AZE", "name": "Premyer Liqa", "country": "Azerbaijan", "tier": 1, "strength": 0.6, "order": 67, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "blr.1": {"iso": "blr", "short": "BLR", "name": "Vysshaya Liga", "country": "Belarus", "tier": 1, "strength": 0.56, "order": 68, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "mda.1": {"iso": "mda", "short": "MDA", "name": "Super Liga", "country": "Moldova", "tier": 1, "strength": 0.52, "order": 69, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "nir.1": {"iso": "nir", "short": "NIR", "name": "Premiership", "country": "Northern Ireland", "tier": 1, "strength": 0.5, "order": 70, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "wal.1": {"iso": "wal", "short": "WAL", "name": "Cymru Premier", "country": "Wales", "tier": 1, "strength": 0.46, "order": 71, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "fro.1": {"iso": "fro", "short": "FRO", "name": "Betrideildin", "country": "Faroe Islands", "tier": 1, "strength": 0.44, "order": 72, "season": "2025", "prev": ['2025', '2024'], "ratingsOnly": True},
+    "lux.1": {"iso": "lux", "short": "LUX", "name": "National Division", "country": "Luxembourg", "tier": 1, "strength": 0.46, "order": 73, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
+    "mlt.1": {"iso": "mlt", "short": "MLT", "name": "Premier League", "country": "Malta", "tier": 1, "strength": 0.46, "order": 74, "season": "2026-27", "prev": ['2024-25', '2023-24'], "ratingsOnly": True},
 }
 
 # Home advantage, expressed as multipliers on expected goals.
@@ -77,6 +117,14 @@ HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185}
 AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850}
 
 SHRINK_FULL_SEASON = 6.0   # pseudo-matches pulling a full season's rating toward league average
+
+# Hard bounds on attack and defence. Across a completed season no side in any
+# league covered here goes outside roughly 0.55-1.80, because a full campaign
+# regresses everything. A one-match sample does not: a 5-0 win produced an
+# attack rating of 4.10 and a defence rating of 0.00, which are not estimates
+# of anything. The clamp is a backstop; the shrinkage below is the real fix.
+ATT_BOUNDS = (0.45, 2.00)
+DEF_BOUNDS = (0.50, 2.00)
 SHRINK_ON_TRANSFER = 10.0  # extra pull applied when a team changes division
 BLEND_K = 12.0             # current-season matches needed before new data outweighs the prior
 FORM_MAX = 0.05            # hard cap on how much last-5 form may move expected goals
@@ -176,8 +224,10 @@ def strength_from_table(table, k=None):
         att_raw = (r["GF"] / p) / mu
         def_raw = (r["GA"] / p) / mu
         w = p / (p + k)
-        out[t] = {"att": w * att_raw + (1 - w) * 1.0,
-                  "def": w * def_raw + (1 - w) * 1.0}
+        att = w * att_raw + (1 - w) * 1.0
+        dfn = w * def_raw + (1 - w) * 1.0
+        out[t] = {"att": min(max(att, ATT_BOUNDS[0]), ATT_BOUNDS[1]),
+                  "def": min(max(dfn, DEF_BOUNDS[0]), DEF_BOUNDS[1])}
     return out
 
 

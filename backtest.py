@@ -58,7 +58,7 @@ def evaluate(codes, season, prior_season, cache=None, blend_k=None, verbose=True
 
         for date, h, a, hg, ag in test:
             tbl = E.build_table(running)
-            cur = E.strength_from_table(tbl, k=0.0) if running else {}
+            cur = E.strength_from_table(tbl) if running else {}
 
             def rt(team):
                 r = tbl.get(team)

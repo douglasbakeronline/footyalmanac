@@ -65,6 +65,43 @@ FIXTURE_FILES = {
     "eu.el":  ["champions-league/master/{s}/el.txt"],
     "eu.ecq": ["champions-league/master/{s}/confq.txt"],
     "eu.ec":  ["champions-league/master/{s}/conf.txt"],
+
+    # rating-source leagues (history only)
+    "nor.1": ["europe/master/norway/{s}_no1.txt"],
+    "cze.1": ["europe/master/czech-republic/{s}_cz1.txt"],
+    "pol.1": ["europe/master/poland/{s}_pl1.txt"],
+    "dnk.1": ["europe/master/denmark/{s}_dk1.txt"],
+    "swe.1": ["europe/master/sweden/{s}_se1.txt"],
+    "ukr.1": ["europe/master/ukraine/{s}_ua1.txt"],
+    "srb.1": ["europe/master/serbia/{s}_rs1.txt"],
+    "hrv.1": ["europe/master/croatia/{s}_hr1.txt"],
+    "rou.1": ["europe/master/romania/{s}_ro1.txt"],
+    "cyp.1": ["europe/master/cyprus/{s}_cy1.txt"],
+    "hun.1": ["europe/master/hungary/{s}_hu1.txt"],
+    "bgr.1": ["europe/master/bulgaria/{s}_bg1.txt"],
+    "svk.1": ["europe/master/slovakia/{s}_sk1.txt"],
+    "svn.1": ["europe/master/slovenia/{s}_si1.txt"],
+    "isr.1": ["europe/master/israel/{s}_il1.txt"],
+    "fin.1": ["europe/master/finland/{s}_fi1.txt"],
+    "irl.1": ["europe/master/ireland/{s}_ie1.txt"],
+    "isl.1": ["europe/master/iceland/{s}_is1.txt"],
+    "bih.1": ["europe/master/bosnia-herzegovina/{s}_ba1.txt"],
+    "alb.1": ["europe/master/albania/{s}_al1.txt"],
+    "arm.1": ["europe/master/armenia/{s}_am1.txt"],
+    "geo.1": ["europe/master/georgia/{s}_ge1.txt"],
+    "ltu.1": ["europe/master/lithuania/{s}_lt1.txt"],
+    "lva.1": ["europe/master/latvia/{s}_lv1.txt"],
+    "est.1": ["europe/master/estonia/{s}_ee1.txt"],
+    "mkd.1": ["europe/master/north-macedonia/{s}_mk1.txt"],
+    "mne.1": ["europe/master/montenegro/{s}_me1.txt"],
+    "aze.1": ["europe/master/azerbaijan/{s}_az1.txt"],
+    "blr.1": ["europe/master/belarus/{s}_by1.txt"],
+    "mda.1": ["europe/master/moldova/{s}_md1.txt"],
+    "nir.1": ["europe/master/northern-ireland/{s}_nir1.txt"],
+    "wal.1": ["europe/master/wales/{s}_wal1.txt"],
+    "fro.1": ["europe/master/faroe-islands/{s}_fo1.txt"],
+    "lux.1": ["europe/master/luxembourg/{s}_lu1.txt"],
+    "mlt.1": ["europe/master/malta/{s}_mt1.txt"],
 }
 
 # Status markers the schedules append to a side: [postponed], [awarded], etc.
@@ -102,12 +139,21 @@ def clean_name(n):
 # --- completed seasons ------------------------------------------------------
 
 def fetch_season(code, season, cache_dir=None):
-    """Return (matches, ok). matches: list of (date, home, away, hg, ag)."""
+    """Return (matches, ok). matches: list of (date, home, away, hg, ag).
+
+    Tries football.json first, then falls back to parsing results out of the
+    plain-text schedule. The smaller European leagues exist only as text, and
+    those files carry completed scores alongside future fixtures, so the same
+    parser serves both purposes.
+    """
     url = f"{RAW}/football.json/master/{season}/{code}.json"
     try:
         doc = json.loads(_get(url, cache_dir))
     except Exception:
-        return [], False
+        rows, ok = fetch_fixtures(code, season, cache_dir)
+        played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
+                  for r in rows if r["hg"] is not None] if ok else []
+        return (played, True) if played else ([], False)
     out = []
     for m in doc.get("matches", []):
         ft = _full_time(m)
@@ -177,7 +223,12 @@ def parse_fixture_txt(text):
             if cur_date and mon < cur_date.month and year:
                 y = year + 1
                 year = y
-            cur_date = date(y or 1900, mon, day)
+            try:
+                cur_date = date(y or 1900, mon, day)
+            except ValueError:
+                # A malformed date line should skip that line, not abort the
+                # whole competition. openfootball has occasional typos.
+                continue
             cur_time = None
             continue
         mp = _PLAYED.match(line)
@@ -222,7 +273,10 @@ def fetch_all_seasons(plan, cache_dir=None, workers=10):
     for c, (season, prevs) in plan.items():
         for s in prevs:
             jobs.append(("hist", c, s))
-        jobs.append(("fix", c, season))
+        # season=None means the competition is a rating source only: pull its
+        # history so its clubs can be priced in Europe, but never its fixtures.
+        if season is not None:
+            jobs.append(("fix", c, season))
 
     def run(j):
         kind, c, s = j
@@ -363,7 +417,10 @@ def fetch_espn(code, start, end, timeout=25):
 
 def _norm(n):
     n = clean_name(n).lower()
-    for a, b in (("&", "and"), ("-", " "), (".", ""), ("'", ""), ("ø", "o"),
+    for a, b in (("&", "and"), ("-", " "), (".", ""), ("'", ""), ("ø", "o"), ("ë", "e"),
+                 ("ł", "l"), ("ż", "z"), ("ą", "a"), ("ę", "e"), ("š", "s"), ("ž", "z"),
+                 ("č", "c"), ("ș", "s"), ("ț", "t"), ("ă", "a"), ("â", "a"), ("î", "i"),
+                 ("å", "a"), ("æ", "ae"), ("ğ", "g"), ("ı", "i"), ("ş", "s"),
                  ("é", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
                  ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n")):
         n = n.replace(a, b)

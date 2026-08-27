@@ -69,7 +69,7 @@ def main():
     # Not every league runs August-to-May. Brazil and the Nordics use a calendar
     # year, so the season strings are per-competition rather than global.
     history, fixtures, missing = S.fetch_all_seasons(
-        {c: (E.LEAGUES[c].get("season", SEASON),
+        {c: (None if E.LEAGUES[c].get("ratingsOnly") else E.LEAGUES[c].get("season", SEASON),
              [] if E.LEAGUES[c].get("cup") else E.LEAGUES[c].get("prev", PREV))
          for c in CODES}, cache_dir=args.cache)
     if missing:
@@ -78,7 +78,8 @@ def main():
     # Where openfootball has nothing for a competition, try the live fallback.
     # European competitions are the reason this exists: the repo lags a season
     # behind, so UEFA ties would otherwise never appear.
-    gaps = [c for c in CODES if c not in fixtures]
+    gaps = [c for c in CODES if c not in fixtures
+            and not E.LEAGUES[c].get("ratingsOnly")]
     if gaps:
         got = []
         for c in gaps:
@@ -110,7 +111,9 @@ def main():
                   for r in rows if r["hg"] is not None]
         tbl = E.build_table(played)
         cur_tables[code] = tbl
-        cur_ratings[code] = E.strength_from_table(tbl, k=0.0) if played else {}
+        # Shrunk, not raw. A one-match sample must regress hard toward the
+        # league average before it is allowed anywhere near a rating.
+        cur_ratings[code] = E.strength_from_table(tbl) if played else {}
 
     rated_pool = set(last_league)
 
