@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
 import sources as S
 
-SEASON = "2026-27"
+SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
 PREV = ["2025-26", "2024-25"]
 CODES = list(E.LEAGUES.keys())
 
@@ -24,9 +24,18 @@ CODES = list(E.LEAGUES.keys())
 # transfers, injuries and managerial change. This is the hook for that.
 # Example: "Liverpool": {"att": 0.95, "def": 1.05, "why": "Slot sacked, squad unsettled"}
 ADJUSTMENTS = {}
-_ADJ_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "adjustments.json")
+_HERE = os.path.dirname(os.path.abspath(__file__))
+_ADJ_FILE = os.path.join(_HERE, "adjustments.json")
 if os.path.exists(_ADJ_FILE):
     ADJUSTMENTS = json.load(open(_ADJ_FILE))
+
+# Unavailable players, entered by hand. See absences.json and
+# engine.absence_factors for how a squad list becomes a rating adjustment.
+ABSENCES = {}
+_ABS_FILE = os.path.join(_HERE, "absences.json")
+if os.path.exists(_ABS_FILE):
+    ABSENCES = {k: v for k, v in json.load(open(_ABS_FILE)).items()
+                if not k.startswith("_")}
 
 
 def prev_of(code):
@@ -60,10 +69,25 @@ def main():
     # Not every league runs August-to-May. Brazil and the Nordics use a calendar
     # year, so the season strings are per-competition rather than global.
     history, fixtures, missing = S.fetch_all_seasons(
-        {c: (E.LEAGUES[c].get("season", SEASON), E.LEAGUES[c].get("prev", PREV))
+        {c: (E.LEAGUES[c].get("season", SEASON),
+             [] if E.LEAGUES[c].get("cup") else E.LEAGUES[c].get("prev", PREV))
          for c in CODES}, cache_dir=args.cache)
     if missing:
         print(f"  no data for: {', '.join(sorted(missing))}", file=sys.stderr)
+
+    # Where openfootball has nothing for a competition, try the live fallback.
+    # European competitions are the reason this exists: the repo lags a season
+    # behind, so UEFA ties would otherwise never appear.
+    gaps = [c for c in CODES if c not in fixtures]
+    if gaps:
+        got = []
+        for c in gaps:
+            rows, ok = S.fetch_espn(c, start, end)
+            if ok:
+                fixtures[c] = rows
+                got.append(f"{c}({len(rows)})")
+        if got:
+            print(f"  live fallback supplied: {', '.join(got)}", file=sys.stderr)
 
     last_league = team_pool(history, fixtures)
 
@@ -88,9 +112,17 @@ def main():
         cur_tables[code] = tbl
         cur_ratings[code] = E.strength_from_table(tbl, k=0.0) if played else {}
 
+    rated_pool = set(last_league)
+
     def rating_for(team, code):
         """Prior (carried across divisions if needed) blended with this season."""
         src = last_league.get(team)
+        if src is None:
+            # A live-source club name may not match openfootball's spelling.
+            alt = S.match_team(team, rated_pool)
+            if alt:
+                src = last_league.get(alt)
+                team = alt
         if src and src in prior_ratings and team in prior_ratings[src]:
             prior = E.transfer_rating(prior_ratings[src][team], src, code)
             carried = (src != code)
@@ -108,6 +140,8 @@ def main():
         crow = cur_tables.get(code, {}).get(team)
         fp = E.form_points(crow)
         adj = ADJUSTMENTS.get(team, {})
+        out = (ABSENCES.get(team) or {}).get("out") or []
+        abs_att, abs_def = E.absence_factors(out)
         return {
             "name": team,
             "att": round(rating["att"], 3),
@@ -121,6 +155,10 @@ def main():
             "form": fp,
             "adj": {"att": adj.get("att", 1.0), "def": adj.get("def", 1.0),
                     "why": adj.get("why")} if adj else None,
+            "out": ([{"name": p.get("name", "unnamed"), "role": p.get("role", "midfield"),
+                      "importance": p.get("importance", "key"), "why": p.get("why")}
+                     for p in out] if out else None),
+            "outFactors": ([round(abs_att, 3), round(abs_def, 3)] if out else None),
             "last": ({"P": prow["P"], "W": prow["W"], "D": prow["D"], "L": prow["L"],
                       "GF": prow["GF"], "GA": prow["GA"], "GD": prow["GD"],
                       "Pts": prow["Pts"], "PPG": prow["PPG"]} if prow else None),
@@ -140,19 +178,77 @@ def main():
             d = date.fromisoformat(r["date"])
             if not (start <= d <= end):
                 continue
-            hb, hr = team_block(r["home"], code)
-            ab, ar = team_block(r["away"], code)
+            # In a cup, a side keeps its own division's rating and the two are
+            # converted into a shared frame. Rating it "in the cup" would be
+            # meaningless: a cup has no table to be average in.
+            # A side whose division cannot be resolved has no rating anyway, so
+            # fall back to the cup's own code rather than inventing a division.
+            # team_block will mark it unrated and the row will say so.
+            h_src = last_league.get(r["home"]) if meta.get("cup") else None
+            a_src = last_league.get(r["away"]) if meta.get("cup") else None
+            h_league = h_src or code
+            a_league = a_src or code
+            hb, hr = team_block(r["home"], h_league)
+            ab, ar = team_block(r["away"], a_league)
             fh = E.form_factor(hb["form"])
             fa = E.form_factor(ab["form"])
             adj_h = hb["adj"] or {}
             adj_a = ab["adj"] or {}
-            p = E.match_probabilities(
-                hr["att"] * adj_h.get("att", 1.0), hr["def"] * adj_h.get("def", 1.0),
-                ar["att"] * adj_a.get("att", 1.0), ar["def"] * adj_a.get("def", 1.0),
-                mu, tier=meta["tier"], form_h=fh, form_a=fa)
+            oh = hb["outFactors"] or [1.0, 1.0]
+            oa = ab["outFactors"] or [1.0, 1.0]
+            rh = {"att": hr["att"] * adj_h.get("att", 1.0) * oh[0],
+                  "def": hr["def"] * adj_h.get("def", 1.0) * oh[1]}
+            ra = {"att": ar["att"] * adj_a.get("att", 1.0) * oa[0],
+                  "def": ar["def"] * adj_a.get("def", 1.0) * oa[1]}
+            if meta.get("cup"):
+                s_h = E.LEAGUES[h_league]["strength"]
+                s_a = E.LEAGUES[a_league]["strength"]
+                cup_mu = (league_mu.get(h_league, 1.35) + league_mu.get(a_league, 1.35)) / 2
+                p = E.cup_match(rh, s_h, ra, s_a, cup_mu,
+                                tier=meta["tier"], form_h=fh, form_a=fa)
+            else:
+                p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
+                                          mu, tier=meta["tier"], form_h=fh, form_a=fa)
 
             evidence = "current" if min(hb["played"], ab["played"]) >= 6 else (
                 "mixed" if max(hb["played"], ab["played"]) > 0 else "carryover")
+
+            # Celtic's Law: declared before kick-off, never after.
+            #
+            # Some fixtures are ones the model is structurally blind to, and it
+            # is possible to say which in advance. Backtesting 2025/26: fixtures
+            # where a side had changed division hit 47.2% against 50.4% for
+            # settled ones, and 43.8% against 48.8% inside the first ten games.
+            # The probability is not wrong so much as less trustworthy, so the
+            # row is marked rather than hidden.
+            #
+            # Applied afterwards to whatever the model got wrong, this would
+            # explain everything and predict nothing. The flag only counts
+            # because it is set before the result is known.
+            reasons = []
+            if meta.get("cup") and h_src and a_src and h_src != a_src:
+                gap = abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"])
+                if gap > 0.05:
+                    reasons.append(
+                        f"cup tie across divisions ({E.LEAGUES[h_src]['name']} v "
+                        f"{E.LEAGUES[a_src]['name']}), priced entirely off league "
+                        f"strength coefficients")
+            for side, t in (("home", hb), ("away", ab)):
+                if t["unrated"]:
+                    reasons.append(f"{t['name']} has no rating on file")
+                elif t["carriedFrom"]:
+                    moved = E.LEAGUES[t["carriedFrom"]]
+                    updown = "up from" if moved["tier"] > meta["tier"] else "down from"
+                    reasons.append(f"{t['name']} came {updown} the {moved['name']}")
+                if t["adj"]:
+                    reasons.append(f"{t['name']} carries a manual override")
+                if t["out"]:
+                    n = len(t["out"])
+                    big = [p["name"] for p in t["out"] if p["importance"] == "star"]
+                    reasons.append(
+                        f"{t['name']} {'is' if n == 1 else 'are'} missing {n} player{'' if n == 1 else 's'}"
+                        + (f", including {', '.join(big)}" if big else ""))
+            early = min(hb["played"], ab["played"]) < 10
 
             by_day[r["date"]].append({
                 "league": code, "leagueName": meta["name"], "short": meta["short"],
@@ -163,10 +259,13 @@ def main():
                 "p": {"h": round(p["home"], 4), "d": round(p["draw"], 4),
                       "a": round(p["away"], 4)},
                 "xg": [round(p["xg_home"], 2), round(p["xg_away"], 2)],
+                "btts": round(p["btts"], 4),
+                "over25": round(p["over25"], 4),
                 "score": list(p["likely_score"]),
                 "confidence": round(p["confidence"], 4),
                 "evidence": evidence,
                 "unrated": hb["unrated"] or ab["unrated"],
+                "celtic": ({"reasons": reasons, "early": early} if reasons else None),
             })
 
     days = []
@@ -197,14 +296,40 @@ def main():
     }
 
     here = os.path.dirname(os.path.abspath(__file__))
+
+    # Archive what was predicted, so score.py can grade it once results land.
+    # Without this the site can never say how it is actually doing.
+    pred_dir = os.path.join(here, "predictions")
+    os.makedirs(pred_dir, exist_ok=True)
+    flat = [{"league": g["league"], "date": g["date"],
+             "home": g["home"]["name"], "away": g["away"]["name"],
+             "p": g["p"], "xg": g["xg"], "score": g["score"],
+             "btts": g["btts"], "over25": g["over25"],
+             "confidence": g["confidence"], "celtic": bool(g["celtic"]),
+             "unrated": g["unrated"]}
+            for d in days for g in d["games"]]
+    with open(os.path.join(pred_dir, f"{start.isoformat()}.json"), "w") as f:
+        json.dump(flat, f, separators=(",", ":"))
+
     out = args.out or os.path.join(here, "data.json")
     with open(out, "w") as f:
         json.dump(payload, f, separators=(",", ":"))
     # Emit a JS shim so index.html opens straight off the filesystem; a bare
     # fetch() of data.json is blocked by CORS on file:// URLs.
+    # The live record, if score.py has run. Inlined the same way as the fixture
+    # data so the dashboard stays a single self-contained file.
+    rec_path = os.path.join(here, "record.json")
+    record = None
+    if os.path.exists(rec_path):
+        try:
+            record = json.load(open(rec_path))
+        except Exception:
+            record = None
+
     blob = json.dumps(payload, separators=(",", ":"))
+    rec_blob = json.dumps(record, separators=(",", ":")) if record else "null"
     with open(os.path.join(here, "data.js"), "w") as f:
-        f.write("window.__FIXTURE_DATA__=" + blob + ";")
+        f.write("window.__FIXTURE_DATA__=" + blob + ";window.__RECORD__=" + rec_blob + ";")
 
     # And emit a fully self-contained single file. Two files is one file too
     # many the moment anyone emails it, drops it in a preview pane, or opens it
@@ -212,7 +337,8 @@ def main():
     tpl_path = os.path.join(here, "index.html")
     if os.path.exists(tpl_path):
         tpl = open(tpl_path).read()
-        inline = '<script>window.__FIXTURE_DATA__=' + blob.replace("</", "<\\/") + ';</script>'
+        inline = ('<script>window.__FIXTURE_DATA__=' + blob.replace("</", "<\\/")
+                  + ';window.__RECORD__=' + rec_blob.replace("</", "<\\/") + ';</script>')
         html = tpl.replace('<script src="data.js"></script>', inline)
         with open(os.path.join(here, "dashboard.html"), "w") as f:
             f.write(html)

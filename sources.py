@@ -45,6 +45,26 @@ FIXTURE_FILES = {
     "gr.1":  ["europe/master/greece/{s}_gr1.txt"],
     "tr.1":  ["europe/master/turkey/{s}_tr1.txt"],
     "br.1":  ["south-america/master/brazil/{s}_br1.txt"],
+
+    # Cup schedules. openfootball's naming for these has never been consistent,
+    # so each competition lists every path it has used. None resolve for
+    # 2026/27 yet; the first one that does switches the competition on.
+    "en.fa":  ["england/master/{s}/cup.txt", "england/master/{s}/facup.txt",
+               "england/master/{s}/5-facup.txt", "europe/master/england/{s}_engfacup.txt"],
+    "en.lc":  ["england/master/{s}/leaguecup.txt", "england/master/{s}/6-leaguecup.txt",
+               "europe/master/england/{s}_engleaguecup.txt"],
+    "es.cup": ["espana/master/{s}/cup.txt", "europe/master/spain/{s}_escup.txt"],
+    "de.cup": ["deutschland/master/{s}/cup.txt", "europe/master/germany/{s}_decup.txt"],
+    "it.cup": ["italy/master/{s}/cup.txt", "europe/master/italy/{s}_itcup.txt"],
+    # UEFA competitions live in their own repo, with the qualifying rounds in
+    # separate files from the main draw. Qualifiers run through August, so they
+    # are listed first: they are the ties actually being played right now.
+    "eu.clq": ["champions-league/master/{s}/clq.txt"],
+    "eu.cl":  ["champions-league/master/{s}/cl.txt"],
+    "eu.elq": ["champions-league/master/{s}/elq.txt"],
+    "eu.el":  ["champions-league/master/{s}/el.txt"],
+    "eu.ecq": ["champions-league/master/{s}/confq.txt"],
+    "eu.ec":  ["champions-league/master/{s}/conf.txt"],
 }
 
 # Status markers the schedules append to a side: [postponed], [awarded], etc.
@@ -252,3 +272,155 @@ def fetch_all(codes, season, prev_seasons, cache_dir=None, workers=10):
             else:
                 fixtures[c] = m
     return history, fixtures, missing
+
+
+# ---------------------------------------------------------------------------
+# Live fallback: ESPN's public scoreboard
+#
+# openfootball is volunteer-maintained and its European coverage lags badly:
+# as of this build the champions-league repo stops at 2025/26, so no UEFA
+# fixture exists there for the current season even though the ties are being
+# played. ESPN publishes a public scoreboard endpoint that needs no key and
+# covers every competition below.
+#
+# This runs only when openfootball has nothing for a competition, so the public
+# domain source stays primary and ESPN is the gap-filler.
+#
+# NOTE: this could not be exercised in the environment it was written in, which
+# could only reach github.com. It is written to fail closed — any error, any
+# unexpected shape, and it returns nothing and the competition simply does not
+# appear, exactly as it does today.
+# ---------------------------------------------------------------------------
+
+ESPN = "https://site.api.espn.com/apis/site/v2/sports/soccer/{slug}/scoreboard?dates={a}-{b}&limit=300"
+
+ESPN_SLUGS = {
+    "en.1": "eng.1", "en.2": "eng.2", "en.3": "eng.3", "en.4": "eng.4",
+    "en.fa": "eng.fa", "en.lc": "eng.league_cup",
+    "es.1": "esp.1", "es.2": "esp.2", "es.cup": "esp.copa_del_rey",
+    "de.1": "ger.1", "de.2": "ger.2", "de.cup": "ger.dfb_pokal",
+    "it.1": "ita.1", "it.2": "ita.2", "it.cup": "ita.coppa_italia",
+    "fr.1": "fra.1", "fr.2": "fra.2",
+    "nl.1": "ned.1", "pt.1": "por.1", "be.1": "bel.1", "tr.1": "tur.1",
+    "at.1": "aut.1", "gr.1": "gre.1", "sco.1": "sco.1", "br.1": "bra.1",
+    "eu.cl":  "uefa.champions",      "eu.clq": "uefa.champions_qual",
+    "eu.el":  "uefa.europa",         "eu.elq": "uefa.europa_qual",
+    "eu.ec":  "uefa.europa.conf",    "eu.ecq": "uefa.europa.conf_qual",
+}
+
+
+def fetch_espn(code, start, end, timeout=25):
+    """Fixtures for one competition between two dates (datetime.date objects).
+
+    Returns the same row shape as parse_fixture_txt so callers cannot tell the
+    difference: {date, time, round, home, away, hg, ag}.
+    """
+    slug = ESPN_SLUGS.get(code)
+    if not slug:
+        return [], False
+    url = ESPN.format(slug=slug, a=start.strftime("%Y%m%d"), b=end.strftime("%Y%m%d"))
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": "football-almanac/1.0"})
+        doc = json.loads(urllib.request.urlopen(req, timeout=timeout).read())
+    except Exception:
+        return [], False
+
+    rows = []
+    for ev in doc.get("events") or []:
+        try:
+            comp = (ev.get("competitions") or [{}])[0]
+            sides = comp.get("competitors") or []
+            home = next((c for c in sides if c.get("homeAway") == "home"), None)
+            away = next((c for c in sides if c.get("homeAway") == "away"), None)
+            if not home or not away:
+                continue
+            iso = (comp.get("date") or ev.get("date") or "")
+            if len(iso) < 10:
+                continue
+            # ESPN stamps UTC; the date and kick-off are taken as given rather
+            # than converted, which matches how openfootball publishes them.
+            d, t = iso[:10], (iso[11:16] if len(iso) >= 16 else None)
+            done = bool(((comp.get("status") or {}).get("type") or {}).get("completed"))
+            hg = ag = None
+            if done:
+                try:
+                    hg, ag = int(home.get("score")), int(away.get("score"))
+                except (TypeError, ValueError):
+                    hg = ag = None
+            rows.append({
+                "date": d, "time": t,
+                "round": ((ev.get("season") or {}).get("slug") or None),
+                "home": clean_name((home.get("team") or {}).get("displayName") or ""),
+                "away": clean_name((away.get("team") or {}).get("displayName") or ""),
+                "hg": hg, "ag": ag,
+            })
+        except Exception:
+            continue
+    return rows, bool(rows)
+
+
+# --- reconciling ESPN's club names with openfootball's ---------------------
+
+def _norm(n):
+    n = clean_name(n).lower()
+    for a, b in (("&", "and"), ("-", " "), (".", ""), ("'", ""), ("ø", "o"),
+                 ("é", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
+                 ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n")):
+        n = n.replace(a, b)
+    drop = {"fc", "cf", "afc", "sc", "ac", "as", "ss", "us", "cd", "ud", "rc",
+            "sd", "ca", "sv", "tsg", "vfl", "vfb", "bv", "sk", "nk", "hnk",
+            "the", "club", "de", "futbol", "calcio"}
+    return " ".join(w for w in n.split() if w not in drop).strip()
+
+
+# ESPN abbreviates; openfootball spells out. Normalisation cannot bridge
+# "Man City" to "Manchester City" or "Spurs" to "Tottenham Hotspur", so the
+# common cases are listed explicitly. Extend this as mismatches show up on the
+# site as "not rated" rows.
+ALIASES = {
+    "man city": "manchester city", "man utd": "manchester united",
+    "man united": "manchester united", "spurs": "tottenham hotspur",
+    "wolves": "wolverhampton wanderers", "nottm forest": "nottingham forest",
+    "brighton": "brighton and hove albion", "leicester": "leicester city",
+    "newcastle": "newcastle united", "west ham": "west ham united",
+    "leeds": "leeds united", "west brom": "west bromwich albion",
+    "sheff utd": "sheffield united", "sheff wed": "sheffield wednesday",
+    "bayern munich": "bayern munchen", "borussia mgladbach": "borussia monchengladbach",
+    "monchengladbach": "borussia monchengladbach", "dortmund": "borussia dortmund",
+    "leverkusen": "bayer leverkusen", "eintracht frankfurt": "eintracht frankfurt",
+    "inter milan": "internazionale milano", "inter": "internazionale milano",
+    "ac milan": "milan", "roma": "roma", "atletico madrid": "atletico madrid",
+    "atleti": "atletico madrid", "athletic club": "athletic club",
+    "real sociedad": "real sociedad", "psg": "paris saint germain",
+    "paris sg": "paris saint germain", "marseille": "olympique marseille",
+    "lyon": "olympique lyonnais", "psv eindhoven": "psv",
+    "ajax": "ajax", "sporting cp": "sporting", "sporting lisbon": "sporting",
+    "porto": "porto", "benfica": "benfica",
+}
+
+
+def match_team(name, pool):
+    """Map an ESPN club name onto a rated team, or None.
+
+    Deliberately conservative: an exact normalised match, then a containment
+    match, and nothing cleverer. A wrong match would silently price a fixture
+    with another club's rating, which is far worse than leaving it unrated —
+    an unrated fixture says so on the page, a mismatched one lies quietly.
+    """
+    if name in pool:
+        return name
+    target = _norm(name)
+    target = ALIASES.get(target, target)
+    if not target:
+        return None
+    norm = {}
+    for t in pool:
+        norm.setdefault(_norm(t), t)
+        alias = ALIASES.get(_norm(t))
+        if alias:
+            norm.setdefault(alias, t)
+    if target in norm:
+        return norm[target]
+    hits = [v for k, v in norm.items()
+            if (target in k or k in target) and min(len(k), len(target)) >= 4]
+    return hits[0] if len(hits) == 1 else None
