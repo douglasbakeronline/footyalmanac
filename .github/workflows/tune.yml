@@ -1,0 +1,53 @@
+name: Weekly retune
+
+# The daily job grades the model. This one asks whether the model's own
+# constants are still the right ones, and refits the calibration curve when the
+# evidence says so.
+#
+# Weekly, not daily, on purpose. The fit is made on the last completed season,
+# which does not change between Mondays, and the check season only gains a few
+# hundred fixtures a month. Running it nightly would just be a slower way of
+# getting the same answer, and would tempt whoever reads it into treating
+# week-to-week wobble as signal.
+on:
+  schedule:
+    - cron: "40 4 * * 1"     # Mondays, 04:40 UTC, ahead of the daily build
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tune
+  cancel-in-progress: false
+
+jobs:
+  tune:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # Refit the calibration curve on the last completed season and check it
+      # on the current one. tune.py writes calibration.json only if the fit
+      # also improves fixtures it has never seen; otherwise the file is left
+      # alone and the shipped constant stays in force.
+      - name: Refit calibration
+        run: python3 tune.py --fit
+
+      # The full constant sweep is advisory. It is printed into the job log for
+      # a human to read and never applied automatically: a structural constant
+      # that moves on its own is a model nobody can explain the next morning.
+      - name: Sweep the constants (advisory)
+        run: python3 tune.py --report
+
+      - name: Commit the result
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A calibration.json tuning-report.json
+          git diff --staged --quiet || git commit -m "Weekly retune $(date +%F)"
+          git push
