@@ -163,6 +163,9 @@ h1 .b{
   padding:10px 0 9px;border-bottom:2px solid var(--ink);
   display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
 }
+/* the controls belong to the fixture board, so they go away with it, and a
+   display rule on the class would otherwise beat the hidden attribute */
+.controls[hidden]{display:none}
 .controls > div{min-width:0}
 .chips{max-width:none}
 .chips{display:flex;gap:4px;flex-wrap:wrap}
@@ -207,7 +210,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   background:var(--paper);border-bottom:1px solid var(--rule);
   font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
 }
-.ruler .r-bar{display:flex;justify-content:space-between}
+.ruler .r-bar,.rruler .r-bar{display:flex;justify-content:space-between}
 
 /* ---------- fixture row ---------- */
 /* Row states, each carrying exactly one meaning:
@@ -293,6 +296,107 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .row.bttsmode{grid-template-columns:32px 46px 1fr 258px 74px 1fr 56px}
 .conf small{display:block;font-size:9.5px;letter-spacing:.06em;color:var(--mute);font-weight:400;text-transform:uppercase}
 
+/* ---------- top-level views ----------
+   Two boards that answer different questions: what is coming, and how the last
+   one went. They sit above the controls because switching between them changes
+   what the controls even mean. Styled as a band rather than as tabs, so it
+   reads as part of the cover rather than as browser chrome. */
+.views{
+  display:flex;margin-top:0;border:3px solid #100e0c;border-top:0;
+  background:#100e0c;
+}
+.views button{
+  flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
+  letter-spacing:.08em;text-transform:uppercase;
+  border:0;background:#100e0c;color:#9a9086;padding:7px 10px;cursor:pointer;
+  border-right:1px solid #3a342e;
+}
+.views button:last-child{border-right:0}
+.views button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
+.views button:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+
+/* ---------- results review ---------- */
+.dayseg{display:flex;flex-wrap:wrap;gap:4px}
+.dayseg button{
+  font-family:var(--f-ui);font-size:12.5px;font-weight:600;letter-spacing:.03em;
+  border:1px solid var(--rule);background:transparent;color:var(--ink-2);
+  padding:4px 9px;cursor:pointer;border-radius:2px;line-height:1.3;white-space:nowrap;
+}
+.dayseg button[aria-pressed="true"]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.dayseg button:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+.dayseg button i{font-style:normal;font-family:var(--f-num);opacity:.75;margin-left:5px}
+
+.scoreline{
+  display:flex;gap:0;flex-wrap:wrap;margin-top:14px;
+  background:var(--surface);border:1px solid var(--rule);
+}
+.scoreline div{
+  flex:1 1 0;min-width:118px;padding:9px 13px;border-right:1px solid var(--rule-soft);
+}
+.scoreline div:last-child{border-right:0}
+.scoreline span{
+  display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;margin-bottom:3px;
+}
+.scoreline b{display:block;font-family:var(--f-num);font-size:21px;font-weight:600;letter-spacing:-.03em;line-height:1}
+.scoreline small{display:block;font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:3px}
+.scoreline .good b{color:#2f6b52}
+.scoreline .bad b{color:var(--away)}
+
+.rruler,.rrow{
+  display:grid;grid-template-columns:46px 1fr 176px 52px 52px 1fr 68px 26px;
+  gap:10px;align-items:center;
+}
+.rruler{
+  padding:7px 8px 5px;border-bottom:1px solid var(--rule);
+  font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
+}
+.rrow{
+  background:var(--surface);border-bottom:1px solid var(--rule-soft);
+  padding:9px 8px;font-size:15px;
+}
+.rrow.alt{background:#f6efdc}
+.rrow.celtic{box-shadow:inset 3px 0 0 var(--draw)}
+.rrow .sc{font-family:var(--f-num);font-size:15px;font-weight:600;text-align:center;letter-spacing:-.03em}
+.rrow .sc.pred{font-size:13px;font-weight:400;color:var(--mute)}
+.rrow .lg{font-family:var(--f-num);font-size:11px;color:var(--mute);font-weight:500}
+.mark{
+  font-family:var(--f-ui);font-weight:700;font-size:15px;text-align:center;line-height:1;
+}
+.mark.ok{color:#2f6b52}
+.mark.no{color:var(--away)}
+.rrow.miss .club{color:var(--ink-2);font-weight:500}
+.rrow.miss .bar{opacity:.55}
+
+.ladder{margin-top:26px}
+.ladder table{border-collapse:collapse;width:100%;max-width:94ch;font-family:var(--f-num);font-size:13px}
+.ladder th{
+  text-align:right;font-family:var(--f-ui);font-weight:700;color:var(--mute);
+  font-size:10px;letter-spacing:.09em;text-transform:uppercase;padding:0 8px 5px 0;
+  border-bottom:1px solid var(--rule);
+}
+.ladder th:first-child{text-align:left}
+.ladder td{text-align:right;padding:6px 8px 6px 0;border-bottom:1px solid var(--rule-soft)}
+.ladder td:first-child{
+  text-align:left;font-family:var(--f-ui);font-size:14px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;
+}
+.ladder td.thin{font-weight:400;color:var(--mute);font-family:var(--f-num);font-size:12px;
+  letter-spacing:0;text-transform:none}
+.ladder .t3 td:first-child{color:var(--home)}
+.ladder .t2 td:first-child{color:#2f6b52}
+.ladder .t1 td:first-child{color:var(--draw)}
+.ladder .t0 td:first-child{color:var(--mute)}
+.prose{max-width:78ch;font-size:14px;line-height:1.6;color:var(--ink-2);margin-top:12px}
+.prose p{margin-top:11px}
+.prose b{color:var(--ink)}
+.prose em{font-style:normal;font-family:var(--f-num);font-size:13px;color:var(--ink)}
+.sect{
+  margin-top:34px;padding-bottom:6px;border-bottom:3px double var(--ink);
+  font-family:var(--f-display);font-weight:400;font-size:16px;
+  letter-spacing:.01em;text-transform:uppercase;
+}
+
 /* ---------- expanded detail ---------- */
 .detail{background:#f3ead6;border-bottom:2px solid var(--ink);padding:16px 18px 18px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -375,6 +479,29 @@ footer a{color:var(--ink-2)}
   .seg button,.boards button{padding:6px 9px;font-size:12.5px}
   .controls{padding:9px 0 8px;gap:10px}
   .controls > div[style*="margin-left"]{margin-left:0!important;width:100%}
+  .rruler{display:none}
+  /* the column ruler is gone on narrow screens, so the two scorelines have to
+     label themselves or the row is a pair of unexplained numbers */
+  .rrow .sc::before{
+    display:block;font-family:var(--f-ui);font-size:8.5px;letter-spacing:.1em;
+    text-transform:uppercase;color:var(--mute);font-weight:700;line-height:1.3;
+  }
+  .rrow .sc.pred::before{content:"Predicted"}
+  .rrow .sc.act::before{content:"Final"}
+  .rrow{grid-template-columns:1fr 66px 30px;grid-template-areas:
+    "home pred mark" "bar bar mark" "away act mark" "lg conf conf";
+    row-gap:5px;padding:11px 8px;}
+  .rrow .lg{grid-area:lg}
+  .rrow .side{grid-area:home}
+  .rrow .side.away{grid-area:away;text-align:left}
+  .rrow .side.away .club{flex-direction:row}
+  .rrow .bar{grid-area:bar;margin:2px 0}
+  .rrow .sc.pred{grid-area:pred}
+  .rrow .sc.act{grid-area:act}
+  .rrow .conf{grid-area:conf;text-align:left}
+  .rrow .conf .tier{display:inline;margin-left:6px}
+  .rrow .mark{grid-area:mark;align-self:center}
+  .scoreline div{flex:1 1 44%;min-width:0}
   .row{grid-template-columns:28px 1fr 62px;grid-template-areas:
     "rank home conf" "rank bar conf" "rank away conf" "rank xg xg";
     row-gap:5px;padding:11px 8px;}
@@ -407,10 +534,14 @@ footer a{color:var(--ink-2)}
     <div class="yr"><b id="window">—</b></div>
     <div class="meta" id="meta"><div class="flash"><span>Premier League</span><span>Champions League</span><span>and more!</span></div></div>
   </div>
+  <nav class="views" id="views" aria-label="Boards">
+    <button data-view="fixtures" aria-pressed="true">What&rsquo;s coming</button>
+    <button data-view="results" aria-pressed="false">How it went</button>
+  </nav>
   <div class="note" id="note"></div>
 </header>
 
-<div class="controls">
+<div class="controls" id="controls">
   <div>
     <div class="ctl-label" style="margin-bottom:4px">Board</div>
     <div class="boards" id="boards">
@@ -434,6 +565,7 @@ footer a{color:var(--ink-2)}
 </div>
 
 <main id="days"></main>
+<section id="results" hidden></section>
 
 <footer id="footer"></footer>
 </div>
@@ -606,14 +738,14 @@ $("#sort").addEventListener("click", e=>{
 /* ---------- how much to trust a number ----------
    A percentage on its own tells a reader nothing: 47% on a three-way market is
    barely above the 33% you would get by guessing. These bands are the model's
-   own backtested hit rates across 4,605 fixtures in 2025/26, so the label is a
+   own backtested hit rates across 5,281 fixtures in 2025/26, so the label is a
    measurement rather than a description. Celtic's Law drops a fixture one band,
    because flagged fixtures measurably underperform their quoted confidence. */
 const TIERS = [
   {min:0.70, k:3, name:"Strong",  was:"79%"},
-  {min:0.62, k:2, name:"Firm",    was:"67%"},
-  {min:0.55, k:1, name:"Lean",    was:"63%"},
-  {min:0.00, k:0, name:"No read", was:"46%"},
+  {min:0.62, k:2, name:"Firm",    was:"66%"},
+  {min:0.55, k:1, name:"Lean",    was:"61%"},
+  {min:0.00, k:0, name:"No read", was:"44%"},
 ];
 /* Both-teams-to-score bands, measured the same way. Note how much flatter they
    are than the winner bands: the very best call is 59% against a 54% base rate.
@@ -780,7 +912,7 @@ function detail(g){
        </div>`
     : `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
          <b>${T.name} read on ${side}.</b> Fixtures the model quoted around ${pct(g.confidence)}%
-         came in ${T.was} of the time across 4,605 matches last season${g.celtic ? ", though this one is flagged below and should be discounted a notch" : ""}.
+         came in ${T.was} of the time across 5,281 matches last season${g.celtic ? ", though this one is flagged below and should be discounted a notch" : ""}.
        </div>`;
 
   return `<div class="detail">
@@ -854,10 +986,177 @@ function render(){
     : `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`;
 }
 
+/* ---------- the review board ----------
+   Predictions are worth nothing unless someone goes back and checks them, and
+   a page that only ever shows the future is asking to be believed on nothing.
+   This board reads a completed day back against what was published before it
+   kicked off: which tier each pick sat in, what happened, and where the misses
+   came from. The tier hit rates underneath are the live version of the labels
+   the fixture board uses, so a reader can see whether "Lean" has meant anything
+   on this season's fixtures rather than only in a backtest. */
+const resState = { day: null };
+const R_DAYS = (R && R.days) || [];
+if(R_DAYS.length) resState.day = R_DAYS[0].date;
+
+const mark = ok => `<div class="mark ${ok?"ok":"no"}" aria-label="${ok?"correct":"wrong"}">${ok?"✓":"✗"}</div>`;
+const OUTCOME = {h:"home win", d:"draw", a:"away win"};
+
+function resultRow(g, i){
+  const L = lname(g.league) || {short:g.league, iso:"", country:""};
+  const h = pct(g.p[0]), d = pct(g.p[1]), a = 100-h-d;
+  const lbl = (v,min) => v>=min ? `<b>${v}</b>` : "";
+  return `<div class="rrow${i%2?" alt":""}${g.celtic?" celtic":""}${g.ok?"":" miss"}">
+    <div class="lg">${L.short}</div>
+    <div class="side"><div class="club">${flag(L.iso,L.country)}<span>${g.home}</span></div></div>
+    <div class="bar" role="img" aria-label="Home win ${h} per cent, draw ${d} per cent, away win ${a} per cent">
+      <i class="h" style="width:${h}%">${lbl(h,15)}</i>
+      <i class="d" style="width:${d}%">${lbl(d,15)}</i>
+      <i class="a" style="width:${a}%">${lbl(a,15)}</i>
+    </div>
+    <div class="sc pred" title="predicted scoreline">${g.predScore[0]}–${g.predScore[1]}</div>
+    <div class="sc act" title="final score">${g.result[0]}–${g.result[1]}</div>
+    <div class="side away"><div class="club">${flag(L.iso,L.country)}<span>${g.away}</span></div></div>
+    <div class="conf">${pct(g.confidence)}${g.celtic?`<span class="cl" title="Celtic&#39;s Law — the model was working blind here">CL</span>`:""}<span class="tier t${g.k}">${g.tier}</span></div>
+    ${mark(g.ok)}
+  </div>`;
+}
+
+function ladderTable(){
+  const live = (R && R.tiers) || [];
+  const rows = TIERS.map(t => {
+    const l = live.find(x => x.name === t.name);
+    return `<tr class="t${t.k}">
+      <td>${t.name}</td>
+      <td class="thin">${t.min>0 ? pct(t.min)+"% and above" : "below 55%"}</td>
+      <td>${t.was}</td>
+      <td>${l ? l.n : "—"}</td>
+      <td>${l ? pct(l.hit)+"%" : "—"}</td>
+      <td class="thin">${l ? (l.hit>=l.expected?"+":"")+Math.round((l.hit-l.expected)*100)+" pts" : "—"}</td>
+    </tr>`;
+  }).join("");
+  return `<table>
+    <tr><th>Tier</th><th>Confidence</th><th>Backtest</th>
+        <th>Live picks</th><th>Live hit</th><th style="text-align:right">vs quoted</th></tr>
+    ${rows}</table>`;
+}
+
+function bandTable(){
+  const b = (R && R.bands) || [];
+  if(!b.length) return "";
+  return `<table>
+    <tr><th>Quoted confidence</th><th>Fixtures</th><th>Average quote</th><th>Actually landed</th><th style="text-align:right">Error</th></tr>
+    ${b.map(x=>`<tr>
+      <td class="thin" style="font-family:var(--f-num);font-size:13px">${pct(x.from)}% – ${pct(x.to)}%</td>
+      <td>${x.n}</td><td>${pct(x.expected)}%</td><td>${pct(x.hit)}%</td>
+      <td>${x.hit>=x.expected?"+":""}${Math.round((x.hit-x.expected)*100)} pts</td>
+    </tr>`).join("")}</table>`;
+}
+
+function renderResults(){
+  const host = $("#results");
+  if(!R_DAYS.length){
+    host.innerHTML = `<div class="empty" style="max-width:80ch;line-height:1.6">
+      <b>Nothing graded yet.</b> This board fills in as results land against
+      predictions that were published before kick-off. If the site has only just
+      started archiving, or the daily job has not run since the last round of
+      fixtures, there is nothing honest to show here yet.</div>`;
+    return;
+  }
+  const day = R_DAYS.find(d => d.date === resState.day) || R_DAYS[0];
+  const tierLine = (day.tiers||[]).map(t =>
+    `<b>${t.name}</b> ${t.correct}/${t.n}`).join(" · ");
+
+  host.innerHTML = `
+    <div style="margin-top:20px">
+      <div class="ctl-label" style="margin-bottom:6px">Completed day</div>
+      <div class="dayseg" id="dayseg">${R_DAYS.map(d=>
+        `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
+           ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div>
+    </div>
+
+    <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
+      <div class="count">${day.n} graded</div></div>
+
+    <div class="scoreline">
+      <div class="${day.accuracy >= day.homeRate ? "good":"bad"}">
+        <span>Top pick correct</span><b>${day.correct} / ${day.n}</b>
+        <small>${pct(day.accuracy)}% · ${pct(day.homeRate)}% if you always backed home</small></div>
+      <div><span>Drawn out</span><b>${day.drawnOut}</b>
+        <small>picked a winner, got a draw</small></div>
+      <div><span>Exact scorelines</span><b>${day.exactScores}</b>
+        <small>of ${day.n}</small></div>
+      <div><span>Log loss</span><b>${day.logLoss.toFixed(3)}</b>
+        <small>lower is better · 1.099 = knowing nothing</small></div>
+    </div>
+    ${tierLine ? `<div class="readbar" style="margin-top:10px">By tier on this day: ${tierLine}.
+      A tier is only worth reading across many days, not one.</div>` : ""}
+
+    <div class="rruler" style="margin-top:16px">
+      <div>Comp</div><div>Home</div>
+      <div class="r-bar"><span>Home</span><span>Draw</span><span>Away</span></div>
+      <div style="text-align:center">Pred</div><div style="text-align:center">Final</div>
+      <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div><div></div>
+    </div>
+    ${day.games.map(resultRow).join("")}
+
+    <h2 class="sect">Reading the confidence number</h2>
+    <div class="prose">
+      <p>The percentage on a fixture is the model's chance for its <b>single most likely
+      outcome</b>, out of three. It is not a chance of winning a bet and it is not a
+      strength rating. Because a draw is always in play, anything in the fifties is close
+      to a coin flip dressed up as a number: at <em>52%</em> the model is telling you it
+      cannot separate two sides, not that the favourite is likely.</p>
+      <p>The tiers below are thresholds, not rankings. <b>Top of the day's board is not
+      the same as Strong.</b> Most days produce nothing above the Lean line, and on those
+      days the most confident fixture on the page is still a no-read.</p>
+    </div>
+    <div class="ladder">${ladderTable()}</div>
+    <div class="prose"><p><b>Backtest</b> is the hit rate measured across 5,281 fixtures in
+    2025/26. <b>Live</b> is this season's published predictions graded after the fact, which
+    is the harder test and the one to trust once the sample is large enough. Small live
+    samples move around a lot; treat anything under about fifty fixtures as noise.</p></div>
+
+    <h2 class="sect">Is a quoted number worth its face value</h2>
+    <div class="ladder">${bandTable()}</div>
+    <div class="prose"><p>If the model is honest, the last two columns match. A positive
+    error means it is under-selling itself in that band, a negative one that it is
+    over-confident. ${R && R.settled && R.celtic ? `Fixtures flagged under <b>Celtic's Law</b>
+    have landed <em>${pct(R.celtic.accuracy)}%</em> against <em>${pct(R.settled.accuracy)}%</em>
+    for settled ones, across ${R.celtic.n} and ${R.settled.n} fixtures. That gap is why a
+    flagged row is dropped one tier before it is labelled.` : ""}</p>
+    <p>${R && R.overall ? `Across every graded fixture so far, the model almost never picks a
+    draw: <em>${R.overall.picks.d}</em> draw picks against <em>${R.overall.actuals.d}</em> matches
+    that actually finished level. Those <em>${R.overall.drawnOut}</em> drawn-out fixtures are the
+    single largest category of miss, and no amount of confidence in a favourite protects you
+    from one.` : ""}</p></div>`;
+
+  $("#dayseg").addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b) return;
+    resState.day = b.dataset.day;
+    renderResults();
+    host.scrollIntoView({block:"start", behavior:"auto"});
+  });
+}
+
+/* ---------- view switching ---------- */
+$("#views").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  const v = b.dataset.view;
+  $("#views").querySelectorAll("button").forEach(x=>
+    x.setAttribute("aria-pressed", x.dataset.view===v));
+  const fixtures = v === "fixtures";
+  $("#controls").hidden = !fixtures;
+  $("#days").hidden = !fixtures;
+  $("#note").hidden = !fixtures;
+  readbarEl.hidden = !fixtures;
+  $("#results").hidden = fixtures;
+  window.scrollTo({top:0});
+});
+
 $("#footer").innerHTML = `
   Probabilities come from a Dixon-Coles adjusted Poisson model over attack and defence ratings.
-  Backtested across ${'4,605'} matches in 2025/26: <b>49.3%</b> of top picks correct against a
-  43.3% always-back-the-home-side baseline. The most confident tenth of fixtures landed 73.5% of the time.
+  Backtested across ${'5,281'} matches in 2025/26: <b>49.5%</b> of top picks correct against a
+  43.7% always-back-the-home-side baseline. The most confident tenth of fixtures landed 75.0% of the time.
   Rows marked <span class="cl">CL</span> fall under Celtic's Law: a side has changed division,
   has no rating, is missing players, or carries a manual override, so the model is working blind. Flagged before
   kick-off, never after. Fixtures and results from
@@ -867,6 +1166,7 @@ $("#footer").innerHTML = `
   properly priced market is for.`;
 
 render();
+renderResults();
 })();
 </script>
 </body>

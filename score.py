@@ -18,7 +18,7 @@ backtest.
 """
 import json, os, sys, glob
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from math import log
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -28,6 +28,29 @@ import sources as S
 HERE = os.path.dirname(os.path.abspath(__file__))
 PRED_DIR = os.path.join(HERE, "predictions")
 EPS = 1e-9
+
+# How far back to chase results on the live source. openfootball backfills a
+# result days after the whistle, which is fine for a season record and useless
+# for a page that reviews yesterday. Anything played inside this window and
+# still ungraded is worth one ESPN request per competition per date.
+LIVE_LOOKBACK = 6
+
+# Days of graded fixtures handed to the dashboard's results board.
+REVIEW_DAYS = 14
+
+# The confidence ladder, identical to the one index.html renders. It lives in
+# both places because the dashboard has to label a fixture that has not been
+# played, and this file has to grade one that has. Change one, change the other.
+# Celtic's Law drops a fixture one rung: flagged rows measurably underperform
+# their quoted number, so they are not allowed to claim the same tier.
+TIERS = [(0.70, 3, "Strong"), (0.62, 2, "Firm"), (0.55, 1, "Lean"), (0.00, 0, "No read")]
+
+
+def tier_of(confidence, celtic):
+    i = next(i for i, (m, _, _) in enumerate(TIERS) if confidence >= m)
+    if celtic and i < len(TIERS) - 1:
+        i += 1
+    return TIERS[i]
 
 
 def load_predictions():
@@ -61,6 +84,48 @@ def load_results(codes, cache=None):
     return res
 
 
+def live_results(pending, log=None):
+    """Results for fixtures openfootball has not backfilled yet.
+
+    openfootball is the primary source and stays that way: this only runs on
+    what it has left ungraded, and only for the last few days, which is exactly
+    the window where the backfill lag bites and the review board is empty.
+
+    Returns the same {(code, date, home, away): (hg, ag)} shape as load_results,
+    so the caller cannot tell which source settled a fixture.
+    """
+    cutoff = (date.today() - timedelta(days=LIVE_LOOKBACK)).isoformat()
+    today = date.today().isoformat()
+    wanted = defaultdict(list)
+    for code, d, home, away in pending:
+        if cutoff <= d < today:
+            wanted[(code, d)].append((code, d, home, away))
+
+    out = {}
+    for (code, d), keys in sorted(wanted.items()):
+        day = date.fromisoformat(d)
+        rows, ok = S.fetch_espn(code, day, day, log=log)
+        if not ok:
+            continue
+        played = [r for r in rows if r["date"] == d and r["hg"] is not None]
+        if not played:
+            continue
+        hpool = {r["home"] for r in played}
+        apool = {r["away"] for r in played}
+        for key in keys:
+            _, _, home, away = key
+            h = home if home in hpool else S.match_team(home, hpool)
+            a = away if away in apool else S.match_team(away, apool)
+            if not h or not a:
+                continue
+            # Both ends must match the same fixture. A half-match is a wrong
+            # match, and a wrong result is worse than no result.
+            hit = next((r for r in played if r["home"] == h and r["away"] == a), None)
+            if hit:
+                out[key] = (hit["hg"], hit["ag"])
+    return out
+
+
 def summarise(rows):
     if not rows:
         return None
@@ -70,9 +135,38 @@ def summarise(rows):
     ll = -sum(log(max(r["p"][idx[r["actual"]]], EPS)) for r in rows) / n
     home = sum(1 for r in rows if r["actual"] == "h") / n
     exact = sum(1 for r in rows if r["score"] == r["result"])
+    # Where the misses actually come from. The model almost never picks a draw,
+    # so a draw is a guaranteed loss on the top pick, and counting them is the
+    # difference between "we got it wrong" and knowing why.
+    drawn = sum(1 for r in rows if r["actual"] == "d" and r["pick"] != "d")
+    picks = {k: sum(1 for r in rows if r["pick"] == k) for k in "hda"}
+    actual = {k: sum(1 for r in rows if r["actual"] == k) for k in "hda"}
     return {"n": n, "correct": hit, "accuracy": round(hit / n, 4),
             "logLoss": round(ll, 4), "homeRate": round(home, 4),
-            "exactScores": exact, "exactRate": round(exact / n, 4)}
+            "exactScores": exact, "exactRate": round(exact / n, 4),
+            "drawnOut": drawn, "picks": picks, "actuals": actual}
+
+
+def tier_table(rows):
+    """Live hit rate for each rung of the confidence ladder.
+
+    This is the number that matters most on the review board. The tier labels
+    were fitted on a backtest of last season; this says whether they have held
+    up on fixtures the site published in advance, which is a much harder test.
+    """
+    out = []
+    for lo, k, name in TIERS:
+        g = [r for r in rows if tier_of(r["confidence"], r["celtic"])[2] == name]
+        if not g:
+            continue
+        out.append({
+            "name": name, "k": k, "min": lo, "n": len(g),
+            "correct": sum(1 for r in g if r["pick"] == r["actual"]),
+            "hit": round(sum(1 for r in g if r["pick"] == r["actual"]) / len(g), 4),
+            "expected": round(sum(r["confidence"] for r in g) / len(g), 4),
+            "drawnOut": sum(1 for r in g if r["actual"] == "d" and r["pick"] != "d"),
+        })
+    return out
 
 
 def main():
@@ -85,6 +179,17 @@ def main():
 
     codes = sorted({k[0] for k in preds})
     results = load_results(codes)
+
+    # Anything played but not yet backfilled gets one pass at the live source.
+    pending = [k for k in preds if k not in results]
+    tried = []
+    live = live_results(pending, log=tried)
+    for line in tried:
+        print(f"    espn {line}", file=sys.stderr)
+    if live:
+        print(f"  live source settled {len(live)} fixture(s) openfootball has "
+              f"not backfilled yet", file=sys.stderr)
+    results.update(live)
 
     rows = []
     for key, g in preds.items():
@@ -126,6 +231,29 @@ def main():
 
     recent = sorted(rows, key=lambda r: r["date"], reverse=True)[:40]
 
+    # ---- the review board --------------------------------------------------
+    # One entry per day, most recent first, carrying every graded fixture on it
+    # rather than a sample. The point of the board is to be able to read a whole
+    # day back and see which tier the misses came from, so a truncated list
+    # would defeat it.
+    def game_row(r):
+        _, k, name = tier_of(r["confidence"], r["celtic"])
+        return {"league": r["league"], "home": r["home"], "away": r["away"],
+                "p": [round(x, 4) for x in r["p"]], "pick": r["pick"],
+                "actual": r["actual"], "confidence": r["confidence"],
+                "celtic": r["celtic"], "tier": name, "k": k,
+                "predScore": list(r["score"]), "result": list(r["result"]),
+                "ok": r["pick"] == r["actual"]}
+
+    by_date = defaultdict(list)
+    for r in rows:
+        by_date[r["date"]].append(r)
+    review = []
+    for d in sorted(by_date, reverse=True)[:REVIEW_DAYS]:
+        g = sorted(by_date[d], key=lambda r: -r["confidence"])
+        review.append({"date": d, **summarise(g), "tiers": tier_table(g),
+                       "games": [game_row(r) for r in g]})
+
     payload = {
         "generated": __import__("datetime").datetime.now().isoformat(timespec="seconds"),
         "archived": len(preds),
@@ -134,6 +262,8 @@ def main():
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),
         "bands": bands,
+        "tiers": tier_table(rows),
+        "days": review,
         "byLeague": per_league,
         "recent": [{"date": r["date"], "league": r["league"], "home": r["home"],
                     "away": r["away"], "p": r["p"], "pick": r["pick"],

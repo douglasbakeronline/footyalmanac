@@ -140,6 +140,29 @@ MAX_GOALS = 10
 # backtest.py --tune. Re-fit whenever the league strength table changes.
 TEMPERATURE = 1.15
 
+# A single temperature applies the same correction to a 40% call and an 85% one,
+# and measurement says those two need different corrections: the model is
+# over-confident low down and under-confident at the top, so one constant
+# flattens the confident calls it should be leaving alone.
+#
+# calibration.json, if present, replaces the constant with a straight line in
+# raw confidence: T = a + b * (confidence - 0.45). Two parameters, because ten
+# free per-band temperatures fit the training season better and generalise
+# worse. It is written by tune.py and ONLY when the fit, made on the last
+# completed season, also improves the current one, which tune.py has never
+# fitted on. Delete the file and the shipped constant takes over again.
+CALIBRATION = None
+_cal_path = __import__("os").path.join(
+    __import__("os").path.dirname(__import__("os").path.abspath(__file__)),
+    "calibration.json")
+if __import__("os").path.exists(_cal_path):
+    try:
+        _c = __import__("json").load(open(_cal_path))
+        if isinstance(_c.get("a"), (int, float)) and isinstance(_c.get("b"), (int, float)):
+            CALIBRATION = {"a": float(_c["a"]), "b": float(_c["b"])}
+    except Exception:
+        CALIBRATION = None
+
 # Both-teams-to-score and over-2.5 need heavy correction, and it is worth being
 # blunt about why. Fitted on 2025/26, the raw grid claimed 64%+ for fixtures
 # where both sides actually scored only 57.8% of the time. Shrinking 60% of the
@@ -333,8 +356,17 @@ def _tau(x, y, lh, la, rho=RHO):
 
 def temper(h, d, a, T=None):
     """Flatten probabilities toward equal thirds by temperature T, then
-    renormalise. T=1 leaves them untouched."""
-    T = TEMPERATURE if T is None else T
+    renormalise. T=1 leaves them untouched.
+
+    With no T passed, a fitted calibration curve is used if one has been
+    written, and the flat constant otherwise.
+    """
+    if T is None:
+        if CALIBRATION:
+            c = max(h, d, a)
+            T = min(max(CALIBRATION["a"] + CALIBRATION["b"] * (c - 0.45), 0.6), 2.0)
+        else:
+            T = TEMPERATURE
     if T == 1.0:
         return h, d, a
     p = [max(x, 1e-12) ** (1.0 / T) for x in (h, d, a)]

@@ -1,0 +1,28 @@
+{
+ "fitted": {
+  "a": 1.075,
+  "b": -0.45
+ },
+ "fitSeason": {
+  "n": 5281,
+  "shipped": 1.0162,
+  "fitted": 1.0147
+ },
+ "checkSeason": {
+  "n": 545,
+  "shipped": 1.0289,
+  "fitted": 1.0272,
+  "delta": -0.0017,
+  "sd": 0.0019,
+  "pWorse": 0.195,
+  "shippedAcc": 0.4789,
+  "fittedAcc": 0.4789
+ },
+ "gates": {
+  "enoughData": true,
+  "notWorse": true,
+  "worthIt": true
+ },
+ "pass": true,
+ "generated": "2026-09-09"
+}
