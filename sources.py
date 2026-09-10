@@ -539,7 +539,30 @@ def fetch_espn(code, start, end, timeout=25, log=None):
 
 # --- reconciling ESPN's club names with openfootball's ---------------------
 
-def _norm(n):
+# English exonyms against the local spellings openfootball uses. This is a whole
+# class of failure rather than a handful of clubs: the live source says Prague,
+# Cologne, Milan, Warsaw, Belgrade, the schedules say Praha, Köln, Milano,
+# Warszawa, Beograd, and no amount of normalising letters bridges the two.
+# Applied to the city token, so it fixes every club in that city at once rather
+# than one alias per club.
+CITIES = {
+    "prague": "praha", "cologne": "koln", "munich": "munchen",
+    "milan": "milano", "turin": "torino", "florence": "firenze",
+    "genoa": "genova", "naples": "napoli", "rome": "roma",
+    "seville": "sevilla", "lisbon": "lisboa", "warsaw": "warszawa",
+    "moscow": "moskva", "athens": "athina", "copenhagen": "kobenhavn",
+    "gothenburg": "goteborg", "vienna": "wien", "belgrade": "beograd",
+    "bucharest": "bucuresti", "zurich": "zurich", "brussels": "brussel",
+    "antwerp": "antwerpen", "the hague": "den haag", "hague": "den haag",
+    "salonika": "thessaloniki", "nicosia": "lefkosia", "kiev": "kyiv",
+    "bruges": "brugge", "ghent": "gent", "eindhoven": "eindhoven",
+}
+
+
+def _base(n):
+    """Letters and generic words only. Deliberately stops before the city map
+    and the alias table, because both of those have to be applied in a
+    particular order and doing it inside here got them the wrong way round."""
     n = clean_name(n).lower()
     for a, b in (("&", "and"), ("-", " "), (".", ""), ("'", ""), ("ø", "o"), ("ë", "e"),
                  ("ł", "l"), ("ż", "z"), ("ą", "a"), ("ę", "e"), ("š", "s"), ("ž", "z"),
@@ -552,6 +575,29 @@ def _norm(n):
             "sd", "ca", "sv", "tsg", "vfl", "vfb", "bv", "sk", "nk", "hnk",
             "the", "club", "de", "futbol", "calcio"}
     return " ".join(w for w in n.split() if w not in drop).strip()
+
+
+def _norm(n):
+    """The comparable form of a club name.
+
+    Aliases resolve first and the city map second. The other way round,
+    "Inter Milan" becomes "inter milano" before the alias table gets a look at
+    it, the alias for "inter milan" never fires, and the name goes on to be
+    matched against whatever else is in Milan.
+    """
+    b = _base(n)
+    b = ALIASES.get(b, b)
+    return " ".join(CITIES.get(w, w) for w in b.split())
+
+
+# A candidate whose whole name reduces to a city and nothing else cannot
+# identify a club: every side in that city contains it. Matching "Inter Milan"
+# against a candidate that has reduced to "milano" returned AC Milan, which is
+# the exact failure the conservative matching here exists to prevent, and it
+# would have priced the fixture with another club's rating and said nothing.
+def _bare_place(norm):
+    toks = set(norm.split())
+    return bool(toks) and toks <= set(CITIES.values())
 
 
 # ESPN abbreviates; openfootball spells out. Normalisation cannot bridge
@@ -575,33 +621,43 @@ ALIASES = {
     "real sociedad": "real sociedad", "psg": "paris saint germain",
     "paris sg": "paris saint germain", "marseille": "olympique marseille",
     "lyon": "olympique lyonnais", "psv eindhoven": "psv",
-    "ajax": "ajax", "sporting cp": "sporting", "sporting lisbon": "sporting",
-    "porto": "porto", "benfica": "benfica",
+    "ajax": "ajax", "porto": "porto", "benfica": "benfica",
+    # Sporting has to name the city. Mapping it to a bare "sporting" made it
+    # ambiguous between Lisbon and Braga, the matcher correctly refused to
+    # guess, and every Sporting tie in Europe rendered as a club with no
+    # rating on file.
+    "sporting cp": "sporting clube portugal",
+    "sporting lisbon": "sporting clube portugal",
+    "sporting braga": "sporting clube braga",
+    "braga": "sporting clube braga",
 }
 
 
 def match_team(name, pool):
-    """Map an ESPN club name onto a rated team, or None.
+    """Map a live-source club name onto a rated team, or None.
 
     Deliberately conservative: an exact normalised match, then a containment
-    match, and nothing cleverer. A wrong match would silently price a fixture
-    with another club's rating, which is far worse than leaving it unrated —
-    an unrated fixture says so on the page, a mismatched one lies quietly.
+    match with two guards, and nothing cleverer. A wrong match would silently
+    price a fixture with another club's rating, which is far worse than leaving
+    it unrated — an unrated fixture says so on the page, a mismatched one lies
+    quietly.
     """
     if name in pool:
         return name
     target = _norm(name)
-    target = ALIASES.get(target, target)
     if not target:
         return None
+
     norm = {}
     for t in pool:
         norm.setdefault(_norm(t), t)
-        alias = ALIASES.get(_norm(t))
-        if alias:
-            norm.setdefault(alias, t)
     if target in norm:
         return norm[target]
-    hits = [v for k, v in norm.items()
-            if (target in k or k in target) and min(len(k), len(target)) >= 4]
-    return hits[0] if len(hits) == 1 else None
+
+    hits = [(k, v) for k, v in norm.items()
+            if (target in k or k in target) and min(len(k), len(target)) >= 4
+            # guard one: a candidate that is only a city name identifies nobody
+            and not _bare_place(k)]
+    # guard two: more than one candidate means the name is ambiguous, and a
+    # guess here is a silently wrong rating rather than a visible gap
+    return hits[0][1] if len(hits) == 1 else None

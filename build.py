@@ -44,11 +44,19 @@ def prev_of(code):
 
 def team_pool(history, fixtures):
     """Work out which competition each team played in last season, so promoted
-    and relegated sides can have their ratings carried across divisions."""
+    and relegated sides can have their ratings carried across divisions.
+
+    Takes whichever prior season actually resolved, not just the most recent
+    one. The ratings below already fall back to the older season when the
+    newer one is missing, and this did not, so twenty-five competitions ended
+    up with ratings computed and no club findable in them: Mexico, Ukraine,
+    Czechia, Azerbaijan and the rest all rated every fixture as unrated.
+    """
     last_league = {}
     for code, seasons in history.items():
-        p0 = prev_of(code)[0]
-        for t in {m[1] for m in seasons.get(p0, [])} | {m[2] for m in seasons.get(p0, [])}:
+        pv = prev_of(code)
+        ms = seasons.get(pv[0]) or (seasons.get(pv[1]) if len(pv) > 1 else None) or []
+        for t in {m[1] for m in ms} | {m[2] for m in ms}:
             last_league[t] = code
     return last_league
 
@@ -123,16 +131,25 @@ def main():
     rated_pool = set(last_league)
 
     def rating_for(team, code):
-        """Prior (carried across divisions if needed) blended with this season."""
+        """Prior (carried across divisions if needed) blended with this season.
+
+        There are two namespaces in play and they are not interchangeable. The
+        prior season comes from openfootball and is keyed by its spellings; the
+        current season is keyed by whatever supplied the fixture list, which
+        for most competitions is now the live source and its own spellings.
+        Looking either up with the other's name returns nothing and says so
+        silently, so the resolved name travels back out with the rating.
+        """
         src = last_league.get(team)
+        prior_name = team
         if src is None:
             # A live-source club name may not match openfootball's spelling.
             alt = S.match_team(team, rated_pool)
             if alt:
                 src = last_league.get(alt)
-                team = alt
-        if src and src in prior_ratings and team in prior_ratings[src]:
-            prior = E.transfer_rating(prior_ratings[src][team], src, code)
+                prior_name = alt
+        if src and src in prior_ratings and prior_name in prior_ratings[src]:
+            prior = E.transfer_rating(prior_ratings[src][prior_name], src, code)
             carried = (src != code)
         else:
             prior = {"att": 1.0, "def": 1.0}
@@ -140,11 +157,16 @@ def main():
         row = cur_tables.get(code, {}).get(team)
         played = row["P"] if row else 0
         cur = cur_ratings.get(code, {}).get(team)
-        return E.blend(prior, cur, played), carried, played, src
+        return E.blend(prior, cur, played), carried, played, src, prior_name
 
     def team_block(team, code):
-        rating, carried, played, src = rating_for(team, code)
-        prow = prior_tables.get(src, {}).get(team) if src else None
+        # prior_name is the club under openfootball's spelling, team is the
+        # name the fixture list gave. Using the latter here was marking clubs
+        # whose rating had just been resolved successfully as having no season
+        # on file, which flagged the fixture, cost it a confidence tier and
+        # threw away its form.
+        rating, carried, played, src, prior_name = rating_for(team, code)
+        prow = prior_tables.get(src, {}).get(prior_name) if src else None
         crow = cur_tables.get(code, {}).get(team)
         fp = E.form_points(crow)
         adj = ADJUSTMENTS.get(team, {})
