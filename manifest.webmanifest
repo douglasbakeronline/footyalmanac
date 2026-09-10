@@ -1,0 +1,35 @@
+{
+ "name": "The Football Almanac",
+ "short_name": "Almanac",
+ "description": "Win, draw and lose probabilities for every fixture, published before kick-off and graded against the result.",
+ "start_url": "./",
+ "display": "standalone",
+ "background_color": "#f0e8d6",
+ "theme_color": "#c8102e",
+ "icons": [
+  {
+   "src": "icon-120.png",
+   "sizes": "120x120",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-152.png",
+   "sizes": "152x152",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-167.png",
+   "sizes": "167x167",
+   "type": "image/png",
+   "purpose": "any"
+  },
+  {
+   "src": "icon-180.png",
+   "sizes": "180x180",
+   "type": "image/png",
+   "purpose": "any"
+  }
+ ]
+}

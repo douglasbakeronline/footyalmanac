@@ -6,7 +6,33 @@
 <title>Football Almanac — complete fixture statistics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bevan&family=Archivo+Black&family=Oswald:wght@600&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Home screen and browser icons.
+
+     The touch icon has to be a real PNG at a real URL: iOS fetches it when
+     someone adds the page to their home screen, and it will not take an SVG or
+     a data URI. The favicon is inlined instead, so dashboard.html stays the one
+     self-contained file it promises to be when it is emailed or opened off a
+     disk. Both are the same drawing, from brandassets.py. -->
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,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">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<!-- Saved to a home screen this opens without Safari's chrome, which is what
+     you want for a board you check rather than a page you browse. The short
+     title is what fits under an icon; the full one would be truncated. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Almanac">
+<meta name="application-name" content="Almanac">
+<meta name="theme-color" content="#f0e8d6">
+<meta name="color-scheme" content="light">
+
 <style>
 :root{
   /* A 1950s American sports annual: aged stock, banner red, foil gold,
@@ -78,29 +104,58 @@ header{padding:18px 0 0}
   color:#fff;font-style:normal;letter-spacing:.18em;
   font-size:clamp(9px,1.6vw,15px);
 }
-h1{margin:5px 0 0;line-height:.82}
+/* The title block gets its own width rather than running the full span of the
+   cover. The reference for this thing is a portrait book jacket; the page is a
+   wide landscape band, and filling 1180px with two words means either type
+   three hundred pixels tall or letterforms stretched out of shape. Capping the
+   block keeps the stack in book proportions and the type at a sane size. */
+h1{margin:clamp(14px,2.4vw,26px) auto 0;line-height:.82;max-width:min(100%,760px)}
 h1 span{
   display:block;font-family:var(--f-display);font-weight:400;text-transform:uppercase;
   letter-spacing:-.012em;white-space:nowrap;
-  transform:scaleX(1.05);transform-origin:center;
+  /* --fit is measured and set by fitWordmark() once the display face has
+     loaded. The 1.05 fallback is what the CSS used to hard-code, so with no
+     JS the wordmark behaves exactly as it did before. */
+  transform:scaleX(var(--fit,1.05));transform-origin:center;
 }
+/* Three lines, three faces. The identity comes from the letterforms rather
+   than from effects piled on a single face:
+
+     FOOTBALL   Bevan, a heavy slab with crisp square serifs
+     ALMANAC    Archivo Black, wide and heavy with no serifs at all
+     strapline  Oswald, condensed and widely letterspaced
+
+   Both title words are fitted to the full width of the cover, so two faces of
+   very different natural width still stack flush. That is the fitting routine
+   earning its keep rather than being a nicety.
+
+   On effects: the stroke is gone. What is left is ONE hard offset per title
+   line, no blur, and it is not decoration. Measured on the cover's grey
+   ground the red reads 1.82:1 and the white 2.61:1, both under the 3:1
+   minimum for large text, so with no edge at all they are genuinely hard to
+   read rather than merely less pretty. A single offset is the cheapest thing
+   that fixes that and stays crisp. Ink measures 7.38:1, which is why the
+   strapline carries no shadow whatsoever.
+
+   If you want the titles clean too, the ground has to go dark: set .cover's
+   background to #14100c and both offsets can come off. */
+h1 .a,h1 .b{font-size:clamp(34px,8.9vw,88px)}
 h1 .a{
-  color:#e0202c;font-size:clamp(34px,8.9vw,88px);
-  text-shadow:
-    4px 0 0 #100e0c,-4px 0 0 #100e0c,0 4px 0 #100e0c,0 -4px 0 #100e0c,
-    3px 3px 0 #100e0c,-3px 3px 0 #100e0c,3px -3px 0 #100e0c,-3px -3px 0 #100e0c;
+  font-family:'Bevan','Alfa Slab One',var(--f-display);
+  color:#e0202c;text-shadow:.036em .036em 0 #100e0c;
 }
 h1 .b{
-  color:#fff;font-size:clamp(34px,8.9vw,88px);margin-top:-.04em;
-  text-shadow:
-    4px 0 0 #100e0c,-4px 0 0 #100e0c,0 4px 0 #100e0c,0 -4px 0 #100e0c,
-    3px 3px 0 #100e0c,-3px 3px 0 #100e0c,3px -3px 0 #100e0c,-3px -3px 0 #100e0c,
-    8px 8px 0 rgba(16,14,12,.55);
+  font-family:'Archivo Black','Anton',var(--f-display);
+  color:#fff;letter-spacing:-.035em;
+  /* set in em so the gap holds its proportion at every size, rather than
+     opening up on desktop and closing on a phone */
+  margin-top:.07em;
+  text-shadow:.05em .05em 0 #100e0c;
 }
 .cover .sub{
-  font-family:var(--f-ui);font-weight:700;color:#c8102e;
-  font-size:clamp(11px,2.5vw,19px);letter-spacing:.05em;text-transform:uppercase;
-  margin-top:6px;text-align:center;
+  font-family:'Oswald',var(--f-ui);font-weight:600;color:#100e0c;
+  font-size:clamp(11px,2.4vw,18px);letter-spacing:.17em;text-transform:uppercase;
+  margin-top:8px;text-align:center;
 }
 .cover .yr{margin-top:5px;background:#100e0c;padding:2px 0;text-align:center}
 .cover .yr b{
@@ -309,7 +364,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
   letter-spacing:.08em;text-transform:uppercase;
   border:0;background:#100e0c;color:#9a9086;padding:7px 10px;cursor:pointer;
-  border-right:1px solid #3a342e;
+  border-right:1px solid #3a342e;min-height:44px;
 }
 .views button:last-child{border-right:0}
 .views button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
@@ -470,6 +525,43 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--mute);max-width:80ch}
 footer a{color:var(--ink-2)}
 
+@media (max-width:600px){
+  /* On a 390px phone the masthead cost 611px and the first fixture sat 957px
+     down the page. Almost none of that was the cover itself: the brand block
+     is 130px of it. The rest was the stat panel wrapping to three rows, two
+     stacked blocks of explanatory prose, and a filter row that grows without
+     limit as competitions are added. None of the following changes the look
+     of the cover. */
+  header{padding-top:12px}
+  .cover{padding:7px}
+  .cover .sub{margin-top:4px}
+  .cover .yr{margin-top:4px}
+
+  /* The stat panel was taking 199px, more than the cover above it. Trimmed by
+     type size and padding rather than by dropping to three columns or a
+     scrolling row: both of those either crop or hide the baseline figure, and
+     the comparison between the model and the baseline is the one number the
+     site exists to make. Nothing here is truncated. */
+  .meta div{padding:6px 9px}
+  .meta span{font-size:8.5px;letter-spacing:.09em}
+  .meta b{font-size:13.5px}
+  .meta small{font-size:10px}
+
+  .note{margin-top:9px;padding:8px 11px;font-size:12px}
+  .readbar{margin-top:7px;font-size:12px}
+
+  /* The competition filter wrapped to five rows at forty competitions and
+     would keep growing. One scrolling row instead, which is the pattern every
+     app uses for a long filter strip, and it stops the control block being
+     taller than the content it filters. */
+  .chips{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;
+         scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  button.chip{flex:0 0 auto;min-height:36px;padding:5px 9px}
+
+  .controls{gap:8px;padding:8px 0 7px}
+  .boards button,.seg button{min-height:40px}
+}
 @media (max-width:860px){
   .ruler{display:none}
   .meta div{flex:1 1 46%;min-width:0;padding:7px 11px}
@@ -598,6 +690,76 @@ let FLAGS = null;
    not run, the page still holds yesterday's games and will happily show them as
    though they were the slate. Days in the past are dropped at render time and
    an out-of-date build says so, rather than quietly looking wrong. */
+/* ---------- wordmark fitting ----------
+   The cover only reads right when the two title words run the full width of
+   it. That was hard-coded as a 1.05 horizontal stretch on a viewport-sized
+   font, which meant the type overflowed its own box above 1024px and fell
+   short of it below 480px, and would have been wrong again for anyone whose
+   browser never loaded the display face.
+
+   Measuring instead of guessing costs a few lines and is correct at every
+   width and in every font. The scale is bounded so a missing face produces
+   something slightly off rather than something absurd. */
+function textWidth(el){
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  return r.getBoundingClientRect().width;
+}
+
+function fitWordmark(){
+  const h1 = document.querySelector("header h1");
+  const cover = document.querySelector(".cover");
+  if(!h1 || !cover) return;
+  // the cover's own padding, plus clearance for the hard offset that sits
+  // outside each title line's own advance width
+  const room = Math.min(cover.clientWidth - 20, h1.clientWidth);
+  if(room <= 0) return;
+
+  h1.querySelectorAll("span").forEach(el => {
+    // Size first, stretch second. The two title lines are set in different
+    // faces now, and Archivo Black is far wider per character than Anton, so
+    // fitting on horizontal scale alone would squash one of them out of shape
+    // to make the widths agree. Adjusting the size does most of the work at
+    // the face's own proportions, and the stretch only takes up the remainder.
+    el.style.removeProperty("font-size");
+    el.style.setProperty("--fit", 1);
+    const base = parseFloat(getComputedStyle(el).fontSize);
+    // A Range around the text, not the element's own box. These spans are
+    // display:block, so their width is the container's width whatever the
+    // type inside is doing, and measuring the box would report a perfect fit
+    // at every size while the letters sat at whatever width they liked.
+    const natural = textWidth(el);
+    if(!base || !natural) return;
+
+    // The ceiling is generous on purpose. Anton is narrow enough to need
+    // nearly three times the CSS size to fill the cover, and a tight clamp
+    // meant both lines pinned to the ceiling and the wider face then bled out
+    // of the box. Each line finds its own size; the stretch afterwards is
+    // held near 1 so neither face is visibly distorted to make them agree.
+    // Size does most of the fitting, at each face's own proportions, and the
+    // stretch takes up whatever is left. The size ceiling is what stops the
+    // masthead growing to fill a wide viewport; the stretch bound is what
+    // stops a narrow face being pulled out of shape to reach the edge.
+    const sized = Math.max(base * 0.4, Math.min(base * 1.9, base * (room / natural)));
+    el.style.fontSize = sized.toFixed(2) + "px";
+
+    const after = textWidth(el);
+    if(after) el.style.setProperty("--fit",
+      Math.max(0.9, Math.min(1.45, room / after)).toFixed(4));
+  });
+}
+
+
+/* Runs once now, again when the display face arrives, and on resize. Fonts
+   land after first paint, so fitting only on load measures the fallback. */
+fitWordmark();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
+let fitTimer;
+addEventListener("resize", () => {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(fitWordmark, 120);
+});
+
 const todayISO = (()=>{ const d=new Date();
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); })();
 
