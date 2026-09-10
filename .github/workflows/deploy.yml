@@ -35,6 +35,13 @@ jobs:
         with:
           python-version: "3.12"
 
+      # A club whose two spellings stop meeting is invisible: no error, no
+      # flag on the page, just a fixture priced as though this season had not
+      # started. Checked before the build so a bad name change stops the
+      # publish rather than reaching the board.
+      - name: Check the club-name matcher
+        run: python3 nametest.py
+
       # No pip install: the whole thing runs on the standard library.
       - name: Build today's slate
         run: python3 build.py --days 5 --top 50
@@ -77,6 +84,9 @@ jobs:
           mkdir -p /tmp/archive
           cp -r predictions /tmp/archive/
           cp record.json /tmp/archive/
+          # The season-so-far cache. Without it every run re-walks a hundred
+          # days for each of sixty-one competitions instead of three.
+          cp -r current /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -84,10 +94,11 @@ jobs:
             # Overlaid, not replaced: another run may have archived a day
             # this one does not have, and swapping the directory wholesale
             # would silently delete it.
-            mkdir -p predictions
+            mkdir -p predictions current
             cp -r /tmp/archive/predictions/. predictions/
+            cp -r /tmp/archive/current/. current/ 2>/dev/null || true
             cp /tmp/archive/record.json .
-            git add -A predictions record.json
+            git add -A predictions current record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
