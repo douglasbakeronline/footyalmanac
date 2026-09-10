@@ -7,7 +7,7 @@ Build the dashboard payload.
 Reads openfootball, rates every team, prices every upcoming fixture, keeps the
 top N by confidence per day, writes data.json next to index.html.
 """
-import argparse, json, os, sys
+import argparse, concurrent.futures as cf, json, os, sys
 from collections import defaultdict
 from datetime import date, timedelta
 
@@ -68,6 +68,8 @@ def main():
     ap.add_argument("--from", dest="start", default=None, help="YYYY-MM-DD, defaults to today")
     ap.add_argument("--out", default=None)
     ap.add_argument("--cache", default=None, help="directory to cache raw downloads")
+    ap.add_argument("--no-topup", action="store_true",
+                    help="skip walking this season for live-sourced competitions")
     args = ap.parse_args()
 
     start = date.fromisoformat(args.start) if args.start else date.today()
@@ -103,6 +105,35 @@ def main():
         print(f"  live fallback supplied: {', '.join(got) if got else 'nothing'}",
               file=sys.stderr)
 
+    # The fallback above asks only for the fixture window, so every row it
+    # returns is a match not yet played and the current-season table for those
+    # competitions was built from nothing. Walk the season so far separately
+    # and cache it: sixty-one leagues had no idea this season had started.
+    season_so_far = {}
+    if not args.no_topup:
+        live = [c for c in gaps if c in fixtures and not E.LEAGUES[c].get("cup")]
+        if live:
+            print(f"  topping up the season so far for {len(live)} "
+                  f"competitions ...", file=sys.stderr)
+            issues, fetched = [], 0
+
+            def top(c):
+                s = E.LEAGUES[c].get("season", SEASON)
+                return c, S.topup_current(c, s, until=start - timedelta(days=1),
+                                          log=issues)
+
+            # Six at a time. The scoreboard is a public endpoint being asked
+            # for a lot of days at once, and politeness costs a minute.
+            with cf.ThreadPoolExecutor(max_workers=6) as pool:
+                for c, (rows, n) in pool.map(top, live):
+                    fetched += n
+                    if rows:
+                        season_so_far[c] = list(rows.values())
+            print(f"  {fetched} day(s) fetched, {len(season_so_far)} "
+                  f"competitions with results on file", file=sys.stderr)
+            for line in issues[:5]:
+                print(f"    topup {line}", file=sys.stderr)
+
     last_league = team_pool(history, fixtures)
 
     # ---- ratings -----------------------------------------------------------
@@ -120,8 +151,20 @@ def main():
     # current-season tables, from whatever has been played so far
     cur_tables, cur_ratings = {}, {}
     for code, rows in fixtures.items():
-        played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
-                  for r in rows if r["hg"] is not None]
+        # The fixture list carries results for the competitions openfootball
+        # supplies as a whole season; for the rest the cache above is the only
+        # place this season exists. Merged rather than either/or, so a result
+        # that has landed since the last top-up still counts.
+        seen, played = set(), []
+        for r in list(rows) + season_so_far.get(code, []):
+            if r["hg"] is None:
+                continue
+            key = (r["date"], r["home"], r["away"])
+            if key in seen:
+                continue
+            seen.add(key)
+            played.append((r["date"], r["home"], r["away"], r["hg"], r["ag"]))
+        played.sort()
         tbl = E.build_table(played)
         cur_tables[code] = tbl
         # Shrunk, not raw. A one-match sample must regress hard toward the
@@ -129,6 +172,30 @@ def main():
         cur_ratings[code] = E.strength_from_table(tbl) if played else {}
 
     rated_pool = set(last_league)
+    _dom_cache = {}
+
+    def domestic_of(team):
+        """The division a club plays in, under either source's spelling.
+
+        A cup tie has no table of its own, so each side is rated in its own
+        division and the two are converted into a shared frame. Resolving that
+        division on the raw name alone failed for every club the live source
+        spells differently, which is most of them: the tie fell back to the
+        cup's own code, both sides came out unrated, and the fixture was priced
+        off two placeholder ratings.
+
+        Returns (division code or None, the club under the prior season's
+        spelling), so callers that need the resolved name do not have to run
+        the match a second time.
+        """
+        if team not in _dom_cache:
+            src, name = last_league.get(team), team
+            if src is None:
+                alt = S.match_team(team, rated_pool)
+                if alt:
+                    src, name = last_league.get(alt), alt
+            _dom_cache[team] = (src, name)
+        return _dom_cache[team]
 
     def rating_for(team, code):
         """Prior (carried across divisions if needed) blended with this season.
@@ -140,14 +207,7 @@ def main():
         Looking either up with the other's name returns nothing and says so
         silently, so the resolved name travels back out with the rating.
         """
-        src = last_league.get(team)
-        prior_name = team
-        if src is None:
-            # A live-source club name may not match openfootball's spelling.
-            alt = S.match_team(team, rated_pool)
-            if alt:
-                src = last_league.get(alt)
-                prior_name = alt
+        src, prior_name = domestic_of(team)
         if src and src in prior_ratings and prior_name in prior_ratings[src]:
             prior = E.transfer_rating(prior_ratings[src][prior_name], src, code)
             carried = (src != code)
@@ -227,8 +287,8 @@ def main():
             # A side whose division cannot be resolved has no rating anyway, so
             # fall back to the cup's own code rather than inventing a division.
             # team_block will mark it unrated and the row will say so.
-            h_src = last_league.get(r["home"]) if meta.get("cup") else None
-            a_src = last_league.get(r["away"]) if meta.get("cup") else None
+            h_src = domestic_of(r["home"])[0] if meta.get("cup") else None
+            a_src = domestic_of(r["away"])[0] if meta.get("cup") else None
             h_league = h_src or code
             a_league = a_src or code
             hb, hr = team_block(r["home"], h_league)

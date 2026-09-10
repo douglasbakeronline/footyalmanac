@@ -11,7 +11,7 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import json, os, re, urllib.request, concurrent.futures
+import json, os, re, time, urllib.request, concurrent.futures
 from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
@@ -161,6 +161,96 @@ def local_history(code, season):
     out = [(r["date"], clean_name(r["home"]), clean_name(r["away"]), r["hg"], r["ag"])
            for r in rows if r.get("hg") is not None]
     return (out, True) if out else ([], False)
+
+
+# --- the season so far, for competitions the live source supplies ------------
+
+CURRENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current")
+
+# How far back to re-ask on every build. A scoreboard corrects a scoreline,
+# finalises an abandoned match, or fills in a game that was still in progress
+# when yesterday's build ran, so the tail is never taken on trust.
+RESCAN = 3
+
+
+def season_window(season):
+    """The calendar range a season string covers.
+
+    A calendar-year league ("2026") runs January to December; a split-year one
+    ("2026-27") runs July to June. Drawn a month wide at each end, because
+    play-offs and rearranged fixtures do not respect the boundary.
+    """
+    if "-" in season:
+        y = int(season.split("-")[0])
+        return date(y, 6, 1), date(y + 1, 7, 31)
+    y = int(season)
+    return date(y, 1, 1), date(y, 12, 31)
+
+
+def _current_path(code, season):
+    return os.path.join(CURRENT_DIR, f"{code}-{season}.json")
+
+
+def load_current(code, season):
+    """Results so far this season, plus the date they were walked up to."""
+    try:
+        doc = json.load(open(_current_path(code, season)))
+    except Exception:
+        return {}, None
+    rows = {(r["date"], r["home"], r["away"]): r for r in doc.get("rows", [])}
+    through = doc.get("through")
+    return rows, (date.fromisoformat(through) if through else None)
+
+
+def topup_current(code, season, until=None, sleep=0.12, log=None):
+    """Walk this season's completed matches forward and cache the result.
+
+    The problem this solves
+    -----------------------
+    For the sixty-one competitions the live source supplies, the build asked
+    the scoreboard only for the fixture window — today and the next few days.
+    Every row that came back was a match not yet played, so the current-season
+    table was built from nothing, every club came back with no matches played,
+    and the blend fell all the way to last season. The Greek, Mexican, American
+    and Japanese leagues were all being priced on last year and nothing else.
+
+    Fetching the season fresh each morning is three hundred requests per
+    competition, so it is walked once and topped up. The cache is committed by
+    the workflow, so a normal build asks for three or four days.
+    """
+    start, _ = season_window(season)
+    until = until or (date.today() - timedelta(days=1))
+    rows, through = load_current(code, season)
+    # Re-ask the tail: yesterday's build may have caught a game in progress.
+    day = max(start, through - timedelta(days=RESCAN)) if through else start
+    if day > until:
+        return rows, 0
+
+    slugs = ESPN_SLUGS.get(code) or []
+    if not slugs:
+        return rows, 0
+    slug, fetched = slugs[0], 0
+    while day <= until:
+        errs = []
+        for ev in _espn_day(slug, day, 25, errs):
+            r = _row(ev)
+            if r and r["hg"] is not None:
+                rows[(r["date"], r["home"], r["away"])] = {
+                    "date": r["date"], "home": r["home"], "away": r["away"],
+                    "hg": r["hg"], "ag": r["ag"]}
+        if errs and log is not None:
+            log.append(f"{code} {day.isoformat()}: {errs[0]}")
+        fetched += 1
+        day += timedelta(days=1)
+        time.sleep(sleep)
+
+    os.makedirs(CURRENT_DIR, exist_ok=True)
+    tmp = _current_path(code, season) + ".tmp"
+    json.dump({"through": until.isoformat(), "rows": sorted(rows.values(),
+               key=lambda r: (r["date"], r["home"]))},
+              open(tmp, "w"), separators=(",", ":"))
+    os.replace(tmp, _current_path(code, season))
+    return rows, fetched
 
 
 def fetch_season(code, season, cache_dir=None):
