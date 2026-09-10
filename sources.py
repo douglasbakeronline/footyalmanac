@@ -577,6 +577,24 @@ def _base(n):
     return " ".join(w for w in n.split() if w not in drop).strip()
 
 
+def _nonum(norm):
+    """The same name with bare numbers taken out.
+
+    A number in a club name is nearly always a founding year, and only one of
+    the two sources tends to carry it: openfootball says "Bayer 04 Leverkusen"
+    where the live source says "Bayer Leverkusen", and containment cannot see
+    through a token wedged into the middle of the name.
+
+    Nearly always, though, is not always — CSKA Sofia and CSKA 1948 Sofia are
+    two different clubs in the same city, and the year is the only thing
+    telling them apart. So this is a last resort in match_team rather than part
+    of the comparable form, and it still has to come back with exactly one
+    candidate before anything is matched.
+    """
+    words = [w for w in norm.split() if not w.isdigit()]
+    return " ".join(words) if words else norm
+
+
 def _norm(n):
     """The comparable form of a club name.
 
@@ -660,4 +678,17 @@ def match_team(name, pool):
             and not _bare_place(k)]
     # guard two: more than one candidate means the name is ambiguous, and a
     # guess here is a silently wrong rating rather than a visible gap
-    return hits[0][1] if len(hits) == 1 else None
+    if len(hits) == 1:
+        return hits[0][1]
+    if hits:
+        return None
+
+    # Last resort: try again with founding years taken out of both sides. Both
+    # guards still apply, so a name that only a year separates from another
+    # club comes back unmatched rather than wrong.
+    bare = _nonum(target)
+    hits = [(k, v) for k, v in ((_nonum(k), v) for k, v in norm.items())
+            if (bare in k or k in bare) and min(len(k), len(bare)) >= 4
+            and not _bare_place(k)]
+    hits = {v for _, v in hits}
+    return next(iter(hits)) if len(hits) == 1 else None

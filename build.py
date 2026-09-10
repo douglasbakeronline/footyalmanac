@@ -154,10 +154,23 @@ def main():
         else:
             prior = {"att": 1.0, "def": 1.0}
             carried = None
-        row = cur_tables.get(code, {}).get(team)
+        # Under either name. A cup tie is rated against the club's DOMESTIC
+        # league, but the fixture carried the live source's spelling, and that
+        # league's current table is keyed by whatever built it. Asking for
+        # "Bayern Munich" in a table keyed "FC Bayern München" returns nothing,
+        # played comes back 0, and the blend falls all the way back to last
+        # season: every European tie was being priced as though this season had
+        # not started.
+        ct = cur_tables.get(code, {})
+        cur_name = team if team in ct else (prior_name if prior_name in ct else None)
+        if cur_name is None and ct:
+            # Neither spelling is in the table. A promoted club has no prior
+            # season to resolve through, so this is its only chance to be found.
+            cur_name = S.match_team(team, set(ct))
+        row = ct.get(cur_name) if cur_name else None
         played = row["P"] if row else 0
-        cur = cur_ratings.get(code, {}).get(team)
-        return E.blend(prior, cur, played), carried, played, src, prior_name
+        cur = cur_ratings.get(code, {}).get(cur_name) if cur_name else None
+        return E.blend(prior, cur, played), carried, played, src, prior_name, cur_name
 
     def team_block(team, code):
         # prior_name is the club under openfootball's spelling, team is the
@@ -165,12 +178,12 @@ def main():
         # whose rating had just been resolved successfully as having no season
         # on file, which flagged the fixture, cost it a confidence tier and
         # threw away its form.
-        rating, carried, played, src, prior_name = rating_for(team, code)
+        rating, carried, played, src, prior_name, cur_name = rating_for(team, code)
         prow = prior_tables.get(src, {}).get(prior_name) if src else None
-        crow = cur_tables.get(code, {}).get(team)
+        crow = cur_tables.get(code, {}).get(cur_name) if cur_name else None
         fp = E.form_points(crow)
-        adj = ADJUSTMENTS.get(team, {})
-        out = (ABSENCES.get(team) or {}).get("out") or []
+        adj = ADJUSTMENTS.get(team) or ADJUSTMENTS.get(prior_name) or {}
+        out = ((ABSENCES.get(team) or ABSENCES.get(prior_name) or {}).get("out")) or []
         abs_att, abs_def = E.absence_factors(out)
         return {
             "name": team,
