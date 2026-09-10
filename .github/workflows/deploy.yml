@@ -59,13 +59,52 @@ jobs:
 
       # Pages artifacts do not persist between runs, so the prediction archive
       # has to live in the repository or the record resets to zero every day.
+      # The archive commit races anything else pushing to main. Uploading files
+      # through the web UI while a build is running is enough: the run checked
+      # out an older main, and by the time it pushes it is no longer a
+      # fast-forward and the whole job fails, taking the deploy with it.
+      #
+      # Rebasing is the wrong tool here. Both files are regenerated outputs of
+      # this run, not edits to be merged, so the fix is to put them on top of
+      # whatever main is now rather than to reconcile two versions of them.
+      # Fetch, reset onto the remote tip, drop the freshly built files back in,
+      # commit, push. Retried, because main can move again while that happens.
       - name: Commit the archive
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A predictions record.json
-          git diff --staged --quiet || git commit -m "Archive predictions and record for $(date +%F)"
-          git push
+
+          mkdir -p /tmp/archive
+          cp -r predictions /tmp/archive/
+          cp record.json /tmp/archive/
+
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --hard origin/main
+            # Overlaid, not replaced: another run may have archived a day
+            # this one does not have, and swapping the directory wholesale
+            # would silently delete it.
+            mkdir -p predictions
+            cp -r /tmp/archive/predictions/. predictions/
+            cp /tmp/archive/record.json .
+            git add -A predictions record.json
+            if git diff --staged --quiet; then
+              echo "nothing new to archive"
+              exit 0
+            fi
+            git commit -m "Archive predictions and record for $(date +%F)"
+            if git push; then
+              exit 0
+            fi
+            echo "push rejected, main moved under us; retrying ($attempt of 3)"
+            sleep $((attempt * 5))
+          done
+
+          # A lost archive costs one day of grading. A failed job costs the
+          # deploy, and the site goes stale instead. The lesser of the two.
+          echo "::warning::could not push the archive after three attempts; \
+                today's predictions will not be graded later"
+          git reset --hard origin/main
 
       - name: Rebuild with the updated record
         run: python3 build.py --days 5 --top 50
