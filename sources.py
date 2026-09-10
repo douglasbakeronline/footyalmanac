@@ -139,14 +139,42 @@ def clean_name(n):
 
 # --- completed seasons ------------------------------------------------------
 
+HISTORY_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "history")
+
+
+def local_history(code, season):
+    """A completed season cached in the repository by backfill.py.
+
+    The competitions openfootball has never carried have no other way to get a
+    prior season, and without one every side is unrated and the confidence
+    number is a placeholder. Walking the live scoreboard for a whole season is
+    three hundred requests, which is fine to do once and unacceptable to do
+    every morning, so the result is committed.
+    """
+    path = os.path.join(HISTORY_DIR, f"{code}-{season}.json")
+    if not os.path.exists(path):
+        return [], False
+    try:
+        rows = json.load(open(path))
+    except Exception:
+        return [], False
+    out = [(r["date"], clean_name(r["home"]), clean_name(r["away"]), r["hg"], r["ag"])
+           for r in rows if r.get("hg") is not None]
+    return (out, True) if out else ([], False)
+
+
 def fetch_season(code, season, cache_dir=None):
     """Return (matches, ok). matches: list of (date, home, away, hg, ag).
 
-    Tries football.json first, then falls back to parsing results out of the
-    plain-text schedule. The smaller European leagues exist only as text, and
-    those files carry completed scores alongside future fixtures, so the same
-    parser serves both purposes.
+    Order is: the local backfill, then openfootball's football.json, then
+    openfootball's plain-text schedule. The local file comes first because a
+    competition that has one is a competition openfootball does not carry, and
+    going out to the network to be told so is pure latency.
     """
+    rows, ok = local_history(code, season)
+    if ok:
+        return rows, True
+
     url = f"{RAW}/football.json/master/{season}/{code}.json"
     try:
         doc = json.loads(_get(url, cache_dir))
@@ -391,6 +419,40 @@ ESPN_SLUGS = {
     "eu.elq": ["uefa.europa_qual"],
     "eu.ec":  ["uefa.europa.conf"],
     "eu.ecq": ["uefa.europa.conf_qual"],
+
+    # ---- competitions that exist ONLY here ------------------------------
+    # openfootball publishes no schedule for any of these, so the slug is the
+    # whole source: fixtures, results, and the past season backfill.py walks to
+    # produce their ratings.
+    #
+    # These slugs are unverified. They follow ESPN's published naming, but the
+    # environment they were written in cannot reach ESPN, so any of them could
+    # be wrong. A wrong slug returns nothing and the competition silently does
+    # not appear, which is the safe failure. Run `python3 backfill.py --probe`
+    # somewhere with network access to find out which ones answer, and delete
+    # the rest.
+    "us.1": ["usa.1"], "us.2": ["usa.usl.1"], "mx.1": ["mex.1"],
+    "ar.1": ["arg.1"], "br.2": ["bra.2"], "co.1": ["col.1"], "cl.1": ["chi.1"],
+    "uy.1": ["uru.1"], "pe.1": ["per.1"], "ec.1": ["ecu.1"],
+    "sa.lib": ["conmebol.libertadores"], "sa.sud": ["conmebol.sudamericana"],
+    "na.ccc": ["concacaf.champions_cup", "concacaf.champions"],
+    "jp.1": ["jpn.1"], "kr.1": ["kor.1"], "cn.1": ["chn.1"], "au.1": ["aus.1"],
+    "sa.1": ["ksa.1"], "ae.1": ["uae.1"], "in.1": ["ind.1"],
+    "ch.1": ["sui.1"], "ru.1": ["rus.1"], "pt.2": ["por.2"], "nl.2": ["ned.2"],
+    "de.3": ["ger.3"], "sco.2": ["sco.2"],
+
+    # The European leagues that used to be ratings-only. They already carry
+    # history from openfootball, so a working slug here adds their fixtures
+    # without needing a backfill at all.
+    "nor.1": ["nor.1"], "swe.1": ["swe.1"], "dnk.1": ["den.1"], "fin.1": ["fin.1"],
+    "isl.1": ["isl.1"], "irl.1": ["irl.1"], "cze.1": ["cze.1"], "pol.1": ["pol.1"],
+    "ukr.1": ["ukr.1"], "srb.1": ["srb.1"], "hrv.1": ["cro.1"], "rou.1": ["rou.1"],
+    "cyp.1": ["cyp.1"], "hun.1": ["hun.1"], "bgr.1": ["bul.1"], "svk.1": ["svk.1"],
+    "svn.1": ["slv.1"], "isr.1": ["isr.1"], "bih.1": ["bih.1"], "alb.1": ["alb.1"],
+    "arm.1": ["arm.1"], "geo.1": ["geo.1"], "ltu.1": ["ltu.1"], "lva.1": ["lva.1"],
+    "est.1": ["est.1"], "mkd.1": ["mkd.1"], "mne.1": ["mne.1"], "aze.1": ["aze.1"],
+    "blr.1": ["blr.1"], "mda.1": ["mda.1"], "nir.1": ["nir.1"], "wal.1": ["wal.1"],
+    "fro.1": ["fro.1"], "lux.1": ["lux.1"], "mlt.1": ["mlt.1"],
 }
 
 

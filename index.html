@@ -588,6 +588,10 @@ if(!D || !D.days){
 const $ = s => document.querySelector(s);
 const pct = x => Math.round(x*100);
 const state = { leagues:new Set(), sort:"conf", open:null, board:"win" };
+// Which flags the sprite actually carries. Read once, lazily, because flag() is
+// called while building the league chips, before this file's later
+// declarations have run.
+let FLAGS = null;
 
 /* ---------- freshness ----------
    A build is a snapshot with a few days of fixtures in it. If the rebuild does
@@ -787,8 +791,13 @@ const rank = {
 // pushed around, so the ranking always means the same thing.
 const sortFns = rank;
 
+/* The flag set is read off the sprite rather than hard-coded, so a competition
+   from a country with no flag drawn yet renders without one instead of leaving
+   an empty box on every row. Add a symbol to the sprite and it appears. */
 function flag(iso, country){
-  if(!iso) return "";
+  if(FLAGS === null) FLAGS = new Set(
+    [...document.querySelectorAll('symbol[id^="f-"]')].map(s => s.id.slice(2)));
+  if(!iso || !FLAGS.has(iso)) return "";
   return `<svg class="flg" role="img" aria-label="${country}"><use href="#f-${iso}"/></svg>`;
 }
 
