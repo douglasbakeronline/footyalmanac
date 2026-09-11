@@ -1,0 +1,36 @@
+{
+ "generated": "2026-09-11T14:07:03+00:00",
+ "source": "football-data.co.uk",
+ "edge": 0.05,
+ "pickMin": 0.55,
+ "seasons": {
+  "fit": {
+   "n": 4442,
+   "logLossModel": 1.0217,
+   "logLossMarket": 0.9983,
+   "bets": 394,
+   "roi": -0.0812,
+   "pRoiNotPositive": 0.974,
+   "clvBets": 394,
+   "clv": -0.0355,
+   "pClvNotPositive": 1.0,
+   "season": "2025-26",
+   "pricedMatches": 7274
+  },
+  "check": {
+   "n": 289,
+   "logLossModel": 1.0134,
+   "logLossMarket": 0.9856,
+   "bets": 15,
+   "roi": 0.2933,
+   "pRoiNotPositive": 0.09,
+   "clvBets": 15,
+   "clv": -0.0123,
+   "pClvNotPositive": 0.66,
+   "season": "2026-27",
+   "pricedMatches": 810
+  }
+ },
+ "valueGate": false,
+ "verdict": "The bookmakers price matches better than the model, and its value picks have not beaten the closing price. No value is flagged; the market's number is shown beside the model's."
+}
