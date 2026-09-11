@@ -557,20 +557,74 @@ def transfer_by_strength(rating, s_from, s_to, k=SHRINK_ON_TRANSFER, played=38):
             "def": w * dfn + (1 - w) * 1.0}
 
 
+# ---------------------------------------------------------------------------
+# Continental ties: what eurotest.py found
+#
+# Priced the way the build would have priced them on the morning, every
+# European tie of 2024-25 (745) and 2025-26 (451) came out under-confident at
+# every band: quoted 76%, landed 95%; quoted 58%, landed 68%. Two causes.
+#
+# 1. The frame shrink. SHRINK_ON_TRANSFER exists for clubs that have changed
+#    division, and cup_match was applying it to both sides of every tie, a 21%
+#    pull toward average for clubs that had moved nowhere. Removing it:
+#    -0.0040 log loss on 2024-25 (p worse 0.04), -0.0044 on 2025-26 (0.09).
+#    Only continental ties were tested, so domestic cups keep the old pull.
+#
+# 2. The coefficients. Hand-set, and too close together: the top leagues were
+#    too low and the small ones too high. europe.json replaces them for
+#    continental ties only, fitted on 2024-25 with a ridge back toward the
+#    hand-set values (strength chosen by 5-fold CV inside the fit season) and
+#    checked on 2025-26. Domestic transfers and domestic cups never read it:
+#    en.2 is not in the fit, and moving en.1 alone would crush every promoted
+#    side. A league with no European data keeps its hand-set value, which is
+#    exactly what the ridge would have answered for it.
+# ---------------------------------------------------------------------------
+CONTINENTAL_FRAME_K = 0.0
+
+CONTINENTAL = {}
+CONTINENTAL_FITTED = set()   # every league the fit had ties for, moved or not
+_eu_path = __import__("os").path.join(
+    __import__("os").path.dirname(__import__("os").path.abspath(__file__)),
+    "europe.json")
+if __import__("os").path.exists(_eu_path):
+    try:
+        _eu = __import__("json").load(open(_eu_path))
+        CONTINENTAL = {k: float(v) for k, v in (_eu.get("strength") or {}).items()
+                       if isinstance(v, (int, float)) and v > 0 and k in LEAGUES}
+        CONTINENTAL_FITTED = set(CONTINENTAL)
+    except Exception:
+        CONTINENTAL, CONTINENTAL_FITTED = {}, set()
+
+
+def continental(code):
+    """UEFA's club competitions and their qualifiers."""
+    return str(code).startswith("eu.")
+
+
+def tie_strength(league, cup_code):
+    """The strength a side carries into a cup tie."""
+    if continental(cup_code) and league in CONTINENTAL:
+        return CONTINENTAL[league]
+    return LEAGUES[league]["strength"]
+
+
 def cup_frame(s_home, s_away):
     """The shared yardstick for a tie between two competitions."""
     return (s_home + s_away) / 2.0
 
 
 def cup_match(rating_h, s_h, rating_a, s_a, mu, tier=1, neutral=False,
-              form_h=1.0, form_a=1.0):
+              form_h=1.0, form_a=1.0, frame_k=None):
     """Price a tie between sides rated in different competitions.
 
     neutral=True removes home advantage, for finals and one-off venues.
+    frame_k is the pull toward average on conversion into the shared frame;
+    None keeps SHRINK_ON_TRANSFER, continental ties pass CONTINENTAL_FRAME_K.
     """
+    k = SHRINK_ON_TRANSFER if frame_k is None else frame_k
     frame = cup_frame(s_h, s_a)
-    rh = transfer_by_strength(rating_h, s_h, frame)
-    ra = transfer_by_strength(rating_a, s_a, frame)
+    rh = transfer_by_strength(rating_h, s_h, frame, k=k)
+    ra = transfer_by_strength(rating_a, s_a, frame, k=k)
     if neutral:
         saved_h = HOME_MULT.get(tier, 1.16)
         saved_a = AWAY_MULT.get(tier, 0.87)

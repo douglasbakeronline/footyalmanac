@@ -42,6 +42,59 @@ def prev_of(code):
     return E.LEAGUES[code].get("prev", PREV)
 
 
+def pick_prior(code, seasons, log=None):
+    """The prior season a competition is rated from, and how complete it is.
+
+    Newest first, but only if it is actually a finished season. A partial file
+    used to win simply for being non-empty: Norway 2025 has 44 of 240 matches
+    and was chosen over a complete 2024, so every Norwegian club was rated off
+    four spring fixtures. If nothing clears the bar, the most complete season
+    is used and the shortfall is returned so the fixture can say so.
+
+    Returns (season, matches, share, expected) or (None, [], 0.0, 0).
+    """
+    pv = prev_of(code)
+    cands = []
+    for i, s in enumerate(pv):
+        rows = seasons.get(s) or []
+        if not rows:
+            continue
+        older = seasons.get(pv[i + 1]) if i + 1 < len(pv) else None
+        share, expected = S.completeness(rows, older)
+        cands.append((s, rows, share, expected))
+        if share >= S.PRIOR_MIN_SHARE:
+            if cands[:-1]:
+                # A newer season exists but stops short. Keep its matches on
+                # top of the complete one rather than throwing them away: a
+                # club promoted into it has no other top-flight record, and
+                # dropping it would turn a thin rating into no rating at all.
+                ns, nrows, nshare, nexp = cands[0]
+                if log is not None:
+                    log.append(f"{code}: {ns} incomplete ({len(nrows)} of ~{nexp}), "
+                               f"rated from {s} plus those {len(nrows)}")
+                return f"{s}+{ns}", rows + nrows, share, expected
+            return s, rows, share, expected
+    if not cands:
+        return None, [], 0.0, 0
+    best = max(cands, key=lambda c: c[2])
+    if log is not None:
+        log.append(f"{code}: no complete prior, using {best[0]} "
+                   f"({len(best[1])} of ~{best[3]} matches)")
+    return best
+
+
+def season_label(season, share=1.0):
+    """How the prior season reads on a team sheet. "2025-26" -> "2025/26";
+    a complete season topped up with a partial newer one -> "Since 2024/25";
+    a season that is the best available but still partial gets "(part)"."""
+    if not season:
+        return None
+    first = season.split("+")[0].replace("-", "/")
+    if "+" in season:
+        return f"Since {first}"
+    return first if share >= S.PRIOR_MIN_SHARE else f"{first} (part)"
+
+
 def team_pool(history, fixtures):
     """Work out which competition each team played in last season, so promoted
     and relegated sides can have their ratings carried across divisions.
@@ -54,8 +107,7 @@ def team_pool(history, fixtures):
     """
     last_league = {}
     for code, seasons in history.items():
-        pv = prev_of(code)
-        ms = seasons.get(pv[0]) or (seasons.get(pv[1]) if len(pv) > 1 else None) or []
+        _, ms, _, _ = pick_prior(code, seasons)
         for t in {m[1] for m in ms} | {m[2] for m in ms}:
             last_league[t] = code
     return last_league
@@ -138,15 +190,21 @@ def main():
 
     # ---- ratings -----------------------------------------------------------
     prior_ratings, prior_tables, league_mu = {}, {}, {}
+    partial_prior, prior_log, prior_label = {}, [], {}
     for code, seasons in history.items():
-        pv = prev_of(code)
-        ms = seasons.get(pv[0]) or seasons.get(pv[1]) or []
+        season_used, ms, share, expected = pick_prior(code, seasons, log=prior_log)
         if not ms:
             continue
+        prior_label[code] = season_label(season_used, share)
+        if share < S.PRIOR_MIN_SHARE:
+            partial_prior[code] = (len(ms), expected, season_used)
         tbl = E.build_table(ms)
         prior_tables[code] = tbl
         prior_ratings[code] = E.strength_from_table(tbl)
         league_mu[code] = E.league_goal_rate(tbl)
+    # Loud, because the whole cost of this fault was that it was silent.
+    for line in prior_log:
+        print(f"  PRIOR {line}", file=sys.stderr)
 
     # current-season tables, from whatever has been played so far
     cur_tables, cur_ratings = {}, {}
@@ -262,6 +320,7 @@ def main():
                       "importance": p.get("importance", "key"), "why": p.get("why")}
                      for p in out] if out else None),
             "outFactors": ([round(abs_att, 3), round(abs_def, 3)] if out else None),
+            "lastSeason": prior_label.get(src) if prow else None,
             "last": ({"P": prow["P"], "W": prow["W"], "D": prow["D"], "L": prow["L"],
                       "GF": prow["GF"], "GA": prow["GA"], "GD": prow["GD"],
                       "Pts": prow["Pts"], "PPG": prow["PPG"]} if prow else None),
@@ -304,11 +363,12 @@ def main():
             ra = {"att": ar["att"] * adj_a.get("att", 1.0) * oa[0],
                   "def": ar["def"] * adj_a.get("def", 1.0) * oa[1]}
             if meta.get("cup"):
-                s_h = E.LEAGUES[h_league]["strength"]
-                s_a = E.LEAGUES[a_league]["strength"]
+                s_h = E.tie_strength(h_league, code)
+                s_a = E.tie_strength(a_league, code)
                 cup_mu = (league_mu.get(h_league, 1.35) + league_mu.get(a_league, 1.35)) / 2
                 p = E.cup_match(rh, s_h, ra, s_a, cup_mu,
-                                tier=meta["tier"], form_h=fh, form_a=fa)
+                                tier=meta["tier"], form_h=fh, form_a=fa,
+                                frame_k=(E.CONTINENTAL_FRAME_K if E.continental(code) else None))
             else:
                 p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
                                           mu, tier=meta["tier"], form_h=fh, form_a=fa)
@@ -329,7 +389,15 @@ def main():
             # explain everything and predict nothing. The flag only counts
             # because it is set before the result is known.
             reasons = []
-            if meta.get("cup") and h_src and a_src and h_src != a_src:
+            # A continental tie between two leagues europe.json has fitted is
+            # no longer priced off a guess. On the 2025-26 check season those
+            # ties landed at or above the league tiers' own backtest rates
+            # (70%+ quoted 77.6%, landed 77.1%), so demoting them a tier would
+            # now understate them. Domestic cups, and any tie with a league
+            # the fit never saw, still carry the flag.
+            fitted_pair = (E.continental(code) and h_src in E.CONTINENTAL_FITTED
+                           and a_src in E.CONTINENTAL_FITTED)
+            if meta.get("cup") and h_src and a_src and h_src != a_src and not fitted_pair:
                 gap = abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"])
                 if gap > 0.05:
                     reasons.append(
@@ -343,6 +411,11 @@ def main():
                     moved = E.LEAGUES[t["carriedFrom"]]
                     updown = "up from" if moved["tier"] > meta["tier"] else "down from"
                     reasons.append(f"{t['name']} came {updown} the {moved['name']}")
+                src_code = t["carriedFrom"] or (h_src if side == "home" else a_src) or code
+                if src_code in partial_prior and not t["unrated"]:
+                    n, exp, s_used = partial_prior[src_code]
+                    reasons.append(f"{t['name']} is rated from a partial season "
+                                   f"({n} of ~{exp} matches, {s_used})")
                 if t["adj"]:
                     reasons.append(f"{t['name']} carries a manual override")
                 if t["out"]:
@@ -358,6 +431,7 @@ def main():
                 "country": meta["country"], "iso": meta["iso"],
                 "tier": meta["tier"], "order": meta["order"], "round": r["round"],
                 "date": r["date"], "time": r["time"],
+                "kickoff": S.kickoff_utc(r, meta["iso"]),
                 "home": hb, "away": ab,
                 "p": {"h": round(p["home"], 4), "d": round(p["draw"], 4),
                       "a": round(p["away"], 4)},

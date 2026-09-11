@@ -163,6 +163,103 @@ def local_history(code, season):
     return (out, True) if out else ([], False)
 
 
+# --- kick-off times ------------------------------------------------------------
+
+# The two sources disagree about what a kick-off time means. openfootball
+# prints the local time at the ground ("20:30" in Dortmund is 19:30 in London);
+# the live scoreboard gives UTC. Shown side by side they were an hour or two
+# apart for the same moment, and the Time sort interleaved them wrongly. Every
+# fixture now carries one absolute instant, and the page shows it in the
+# reader's own time zone.
+KICKOFF_TZ = {
+    "eng": "Europe/London", "sct": "Europe/London", "esp": "Europe/Madrid",
+    "deu": "Europe/Berlin", "ita": "Europe/Rome", "fra": "Europe/Paris",
+    "nld": "Europe/Amsterdam", "prt": "Europe/Lisbon", "bel": "Europe/Brussels",
+    "tur": "Europe/Istanbul", "aut": "Europe/Vienna", "grc": "Europe/Athens",
+    "bra": "America/Sao_Paulo",
+    "eur": "Europe/Paris",   # openfootball prints UEFA ties in CET
+}
+
+
+def kickoff_utc(row, iso):
+    """The fixture's kick-off as "YYYY-MM-DDTHH:MM:00Z", or None if unknown.
+
+    None is an honest answer: a time with no known zone is left for the page
+    to print as it came rather than converted with a guess.
+    """
+    t, d = row.get("time"), row.get("date")
+    if not t or not d:
+        return None
+    try:
+        hh, mm = (int(x) for x in str(t).split(":")[:2])
+        y, mo, dd = (int(x) for x in str(d)[:10].split("-"))
+        if row.get("utc"):
+            return f"{y:04d}-{mo:02d}-{dd:02d}T{hh:02d}:{mm:02d}:00Z"
+        zone = KICKOFF_TZ.get(iso)
+        if not zone:
+            return None
+        from zoneinfo import ZoneInfo
+        from datetime import timezone
+        at = datetime(y, mo, dd, hh, mm, tzinfo=ZoneInfo(zone)).astimezone(timezone.utc)
+        return at.strftime("%Y-%m-%dT%H:%M:00Z")
+    except Exception:
+        return None
+
+
+# --- is a completed season actually complete? --------------------------------
+
+# openfootball's football.json sometimes carries a season that stops a few
+# weeks in: Norway 2025 holds 44 of 240 matches, Belgium 2025-26 104 of about
+# 300. A partial season is not an error anywhere downstream. It rates every club
+# off a handful of spring fixtures, sets the league goal rate off the same
+# handful, and says nothing.
+#
+# Separately, the smaller European files carry corrupted years: Norway 2023 is
+# a complete, correct season whose dates run on into 2028. The results are
+# fine and a prior season never reads its dates, so completeness counts every
+# row. Anything that filters by date (a walk-forward "played before this
+# morning") has to use in_window, or a mis-dated result leaks from the future.
+PRIOR_MIN_SHARE = 0.80
+
+
+def in_window(rows, season):
+    """Drop rows dated outside the season they claim to belong to."""
+    lo, hi = season_window(season)
+    out = []
+    for r in rows:
+        try:
+            d = date.fromisoformat(str(r[0])[:10])
+        except ValueError:
+            continue
+        if lo <= d <= hi:
+            out.append(r)
+    return out
+
+
+def completeness(rows, older_rows=None):
+    """(share, expected) for a season that is supposed to be finished.
+
+    Judged against the season before it where there is one, since formats
+    differ (split leagues, play-off rounds) and the previous season is the
+    best statement of how many matches this league plays. Otherwise a double
+    round robin of the clubs that appear at least three times: some files
+    spell a club two ways, and counting every spelling as a team made
+    complete seasons look a third short.
+    """
+    if older_rows:
+        expected = len(older_rows)
+    else:
+        seen = {}
+        for r in rows:
+            for t in (r[1], r[2]):
+                seen[t] = seen.get(t, 0) + 1
+        core = sum(1 for v in seen.values() if v >= 3)
+        expected = core * (core - 1)
+    if not expected:
+        return 0.0, 0
+    return min(1.0, len(rows) / expected), expected
+
+
 # --- the season so far, for competitions the live source supplies ------------
 
 CURRENT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current")
@@ -583,6 +680,7 @@ def _row(ev):
     return {
         "date": iso[:10],
         "time": iso[11:16] if len(iso) >= 16 else None,
+        "utc": True,     # the scoreboard's times are UTC; see kickoff_utc
         "round": (ev.get("season") or {}).get("slug"),
         "home": clean_name((home.get("team") or {}).get("displayName") or ""),
         "away": clean_name((away.get("team") or {}).get("displayName") or ""),
@@ -738,6 +836,18 @@ ALIASES = {
     "sporting lisbon": "sporting clube portugal",
     "sporting braga": "sporting clube braga",
     "braga": "sporting clube braga",
+    # Found by eurotest.py: European fixture names that never reached their
+    # domestic club. Each one was a tie priced off two placeholder ratings.
+    "sl benfica": "benfica",
+    "az alkmaar": "az",
+    "red bull salzburg": "rb salzburg", "salzburg": "rb salzburg",
+    "olympiacos": "olympiakos piraeus", "olympiakos": "olympiakos piraeus",
+    "pae olympiakos sfp": "olympiakos piraeus",
+    "qarabag": "qarabag fk", "qarabag agdam fk": "qarabag fk",
+    "pafos": "paphos",
+    # "Club Brugge" loses "club" as a generic word and reduces to the bare
+    # city, which the matcher rightly refuses (Cercle Brugge is also there).
+    "brugge": "brugge kv",
 }
 
 

@@ -56,6 +56,17 @@ LIVE_NAMES = [
     ("Braga", "pt.1"),
 ]
 
+# European fixtures arrive in the live source's spelling and are rated through
+# the club's domestic league, so they have to resolve against the rated pool,
+# not a current table. Each of these was a European tie priced off two
+# placeholder ratings until an alias went in. (spelling, club it must reach)
+EUROPE_NAMES = [
+    ("Club Brugge", "Club Brugge KV"), ("Olympiacos", "Olympiakos Piraeus"),
+    ("Benfica", "Sport Lisboa e Benfica"), ("SL Benfica", "Sport Lisboa e Benfica"),
+    ("Red Bull Salzburg", "RB Salzburg"), ("Qarabag", "Qarabağ FK"),
+    ("Pafos", "Paphos"), ("AZ Alkmaar", "AZ"), ("Bodo/Glimt", "FK Bodø/Glimt"),
+]
+
 # Pairs that must never collapse into each other. Two clubs, one city, and the
 # founding year is the only thing between them.
 DISTINCT = [("CSKA Sofia", "CSKA 1948 Sofia")]
@@ -92,6 +103,17 @@ def main():
         if not table[hit]["P"]:
             fails.append(f"{name!r} -> {hit!r} ({code}) has no matches played")
     print(f"live spellings: {checked} checked against a live table")
+
+    # 1b. European spellings reach the right club in the rated pool
+    eu = 0
+    for name, want in EUROPE_NAMES:
+        if want not in pool:
+            continue                      # that league's prior is not on file
+        eu += 1
+        got = S.match_team(name, pool)
+        if got != want:
+            fails.append(f"{name!r} should resolve to {want!r}, got {got!r}")
+    print(f"european spellings: {eu} checked against the rated pool")
 
     # 2. nothing resolves to a different club
     wrong = [(t, g) for t in pool if (g := S.match_team(t, pool)) != t]
