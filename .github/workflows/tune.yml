@@ -44,6 +44,12 @@ jobs:
       - name: Sweep the constants (advisory)
         run: python3 tune.py --report
 
+      # The continental coefficients are structural too, so the same rule
+      # holds: printed for a human, never refitted on a schedule. Refit by
+      # running `python3 eurotest.py --fit` and committing europe.json.
+      - name: European ties (advisory)
+        run: python3 eurotest.py --report
+
       - name: Commit the result
         run: |
           git config user.name  "github-actions[bot]"
