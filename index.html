@@ -551,6 +551,21 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .row.unrated{opacity:.72}
 .row.celtic.alt{background:#f6efe0}
 .row:hover,.row.alt:hover{background:#fdf6d8}
+/* The bookmakers' number for the outcome the model favours, sitting under
+   that outcome's segment of the bar so it reads as belonging to it. */
+.barcell{min-width:0}
+.mkt{
+  margin-top:4px;font-family:var(--f-num);font-size:10.5px;color:var(--mute-ink,#6e6355);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em;
+}
+.mkt b{color:var(--ink);font-weight:600}
+.mkt.h{text-align:left}.mkt.d{text-align:center}.mkt.a{text-align:right}
+.mkt .val{background:var(--cover-ink);color:var(--yellow);padding:0 4px;border-radius:2px;font-weight:700}
+.mktgrid{width:100%;border-collapse:collapse;font-family:var(--f-num);font-size:12.5px;margin:4px 0 2px}
+.mktgrid th{font-family:var(--f-ui);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mute);font-weight:700;text-align:right;padding:3px 6px}
+.mktgrid th:first-child,.mktgrid td:first-child{text-align:left;padding-left:0}
+.mktgrid td{text-align:right;padding:3px 6px;border-top:1px solid var(--rule)}
 /* "Show all" at the foot of a capped day */
 .more{
   display:block;width:100%;margin-top:0;padding:11px 8px;cursor:pointer;
@@ -665,6 +680,9 @@ footer a{color:var(--ink-2)}
   .side{grid-area:home}
   .side.away{grid-area:away;text-align:left}
   .bar{grid-area:bar;margin:2px 0}
+  .barcell{grid-area:bar}
+  .barcell .bar{margin:2px 0 0}
+  .mkt{white-space:normal}
   .side.away .club{flex-direction:row}
   .conf{grid-area:conf;align-self:start}
   .detail-grid{grid-template-columns:1fr;gap:18px}
@@ -897,6 +915,17 @@ const readbarEl = document.createElement("div");
 readbarEl.className = "readbar";
 $("#note").after(readbarEl);
 
+function oddsNote(){
+  const O = D.odds || {};
+  const any = allGames.some(g => g.market);
+  if(!any) return "";
+  return O.gate
+    ? ` Bookmaker prices sit under each bar; a black <b>value</b> tag marks a best price the model
+       beats, a test it has passed against closing prices over two seasons.`
+    : ` Bookmaker prices sit under each bar for comparison. The model has not yet shown it beats
+       them, so nothing is tagged as value.`;
+}
+
 function updateReadbar(){
   if(!allGames.length){ readbarEl.innerHTML=""; return; }
   if(state.board === "btts"){
@@ -915,7 +944,7 @@ function updateReadbar(){
          <b>Strong</b> (yellow on black), <b>Firm</b> or <b>Lean</b>. Those tiers have historically
          landed 79%, 66% and 61% of the time. Fixtures marked <b>flagged</b> drop one tier because the model is
          partly blind to them. The rest are closer to guesswork and are marked <b>No read</b>.
-         <b>Confident only</b> hides them.`;
+         <b>Confident only</b> hides them.` + oddsNote();
   }
 }
 // First run happens beside the first render(), once the tier ladders below
@@ -1087,6 +1116,16 @@ function probBar(h, d, a, min){
   </div>`;
 }
 
+/* Bookmakers' fair probability and best price for the model's favoured
+   outcome. The "value" tag only exists if odds.py's backtest opened the gate. */
+function mktLine(g){
+  if(!g.market) return "";
+  const mp = [g.p.h, g.p.d, g.p.a];
+  const i = mp.indexOf(Math.max(...mp));
+  const v = g.value ? ` · <b class="val">value +${Math.round(g.value.ev*100)}%</b>` : "";
+  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. Collected Friday for the weekend and Tuesday for midweek, so it will have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${v}</div>`;
+}
+
 function bar(g){
   const h=pct(g.p.h), d=pct(g.p.d);
   return probBar(h, d, 100-h-d, 13);
@@ -1188,8 +1227,24 @@ function detail(g){
          came in ${T.was} of the time across 5,281 matches last season${g.celtic ? ", though this one is flagged below and should be discounted a notch" : ""}.
        </div>`;
 
+  const O = D.odds || {};
+  const mk = g.market ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
+      <b>Against the bookmakers.</b>
+      <table class="mktgrid"><thead><tr><th></th><th>${g.home.name}</th><th>Draw</th><th>${g.away.name}</th></tr></thead>
+      <tbody>
+        <tr><td>Model</td><td>${pct(g.p.h)}%</td><td>${pct(g.p.d)}%</td><td>${pct(g.p.a)}%</td></tr>
+        <tr><td>Bookies</td><td>${pct(g.market.p[0])}%</td><td>${pct(g.market.p[1])}%</td><td>${pct(g.market.p[2])}%</td></tr>
+        <tr><td>Best price</td><td>${g.market.best[0].toFixed(2)}</td><td>${g.market.best[1].toFixed(2)}</td><td>${g.market.best[2].toFixed(2)}</td></tr>
+      </tbody></table>
+      ${g.value ? `The best price on ${g.value.side==="h"?g.home.name:g.value.side==="a"?g.away.name:"the draw"} is
+        worth about <em>${Math.round(g.value.ev*100)}%</em> more than the model's own fair price.`
+        : (O.verdict || "")}
+      Prices from football-data.co.uk, collected Friday for the weekend and Tuesday for midweek.
+    </div>` : "";
+
   return `<div class="detail">
     ${verdict}
+    ${mk}
     <div class="detail-grid" style="margin-top:16px">
       ${teamSheet(g.home,"Home")}
       ${teamSheet(g.away,"Away")}
@@ -1252,7 +1307,7 @@ function render(){
         <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
         <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span></div></div>
         <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
-        ${btts ? bttsBar(g) : bar(g)}
+        <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
         <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
         <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
         <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
@@ -1456,7 +1511,8 @@ $("#footer").innerHTML = `
   Rows marked <b>flagged</b> fall under Celtic's Law: a side has changed division, has no rating,
   is missing players, or carries a manual override, so the model is working partly blind and the fixture
   is dropped one tier. Flagged before kick-off, never after. Tap any row for the full reasoning. Fixtures and results from
-  <a href="https://github.com/openfootball">openfootball</a>, public domain.
+  <a href="https://github.com/openfootball">openfootball</a>, public domain. Bookmaker prices from
+  <a href="https://www.football-data.co.uk">football-data.co.uk</a>.
   ${(()=>{ const none = D.leagues.filter(l => !l.haveFixtures && !l.ratingsOnly && !l.cup).map(l => `${l.country} ${l.name}`);
       return none.length ? `<br><br>No fixtures available yet for: ${none.join(", ")}.` : ""; })()}
   <br><br>This is a model, not a tip sheet. It is worse than the betting market, which is what a

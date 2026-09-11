@@ -125,6 +125,8 @@ def main():
     ap.add_argument("--from", dest="start", default=None, help="YYYY-MM-DD, defaults to today")
     ap.add_argument("--out", default=None)
     ap.add_argument("--cache", default=None, help="directory to cache raw downloads")
+    ap.add_argument("--no-odds", action="store_true",
+                    help="skip bookmaker prices and the weekly value backtest")
     ap.add_argument("--no-topup", action="store_true",
                     help="skip walking this season for live-sourced competitions")
     args = ap.parse_args()
@@ -463,6 +465,39 @@ def main():
             unique.append(g)
         by_day[d] = unique
 
+    # Bookmaker prices, beside the model's number. Value is only flagged if
+    # odds.py's weekly backtest says the model beats the closing price; see
+    # the docstring there for why it is gated rather than trusted.
+    odds_meta = {"gate": False, "verdict": None, "source": "football-data.co.uk"}
+    if not args.no_odds:
+        import odds as O
+        olog = []
+        try:
+            rep = O.refresh_report(log=olog)
+            if rep:
+                odds_meta.update(gate=bool(rep.get("valueGate")), verdict=rep.get("verdict"),
+                                 seasons=rep.get("seasons"))
+            live = O.fetch_live(log=olog)
+            everything = [g for d in by_day for g in by_day[d]]
+            keyed = {(g["league"], g["date"], g["home"]["name"], g["away"]["name"]): g
+                     for g in everything}
+            joined = O.match(live, [(k, *k) for k in keyed])
+            for k, r in joined.items():
+                g = keyed[k]
+                mp = [g["p"]["h"], g["p"]["d"], g["p"]["a"]]
+                g["market"] = O.market_block(r, mp)
+                pick = max(range(3), key=lambda i: mp[i])
+                if (odds_meta["gate"] and mp[pick] >= O.PICK_MIN and not g["celtic"]
+                        and not g["unrated"] and g["market"]["ev"][pick] >= O.EDGE):
+                    g["value"] = {"side": "hda"[pick], "ev": g["market"]["ev"][pick],
+                                  "price": g["market"]["best"][pick]}
+            print(f"odds: {len(live)} priced, {len(joined)} matched to fixtures, "
+                  f"value gate {'open' if odds_meta['gate'] else 'closed'}", file=sys.stderr)
+        except Exception as e:
+            olog.append(f"odds failed: {e}")
+        for line in olog[:8]:
+            print(f"  ODDS {line}", file=sys.stderr)
+
     days = []
     for d in sorted(by_day):
         # Every fixture of the day, most one-sided first. A fixture with an
@@ -482,6 +517,7 @@ def main():
                      "haveFixtures": c in fixtures,
                      "haveHistory": c in prior_ratings} for c in CODES],
         "missing": sorted(missing),
+        "odds": odds_meta,
         "days": days,
         "model": {
             "blendK": E.BLEND_K, "formCap": E.FORM_MAX, "rho": E.RHO, "temperature": E.TEMPERATURE,
@@ -500,7 +536,9 @@ def main():
              "p": g["p"], "xg": g["xg"], "score": g["score"],
              "btts": g["btts"], "over25": g["over25"],
              "confidence": g["confidence"], "celtic": bool(g["celtic"]),
-             "unrated": g["unrated"]}
+             "unrated": g["unrated"],
+             # archived so the prices a reader saw can be graded later
+             "market": g.get("market"), "value": g.get("value")}
             for d in days for g in d["games"]]
     with open(os.path.join(pred_dir, f"{start.isoformat()}.json"), "w") as f:
         json.dump(flat, f, separators=(",", ":"))

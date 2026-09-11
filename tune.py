@@ -110,9 +110,12 @@ def _form(res, cap, n):
     return 1.0 + max(-1.0, min(1.0, dev)) * cap
 
 
-def lambdas(data, split, params=None):
+def lambdas(data, split, params=None, meta=False):
     """Every fixture of the season, with the two expected-goal numbers the
     model would have published the morning before it kicked off.
+
+    meta=True appends (code, date, home, away) to each row, for joining the
+    predictions to something else (odds.py joins them to bookmaker prices).
 
     The table is updated incrementally rather than rebuilt per fixture, which is
     the only reason a full sweep finishes in minutes rather than hours.
@@ -153,7 +156,8 @@ def lambdas(data, split, params=None):
             rh, ra = rate(h), rate(a)
             lh = max(0.15, rh[0] * ra[1] * mu * hm * _form(form.get(h, []), p["form_cap"], p["form_n"]))
             la = max(0.15, ra[0] * rh[1] * mu * am * _form(form.get(a, []), p["form_cap"], p["form_n"]))
-            rows.append((lh, la, 0 if hg > ag else (1 if hg == ag else 2)))
+            y = 0 if hg > ag else (1 if hg == ag else 2)
+            rows.append((lh, la, y, code, d, h, a) if meta else (lh, la, y))
 
             for t, gf, ga, pts in ((h, hg, ag, 3 if hg > ag else (1 if hg == ag else 0)),
                                    (a, ag, hg, 3 if ag > hg else (1 if hg == ag else 0))):
