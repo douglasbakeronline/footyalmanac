@@ -46,7 +46,11 @@ REVIEW_DAYS = 14
 TIERS = [(0.70, 3, "Strong"), (0.62, 2, "Firm"), (0.55, 1, "Lean"), (0.00, 0, "No read")]
 
 
-def tier_of(confidence, celtic):
+def tier_of(confidence, celtic, unrated=False):
+    # A side with no rating is priced off a 1.00/1.00 placeholder, so the
+    # number is not a read at all, however confident it looks.
+    if unrated:
+        return TIERS[-1]
     i = next(i for i, (m, _, _) in enumerate(TIERS) if confidence >= m)
     if celtic and i < len(TIERS) - 1:
         i += 1
@@ -156,7 +160,7 @@ def tier_table(rows):
     """
     out = []
     for lo, k, name in TIERS:
-        g = [r for r in rows if tier_of(r["confidence"], r["celtic"])[2] == name]
+        g = [r for r in rows if tier_of(r["confidence"], r["celtic"], r["unrated"])[2] == name]
         if not g:
             continue
         out.append({
@@ -204,6 +208,7 @@ def main():
             "home": g["home"], "away": g["away"],
             "p": p, "pick": pick, "actual": actual,
             "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
+            "unrated": bool(g.get("unrated")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
         })
 
@@ -237,7 +242,7 @@ def main():
     # day back and see which tier the misses came from, so a truncated list
     # would defeat it.
     def game_row(r):
-        _, k, name = tier_of(r["confidence"], r["celtic"])
+        _, k, name = tier_of(r["confidence"], r["celtic"], r["unrated"])
         return {"league": r["league"], "home": r["home"], "away": r["away"],
                 "p": [round(x, 4) for x in r["p"]], "pick": r["pick"],
                 "actual": r["actual"], "confidence": r["confidence"],

@@ -57,6 +57,7 @@
   --gold:#b08a2e;
 
   --yellow:#f4d21c;      /* the year band */
+  --yellow-mid:#f8e27a;
   --yellow-soft:#fbf0bf;
   --red:#c8102e;         /* the star band and stat panel */
   --grey:#a4a9ad;        /* the jacket */
@@ -298,11 +299,17 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .row[aria-expanded="true"]{background:#f3ead6;box-shadow:inset 0 0 0 1px var(--rule)}
 
 .rank{font-family:var(--f-num);font-size:12px;color:var(--mute);font-weight:500}
-.rank.top{
-  color:var(--cover-ink);font-weight:700;background:var(--yellow);
-  box-shadow:inset 0 0 0 1px var(--cover-ink);border-radius:2px;
+/* The row number carries the model's read, not the row's position, so it
+   means the same thing under every sort and every filter. Any read is a
+   yellow chip; Strong is the year band itself, yellow on ink. No chip, no read. */
+.rank.t1,.rank.t2,.rank.t3{
+  color:var(--cover-ink);font-weight:700;border-radius:2px;
+  box-shadow:inset 0 0 0 1px var(--cover-ink);
   text-align:center;padding:2px 0;justify-self:start;min-width:24px;
 }
+.rank.t3{background:var(--cover-ink);color:var(--yellow)}
+.rank.t2{background:var(--yellow)}
+.rank.t1{background:var(--yellow-mid)}
 /* Kick-off and competition, always visible. The time is the reader's own
    local time (build.py stores one UTC instant per fixture). */
 .ko{min-width:0;line-height:1.2}
@@ -352,12 +359,13 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   display:block;font-family:var(--f-ui);font-size:9.5px;font-weight:700;
   letter-spacing:.09em;text-transform:uppercase;margin-top:2px;
 }
-.tier.t3{
-  color:var(--cover-ink);background:var(--yellow);display:table;margin-left:auto;
+.tier.t1,.tier.t2,.tier.t3{
+  color:var(--cover-ink);display:table;margin-left:auto;
   padding:1px 5px;border-radius:2px;box-shadow:inset 0 0 0 1px var(--cover-ink);
 }
-.tier.t2{color:#2f6b52}
-.tier.t1{color:var(--draw)}
+.tier.t3{background:var(--cover-ink);color:var(--yellow)}
+.tier.t2{background:var(--yellow)}
+.tier.t1{background:var(--yellow-mid)}
 .tier.t0{color:var(--mute)}
 .row.noread .club{font-weight:500;color:var(--ink-2)}
 .row.noread .bar{opacity:.62}
@@ -468,8 +476,8 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .ladder td.thin{font-weight:400;color:var(--mute);font-family:var(--f-num);font-size:12px;
   letter-spacing:0;text-transform:none}
 .ladder .t3 td:first-child{color:var(--cover-ink);background:linear-gradient(transparent 55%,var(--yellow) 55%)}
-.ladder .t2 td:first-child{color:#2f6b52}
-.ladder .t1 td:first-child{color:var(--draw)}
+.ladder .t2 td:first-child{color:var(--cover-ink);background:linear-gradient(transparent 55%,var(--yellow) 55%)}
+.ladder .t1 td:first-child{color:var(--cover-ink);background:linear-gradient(transparent 55%,var(--yellow-mid) 55%)}
 .ladder .t0 td:first-child{color:var(--mute)}
 .prose{max-width:78ch;font-size:14px;line-height:1.6;color:var(--ink-2);margin-top:12px}
 .prose p{margin-top:11px}
@@ -542,7 +550,17 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .row.celtic{box-shadow:inset 3px 0 0 var(--draw)}
 .row.unrated{opacity:.72}
 .row.celtic.alt{background:#f6efe0}
-.row:hover,.row.alt:hover{background:var(--yellow-soft)}
+.row:hover,.row.alt:hover{background:#fdf6d8}
+/* "Show all" at the foot of a capped day */
+.more{
+  display:block;width:100%;margin-top:0;padding:11px 8px;cursor:pointer;
+  font-family:var(--f-ui);font-size:13.5px;font-weight:700;letter-spacing:.04em;
+  background:var(--surface);color:var(--cover-ink);border:0;border-bottom:2px solid var(--cover-ink);
+  text-align:center;
+}
+.more:hover{background:var(--yellow-soft)}
+.more:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.more b{font-family:var(--f-num)}
 .cl{
   display:inline-block;font-family:var(--f-num);font-size:9.5px;font-weight:600;
   color:var(--draw);border:1px solid var(--draw);border-radius:2px;
@@ -635,6 +653,8 @@ footer a{color:var(--ink-2)}
   .ko time{font-size:13px}
   .ko .comp{margin-top:0}
   .day-head h2{font-size:15px}
+  .day-head{flex-wrap:wrap;row-gap:2px}
+  .day-head .count{margin-left:0;width:100%}
   .side{grid-area:home}
   .side.away{grid-area:away;text-align:left}
   .bar{grid-area:bar;margin:2px 0}
@@ -675,6 +695,13 @@ footer a{color:var(--ink-2)}
     </div>
   </div>
   <div>
+    <div class="ctl-label" style="margin-bottom:4px">Show</div>
+    <div class="boards" id="show">
+      <button data-show="all" aria-pressed="true">Every fixture</button>
+      <button data-show="read" aria-pressed="false">Confident only</button>
+    </div>
+  </div>
+  <div>
     <div class="ctl-label" style="margin-bottom:4px">Competition</div>
     <div class="chips" id="chips"></div>
   </div>
@@ -712,7 +739,8 @@ if(!D || !D.days){
 }
 const $ = s => document.querySelector(s);
 const pct = x => Math.round(x*100);
-const state = { leagues:new Set(), sort:"conf", open:null, board:"win" };
+const state = { leagues:new Set(), sort:"conf", open:null, board:"win",
+                show:"all", expanded:new Set() };
 // Which flags the sprite actually carries. Read once, lazily, because flag() is
 // called while building the league chips, before this file's later
 // declarations have run.
@@ -865,23 +893,25 @@ $("#note").after(readbarEl);
 function updateReadbar(){
   if(!allGames.length){ readbarEl.innerHTML=""; return; }
   if(state.board === "btts"){
-    const n = allGames.filter(g => g.btts >= 0.58 && !g.celtic && !g.unrated).length;
+    const n = allGames.filter(g => bttsTier(g).k >= 2).length;
     readbarEl.innerHTML = `<b>${n}</b> of ${allGames.length} fixtures reach 58% for both teams
       to score. Be careful with this board: across last season the model's very best
       both-score calls came in <b>59%</b> of the time against a <b>54%</b> base rate for all
       fixtures. It is a real edge but a thin one, far weaker than the winner board.`;
   } else {
-    const n = allGames.filter(g => g.confidence >= 0.55 && !g.celtic && !g.unrated).length;
+    const n = allGames.filter(g => tier(g).k >= 1).length;
     readbarEl.innerHTML = n === 0
       ? `<b>None</b> of today's ${allGames.length} fixtures clear the threshold where this model
          has historically been worth listening to. That is normal — across last season three
          quarters of all fixtures fell below it.`
-      : `<b>${n}</b> of ${allGames.length} fixtures clear the 55% mark, where the model's top
-         pick has historically been right about two thirds of the time. The rest are closer to
-         guesswork and are marked <b>No read</b>.`;
+      : `<b>${n}</b> of ${allGames.length} fixtures have a confident read, highlighted in yellow:
+         <b>Strong</b> (yellow on black), <b>Firm</b> or <b>Lean</b>. Those tiers have historically
+         landed 79%, 66% and 61% of the time. The rest are closer to guesswork and are marked
+         <b>No read</b>. <b>Confident only</b> hides them.`;
   }
 }
-updateReadbar();
+// First run happens beside the first render(), once the tier ladders below
+// have been declared: calling it here would read TIERS before it exists.
 
 /* ---------- league chips ---------- */
 const present = [...new Set(upcoming.flatMap(d=>d.games.map(g=>g.league)))]
@@ -909,6 +939,13 @@ chips.addEventListener("click", e=>{
   render();
 });
 
+$("#show").addEventListener("click", e=>{
+  const b = e.target.closest("button"); if(!b) return;
+  state.show = b.dataset.show; state.open = null;
+  $("#show").querySelectorAll("button").forEach(x=>
+    x.setAttribute("aria-pressed", x.dataset.show===state.show));
+  render();
+});
 $("#boards").addEventListener("click", e=>{
   const b=e.target.closest("button"); if(!b) return;
   state.board=b.dataset.board; state.open=null;
@@ -956,8 +993,9 @@ const BTTS_TIERS = [
   {min:0.00, k:0, name:"Unlikely",was:"49%"},
 ];
 function bttsTier(g){
+  if(g.unrated) return {min:0, k:0, name:"No read", was:"—"};
   let t = BTTS_TIERS.find(t => g.btts >= t.min);
-  if(g.celtic || g.unrated){
+  if(g.celtic){
     const i = BTTS_TIERS.indexOf(t);
     if(i < BTTS_TIERS.length - 1) t = BTTS_TIERS[i + 1];
   }
@@ -965,8 +1003,11 @@ function bttsTier(g){
 }
 
 function tier(g){
+  // No rating on file means the number is built on a placeholder: no read,
+  // however confident it looks. score.py grades it the same way.
+  if(g.unrated) return TIERS[TIERS.length - 1];
   let t = TIERS.find(t => g.confidence >= t.min);
-  if(g.celtic || g.unrated){
+  if(g.celtic){
     const i = TIERS.indexOf(t);
     if(i < TIERS.length - 1) t = TIERS[i + 1];
   }
@@ -1154,8 +1195,22 @@ function render(){
   let shown = 0;
 
   upcoming.forEach(day=>{
+    const btts = state.board === "btts";
+    const tierOf = g => btts ? bttsTier(g) : tier(g);
     let games = day.games.filter(g=> state.leagues.size===0 || state.leagues.has(g.league));
+    if(state.show === "read") games = games.filter(g => tierOf(g).k >= 1);
     if(!games.length) return;
+    const nRead = games.filter(g => tierOf(g).k >= 1).length;
+    const total = games.length;
+    // Every fixture is on the page. Only the All view with nothing filtered
+    // is shortened, to the most confident rows, until "Show all" is pressed.
+    // Picking a competition, or Confident only, always shows everything.
+    const cap = D.topPerDay || 50;
+    const capped = state.leagues.size === 0 && state.show === "all"
+                   && !state.expanded.has(day.date) && total > cap;
+    if(capped){
+      games = games.slice().sort((a,b)=> (a.unrated-b.unrated) || (b.confidence-a.confidence)).slice(0, cap);
+    }
     games = games.slice().sort(sortFns[state.sort]);
     shown += games.length;
 
@@ -1164,7 +1219,7 @@ function render(){
     sec.innerHTML = `
       <div class="day-head">
         <h2>${fmtDay(day.date)}</h2>
-        <div class="count">${games.length} fixture${games.length===1?"":"s"}</div>
+        <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident</div>
       </div>
       <div class="ruler">
         <div>#</div><div>Kick-off</div><div>Home</div>
@@ -1178,14 +1233,13 @@ function render(){
     games.forEach((g,i)=>{
       const id = day.date+"|"+g.home.name+"|"+g.away.name;
       const btn = document.createElement("button");
-      const btts = state.board === "btts";
-      const T = btts ? bttsTier(g) : tier(g);
+      const T = tierOf(g);
       btn.className = "row" + (i % 2 ? " alt" : "")
                     + (g.unrated ? " unrated" : "") + (g.celtic ? " celtic" : "")
                     + (T.k === 0 ? " noread" : "");
       btn.setAttribute("aria-expanded", state.open===id ? "true":"false");
       btn.innerHTML = `
-        <div class="rank ${i<3?"top":""}">${String(i+1).padStart(2,"0")}</div>
+        <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
         <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span></div></div>
         <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
         ${btts ? bttsBar(g) : bar(g)}
@@ -1200,11 +1254,26 @@ function render(){
         sec.appendChild(dv.firstElementChild);
       }
     });
+    if(capped || (state.expanded.has(day.date) && state.leagues.size === 0
+                  && state.show === "all" && total > cap)){
+      const more = document.createElement("button");
+      more.className = "more";
+      more.innerHTML = capped
+        ? `Show all <b>${total}</b> fixtures for ${fmtDay(day.date)}`
+        : `Show the top <b>${cap}</b> only`;
+      more.addEventListener("click", ()=>{
+        state.expanded.has(day.date) ? state.expanded.delete(day.date) : state.expanded.add(day.date);
+        render();
+      });
+      sec.appendChild(more);
+    }
     host.appendChild(sec);
   });
 
   if(!shown) host.innerHTML = upcoming.length
-    ? `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`
+    ? (state.show === "read"
+        ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
+        : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`)
     : `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`;
 }
 
@@ -1383,6 +1452,7 @@ $("#footer").innerHTML = `
   properly priced market is for.`;
 
 render();
+updateReadbar();
 renderResults();
 })();
 </script>

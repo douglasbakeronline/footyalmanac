@@ -116,7 +116,12 @@ def team_pool(history, fixtures):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=4, help="days of fixtures to include")
-    ap.add_argument("--top", type=int, default=50, help="fixtures kept per day")
+    # Every fixture is published and archived. --top used to cut each day to
+    # the N most confident, which left a league filter showing three of a
+    # weekend's ten matches. It now only tells the page how many rows the "All
+    # competitions" view shows before its "Show all" button.
+    ap.add_argument("--top", type=int, default=50,
+                    help="rows the All view shows per day before 'Show all'")
     ap.add_argument("--from", dest="start", default=None, help="YYYY-MM-DD, defaults to today")
     ap.add_argument("--out", default=None)
     ap.add_argument("--cache", default=None, help="directory to cache raw downloads")
@@ -460,13 +465,11 @@ def main():
 
     days = []
     for d in sorted(by_day):
-        # A fixture with an unrated side can look confident purely because the
-        # placeholder rating flatters the other team. Rank those last so they
-        # never occupy the top of the slate.
-        games = sorted(by_day[d], key=lambda g: (g["unrated"], -g["confidence"]))[:args.top]
-        # Straight confidence order, most one-sided at the top of every day.
-        games.sort(key=lambda g: -g["confidence"])
-        for i, g in enumerate(sorted(games, key=lambda g: -g["confidence"]), 1):
+        # Every fixture of the day, most one-sided first. A fixture with an
+        # unrated side can look confident purely because the placeholder rating
+        # flatters the other team, so those rank after every rated one.
+        games = sorted(by_day[d], key=lambda g: (g["unrated"], -g["confidence"]))
+        for i, g in enumerate(games, 1):
             g["rank"] = i
         days.append({"date": d, "count": len(games), "games": games})
 
