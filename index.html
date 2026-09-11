@@ -566,6 +566,12 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
   color:var(--draw);border:1px solid var(--draw);border-radius:2px;
   padding:0 3px;line-height:1.35;margin-left:5px;vertical-align:1px;
 }
+/* A flagged fixture says so in words, under its tier: "CL" meant nothing
+   unless you had read the footer. */
+.flagged{
+  display:block;margin-top:2px;font-family:var(--f-ui);font-size:9.5px;font-weight:700;
+  letter-spacing:.08em;text-transform:uppercase;color:#7a5c12;
+}
 .pred{font-family:var(--f-num);text-align:center;white-space:nowrap;line-height:1.25}
 .pred b{display:block;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
 .pred small{display:block;font-size:10.5px;color:var(--mute);letter-spacing:-.02em}
@@ -640,6 +646,7 @@ footer a{color:var(--ink-2)}
   .rrow .sc.act{grid-area:act}
   .rrow .conf{grid-area:conf;text-align:left}
   .rrow .conf .tier{display:inline;margin-left:6px}
+  .rrow .conf .flagged{display:inline;margin-left:6px}
   .rrow .mark{grid-area:mark;align-self:center}
   .scoreline div{flex:1 1 44%;min-width:0}
   .row{grid-template-columns:28px 1fr 62px;grid-template-areas:
@@ -708,7 +715,7 @@ footer a{color:var(--ink-2)}
   <div style="margin-left:auto">
     <div class="ctl-label" style="margin-bottom:4px">Order by</div>
     <div class="seg" id="sort">
-      <button data-sort="conf" id="sortPrimary" aria-pressed="true">One-sided</button>
+      <button data-sort="conf" id="sortPrimary" aria-pressed="true">Most confident</button>
       <button data-sort="upset" aria-pressed="false">Upsets</button>
       <button data-sort="goals" aria-pressed="false">Goals</button>
       <button data-sort="time" aria-pressed="false">Time</button>
@@ -906,8 +913,9 @@ function updateReadbar(){
          quarters of all fixtures fell below it.`
       : `<b>${n}</b> of ${allGames.length} fixtures have a confident read, highlighted in yellow:
          <b>Strong</b> (yellow on black), <b>Firm</b> or <b>Lean</b>. Those tiers have historically
-         landed 79%, 66% and 61% of the time. The rest are closer to guesswork and are marked
-         <b>No read</b>. <b>Confident only</b> hides them.`;
+         landed 79%, 66% and 61% of the time. Fixtures marked <b>flagged</b> drop one tier because the model is
+         partly blind to them. The rest are closer to guesswork and are marked <b>No read</b>.
+         <b>Confident only</b> hides them.`;
   }
 }
 // First run happens beside the first render(), once the tier ladders below
@@ -956,7 +964,7 @@ $("#boards").addEventListener("click", e=>{
   // rather than leaving the control with nothing selected.
   const primary = $("#sortPrimary");
   primary.dataset.sort = state.board==="btts" ? "btts" : "conf";
-  primary.textContent  = state.board==="btts" ? "Most likely" : "One-sided";
+  primary.textContent  = state.board==="btts" ? "Most likely" : "Most confident";
   state.sort = primary.dataset.sort;
   $("#sort").querySelectorAll("button").forEach(x=>
     x.setAttribute("aria-pressed", x.dataset.sort===state.sort));
@@ -1022,16 +1030,18 @@ const koText = g => g.kickoff ? koFmt.format(new Date(g.kickoff)) : (g.time || "
 const koKey = g => g.kickoff || (g.date + "T" + (g.time || "99:99"));
 const compName = g => g.leagueName || g.short || g.league;
 
+/* "Most confident" puts the model's reads first, strongest tier at the top,
+   then by percentage inside each tier. Sorting on the raw number alone put a
+   flagged 60% (demoted to No read) above an unflagged 59% (Lean), so the
+   numbering and the highlighting told two different stories. */
 const rank = {
-  conf:  (a,b)=> b.confidence - a.confidence,
-  btts:  (a,b)=> b.btts - a.btts,
+  conf:  (a,b)=> (tier(b).k - tier(a).k) || (b.confidence - a.confidence),
+  btts:  (a,b)=> (bttsTier(b).k - bttsTier(a).k) || (b.btts - a.btts),
   upset: (a,b)=> b.p.a - a.p.a,
   goals: (a,b)=> (b.xg[0]+b.xg[1]) - (a.xg[0]+a.xg[1]),
   time:  (a,b)=> koKey(a).localeCompare(koKey(b)) || b.confidence-a.confidence,
 };
-// Straight order, no special cases. Every day reads top to bottom by
-// confidence; unrated and flagged rows are marked visually instead of being
-// pushed around, so the ranking always means the same thing.
+// Upsets, Goals and Time are straight orders on one number each.
 const sortFns = rank;
 
 /* The flag set is read off the sprite rather than hard-coded, so a competition
@@ -1209,7 +1219,7 @@ function render(){
     const capped = state.leagues.size === 0 && state.show === "all"
                    && !state.expanded.has(day.date) && total > cap;
     if(capped){
-      games = games.slice().sort((a,b)=> (a.unrated-b.unrated) || (b.confidence-a.confidence)).slice(0, cap);
+      games = games.slice().sort(btts ? rank.btts : rank.conf).slice(0, cap);
     }
     games = games.slice().sort(sortFns[state.sort]);
     shown += games.length;
@@ -1245,7 +1255,7 @@ function render(){
         ${btts ? bttsBar(g) : bar(g)}
         <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
         <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
-        <div class="conf">${pct(btts ? g.btts : g.confidence)}${g.celtic?`<span class="cl" title="Celtic&#39;s Law — the model is working blind here">CL</span>`:""}<span class="tier t${T.k}">${T.name}</span></div>`;
+        <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
       btn.addEventListener("click", ()=>{ state.open = state.open===id ? null : id; render(); });
       sec.appendChild(btn);
       if(state.open===id){
@@ -1302,7 +1312,7 @@ function resultRow(g, i){
     <div class="sc pred" title="predicted scoreline">${g.predScore[0]}–${g.predScore[1]}</div>
     <div class="sc act" title="final score">${g.result[0]}–${g.result[1]}</div>
     <div class="side away"><div class="club">${flag(L.iso,L.country)}<span>${g.away}</span></div></div>
-    <div class="conf">${pct(g.confidence)}${g.celtic?`<span class="cl" title="Celtic&#39;s Law — the model was working blind here">CL</span>`:""}<span class="tier t${g.k}">${g.tier}</span></div>
+    <div class="conf">${pct(g.confidence)}<span class="tier t${g.k}">${g.tier}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: flagged before kick-off and dropped one tier">flagged</span>`:""}</div>
     ${mark(g.ok)}
   </div>`;
 }
@@ -1443,11 +1453,12 @@ $("#footer").innerHTML = `
   Probabilities come from a Dixon-Coles adjusted Poisson model over attack and defence ratings.
   Backtested across ${'5,281'} matches in 2025/26: <b>49.5%</b> of top picks correct against a
   43.7% always-back-the-home-side baseline. The most confident tenth of fixtures landed 75.0% of the time.
-  Rows marked <span class="cl">CL</span> fall under Celtic's Law: a side has changed division,
-  has no rating, is missing players, or carries a manual override, so the model is working blind. Flagged before
-  kick-off, never after. Fixtures and results from
+  Rows marked <b>flagged</b> fall under Celtic's Law: a side has changed division, has no rating,
+  is missing players, or carries a manual override, so the model is working partly blind and the fixture
+  is dropped one tier. Flagged before kick-off, never after. Tap any row for the full reasoning. Fixtures and results from
   <a href="https://github.com/openfootball">openfootball</a>, public domain.
-  ${D.missing.length ? `<br><br>No current-season fixture list published yet for: ${D.missing.map(m=>m.split(" ")[0]).join(", ")}.` : ""}
+  ${(()=>{ const none = D.leagues.filter(l => !l.haveFixtures && !l.ratingsOnly && !l.cup).map(l => `${l.country} ${l.name}`);
+      return none.length ? `<br><br>No fixtures available yet for: ${none.join(", ")}.` : ""; })()}
   <br><br>This is a model, not a tip sheet. It is worse than the betting market, which is what a
   properly priced market is for.`;
 
