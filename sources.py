@@ -428,6 +428,26 @@ def parse_fixture_txt(text):
         mr = _ROUND.match(line)
         if mr and not re.search(r"\d{1,2}:\d{2}", line):
             cur_round = mr.group(1)
+            # A round header is always followed by its own date line when the
+            # fixture is actually dated — every round in every file checked
+            # does this, without exception. A round with no date line right
+            # after it is openfootball's own way of saying the pairing is
+            # confirmed but the date is not yet ("datum TBC" and similar):
+            # Belgium alone carries 27 such rounds for 2026/27. Carrying the
+            # previous round's date and kick-off time forward across that gap
+            # stamped nearly 250 undated fixtures with one Saturday's date,
+            # showing nine different mid-table sides as playing the same club
+            # at the same kick-off. Resetting here means an undated match has
+            # no date to attach to and is silently dropped, exactly like an
+            # unresolved team name — not shown rather than shown wrong.
+            cur_date = cur_time = None
+            continue
+        if "TBC" in line and " v " not in line and " vs " not in line:
+            # The same problem at single-fixture granularity: a match pulled
+            # from its slot ("TBC (postponed, new date follows)") with no
+            # replacement date given yet. Whatever match line comes next must
+            # not inherit whatever date was current before this note.
+            cur_date = cur_time = None
             continue
         md = _DATE.match(line)
         if md and md.group(1) in MONTHS:
