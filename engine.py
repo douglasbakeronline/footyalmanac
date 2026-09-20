@@ -69,6 +69,20 @@ LEAGUES = {
     "eu.ecq": {"iso": "eur", "short": "UECQ","name": "Conference qualifying",        "country": "Europe", "tier": 1, "strength": 0.76, "order": 30, "cup": True},
     "eu.ec":  {"iso": "eur", "short": "UECL","name": "Conference League","country": "Europe",  "tier": 1, "strength": 0.84, "order": 31, "cup": True},
 
+    # More domestic cups, same shared-frame mechanism as the five above: no
+    # rating of their own, each side priced from its own division. These are
+    # the safest possible additions — every club in them is already rated
+    # from a league this build has covered for months — and only need a
+    # fixture source. "por.cup" fills the one Douglas asked for by name.
+    "fr.cup": {"iso": "fra", "short": "CDF", "name": "Coupe de France",  "country": "France",  "tier": 1, "strength": 0.89, "order": 32, "cup": True, "live": True},
+    "nl.cup": {"iso": "nld", "short": "KNV", "name": "KNVB Beker",       "country": "Netherlands", "tier": 1, "strength": 0.83, "order": 33, "cup": True, "live": True},
+    "pt.cup": {"iso": "prt", "short": "TDP", "name": "Taça de Portugal", "country": "Portugal", "tier": 1, "strength": 0.84, "order": 34, "cup": True, "live": True},
+    "be.cup": {"iso": "bel", "short": "BCP", "name": "Belgian Cup",      "country": "Belgium",  "tier": 1, "strength": 0.79, "order": 35, "cup": True, "live": True},
+    "tr.cup": {"iso": "tur", "short": "TKP", "name": "Türkiye Kupası",   "country": "Turkey",   "tier": 1, "strength": 0.79, "order": 36, "cup": True, "live": True},
+    "sco.cup":{"iso": "sct", "short": "SCP", "name": "Scottish Cup",     "country": "Scotland", "tier": 1, "strength": 0.73, "order": 37, "cup": True, "live": True},
+    "at.cup": {"iso": "aut", "short": "OFB", "name": "ÖFB-Cup",          "country": "Austria",  "tier": 1, "strength": 0.75, "order": 38, "cup": True, "live": True},
+    "gr.cup": {"iso": "grc", "short": "GRC", "name": "Greek Cup",        "country": "Greece",   "tier": 1, "strength": 0.75, "order": 39, "cup": True, "live": True},
+
     # ---------------------------------------------------------------------
     # Competitions openfootball does not publish at all.
     #
@@ -164,6 +178,33 @@ LEAGUES = {
     "fro.1": {"iso": "fro", "short": "FRO", "name": "Betrideildin", "country": "Faroe Islands", "tier": 1, "strength": 0.44, "order": 72, "season": "2026", "prev": ['2025', '2024'], "live": True},
     "lux.1": {"iso": "lux", "short": "LUX", "name": "National Division", "country": "Luxembourg", "tier": 1, "strength": 0.46, "order": 73, "season": "2026-27", "prev": ['2025-26', '2024-25'], "live": True},
     "mlt.1": {"iso": "mlt", "short": "MLT", "name": "Premier League", "country": "Malta", "tier": 1, "strength": 0.46, "order": 74, "season": "2026-27", "prev": ['2025-26', '2024-25'], "live": True},
+
+    # New countries. Strengths are estimates in the same spirit as every
+    # other hand-set coefficient here (see the note at the top of this
+    # file) — a starting point, not a measurement, until enough
+    # cross-competition ties exist to fit them properly.
+    "and.1": {"iso": "and", "short": "AND", "name": "Primera Divisió", "country": "Andorra", "tier": 1, "strength": 0.38, "order": 150, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "ago.1": {"iso": "ago", "short": "ANG", "name": "Girabola", "country": "Angola", "tier": 1, "strength": 0.55, "order": 151, "season": "2026", "prev": ["2025", "2024"], "live": True},
+    "eg.1":  {"iso": "egy", "short": "EGY", "name": "Premier League", "country": "Egypt", "tier": 1, "strength": 0.62, "order": 152, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "ma.1":  {"iso": "mar", "short": "MAR", "name": "Botola Pro", "country": "Morocco", "tier": 1, "strength": 0.60, "order": 153, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "tn.1":  {"iso": "tun", "short": "TUN", "name": "Ligue Professionnelle 1", "country": "Tunisia", "tier": 1, "strength": 0.56, "order": 154, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "za.1":  {"iso": "zaf", "short": "RSA", "name": "Premiership", "country": "South Africa", "tier": 1, "strength": 0.58, "order": 155, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "qa.1":  {"iso": "qat", "short": "QAT", "name": "Stars League", "country": "Qatar", "tier": 1, "strength": 0.66, "order": 156, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "th.1":  {"iso": "tha", "short": "THA", "name": "Thai League 1", "country": "Thailand", "tier": 1, "strength": 0.60, "order": 157, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "py.1":  {"iso": "pry", "short": "PAR", "name": "División Profesional", "country": "Paraguay", "tier": 1, "strength": 0.64, "order": 158, "season": "2026", "prev": ["2025", "2024"], "live": True},
+    "bo.1":  {"iso": "bol", "short": "BOL", "name": "División Profesional", "country": "Bolivia", "tier": 1, "strength": 0.56, "order": 159, "season": "2026", "prev": ["2025", "2024"], "live": True},
+    "ve.1":  {"iso": "ven", "short": "VEN", "name": "Primera División", "country": "Venezuela", "tier": 1, "strength": 0.58, "order": 160, "season": "2026", "prev": ["2025", "2024"], "live": True},
+    "cr.1":  {"iso": "crc", "short": "CRC", "name": "Primera División", "country": "Costa Rica", "tier": 1, "strength": 0.62, "order": 161, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "hn.1":  {"iso": "hnd", "short": "HON", "name": "Liga Nacional", "country": "Honduras", "tier": 1, "strength": 0.58, "order": 162, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+
+    # Women's football. Started with the two competitions with the deepest,
+    # most consistent ESPN coverage rather than every one that exists — a
+    # thin, gappy source produces confident-looking numbers off nothing,
+    # which is the exact failure mode data-integrity.md is written about.
+    # Say the word and Liga F, the Frauen-Bundesliga, D1 Arkema or the
+    # Women's Champions League can go in the same way.
+    "en.w1": {"iso": "eng", "short": "WSL", "name": "Women's Super League", "country": "England", "tier": 1, "strength": 0.70, "order": 163, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "us.w1": {"iso": "usa", "short": "NWS", "name": "NWSL", "country": "USA", "tier": 1, "strength": 0.72, "order": 164, "season": "2026", "prev": ["2025", "2024"], "live": True},
 }
 
 # Home advantage, expressed as multipliers on expected goals.
@@ -360,6 +401,32 @@ def blend(prior, current, played, k=None):
     w = played / (played + k)
     return {"att": w * current["att"] + (1 - w) * prior["att"],
             "def": w * current["def"] + (1 - w) * prior["def"]}
+
+
+def blend_prior_seasons(older_table, newer_table, k=None):
+    """Rating for a competition whose "last season" data is really two
+    seasons stitched together: a complete older one plus a newer one
+    openfootball has only partly backfilled (see build.pick_prior).
+
+    Previously the two seasons were pooled into one table and averaged flat,
+    so a match from fourteen months ago counted exactly the same as one from
+    last week. Here the newer season is blended on top of the older one with
+    the same recency weighting `blend()` already uses for in-season form:
+    it reaches equal weight with the older season at BLEND_K matches played,
+    and dominates well before the newer season is actually complete.
+    """
+    older_rating = strength_from_table(older_table)
+    newer_rating = strength_from_table(newer_table)
+    out = {}
+    for team, base in older_rating.items():
+        row = newer_table.get(team)
+        played = row["P"] if row else 0
+        cur = newer_rating.get(team) if played else None
+        out[team] = blend(base, cur, played, k=k)
+    for team, cur in newer_rating.items():
+        if team not in out:
+            out[team] = cur   # only in the newer season: promoted since, no older record
+    return out
 
 
 def form_points(row, n=5):

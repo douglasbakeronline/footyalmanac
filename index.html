@@ -298,6 +298,30 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .row:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
 .row[aria-expanded="true"]{background:#f3ead6;box-shadow:inset 0 0 0 1px var(--rule)}
 
+/* A row plus its bookmark toggle, side by side. The star sits outside the
+   row's own grid entirely — a sibling, not a child — so it never has to
+   know about, or risk breaking, that grid's desktop and mobile layouts. */
+.row-line{display:flex;align-items:stretch}
+.row-line .row{border-left:0}
+.star-btn{
+  flex:0 0 30px;width:30px;border:0;border-bottom:1px solid var(--rule-soft);
+  background:var(--surface);color:var(--mute-ink,var(--mute));cursor:pointer;
+  font-size:16px;line-height:1;padding:0;
+}
+.star-btn:hover{background:var(--yellow-soft);color:var(--brand-red,#b4222b)}
+.star-btn[aria-pressed="true"]{color:var(--brand-red,#b4222b)}
+.star-btn:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.row-line:nth-child(odd) .star-btn{background:var(--surface)}
+
+/* Research links inside an expanded fixture: a fast way out to Google for
+   the fixture itself or the competition table, rather than the model
+   pretending to be the last word on either. */
+.research{display:flex;gap:16px;flex-wrap:wrap;padding-bottom:12px;margin-bottom:12px;
+  border-bottom:1px solid var(--rule)}
+.research a{font-family:var(--f-ui);font-size:13.5px;font-weight:600;color:var(--home);
+  text-decoration:none}
+.research a:hover{text-decoration:underline}
+
 .rank{font-family:var(--f-num);font-size:12px;color:var(--mute);font-weight:500}
 /* The row number carries the model's read, not the row's position, so it
    means the same thing under every sort and every filter. Any read is a
@@ -706,6 +730,7 @@ footer a{color:var(--ink-2)}
   </div>
   <nav class="views" id="views" aria-label="Boards">
     <button data-view="fixtures" aria-pressed="true">What&rsquo;s coming</button>
+    <button data-view="starred" aria-pressed="false">Starred</button>
     <button data-view="results" aria-pressed="false">How it went</button>
   </nav>
   <div class="note" id="note"></div>
@@ -742,6 +767,7 @@ footer a{color:var(--ink-2)}
 </div>
 
 <main id="days"></main>
+<section id="starred" hidden></section>
 <section id="results" hidden></section>
 
 <footer id="footer"></footer>
@@ -853,6 +879,28 @@ const upcoming = D.days.filter(d => d.date >= todayISO);
 const droppedDays = D.days.length - upcoming.length;
 const ageHours = (Date.now() - new Date(D.generated).getTime()) / 36e5;
 const isStale = ageHours > 30 || upcoming.length === 0;
+
+/* ---------- bookmarks ----------
+   Keyed to today's date rather than to a fixture: reading yesterday's
+   shortlist back once those games are gone would be worse than showing
+   nothing, so the whole list is treated as expired the moment the date
+   it was made on has passed, and simply starts empty again. */
+const STAR_KEY = "almanac-starred";
+function loadStarred(){
+  try{
+    const raw = localStorage.getItem(STAR_KEY);
+    if(!raw) return new Set();
+    const obj = JSON.parse(raw);
+    return obj && obj.date === todayISO ? new Set(obj.ids) : new Set();
+  }catch(e){ return new Set(); }
+}
+function saveStarred(){
+  try{
+    localStorage.setItem(STAR_KEY, JSON.stringify({date: todayISO, ids: [...state.starred]}));
+  }catch(e){ /* private browsing or storage full: bookmarking just stops persisting */ }
+}
+state.starred = loadStarred();
+function gSearch(q){ return "https://www.google.com/search?q=" + encodeURIComponent(q); }
 
 /* ---------- header ---------- */
 const fmtDay = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
@@ -1168,6 +1216,15 @@ function teamSheet(t, label){
 }
 
 function detail(g){
+  // A model number is a starting point, not the last word. Both links leave
+  // the site entirely: the fixture itself, and the competition table for
+  // context the model doesn't show (position, run-in, head-to-head).
+  const research = `<div class="research">
+    <a href="${gSearch(g.home.name + " v " + g.away.name + (g.date ? " " + g.date : ""))}"
+       target="_blank" rel="noopener">Search this fixture ↗</a>
+    <a href="${gSearch(compName(g) + " " + g.country + " table")}"
+       target="_blank" rel="noopener">${compName(g)} table ↗</a>
+  </div>`;
   const edge = g.p.h>g.p.a ? g.home : g.away;
   const dir  = g.p.h>g.p.a ? "home" : "away";
   const missing = [g.home,g.away].filter(t=>t.unrated).map(t=>t.name);
@@ -1208,7 +1265,7 @@ function detail(g){
         <em>54%</em> base rate across all fixtures. Goals markets are much harder to call from
         season averages than the result is, so treat this as a nudge rather than a read.
       </div>`;
-    return `<div class="detail">${bv}
+    return `<div class="detail">${research}${bv}
       <div class="detail-grid" style="margin-top:16px">${teamSheet(g.home,"Home")}${teamSheet(g.away,"Away")}</div>
     </div>`;
   }
@@ -1243,6 +1300,7 @@ function detail(g){
     </div>` : "";
 
   return `<div class="detail">
+    ${research}
     ${verdict}
     ${mk}
     <div class="detail-grid" style="margin-top:16px">
@@ -1252,6 +1310,104 @@ function detail(g){
     <div class="why">${why}</div>
     ${cl}
   </div>`;
+}
+
+/* ---------- shared fixture row: used by both the fixtures board and the
+   Starred board, so a bookmark toggled or a row expanded on one reads the
+   same on the other. */
+const starGlyph = id => state.starred.has(id) ? "★" : "☆";
+
+function appendFixture(sec, g, i, dayDate, btts){
+  const id = dayDate+"|"+g.home.name+"|"+g.away.name;
+  const T = btts ? bttsTier(g) : tier(g);
+
+  const line = document.createElement("div");
+  line.className = "row-line";
+
+  const star = document.createElement("button");
+  star.type = "button";
+  star.className = "star-btn";
+  star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
+  star.setAttribute("aria-label",
+    (state.starred.has(id) ? "Remove bookmark: " : "Bookmark: ") + g.home.name + " v " + g.away.name);
+  star.title = "Bookmark this fixture";
+  star.textContent = starGlyph(id);
+  star.addEventListener("click", e=>{
+    e.stopPropagation();
+    state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
+    saveStarred();
+    star.textContent = starGlyph(id);
+    star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
+    if(!$("#starred").hidden) renderStarred();
+  });
+
+  const btn = document.createElement("button");
+  btn.className = "row" + (i % 2 ? " alt" : "")
+                + (g.unrated ? " unrated" : "") + (g.celtic ? " celtic" : "")
+                + (T.k === 0 ? " noread" : "");
+  btn.setAttribute("aria-expanded", state.open===id ? "true":"false");
+  btn.innerHTML = `
+    <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
+    <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span></div></div>
+    <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
+    <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
+    <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
+    <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
+  btn.addEventListener("click", ()=>{
+    state.open = state.open===id ? null : id;
+    render();
+    if(!$("#starred").hidden) renderStarred();
+  });
+
+  line.appendChild(star);
+  line.appendChild(btn);
+  sec.appendChild(line);
+  if(state.open===id){
+    const dv = document.createElement("div");
+    dv.innerHTML = detail(g);
+    sec.appendChild(dv.firstElementChild);
+  }
+}
+
+/* ---------- the starred board ----------
+   A shortlist, not a saved search: it only ever holds fixtures already on
+   the fixtures board, filtered to what was tapped, and it empties itself
+   with the rest of the slate at the start of a new day (see loadStarred). */
+function renderStarred(){
+  const host = $("#starred");
+  if(!host) return;
+  host.innerHTML = "";
+  const btts = state.board === "btts";
+  let any = false;
+
+  upcoming.forEach(day=>{
+    const games = day.games.filter(g => state.starred.has(day.date+"|"+g.home.name+"|"+g.away.name));
+    if(!games.length) return;
+    any = true;
+    const sec = document.createElement("section");
+    sec.className = "day";
+    sec.innerHTML = `
+      <div class="day-head">
+        <h2>${fmtDay(day.date)}</h2>
+        <div class="count">${games.length} bookmarked</div>
+      </div>
+      <div class="ruler">
+        <div>#</div><div>Kick-off</div><div>Home</div>
+        <div class="r-bar">${btts
+          ? `<span>Both score</span><span>Not both</span>`
+          : `<span>Home win</span><span>Draw</span><span>Away win</span>`}</div>
+        <div style="text-align:center">Score · xG</div>
+        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
+      </div>`;
+    games.slice().sort(btts ? rank.btts : rank.conf)
+      .forEach((g,i)=> appendFixture(sec, g, i, day.date, btts));
+    host.appendChild(sec);
+  });
+
+  if(!any) host.innerHTML = `<div class="empty">No bookmarks yet. Tap the star (☆) on any
+    fixture to shortlist it here. The list clears itself each morning along with the
+    fixtures, so it never carries a stale pick into a new day.</div>`;
 }
 
 function render(){
@@ -1295,30 +1451,7 @@ function render(){
         <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
       </div>`;
 
-    games.forEach((g,i)=>{
-      const id = day.date+"|"+g.home.name+"|"+g.away.name;
-      const btn = document.createElement("button");
-      const T = tierOf(g);
-      btn.className = "row" + (i % 2 ? " alt" : "")
-                    + (g.unrated ? " unrated" : "") + (g.celtic ? " celtic" : "")
-                    + (T.k === 0 ? " noread" : "");
-      btn.setAttribute("aria-expanded", state.open===id ? "true":"false");
-      btn.innerHTML = `
-        <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
-        <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span></div></div>
-        <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
-        <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
-        <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
-        <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
-        <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
-      btn.addEventListener("click", ()=>{ state.open = state.open===id ? null : id; render(); });
-      sec.appendChild(btn);
-      if(state.open===id){
-        const dv = document.createElement("div");
-        dv.innerHTML = detail(g);
-        sec.appendChild(dv.firstElementChild);
-      }
-    });
+    games.forEach((g,i)=> appendFixture(sec, g, i, day.date, btts));
     if(capped || (state.expanded.has(day.date) && state.leagues.size === 0
                   && state.show === "all" && total > cap)){
       const more = document.createElement("button");
@@ -1496,11 +1629,14 @@ $("#views").addEventListener("click", e=>{
   $("#views").querySelectorAll("button").forEach(x=>
     x.setAttribute("aria-pressed", x.dataset.view===v));
   const fixtures = v === "fixtures";
+  const starred = v === "starred";
   $("#controls").hidden = !fixtures;
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
   readbarEl.hidden = !fixtures;
-  $("#results").hidden = fixtures;
+  $("#results").hidden = v !== "results";
+  $("#starred").hidden = !starred;
+  if(starred) renderStarred();
   window.scrollTo({top:0});
 });
 

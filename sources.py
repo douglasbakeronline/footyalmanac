@@ -640,6 +640,24 @@ ESPN_SLUGS = {
     "est.1": ["est.1"], "mkd.1": ["mkd.1"], "mne.1": ["mne.1"], "aze.1": ["aze.1"],
     "blr.1": ["blr.1"], "mda.1": ["mda.1"], "nir.1": ["nir.1"], "wal.1": ["wal.1"],
     "fro.1": ["fro.1"], "lux.1": ["lux.1"], "mlt.1": ["mlt.1"],
+
+    # New countries, added alongside the LEAGUES entries above. Same
+    # disclaimer as the block above: unverified, needs --probe.
+    "and.1": ["and.1"], "ago.1": ["ang.1"], "eg.1": ["egy.1"], "ma.1": ["mar.1"],
+    "tn.1": ["tun.1"], "za.1": ["rsa.1"], "qa.1": ["qat.1"], "th.1": ["tha.1"],
+    "py.1": ["par.1"], "bo.1": ["bol.1"], "ve.1": ["ven.1"], "cr.1": ["crc.1"],
+    "hn.1": ["hon.1"],
+
+    # Women's football.
+    "en.w1": ["eng.w.1"], "us.w1": ["usa.nwsl"],
+
+    # More domestic cups. Same slug pattern as the five originals
+    # (esp.copa_del_rey, ger.dfb_pokal, ita.coppa_italia) — guessed the same
+    # way, unverified the same way.
+    "fr.cup": ["fra.coupe_de_france"], "nl.cup": ["ned.knvb_beker"],
+    "pt.cup": ["por.taca_de_portugal"], "be.cup": ["bel.cup"],
+    "tr.cup": ["tur.cup"], "sco.cup": ["sco.cup"], "at.cup": ["aut.cup"],
+    "gr.cup": ["gre.cup"],
 }
 
 

@@ -51,7 +51,13 @@ def pick_prior(code, seasons, log=None):
     four spring fixtures. If nothing clears the bar, the most complete season
     is used and the shortfall is returned so the fixture can say so.
 
-    Returns (season, matches, share, expected) or (None, [], 0.0, 0).
+    Returns (season, matches, share, expected, newer_matches). newer_matches
+    is the partial, more recent season's rows kept SEPARATE from matches (the
+    complete older season) rather than pooled into it — see engine.blend_prior_seasons
+    for why: pooling them let a match from fourteen months ago outweigh recent
+    form just by there being more of them.
+
+    Returns (None, [], 0.0, 0, []) if nothing usable is on file.
     """
     pv = prev_of(code)
     cands = []
@@ -64,34 +70,38 @@ def pick_prior(code, seasons, log=None):
         cands.append((s, rows, share, expected))
         if share >= S.PRIOR_MIN_SHARE:
             if cands[:-1]:
-                # A newer season exists but stops short. Keep its matches on
-                # top of the complete one rather than throwing them away: a
-                # club promoted into it has no other top-flight record, and
-                # dropping it would turn a thin rating into no rating at all.
+                # A newer season exists but stops short. Keep its matches
+                # rather than throwing them away: a club promoted into it has
+                # no other top-flight record, and dropping it would turn a
+                # thin rating into no rating at all. Kept separate so it can
+                # be weighted by recency instead of pooled flat.
                 ns, nrows, nshare, nexp = cands[0]
                 if log is not None:
                     log.append(f"{code}: {ns} incomplete ({len(nrows)} of ~{nexp}), "
-                               f"rated from {s} plus those {len(nrows)}")
-                return f"{s}+{ns}", rows + nrows, share, expected
-            return s, rows, share, expected
+                               f"rated from {s} weighted with those {len(nrows)}")
+                return f"{s}+{ns}", rows, share, expected, nrows
+            return s, rows, share, expected, []
     if not cands:
-        return None, [], 0.0, 0
+        return None, [], 0.0, 0, []
     best = max(cands, key=lambda c: c[2])
     if log is not None:
         log.append(f"{code}: no complete prior, using {best[0]} "
                    f"({len(best[1])} of ~{best[3]} matches)")
-    return best
+    return best + ([],)
 
 
 def season_label(season, share=1.0):
     """How the prior season reads on a team sheet. "2025-26" -> "2025/26";
-    a complete season topped up with a partial newer one -> "Since 2024/25";
-    a season that is the best available but still partial gets "(part)"."""
+    a complete season blended with a partial newer one -> "2024/25 + 2025/26
+    so far" (not "Since 2024/25" — that read as one continuous span rather
+    than two seasons weighted toward the more recent); a season that is the
+    best available but still partial gets "(part)"."""
     if not season:
         return None
     first = season.split("+")[0].replace("-", "/")
     if "+" in season:
-        return f"Since {first}"
+        second = season.split("+")[1].replace("-", "/")
+        return f"{first} + {second} so far"
     return first if share >= S.PRIOR_MIN_SHARE else f"{first} (part)"
 
 
@@ -107,8 +117,9 @@ def team_pool(history, fixtures):
     """
     last_league = {}
     for code, seasons in history.items():
-        _, ms, _, _ = pick_prior(code, seasons)
-        for t in {m[1] for m in ms} | {m[2] for m in ms}:
+        _, ms, _, _, newer_ms = pick_prior(code, seasons)
+        all_ms = ms + newer_ms
+        for t in {m[1] for m in all_ms} | {m[2] for m in all_ms}:
             last_league[t] = code
     return last_league
 
@@ -199,16 +210,31 @@ def main():
     prior_ratings, prior_tables, league_mu = {}, {}, {}
     partial_prior, prior_log, prior_label = {}, [], {}
     for code, seasons in history.items():
-        season_used, ms, share, expected = pick_prior(code, seasons, log=prior_log)
+        season_used, ms, share, expected, newer_ms = pick_prior(code, seasons, log=prior_log)
         if not ms:
             continue
         prior_label[code] = season_label(season_used, share)
         if share < S.PRIOR_MIN_SHARE:
             partial_prior[code] = (len(ms), expected, season_used)
         tbl = E.build_table(ms)
-        prior_tables[code] = tbl
-        prior_ratings[code] = E.strength_from_table(tbl)
-        league_mu[code] = E.league_goal_rate(tbl)
+        if newer_ms:
+            # Two seasons, weighted by recency rather than pooled flat —
+            # see engine.blend_prior_seasons.
+            newer_tbl = E.build_table(newer_ms)
+            prior_ratings[code] = E.blend_prior_seasons(tbl, newer_tbl)
+            # The table shown on a team sheet stays the full combined record
+            # (a reader wants to see the whole P/W/D/L window), with any
+            # newer-only row added for a club promoted since the older season.
+            merged = dict(tbl)
+            for team, row in newer_tbl.items():
+                if team not in merged:
+                    merged[team] = row
+            prior_tables[code] = merged
+            league_mu[code] = E.league_goal_rate(merged)
+        else:
+            prior_tables[code] = tbl
+            prior_ratings[code] = E.strength_from_table(tbl)
+            league_mu[code] = E.league_goal_rate(tbl)
     # Loud, because the whole cost of this fault was that it was silent.
     for line in prior_log:
         print(f"  PRIOR {line}", file=sys.stderr)
