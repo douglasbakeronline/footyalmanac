@@ -232,19 +232,19 @@ LEAGUES = {
     # build.py. Ratings come from international.json (tune_international.py),
     # not from a domestic table, so these carry "international": True instead
     # of "cup" and skip team_block entirely.
-    "wc.q.uefa":    {"name": "World Cup qualifying (UEFA)",     "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 200, "international": True, "live": True},
-    "wc.q.conmebol":{"name": "World Cup qualifying (CONMEBOL)", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 201, "international": True, "live": True},
-    "wc.q.concacaf":{"name": "World Cup qualifying (CONCACAF)", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 202, "international": True, "live": True},
-    "wc.q.caf":     {"name": "World Cup qualifying (CAF)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 203, "international": True, "live": True},
-    "wc.q.afc":     {"name": "World Cup qualifying (AFC)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 204, "international": True, "live": True},
-    "wc.q.ofc":     {"name": "World Cup qualifying (OFC)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 214, "international": True, "live": True},
-    "afc.q":        {"name": "AFC Asian Cup qualifying",        "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 215, "international": True, "live": True},
-    "concacaf.gold.q": {"name": "Gold Cup qualifying",          "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 216, "international": True, "live": True},
-    "afcon.q":      {"name": "Africa Cup of Nations qualifying","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 208, "international": True, "live": True},
-    "u21.uefa.q":   {"name": "UEFA U21 Championship qualifying","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 209, "international": True, "u21Proxy": True, "live": True},
-    "uefa.nations": {"name": "UEFA Nations League",             "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 205, "international": True, "live": True},
-    "concacaf.nations": {"name": "CONCACAF Nations League",     "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 206, "international": True, "live": True},
-    "friendly":     {"name": "International friendly",          "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 207, "international": True, "live": True},
+    "wc.q.uefa":    {"name": "World Cup qualifying (UEFA)",     "short": "WCQU", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 200, "international": True, "live": True},
+    "wc.q.conmebol":{"name": "World Cup qualifying (CONMEBOL)", "short": "WCQS", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 201, "international": True, "live": True},
+    "wc.q.concacaf":{"name": "World Cup qualifying (CONCACAF)", "short": "WCQC", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 202, "international": True, "live": True},
+    "wc.q.caf":     {"name": "World Cup qualifying (CAF)",      "short": "WCQA", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 203, "international": True, "live": True},
+    "wc.q.afc":     {"name": "World Cup qualifying (AFC)",      "short": "WCQF", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 204, "international": True, "live": True},
+    "wc.q.ofc":     {"name": "World Cup qualifying (OFC)",      "short": "WCQO", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 214, "international": True, "live": True},
+    "afc.q":        {"name": "AFC Asian Cup qualifying",        "short": "ACQ",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 215, "international": True, "live": True},
+    "concacaf.gold.q": {"name": "Gold Cup qualifying",          "short": "GLDQ", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 216, "international": True, "live": True},
+    "afcon.q":      {"name": "Africa Cup of Nations qualifying","short": "ACNQ", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 208, "international": True, "live": True},
+    "u21.uefa.q":   {"name": "UEFA U21 Championship qualifying","short": "U21Q", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 209, "international": True, "u21Proxy": True, "live": True},
+    "uefa.nations": {"name": "UEFA Nations League",             "short": "UNL",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 205, "international": True, "live": True},
+    "concacaf.nations": {"name": "CONCACAF Nations League",     "short": "CNL",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 206, "international": True, "live": True},
+    "friendly":     {"name": "International friendly",          "short": "FR",   "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 207, "international": True, "live": True},
 }
 
 # Home advantage, expressed as multipliers on expected goals.
