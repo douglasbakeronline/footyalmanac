@@ -398,7 +398,7 @@ def _full_time(m):
 
 # --- current season fixture lists ------------------------------------------
 
-_DATE = re.compile(r"^\s{2,6}(?:\w{3}\s+)?(\w{3})\s+(\d{1,2})(?:\s+(\d{4}))?\s*$")
+_DATE = re.compile(r"^\s{0,6}(?:\w{3}\s+)?(\w{3})\s+(\d{1,2})(?:\s+(\d{4}))?\s*$")
 _ROUND = re.compile(r"^\s*[▪•]\s*(.+?)\s*$")
 # One space is enough before the separator: these files pad the home column to a
 # fixed width, so the longest club name in a division ("Brighton & Hove Albion
@@ -677,7 +677,28 @@ ESPN_SLUGS = {
     "fr.cup": ["fra.coupe_de_france"], "nl.cup": ["ned.knvb_beker"],
     "pt.cup": ["por.taca_de_portugal"], "be.cup": ["bel.cup"],
     "tr.cup": ["tur.cup"], "sco.cup": ["sco.cup"], "at.cup": ["aut.cup"],
-    "gr.cup": ["gre.cup"],
+    "gr.cup": ["gre.cup"], "br.cup": ["bra.copa_do_brasil"], "ar.cup": ["arg.copa"],
+    "afc.cl": ["afc.champions"], "caf.cl": ["caf.champions"],
+
+    # Women's leagues and cup.
+    "de.w1": ["ger.w.1"], "es.w1": ["esp.w.1"], "it.w1": ["ita.w.1"],
+    "fr.w1": ["fra.w.1"], "se.w1": ["swe.w.1"], "en.w2": ["eng.w.2"],
+    "uwcl": ["uefa.wchampions"], "en.w.cup": ["eng.w.league_cup"],
+
+    "sco.challenge": ["sco.challenge_cup", "sco.league_cup"],
+    "en.6n": ["eng.6"], "en.6s": ["eng.7"],
+
+    # International. These are the least confident guesses in the whole
+    # file — ESPN's naming for national-team competitions has never been
+    # cross-checked against anything, unlike the club slugs above which at
+    # least follow one consistent pattern. Probe these first.
+    "wc.q.uefa": ["fifa.worldq.uefa"], "wc.q.conmebol": ["fifa.worldq.conmebol"],
+    "wc.q.concacaf": ["fifa.worldq.concacaf"], "wc.q.caf": ["fifa.worldq.caf"],
+    "wc.q.afc": ["fifa.worldq.afc"], "afcon.q": ["caf.nations_q", "fifa.confq.caf"],
+    "wc.q.ofc": ["fifa.worldq.ofc"], "afc.q": ["afc.asian_cup_q"],
+    "concacaf.gold.q": ["concacaf.gold_q"],
+    "uefa.nations": ["uefa.nations"], "concacaf.nations": ["concacaf.nations_qualifying", "concacaf.nations"],
+    "friendly": ["fifa.friendly"], "u21.uefa.q": ["uefa.u21_champ_q", "fifa.u21euroq"],
 }
 
 
@@ -723,6 +744,14 @@ def _row(ev):
         "home": clean_name((home.get("team") or {}).get("displayName") or ""),
         "away": clean_name((away.get("team") or {}).get("displayName") or ""),
         "hg": hg, "ag": ag,
+        # Only meaningful for internationals — a World Cup qualifier is
+        # always a real home fixture, but a Nations League final or a
+        # tournament played at a pre-set host is not, and pricing it as one
+        # would hand a "home" side an advantage it was never given. ESPN's
+        # own field name for this, unverified like every other field this
+        # build hasn't hit yet — confirm on the first real international
+        # fetch rather than assume it's spelled the same in every sport.
+        "neutral": bool(comp.get("neutralSite", False)),
     }
 
 

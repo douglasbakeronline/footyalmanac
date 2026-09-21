@@ -150,7 +150,8 @@ def main():
     # year, so the season strings are per-competition rather than global.
     history, fixtures, missing = S.fetch_all_seasons(
         {c: (None if E.LEAGUES[c].get("ratingsOnly") else E.LEAGUES[c].get("season", SEASON),
-             [] if E.LEAGUES[c].get("cup") else E.LEAGUES[c].get("prev", PREV))
+             [] if E.LEAGUES[c].get("cup") or E.LEAGUES[c].get("international")
+                else E.LEAGUES[c].get("prev", PREV))
          for c in CODES}, cache_dir=args.cache)
     if missing:
         print(f"  no data for: {', '.join(sorted(missing))}", file=sys.stderr)
@@ -181,7 +182,8 @@ def main():
     # and cache it: sixty-one leagues had no idea this season had started.
     season_so_far = {}
     if not args.no_topup:
-        live = [c for c in gaps if c in fixtures and not E.LEAGUES[c].get("cup")]
+        live = [c for c in gaps if c in fixtures and not E.LEAGUES[c].get("cup")
+                and not E.LEAGUES[c].get("international")]
         if live:
             print(f"  topping up the season so far for {len(live)} "
                   f"competitions ...", file=sys.stderr)
@@ -362,8 +364,40 @@ def main():
                      "Pts": crow["Pts"], "PPG": crow["PPG"]} if crow and crow["P"] else None),
         }, rating
 
+    def international_block(team, display_name=None):
+        # Same return shape as team_block, so every downstream line — Celtic's
+        # Law reasons, the row dict, the team-sheet card — reads it without
+        # caring which path built it. No domestic table exists here, so
+        # "last"/"now"/"carriedFrom"/absences are simply always empty rather
+        # than faked from something that doesn't apply. display_name lets a
+        # U21 fixture look "Germany" up in international.json while still
+        # showing "Germany U21" on the row.
+        r = E.international_rating(team)
+        return {
+            "name": display_name or team,
+            "att": round(r[0], 3) if r else 1.0,
+            "def": round(r[1], 3) if r else 1.0,
+            "played": None,
+            "unrated": r is None,
+            "carriedFrom": None, "form": None, "adj": None,
+            "out": None, "outFactors": None,
+            "lastSeason": None, "last": None, "now": None,
+        }, {"att": r[0], "def": r[1]} if r else {"att": 1.0, "def": 1.0}
+
+    def unrated_international(name):
+        # A U21 fixture that didn't clear U21_POWER_RATIO, or one where a
+        # senior rating for either side doesn't exist at all: same shape as
+        # every other unrated side, so it's filtered the same way downstream
+        # rather than needing its own special case there.
+        return {
+            "name": name, "att": 1.0, "def": 1.0, "played": None, "unrated": True,
+            "carriedFrom": None, "form": None, "adj": None,
+            "out": None, "outFactors": None, "lastSeason": None, "last": None, "now": None,
+        }, {"att": 1.0, "def": 1.0}
+
     # ---- price the fixtures ------------------------------------------------
     by_day = defaultdict(list)
+    dropped_unrated = 0
     for code, rows in fixtures.items():
         meta = E.LEAGUES[code]
         mu = league_mu.get(code, 1.35)
@@ -379,12 +413,32 @@ def main():
             # A side whose division cannot be resolved has no rating anyway, so
             # fall back to the cup's own code rather than inventing a division.
             # team_block will mark it unrated and the row will say so.
+            is_intl = meta.get("international")
+            is_u21 = meta.get("u21Proxy")
             h_src = domestic_of(r["home"])[0] if meta.get("cup") else None
             a_src = domestic_of(r["away"])[0] if meta.get("cup") else None
             h_league = h_src or code
             a_league = a_src or code
-            hb, hr = team_block(r["home"], h_league)
-            ab, ar = team_block(r["away"], a_league)
+            if is_u21:
+                # Only ever priced off the senior gap when that gap is wide
+                # enough to trust despite being the wrong players — see
+                # engine.u21_power_gap. Anything closer, or either side
+                # missing a senior rating altogether, comes back unrated and
+                # is dropped by the no-data filter below rather than shown
+                # on a guess.
+                ratio, hsr, asr = E.u21_power_gap(r["home"], r["away"])
+                if ratio is not None and ratio >= E.U21_POWER_RATIO:
+                    hb, hr = international_block(E.senior_of(r["home"]), display_name=r["home"])
+                    ab, ar = international_block(E.senior_of(r["away"]), display_name=r["away"])
+                else:
+                    hb, hr = unrated_international(r["home"])
+                    ab, ar = unrated_international(r["away"])
+            elif is_intl:
+                hb, hr = international_block(r["home"])
+                ab, ar = international_block(r["away"])
+            else:
+                hb, hr = team_block(r["home"], h_league)
+                ab, ar = team_block(r["away"], a_league)
             fh = E.form_factor(hb["form"])
             fa = E.form_factor(ab["form"])
             adj_h = hb["adj"] or {}
@@ -395,7 +449,24 @@ def main():
                   "def": hr["def"] * adj_h.get("def", 1.0) * oh[1]}
             ra = {"att": ar["att"] * adj_a.get("att", 1.0) * oa[0],
                   "def": ar["def"] * adj_a.get("def", 1.0) * oa[1]}
-            if meta.get("cup"):
+            if is_intl:
+                # No cross-competition transfer here — both sides are already
+                # in international.json's own shared frame — and international
+                # goes to a *lower* average than club football's ~1.35, which
+                # is exactly why this needs its own mu rather than borrowing
+                # a club one: fewer settled defences, more cagey qualifiers.
+                intl_mu = E.INTERNATIONAL["mu"] if E.INTERNATIONAL else 1.2
+                intl_ha = E.INTERNATIONAL["homeAdvantage"] if E.INTERNATIONAL else 1.2
+                neutral = bool(r.get("neutral"))
+                saved_h, saved_a = E.HOME_MULT.get(meta["tier"]), E.AWAY_MULT.get(meta["tier"])
+                E.HOME_MULT[meta["tier"]] = 1.0 if neutral else intl_ha
+                E.AWAY_MULT[meta["tier"]] = 1.0 if neutral else 1.0 / intl_ha
+                try:
+                    p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
+                                              intl_mu, tier=meta["tier"], form_h=fh, form_a=fa)
+                finally:
+                    E.HOME_MULT[meta["tier"]], E.AWAY_MULT[meta["tier"]] = saved_h, saved_a
+            elif meta.get("cup"):
                 s_h = E.tie_strength(h_league, code)
                 s_a = E.tie_strength(a_league, code)
                 cup_mu = (league_mu.get(h_league, 1.35) + league_mu.get(a_league, 1.35)) / 2
@@ -406,58 +477,86 @@ def main():
                 p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
                                           mu, tier=meta["tier"], form_h=fh, form_a=fa)
 
-            evidence = "current" if min(hb["played"], ab["played"]) >= 6 else (
-                "mixed" if max(hb["played"], ab["played"]) > 0 else "carryover")
+            if is_intl:
+                # "Evidence" and Celtic's Law both describe things specific to
+                # a domestic table (games played this season, a division
+                # change) that a national team doesn't have. An unrated side
+                # here means no history at all, not a thin one — closer to
+                # the domestic "carryover" case than "current" or "mixed".
+                evidence = "carryover"
+                reasons = []
+                for t in (hb, ab):
+                    if t["unrated"]:
+                        reasons.append(f"{t['name']} has no rating on file")
+                if is_u21 and not reasons:
+                    reasons.append(
+                        "priced off senior national team ratings, not actual U21 form — "
+                        "shown only because the senior gap is wide enough to trust despite that")
+                early = False
+            else:
+                evidence = "current" if min(hb["played"], ab["played"]) >= 6 else (
+                    "mixed" if max(hb["played"], ab["played"]) > 0 else "carryover")
 
-            # Celtic's Law: declared before kick-off, never after.
-            #
-            # Some fixtures are ones the model is structurally blind to, and it
-            # is possible to say which in advance. Backtesting 2025/26: fixtures
-            # where a side had changed division hit 47.2% against 50.4% for
-            # settled ones, and 43.8% against 48.8% inside the first ten games.
-            # The probability is not wrong so much as less trustworthy, so the
-            # row is marked rather than hidden.
-            #
-            # Applied afterwards to whatever the model got wrong, this would
-            # explain everything and predict nothing. The flag only counts
-            # because it is set before the result is known.
-            reasons = []
-            # A continental tie between two leagues europe.json has fitted is
-            # no longer priced off a guess. On the 2025-26 check season those
-            # ties landed at or above the league tiers' own backtest rates
-            # (70%+ quoted 77.6%, landed 77.1%), so demoting them a tier would
-            # now understate them. Domestic cups, and any tie with a league
-            # the fit never saw, still carry the flag.
-            fitted_pair = (E.continental(code) and h_src in E.CONTINENTAL_FITTED
-                           and a_src in E.CONTINENTAL_FITTED)
-            if meta.get("cup") and h_src and a_src and h_src != a_src and not fitted_pair:
-                gap = abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"])
-                if gap > 0.05:
-                    reasons.append(
-                        f"cup tie across divisions ({E.LEAGUES[h_src]['name']} v "
-                        f"{E.LEAGUES[a_src]['name']}), priced entirely off league "
-                        f"strength coefficients")
-            for side, t in (("home", hb), ("away", ab)):
-                if t["unrated"]:
-                    reasons.append(f"{t['name']} has no rating on file")
-                elif t["carriedFrom"]:
-                    moved = E.LEAGUES[t["carriedFrom"]]
-                    updown = "up from" if moved["tier"] > meta["tier"] else "down from"
-                    reasons.append(f"{t['name']} came {updown} the {moved['name']}")
-                src_code = t["carriedFrom"] or (h_src if side == "home" else a_src) or code
-                if src_code in partial_prior and not t["unrated"]:
-                    n, exp, s_used = partial_prior[src_code]
-                    reasons.append(f"{t['name']} is rated from a partial season "
-                                   f"({n} of ~{exp} matches, {s_used})")
-                if t["adj"]:
-                    reasons.append(f"{t['name']} carries a manual override")
-                if t["out"]:
-                    n = len(t["out"])
-                    big = [p["name"] for p in t["out"] if p["importance"] == "star"]
-                    reasons.append(
-                        f"{t['name']} {'is' if n == 1 else 'are'} missing {n} player{'' if n == 1 else 's'}"
-                        + (f", including {', '.join(big)}" if big else ""))
-            early = min(hb["played"], ab["played"]) < 10
+                # Celtic's Law: declared before kick-off, never after.
+                #
+                # Some fixtures are ones the model is structurally blind to, and it
+                # is possible to say which in advance. Backtesting 2025/26: fixtures
+                # where a side had changed division hit 47.2% against 50.4% for
+                # settled ones, and 43.8% against 48.8% inside the first ten games.
+                # The probability is not wrong so much as less trustworthy, so the
+                # row is marked rather than hidden.
+                #
+                # Applied afterwards to whatever the model got wrong, this would
+                # explain everything and predict nothing. The flag only counts
+                # because it is set before the result is known.
+                reasons = []
+                # A continental tie between two leagues europe.json has fitted is
+                # no longer priced off a guess. On the 2025-26 check season those
+                # ties landed at or above the league tiers' own backtest rates
+                # (70%+ quoted 77.6%, landed 77.1%), so demoting them a tier would
+                # now understate them. Domestic cups, and any tie with a league
+                # the fit never saw, still carry the flag.
+                fitted_pair = (E.continental(code) and h_src in E.CONTINENTAL_FITTED
+                               and a_src in E.CONTINENTAL_FITTED)
+                if meta.get("cup") and h_src and a_src and h_src != a_src and not fitted_pair:
+                    gap = abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"])
+                    if gap > 0.05:
+                        reasons.append(
+                            f"cup tie across divisions ({E.LEAGUES[h_src]['name']} v "
+                            f"{E.LEAGUES[a_src]['name']}), priced entirely off league "
+                            f"strength coefficients")
+                for side, t in (("home", hb), ("away", ab)):
+                    if t["unrated"]:
+                        reasons.append(f"{t['name']} has no rating on file")
+                    elif t["carriedFrom"]:
+                        moved = E.LEAGUES[t["carriedFrom"]]
+                        updown = "up from" if moved["tier"] > meta["tier"] else "down from"
+                        reasons.append(f"{t['name']} came {updown} the {moved['name']}")
+                    src_code = t["carriedFrom"] or (h_src if side == "home" else a_src) or code
+                    if src_code in partial_prior and not t["unrated"]:
+                        n, exp, s_used = partial_prior[src_code]
+                        reasons.append(f"{t['name']} is rated from a partial season "
+                                       f"({n} of ~{exp} matches, {s_used})")
+                    if t["adj"]:
+                        reasons.append(f"{t['name']} carries a manual override")
+                    if t["out"]:
+                        n = len(t["out"])
+                        big = [p["name"] for p in t["out"] if p["importance"] == "star"]
+                        reasons.append(
+                            f"{t['name']} {'is' if n == 1 else 'are'} missing {n} player{'' if n == 1 else 's'}"
+                            + (f", including {', '.join(big)}" if big else ""))
+                early = min(hb["played"], ab["played"]) < 10
+
+            # "Unrated" was a display flag; it's a publish gate now. A
+            # fixture where a side has genuinely nothing behind it — no
+            # domestic table, no international rating, no senior-proxy gap
+            # wide enough to trust — isn't a prediction, it's a coin flip
+            # wearing a percentage sign. Better absent from the board than
+            # shown and ignored, or worse, mistaken for a real read.
+            unrated = hb["unrated"] or ab["unrated"]
+            if unrated:
+                dropped_unrated += 1
+                continue
 
             by_day[r["date"]].append({
                 "league": code, "leagueName": meta["name"], "short": meta["short"],
@@ -474,9 +573,13 @@ def main():
                 "score": list(p["likely_score"]),
                 "confidence": round(p["confidence"], 4),
                 "evidence": evidence,
-                "unrated": hb["unrated"] or ab["unrated"],
+                "unrated": unrated,
                 "celtic": ({"reasons": reasons, "early": early} if reasons else None),
             })
+
+    if dropped_unrated:
+        print(f"  {dropped_unrated} fixture(s) dropped: no rating on file for a side "
+              f"(unrated is now a publish gate, not just a display flag)", file=sys.stderr)
 
     # Backstop against the same fixture arriving from two competitions or two
     # sources. Keyed on the teams and the date, so a genuine two-legged tie on

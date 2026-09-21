@@ -1133,7 +1133,16 @@ function flag(iso, country){
 
 function sideStats(t){
   const s = t.now && t.now.P ? t.now : t.last;
-  if(!s) return `<div class="stat none">not rated — no season on file</div>`;
+  if(!s){
+    // An international side has no domestic season table by definition —
+    // that's not the same thing as being unrated. t.played is null only
+    // for that path (a domestic side always has a played COUNT, even 0),
+    // so it's the signal to show the rating itself instead of wrongly
+    // claiming there isn't one.
+    if(t.played === null && !t.unrated)
+      return `<div class="stat">att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)} · international rating</div>`;
+    return `<div class="stat none">not rated — no season on file</div>`;
+  }
   const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
   const f = t.form ? ` · ${t.form.seq}` : "";
   const miss = t.out ? ` · <span class="mini-out">${t.out.length} out</span>` : "";
@@ -1199,7 +1208,9 @@ function teamSheet(t, label){
     ${flags}
     <table class="sheet">
       <tr><th>Record</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>PPG</th></tr>
-      ${body || `<tr><td colspan="10">No completed matches on record.</td></tr>`}
+      ${body || (t.played === null && !t.unrated
+        ? `<tr><td colspan="10">Rated from international results, not a domestic table — see attack/defence below.</td></tr>`
+        : `<tr><td colspan="10">No completed matches on record.</td></tr>`)}
     </table>
     <div class="stat" style="margin-top:8px">
       attack ${t.att.toFixed(2)} · defence ${t.def.toFixed(2)}

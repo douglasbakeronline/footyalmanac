@@ -27,7 +27,9 @@ LEAGUES = {
     "en.2": {"iso": "eng", "short": "CHA", "name": "Championship",     "country": "England",     "tier": 2, "strength": 0.78, "order": 2},
     "en.3": {"iso": "eng", "short": "LG1", "name": "League One",       "country": "England",     "tier": 3, "strength": 0.66, "order": 3},
     "en.4": {"iso": "eng", "short": "LG2", "name": "League Two",       "country": "England",     "tier": 4, "strength": 0.58, "order": 4},
-    "en.5": {"iso": "eng", "short": "NLG", "name": "National League", "country": "England", "tier": 5, "strength": 0.50, "order": 5},
+    "en.5": {"iso": "eng", "short": "NLG", "name": "National League", "country": "England", "tier": 5, "strength": 0.50, "order": 4.5},
+    "en.6n": {"iso": "eng", "short": "NLN", "name": "National League North", "country": "England", "tier": 6, "strength": 0.42, "order": 174, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "en.6s": {"iso": "eng", "short": "NLS", "name": "National League South", "country": "England", "tier": 6, "strength": 0.42, "order": 175, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
     "sco.1": {"iso": "sct", "short": "SPL", "name": "Premiership",      "country": "Scotland",    "tier": 1, "strength": 0.76, "order": 5},
     "es.1": {"iso": "esp", "short": "LAL", "name": "La Liga",          "country": "Spain",       "tier": 1, "strength": 0.99, "order": 6},
     "es.2": {"iso": "esp", "short": "LA2", "name": "LaLiga 2",         "country": "Spain",       "tier": 2, "strength": 0.76, "order": 7},
@@ -205,14 +207,52 @@ LEAGUES = {
     # Women's Champions League can go in the same way.
     "en.w1": {"iso": "eng", "short": "WSL", "name": "Women's Super League", "country": "England", "tier": 1, "strength": 0.70, "order": 163, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
     "us.w1": {"iso": "usa", "short": "NWS", "name": "NWSL", "country": "USA", "tier": 1, "strength": 0.72, "order": 164, "season": "2026", "prev": ["2025", "2024"], "live": True},
+
+    # More women's leagues, added so the Women's Champions League (uwcl,
+    # below) has more than two countries' worth of clubs to actually rate —
+    # otherwise most of its ties would come back unrated.
+    "de.w1": {"iso": "deu", "short": "FBL", "name": "Frauen-Bundesliga", "country": "Germany", "tier": 1, "strength": 0.68, "order": 165, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "es.w1": {"iso": "esp", "short": "LGF", "name": "Liga F", "country": "Spain", "tier": 1, "strength": 0.70, "order": 166, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "it.w1": {"iso": "ita", "short": "SAF", "name": "Serie A Femminile", "country": "Italy", "tier": 1, "strength": 0.62, "order": 167, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "fr.w1": {"iso": "fra", "short": "D1A", "name": "D1 Arkema", "country": "France", "tier": 1, "strength": 0.64, "order": 168, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "se.w1": {"iso": "swe", "short": "DAM", "name": "Damallsvenskan", "country": "Sweden", "tier": 1, "strength": 0.60, "order": 169, "season": "2026", "prev": ["2025", "2024"], "live": True},
+
+    "uwcl": {"iso": "eur", "short": "UWCL", "name": "Women's Champions League", "country": "Europe", "tier": 1, "strength": 0.80, "order": 170, "cup": True, "live": True},
+    "en.w2": {"iso": "eng", "short": "WCH", "name": "Women's Championship", "country": "England", "tier": 2, "strength": 0.55, "order": 171, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    "en.w.cup": {"iso": "eng", "short": "WLC", "name": "Women's League Cup", "country": "England", "tier": 1, "strength": 0.66, "order": 172, "cup": True, "live": True},
+    "sco.challenge": {"iso": "sct", "short": "SCC", "name": "Scottish Challenge Cup", "country": "Scotland", "tier": 1, "strength": 0.55, "order": 173, "cup": True, "live": True},
+    "afc.cl":  {"iso": "fifa", "short": "ACL", "name": "AFC Champions League Elite", "country": "Asia", "tier": 1, "strength": 0.62, "order": 210, "cup": True, "live": True},
+    "caf.cl":  {"iso": "fifa", "short": "CCL", "name": "CAF Champions League", "country": "Africa", "tier": 1, "strength": 0.58, "order": 211, "cup": True, "live": True},
+    "br.cup":  {"iso": "bra", "short": "CDB", "name": "Copa do Brasil", "country": "Brazil", "tier": 1, "strength": 0.84, "order": 212, "cup": True, "live": True},
+    "ar.cup":  {"iso": "arg", "short": "CDA", "name": "Copa Argentina", "country": "Argentina", "tier": 1, "strength": 0.82, "order": 213, "cup": True, "live": True},
+
+    # International football. No single country to hang a competition flag
+    # on — both sides bring their own — which the site's row template
+    # doesn't yet have a slot for; see the note where fixtures get priced in
+    # build.py. Ratings come from international.json (tune_international.py),
+    # not from a domestic table, so these carry "international": True instead
+    # of "cup" and skip team_block entirely.
+    "wc.q.uefa":    {"name": "World Cup qualifying (UEFA)",     "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 200, "international": True, "live": True},
+    "wc.q.conmebol":{"name": "World Cup qualifying (CONMEBOL)", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 201, "international": True, "live": True},
+    "wc.q.concacaf":{"name": "World Cup qualifying (CONCACAF)", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 202, "international": True, "live": True},
+    "wc.q.caf":     {"name": "World Cup qualifying (CAF)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 203, "international": True, "live": True},
+    "wc.q.afc":     {"name": "World Cup qualifying (AFC)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 204, "international": True, "live": True},
+    "wc.q.ofc":     {"name": "World Cup qualifying (OFC)",      "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 214, "international": True, "live": True},
+    "afc.q":        {"name": "AFC Asian Cup qualifying",        "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 215, "international": True, "live": True},
+    "concacaf.gold.q": {"name": "Gold Cup qualifying",          "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 216, "international": True, "live": True},
+    "afcon.q":      {"name": "Africa Cup of Nations qualifying","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 208, "international": True, "live": True},
+    "u21.uefa.q":   {"name": "UEFA U21 Championship qualifying","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 209, "international": True, "u21Proxy": True, "live": True},
+    "uefa.nations": {"name": "UEFA Nations League",             "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 205, "international": True, "live": True},
+    "concacaf.nations": {"name": "CONCACAF Nations League",     "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 206, "international": True, "live": True},
+    "friendly":     {"name": "International friendly",          "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 207, "international": True, "live": True},
 }
 
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly
 # higher (smaller crowds, worse pitches, but less travel-adjusted squad depth).
-HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190}
-AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845}
+HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190, 6: 1.195}
+AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845, 6: 0.840}
 
 SHRINK_FULL_SEASON = 6.0   # pseudo-matches pulling a full season's rating toward league average
 
@@ -259,6 +299,84 @@ if __import__("os").path.exists(_cal_path):
             CALIBRATION = {"a": float(_c["a"]), "b": float(_c["b"])}
     except Exception:
         CALIBRATION = None
+
+# international.json, if present, carries attack/defence ratings for national
+# teams — fitted by tune_international.py from real match history the same
+# way calibration.json is fitted by tune.py, and gated the same way: it only
+# exists if a walk-forward check on matches never used to fit it actually
+# passed. Missing file, or a team not in it, means "no rating" rather than a
+# guess — international.py (build.py's international-fixture path) treats
+# that exactly like an unrated club: flagged, not invented.
+INTERNATIONAL = None
+_intl_path = __import__("os").path.join(
+    __import__("os").path.dirname(__import__("os").path.abspath(__file__)),
+    "international.json")
+if __import__("os").path.exists(_intl_path):
+    try:
+        _i = __import__("json").load(open(_intl_path))
+        if isinstance(_i.get("ratings"), dict) and isinstance(_i.get("mu"), (int, float)):
+            INTERNATIONAL = {"ratings": _i["ratings"], "mu": float(_i["mu"]),
+                              "homeAdvantage": float(_i["homeAdvantage"])}
+    except Exception:
+        INTERNATIONAL = None
+
+
+def international_rating(team):
+    """A national team's (att, def) from international.json, or None if the
+    file is missing or the team isn't in it — same silent-if-absent contract
+    as everything else that reads a tune-produced file."""
+    if not INTERNATIONAL:
+        return None
+    r = INTERNATIONAL["ratings"].get(team)
+    return (r["att"], r["def"]) if r else None
+
+
+# U21 internationals have no rating source of their own — no maintained
+# public results dataset exists for youth internationals the way
+# martj42/international_results does for senior football, and a rating built
+# without real match evidence behind it is exactly what this project doesn't
+# ship (see tune_international.py's header). What senior ratings DO carry
+# over, plausibly, is football infrastructure: a country with a much deeper
+# playing base at senior level very likely has one at U21 level too. That
+# holds for a genuine gulf — Germany's set-up versus Malta's — and gets
+# progressively less trustworthy as the gap narrows, since squad-by-squad
+# variation at U21 level can easily swamp a moderate senior-level edge.
+#
+# So: only surface a U21 fixture where the senior gap is wide enough that
+# the "different players, same footballing depth" argument is doing real
+# work, not standing in for a genuine unknown. U21_POWER_RATIO is a judgment
+# call, not a fitted constant — there's no U21 holdout to fit it against.
+# Real senior ratings for context: Portugal v Wales sits at 2.4x, Malta v
+# Northern Ireland at 2.8x — both held back deliberately; Germany v Malta at
+# 7.8x, Latvia v Germany at 5.7x clear it easily. 3.0x draws the line
+# somewhere defensible between those two clusters.
+U21_POWER_RATIO = 3.0
+
+_U21_SUFFIX = __import__("re").compile(
+    r"\s+(?:U-?\s?21|Under[\s-]?21)$", __import__("re").IGNORECASE)
+
+
+def senior_of(u21_name):
+    """"Germany U21" / "Germany U-21" -> "Germany", so a U21 fixture can be
+    looked up against the senior ratings it's being proxied from. Trims
+    first: the anchored suffix match needs "U21" to be the literal end of
+    the string, and a trailing space from an upstream field — plausible
+    from any scraped API — would otherwise defeat it silently, leaving the
+    fixture looking merely unrated rather than visibly broken."""
+    return _U21_SUFFIX.sub("", u21_name.strip()).strip()
+
+
+def u21_power_gap(home_u21, away_u21):
+    """(ratio, home_senior_rating, away_senior_rating) for a U21 fixture,
+    using each side's senior international rating. ratio is None if either
+    senior team has no rating to compare — silently, the same as any other
+    missing-rating case elsewhere."""
+    hr = international_rating(senior_of(home_u21))
+    ar = international_rating(senior_of(away_u21))
+    if not hr or not ar:
+        return None, hr, ar
+    h_power, a_power = hr[0] / hr[1], ar[0] / ar[1]
+    return max(h_power / a_power, a_power / h_power), hr, ar
 
 # Both-teams-to-score and over-2.5 need heavy correction, and it is worth being
 # blunt about why. Fitted on 2025/26, the raw grid claimed 64%+ for fixtures
