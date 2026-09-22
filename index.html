@@ -438,39 +438,62 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   font-family:var(--f-display);letter-spacing:.04em;text-transform:uppercase;
   font-size:15px;display:flex;align-items:center;justify-content:space-between;
 }
+/* Explicit flex nesting throughout, deliberately not one shared CSS Grid —
+   a grid with some children auto-placed and others explicitly spanning
+   full width is exactly what put the player names into the 74px time
+   column instead of the wide middle one the first time this was built.
+   Each row here is its own flex container with one job, so there's no
+   auto-placement algorithm left to get it wrong. */
 .tmatch{
-  display:grid;grid-template-columns:74px 1fr 56px;gap:10px;align-items:center;
   background:var(--surface);border-bottom:1px solid var(--rule-soft);
-  padding:10px 14px;font-family:var(--f-ui);font-size:15px;
+  padding:10px 14px 12px;font-family:var(--f-ui);cursor:pointer;
 }
 .tmatch:nth-child(odd){background:#f5efdf}
+.tmatch:hover{background:var(--yellow-soft)}
+.tmatch:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.tmatch[aria-expanded="true"]{background:#f3ead6;box-shadow:inset 0 0 0 1px var(--rule)}
+
+.trow-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
+.ttime{
+  font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--mute);
+  font-size:13px;flex:0 0 auto;
+}
 .tmeta{
-  grid-column:1 / -1;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap;
+  flex:1 1 auto;min-width:0;display:flex;gap:7px;align-items:baseline;flex-wrap:wrap;
   font-family:var(--f-num);font-size:11.5px;color:var(--mute);
-  text-transform:uppercase;letter-spacing:.04em;padding-bottom:2px;
+  text-transform:uppercase;letter-spacing:.03em;
 }
 .tmeta .tour{
   font-family:var(--f-display);font-weight:400;letter-spacing:.03em;
   background:var(--ink);color:var(--paper);padding:1px 6px;border-radius:2px;
+  flex:0 0 auto;
 }
-.tplayers{display:flex;flex-direction:column;gap:6px}
-.tplayer{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.tplayer .name{font-weight:600}
-.tplayer.pick .name{color:var(--home)}
-.tplayer .pct{font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--mute)}
-.tplayer.pick .pct{color:var(--home);font-weight:700}
-.tbar{grid-column:1 / -1;height:6px;border-radius:3px;overflow:hidden;
-  display:flex;background:var(--rule-soft)}
-.tbar span{height:100%}
-.tbar .a{background:var(--home)}
-.tbar .b{background:var(--away)}
-.ttime{font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--mute);font-size:13px}
-.ttier{text-align:right;font-family:var(--f-display);font-size:12px;letter-spacing:.03em;
-  text-transform:uppercase;padding:3px 6px;border-radius:2px;align-self:start}
+.ttier{
+  flex:0 0 auto;font-family:var(--f-display);font-size:12px;letter-spacing:.03em;
+  text-transform:uppercase;padding:3px 7px;border-radius:2px;
+}
 .ttier.tStrong{background:var(--home);color:#fff}
 .ttier.tFirm{background:var(--home-soft);color:var(--home)}
 .ttier.tLean{background:var(--rule-soft);color:var(--ink)}
 .ttier.tNoread{background:transparent;color:var(--mute)}
+
+.tplayers{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
+.tplayer{display:flex;align-items:baseline;gap:10px}
+.tplayer .name{
+  flex:1 1 auto;min-width:0;font-weight:600;font-size:16px;letter-spacing:-.005em;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.tplayer.pick .name{color:var(--home)}
+.tplayer .pct{
+  flex:0 0 auto;font-family:var(--f-num);font-variant-numeric:tabular-nums;
+  font-size:15px;color:var(--mute);min-width:2.6em;text-align:right;
+}
+.tplayer.pick .pct{color:var(--home);font-weight:700}
+
+.tbar{height:6px;border-radius:3px;overflow:hidden;display:flex;background:var(--rule-soft)}
+.tbar span{height:100%}
+.tbar .a{background:var(--home)}
+.tbar .b{background:var(--away)}
 
 /* ---------- results review ---------- */
 .dayseg{display:flex;flex-wrap:wrap;gap:4px}
@@ -1471,6 +1494,18 @@ function renderStarred(){
    no three-way bar — a single two-colour split between the two players.
    No flags: nationality isn't in tennis.json's rating file, so this shows
    name and tour only rather than guessing at a flag. */
+function tennisResearch(m){
+  // Same idea as football's research links: leave the model's own number
+  // and give a fast way out to something with more context than a rating
+  // file can hold — a bracket, a recent-form thread, an injury note.
+  return `<div class="research">
+    <a href="${gSearch(m.playerA + " v " + m.playerB + " " + m.tournament)}"
+       target="_blank" rel="noopener">Search this match ↗</a>
+    <a href="${gSearch(m.tournament + " " + m.tour + " draw")}"
+       target="_blank" rel="noopener">${m.tournament || "Tournament"} draw ↗</a>
+  </div>`;
+}
+
 function renderTennis(){
   const host = $("#tennis");
   const TD = window.__TENNIS_DATA__;
@@ -1500,26 +1535,52 @@ function renderTennis(){
     byDay[date].slice().sort((a,b)=> b.confidence - a.confidence).forEach(m=>{
       const aPick = m.pick === m.playerA;
       const pa = Math.round(m.p.a*100), pb = Math.round(m.p.b*100);
+      const tierClass = "t" + m.tier.replace(/\s+/g, "");
       const row = document.createElement("div");
       row.className = "tmatch";
-      const tierClass = "t" + m.tier.replace(/\s+/g, "");
+      row.tabIndex = 0;
+      row.setAttribute("role", "button");
+      row.setAttribute("aria-expanded", "false");
       row.innerHTML = `
-        <div class="ttime">${m.time || ""}</div>
-        <div class="tmeta"><span class="tour">${m.tour}</span>
-          <span>${m.tournament || "Tour event"}</span>
-          ${m.round ? `<span>&middot; ${m.round}</span>` : ""}
-          <span>&middot; ${m.surface}</span></div>
+        <div class="trow-top">
+          <div class="ttime">${m.time || ""}</div>
+          <div class="tmeta"><span class="tour">${m.tour}</span>
+            <span>${m.tournament || "Tour event"}</span>
+            ${m.round ? `<span>&middot; ${m.round}</span>` : ""}
+            <span>&middot; ${m.surface}</span></div>
+          <div class="ttier ${tierClass}">${m.tier}</div>
+        </div>
         <div class="tplayers">
           <div class="tplayer${aPick?" pick":""}"><span class="name">${m.playerA}</span><span class="pct">${pa}%</span></div>
           <div class="tplayer${!aPick?" pick":""}"><span class="name">${m.playerB}</span><span class="pct">${pb}%</span></div>
         </div>
-        <div class="ttier ${tierClass}">${m.tier}</div>
         <div class="tbar"><span class="a" style="width:${pa}%"></span><span class="b" style="width:${pb}%"></span></div>`;
+
+      let detailEl = null;
+      const toggle = ()=>{
+        const open = row.getAttribute("aria-expanded") === "true";
+        if(open){
+          row.setAttribute("aria-expanded", "false");
+          if(detailEl){ detailEl.remove(); detailEl = null; }
+        } else {
+          row.setAttribute("aria-expanded", "true");
+          detailEl = document.createElement("div");
+          detailEl.className = "detail";
+          detailEl.innerHTML = tennisResearch(m);
+          row.after(detailEl);
+        }
+      };
+      row.addEventListener("click", toggle);
+      row.addEventListener("keydown", e=>{
+        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
+      });
+
       day.appendChild(row);
     });
     host.appendChild(day);
   });
 }
+
 
 function render(){
   const host = $("#days");
