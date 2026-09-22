@@ -33,6 +33,7 @@ LEAGUES = {
     "sco.1": {"iso": "sct", "short": "SPL", "name": "Premiership",      "country": "Scotland",    "tier": 1, "strength": 0.76, "order": 5},
     "es.1": {"iso": "esp", "short": "LAL", "name": "La Liga",          "country": "Spain",       "tier": 1, "strength": 0.99, "order": 6},
     "es.2": {"iso": "esp", "short": "LA2", "name": "LaLiga 2",         "country": "Spain",       "tier": 2, "strength": 0.76, "order": 7},
+    "es.3": {"iso": "esp", "short": "RFEF","name": "Primera RFEF",    "country": "Spain",       "tier": 3, "strength": 0.60, "order": 220, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
     "de.1": {"iso": "deu", "short": "BUN", "name": "Bundesliga",       "country": "Germany",     "tier": 1, "strength": 0.97, "order": 8},
     "de.2": {"iso": "deu", "short": "BU2", "name": "2. Bundesliga",    "country": "Germany",     "tier": 2, "strength": 0.76, "order": 9},
     "it.1": {"iso": "ita", "short": "SEA", "name": "Serie A",          "country": "Italy",       "tier": 1, "strength": 0.97, "order": 10},
@@ -84,6 +85,8 @@ LEAGUES = {
     "sco.cup":{"iso": "sct", "short": "SCP", "name": "Scottish Cup",     "country": "Scotland", "tier": 1, "strength": 0.73, "order": 37, "cup": True, "live": True},
     "at.cup": {"iso": "aut", "short": "OFB", "name": "ÖFB-Cup",          "country": "Austria",  "tier": 1, "strength": 0.75, "order": 38, "cup": True, "live": True},
     "gr.cup": {"iso": "grc", "short": "GRC", "name": "Greek Cup",        "country": "Greece",   "tier": 1, "strength": 0.75, "order": 39, "cup": True, "live": True},
+    "es.copafed": {"iso": "esp", "short": "CDF", "name": "Copa Federación", "country": "Spain", "tier": 1, "strength": 0.52, "order": 221, "cup": True, "live": True},
+    "cze.cup": {"iso": "cze", "short": "MOL", "name": "Czech Cup", "country": "Czechia", "tier": 1, "strength": 0.66, "order": 222, "cup": True, "live": True},
 
     # ---------------------------------------------------------------------
     # Competitions openfootball does not publish at all.
@@ -241,10 +244,18 @@ LEAGUES = {
     "afc.q":        {"name": "AFC Asian Cup qualifying",        "short": "ACQ",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 215, "international": True, "live": True},
     "concacaf.gold.q": {"name": "Gold Cup qualifying",          "short": "GLDQ", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 216, "international": True, "live": True},
     "afcon.q":      {"name": "Africa Cup of Nations qualifying","short": "ACNQ", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 208, "international": True, "live": True},
-    "u21.uefa.q":   {"name": "UEFA U21 Championship qualifying","short": "U21Q", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 209, "international": True, "u21Proxy": True, "live": True},
+    "u21.uefa.q":   {"name": "UEFA U21 Championship qualifying","short": "U21Q", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 209, "international": True, "ageProxy": True, "live": True},
     "uefa.nations": {"name": "UEFA Nations League",             "short": "UNL",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 205, "international": True, "live": True},
     "concacaf.nations": {"name": "CONCACAF Nations League",     "short": "CNL",  "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 206, "international": True, "live": True},
     "friendly":     {"name": "International friendly",          "short": "FR",   "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 207, "international": True, "live": True},
+
+    # Youth internationals — priced only when the senior-rating gap is wide
+    # enough to trust (see engine.age_power_gap), same mechanism as the U21
+    # entry above, just generalised to work for any age band and either
+    # gender now that women=True is a real option.
+    "cosafa.u20":   {"name": "COSAFA U20 Cup",                   "short": "CU20", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 217, "international": True, "ageProxy": True, "live": True},
+    "fifa.wwc.u20": {"name": "FIFA Women's U20 World Cup",       "short": "WU20", "iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 218, "international": True, "ageProxy": True, "women": True, "live": True},
+    "asiangames":   {"name": "Asian Games football (U23)",       "short": "AGU23","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 219, "international": True, "ageProxy": True, "live": True},
 }
 
 # Home advantage, expressed as multipliers on expected goals.
@@ -300,79 +311,102 @@ if __import__("os").path.exists(_cal_path):
     except Exception:
         CALIBRATION = None
 
-# international.json, if present, carries attack/defence ratings for national
-# teams — fitted by tune_international.py from real match history the same
-# way calibration.json is fitted by tune.py, and gated the same way: it only
+# international.json / international-women.json, if present, carry
+# attack/defence ratings for national teams — fitted by tune_international.py
+# / tune_international_women.py from real match history the same way
+# calibration.json is fitted by tune.py, and gated the same way: each only
 # exists if a walk-forward check on matches never used to fit it actually
 # passed. Missing file, or a team not in it, means "no rating" rather than a
-# guess — international.py (build.py's international-fixture path) treats
-# that exactly like an unrated club: flagged, not invented.
-INTERNATIONAL = None
-_intl_path = __import__("os").path.join(
-    __import__("os").path.dirname(__import__("os").path.abspath(__file__)),
-    "international.json")
-if __import__("os").path.exists(_intl_path):
-    try:
-        _i = __import__("json").load(open(_intl_path))
-        if isinstance(_i.get("ratings"), dict) and isinstance(_i.get("mu"), (int, float)):
-            INTERNATIONAL = {"ratings": _i["ratings"], "mu": float(_i["mu"]),
-                              "homeAdvantage": float(_i["homeAdvantage"])}
-    except Exception:
-        INTERNATIONAL = None
-
-
-def international_rating(team):
-    """A national team's (att, def) from international.json, or None if the
-    file is missing or the team isn't in it — same silent-if-absent contract
-    as everything else that reads a tune-produced file."""
-    if not INTERNATIONAL:
+# guess — build.py's international-fixture path treats that exactly like an
+# unrated club: flagged, not invented.
+def _load_international(filename):
+    path = __import__("os").path.join(
+        __import__("os").path.dirname(__import__("os").path.abspath(__file__)), filename)
+    if not __import__("os").path.exists(path):
         return None
-    r = INTERNATIONAL["ratings"].get(team)
+    try:
+        d = __import__("json").load(open(path))
+        if isinstance(d.get("ratings"), dict) and isinstance(d.get("mu"), (int, float)):
+            return {"ratings": d["ratings"], "mu": float(d["mu"]),
+                    "homeAdvantage": float(d["homeAdvantage"])}
+    except Exception:
+        pass
+    return None
+
+INTERNATIONAL = _load_international("international.json")
+INTERNATIONAL_WOMEN = _load_international("international-women.json")
+
+
+def international_rating(team, women=False):
+    """A national team's (att, def) from international.json (or
+    international-women.json), or None if the file is missing or the team
+    isn't in it — same silent-if-absent contract as everything else that
+    reads a tune-produced file."""
+    pool = INTERNATIONAL_WOMEN if women else INTERNATIONAL
+    if not pool:
+        return None
+    r = pool["ratings"].get(team)
     return (r["att"], r["def"]) if r else None
 
 
-# U21 internationals have no rating source of their own — no maintained
-# public results dataset exists for youth internationals the way
-# martj42/international_results does for senior football, and a rating built
-# without real match evidence behind it is exactly what this project doesn't
-# ship (see tune_international.py's header). What senior ratings DO carry
-# over, plausibly, is football infrastructure: a country with a much deeper
-# playing base at senior level very likely has one at U21 level too. That
-# holds for a genuine gulf — Germany's set-up versus Malta's — and gets
-# progressively less trustworthy as the gap narrows, since squad-by-squad
-# variation at U21 level can easily swamp a moderate senior-level edge.
+# Youth internationals (U20, U21, U23, whichever age band a competition
+# uses) have no rating source of their own — no maintained public results
+# dataset exists for youth football the way martj42's men's and women's
+# senior datasets do, and a rating built without real match evidence behind
+# it is exactly what this project doesn't ship (see tune_international.py's
+# header). What senior ratings DO carry over, plausibly, is footballing
+# infrastructure: a country with a much deeper playing base at senior level
+# very likely has one at youth level too. That holds for a genuine gulf —
+# Germany's set-up versus Malta's — and gets progressively less trustworthy
+# as the gap narrows, since squad-by-squad variation at youth level can
+# easily swamp a moderate senior-level edge.
 #
-# So: only surface a U21 fixture where the senior gap is wide enough that
+# So: only surface a youth fixture where the senior gap is wide enough that
 # the "different players, same footballing depth" argument is doing real
-# work, not standing in for a genuine unknown. U21_POWER_RATIO is a judgment
-# call, not a fitted constant — there's no U21 holdout to fit it against.
-# Real senior ratings for context: Portugal v Wales sits at 2.4x, Malta v
-# Northern Ireland at 2.8x — both held back deliberately; Germany v Malta at
-# 7.8x, Latvia v Germany at 5.7x clear it easily. 3.0x draws the line
-# somewhere defensible between those two clusters.
-U21_POWER_RATIO = 3.0
+# work, not standing in for a genuine unknown. AGE_POWER_RATIO is a judgment
+# call, not a fitted constant — there's no youth-level holdout to fit it
+# against, for either gender. Real senior ratings for context (men's):
+# Portugal v Wales sits at 2.4x, Malta v Northern Ireland at 2.8x — both
+# held back deliberately; Germany v Malta at 7.8x, Latvia v Germany at 5.7x
+# clear it easily. 3.0x draws the line somewhere defensible between those
+# two clusters. Applied the same way regardless of age band or gender —
+# there's no more evidence to calibrate one differently than another.
+AGE_POWER_RATIO = 3.0
 
-_U21_SUFFIX = __import__("re").compile(
-    r"\s+(?:U-?\s?21|Under[\s-]?21)$", __import__("re").IGNORECASE)
-
-
-def senior_of(u21_name):
-    """"Germany U21" / "Germany U-21" -> "Germany", so a U21 fixture can be
-    looked up against the senior ratings it's being proxied from. Trims
-    first: the anchored suffix match needs "U21" to be the literal end of
-    the string, and a trailing space from an upstream field — plausible
-    from any scraped API — would otherwise defeat it silently, leaving the
-    fixture looking merely unrated rather than visibly broken."""
-    return _U21_SUFFIX.sub("", u21_name.strip()).strip()
+_AGE_TOKEN = __import__("re").compile(
+    r"\s+(?:U-?\s?1[5-9]|U-?\s?2[0-9]|Under[\s-]?1[5-9]|Under[\s-]?2[0-9])$",
+    __import__("re").IGNORECASE)
+_WOMEN_TOKEN = __import__("re").compile(r"\s+Women$", __import__("re").IGNORECASE)
 
 
-def u21_power_gap(home_u21, away_u21):
-    """(ratio, home_senior_rating, away_senior_rating) for a U21 fixture,
+def senior_of(youth_name):
+    """"Germany U21" -> "Germany"; "Spain U20 Women" -> "Spain" — the age
+    marker and "Women" can appear in either order ("Italy U20 Women" is the
+    real, observed naming; "Italy Women U20" is at least as plausible
+    elsewhere), so both trailing tokens are stripped, repeatedly, regardless
+    of which comes last, rather than assuming one fixed order. Trims first:
+    the anchored match needs the stripped token to be the literal end of the
+    string, and a trailing space from an upstream field — plausible from any
+    scraped API — would otherwise defeat it silently, leaving the fixture
+    looking merely unrated rather than visibly broken."""
+    s = youth_name.strip()
+    changed = True
+    while changed:
+        changed = False
+        for pat in (_AGE_TOKEN, _WOMEN_TOKEN):
+            new_s = pat.sub("", s)
+            if new_s != s:
+                s, changed = new_s, True
+    return s.strip()
+
+
+def age_power_gap(home_youth, away_youth, women=False):
+    """(ratio, home_senior_rating, away_senior_rating) for a youth fixture,
     using each side's senior international rating. ratio is None if either
     senior team has no rating to compare — silently, the same as any other
     missing-rating case elsewhere."""
-    hr = international_rating(senior_of(home_u21))
-    ar = international_rating(senior_of(away_u21))
+    hr = international_rating(senior_of(home_youth), women=women)
+    ar = international_rating(senior_of(away_youth), women=women)
     if not hr or not ar:
         return None, hr, ar
     h_power, a_power = hr[0] / hr[1], ar[0] / ar[1]

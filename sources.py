@@ -677,7 +677,8 @@ ESPN_SLUGS = {
     "fr.cup": ["fra.coupe_de_france"], "nl.cup": ["ned.knvb_beker"],
     "pt.cup": ["por.taca_de_portugal"], "be.cup": ["bel.cup"],
     "tr.cup": ["tur.cup"], "sco.cup": ["sco.cup"], "at.cup": ["aut.cup"],
-    "gr.cup": ["gre.cup"], "br.cup": ["bra.copa_do_brasil"], "ar.cup": ["arg.copa"],
+    "gr.cup": ["gre.cup"], "es.copafed": ["esp.copa_federacion"], "cze.cup": ["cze.cup"],
+    "es.3": ["esp.3"], "br.cup": ["bra.copa_do_brasil"], "ar.cup": ["arg.copa"],
     "afc.cl": ["afc.champions"], "caf.cl": ["caf.champions"],
 
     # Women's leagues and cup.
@@ -699,6 +700,7 @@ ESPN_SLUGS = {
     "concacaf.gold.q": ["concacaf.gold_q"],
     "uefa.nations": ["uefa.nations"], "concacaf.nations": ["concacaf.nations_qualifying", "concacaf.nations"],
     "friendly": ["fifa.friendly"], "u21.uefa.q": ["uefa.u21_champ_q", "fifa.u21euroq"],
+    "cosafa.u20": ["cosafa.u20"], "fifa.wwc.u20": ["fifa.wwcu20"], "asiangames": ["fifa.asiangames"],
 }
 
 

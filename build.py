@@ -364,15 +364,15 @@ def main():
                      "Pts": crow["Pts"], "PPG": crow["PPG"]} if crow and crow["P"] else None),
         }, rating
 
-    def international_block(team, display_name=None):
+    def international_block(team, display_name=None, women=False):
         # Same return shape as team_block, so every downstream line — Celtic's
         # Law reasons, the row dict, the team-sheet card — reads it without
         # caring which path built it. No domestic table exists here, so
         # "last"/"now"/"carriedFrom"/absences are simply always empty rather
         # than faked from something that doesn't apply. display_name lets a
-        # U21 fixture look "Germany" up in international.json while still
+        # youth fixture look "Germany" up in international.json while still
         # showing "Germany U21" on the row.
-        r = E.international_rating(team)
+        r = E.international_rating(team, women=women)
         return {
             "name": display_name or team,
             "att": round(r[0], 3) if r else 1.0,
@@ -385,7 +385,7 @@ def main():
         }, {"att": r[0], "def": r[1]} if r else {"att": 1.0, "def": 1.0}
 
     def unrated_international(name):
-        # A U21 fixture that didn't clear U21_POWER_RATIO, or one where a
+        # A youth fixture that didn't clear AGE_POWER_RATIO, or one where a
         # senior rating for either side doesn't exist at all: same shape as
         # every other unrated side, so it's filtered the same way downstream
         # rather than needing its own special case there.
@@ -414,28 +414,29 @@ def main():
             # fall back to the cup's own code rather than inventing a division.
             # team_block will mark it unrated and the row will say so.
             is_intl = meta.get("international")
-            is_u21 = meta.get("u21Proxy")
+            is_youth = meta.get("ageProxy")
+            is_women = meta.get("women")
             h_src = domestic_of(r["home"])[0] if meta.get("cup") else None
             a_src = domestic_of(r["away"])[0] if meta.get("cup") else None
             h_league = h_src or code
             a_league = a_src or code
-            if is_u21:
+            if is_youth:
                 # Only ever priced off the senior gap when that gap is wide
                 # enough to trust despite being the wrong players — see
-                # engine.u21_power_gap. Anything closer, or either side
+                # engine.age_power_gap. Anything closer, or either side
                 # missing a senior rating altogether, comes back unrated and
                 # is dropped by the no-data filter below rather than shown
                 # on a guess.
-                ratio, hsr, asr = E.u21_power_gap(r["home"], r["away"])
-                if ratio is not None and ratio >= E.U21_POWER_RATIO:
-                    hb, hr = international_block(E.senior_of(r["home"]), display_name=r["home"])
-                    ab, ar = international_block(E.senior_of(r["away"]), display_name=r["away"])
+                ratio, hsr, asr = E.age_power_gap(r["home"], r["away"], women=is_women)
+                if ratio is not None and ratio >= E.AGE_POWER_RATIO:
+                    hb, hr = international_block(E.senior_of(r["home"]), display_name=r["home"], women=is_women)
+                    ab, ar = international_block(E.senior_of(r["away"]), display_name=r["away"], women=is_women)
                 else:
                     hb, hr = unrated_international(r["home"])
                     ab, ar = unrated_international(r["away"])
             elif is_intl:
-                hb, hr = international_block(r["home"])
-                ab, ar = international_block(r["away"])
+                hb, hr = international_block(r["home"], women=is_women)
+                ab, ar = international_block(r["away"], women=is_women)
             else:
                 hb, hr = team_block(r["home"], h_league)
                 ab, ar = team_block(r["away"], a_league)
