@@ -225,7 +225,7 @@ def main():
     ap.add_argument("--from", dest="start", default=None, help="YYYY-MM-DD, defaults to today")
     ap.add_argument("--days", type=int, default=7)
     ap.add_argument("--ratings", default=os.path.join(HERE, "tennis.json"))
-    ap.add_argument("--out", default=os.path.join(HERE, "tennis-data.json"))
+    ap.add_argument("--out", default=os.path.join(HERE, "tennis-data.js"))
     args = ap.parse_args()
 
     if not os.path.exists(args.ratings):
@@ -270,7 +270,9 @@ def main():
     payload = {"generated": datetime.now().isoformat(timespec="seconds"),
                "from": start.isoformat(), "to": end.isoformat(),
                "count": len(matches), "matches": matches}
-    json.dump(payload, open(args.out, "w"), separators=(",", ":"))
+    blob = json.dumps(payload, separators=(",", ":"))
+    with open(args.out, "w") as f:
+        f.write("window.__TENNIS_DATA__=" + blob + ";")
     print(f"wrote {args.out}: {len(matches)} priced matches", file=sys.stderr)
 
 
