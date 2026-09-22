@@ -431,70 +431,21 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .views button[aria-pressed="true"]{background:var(--paper);color:var(--ink)}
 .views button:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
 
-/* ---------- tennis ---------- */
-.tennis-day{margin-bottom:2px}
-.tennis-day .day-head{
-  background:#100e0c;color:#e8dfc9;padding:9px 14px;
-  font-family:var(--f-display);letter-spacing:.04em;text-transform:uppercase;
-  font-size:15px;display:flex;align-items:center;justify-content:space-between;
-}
-/* Explicit flex nesting throughout, deliberately not one shared CSS Grid —
-   a grid with some children auto-placed and others explicitly spanning
-   full width is exactly what put the player names into the 74px time
-   column instead of the wide middle one the first time this was built.
-   Each row here is its own flex container with one job, so there's no
-   auto-placement algorithm left to get it wrong. */
-.tmatch{
-  background:var(--surface);border-bottom:1px solid var(--rule-soft);
-  padding:10px 14px 12px;font-family:var(--f-ui);cursor:pointer;
-}
-.tmatch:nth-child(odd){background:#f5efdf}
-.tmatch:hover{background:var(--yellow-soft)}
-.tmatch:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
-.tmatch[aria-expanded="true"]{background:#f3ead6;box-shadow:inset 0 0 0 1px var(--rule)}
-
-.trow-top{display:flex;align-items:baseline;gap:8px;margin-bottom:8px}
-.ttime{
-  font-family:var(--f-num);font-variant-numeric:tabular-nums;color:var(--mute);
-  font-size:13px;flex:0 0 auto;
-}
-.tmeta{
-  flex:1 1 auto;min-width:0;display:flex;gap:7px;align-items:baseline;flex-wrap:wrap;
-  font-family:var(--f-num);font-size:11.5px;color:var(--mute);
-  text-transform:uppercase;letter-spacing:.03em;
-}
-.tmeta .tour{
-  font-family:var(--f-display);font-weight:400;letter-spacing:.03em;
-  background:var(--ink);color:var(--paper);padding:1px 6px;border-radius:2px;
+/* ---------- tennis ----------
+   Deliberately reuses .row, .rank, .club, .stat, .bar, .tier, .conf, .ko,
+   .day-head and .ruler as-is rather than a parallel .tXXX set — the first
+   build had its own near-identical classes, which is exactly how a "Strong"
+   tier ended up blue instead of the yellow-on-black every other Strong tag
+   on the site uses. Same classes means the same rules apply automatically;
+   there's nothing left to drift out of sync with football. .trow only
+   overrides the column count, since there's no score/xG slot here. */
+.trow{grid-template-columns:32px 116px 1fr 220px 1fr 56px}
+.trow .comp span{max-width:220px}
+.tour-chip{
+  font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.03em;
+  background:var(--ink);color:var(--paper);padding:1px 5px;border-radius:2px;
   flex:0 0 auto;
 }
-.ttier{
-  flex:0 0 auto;font-family:var(--f-display);font-size:12px;letter-spacing:.03em;
-  text-transform:uppercase;padding:3px 7px;border-radius:2px;
-}
-.ttier.tStrong{background:var(--home);color:#fff}
-.ttier.tFirm{background:var(--home-soft);color:var(--home)}
-.ttier.tLean{background:var(--rule-soft);color:var(--ink)}
-.ttier.tNoread{background:transparent;color:var(--mute)}
-
-.tplayers{display:flex;flex-direction:column;gap:5px;margin-bottom:8px}
-.tplayer{display:flex;align-items:baseline;gap:10px}
-.tplayer .name{
-  flex:1 1 auto;min-width:0;font-weight:600;font-size:16px;letter-spacing:-.005em;
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.tplayer.pick .name{color:var(--home)}
-.tplayer .pct{
-  flex:0 0 auto;font-family:var(--f-num);font-variant-numeric:tabular-nums;
-  font-size:15px;color:var(--mute);min-width:2.6em;text-align:right;
-}
-.tplayer.pick .pct{color:var(--home);font-weight:700}
-
-.tbar{height:6px;border-radius:3px;overflow:hidden;display:flex;background:var(--rule-soft)}
-.tbar span{height:100%}
-.tbar .a{background:var(--home)}
-.tbar .b{background:var(--away)}
-
 /* ---------- results review ---------- */
 .dayseg{display:flex;flex-wrap:wrap;gap:4px}
 .dayseg button{
@@ -793,9 +744,9 @@ footer a{color:var(--ink-2)}
     <div class="meta" id="meta"><div class="flash"><span>Premier League</span><span>Champions League</span><span>and more!</span></div></div>
   </div>
   <nav class="views" id="views" aria-label="Boards">
-    <button data-view="fixtures" aria-pressed="true">What&rsquo;s coming</button>
-    <button data-view="starred" aria-pressed="false">Starred</button>
+    <button data-view="fixtures" aria-pressed="true">Football</button>
     <button data-view="tennis" aria-pressed="false">Tennis</button>
+    <button data-view="starred" aria-pressed="false">Starred</button>
     <button data-view="results" aria-pressed="false">How it went</button>
   </nav>
   <div class="note" id="note"></div>
@@ -1506,6 +1457,29 @@ function tennisResearch(m){
   </div>`;
 }
 
+// Same numeric tiers football's own TIERS/tier() use — k:3 Strong down to
+// k:0 No read — so .rank.t3 and .tier.t3 mean exactly the same yellow-on-
+// black "Strong" everywhere on the site, not a tennis-specific lookalike.
+const TENNIS_TIER_K = {"Strong": 3, "Firm": 2, "Lean": 1, "No read": 0};
+
+function tennisBar(pa, pb){
+  const [ca, cb] = pa >= pb ? ["win", "lose"] : ["lose", "win"];
+  const lbl = v => v >= 13 ? `<b>${v}</b>` : "";
+  return `<div class="bar" role="img" aria-label="${pa} per cent, ${pb} per cent">
+    <i class="h ${ca}" style="width:${pa}%">${lbl(pa)}</i>
+    <i class="a ${cb}" style="width:${pb}%">${lbl(pb)}</i>
+  </div>`;
+}
+
+function tennisStat(r, surface){
+  // The evidence behind the number, same job football's ppg/W-D-L/GD line
+  // under each club does: elo is the rating actually used to price this
+  // specific match (the surface-specific one, falling back to overall for
+  // a player new to this surface); matches is how much of it to trust.
+  if(!r) return `<div class="stat none">not rated</div>`;
+  return `<div class="stat">${r.surfaceElo} ${surface} Elo &middot; ${r.matches} matches</div>`;
+}
+
 function renderTennis(){
   const host = $("#tennis");
   const TD = window.__TENNIS_DATA__;
@@ -1525,62 +1499,61 @@ function renderTennis(){
   TD.matches.forEach(m => (byDay[m.date] = byDay[m.date] || []).push(m));
 
   Object.keys(byDay).sort().forEach(date => {
-    const day = document.createElement("section");
-    day.className = "tennis-day";
+    const games = byDay[date].slice().sort((a,b)=> b.confidence - a.confidence);
+    const confident = games.filter(m => m.tier !== "No read").length;
+    const sec = document.createElement("section");
+    sec.className = "day";
     const d = new Date(date + "T00:00:00");
-    const label = d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" });
-    day.innerHTML = `<div class="day-head"><span>${label}</span>
-      <span>${byDay[date].length} match${byDay[date].length===1?"":"es"}</span></div>`;
+    const label = d.toLocaleDateString(undefined, { weekday: "long", day: "numeric", month: "long" }).toUpperCase();
+    sec.innerHTML = `
+      <div class="day-head">
+        <h2>${label}</h2>
+        <div class="count">${games.length} matches &middot; ${confident} confident</div>
+      </div>
+      <div class="ruler trow">
+        <div>#</div><div>Time</div><div>Player</div>
+        <div class="r-bar"><span>Win prob.</span><span>Win prob.</span></div>
+        <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div>
+      </div>`;
 
-    byDay[date].slice().sort((a,b)=> b.confidence - a.confidence).forEach(m=>{
+    games.forEach((m, i)=>{
       const aPick = m.pick === m.playerA;
       const pa = Math.round(m.p.a*100), pb = Math.round(m.p.b*100);
-      const tierClass = "t" + m.tier.replace(/\s+/g, "");
-      const row = document.createElement("div");
-      row.className = "tmatch";
-      row.tabIndex = 0;
-      row.setAttribute("role", "button");
+      const k = TENNIS_TIER_K[m.tier] ?? 0;
+      const row = document.createElement("button");
+      row.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
       row.setAttribute("aria-expanded", "false");
       row.innerHTML = `
-        <div class="trow-top">
-          <div class="ttime">${m.time || ""}</div>
-          <div class="tmeta"><span class="tour">${m.tour}</span>
-            <span>${m.tournament || "Tour event"}</span>
-            ${m.round ? `<span>&middot; ${m.round}</span>` : ""}
-            <span>&middot; ${m.surface}</span></div>
-          <div class="ttier ${tierClass}">${m.tier}</div>
-        </div>
-        <div class="tplayers">
-          <div class="tplayer${aPick?" pick":""}"><span class="name">${m.playerA}</span><span class="pct">${pa}%</span></div>
-          <div class="tplayer${!aPick?" pick":""}"><span class="name">${m.playerB}</span><span class="pct">${pb}%</span></div>
-        </div>
-        <div class="tbar"><span class="a" style="width:${pa}%"></span><span class="b" style="width:${pb}%"></span></div>`;
+        <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
+        <div class="ko"><time>${m.time || ""}</time>
+          <div class="comp" title="${m.tournament} &middot; ${m.round || ""}">
+            <span class="tour-chip">${m.tour}</span>
+            <span>${m.tournament || "Tour event"}${m.round ? " &middot; " + m.round : ""} &middot; ${m.surface}</span>
+          </div></div>
+        <div class="side"><div class="club${aPick?" pick":""}">${m.playerA}</div>${tennisStat(m.ratingA, m.surface)}</div>
+        <div class="barcell">${tennisBar(pa, pb)}</div>
+        <div class="side away"><div class="club${!aPick?" pick":""}">${m.playerB}</div>${tennisStat(m.ratingB, m.surface)}</div>
+        <div class="conf">${Math.round(m.confidence*100)}<span class="tier t${k}">${m.tier}</span></div>`;
 
-      let detailEl = null;
-      const toggle = ()=>{
+      row.addEventListener("click", ()=>{
         const open = row.getAttribute("aria-expanded") === "true";
+        const next = row.nextElementSibling;
         if(open){
           row.setAttribute("aria-expanded", "false");
-          if(detailEl){ detailEl.remove(); detailEl = null; }
+          if(next && next.classList.contains("detail")) next.remove();
         } else {
           row.setAttribute("aria-expanded", "true");
-          detailEl = document.createElement("div");
-          detailEl.className = "detail";
-          detailEl.innerHTML = tennisResearch(m);
-          row.after(detailEl);
+          const dv = document.createElement("div");
+          dv.innerHTML = `<div class="detail">${tennisResearch(m)}</div>`;
+          row.after(dv.firstElementChild);
         }
-      };
-      row.addEventListener("click", toggle);
-      row.addEventListener("keydown", e=>{
-        if(e.key === "Enter" || e.key === " "){ e.preventDefault(); toggle(); }
       });
 
-      day.appendChild(row);
+      sec.appendChild(row);
     });
-    host.appendChild(day);
+    host.appendChild(sec);
   });
 }
-
 
 function render(){
   const host = $("#days");
@@ -1655,7 +1628,7 @@ function render(){
    came from. The tier hit rates underneath are the live version of the labels
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
-const resState = { day: null };
+const resState = { day: null, sport: "football" };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
@@ -1710,19 +1683,48 @@ function bandTable(){
 
 function renderResults(){
   const host = $("#results");
+  // Two records, not one — a graded football fixture and a graded tennis
+  // match are different things this site tracks completely separately, so
+  // "How it went" is really two boards sharing a tab. Tennis's own grading
+  // pipeline doesn't exist yet (no score.py equivalent), so its mini-tab
+  // says exactly that rather than a fabricated accuracy number.
+  const sportTabs = `<div class="views" id="resSport" style="margin:18px 0 0;max-width:340px">
+    <button data-sport="football" aria-pressed="${resState.sport==="football"}">Football</button>
+    <button data-sport="tennis" aria-pressed="${resState.sport==="tennis"}">Tennis</button>
+  </div>`;
+
+  if(resState.sport === "tennis"){
+    host.innerHTML = sportTabs + `<div class="empty" style="max-width:80ch;line-height:1.6">
+      <b>Not tracked yet.</b> Tennis fixtures are priced, but nothing grades them against
+      results once they're played — there's no equivalent of football's score.py for tennis
+      on this site yet. This board will fill in once that exists, the same way football's
+      did.</div>`;
+    $("#resSport").addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.sport = b.dataset.sport;
+      renderResults();
+    });
+    return;
+  }
+
   if(!R_DAYS.length){
-    host.innerHTML = `<div class="empty" style="max-width:80ch;line-height:1.6">
+    host.innerHTML = sportTabs + `<div class="empty" style="max-width:80ch;line-height:1.6">
       <b>Nothing graded yet.</b> This board fills in as results land against
       predictions that were published before kick-off. If the site has only just
       started archiving, or the daily job has not run since the last round of
       fixtures, there is nothing honest to show here yet.</div>`;
+    $("#resSport").addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.sport = b.dataset.sport;
+      renderResults();
+    });
     return;
   }
   const day = R_DAYS.find(d => d.date === resState.day) || R_DAYS[0];
   const tierLine = (day.tiers||[]).map(t =>
     `<b>${t.name}</b> ${t.correct}/${t.n}`).join(" · ");
 
-  host.innerHTML = `
+  host.innerHTML = sportTabs + `
     <div style="margin-top:20px">
       <div class="ctl-label" style="margin-bottom:6px">Completed day</div>
       <div class="dayseg" id="dayseg">${R_DAYS.map(d=>
@@ -1791,6 +1793,11 @@ function renderResults(){
     resState.day = b.dataset.day;
     renderResults();
     host.scrollIntoView({block:"start", behavior:"auto"});
+  });
+  $("#resSport").addEventListener("click", e=>{
+    const b = e.target.closest("button"); if(!b) return;
+    resState.sport = b.dataset.sport;
+    renderResults();
   });
 }
 

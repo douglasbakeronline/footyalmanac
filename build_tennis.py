@@ -273,10 +273,22 @@ def main():
                 dropped += 1
                 continue   # no rating on at least one side — not published, same rule as football
             p = price_match(pool[a], pool[b], r["surface"], sw)
+            surf_key = f"surface_{r['surface']}"
             matches.append({
                 "tour": tour.upper(), "date": r["date"], "time": r["time"],
                 "tournament": r["tournament"], "round": r["round"], "surface": r["surface"],
                 "playerA": a, "playerB": b,
+                # The evidence behind the number, same principle as football's
+                # ppg/W-D-L/GD line under each club: elo is career-overall,
+                # surfaceElo is specific to the surface this match is actually
+                # on (the one price_match used) and falls back to the same
+                # value as elo if the player hasn't got surface-specific
+                # matches yet — a genuinely new-to-surface player, not a
+                # missing stat.
+                "ratingA": {"elo": round(pool[a]["overall"]), "matches": pool[a]["matches"],
+                            "surfaceElo": round(pool[a].get(surf_key, pool[a]["overall"]))},
+                "ratingB": {"elo": round(pool[b]["overall"]), "matches": pool[b]["matches"],
+                            "surfaceElo": round(pool[b].get(surf_key, pool[b]["overall"]))},
                 "p": {"a": round(p, 4), "b": round(1 - p, 4)},
                 "pick": a if p >= 0.5 else b,
                 "confidence": round(max(p, 1 - p), 4),
