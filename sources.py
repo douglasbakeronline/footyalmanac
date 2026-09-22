@@ -674,7 +674,13 @@ ESPN_SLUGS = {
     # More domestic cups. Same slug pattern as the five originals
     # (esp.copa_del_rey, ger.dfb_pokal, ita.coppa_italia) — guessed the same
     # way, unverified the same way.
-    "fr.cup": ["fra.coupe_de_france"], "nl.cup": ["ned.knvb_beker"],
+    "fr.cup": ["fra.coupe_de_france"],
+    # Both previously tried a single slug that 400'd. Multiple candidates,
+    # tried in order, same mechanism this list already uses elsewhere (see
+    # sco.challenge below) — I could not find the actual API slug through
+    # search, only confirm ESPN carries the competition under this display
+    # name. Needs testing, same as every "live" league did originally.
+    "nl.cup": ["ned.knvb_beker", "ned.beker", "ned.toto_knvb_beker", "ned.cup"],
     "pt.cup": ["por.taca_de_portugal"], "be.cup": ["bel.cup"],
     "tr.cup": ["tur.cup"], "sco.cup": ["sco.cup"], "at.cup": ["aut.cup"],
     "gr.cup": ["gre.cup"], "es.copafed": ["esp.copa_federacion"], "cze.cup": ["cze.cup"],
@@ -686,7 +692,13 @@ ESPN_SLUGS = {
     "fr.w1": ["fra.w.1"], "se.w1": ["swe.w.1"], "en.w2": ["eng.w.2"],
     "uwcl": ["uefa.wchampions"], "en.w.cup": ["eng.w.league_cup"],
 
-    "sco.challenge": ["sco.challenge_cup", "sco.league_cup"],
+    "sco.challenge": ["sco.challenge_cup", "sco.league_cup", "sco.spfl_challenge_cup", "sco.challenge"],
+    # New this round, all unverified — same caveat as above, confirmed to
+    # exist on ESPN by display name (search results), slug not confirmed.
+    "efl.trophy": ["eng.trophy", "eng.efl_trophy", "eng.football_league_trophy"],
+    "cl.cup": ["chi.copa_chile", "chi.cup"],
+    "py.cup": ["par.copa_paraguay", "par.cup"],
+    "dk.w1": ["den.w.1", "dnk.w.1"],
     "en.6n": ["eng.6"], "en.6s": ["eng.7"],
 
     # International. These are the least confident guesses in the whole
