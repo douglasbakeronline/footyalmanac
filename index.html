@@ -130,7 +130,7 @@ h1 span{
 /* Three lines, three faces. The identity comes from the letterforms rather
    than from effects piled on a single face:
 
-     FOOTBALL   Bevan, a heavy slab with crisp square serifs
+     SPORTS     Bevan, a heavy slab with crisp square serifs
      ALMANAC    Archivo Black, wide and heavy with no serifs at all
      strapline  Oswald, condensed and widely letterspaced
 
@@ -138,20 +138,25 @@ h1 span{
    very different natural width still stack flush. That is the fitting routine
    earning its keep rather than being a nicety.
 
-   On effects: the stroke is gone. What is left is ONE hard offset per title
-   line, no blur, and it is not decoration. Measured on the cover's grey
-   ground the red reads 1.82:1 and the white 2.61:1, both under the 3:1
-   minimum for large text, so with no edge at all they are genuinely hard to
-   read rather than merely less pretty. A single offset is the cheapest thing
-   that fixes that and stays crisp. Ink measures 7.38:1, which is why the
-   strapline carries no shadow whatsoever.
-
-   If you want the titles clean too, the ground has to go dark: set .cover's
-   background to #14100c and both offsets can come off. */
+   On effects: a full outline, not a single offset. Measured on the cover's
+   grey ground the red reads 1.82:1 and the white 2.61:1, both under the 3:1
+   minimum for large text, so some edge treatment is doing real contrast work,
+   not just decoration — an outline running all the way round does that job
+   better than a diagonal offset does, since a offset leaves two edges of the
+   letterform with no separation from the ground at all. -webkit-text-stroke
+   draws the actual outline in browsers that support it; the eight-direction
+   text-shadow is the fallback everywhere else (same technique .starband b
+   already uses lower down, just eight directions instead of four for a
+   rounder edge at this much larger size). Ink measures 7.38:1, which is why
+   the strapline carries no outline whatsoever. */
 h1 .a,h1 .b{font-size:clamp(34px,8.9vw,88px)}
 h1 .a{
   font-family:'Bevan','Alfa Slab One',var(--f-display);
-  color:#e0202c;text-shadow:.036em .036em 0 #100e0c;
+  color:#e0202c;-webkit-text-stroke:.045em #100e0c;paint-order:stroke fill;
+  text-shadow:
+    .045em 0 0 #100e0c, -.045em 0 0 #100e0c, 0 .045em 0 #100e0c, 0 -.045em 0 #100e0c,
+    .032em .032em 0 #100e0c, -.032em .032em 0 #100e0c,
+    .032em -.032em 0 #100e0c, -.032em -.032em 0 #100e0c;
 }
 h1 .b{
   font-family:'Archivo Black','Anton',var(--f-display);
@@ -159,7 +164,11 @@ h1 .b{
   /* set in em so the gap holds its proportion at every size, rather than
      opening up on desktop and closing on a phone */
   margin-top:.07em;
-  text-shadow:.05em .05em 0 #100e0c;
+  -webkit-text-stroke:.045em #100e0c;paint-order:stroke fill;
+  text-shadow:
+    .045em 0 0 #100e0c, -.045em 0 0 #100e0c, 0 .045em 0 #100e0c, 0 -.045em 0 #100e0c,
+    .032em .032em 0 #100e0c, -.032em .032em 0 #100e0c,
+    .032em -.032em 0 #100e0c, -.032em -.032em 0 #100e0c;
 }
 .cover .sub{
   font-family:'Oswald',var(--f-ui);font-weight:600;color:#100e0c;
@@ -746,7 +755,7 @@ footer a{color:var(--ink-2)}
       <i>★ ★ ★</i><b>The</b><i>★ ★ ★</i>
     </div>
     <h1><span class="a">Sports</span><span class="b">Almanac</span></h1>
-    <div class="sub">Complete fixture statistics</div>
+    <div class="sub">Complete sports statistics</div>
     <div class="yr"><b id="window">—</b></div>
     <div class="meta" id="meta"><div class="flash"><span>Football</span><span>Tennis</span><span>&amp; more soon</span></div></div>
   </div>
@@ -933,7 +942,10 @@ const fmtDay = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
 const fmtShort = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
   {day:"numeric", month:"short"});
 
-$("#window").textContent = D.season.replace("-", "—20");
+// Always just the current calendar year — not the two-year season string
+// data.json carries (e.g. "2026-27"), and computed fresh each load rather
+// than baked in, so it's still correct next January with no edit needed.
+$("#window").textContent = new Date().getFullYear();
 const rangeText = upcoming.length
   ? fmtShort(upcoming[0].date)+" – "+fmtShort(upcoming[upcoming.length-1].date)
   : "none upcoming";

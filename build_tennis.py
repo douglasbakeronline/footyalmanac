@@ -129,6 +129,26 @@ def price_match(rating_a, rating_b, surface, surface_weight):
     return 1.0 / (1.0 + 10 ** ((bb - ba) / 400.0))
 
 
+# Deliberately separate from price_match rather than folded into it: this is
+# a direct response to a few live results looking wrong by eye, not a
+# re-validated calibration. The walk-forward holdout (tune_tennis.py, 1437
+# ATP + 1286 WTA matches from 2026) showed the tiers landing close to or
+# above what their labels claim — WTA Strong at 80.8% against a label of
+# 70%+, for instance — so the backtested model itself isn't the obvious
+# problem. But a handful of live matches is a genuinely different, much
+# smaller sample than a season-long backtest, and there's no tennis
+# equivalent of score.py yet to actually track whether this shrink helps or
+# overcorrects. Until that exists, treat this constant as a judgement call
+# to revisit, not a fitted value: 0.8 pulls every probability 20% of the way
+# back toward a coin flip, softening the number shown without changing which
+# side is favoured.
+CONFIDENCE_SHRINK = 0.8
+
+
+def dampen(p, shrink=CONFIDENCE_SHRINK):
+    return 0.5 + (p - 0.5) * shrink
+
+
 TIERS = [(0.70, "Strong"), (0.62, "Firm"), (0.55, "Lean"), (0.0, "No read")]
 def tier_of(p):
     # Borrowed straight from football's thresholds as a starting point, not
@@ -272,7 +292,7 @@ def main():
             if not a or not b:
                 dropped += 1
                 continue   # no rating on at least one side — not published, same rule as football
-            p = price_match(pool[a], pool[b], r["surface"], sw)
+            p = dampen(price_match(pool[a], pool[b], r["surface"], sw))
             surf_key = f"surface_{r['surface']}"
             matches.append({
                 "tour": tour.upper(), "date": r["date"], "time": r["time"],
