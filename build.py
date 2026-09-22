@@ -264,6 +264,26 @@ def main():
         # league average before it is allowed anywhere near a rating.
         cur_ratings[code] = E.strength_from_table(tbl) if played else {}
 
+    # A club stuck on zero games while the rest of its division has moved on
+    # is the exact symptom a stale cached fixture file produces: openfootball
+    # updates the whole file at once, but this build's own cache of it can
+    # predate that update. Every other club in the file shows fine, so this
+    # is invisible unless something is actually looking for the gap — this
+    # is that something, run every build rather than found by eye per fixture.
+    for code, tbl in cur_tables.items():
+        if len(tbl) < 4:
+            continue
+        played_counts = sorted(row["P"] for row in tbl.values())
+        median_p = played_counts[len(played_counts) // 2]
+        if median_p < 3:
+            continue  # too early in the season for a gap to mean anything
+        stuck = [name for name, row in tbl.items() if row["P"] == 0]
+        if stuck:
+            print(f"  STALE? {code}: {', '.join(stuck)} show 0 games played "
+                  f"this season while the division median is {median_p} — "
+                  f"likely a cached fixture file that predates their results, "
+                  f"not a rating problem", file=sys.stderr)
+
     rated_pool = set(last_league)
     _dom_cache = {}
 
