@@ -489,7 +489,7 @@ def main():
                 for t in (hb, ab):
                     if t["unrated"]:
                         reasons.append(f"{t['name']} has no rating on file")
-                if is_u21 and not reasons:
+                if is_youth and not reasons:
                     reasons.append(
                         "priced off senior national team ratings, not actual U21 form — "
                         "shown only because the senior gap is wide enough to trust despite that")
