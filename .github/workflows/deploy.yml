@@ -64,6 +64,37 @@ jobs:
       - name: Score past predictions
         run: python3 score.py
 
+      # A separate pipeline from football — its own ratings file
+      # (tennis.json), its own fetch, nothing football depends on. The one
+      # thing that matters here: a day this can't reach ESPN, or ESPN
+      # blocks the request the way it briefly did testing this by hand,
+      # must NOT overwrite a working file with an empty one. Whatever was
+      # last committed is already sitting in the checkout when this runs,
+      # so that's the fallback — compare match counts, keep the higher one.
+      - name: Build this week's tennis
+        run: |
+          cp tennis-data.js /tmp/tennis-data.js.prev 2>/dev/null || true
+          python3 build_tennis.py --days 7 || true
+          python3 - <<'PY'
+          import json, os
+
+          def count(path):
+              try:
+                  text = open(path).read()
+                  i = text.index("{")
+                  return json.loads(text[i:-1]).get("count", 0)
+              except Exception:
+                  return 0
+
+          new_n = count("tennis-data.js")
+          old_n = count("/tmp/tennis-data.js.prev")
+          if new_n == 0 and old_n > 0:
+              print(f"today's tennis fetch returned 0 matches — keeping yesterday's {old_n} instead")
+              os.replace("/tmp/tennis-data.js.prev", "tennis-data.js")
+          else:
+              print(f"today's tennis fetch: {new_n} matches")
+          PY
+
       # Pages artifacts do not persist between runs, so the prediction archive
       # has to live in the repository or the record resets to zero every day.
       # The archive commit races anything else pushing to main. Uploading files
@@ -87,6 +118,12 @@ jobs:
           # The season-so-far cache. Without it every run re-walks a hundred
           # days for each of sixty-one competitions instead of three.
           cp -r current /tmp/archive/ 2>/dev/null || true
+          # Today's tennis fetch (or yesterday's, if today's came back
+          # empty) — committed for the same reason the predictions are:
+          # Pages artifacts don't persist between runs, so without this the
+          # fallback in the step above would have nothing to fall back to
+          # tomorrow.
+          cp tennis-data.js /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -98,7 +135,8 @@ jobs:
             cp -r /tmp/archive/predictions/. predictions/
             cp -r /tmp/archive/current/. current/ 2>/dev/null || true
             cp /tmp/archive/record.json .
-            git add -A predictions current record.json
+            cp /tmp/archive/tennis-data.js . 2>/dev/null || true
+            git add -A predictions current record.json tennis-data.js
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
@@ -131,6 +169,11 @@ jobs:
           # than parsed out of the page, so they need to exist at real URLs or
           # a home-screen save falls back to a screenshot of the page.
           cp icon-*.png manifest.webmanifest _site/
+          # Tennis: only copied if it exists, which it always will now that
+          # the step above commits it back — but a defensive check costs
+          # nothing and a missing file must not fail the assemble step.
+          cp tennis-data.js _site/tennis-data.js 2>/dev/null || \
+            echo "::warning::no tennis-data.js this run — Tennis tab will show its empty state"
 
       - uses: actions/upload-pages-artifact@v3
         with:
