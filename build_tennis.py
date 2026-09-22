@@ -35,7 +35,7 @@ back before trusting any of it.
 
 Standard library only, like the rest of the project.
 """
-import argparse, json, math, os, re, sys, unicodedata, urllib.request
+import argparse, json, os, re, sys, unicodedata, urllib.request
 from datetime import date, datetime, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -49,14 +49,25 @@ ESPN_HOSTS = ["https://site.api.espn.com", "https://site.web.api.espn.com"]
 # unconfirmed.
 ESPN_PATH = "/apis/site/v2/sports/tennis/{tour}/scoreboard?dates={d}&limit=400"
 ESPN_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (footyalmanac build)",
+    # Copied verbatim from sources.py's ESPN_HEADERS, which is the one
+    # actually proven to work against ESPN — a genuine Chrome UA plus the
+    # Accept/Accept-Language headers, not just a UA string on its own. The
+    # earlier version of this file used a placeholder UA and nothing else,
+    # which is almost certainly why ESPN returned 403 rather than data: it
+    # read as a bot, correctly.
+    "User-Agent": ("Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                   "AppleWebKit/537.36 (KHTML, like Gecko) "
+                   "Chrome/126.0.0.0 Safari/537.36"),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "en-GB,en;q=0.9",
     "Referer": "https://www.espn.com/tennis/scoreboard",
     "Origin": "https://www.espn.com",
 }
 TOUR_SLUGS = {"atp": ["atp"], "wta": ["wta"]}   # unverified — see module docstring
 
-SURFACE_MAP = {"hard": "Hard", "clay": "Clay", "grass": "Grass",
-               "carpet": "Hard", "indoor hard": "Hard", "i. hard": "Hard"}
+# SURFACE_MAP removed: ESPN's tennis feed carries no surface field at all
+# (confirmed against a real response), so there was never anything to map —
+# see the "Hard" fallback and its comment in _matches_from_event below.
 
 
 # ---------------------------------------------------------------------------
@@ -146,49 +157,60 @@ def _get_day(tour_slug, day, timeout, errs):
     return []
 
 
-def _row(ev, tour):
-    """One ESPN tennis event -> a plain match dict, or None if the shape
-    doesn't match what was guessed. Tries a couple of plausible layouts for
-    where the two players' names live, since individual-athlete events don't
-    follow soccer's team-competitor schema and the real shape is unseen."""
-    comp = (ev.get("competitions") or [{}])[0]
-    sides = comp.get("competitors") or []
-    if len(sides) != 2:
-        return None
+# Confirmed against a real response fetched by hand on 22 Sep 2026 — not a
+# guess. Only two draw types get rated: tennis.json is singles-only, so
+# doubles/mixed groupings are skipped outright rather than half-parsed.
+SINGLES_SLUGS = {"mens-singles", "womens-singles"}
 
-    def side_name(c):
-        for path in (("athlete", "displayName"), ("athlete", "shortName"), ("team", "displayName")):
-            obj = c
-            for key in path:
-                obj = (obj or {}).get(key) if isinstance(obj, dict) else None
-            if obj:
-                return obj
-        return None
 
-    p0, p1 = side_name(sides[0]), side_name(sides[1])
-    if not p0 or not p1:
-        return None
+def _matches_from_event(ev, tour):
+    """One ESPN tennis "event" is a whole TOURNAMENT (e.g. "Chengdu Open"),
+    not a match — soccer's schema has one event per game, but tennis nests
+    every match for every draw of that tournament inside
+    event["groupings"][i]["competitions"][j]. Getting this wrong was the
+    actual reason nothing was ever extracted, even once the 403 was fixed:
+    the earlier version of this file read event["competitions"] directly,
+    which doesn't exist, and silently found nothing every time."""
+    tourney = ev.get("name") or ev.get("shortName") or ""
+    out = []
+    for g in ev.get("groupings") or []:
+        if ((g.get("grouping") or {}).get("slug")) not in SINGLES_SLUGS:
+            continue
+        for comp in g.get("competitions") or []:
+            sides = comp.get("competitors") or []
+            if len(sides) != 2:
+                continue
 
-    status = ((ev.get("status") or {}).get("type") or {}).get("state")
-    completed = status == "post"
-    winner = None
-    if completed:
-        w0 = sides[0].get("winner")
-        winner = p0 if w0 else (p1 if sides[1].get("winner") else None)
+            def name(c):
+                return (c.get("athlete") or {}).get("displayName")
 
-    iso = comp.get("date") or ev.get("date") or ""
-    surface_raw = ((ev.get("groupings") or [{}])[0].get("grouping") or {}).get("surface") \
-        or ev.get("surface") or ""
-    round_name = ((ev.get("competitions") or [{}])[0].get("notes") or [{}])
-    round_name = round_name[0].get("headline") if round_name else None
-    tourney = ((ev.get("league") or {}).get("name")) or ev.get("shortName") or ""
+            p0, p1 = name(sides[0]), name(sides[1])
+            if not p0 or not p1:
+                continue
 
-    return {
-        "tour": tour, "date": iso[:10], "time": iso[11:16] if len(iso) >= 16 else None,
-        "p0": p0, "p1": p1, "completed": completed, "winner": winner,
-        "surface": SURFACE_MAP.get(surface_raw.strip().lower(), "Hard"),
-        "round": round_name, "tournament": tourney,
-    }
+            status = ((comp.get("status") or {}).get("type") or {}).get("state")
+            completed = status == "post"
+            winner = None
+            if completed:
+                winner = p0 if sides[0].get("winner") else (p1 if sides[1].get("winner") else None)
+
+            iso = comp.get("date") or ""
+            round_name = (comp.get("round") or {}).get("displayName")
+            out.append({
+                "tour": tour, "date": iso[:10], "time": iso[11:16] if len(iso) >= 16 else None,
+                "p0": p0, "p1": p1, "completed": completed, "winner": winner,
+                # ESPN's tennis feed carries no surface field at all — an
+                # earlier version of this read one that doesn't exist and
+                # always fell back to Hard anyway. Hard-coding it here
+                # instead is the same fallback made honest: correct for the
+                # current hard-court swing (Sep-Mar is nearly all hard
+                # court), a real gap once clay/grass season starts. Needs a
+                # tournament-name lookup to fix properly — not attempted
+                # here, flagged instead of silently guessed at.
+                "surface": "Hard",
+                "round": round_name, "tournament": tourney,
+            })
+    return out
 
 
 def fetch_week(tour, start, end, timeout=25, log=None):
@@ -201,13 +223,11 @@ def fetch_week(tour, start, end, timeout=25, log=None):
         errs, rows, seen = [], [], set()
         for day in days:
             for ev in _get_day(slug, day, timeout, errs):
-                r = _row(ev, tour)
-                if not r:
-                    continue
-                key = (r["date"], r["p0"], r["p1"])
-                if key not in seen:
-                    seen.add(key)
-                    rows.append(r)
+                for r in _matches_from_event(ev, tour):
+                    key = (r["date"], r["p0"], r["p1"])
+                    if key not in seen:
+                        seen.add(key)
+                        rows.append(r)
         if log is not None:
             note = f"  ERROR {errs[0]}" if errs else ""
             log.append(f"{tour}/{slug}: {len(rows)} matches{note}")
