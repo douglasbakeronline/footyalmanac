@@ -348,6 +348,13 @@ def main():
             # from a division this build does not cover.
             "unrated": (prow is None and played == 0),
             "carriedFrom": src if carried else None,
+            # The division these ratings actually come from — distinct from
+            # carriedFrom, which is only set when a promoted side's rating
+            # crossed divisions. In a cup, every side's rating comes from its
+            # own domestic league (there's no table for the cup itself), so
+            # this is the one place a reader can see which league a club's
+            # stats below actually belong to without already knowing it.
+            "league": E.LEAGUES[src]["name"] if src in E.LEAGUES else None,
             "form": fp,
             "adj": {"att": adj.get("att", 1.0), "def": adj.get("def", 1.0),
                     "why": adj.get("why")} if adj else None,
@@ -379,7 +386,7 @@ def main():
             "def": round(r[1], 3) if r else 1.0,
             "played": None,
             "unrated": r is None,
-            "carriedFrom": None, "form": None, "adj": None,
+            "carriedFrom": None, "league": None, "form": None, "adj": None,
             "out": None, "outFactors": None,
             "lastSeason": None, "last": None, "now": None,
         }, {"att": r[0], "def": r[1]} if r else {"att": 1.0, "def": 1.0}
@@ -391,7 +398,7 @@ def main():
         # rather than needing its own special case there.
         return {
             "name": name, "att": 1.0, "def": 1.0, "played": None, "unrated": True,
-            "carriedFrom": None, "form": None, "adj": None,
+            "carriedFrom": None, "league": None, "form": None, "adj": None,
             "out": None, "outFactors": None, "lastSeason": None, "last": None, "now": None,
         }, {"att": 1.0, "def": 1.0}
 
@@ -563,6 +570,7 @@ def main():
                 "league": code, "leagueName": meta["name"], "short": meta["short"],
                 "country": meta["country"], "iso": meta["iso"],
                 "tier": meta["tier"], "order": meta["order"], "round": r["round"],
+                "cup": bool(meta.get("cup")),
                 "date": r["date"], "time": r["time"],
                 "kickoff": S.kickoff_utc(r, meta["iso"]),
                 "home": hb, "away": ab,

@@ -568,6 +568,18 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .row.unrated .conf{color:var(--mute);font-weight:500}
 .row.unrated .stat{opacity:.8}
 .stat.none{color:var(--away);opacity:.85}
+/* Only ever rendered inside a cup fixture's row — see sideStats(). Small
+   and muted rather than colour-coded like the tier badges, since it's
+   identifying information, not a verdict the way Strong/Firm/Lean are. */
+.league-tag{
+  display:block;font-family:var(--f-ui);font-size:9.5px;font-weight:700;
+  letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2);
+  background:var(--rule-soft);padding:1px 5px;border-radius:2px;
+  margin-top:2px;white-space:nowrap;width:fit-content;
+}
+.league-tag.none{color:var(--mute);background:transparent;font-weight:500;
+  text-transform:none;letter-spacing:normal;padding:0}
+.sheet-league{font-weight:400;color:var(--mute);font-size:.85em}
 .flg{
   width:15px;height:10.3px;flex:0 0 auto;border-radius:1px;
   box-shadow:0 0 0 .5px rgba(20,24,29,.28);vertical-align:baseline;
@@ -1159,7 +1171,14 @@ function flag(iso, country){
   return `<svg class="flg" role="img" aria-label="${country}"><use href="#f-${iso}"/></svg>`;
 }
 
-function sideStats(t){
+function sideStats(t, isCup){
+  // Only shown for cup ties: in an ordinary league fixture the competition
+  // itself already tells you the level, so a repeated badge would be noise.
+  // In a cup, sides can come from completely different divisions — this is
+  // the "quick scan" version, the row-level equivalent of teamSheet's header.
+  const tag = (isCup && t.league)
+    ? `<span class="league-tag">${t.league}</span>`
+    : (isCup && t.played !== null ? `<span class="league-tag none">no domestic league on file</span>` : "");
   const s = t.now && t.now.P ? t.now : t.last;
   if(!s){
     // An international side has no domestic season table by definition —
@@ -1168,13 +1187,13 @@ function sideStats(t){
     // so it's the signal to show the rating itself instead of wrongly
     // claiming there isn't one.
     if(t.played === null && !t.unrated)
-      return `<div class="stat">att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)} · international rating</div>`;
-    return `<div class="stat none">not rated — no season on file</div>`;
+      return `${tag}<div class="stat">att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)} · international rating</div>`;
+    return `${tag}<div class="stat none">not rated — no season on file</div>`;
   }
   const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
   const f = t.form ? ` · ${t.form.seq}` : "";
   const miss = t.out ? ` · <span class="mini-out">${t.out.length} out</span>` : "";
-  return `<div class="stat">${s.PPG.toFixed(2)} ppg · ${s.W}-${s.D}-${s.L} · ${gd}${f}${miss}</div>`;
+  return `${tag}<div class="stat">${s.PPG.toFixed(2)} ppg · ${s.W}-${s.D}-${s.L} · ${gd}${f}${miss}</div>`;
 }
 
 /* Which side the model favours decides the colours: yellow for it, red for
@@ -1232,7 +1251,7 @@ function teamSheet(t, label){
     (t.now && t.now.P) ? `<span class="flag live">${t.now.P} played</span>` : "",
   ].join("");
   return `<div>
-    <h3>${label} — ${t.name}</h3>
+    <h3>${label} — ${t.name}${t.league ? ` <span class="sheet-league">(${t.league})</span>` : ""}</h3>
     ${flags}
     <table class="sheet">
       <tr><th>Record</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>PPG</th></tr>
@@ -1388,10 +1407,10 @@ function appendFixture(sec, g, i, dayDate, btts){
   btn.innerHTML = `
     <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span></div></div>
-    <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home)}</div>
+    <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home, g.cup)}</div>
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
-    <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away)}</div>
+    <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
     <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
   btn.addEventListener("click", ()=>{
     state.open = state.open===id ? null : id;
