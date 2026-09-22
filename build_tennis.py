@@ -149,6 +149,35 @@ def dampen(p, shrink=CONFIDENCE_SHRINK):
     return 0.5 + (p - 0.5) * shrink
 
 
+def dynamic_k(matches_played, k_base):
+    return k_base / ((matches_played + 5) ** 0.4)
+
+
+def apply_result(pool, winner, loser, surface, k_base):
+    """Nudges both players' overall and surface ratings by one result, the
+    exact update tune_tennis.py's run_elo() applies during a full fit.
+    This is what keeps tennis.json from just being a snapshot frozen at
+    whatever date it was last fitted on: every real ESPN result this script
+    can see gets folded in, in order, before anything is priced."""
+    surf_key = f"surface_{surface}"
+    ow = pool[winner]["overall"]
+    ol = pool[loser]["overall"]
+    sw = pool[winner].get(surf_key, ow)
+    sl = pool[loser].get(surf_key, ol)
+    nw = pool[winner].get("matches", 0)
+    nl = pool[loser].get("matches", 0)
+    kw, kl = dynamic_k(nw, k_base), dynamic_k(nl, k_base)
+
+    e_ow = 1.0 / (1.0 + 10 ** ((ol - ow) / 400.0))
+    pool[winner]["overall"] = ow + kw * (1 - e_ow)
+    pool[loser]["overall"] = ol + kl * (0 - (1 - e_ow))
+    e_sw = 1.0 / (1.0 + 10 ** ((sl - sw) / 400.0))
+    pool[winner][surf_key] = sw + kw * (1 - e_sw)
+    pool[loser][surf_key] = sl + kl * (0 - (1 - e_sw))
+    pool[winner]["matches"] = nw + 1
+    pool[loser]["matches"] = nl + 1
+
+
 TIERS = [(0.70, "Strong"), (0.62, "Firm"), (0.55, "Lean"), (0.0, "No read")]
 def tier_of(p):
     # Borrowed straight from football's thresholds as a starting point, not
@@ -264,6 +293,11 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--from", dest="start", default=None, help="YYYY-MM-DD, defaults to today")
     ap.add_argument("--days", type=int, default=7)
+    ap.add_argument("--catchup-days", type=int, default=6,
+                     help="how many days back to pull completed results from, to update "
+                          "ratings before pricing. tennis.json is a snapshot from whenever "
+                          "it was last fitted on bulk historical data; this is what keeps it "
+                          "from just getting staler forever between full refits.")
     ap.add_argument("--ratings", default=os.path.join(HERE, "tennis.json"))
     ap.add_argument("--out", default=os.path.join(HERE, "tennis-data.js"))
     args = ap.parse_args()
@@ -280,9 +314,34 @@ def main():
     matches = []
     for tour in ("atp", "wta"):
         pool = ratings[tour]["ratings"]
+        k_base = ratings[tour]["constants"]["kBase"]
         sw = ratings[tour]["constants"]["surfaceWeight"]
         by_full, by_initial = build_index(pool)
-        rows = fetch_week(tour, start, end, log=log)
+
+        # Catch-up pass: fold in whatever real results ESPN has for the last
+        # few days before pricing anything, so the ratings used below aren't
+        # just whatever tennis.json was fitted on — they're that plus every
+        # result since that this script could actually see. Unmatched
+        # players are skipped rather than guessed at, same rule as pricing.
+        catchup_start = start - timedelta(days=args.catchup_days)
+        catchup_rows = fetch_week(tour, catchup_start, end, log=log)
+        completed = [r for r in catchup_rows if r["completed"] and r["winner"]]
+        completed.sort(key=lambda r: (r["date"], r["time"] or ""))
+        applied, skipped = 0, 0
+        for r in completed:
+            a = match_player(r["p0"], by_full, by_initial)
+            b = match_player(r["p1"], by_full, by_initial)
+            if not a or not b:
+                skipped += 1
+                continue
+            winner = a if r["winner"] == r["p0"] else b
+            loser = b if winner == a else a
+            apply_result(pool, winner, loser, r["surface"], k_base)
+            applied += 1
+        log.append(f"{tour}: {applied} completed results applied to ratings, "
+                    f"{skipped} skipped (no rating on file for a side)")
+
+        rows = [r for r in catchup_rows if r["date"] >= start.isoformat()]
         dropped = 0
         for r in rows:
             if r["completed"]:
