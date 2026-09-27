@@ -12,10 +12,12 @@ top, and grades itself publicly against what actually happened.
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
-The front page is the **Daily List**: only the obvious wins across every
-sport. Football at ≥75% (win pick, nothing flagged, every club rated from a
-prior season); each other sport only at the threshold its own backtest
-earned (see `claude/multi-sport.md`). It is the
+The front page is the **Daily List**: the most likely results across every
+sport, one ranking per day, strongest tested hit rate first. One rule for
+all sports: a pick qualifies only if calls at its level landed ≥75% in
+testing on games never tuned on (`sports.list_threshold`), plus football's
+blind-spot exclusions and no draws, and no tennis qualifying rounds. Every
+row shows its tested rate. See `claude/multi-sport.md`. It is the
 model's own independent read, with no bookmaker input, by Douglas's decision.
 The full board sits one tap behind it.
 
@@ -79,7 +81,7 @@ by `backfill.py` and committed by hand.
 
 ```
 python3 nametest.py                          # must pass before any push
-python3 build.py --days 5 --top 50           # what CI runs
+python3 build.py --days 7 --top 50           # what CI runs (7 days: reaches the weekend, like the other sports)
 python3 build.py --days 2 --no-topup --no-odds   # fast local check
 python3 score.py                             # regrade, rewrite record.json
 python3 score_tennis.py                      # grade tennis picks, rewrite tennis-record.*

@@ -62,8 +62,28 @@ RESCAN = 3
 
 # Gates, as tune.py.
 MIN_HOLDOUT, MAX_P_WORSE, MIN_GAIN = 250, 0.30, 0.0005
-LIST_THRESHOLDS = (0.75, 0.80, 0.85)
-LIST_MIN_HIT, LIST_MIN_N = 0.78, 30
+# The Daily List takes a sport's games from the lowest confidence at which its
+# calls landed LIST_MIN_HIT or better in every test window holding at least
+# LIST_MIN_N such calls (and at least one window must). Shared with football
+# and tennis: every pick on the list landed three in four or better in testing.
+LIST_THRESHOLDS = (0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85)
+LIST_MIN_HIT, LIST_MIN_N = 0.75, 30
+
+
+def list_threshold(windows):
+    for t in LIST_THRESHOLDS:
+        ok, big = True, 0
+        for w in windows:
+            b = next((x for x in w if abs(x["from"] - t) < 1e-9), None)
+            if b is None:
+                ok = False
+                break
+            if b["n"] >= LIST_MIN_N:
+                big += 1
+                ok = ok and b["hit"] >= LIST_MIN_HIT
+        if ok and big:
+            return t
+    return None
 DEFAULTS = {"k": 20, "hfa": 50, "regress": 0.33, "mov": 1}
 GRID = {"k": (8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
         "regress": (0.0, 0.25, 0.5), "mov": (0, 1)}
@@ -416,13 +436,7 @@ def tune_sport(sport, verbose=True):
         f"65%+ gap {gap_raw:.3f} -> {gap_cal:.3f} -> {'applied' if use_cal else 'not applied'}")
 
     b_fit, b_chk = bands(rows_fit), bands(rows_chk)
-    list_min = None
-    for t in LIST_THRESHOLDS:
-        f = next((b for b in b_fit if b["from"] == t), None)
-        c = next((b for b in b_chk if b["from"] == t), None)
-        if f and c and c["n"] >= LIST_MIN_N and f["hit"] >= LIST_MIN_HIT and c["hit"] >= LIST_MIN_HIT:
-            list_min = t
-            break
+    list_min = list_threshold([b_fit, b_chk])
 
     acc = sum(r[1] for r in rows_chk) / max(len(rows_chk), 1)
     say(f"  fitted {fitted} (fit window log loss {best[0]:.4f})")

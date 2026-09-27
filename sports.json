@@ -23,7 +23,7 @@
    "pWorseVsHome": 0.01
   },
   "publish": true,
-  "listMin": 0.8,
+  "listMin": 0.75,
   "cal": null,
   "calTested": {
    "a": -0.1411,
@@ -272,7 +272,7 @@
    "pWorseVsHome": 0.0
   },
   "publish": true,
-  "listMin": 0.75,
+  "listMin": 0.7,
   "cal": {
    "a": 0.064,
    "b": 0.9936
@@ -408,7 +408,7 @@
    "pWorseVsHome": 0.0
   },
   "publish": true,
-  "listMin": 0.75,
+  "listMin": 0.6,
   "cal": null,
   "calTested": {
    "a": 0.2105,

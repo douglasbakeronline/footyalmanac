@@ -140,14 +140,16 @@ def price_match(rating_a, rating_b, surface, surface_weight):
 # 5.7 -> 1.5 pts. 0.8 was under-quoting: its 75% calls landed 85%.
 CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
 
-# The Daily List. Same archive and filter, the shrink above: calls at 75%+
-# landed ATP 82.0% (399) in 2025 and 81.0% (184) in 2026, WTA 80.8% (380)
-# and 81.0% (253). That archive is main draw only, so qualifying rounds (thin
-# ratings, and not what was tested) never make the list.
-LIST_MIN = 0.75
+# The Daily List. Same archive and filter, the shrink above. The shared rule
+# (sports.list_threshold): the lowest confidence at which calls landed 75%+
+# in every test window with 30+ such calls. Both tours: 70%, where ATP landed
+# 79.1% (673) in 2025 and 78.1% (320) in 2026, WTA 78.1% (661) and 80.2%
+# (384). The archive is main draw only, so qualifying rounds (thin ratings,
+# and not what was tested) never make the list.
+LIST_MIN = {"ATP": 0.70, "WTA": 0.70}
 LIST_MIN_MATCHES = 10
-LIST_BACKTEST = {"ATP": {"2025": [0.820, 399], "2026": [0.810, 184]},
-                 "WTA": {"2025": [0.808, 380], "2026": [0.810, 253]}}
+LIST_BACKTEST = {"ATP": {"2025": [0.791, 673], "2026": [0.781, 320]},
+                 "WTA": {"2025": [0.781, 661], "2026": [0.802, 384]}}
 # How calls at each level landed in 2026 (never fitted on), for every row.
 ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.6824, "n": 973, "quoted": 0.6734}, {"from": 0.6, "hit": 0.7188, "n": 754, "quoted": 0.7019}, {"from": 0.65, "hit": 0.7514, "n": 523, "quoted": 0.7363}, {"from": 0.7, "hit": 0.7812, "n": 320, "quoted": 0.775}, {"from": 0.75, "hit": 0.8098, "n": 184, "quoted": 0.8137}, {"from": 0.8, "hit": 0.8913, "n": 92, "quoted": 0.852}, {"from": 0.85, "hit": 0.9048, "n": 42, "quoted": 0.8855}], "WTA": [{"from": 0.55, "hit": 0.6829, "n": 965, "quoted": 0.6843}, {"from": 0.6, "hit": 0.7151, "n": 737, "quoted": 0.7187}, {"from": 0.65, "hit": 0.7681, "n": 539, "quoted": 0.7534}, {"from": 0.7, "hit": 0.8021, "n": 384, "quoted": 0.7854}, {"from": 0.75, "hit": 0.8103, "n": 253, "quoted": 0.8161}, {"from": 0.8, "hit": 0.8696, "n": 138, "quoted": 0.8499}, {"from": 0.85, "hit": 0.9032, "n": 62, "quoted": 0.8795}]}
 
@@ -160,8 +162,8 @@ def accuracy_for(conf, tour):
     return {"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None
 
 
-def list_eligible(conf, round_name, matches_a, matches_b):
-    return (conf >= LIST_MIN and "qualif" not in (round_name or "").lower()
+def list_eligible(conf, tour, round_name, matches_a, matches_b):
+    return (conf >= LIST_MIN[tour.upper()] and "qualif" not in (round_name or "").lower()
             and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
 
 
@@ -435,7 +437,7 @@ def main():
                 "confidence": round(max(p, 1 - p), 4),
                 "tier": tier_of(max(p, 1 - p)),
                 "accuracy": accuracy_for(max(p, 1 - p), tour),
-                "list": list_eligible(max(p, 1 - p), r["round"],
+                "list": list_eligible(max(p, 1 - p), tour, r["round"],
                                       pool[a]["matches"], pool[b]["matches"]),
             })
         log.append(f"{tour}: {len(rows)} fetched, {dropped} dropped (no rating on file for a side)")

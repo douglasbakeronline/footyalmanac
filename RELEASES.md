@@ -22,6 +22,42 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-7 — A fuller Daily List, strongest first
+
+**What changed for a reader**
+
+- The Daily List rule is now the same for every sport: a pick is on it only
+  if calls at its level landed at least 75% of the time in testing on games
+  the model was never tuned on (every test window with 30+ such calls must
+  clear it). Each row already shows its own tested rate.
+- Resulting thresholds: football leagues 75%, internationals 55% (the
+  international fit under-quotes itself: 55%+ landed 75.7% of 177), tennis
+  70% (ATP 79.1%/78.1%, WTA 78.1%/80.2%), basketball 70%, rugby 60%
+  (78.0%/75.1%), NFL 75%. Baseball still does not qualify.
+- Each day is one list across all sports, ranked by tested hit rate, then
+  confidence: the strongest pick always leads.
+- Football now builds 7 days, like the other sports, so the weekend's club
+  football is on the list alongside the weekend's rugby.
+- On this week's slate: about 67 picks across 7 days (was about 13), every
+  day covered.
+- One live record line for the list across every sport.
+
+**Trade-off, stated plainly** The old bar was ~78-80% landed; the new one is
+75%. More picks, each a little less certain on average. The ranking puts
+the most certain first and every row shows its tested rate.
+
+**Fixes** A hung SSH connection could stall a pull for ever: this repo's
+SSH now times out (`core.sshCommand`, local config). The tennis threshold
+text handles an older tennis file kept after a failed fetch.
+
+**Files** `sports.py` (`list_threshold`), `sports.json`, `build.py`
+(`LIST_MIN` per league/international), `build_tennis.py` (`LIST_MIN` per
+tour), `index.html` (ranked list), `deploy.yml` (`--days 7`), `CLAUDE.md`.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-27-6 — Tested accuracy on every row; football's row features on every sport
 
 **What changed for a reader**

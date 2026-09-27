@@ -49,7 +49,12 @@ if os.path.exists(_ABS_FILE):
 # the rest of the selection is about removing games the model cannot see.
 # Internationals are rated by a separate fit (tune_international.py); on its
 # 2026 holdout, calibrated calls at 75%+ landed 81.6% (49 games).
-LIST_MIN = 0.75
+# The shared rule (sports.list_threshold): the lowest confidence at which
+# calls landed 75%+ in every test window with 30+ such calls. League
+# fixtures: 75% (2025/26 78.9% of 242; 2026/27 76.2% of 21, too few to count
+# yet). Internationals: 55%, where the 2026 holdout landed 75.7% of 177, since
+# the international fit under-quotes itself.
+LIST_MIN = {"league": 0.75, "intl": 0.55}
 LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
                  "check": {"season": "2026-27", "n": 21, "hit": 0.762},
                  "intl": {"season": "2026", "n": 49, "hit": 0.816}}
@@ -91,7 +96,8 @@ def list_eligible(g):
     """
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
-    if pick == "d" or p[pick] < LIST_MIN or g["celtic"] or g["unrated"]:
+    intl = bool(E.LEAGUES[g["league"]].get("international"))
+    if pick == "d" or p[pick] < LIST_MIN["intl" if intl else "league"] or g["celtic"] or g["unrated"]:
         return False
     for t in (g["home"], g["away"]):
         if t["played"] is not None and not t["last"]:
@@ -739,7 +745,7 @@ def main():
                      "haveHistory": c in prior_ratings} for c in CODES],
         "missing": sorted(missing),
         "odds": odds_meta,
-        "list": {"min": LIST_MIN, "backtest": LIST_BACKTEST},
+        "list": {"min": LIST_MIN["league"], "minIntl": LIST_MIN["intl"], "backtest": LIST_BACKTEST},
         "days": days,
         "model": {
             "blendK": E.BLEND_K, "formCap": E.FORM_MAX, "rho": E.RHO, "temperature": E.TEMPERATURE,

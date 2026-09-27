@@ -88,3 +88,12 @@ under-quotes (75% quoted, 85% landed): worth revisiting with its own test.
 - Tennis shrink per tour: ATP 0.9, WTA 0.95 (was 0.8), tested 2025 -> 2026.
 - Shared two-sided row in `index.html` (`sportRow`, `sportDetail`,
   `tennisAsGame`): star, expandable detail, accuracy chip, Starred board.
+
+## Update: one list rule, ranked (release-2026-09-27-7)
+
+Rule shared by all pipelines: the lowest confidence where calls landed 75%+
+in every test window with 30+ calls (at least one window must have 30).
+Thresholds: football leagues 75%, internationals 55%, tennis 70%, NBA 70%,
+rugby 60%, NFL 75%, baseball none. The page ranks each day's picks across
+sports by tested hit rate, then confidence. Football builds 7 days in CI.
+This week: ~67 picks over 7 days (was ~13).

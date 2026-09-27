@@ -1563,71 +1563,65 @@ function renderList(){
   const host = $("#list");
   if(!host) return;
   const L = D.list || {min:0.75};
-  const bt = L.backtest;
   const R = window.__RECORD__ || {};
-  const live = R.list;
   const pc = x => Math.round(x*100) + "%";
+
+  // Each sport's threshold, as its own testing set it.
+  const TDL = window.__TENNIS_DATA__;
+  const thresholds = [`football leagues ${pc(L.min)}`];
+  if(L.minIntl) thresholds.push(`internationals ${pc(L.minIntl)}`);
+  // min is per tour now; an older tennis file (kept when a day's fetch fails) has one number
+  if(TDL && TDL.list && TDL.list.min) thresholds.push(`tennis ${pc(typeof TDL.list.min === "number"
+    ? TDL.list.min : Math.min(...Object.values(TDL.list.min)))}`);
+  const absent = [];
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp =>
+    sp.published && sp.listMin ? thresholds.push(`${sp.name === "NFL" ? "NFL" : sp.name.toLowerCase()} ${pc(sp.listMin)}`) : absent.push(sp.name));
+
+  // One live record for the list, across every sport that has graded picks.
+  const recs = [R.list, window.__TENNIS_RECORD__ && window.__TENNIS_RECORD__.list, SR && SR.list].filter(Boolean);
+  const liveN = recs.reduce((a,r) => a + r.n, 0), liveC = recs.reduce((a,r) => a + r.correct, 0);
+
   host.innerHTML = `
     <div class="list-rule">
-      <b>Only the obvious wins, across every sport.</b> Football makes the list when the model gives
-      one side <b>${pc(L.min)} or more</b> to win, never a draw, every club is rated from a full prior
-      season, and nothing leaves the model working blind (no promoted side, no cross-division cup tie,
-      no unrated club). Every other sport joins only at the threshold its own backtest earned${(() => {
-        const q = SD && SD.sports ? Object.values(SD.sports).filter(sp => sp.published && sp.listMin) : [];
-        const n = SD && SD.sports ? Object.values(SD.sports).filter(sp => !(sp.published && sp.listMin)).map(sp => sp.name) : [];
-        const tl = window.__TENNIS_DATA__ && window.__TENNIS_DATA__.list;
-        if(tl) q.unshift({name:"tennis (main draw)", listMin:tl.min});
-        return (q.length ? `: ${q.map(sp => `${sp.name} at ${pc(sp.listMin)}`).join(", ")}` : "")
-          + (n.length ? `. Not on the list, because testing did not earn it: ${n.join(", ")}` : "");
-      })()}. All the model's own read, with no bookmaker input. On days when nothing clears the bar the
-      list is empty on purpose.
-      ${bt ? `<br>Backtest: <b>${pc(bt.fit.hit)}</b> of ${bt.fit.n} league games at this level landed in
-      ${bt.fit.season}, ${pc(bt.check.hit)} of ${bt.check.n} in ${bt.check.season} so far${bt.intl ? `, and
-      ${pc(bt.intl.hit)} of ${bt.intl.n} internationals in ${bt.intl.season}` : ""}. So roughly one in five still
-      won't: that is football's ceiling, and a higher bar does not raise it.` : ""}
-      ${live ? `<br>Live since the list launched: <b>${live.correct} of ${live.n}</b> landed (${pc(live.accuracy)})${live.drawnOut ? `, ${live.drawnOut} of the misses ${live.drawnOut===1?"was a draw":"were draws"}` : ""}.`
-             : `<br>Live record: nothing graded yet. The list is scored separately from the full board, from its first day.`}
+      <b>The most likely results across every sport, strongest first.</b> A pick is here only if calls
+      at its level <b>landed at least 75% of the time</b> in testing on games the model was never tuned on,
+      and each row shows its own tested rate. That level differs by sport because the numbers do:
+      ${thresholds.join(", ")}.${absent.length ? ` Not on the list: ${absent.join(", ")}, whose strongest calls do not land often enough.` : ""}
+      Football also leaves out anything the model is blind to (promoted sides, cross-division cup ties,
+      clubs with no prior season) and never picks a draw. Tennis leaves out qualifying rounds. All the
+      model's own read, no bookmaker input. Roughly one pick in four or five will still miss.
+      <br>${liveN ? `Live since the list launched: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).`
+        : `Live record: nothing graded yet. The list is scored on its own, from its first day.`}
     </div>`;
 
-  // Every sport's qualifying picks, day by day. Football rows keep their own
-  // three-way layout; the two-sided sports share the tennis row.
-  const foot = {};
-  upcoming.forEach(day => { const g = day.games.filter(x => x.list); if(g.length) foot[day.date] = {day, games:g}; });
-  const other = {};
+  // Every sport's picks per day in one ranking: highest tested hit rate
+  // first, then confidence. Confidence alone would not compare fairly: a
+  // football number is one of three outcomes, the others one of two.
+  const byDay = {};
+  const add = (date, item) => (byDay[date] = byDay[date] || []).push(item);
+  upcoming.forEach(day => day.games.filter(g => g.list).forEach(g => add(day.date, {kind:"football", g, day})));
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).filter(g => g.list)
-    .forEach(g => (other[localDay(g.when)] = other[localDay(g.when)] || []).push(g)));
-  // Tennis, in the same two-sided shape (player A in the home slot).
-  const TDL = window.__TENNIS_DATA__;
-  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).map(tennisAsGame).forEach(g =>
-    (other[localDay(g.when)] = other[localDay(g.when)] || []).push(g));
-  const dates = [...new Set([...Object.keys(foot), ...Object.keys(other)])].sort();
+    .forEach(g => add(localDay(g.when), {kind:"sport", g})));
+  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).map(tennisAsGame)
+    .forEach(g => add(localDay(g.when), {kind:"sport", g}));
+  const strength = it => [(it.g.accuracy && it.g.accuracy.hit) || 0, it.g.confidence];
+  const dates = Object.keys(byDay).sort();
   dates.forEach(date => {
-    const f = foot[date] ? foot[date].games.slice().sort(rank.conf) : [];
-    const o = (other[date] || []).slice().sort((a,b) => b.confidence - a.confidence);
+    const items = byDay[date].sort((a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; });
     const sec = document.createElement("section");
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${f.length + o.length} pick${f.length + o.length === 1 ? "" : "s"}</div></div>`;
-    if(f.length){
-      sec.insertAdjacentHTML("beforeend", `<div class="ruler">
-        <div>#</div><div>Kick-off</div><div>Home</div>
-        <div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
-        <div style="text-align:center">Score · xG</div>
-        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`);
-      f.forEach((g,i) => appendFixture(sec, g, i, date, false));
-    }
-    if(o.length){
-      sec.insertAdjacentHTML("beforeend", sportRuler());
-      o.forEach((g,i) => sec.appendChild(sportRow(g, f.length + i, true)));
-    }
+      <div class="count">${items.length} pick${items.length === 1 ? "" : "s"}</div></div>`;
+    items.forEach((it, i) => it.kind === "football"
+      ? appendFixture(sec, it.g, i, date, false)
+      : sec.appendChild(sportRow(it.g, i, true)));
     host.appendChild(sec);
   });
-  const any = dates.length > 0;
-  if(!any){
+  if(!dates.length){
     const e = document.createElement("div");
     e.className = "empty";
-    e.innerHTML = `Nothing obvious in this window. No fixture in any sport clears the bar, so nothing is served.
-      Each sport's full slate is on its own tab, with the weaker reads labelled as such.`;
+    e.innerHTML = `Nothing clears the bar in this window, in any sport, so nothing is served.
+      Each sport's full slate is on its own tab.`;
     host.appendChild(e);
   }
 

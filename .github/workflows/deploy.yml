@@ -44,7 +44,7 @@ jobs:
 
       # No pip install: the whole thing runs on the standard library.
       - name: Build today's slate
-        run: python3 build.py --days 5 --top 50
+        run: python3 build.py --days 7 --top 50
 
       # A build that returns nothing is a broken upstream, not a quiet
       # publish of an empty page. Fail loudly and keep yesterday's site.
@@ -183,7 +183,7 @@ jobs:
           git reset --hard origin/main
 
       - name: Rebuild with the updated record
-        run: python3 build.py --days 5 --top 50
+        run: python3 build.py --days 7 --top 50
 
       - name: Assemble the site
         run: |
