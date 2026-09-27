@@ -178,6 +178,7 @@ def main():
                     "tournament": m.get("tournament"), "round": m.get("round"),
                     "playerA": m["playerA"], "playerB": m["playerB"],
                     "pick": m["pick"], "confidence": conf, "tier": B.tier_of(conf),
+                    "list": bool(m.get("list")),
                     "winner": winner, "ok": winner == m["pick"],
                     "retired": "ret" in (r.get("note") or "").lower(),
                     "note": r.get("note"), "published": m["published"],
@@ -215,6 +216,8 @@ def main():
         "overall": summarise(rows),
         "byTour": {t: summarise([r for r in rows if r["tour"] == t]) for t in ("ATP", "WTA")},
         "tiers": tier_table(rows),
+        # the Daily List's tennis picks on their own, from the day it launched
+        "list": summarise([r for r in rows if r.get("list")]),
         "bands": bands,
         "void": sum(1 for g in graded.values() if g["void"]),
         "days": days,

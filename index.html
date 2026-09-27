@@ -457,6 +457,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   border-right:1px solid #3a342e;min-height:44px;
 }
 .views button:last-child{border-right:0}
+/* nine boards: three to a row on a phone rather than nine slivers */
+#views{flex-wrap:wrap}
+@media (max-width:700px){ #views button{flex:1 1 30%;border-bottom:1px solid #3a342e} }
 .views button[aria-pressed="true"]{
   background:var(--yellow);color:#100e0c;
 }
@@ -530,27 +533,27 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .rrow.miss .club{color:var(--ink-2);font-weight:500}
 .rrow.miss .bar{opacity:.55}
 
-/* tennis results: prediction beside the result, one match per row */
-.truler,.trow{display:grid;grid-template-columns:46px 1.4fr 1fr 1.3fr 70px 26px;gap:10px;align-items:center}
-.truler{
+/* results rows (tennis, other sports): prediction beside the result, one match per row */
+.xruler,.xrow{display:grid;grid-template-columns:46px 1.4fr 1fr 1.3fr 70px 26px;gap:10px;align-items:center}
+.xruler{
   padding:7px 8px 5px;border-bottom:1px solid var(--rule);
   font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
 }
-.trow{background:var(--surface);border-bottom:1px solid var(--rule-soft);padding:9px 8px;font-size:14.5px}
-.trow.alt{background:#f6efdc}
-.trow .lg{font-family:var(--f-num);font-size:11px;color:var(--mute);font-weight:500}
-.trow .tm b{font-weight:600}
-.trow small{display:block;font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:2px}
-.trow .tp span,.trow .tw span{display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
-.trow .tp em{font-style:normal;font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
-.trow .tw{font-weight:600}
-.trow.miss .tw{color:var(--away)}
-.trow .conf{text-align:right}
+.xrow{background:var(--surface);border-bottom:1px solid var(--rule-soft);padding:9px 8px;font-size:14.5px}
+.xrow.alt{background:#f6efdc}
+.xrow .lg{font-family:var(--f-num);font-size:11px;color:var(--mute);font-weight:500}
+.xrow .tm b{font-weight:600}
+.xrow small{display:block;font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:2px}
+.xrow .tp span,.xrow .tw span{display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.xrow .tp em{font-style:normal;font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
+.xrow .tw{font-weight:600}
+.xrow.miss .tw{color:var(--away)}
+.xrow .conf{text-align:right}
 @media (max-width:700px){
-  .truler{display:none}
-  .trow{grid-template-columns:1fr 1fr 26px;grid-template-areas:"tm tm mark" "tp tw mark" "lg conf conf";row-gap:6px}
-  .trow .tm{grid-area:tm}.trow .tp{grid-area:tp}.trow .tw{grid-area:tw}
-  .trow .lg{grid-area:lg}.trow .conf{grid-area:conf}.trow .mark{grid-area:mark}
+  .xruler{display:none}
+  .xrow{grid-template-columns:1fr 1fr 26px;grid-template-areas:"tm tm mark" "tp tw mark" "lg conf conf";row-gap:6px}
+  .xrow .tm{grid-area:tm}.xrow .tp{grid-area:tp}.xrow .tw{grid-area:tw}
+  .xrow .lg{grid-area:lg}.xrow .conf{grid-area:conf}.xrow .mark{grid-area:mark}
 }
 
 .ladder{margin-top:26px}
@@ -813,6 +816,10 @@ footer a{color:var(--ink-2)}
     <button data-view="list" aria-pressed="true">Daily List</button>
     <button data-view="fixtures" aria-pressed="false">Football</button>
     <button data-view="tennis" aria-pressed="false">Tennis</button>
+    <button data-view="sport:nfl" aria-pressed="false">NFL</button>
+    <button data-view="sport:mlb" aria-pressed="false">Baseball</button>
+    <button data-view="sport:nba" aria-pressed="false">Basketball</button>
+    <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
     <button data-view="starred" aria-pressed="false">Starred</button>
     <button data-view="results" aria-pressed="false">How it went</button>
   </nav>
@@ -853,6 +860,7 @@ footer a{color:var(--ink-2)}
 <section id="list" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
+<section id="sport" hidden></section>
 <section id="results" hidden></section>
 
 <footer id="footer"></footer>
@@ -861,6 +869,8 @@ footer a{color:var(--ink-2)}
 <script src="data.js"></script>
 <script src="tennis-data.js"></script>
 <script src="tennis-record.js"></script>
+<script src="sports-data.js"></script>
+<script src="sports-record.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1534,11 +1544,18 @@ function renderList(){
   const pc = x => Math.round(x*100) + "%";
   host.innerHTML = `
     <div class="list-rule">
-      <b>Only the obvious wins.</b> A fixture makes this list when the model gives one side
-      <b>${pc(L.min)} or more</b> to win, never a draw, every club is rated from a full prior
-      season, and nothing about the fixture leaves the model working blind (no promoted side,
-      no cross-division cup tie, no unrated club). It is the model's own read, with no bookmaker
-      input. On days when nothing clears that bar the list is empty on purpose.
+      <b>Only the obvious wins, across every sport.</b> Football makes the list when the model gives
+      one side <b>${pc(L.min)} or more</b> to win, never a draw, every club is rated from a full prior
+      season, and nothing leaves the model working blind (no promoted side, no cross-division cup tie,
+      no unrated club). Every other sport joins only at the threshold its own backtest earned${(() => {
+        const q = SD && SD.sports ? Object.values(SD.sports).filter(sp => sp.published && sp.listMin) : [];
+        const n = SD && SD.sports ? Object.values(SD.sports).filter(sp => !(sp.published && sp.listMin)).map(sp => sp.name) : [];
+        const tl = window.__TENNIS_DATA__ && window.__TENNIS_DATA__.list;
+        if(tl) q.unshift({name:"tennis (main draw)", listMin:tl.min});
+        return (q.length ? `: ${q.map(sp => `${sp.name} at ${pc(sp.listMin)}`).join(", ")}` : "")
+          + (n.length ? `. Not on the list, because testing did not earn it: ${n.join(", ")}` : "");
+      })()}. All the model's own read, with no bookmaker input. On days when nothing clears the bar the
+      list is empty on purpose.
       ${bt ? `<br>Backtest: <b>${pc(bt.fit.hit)}</b> of ${bt.fit.n} league games at this level landed in
       ${bt.fit.season}, ${pc(bt.check.hit)} of ${bt.check.n} in ${bt.check.season} so far${bt.intl ? `, and
       ${pc(bt.intl.hit)} of ${bt.intl.n} internationals in ${bt.intl.season}` : ""}. So roughly one in five still
@@ -1547,32 +1564,51 @@ function renderList(){
              : `<br>Live record: nothing graded yet. The list is scored separately from the full board, from its first day.`}
     </div>`;
 
-  let any = false;
-  upcoming.forEach(day=>{
-    const games = day.games.filter(g => g.list).sort(rank.conf);
-    if(!games.length) return;
-    any = true;
+  // Every sport's qualifying picks, day by day. Football rows keep their own
+  // three-way layout; the two-sided sports share the tennis row.
+  const foot = {};
+  upcoming.forEach(day => { const g = day.games.filter(x => x.list); if(g.length) foot[day.date] = {day, games:g}; });
+  const other = {};
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).filter(g => g.list)
+    .forEach(g => (other[localDay(g.when)] = other[localDay(g.when)] || []).push(g)));
+  // Tennis, in the same two-sided shape (player A in the home slot).
+  const TDL = window.__TENNIS_DATA__;
+  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).forEach(m => {
+    const when = m.time ? `${m.date}T${m.time}:00Z` : `${m.date}T12:00:00Z`;
+    (other[localDay(when)] = other[localDay(when)] || []).push({
+      sport:"tennis", label:`${m.tour} · ${m.tournament || ""}${m.round ? " · " + m.round : ""}`,
+      when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
+      confidence:m.confidence, tier:m.tier, eloH:m.ratingA.elo, eloA:m.ratingB.elo,
+      gamesH:m.ratingA.matches, gamesA:m.ratingB.matches, list:true});
+  });
+  const dates = [...new Set([...Object.keys(foot), ...Object.keys(other)])].sort();
+  dates.forEach(date => {
+    const f = foot[date] ? foot[date].games.slice().sort(rank.conf) : [];
+    const o = (other[date] || []).slice().sort((a,b) => b.confidence - a.confidence);
     const sec = document.createElement("section");
     sec.className = "day";
-    sec.innerHTML = `
-      <div class="day-head">
-        <h2>${fmtDay(day.date)}</h2>
-        <div class="count">${games.length} of ${day.games.length} fixture${day.games.length===1?"":"s"}</div>
-      </div>
-      <div class="ruler">
+    sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
+      <div class="count">${f.length + o.length} pick${f.length + o.length === 1 ? "" : "s"}</div></div>`;
+    if(f.length){
+      sec.insertAdjacentHTML("beforeend", `<div class="ruler">
         <div>#</div><div>Kick-off</div><div>Home</div>
         <div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
         <div style="text-align:center">Score · xG</div>
-        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
-      </div>`;
-    games.forEach((g,i)=> appendFixture(sec, g, i, day.date, false));
+        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`);
+      f.forEach((g,i) => appendFixture(sec, g, i, date, false));
+    }
+    if(o.length){
+      sec.insertAdjacentHTML("beforeend", sportRuler());
+      o.forEach((g,i) => sec.appendChild(sportRow(g, f.length + i, true)));
+    }
     host.appendChild(sec);
   });
+  const any = dates.length > 0;
   if(!any){
     const e = document.createElement("div");
     e.className = "empty";
-    e.innerHTML = `Nothing obvious in this window. No fixture clears the bar, so nothing is served.
-      The full slate is on the <b>Football</b> board, ranked, with the weaker reads labelled as such.`;
+    e.innerHTML = `Nothing obvious in this window. No fixture in any sport clears the bar, so nothing is served.
+      Each sport's full slate is on its own tab, with the weaker reads labelled as such.`;
     host.appendChild(e);
   }
 
@@ -1778,7 +1814,7 @@ function render(){
    came from. The tier hit rates underneath are the live version of the labels
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
-const resState = { day: null, tday: null, sport: "football" };
+const resState = { day: null, tday: null, sday: null, sport: "football" };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
@@ -1842,7 +1878,7 @@ const tScore = note => (note || "").replace(/^.*\([A-Z]{3}\)\s*/, "");
 
 function tennisRow(g, i){
   const loser = g.winner === g.playerA ? g.playerB : g.playerA;
-  return `<div class="trow${i%2?" alt":""}${g.ok?"":" miss"}">
+  return `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}">
     <div class="lg">${g.tour}</div>
     <div class="tm"><b>${g.playerA}</b> v <b>${g.playerB}</b>
       <small>${[g.tournament, g.round].filter(Boolean).join(" · ")}</small></div>
@@ -1893,7 +1929,7 @@ function tennisResults(){
 
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
-    <div class="truler"><div>Tour</div><div>Match</div><div>Prediction</div><div>Result</div>
+    <div class="xruler"><div>Tour</div><div>Match</div><div>Prediction</div><div>Result</div>
       <div style="text-align:right">Tier</div><div></div></div>
     ${day.games.map(tennisRow).join("")}
 
@@ -1912,15 +1948,141 @@ function tennisResults(){
     </div>`;
 }
 
+/* ---------- NFL, baseball, basketball, rugby ----------
+   sports.py prices these off one Elo model per sport, keyed by ESPN team id,
+   and only publishes a sport whose model beat backing the home side on a
+   season it never saw. Same row shape as tennis: two sides, no draw. */
+const SD = window.__SPORTS_DATA__ || null;
+const SR = window.__SPORTS_RECORD__ || null;
+const SPORT_K = {"Strong":3, "Firm":2, "Lean":1, "No read":0};
+const localDay = iso => { const d = new Date(iso); return isNaN(d) ? iso.slice(0,10)
+  : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
+const localTime = iso => { const d = new Date(iso); return isNaN(d) ? "" :
+  d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}); };
+
+function sportRow(g, i, showSport){
+  const ph = Math.round(g.pHome*100), pa = 100 - ph;
+  const k = SPORT_K[g.tier] ?? 0;
+  const homePick = g.pick === g.home;
+  const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
+  const row = document.createElement("div");
+  row.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
+  row.innerHTML = `
+    <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
+    <div class="ko"><time datetime="${g.when}">${localTime(g.when)}</time>
+      <div class="comp"><span class="tour-chip">${showSport ? name : g.label}</span>
+        <span>${showSport ? g.label : ""}${g.neutral ? " · neutral venue" : ""}</span></div></div>
+    <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
+      <div class="stat">rating ${g.eloH} · ${g.gamesH} games</div></div>
+    <div class="barcell">${tennisBar(ph, pa)}</div>
+    <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
+      <div class="stat">rating ${g.eloA} · ${g.gamesA} games</div></div>
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span></div>`;
+  return row;
+}
+
+function sportRuler(){
+  return `<div class="ruler trow"><div>#</div><div>Time</div><div>Home</div>
+    <div class="r-bar"><span>Win prob.</span><span>Win prob.</span></div>
+    <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`;
+}
+
+function sportEvidence(sp){
+  const c = sp.check, b = (sp.bands || []).find(x => x.from === 0.75);
+  if(!c) return "";
+  return `Checked on <b>${c.n}</b> games since July 2025 that it was never fitted on: picked the
+    winner <b>${pct(c.accuracy)}%</b> of the time, against ${pct(c.homeRate)}% for always backing the
+    home side.${b ? ` Calls at 75% or more landed <b>${pct(b.hit)}%</b> (${b.n} games).` : ""}
+    ${sp.listMin ? `Games at <b>${pct(sp.listMin)}%</b> or more go on the Daily List.`
+      : `No games from this sport go on the Daily List: its strongest calls did not land often enough in testing.`}`;
+}
+
+function renderSport(key){
+  const host = $("#sport");
+  const sp = SD && SD.sports && SD.sports[key];
+  if(!sp){
+    host.innerHTML = `<div class="empty">No data loaded for this sport yet. It appears after the next daily build.</div>`;
+    return;
+  }
+  if(!sp.published){
+    host.innerHTML = `<div class="list-rule"><b>${sp.name} is not published.</b> In testing, the
+      model did not beat simply backing the home side on games it had never seen, so its
+      numbers would not mean anything.</div>`;
+    return;
+  }
+  host.innerHTML = `<div class="list-rule">${sportEvidence(sp)}</div>`;
+  if(!sp.games.length){
+    host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
+    return;
+  }
+  const byDay = {};
+  sp.games.forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
+  Object.keys(byDay).sort().forEach(d => {
+    const games = byDay[d].slice().sort((a,b) => b.confidence - a.confidence);
+    const sec = document.createElement("section");
+    sec.className = "day";
+    sec.innerHTML = `<div class="day-head"><h2>${fmtDay(d)}</h2>
+      <div class="count">${games.length} game${games.length===1?"":"s"} · ${games.filter(g=>g.tier!=="No read").length} confident</div></div>
+      ${sportRuler()}`;
+    games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
+    host.appendChild(sec);
+  });
+}
+
+/* sports results on "How it went": same rows as tennis */
+function sportsResults(){
+  if(!SR || !SR.overall || !(SR.days||[]).length){
+    return `<div class="empty" style="max-width:80ch;line-height:1.6"><b>Nothing graded yet.</b>
+      NFL, baseball, basketball and rugby picks are graded once played, and only if they were
+      published before the start. This fills in from the first day they are on the site.</div>`;
+  }
+  const days = SR.days, day = days.find(d => d.date === resState.sday) || days[0];
+  const tl = (x, label) => x ? `<div class="${x.accuracy >= x.expected ? "good" : "bad"}">
+      <span>${label}</span><b>${x.correct} / ${x.n}</b>
+      <small>${pct(x.accuracy)}% · quoted ${pct(x.expected)}%</small></div>` : "";
+  const row = (g, i) => `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}">
+      <div class="lg">${(SD && SD.sports[g.sport] || {name:g.sport}).name}</div>
+      <div class="tm"><b>${g.home}</b> v <b>${g.away}</b><small>${g.label}</small></div>
+      <div class="tp"><span>Picked</span>${g.pick} <em>${pct(g.confidence)}%</em></div>
+      <div class="tw"><span>Won</span>${g.winner || "Draw"}<small>${g.score[0]}–${g.score[1]}</small></div>
+      <div class="conf"><span class="tier t${SPORT_K[g.tier] ?? 0}">${g.tier}</span></div>
+      ${mark(g.ok)}</div>`;
+  return `<div class="scoreline" style="margin-top:20px">${tl(SR.overall, "Picked the winner")}
+      ${Object.entries(SR.bySport).filter(([k,v]) => v).map(([k,v]) => tl(v, (SD && SD.sports[k] || {name:k}).name)).join("")}</div>
+    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">Completed day</div>
+      <div class="dayseg" id="sdayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
+        ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div></div>
+    <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
+      <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
+    <div class="xruler"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
+      <div style="text-align:right">Tier</div><div></div></div>
+    ${day.games.map(row).join("")}`;
+}
+
 function renderResults(){
   const host = $("#results");
   // Two records, not one: a graded football fixture and a graded tennis
   // match are tracked completely separately (score.py, score_tennis.py), so
   // "How it went" is two boards sharing a tab.
-  const sportTabs = `<div class="views standalone" id="resSport" style="margin:18px 0 0;max-width:340px">
+  const sportTabs = `<div class="views standalone" id="resSport" style="margin:18px 0 0;max-width:520px">
     <button data-sport="football" aria-pressed="${resState.sport==="football"}">Football</button>
     <button data-sport="tennis" aria-pressed="${resState.sport==="tennis"}">Tennis</button>
+    <button data-sport="other" aria-pressed="${resState.sport==="other"}">Other sports</button>
   </div>`;
+
+  if(resState.sport === "other"){
+    host.innerHTML = sportTabs + sportsResults();
+    const seg = $("#sdayseg");
+    if(seg) seg.addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.sday = b.dataset.day; renderResults();
+    });
+    $("#resSport").addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.sport = b.dataset.sport; renderResults();
+    });
+    return;
+  }
 
   if(resState.sport === "tennis"){
     host.innerHTML = sportTabs + tennisResults();
@@ -2042,6 +2204,7 @@ $("#views").addEventListener("click", e=>{
   const starred = v === "starred";
   const tennis = v === "tennis";
   const list = v === "list";
+  const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
@@ -2050,6 +2213,8 @@ $("#views").addEventListener("click", e=>{
   $("#starred").hidden = !starred;
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
+  $("#sport").hidden = !sport;
+  if(sport) renderSport(sport);
   if(list) renderList();
   if(starred) renderStarred();
   if(tennis) renderTennis();

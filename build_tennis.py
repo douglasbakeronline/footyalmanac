@@ -146,6 +146,21 @@ def price_match(rating_a, rating_b, surface, surface_weight):
 # side is favoured.
 CONFIDENCE_SHRINK = 0.8
 
+# The Daily List. Walk-forward on the tour-level archive tune_tennis.py fits on,
+# shipped constants, this shrink applied, both players with 10+ prior matches:
+# calls at 75%+ landed ATP 85.5% (262) in 2025 and 85.8% (127) in 2026, WTA
+# 84.6% (201) and 86.4% (154). That archive is main draw only, so qualifying
+# rounds (thin ratings, and not what was tested) never make the list.
+LIST_MIN = 0.75
+LIST_MIN_MATCHES = 10
+LIST_BACKTEST = {"ATP": {"2025": [0.855, 262], "2026": [0.858, 127]},
+                 "WTA": {"2025": [0.846, 201], "2026": [0.864, 154]}}
+
+
+def list_eligible(conf, round_name, matches_a, matches_b):
+    return (conf >= LIST_MIN and "qualif" not in (round_name or "").lower()
+            and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
+
 
 def dampen(p, shrink=CONFIDENCE_SHRINK):
     return 0.5 + (p - 0.5) * shrink
@@ -416,6 +431,8 @@ def main():
                 "pick": a if p >= 0.5 else b,
                 "confidence": round(max(p, 1 - p), 4),
                 "tier": tier_of(max(p, 1 - p)),
+                "list": list_eligible(max(p, 1 - p), r["round"],
+                                      pool[a]["matches"], pool[b]["matches"]),
             })
         log.append(f"{tour}: {len(rows)} fetched, {dropped} dropped (no rating on file for a side)")
 
@@ -424,6 +441,7 @@ def main():
 
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     payload = {"generated": generated,
+               "list": {"min": LIST_MIN, "backtest": LIST_BACKTEST},
                "from": start.isoformat(), "to": end.isoformat(),
                "count": len(matches), "matches": matches}
     archive(matches, generated)

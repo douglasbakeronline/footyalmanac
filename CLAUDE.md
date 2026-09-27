@@ -12,8 +12,10 @@ top, and grades itself publicly against what actually happened.
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
-The front page is the **Daily List**: only the obvious wins (model ≥75%, win
-pick, nothing flagged, every club rated from a prior season). It is the
+The front page is the **Daily List**: only the obvious wins across every
+sport. Football at ≥75% (win pick, nothing flagged, every club rated from a
+prior season); each other sport only at the threshold its own backtest
+earned (see `claude/multi-sport.md`). It is the
 model's own independent read, with no bookmaker input, by Douglas's decision.
 The full board sits one tap behind it.
 
@@ -24,6 +26,7 @@ The full board sits one tap behind it.
 | File | Covers |
 |---|---|
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
+| `claude/multi-sport.md` | NFL, baseball, basketball, rugby: the model, its evidence, which sports earn a Daily List place and why. Read before touching `sports.py` or `sports.json`. |
 | `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
@@ -51,6 +54,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
+- `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js`. Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
 
@@ -66,7 +70,9 @@ Config the model reads: `calibration.json` (auto-refitted weekly),
 
 Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
-`tennis-record.json`, `tennis-record.js`. `history/` is written
+`tennis-record.json`, `tennis-record.js`, `predictions-sports/`,
+`sports-data.js`, `sports-record.json`, `sports-record.js`. `history-sports/`
+is topped up by CI; its first walk was committed by hand. `history/` is written
 by `backfill.py` and committed by hand.
 
 ## Commands
@@ -93,7 +99,8 @@ Open `dashboard.html` straight off disk to check the page.
 
 - `deploy.yml` runs daily at 05:15 UTC, on manual dispatch, **and on every
   push to `main`**. Order: `nametest.py`, build, refuse-if-empty, `score.py`,
-  tennis build, `score_tennis.py` (allowed to fail), commit the archives back
+  tennis build, `score_tennis.py`, `sports.py --daily` (both allowed to fail),
+  commit the archives back
   to `main`, rebuild, publish to Pages.
 - `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
   passes all gates), then `--report` and `eurotest.py --report` as advisory

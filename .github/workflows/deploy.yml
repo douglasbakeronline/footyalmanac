@@ -101,6 +101,13 @@ jobs:
       - name: Score past tennis predictions
         run: python3 score_tennis.py || echo "::warning::tennis scoring failed; keeping the last record"
 
+      # NFL, baseball, basketball, rugby: top up results, price the next five
+      # days, grade the archive. Uses the committed sports.json (fitted by hand
+      # with sports.py --tune, never refitted here). Allowed to fail: football
+      # and tennis must publish regardless.
+      - name: Build and score the other sports
+        run: python3 sports.py --daily || echo "::warning::sports build failed; keeping the last files"
+
       # Pages artifacts do not persist between runs, so the prediction archive
       # has to live in the repository or the record resets to zero every day.
       # The archive commit races anything else pushing to main. Uploading files
@@ -133,6 +140,8 @@ jobs:
           # The tennis archive and its record, same reason again.
           cp -r predictions-tennis /tmp/archive/ 2>/dev/null || true
           cp tennis-record.json tennis-record.js /tmp/archive/ 2>/dev/null || true
+          cp -r history-sports predictions-sports /tmp/archive/ 2>/dev/null || true
+          cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -148,8 +157,13 @@ jobs:
             mkdir -p predictions-tennis
             cp -r /tmp/archive/predictions-tennis/. predictions-tennis/ 2>/dev/null || true
             cp /tmp/archive/tennis-record.json /tmp/archive/tennis-record.js . 2>/dev/null || true
+            mkdir -p history-sports predictions-sports
+            cp -r /tmp/archive/history-sports/. history-sports/ 2>/dev/null || true
+            cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
+            cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
             git add -A predictions current record.json tennis-data.js \
-                       predictions-tennis tennis-record.json tennis-record.js
+                       predictions-tennis tennis-record.json tennis-record.js \
+                       history-sports predictions-sports sports-data.js sports-record.json sports-record.js
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
@@ -187,6 +201,8 @@ jobs:
           # nothing and a missing file must not fail the assemble step.
           cp tennis-data.js _site/tennis-data.js 2>/dev/null || \
             echo "::warning::no tennis-data.js this run — Tennis tab will show its empty state"
+          cp sports-data.js sports-record.js _site/ 2>/dev/null || \
+            echo "::warning::no sports files this run — sport tabs will show their empty state"
           cp tennis-record.js _site/tennis-record.js 2>/dev/null || \
             echo "::warning::no tennis-record.js this run — tennis results will show their empty state"
 

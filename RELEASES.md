@@ -22,6 +22,43 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-5 — NFL, baseball, basketball, rugby, and an all-sports Daily List
+
+**What changed for a reader**
+
+- Four new tabs: NFL, Baseball, Basketball, Rugby (Premiership, URC, Top 14,
+  European cups, Six Nations, Rugby Championship, tests, Super Rugby).
+- The Daily List now takes the most likely results from every sport that
+  has earned a place: football (75%), tennis main draw (75%), basketball
+  (75%), rugby (75%), NFL (80%). Baseball is shown on its tab but kept off
+  the list: its strongest calls did not land often enough in testing.
+- "How it went" gains an "Other sports" board, grading each pick against
+  the result from the day it is first published.
+- Fixed: the tennis fixtures tab layout, broken by the previous release's
+  results styles.
+
+**Evidence** (games the model was never fitted on, since 1 Jul 2025)
+
+Basketball 67.5% of 1,322 picked the winner (home 54.5%), 75%+ landed
+82.9%. Rugby 70.6% of 731 (home 68.9%), 75%+ 84.0%. NFL 63.5% of 317 (home
+54.7%), 80%+ 80.7%. Baseball 55.0% of 3,629 (home 52.7%). Tennis 75%+
+landed 84.6-86.4% across ATP/WTA 2025-26. Details: `claude/multi-sport.md`.
+
+**Files**
+
+New `sports.py`, `sports.json` (fitted by hand), `history-sports/`.
+Changed `index.html`, `build_tennis.py` (list flag), `score_tennis.py`
+(list summary), `.github/workflows/deploy.yml` (`sports.py --daily`,
+archives, publishes `sports-data.js` / `sports-record.js`).
+
+**Not changed** Football model, tennis ratings.
+
+**Roll back** `git revert --no-edit <release commit>`. The four tabs and
+the other sports on the list disappear; if the bot has since committed
+`predictions-sports/` or `sports-*`, remove them in the revert.
+
+---
+
 ## release-2026-09-27-4 — Poland, Switzerland, Romania, Finland, Ireland
 
 **What changed for a reader**
