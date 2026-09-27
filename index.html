@@ -615,6 +615,7 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 
 /* tested accuracy under the confidence number: what calls at this level
    actually did on games the model never saw */
+.stat .wr{font-weight:700;color:var(--ink)}
 .conf .acc{display:block;font-family:var(--f-num);font-size:10px;font-weight:500;color:var(--mute);
   letter-spacing:0;margin-top:2px;white-space:nowrap}
 table.sheet td.rW{color:#2f6b52;font-weight:700}
@@ -1254,7 +1255,7 @@ function sideStats(t, isCup){
     // so it's the signal to show the rating itself instead of wrongly
     // claiming there isn't one.
     if(t.played === null && !t.unrated)
-      return `${tag}<div class="stat">att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)} · international rating</div>`;
+      return `${tag}<div class="stat">${t.worldRank ? `<b class="wr">FIFA #${t.worldRank}</b> · ` : ""}att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)}${t.worldRank ? "" : " · international rating"}</div>`;
     return `${tag}<div class="stat none">not rated — no season on file</div>`;
   }
   const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
@@ -1405,7 +1406,9 @@ function detail(g){
          not that ${side} is likely.
        </div>`
     : `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
-         <b>${T.name} read on ${side}.</b> ${g.accuracy ? accLine(g.accuracy)
+         <b>${T.name} read on ${side}.</b> ${g.rankAdjusted ? `Re-scored with the FIFA world ranking
+           (${g.home.name} #${g.home.worldRank}, ${g.away.name} #${g.away.worldRank}), which in testing on 2026
+           internationals made the calls measurably more accurate. ` : ""}${g.accuracy ? accLine(g.accuracy)
            : `Fixtures the model quoted around ${pct(g.confidence)}% came in ${T.was} of the time last season.`}${g.celtic ? " This one is flagged below and should be discounted a notch." : ""}
        </div>`;
 
@@ -2024,12 +2027,14 @@ function tennisAsGame(m){
     chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
     when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
     confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list,
-    statH:`${m.ratingA.surfaceElo} ${m.surface} Elo · ${m.ratingA.matches} matches`,
-    statA:`${m.ratingB.surfaceElo} ${m.surface} Elo · ${m.ratingB.matches} matches`,
+    statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}${m.ratingA.surfaceElo} ${m.surface} Elo · ${m.ratingA.matches} matches`,
+    statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}${m.ratingB.surfaceElo} ${m.surface} Elo · ${m.ratingB.matches} matches`,
     research:tennisResearch(m),
     why:`Career Elo <em>${m.ratingA.elo}</em> against <em>${m.ratingB.elo}</em>, ${m.surface.toLowerCase()}-court
       Elo <em>${m.ratingA.surfaceElo}</em> against <em>${m.ratingB.surfaceElo}</em>, blended and pulled toward a coin flip
-      by the amount testing found honest for the ${m.tour}.${m.list ? "" : m.confidence >= 0.75 ? " Not on the Daily List: qualifying rounds and thinly-rated players are excluded, because that is not what was tested." : ""}`};
+      by the amount testing found honest for the ${m.tour}.${m.rankAdjusted
+        ? ` Then re-scored with the ATP world ranking (${m.rankA ? "#" + m.rankA : "outside the top 150"} v ${m.rankB ? "#" + m.rankB : "outside the top 150"}), which made ATP calls measurably more accurate in testing.`
+        : (m.tour === "WTA" ? " WTA rankings are shown for reference: in testing they did not improve on the ratings, so they do not move the number." : "")}${m.list ? "" : m.confidence >= 0.75 ? " Not on the Daily List: qualifying rounds and thinly-rated players are excluded, because that is not what was tested." : ""}`};
 }
 
 /* ---------- NFL, baseball, basketball, rugby ----------

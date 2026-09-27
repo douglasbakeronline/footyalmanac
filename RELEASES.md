@@ -22,6 +22,31 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28 — World rankings in the model
+
+**What changed for a reader**
+
+- Men's international football is now re-scored with the **FIFA world
+  ranking**, and ATP tennis with the **ATP ranking**. Both were tested on
+  2026 games the model never saw and made the calls measurably more
+  accurate: FIFA -0.036 log loss (p(worse) 0.00, the largest gain any
+  signal has shown on this site; the strongest 20% of calls went from
+  80.9% to 84.3% landed), ATP -0.0037 (p(worse) 0.03).
+- Rankings are shown on the rows: FIFA #, ATP #, WTA #. The expanded row
+  says when a ranking changed the number.
+- WTA rankings are shown but do not move the number: in testing they did
+  not beat the ratings. World Rugby rankings have no reachable source.
+- Adjusted rows have their own tested accuracy and list thresholds
+  (internationals 60%, ATP 65%, by the same 75%-landed rule).
+
+**Files** New `rankings.py`, `fifa-rankings.json`, `claude/world-rankings.md`.
+Changed `build.py`, `build_tennis.py`, `index.html`, `deploy.yml` (commits
+the FIFA file when a new release is fetched).
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-27-7 — A fuller Daily List, strongest first
 
 **What changed for a reader**

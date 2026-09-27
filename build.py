@@ -14,6 +14,7 @@ from datetime import date, timedelta
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
 import sources as S
+import rankings as RK
 
 SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
 PREV = ["2025-26", "2024-25"]
@@ -54,7 +55,11 @@ if os.path.exists(_ABS_FILE):
 # fixtures: 75% (2025/26 78.9% of 242; 2026/27 76.2% of 21, too few to count
 # yet). Internationals: 55%, where the 2026 holdout landed 75.7% of 177, since
 # the international fit under-quotes itself.
-LIST_MIN = {"league": 0.75, "intl": 0.55}
+LIST_MIN = {"league": 0.75, "intl": 0.55,
+            # an international adjusted by the FIFA ranking (rankings.py): the
+            # ranking model's own test, 60%+ landed 77.8% of 536 in 2025 and
+            # 75.3% of 190 in 2026
+            "intlRanked": 0.60}
 LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
                  "check": {"season": "2026-27", "n": 21, "hit": 0.762},
                  "intl": {"season": "2026", "n": 49, "hit": 0.816}}
@@ -63,16 +68,20 @@ LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
 # on every row so a reader can weigh the number: "calls at 70%+ landed 78%".
 # League: 2026/27 where a band has 30+ games, else 2025/26. Internationals:
 # the 2026 holdout. Same walk-forward as above.
+ACCURACY_BANDS_RANKED = [{"from": 0.55, "hit": 0.7436, "n": 234, "quoted": 0.7148}, {"from": 0.6, "hit": 0.7526, "n": 190, "quoted": 0.7475}, {"from": 0.65, "hit": 0.7986, "n": 144, "quoted": 0.787}, {"from": 0.7, "hit": 0.8235, "n": 119, "quoted": 0.8099}, {"from": 0.75, "hit": 0.8427, "n": 89, "quoted": 0.8377}, {"from": 0.8, "hit": 0.8387, "n": 62, "quoted": 0.8652}, {"from": 0.85, "hit": 0.9394, "n": 33, "quoted": 0.9006}]
 ACCURACY_BANDS = {"league": {"check": [{"from": 0.45, "hit": 0.5498, "n": 733, "quoted": 0.5504}, {"from": 0.5, "hit": 0.597, "n": 474, "quoted": 0.5921}, {"from": 0.55, "hit": 0.6714, "n": 280, "quoted": 0.639}, {"from": 0.6, "hit": 0.7459, "n": 181, "quoted": 0.6755}, {"from": 0.65, "hit": 0.7767, "n": 103, "quoted": 0.7145}, {"from": 0.7, "hit": 0.7347, "n": 49, "quoted": 0.7605}, {"from": 0.75, "hit": 0.7619, "n": 21, "quoted": 0.8041}, {"from": 0.8, "hit": 0.8, "n": 10, "quoted": 0.8354}], "fit": [{"from": 0.45, "hit": 0.5564, "n": 4371, "quoted": 0.5599}, {"from": 0.5, "hit": 0.6032, "n": 2916, "quoted": 0.6028}, {"from": 0.55, "hit": 0.6524, "n": 1910, "quoted": 0.6447}, {"from": 0.6, "hit": 0.6879, "n": 1163, "quoted": 0.6904}, {"from": 0.65, "hit": 0.7287, "n": 726, "quoted": 0.7315}, {"from": 0.7, "hit": 0.778, "n": 419, "quoted": 0.775}, {"from": 0.75, "hit": 0.7893, "n": 242, "quoted": 0.8127}, {"from": 0.8, "hit": 0.8397, "n": 131, "quoted": 0.8471}]}, "intl": [{"from": 0.45, "hit": 0.6756, "n": 299, "quoted": 0.6093}, {"from": 0.5, "hit": 0.7118, "n": 229, "quoted": 0.6508}, {"from": 0.55, "hit": 0.7571, "n": 177, "quoted": 0.6877}, {"from": 0.6, "hit": 0.7687, "n": 134, "quoted": 0.725}, {"from": 0.65, "hit": 0.7822, "n": 101, "quoted": 0.7581}, {"from": 0.7, "hit": 0.7971, "n": 69, "quoted": 0.7983}, {"from": 0.75, "hit": 0.8163, "n": 49, "quoted": 0.8255}, {"from": 0.8, "hit": 0.8667, "n": 30, "quoted": 0.8581}]}
 
 
-def accuracy_for(conf, intl):
+def accuracy_for(conf, intl, ranked=False):
     def pick(bands):
         best = None
         for b in bands:
             if conf >= b["from"]:
                 best = b
         return best
+    if intl and ranked:
+        b = pick(ACCURACY_BANDS_RANKED)
+        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026, with FIFA ranking"} if b else None
     if intl:
         b = pick(ACCURACY_BANDS["intl"])
         return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026"} if b else None
@@ -97,7 +106,8 @@ def list_eligible(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
-    if pick == "d" or p[pick] < LIST_MIN["intl" if intl else "league"] or g["celtic"] or g["unrated"]:
+    bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
+    if pick == "d" or p[pick] < bar or g["celtic"] or g["unrated"]:
         return False
     for t in (g["home"], g["away"]):
         if t["played"] is not None and not t["last"]:
@@ -215,6 +225,12 @@ def main():
     print(f"fetching {len(CODES)} competitions ...", file=sys.stderr)
     # Not every league runs August-to-May. Brazil and the Nordics use a calendar
     # year, so the season strings are per-competition rather than global.
+    # The FIFA world ranking, refreshed when a new release is out (rankings.py).
+    rk_log = []
+    FIFA = RK.refresh_fifa(log=rk_log)
+    for line in rk_log:
+        print(f"  {line}", file=sys.stderr)
+
     history, fixtures, missing = S.fetch_all_seasons(
         {c: (None if E.LEAGUES[c].get("ratingsOnly") else E.LEAGUES[c].get("season", SEASON),
              [] if E.LEAGUES[c].get("cup") or E.LEAGUES[c].get("international")
@@ -472,7 +488,7 @@ def main():
             "att": round(r[0], 3) if r else 1.0,
             "def": round(r[1], 3) if r else 1.0,
             "played": None,
-            "unrated": r is None,
+            "unrated": r is None, "worldRank": None,
             "carriedFrom": None, "league": None, "form": None, "adj": None,
             "out": None, "outFactors": None,
             "lastSeason": None, "last": None, "now": None,
@@ -561,6 +577,24 @@ def main():
                                               intl_mu, tier=meta["tier"], form_h=fh, form_a=fa)
                 finally:
                     E.HOME_MULT[meta["tier"]], E.AWAY_MULT[meta["tier"]] = saved_h, saved_a
+                # FIFA world ranking (rankings.py): the points gap re-scores the
+                # win pick, tested on 2026 internationals (-0.036 log loss,
+                # p(worse) 0.00). Senior men's only: the women's and youth
+                # sides are rated differently and were not tested.
+                if not is_youth and not is_women:
+                    fr_h, fr_a = RK.fifa_team(FIFA, r["home"]), RK.fifa_team(FIFA, r["away"])
+                    hb["worldRank"] = fr_h[0] if fr_h else None
+                    ab["worldRank"] = fr_a[0] if fr_a else None
+                    trip = {"home": p["home"], "draw": p["draw"], "away": p["away"]}
+                    pk = max(trip, key=trip.get)
+                    if pk != "draw" and fr_h and fr_a:
+                        fav, opp = (fr_h, fr_a) if pk == "home" else (fr_a, fr_h)
+                        new = RK.adjust_fifa(trip[pk], fav, opp)
+                        rest = 1 - trip[pk]
+                        for k in trip:
+                            p[k] = new if k == pk else (trip[k] * (1 - new) / rest if rest > 0 else 0.0)
+                        p["confidence"] = max(p["home"], p["draw"], p["away"])
+                        p["rankAdjusted"] = True
             elif meta.get("cup"):
                 s_h = E.tie_strength(h_league, code)
                 s_a = E.tie_strength(a_league, code)
@@ -670,6 +704,7 @@ def main():
                 "confidence": round(p["confidence"], 4),
                 "evidence": evidence,
                 "unrated": unrated,
+                "rankAdjusted": bool(p.get("rankAdjusted")),
                 "celtic": ({"reasons": reasons, "early": early} if reasons else None),
             })
 
@@ -732,7 +767,8 @@ def main():
         for i, g in enumerate(games, 1):
             g["rank"] = i
             g["list"] = list_eligible(g)
-            g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"))
+            g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"),
+                                         g.get("rankAdjusted"))
         days.append({"date": d, "count": len(games), "games": games})
 
     payload = {

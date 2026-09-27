@@ -36,6 +36,7 @@ back before trusting any of it.
 Standard library only, like the rest of the project.
 """
 import argparse, json, os, re, sys, unicodedata, urllib.request
+import rankings as RK
 from datetime import date, datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -146,24 +147,29 @@ CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
 # 79.1% (673) in 2025 and 78.1% (320) in 2026, WTA 78.1% (661) and 80.2%
 # (384). The archive is main draw only, so qualifying rounds (thin ratings,
 # and not what was tested) never make the list.
-LIST_MIN = {"ATP": 0.70, "WTA": 0.70}
+LIST_MIN = {"ATP": 0.70, "WTA": 0.70,
+            # an ATP match re-scored by the world ranking (rankings.py): that
+            # model's own test, 65%+ landed 76.9%/77% in 2025/2026
+            "ATP_RANKED": 0.65}
 LIST_MIN_MATCHES = 10
 LIST_BACKTEST = {"ATP": {"2025": [0.791, 673], "2026": [0.781, 320]},
                  "WTA": {"2025": [0.781, 661], "2026": [0.802, 384]}}
+# ATP with the world ranking applied: how calls at each level landed in 2026.
+ACCURACY_BANDS_ATP_RANKED = [{"from": 0.55, "hit": 0.6938, "n": 921, "quoted": 0.6796}, {"from": 0.6, "hit": 0.7328, "n": 670, "quoted": 0.7183}, {"from": 0.65, "hit": 0.7688, "n": 519, "quoted": 0.746}, {"from": 0.7, "hit": 0.7867, "n": 347, "quoted": 0.7811}, {"from": 0.75, "hit": 0.8316, "n": 196, "quoted": 0.8256}, {"from": 0.8, "hit": 0.8559, "n": 118, "quoted": 0.8607}, {"from": 0.85, "hit": 0.9194, "n": 62, "quoted": 0.8938}]
 # How calls at each level landed in 2026 (never fitted on), for every row.
 ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.6824, "n": 973, "quoted": 0.6734}, {"from": 0.6, "hit": 0.7188, "n": 754, "quoted": 0.7019}, {"from": 0.65, "hit": 0.7514, "n": 523, "quoted": 0.7363}, {"from": 0.7, "hit": 0.7812, "n": 320, "quoted": 0.775}, {"from": 0.75, "hit": 0.8098, "n": 184, "quoted": 0.8137}, {"from": 0.8, "hit": 0.8913, "n": 92, "quoted": 0.852}, {"from": 0.85, "hit": 0.9048, "n": 42, "quoted": 0.8855}], "WTA": [{"from": 0.55, "hit": 0.6829, "n": 965, "quoted": 0.6843}, {"from": 0.6, "hit": 0.7151, "n": 737, "quoted": 0.7187}, {"from": 0.65, "hit": 0.7681, "n": 539, "quoted": 0.7534}, {"from": 0.7, "hit": 0.8021, "n": 384, "quoted": 0.7854}, {"from": 0.75, "hit": 0.8103, "n": 253, "quoted": 0.8161}, {"from": 0.8, "hit": 0.8696, "n": 138, "quoted": 0.8499}, {"from": 0.85, "hit": 0.9032, "n": 62, "quoted": 0.8795}]}
 
 
-def accuracy_for(conf, tour):
+def accuracy_for(conf, tour, ranked=False):
     best = None
-    for b in ACCURACY_BANDS.get(tour.upper(), []):
+    for b in (ACCURACY_BANDS_ATP_RANKED if ranked else ACCURACY_BANDS.get(tour.upper(), [])):
         if conf >= b["from"]:
             best = b
     return {"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None
 
 
-def list_eligible(conf, tour, round_name, matches_a, matches_b):
-    return (conf >= LIST_MIN[tour.upper()] and "qualif" not in (round_name or "").lower()
+def list_eligible(conf, tour, round_name, matches_a, matches_b, ranked=False):
+    return (conf >= LIST_MIN["ATP_RANKED" if ranked else tour.upper()] and "qualif" not in (round_name or "").lower()
             and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
 
 
@@ -254,6 +260,8 @@ def _matches_from_event(ev, tour):
 
             def name(c):
                 return (c.get("athlete") or {}).get("displayName")
+            # the ESPN athlete id, which is how the world ranking is keyed
+            ids = [s.get("id") for s in sides]
 
             p0, p1 = name(sides[0]), name(sides[1])
             if not p0 or not p1:
@@ -275,7 +283,8 @@ def _matches_from_event(ev, tour):
                 "id": comp.get("id"), "state": status, "statusName": stype.get("name"),
                 "note": note or None,
                 "tour": tour, "date": iso[:10], "time": iso[11:16] if len(iso) >= 16 else None,
-                "p0": p0, "p1": p1, "completed": completed, "winner": winner,
+                "p0": p0, "p1": p1, "id0": ids[0], "id1": ids[1],
+                "completed": completed, "winner": winner,
                 # ESPN's tennis feed carries no surface field at all — an
                 # earlier version of this read one that doesn't exist and
                 # always fell back to Hard anyway. Hard-coding it here
@@ -377,6 +386,8 @@ def main():
         k_base = ratings[tour]["constants"]["kBase"]
         sw = ratings[tour]["constants"]["surfaceWeight"]
         by_full, by_initial = build_index(pool)
+        world = RK.tennis_ranks(tour)   # {ESPN athlete id: rank}, top 150; {} if unavailable
+        log.append(f"{tour}: {len(world)} players with a world ranking")
 
         # Catch-up pass: fold in whatever real results ESPN has for the last
         # few days before pricing anything, so the ratings used below aren't
@@ -415,6 +426,16 @@ def main():
                 dropped += 1
                 continue   # no rating on at least one side — not published, same rule as football
             p = dampen(price_match(pool[a], pool[b], r["surface"], sw), CONFIDENCE_SHRINK[tour])
+            rank_a, rank_b = world.get(r["id0"]), world.get(r["id1"])
+            ranked = False
+            if tour == "atp" and (rank_a or rank_b):
+                # ATP ranking gap on top of Elo (rankings.py): tested on 2026
+                # main-draw matches, -0.0037 log loss, p(worse) 0.03. WTA did
+                # not pass, so WTA ranks are shown but never move the number.
+                fav_a = p >= 0.5
+                conf = RK.adjust_atp(max(p, 1 - p), rank_a if fav_a else rank_b, rank_b if fav_a else rank_a)
+                p = conf if fav_a else 1 - conf
+                ranked = True
             surf_key = f"surface_{r['surface']}"
             matches.append({
                 "id": r["id"], "espn": [r["p0"], r["p1"]],
@@ -436,9 +457,10 @@ def main():
                 "pick": a if p >= 0.5 else b,
                 "confidence": round(max(p, 1 - p), 4),
                 "tier": tier_of(max(p, 1 - p)),
-                "accuracy": accuracy_for(max(p, 1 - p), tour),
+                "rankA": rank_a, "rankB": rank_b, "rankAdjusted": ranked,
+                "accuracy": accuracy_for(max(p, 1 - p), tour, ranked),
                 "list": list_eligible(max(p, 1 - p), tour, r["round"],
-                                      pool[a]["matches"], pool[b]["matches"]),
+                                      pool[a]["matches"], pool[b]["matches"], ranked),
             })
         log.append(f"{tour}: {len(rows)} fetched, {dropped} dropped (no rating on file for a side)")
 

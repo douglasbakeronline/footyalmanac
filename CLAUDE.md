@@ -28,6 +28,7 @@ The full board sits one tap behind it.
 | File | Covers |
 |---|---|
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
+| `claude/world-rankings.md` | Which world rankings are in the model, the tests behind them, sources and name mapping. Read before touching `rankings.py`. |
 | `claude/multi-sport.md` | NFL, baseball, basketball, rugby: the model, its evidence, which sports earn a Daily List place and why. Read before touching `sports.py` or `sports.json`. |
 | `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
@@ -57,6 +58,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `odds.py` football-data.co.uk prices and the value backtest.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
+- `rankings.py` FIFA and ATP/WTA world rankings: fetch, and the tested adjustments (FIFA for men's internationals, ATP for men's tennis; WTA shown only).
 - `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js`. Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
 
@@ -73,7 +75,8 @@ Config the model reads: `calibration.json` (auto-refitted weekly),
 Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
 `tennis-record.json`, `tennis-record.js`, `predictions-sports/`,
-`sports-data.js`, `sports-record.json`, `sports-record.js`. `history-sports/`
+`sports-data.js`, `sports-record.json`, `sports-record.js`, `fifa-rankings.json`
+(refreshed by the build when FIFA publishes). `history-sports/`
 is topped up by CI; its first walk was committed by hand. `history/` is written
 by `backfill.py` and committed by hand.
 

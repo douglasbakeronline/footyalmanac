@@ -142,6 +142,8 @@ jobs:
           cp tennis-record.json tennis-record.js /tmp/archive/ 2>/dev/null || true
           cp -r history-sports predictions-sports /tmp/archive/ 2>/dev/null || true
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
+          # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
+          cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -161,9 +163,11 @@ jobs:
             cp -r /tmp/archive/history-sports/. history-sports/ 2>/dev/null || true
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
             cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
+            cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
             git add -A predictions current record.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js \
-                       history-sports predictions-sports sports-data.js sports-record.json sports-record.js
+                       history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
+                       fifa-rankings.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
