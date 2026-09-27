@@ -22,6 +22,60 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-2 — Tennis graded on "How it went"
+
+**What changed for a reader**
+
+- The Tennis side of "How it went" now checks every tennis pick against who
+  actually won: the match, who the model picked and at what confidence, who
+  won and the score, a tick or cross, and hit rates by tier and by tour.
+- The record starts on 22 Sep, rebuilt from the 18 versions of
+  `tennis-data.js` the site actually published (in git history), with the
+  commit time as the publish time. 626 prices qualified; 89 that were
+  published after their match had already started were dropped.
+- First reading, 105 graded matches: 53% picked the winner against 59%
+  quoted. ATP 63% of 43 (quoted 60%), WTA 47% of 62 (quoted 58%). Small
+  sample, not fitted on.
+- Mexico, Saudi Arabia, Ecuador, Australia and India now have a prior season.
+
+**Fixes**
+
+- `build_tennis.py` priced matches already in play (anything not "post").
+  It now prices only matches that have not started.
+- A rescheduled tennis match was priced once per date it was listed for;
+  it is graded once, on the latest price published before it began.
+
+**How grading works** (`score_tennis.py`)
+
+Only prices published before the scheduled start count. Walkovers and
+cancellations are void, retirements count and are marked. New predictions
+match their result by ESPN match id; older ones by the two players within
+two days, and only when exactly one match fits. Graded matches persist in
+`tennis-record.json`, so a failed ESPN day loses nothing.
+
+**Files**
+
+New `score_tennis.py`, `predictions-tennis/` (archive), `tennis-record.json`,
+`tennis-record.js`. Changed `build_tennis.py` (archive, id, publish time in
+UTC, no in-play pricing), `index.html` (tennis results view, loads
+`tennis-record.js`), `.github/workflows/deploy.yml` (runs `score_tennis.py`
+after the tennis build, commits the archive and record, publishes
+`tennis-record.js`). New `history/` for ec.1, mx.1, sa.1, au.1, in.1.
+
+**Not changed**
+
+Tennis ratings, `CONFIDENCE_SHRINK`, tennis tiers, anything football.
+
+**Roll back**
+
+`git revert --no-edit <release commit>`. The Tennis results tab returns to
+"not tracked yet". If the bot has since committed to `predictions-tennis/`
+or `tennis-record.*`, the revert may conflict there: delete those files in
+the revert (`git rm -r predictions-tennis tennis-record.json tennis-record.js`)
+and continue.
+
+---
+
 ## release-2026-09-27 — The Daily List
 
 **What changed for a reader**

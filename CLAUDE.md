@@ -24,6 +24,7 @@ The full board sits one tap behind it.
 | File | Covers |
 |---|---|
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
+| `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
 | `claude/coverage-expansion.md` | Why 61 competitions come from ESPN, `backfill.py`, which leagues still lack a prior season. |
@@ -50,6 +51,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
+- `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js`. Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
 
 Front end: `index.html` is the template (loads `data.js`). `dashboard.html` is
@@ -63,7 +65,8 @@ Config the model reads: `calibration.json` (auto-refitted weekly),
 `RELEASES.md` is the release log; every release gets an entry and a tag.
 
 Written by the bot, never hand-edit: `predictions/`, `current/`,
-`record.json`, `tennis-data.js`, `tuning-report.json`. `history/` is written
+`record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
+`tennis-record.json`, `tennis-record.js`. `history/` is written
 by `backfill.py` and committed by hand.
 
 ## Commands
@@ -73,6 +76,7 @@ python3 nametest.py                          # must pass before any push
 python3 build.py --days 5 --top 50           # what CI runs
 python3 build.py --days 2 --no-topup --no-odds   # fast local check
 python3 score.py                             # regrade, rewrite record.json
+python3 score_tennis.py                      # grade tennis picks, rewrite tennis-record.*
 python3 backtest.py --season 2025-26 --prior 2024-25
 python3 tune.py --report                     # advisory sweep, changes nothing
 python3 predictability.py                    # which signals separate hits from misses
@@ -89,7 +93,8 @@ Open `dashboard.html` straight off disk to check the page.
 
 - `deploy.yml` runs daily at 05:15 UTC, on manual dispatch, **and on every
   push to `main`**. Order: `nametest.py`, build, refuse-if-empty, `score.py`,
-  tennis, commit the archive back to `main`, rebuild, publish to Pages.
+  tennis build, `score_tennis.py` (allowed to fail), commit the archives back
+  to `main`, rebuild, publish to Pages.
 - `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
   passes all gates), then `--report` and `eurotest.py --report` as advisory
   output for a human.

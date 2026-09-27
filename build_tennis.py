@@ -36,9 +36,11 @@ back before trusting any of it.
 Standard library only, like the rest of the project.
 """
 import argparse, json, os, re, sys, unicodedata, urllib.request
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
+# Every priced match, archived so score_tennis.py can grade it once played.
+PRED_DIR = os.path.join(HERE, "predictions-tennis")
 
 ESPN_HOSTS = ["https://site.api.espn.com", "https://site.web.api.espn.com"]
 # Soccer's path is /sports/soccer/{league-slug}/scoreboard. Tennis's sport
@@ -237,15 +239,21 @@ def _matches_from_event(ev, tour):
             if not p0 or not p1:
                 continue
 
-            status = ((comp.get("status") or {}).get("type") or {}).get("state")
+            stype = (comp.get("status") or {}).get("type") or {}
+            status = stype.get("state")
             completed = status == "post"
             winner = None
             if completed:
                 winner = p0 if sides[0].get("winner") else (p1 if sides[1].get("winner") else None)
+            # "Muller (FRA) bt Pavlovic (FRA) 6-4 6-7 (6-8) 6-3": the score, and
+            # the only place a walkover or retirement is spelled out.
+            note = " ".join(n.get("text", "") for n in comp.get("notes") or []).strip()
 
             iso = comp.get("date") or ""
             round_name = (comp.get("round") or {}).get("displayName")
             out.append({
+                "id": comp.get("id"), "state": status, "statusName": stype.get("name"),
+                "note": note or None,
                 "tour": tour, "date": iso[:10], "time": iso[11:16] if len(iso) >= 16 else None,
                 "p0": p0, "p1": p1, "completed": completed, "winner": winner,
                 # ESPN's tennis feed carries no surface field at all — an
@@ -283,6 +291,38 @@ def fetch_week(tour, start, end, timeout=25, log=None):
         if rows or not errs:
             return rows
     return []
+
+
+# ---------------------------------------------------------------------------
+# archive
+# ---------------------------------------------------------------------------
+
+def pred_key(m):
+    """One match, however many builds priced it."""
+    return m.get("id") or f"{m['tour']}|{m['date']}|{m['playerA']}|{m['playerB']}"
+
+
+def archive(matches, published, day=None):
+    """Add this build's prices to predictions-tennis/<day>.json.
+
+    Merged into the day's file, not written over it: a second build the same
+    day no longer prices a match that has since started, and replacing the
+    file would throw away the earlier, pre-match price that was published.
+    Each entry carries the time it was published, so score_tennis.py can
+    refuse anything published after the match began.
+    """
+    os.makedirs(PRED_DIR, exist_ok=True)
+    day = day or published[:10]
+    path = os.path.join(PRED_DIR, f"{day}.json")
+    try:
+        old = json.load(open(path))
+    except Exception:
+        old = []
+    merged = {pred_key(m): m for m in old}
+    for m in matches:
+        merged[pred_key(m)] = {**m, "published": published}
+    with open(path, "w") as f:
+        json.dump(list(merged.values()), f, separators=(",", ":"))
 
 
 # ---------------------------------------------------------------------------
@@ -344,8 +384,11 @@ def main():
         rows = [r for r in catchup_rows if r["date"] >= start.isoformat()]
         dropped = 0
         for r in rows:
-            if r["completed"]:
-                continue   # only price what hasn't been played yet
+            if r["state"] != "pre":
+                # Only what hasn't started. A match already in play at build
+                # time was priced before, and published after, it began, which
+                # score_tennis.py would rightly refuse to grade.
+                continue
             a = match_player(r["p0"], by_full, by_initial)
             b = match_player(r["p1"], by_full, by_initial)
             if not a or not b:
@@ -354,6 +397,7 @@ def main():
             p = dampen(price_match(pool[a], pool[b], r["surface"], sw))
             surf_key = f"surface_{r['surface']}"
             matches.append({
+                "id": r["id"], "espn": [r["p0"], r["p1"]],
                 "tour": tour.upper(), "date": r["date"], "time": r["time"],
                 "tournament": r["tournament"], "round": r["round"], "surface": r["surface"],
                 "playerA": a, "playerB": b,
@@ -378,9 +422,11 @@ def main():
     for line in log:
         print(f"  {line}", file=sys.stderr)
 
-    payload = {"generated": datetime.now().isoformat(timespec="seconds"),
+    generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    payload = {"generated": generated,
                "from": start.isoformat(), "to": end.isoformat(),
                "count": len(matches), "matches": matches}
+    archive(matches, generated)
     blob = json.dumps(payload, separators=(",", ":"))
     with open(args.out, "w") as f:
         f.write("window.__TENNIS_DATA__=" + blob + ";")

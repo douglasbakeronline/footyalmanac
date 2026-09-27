@@ -530,6 +530,29 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .rrow.miss .club{color:var(--ink-2);font-weight:500}
 .rrow.miss .bar{opacity:.55}
 
+/* tennis results: prediction beside the result, one match per row */
+.truler,.trow{display:grid;grid-template-columns:46px 1.4fr 1fr 1.3fr 70px 26px;gap:10px;align-items:center}
+.truler{
+  padding:7px 8px 5px;border-bottom:1px solid var(--rule);
+  font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
+}
+.trow{background:var(--surface);border-bottom:1px solid var(--rule-soft);padding:9px 8px;font-size:14.5px}
+.trow.alt{background:#f6efdc}
+.trow .lg{font-family:var(--f-num);font-size:11px;color:var(--mute);font-weight:500}
+.trow .tm b{font-weight:600}
+.trow small{display:block;font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:2px}
+.trow .tp span,.trow .tw span{display:block;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:700}
+.trow .tp em{font-style:normal;font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
+.trow .tw{font-weight:600}
+.trow.miss .tw{color:var(--away)}
+.trow .conf{text-align:right}
+@media (max-width:700px){
+  .truler{display:none}
+  .trow{grid-template-columns:1fr 1fr 26px;grid-template-areas:"tm tm mark" "tp tw mark" "lg conf conf";row-gap:6px}
+  .trow .tm{grid-area:tm}.trow .tp{grid-area:tp}.trow .tw{grid-area:tw}
+  .trow .lg{grid-area:lg}.trow .conf{grid-area:conf}.trow .mark{grid-area:mark}
+}
+
 .ladder{margin-top:26px}
 .ladder table{border-collapse:collapse;width:100%;max-width:94ch;font-family:var(--f-num);font-size:13px}
 .ladder th{
@@ -837,6 +860,7 @@ footer a{color:var(--ink-2)}
 
 <script src="data.js"></script>
 <script src="tennis-data.js"></script>
+<script src="tennis-record.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1754,7 +1778,7 @@ function render(){
    came from. The tier hit rates underneath are the live version of the labels
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
-const resState = { day: null, sport: "football" };
+const resState = { day: null, tday: null, sport: "football" };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
@@ -1807,24 +1831,105 @@ function bandTable(){
     </tr>`).join("")}</table>`;
 }
 
+/* ---------- tennis: how it went ----------
+   score_tennis.py grades every archived tennis price against ESPN's winner,
+   but only prices published before the match started; walkovers are void,
+   retirements count. Each row reads as the prediction beside the result:
+   who the model backed, who actually won, and the score. */
+const TT = window.__TENNIS_RECORD__ || null;
+const TK = {"Strong":3, "Firm":2, "Lean":1, "No read":0};
+const tScore = note => (note || "").replace(/^.*\([A-Z]{3}\)\s*/, "");
+
+function tennisRow(g, i){
+  const loser = g.winner === g.playerA ? g.playerB : g.playerA;
+  return `<div class="trow${i%2?" alt":""}${g.ok?"":" miss"}">
+    <div class="lg">${g.tour}</div>
+    <div class="tm"><b>${g.playerA}</b> v <b>${g.playerB}</b>
+      <small>${[g.tournament, g.round].filter(Boolean).join(" · ")}</small></div>
+    <div class="tp"><span>Picked</span>${g.pick} <em>${pct(g.confidence)}%</em></div>
+    <div class="tw"><span>Won</span>${g.winner}
+      <small>${tScore(g.note)}${g.retired ? ` · ${loser} retired` : ""}</small></div>
+    <div class="conf"><span class="tier t${TK[g.tier] ?? 0}">${g.tier}</span></div>
+    ${mark(g.ok)}
+  </div>`;
+}
+
+function tennisResults(){
+  if(!TT || !TT.overall || !(TT.days || []).length){
+    return `<div class="empty" style="max-width:80ch;line-height:1.6">
+      <b>Nothing graded yet.</b> Tennis picks are graded once the match is played, and only
+      if the pick was published before it started. This fills in after the next daily run.</div>`;
+  }
+  const days = TT.days;
+  const day = days.find(d => d.date === resState.tday) || days[0];
+  const o = TT.overall, at = TT.byTour.ATP, wt = TT.byTour.WTA;
+  const tierRows = ["Strong","Firm","Lean","No read"].map(name => {
+    const t = (TT.tiers || []).find(x => x.name === name);
+    const k = TK[name];
+    const min = {Strong:"70%", Firm:"62%", Lean:"55%"}[name];
+    return `<tr class="t${k}"><td>${name}</td>
+      <td class="thin">${min ? min + " and above" : "below 55%"}</td>
+      <td>${t ? t.n : "—"}</td><td>${t ? pct(t.accuracy)+"%" : "—"}</td>
+      <td class="thin">${t ? pct(t.expected)+"%" : "—"}</td>
+      <td class="thin">${t ? (t.accuracy>=t.expected?"+":"")+Math.round((t.accuracy-t.expected)*100)+" pts" : "—"}</td></tr>`;
+  }).join("");
+  const tl = (x, label) => x ? `<div class="${x.accuracy >= x.expected ? "good" : "bad"}">
+      <span>${label}</span><b>${x.correct} / ${x.n}</b>
+      <small>${pct(x.accuracy)}% · quoted ${pct(x.expected)}%</small></div>` : "";
+
+  return `
+    <div class="scoreline" style="margin-top:20px">
+      ${tl(o, "Picked the winner")}${tl(at, "ATP")}${tl(wt, "WTA")}
+      <div><span>Log loss</span><b>${o.logLoss.toFixed(3)}</b>
+        <small>lower is better · 0.693 = a coin flip</small></div>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="ctl-label" style="margin-bottom:6px">Completed day</div>
+      <div class="dayseg" id="tdayseg">${days.map(d=>
+        `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
+           ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div>
+    </div>
+
+    <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
+      <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
+    <div class="truler"><div>Tour</div><div>Match</div><div>Prediction</div><div>Result</div>
+      <div style="text-align:right">Tier</div><div></div></div>
+    ${day.games.map(tennisRow).join("")}
+
+    <h2 class="sect">By confidence tier</h2>
+    <div class="ladder"><table>
+      <tr><th>Tier</th><th>Confidence</th><th>Graded</th><th>Won</th>
+          <th>Quoted</th><th style="text-align:right">vs quoted</th></tr>${tierRows}</table></div>
+    <div class="prose">
+      <p>Every match here was priced and published <b>before it started</b>. A price the site
+      showed after a match had begun is not graded${TT.publishedLate ? ` (${TT.publishedLate} such)` : ""}.
+      Walkovers are void${TT.void ? ` (${TT.void} so far)` : ""}; a retirement counts, because the
+      result stands.</p>
+      <p>The tennis tiers borrow football's thresholds and have not been calibrated for tennis.
+      This is a small live sample: treat anything under about fifty matches in a row of the
+      table as noise, and read the WTA and ATP lines separately.</p>
+    </div>`;
+}
+
 function renderResults(){
   const host = $("#results");
-  // Two records, not one — a graded football fixture and a graded tennis
-  // match are different things this site tracks completely separately, so
-  // "How it went" is really two boards sharing a tab. Tennis's own grading
-  // pipeline doesn't exist yet (no score.py equivalent), so its mini-tab
-  // says exactly that rather than a fabricated accuracy number.
+  // Two records, not one: a graded football fixture and a graded tennis
+  // match are tracked completely separately (score.py, score_tennis.py), so
+  // "How it went" is two boards sharing a tab.
   const sportTabs = `<div class="views standalone" id="resSport" style="margin:18px 0 0;max-width:340px">
     <button data-sport="football" aria-pressed="${resState.sport==="football"}">Football</button>
     <button data-sport="tennis" aria-pressed="${resState.sport==="tennis"}">Tennis</button>
   </div>`;
 
   if(resState.sport === "tennis"){
-    host.innerHTML = sportTabs + `<div class="empty" style="max-width:80ch;line-height:1.6">
-      <b>Not tracked yet.</b> Tennis fixtures are priced, but nothing grades them against
-      results once they're played — there's no equivalent of football's score.py for tennis
-      on this site yet. This board will fill in once that exists, the same way football's
-      did.</div>`;
+    host.innerHTML = sportTabs + tennisResults();
+    const seg = $("#tdayseg");
+    if(seg) seg.addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.tday = b.dataset.day;
+      renderResults();
+    });
     $("#resSport").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
       resState.sport = b.dataset.sport;

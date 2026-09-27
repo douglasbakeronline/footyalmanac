@@ -95,6 +95,12 @@ jobs:
               print(f"today's tennis fetch: {new_n} matches")
           PY
 
+      # Grade archived tennis picks against who won. Separate from football's
+      # score.py, and allowed to fail: a bad ESPN day keeps yesterday's grades
+      # (they live in tennis-record.json) rather than costing the deploy.
+      - name: Score past tennis predictions
+        run: python3 score_tennis.py || echo "::warning::tennis scoring failed; keeping the last record"
+
       # Pages artifacts do not persist between runs, so the prediction archive
       # has to live in the repository or the record resets to zero every day.
       # The archive commit races anything else pushing to main. Uploading files
@@ -124,6 +130,9 @@ jobs:
           # fallback in the step above would have nothing to fall back to
           # tomorrow.
           cp tennis-data.js /tmp/archive/ 2>/dev/null || true
+          # The tennis archive and its record, same reason again.
+          cp -r predictions-tennis /tmp/archive/ 2>/dev/null || true
+          cp tennis-record.json tennis-record.js /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -136,7 +145,11 @@ jobs:
             cp -r /tmp/archive/current/. current/ 2>/dev/null || true
             cp /tmp/archive/record.json .
             cp /tmp/archive/tennis-data.js . 2>/dev/null || true
-            git add -A predictions current record.json tennis-data.js
+            mkdir -p predictions-tennis
+            cp -r /tmp/archive/predictions-tennis/. predictions-tennis/ 2>/dev/null || true
+            cp /tmp/archive/tennis-record.json /tmp/archive/tennis-record.js . 2>/dev/null || true
+            git add -A predictions current record.json tennis-data.js \
+                       predictions-tennis tennis-record.json tennis-record.js
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
@@ -174,6 +187,8 @@ jobs:
           # nothing and a missing file must not fail the assemble step.
           cp tennis-data.js _site/tennis-data.js 2>/dev/null || \
             echo "::warning::no tennis-data.js this run — Tennis tab will show its empty state"
+          cp tennis-record.js _site/tennis-record.js 2>/dev/null || \
+            echo "::warning::no tennis-record.js this run — tennis results will show their empty state"
 
       - uses: actions/upload-pages-artifact@v3
         with:
