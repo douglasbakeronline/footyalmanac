@@ -155,7 +155,9 @@ These were each learned the hard way. Do not break them without asking.
 - **Calibration**: `T = 1.075 − 0.45 × (confidence − 0.45)` from
   `calibration.json`, replacing the old flat temperature of 1.15.
 - **Sources**: openfootball spells clubs in full (*FC Bayern München*), ESPN
-  abbreviates (*Bayern Munich*). Cup ties are rated against the club's
+  abbreviates (*Bayern Munich*). football-data.co.uk's extra-league files
+  are the sole source for Poland, Switzerland, Romania, Finland and Ireland
+  (`sources.FDX`), history and fixtures both, so each league has one spelling. Cup ties are rated against the club's
   domestic league via `domestic_of`.
 
 ## Tested and rejected, don't reopen without new evidence

@@ -22,6 +22,33 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-4 — Poland, Switzerland, Romania, Finland, Ireland
+
+**What changed for a reader**
+
+Five leagues that had no working source now appear and are rated:
+Poland's Ekstraklasa, Switzerland's Super League and Romania's Superliga
+(ESPN does not carry them), plus Finland and Ireland (no fixture source).
+All five come from football-data.co.uk's extra-league files: complete
+prior seasons (Poland 306, Switzerland 228, Romania 321, Finland 177,
+Ireland 180 matches) and this season's results to date. The rated club
+pool goes from 1,063 to 1,275, none resolving to the wrong club.
+
+**Limits**
+
+Their upcoming fixtures come from a weekly next-round file (refreshed
+around Friday), so they mostly fill weekends. Only the result and fixture
+columns are read; the bookmaker columns in the same files are ignored.
+
+**Files** `sources.py` (`FDX`, `fdx_rows`, `fdx_upcoming`; `fetch_season`
+and `fetch_fixtures` route those five leagues there; `kickoff_utc` honours a
+row's `tz`, since football-data times are UK time).
+
+**Roll back** `git revert --no-edit <release commit>`. The five leagues go
+back to having no fixtures.
+
+---
+
 ## release-2026-09-27-3 — Prior seasons for four more leagues
 
 **What changed for a reader**

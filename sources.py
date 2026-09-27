@@ -11,7 +11,7 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import json, os, re, time, urllib.request, concurrent.futures
+import csv, io, json, os, re, threading, time, urllib.request, concurrent.futures
 from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
@@ -195,7 +195,7 @@ def kickoff_utc(row, iso):
         y, mo, dd = (int(x) for x in str(d)[:10].split("-"))
         if row.get("utc"):
             return f"{y:04d}-{mo:02d}-{dd:02d}T{hh:02d}:{mm:02d}:00Z"
-        zone = KICKOFF_TZ.get(iso)
+        zone = row.get("tz") or KICKOFF_TZ.get(iso)
         if not zone:
             return None
         from zoneinfo import ZoneInfo
@@ -355,6 +355,103 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     return rows, fetched
 
 
+# --- football-data.co.uk's extra leagues ---------------------------------------
+#
+# Full results, current season included, for leagues nothing else here carries:
+# ESPN has no Poland, Switzerland or Romania at all, and no fixtures for Finland
+# or Ireland. new/<CODE>.csv is every match since 2012; new_league_fixtures.csv
+# is the next round, refreshed weekly. Only the result and fixture columns are
+# read. The bookmaker columns in the same files are ignored: the board is the
+# model's own read.
+#
+# A league listed here takes ALL its data from this source, history and
+# fixtures alike, so its clubs are spelled one way throughout. Mixing it with
+# openfootball's history would put two spellings of every club in one table.
+#
+# Times are UK local (checked 27 Sep 2026: Seattle v Real Salt Lake is 02:30
+# here, 01:30Z on ESPN), so rows carry tz and kickoff_utc converts them.
+FDX_BASE = "https://www.football-data.co.uk"
+FDX = {  # code: (file, country, league) as the files name them
+    "pol.1": ("POL", "Poland", "Ekstraklasa"),
+    "ch.1": ("SWZ", "Switzerland", "Super League"),
+    "rou.1": ("ROU", "Romania", "Superliga"),
+    "fin.1": ("FIN", "Finland", "Veikkausliiga"),
+    "irl.1": ("IRL", "Ireland", "Premier Division"),
+}
+_FDX_CACHE, _FDX_LOCK = {}, threading.Lock()
+
+
+def _fdx_text(path, cache_dir=None):
+    """One file, fetched once per build however many seasons ask for it."""
+    with _FDX_LOCK:
+        if path in _FDX_CACHE:
+            return _FDX_CACHE[path]
+    req = urllib.request.Request(FDX_BASE + path, headers={"User-Agent": "football-almanac/1.0"})
+    try:
+        text = urllib.request.urlopen(req, timeout=40).read().decode("utf-8-sig", "replace")
+    except Exception:
+        text = ""
+    with _FDX_LOCK:
+        _FDX_CACHE[path] = text
+    return text
+
+
+def _fdx_date(s):
+    try:
+        d, m, y = s.strip().split("/")
+        y = int(y) + (2000 if len(y) == 2 else 0)
+        return f"{y:04d}-{int(m):02d}-{int(d):02d}"
+    except Exception:
+        return None
+
+
+def _fdx_season(season):
+    """"2025-26" -> "2025/2026"; "2026" -> "2026"."""
+    if "-" in season:
+        y = int(season.split("-")[0])
+        return f"{y}/{y + 1}"
+    return season
+
+
+def fdx_rows(code, season, cache_dir=None):
+    """Every match of one season, played or not, as fixture rows."""
+    f, country, league = FDX[code]
+    want = _fdx_season(season)
+    out = []
+    for r in csv.DictReader(io.StringIO(_fdx_text(f"/new/{f}.csv", cache_dir))):
+        if (r.get("Season") or "").strip() != want or (r.get("League") or "").strip() != league:
+            continue
+        d = _fdx_date(r.get("Date") or "")
+        home, away = clean_name(r.get("Home") or ""), clean_name(r.get("Away") or "")
+        if not d or not home or not away:
+            continue
+        try:
+            hg, ag = int(r["HG"]), int(r["AG"])
+        except (KeyError, TypeError, ValueError):
+            hg = ag = None
+        out.append({"date": d, "time": (r.get("Time") or "").strip() or None,
+                    "tz": "Europe/London", "round": None,
+                    "home": home, "away": away, "hg": hg, "ag": ag})
+    return out
+
+
+def fdx_upcoming(code, cache_dir=None):
+    """The next round from new_league_fixtures.csv (tab-separated)."""
+    _, country, league = FDX[code]
+    text = _fdx_text("/new_league_fixtures.csv", cache_dir)
+    out = []
+    for r in csv.DictReader(io.StringIO(text), delimiter="\t"):
+        if (r.get("Country") or "").strip() != country or (r.get("League") or "").strip() != league:
+            continue
+        d = _fdx_date(r.get("Date") or "")
+        home, away = clean_name(r.get("Home") or ""), clean_name(r.get("Away") or "")
+        if d and home and away:
+            out.append({"date": d, "time": (r.get("Time") or "").strip() or None,
+                        "tz": "Europe/London", "round": None,
+                        "home": home, "away": away, "hg": None, "ag": None})
+    return out
+
+
 def fetch_season(code, season, cache_dir=None):
     """Return (matches, ok). matches: list of (date, home, away, hg, ag).
 
@@ -366,6 +463,10 @@ def fetch_season(code, season, cache_dir=None):
     rows, ok = local_history(code, season)
     if ok:
         return rows, True
+    if code in FDX:
+        played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
+                  for r in fdx_rows(code, season, cache_dir) if r["hg"] is not None]
+        return (played, True) if played else ([], False)
 
     url = f"{RAW}/football.json/master/{season}/{code}.json"
     try:
@@ -496,6 +597,14 @@ def parse_fixture_txt(text):
 
 
 def fetch_fixtures(code, season, cache_dir=None):
+    if code in FDX:
+        # The season so far plus the next round: the same shape as an
+        # openfootball schedule, so the build treats it identically.
+        rows = fdx_rows(code, season, cache_dir)
+        seen = {(r["date"], r["home"], r["away"]) for r in rows}
+        rows += [r for r in fdx_upcoming(code, cache_dir)
+                 if (r["date"], r["home"], r["away"]) not in seen]
+        return (rows, True) if rows else ([], False)
     for path in FIXTURE_FILES.get(code, []):
         try:
             txt = _get(f"{RAW}/{path.format(s=season)}", cache_dir).decode("utf-8", "replace")
