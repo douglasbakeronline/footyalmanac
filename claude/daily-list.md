@@ -103,7 +103,15 @@ CONCACAF Champions Cup rate clubs through their domestic leagues.
 | cl.1 2025 | 240 | release-2026-09-27 |
 | uy.1 2025 | 300 | release-2026-09-27 |
 | pe.1 2025 | 332 | release-2026-09-27 |
-| ec.1, mx.1, sa.1, ru.1, nl.2, dnk.1, au.1, in.1, sco.2 | pending | next release |
+| ec.1 2025 | 312 | release-2026-09-27-2 |
+| mx.1 2025-26 | 358 | release-2026-09-27-2 |
+| sa.1 2025-26 | 306 | release-2026-09-27-2 |
+| au.1 2025-26 | 163 | release-2026-09-27-2 |
+| in.1 2025-26 | 91 (season cut short; flagged partial) | release-2026-09-27-2 |
+| ru.1 2025-26 | 249 | release-2026-09-27-3 |
+| nl.2 2025-26 | 380 | release-2026-09-27-3 |
+| dnk.1 2025-26 | 200 | release-2026-09-27-3 |
+| sco.2 2025-26 | 180 | release-2026-09-27-3 |
 
 MLS and USL are not round robins: `"games"` on their LEAGUES entries (34,
 30) lets `sources.completeness` judge a season with no older one on file.

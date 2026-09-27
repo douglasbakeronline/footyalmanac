@@ -22,6 +22,32 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-3 — Prior seasons for four more leagues
+
+**What changed for a reader**
+
+Russia, the Netherlands' Eerste Divisie, Denmark and the Scottish
+Championship now have a prior season on file, so their clubs are rated from
+last season instead of from this season's first few games, and their
+fixtures can qualify for the Daily List.
+
+| Season | Matches |
+|---|---|
+| ru.1 2025-26 | 249 |
+| nl.2 2025-26 | 380 |
+| dnk.1 2025-26 | 200 |
+| sco.2 2025-26 | 180 |
+
+This completes the backfill of the 14 leagues ESPN carries (see
+`claude/daily-list.md`).
+
+**Files** `history/` only.
+
+**Roll back** `git revert --no-edit <release commit>`. Those four leagues go
+back to being rated from this season alone.
+
+---
+
 ## release-2026-09-27-2 — Tennis graded on "How it went"
 
 **What changed for a reader**
