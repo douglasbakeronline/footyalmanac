@@ -222,6 +222,29 @@ h1 .b{
 .record .lose b{color:var(--away)}
 .note b{font-weight:700}
 
+/* ---------- the daily list ----------
+   The site's headline: only the fixtures obvious enough to serve on their
+   own. The rule is stated in full above the list, because a short list is
+   only worth trusting if the reader can see what kept everything else off it. */
+.list-rule{
+  margin-top:16px;padding:12px 15px;background:var(--surface);border:1px solid var(--rule);
+  border-left:var(--rail) solid var(--ink);font-size:14px;line-height:1.55;max-width:100ch;color:var(--ink-2);
+}
+.list-rule b{color:var(--ink)}
+.list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
+.list-past h3{
+  font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);padding:10px 15px 6px;
+}
+.list-past li{
+  list-style:none;display:grid;grid-template-columns:5.5em 1.4em 1fr auto;gap:8px;
+  padding:6px 15px;border-top:1px solid var(--rule-soft);font-size:13.5px;align-items:baseline;
+}
+.list-past .d{font-family:var(--f-num);font-size:12px;color:var(--mute)}
+.list-past .ok{color:var(--home);font-weight:700}
+.list-past .no{color:var(--away);font-weight:700}
+.list-past .sc{font-family:var(--f-num);font-size:12px;color:var(--ink-2);white-space:nowrap}
+
 /* ---------- controls ---------- */
 .controls{
   position:sticky;top:0;z-index:20;background:var(--paper);
@@ -764,7 +787,8 @@ footer a{color:var(--ink-2)}
     <div class="meta" id="meta"><div class="flash"><span>Football</span><span>Tennis</span><span>&amp; more soon</span></div></div>
   </div>
   <nav class="views" id="views" aria-label="Boards">
-    <button data-view="fixtures" aria-pressed="true">Football</button>
+    <button data-view="list" aria-pressed="true">Daily List</button>
+    <button data-view="fixtures" aria-pressed="false">Football</button>
     <button data-view="tennis" aria-pressed="false">Tennis</button>
     <button data-view="starred" aria-pressed="false">Starred</button>
     <button data-view="results" aria-pressed="false">How it went</button>
@@ -803,6 +827,7 @@ footer a{color:var(--ink-2)}
 </div>
 
 <main id="days"></main>
+<section id="list" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
 <section id="results" hidden></section>
@@ -1398,6 +1423,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     star.textContent = starGlyph(id);
     star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
     if(!$("#starred").hidden) renderStarred();
+    if(!$("#list").hidden) renderList();
   });
 
   const btn = document.createElement("button");
@@ -1417,6 +1443,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     state.open = state.open===id ? null : id;
     render();
     if(!$("#starred").hidden) renderStarred();
+    if(!$("#list").hidden) renderList();
   });
 
   line.appendChild(star);
@@ -1467,6 +1494,75 @@ function renderStarred(){
   if(!any) host.innerHTML = `<div class="empty">No bookmarks yet. Tap the star (☆) on any
     fixture to shortlist it here. The list clears itself each morning along with the
     fixtures, so it never carries a stale pick into a new day.</div>`;
+}
+
+/* ---------- the daily list ----------
+   build.py decides membership (list_eligible) and archives it, so the page
+   only reads the flag: the rule lives in one place and score.py grades
+   exactly what was shown. */
+function renderList(){
+  const host = $("#list");
+  if(!host) return;
+  const L = D.list || {min:0.75};
+  const bt = L.backtest;
+  const R = window.__RECORD__ || {};
+  const live = R.list;
+  const pc = x => Math.round(x*100) + "%";
+  host.innerHTML = `
+    <div class="list-rule">
+      <b>Only the obvious wins.</b> A fixture makes this list when the model gives one side
+      <b>${pc(L.min)} or more</b> to win, never a draw, every club is rated from a full prior
+      season, and nothing about the fixture leaves the model working blind (no promoted side,
+      no cross-division cup tie, no unrated club). It is the model's own read, with no bookmaker
+      input. On days when nothing clears that bar the list is empty on purpose.
+      ${bt ? `<br>Backtest: <b>${pc(bt.fit.hit)}</b> of ${bt.fit.n} league games at this level landed in
+      ${bt.fit.season}, ${pc(bt.check.hit)} of ${bt.check.n} in ${bt.check.season} so far${bt.intl ? `, and
+      ${pc(bt.intl.hit)} of ${bt.intl.n} internationals in ${bt.intl.season}` : ""}. So roughly one in five still
+      won't: that is football's ceiling, and a higher bar does not raise it.` : ""}
+      ${live ? `<br>Live since the list launched: <b>${live.correct} of ${live.n}</b> landed (${pc(live.accuracy)})${live.drawnOut ? `, ${live.drawnOut} of the misses ${live.drawnOut===1?"was a draw":"were draws"}` : ""}.`
+             : `<br>Live record: nothing graded yet. The list is scored separately from the full board, from its first day.`}
+    </div>`;
+
+  let any = false;
+  upcoming.forEach(day=>{
+    const games = day.games.filter(g => g.list).sort(rank.conf);
+    if(!games.length) return;
+    any = true;
+    const sec = document.createElement("section");
+    sec.className = "day";
+    sec.innerHTML = `
+      <div class="day-head">
+        <h2>${fmtDay(day.date)}</h2>
+        <div class="count">${games.length} of ${day.games.length} fixture${day.games.length===1?"":"s"}</div>
+      </div>
+      <div class="ruler">
+        <div>#</div><div>Kick-off</div><div>Home</div>
+        <div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
+        <div style="text-align:center">Score · xG</div>
+        <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
+      </div>`;
+    games.forEach((g,i)=> appendFixture(sec, g, i, day.date, false));
+    host.appendChild(sec);
+  });
+  if(!any){
+    const e = document.createElement("div");
+    e.className = "empty";
+    e.innerHTML = `Nothing obvious in this window. No fixture clears the bar, so nothing is served.
+      The full slate is on the <b>Football</b> board, ranked, with the weaker reads labelled as such.`;
+    host.appendChild(e);
+  }
+
+  const past = R.listDays || [];
+  if(past.length){
+    const rows = past.flatMap(d => d.games.map(g => ({d:d.date, ...g})));
+    const side = g => g.pick === "h" ? g.home : g.away;
+    host.insertAdjacentHTML("beforeend", `
+      <div class="list-past"><h3>Recent list results</h3><ul>${rows.slice(0, 30).map(g => `
+        <li><span class="d">${fmtDay(g.d).split(",")[0]}</span>
+          <span class="${g.ok ? "ok" : "no"}">${g.ok ? "✓" : "✗"}</span>
+          <span>${side(g)} to beat ${g.pick === "h" ? g.away : g.home} · ${pct(g.confidence)}%</span>
+          <span class="sc">${g.result[0]}–${g.result[1]}</span></li>`).join("")}</ul></div>`);
+  }
 }
 
 /* ---------- tennis ----------
@@ -1840,6 +1936,7 @@ $("#views").addEventListener("click", e=>{
   const fixtures = v === "fixtures";
   const starred = v === "starred";
   const tennis = v === "tennis";
+  const list = v === "list";
   $("#controls").hidden = !fixtures;
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
@@ -1847,6 +1944,8 @@ $("#views").addEventListener("click", e=>{
   $("#results").hidden = v !== "results";
   $("#starred").hidden = !starred;
   $("#tennis").hidden = !tennis;
+  $("#list").hidden = !list;
+  if(list) renderList();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   window.scrollTo({top:0});
@@ -1869,6 +1968,8 @@ $("#footer").innerHTML = `
 render();
 updateReadbar();
 renderResults();
+// The Daily List is the front page; the full board is one tap away.
+$('#views button[data-view="list"]').click();
 })();
 </script>
 </body>

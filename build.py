@@ -38,6 +38,44 @@ if os.path.exists(_ABS_FILE):
                 if not k.startswith("_")}
 
 
+# The Daily List: the fixtures obvious enough to serve on their own. The model's
+# number and nothing else, no bookmaker input, so it stays an independent read.
+#
+# Why 75%: on the walk-forward (predictability.py), league fixtures the model
+# rated 75%+ landed 81.0% of the time in 2025/26 (211 games) and 77.8% in
+# 2026/27 so far (18). Raising it further does not buy accuracy: the 85%+ calls
+# landed 76.9% (52 games), because the model's most extreme numbers are its
+# least well calibrated. So the bar is set where hit rate stops climbing, and
+# the rest of the selection is about removing games the model cannot see.
+# Internationals are rated by a separate fit (tune_international.py); on its
+# 2026 holdout, calibrated calls at 75%+ landed 81.6% (49 games, 82.6% quoted).
+LIST_MIN = 0.75
+LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 211, "hit": 0.810},
+                 "check": {"season": "2026-27", "n": 18, "hit": 0.778},
+                 "intl": {"season": "2026", "n": 49, "hit": 0.816}}
+
+
+def list_eligible(g):
+    """Whether a fixture is obvious enough for the Daily List.
+
+    A win pick, never a draw, at LIST_MIN or above, and nothing the model is
+    blind to: no Celtic's Law flag, no unrated side, and every club rated from
+    a prior season on file. That last condition is not on the board: a club in
+    a league with no history gets a rating from its first few games and counts
+    as rated there, which is exactly how a mislabelled feed (El Salvador as
+    Slovenia, Sep 2026) produced confident-looking rows. National teams carry
+    no domestic table, so their gate is simply having a rating at all.
+    """
+    p = g["p"]
+    pick = max(("h", "d", "a"), key=lambda k: p[k])
+    if pick == "d" or p[pick] < LIST_MIN or g["celtic"] or g["unrated"]:
+        return False
+    for t in (g["home"], g["away"]):
+        if t["played"] is not None and not t["last"]:
+            return False
+    return True
+
+
 def prev_of(code):
     return E.LEAGUES[code].get("prev", PREV)
 
@@ -66,7 +104,7 @@ def pick_prior(code, seasons, log=None):
         if not rows:
             continue
         older = seasons.get(pv[i + 1]) if i + 1 < len(pv) else None
-        share, expected = S.completeness(rows, older)
+        share, expected = S.completeness(rows, older, E.LEAGUES[code].get("games"))
         cands.append((s, rows, share, expected))
         if share >= S.PRIOR_MIN_SHARE:
             if cands[:-1]:
@@ -664,6 +702,7 @@ def main():
         games = sorted(by_day[d], key=lambda g: (g["unrated"], -g["confidence"]))
         for i, g in enumerate(games, 1):
             g["rank"] = i
+            g["list"] = list_eligible(g)
         days.append({"date": d, "count": len(games), "games": games})
 
     payload = {
@@ -676,6 +715,7 @@ def main():
                      "haveHistory": c in prior_ratings} for c in CODES],
         "missing": sorted(missing),
         "odds": odds_meta,
+        "list": {"min": LIST_MIN, "backtest": LIST_BACKTEST},
         "days": days,
         "model": {
             "blendK": E.BLEND_K, "formCap": E.FORM_MAX, "rho": E.RHO, "temperature": E.TEMPERATURE,
@@ -695,6 +735,8 @@ def main():
              "btts": g["btts"], "over25": g["over25"],
              "confidence": g["confidence"], "celtic": bool(g["celtic"]),
              "unrated": g["unrated"],
+             # fixed at publication, so the list is graded on what it said
+             "list": g["list"],
              # archived so the prices a reader saw can be graded later
              "market": g.get("market"), "value": g.get("value")}
             for d in days for g in d["games"]]

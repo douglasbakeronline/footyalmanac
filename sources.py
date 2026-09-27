@@ -236,7 +236,7 @@ def in_window(rows, season):
     return out
 
 
-def completeness(rows, older_rows=None):
+def completeness(rows, older_rows=None, games=None):
     """(share, expected) for a season that is supposed to be finished.
 
     Judged against the season before it where there is one, since formats
@@ -245,6 +245,11 @@ def completeness(rows, older_rows=None):
     round robin of the clubs that appear at least three times: some files
     spell a club two ways, and counting every spelling as a team made
     complete seasons look a third short.
+
+    games: regular-season games per club, for a league that is not a round
+    robin (LEAGUES["us.1"]["games"]). MLS plays 34 across 30 clubs, about 510
+    matches, and read as a double round robin (870) a complete season looked
+    62% done and every MLS row was flagged as rated from a partial season.
     """
     if older_rows:
         expected = len(older_rows)
@@ -254,7 +259,7 @@ def completeness(rows, older_rows=None):
             for t in (r[1], r[2]):
                 seen[t] = seen.get(t, 0) + 1
         core = sum(1 for v in seen.values() if v >= 3)
-        expected = core * (core - 1)
+        expected = core * games // 2 if games else core * (core - 1)
     if not expected:
         return 0.0, 0
     return min(1.0, len(rows) / expected), expected
@@ -632,87 +637,61 @@ ESPN_SLUGS = {
     # whole source: fixtures, results, and the past season backfill.py walks to
     # produce their ratings.
     #
-    # These slugs are unverified. They follow ESPN's published naming, but the
-    # environment they were written in cannot reach ESPN, so any of them could
-    # be wrong. A wrong slug returns nothing and the competition silently does
-    # not appear, which is the safe failure. Run `python3 backfill.py --probe`
-    # somewhere with network access to find out which ones answer, and delete
-    # the rest.
+    # Probed 27 Sep 2026 against ESPN's league index and eight club dates.
+    # Every slug ESPN answered 400 to (no such league) was deleted, as was
+    # slv.1, which is El Salvador, not Slovenia: it had been publishing
+    # Salvadoran fixtures as PrvaLiga. A slug that exists but returned nothing
+    # is kept only where ESPN names it as the right competition (sui.1 is
+    # "Swiss Super League"), or the league was between seasons. ESPN does not
+    # carry Poland, Croatia, Serbia, Ukraine, Hungary, Korea, the UAE, the
+    # 3. Liga, Liga Portugal 2 or most of the smaller European leagues at all.
+    # Check a new slug's sample fixture by eye before adding it: `backfill.py
+    # --probe --on <club dates>`.
     "us.1": ["usa.1"], "us.2": ["usa.usl.1"], "mx.1": ["mex.1"],
     "ar.1": ["arg.1"], "br.2": ["bra.2"], "co.1": ["col.1"], "cl.1": ["chi.1"],
     "uy.1": ["uru.1"], "pe.1": ["per.1"], "ec.1": ["ecu.1"],
     "sa.lib": ["conmebol.libertadores"], "sa.sud": ["conmebol.sudamericana"],
     "na.ccc": ["concacaf.champions_cup", "concacaf.champions"],
-    "jp.1": ["jpn.1"], "kr.1": ["kor.1"], "cn.1": ["chn.1"], "au.1": ["aus.1"],
-    "sa.1": ["ksa.1"], "ae.1": ["uae.1"], "in.1": ["ind.1"],
-    "ch.1": ["sui.1"], "ru.1": ["rus.1"], "pt.2": ["por.2"], "nl.2": ["ned.2"],
-    "de.3": ["ger.3"], "sco.2": ["sco.2"],
+    "jp.1": ["jpn.1"], "cn.1": ["chn.1"], "au.1": ["aus.1"],
+    "sa.1": ["ksa.1"], "in.1": ["ind.1"],
+    "ch.1": ["sui.1"], "ru.1": ["rus.1"], "nl.2": ["ned.2"], "sco.2": ["sco.2"],
 
     # The European leagues that used to be ratings-only. They already carry
     # history from openfootball, so a working slug here adds their fixtures
     # without needing a backfill at all.
     "nor.1": ["nor.1"], "swe.1": ["swe.1"], "dnk.1": ["den.1"], "fin.1": ["fin.1"],
-    "isl.1": ["isl.1"], "irl.1": ["irl.1"], "cze.1": ["cze.1"], "pol.1": ["pol.1"],
-    "ukr.1": ["ukr.1"], "srb.1": ["srb.1"], "hrv.1": ["cro.1"], "rou.1": ["rou.1"],
-    "cyp.1": ["cyp.1"], "hun.1": ["hun.1"], "bgr.1": ["bul.1"], "svk.1": ["svk.1"],
-    "svn.1": ["slv.1"], "isr.1": ["isr.1"], "bih.1": ["bih.1"], "alb.1": ["alb.1"],
-    "arm.1": ["arm.1"], "geo.1": ["geo.1"], "ltu.1": ["ltu.1"], "lva.1": ["lva.1"],
-    "est.1": ["est.1"], "mkd.1": ["mkd.1"], "mne.1": ["mne.1"], "aze.1": ["aze.1"],
-    "blr.1": ["blr.1"], "mda.1": ["mda.1"], "nir.1": ["nir.1"], "wal.1": ["wal.1"],
-    "fro.1": ["fro.1"], "lux.1": ["lux.1"], "mlt.1": ["mlt.1"],
+    "irl.1": ["irl.1"], "cze.1": ["cze.1"], "rou.1": ["rou.1"], "cyp.1": ["cyp.1"],
+    "isr.1": ["isr.1"], "nir.1": ["nir.1"], "wal.1": ["wal.1"], "mlt.1": ["mlt.1"],
 
-    # New countries, added alongside the LEAGUES entries above. Same
-    # disclaimer as the block above: unverified, needs --probe.
-    "and.1": ["and.1"], "ago.1": ["ang.1"], "eg.1": ["egy.1"], "ma.1": ["mar.1"],
-    "tn.1": ["tun.1"], "za.1": ["rsa.1"], "qa.1": ["qat.1"], "th.1": ["tha.1"],
+    # New countries, added alongside the LEAGUES entries above.
+    "za.1": ["rsa.1"], "th.1": ["tha.1"],
     "py.1": ["par.1"], "bo.1": ["bol.1"], "ve.1": ["ven.1"], "cr.1": ["crc.1"],
     "hn.1": ["hon.1"],
 
     # Women's football.
     "en.w1": ["eng.w.1"], "us.w1": ["usa.nwsl"],
 
-    # More domestic cups. Same slug pattern as the five originals
-    # (esp.copa_del_rey, ger.dfb_pokal, ita.coppa_italia) — guessed the same
-    # way, unverified the same way.
-    "fr.cup": ["fra.coupe_de_france"],
-    # Both previously tried a single slug that 400'd. Multiple candidates,
-    # tried in order, same mechanism this list already uses elsewhere (see
-    # sco.challenge below) — I could not find the actual API slug through
-    # search, only confirm ESPN carries the competition under this display
-    # name. Needs testing, same as every "live" league did originally.
-    "nl.cup": ["ned.knvb_beker", "ned.beker", "ned.toto_knvb_beker", "ned.cup"],
-    "pt.cup": ["por.taca_de_portugal"], "be.cup": ["bel.cup"],
-    "tr.cup": ["tur.cup"], "sco.cup": ["sco.cup"], "at.cup": ["aut.cup"],
-    "gr.cup": ["gre.cup"], "es.copafed": ["esp.copa_federacion"], "cze.cup": ["cze.cup"],
-    "es.3": ["esp.3"], "br.cup": ["bra.copa_do_brasil"], "ar.cup": ["arg.copa"],
+    # More domestic cups. The slugs from here down are taken from ESPN's own
+    # league index (sports.core.api.espn.com/v2/sports/soccer/leagues).
+    "fr.cup": ["fra.coupe_de_france"], "nl.cup": ["ned.cup"],
+    "pt.cup": ["por.taca.portugal"], "br.cup": ["bra.copa_do_brazil"], "ar.cup": ["arg.copa"],
     "afc.cl": ["afc.champions"], "caf.cl": ["caf.champions"],
 
     # Women's leagues and cup.
-    "de.w1": ["ger.w.1"], "es.w1": ["esp.w.1"], "it.w1": ["ita.w.1"],
-    "fr.w1": ["fra.w.1"], "se.w1": ["swe.w.1"], "en.w2": ["eng.w.2"],
+    "es.w1": ["esp.w.1"], "fr.w1": ["fra.w.1"],
     "uwcl": ["uefa.wchampions"], "en.w.cup": ["eng.w.league_cup"],
 
-    "sco.challenge": ["sco.challenge_cup", "sco.league_cup", "sco.spfl_challenge_cup", "sco.challenge"],
-    # New this round, all unverified — same caveat as above, confirmed to
-    # exist on ESPN by display name (search results), slug not confirmed.
-    "efl.trophy": ["eng.trophy", "eng.efl_trophy", "eng.football_league_trophy"],
-    "cl.cup": ["chi.copa_chile", "chi.cup"],
-    "py.cup": ["par.copa_paraguay", "par.cup"],
-    "dk.w1": ["den.w.1", "dnk.w.1"],
-    "en.6n": ["eng.6"], "en.6s": ["eng.7"],
+    "sco.challenge": ["sco.challenge"], "efl.trophy": ["eng.trophy"],
+    "cl.cup": ["chi.copa_chi"],
 
-    # International. These are the least confident guesses in the whole
-    # file — ESPN's naming for national-team competitions has never been
-    # cross-checked against anything, unlike the club slugs above which at
-    # least follow one consistent pattern. Probe these first.
+    # International.
     "wc.q.uefa": ["fifa.worldq.uefa"], "wc.q.conmebol": ["fifa.worldq.conmebol"],
     "wc.q.concacaf": ["fifa.worldq.concacaf"], "wc.q.caf": ["fifa.worldq.caf"],
-    "wc.q.afc": ["fifa.worldq.afc"], "afcon.q": ["caf.nations_q", "fifa.confq.caf"],
-    "wc.q.ofc": ["fifa.worldq.ofc"], "afc.q": ["afc.asian_cup_q"],
-    "concacaf.gold.q": ["concacaf.gold_q"],
-    "uefa.nations": ["uefa.nations"], "concacaf.nations": ["concacaf.nations_qualifying", "concacaf.nations"],
-    "friendly": ["fifa.friendly"], "u21.uefa.q": ["uefa.u21_champ_q", "fifa.u21euroq"],
-    "cosafa.u20": ["cosafa.u20"], "fifa.wwc.u20": ["fifa.wwcu20"], "asiangames": ["fifa.asiangames"],
+    "wc.q.afc": ["fifa.worldq.afc"], "afcon.q": ["caf.nations_qual"],
+    "wc.q.ofc": ["fifa.worldq.ofc"],
+    "concacaf.gold.q": ["concacaf.gold_qual"],
+    "uefa.nations": ["uefa.nations"], "concacaf.nations": ["concacaf.nations.league"],
+    "friendly": ["fifa.friendly"], "u21.uefa.q": ["uefa.euro_u21_qual"],
 }
 
 
@@ -769,13 +748,19 @@ def _row(ev):
     }
 
 
-def fetch_espn(code, start, end, timeout=25, log=None):
+def fetch_espn(code, start, end, timeout=25, log=None, clip=True):
     """Fixtures for one competition across a date range, queried day by day.
 
     Returns the same row shape as parse_fixture_txt so callers cannot tell the
     difference. Failures are reported through `log` rather than swallowed: a
     blocked request and an empty competition are different problems and must
     not look identical.
+
+    ESPN's dates= is a US Eastern day, but rows carry the UTC date, so an
+    evening kick-off in the Americas comes back from Tuesday's query dated
+    Wednesday. clip=True keeps only rows dated inside the window, which drops
+    those; a caller walking day by day (backfill.walk) passes clip=False and
+    de-duplicates itself, or it loses every evening game.
     """
     slugs = ESPN_SLUGS.get(code)
     if not slugs:
@@ -797,7 +782,8 @@ def fetch_espn(code, start, end, timeout=25, log=None):
                 if key not in seen:
                     seen.add(key)
                     rows.append(r)
-        inwin = [r for r in rows if start.isoformat() <= r["date"] <= end.isoformat()]
+        inwin = (rows if not clip else
+                 [r for r in rows if start.isoformat() <= r["date"] <= end.isoformat()])
         if log is not None:
             note = f"  ERROR {errs[0]}" if errs else ""
             log.append(f"{code}/{slug}: {len(rows)} returned, {len(inwin)} in window{note}")

@@ -107,8 +107,8 @@ LEAGUES = {
     # North and Central America. MLS runs a calendar year; Liga MX splits its
     # year into Apertura and Clausura, which the live source reports as one
     # season, so it is treated as a split-year league.
-    "us.1":  {"iso": "usa", "short": "MLS", "name": "Major League Soccer", "country": "USA", "tier": 1, "strength": 0.72, "order": 80, "season": "2026", "prev": ["2025", "2024"], "live": True},
-    "us.2":  {"iso": "usa", "short": "USL", "name": "USL Championship", "country": "USA", "tier": 2, "strength": 0.60, "order": 81, "season": "2026", "prev": ["2025", "2024"], "live": True},
+    "us.1":  {"iso": "usa", "short": "MLS", "name": "Major League Soccer", "country": "USA", "tier": 1, "strength": 0.72, "order": 80, "season": "2026", "prev": ["2025", "2024"], "live": True, "games": 34},
+    "us.2":  {"iso": "usa", "short": "USL", "name": "USL Championship", "country": "USA", "tier": 2, "strength": 0.60, "order": 81, "season": "2026", "prev": ["2025", "2024"], "live": True, "games": 30},
     "mx.1":  {"iso": "mex", "short": "MEX", "name": "Liga MX", "country": "Mexico", "tier": 1, "strength": 0.76, "order": 82, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
 
     # South America. Every one of these runs a calendar year.

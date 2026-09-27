@@ -116,7 +116,7 @@ def main():
     print(f"european spellings: {eu} checked against the rated pool")
 
     # 2. nothing resolves to a different club
-    wrong = [(t, g) for t in pool if (g := S.match_team(t, pool)) != t]
+    wrong = [(t, g) for t, g in ((t, S.match_team(t, pool)) for t in pool) if g != t]
     for a, b in wrong:
         fails.append(f"{a!r} resolves to {b!r} — a wrong match prices the "
                      f"fixture with another club's rating")

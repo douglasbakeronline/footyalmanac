@@ -110,12 +110,15 @@ def _form(res, cap, n):
     return 1.0 + max(-1.0, min(1.0, dev)) * cap
 
 
-def lambdas(data, split, params=None, meta=False):
+def lambdas(data, split, params=None, meta=False, features=False):
     """Every fixture of the season, with the two expected-goal numbers the
     model would have published the morning before it kicked off.
 
     meta=True appends (code, date, home, away) to each row, for joining the
     predictions to something else (odds.py joins them to bookmaker prices).
+    features=True appends a dict of what else was knowable that morning
+    (games played, how far each rating has moved off its prior, recent
+    points), for predictability.py. Neither changes the numbers.
 
     The table is updated incrementally rather than rebuilt per fixture, which is
     the only reason a full sweep finishes in minutes rather than hours.
@@ -157,7 +160,22 @@ def lambdas(data, split, params=None, meta=False):
             lh = max(0.15, rh[0] * ra[1] * mu * hm * _form(form.get(h, []), p["form_cap"], p["form_n"]))
             la = max(0.15, ra[0] * rh[1] * mu * am * _form(form.get(a, []), p["form_cap"], p["form_n"]))
             y = 0 if hg > ag else (1 if hg == ag else 2)
-            rows.append((lh, la, y, code, d, h, a) if meta else (lh, la, y))
+            row = (lh, la, y, code, d, h, a) if meta else (lh, la, y)
+            if features:
+                def drift(team):
+                    # how far this season's evidence sits from the prior
+                    if team not in cur or team not in prior_rt:
+                        return 0.0
+                    c, pri = cur[team], prior_rt[team]
+                    return abs(math.log(c[0] / pri[0])) + abs(math.log(c[1] / pri[1]))
+                row = row + ({
+                    "nH": tbl[h][0] if h in tbl else 0,
+                    "nA": tbl[a][0] if a in tbl else 0,
+                    "newH": h not in prior_rt, "newA": a not in prior_rt,
+                    "driftH": drift(h), "driftA": drift(a),
+                    "formH": form.get(h, [])[-5:], "formA": form.get(a, [])[-5:],
+                },)
+            rows.append(row)
 
             for t, gf, ga, pts in ((h, hg, ag, 3 if hg > ag else (1 if hg == ag else 0)),
                                    (a, ag, hg, 3 if ag > hg else (1 if hg == ag else 0))):

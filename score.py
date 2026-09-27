@@ -108,7 +108,9 @@ def live_results(pending, log=None):
     out = {}
     for (code, d), keys in sorted(wanted.items()):
         day = date.fromisoformat(d)
-        rows, ok = S.fetch_espn(code, day, day, log=log)
+        # d is a UTC date; ESPN's days are US Eastern. A late kick-off in the
+        # Americas dated d is only returned by the previous day's query.
+        rows, ok = S.fetch_espn(code, day - timedelta(days=1), day, log=log)
         if not ok:
             continue
         played = [r for r in rows if r["date"] == d and r["hg"] is not None]
@@ -209,6 +211,7 @@ def main():
             "p": p, "pick": pick, "actual": actual,
             "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
             "unrated": bool(g.get("unrated")),
+            "list": bool(g.get("list")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
         })
 
@@ -248,7 +251,7 @@ def main():
                 "actual": r["actual"], "confidence": r["confidence"],
                 "celtic": r["celtic"], "tier": name, "k": k,
                 "predScore": list(r["score"]), "result": list(r["result"]),
-                "ok": r["pick"] == r["actual"]}
+                "list": r["list"], "ok": r["pick"] == r["actual"]}
 
     by_date = defaultdict(list)
     for r in rows:
@@ -268,6 +271,14 @@ def main():
         "celtic": summarise([r for r in rows if r["celtic"]]),
         "bands": bands,
         "tiers": tier_table(rows),
+        # The Daily List on its own. Only fixtures archived with the flag set,
+        # which means from the day the list was first published: membership is
+        # never worked out afterwards from the numbers, because the list is
+        # judged on what it actually said before kick-off.
+        "list": summarise([r for r in rows if r["list"]]),
+        "listDays": [{"date": d, "games": [game_row(r) for r in by_date[d] if r["list"]]}
+                     for d in sorted(by_date, reverse=True)[:REVIEW_DAYS]
+                     if any(r["list"] for r in by_date[d])],
         "days": review,
         "byLeague": per_league,
         "recent": [{"date": r["date"], "league": r["league"], "home": r["home"],

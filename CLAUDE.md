@@ -12,12 +12,18 @@ top, and grades itself publicly against what actually happened.
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
+The front page is the **Daily List**: only the obvious wins (model ≥75%, win
+pick, nothing flagged, every club rated from a prior season). It is the
+model's own independent read, with no bookmaker input, by Douglas's decision.
+The full board sits one tap behind it.
+
 ## Read before non-trivial work
 
 `claude/` holds dated handover notes. Read the one that matches the task.
 
 | File | Covers |
 |---|---|
+| `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
 | `claude/coverage-expansion.md` | Why 61 competitions come from ESPN, `backfill.py`, which leagues still lack a prior season. |
@@ -38,6 +44,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder.
 - `backtest.py` walk-forward backtest.
 - `tune.py` constant sweep and calibration refit, behind gates.
+- `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.
 - `eurotest.py` cross-competition harness for league strength, writes `europe.json`.
 - `nametest.py` guards the club-name matcher. Runs before every deploy.
 - `backfill.py` walks a past season from ESPN into `history/`.
@@ -53,6 +60,8 @@ Config the model reads: `calibration.json` (auto-refitted weekly),
 `europe.json` (structural, refitted by hand only), `adjustments.json`
 (deliberately empty, see rules).
 
+`RELEASES.md` is the release log; every release gets an entry and a tag.
+
 Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`. `history/` is written
 by `backfill.py` and committed by hand.
@@ -66,6 +75,8 @@ python3 build.py --days 2 --no-topup --no-odds   # fast local check
 python3 score.py                             # regrade, rewrite record.json
 python3 backtest.py --season 2025-26 --prior 2024-25
 python3 tune.py --report                     # advisory sweep, changes nothing
+python3 predictability.py                    # which signals separate hits from misses
+python3 backfill.py --probe --on 2026-09-20,2026-09-13   # probe on club dates, not an international break
 python3 tune.py --fit --dry-run
 python3 eurotest.py --report
 python3 backfill.py --probe                  # which ESPN slugs answer
@@ -84,6 +95,21 @@ Open `dashboard.html` straight off disk to check the page.
   output for a human.
 - The bot commits to `main` every day. Pull before starting and before
   pushing. If a conflict lands on a bot-written file, take the remote copy.
+
+## Releases
+
+Douglas's standing instruction: every finished piece of work is committed
+and pushed to `main` with a release note, so it can be rolled back.
+
+1. Pull first. Run `nametest.py` and a fast build. Restore any bot-written
+   file the local build overwrote (`predictions/`, `dashboard.html`,
+   `record.json`); don't commit `data.js` / `data.json`.
+2. Add an entry at the top of `RELEASES.md`: what changed for a reader, the
+   evidence, the files, what was not changed, how to roll back.
+3. Commit, then tag `release-YYYY-MM-DD` (annotated, `-2` for a second the
+   same day) and `git push --follow-tags`. The push deploys the site.
+4. Roll back with `git revert`, never `git reset`: the bot's daily archive
+   commits sit between releases. Instructions are at the top of `RELEASES.md`.
 
 ## Rules
 
@@ -135,10 +161,12 @@ live record.
 
 ## Open items
 
-- 45 competitions still need a prior season: `backfill.py --probe`, prune dead
-  slugs in `sources.ESPN_SLUGS`, then `--season 2025` and `--season 2025-26`,
-  commit `history/`. The ESPN slugs were written without network access to
-  ESPN and are unverified; smaller European ones are least trustworthy.
+- Slugs were audited against ESPN on 27 Sep 2026 and 14 leagues backfilled
+  (see `claude/daily-list.md`). ESPN does not carry Poland, Croatia, Serbia,
+  Ukraine, Hungary, Korea, the UAE, the 3. Liga, Liga Portugal 2 or most small
+  European leagues. Covering them needs a second free source, not a slug.
+- The backfilled leagues have no walk-forward of their own yet (needs a
+  second prior season).
 - Whether unrated rows should compete for the top of the board on raw
   confidence. Currently they do, deliberately. Douglas's call.
 - Tier ladder duplication (rule 7) could be collapsed to one definition.
@@ -154,6 +182,10 @@ live record.
   `brandassets.py` on `main` still describes a slab-serif A in Bevan. Confirm
   which identity is live before touching branding.
 - `README.md` still says twenty competitions and older backtest figures.
+- `claude/coverage-expansion.md` calls the ESPN slugs unverified and lists 45
+  leagues to backfill; superseded by `claude/daily-list.md`.
+- The local Mac has Python 3.7 only (Homebrew can't install 3.12 on it).
+  `nametest.py` and `build.py` run on 3.7; `eurotest.py` needs 3.8+.
 
 ## Working with Douglas
 

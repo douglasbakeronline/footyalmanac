@@ -72,7 +72,7 @@ def walk(code, season, sleep=0.15, verbose=True):
     rows, seen, errors = [], set(), 0
     day, n_days = start, (end - start).days + 1
     while day <= end:
-        got, ok = S.fetch_espn(code, day, day, log=None)
+        got, ok = S.fetch_espn(code, day, day, log=None, clip=False)
         if not ok:
             errors += 1
         for r in got:
@@ -96,16 +96,19 @@ def walk(code, season, sleep=0.15, verbose=True):
     return rows
 
 
-def probe(codes):
+def probe(codes, days=None):
     """Ask every slug for a recent busy weekend and report what came back."""
     # A Saturday and a Wednesday, so both weekend leagues and midweek rounds
     # get a fair chance. Recent, so a league in season should have something.
-    days = []
-    d = date.today() - timedelta(days=1)
-    while len(days) < 2:
-        if d.weekday() in (2, 5):
-            days.append(d)
-        d -= timedelta(days=1)
+    # In an international window most club leagues are idle and answer empty,
+    # so pass club dates with --on rather than trusting the default then.
+    if not days:
+        days = []
+        d = date.today() - timedelta(days=1)
+        while len(days) < 2:
+            if d.weekday() in (2, 5):
+                days.append(d)
+            d -= timedelta(days=1)
 
     print(f"probing {len(codes)} competitions on {', '.join(x.isoformat() for x in days)}\n")
     print(f"  {'code':8} {'slug':26} {'fixtures':>9}  status")
@@ -147,6 +150,7 @@ def main():
     ap.add_argument("--probe", action="store_true", help="report which slugs answer")
     ap.add_argument("--season", help="season string to walk, e.g. 2025 or 2025-26")
     ap.add_argument("--only", help="comma-separated competition codes")
+    ap.add_argument("--on", help="probe these dates instead, e.g. 2026-09-19,2026-09-13")
     ap.add_argument("--sleep", type=float, default=0.15)
     args = ap.parse_args()
 
@@ -159,7 +163,8 @@ def main():
         codes = [c for c in codes if c in wanted] or sorted(wanted)
 
     if args.probe:
-        probe(codes)
+        probe(codes, [date.fromisoformat(x.strip()) for x in args.on.split(",")]
+              if args.on else None)
         return
     if not args.season:
         ap.error("nothing to do: pass --probe or --season")
