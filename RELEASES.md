@@ -22,6 +22,30 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-2 — Cleaner rows, one layout for every sport
+
+**What changed for a reader**
+
+- Every row in every sport now uses one column layout: the probability bar
+  is the same width in the same place for football, tennis, NFL, baseball,
+  basketball and rugby (football's predicted score sits in a narrow middle
+  column the other sports keep aligned).
+- No more overlapping text: team stat lines truncate cleanly instead of
+  running into the bar or the confidence column, "international rating"
+  filler removed, tennis lines shortened ("Elo 1815 · 508 played").
+- More readable: small labels darkened site-wide to 4.8:1 contrast (from
+  3.4:1, below the accessibility minimum), larger names, confidence number
+  and bar labels, more space per row, a wider confidence column so
+  "94% landed" always fits.
+- Column headers now sit exactly over their columns (they ignored the
+  bookmark star and sat 30px to the left).
+
+**Files** `index.html` only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28 — World rankings in the model
 
 **What changed for a reader**

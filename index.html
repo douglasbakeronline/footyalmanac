@@ -42,7 +42,13 @@
      expects to lose. Position still says which side is home. */
   --ink:#1a1511;
   --ink-2:#4b4038;
-  --mute:#867a6b;
+  --mute:#6e6355;        /* 4.8:1 on paper; was #867a6b at 3.4:1, too faint for small labels */
+  --mute-ink:#6e6355;
+  /* One column layout for every row in every sport, so the bar sits in the
+     same place at the same width whether the row is football, tennis, NFL,
+     basketball, baseball or rugby. The narrow middle column is football's
+     predicted score; the two-sided sports keep it empty to stay aligned. */
+  --row-cols:32px 132px minmax(0,1fr) 248px 72px minmax(0,1fr) 88px;
   --rule:#c6b89e;
   --rule-soft:#ded3bd;
   --paper:#f0e8d6;
@@ -296,8 +302,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 
 /* ---------- column ruler ---------- */
 .ruler{
-  display:grid;grid-template-columns:32px 124px 1fr 258px 74px 1fr 56px;
-  gap:10px;align-items:center;padding:7px 8px 5px;
+  display:grid;grid-template-columns:var(--row-cols);
+  /* left padding = the row's own padding plus the 30px bookmark star that
+     sits in front of every row, so each label sits over its column */
+  gap:12px;align-items:center;padding:8px 10px 6px 40px;
   background:var(--paper);border-bottom:1px solid var(--rule);
   font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);font-weight:600;
 }
@@ -312,10 +320,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
      noread    muted type, the number is close to a guess
    Nothing else changes the background, so a tint always means something. */
 .row{
-  display:grid;grid-template-columns:32px 124px 1fr 258px 74px 1fr 56px;
-  gap:10px;align-items:center;
+  display:grid;grid-template-columns:var(--row-cols);
+  gap:12px;align-items:center;
   background:var(--surface);border-bottom:1px solid var(--rule-soft);
-  padding:9px 8px;width:100%;text-align:left;border-left:0;border-right:0;border-top:0;
+  padding:12px 10px;transition:background .15s ease;width:100%;text-align:left;border-left:0;border-right:0;border-top:0;
   font-family:var(--f-ui);font-size:15px;color:var(--ink);cursor:pointer;
 }
 .row:hover{background:var(--yellow-soft)}
@@ -371,16 +379,17 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .side{min-width:0}
 .side.away{text-align:right}
 .club{
-  font-weight:600;font-size:16px;letter-spacing:-.005em;line-height:1.15;
+  font-weight:600;font-size:16.5px;letter-spacing:-.005em;line-height:1.2;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
-.stat{font-family:var(--f-num);font-size:11px;color:var(--mute);margin-top:2px;white-space:nowrap}
+.stat{font-family:var(--f-num);font-size:11.5px;color:var(--mute);margin-top:3px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.01em}
 .stat i{font-style:normal}
 .stat .pos{color:var(--home)}
 .stat .neg{color:var(--away)}
 
 /* ---------- the bar: this is the whole point of the page ---------- */
-.bar{position:relative;height:26px;display:flex;background:#f0f2f0;
+.bar{position:relative;height:28px;display:flex;background:#f0f2f0;
   box-shadow:inset 0 0 0 1px rgba(16,14,12,.18)}
 .bar i{display:block;height:100%;position:relative;overflow:hidden}
 /* Colour follows the model's verdict, not the venue: yellow for the side it
@@ -391,7 +400,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .bar .lose{background:var(--red)}
 .bar .win b,.bar .draw b{color:var(--cover-ink)}
 .bar b{
-  font-family:var(--f-num);font-size:11px;font-weight:600;color:#fff;
+  font-family:var(--f-num);font-size:12px;font-weight:600;color:#fff;
   position:absolute;top:50%;transform:translateY(-50%);left:6px;
   letter-spacing:-.03em;
 }
@@ -402,7 +411,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   content:"";position:absolute;left:50%;top:-3px;bottom:-3px;width:1px;
   background:var(--ink);opacity:.5;
 }
-.conf{font-family:var(--f-num);font-size:14px;font-weight:600;text-align:right}
+.conf{font-family:var(--f-num);font-size:17px;font-weight:600;text-align:right;line-height:1.1}
 .tier{
   display:block;font-family:var(--f-ui);font-size:9.5px;font-weight:700;
   letter-spacing:.09em;text-transform:uppercase;margin-top:2px;
@@ -433,7 +442,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .boards button:focus-visible{outline:2px solid var(--home);outline-offset:-3px}
 .btts{font-family:var(--f-num);font-size:14px;font-weight:600;text-align:right}
 .btts small{display:block;font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);font-weight:400;font-family:var(--f-ui)}
-.row.bttsmode{grid-template-columns:32px 124px 1fr 258px 74px 1fr 56px}
+.row.bttsmode{grid-template-columns:var(--row-cols)}
 .conf small{display:block;font-size:9.5px;letter-spacing:.06em;color:var(--mute);font-weight:400;text-transform:uppercase}
 
 /* ---------- top-level views ----------
@@ -473,8 +482,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    on the site uses. Same classes means the same rules apply automatically;
    there's nothing left to drift out of sync with football. .trow only
    overrides the column count, since there's no score/xG slot here. */
-.trow{grid-template-columns:32px 116px 1fr 220px 1fr 56px}
-.trow .comp span{max-width:220px}
+.trow .comp span{max-width:132px}
 .tour-chip{
   font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.03em;
   background:var(--ink);color:var(--paper);padding:1px 5px;border-radius:2px;
@@ -616,8 +624,8 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 /* tested accuracy under the confidence number: what calls at this level
    actually did on games the model never saw */
 .stat .wr{font-weight:700;color:var(--ink)}
-.conf .acc{display:block;font-family:var(--f-num);font-size:10px;font-weight:500;color:var(--mute);
-  letter-spacing:0;margin-top:2px;white-space:nowrap}
+.conf .acc{display:block;font-family:var(--f-num);font-size:10.5px;font-weight:500;color:var(--mute);
+  letter-spacing:-.01em;margin-top:4px;white-space:nowrap}
 table.sheet td.rW{color:#2f6b52;font-weight:700}
 table.sheet td.rL{color:var(--away);font-weight:700}
 table.sheet td.rD{color:var(--mute);font-weight:700}
@@ -1255,7 +1263,7 @@ function sideStats(t, isCup){
     // so it's the signal to show the rating itself instead of wrongly
     // claiming there isn't one.
     if(t.played === null && !t.unrated)
-      return `${tag}<div class="stat">${t.worldRank ? `<b class="wr">FIFA #${t.worldRank}</b> · ` : ""}att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)}${t.worldRank ? "" : " · international rating"}</div>`;
+      return `${tag}<div class="stat">${t.worldRank ? `<b class="wr">FIFA #${t.worldRank}</b> · ` : ""}att ${t.att.toFixed(2)} · def ${t.def.toFixed(2)}</div>`;
     return `${tag}<div class="stat none">not rated — no season on file</div>`;
   }
   const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
@@ -1712,9 +1720,9 @@ function renderTennis(){
         <h2>${label}</h2>
         <div class="count">${games.length} matches &middot; ${confident} confident</div>
       </div>
-      <div class="ruler trow">
+      <div class="ruler">
         <div>#</div><div>Time</div><div>Player</div>
-        <div class="r-bar"><span>Win prob.</span><span>Win prob.</span></div>
+        <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
         <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div>
       </div>`;
 
@@ -2004,6 +2012,7 @@ function sportRow(g, i, showSport, host){
     <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
       <div class="stat">${g.statH || `rating ${g.eloH} · ${g.gamesH} games`}</div></div>
     <div class="barcell">${tennisBar(ph, pa)}</div>
+    <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
       <div class="stat">${g.statA || `rating ${g.eloA} · ${g.gamesA} games`}</div></div>
     <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}</div>`;
@@ -2027,8 +2036,8 @@ function tennisAsGame(m){
     chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
     when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
     confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list,
-    statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}${m.ratingA.surfaceElo} ${m.surface} Elo · ${m.ratingA.matches} matches`,
-    statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}${m.ratingB.surfaceElo} ${m.surface} Elo · ${m.ratingB.matches} matches`,
+    statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}Elo ${m.ratingA.surfaceElo} · ${m.ratingA.matches} played`,
+    statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}Elo ${m.ratingB.surfaceElo} · ${m.ratingB.matches} played`,
     research:tennisResearch(m),
     why:`Career Elo <em>${m.ratingA.elo}</em> against <em>${m.ratingB.elo}</em>, ${m.surface.toLowerCase()}-court
       Elo <em>${m.ratingA.surfaceElo}</em> against <em>${m.ratingB.surfaceElo}</em>, blended and pulled toward a coin flip
@@ -2050,8 +2059,8 @@ const localTime = iso => { const d = new Date(iso); return isNaN(d) ? "" :
   d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}); };
 
 function sportRuler(){
-  return `<div class="ruler trow"><div>#</div><div>Time</div><div>Home</div>
-    <div class="r-bar"><span>Win prob.</span><span>Win prob.</span></div>
+  return `<div class="ruler"><div>#</div><div>Time</div><div>Home</div>
+    <div class="r-bar"><span>Home win</span><span>Away win</span></div><div></div>
     <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`;
 }
 
