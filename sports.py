@@ -277,13 +277,50 @@ def in_window(g, win):
     return win[0] <= d and (win[1] is None or d < win[1])
 
 
-def losses(preds, win):
+def _logit(p):
+    p = min(max(p, 1e-6), 1 - 1e-6)
+    return math.log(p / (1 - p))
+
+
+def calibrate(p, cal):
+    """Raw Elo probability -> calibrated. cal = {"a", "b"}: logistic in the
+    log-odds, two parameters, as football's temperature line. None = as is."""
+    if not cal:
+        return p
+    z = cal["a"] + cal["b"] * _logit(p)
+    return 1 / (1 + math.exp(-max(min(z, 30), -30)))
+
+
+def fit_calibration(preds, win):
+    """Newton's method for (a, b) on home-win, warm decided games in a window."""
+    xs = [(_logit(ph), 1 if g["hs"] > g["as"] else 0) for g, ph, warm in preds
+          if warm and in_window(g, win) and g["hs"] != g["as"]]
+    a, b = 0.0, 1.0
+    for _ in range(30):
+        ga = gb = haa = hab = hbb = 0.0
+        for x, y in xs:
+            p = 1 / (1 + math.exp(-max(min(a + b * x, 30), -30)))
+            e, v = p - y, p * (1 - p)
+            ga += e; gb += e * x
+            haa += v; hab += v * x; hbb += v * x * x
+        det = haa * hbb - hab * hab
+        if not det:
+            break
+        da, db = (hbb * ga - hab * gb) / det, (haa * gb - hab * ga) / det
+        a, b = a - da, b - db
+        if abs(da) + abs(db) < 1e-9:
+            break
+    return {"a": round(a, 4), "b": round(b, 4)}
+
+
+def losses(preds, win, cal=None):
     """Per-game binary log loss on home-win, and pick hits, for warm games
     in a window. Draws are excluded from the loss and count as misses."""
     ll, rows = [], []
     for g, ph, warm in preds:
         if not warm or not in_window(g, win):
             continue
+        ph = calibrate(ph, cal)
         y = 1 if g["hs"] > g["as"] else (0 if g["hs"] < g["as"] else None)
         conf = max(ph, 1 - ph)
         pick_home = ph >= 0.5
@@ -355,6 +392,29 @@ def tune_sport(sport, verbose=True):
         _, rows_fit = score(params, FIT)
         ll_new, rows_chk = score(params, CHECK)
 
+    # 3. calibration: does a two-parameter curve, fitted on the fit window,
+    # make the quoted numbers truer on the check window? Same gates.
+    preds = replay(games, params)[1]
+    cal = fit_calibration(preds, FIT)
+    ll_cal, rows_chk_cal = losses(preds, CHECK, cal)
+    m_c, sd_c, pw_c = paired(ll_cal, ll_new) if n else (0, 0, 1)
+
+    # Honesty guard: a better log loss overall is not enough if the strongest
+    # calls end up quoted above what they land (rugby, Sep 2026: 85% quoted,
+    # 81% landed). The quoted-minus-landed gap at 65%+ may not widen by more
+    # than a point.
+    def top_gap(rows):
+        g = [r for r in rows if r[0] >= 0.65]
+        return abs(sum(r[0] for r in g) / len(g) - sum(r[1] for r in g) / len(g)) if g else 0.0
+    gap_raw, gap_cal = top_gap(rows_chk), top_gap(rows_chk_cal)
+    use_cal = (n >= MIN_HOLDOUT and pw_c <= MAX_P_WORSE and -m_c >= MIN_GAIN
+               and gap_cal <= gap_raw + 0.01)
+    if use_cal:
+        ll_new, rows_chk = ll_cal, rows_chk_cal
+        rows_fit = losses(preds, FIT, cal)[1]
+    say(f"  calibration a={cal['a']} b={cal['b']}: {m_c:+.4f}, p(worse) {pw_c:.2f}, "
+        f"65%+ gap {gap_raw:.3f} -> {gap_cal:.3f} -> {'applied' if use_cal else 'not applied'}")
+
     b_fit, b_chk = bands(rows_fit), bands(rows_chk)
     list_min = None
     for t in LIST_THRESHOLDS:
@@ -377,6 +437,9 @@ def tune_sport(sport, verbose=True):
                                            "accuracy": round(acc, 4), "homeRate": round(hr, 4),
                                            "vsHome": round(m_b, 4), "pWorseVsHome": round(pw_b, 3)},
             "publish": beats_home, "listMin": list_min,
+            "cal": cal if use_cal else None, "calTested": {"a": cal["a"], "b": cal["b"],
+                                                           "delta": round(m_c, 4), "pWorse": round(pw_c, 3),
+                                                           "topGapRaw": round(gap_raw, 4), "topGapCal": round(gap_cal, 4)},
             "bandsFit": b_fit, "bandsCheck": b_chk,
             "windows": {"fit": [FIT[0].isoformat(), FIT[1].isoformat()],
                         "check": [CHECK[0].isoformat(), None]}}
@@ -409,6 +472,57 @@ def upcoming(sport, start, days):
     return out
 
 
+def accuracy_for(conf, bands_chk):
+    """How calls at this level did on games the model never saw: the highest
+    tested band at or below this confidence."""
+    best = None
+    for b in bands_chk or []:
+        if conf >= b["from"]:
+            best = b
+    return ({"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None)
+
+
+def _result(g, team):
+    mine, theirs = (g["hs"], g["as"]) if g["h"] == team else (g["as"], g["hs"])
+    return "W" if mine > theirs else ("L" if mine < theirs else "D"), mine, theirs
+
+
+def form(games, team, n=5):
+    """The last n results, newest first."""
+    out = []
+    for g in reversed(games[-n:]):
+        r, mine, theirs = _result(g, team)
+        home = g["h"] == team
+        out.append({"r": r, "score": f"{mine}-{theirs}", "opp": g["an"] if home else g["hn"],
+                    "home": home, "date": g["when"][:10]})
+    return out
+
+
+def record(games, team):
+    """Won-lost(-drawn) since the team's last off-season break."""
+    cur = []
+    for g in games:
+        if cur and (datetime.fromisoformat(g["when"][:10])
+                    - datetime.fromisoformat(cur[-1]["when"][:10])).days > OFFSEASON_DAYS:
+            cur = []
+        cur.append(g)
+    w = sum(1 for g in cur if _result(g, team)[0] == "W")
+    l = sum(1 for g in cur if _result(g, team)[0] == "L")
+    d = len(cur) - w - l
+    return {"w": w, "l": l, "d": d}
+
+
+def head_to_head(games, team, opp, n=3):
+    out = []
+    for g in reversed(games):
+        if opp in (g["h"], g["a"]):
+            out.append({"date": g["when"][:10], "home": g["hn"], "away": g["an"],
+                        "score": f"{g['hs']}-{g['as']}"})
+            if len(out) == n:
+                break
+    return out
+
+
 def build(start=None):
     P = load_params()
     start = start or date.today()
@@ -424,19 +538,32 @@ def build(start=None):
         payload["sports"][sport] = entry
         if not entry["published"]:
             continue
-        elo, _ = replay([g for g in history_for(sport) if g["final"]], sp["params"])
+        played = [g for g in history_for(sport) if g["final"]]
+        elo, _ = replay(played, sp["params"])
+        by_team = {}
+        for g in played:
+            by_team.setdefault((g["pool"], g["h"]), []).append(g)
+            by_team.setdefault((g["pool"], g["a"]), []).append(g)
         for g in upcoming(sport, start, WINDOW_DAYS):
             eh = elo.r.get((g["pool"], g["h"]))
             ea = elo.r.get((g["pool"], g["a"]))
             if not eh or not ea or eh[2] < MIN_GAMES or ea[2] < MIN_GAMES:
                 continue   # a team without enough history is not priced, as football
-            ph, eh, ea = elo.predict(g)
+            raw, eh, ea = elo.predict(g)
+            ph = calibrate(raw, sp.get("cal"))
             conf = max(ph, 1 - ph)
             row = {"id": g["id"], "sport": sport, "label": g["label"], "when": g["when"],
                    "home": g["hn"], "away": g["an"], "neutral": g["neutral"],
                    "pHome": round(ph, 4), "pick": g["hn"] if ph >= 0.5 else g["an"],
                    "confidence": round(conf, 4), "tier": tier_of(conf),
                    "eloH": round(eh[0]), "eloA": round(ea[0]), "gamesH": eh[2], "gamesA": ea[2],
+                   "hfa": 0 if g["neutral"] else sp["params"]["hfa"],
+                   "accuracy": accuracy_for(conf, sp.get("bandsCheck")),
+                   "formH": form(by_team.get((g["pool"], g["h"]), []), g["h"]),
+                   "formA": form(by_team.get((g["pool"], g["a"]), []), g["a"]),
+                   "recordH": record(by_team.get((g["pool"], g["h"]), []), g["h"]),
+                   "recordA": record(by_team.get((g["pool"], g["a"]), []), g["a"]),
+                   "h2h": head_to_head(by_team.get((g["pool"], g["h"]), []), g["h"], g["a"]),
                    "list": bool(entry["listMin"] and conf >= entry["listMin"])}
             entry["games"].append(row)
             archive.append({**row, "published": now})

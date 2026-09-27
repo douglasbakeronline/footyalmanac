@@ -74,3 +74,17 @@ under-quotes (75% quoted, 85% landed): worth revisiting with its own test.
 - NFL calibration at the top end; a calibration curve like football's.
 - NBA regular season starts late October; until then the tab is empty.
 - Sports window is 7 days (football 5) so Friday-Sunday rugby is always seen.
+
+## Update, same day: accuracy on every row, calibration, tennis shrink
+
+- Every row carries `accuracy` {from, hit, n[, season]}: the highest tested
+  band at or below its confidence, from games never tuned on. Football:
+  `build.ACCURACY_BANDS` (league 2026/27 if the band has 30+, else 2025/26;
+  internationals 2026 holdout). Tennis: `build_tennis.ACCURACY_BANDS` (2026).
+  Sports: `sports.json` `bandsCheck`.
+- `sports.py` tests a two-parameter calibration per sport. Ships only if it
+  passes the gates AND the quoted-minus-landed gap at 65%+ does not widen by
+  more than a point. Basketball: applied. NFL, baseball, rugby: rejected.
+- Tennis shrink per tour: ATP 0.9, WTA 0.95 (was 0.8), tested 2025 -> 2026.
+- Shared two-sided row in `index.html` (`sportRow`, `sportDetail`,
+  `tennisAsGame`): star, expandable detail, accuracy chip, Starred board.

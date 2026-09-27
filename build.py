@@ -41,18 +41,41 @@ if os.path.exists(_ABS_FILE):
 # The Daily List: the fixtures obvious enough to serve on their own. The model's
 # number and nothing else, no bookmaker input, so it stays an independent read.
 #
-# Why 75%: on the walk-forward (predictability.py), league fixtures the model
-# rated 75%+ landed 81.0% of the time in 2025/26 (211 games) and 77.8% in
-# 2026/27 so far (18). Raising it further does not buy accuracy: the 85%+ calls
-# landed 76.9% (52 games), because the model's most extreme numbers are its
+# Why 75%: on the walk-forward (predictability.py, re-run 27 Sep 2026 with the
+# current calibration.json), league fixtures the model rated 75%+ landed 78.9%
+# of the time in 2025/26 (242 games) and 76.2% in 2026/27 so far (21).
+# Raising it further buys little: the model's most extreme numbers are its
 # least well calibrated. So the bar is set where hit rate stops climbing, and
 # the rest of the selection is about removing games the model cannot see.
 # Internationals are rated by a separate fit (tune_international.py); on its
-# 2026 holdout, calibrated calls at 75%+ landed 81.6% (49 games, 82.6% quoted).
+# 2026 holdout, calibrated calls at 75%+ landed 81.6% (49 games).
 LIST_MIN = 0.75
-LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 211, "hit": 0.810},
-                 "check": {"season": "2026-27", "n": 18, "hit": 0.778},
+LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
+                 "check": {"season": "2026-27", "n": 21, "hit": 0.762},
                  "intl": {"season": "2026", "n": 49, "hit": 0.816}}
+
+# How calls at each level landed on games the model was never tuned on, shown
+# on every row so a reader can weigh the number: "calls at 70%+ landed 78%".
+# League: 2026/27 where a band has 30+ games, else 2025/26. Internationals:
+# the 2026 holdout. Same walk-forward as above.
+ACCURACY_BANDS = {"league": {"check": [{"from": 0.45, "hit": 0.5498, "n": 733, "quoted": 0.5504}, {"from": 0.5, "hit": 0.597, "n": 474, "quoted": 0.5921}, {"from": 0.55, "hit": 0.6714, "n": 280, "quoted": 0.639}, {"from": 0.6, "hit": 0.7459, "n": 181, "quoted": 0.6755}, {"from": 0.65, "hit": 0.7767, "n": 103, "quoted": 0.7145}, {"from": 0.7, "hit": 0.7347, "n": 49, "quoted": 0.7605}, {"from": 0.75, "hit": 0.7619, "n": 21, "quoted": 0.8041}, {"from": 0.8, "hit": 0.8, "n": 10, "quoted": 0.8354}], "fit": [{"from": 0.45, "hit": 0.5564, "n": 4371, "quoted": 0.5599}, {"from": 0.5, "hit": 0.6032, "n": 2916, "quoted": 0.6028}, {"from": 0.55, "hit": 0.6524, "n": 1910, "quoted": 0.6447}, {"from": 0.6, "hit": 0.6879, "n": 1163, "quoted": 0.6904}, {"from": 0.65, "hit": 0.7287, "n": 726, "quoted": 0.7315}, {"from": 0.7, "hit": 0.778, "n": 419, "quoted": 0.775}, {"from": 0.75, "hit": 0.7893, "n": 242, "quoted": 0.8127}, {"from": 0.8, "hit": 0.8397, "n": 131, "quoted": 0.8471}]}, "intl": [{"from": 0.45, "hit": 0.6756, "n": 299, "quoted": 0.6093}, {"from": 0.5, "hit": 0.7118, "n": 229, "quoted": 0.6508}, {"from": 0.55, "hit": 0.7571, "n": 177, "quoted": 0.6877}, {"from": 0.6, "hit": 0.7687, "n": 134, "quoted": 0.725}, {"from": 0.65, "hit": 0.7822, "n": 101, "quoted": 0.7581}, {"from": 0.7, "hit": 0.7971, "n": 69, "quoted": 0.7983}, {"from": 0.75, "hit": 0.8163, "n": 49, "quoted": 0.8255}, {"from": 0.8, "hit": 0.8667, "n": 30, "quoted": 0.8581}]}
+
+
+def accuracy_for(conf, intl):
+    def pick(bands):
+        best = None
+        for b in bands:
+            if conf >= b["from"]:
+                best = b
+        return best
+    if intl:
+        b = pick(ACCURACY_BANDS["intl"])
+        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026"} if b else None
+    c = pick(ACCURACY_BANDS["league"]["check"])
+    if c and c["n"] >= 30:
+        return {"from": c["from"], "hit": c["hit"], "n": c["n"], "season": "2026-27"}
+    f = pick(ACCURACY_BANDS["league"]["fit"])
+    return {"from": f["from"], "hit": f["hit"], "n": f["n"], "season": "2025-26"} if f else None
 
 
 def list_eligible(g):
@@ -703,6 +726,7 @@ def main():
         for i, g in enumerate(games, 1):
             g["rank"] = i
             g["list"] = list_eligible(g)
+            g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"))
         days.append({"date": d, "count": len(games), "games": games})
 
     payload = {

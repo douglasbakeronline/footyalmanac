@@ -131,30 +131,33 @@ def price_match(rating_a, rating_b, surface, surface_weight):
     return 1.0 / (1.0 + 10 ** ((bb - ba) / 400.0))
 
 
-# Deliberately separate from price_match rather than folded into it: this is
-# a direct response to a few live results looking wrong by eye, not a
-# re-validated calibration. The walk-forward holdout (tune_tennis.py, 1437
-# ATP + 1286 WTA matches from 2026) showed the tiers landing close to or
-# above what their labels claim — WTA Strong at 80.8% against a label of
-# 70%+, for instance — so the backtested model itself isn't the obvious
-# problem. But a handful of live matches is a genuinely different, much
-# smaller sample than a season-long backtest, and there's no tennis
-# equivalent of score.py yet to actually track whether this shrink helps or
-# overcorrects. Until that exists, treat this constant as a judgement call
-# to revisit, not a fitted value: 0.8 pulls every probability 20% of the way
-# back toward a coin flip, softening the number shown without changing which
-# side is favoured.
-CONFIDENCE_SHRINK = 0.8
+# How far each probability is pulled back toward a coin flip, per tour.
+# Was a flat 0.8 judgement call. Tested 27 Sep 2026 on the tour-level archive
+# (main draw, both players 10+ matches): shrink chosen on 2025, checked on 2026
+# against 0.8, paired bootstrap, tune.py gates plus the honesty guard (the
+# quoted-minus-landed gap at 65%+ may not widen). ATP 0.9: -0.0023 log loss,
+# p(worse) 0.03, gap 5.0 -> 1.5 pts. WTA 0.95: -0.0034, p(worse) 0.04, gap
+# 5.7 -> 1.5 pts. 0.8 was under-quoting: its 75% calls landed 85%.
+CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
 
-# The Daily List. Walk-forward on the tour-level archive tune_tennis.py fits on,
-# shipped constants, this shrink applied, both players with 10+ prior matches:
-# calls at 75%+ landed ATP 85.5% (262) in 2025 and 85.8% (127) in 2026, WTA
-# 84.6% (201) and 86.4% (154). That archive is main draw only, so qualifying
-# rounds (thin ratings, and not what was tested) never make the list.
+# The Daily List. Same archive and filter, the shrink above: calls at 75%+
+# landed ATP 82.0% (399) in 2025 and 81.0% (184) in 2026, WTA 80.8% (380)
+# and 81.0% (253). That archive is main draw only, so qualifying rounds (thin
+# ratings, and not what was tested) never make the list.
 LIST_MIN = 0.75
 LIST_MIN_MATCHES = 10
-LIST_BACKTEST = {"ATP": {"2025": [0.855, 262], "2026": [0.858, 127]},
-                 "WTA": {"2025": [0.846, 201], "2026": [0.864, 154]}}
+LIST_BACKTEST = {"ATP": {"2025": [0.820, 399], "2026": [0.810, 184]},
+                 "WTA": {"2025": [0.808, 380], "2026": [0.810, 253]}}
+# How calls at each level landed in 2026 (never fitted on), for every row.
+ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.6824, "n": 973, "quoted": 0.6734}, {"from": 0.6, "hit": 0.7188, "n": 754, "quoted": 0.7019}, {"from": 0.65, "hit": 0.7514, "n": 523, "quoted": 0.7363}, {"from": 0.7, "hit": 0.7812, "n": 320, "quoted": 0.775}, {"from": 0.75, "hit": 0.8098, "n": 184, "quoted": 0.8137}, {"from": 0.8, "hit": 0.8913, "n": 92, "quoted": 0.852}, {"from": 0.85, "hit": 0.9048, "n": 42, "quoted": 0.8855}], "WTA": [{"from": 0.55, "hit": 0.6829, "n": 965, "quoted": 0.6843}, {"from": 0.6, "hit": 0.7151, "n": 737, "quoted": 0.7187}, {"from": 0.65, "hit": 0.7681, "n": 539, "quoted": 0.7534}, {"from": 0.7, "hit": 0.8021, "n": 384, "quoted": 0.7854}, {"from": 0.75, "hit": 0.8103, "n": 253, "quoted": 0.8161}, {"from": 0.8, "hit": 0.8696, "n": 138, "quoted": 0.8499}, {"from": 0.85, "hit": 0.9032, "n": 62, "quoted": 0.8795}]}
+
+
+def accuracy_for(conf, tour):
+    best = None
+    for b in ACCURACY_BANDS.get(tour.upper(), []):
+        if conf >= b["from"]:
+            best = b
+    return {"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None
 
 
 def list_eligible(conf, round_name, matches_a, matches_b):
@@ -162,7 +165,7 @@ def list_eligible(conf, round_name, matches_a, matches_b):
             and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
 
 
-def dampen(p, shrink=CONFIDENCE_SHRINK):
+def dampen(p, shrink):
     return 0.5 + (p - 0.5) * shrink
 
 
@@ -409,7 +412,7 @@ def main():
             if not a or not b:
                 dropped += 1
                 continue   # no rating on at least one side — not published, same rule as football
-            p = dampen(price_match(pool[a], pool[b], r["surface"], sw))
+            p = dampen(price_match(pool[a], pool[b], r["surface"], sw), CONFIDENCE_SHRINK[tour])
             surf_key = f"surface_{r['surface']}"
             matches.append({
                 "id": r["id"], "espn": [r["p0"], r["p1"]],
@@ -431,6 +434,7 @@ def main():
                 "pick": a if p >= 0.5 else b,
                 "confidence": round(max(p, 1 - p), 4),
                 "tier": tier_of(max(p, 1 - p)),
+                "accuracy": accuracy_for(max(p, 1 - p), tour),
                 "list": list_eligible(max(p, 1 - p), r["round"],
                                       pool[a]["matches"], pool[b]["matches"]),
             })

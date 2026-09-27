@@ -22,6 +22,43 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-27-6 — Tested accuracy on every row; football's row features on every sport
+
+**What changed for a reader**
+
+- Every row in every sport now shows how often calls at that level actually
+  landed on games the model was never tuned on: a "82% landed" chip under
+  the confidence number, and in the expanded row the band, hit rate and
+  number of games. That is the figure to judge a pick by.
+- NFL, baseball, basketball, rugby and tennis rows now work like football's:
+  bookmark star (and they appear on Starred), tap to expand the reasoning,
+  each side's season record and last five results, the last meetings, and
+  search links for your own research.
+
+**Optimised**
+
+- Tennis confidence shrink re-tested (was a flat 0.8 judgement call):
+  ATP 0.9, WTA 0.95. Both beat 0.8 on 2026 (p(worse) 0.03 / 0.04) and cut
+  the quoted-vs-landed gap at 65%+ from ~5 points to 1.5. 0.8 was
+  under-quoting (75% calls landed 85%). More tennis now reaches the list at
+  the same ~81% hit rate.
+- Two-parameter calibration tested per sport, with a new honesty guard: it
+  ships only if it improves log loss AND does not widen the top-end gap.
+  Applied to basketball. Rejected for NFL (the correction flipped direction
+  between seasons), baseball and rugby (inflated their strongest calls).
+- Football's Daily List backtest line refreshed to the current calibration:
+  78.9% of 242 (2025/26), 76.2% of 21 (2026/27), 81.6% of 49 internationals.
+
+**Files** `sports.py` (calibration, honesty guard, per-game accuracy, form,
+record, head-to-head), `sports.json` (re-tuned), `build_tennis.py`
+(per-tour shrink, accuracy bands), `build.py` (football accuracy bands,
+refreshed list backtest), `index.html` (shared two-sided row, accuracy
+chips, Starred for all sports).
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-27-5 — NFL, baseball, basketball, rugby, and an all-sports Daily List
 
 **What changed for a reader**

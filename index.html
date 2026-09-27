@@ -613,6 +613,13 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 .flag.live{background:var(--home-soft);color:#0d443f}
 
 
+/* tested accuracy under the confidence number: what calls at this level
+   actually did on games the model never saw */
+.conf .acc{display:block;font-family:var(--f-num);font-size:10px;font-weight:500;color:var(--mute);
+  letter-spacing:0;margin-top:2px;white-space:nowrap}
+table.sheet td.rW{color:#2f6b52;font-weight:700}
+table.sheet td.rL{color:var(--away);font-weight:700}
+table.sheet td.rD{color:var(--mute);font-weight:700}
 .row.unrated .club{color:var(--mute);font-weight:500}
 .row.unrated .bar{opacity:.38}
 .row.unrated .conf{color:var(--mute);font-weight:500}
@@ -1398,8 +1405,8 @@ function detail(g){
          not that ${side} is likely.
        </div>`
     : `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
-         <b>${T.name} read on ${side}.</b> Fixtures the model quoted around ${pct(g.confidence)}%
-         came in ${T.was} of the time across 5,281 matches last season${g.celtic ? ", though this one is flagged below and should be discounted a notch" : ""}.
+         <b>${T.name} read on ${side}.</b> ${g.accuracy ? accLine(g.accuracy)
+           : `Fixtures the model quoted around ${pct(g.confidence)}% came in ${T.was} of the time last season.`}${g.celtic ? " This one is flagged below and should be discounted a notch." : ""}
        </div>`;
 
   const O = D.odds || {};
@@ -1472,7 +1479,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
   btn.addEventListener("click", ()=>{
     state.open = state.open===id ? null : id;
     render();
@@ -1525,6 +1532,24 @@ function renderStarred(){
     host.appendChild(sec);
   });
 
+  // Every other sport's bookmarks, by day, in the shared row.
+  const others = [];
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
+  const TDS = window.__TENNIS_DATA__;
+  if(TDS && TDS.matches) TDS.matches.forEach(m => others.push(tennisAsGame(m)));
+  const starredOthers = others.filter(g => state.starred.has("s|" + (g.id || (g.when + "|" + g.home + "|" + g.away))));
+  const byDay = {};
+  starredOthers.forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
+  Object.keys(byDay).sort().forEach(d => {
+    any = true;
+    const sec = document.createElement("section");
+    sec.className = "day";
+    sec.innerHTML = `<div class="day-head"><h2>${fmtDay(d)}</h2>
+      <div class="count">${byDay[d].length} bookmarked · other sports</div></div>${sportRuler()}`;
+    byDay[d].sort((x,y) => y.confidence - x.confidence).forEach((g,i) => sec.appendChild(sportRow(g, i, true)));
+    host.appendChild(sec);
+  });
+
   if(!any) host.innerHTML = `<div class="empty">No bookmarks yet. Tap the star (☆) on any
     fixture to shortlist it here. The list clears itself each morning along with the
     fixtures, so it never carries a stale pick into a new day.</div>`;
@@ -1573,14 +1598,8 @@ function renderList(){
     .forEach(g => (other[localDay(g.when)] = other[localDay(g.when)] || []).push(g)));
   // Tennis, in the same two-sided shape (player A in the home slot).
   const TDL = window.__TENNIS_DATA__;
-  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).forEach(m => {
-    const when = m.time ? `${m.date}T${m.time}:00Z` : `${m.date}T12:00:00Z`;
-    (other[localDay(when)] = other[localDay(when)] || []).push({
-      sport:"tennis", label:`${m.tour} · ${m.tournament || ""}${m.round ? " · " + m.round : ""}`,
-      when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
-      confidence:m.confidence, tier:m.tier, eloH:m.ratingA.elo, eloA:m.ratingB.elo,
-      gamesH:m.ratingA.matches, gamesA:m.ratingB.matches, list:true});
-  });
+  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).map(tennisAsGame).forEach(g =>
+    (other[localDay(g.when)] = other[localDay(g.when)] || []).push(g));
   const dates = [...new Set([...Object.keys(foot), ...Object.keys(other)])].sort();
   dates.forEach(date => {
     const f = foot[date] ? foot[date].games.slice().sort(rank.conf) : [];
@@ -1702,41 +1721,7 @@ function renderTennis(){
         <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div>
       </div>`;
 
-    games.forEach((m, i)=>{
-      const aPick = m.pick === m.playerA;
-      const pa = Math.round(m.p.a*100), pb = Math.round(m.p.b*100);
-      const k = TENNIS_TIER_K[m.tier] ?? 0;
-      const row = document.createElement("button");
-      row.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
-      row.setAttribute("aria-expanded", "false");
-      row.innerHTML = `
-        <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
-        <div class="ko"><time>${m.time || ""}</time>
-          <div class="comp" title="${m.tournament} &middot; ${m.round || ""}">
-            <span class="tour-chip">${m.tour}</span>
-            <span>${m.tournament || "Tour event"}${m.round ? " &middot; " + m.round : ""} &middot; ${m.surface}</span>
-          </div></div>
-        <div class="side"><div class="club${aPick?" pick":""}">${m.playerA}</div>${tennisStat(m.ratingA, m.surface)}</div>
-        <div class="barcell">${tennisBar(pa, pb)}</div>
-        <div class="side away"><div class="club${!aPick?" pick":""}">${m.playerB}</div>${tennisStat(m.ratingB, m.surface)}</div>
-        <div class="conf">${Math.round(m.confidence*100)}<span class="tier t${k}">${m.tier}</span></div>`;
-
-      row.addEventListener("click", ()=>{
-        const open = row.getAttribute("aria-expanded") === "true";
-        const next = row.nextElementSibling;
-        if(open){
-          row.setAttribute("aria-expanded", "false");
-          if(next && next.classList.contains("detail")) next.remove();
-        } else {
-          row.setAttribute("aria-expanded", "true");
-          const dv = document.createElement("div");
-          dv.innerHTML = `<div class="detail">${tennisResearch(m)}</div>`;
-          row.after(dv.firstElementChild);
-        }
-      });
-
-      sec.appendChild(row);
-    });
+    games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
     host.appendChild(sec);
   });
 }
@@ -1948,6 +1933,111 @@ function tennisResults(){
     </div>`;
 }
 
+/* ---------- the shared two-sided row: NFL, baseball, basketball, rugby, tennis ----------
+   Football's row features on every sport: a bookmark star, tap to expand the
+   reasoning, and the tested accuracy of calls at this level. */
+const accChip = a => a ? `<span class="acc" title="Calls at ${pct(a.from)}% or more landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>` : "";
+const accLine = a => a ? `Calls at <em>${pct(a.from)}%</em> or more landed <em>${pct(a.hit)}%</em> of the time across
+  <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.` : "";
+
+function rerenderOpen(){
+  if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
+  if(!$("#tennis").hidden) renderTennis();
+  if(!$("#list").hidden) renderList();
+  if(!$("#starred").hidden) renderStarred();
+}
+
+function formLines(f){
+  if(!f || !f.length) return `<div class="stat">no recent games on file</div>`;
+  return `<table class="sheet"><tr><th>Last ${f.length}</th><th>Score</th><th></th></tr>${f.map(x =>
+    `<tr><td>${x.home ? "v" : "at"} ${x.opp}</td><td>${x.score}</td><td class="r${x.r}">${x.r}</td></tr>`).join("")}</table>`;
+}
+
+function sportDetail(g){
+  const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
+  const research = g.research || `<div class="research">
+    <a href="${gSearch(g.home + " v " + g.away + " " + name)}" target="_blank" rel="noopener">Search this game ↗</a>
+    <a href="${gSearch(g.label + " " + name + " standings")}" target="_blank" rel="noopener">${g.label} table ↗</a></div>`;
+  const T = SPORT_K[g.tier] ?? 0;
+  const verdict = `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
+      <b>${T ? `${g.tier} read on ${g.pick}` : "No read"}</b> at ${pct(g.confidence)}%. ${accLine(g.accuracy)}
+      ${T ? "" : " At this level the model cannot really separate them."}</div>`;
+  const gap = (g.eloH + (g.hfa || 0)) - g.eloA;
+  const why = g.sport === "tennis" ? `<div class="why">${g.why || ""}</div>` : `<div class="why">
+      Rated <em>${g.eloH}</em> against <em>${g.eloA}</em>${g.hfa ? `, plus <em>${g.hfa}</em> for playing at home` : g.neutral ? ", neutral venue" : ""}:
+      a gap of <em>${Math.abs(Math.round(gap))}</em> rating points in ${gap >= 0 ? g.home : g.away}'s favour.
+      Ratings move with every result, more for bigger wins, and drift back toward average over an off-season.</div>`;
+  const rec = r => r ? `${r.w}–${r.l}${r.d ? "–" + r.d : ""} this season` : "";
+  const sheets = g.formH ? `<div class="detail-grid" style="margin-top:16px">
+      <div><h3>${g.home} · ${rec(g.recordH)}</h3>${formLines(g.formH)}</div>
+      <div><h3>${g.away} · ${rec(g.recordA)}</h3>${formLines(g.formA)}</div></div>` : "";
+  const h2h = g.h2h && g.h2h.length ? `<div class="why"><b>Last meetings.</b> ${g.h2h.map(m =>
+      `${m.home} ${m.score} ${m.away} <em>${m.date}</em>`).join(" · ")}</div>` : "";
+  return `<div class="detail">${research}${verdict}${why}${sheets}${h2h}</div>`;
+}
+
+function sportRow(g, i, showSport, host){
+  const id = "s|" + (g.id || (g.when + "|" + g.home + "|" + g.away));
+  const ph = Math.round(g.pHome*100), pa = 100 - ph;
+  const k = SPORT_K[g.tier] ?? 0;
+  const homePick = g.pick === g.home;
+  const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
+  const line = document.createElement("div");
+  line.className = "row-line";
+  const star = document.createElement("button");
+  star.type = "button"; star.className = "star-btn";
+  star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
+  star.setAttribute("aria-label", (state.starred.has(id) ? "Remove bookmark: " : "Bookmark: ") + g.home + " v " + g.away);
+  star.textContent = starGlyph(id);
+  star.addEventListener("click", e => {
+    e.stopPropagation();
+    state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
+    state.starredGames = state.starredGames || {};
+    state.starredGames[id] = g;
+    saveStarred(); rerenderOpen();
+  });
+  const btn = document.createElement("button");
+  btn.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
+  btn.setAttribute("aria-expanded", state.open === id ? "true" : "false");
+  btn.innerHTML = `
+    <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
+    <div class="ko"><time datetime="${g.when}">${localTime(g.when)}</time>
+      <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
+        <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span></div></div>
+    <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
+      <div class="stat">${g.statH || `rating ${g.eloH} · ${g.gamesH} games`}</div></div>
+    <div class="barcell">${tennisBar(ph, pa)}</div>
+    <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
+      <div class="stat">${g.statA || `rating ${g.eloA} · ${g.gamesA} games`}</div></div>
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}</div>`;
+  btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
+  line.appendChild(star); line.appendChild(btn);
+  const frag = document.createDocumentFragment();
+  frag.appendChild(line);
+  if(state.open === id){
+    const dv = document.createElement("div");
+    dv.innerHTML = sportDetail(g);
+    frag.appendChild(dv.firstElementChild);
+  }
+  return frag;
+}
+
+/* tennis in the shared shape */
+function tennisAsGame(m){
+  const when = m.time ? `${m.date}T${m.time}:00Z` : `${m.date}T12:00:00Z`;
+  return {sport:"tennis", id:"t|" + m.date + "|" + m.playerA + "|" + m.playerB,
+    label:`${m.tour} · ${m.tournament || ""}${m.round ? " · " + m.round : ""}`,
+    chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
+    when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
+    confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list,
+    statH:`${m.ratingA.surfaceElo} ${m.surface} Elo · ${m.ratingA.matches} matches`,
+    statA:`${m.ratingB.surfaceElo} ${m.surface} Elo · ${m.ratingB.matches} matches`,
+    research:tennisResearch(m),
+    why:`Career Elo <em>${m.ratingA.elo}</em> against <em>${m.ratingB.elo}</em>, ${m.surface.toLowerCase()}-court
+      Elo <em>${m.ratingA.surfaceElo}</em> against <em>${m.ratingB.surfaceElo}</em>, blended and pulled toward a coin flip
+      by the amount testing found honest for the ${m.tour}.${m.list ? "" : m.confidence >= 0.75 ? " Not on the Daily List: qualifying rounds and thinly-rated players are excluded, because that is not what was tested." : ""}`};
+}
+
 /* ---------- NFL, baseball, basketball, rugby ----------
    sports.py prices these off one Elo model per sport, keyed by ESPN team id,
    and only publishes a sport whose model beat backing the home side on a
@@ -1959,27 +2049,6 @@ const localDay = iso => { const d = new Date(iso); return isNaN(d) ? iso.slice(0
   : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
 const localTime = iso => { const d = new Date(iso); return isNaN(d) ? "" :
   d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}); };
-
-function sportRow(g, i, showSport){
-  const ph = Math.round(g.pHome*100), pa = 100 - ph;
-  const k = SPORT_K[g.tier] ?? 0;
-  const homePick = g.pick === g.home;
-  const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
-  const row = document.createElement("div");
-  row.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
-  row.innerHTML = `
-    <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
-    <div class="ko"><time datetime="${g.when}">${localTime(g.when)}</time>
-      <div class="comp"><span class="tour-chip">${showSport ? name : g.label}</span>
-        <span>${showSport ? g.label : ""}${g.neutral ? " · neutral venue" : ""}</span></div></div>
-    <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
-      <div class="stat">rating ${g.eloH} · ${g.gamesH} games</div></div>
-    <div class="barcell">${tennisBar(ph, pa)}</div>
-    <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
-      <div class="stat">rating ${g.eloA} · ${g.gamesA} games</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span></div>`;
-  return row;
-}
 
 function sportRuler(){
   return `<div class="ruler trow"><div>#</div><div>Time</div><div>Home</div>
@@ -1998,6 +2067,7 @@ function sportEvidence(sp){
 }
 
 function renderSport(key){
+  state.sportView = key;
   const host = $("#sport");
   const sp = SD && SD.sports && SD.sports[key];
   if(!sp){
