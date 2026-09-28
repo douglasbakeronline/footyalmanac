@@ -1,7 +1,7 @@
 # Football Almanac
 
-A fixture-probability dashboard. It rates every team in twenty competitions from
-completed results, prices each upcoming fixture as a home win / draw / away win split,
+A fixture-probability dashboard. It rates every team in more than seventy
+competitions from completed results, prices each upcoming fixture as a home win / draw / away win split,
 and ranks the day's slate so the most one-sided games sit at the top.
 
 ```

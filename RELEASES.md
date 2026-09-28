@@ -22,6 +22,20 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-6 — README competition count
+
+The README's opening line said the model rates twenty competitions. A
+fast local build on today's `main` rates 71 (154 defined in
+`engine.LEAGUES`), so it now says "more than seventy". The rest of the
+README, including the older backtest figures and the Coverage section, is
+unchanged and still stale. This release also tests committing, tagging
+and deploying from a Claude Code cloud session. `README.md` only; no
+model, data or page change.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-5 — Flush cover header
 
 The star banner, 2026 year band and red stat panel now run edge to edge of
