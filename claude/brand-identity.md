@@ -1,5 +1,9 @@
 # Football Almanac — identity spec
 
+> **Not what is live (28 Sep 2026).** The site uses the Grays-style Sports
+> Almanac cover (see "Known drift" in `CLAUDE.md`), by the owner's choice. The
+> colour tokens and contrast ratios below still apply to everything else.
+
 Replaces the Grays Sports Almanac jacket pastiche, 10 September 2026.
 
 ## The mark

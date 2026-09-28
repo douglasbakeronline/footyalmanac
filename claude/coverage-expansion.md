@@ -1,5 +1,10 @@
 # Coverage expansion — 10 September 2026
 
+> **Partly superseded (28 Sep 2026).** The ESPN slugs were audited on
+> 27 Sep 2026: dead ones removed, 14 leagues backfilled, and five leagues moved
+> to football-data.co.uk. See `claude/daily-list.md` and `sources.FDX`. The
+> background below is still accurate.
+
 ## The problem
 
 The site claimed 74 leagues and could show **21**, all European except Brazil.

@@ -22,6 +22,46 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-8 — Ready for AI agents
+
+No change to the site or models. Documentation and tooling so any AI agent
+(claude.ai/code, the Claude GitHub agent, Copilot and others) can add value
+without undoing earlier work:
+
+- `README.md` rewritten: the old one described one sport, 20 competitions,
+  manual injury entry and overrides, all long gone.
+- New `AGENTS.md`: guardrails, how to verify, how to ship (unattended agents
+  open pull requests; a push to `main` deploys).
+- `CLAUDE.md`: "Working as an AI agent" section (local vs cloud vs GitHub
+  agent, the owner's standing decisions), title and intro now multi-sport,
+  brand drift corrected.
+- New `.github/workflows/claude.yml`: `@claude` on an issue or PR, owner and
+  collaborators only (public repo). Needs the `ANTHROPIC_API_KEY` secret.
+- New `.github/copilot-instructions.md` and `.gitignore`.
+- Banners on the two partly stale `claude/` notes; their content is kept.
+- Learned from the first claude.ai/code test (release -6): cloud sessions can
+  push branches and commits but not tags, and cannot reach ESPN. The agent
+  docs now say so; cloud work goes through pull requests and a local session
+  adds the tag.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
+## release-2026-09-28-7 — Hairline outlines
+
+No dark border is thicker than 1px any more. Reduced to 1px: the cover
+outline (3px), tab bar outline and the "How it went" sport switcher (3px),
+section headings on "How it went" (3px double), star banner edge, corner
+flash, day headers, football filter bar, expanded-row edge and "Show all"
+(all 2px), and the old list box rail (6px). Keyboard focus rings stay 2px
+for accessibility; the amber flagged-row rail is not a dark colour and is
+unchanged. Also removes a duplicated stat-panel rule. `index.html` only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-6 — README competition count
 
 The README's opening line said the model rates twenty competitions. A

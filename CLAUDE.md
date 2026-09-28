@@ -1,9 +1,12 @@
-# Football Almanac
+# Sports Almanac (repo: footyalmanac)
 
-A daily-refreshed football prediction site. It rates every club from completed
-results, prices each upcoming fixture as home / draw / away with a Dixon-Coles
-adjusted Poisson model, ranks the slate so the most one-sided games sit at the
-top, and grades itself publicly against what actually happened.
+A daily-refreshed sports prediction site: football (a Dixon-Coles adjusted
+Poisson model, home / draw / away), tennis (surface Elo), and NFL, baseball,
+basketball and rugby (Elo per sport). It rates every team or player it has free
+data for, prices each upcoming game, ranks the slate so the most predictable
+games sit at the top, and grades itself publicly against what actually
+happened. It began as football-only, which is why many notes and names say
+"football" or "footy".
 
 - Live: https://douglasbakeronline.github.io/footyalmanac/
 - Repo: https://github.com/douglasbakeronline/footyalmanac (public)
@@ -20,6 +23,33 @@ blind-spot exclusions and no draws, and no tennis qualifying rounds. Every
 row shows its tested rate. See `claude/multi-sport.md`. It is the
 model's own independent read, with no bookmaker input, by Douglas's decision.
 The full board sits one tap behind it.
+
+## Working as an AI agent
+
+This repo is worked on by Claude Code in several places. The rules below apply
+in all of them; `AGENTS.md` has the same guardrails for any other agent.
+
+| Where | How work lands |
+|---|---|
+| Local session with Douglas (terminal / VS Code) | Straight to `main` via the release process below. Douglas has given standing authorisation to push. |
+| claude.ai/code (cloud) | A branch and a pull request, with the would-be `RELEASES.md` entry (mark the tag "pending"). A push to `main` deploys the live site, so merging stays with Douglas unless he says otherwise in that session. Tested 28 Sep 2026: the cloud session can push branches and commits but **not tags** (GitHub drops the connection), and **cannot reach ESPN**, so its builds are partial. A local session adds the tag after merge. |
+| GitHub agent (`@claude` on an issue or PR, `.github/workflows/claude.yml`) | Same as cloud: branch and pull request, never a direct push to `main`. Only the owner and collaborators can trigger it (public repo). Needs the `ANTHROPIC_API_KEY` secret. |
+
+- **Protect what exists.** Before replacing anything, find out why it is the
+  way it is: the comment above it, the matching `claude/` note, `RELEASES.md`
+  and `git log -p`. Most odd-looking choices here were deliberate and tested.
+  Extend rather than rewrite; remove only with a stated reason.
+- **Owner's standing decisions** (do not reverse without asking): the Daily
+  List is the front page; no bookmaker input into any model; no manual data
+  entry; the cover header (star banner, grey cover, stacked SPORTS / ALMANAC,
+  year band, red stat panel) stays; no dark border thicker than 1px; every
+  release is tagged and logged.
+- **Cloud and CI environments** run Python 3.12. Network access to ESPN,
+  openfootball, football-data.co.uk or FIFA may be blocked in a cloud sandbox:
+  if a build cannot fetch, say so and let CI be the check. Never commit the
+  output of a build that could not fetch its data.
+- **Visual changes** must be checked in a browser at desktop and phone
+  (~400px) width before shipping.
 
 ## Read before non-trivial work
 
@@ -71,6 +101,9 @@ Config the model reads: `calibration.json` (auto-refitted weekly),
 (deliberately empty, see rules).
 
 `RELEASES.md` is the release log; every release gets an entry and a tag.
+`README.md` is the public overview (rewritten 28 Sep 2026, current).
+`AGENTS.md` is the guide for any AI agent; `.github/copilot-instructions.md`
+points Copilot at it. `.gitignore` keeps `data.js`, `data.json` and caches out.
 
 Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
@@ -110,6 +143,9 @@ Open `dashboard.html` straight off disk to check the page.
 - `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
   passes all gates), then `--report` and `eurotest.py --report` as advisory
   output for a human.
+- `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
+  mentions `@claude` on an issue or pull request. It opens pull requests; it
+  never deploys.
 - The bot commits to `main` every day. Pull before starting and before
   pushing. If a conflict lands on a bot-written file, take the remote copy.
 
@@ -199,11 +235,13 @@ live record.
   `engine.py` consumes it before treating the coefficients as untested.
 - `claude/brand-identity.md` describes a three-bar mark with Anton;
   `brandassets.py` on `main` still describes a slab-serif A in Bevan. What is
-  live (28 Sep 2026): a slim dark masthead, "Sports" in Bevan red, "Almanac"
-  in Archivo Black white, three stars, red stat strip, sticky tab bar on
-  desktop. The brand note's contrast tokens still apply (`--mute` is now its
+  live (28 Sep 2026), and Douglas's choice: the Grays-style cover (red star
+  banner, grey cover with "Sports" in Bevan red over "Almanac" in Archivo
+  Black white, "Complete sports statistics", black year band, red stat panel
+  with yellow corner flash), bands flush to the cover edge, 1px dark borders,
+  sticky tab bar on desktop. A slimmer dark masthead was tried and reverted
+  at his request (release-2026-09-28-4). The brand note's contrast tokens still apply (`--mute` is now its
   4.8:1 value).
-- `README.md` still says twenty competitions and older backtest figures.
 - `claude/coverage-expansion.md` calls the ESPN slugs unverified and lists 45
   leagues to backfill; superseded by `claude/daily-list.md`.
 - The local Mac has Python 3.7 only (Homebrew can't install 3.12 on it).

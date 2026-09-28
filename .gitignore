@@ -1,0 +1,8 @@
+# Local build outputs. build.py regenerates these; CI never commits them.
+data.js
+data.json
+__pycache__/
+*.pyc
+# Local fetch caches used by the tuning harnesses
+.tunecache/
+.DS_Store
