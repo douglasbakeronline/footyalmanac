@@ -226,7 +226,8 @@ live record.
   confidence. Currently they do, deliberately. Douglas's call.
 - Tier ladder duplication (rule 7) could be collapsed to one definition.
 - "Lean or better only" filter on the fixtures board, not built.
-- No dark theme. Flag sprite covers 13 countries.
+- No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
+  (84 symbols); a new league with a new `iso` needs a symbol added.
 
 ## Known drift
 

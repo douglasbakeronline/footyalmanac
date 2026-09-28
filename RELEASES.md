@@ -22,6 +22,19 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-9 — A flag for every competition
+
+The football competition chips and fixture rows showed flags for only 13
+countries. All 71 remaining countries and regions used by the leagues now
+have one, drawn as simple flat flags to match the originals (colours and
+layout exact, emblems simplified at 15px). Europe's club competitions show
+the circle of stars; international, CONMEBOL and CONCACAF competitions show
+a globe mark. `index.html` only (the inline flag sprite).
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-8 — Ready for AI agents
 
 No change to the site or models. Documentation and tooling so any AI agent
