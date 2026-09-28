@@ -22,6 +22,18 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-5 — Flush cover header
+
+The star banner, 2026 year band and red stat panel now run edge to edge of
+the cover instead of sitting inside a grey margin; the wordmark and
+strapline stay on the grey, unchanged. The football record line no longer
+runs under the yellow corner. The Daily List headline and "How the list
+works" dropdown are kept as they are. `index.html` only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-4 — The cover header is back
 
 Reverts only the masthead from release-2026-09-28-3, at Douglas's request:

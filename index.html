@@ -103,10 +103,12 @@ header{padding:18px 0 0}
 .cover{
   position:relative;overflow:hidden;
   background:#9ba1a6;border:3px solid #100e0c;
-  padding:9px;text-align:center;
+  /* flush: the star banner, year band and stat panel run edge to edge;
+     only the title block sits on the grey */
+  padding:0;text-align:center;
 }
 .starband{
-  background:#c8102e;border:2px solid #100e0c;
+  background:#c8102e;border:0;border-bottom:2px solid #100e0c;
   padding:3px 12px;display:flex;align-items:center;justify-content:space-between;
 }
 .starband b{
@@ -173,7 +175,7 @@ h1 .b{
   font-size:clamp(11px,2.4vw,18px);letter-spacing:.17em;text-transform:uppercase;
   margin-top:8px;text-align:center;
 }
-.cover .yr{margin-top:5px;background:#100e0c;padding:2px 0;text-align:center}
+.cover .yr{margin-top:clamp(10px,1.6vw,16px);background:#100e0c;padding:2px 0;text-align:center}
 .cover .yr b{
   font-family:var(--f-display);font-weight:400;font-style:italic;color:#f4d21c;
   font-size:clamp(20px,4.8vw,40px);letter-spacing:.01em;
@@ -182,7 +184,7 @@ h1 .b{
 /* the red panel stands in for the cover artwork, and carries the numbers */
 .meta{
   display:flex;gap:0;flex-wrap:wrap;
-  background:#c8102e;border:2px solid #100e0c;border-top:0;
+  background:#c8102e;border:0;
   position:relative;overflow:hidden;
 }
 .meta div{
@@ -190,6 +192,9 @@ h1 .b{
   border-right:1px solid rgba(255,255,255,.28);
 }
 .meta div:last-child{border-right:0}
+/* the last stat cell (the corner flash is .meta's final child) stops short of the yellow corner */
+.meta > div:nth-last-child(2){padding-right:96px}
+@media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
 /* the last stat cell (the flash div is .meta's final child) stops short of the yellow corner */
 .meta > div:nth-last-child(2){padding-right:92px}
 @media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
@@ -755,7 +760,7 @@ footer b{color:var(--ink-2)}
      scrolling row: both of those either crop or hide the baseline figure, and
      the comparison between the model and the baseline is the one number the
      site exists to make. Nothing here is truncated. */
-  .cover{padding:7px}
+  .cover{padding:0}
   .cover .sub{margin-top:4px}
   .cover .yr{margin-top:4px}
   .meta div{padding:6px 9px}
@@ -781,7 +786,7 @@ footer b{color:var(--ink-2)}
 @media (max-width:860px){
   .ruler{display:none}
   .meta div{flex:1 1 46%;min-width:0;padding:7px 11px}
-  .cover{padding:14px 14px 11px}
+  .cover{padding:0}
   .meta small{display:block}
   .seg,.boards{max-width:100%;overflow-x:auto}
   .seg button,.boards button{padding:6px 9px;font-size:12.5px}
