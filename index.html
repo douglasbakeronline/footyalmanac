@@ -102,13 +102,13 @@ body{
 header{padding:18px 0 0}
 .cover{
   position:relative;overflow:hidden;
-  background:#9ba1a6;border:3px solid #100e0c;
+  background:#9ba1a6;border:1px solid #100e0c;
   /* flush: the star banner, year band and stat panel run edge to edge;
      only the title block sits on the grey */
   padding:0;text-align:center;
 }
 .starband{
-  background:#c8102e;border:0;border-bottom:2px solid #100e0c;
+  background:#c8102e;border:0;border-bottom:1px solid #100e0c;
   padding:3px 12px;display:flex;align-items:center;justify-content:space-between;
 }
 .starband b{
@@ -195,9 +195,6 @@ h1 .b{
 /* the last stat cell (the corner flash is .meta's final child) stops short of the yellow corner */
 .meta > div:nth-last-child(2){padding-right:96px}
 @media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
-/* the last stat cell (the flash div is .meta's final child) stops short of the yellow corner */
-.meta > div:nth-last-child(2){padding-right:92px}
-@media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
 .meta b{font-family:var(--f-num);font-weight:600;font-size:14.5px;color:#fff;display:block;letter-spacing:-.02em}
 .meta span{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:2px}
 .meta small{font-family:var(--f-num);font-size:10.5px;color:rgba(255,255,255,.72)}
@@ -205,7 +202,7 @@ h1 .b{
 .meta .bad b{color:#ffd9d9}
 .flash{
   position:absolute;right:-66px;bottom:-8px;width:240px;z-index:3;
-  background:#f4d21c;border-top:2px solid #100e0c;border-bottom:2px solid #100e0c;
+  background:#f4d21c;border-top:1px solid #100e0c;border-bottom:1px solid #100e0c;
   transform:rotate(-30deg);padding:5px 0;text-align:center;pointer-events:none;
 }
 .flash span{
@@ -256,7 +253,7 @@ details.how[open] summary::before{content:"–"}
 details.how p{margin-top:8px;padding-left:22px}
 .list-rule{
   margin-top:16px;padding:12px 15px;background:var(--surface);border:1px solid var(--rule);
-  border-left:var(--rail) solid var(--ink);font-size:14px;line-height:1.55;max-width:100ch;color:var(--ink-2);
+  border-left:1px solid var(--ink);font-size:14px;line-height:1.55;max-width:100ch;color:var(--ink-2);
 }
 .list-rule b{color:var(--ink)}
 .list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
@@ -276,7 +273,7 @@ details.how p{margin-top:8px;padding-left:22px}
 /* ---------- controls ---------- */
 .controls{
   position:sticky;top:47px;z-index:20;background:var(--paper);
-  padding:10px 0 9px;border-bottom:2px solid var(--ink);
+  padding:10px 0 9px;border-bottom:1px solid var(--ink);
   display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
 }
 /* the controls belong to the fixture board, so they go away with it, and a
@@ -313,7 +310,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    jacket carries down the page instead of stopping at the masthead. */
 .day-head{
   display:flex;align-items:baseline;gap:12px;padding:6px 12px 5px;
-  background:var(--red);border:2px solid var(--cover-ink);
+  background:var(--red);border:1px solid var(--cover-ink);
 }
 .day-head h2{
   font-family:var(--f-display);font-weight:400;font-size:17px;color:#fff;
@@ -474,14 +471,14 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    what the controls even mean. Styled as a band rather than as tabs, so it
    reads as part of the cover rather than as browser chrome. */
 .views{
-  display:flex;margin-top:0;border:3px solid #100e0c;border-top:0;
+  display:flex;margin-top:0;border:1px solid #100e0c;border-top:0;
   background:#100e0c;
 }
 /* The top-level nav sits flush under the red band above it, so no top
    border is wanted there — but the same .views class is reused for the
    standalone "How it went" sport switcher, which has nothing above it and
    needs its stroke closed on all four sides or it reads as unfinished. */
-.views.standalone{border-top:3px solid #100e0c}
+.views.standalone{border-top:1px solid #100e0c}
 .views button{
   flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
   letter-spacing:.08em;text-transform:uppercase;
@@ -614,13 +611,13 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .prose b{color:var(--ink)}
 .prose em{font-style:normal;font-family:var(--f-num);font-size:13px;color:var(--ink)}
 .sect{
-  margin-top:34px;padding-bottom:6px;border-bottom:3px double var(--ink);
+  margin-top:34px;padding-bottom:6px;border-bottom:1px solid var(--ink);
   font-family:var(--f-display);font-weight:400;font-size:16px;
   letter-spacing:.01em;text-transform:uppercase;
 }
 
 /* ---------- expanded detail ---------- */
-.detail{background:#f3ead6;border-bottom:2px solid var(--ink);padding:16px 18px 18px}
+.detail{background:#f3ead6;border-bottom:1px solid var(--ink);padding:16px 18px 18px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
 .detail h3{
   font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;
@@ -720,7 +717,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .more{
   display:block;width:100%;margin-top:0;padding:11px 8px;cursor:pointer;
   font-family:var(--f-ui);font-size:13.5px;font-weight:700;letter-spacing:.04em;
-  background:var(--surface);color:var(--cover-ink);border:0;border-bottom:2px solid var(--cover-ink);
+  background:var(--surface);color:var(--cover-ink);border:0;border-bottom:1px solid var(--cover-ink);
   text-align:center;
 }
 .more:hover{background:var(--yellow-soft)}
