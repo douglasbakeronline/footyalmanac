@@ -198,8 +198,11 @@ live record.
   untested. `eurotest.py` and a fitted `europe.json` now exist. Check how
   `engine.py` consumes it before treating the coefficients as untested.
 - `claude/brand-identity.md` describes a three-bar mark with Anton;
-  `brandassets.py` on `main` still describes a slab-serif A in Bevan. Confirm
-  which identity is live before touching branding.
+  `brandassets.py` on `main` still describes a slab-serif A in Bevan. What is
+  live (28 Sep 2026): a slim dark masthead, "Sports" in Bevan red, "Almanac"
+  in Archivo Black white, three stars, red stat strip, sticky tab bar on
+  desktop. The brand note's contrast tokens still apply (`--mute` is now its
+  4.8:1 value).
 - `README.md` still says twenty competitions and older backtest figures.
 - `claude/coverage-expansion.md` calls the ESPN slugs unverified and lists 45
   leagues to backfill; superseded by `claude/daily-list.md`.

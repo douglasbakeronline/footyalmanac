@@ -22,6 +22,36 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-3 — Slim masthead, sticky tabs, lighter copy
+
+**What changed for a reader**
+
+- The book-cover masthead (~600px) is now a slim dark band that keeps the
+  identity: red slab SPORTS, white ALMANAC, the three stars and a one-line
+  promise. The first pick now sits about 440px down on desktop, not 820px.
+- The stat strip covers the whole site, not football alone: this week's
+  window, Daily List picks, games priced across every sport, the list's live
+  record, and the football record.
+- The tab bar stays pinned while you scroll on desktop (football's filters
+  pin just beneath it). On phones both scroll away so they don't eat the
+  screen.
+- The Daily List opens with a headline ("76 picks this week, strongest
+  first") and one sentence explaining "landed"; the full rules sit behind a
+  "How the list works" toggle. Sport and tennis tabs get the same headline.
+- The football notes are one line plus a "Tiers and flags" toggle.
+
+**Stale copy removed** The "Complete sports statistics" strapline and the
+"& more soon" flash; the football tier figures from an old backtest (79%,
+66%, 61%); the footer's 2025/26-only backtest numbers and its ~90-league
+"no fixtures" list. The footer now describes every sport's model and all
+sources.
+
+**Files** `index.html` only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-2 — Cleaner rows, one layout for every sport
 
 **What changed for a reader**
