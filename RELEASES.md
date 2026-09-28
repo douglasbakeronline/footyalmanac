@@ -22,6 +22,18 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-28-4 — The cover header is back
+
+Reverts only the masthead from release-2026-09-28-3, at Douglas's request:
+star banner, grey cover, stacked SPORTS / ALMANAC wordmark, strapline,
+2026 year band and red stat panel, exactly as before. Kept from -3: the
+stat panel's whole-site figures, the sticky tab bar, the Daily List
+headline and toggles, the refreshed footer. `index.html` only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-3 — Slim masthead, sticky tabs, lighter copy
 
 **What changed for a reader**

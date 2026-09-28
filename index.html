@@ -90,34 +90,124 @@ body{
 .num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
 
 /* ---------- masthead ----------
-   A slim band, not a book jacket. The old Grays-cover pastiche took ~600px
-   before the first pick; this keeps its identity (red slab SPORTS, white
-   heavy ALMANAC, the yellow year band colour) on a dark ground, where both
-   title colours clear contrast without shadows, in about a third of that. */
-.mast{margin-top:14px;background:#14100c;border:3px solid #100e0c;border-top:6px solid #c8102e}
-.mast-in{display:flex;align-items:center;justify-content:space-between;gap:10px 24px;
-  padding:14px 18px 12px;flex-wrap:wrap}
-.brand{display:flex;align-items:baseline;gap:.26em;line-height:1;text-decoration:none;
-  font-size:clamp(28px,4.4vw,46px);text-transform:uppercase;white-space:nowrap}
-.brand .a{font-family:'Bevan','Alfa Slab One',var(--f-display);color:#e8303a}
-.brand .b{font-family:'Archivo Black','Anton',var(--f-display);color:#fff;letter-spacing:-.03em}
-.tag{font-family:'Oswald',var(--f-ui);font-weight:600;color:#f4d21c;text-transform:uppercase;
-  letter-spacing:.13em;font-size:clamp(10.5px,1.2vw,12.5px);line-height:1.45;text-align:right;max-width:38ch}
-.tag i{font-style:normal;color:#fff;opacity:.55;letter-spacing:.3em;margin-right:.4em}
-/* the numbers that matter, in one slim strip */
-.meta{display:flex;flex-wrap:wrap;background:#c8102e;border-top:2px solid #100e0c}
-.meta div{flex:1 1 0;min-width:120px;padding:8px 14px;border-right:1px solid rgba(255,255,255,.25)}
-.meta div:last-child{border-right:0}
-.meta span{display:block;font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;
-  color:rgba(255,255,255,.82);font-weight:700;margin-bottom:2px}
-.meta b{display:block;font-family:var(--f-num);font-weight:600;font-size:16px;color:#fff;letter-spacing:-.02em}
-.meta small{font-family:var(--f-num);font-size:10.5px;color:rgba(255,255,255,.8)}
-.meta .good b{color:#f4d21c}
-@media (max-width:640px){
-  .mast-in{padding:12px 14px 10px}
-  .tag{text-align:left;max-width:none}
-  .meta div{flex:1 1 45%;padding:7px 12px}
+   A close restaging of the Grays Sports Almanac jacket. The details that carry
+   the resemblance, in order of how much they matter:
+     - the two title words are the full width of the cover, not centred text
+     - they are stretched horizontally and set solid, so they nearly touch
+     - the black outline is heavy and there is a hard offset shadow under it
+     - the star banner and year band bleed edge to edge inside a grey margin
+     - the lower panel is red, standing in for the sports artwork
+   Getting the words to fill the width is what actually makes it read as the
+   cover: the reference has almost no air anywhere. */
+header{padding:18px 0 0}
+.cover{
+  position:relative;overflow:hidden;
+  background:#9ba1a6;border:3px solid #100e0c;
+  padding:9px;text-align:center;
 }
+.starband{
+  background:#c8102e;border:2px solid #100e0c;
+  padding:3px 12px;display:flex;align-items:center;justify-content:space-between;
+}
+.starband b{
+  font-family:var(--f-display);font-weight:400;color:#fff;
+  font-size:clamp(15px,3.2vw,27px);letter-spacing:clamp(.16em,1.1vw,.34em);
+  text-transform:uppercase;line-height:1.1;padding-left:.28em;
+  text-shadow:2px 0 0 #100e0c,-2px 0 0 #100e0c,0 2px 0 #100e0c,0 -2px 0 #100e0c;
+}
+.starband i{
+  color:#fff;font-style:normal;letter-spacing:.18em;
+  font-size:clamp(9px,1.6vw,15px);
+}
+/* The title block gets its own width rather than running the full span of the
+   cover. The reference for this thing is a portrait book jacket; the page is a
+   wide landscape band, and filling 1180px with two words means either type
+   three hundred pixels tall or letterforms stretched out of shape. Capping the
+   block keeps the stack in book proportions and the type at a sane size. */
+h1{margin:clamp(14px,2.4vw,26px) auto 0;line-height:.82;max-width:min(100%,760px)}
+h1 span{
+  display:block;font-family:var(--f-display);font-weight:400;text-transform:uppercase;
+  letter-spacing:-.012em;white-space:nowrap;
+  /* --fit is measured and set by fitWordmark() once the display face has
+     loaded. The 1.05 fallback is what the CSS used to hard-code, so with no
+     JS the wordmark behaves exactly as it did before. */
+  transform:scaleX(var(--fit,1.05));transform-origin:center;
+}
+/* Three lines, three faces. The identity comes from the letterforms rather
+   than from effects piled on a single face:
+
+     SPORTS     Bevan, a heavy slab with crisp square serifs
+     ALMANAC    Archivo Black, wide and heavy with no serifs at all
+     strapline  Oswald, condensed and widely letterspaced
+
+   Both title words are fitted to the full width of the cover, so two faces of
+   very different natural width still stack flush. That is the fitting routine
+   earning its keep rather than being a nicety.
+
+   On effects: the stroke is gone. What is left is ONE hard offset per title
+   line, no blur, and it is not decoration. Measured on the cover's grey
+   ground the red reads 1.82:1 and the white 2.61:1, both under the 3:1
+   minimum for large text, so with no edge at all they are genuinely hard to
+   read rather than merely less pretty. A single offset is the cheapest thing
+   that fixes that and stays crisp. Ink measures 7.38:1, which is why the
+   strapline carries no shadow whatsoever.
+
+   If you want the titles clean too, the ground has to go dark: set .cover's
+   background to #14100c and both offsets can come off. */
+h1 .a,h1 .b{font-size:clamp(34px,8.9vw,88px)}
+h1 .a{
+  font-family:'Bevan','Alfa Slab One',var(--f-display);
+  color:#e0202c;text-shadow:.036em .036em 0 #100e0c;
+}
+h1 .b{
+  font-family:'Archivo Black','Anton',var(--f-display);
+  color:#fff;letter-spacing:-.035em;
+  /* set in em so the gap holds its proportion at every size, rather than
+     opening up on desktop and closing on a phone */
+  margin-top:.07em;
+  text-shadow:.05em .05em 0 #100e0c;
+}
+     
+.cover .sub{
+  font-family:'Oswald',var(--f-ui);font-weight:600;color:#100e0c;
+  font-size:clamp(11px,2.4vw,18px);letter-spacing:.17em;text-transform:uppercase;
+  margin-top:8px;text-align:center;
+}
+.cover .yr{margin-top:5px;background:#100e0c;padding:2px 0;text-align:center}
+.cover .yr b{
+  font-family:var(--f-display);font-weight:400;font-style:italic;color:#f4d21c;
+  font-size:clamp(20px,4.8vw,40px);letter-spacing:.01em;
+  text-shadow:3px 3px 0 rgba(0,0,0,.5);
+}
+/* the red panel stands in for the cover artwork, and carries the numbers */
+.meta{
+  display:flex;gap:0;flex-wrap:wrap;
+  background:#c8102e;border:2px solid #100e0c;border-top:0;
+  position:relative;overflow:hidden;
+}
+.meta div{
+  flex:1 1 0;min-width:100px;padding:6px 9px;text-align:left;
+  border-right:1px solid rgba(255,255,255,.28);
+}
+.meta div:last-child{border-right:0}
+/* the last stat cell (the flash div is .meta's final child) stops short of the yellow corner */
+.meta > div:nth-last-child(2){padding-right:92px}
+@media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
+.meta b{font-family:var(--f-num);font-weight:600;font-size:14.5px;color:#fff;display:block;letter-spacing:-.02em}
+.meta span{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:2px}
+.meta small{font-family:var(--f-num);font-size:10.5px;color:rgba(255,255,255,.72)}
+.meta .good b{color:#f4d21c}
+.meta .bad b{color:#ffd9d9}
+.flash{
+  position:absolute;right:-66px;bottom:-8px;width:240px;z-index:3;
+  background:#f4d21c;border-top:2px solid #100e0c;border-bottom:2px solid #100e0c;
+  transform:rotate(-30deg);padding:5px 0;text-align:center;pointer-events:none;
+}
+.flash span{
+  font-family:var(--f-ui);font-weight:700;font-size:8.5px;letter-spacing:.01em;
+  text-transform:uppercase;color:#100e0c;line-height:1.3;display:block;white-space:nowrap;
+}
+@media (max-width:700px){ .flash{display:none} }
 
 /* ---------- honesty strip ---------- */
 .note{
@@ -665,6 +755,9 @@ footer b{color:var(--ink-2)}
      scrolling row: both of those either crop or hide the baseline figure, and
      the comparison between the model and the baseline is the one number the
      site exists to make. Nothing here is truncated. */
+  .cover{padding:7px}
+  .cover .sub{margin-top:4px}
+  .cover .yr{margin-top:4px}
   .meta div{padding:6px 9px}
   .meta span{font-size:8.5px;letter-spacing:.09em}
   .meta b{font-size:13.5px}
@@ -688,6 +781,7 @@ footer b{color:var(--ink-2)}
 @media (max-width:860px){
   .ruler{display:none}
   .meta div{flex:1 1 46%;min-width:0;padding:7px 11px}
+  .cover{padding:14px 14px 11px}
   .meta small{display:block}
   .seg,.boards{max-width:100%;overflow-x:auto}
   .seg button,.boards button{padding:6px 9px;font-size:12.5px}
@@ -747,12 +841,16 @@ footer b{color:var(--ink-2)}
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="f-eng" viewBox="0 0 16 11"><path fill="#fff" d="M0 0h16v11H0z"/><path stroke="#ce1124" stroke-width="2" d="M8 0v11M0 5.5h16"/></symbol><symbol id="f-sct" viewBox="0 0 16 11"><path fill="#0065bd" d="M0 0h16v11H0z"/><path stroke="#fff" stroke-width="1.7" d="M0 0l16 11M16 0L0 11"/></symbol><symbol id="f-esp" viewBox="0 0 16 11"><path fill="#c60b1e" d="M0 0h16v11H0z"/><path fill="#ffc400" d="M0 2.75h16v5.5H0z"/></symbol><symbol id="f-deu" viewBox="0 0 16 11"><path d="M0 0h16v3.67H0z"/><path fill="#dd0000" d="M0 3.67h16v3.66H0z"/><path fill="#ffce00" d="M0 7.33h16V11H0z"/></symbol><symbol id="f-ita" viewBox="0 0 16 11"><path fill="#009246" d="M0 0h5.33v11H0z"/><path fill="#fff" d="M5.33 0h5.34v11H5.33z"/><path fill="#ce2b37" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-fra" viewBox="0 0 16 11"><path fill="#002395" d="M0 0h5.33v11H0z"/><path fill="#fff" d="M5.33 0h5.34v11H5.33z"/><path fill="#ed2939" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-nld" viewBox="0 0 16 11"><path fill="#ae1c28" d="M0 0h16v3.67H0z"/><path fill="#fff" d="M0 3.67h16v3.66H0z"/><path fill="#21468b" d="M0 7.33h16V11H0z"/></symbol><symbol id="f-prt" viewBox="0 0 16 11"><path fill="#f00" d="M0 0h16v11H0z"/><path fill="#060" d="M0 0h6.4v11H0z"/><circle cx="6.4" cy="5.5" r="2.3" fill="#ff0"/><circle cx="6.4" cy="5.5" r="1.4" fill="#f00"/></symbol><symbol id="f-bel" viewBox="0 0 16 11"><path d="M0 0h5.33v11H0z"/><path fill="#fae042" d="M5.33 0h5.34v11H5.33z"/><path fill="#ed2939" d="M10.67 0H16v11h-5.33z"/></symbol><symbol id="f-tur" viewBox="0 0 16 11"><path fill="#e30a17" d="M0 0h16v11H0z"/><circle cx="6" cy="5.5" r="2.6" fill="#fff"/><circle cx="7" cy="5.5" r="2.1" fill="#e30a17"/><path fill="#fff" d="M9.7 5.5l2.3-.75-1.42 1.96V4.29L12 6.25z"/></symbol><symbol id="f-aut" viewBox="0 0 16 11"><path fill="#ed2939" d="M0 0h16v11H0z"/><path fill="#fff" d="M0 3.67h16v3.66H0z"/></symbol><symbol id="f-grc" viewBox="0 0 16 11"><path fill="#0d5eaf" d="M0 0h16v11H0z"/><path stroke="#fff" stroke-width="1.22" d="M0 1.83h16M0 4.28h16M0 6.72h16M0 9.17h16"/><path fill="#0d5eaf" d="M0 0h6.1v6.1H0z"/><path stroke="#fff" stroke-width="1.22" d="M3.05 0v6.1M0 3.05h6.1"/></symbol><symbol id="f-bra" viewBox="0 0 16 11"><path fill="#009b3a" d="M0 0h16v11H0z"/><path fill="#fedf00" d="M8 1.1l6.6 4.4L8 9.9 1.4 5.5z"/><circle cx="8" cy="5.5" r="2.4" fill="#002776"/></symbol></svg>
 <div class="wrap">
 
-<header class="mast">
-  <div class="mast-in">
-    <a class="brand" href="#" aria-label="Sports Almanac, home"><span class="a">Sports</span><span class="b">Almanac</span></a>
-    <p class="tag"><i>★★★</i>The most likely results in every sport, tested before they are shown</p>
+<header>
+  <div class="cover">
+    <div class="starband">
+      <i>★ ★ ★</i><b>The</b><i>★ ★ ★</i>
+    </div>
+    <h1><span class="a">Sports</span><span class="b">Almanac</span></h1>
+    <div class="sub">Complete sports statistics</div>
+    <div class="yr"><b id="window">—</b></div>
+    <div class="meta" id="meta"><div class="flash"><span>Football</span><span>Tennis</span><span>&amp; more soon</span></div></div>
   </div>
-  <div class="meta" id="meta"></div>
 </header>
 <nav class="views" id="views" aria-label="Boards">
   <button data-view="list" aria-pressed="true">Daily List</button>
@@ -840,6 +938,76 @@ let FLAGS = null;
    not run, the page still holds yesterday's games and will happily show them as
    though they were the slate. Days in the past are dropped at render time and
    an out-of-date build says so, rather than quietly looking wrong. */
+/* ---------- wordmark fitting ----------
+   The cover only reads right when the two title words run the full width of
+   it. That was hard-coded as a 1.05 horizontal stretch on a viewport-sized
+   font, which meant the type overflowed its own box above 1024px and fell
+   short of it below 480px, and would have been wrong again for anyone whose
+   browser never loaded the display face.
+
+   Measuring instead of guessing costs a few lines and is correct at every
+   width and in every font. The scale is bounded so a missing face produces
+   something slightly off rather than something absurd. */
+function textWidth(el){
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  return r.getBoundingClientRect().width;
+}
+
+function fitWordmark(){
+  const h1 = document.querySelector("header h1");
+  const cover = document.querySelector(".cover");
+  if(!h1 || !cover) return;
+  // the cover's own padding, plus clearance for the hard offset that sits
+  // outside each title line's own advance width
+  const room = Math.min(cover.clientWidth - 20, h1.clientWidth);
+  if(room <= 0) return;
+
+  h1.querySelectorAll("span").forEach(el => {
+    // Size first, stretch second. The two title lines are set in different
+    // faces now, and Archivo Black is far wider per character than Anton, so
+    // fitting on horizontal scale alone would squash one of them out of shape
+    // to make the widths agree. Adjusting the size does most of the work at
+    // the face's own proportions, and the stretch only takes up the remainder.
+    el.style.removeProperty("font-size");
+    el.style.setProperty("--fit", 1);
+    const base = parseFloat(getComputedStyle(el).fontSize);
+    // A Range around the text, not the element's own box. These spans are
+    // display:block, so their width is the container's width whatever the
+    // type inside is doing, and measuring the box would report a perfect fit
+    // at every size while the letters sat at whatever width they liked.
+    const natural = textWidth(el);
+    if(!base || !natural) return;
+
+    // The ceiling is generous on purpose. Anton is narrow enough to need
+    // nearly three times the CSS size to fill the cover, and a tight clamp
+    // meant both lines pinned to the ceiling and the wider face then bled out
+    // of the box. Each line finds its own size; the stretch afterwards is
+    // held near 1 so neither face is visibly distorted to make them agree.
+    // Size does most of the fitting, at each face's own proportions, and the
+    // stretch takes up whatever is left. The size ceiling is what stops the
+    // masthead growing to fill a wide viewport; the stretch bound is what
+    // stops a narrow face being pulled out of shape to reach the edge.
+    const sized = Math.max(base * 0.4, Math.min(base * 1.9, base * (room / natural)));
+    el.style.fontSize = sized.toFixed(2) + "px";
+
+    const after = textWidth(el);
+    if(after) el.style.setProperty("--fit",
+      Math.max(0.9, Math.min(1.45, room / after)).toFixed(4));
+  });
+}
+
+
+/* Runs once now, again when the display face arrives, and on resize. Fonts
+   land after first paint, so fitting only on load measures the fallback. */
+fitWordmark();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
+let fitTimer;
+addEventListener("resize", () => {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(fitWordmark, 120);
+});
+
 const todayISO = (()=>{ const d=new Date();
   return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); })();
 
@@ -876,6 +1044,7 @@ const fmtDay = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
 const fmtShort = iso => new Date(iso+"T12:00:00").toLocaleDateString("en-GB",
   {day:"numeric", month:"short"});
 
+$("#window").textContent = new Date().getFullYear();
 const rangeText = upcoming.length
   ? fmtShort(upcoming[0].date)+" – "+fmtShort(upcoming[upcoming.length-1].date)
   : "none upcoming";
