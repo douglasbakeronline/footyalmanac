@@ -36,7 +36,7 @@ The live site's international ratings are refitted by hand every few weeks.
   outcomes are rescaled to keep the total at 1.
 
 Adjusted rows carry `rankAdjusted`, their own accuracy bands and their own
-list threshold (internationals 60%, ATP 65%, both by the shared 75%-landed
+list threshold (internationals 65% since 29 Sep 2026, was 60%; ATP 65%, both by the shared 75%-landed
 rule). Rows show `FIFA #57` / `ATP #6` / `WTA #108`, and the expanded row
 says when a ranking changed the number.
 

@@ -22,6 +22,34 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-29 (tag pending) — Ranked internationals: goals line fixed, list bar 65%
+
+**What changed for a reader**
+
+- On an international re-scored by the FIFA ranking, the expected goals and
+  likeliest score now agree with the percentage on the row. Burundi v
+  Algeria showed Algeria at 79% over a 1-1 scoreline; it would now read
+  0.68-2.63, likeliest 0-2. The percentages themselves are unchanged.
+- Internationals re-scored by the FIFA ranking now need 65% to make the
+  Daily List (was 60%). Fewer, stronger international picks.
+
+**Evidence** `ranktest.py`, new: the ranking adjustment with its weights
+frozen, re-checked on Oct 2022 - Oct 2024 (2,024 picks never seen by weights
+or ratings). It still helps (-0.0099 log loss, p(worse) 0.012) but runs 3-5
+points high; 60%+ landed 73.7% of 949, 65%+ 76.5% of 791. The shared rule
+(75% in every window) puts the bar at 65%. Full write-up in
+`claude/ranking-review.md`.
+
+**Files** `build.py`, `ranktest.py` (new), `README.md`, `CLAUDE.md`,
+`claude/ranking-review.md` (new), `claude/world-rankings.md`.
+
+**Not changed** FIFA_W, the published split, BTTS, over 2.5, club football,
+tennis, the other sports. Nothing in `record.json`.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-28-9 — A flag for every competition
 
 The football competition chips and fixture rows showed flags for only 13

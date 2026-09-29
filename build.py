@@ -7,7 +7,7 @@ Build the dashboard payload.
 Reads openfootball, rates every team, prices every upcoming fixture, keeps the
 top N by confidence per day, writes data.json next to index.html.
 """
-import argparse, concurrent.futures as cf, json, os, sys
+import argparse, concurrent.futures as cf, json, math, os, sys
 from collections import defaultdict
 from datetime import date, timedelta
 
@@ -58,8 +58,11 @@ if os.path.exists(_ABS_FILE):
 LIST_MIN = {"league": 0.75, "intl": 0.55,
             # an international adjusted by the FIFA ranking (rankings.py): the
             # ranking model's own test, 60%+ landed 77.8% of 536 in 2025 and
-            # 75.3% of 190 in 2026
-            "intlRanked": 0.60}
+            # 75.3% of 190 in 2026. An out-of-time check (29 Sep 2026, weights
+            # frozen, Oct 2022 - Oct 2024, the years FIFA's public history
+            # covers) landed 73.7% of 949 at 60%+ and 76.5% of 791 at 65%+,
+            # so by the shared rule (75% in every window) the bar is 65%.
+            "intlRanked": 0.65}
 LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
                  "check": {"season": "2026-27", "n": 21, "hit": 0.762},
                  "intl": {"season": "2026", "n": 49, "hit": 0.816}}
@@ -70,6 +73,23 @@ LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
 # the 2026 holdout. Same walk-forward as above.
 ACCURACY_BANDS_RANKED = [{"from": 0.55, "hit": 0.7436, "n": 234, "quoted": 0.7148}, {"from": 0.6, "hit": 0.7526, "n": 190, "quoted": 0.7475}, {"from": 0.65, "hit": 0.7986, "n": 144, "quoted": 0.787}, {"from": 0.7, "hit": 0.8235, "n": 119, "quoted": 0.8099}, {"from": 0.75, "hit": 0.8427, "n": 89, "quoted": 0.8377}, {"from": 0.8, "hit": 0.8387, "n": 62, "quoted": 0.8652}, {"from": 0.85, "hit": 0.9394, "n": 33, "quoted": 0.9006}]
 ACCURACY_BANDS = {"league": {"check": [{"from": 0.45, "hit": 0.5498, "n": 733, "quoted": 0.5504}, {"from": 0.5, "hit": 0.597, "n": 474, "quoted": 0.5921}, {"from": 0.55, "hit": 0.6714, "n": 280, "quoted": 0.639}, {"from": 0.6, "hit": 0.7459, "n": 181, "quoted": 0.6755}, {"from": 0.65, "hit": 0.7767, "n": 103, "quoted": 0.7145}, {"from": 0.7, "hit": 0.7347, "n": 49, "quoted": 0.7605}, {"from": 0.75, "hit": 0.7619, "n": 21, "quoted": 0.8041}, {"from": 0.8, "hit": 0.8, "n": 10, "quoted": 0.8354}], "fit": [{"from": 0.45, "hit": 0.5564, "n": 4371, "quoted": 0.5599}, {"from": 0.5, "hit": 0.6032, "n": 2916, "quoted": 0.6028}, {"from": 0.55, "hit": 0.6524, "n": 1910, "quoted": 0.6447}, {"from": 0.6, "hit": 0.6879, "n": 1163, "quoted": 0.6904}, {"from": 0.65, "hit": 0.7287, "n": 726, "quoted": 0.7315}, {"from": 0.7, "hit": 0.778, "n": 419, "quoted": 0.775}, {"from": 0.75, "hit": 0.7893, "n": 242, "quoted": 0.8127}, {"from": 0.8, "hit": 0.8397, "n": 131, "quoted": 0.8471}]}, "intl": [{"from": 0.45, "hit": 0.6756, "n": 299, "quoted": 0.6093}, {"from": 0.5, "hit": 0.7118, "n": 229, "quoted": 0.6508}, {"from": 0.55, "hit": 0.7571, "n": 177, "quoted": 0.6877}, {"from": 0.6, "hit": 0.7687, "n": 134, "quoted": 0.725}, {"from": 0.65, "hit": 0.7822, "n": 101, "quoted": 0.7581}, {"from": 0.7, "hit": 0.7971, "n": 69, "quoted": 0.7983}, {"from": 0.75, "hit": 0.8163, "n": 49, "quoted": 0.8255}, {"from": 0.8, "hit": 0.8667, "n": 30, "quoted": 0.8581}]}
+
+
+def solve_goals(grid, pick, target):
+    """The grid whose `pick` ("home" / "away") probability is `target`, found by
+    scaling that side's expected goals by k and the other side's by 1/k."""
+    def at(k):
+        return grid(k, 1 / k) if pick == "home" else grid(1 / k, k)
+    lo, hi = 0.25, 4.0
+    if not (at(lo)[pick] <= target <= at(hi)[pick]):
+        return None
+    for _ in range(40):
+        mid = math.sqrt(lo * hi)
+        if at(mid)[pick] < target:
+            lo = mid
+        else:
+            hi = mid
+    return at(math.sqrt(lo * hi))
 
 
 def accuracy_for(conf, intl, ranked=False):
@@ -570,13 +590,16 @@ def main():
                 intl_ha = E.INTERNATIONAL["homeAdvantage"] if E.INTERNATIONAL else 1.2
                 neutral = bool(r.get("neutral"))
                 saved_h, saved_a = E.HOME_MULT.get(meta["tier"]), E.AWAY_MULT.get(meta["tier"])
-                E.HOME_MULT[meta["tier"]] = 1.0 if neutral else intl_ha
-                E.AWAY_MULT[meta["tier"]] = 1.0 if neutral else 1.0 / intl_ha
-                try:
-                    p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
-                                              intl_mu, tier=meta["tier"], form_h=fh, form_a=fa)
-                finally:
-                    E.HOME_MULT[meta["tier"]], E.AWAY_MULT[meta["tier"]] = saved_h, saved_a
+                def intl_grid(adj_h=1.0, adj_a=1.0):
+                    E.HOME_MULT[meta["tier"]] = 1.0 if neutral else intl_ha
+                    E.AWAY_MULT[meta["tier"]] = 1.0 if neutral else 1.0 / intl_ha
+                    try:
+                        return E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
+                                                     intl_mu, tier=meta["tier"], form_h=fh, form_a=fa,
+                                                     adj_h=adj_h, adj_a=adj_a)
+                    finally:
+                        E.HOME_MULT[meta["tier"]], E.AWAY_MULT[meta["tier"]] = saved_h, saved_a
+                p = intl_grid()
                 # FIFA world ranking (rankings.py): the points gap re-scores the
                 # win pick, tested on 2026 internationals (-0.036 log loss,
                 # p(worse) 0.00). Senior men's only: the women's and youth
@@ -595,6 +618,19 @@ def main():
                             p[k] = new if k == pk else (trip[k] * (1 - new) / rest if rest > 0 else 0.0)
                         p["confidence"] = max(p["home"], p["draw"], p["away"])
                         p["rankAdjusted"] = True
+                        # The ranking moves the pick's probability and nothing
+                        # else, which left the goals line on the unadjusted
+                        # model: Burundi v Algeria (29 Sep 2026) showed Algeria
+                        # at 79% over "1-1, 0.96-1.86", which is the model's 57%.
+                        # So the goals are re-solved to agree with the row:
+                        # the pick's expected goals scaled up and the other
+                        # side's down by one factor until the grid gives the
+                        # adjusted number. Only xG and the likeliest score
+                        # change; the tested split, BTTS and over 2.5 stay.
+                        g = solve_goals(intl_grid, pk, new)
+                        if g:
+                            p["xg_home"], p["xg_away"] = g["xg_home"], g["xg_away"]
+                            p["likely_score"] = g["likely_score"]
             elif meta.get("cup"):
                 s_h = E.tie_strength(h_league, code)
                 s_a = E.tie_strength(a_league, code)

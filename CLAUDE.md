@@ -59,6 +59,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 |---|---|
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
 | `claude/world-rankings.md` | Which world rankings are in the model, the tests behind them, sources and name mapping. Read before touching `rankings.py`. |
+| `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |
 | `claude/multi-sport.md` | NFL, baseball, basketball, rugby: the model, its evidence, which sports earn a Daily List place and why. Read before touching `sports.py` or `sports.json`. |
 | `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
@@ -88,6 +89,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `odds.py` football-data.co.uk prices and the value backtest.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
+- `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
 - `rankings.py` FIFA and ATP/WTA world rankings: fetch, and the tested adjustments (FIFA for men's internationals, ATP for men's tennis; WTA shown only).
 - `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js`. Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
@@ -228,6 +230,11 @@ live record.
 - "Lean or better only" filter on the fixtures board, not built.
 - No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
   (84 symbols); a new league with a new `iso` needs a symbol added.
+
+- Picks the FIFA ranking lifts 20+ points landed 65% of 40 in 2022-24.
+  Confirm on 2026 before flagging them (`claude/ranking-review.md`).
+- Row "landed" rates are cumulative bands, so a 79% pick shows the 75%+
+  record (84%) including 90%+ calls. Own-band rates would be stricter. Douglas's call.
 
 ## Known drift
 

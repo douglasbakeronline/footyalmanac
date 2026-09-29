@@ -32,7 +32,7 @@ saw. The level differs by sport because the numbers do:
 | Sport | List threshold | Tested hit rate at that level |
 |---|---|---|
 | Football leagues | 75% | 78.9% of 242 (2025/26) |
-| Men's internationals (with FIFA ranking) | 60% | 77.8% of 536 (2025), 75.3% of 190 (2026) |
+| Men's internationals (with FIFA ranking) | 65% | 76.5% of 791 (2022-24), 79.9% of 144 (2026) |
 | Tennis, main draw (ATP with ranking) | 65-70% | 78-80% across ATP/WTA, 2025 and 2026 |
 | Basketball | 70% | 79.7% / 80.4% |
 | Rugby | 60% | 78.0% / 75.1% |
