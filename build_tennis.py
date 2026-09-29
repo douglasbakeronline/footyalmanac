@@ -147,10 +147,16 @@ CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
 # 79.1% (673) in 2025 and 78.1% (320) in 2026, WTA 78.1% (661) and 80.2%
 # (384). The archive is main draw only, so qualifying rounds (thin ratings,
 # and not what was tested) never make the list.
-LIST_MIN = {"ATP": 0.70, "WTA": 0.70,
+#
+# Raised 29 Sep 2026 with every sport to the 80% target (sports.LIST_MIN_HIT):
+# 80% on both tours, where 2026 landed ATP 89.1% (92), WTA 87.0% (138), ATP
+# with ranking 85.6% (118). 75% passes on 2026 too (81.0%, 81.0%, 83.2%) but
+# the 2025 bands at that level are not on file, so the list takes the level
+# both windows are well clear of rather than one only 2026 can vouch for.
+LIST_MIN = {"ATP": 0.80, "WTA": 0.80,
             # an ATP match re-scored by the world ranking (rankings.py): that
             # model's own test, 65%+ landed 76.9%/77% in 2025/2026
-            "ATP_RANKED": 0.65}
+            "ATP_RANKED": 0.80}
 LIST_MIN_MATCHES = 10
 LIST_BACKTEST = {"ATP": {"2025": [0.791, 673], "2026": [0.781, 320]},
                  "WTA": {"2025": [0.781, 661], "2026": [0.802, 384]}}

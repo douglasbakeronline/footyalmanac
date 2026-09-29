@@ -1072,7 +1072,7 @@ const metaCells = [
   ["This week", rangeText, ""],
   ["Daily List", listCount + " picks", "across the week, strongest first"],
   ["Games priced", pricedAll, sportsOn + " sports in play"],
-  _ln ? ["List record", pct(_lc/_ln) + "%", _lc + " of " + _ln + " landed", _lc/_ln >= 0.75 ? "good" : ""]
+  _ln ? ["List record", pct(_lc/_ln) + "%", _lc + " of " + _ln + " landed", _lc/_ln >= 0.80 ? "good" : ""]
       : ["List record", "Starts now", "graded from its first day"],
 ];
 if(R && R.overall && R.overall.n >= 5){
@@ -1633,19 +1633,20 @@ function renderList(){
   host.innerHTML = `
     <div class="lede">
       <h2>${_n} pick${_n === 1 ? "" : "s"} this week, strongest first</h2>
-      <p>Every pick here is one the model's testing says lands at least <b>three times in four</b>.
+      <p>Every pick here is one the model's testing says lands at least <b>four times in five</b>.
         Each row shows its own tested rate: <b>"86% landed"</b> means calls at that level came off
         86% of the time on games the model never saw.
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <details class="how"><summary>How the list works</summary>
-        <p>A pick qualifies only if calls at its level landed at least 75% of the time in testing, on
+        <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
         games the model was never tuned on. The level differs by sport because the numbers do:
         ${thresholds.join(", ")}.${absent.length ? ` Not on the list: ${absent.join(", ")}, whose strongest calls do not land often enough.` : ""}</p>
         <p>Football leaves out anything the model is blind to (promoted sides, cross-division cup ties,
         clubs with no prior season) and never picks a draw. Tennis leaves out qualifying rounds.
-        World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.</p>
-        <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in four or
-        five will still miss; that is sport, and a higher bar does not remove it.
+        World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.
+        An international also needs the model's own number to clear the bar before the ranking moves it.</p>
+        <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in five or
+        six will still miss; that is sport, and no bar removes it.
         ${liveN ? "" : "The list's live record starts from its first graded day."}</p>
       </details>
     </div>`;

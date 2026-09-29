@@ -55,14 +55,24 @@ if os.path.exists(_ABS_FILE):
 # fixtures: 75% (2025/26 78.9% of 242; 2026/27 76.2% of 21, too few to count
 # yet). Internationals: 55%, where the 2026 holdout landed 75.7% of 177, since
 # the international fit under-quotes itself.
-LIST_MIN = {"league": 0.75, "intl": 0.55,
+# Raised to 80% on 29 Sep 2026 at Douglas's request after Burundi 2-2 Algeria:
+# the list is for the strongest calls in the world, so every pick must come
+# from a level whose calls landed at least four in five (LIST_MIN_HIT 0.80),
+# not three in four. By the same rule on the same bands: leagues 80% (2025/26
+# 84.0% of 131; 2026/27 has 10, too few), internationals 75% (2026 81.6% of
+# 49), ranked internationals 75% (2026 84.3% of 89; 2022-24 82.6% of 483).
+LIST_MIN = {"league": 0.80, "intl": 0.75,
             # an international adjusted by the FIFA ranking (rankings.py): the
             # ranking model's own test, 60%+ landed 77.8% of 536 in 2025 and
             # 75.3% of 190 in 2026. An out-of-time check (29 Sep 2026, weights
             # frozen, Oct 2022 - Oct 2024, the years FIFA's public history
             # covers) landed 73.7% of 949 at 60%+ and 76.5% of 791 at 65%+,
-            # so by the shared rule (75% in every window) the bar is 65%.
-            "intlRanked": 0.65}
+            # so at the old 75% target the bar was 65%; at 80% it is 75%.
+            "intlRanked": 0.75}
+# A ranked international must also clear the unranked bar on the model's own
+# number, before the FIFA ranking moved it. Where both reads agreed at 75%+,
+# 88.2% of 288 landed (ranktest.py, 2022-24); where only the ranking carried
+# the pick over, 74.4% of 195. Burundi v Algeria was 57% before the ranking.
 LIST_BACKTEST = {"fit": {"season": "2025-26", "n": 242, "hit": 0.789},
                  "check": {"season": "2026-27", "n": 21, "hit": 0.762},
                  "intl": {"season": "2026", "n": 49, "hit": 0.816}}
@@ -128,6 +138,8 @@ def list_eligible(g):
     intl = bool(E.LEAGUES[g["league"]].get("international"))
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if pick == "d" or p[pick] < bar or g["celtic"] or g["unrated"]:
+        return False
+    if g.get("rankAdjusted") and (g.get("modelConfidence") or 0) < LIST_MIN["intl"]:
         return False
     for t in (g["home"], g["away"]):
         if t["played"] is not None and not t["last"]:
@@ -618,6 +630,7 @@ def main():
                             p[k] = new if k == pk else (trip[k] * (1 - new) / rest if rest > 0 else 0.0)
                         p["confidence"] = max(p["home"], p["draw"], p["away"])
                         p["rankAdjusted"] = True
+                        p["modelConfidence"] = trip[pk]
                         # The ranking moves the pick's probability and nothing
                         # else, which left the goals line on the unadjusted
                         # model: Burundi v Algeria (29 Sep 2026) showed Algeria
@@ -741,6 +754,7 @@ def main():
                 "evidence": evidence,
                 "unrated": unrated,
                 "rankAdjusted": bool(p.get("rankAdjusted")),
+                "modelConfidence": (round(p["modelConfidence"], 4) if p.get("modelConfidence") else None),
                 "celtic": ({"reasons": reasons, "early": early} if reasons else None),
             })
 

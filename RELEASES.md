@@ -22,6 +22,36 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-29-2 (tag pending) — Daily List bar raised to 80%
+
+**What changed for a reader**
+
+- Every pick on the Daily List now comes from a level whose calls landed at
+  least **four in five** in testing (was three in four), in every sport.
+  Football leagues 80%, internationals 75%, tennis 80%, NFL 80%, basketball
+  75%, rugby 70%. Baseball still has no place.
+- An international re-scored by the FIFA ranking must also reach 75% on the
+  model's own number before the ranking. Burundi v Algeria (57% before the
+  ranking) could not make the list now.
+- This week's football list goes from 35 picks to 10 on the same fixtures.
+  The list is shorter on purpose.
+
+**Evidence** The shared rule re-run at 80% on the stored test bands of every
+sport (`sports.list_threshold`). Ranked internationals, 2022-24
+(`ranktest.py`): both reads 75%+ landed 88.2% of 288; picks the ranking alone
+carried to 75%+ landed 74.4% of 195. See `claude/ranking-review.md`.
+
+**Files** `build.py`, `build_tennis.py`, `sports.py`, `sports.json`
+(listMin only), `index.html` (list copy), `README.md`, `CLAUDE.md`,
+`claude/ranking-review.md`.
+
+**Not changed** Any percentage on any row, the tiers, the full boards, the
+graded record (past list picks keep their grades).
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-29 (tag pending) — Ranked internationals: goals line fixed, list bar 65%
 
 **What changed for a reader**

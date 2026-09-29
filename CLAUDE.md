@@ -17,9 +17,11 @@ games, say plainly when a call is weak, and never inflate a number to look good.
 
 The front page is the **Daily List**: the most likely results across every
 sport, one ranking per day, strongest tested hit rate first. One rule for
-all sports: a pick qualifies only if calls at its level landed ≥75% in
+all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
-blind-spot exclusions and no draws, and no tennis qualifying rounds. Every
+blind-spot exclusions and no draws, no tennis qualifying rounds, and a
+ranked international must clear its bar before the FIFA ranking too. Raised
+from 75% on 29 Sep 2026 at Douglas's request (`claude/ranking-review.md`). Every
 row shows its tested rate. See `claude/multi-sport.md`. It is the
 model's own independent read, with no bookmaker input, by Douglas's decision.
 The full board sits one tap behind it.

@@ -26,23 +26,24 @@ games, say plainly when a call is weak, and never inflate a number to look good.
 ## The Daily List
 
 The front page. One rule for every sport: a pick qualifies only if calls at its
-level **landed at least 75% of the time in testing** on games the model never
+level **landed at least 80% of the time in testing** on games the model never
 saw. The level differs by sport because the numbers do:
 
 | Sport | List threshold | Tested hit rate at that level |
 |---|---|---|
-| Football leagues | 75% | 78.9% of 242 (2025/26) |
-| Men's internationals (with FIFA ranking) | 65% | 76.5% of 791 (2022-24), 79.9% of 144 (2026) |
-| Tennis, main draw (ATP with ranking) | 65-70% | 78-80% across ATP/WTA, 2025 and 2026 |
-| Basketball | 70% | 79.7% / 80.4% |
-| Rugby | 60% | 78.0% / 75.1% |
-| NFL | 75% | 81.6% / 77.4% |
+| Football leagues | 80% | 84.0% of 131 (2025/26) |
+| Men's internationals | 75% | 81.6% of 49 (2026) |
+| Men's internationals (with FIFA ranking) | 75%, and 75% before the ranking | 84.3% of 89 (2026); both reads 75%+: 88.2% of 288 (2022-24) |
+| Tennis, main draw | 80% | ATP 89.1% of 92, WTA 87.0% of 138, ATP with ranking 85.6% of 118 (2026) |
+| Basketball | 75% | 84.5% / 82.2% |
+| Rugby | 70% | 82.3% / 81.6% |
+| NFL | 80% | 80.6% of 31 (check window) |
 | Baseball | not on the list | its strongest calls do not land often enough |
 
 Football also leaves out anything the model is structurally blind to (see
 Celtic's Law below) and never picks a draw; tennis leaves out qualifying
 rounds. Each day is one ranking across every sport by tested hit rate. Roughly
-one pick in four or five still misses: that is sport, and a higher bar does not
+one pick in five or six still misses: that is sport, and a higher bar does not
 remove it. The list is the model's own independent read, with no bookmaker
 input.
 

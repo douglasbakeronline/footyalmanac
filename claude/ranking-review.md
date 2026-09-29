@@ -63,3 +63,22 @@ hand-refitted ones. Both windows agree it helps.
   but changes every sport's rows and the list order. Douglas's call.
 - FIFA_W was not refitted. It passed its own test on 2026; one older window
   running high is not grounds to move a structural constant (rule 5).
+
+## Follow-up the same day: the list bar is 80%
+
+Douglas: the Daily List is for the strongest calls in the world, and Algeria
+should never have been on it. Two changes, pushed together:
+
+1. **Every sport's list now needs 80% landed in testing** (`sports.LIST_MIN_HIT`,
+   was 75%), by the same rule on the same stored bands. Leagues 75% -> 80%,
+   internationals 55% -> 75%, ranked internationals 65% -> 75%, tennis
+   70/70/65% -> 80% (75% passes on 2026 alone, but 2025 at that level is not
+   on file), NFL 75% -> 80%, basketball 70% -> 75%, rugby 60% -> 70%,
+   baseball still none.
+2. **A ranked international must clear the unranked bar (75%) on the model's
+   own number** before the FIFA ranking moves it (`modelConfidence` on the
+   row). 2022-24: both reads 75%+ landed 88.2% of 288; ranking-carried picks
+   at 75%+ landed 74.4% of 195. Algeria (57% before the ranking) is out.
+
+No bar makes a pick certain. At 80%, roughly one pick in five or six still
+misses, and a four-fold of 85% picks lands about half the time.

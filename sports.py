@@ -65,9 +65,10 @@ MIN_HOLDOUT, MAX_P_WORSE, MIN_GAIN = 250, 0.30, 0.0005
 # The Daily List takes a sport's games from the lowest confidence at which its
 # calls landed LIST_MIN_HIT or better in every test window holding at least
 # LIST_MIN_N such calls (and at least one window must). Shared with football
-# and tennis: every pick on the list landed three in four or better in testing.
+# and tennis: every pick on the list landed four in five or better in testing
+# (raised from three in four on 29 Sep 2026, Douglas's call).
 LIST_THRESHOLDS = (0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85)
-LIST_MIN_HIT, LIST_MIN_N = 0.75, 30
+LIST_MIN_HIT, LIST_MIN_N = 0.80, 30
 
 
 def list_threshold(windows):
