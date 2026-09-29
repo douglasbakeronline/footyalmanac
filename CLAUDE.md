@@ -216,7 +216,11 @@ These were each learned the hard way. Do not break them without asking.
 
 Separate home/away ratings (+0.0124 log loss), rest days (no effect), ten free
 per-band temperatures (overfit), heavier recent-form weighting, tuning on the
-live record.
+live record. Form re-tested 29 Sep 2026 at Douglas's request, calibrated, both
+seasons: a form-led model (form cap 0.30-0.50, or current season taking over
+after 3 games) is +0.005 log loss worse on both; FORM_MAX 0.10 a wash. What
+passed was this season counting sooner (SHRINK_FULL_SEASON 6 -> 4, shipped).
+See `claude/tuning-evidence.md`.
 
 ## Open items
 

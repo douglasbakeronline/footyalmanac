@@ -269,7 +269,13 @@ LEAGUES = {
 HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190, 6: 1.195}
 AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845, 6: 0.840}
 
-SHRINK_FULL_SEASON = 6.0   # pseudo-matches pulling a full season's rating toward league average
+# Pseudo-matches pulling a full season's rating toward league average. 6 until
+# 29 Sep 2026; 4 lets this season's results count at face value sooner. Tested
+# with the calibration curve refitted for each setting (the trap in
+# claude/tuning-evidence.md): 2025/26 -0.0004 log loss, p(worse) 0.04;
+# 2026/27 -0.0007, p(worse) 0.18 (789 fixtures; ESPN leagues not reachable
+# from the session that ran it). A form-led model scored worse on both.
+SHRINK_FULL_SEASON = 4.0
 
 # Hard bounds on attack and defence. Across a completed season no side in any
 # league covered here goes outside roughly 0.55-1.80, because a full campaign

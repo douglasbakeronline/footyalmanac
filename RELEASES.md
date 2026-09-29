@@ -22,6 +22,32 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-29-3 (tag pending) — This season's results count sooner
+
+**What changed for a reader** Club ratings now lean on this season's results
+earlier: a side's current record overrides last season after fewer games.
+Most rows move by a point or less. Internationals, tennis and the other
+sports are untouched.
+
+**Evidence** Douglas asked for a recent-form-led model. Tested properly
+(calibration refitted per setting, paired bootstrap, fit 2025/26, confirmed
+2026/27): a form-led model is about 0.005 log loss worse on both seasons,
+ten times the smallest change the gates accept, in the wrong direction.
+SHRINK_FULL_SEASON 6 -> 4 passed: -0.0004 (p(worse) 0.04), then -0.0007
+(p(worse) 0.18) on 789 current-season fixtures. ESPN leagues could not be
+fetched from the cloud session; CI builds with them. Table in
+`claude/tuning-evidence.md`.
+
+**Files** `engine.py`, `tune.py` (sweep values), `CLAUDE.md`,
+`claude/tuning-evidence.md`.
+
+**Not changed** FORM_MAX, BLEND_K, calibration.json (refitted by Monday's
+tune.yml), list bars, the record.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-29-2 (tag pending) — Daily List bar raised to 80%
 
 **What changed for a reader**

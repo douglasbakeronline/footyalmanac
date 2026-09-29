@@ -88,3 +88,28 @@ The 74 league strength coefficients, which the roadmap calls the single largest
 weakness. A league-only walk-forward cannot test them: within a league they
 cancel out entirely. Testing them needs a cross-competition harness built on
 European ties and cross-division cups. That is now the highest-value open item.
+
+
+## Re-test, 29 September 2026: a form-led model
+
+Douglas asked for the model to be led by this season's form after Needham
+Market (a league not covered) won on form. Every setting was scored with the
+calibration curve refitted for it, on 2025/26 (6,272 fixtures) and 2026/27
+(789; ESPN-sourced leagues were not reachable from the cloud session).
+
+| Setting | 2025/26 | 2026/27 | Verdict |
+|---|---|---|---|
+| FORM_MAX 0.10 | -0.0003, p 0.12 | -0.0006, p 0.17 | wash on fit |
+| FORM_MAX 0.30 | +0.0011 | +0.0009 | worse |
+| FORM_MAX 0.50 | +0.0050 | +0.0050 | worse |
+| form 0.30, last 3 | +0.0029 | +0.0020 | worse |
+| BLEND_K 3 (season takes over after 3 games) | +0.0017 | +0.0027 | worse |
+| Form-led: shrink 2, blend 3, form 0.30 | +0.0049 | +0.0059 | worse |
+| SHRINK_FULL_SEASON 3 | -0.0004, p 0.14 | -0.0009, p 0.23 | passes |
+| **SHRINK_FULL_SEASON 4** | **-0.0004, p 0.04** | **-0.0007, p 0.18** | **shipped** |
+| shrink 3 + form 0.10 | -0.0004, p 0.20 | -0.0009, p 0.29 | no better than shrink alone |
+
+Heavy form weighting chases noise: a five-game run is mostly luck at these
+goal rates. What holds up is letting this season's full record count sooner,
+which is the honest version of "this season's form". calibration.json was fit
+at shrink 6; Monday's tune.yml refits it on the full data.

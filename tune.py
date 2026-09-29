@@ -304,8 +304,8 @@ def report(data):
         trial("TEMPERATURE", 1.15, T, T=T)
     for r in (-0.12, -0.08, -0.04, 0.0):
         trial("RHO", -0.06, r, rho=r)
-    for v in (2, 3, 4, 8, 12):
-        trial("SHRINK_FULL_SEASON", 6, v, {"shrink": v})
+    for v in (2, 3, 6, 8, 12):
+        trial("SHRINK_FULL_SEASON", 4, v, {"shrink": v})
     for v in (3, 4, 8, 12, 20):
         trial("BLEND_K", 6, v, {"blend_k": v})
     for v in (0.0, 0.10, 0.15, 0.20, 0.30):
