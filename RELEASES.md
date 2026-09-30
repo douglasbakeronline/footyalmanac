@@ -22,6 +22,24 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-8 (tag pending) — Fix: API-Football calls paced, all wider leagues fetched
+
+**What changed** The first live build of the wider leagues fetched them ten
+at a time; the plan allows five calls a second, the refused calls came back
+as errors, and 46 of the 66 leagues playing this week were read as "no data"
+(safe: they were left off, not guessed). Calls are now paced at four a
+second, a refused call is retried with back-off, and a failure is never
+remembered as an empty answer.
+
+**Evidence** 40 calls fired ten at once: 10 seconds, none refused; the three
+empty answers are leagues whose 2026 season API-Football has not opened.
+
+**Files** `sources.py`.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-7 (tag pending) — Fix: big clubs matched again after the wider leagues
 
 **What changed** The wider leagues added clubs such as "Benfica Castelo

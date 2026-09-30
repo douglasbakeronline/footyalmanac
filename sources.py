@@ -11,7 +11,7 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import csv, io, json, os, re, threading, time, urllib.request, concurrent.futures
+import csv, io, json, os, re, sys, threading, time, urllib.request, concurrent.futures
 from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
@@ -498,8 +498,16 @@ AF_DEAD = {"PST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"}
 _AF_CACHE, _AF_LOCK = {}, threading.Lock()
 
 
+_AF_PACE, _AF_NEXT = 0.25, [0.0]   # Pro allows 5 calls a second; keep under it
+
+
 def _af_get(path):
-    """One API call, cached for the build. [] on any failure or missing key."""
+    """One API call, cached for the build. [] on any failure or missing key.
+
+    Paced and retried: the plan refuses more than 5 calls a second with an
+    error body, and on 30 Sep 2026 a parallel first build lost 46 leagues
+    that way, each quietly read as "no data". A refused call is retried, and
+    a failure is never remembered as an empty answer."""
     key = os.environ.get("API_FOOTBALL_KEY")
     if not key:
         return []
@@ -508,14 +516,29 @@ def _af_get(path):
             return _AF_CACHE[path]
     req = urllib.request.Request(AF_BASE + path, headers={"x-apisports-key": key,
                                                           "User-Agent": "football-almanac/1.0"})
-    try:
-        doc = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
-        out = [] if doc.get("errors") else (doc.get("response") or [])
-    except Exception:
-        out = []
-    with _AF_LOCK:
-        _AF_CACHE[path] = out
-    return out
+    for attempt in range(6):
+        with _AF_LOCK:
+            wait = _AF_NEXT[0] - time.time()
+            _AF_NEXT[0] = max(time.time(), _AF_NEXT[0]) + _AF_PACE
+        if wait > 0:
+            time.sleep(wait)
+        try:
+            doc = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
+        except Exception:
+            time.sleep(1 + attempt)
+            continue
+        errs = doc.get("errors")
+        if errs:
+            if "rateLimit" in str(errs) or "requests" in str(errs).lower():
+                time.sleep(2 + 2 * attempt)
+                continue
+            return []                     # a real refusal (bad key, plan): not retried, not cached
+        out = doc.get("response") or []
+        with _AF_LOCK:
+            _AF_CACHE[path] = out
+        return out
+    print(f"  API-Football gave up on {path} after retries", file=sys.stderr)
+    return []
 
 
 AF_CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".afcache")
