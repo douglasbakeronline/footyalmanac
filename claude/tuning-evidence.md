@@ -135,3 +135,23 @@ opponent's), calibration refitted per setting, both seasons.
 Worse at every strength. The ratings are built from goals scored and
 conceded, so these sides are already priced to lose; a second penalty counts
 the same evidence twice. Rejected.
+
+## Re-test, 30 September 2026: recency built into the ratings
+
+Douglas again asked for recent form to be weighted heavily. Unlike the 29 Sep
+variants (a form multiplier on top), this weights each team's own season so
+its k-th most recent match counts decay^k in the attack/defence rating.
+Calibration refitted per setting, 2025/26 fit, 2026/27 check (789).
+
+| Decay | Half-life | 2025/26 | 2026/27 |
+|---|---|---|---|
+| 0.98 | 34 games | -0.0002, p(worse) 0.20 | -0.0001, 0.38 |
+| 0.95 | 13.5 | +0.0001 | -0.0001 |
+| 0.92 | 8.3 | +0.0010 | +0.0001 |
+| 0.90 | 6.6 | +0.0018, 0.96 | +0.0002 |
+| 0.85 | 4.3 | +0.0042, 1.00 | +0.0006 |
+| 0.80 | 3.1 | +0.0067, 1.00 | +0.0010 |
+
+A long half-life is a wash; anything that makes recent games dominate is
+worse, and more so the harder it leans. Over a full season, what a side did
+in August is still evidence in March. Rejected; nothing shipped.
