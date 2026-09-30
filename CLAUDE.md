@@ -68,6 +68,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
 | `claude/coverage-expansion.md` | Why 61 competitions come from ESPN, `backfill.py`, which leagues still lack a prior season. |
 | `claude/results-review-board.md` | The "How it went" board, tier ladder, live calibration. |
+| `claude/data-expansion-plan.md` | API-Football Pro (bought 30 Sep 2026), where the key lives, the order of work: coverage, lower leagues, replay test, U21, UFC, boxing. Read before any paid-data or new-sport work. |
 | `claude/brand-identity.md` | Mark, type, colour tokens with contrast ratios, sticky bar, assets. |
 
 **The code on `main` is the source of truth.** The notes are snapshots from
