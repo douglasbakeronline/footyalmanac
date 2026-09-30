@@ -1,22 +1,22 @@
 {
  "fitted": {
-  "a": 1.095,
-  "b": -0.35
+  "a": 1.135,
+  "b": -0.3
  },
  "fitSeason": {
   "n": 7484,
-  "shipped": 1.0219,
-  "fitted": 1.0211
+  "shipped": 1.0211,
+  "fitted": 1.0208
  },
  "checkSeason": {
-  "n": 1308,
-  "shipped": 1.026,
-  "fitted": 1.0245,
-  "delta": -0.0015,
-  "sd": 0.0009,
-  "pWorse": 0.048,
-  "shippedAcc": 0.4862,
-  "fittedAcc": 0.4862
+  "n": 1309,
+  "shipped": 1.0249,
+  "fitted": 1.024,
+  "delta": -0.0008,
+  "sd": 0.0006,
+  "pWorse": 0.076,
+  "shippedAcc": 0.482,
+  "fittedAcc": 0.482
  },
  "gates": {
   "enoughData": true,
@@ -24,5 +24,5 @@
   "worthIt": true
  },
  "pass": true,
- "generated": "2026-09-28"
+ "generated": "2026-09-30"
 }

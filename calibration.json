@@ -1,15 +1,15 @@
 {
- "a": 1.095,
- "b": -0.35,
- "fitted": "2026-09-28",
+ "a": 1.135,
+ "b": -0.3,
+ "fitted": "2026-09-30",
  "check": {
-  "n": 1308,
-  "shipped": 1.026,
-  "fitted": 1.0245,
-  "delta": -0.0015,
-  "sd": 0.0009,
-  "pWorse": 0.048,
-  "shippedAcc": 0.4862,
-  "fittedAcc": 0.4862
+  "n": 1309,
+  "shipped": 1.0249,
+  "fitted": 1.024,
+  "delta": -0.0008,
+  "sd": 0.0006,
+  "pWorse": 0.076,
+  "shippedAcc": 0.482,
+  "fittedAcc": 0.482
  }
 }
