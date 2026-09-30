@@ -76,3 +76,13 @@ replay passes. A name mismatch fails loudly.
   `sources.AF_BOARD_ONLY` is now the step-3 set used by `build.NO_LIST` and
   `tune.codes()`; the steps 1-2 leagues stay in the calibration fit and on
   the shared list rule.
+- **30 Sep, discovery replay and 236 leagues.** Every senior AF league not
+  covered, replayed walk-forward (script kept in the session scratchpad, logic
+  as `tune.lambdas` + live calibration). 357 with data; 247 beat a baseline on
+  the fit season; 11 duplicates removed; `af-leagues.json` holds the 227 (nine women's leagues removed after).
+  Registered in `engine.AF_EXTRA` (tier 2, strength 0.5, as replayed), list
+  bar `build.LIST_MIN_AFX` = 0.75 with own bands `ACCURACY_BANDS_AFX`, out of
+  `tune.codes()`. Finished seasons cached in `.afcache/` (Actions cache in CI).
+  To re-run: fetch `/leagues`, filter senior leagues with 3+ seasons, replay,
+  keep those beating the outcome-share baseline, dedupe against current
+  coverage by club-list overlap (>=0.5, plus split-season top flights).

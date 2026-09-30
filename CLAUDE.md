@@ -239,6 +239,7 @@ strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 - No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
   (84 symbols); a new league with a new `iso` needs a symbol added.
 
+- 227 wider leagues from API-Football (`af-leagues.json`, `engine.AF_EXTRA`): tier 2, own bands, list bar 75% (`build.LIST_MIN_AFX`), out of the calibration fit. National League, North and South also come from `AF` now.
 - English step 3 (four leagues, `sources.AF`) is on the board and reserve, never the Daily List: replayed below the bar (`build.NO_LIST`).
 - The Daily List fills to 20 a day with a **reserve** (below the bar, Firm
   62%+, clean), flagged per pipeline as `reserve` and graded as its own group

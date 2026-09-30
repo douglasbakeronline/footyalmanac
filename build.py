@@ -110,6 +110,12 @@ def solve_goals(grid, pick, target):
 ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
 NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
 
+# The discovery-replay leagues (engine.AF_EXTRA): their own bands, from the
+# 2025 replay, and their own list bar by the shared rule: 75%+ landed 82.3%
+# of 2,236 (2025) and 80.0% of 765 (2026 so far); 70%+ 79.1% / 75.8% fails.
+ACCURACY_BANDS_AFX = [{"from": 0.45, "hit": 0.5838, "n": 29687, "quoted": 0.5709}, {"from": 0.5, "hit": 0.6261, "n": 20677, "quoted": 0.6132}, {"from": 0.55, "hit": 0.6695, "n": 13872, "quoted": 0.657}, {"from": 0.6, "hit": 0.7121, "n": 9156, "quoted": 0.7003}, {"from": 0.65, "hit": 0.7483, "n": 5916, "quoted": 0.7425}, {"from": 0.7, "hit": 0.7908, "n": 3662, "quoted": 0.7849}, {"from": 0.75, "hit": 0.8229, "n": 2236, "quoted": 0.8239}, {"from": 0.8, "hit": 0.853, "n": 1272, "quoted": 0.8628}, {"from": 0.85, "hit": 0.8997, "n": 628, "quoted": 0.9036}]
+LIST_MIN_AFX = 0.75
+
 
 def accuracy_for(conf, intl, ranked=False, league=None):
     def pick(bands):
@@ -118,6 +124,9 @@ def accuracy_for(conf, intl, ranked=False, league=None):
             if conf >= b["from"]:
                 best = b
         return best
+    if league in S.AF_EXTRA:
+        b = pick(ACCURACY_BANDS_AFX)
+        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025, wider leagues"} if b else None
     if league in NO_LIST:
         b = pick(ACCURACY_BANDS_STEP3)
         return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025-26, step 3"} if b else None
@@ -151,6 +160,8 @@ def list_eligible(g):
     if g["league"] in NO_LIST:
         return False
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
+    if g["league"] in S.AF_EXTRA:
+        bar = LIST_MIN_AFX
     if pick == "d" or p[pick] < bar or g["celtic"] or g["unrated"]:
         return False
     if g.get("rankAdjusted") and (g.get("modelConfidence") or 0) < LIST_MIN["intl"]:

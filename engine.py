@@ -270,6 +270,29 @@ LEAGUES = {
     "asiangames":   {"name": "Asian Games football (U23)",       "short": "AGU23","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 219, "international": True, "ageProxy": True, "live": True},
 }
 
+# API-Football's wider coverage (30 Sep 2026, claude/data-expansion-plan.md).
+# af-leagues.json lists every league that passed the discovery replay: priced
+# walk-forward with the live calibration curve, it beat a baseline on 2025,
+# and as a group its win picks at 75%+ landed 82.3% of 2,236 (2025) and 80.0%
+# of 765 (2026). Duplicates of leagues already covered were dropped. Tier 2 and
+# strength 0.5 are what the replay used; a flag shows only where the country
+# already has one.
+def _af_extra():
+    import json as _j, os as _o
+    p = _o.path.join(_o.path.dirname(_o.path.abspath(__file__)), "af-leagues.json")
+    try:
+        return _j.load(open(p))
+    except Exception:
+        return []
+
+AF_EXTRA = _af_extra()
+_ISO_BY_COUNTRY = {m["country"]: m["iso"] for m in LEAGUES.values()
+                   if m.get("iso") and m["iso"] != "fifa"}
+for _i, _e in enumerate(AF_EXTRA):
+    LEAGUES[_e["code"]] = {"iso": _ISO_BY_COUNTRY.get(_e["country"], ""), "short": _e["name"][:3].upper(),
+                           "name": _e["name"], "country": _e["country"], "tier": 2, "strength": 0.5,
+                           "order": 400 + _i, "season": _e["season"], "prev": _e["prev"], "afExtra": True}
+
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly

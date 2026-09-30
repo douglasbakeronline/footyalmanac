@@ -1,0 +1,2499 @@
+[
+{
+"code": "af.311",
+"id": 311,
+"name": "1st Division",
+"country": "Albania",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.512",
+"id": 512,
+"name": "2nd Division - Group A",
+"country": "Albania",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.513",
+"id": 513,
+"name": "2nd Division - Group B",
+"country": "Albania",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.186",
+"id": 186,
+"name": "Ligue 1",
+"country": "Algeria",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.187",
+"id": 187,
+"name": "Ligue 2",
+"country": "Algeria",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.312",
+"id": 312,
+"name": "1a Divisi\u00f3",
+"country": "Andorra",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.1048",
+"id": 1048,
+"name": "Premier Division",
+"country": "Antigua And Barbuda",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.131",
+"id": 131,
+"name": "Primera B Metropolitana",
+"country": "Argentina",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.132",
+"id": 132,
+"name": "Primera C",
+"country": "Argentina",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.129",
+"id": 129,
+"name": "Primera Nacional",
+"country": "Argentina",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.134",
+"id": 134,
+"name": "Torneo Federal A",
+"country": "Argentina",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.343",
+"id": 343,
+"name": "First League",
+"country": "Armenia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.191",
+"id": 191,
+"name": "Brisbane Premier League",
+"country": "Australia",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.192",
+"id": 192,
+"name": "New South Wales NPL",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.835",
+"id": 835,
+"name": "New South Wales NPL 2",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.481",
+"id": 481,
+"name": "Northern NSW NPL",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.833",
+"id": 833,
+"name": "Queensland Premier League",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.834",
+"id": 834,
+"name": "South Australia State League 1",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.195",
+"id": 195,
+"name": "Victoria NPL",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.836",
+"id": 836,
+"name": "Victoria NPL 2",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.196",
+"id": 196,
+"name": "Western Australia NPL",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.1094",
+"id": 1094,
+"name": "Western Australia State League 1",
+"country": "Australia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.219",
+"id": 219,
+"name": "2. Liga",
+"country": "Austria",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.222",
+"id": 222,
+"name": "Regionalliga - Mitte",
+"country": "Austria",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.221",
+"id": 221,
+"name": "Regionalliga - Ost",
+"country": "Austria",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.223",
+"id": 223,
+"name": "Regionalliga - West",
+"country": "Austria",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.418",
+"id": 418,
+"name": "Birinci Dasta",
+"country": "Azerbaijan",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.117",
+"id": 117,
+"name": "1. Division",
+"country": "Belarus",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.118",
+"id": 118,
+"name": "2. Division",
+"country": "Belarus",
+"season": "2024",
+"prev": [
+"2023",
+"2022"
+]
+},
+{
+"code": "af.145",
+"id": 145,
+"name": "Challenger Pro League",
+"country": "Belgium",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.144",
+"id": 144,
+"name": "Jupiler Pro League",
+"country": "Belgium",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.316",
+"id": 316,
+"name": "1st League - FBiH",
+"country": "Bosnia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.317",
+"id": 317,
+"name": "1st League - RS",
+"country": "Bosnia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.478",
+"id": 478,
+"name": "Ga\u00facho - 2",
+"country": "Brazil",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.475",
+"id": 475,
+"name": "Paulista - A1",
+"country": "Brazil",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.76",
+"id": 76,
+"name": "Serie D",
+"country": "Brazil",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.173",
+"id": 173,
+"name": "Second League",
+"country": "Bulgaria",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.566",
+"id": 566,
+"name": "Ligue A",
+"country": "Burundi",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.410",
+"id": 410,
+"name": "C-League",
+"country": "Cambodia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.411",
+"id": 411,
+"name": "Elite One",
+"country": "Cameroon",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.813",
+"id": 813,
+"name": "Elite Two",
+"country": "Cameroon",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.479",
+"id": 479,
+"name": "Canadian Premier League",
+"country": "Canada",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.923",
+"id": 923,
+"name": "League 1 Ontario",
+"country": "Canada",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.170",
+"id": 170,
+"name": "League One",
+"country": "China",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.929",
+"id": 929,
+"name": "League Two",
+"country": "China",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.240",
+"id": 240,
+"name": "Primera B",
+"country": "Colombia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.946",
+"id": 946,
+"name": "Second NL",
+"country": "Croatia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.120",
+"id": 120,
+"name": "1. Division",
+"country": "Denmark",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.122",
+"id": 122,
+"name": "2. Division",
+"country": "Denmark",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.862",
+"id": 862,
+"name": "3. Division",
+"country": "Denmark",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.982",
+"id": 982,
+"name": "Denmark Series - Promotion Round",
+"country": "Denmark",
+"season": "2024",
+"prev": [
+"2023",
+"2022"
+]
+},
+{
+"code": "af.983",
+"id": 983,
+"name": "Denmark Series - Relegation Round",
+"country": "Denmark",
+"season": "2024",
+"prev": [
+"2023",
+"2022"
+]
+},
+{
+"code": "af.887",
+"id": 887,
+"name": "Second League",
+"country": "Egypt",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.932",
+"id": 932,
+"name": "Non League Div One - Northern East",
+"country": "England",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.933",
+"id": 933,
+"name": "Non League Div One - Southern Central",
+"country": "England",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.328",
+"id": 328,
+"name": "Esiliiga A",
+"country": "Estonia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.1126",
+"id": 1126,
+"name": "Esiliiga B",
+"country": "Estonia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.847",
+"id": 847,
+"name": "Premier League",
+"country": "Eswatini",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.366",
+"id": 366,
+"name": "1. Deild",
+"country": "Faroe Islands",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.367",
+"id": 367,
+"name": "Meistaradeildin",
+"country": "Faroe Islands",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.1087",
+"id": 1087,
+"name": "Ykk\u00f6sliiga",
+"country": "Finland",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.63",
+"id": 63,
+"name": "Ligue 3",
+"country": "France",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.67",
+"id": 67,
+"name": "National 2 - Group A",
+"country": "France",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.69",
+"id": 69,
+"name": "National 2 - Group C",
+"country": "France",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.463",
+"id": 463,
+"name": "National 3 - Group C",
+"country": "France",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.464",
+"id": 464,
+"name": "National 3 - Group D",
+"country": "France",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.466",
+"id": 466,
+"name": "National 3 - Group F",
+"country": "France",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.1029",
+"id": 1029,
+"name": "National 3 - Group G",
+"country": "France",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.467",
+"id": 467,
+"name": "National 3 - Group H",
+"country": "France",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.468",
+"id": 468,
+"name": "National 3 - Group I",
+"country": "France",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.469",
+"id": 469,
+"name": "National 3 - Group J",
+"country": "France",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.470",
+"id": 470,
+"name": "National 3 - Group K",
+"country": "France",
+"season": "2023-24",
+"prev": [
+"2022-23",
+"2021-22"
+]
+},
+{
+"code": "af.471",
+"id": 471,
+"name": "National 3 - Group L",
+"country": "France",
+"season": "2022-23",
+"prev": [
+"2021-22",
+"2020-21"
+]
+},
+{
+"code": "af.472",
+"id": 472,
+"name": "National 3 - Group M",
+"country": "France",
+"season": "2022-23",
+"prev": [
+"2021-22",
+"2020-21"
+]
+},
+{
+"code": "af.968",
+"id": 968,
+"name": "Championnat D1",
+"country": "Gabon",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.845",
+"id": 845,
+"name": "GFA League",
+"country": "Gambia",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.326",
+"id": 326,
+"name": "Erovnuli Liga 2",
+"country": "Georgia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.1104",
+"id": 1104,
+"name": "Liga 3",
+"country": "Georgia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.938",
+"id": 938,
+"name": "Oberliga - Bayern Nord",
+"country": "Germany",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.939",
+"id": 939,
+"name": "Oberliga - Bayern S\u00fcd",
+"country": "Germany",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.85",
+"id": 85,
+"name": "Regionalliga - Nordost",
+"country": "Germany",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.86",
+"id": 86,
+"name": "Regionalliga - SudWest",
+"country": "Germany",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.87",
+"id": 87,
+"name": "Regionalliga - West",
+"country": "Germany",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.198",
+"id": 198,
+"name": "Football League",
+"country": "Greece",
+"season": "2020",
+"prev": [
+"2019",
+"2018"
+]
+},
+{
+"code": "af.576",
+"id": 576,
+"name": "Gamma Ethniki - Group 1",
+"country": "Greece",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.577",
+"id": 577,
+"name": "Gamma Ethniki - Group 2",
+"country": "Greece",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.578",
+"id": 578,
+"name": "Gamma Ethniki - Group 3",
+"country": "Greece",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.579",
+"id": 579,
+"name": "Gamma Ethniki - Group 4",
+"country": "Greece",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.377",
+"id": 377,
+"name": "Division d'Honneur",
+"country": "Guadeloupe",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.378",
+"id": 378,
+"name": "Ligue 1",
+"country": "Guinea",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.381",
+"id": 381,
+"name": "HKFA 1st Division",
+"country": "Hong Kong",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.380",
+"id": 380,
+"name": "Premier League",
+"country": "Hong Kong",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.272",
+"id": 272,
+"name": "NB II",
+"country": "Hungary",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.633",
+"id": 633,
+"name": "NB III - Northeast",
+"country": "Hungary",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.635",
+"id": 635,
+"name": "NB III - Northwest",
+"country": "Hungary",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.1023",
+"id": 1023,
+"name": "NB III - Southeast",
+"country": "Hungary",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.634",
+"id": 634,
+"name": "NB III - Southwest",
+"country": "Hungary",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.165",
+"id": 165,
+"name": "1. Deild",
+"country": "Iceland",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.164",
+"id": 164,
+"name": "\u00darvalsdeild",
+"country": "Iceland",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.1020",
+"id": 1020,
+"name": "Calcutta Premier Division",
+"country": "India",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.275",
+"id": 275,
+"name": "Liga 2",
+"country": "Indonesia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.291",
+"id": 291,
+"name": "Azadegan League",
+"country": "Iran",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.290",
+"id": 290,
+"name": "Persian Gulf Pro League",
+"country": "Iran",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.542",
+"id": 542,
+"name": "Iraqi League",
+"country": "Iraq",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.358",
+"id": 358,
+"name": "First Division",
+"country": "Ireland",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.138",
+"id": 138,
+"name": "Serie C - Girone A",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.426",
+"id": 426,
+"name": "Serie D - Girone A",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.427",
+"id": 427,
+"name": "Serie D - Girone B",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.428",
+"id": 428,
+"name": "Serie D - Girone C",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.429",
+"id": 429,
+"name": "Serie D - Girone D",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.430",
+"id": 430,
+"name": "Serie D - Girone E",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.431",
+"id": 431,
+"name": "Serie D - Girone F",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.432",
+"id": 432,
+"name": "Serie D - Girone G",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.433",
+"id": 433,
+"name": "Serie D - Girone H",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.434",
+"id": 434,
+"name": "Serie D - Girone I",
+"country": "Italy",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.322",
+"id": 322,
+"name": "Premier League",
+"country": "Jamaica",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.99",
+"id": 99,
+"name": "J2 League",
+"country": "Japan",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.100",
+"id": 100,
+"name": "J3 League",
+"country": "Japan",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.497",
+"id": 497,
+"name": "Japan Football League",
+"country": "Japan",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.387",
+"id": 387,
+"name": "League",
+"country": "Jordan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.388",
+"id": 388,
+"name": "1. Division",
+"country": "Kazakhstan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.389",
+"id": 389,
+"name": "Premier League",
+"country": "Kazakhstan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.276",
+"id": 276,
+"name": "FKF Premier League",
+"country": "Kenya",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.330",
+"id": 330,
+"name": "Premier League",
+"country": "Kuwait",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.569",
+"id": 569,
+"name": "Premier League",
+"country": "Kyrgyzstan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.364",
+"id": 364,
+"name": "1. Liga",
+"country": "Latvia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.390",
+"id": 390,
+"name": "Premier League",
+"country": "Lebanon",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.962",
+"id": 962,
+"name": "Premier League",
+"country": "Lesotho",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.361",
+"id": 361,
+"name": "1 Lyga",
+"country": "Lithuania",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.371",
+"id": 371,
+"name": "First League",
+"country": "Macedonia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.279",
+"id": 279,
+"name": "Premier League",
+"country": "Malaysia",
+"season": "2022",
+"prev": [
+"2021",
+"2020"
+]
+},
+{
+"code": "af.278",
+"id": 278,
+"name": "Super League",
+"country": "Malaysia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.392",
+"id": 392,
+"name": "Challenge League",
+"country": "Malta",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.872",
+"id": 872,
+"name": "Liga Premier Serie B",
+"country": "Mexico",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.263",
+"id": 263,
+"name": "Liga de Expansi\u00f3n MX",
+"country": "Mexico",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.395",
+"id": 395,
+"name": "Liga 1",
+"country": "Moldova",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.588",
+"id": 588,
+"name": "National League",
+"country": "Myanmar",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.956",
+"id": 956,
+"name": "National League - Northern",
+"country": "New Zealand",
+"season": "2025",
+"prev": [
+"2024",
+"2023"
+]
+},
+{
+"code": "af.396",
+"id": 396,
+"name": "Primera Division",
+"country": "Nicaragua",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.104",
+"id": 104,
+"name": "1. Division",
+"country": "Norway",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.473",
+"id": 473,
+"name": "2. Division - Group 1",
+"country": "Norway",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.474",
+"id": 474,
+"name": "2. Division - Group 2",
+"country": "Norway",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.406",
+"id": 406,
+"name": "Professional League",
+"country": "Oman",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.586",
+"id": 586,
+"name": "West Bank Premier League",
+"country": "Palestine",
+"season": "2023",
+"prev": [
+"2022",
+"2021"
+]
+},
+{
+"code": "af.457",
+"id": 457,
+"name": "Campeonato de Portugal Prio - Group A",
+"country": "Portugal",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.458",
+"id": 458,
+"name": "Campeonato de Portugal Prio - Group B",
+"country": "Portugal",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.459",
+"id": 459,
+"name": "Campeonato de Portugal Prio - Group C",
+"country": "Portugal",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.460",
+"id": 460,
+"name": "Campeonato de Portugal Prio - Group D",
+"country": "Portugal",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.284",
+"id": 284,
+"name": "Liga II",
+"country": "Romania",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.236",
+"id": 236,
+"name": "First League",
+"country": "Russia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.1025",
+"id": 1025,
+"name": "Second League A - Division A Gold",
+"country": "Russia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.404",
+"id": 404,
+"name": "Campionato",
+"country": "San Marino",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.308",
+"id": 308,
+"name": "Division 1",
+"country": "Saudi Arabia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.183",
+"id": 183,
+"name": "League One",
+"country": "Scotland",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.184",
+"id": 184,
+"name": "League Two",
+"country": "Scotland",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.403",
+"id": 403,
+"name": "Ligue 1",
+"country": "Senegal",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.287",
+"id": 287,
+"name": "Prva Liga",
+"country": "Serbia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.572",
+"id": 572,
+"name": "Srpska Liga - Belgrade",
+"country": "Serbia",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.574",
+"id": 574,
+"name": "Srpska Liga - East",
+"country": "Serbia",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.573",
+"id": 573,
+"name": "Srpska Liga - Vojvodina",
+"country": "Serbia",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.575",
+"id": 575,
+"name": "Srpska Liga - West",
+"country": "Serbia",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.645",
+"id": 645,
+"name": "3. liga - East",
+"country": "Slovakia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.644",
+"id": 644,
+"name": "3. liga - West",
+"country": "Slovakia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.846",
+"id": 846,
+"name": "Somali Premier League",
+"country": "Somalia",
+"season": "2024-25",
+"prev": [
+"2023-24",
+"2022-23"
+]
+},
+{
+"code": "af.289",
+"id": 289,
+"name": "1st Division",
+"country": "South Africa",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.293",
+"id": 293,
+"name": "K League 2",
+"country": "South Korea",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.295",
+"id": 295,
+"name": "K3 League",
+"country": "South Korea",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.875",
+"id": 875,
+"name": "Segunda Divisi\u00f3n RFEF - Group 1",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.876",
+"id": 876,
+"name": "Segunda Divisi\u00f3n RFEF - Group 2",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.877",
+"id": 877,
+"name": "Segunda Divisi\u00f3n RFEF - Group 3",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.878",
+"id": 878,
+"name": "Segunda Divisi\u00f3n RFEF - Group 4",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.879",
+"id": 879,
+"name": "Segunda Divisi\u00f3n RFEF - Group 5",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.439",
+"id": 439,
+"name": "Tercera Divisi\u00f3n RFEF - Group 1",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.449",
+"id": 449,
+"name": "Tercera Divisi\u00f3n RFEF - Group 11",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.450",
+"id": 450,
+"name": "Tercera Divisi\u00f3n RFEF - Group 12",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.451",
+"id": 451,
+"name": "Tercera Divisi\u00f3n RFEF - Group 13",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.452",
+"id": 452,
+"name": "Tercera Divisi\u00f3n RFEF - Group 14",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.453",
+"id": 453,
+"name": "Tercera Divisi\u00f3n RFEF - Group 15",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.454",
+"id": 454,
+"name": "Tercera Divisi\u00f3n RFEF - Group 16",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.455",
+"id": 455,
+"name": "Tercera Divisi\u00f3n RFEF - Group 17",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.456",
+"id": 456,
+"name": "Tercera Divisi\u00f3n RFEF - Group 18",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.440",
+"id": 440,
+"name": "Tercera Divisi\u00f3n RFEF - Group 2",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.441",
+"id": 441,
+"name": "Tercera Divisi\u00f3n RFEF - Group 3",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.442",
+"id": 442,
+"name": "Tercera Divisi\u00f3n RFEF - Group 4",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.443",
+"id": 443,
+"name": "Tercera Divisi\u00f3n RFEF - Group 5",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.444",
+"id": 444,
+"name": "Tercera Divisi\u00f3n RFEF - Group 6",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.445",
+"id": 445,
+"name": "Tercera Divisi\u00f3n RFEF - Group 7",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.446",
+"id": 446,
+"name": "Tercera Divisi\u00f3n RFEF - Group 8",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.447",
+"id": 447,
+"name": "Tercera Divisi\u00f3n RFEF - Group 9",
+"country": "Spain",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.568",
+"id": 568,
+"name": "Eerste Divisie",
+"country": "Suriname",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.592",
+"id": 592,
+"name": "Division 2 - Norra G\u00f6taland",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.593",
+"id": 593,
+"name": "Division 2 - Norra Svealand",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.594",
+"id": 594,
+"name": "Division 2 - Norrland",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.597",
+"id": 597,
+"name": "Division 2 - S\u00f6dra G\u00f6taland",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.595",
+"id": 595,
+"name": "Division 2 - S\u00f6dra Svealand",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.596",
+"id": 596,
+"name": "Division 2 - V\u00e4stra G\u00f6taland",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.563",
+"id": 563,
+"name": "Ettan - Norra",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.564",
+"id": 564,
+"name": "Ettan - S\u00f6dra",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.114",
+"id": 114,
+"name": "Superettan",
+"country": "Sweden",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.600",
+"id": 600,
+"name": "1. Liga Classic - Group 2",
+"country": "Switzerland",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.601",
+"id": 601,
+"name": "1. Liga Classic - Group 3",
+"country": "Switzerland",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.208",
+"id": 208,
+"name": "Challenge League",
+"country": "Switzerland",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.571",
+"id": 571,
+"name": "Vysshaya Liga",
+"country": "Tajikistan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.567",
+"id": 567,
+"name": "Ligi kuu Bara",
+"country": "Tanzania",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.591",
+"id": 591,
+"name": "Pro League",
+"country": "Trinidad And Tobago",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.202",
+"id": 202,
+"name": "Ligue 1",
+"country": "Tunisia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.828",
+"id": 828,
+"name": "Ligue 2",
+"country": "Tunisia",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.204",
+"id": 204,
+"name": "1. Lig",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.205",
+"id": 205,
+"name": "2. Lig",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.552",
+"id": 552,
+"name": "3. Lig - Group 1",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.553",
+"id": 553,
+"name": "3. Lig - Group 2",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.554",
+"id": 554,
+"name": "3. Lig - Group 3",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.1027",
+"id": 1027,
+"name": "3. Lig - Group 4",
+"country": "Turkey",
+"season": "2025-26",
+"prev": [
+"2024-25",
+"2023-24"
+]
+},
+{
+"code": "af.203",
+"id": 203,
+"name": "S\u00fcper Lig",
+"country": "Turkey",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.636",
+"id": 636,
+"name": "\u00ddokary Liga",
+"country": "Turkmenistan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.585",
+"id": 585,
+"name": "Premier League",
+"country": "Uganda",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.336",
+"id": 336,
+"name": "Druha Liga",
+"country": "Ukraine",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.334",
+"id": 334,
+"name": "Persha Liga",
+"country": "Ukraine",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.303",
+"id": 303,
+"name": "Division 1",
+"country": "United Arab Emirates",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.301",
+"id": 301,
+"name": "Pro League",
+"country": "United Arab Emirates",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.269",
+"id": 269,
+"name": "Segunda Divisi\u00f3n",
+"country": "Uruguay",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.369",
+"id": 369,
+"name": "Super League",
+"country": "Uzbekistan",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.300",
+"id": 300,
+"name": "Segunda Divisi\u00f3n",
+"country": "Venezuela",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+},
+{
+"code": "af.340",
+"id": 340,
+"name": "V.League 1",
+"country": "Vietnam",
+"season": "2027",
+"prev": [
+"2026",
+"2025"
+]
+},
+{
+"code": "af.637",
+"id": 637,
+"name": "V.League 2",
+"country": "Vietnam",
+"season": "2027",
+"prev": [
+"2026",
+"2025"
+]
+},
+{
+"code": "af.400",
+"id": 400,
+"name": "Super League",
+"country": "Zambia",
+"season": "2026-27",
+"prev": [
+"2025-26",
+"2024-25"
+]
+},
+{
+"code": "af.401",
+"id": 401,
+"name": "Premier Soccer League",
+"country": "Zimbabwe",
+"season": "2026",
+"prev": [
+"2025",
+"2024"
+]
+}
+]

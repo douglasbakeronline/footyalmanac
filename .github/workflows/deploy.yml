@@ -39,6 +39,14 @@ jobs:
         with:
           python-version: "3.12"
 
+      # Finished API-Football seasons (sources._af_season): fetched once and
+      # kept, so a build costs about one call per league, not three.
+      - uses: actions/cache@v4
+        with:
+          path: .afcache
+          key: afcache-${{ github.run_id }}
+          restore-keys: afcache-
+
       # A club whose two spellings stop meeting is invisible: no error, no
       # flag on the page, just a fixture priced as though this season had not
       # started. Checked before the build so a bad name change stops the

@@ -22,6 +22,37 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-6 (tag pending) — 227 more leagues worldwide
+
+**What changed for a reader** The Football board now covers 227 more
+leagues from API-Football: second and third tiers across Europe, regional
+divisions (Spain, France, Italy, Germany, Sweden, Australia...), and top
+flights the free sources missed. Their strongest calls can make the Daily
+List: a pick from these leagues needs 75%, the level whose calls landed 80%+
+in testing, and each row shows these leagues' own tested rate.
+
+**Evidence** Discovery replay of every senior API-Football league the site
+did not cover (357 with data, 105,000 fixtures), priced walk-forward with the
+live calibration curve. Kept only leagues where the model beat a baseline on
+2025 (247), then removed duplicates of covered leagues (Spain Segunda,
+Greece, Peru, South Africa, El Salvador, Argentina, Paraguay, Wales, Belarus,
+Spain Primera RFEF) and nine women's leagues my first filter missed
+(England's WSL among them): 227. As a group, win picks at 75%+ landed
+82.3% of 2,236 (2025) and 80.0% of 765 (2026 so far); at 70%+
+79.1% / 75.8%, so the bar is 75%.
+
+**Files** `af-leagues.json` (new: the league list), `engine.py` (registers
+them: tier 2, strength 0.5, as replayed), `sources.py` (added to `AF`; finished
+seasons cached in `.afcache/`), `build.py` (their bands and 75% bar),
+`tune.py` (kept out of the shared calibration fit), `deploy.yml` (Actions
+cache for finished seasons), `.gitignore`.
+
+**Not changed** Any existing league, the calibration, the other sports.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-5 (tag pending) — National League, North and South on complete history
 
 **What changed for a reader** Every club in the National League, National

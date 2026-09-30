@@ -486,6 +486,10 @@ AF = {  # code: API-Football league id
     "en.7i": 58,     # Isthmian League Premier
     "en.7n": 59,     # Northern Premier League Premier
 }
+# The discovery-replay leagues (engine.AF_EXTRA, af-leagues.json).
+import engine as _E
+AF.update({e["code"]: e["id"] for e in _E.AF_EXTRA})
+AF_EXTRA = {e["code"] for e in _E.AF_EXTRA}
 # Replayed below the Daily List bar: board and reserve only, and kept out of
 # the shared calibration fit (build.NO_LIST, tune.codes).
 AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
@@ -514,11 +518,33 @@ def _af_get(path):
     return out
 
 
+AF_CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".afcache")
+
+
+def _af_season(code, year, current):
+    """A finished season never changes, so it is kept on disk (.afcache/, and
+    the Actions cache in CI): with 240+ leagues this keeps a build to about one
+    call per league, well inside the daily allowance."""
+    path = os.path.join(AF_CACHE_DIR, f"{AF[code]}-{year}.json")
+    if not current and os.path.exists(path):
+        try:
+            return json.load(open(path))
+        except Exception:
+            pass
+    rows = _af_get(f"/fixtures?league={AF[code]}&season={year}")
+    if not current and rows:
+        os.makedirs(AF_CACHE_DIR, exist_ok=True)
+        json.dump(rows, open(path, "w"), separators=(",", ":"))
+    return rows
+
+
 def af_rows(code, season):
     """Every match of one season, played or still to come, as fixture rows."""
     year = int(season.split("-")[0])
+    from engine import LEAGUES as _L
+    current = season == _L.get(code, {}).get("season", season)
     out = []
-    for f in _af_get(f"/fixtures?league={AF[code]}&season={year}"):
+    for f in _af_season(code, year, current):
         st = ((f.get("fixture") or {}).get("status") or {}).get("short")
         if st in AF_DEAD:
             continue
