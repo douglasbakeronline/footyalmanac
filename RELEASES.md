@@ -22,6 +22,27 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-10 (tag pending) — Competition filter collapses
+
+**What changed** The competition chips took up most of a phone screen once
+the 227 wider leagues arrived. They now sit behind one compact control,
+"Competition [All ▾]", which opens a scrollable panel with a finder box:
+type a country or league ("spain", "national league") and only matching
+chips stay. The control shows what is picked (All, the league name, or
+"n selected"). Wider-league chips show their full name, since their short
+codes meant nothing. Picking works exactly as before.
+
+**Evidence** Checked in Chromium at 1280px and 400px: closed, open,
+filtered, and after a pick. No script errors.
+
+**Files** `index.html` only.
+
+**Not changed** Any model number, pick or filter rule.
+
+**Roll back** `git revert` this commit.
+
+---
+
 ## release-2026-09-30-9 (tag pending) — Fix: clubs matched only within gender, country and continent
 
 **What changed** Every club name resolved through one shared pool, with no

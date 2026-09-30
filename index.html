@@ -311,6 +311,17 @@ details.how p{margin-top:8px;padding-left:22px}
 .controls[hidden]{display:none}
 .controls > div{min-width:0}
 .chips{max-width:none}
+.comp-toggle{font-family:var(--f-ui);font-size:13px;display:inline-flex;align-items:center;gap:8px;
+  border:1px solid var(--rule);background:transparent;color:var(--ink);padding:5px 10px;
+  cursor:pointer;border-radius:2px;min-height:32px;max-width:260px}
+.comp-toggle b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.comp-toggle .caret{color:var(--mute);transition:transform .12s}
+.comp-toggle[aria-expanded="true"] .caret{transform:rotate(180deg)}
+.comp-panel{flex-basis:100%;padding-top:8px;border-top:1px solid var(--rule-soft);
+  max-height:46vh;overflow-y:auto}
+.comp-panel input{width:100%;max-width:340px;font:inherit;font-size:14px;padding:6px 9px;
+  border:1px solid var(--rule);background:var(--surface);color:var(--ink);margin-bottom:8px;border-radius:2px}
+button.chip[hidden]{display:none}
 .chips{display:flex;gap:4px;flex-wrap:wrap}
 button.chip{
   font-family:var(--f-ui);font-size:12.5px;font-weight:600;letter-spacing:.04em;
@@ -798,12 +809,9 @@ footer b{color:var(--ink-2)}
   .note{margin-top:9px;padding:8px 11px;font-size:12px}
   .readbar{margin-top:7px;font-size:12px}
 
-  /* The competition filter wrapped to five rows at forty competitions and
-     would keep growing. One scrolling row instead, which is the pattern every
-     app uses for a long filter strip, and it stops the control block being
-     taller than the content it filters. */
-  .chips{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;
-         scrollbar-width:none;padding-bottom:2px;-webkit-overflow-scrolling:touch}
+  /* The competition chips live in a collapsed panel (#compPanel) now, so
+     they wrap there instead of scrolling as one row. */
+  .chips{flex-wrap:wrap}
   .chips::-webkit-scrollbar{display:none}
   button.chip{flex:0 0 auto;min-height:36px;padding:5px 9px}
 
@@ -914,7 +922,8 @@ footer b{color:var(--ink-2)}
   </div>
   <div>
     <div class="ctl-label" style="margin-bottom:4px">Competition</div>
-    <div class="chips" id="chips"></div>
+    <button type="button" class="comp-toggle" id="compToggle" aria-expanded="false" aria-controls="compPanel">
+      <b id="compNow">All</b><span class="caret" aria-hidden="true">▾</span></button>
   </div>
   <div style="margin-left:auto">
     <div class="ctl-label" style="margin-bottom:4px">Order by</div>
@@ -924,6 +933,12 @@ footer b{color:var(--ink-2)}
       <button data-sort="goals" aria-pressed="false">Goals</button>
       <button data-sort="time" aria-pressed="false">Time</button>
     </div>
+  </div>
+  <!-- Collapsed by default: 300-odd competitions filled five rows of the
+       sticky bar (Douglas, 30 Sep 2026). Opens full width, with a finder. -->
+  <div class="comp-panel" id="compPanel" hidden>
+    <input type="search" id="compFind" placeholder="Find a competition or country" aria-label="Find a competition or country">
+    <div class="chips" id="chips"></div>
   </div>
 </div>
 
@@ -1187,9 +1202,31 @@ chips.innerHTML = `<button class="chip" data-league="*" aria-pressed="true">All<
   present.map(c=>{
     const L = lname(c);
     const g = upcoming.flatMap(d=>d.games).find(x=>x.league===c);
+    // The wider API-Football leagues have no short code worth reading ("TER"
+    // sixteen times), so they show their name; the flag tells countries apart.
     return `<button class="chip" data-league="${c}" aria-pressed="false"` +
-           ` title="${L.country} ${L.name}">${g?flag(g.iso,L.country):""}${L.short}</button>`;
+           ` data-find="${(L.country + " " + L.name + " " + L.short).toLowerCase()}"` +
+           ` title="${L.country} ${L.name}">${g?flag(g.iso,L.country):""}${L.afExtra ? L.name : L.short}</button>`;
   }).join("");
+
+const compNow = () => {
+  const n = state.leagues.size;
+  $("#compNow").textContent = n === 0 ? "All"
+    : n === 1 ? (L => L.afExtra ? L.country + " " + L.name : L.name)(lname([...state.leagues][0]))
+    : n + " selected";
+};
+$("#compToggle").addEventListener("click", () => {
+  const open = $("#compPanel").hidden;
+  $("#compPanel").hidden = !open;
+  $("#compToggle").setAttribute("aria-expanded", String(open));
+  if(open) $("#compFind").focus({preventScroll: true});
+});
+$("#compFind").addEventListener("input", e => {
+  const q = e.target.value.trim().toLowerCase();
+  chips.querySelectorAll("button").forEach(b => {
+    b.hidden = !!q && b.dataset.league !== "*" && !b.dataset.find.includes(q);
+  });
+});
 
 chips.addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -1200,6 +1237,7 @@ chips.addEventListener("click", e=>{
     const k = x.dataset.league;
     x.setAttribute("aria-pressed", k==="*" ? state.leagues.size===0 : state.leagues.has(k));
   });
+  compNow();
   render();
 });
 
