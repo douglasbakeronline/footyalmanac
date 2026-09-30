@@ -24,6 +24,10 @@ concurrency:
 jobs:
   tune:
     runs-on: ubuntu-latest
+    env:
+      # API-Football (sources.AF), the paid source for step 3; absent means
+      # those leagues are logged as missing, never guessed.
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
     steps:
       - uses: actions/checkout@v4
 

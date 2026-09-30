@@ -55,3 +55,19 @@ F1 (same), ice hockey (expected to fail like baseball; test only if asked).
 No bookmaker input into any model. Nothing fitted on `record.json`. A new
 league or sport is on its board at once but off the Daily List until its
 replay passes. A name mismatch fails loudly.
+
+
+## Progress
+
+- **30 Sep, step 1 (coverage).** 1,247 competitions, 171 countries; a day
+  (3 Oct) is 1,306 fixtures in 267 competitions in one call. English step 3
+  all four leagues with 5-8 seasons; step 4 stops at 2025-26. U21: UEFA U21
+  qualifying (id 850, 2023-27), U21 finals (id 38, 2017-25), U20/U23 on every
+  continent.
+- **30 Sep, step 2-3 for step 3.** `sources.AF` (code -> league id), wired
+  like FDX in `fetch_season` / `fetch_fixtures`. Replay: no list place (see
+  RELEASES.md release-2026-09-30-4); own bands in `build.ACCURACY_BANDS_STEP3`,
+  `build.NO_LIST`. Kept out of `tune.codes()`.
+- **Next:** other countries' missing leagues via AF (Poland 2, Croatia,
+  Serbia, Ukraine, Hungary, Korea, UAE, 3. Liga, Liga Portugal 2 ...), each
+  group replayed before any list place; then U21.

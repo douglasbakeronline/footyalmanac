@@ -80,7 +80,7 @@ note and the code disagree, trust the code and tell Douglas the note is stale.
 Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt**:
 
 - `engine.py` ratings and match model. Every number on a row comes from here.
-- `sources.py` openfootball + ESPN fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
+- `sources.py` openfootball + ESPN + football-data.co.uk (`FDX`) + API-Football (`AF`, paid, key `API_FOOTBALL_KEY` in secrets and the cloud env) fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
 - `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
 - `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder.
 - `backtest.py` walk-forward backtest.
@@ -239,6 +239,7 @@ strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 - No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
   (84 symbols); a new league with a new `iso` needs a symbol added.
 
+- English step 3 (four leagues, `sources.AF`) is on the board and reserve, never the Daily List: replayed below the bar (`build.NO_LIST`).
 - The Daily List fills to 20 a day with a **reserve** (below the bar, Firm
   62%+, clean), flagged per pipeline as `reserve` and graded as its own group
   (`record.json` / `tennis-record.json` / `sports-record.json` "reserve").

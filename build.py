@@ -102,13 +102,25 @@ def solve_goals(grid, pick, target):
     return at(math.sqrt(lo * hi))
 
 
-def accuracy_for(conf, intl, ranked=False):
+# English step 3 (API-Football, sources.AF), replayed 30 Sep 2026 with the
+# live calibration curve: harder to call than the leagues above (log loss
+# 1.034 v ~1.016), and no level lands 80% with 30+ calls (75%+: 78.6% of 56;
+# 80%+: 88.0% of 25), so no Daily List place under the shared rule. Its rows
+# show these bands, its own, and may reach the reserve.
+ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
+NO_LIST = set(S.AF)   # replayed and below the bar: board and reserve only
+
+
+def accuracy_for(conf, intl, ranked=False, league=None):
     def pick(bands):
         best = None
         for b in bands:
             if conf >= b["from"]:
                 best = b
         return best
+    if league in NO_LIST:
+        b = pick(ACCURACY_BANDS_STEP3)
+        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025-26, step 3"} if b else None
     if intl and ranked:
         b = pick(ACCURACY_BANDS_RANKED)
         return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026, with FIFA ranking"} if b else None
@@ -136,6 +148,8 @@ def list_eligible(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
+    if g["league"] in NO_LIST:
+        return False
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if pick == "d" or p[pick] < bar or g["celtic"] or g["unrated"]:
         return False
@@ -731,8 +745,14 @@ def main():
                         reasons.append(f"{t['name']} has no rating on file")
                     elif t["carriedFrom"]:
                         moved = E.LEAGUES[t["carriedFrom"]]
-                        updown = "up from" if moved["tier"] > meta["tier"] else "down from"
-                        reasons.append(f"{t['name']} came {updown} the {moved['name']}")
+                        # Same tier is a sideways move (English step 3 clubs are
+                        # moved between its four leagues each summer for
+                        # geography), not a promotion or relegation.
+                        if moved["tier"] == meta["tier"]:
+                            reasons.append(f"{t['name']} moved across from the {moved['name']}")
+                        else:
+                            updown = "up from" if moved["tier"] > meta["tier"] else "down from"
+                            reasons.append(f"{t['name']} came {updown} the {moved['name']}")
                     src_code = t["carriedFrom"] or (h_src if side == "home" else a_src) or code
                     if src_code in partial_prior and not t["unrated"]:
                         n, exp, s_used = partial_prior[src_code]
@@ -842,7 +862,7 @@ def main():
             g["list"] = list_eligible(g)
             g["reserve"] = list_reserve(g)
             g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"),
-                                         g.get("rankAdjusted"))
+                                         g.get("rankAdjusted"), g["league"])
         days.append({"date": d, "count": len(games), "games": games})
 
     payload = {

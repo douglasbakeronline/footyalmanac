@@ -22,6 +22,33 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-4 (tag pending) — English step 3 on the board (API-Football)
+
+**What changed for a reader** The Football tab now carries the four step-3
+leagues of the English non-league pyramid: Southern League Premier Central
+and South, Isthmian Premier and Northern Premier (Needham Market, Rushall
+Olympic and the rest), from API-Football, the first paid source. Each row
+shows step 3's **own** tested rate. They are **not on the Daily List**: they
+can appear in its reserve, tagged, and are graded like everything else.
+
+**Evidence** Replay of 2025/26 (1,818 fixtures) and 2026/27 so far (388),
+each priced from what was known the morning before, the live calibration
+applied: log loss 1.034 (the covered leagues run ~1.016); win picks at 70%+
+landed 79.0% of 105, at 75%+ 78.6% of 56, at 80%+ 88.0% of 25. No level
+lands 80% with 30+ calls, so the shared rule gives no list place. Step 4 is
+not carried by API-Football this season.
+
+**Files** `sources.py` (AF source), `engine.py` (four leagues, tier 7 home
+advantage = tier 6), `build.py` (step-3 bands, off the list), `tune.py`
+(step 3 kept out of the shared calibration fit), `deploy.yml` and `tune.yml`
+(the key from secrets), `claude/data-expansion-plan.md`.
+
+**Not changed** Any existing league's numbers, the calibration, the list bar.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-3 (tag pending) — Run your starred picks
 
 **What changed for a reader** The Starred tab has a **Run** button. It works

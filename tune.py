@@ -52,8 +52,11 @@ MIN_GAIN = 0.0005      # log loss improvement worth the churn
 def codes():
     """Competitions with a league table of their own. A cup has no table to be
     average in, and ratings-only leagues carry no fixtures."""
+    # The API-Football step-3 leagues (sources.AF) are left out on purpose:
+    # a new, less predictable group should not move the shared calibration
+    # curve without a deliberate decision (30 Sep 2026).
     return [c for c, m in E.LEAGUES.items()
-            if not m.get("cup") and not m.get("ratingsOnly")]
+            if not m.get("cup") and not m.get("ratingsOnly") and c not in S.AF]
 
 
 def splits(code):

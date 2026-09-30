@@ -466,6 +466,66 @@ def fdx_upcoming(code, cache_dir=None):
     return out
 
 
+# --- API-Football (paid, API_FOOTBALL_KEY) ----------------------------------
+#
+# Bought 30 Sep 2026 (claude/data-expansion-plan.md) to reach divisions no free
+# source carries. Like FDX, one source per league for history and fixtures
+# both, so each league has exactly one spelling. Kick-offs come back in UTC.
+# No key (a local run without it) means these leagues have no data and are
+# logged as missing, never guessed.
+AF_BASE = "https://v3.football.api-sports.io"
+AF = {  # code: API-Football league id
+    "en.7sc": 931,   # Southern League Premier Central (step 3)
+    "en.7ss": 60,    # Southern League Premier South
+    "en.7i": 58,     # Isthmian League Premier
+    "en.7n": 59,     # Northern Premier League Premier
+}
+AF_PLAYED = {"FT", "AET", "PEN"}          # full time reached; the 90-minute score is used
+AF_DEAD = {"PST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"}
+_AF_CACHE, _AF_LOCK = {}, threading.Lock()
+
+
+def _af_get(path):
+    """One API call, cached for the build. [] on any failure or missing key."""
+    key = os.environ.get("API_FOOTBALL_KEY")
+    if not key:
+        return []
+    with _AF_LOCK:
+        if path in _AF_CACHE:
+            return _AF_CACHE[path]
+    req = urllib.request.Request(AF_BASE + path, headers={"x-apisports-key": key,
+                                                          "User-Agent": "football-almanac/1.0"})
+    try:
+        doc = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
+        out = [] if doc.get("errors") else (doc.get("response") or [])
+    except Exception:
+        out = []
+    with _AF_LOCK:
+        _AF_CACHE[path] = out
+    return out
+
+
+def af_rows(code, season):
+    """Every match of one season, played or still to come, as fixture rows."""
+    year = int(season.split("-")[0])
+    out = []
+    for f in _af_get(f"/fixtures?league={AF[code]}&season={year}"):
+        st = ((f.get("fixture") or {}).get("status") or {}).get("short")
+        if st in AF_DEAD:
+            continue
+        when = (f.get("fixture") or {}).get("date") or ""
+        home = clean_name(((f.get("teams") or {}).get("home") or {}).get("name") or "")
+        away = clean_name(((f.get("teams") or {}).get("away") or {}).get("name") or "")
+        if len(when) < 16 or not home or not away:
+            continue
+        ft = (f.get("score") or {}).get("fulltime") or {}
+        played = st in AF_PLAYED and ft.get("home") is not None and ft.get("away") is not None
+        out.append({"date": when[:10], "time": when[11:16], "utc": True, "round": None,
+                    "home": home, "away": away,
+                    "hg": ft["home"] if played else None, "ag": ft["away"] if played else None})
+    return out
+
+
 def fetch_season(code, season, cache_dir=None):
     """Return (matches, ok). matches: list of (date, home, away, hg, ag).
 
@@ -480,6 +540,10 @@ def fetch_season(code, season, cache_dir=None):
     if code in FDX:
         played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
                   for r in fdx_rows(code, season, cache_dir) if r["hg"] is not None]
+        return (played, True) if played else ([], False)
+    if code in AF:
+        played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
+                  for r in af_rows(code, season) if r["hg"] is not None]
         return (played, True) if played else ([], False)
 
     url = f"{RAW}/football.json/master/{season}/{code}.json"
@@ -611,6 +675,9 @@ def parse_fixture_txt(text):
 
 
 def fetch_fixtures(code, season, cache_dir=None):
+    if code in AF:
+        rows = af_rows(code, season)
+        return (rows, True) if rows else ([], False)
     if code in FDX:
         # The season so far plus the next round: the same shape as an
         # openfootball schedule, so the build treats it identically.

@@ -30,6 +30,14 @@ LEAGUES = {
     "en.5": {"iso": "eng", "short": "NLG", "name": "National League", "country": "England", "tier": 5, "strength": 0.50, "order": 4.5},
     "en.6n": {"iso": "eng", "short": "NLN", "name": "National League North", "country": "England", "tier": 6, "strength": 0.42, "order": 174, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
     "en.6s": {"iso": "eng", "short": "NLS", "name": "National League South", "country": "England", "tier": 6, "strength": 0.42, "order": 175, "season": "2026-27", "prev": ["2025-26", "2024-25"], "live": True},
+    # Step 3 of the National League System, from API-Football (sources.AF),
+    # 30 Sep 2026. Strength 0.35 continues the step-down from NLN/NLS (0.42);
+    # it only matters in cup ties and for a promoted or relegated club's
+    # carried rating, and is a starting value, not a fitted one.
+    "en.7sc": {"iso": "eng", "short": "SLC", "name": "Southern League Premier Central", "country": "England", "tier": 7, "strength": 0.35, "order": 176, "season": "2026-27", "prev": ["2025-26", "2024-25"]},
+    "en.7ss": {"iso": "eng", "short": "SLS", "name": "Southern League Premier South", "country": "England", "tier": 7, "strength": 0.35, "order": 177, "season": "2026-27", "prev": ["2025-26", "2024-25"]},
+    "en.7i": {"iso": "eng", "short": "ISP", "name": "Isthmian League Premier", "country": "England", "tier": 7, "strength": 0.35, "order": 178, "season": "2026-27", "prev": ["2025-26", "2024-25"]},
+    "en.7n": {"iso": "eng", "short": "NPL", "name": "Northern Premier League", "country": "England", "tier": 7, "strength": 0.35, "order": 179, "season": "2026-27", "prev": ["2025-26", "2024-25"]},
     "sco.1": {"iso": "sct", "short": "SPL", "name": "Premiership",      "country": "Scotland",    "tier": 1, "strength": 0.76, "order": 5},
     "es.1": {"iso": "esp", "short": "LAL", "name": "La Liga",          "country": "Spain",       "tier": 1, "strength": 0.99, "order": 6},
     "es.2": {"iso": "esp", "short": "LA2", "name": "LaLiga 2",         "country": "Spain",       "tier": 2, "strength": 0.76, "order": 7},
@@ -266,8 +274,8 @@ LEAGUES = {
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly
 # higher (smaller crowds, worse pitches, but less travel-adjusted squad depth).
-HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190, 6: 1.195}
-AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845, 6: 0.840}
+HOME_MULT = {1: 1.155, 2: 1.170, 3: 1.180, 4: 1.185, 5: 1.190, 6: 1.195, 7: 1.195}
+AWAY_MULT = {1: 0.870, 2: 0.862, 3: 0.855, 4: 0.850, 5: 0.845, 6: 0.840, 7: 0.840}
 
 # Pseudo-matches pulling a full season's rating toward league average. 6 until
 # 29 Sep 2026; 4 lets this season's results count at face value sooner. Tested
