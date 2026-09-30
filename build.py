@@ -447,7 +447,12 @@ def main():
                   f"likely a cached fixture file that predates their results, "
                   f"not a rating problem", file=sys.stderr)
 
-    rated_pool = set(last_league)
+    # The fuzzy matcher bridges two sources' spellings of the same club. The
+    # API-Football wider leagues are one source each and always found by exact
+    # name, so their clubs stay out of the fuzzy pool: 227 leagues of small
+    # clubs made big names ambiguous ("Benfica" v "Benfica Castelo Branco",
+    # 30 Sep 2026) and a Champions League side would have come out unrated.
+    rated_pool = {t for t, c in last_league.items() if c not in S.AF_EXTRA}
     _dom_cache = {}
 
     def domestic_of(team):

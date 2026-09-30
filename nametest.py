@@ -82,7 +82,9 @@ def load():
         played = [(r["date"], r["home"], r["away"], r["hg"], r["ag"])
                   for r in rows if r["hg"] is not None]
         cur[code] = E.build_table(played)
-    return set(B.team_pool(history, fixtures)), cur
+    # As build.domestic_of: the single-source API-Football wider leagues are
+    # matched by exact name only, so they are not part of the fuzzy pool.
+    return {t for t, c in B.team_pool(history, fixtures).items() if c not in S.AF_EXTRA}, cur
 
 
 def main():

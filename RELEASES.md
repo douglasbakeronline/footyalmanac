@@ -22,6 +22,23 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-7 (tag pending) — Fix: big clubs matched again after the wider leagues
+
+**What changed** The wider leagues added clubs such as "Benfica Castelo
+Branco" and "Arronches e Benfica" to the pool the spelling matcher searches,
+so a bare "Benfica" in a European tie became ambiguous and `nametest.py`
+failed, which stops the deploy (the live site stayed as it was). The
+API-Football wider leagues are single-source and found by exact name, so
+their clubs are now kept out of the fuzzy pool, in `build.py` and
+`nametest.py` alike. release-2026-09-30-6 was pushed with this test failing:
+my check read only the test's last line. It never reached the live site.
+
+**Files** `build.py`, `nametest.py`.
+
+**Roll back** `git revert --no-edit <release commit>` (restores the failure).
+
+---
+
 ## release-2026-09-30-6 (tag pending) — 227 more leagues worldwide
 
 **What changed for a reader** The Football board now covers 227 more
