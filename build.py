@@ -108,7 +108,7 @@ def solve_goals(grid, pick, target):
 # 80%+: 88.0% of 25), so no Daily List place under the shared rule. Its rows
 # show these bands, its own, and may reach the reserve.
 ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
-NO_LIST = set(S.AF)   # replayed and below the bar: board and reserve only
+NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
 
 
 def accuracy_for(conf, intl, ranked=False, league=None):

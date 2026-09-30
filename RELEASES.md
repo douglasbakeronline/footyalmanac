@@ -22,6 +22,30 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-5 (tag pending) — National League, North and South on complete history
+
+**What changed for a reader** Every club in the National League, National
+League North and National League South is now rated from complete seasons.
+The free sources held 296 of 552 National League games for 2025/26 and none
+at all for North or South, so those clubs had been rated off half a season,
+or off 2024/25 alone. All three now come from API-Football, history and
+fixtures both, one source and one spelling per league. Numbers on those rows
+move; team sheets read "2025/26" instead of "2024/25 + 2025/26 so far".
+
+**Evidence** API-Football: 556, 557 and 557 played games for 2025/26, and
+the current season to date. `nametest.py` passes; the build shows no new
+unrated clubs (see the check in this session's notes).
+
+**Files** `sources.py` (three leagues added to `AF`; `AF_BOARD_ONLY` now
+names the step-3 set), `build.py`, `tune.py` (both read `AF_BOARD_ONLY`).
+
+**Not changed** List eligibility: these three leagues stay on the shared
+league bands and rule, as before. Step 3 is still board and reserve only.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-4 (tag pending) — English step 3 on the board (API-Football)
 
 **What changed for a reader** The Football tab now carries the four step-3

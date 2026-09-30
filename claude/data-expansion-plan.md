@@ -71,3 +71,8 @@ replay passes. A name mismatch fails loudly.
 - **Next:** other countries' missing leagues via AF (Poland 2, Croatia,
   Serbia, Ukraine, Hungary, Korea, UAE, 3. Liga, Liga Portugal 2 ...), each
   group replayed before any list place; then U21.
+- **30 Sep, National League, North, South moved to AF** (ids 43, 50, 51):
+  the free sources had 296/552 NL games for 2025/26 and none for N/S.
+  `sources.AF_BOARD_ONLY` is now the step-3 set used by `build.NO_LIST` and
+  `tune.codes()`; the steps 1-2 leagues stay in the calibration fit and on
+  the shared list rule.

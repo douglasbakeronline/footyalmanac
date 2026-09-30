@@ -475,11 +475,20 @@ def fdx_upcoming(code, cache_dir=None):
 # logged as missing, never guessed.
 AF_BASE = "https://v3.football.api-sports.io"
 AF = {  # code: API-Football league id
+    # Steps 1-2 moved here 30 Sep 2026: the free sources held 296 of 552
+    # National League games for 2025/26 and none at all for North or South,
+    # so those clubs were rated off a half season or a season out of date.
+    "en.5": 43,      # National League
+    "en.6n": 50,     # National League North
+    "en.6s": 51,     # National League South
     "en.7sc": 931,   # Southern League Premier Central (step 3)
     "en.7ss": 60,    # Southern League Premier South
     "en.7i": 58,     # Isthmian League Premier
     "en.7n": 59,     # Northern Premier League Premier
 }
+# Replayed below the Daily List bar: board and reserve only, and kept out of
+# the shared calibration fit (build.NO_LIST, tune.codes).
+AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
 AF_PLAYED = {"FT", "AET", "PEN"}          # full time reached; the 90-minute score is used
 AF_DEAD = {"PST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"}
 _AF_CACHE, _AF_LOCK = {}, threading.Lock()
