@@ -241,6 +241,9 @@ strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 - The Daily List fills to 20 a day with a **reserve** (below the bar, Firm
   62%+, clean), flagged per pipeline as `reserve` and graded as its own group
   (`record.json` / `tennis-record.json` / `sports-record.json` "reserve").
+- The Starred tab's **Run** button (`runSlip` in `index.html`) gives the
+  chance all starred picks land, fair odds, and a Strong / Reserve / Wary
+  verdict per leg. Site numbers only, never bookmaker prices.
 - International ratings are refitted on every match to date when
   `tune_international.py --fit` runs (before 30 Sep 2026 they stopped at the
   holdout start, 1 Jan). Nothing reruns it automatically yet; weekly in

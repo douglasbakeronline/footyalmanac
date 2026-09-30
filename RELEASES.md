@@ -22,6 +22,31 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-3 (tag pending) — Run your starred picks
+
+**What changed for a reader** The Starred tab has a **Run** button. It works
+out the chance that every starred pick lands, on the site's own numbers,
+shown as a percentage, "about 1 in N" and fair odds (1 ÷ the chance, not a
+bookmaker's price), plus how often the slip loses. Each leg gets a verdict:
+**Strong** (clears the Daily List bar), **Reserve** (below it, Firm or
+better) or **Wary**, with the reason: the FIFA ranking carried it past the
+model's own number, a draw pick, under Firm (62%), a Celtic's Law flag, an
+unrated side, or a tennis qualifying round. It names the weakest leg and what
+the rest are worth without it.
+
+**Evidence** Checked in a browser at desktop and phone width with strong,
+reserve and wary legs (a ranking-carried international at 59% on the model's
+own number, and a draw pick).
+
+**Files** `index.html`.
+
+**Not changed** Any number on any row, the list, the record. No bookmaker
+prices are used.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-2 (tag pending) — Every time in UK time
 
 **What changed for a reader** Every kick-off and start time, in every sport,

@@ -258,6 +258,32 @@ details.how p{margin-top:8px;padding-left:22px}
 .list-rule b{color:var(--ink)}
 .ko-local{font-family:var(--f-ui);font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
+.slip-box{margin:16px 0 20px;border:1px solid var(--ink);background:var(--surface);padding:14px 15px}
+.slip-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.slip-head h3{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.slip-head p{font-size:13.5px;color:var(--ink-2);margin-top:4px}
+.slip-run{font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--ink);color:var(--yellow);border:0;padding:10px 18px;cursor:pointer;flex:none}
+.slip-total{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);margin-top:14px;border:1px solid var(--rule)}
+.slip-total>div{background:var(--surface);padding:10px 12px}
+.slip-total span{display:block;font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.slip-total b{display:block;font-family:var(--f-num);font-size:24px;margin:2px 0}
+.slip-total small,.slip small{display:block;font-size:12px;color:var(--mute);line-height:1.4}
+.slip-note{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin:12px 0}
+.slip{width:100%;border-collapse:collapse;font-size:14px}
+.slip th{font-family:var(--f-ui);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);text-align:left;padding:6px 6px;border-bottom:1px solid var(--ink)}
+.slip td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+.slip .n{text-align:right;font-family:var(--f-num);white-space:nowrap}
+.slip .verdict{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px}
+.v-strong .verdict{background:var(--ink);color:var(--yellow)}
+.v-reserve .verdict{border:1px solid var(--ink);color:var(--ink)}
+.v-wary .verdict{background:var(--red);color:#fff}
+@media (max-width:560px){.slip-total{grid-template-columns:1fr}.slip-total b{font-size:20px}
+  .slip thead{display:none}
+  .slip tr{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+  .slip td{border:0;padding:0}
+  .slip td:last-child{grid-column:1/-1}
+  .slip td:last-child small{display:inline;margin-left:6px}}
 .reserve-head{padding:14px 12px 8px;margin-top:6px;border-top:1px solid var(--ink);
   font-family:var(--f-ui);font-size:13px;color:var(--mute);line-height:1.45}
 .reserve-head b{color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
@@ -1558,12 +1584,99 @@ function appendFixture(sec, g, i, dayDate, btts){
    A shortlist, not a saved search: it only ever holds fixtures already on
    the fixtures board, filtered to what was tapped, and it empties itself
    with the rest of the slate at the start of a new day (see loadStarred). */
+/* ---------- starred: run the slip ----------
+   The chance every starred pick lands, on the site's own numbers (no
+   bookmaker input, by Douglas's decision), with fair odds (1 / chance) and a
+   plain verdict per leg. Legs are treated as independent, which is how an
+   accumulator settles. Douglas, 30 Sep 2026. */
+function starredLegs(){
+  const legs = [];
+  upcoming.forEach(day => day.games.forEach(g => {
+    if(!state.starred.has(day.date + "|" + g.home.name + "|" + g.away.name)) return;
+    const k = ["h","d","a"].reduce((a,b) => g.p[b] > g.p[a] ? b : a, "h");
+    const pick = k === "h" ? g.home.name : k === "a" ? g.away.name : "Draw";
+    const warn = [];
+    if(k === "d") warn.push("a draw pick: the least predictable outcome in football");
+    if(g.rankAdjusted && g.modelConfidence && g.modelConfidence < 0.75)
+      warn.push(`the FIFA ranking carried it: the model's own number was ${pct(g.modelConfidence)}%`);
+    if(g.celtic) warn.push("Celtic's Law: " + g.celtic.reasons.join("; "));
+    if(g.unrated) warn.push("a side has no rating on file");
+    legs.push({name: `${g.home.name} v ${g.away.name}`, pick, p: g.p[k], acc: g.accuracy,
+      list: g.list, reserve: g.reserve, warn});
+  }));
+  const others = [];
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
+  const TDS = window.__TENNIS_DATA__;
+  if(TDS && TDS.matches) TDS.matches.forEach(m => others.push(tennisAsGame(m)));
+  others.filter(g => state.starred.has("s|" + (g.id || (g.when + "|" + g.home + "|" + g.away)))).forEach(g => {
+    const warn = [];
+    if(/qualif/i.test(g.label || "")) warn.push("a qualifying round: thin ratings, and not what was tested");
+    legs.push({name: `${g.home} v ${g.away}`, pick: g.pick, p: g.confidence, acc: g.accuracy,
+      list: g.list, reserve: g.reserve, warn});
+  });
+  legs.forEach(l => {
+    if(l.p < 0.62) l.warn.push("under Firm (62%): close to a coin flip on the model's numbers");
+    l.verdict = l.list && !l.warn.length ? "Strong" : (l.warn.length ? "Wary" : (l.reserve ? "Reserve" : "Wary"));
+    if(l.verdict === "Wary" && !l.warn.length) l.warn.push("under this sport's Daily List bar");
+  });
+  return legs;
+}
+
+const fairOdds = p => {
+  const dec = 1 / p;
+  return `${dec.toFixed(2)} (${dec - 1 >= 1 ? (dec - 1).toFixed(dec - 1 >= 10 ? 0 : 1) + "/1" : "1/" + (1 / (dec - 1)).toFixed(1)})`;
+};
+
+function runSlip(){
+  const legs = starredLegs();
+  if(!legs.length) return `<p>Star some picks first.</p>`;
+  const all = legs.reduce((a, l) => a * l.p, 1);
+  const weakest = legs.reduce((a, l) => l.p < a.p ? l : a);
+  const without = legs.length > 1 ? all / weakest.p : null;
+  const rows = legs.slice().sort((a, b) => b.p - a.p).map(l => `
+    <tr class="v-${l.verdict.toLowerCase()}">
+      <td><b>${l.pick}</b><small>${l.name}</small></td>
+      <td class="n">${pct(l.p)}%<small>${fairOdds(l.p)}</small></td>
+      <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? "tested" : ""}</small></td>
+      <td><span class="verdict">${l.verdict}</span>${l.warn.length ? `<small>${l.warn.map(w => w[0].toUpperCase() + w.slice(1)).join(". ")}.</small>`
+        : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}</td>
+    </tr>`).join("");
+  const strong = legs.filter(l => l.verdict === "Strong").length;
+  const wary = legs.filter(l => l.verdict === "Wary").length;
+  return `
+    <div class="slip-total">
+      <div><span>All ${legs.length} land</span><b>${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>
+        <small>about 1 in ${Math.max(1, Math.round(1 / all))} · fair odds ${fairOdds(all)}</small></div>
+      <div><span>Loses</span><b>${((1 - all) * 100).toFixed(0)}%</b><small>of the time, on these numbers</small></div>
+      <div><span>Verdicts</span><b>${strong} strong</b><small>${wary} to be wary of</small></div>
+    </div>
+    <p class="slip-note">${legs.length > 1 ? `Weakest leg: <b>${weakest.pick}</b> at ${pct(weakest.p)}%.
+      Without it, the rest land ${(without * 100).toFixed(0)}% of the time. ` : ""}Fair odds are 1 ÷ the site's chance,
+      not a bookmaker's price; a bookmaker pays less, and the gap widens with every leg.</p>
+    <table class="slip"><thead><tr><th>Pick</th><th class="n">Chance</th><th class="n">Landed</th><th>Verdict</th></tr></thead>
+    <tbody>${rows}</tbody></table>`;
+}
+
 function renderStarred(){
   const host = $("#starred");
   if(!host) return;
   host.innerHTML = "";
   const btts = state.board === "btts";
   let any = false;
+  if(state.starred.size){
+    const box = document.createElement("div");
+    box.className = "slip-box";
+    box.innerHTML = `<div class="slip-head"><div><h3>Your starred picks together</h3>
+      <p>The chance they all land on the site's own numbers, and a verdict on each.</p></div>
+      <button type="button" class="slip-run">${state.slipRun ? "Run again" : "Run"}</button></div>
+      <div class="slip-out">${state.slipRun ? runSlip() : ""}</div>`;
+    box.querySelector(".slip-run").addEventListener("click", () => {
+      state.slipRun = true;
+      box.querySelector(".slip-out").innerHTML = runSlip();
+      box.querySelector(".slip-run").textContent = "Run again";
+    });
+    host.appendChild(box);
+  }
 
   upcoming.forEach(day=>{
     const games = day.games.filter(g => state.starred.has(day.date+"|"+g.home.name+"|"+g.away.name));
