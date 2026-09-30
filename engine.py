@@ -270,6 +270,40 @@ LEAGUES = {
     "asiangames":   {"name": "Asian Games football (U23)",       "short": "AGU23","iso": "fifa", "country": "International", "tier": 1, "strength": 1.0, "order": 219, "international": True, "ageProxy": True, "live": True},
 }
 
+# Which pool a club may be looked up in (build.domestic_of). Until 30 Sep 2026
+# every club name resolved through one shared pool, so a Women's Champions
+# League "Barcelona" landed on Ecuador's men's Barcelona SC and Roma women on
+# men's Serie A, and whichever league came last won any name clash. A club is
+# now resolved only among leagues of the same gender, and for a cup, of the
+# cup's own country or continent.
+WOMEN_CODES = {c for c, m in LEAGUES.items()
+               if m.get("women") or ".w" in c or "women" in m["name"].lower()}
+_CONFED = {
+    "Europe": {"eng", "sct", "esp", "deu", "ita", "fra", "nld", "prt", "bel", "tur", "aut", "grc",
+               "che", "rus", "nor", "cze", "pol", "dnk", "swe", "ukr", "srb", "hrv", "rou", "cyp",
+               "hun", "bgr", "svk", "svn", "isr", "fin", "irl", "isl", "bih", "alb", "arm", "geo",
+               "ltu", "lva", "est", "mkd", "mne", "aze", "blr", "mda", "nir", "wal", "fro", "lux",
+               "mlt", "and"},
+    "South America": {"bra", "arg", "col", "chl", "ury", "per", "ecu", "pry", "bol", "ven"},
+    "CONCACAF": {"usa", "mex", "crc", "hnd"},
+    "Asia": {"jpn", "kor", "chn", "aus", "sau", "are", "ind", "qat", "tha"},
+    "Africa": {"ago", "egy", "mar", "tun", "zaf"},
+}
+
+
+def eligible_league(src, comp):
+    """Whether a club rated in league `src` can be the club of that name in
+    competition `comp`: same gender, and for a cup the cup's own country or
+    confederation."""
+    if (src in WOMEN_CODES) != (comp in WOMEN_CODES):
+        return False
+    cm, sm = LEAGUES[comp], LEAGUES[src]
+    if not cm.get("cup"):
+        return True
+    if cm["country"] in _CONFED:
+        return sm.get("iso") in _CONFED[cm["country"]]
+    return sm["country"] == cm["country"]
+
 # API-Football's wider coverage (30 Sep 2026, claude/data-expansion-plan.md).
 # af-leagues.json lists every league that passed the discovery replay: priced
 # walk-forward with the live calibration curve, it beat a baseline on 2025,

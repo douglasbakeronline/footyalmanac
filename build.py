@@ -281,6 +281,17 @@ def team_pool(history, fixtures):
     return last_league
 
 
+def team_leagues(history):
+    """Every league each name appears in (team_pool keeps only one)."""
+    out = defaultdict(set)
+    for code, seasons in history.items():
+        _, ms, _, _, newer_ms = pick_prior(code, seasons)
+        for m in ms + newer_ms:
+            out[m[1]].add(code)
+            out[m[2]].add(code)
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=4, help="days of fixtures to include")
@@ -453,9 +464,10 @@ def main():
     # clubs made big names ambiguous ("Benfica" v "Benfica Castelo Branco",
     # 30 Sep 2026) and a Champions League side would have come out unrated.
     rated_pool = {t for t, c in last_league.items() if c not in S.AF_EXTRA}
+    leagues_of = team_leagues(history)
     _dom_cache = {}
 
-    def domestic_of(team):
+    def domestic_of(team, comp=None):
         """The division a club plays in, under either source's spelling.
 
         A cup tie has no table of its own, so each side is rated in its own
@@ -469,14 +481,26 @@ def main():
         spelling), so callers that need the resolved name do not have to run
         the match a second time.
         """
-        if team not in _dom_cache:
-            src, name = last_league.get(team), team
-            if src is None:
-                alt = S.match_team(team, rated_pool)
+        key = (team, comp)
+        if key not in _dom_cache:
+            ok = (lambda c: E.eligible_league(c, comp)) if comp else (lambda c: True)
+            name, cands = team, {c for c in leagues_of.get(team, ()) if ok(c)}
+            if not cands:
+                # fuzzy only among clubs whose league fits this competition
+                pool = {t for t in rated_pool if any(ok(c) for c in leagues_of.get(t, ()))}
+                alt = S.match_team(team, pool)
                 if alt:
-                    src, name = last_league.get(alt), alt
-            _dom_cache[team] = (src, name)
-        return _dom_cache[team]
+                    name, cands = alt, {c for c in leagues_of.get(alt, ()) if ok(c)}
+            if comp in cands and not E.LEAGUES[comp].get("cup"):
+                src = comp                         # a league fixture: its own league first
+            elif last_league.get(name) in cands:
+                src = last_league[name]            # as before, when it fits
+            elif cands:
+                src = max(cands, key=lambda c: (E.LEAGUES[c]["strength"], c))
+            else:
+                src = None
+            _dom_cache[key] = (src, name)
+        return _dom_cache[key]
 
     def rating_for(team, code):
         """Prior (carried across divisions if needed) blended with this season.
@@ -488,7 +512,7 @@ def main():
         Looking either up with the other's name returns nothing and says so
         silently, so the resolved name travels back out with the rating.
         """
-        src, prior_name = domestic_of(team)
+        src, prior_name = domestic_of(team, code)
         if src and src in prior_ratings and prior_name in prior_ratings[src]:
             prior = E.transfer_rating(prior_ratings[src][prior_name], src, code)
             carried = (src != code)
@@ -611,8 +635,8 @@ def main():
             is_intl = meta.get("international")
             is_youth = meta.get("ageProxy")
             is_women = meta.get("women")
-            h_src = domestic_of(r["home"])[0] if meta.get("cup") else None
-            a_src = domestic_of(r["away"])[0] if meta.get("cup") else None
+            h_src = domestic_of(r["home"], code)[0] if meta.get("cup") else None
+            a_src = domestic_of(r["away"], code)[0] if meta.get("cup") else None
             h_league = h_src or code
             a_league = a_src or code
             if is_youth:

@@ -136,3 +136,14 @@ normalisation step it collapses the two CSKA clubs into one.
   board on raw confidence. They currently do, by an explicit choice in the
   code, and a placeholder rating can produce a confident-looking number off
   nothing. Douglas's call.
+
+
+## 30 September 2026: gender, country and continent in club lookup
+
+Roma women v Barcelona women (UWCL) was priced off men's Serie A Roma and
+Ecuador's men's Barcelona SC. `build.domestic_of(team, comp)` now resolves a
+name only among leagues where `engine.eligible_league(src, comp)` holds: same
+gender (`engine.WOMEN_CODES`), and for a cup the cup's country or, for
+continental cups, its confederation (`engine._CONFED`, by iso). League
+fixtures use their own league first; remaining clashes take the higher
+strength. Nothing eligible means unrated, which the publish gate withholds.

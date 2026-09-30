@@ -22,6 +22,29 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-9 (tag pending) — Fix: clubs matched only within gender, country and continent
+
+**What changed** Every club name resolved through one shared pool, with no
+notion of men's and women's football or of a cup's country or continent,
+and whichever league came last won a name clash. So a Women's Champions
+League Roma v Barcelona was priced with Roma's men's Serie A record and
+Ecuador's men's Barcelona SC: Roma 76%. A club is now resolved only among
+leagues of the same gender and, for a cup, of its own country (domestic) or
+confederation (continental); a league fixture uses the club's own league
+first; a remaining clash takes the stronger league. A club nothing fits is
+unrated, so the fixture is withheld, not guessed.
+
+**Evidence** Full build: Roma v Barcelona withheld (neither side has a
+women's league record to rate from); no other row moved more than 3 points;
+1,230 fixtures, 21 on the Daily List; `nametest.py` exit 0.
+
+**Files** `engine.py` (`WOMEN_CODES`, `eligible_league`), `build.py`
+(`team_leagues`, `domestic_of`).
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30-8 (tag pending) — Fix: API-Football calls paced, all wider leagues fetched
 
 **What changed** The first live build of the wider leagues fetched them ten
