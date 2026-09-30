@@ -1,0 +1,31 @@
+name: API probe
+
+# Manual only. Checks the paid data keys work from CI, where the secrets live,
+# and prints the plan and remaining calls. Never prints the key, and never the
+# account block (it carries the owner's email; this repo's logs are public).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: API-Football status
+        env:
+          KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::error::No API_FOOTBALL_KEY secret found in Settings > Secrets and variables > Actions"
+            exit 1
+          fi
+          curl -sS -H "x-apisports-key: $KEY" https://v3.football.api-sports.io/status | python3 -c '
+          import json, sys
+          d = json.load(sys.stdin)
+          r = d.get("response") or {}
+          print("errors:", d.get("errors") or "none")
+          print("subscription:", {k: v for k, v in (r.get("subscription") or {}).items() if k in ("plan", "end", "active")})
+          print("requests:", r.get("requests"))
+          '
