@@ -220,7 +220,8 @@ live record. Form re-tested 29 Sep 2026 at Douglas's request, calibrated, both
 seasons: a form-led model (form cap 0.30-0.50, or current season taking over
 after 3 games) is +0.005 log loss worse on both; FORM_MAX 0.10 a wash. What
 passed was this season counting sooner (SHRINK_FULL_SEASON 6 -> 4, shipped).
-See `claude/tuning-evidence.md`.
+Bottom-10%-away and weak-goal-record penalties (30 Sep 2026): worse at every
+strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 
 ## Open items
 
@@ -237,6 +238,13 @@ See `claude/tuning-evidence.md`.
 - No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
   (84 symbols); a new league with a new `iso` needs a symbol added.
 
+- The Daily List fills to 20 a day with a **reserve** (below the bar, Firm
+  62%+, clean), flagged per pipeline as `reserve` and graded as its own group
+  (`record.json` / `tennis-record.json` / `sports-record.json` "reserve").
+- International ratings are refitted on every match to date when
+  `tune_international.py --fit` runs (before 30 Sep 2026 they stopped at the
+  holdout start, 1 Jan). Nothing reruns it automatically yet; weekly in
+  `tune.yml` is the obvious home, Douglas's call.
 - Picks the FIFA ranking lifts 20+ points landed 65% of 40 in 2022-24.
   Confirm on 2026 before flagging them (`claude/ranking-review.md`).
 - Row "landed" rates are cumulative bands, so a 79% pick shows the 75%+

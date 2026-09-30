@@ -178,7 +178,7 @@ def main():
                     "tournament": m.get("tournament"), "round": m.get("round"),
                     "playerA": m["playerA"], "playerB": m["playerB"],
                     "pick": m["pick"], "confidence": conf, "tier": B.tier_of(conf),
-                    "list": bool(m.get("list")),
+                    "list": bool(m.get("list")), "reserve": bool(m.get("reserve")),
                     "winner": winner, "ok": winner == m["pick"],
                     "retired": "ret" in (r.get("note") or "").lower(),
                     "note": r.get("note"), "published": m["published"],
@@ -218,6 +218,8 @@ def main():
         "tiers": tier_table(rows),
         # the Daily List's tennis picks on their own, from the day it launched
         "list": summarise([r for r in rows if r.get("list")]),
+        "reserve": summarise([r for r in rows if r.get("reserve")]),
+        "reserveTiers": tier_table([r for r in rows if r.get("reserve")]),
         "bands": bands,
         "void": sum(1 for g in graded.values() if g["void"]),
         "days": days,

@@ -13,14 +13,14 @@
    "mov": 1
   },
   "usedFitted": false,
-  "games": 891,
+  "games": 906,
   "check": {
-   "n": 317,
-   "logLoss": 0.6404,
-   "accuracy": 0.6352,
+   "n": 332,
+   "logLoss": 0.6387,
+   "accuracy": 0.6426,
    "homeRate": 0.5474,
-   "vsHome": -0.0511,
-   "pWorseVsHome": 0.01
+   "vsHome": -0.049,
+   "pWorseVsHome": 0.013
   },
   "publish": true,
   "listMin": 0.8,
@@ -28,10 +28,10 @@
   "calTested": {
    "a": -0.1411,
    "b": 1.2092,
-   "delta": 0.0028,
-   "pWorse": 0.731,
-   "topGapRaw": 0.0441,
-   "topGapCal": 0.0668
+   "delta": 0.0038,
+   "pWorse": 0.795,
+   "topGapRaw": 0.0417,
+   "topGapCal": 0.058
   },
   "bandsFit": [
    {
@@ -80,33 +80,33 @@
   "bandsCheck": [
    {
     "from": 0.55,
-    "n": 252,
-    "hit": 0.6706,
+    "n": 263,
+    "hit": 0.673,
     "quoted": 0.6844
    },
    {
     "from": 0.6,
-    "n": 191,
-    "hit": 0.6911,
-    "quoted": 0.7187
+    "n": 200,
+    "hit": 0.695,
+    "quoted": 0.7181
    },
    {
     "from": 0.65,
-    "n": 143,
-    "hit": 0.7063,
-    "quoted": 0.7504
+    "n": 148,
+    "hit": 0.7095,
+    "quoted": 0.7511
    },
    {
     "from": 0.7,
-    "n": 110,
-    "hit": 0.7182,
-    "quoted": 0.7724
+    "n": 115,
+    "hit": 0.7217,
+    "quoted": 0.7723
    },
    {
     "from": 0.75,
-    "n": 62,
-    "hit": 0.7742,
-    "quoted": 0.8091
+    "n": 66,
+    "hit": 0.7727,
+    "quoted": 0.8077
    },
    {
     "from": 0.8,
@@ -132,7 +132,7 @@
    ]
   }
  },
- "generated": "2026-09-27",
+ "generated": "2026-09-30",
  "mlb": {
   "params": {
    "k": 8,
@@ -147,14 +147,14 @@
    "mov": 0
   },
   "usedFitted": true,
-  "games": 8609,
+  "games": 8623,
   "check": {
-   "n": 3629,
-   "logLoss": 0.6858,
-   "accuracy": 0.5503,
+   "n": 3643,
+   "logLoss": 0.6855,
+   "accuracy": 0.5504,
    "homeRate": 0.5273,
-   "vsHome": -0.0054,
-   "pWorseVsHome": 0.022
+   "vsHome": -0.0056,
+   "pWorseVsHome": 0.02
   },
   "publish": true,
   "listMin": null,
@@ -162,10 +162,10 @@
   "calTested": {
    "a": -0.0046,
    "b": 0.8039,
-   "delta": -0.001,
-   "pWorse": 0.053,
-   "topGapRaw": 0.0343,
-   "topGapCal": 0.0556
+   "delta": -0.0009,
+   "pWorse": 0.055,
+   "topGapRaw": 0.0307,
+   "topGapCal": 0.0581
   },
   "bandsFit": [
    {
@@ -208,27 +208,27 @@
   "bandsCheck": [
    {
     "from": 0.55,
-    "n": 2104,
-    "hit": 0.5741,
-    "quoted": 0.6029
+    "n": 2112,
+    "hit": 0.5753,
+    "quoted": 0.603
    },
    {
     "from": 0.6,
-    "n": 903,
-    "hit": 0.6002,
-    "quoted": 0.6419
+    "n": 907,
+    "hit": 0.602,
+    "quoted": 0.642
    },
    {
     "from": 0.65,
-    "n": 291,
-    "hit": 0.6495,
+    "n": 294,
+    "hit": 0.6531,
     "quoted": 0.6837
    },
    {
     "from": 0.7,
-    "n": 74,
-    "hit": 0.7432,
-    "quoted": 0.725
+    "n": 75,
+    "hit": 0.7467,
+    "quoted": 0.7248
    },
    {
     "from": 0.75,
@@ -398,13 +398,13 @@
    "mov": 1
   },
   "usedFitted": true,
-  "games": 2291,
+  "games": 2293,
   "check": {
-   "n": 731,
-   "logLoss": 0.5609,
-   "accuracy": 0.7056,
+   "n": 733,
+   "logLoss": 0.5612,
+   "accuracy": 0.7051,
    "homeRate": 0.6892,
-   "vsHome": -0.0717,
+   "vsHome": -0.0718,
    "pWorseVsHome": 0.0
   },
   "publish": true,
@@ -413,10 +413,10 @@
   "calTested": {
    "a": 0.2105,
    "b": 1.2385,
-   "delta": -0.0044,
-   "pWorse": 0.203,
-   "topGapRaw": 0.0193,
-   "topGapCal": 0.0335
+   "delta": -0.0042,
+   "pWorse": 0.202,
+   "topGapRaw": 0.0199,
+   "topGapCal": 0.0344
   },
   "bandsFit": [
    {
@@ -465,27 +465,27 @@
   "bandsCheck": [
    {
     "from": 0.55,
-    "n": 641,
-    "hit": 0.7379,
-    "quoted": 0.713
+    "n": 643,
+    "hit": 0.7372,
+    "quoted": 0.7129
    },
    {
     "from": 0.6,
-    "n": 535,
-    "hit": 0.7514,
-    "quoted": 0.7401
+    "n": 537,
+    "hit": 0.7505,
+    "quoted": 0.7399
    },
    {
     "from": 0.65,
-    "n": 426,
-    "hit": 0.7887,
-    "quoted": 0.7695
+    "n": 427,
+    "hit": 0.7892,
+    "quoted": 0.7693
    },
    {
     "from": 0.7,
-    "n": 337,
-    "hit": 0.816,
-    "quoted": 0.7948
+    "n": 338,
+    "hit": 0.8166,
+    "quoted": 0.7945
    },
    {
     "from": 0.75,

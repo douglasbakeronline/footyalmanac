@@ -22,6 +22,43 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30 (tag pending) — Reserve picks, research links, fresh international ratings
+
+**What changed for a reader**
+
+- **Daily List reserve.** Below the picks that clear the 80% bar, each day
+  fills out to 20 with games under the bar but otherwise clean, Firm (62%)
+  or better, behind a "Reserve" divider. Each keeps its strength tag and
+  tested rate. The reserve is graded as its own group, by tag, and never
+  counts in the list's record. A ranked international must be Firm on the
+  model's own number too.
+- **Head to head and Predictions links** at the top of every expanded row,
+  in every sport.
+- **International ratings now include 2026.** The shipped ratings had been
+  the holdout fit, frozen at 1 January; they are now refitted on every match
+  to 30 Sep (10,091) with the same tested method. Men's and women's.
+
+**Tested, not shipped** Bottom-10%-away and weak-goal-record penalties:
+worse at every strength on both seasons (up to +0.008 log loss). Table in
+`claude/tuning-evidence.md`.
+
+**Recalibration** Sports (`sports.py --tune`): no parameter, calibration or
+list-bar change; tested bands refreshed. Tennis (`tune_tennis.py --report`):
+constants unchanged, both tours pass. International: refitted as above.
+Football calibration: `tune.yml` dispatched on push, full data in CI.
+
+**Files** `build.py`, `build_tennis.py`, `sports.py`, `score.py`,
+`score_tennis.py`, `index.html`, `tune_international.py`,
+`tune_international_women.py`, `international.json`,
+`international-women.json`, `sports.json`, `CLAUDE.md`,
+`claude/tuning-evidence.md`.
+
+**Not changed** List bars, tiers, club football model, the record.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-29-3 (tag pending) — This season's results count sooner
 
 **What changed for a reader** Club ratings now lean on this season's results

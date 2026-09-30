@@ -257,6 +257,9 @@ details.how p{margin-top:8px;padding-left:22px}
 }
 .list-rule b{color:var(--ink)}
 .list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
+.reserve-head{padding:14px 12px 8px;margin-top:6px;border-top:1px solid var(--ink);
+  font-family:var(--f-ui);font-size:13px;color:var(--mute);line-height:1.45}
+.reserve-head b{color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
 .list-past h3{
   font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.12em;
   text-transform:uppercase;color:var(--mute);padding:10px 15px 6px;
@@ -1387,6 +1390,10 @@ function detail(g){
   // the site entirely: the fixture itself, and the competition table for
   // context the model doesn't show (position, run-in, head-to-head).
   const research = `<div class="research">
+    <a href="${gSearch(g.home.name + " v " + g.away.name + " head to head")}"
+       target="_blank" rel="noopener">Head to head ↗</a>
+    <a href="${gSearch(g.home.name + " v " + g.away.name + " prediction")}"
+       target="_blank" rel="noopener">Predictions ↗</a>
     <a href="${gSearch(g.home.name + " v " + g.away.name + (g.date ? " " + g.date : ""))}"
        target="_blank" rel="noopener">Search this fixture ↗</a>
     <a href="${gSearch(compName(g) + " " + g.country + " table")}"
@@ -1645,6 +1652,9 @@ function renderList(){
         clubs with no prior season) and never picks a draw. Tennis leaves out qualifying rounds.
         World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.
         An international also needs the model's own number to clear the bar before the ranking moves it.</p>
+        <p>Below the picks that clear the bar, a <b>reserve</b> fills each day out to 20: games under the bar
+        but otherwise clean, Firm (62%) or better, ranked the same way. Each carries its strength tag and
+        tested rate, and the reserve is graded as its own group so it never flatters the list's record.</p>
         <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in five or
         six will still miss; that is sport, and no bar removes it.
         ${liveN ? "" : "The list's live record starts from its first graded day."}</p>
@@ -1654,24 +1664,41 @@ function renderList(){
   // Every sport's picks per day in one ranking: highest tested hit rate
   // first, then confidence. Confidence alone would not compare fairly: a
   // football number is one of three outcomes, the others one of two.
-  const byDay = {};
-  const add = (date, item) => (byDay[date] = byDay[date] || []).push(item);
-  upcoming.forEach(day => day.games.filter(g => g.list).forEach(g => add(day.date, {kind:"football", g, day})));
-  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).filter(g => g.list)
-    .forEach(g => add(localDay(g.when), {kind:"sport", g})));
-  if(TDL && TDL.matches) TDL.matches.filter(m => m.list).map(tennisAsGame)
-    .forEach(g => add(localDay(g.when), {kind:"sport", g}));
+  // Picks that clear the bar come first. Below them, the reserve fills the
+  // day out to LIST_TARGET: games under the bar but otherwise clean, Firm or
+  // better, flagged by each pipeline before kick-off and graded as their own
+  // group by strength tag (record.json "reserve"), never in the list's record.
+  const LIST_TARGET = 20;
+  const byDay = {}, resDay = {};
+  const add = (bucket, date, item) => (bucket[date] = bucket[date] || []).push(item);
+  upcoming.forEach(day => day.games.forEach(g =>
+    g.list ? add(byDay, day.date, {kind:"football", g, day})
+           : g.reserve && add(resDay, day.date, {kind:"football", g, day})));
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g =>
+    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
+           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g})));
+  if(TDL && TDL.matches) TDL.matches.map(tennisAsGame).forEach(g =>
+    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
+           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g}));
   const strength = it => [(it.g.accuracy && it.g.accuracy.hit) || 0, it.g.confidence];
-  const dates = Object.keys(byDay).sort();
+  const order = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
+  const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay)])].sort();
   dates.forEach(date => {
-    const items = byDay[date].sort((a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; });
+    const items = (byDay[date] || []).sort(order).slice(0, LIST_TARGET);
+    const extra = (resDay[date] || []).sort(order).slice(0, Math.max(0, LIST_TARGET - items.length));
     const sec = document.createElement("section");
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} pick${items.length === 1 ? "" : "s"}</div></div>`;
-    items.forEach((it, i) => it.kind === "football"
+      <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}</div></div>`;
+    const put = (it, i) => it.kind === "football"
       ? appendFixture(sec, it.g, i, date, false)
-      : sec.appendChild(sportRow(it.g, i, true)));
+      : sec.appendChild(sportRow(it.g, i, true));
+    items.forEach(put);
+    if(extra.length){
+      sec.insertAdjacentHTML("beforeend", `<div class="reserve-head"><b>Reserve</b>
+        Under the 80% bar, Firm or better. Weigh each by its tag and tested rate; graded separately.</div>`);
+      extra.forEach((it, j) => put(it, items.length + j));
+    }
     host.appendChild(sec);
   });
   if(!dates.length){
@@ -1706,6 +1733,10 @@ function tennisResearch(m){
   // and give a fast way out to something with more context than a rating
   // file can hold — a bracket, a recent-form thread, an injury note.
   return `<div class="research">
+    <a href="${gSearch(m.playerA + " v " + m.playerB + " head to head")}"
+       target="_blank" rel="noopener">Head to head ↗</a>
+    <a href="${gSearch(m.playerA + " v " + m.playerB + " prediction")}"
+       target="_blank" rel="noopener">Predictions ↗</a>
     <a href="${gSearch(m.playerA + " v " + m.playerB + " " + m.tournament)}"
        target="_blank" rel="noopener">Search this match ↗</a>
     <a href="${gSearch(m.tournament + " " + m.tour + " draw")}"
@@ -2011,6 +2042,8 @@ function formLines(f){
 function sportDetail(g){
   const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
   const research = g.research || `<div class="research">
+    <a href="${gSearch(g.home + " v " + g.away + " " + name + " head to head")}" target="_blank" rel="noopener">Head to head ↗</a>
+    <a href="${gSearch(g.home + " v " + g.away + " " + name + " prediction")}" target="_blank" rel="noopener">Predictions ↗</a>
     <a href="${gSearch(g.home + " v " + g.away + " " + name)}" target="_blank" rel="noopener">Search this game ↗</a>
     <a href="${gSearch(g.label + " " + name + " standings")}" target="_blank" rel="noopener">${g.label} table ↗</a></div>`;
   const T = SPORT_K[g.tier] ?? 0;
@@ -2085,7 +2118,7 @@ function tennisAsGame(m){
     label:`${m.tour} · ${m.tournament || ""}${m.round ? " · " + m.round : ""}`,
     chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
     when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
-    confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list,
+    confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list, reserve:m.reserve,
     statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}Elo ${m.ratingA.surfaceElo} · ${m.ratingA.matches} played`,
     statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}Elo ${m.ratingB.surfaceElo} · ${m.ratingB.matches} played`,
     research:tennisResearch(m),

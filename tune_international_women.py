@@ -293,6 +293,8 @@ def run(cache_dir, verbose=True):
     # (every team rated identically) — i.e. do the ratings carry real signal
     # at all, on matches never touched during fitting?
     per_fit, acc_fit = score(check, ratings, mu, home_adv)
+    live, live_mu, live_ha = fit_ratings(all_matches, datetime.combine(_date.today(), datetime.min.time()),
+                                         best_hl, final_weights)
     per_base, acc_base = score(check, ratings, mu, home_adv, baseline=True)
     m, pw = paired(per_fit, per_base)
 
@@ -311,7 +313,15 @@ def run(cache_dir, verbose=True):
             "notWorse": pw <= MAX_P_WORSE,
             "worthIt": -m >= MIN_GAIN,
         },
-        "ratings": ratings,
+        # The method (half-life, weighting) is chosen and judged on the
+        # holdout above; the ratings that ship are then refitted on every
+        # match up to today with that method. Until 30 Sep 2026 the file
+        # carried the holdout fit itself, frozen at CHECK_FROM, so the live
+        # site rated national teams without the current year's results.
+        "ratings": live,
+        "mu": round(live_mu, 4), "homeAdvantage": round(live_ha, 4),
+        "ratingsAsOf": _date.today().isoformat(), "ratingMatches": len(all_matches),
+        "holdoutFit": {"mu": round(mu, 4), "homeAdvantage": round(home_adv, 4)},
     }
     verdict["pass"] = all(verdict["gates"].values())
 

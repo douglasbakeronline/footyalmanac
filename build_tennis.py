@@ -174,6 +174,17 @@ def accuracy_for(conf, tour, ranked=False):
     return {"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None
 
 
+# The list's reserve, as football (build.RESERVE_MIN): below the bar, Firm
+# or better, main draw, both players rated. Graded as its own group.
+RESERVE_MIN = 0.62
+
+
+def list_reserve(conf, tour, round_name, matches_a, matches_b, ranked=False):
+    return (not list_eligible(conf, tour, round_name, matches_a, matches_b, ranked)
+            and conf >= RESERVE_MIN and "qualif" not in (round_name or "").lower()
+            and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
+
+
 def list_eligible(conf, tour, round_name, matches_a, matches_b, ranked=False):
     return (conf >= LIST_MIN["ATP_RANKED" if ranked else tour.upper()] and "qualif" not in (round_name or "").lower()
             and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
@@ -467,6 +478,8 @@ def main():
                 "accuracy": accuracy_for(max(p, 1 - p), tour, ranked),
                 "list": list_eligible(max(p, 1 - p), tour, r["round"],
                                       pool[a]["matches"], pool[b]["matches"], ranked),
+                "reserve": list_reserve(max(p, 1 - p), tour, r["round"],
+                                        pool[a]["matches"], pool[b]["matches"], ranked),
             })
         log.append(f"{tour}: {len(rows)} fetched, {dropped} dropped (no rating on file for a side)")
 

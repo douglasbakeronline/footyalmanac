@@ -211,7 +211,7 @@ def main():
             "p": p, "pick": pick, "actual": actual,
             "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
             "unrated": bool(g.get("unrated")),
-            "list": bool(g.get("list")),
+            "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
         })
 
@@ -279,6 +279,11 @@ def main():
         "listDays": [{"date": d, "games": [game_row(r) for r in by_date[d] if r["list"]]}
                      for d in sorted(by_date, reverse=True)[:REVIEW_DAYS]
                      if any(r["list"] for r in by_date[d])],
+        # The list's reserve (below the bar, Firm or better), from 30 Sep 2026:
+        # graded as its own group and by strength tag, never mixed into the
+        # list's record above.
+        "reserve": summarise([r for r in rows if r["reserve"]]),
+        "reserveTiers": tier_table([r for r in rows if r["reserve"]]),
         "days": review,
         "byLeague": per_league,
         "recent": [{"date": r["date"], "league": r["league"], "home": r["home"],

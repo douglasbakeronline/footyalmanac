@@ -113,3 +113,25 @@ Heavy form weighting chases noise: a five-game run is mostly luck at these
 goal rates. What holds up is letting this season's full record count sooner,
 which is the honest version of "this season's form". calibration.json was fit
 at shrink 6; Monday's tune.yml refits it on the full data.
+
+
+## Re-test, 30 September 2026: table-position and goal-record penalties
+
+Douglas asked for clubs in the bottom 10% of their table playing away, and
+clubs substantially low for goals scored and high for goals conceded
+(z <= -1 and z >= +1 against their league), to be weighted to lose. Tested as
+multipliers on the flagged side's expected goals (and the inverse on the
+opponent's), calibration refitted per setting, both seasons.
+
+| Setting | Flagged (fit / check) | 2025/26 | 2026/27 |
+|---|---|---|---|
+| bottom-10% away x0.90 | 495 / 34 | +0.0010, p(worse) 0.98 | +0.0017, 0.94 |
+| bottom-10% away x0.80 | | +0.0030, 1.00 | +0.0047, 0.99 |
+| bottom-10% away x0.70 | | +0.0053, 1.00 | +0.0083, 1.00 |
+| weak attack and defence x0.90 | 447 / 27 | +0.0009, 0.98 | +0.0019, 0.98 |
+| weak attack and defence x0.80 | | +0.0029, 1.00 | +0.0048, 1.00 |
+| both x0.85 | | +0.0036, 1.00 | +0.0062, 1.00 |
+
+Worse at every strength. The ratings are built from goals scored and
+conceded, so these sides are already priced to lose; a second penalty counts
+the same evidence twice. Rejected.

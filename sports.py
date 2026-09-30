@@ -69,6 +69,7 @@ MIN_HOLDOUT, MAX_P_WORSE, MIN_GAIN = 250, 0.30, 0.0005
 # (raised from three in four on 29 Sep 2026, Douglas's call).
 LIST_THRESHOLDS = (0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85)
 LIST_MIN_HIT, LIST_MIN_N = 0.80, 30
+RESERVE_MIN = 0.62   # the list's reserve floor, Firm, as football and tennis
 
 
 def list_threshold(windows):
@@ -579,7 +580,10 @@ def build(start=None):
                    "recordH": record(by_team.get((g["pool"], g["h"]), []), g["h"]),
                    "recordA": record(by_team.get((g["pool"], g["a"]), []), g["a"]),
                    "h2h": head_to_head(by_team.get((g["pool"], g["h"]), []), g["h"], g["a"]),
-                   "list": bool(entry["listMin"] and conf >= entry["listMin"])}
+                   "list": bool(entry["listMin"] and conf >= entry["listMin"]),
+                   # the list's reserve: a sport with a list place, below its
+                   # bar, Firm or better (build.RESERVE_MIN)
+                   "reserve": bool(entry["listMin"] and RESERVE_MIN <= conf < entry["listMin"])}
             entry["games"].append(row)
             archive.append({**row, "published": now})
         entry["games"].sort(key=lambda r: r["when"])
@@ -639,6 +643,9 @@ def score():
            "overall": summ(graded),
            "bySport": {s: summ([r for r in graded if r["sport"] == s]) for s in SPORTS},
            "list": summ([r for r in graded if r["list"]]),
+           "reserve": summ([r for r in graded if r.get("reserve")]),
+           "reserveTiers": {t: summ([r for r in graded if r.get("reserve") and r["tier"] == t])
+                            for t in ("Strong", "Firm")},
            "days": [{"date": d, **summ(by_date[d]),
                      "games": sorted(by_date[d], key=lambda r: -r["confidence"])}
                     for d in sorted(by_date, reverse=True)[:14]]}

@@ -147,6 +147,29 @@ def list_eligible(g):
     return True
 
 
+# The reserve (30 Sep 2026, Douglas): the Daily List fills out to LIST_TARGET
+# picks a day from games that miss the bar but are otherwise clean, shown
+# below a divider and graded as their own group, by strength tag. The floor
+# is Firm (62%, the tier ladder). A ranked international must be Firm on the
+# model's own number too, so the ranking alone never promotes a coin flip.
+RESERVE_MIN = 0.62
+
+
+def list_reserve(g):
+    if g["list"]:
+        return False
+    p = g["p"]
+    pick = max(("h", "d", "a"), key=lambda k: p[k])
+    if pick == "d" or p[pick] < RESERVE_MIN or g["celtic"] or g["unrated"]:
+        return False
+    if g.get("rankAdjusted") and (g.get("modelConfidence") or 0) < RESERVE_MIN:
+        return False
+    for t in (g["home"], g["away"]):
+        if t["played"] is not None and not t["last"]:
+            return False
+    return True
+
+
 def prev_of(code):
     return E.LEAGUES[code].get("prev", PREV)
 
@@ -817,6 +840,7 @@ def main():
         for i, g in enumerate(games, 1):
             g["rank"] = i
             g["list"] = list_eligible(g)
+            g["reserve"] = list_reserve(g)
             g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"),
                                          g.get("rankAdjusted"))
         days.append({"date": d, "count": len(games), "games": games})
@@ -852,7 +876,7 @@ def main():
              "confidence": g["confidence"], "celtic": bool(g["celtic"]),
              "unrated": g["unrated"],
              # fixed at publication, so the list is graded on what it said
-             "list": g["list"],
+             "list": g["list"], "reserve": g["reserve"],
              # archived so the prices a reader saw can be graded later
              "market": g.get("market"), "value": g.get("value")}
             for d in days for g in d["games"]]
