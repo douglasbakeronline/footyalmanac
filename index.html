@@ -256,6 +256,7 @@ details.how p{margin-top:8px;padding-left:22px}
   border-left:1px solid var(--ink);font-size:14px;line-height:1.55;max-width:100ch;color:var(--ink-2);
 }
 .list-rule b{color:var(--ink)}
+.ko-local{font-family:var(--f-ui);font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
 .list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
 .reserve-head{padding:14px 12px 8px;margin-top:6px;border-top:1px solid var(--ink);
   font-family:var(--f-ui);font-size:13px;color:var(--mute);line-height:1.45}
@@ -1252,10 +1253,15 @@ function tier(g){
 }
 
 /* ---------- row rendering ---------- */
-/* Kick-off in the reader's own time zone. build.py stores one UTC instant
-   per fixture; an older build without it falls back to the time as printed. */
-const koFmt = new Intl.DateTimeFormat("en-GB", {hour:"2-digit", minute:"2-digit"});
-const koText = g => g.kickoff ? koFmt.format(new Date(g.kickoff)) : (g.time || "TBC");
+/* Every time on the site is UK time (Europe/London, so GMT or BST as the
+   date falls), whatever zone the reader's device is set to: Douglas's call,
+   30 Sep 2026, so a slate reads against the UK day. build.py stores one UTC
+   instant per fixture; a fixture whose source gave no zone keeps the time as
+   printed, marked "local" rather than converted with a guess. */
+const UK_TZ = "Europe/London";
+const koFmt = new Intl.DateTimeFormat("en-GB", {hour:"2-digit", minute:"2-digit", timeZone: UK_TZ});
+const koText = g => g.kickoff ? koFmt.format(new Date(g.kickoff))
+  : (g.time ? `${g.time} <small class="ko-local" title="The source gave no time zone, so this is the local kick-off time, not UK time">local</small>` : "TBC");
 const koKey = g => g.kickoff || (g.date + "T" + (g.time || "99:99"));
 const compName = g => g.leagueName || g.short || g.league;
 
@@ -1571,7 +1577,7 @@ function renderStarred(){
         <div class="count">${games.length} bookmarked</div>
       </div>
       <div class="ruler">
-        <div>#</div><div>Kick-off</div><div>Home</div>
+        <div>#</div><div>UK time</div><div>Home</div>
         <div class="r-bar">${btts
           ? `<span>Both score</span><span>Not both</span>`
           : `<span>Home win</span><span>Draw</span><span>Away win</span>`}</div>
@@ -1671,9 +1677,10 @@ function renderList(){
   const LIST_TARGET = 20;
   const byDay = {}, resDay = {};
   const add = (bucket, date, item) => (bucket[date] = bucket[date] || []).push(item);
+  const fDay = (g, day) => g.kickoff ? localDay(g.kickoff) : day.date;
   upcoming.forEach(day => day.games.forEach(g =>
-    g.list ? add(byDay, day.date, {kind:"football", g, day})
-           : g.reserve && add(resDay, day.date, {kind:"football", g, day})));
+    g.list ? add(byDay, fDay(g, day), {kind:"football", g, day})
+           : g.reserve && add(resDay, fDay(g, day), {kind:"football", g, day})));
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g =>
     g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
            : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g})));
@@ -1787,7 +1794,7 @@ function renderTennis(){
     matches are re-scored with the ATP world ranking, which made them measurably more accurate.
     Under each number is how often calls at that level landed in testing.</p></div>`;
   const byDay = {};
-  TD.matches.forEach(m => (byDay[m.date] = byDay[m.date] || []).push(m));
+  TD.matches.forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
 
   Object.keys(byDay).sort().forEach(date => {
     const games = byDay[date].slice().sort((a,b)=> b.confidence - a.confidence);
@@ -1802,7 +1809,7 @@ function renderTennis(){
         <div class="count">${games.length} matches &middot; ${confident} confident</div>
       </div>
       <div class="ruler">
-        <div>#</div><div>Time</div><div>Player</div>
+        <div>#</div><div>UK time</div><div>Player</div>
         <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
         <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div>
       </div>`;
@@ -1845,7 +1852,7 @@ function render(){
         <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident</div>
       </div>
       <div class="ruler">
-        <div>#</div><div>Kick-off</div><div>Home</div>
+        <div>#</div><div>UK time</div><div>Home</div>
         <div class="r-bar">${state.board==="btts"
           ? `<span>Both score</span><span>Not both</span>`
           : `<span>Home win</span><span>Draw</span><span>Away win</span>`}</div>
@@ -2136,13 +2143,13 @@ function tennisAsGame(m){
 const SD = window.__SPORTS_DATA__ || null;
 const SR = window.__SPORTS_RECORD__ || null;
 const SPORT_K = {"Strong":3, "Firm":2, "Lean":1, "No read":0};
-const localDay = iso => { const d = new Date(iso); return isNaN(d) ? iso.slice(0,10)
-  : `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; };
-const localTime = iso => { const d = new Date(iso); return isNaN(d) ? "" :
-  d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}); };
+// The UK calendar day and time of an instant (UK_TZ above), not the device's.
+const ukDayFmt = new Intl.DateTimeFormat("en-CA", {year:"numeric", month:"2-digit", day:"2-digit", timeZone: UK_TZ});
+const localDay = iso => { const d = new Date(iso); return isNaN(d) ? iso.slice(0,10) : ukDayFmt.format(d); };
+const localTime = iso => { const d = new Date(iso); return isNaN(d) ? "" : koFmt.format(d); };
 
 function sportRuler(){
-  return `<div class="ruler"><div>#</div><div>Time</div><div>Home</div>
+  return `<div class="ruler"><div>#</div><div>UK time</div><div>Home</div>
     <div class="r-bar"><span>Home win</span><span>Away win</span></div><div></div>
     <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`;
 }

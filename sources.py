@@ -178,6 +178,20 @@ KICKOFF_TZ = {
     "tur": "Europe/Istanbul", "aut": "Europe/Vienna", "grc": "Europe/Athens",
     "bra": "America/Sao_Paulo",
     "eur": "Europe/Paris",   # openfootball prints UEFA ties in CET
+    # every other country openfootball carries, so each kick-off reaches the
+    # page as UK time (30 Sep 2026) instead of the source's own local time
+    "alb": "Europe/Tirane", "arm": "Asia/Yerevan", "aze": "Asia/Baku",
+    "bgr": "Europe/Sofia", "bih": "Europe/Sarajevo", "blr": "Europe/Minsk",
+    "cyp": "Asia/Nicosia", "cze": "Europe/Prague", "dnk": "Europe/Copenhagen",
+    "est": "Europe/Tallinn", "fin": "Europe/Helsinki", "fro": "Atlantic/Faroe",
+    "geo": "Asia/Tbilisi", "hrv": "Europe/Zagreb", "hun": "Europe/Budapest",
+    "irl": "Europe/Dublin", "isl": "Atlantic/Reykjavik", "isr": "Asia/Jerusalem",
+    "ltu": "Europe/Vilnius", "lux": "Europe/Luxembourg", "lva": "Europe/Riga",
+    "mda": "Europe/Chisinau", "mkd": "Europe/Skopje", "mlt": "Europe/Malta",
+    "mne": "Europe/Podgorica", "nir": "Europe/London", "nor": "Europe/Oslo",
+    "pol": "Europe/Warsaw", "rou": "Europe/Bucharest", "srb": "Europe/Belgrade",
+    "svk": "Europe/Bratislava", "svn": "Europe/Ljubljana", "swe": "Europe/Stockholm",
+    "ukr": "Europe/Kyiv", "wal": "Europe/London",
 }
 
 

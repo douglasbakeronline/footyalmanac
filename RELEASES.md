@@ -22,6 +22,26 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-09-30-2 (tag pending) — Every time in UK time
+
+**What changed for a reader** Every kick-off and start time, in every sport,
+now shows in UK time (GMT or BST as the date falls), whatever time zone the
+phone or computer is set to, and each game sits under its UK calendar day.
+Column headings read "UK time". Kick-offs from 35 more countries' fixture
+files are converted instead of printed as the local time; the rare fixture
+whose source gives no zone at all is marked "local".
+
+**Evidence** Checked in a browser set to London, New York and Tokyo: the
+same instants print the same UK times and days in all three.
+
+**Files** `index.html`, `sources.py` (KICKOFF_TZ).
+
+**Not changed** Any number, the list, the record.
+
+**Roll back** `git revert --no-edit <release commit>`.
+
+---
+
 ## release-2026-09-30 (tag pending) — Reserve picks, research links, fresh international ratings
 
 **What changed for a reader**
