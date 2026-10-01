@@ -243,6 +243,8 @@ h1 .b{
   letter-spacing:.01em;text-transform:uppercase;line-height:1.05;color:var(--ink)}
 .lede p{margin-top:6px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
 .lede b{color:var(--ink)}
+.list-order{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.list-order .seg{width:max-content}
 details.how{margin-top:8px;font-size:13.5px;color:var(--ink-2);line-height:1.55}
 details.how summary{cursor:pointer;font-weight:700;color:var(--home);list-style:none;
   display:inline-flex;align-items:center;gap:6px;font-size:13.5px}
@@ -1767,6 +1769,17 @@ function renderStarred(){
    build.py decides membership (list_eligible) and archives it, so the page
    only reads the flag: the rule lives in one place and score.py grades
    exactly what was shown. */
+// The Daily List's order (Douglas, 1 Oct 2026): strongest first by default,
+// or by kick-off to plan the day. Remembered on this device only.
+let LIST_ORDER = (() => { try { return localStorage.getItem("listOrder") === "time" ? "time" : "strength"; }
+                          catch(e){ return "strength"; } })();
+document.addEventListener("click", e => {
+  const b = e.target.closest("#listSort button"); if(!b) return;
+  LIST_ORDER = b.dataset.lsort;
+  try { localStorage.setItem("listOrder", LIST_ORDER); } catch(e){}
+  renderList();
+});
+
 function renderList(){
   const host = $("#list");
   if(!host) return;
@@ -1796,11 +1809,16 @@ function renderList(){
   if(TDL && TDL.matches) _n += TDL.matches.filter(m => m.list).length;
   host.innerHTML = `
     <div class="lede">
-      <h2>${_n} pick${_n === 1 ? "" : "s"} this week, strongest first</h2>
+      <h2>${_n} pick${_n === 1 ? "" : "s"} this week, ${LIST_ORDER === "time" ? "by kick-off" : "strongest first"}</h2>
       <p>Every pick here is one the model's testing says lands at least <b>four times in five</b>.
         Each row shows its own tested rate: <b>"86% landed"</b> means calls at that level came off
         86% of the time on games the model never saw.
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
+      <div class="list-order"><span class="ctl-label">Order by</span>
+        <div class="seg" id="listSort">
+          <button data-lsort="strength" aria-pressed="${LIST_ORDER === "strength"}">Strongest</button>
+          <button data-lsort="time" aria-pressed="${LIST_ORDER === "time"}">Kick-off time</button>
+        </div></div>
       <details class="how"><summary>How the list works</summary>
         <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
         games the model was never tuned on. The level differs by sport because the numbers do:
@@ -1839,11 +1857,18 @@ function renderList(){
     g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
            : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g}));
   const strength = it => [(it.g.accuracy && it.g.accuracy.hit) || 0, it.g.confidence];
-  const order = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
+  const byStrength = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
+  // Kick-off order keeps the bar: picks that clear it still come before the
+  // reserve, each group in time order, and the same 20 a day are chosen
+  // (strongest first) whichever order they are shown in.
+  const ko = it => { const t = Date.parse(it.kind === "football" ? koKey(it.g) : it.g.when);
+                     return isNaN(t) ? Infinity : t; };            // no time: end of its day
+  const byTime = (a,b) => (ko(a) - ko(b)) || byStrength(a,b);
+  const shown = xs => LIST_ORDER === "time" ? xs.sort(byTime) : xs;
   const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay)])].sort();
   dates.forEach(date => {
-    const items = (byDay[date] || []).sort(order).slice(0, LIST_TARGET);
-    const extra = (resDay[date] || []).sort(order).slice(0, Math.max(0, LIST_TARGET - items.length));
+    const items = shown((byDay[date] || []).sort(byStrength).slice(0, LIST_TARGET));
+    const extra = shown((resDay[date] || []).sort(byStrength).slice(0, Math.max(0, LIST_TARGET - items.length)));
     const sec = document.createElement("section");
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>

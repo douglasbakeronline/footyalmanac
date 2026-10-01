@@ -22,6 +22,26 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-01 (tag pending) — Daily List can be ordered by kick-off
+
+**What changed** The Daily List has an "Order by" switch: Strongest (as
+before, the default) or Kick-off time, in UK time. Ordering by kick-off keeps
+the bar: each day's picks that clear 80% still come first, then the reserve,
+each group in time order. The same 20 a day are chosen either way; only the
+order they are shown in changes. The choice is remembered on that device.
+The fixtures board already had a Time order and is unchanged.
+
+**Evidence** Checked in Chromium at 1280px and 400px: the switch, the
+headline ("by kick-off"), times ascending within each group, no script errors.
+
+**Files** `index.html` only.
+
+**Not changed** Which games make the list, any number, any rule.
+
+**Roll back** `git revert` this commit.
+
+---
+
 ## release-2026-09-30-10 (tag pending) — Competition filter collapses
 
 **What changed** The competition chips took up most of a phone screen once
