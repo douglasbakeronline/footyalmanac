@@ -1,0 +1,73 @@
+name: Office agents
+
+# The Footyalmanac HQ agents doing real development work, unattended.
+# Each morning, after the daily build, one agent picks the most important
+# objective that is behind (agents/pick_task.py), works on it with Claude
+# following CLAUDE.md and AGENTS.md, and the workflow opens a pull request.
+# It never pushes to main: agents/merge_gate.py (office-merge.yml) decides
+# what ships. Needs ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN); without
+# it this workflow skips quietly.
+on:
+  schedule:
+    - cron: "30 6 * * *"   # 07:30 BST / 06:30 GMT, after deploy.yml
+  workflow_dispatch:
+    inputs:
+      task:
+        description: "Task key to force (blank = pick automatically)"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: read
+
+concurrency:
+  group: office-agents
+  cancel-in-progress: false
+
+jobs:
+  work:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    env:
+      GH_TOKEN: ${{ github.token }}
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check for a Claude key
+        id: key
+        env:
+          K1: ${{ secrets.ANTHROPIC_API_KEY }}
+          K2: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -z "$K1$K2" ]; then
+            echo "::warning::No ANTHROPIC_API_KEY or CLAUDE_CODE_OAUTH_TOKEN secret, so the agents are off today."
+            echo "skip=1" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=0" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Pick today's task
+        id: pick
+        if: steps.key.outputs.skip == '0'
+        run: python3 agents/pick_task.py --task "${{ inputs.task }}"
+      - name: Agent works on the task
+        if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: ${{ steps.pick.outputs.prompt }}
+          claude_args: "--max-turns 80 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
+      - name: Verify and open a pull request
+        if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
+        run: |
+          mkdir -p /tmp/office-agent
+          bash agents/open_pr.sh "${{ steps.pick.outputs.key }}" "${{ steps.pick.outputs.owner }}" "${{ steps.pick.outputs.title }}"

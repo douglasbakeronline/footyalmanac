@@ -1,0 +1,33 @@
+name: Office merge window
+
+# Once a day, merge office-agent pull requests that are safe to ship
+# unattended (see agents/merge_gate.py for every gate), tag the release and
+# redeploy. Anything labelled hold or needs-owner waits for Douglas.
+on:
+  schedule:
+    - cron: "0 21 * * *"   # 22:00 BST / 21:00 GMT
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+
+concurrency:
+  group: office-merge
+  cancel-in-progress: false
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 agents/merge_gate.py

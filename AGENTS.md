@@ -60,6 +60,14 @@ around them; if you think one is wrong, say so in your pull request instead.
   owner. Visual changes respect the contrast tokens in
   `claude/brand-identity.md`; no dark border thicker than 1px.
 
+## Office agents (unattended, scheduled)
+
+`office-agents.yml` gives you one task a day as a named office agent. Do not
+commit, push or tag: leave changes in the working tree and write
+`/tmp/office-agent/report.md` and `meta.json` as the prompt says. Changes to
+bot-written and fitted files are discarded. Set `automerge` to false unless the
+change is safe to ship unattended: `office-merge.yml` merges it otherwise.
+
 ## How to ship
 
 - **Unattended agents (claude.ai/code sessions, the GitHub agent, Copilot):**

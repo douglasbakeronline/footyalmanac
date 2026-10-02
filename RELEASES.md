@@ -22,6 +22,32 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-03 — Office agents develop the project unattended
+
+**What changed** Nothing on the site. Two scheduled workflows let the
+Footyalmanac HQ agents do real development work. Each morning at 06:30 UTC,
+one agent takes the most important objective that is behind (weakest league,
+calibration gap, unrated fixtures, a failed build and so on) and works on it
+with Claude under CLAUDE.md's rules. The workflow then runs `nametest.py`
+(plus a fast build if pipeline code changed) and opens a labelled pull
+request. Each evening at 21:00 UTC, the merge window ships pull requests that
+pass every gate, tags them and redeploys. Everything else waits for Douglas.
+
+**Evidence** `agents/pick_task.py` run against today's record picks "Lift
+accuracy in England Championship" (37% over 76 games) for Mia. Both workflows
+skip quietly until an `ANTHROPIC_API_KEY` or `CLAUDE_CODE_OAUTH_TOKEN` secret
+is added.
+
+**Files** `.github/workflows/office-agents.yml`, `.github/workflows/office-merge.yml`,
+`agents/`, `claude/office-agents.md`, `CLAUDE.md`, `AGENTS.md`.
+
+**Not changed** The model, the data, the site, `deploy.yml`, `tune.yml`, `claude.yml`.
+
+**Roll back** Disable the two workflows in the Actions tab, or `git revert` this commit.
+Stop a single change by adding the `hold` label to its pull request.
+
+---
+
 ## release-2026-10-01 (tag pending) — Daily List can be ordered by kick-off
 
 **What changed** The Daily List has an "Order by" switch: Strongest (as
