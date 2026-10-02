@@ -22,6 +22,65 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-03-2 — Football evaluation infrastructure (audit fixes)
+
+**What changed** Nothing on the page. Underneath, the harnesses that judge the
+football model and fit its calibration were fixed after an external audit
+(Julius, 1 Oct 2026), reviewed at commit `6ab010b` and merged without
+rewriting history:
+
+- `tune.py` (which fits `calibration.json`) and `backtest.py` now share one
+  walk-forward replay (`replay.py`) built from the live build's engine
+  functions. Before, `tune.py` normalised this season by last season's goal
+  rate while `backtest.py` and the live build used this season's.
+- The replay is batched by date: a match sees only results from earlier
+  days, never a same-day result that came first in the file.
+- Seasons that overlap, are missing, or hold rows outside their calendar
+  window are refused and listed, not silently used (`replay.py --audit`).
+  Excluded today: en.3 (corrupt 2025-26 file), mx.1 fit, and five 2024-25
+  files with rows dated 2026.
+- The live build drops matches that appear in both a prior and the current
+  season (mx.1 21, ru.1 9, dnk.1 6), loudly.
+- The prediction archive stamps `published` and `kickoff` and accepts no new
+  entry once a fixture's start has passed (known kick-off, or 10:00 UTC the
+  day before when unknown). `score.py` labels every row `verified`,
+  `verified-by-date`, `legacy-unverified` (graded), or `late` /
+  `timing-unverifiable` (not graded, counted apart). `record.json` gains a
+  `verification` block. All 11,874 earlier rows are legacy, still graded,
+  prices untouched.
+- `backfill.py` uses evidenced season bounds for mx.1, ru.1 and dnk.1 and
+  stops each walk before the next season's first result.
+- 37 regression tests (`tests/`), run on Python 3.12 and 3.13 by
+  `.github/workflows/tests.yml` for pull requests and branch pushes.
+
+**Evidence** Identical fixtures, frozen snapshot `aa19d05b...`: fit
+2025-26 (6,474) old tune 1.02402, old backtest 1.02398, new both 1.02395;
+check 2026-27 (1,386) 1.02630 / 1.02568 / 1.02564. New tune and backtest
+agree to 7e-16. Openfootball-only snapshot `cc08a335...` reproduces the same
+pattern. Golden test: engine outputs unchanged to 1e-12. Julius verified
+`ed33bdc` independently (36 tests, Python 3.13). On the merged main: 37
+tests pass, `nametest.py` passes, fast build 99 fixtures. Full write-up:
+`claude/evaluation-audit.md`.
+
+**Files** `replay.py`, `engine.py` (refactor only), `tune.py`, `backtest.py`,
+`build.py`, `score.py`, `sources.py`, `backfill.py`, `tests/`, `tools/`,
+`.github/workflows/tests.yml`, `.gitignore`, `claude/evaluation-audit.md`,
+`claude/proposals/`, `CLAUDE.md`, `AGENTS.md`.
+
+**Not changed** `calibration.json`, every model constant, odds (still out of
+every prediction), the site, `tune.yml`, `deploy.yml`. Not included: the
+history repairs, the League One prior and the cache-expanded calibration
+coverage (`claude/proposals/`, each awaiting a decision). No refit was run.
+The next Monday refit (5 Oct, 04:40 UTC) will be the first on the corrected
+calculation, under the same gates.
+
+**Roll back** `git revert -m 1 <merge commit>` (the merge of
+`audit/eval-infrastructure`), then `git push`. Archive rows written in the
+meantime keep their extra `published` / `kickoff` fields; the old `score.py`
+ignores them.
+
+---
+
 ## release-2026-10-03 — Office agents develop the project unattended
 
 **What changed** Nothing on the site. Two scheduled workflows let the
