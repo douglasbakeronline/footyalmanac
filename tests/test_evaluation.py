@@ -330,12 +330,27 @@ class Grading(unittest.TestCase):
                  ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "verified"),
                  ({"published": "2026-10-02T14:30:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "late"),
                  ({"published": "2026-10-01T05:15:00Z"}, "verified-by-date"),         # before 10-01T10:00Z
-                 ({"published": "2026-10-01T20:00:00Z"}, "late"),                     # after the earliest instant
-                 ({"published": "2026-10-02T05:15:00Z"}, "late"),                     # match day, no kick-off
-                 ({"published": "2026-10-02T12:00:00Z", "date": "2026-10-01"}, "late"),   # reviewer's case
-                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00"}, "late")]  # zone-less
+                 ({"published": "2026-10-01T20:00:00Z"}, "timing-unverifiable"),      # after the earliest instant
+                 ({"published": "2026-10-02T05:15:00Z"}, "timing-unverifiable"),      # match day, no kick-off
+                 ({"published": "2026-10-02T12:00:00Z", "date": "2026-10-01"}, "timing-unverifiable"),  # review case
+                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00"},
+                  "timing-unverifiable")]                                                # zone-less kick-off
         for extra, want in cases:
             self.assertEqual(score.verification({**base, **extra}), want, extra)
+
+    def test_late_and_unverifiable_are_distinct_and_both_excluded(self):
+        """Same publish time, same date: with a known kick-off after it the
+        row is verified; with a known kick-off before it, late; with no
+        kick-off it cannot be proven either way, so timing-unverifiable."""
+        import score
+        base = {"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B",
+                "published": "2026-10-02T12:00:00Z"}
+        self.assertEqual(score.verification({**base, "kickoff": "2026-10-02T15:00:00Z"}), "verified")
+        self.assertEqual(score.verification({**base, "kickoff": "2026-10-02T11:00:00Z"}), "late")
+        self.assertEqual(score.verification({**base, "kickoff": None}), "timing-unverifiable")
+        self.assertEqual(score.EXCLUDED_FROM_GRADING, ("late", "timing-unverifiable"))
+        self.assertEqual(score.verification({k: v for k, v in base.items() if k != "published"}),
+                         "legacy-unverified")      # legacy rows stay graded
 
     def test_grading_keeps_legacy_and_evidenced_early_rows_and_drops_late_ones(self):
         import score
@@ -355,11 +370,13 @@ class Grading(unittest.TestCase):
             try:
                 score.PRED_DIR = d
                 got = score.load_predictions()
-                late = sorted(k[2] for k in score.LATE_SKIPPED)
+                late = sorted(k[2] for k in score.SKIPPED["late"])
+                unverifiable = sorted(k[2] for k in score.SKIPPED["timing-unverifiable"])
             finally:
                 score.PRED_DIR = saved
         self.assertEqual(sorted(k[2] for k in got), ["C", "E", "I"])
-        self.assertEqual(late, ["A", "G"])
+        self.assertEqual(late, ["A"])                 # known kick-off proves lateness
+        self.assertEqual(unverifiable, ["G"])         # no kick-off, fails the earliest-start cutoff
         self.assertEqual({k[2]: score.verification(v) for k, v in got.items()},
                          {"C": "verified", "E": "legacy-unverified", "I": "verified-by-date"})
 

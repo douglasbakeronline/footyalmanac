@@ -78,21 +78,29 @@ build re-priced games in play and overwrote the day's archive, which
   price archived before it and accepts no new entry; corrects the kick-off
   if it moved; stamps `kickoff` and `published`. Comparisons are
   timezone-aware (`sources.parse_utc`); a time with no zone counts as unknown.
-- `score.py`: `verification()` per row: `verified` (published before a
-  known kick-off), `verified-by-date` (no kick-off, published before the
-  date's earliest instant), `legacy-unverified` (no publish time: archived
-  before 2 Oct 2026; graded as before), `late` (published at or after the
-  start, known or earliest-possible; not graded, counted). A row with a
-  publish time is never legacy. `record.json` gains `verification` counts
-  overall, for the Daily List, and the number refused as late. Historical
-  prices are never rewritten.
+- `score.py`: `verification()` per row, five categories:
+
+  | Category | Rule | Graded |
+  |---|---|---|
+  | `verified` | published before a known kick-off | yes |
+  | `verified-by-date` | no usable kick-off; published before the date's earliest instant | yes |
+  | `legacy-unverified` | no publish time (archived before 2 Oct 2026) | yes, as before, labelled |
+  | `late` | a known kick-off proves it was published at or after kick-off | no, counted |
+  | `timing-unverifiable` | no usable kick-off, and published at or after the date's earliest instant, so lateness can be neither proved nor ruled out | no, counted |
+
+  A row with a publish time is never legacy. `late` is evidence of a late
+  price; `timing-unverifiable` is only the absence of evidence that it was
+  early, so the two are counted apart (`record.json` `verification.late`
+  and `verification.timingUnverifiable`) and both kept out of verified
+  grading. `record.json` also gains verification counts overall and for the
+  Daily List. Historical prices are never rewritten.
 - `sources.py`: `parse_utc`, `earliest_start`.
 - `backfill.py`: `SEASON_BOUNDS` sets 1 July to 30 June for mx.1, ru.1 and
   dnk.1 only, from the evidence below; every walk also stops the day before
   the next season's first cached result (`clip_to_next_season`).
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`:
   reproducible before/after on a frozen snapshot.
-- `tests/`: 36 tests. Numeric golden outputs compared to 1e-12 (CPython
+- `tests/`: 37 tests. Numeric golden outputs compared to 1e-12 (CPython
   builds differ by one ulp in exp/pow: 1.1e-16 seen on 3.13), discrete
   outputs exact, golden values not regenerated.
 - `.github/workflows/tests.yml`: tests and `nametest.py` on Python 3.12 and
@@ -107,7 +115,8 @@ as the first instant that date exists anywhere: 00:00 at UTC+14, i.e.
 published before kick-off only if it came before that. Conservative by
 design: it can refuse an honest price, never pass a late one. Review case:
 fixture dated 2026-10-01, no kick-off, archived 2026-10-02T12:00Z: refused
-by the archive, and `late` (not graded) if such a row exists.
+by the archive, and `timing-unverifiable` (not graded) if such a row exists.
+The same row with a known kick-off of 2026-10-01T19:00Z would be `late`.
 
 ## Season-boundary evidence for the backfill cutoff
 
@@ -157,6 +166,76 @@ python3 -m unittest discover -s tests -v
 
 A fresh freeze fetches today's sources, so its numbers can differ from these;
 the snapshot hash says which data a result belongs to.
+
+## Openfootball-only snapshot
+
+The full snapshot mixes four sources. openfootball is public domain; ESPN
+and football-data.co.uk carry no redistribution licence. For independent
+reproduction on shareable data, `replay.py --filter-snapshot` derives an
+openfootball-only copy: it keeps seasons read from openfootball, drops every
+other season and the whole `current/` cache, records each dropped season and
+its source, and carries the parent's content hash.
+
+| | Content sha256 | File sha256 |
+|---|---|---|
+| full | `aa19d05b33faf7e5044a78bd5e6cfe13938a4475793e570d66a43b46dd6e7bda` | `20bd6a430450c55fb3d178f230209405d85d5fbca4c7a22b033dd7d5c5d602bb` |
+| openfootball-only | `cc08a335d3ace77aeba601c713d57349b47944236e0902f058afe75017b80f34` | `9b9d46165eb7bdf677bb4a1386a7ad5f3586f84e90700614eb2dd37713598153` |
+
+The content hash covers the data (verified on every load); the file hash is
+of the JSON as written (1,095,724 bytes) and also covers its creation time.
+
+**Seasons dropped (69):**
+
+- ESPN backfill (`history/`), 14 seasons, 4,027 matches: au.1, dnk.1,
+  in.1, mx.1, nl.2, ru.1, sa.1, sco.2 (2025-26); cl.1, ec.1, pe.1, us.1,
+  us.2, uy.1 (2025).
+- football-data.co.uk, 15 seasons, 2,931 matches: ch.1, pol.1, rou.1
+  (2024-25, 2025-26, 2026-27); fin.1, irl.1 (2024, 2025, 2026).
+- ESPN `current/` cache, 40 seasons, 5,472 matches. `tune.py` and
+  `backtest.py` never read it, so dropping it changes no harness result; it
+  matters only for `--include-current`.
+
+**Competitions and fixtures lost against the full snapshot:**
+
+| Split | Full | Openfootball-only | Lost |
+|---|---|---|---|
+| fit (2024-25 -> 2025-26) | 35 / 6,474 | 28 / 4,899 | au.1 163, dnk.1 200 (ESPN test season); ch.1 228, fin.1 177, irl.1 180, pol.1 306, rou.1 321 (football-data) = 7 / 1,575 |
+| check (2025-26 -> 2026-27) | 17 / 1,386 | 12 / 866 | ch.1 54, fin.1 150, irl.1 159, pol.1 78, rou.1 79 (football-data) = 5 / 520 |
+
+Excluded in both snapshots by validation: en.3 (corrupt 2025-26, fit and
+check), arm.1, hun.1, nir.1, ukr.1, wal.1 (2024-25 rows dated 2026) and, in
+the full snapshot, mx.1 fit (2026-27 rows in 2025-26; in the
+openfootball-only copy its 2025-26 season is simply absent). Full lists:
+`python3 replay.py --audit --snapshot audit-out/snapshot-openfootball.json`.
+
+**Before / after on identical fixtures:**
+
+| | Fit, 4,899 | Check, 866 |
+|---|---|---|
+| old tune.py | 1.01489, 49.42%, Brier 0.60778 | 1.02455, 48.04%, 0.61489 |
+| old backtest.py | 1.01454, 49.50%, 0.60756 | 1.02429, 48.27%, 0.61478 |
+| new (both) | 1.01450, 49.48%, 0.60754 | 1.02431, 48.15%, 0.61479 |
+
+New tune.py and backtest.py agree to 6.7e-16 (fit) and 5.6e-16 (check). Old
+tune minus old backtest: +0.00035 [-0.00040, +0.00103] fit, +0.00026
+[-0.00115, +0.00170] check. Date batching alone moves 3,248 / 507 fixtures,
+mean 0.0007, max 0.016, top pick changes on 1 in each split. Newly excluded:
+en.3 (fit). The lower log loss than the full snapshot is the competition
+mix (the dropped leagues are harder), not a model difference; compare
+numbers only within one snapshot.
+
+Reproduce:
+
+```
+python3 replay.py --filter-snapshot audit-out/snapshot.json audit-out/snapshot-openfootball.json
+python3 tools/capture_predictions.py --code-dir /tmp/fa-main --snapshot audit-out/snapshot-openfootball.json --out audit-out/of-before.json
+python3 tools/capture_predictions.py --code-dir . --snapshot audit-out/snapshot-openfootball.json --out audit-out/of-after.json
+python3 tools/compare_predictions.py audit-out/of-before.json audit-out/of-after.json
+```
+
+Anyone holding only the openfootball-only file can start at the second
+line: `load_snapshot` checks its content hash, and `compare_predictions.py`
+refuses captures from different snapshots.
 
 ## Follow-ups
 

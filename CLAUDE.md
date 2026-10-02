@@ -83,11 +83,11 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `engine.py` ratings and match model. Every number on a row comes from here.
 - `sources.py` openfootball + ESPN + football-data.co.uk (`FDX`) + API-Football (`AF`, paid, key `API_FOOTBALL_KEY` in secrets and the cloud env) fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
 - `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
-- `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder.
+- `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder. Each row is `verified`, `verified-by-date` or `legacy-unverified` (graded), or `late` / `timing-unverifiable` (not graded, counted apart); see `claude/evaluation-audit.md`.
 - `backtest.py` walk-forward backtest.
 - `tune.py` constant sweep and calibration refit, behind gates.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
-- `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`). Outputs go in `audit-out/` (gitignored).
+- `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
 - `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
 - `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
 - `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.

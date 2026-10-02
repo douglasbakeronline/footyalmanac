@@ -6,6 +6,7 @@ the season checks that decide which competitions it may use.
     python3 replay.py --audit                      which competitions are usable, which are not, and why
     python3 replay.py --freeze FILE                freeze the data (harness seasons + current/ cache) with a sha256
     python3 replay.py --audit --snapshot FILE      the same report from a frozen snapshot
+    python3 replay.py --filter-snapshot FULL OPENFOOTBALL   openfootball-only copy of a frozen snapshot
     python3 replay.py --audit --snapshot FILE --include-current
                                                    advisory: original vs cache-expanded coverage, shipped
                                                    calibration, nothing refitted or written
@@ -228,6 +229,46 @@ def load_snapshot(path):
     return data, cur, body["sha256"]
 
 
+def season_source(code, season):
+    """Where sources.fetch_season takes a season from, in its own order:
+    a committed backfill (ESPN), football-data.co.uk, API-Football, else
+    openfootball. Attribution for snapshot filtering and licensing."""
+    import sources as S
+    here = os.path.dirname(os.path.abspath(__file__))
+    if os.path.exists(os.path.join(here, "history", f"{code}-{season}.json")):
+        return "espn-backfill"
+    if code in S.FDX:
+        return "football-data"
+    if code in getattr(S, "AF", {}):
+        return "api-football"
+    return "openfootball"
+
+
+def filter_snapshot(src, dst, keep=("openfootball",)):
+    """Derive a snapshot holding only seasons from the sources in `keep`
+    (the season-so-far cache is ESPN and is dropped). Records what was left
+    out and the parent snapshot's hash."""
+    import json, time
+    data, cur, parent = load_snapshot(src)
+    kept, dropped = {}, []
+    for (code, season), rows in sorted(data.items()):
+        srcname = season_source(code, season) if rows else "empty"
+        if rows and srcname in keep:
+            kept[f"{code}|{season}"] = [list(r) for r in rows]
+        elif rows:
+            dropped.append({"code": code, "season": season, "source": srcname, "matches": len(rows)})
+    for (code, season), rows in sorted(cur.items()):
+        dropped.append({"code": code, "season": season, "source": "espn-current-cache", "matches": len(rows)})
+    body = {"data": kept, "current": {}}
+    body["sha256"] = _digest({"data": kept, "current": {}})
+    body.update({"created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                 "derivedFrom": parent, "sources": list(keep), "dropped": dropped})
+    os.makedirs(os.path.dirname(os.path.abspath(dst)), exist_ok=True)
+    with open(dst, "w") as f:
+        json.dump(body, f, separators=(",", ":"))
+    return body
+
+
 def expand_with_current(data, cur, codes, splits):
     """Advisory: fill each missing test season from the season-so-far cache.
     Returns (expanded copy, [(code, split, season, matches)] added)."""
@@ -305,13 +346,20 @@ def main():
     ap.add_argument("--audit", action="store_true", help="report usable and excluded competitions")
     ap.add_argument("--freeze", metavar="FILE", help="write a frozen data snapshot (harness data + current/) and stop")
     ap.add_argument("--snapshot", metavar="FILE", help="run --audit from a frozen snapshot instead of fetching")
+    ap.add_argument("--filter-snapshot", nargs=2, metavar=("SRC", "DST"),
+                    help="derive an openfootball-only snapshot from a frozen one and stop")
     ap.add_argument("--include-current", action="store_true",
                     help="advisory: also report coverage with test seasons filled from current/")
     ap.add_argument("--cache", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".tunecache"))
     args = ap.parse_args()
-    if not (args.audit or args.freeze):
-        ap.error("nothing to do: pass --audit or --freeze")
+    if not (args.audit or args.freeze or args.filter_snapshot):
+        ap.error("nothing to do: pass --audit, --freeze or --filter-snapshot")
     import tune
+    if args.filter_snapshot:
+        body = filter_snapshot(*args.filter_snapshot)
+        print(f"kept {len(body['data'])} openfootball seasons, dropped {len(body['dropped'])} "
+              f"(parent {body['derivedFrom'][:12]}...), sha256 {body['sha256']}", file=sys.stderr)
+        return
     if args.freeze:
         os.makedirs(args.cache, exist_ok=True)
         body = freeze(tune.load(args.cache), args.freeze)
