@@ -39,6 +39,16 @@ def latest(d):
     names = sorted(n for n in os.listdir(p) if n.endswith(".json"))
     return (names[-1][:-5], load(f"{d}/{names[-1]}", [])) if names else (None, [])
 
+def backlog():
+    """Issues labelled office-backlog (from Douglas, Julius or Perplexity) come before the agents' own picks."""
+    out = []
+    for i in gh(["issue", "list", "--label", "office-backlog", "--state", "open", "-L", "20", "--json", "number,title,body,labels"]):
+        owner = next((l["name"][6:] for l in i.get("labels", []) if l["name"].startswith("agent:") and l["name"][6:] in AGENTS), "experiment")
+        brief = (i.get("body") or "").strip()[:4000]
+        out.append((f"issue-{i['number']}", owner, i["title"][:80],
+                    f"Backlog issue #{i['number']}: {i['title']}\n\n{brief}\n\nWork on exactly this. If the evidence says it is not worth doing, explain why in the report."))
+    return sorted(out, key=lambda c: int(c[0][6:]))
+
 def candidates():
     rec = load("record.json", {}) or {}
     trec = load("tennis-record.json", {}) or {}
@@ -113,7 +123,7 @@ def main():
                 else: f.write(f"{k}={v}\n")
     if len(open_prs) >= MAX_OPEN and not a.task:
         print(f"{len(open_prs)} agent pull requests already open; waiting for them to merge."); emit(skip="1"); return
-    cands = candidates()
+    cands = backlog() + candidates()
     pick = next((c for c in cands if c[0] == a.task), None) if a.task else next((c for c in cands if c[0] not in recent), None)
     if not pick:
         print("Nothing new to work on today."); emit(skip="1"); return

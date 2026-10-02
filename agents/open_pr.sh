@@ -31,5 +31,6 @@ for L in "office-agent:5b4bd6" "agent:$OWNER:f0b35a" "objective:$KEY:c5def5" "ch
 done
 LABELS="office-agent,agent:$OWNER,objective:$KEY,checks-$CHECKS"
 if [ "$AUTO" = yes ] && [ "$CHECKS" = passed ]; then LABELS="$LABELS,auto-merge-ok"; NOTE="This will merge automatically at the next merge window (22:00 UK) if it is at least 12 hours old. Add the **hold** label or close it to stop that."; else LABELS="$LABELS,needs-owner"; NOTE="This one waits for the owner: it is a $TYPE change, checks $CHECKS, auto-merge was not recommended."; fi
-BODY=$( { echo "> **Office agent:** $OWNER · type: $TYPE · checks: $CHECKS"; echo ">"; echo "> $SUMMARY"; echo ">"; echo "> $NOTE"; echo; cat /tmp/office-agent/report.md 2>/dev/null || echo "(no report written)"; } )
+CLOSES=""; case "$KEY" in issue-*) CLOSES="Closes #${KEY#issue-}";; esac
+BODY=$( { echo "> **Office agent:** $OWNER · type: $TYPE · checks: $CHECKS"; echo ">"; echo "> $SUMMARY"; echo ">"; echo "> $NOTE"; echo; [ -n "$CLOSES" ] && { echo "$CLOSES"; echo; }; cat /tmp/office-agent/report.md 2>/dev/null || echo "(no report written)"; } )
 gh pr create --base main --head "$BRANCH" --title "[$OWNER] $TITLE" --body "$BODY" --label "$LABELS"

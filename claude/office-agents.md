@@ -5,7 +5,7 @@ Douglas asked for the Footyalmanac HQ office
 unattended, with him reviewing whenever he chooses.
 
 ## The loop
-1. **06:30 UTC, `office-agents.yml`.** `agents/pick_task.py` reads `record.json`,
+1. **06:30 UTC, `office-agents.yml`.** Open issues labelled `office-backlog` come first, oldest first; an `agent:<id>` label picks the agent. Otherwise `agents/pick_task.py` reads `record.json`,
    `tennis-record.json`, the latest `predictions/` file and recent `deploy.yml`
    runs, then picks the first task in priority order:
    build failure (Allan) → unrated fixtures (Cory) → weakest league under 45% (Mia) →
@@ -34,4 +34,4 @@ unattended, with him reviewing whenever he chooses.
 - Stop one change: add the `hold` label, or close the pull request.
 - Stop everything: disable "Office agents" in the Actions tab.
 - Force a task: run "Office agents" with a task key (e.g. `calibration-gap`).
-- Cost: one Claude session a day, at most 80 turns.
+- Cost: one Claude session a day on Sonnet (the Claude Max subscription token, `CLAUDE_CODE_OAUTH_TOKEN`), at most 50 turns. Days with nothing new to do use no tokens.
