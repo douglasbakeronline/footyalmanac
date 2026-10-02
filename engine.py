@@ -8,7 +8,7 @@ Two stages:
 Everything here is deterministic and inspectable: no black boxes, every number a
 row shows on the dashboard is produced by a function in this file.
 """
-from math import exp, factorial
+from math import exp, factorial, sqrt
 
 # ---------------------------------------------------------------------------
 # League strength coefficients.
@@ -667,7 +667,7 @@ def form_points(row, n=5):
             "seq": "".join(x[1] for x in last)}
 
 
-def form_factor(fp):
+def form_factor(fp, cap=None):
     """Small, capped nudge from recent form.
 
     Form is mostly already inside the season ratings. What it adds is the part
@@ -678,7 +678,7 @@ def form_factor(fp):
         return 1.0
     ppg = fp["pts"] / (fp["max"] / 3)
     dev = (ppg - 1.35) / 1.65          # -0.82 .. +1.00 across the plausible range
-    return 1.0 + max(-1.0, min(1.0, dev)) * FORM_MAX
+    return 1.0 + max(-1.0, min(1.0, dev)) * (FORM_MAX if cap is None else cap)
 
 
 # ---------------------------------------------------------------------------
@@ -724,14 +724,39 @@ def temper(h, d, a, T=None):
     return p[0] / s, p[1] / s, p[2] / s
 
 
+def venue_multipliers(tier, ha_scale=1.0):
+    """(home, away) expected-goal multipliers for a tier. ha_scale moves the
+    home/away tilt without touching the overall goal level (tune.py sweeps
+    it); 1.0 is the shipped value."""
+    hm = HOME_MULT.get(tier, 1.16)
+    am = AWAY_MULT.get(tier, 0.87)
+    if ha_scale != 1.0:
+        mid = sqrt(hm * am)
+        hm, am = mid * (hm / mid) ** ha_scale, mid * (am / mid) ** ha_scale
+    return hm, am
+
+
+def expected_goals(att_h, def_h, att_a, def_a, mu, tier=1,
+                   form_h=1.0, form_a=1.0, adj_h=1.0, adj_a=1.0, ha_scale=1.0):
+    """(lambda_home, lambda_away). The one place a fixture's expected goals are
+    computed: the live build (via match_probabilities), backtest.py and
+    tune.py (via replay.py) all come through here."""
+    hm, am = venue_multipliers(tier, ha_scale)
+    lh = max(0.15, att_h * def_a * mu * hm * form_h * adj_h)
+    la = max(0.15, att_a * def_h * mu * am * form_a * adj_a)
+    return lh, la
+
+
 def match_probabilities(att_h, def_h, att_a, def_a, mu, tier=1,
                         form_h=1.0, form_a=1.0, adj_h=1.0, adj_a=1.0):
     """Return probabilities, expected goals and the likeliest scoreline."""
-    hm = HOME_MULT.get(tier, 1.16)
-    am = AWAY_MULT.get(tier, 0.87)
-    lh = max(0.15, att_h * def_a * mu * hm * form_h * adj_h)
-    la = max(0.15, att_a * def_h * mu * am * form_a * adj_a)
+    lh, la = expected_goals(att_h, def_h, att_a, def_a, mu, tier=tier,
+                            form_h=form_h, form_a=form_a, adj_h=adj_h, adj_a=adj_a)
+    return probabilities_from_xg(lh, la)
 
+
+def probabilities_from_xg(lh, la):
+    """The Dixon-Coles grid and calibration for given expected goals."""
     ph = [_pois(i, lh) for i in range(MAX_GOALS + 1)]
     pa = [_pois(i, la) for i in range(MAX_GOALS + 1)]
 

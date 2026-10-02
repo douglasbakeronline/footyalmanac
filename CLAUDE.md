@@ -64,6 +64,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |
 | `claude/multi-sport.md` | NFL, baseball, basketball, rugby: the model, its evidence, which sports earn a Daily List place and why. Read before touching `sports.py` or `sports.json`. |
 | `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
+| `claude/evaluation-audit.md` | The 2 Oct 2026 audit: prior/test overlaps, the tune/backtest calculation mismatch, same-day leakage, the archive's publish-time gap, what was fixed, before/after numbers, open questions. Read before touching `replay.py`, `tune.py`, `backtest.py` or the prediction archive. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
 | `claude/coverage-expansion.md` | Why 61 competitions come from ESPN, `backfill.py`, which leagues still lack a prior season. |
@@ -82,9 +83,13 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `engine.py` ratings and match model. Every number on a row comes from here.
 - `sources.py` openfootball + ESPN + football-data.co.uk (`FDX`) + API-Football (`AF`, paid, key `API_FOOTBALL_KEY` in secrets and the cloud env) fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
 - `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
-- `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder.
+- `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder. Each row is `verified`, `verified-by-date` or `legacy-unverified` (graded), or `late` / `timing-unverifiable` (not graded, counted apart); see `claude/evaluation-audit.md`.
 - `backtest.py` walk-forward backtest.
 - `tune.py` constant sweep and calibration refit, behind gates.
+- `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
+- `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
+- `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
+- `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
 - `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.
 - `eurotest.py` cross-competition harness for league strength, writes `europe.json`.
 - `nametest.py` guards the club-name matcher. Runs before every deploy.
@@ -122,6 +127,8 @@ by `backfill.py` and committed by hand.
 
 ```
 python3 nametest.py                          # must pass before any push
+python3 -m unittest discover -s tests -v     # regression tests
+python3 replay.py --audit                    # which competitions the replay can use, and why not
 python3 build.py --days 7 --top 50           # what CI runs (7 days: reaches the weekend, like the other sports)
 python3 build.py --days 2 --no-topup --no-odds   # fast local check
 python3 score.py                             # regrade, rewrite record.json

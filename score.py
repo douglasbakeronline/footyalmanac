@@ -57,14 +57,57 @@ def tier_of(confidence, celtic, unrated=False):
     return TIERS[i]
 
 
+def verification(g):
+    """How sure we are that an archived price was published before kick-off.
+
+      verified              published before a known kick-off (timezone-aware)
+      verified-by-date      no usable kick-off; published before the earliest
+                            instant the fixture's date exists anywhere
+                            (sources.earliest_start: 10:00 UTC the day before)
+      legacy-unverified     no publish time: archived before 2 Oct 2026, when
+                            times started being recorded. Graded as before,
+                            prices never rewritten, reported separately
+      late                  a known kick-off proves the price was published at
+                            or after it. Not graded
+      timing-unverifiable   no usable kick-off (missing, or without a zone) and
+                            published at or after the conservative earliest
+                            start, so it cannot be shown to be early. Not
+                            graded; not proof of lateness either
+
+    A row with a publish time is never legacy: it is evidenced as early, as
+    late, or as unverifiable.
+    """
+    pub = S.parse_utc(g.get("published"))
+    if not pub:
+        return "legacy-unverified"
+    ko = S.parse_utc(g.get("kickoff"))
+    if ko:
+        return "verified" if pub < ko else "late"
+    return "verified-by-date" if pub < S.earliest_start(g["date"]) else "timing-unverifiable"
+
+
+EXCLUDED_FROM_GRADING = ("late", "timing-unverifiable")
+SKIPPED = {v: [] for v in EXCLUDED_FROM_GRADING}   # (league, date, home, away) refused, last load
+
+
 def load_predictions():
     """Every fixture ever predicted, keyed so it can be matched to a result.
     Later files win: if a fixture was predicted on several days, the most recent
     build is the one judged, which is the one a reader would have seen."""
     out = {}
+    for v in SKIPPED.values():
+        del v[:]
     for path in sorted(glob.glob(os.path.join(PRED_DIR, "*.json"))):
         try:
-            for g in json.load(open(path)):
+            with open(path) as f:
+                archived = json.load(f)
+            for g in archived:
+                # A price shown to be late, or that cannot be shown to be
+                # early, proves nothing: neither is graded.
+                v = verification(g)
+                if v in EXCLUDED_FROM_GRADING:
+                    SKIPPED[v].append((g["league"], g["date"], g["home"], g["away"]))
+                    continue
                 out[(g["league"], g["date"], g["home"], g["away"])] = g
         except Exception as e:
             print(f"  skipping {os.path.basename(path)}: {e}", file=sys.stderr)
@@ -211,6 +254,7 @@ def main():
             "p": p, "pick": pick, "actual": actual,
             "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
             "unrated": bool(g.get("unrated")),
+            "verified": verification(g),
             "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
         })
@@ -267,6 +311,18 @@ def main():
         "archived": len(preds),
         "graded": len(rows),
         "overall": summarise(rows),
+        # Publication-time evidence for every graded prediction, overall and
+        # for the Daily List. "legacy-unverified" is the archive from before
+        # publish/kick-off times were recorded (2 Oct 2026).
+        "verification": {
+            "all": {v: sum(1 for r in rows if r["verified"] == v)
+                    for v in ("verified", "verified-by-date", "legacy-unverified")},
+            "list": {v: sum(1 for r in rows if r["verified"] == v and r.get("list"))
+                     for v in ("verified", "verified-by-date", "legacy-unverified")},
+            # archived prices not graded: proven late, or timing unverifiable
+            "late": len(set(SKIPPED["late"])),
+            "timingUnverifiable": len(set(SKIPPED["timing-unverifiable"])),
+        },
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),
         "bands": bands,
