@@ -49,28 +49,61 @@ def live_codes():
     return [c for c, m in E.LEAGUES.items() if m.get("live")]
 
 
+# Season boundaries that differ from the default window, each backed by the
+# 2025-26 data (audit, 2 Oct 2026). Real season end / next season start:
+#   mx.1   2026-05-25 / 2026-07-17   ru.1   2026-05-17 / 2026-07-24
+#   dnk.1  2026-05-21 / 2026-07-24   (and 2025-06-01 Randers v Silkeborg was
+#                                     the 2024-25 European play-off)
+# The default window (1 June to 31 July) ran into all three next seasons and,
+# for Denmark, back into the previous one. 1 July to 30 June sits inside every
+# gap. Other competitions keep the default: their data shows no overlap
+# (nl.2, sa.1, sco.2 start in August) or cannot be checked yet (au.1, in.1).
+# Add a competition here only with that kind of evidence.
+SEASON_BOUNDS = {          # code: ((start month, day), (end month, day)), split-year seasons
+    "mx.1": ((7, 1), (6, 30)),
+    "ru.1": ((7, 1), (6, 30)),
+    "dnk.1": ((7, 1), (6, 30)),
+}
+
+
 def season_window(code, season):
     """The calendar range a season string covers.
 
     A calendar-year league ("2026") runs January to December. A split-year one
-    ("2026-27") runs 1 June to 30 June: a month early for rearranged fixtures,
-    but never into July, when several leagues start their next season.
+    ("2026-27") runs, by default, 1 June to 31 July of the following year,
+    drawn wide for play-offs and rearranged fixtures, unless SEASON_BOUNDS
+    holds evidence for tighter dates.
     """
     if "-" in season:
         y = int(season.split("-")[0])
-        # Ends 30 June, not 31 July: Liga MX, the Russian Premier League and
-        # the Danish Superliga kick off in mid-July, and a July end put the
-        # next season's opening weeks into this file (fixed 2 Oct 2026; the
-        # replay now refuses any prior/test overlap).
-        return date(y, 6, 1), date(y + 1, 6, 30)
+        (sm, sd), (em, ed) = SEASON_BOUNDS.get(code, ((6, 1), (7, 31)))
+        return date(y, sm, sd), date(y + 1, em, ed)
     y = int(season)
     return date(y, 1, 1), date(y, 12, 31)
+
+
+def next_season(season):
+    if "-" in season:
+        y = int(season.split("-")[0]) + 1
+        return f"{y}-{str(y + 1)[-2:]}"
+    return str(int(season) + 1)
+
+
+def clip_to_next_season(code, season, end):
+    """End the walk the day before the next season's first cached result, if
+    there is one: whatever the window says, a backfill must not run into the
+    season that follows it."""
+    nxt, _ = S.load_current(code, next_season(season))
+    if nxt:
+        first = min(r["date"] for r in nxt.values())
+        end = min(end, date.fromisoformat(first) - timedelta(days=1))
+    return end
 
 
 def walk(code, season, sleep=0.15, verbose=True):
     """Every completed match of one season, one date at a time."""
     start, end = season_window(code, season)
-    end = min(end, date.today() - timedelta(days=1))
+    end = clip_to_next_season(code, season, min(end, date.today() - timedelta(days=1)))
     if start > end:
         return []
     rows, seen, errors = [], set(), 0

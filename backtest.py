@@ -40,7 +40,8 @@ def evaluate(codes, season, prior_season, cache=None, blend_k=None, verbose=True
     for code in codes:
         prior, ok_p = S.fetch_season(code, prior_season, cache)
         test, ok_t = S.fetch_season(code, season, cache)
-        v = R.validate_split(code, season, prior if ok_p else [], test if ok_t else [])
+        v = R.validate_split(code, season, prior if ok_p else [], test if ok_t else [],
+                             prior_season, season)
         if not v["ok"]:
             v["seasons"] = {"prior": prior_season, "test": season}
             excluded.append(v)

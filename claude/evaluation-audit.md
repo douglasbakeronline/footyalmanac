@@ -1,111 +1,144 @@
 # Football evaluation infrastructure audit — 2 October 2026
 
 Branch `audit/eval-infrastructure`. Triggered by an external audit (Julius,
-1 Oct 2026, bundle in `football_accuracy_audit/`, not committed). Every
-finding was re-checked on our own sources and caches rather than the audit's
-snapshot. No model constant, calibration file, odds input or page change.
+1 Oct 2026; bundle in `football_accuracy_audit/`, gitignored, never
+committed). Every finding was re-checked on our own sources and caches, not
+the audit's snapshot. No model constant, calibration file, odds input or page
+change. Nothing here is merged or deployed by this branch.
+
+## What is and is not shared with the live build
+
+**Shared (one implementation, tested equal):** the per-fixture rating and
+pricing step. Given a prior season and the earlier results of the current
+season, `replay.replay_league` computes ratings with `strength_from_table`
+(this season's goal rate), `blend`, `form_points` / `form_factor` and
+`expected_goals`, the same engine functions `build.py` calls, and
+`probabilities_from_xg` is the grid `match_probabilities` uses. A test
+rebuilds one prediction the way `build.py` does and matches it to 12 dp;
+`tune.py` and `backtest.py` agree to 7e-16.
+
+**Not replayed (live-only, so not full pipeline parity):**
+
+- promoted and relegated sides: live transfers the rating from the old
+  division (`transfer_rating`); the replay starts them at 1.00 / 1.00;
+- partial priors: live picks a complete older season and blends a partial
+  newer one (`pick_prior`, `blend_prior_seasons`); the replay uses the prior
+  season as given;
+- cup ties (`cup_match`, league strengths, `europe.json`);
+- internationals, youth sides and the FIFA ranking adjustment;
+- absences / adjustments (both empty by rule), Celtic's Law flags, list
+  selection and tiers.
+
+Backtest and tuning numbers therefore describe the league model's core, not
+every row the site publishes.
 
 ## Findings, reproduced
 
-**1. Prior/test overlaps.** On our sources (`tune.load`):
+**1. Prior/test overlaps and mis-dated seasons.** On our sources (frozen
+snapshot `aa19d05b...`):
 
-| Competition | Split | What overlaps | Cause |
-|---|---|---|---|
-| en.3 | fit (2024-25 -> 2025-26) | 85 matches dated Jan-Feb 2025 in openfootball's 2025-26 League One file; 42 repeat 2024-25 fixtures | corrupt upstream file (season also stops in December) |
-| mx.1 | live build | `history/mx.1-2025-26.json` ends 1 Aug 2026; 21 matches also in `current/` | `backfill.season_window` ran split-year seasons to 31 July; Liga MX started 17 July |
-| ru.1 | live build | ends 31 Jul 2026; 9 duplicates | same (RPL started 24 July) |
-| dnk.1 | live build | ends 27 Jul 2026; 6 duplicates | same (Superliga started 24 July) |
+| Competition | Problem | Cause |
+|---|---|---|
+| en.3 | 2025-26 file holds 85 matches dated Jan-Feb 2025 (42 repeat 2024-25 fixtures); season stops in December | corrupt upstream (openfootball) |
+| mx.1 | 2025-26 file ends 1 Aug 2026; 21 matches also in `current/` 2026-27 | backfill window ran to 31 July; Liga MX started 17 July |
+| ru.1 | ends 31 Jul 2026; 9 duplicates | same; RPL started 24 July |
+| dnk.1 | ends 27 Jul 2026; 6 duplicates; also starts 1 Jun 2025 with the 2024-25 European play-off | same, at both ends |
+| arm.1, hun.1, nir.1, ukr.1, wal.1 | 2024-25 files hold rows dated 2026 (1 to 101 each) | corrupt years upstream |
 
-The audit saw mx.1/ru.1/dnk.1 in its check split because it read `current/`
-directly. Our harness never reads `current/` (see open question 1), so those
-three were silently missing from our check season instead. In the live build
-the duplicates were counted twice (prior and current season).
-
-**2. Two calculations.** `tune.py` normalised this season's ratings by last
-season's goal rate (`_strength(tbl, mu, ...)` with the prior `mu`);
-`backtest.py` and the live build use this season's (`strength_from_table`).
-`tune.py` fits `calibration.json`, which the live build applies. On 8,218
-identical fixtures the two harnesses differed on 7,797 (mean 0.011, largest
-0.101 probability; top pick different on 48).
+**2. Two calculations.** `tune.py` normalised this season by last season's
+goal rate; `backtest.py` and the live build by this season's. `tune.py` fits
+`calibration.json`.
 
 **3. Same-day updates.** Both harnesses updated after each fixture in file
-order; the data holds dates only. Date batching changes 5,109 of 8,218
-fixtures, by 0.0007 on average (largest 0.016); top pick changes on 3.
+order; the data holds dates only.
 
-**Also found:** the live build re-priced games already in play on any
-mid-day rebuild (every push to main deploys) and overwrote that day's
-archive file, which score.py grades; a fixture finished since the morning
-also vanished from the day's file, so the previous day's price was graded.
-Archived rows had no kick-off or publish time to check against.
+**4. Publish time (found here).** Every push to main deploys; a mid-day
+build re-priced games in play and overwrote the day's archive, which
+`score.py` grades. Archived rows carried no publish or kick-off time.
 
 ## What changed
 
-- `replay.py` (new): `replay_league`, the one walk-forward used by
-  `backtest.py` and `tune.py`, built from the live build's engine functions
-  and batched by date; `validate_split` / `coverage` / `report_exclusions`,
-  which refuse overlapping or missing seasons and say why;
-  `python3 replay.py --audit`.
+- `replay.py` (new): `replay_league` (shared, date-batched);
+  `validate_split` refuses missing seasons, prior/test overlaps, and rows
+  outside a season's calendar window (`season_window`: calendar year, or
+  1 June to 31 July for split-year; labels it cannot parse are not checked);
+  `coverage` / `report_exclusions`; `--audit`, `--freeze`, `--snapshot`,
+  `--include-current` (advisory).
 - `engine.py`: `match_probabilities` = `expected_goals` +
   `probabilities_from_xg` (bit-identical, golden test); `venue_multipliers`;
   `form_factor(cap=)`.
-- `tune.py`: `lambdas` uses the replay (same outputs and signature for
-  `odds.py` / `predictability.py`); private `_strength` / `_form` removed;
-  `exclusions()`; exclusions printed and written to `tuning-report.json`.
-- `backtest.py`: `evaluate` uses the replay, reports exclusions, rows carry
-  home/away.
-- `build.py`: `drop_current_from_prior` removes matches present in both the
-  prior and the current season, loudly; `archive_predictions` merges into the
-  day's file, never replaces a price for a fixture that has kicked off (or
-  archives a first price after kick-off), keeps the day's first price for a
-  date-only fixture, and stamps `kickoff` and `published`.
-- `score.py`: skips a prediction published at or after its kick-off (older
-  rows without the fields are graded as before).
-- `backfill.py`: split-year window ends 30 June.
-- `tests/test_evaluation.py` + `tests/golden_match_probabilities.json`:
-  17 tests. `python3 -m unittest discover -s tests -v`.
+- `tune.py`: `lambdas` uses the replay (same signature and outputs);
+  private `_strength` / `_form` removed; `exclusions()`; exclusions printed
+  and recorded in `tuning-report.json`.
+- `backtest.py`: `evaluate` uses the replay and validation; rows carry teams.
+- `build.py`: `drop_current_from_prior` (identical matches in both seasons
+  removed from the prior, loudly); `archive_predictions` merges into the
+  day's file, never replaces a price for a fixture that has kicked off,
+  corrects the kick-off if it moved, keeps the day's first price when the
+  kick-off is unknown, stamps `kickoff` and `published`. Comparisons are
+  timezone-aware (`sources.parse_utc`); a time with no zone counts as unknown.
+- `score.py`: `verification()` per graded row: `verified` (published before
+  a known kick-off), `verified-by-date` (no kick-off, published on an earlier
+  date), `unverified` (legacy rows without times, or match-day with no
+  kick-off), `late` (not graded). `record.json` gains `verification` counts
+  overall and for the Daily List. Historical prices are never rewritten.
+- `sources.py`: `parse_utc`.
+- `backfill.py`: `SEASON_BOUNDS` sets 1 July to 30 June for mx.1, ru.1 and
+  dnk.1 only, from the evidence below; every walk also stops the day before
+  the next season's first cached result (`clip_to_next_season`).
+- `tools/capture_predictions.py`, `tools/compare_predictions.py`:
+  reproducible before/after on a frozen snapshot.
+- `tests/`: 30 tests.
 
-## Before / after on identical fixtures (same data snapshot)
+## Season-boundary evidence for the backfill cutoff
 
-| | Fit 2025/26, 6,832 | Check 2026/27, 1,386 |
+| Code | 2025-26 real end | 2026-27 starts | Gap | 30 Jun inside gap | 31 Jul inside gap |
+|---|---|---|---|---|---|
+| mx.1 | 2026-05-25 | 2026-07-17 | 53 d | yes | no |
+| ru.1 | 2026-05-17 | 2026-07-24 | 68 d | yes | no |
+| dnk.1 | 2026-05-21 | 2026-07-24 | 64 d | yes | no |
+| nl.2 | 2026-04-24 | 2026-08-07 | 105 d | yes | yes |
+| sa.1 | 2026-05-21 | 2026-08-13 | 84 d | yes | yes |
+| sco.2 | 2026-05-01 | 2026-08-01 | 92 d | yes | yes |
+| au.1, in.1 | May 2026 | no data yet | | unverified | unverified |
+
+Only the three failing competitions get tighter bounds; the rest keep the
+default window, and the next-season clip guards all of them.
+
+## Archive verification today
+
+40 files (20 Aug to 2 Oct 2026), 11,874 rows: all `unverified` (archived
+before times were recorded). They stay graded as before, labelled as such.
+
+## Before / after on identical fixtures (snapshot aa19d05b...)
+
+| | Fit 2025/26, 6,474 | Check 2026/27, 1,386 |
 |---|---|---|
-| old tune.py | 1.02364, 48.70% | 1.02630, 48.34% |
-| old backtest.py | 1.02365, 48.76% | 1.02568, 48.20% |
-| new (both) | 1.02362, 48.74% | 1.02564, 48.20% |
+| old tune.py | 1.02402, 48.53% | 1.02630, 48.34% |
+| old backtest.py | 1.02398, 48.58% | 1.02568, 48.20% |
+| new (both) | 1.02395, 48.56% | 1.02564, 48.20% |
 
-New tune and backtest agree to 7e-16. Old tune minus old backtest on check:
-+0.00063 (95% [-0.0016, +0.0030]). Date batching alone: -0.00002 (fit),
--0.00004 (check), inside noise. en.3 (356 fit fixtures) is now excluded.
+Old tune vs old backtest: 6,202 of 6,474 fit fixtures differ (max 0.067);
+1,245 of 1,386 check (max 0.101). Date batching alone: 4,077 / 800 fixtures
+change, mean 0.0007, max 0.016, top pick changes on 3. Excluded by the new
+checks: en.3 and mx.1 (fit).
 
-Accuracy barely moves; the point is that the number tuning fits, the number
-the backtest reports and the number the site publishes are now one
-calculation, and no evaluation can see a result from its own match day.
+Reproduce:
 
-## Coverage the harness can use (from `replay.py --audit`)
+```
+python3 replay.py --freeze audit-out/snapshot.json
+git worktree add /tmp/fa-main main
+python3 tools/capture_predictions.py --code-dir /tmp/fa-main --snapshot audit-out/snapshot.json --out audit-out/before.json
+python3 tools/capture_predictions.py --code-dir . --snapshot audit-out/snapshot.json --out audit-out/after.json
+python3 tools/compare_predictions.py audit-out/before.json audit-out/after.json
+python3 replay.py --audit --snapshot audit-out/snapshot.json
+python3 -m unittest discover -s tests -v
+```
 
-Fit: 36 competitions, 6,832 fixtures, 84 excluded. Check: 17 competitions,
-1,386 fixtures, 103 excluded. Excluded for missing data: every international
-and women's competition, most ESPN-only leagues (no 2024/25 prior), and every
-league whose 2026-27 season exists only in `current/`.
+A fresh freeze fetches today's sources, so its numbers can differ from these;
+the snapshot hash says which data a result belongs to.
 
-## Open questions
+## Follow-ups
 
-1. **The check season covers 17 competitions.** `tune.load` reads
-   history/openfootball/FDX/AF, never `current/`, so 36 leagues with a live
-   current season (en.3, en.4, es.2, de.2, tr.1, mx.1, the Nordics...) are not
-   in the calibration check. Reading `current/` would widen it a lot, but
-   changes what calibration is fitted and judged on; worth a separate,
-   gated change.
-2. **Should the four affected history files be repaired?** The build now
-   drops the duplicates at run time; the files still hold them.
-   Re-walking mx.1/ru.1/dnk.1 2025-26 with the fixed window would make the
-   data itself clean.
-3. **en.3 2025-26** is corrupt upstream. It still feeds the live League One
-   prior (via `pick_prior`, as a partial season). Exclude it there too, or
-   take League One history from ESPN/AF?
-4. **The replay is not the whole live build.** Promoted sides (live:
-   transfer from their old division; replay: neutral 1.00), partial priors,
-   cups, internationals and the FIFA adjustment are live-only. The per-fixture
-   rating and pricing step is shared; prior construction is not.
-5. **The existing calibration** was fitted on the old tune calculation. The
-   next Monday refit (tune.yml) will fit on the corrected one; the gates
-   decide whether it ships.
+Separate proposals, not implemented: `claude/proposals/regenerate-history.md`,
+`claude/proposals/league-one-prior.md`, `claude/proposals/cache-expansion.md`.

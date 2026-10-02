@@ -57,6 +57,27 @@ def tier_of(confidence, celtic, unrated=False):
     return TIERS[i]
 
 
+def verification(g):
+    """How sure we are that an archived price was published before kick-off.
+
+      verified           published and kick-off both known (timezone-aware),
+                         published before kick-off
+      verified-by-date   no usable kick-off time, published on an earlier date
+      unverified         no publish time (rows archived before 2 Oct 2026), or
+                         published on the match date with no usable kick-off
+      late               published at or after kick-off: not graded
+
+    Legacy rows are graded as before but reported as unverified; their
+    prices are never rewritten.
+    """
+    pub, ko = S.parse_utc(g.get("published")), S.parse_utc(g.get("kickoff"))
+    if not pub:
+        return "unverified"
+    if ko:
+        return "verified" if pub < ko else "late"
+    return "verified-by-date" if pub.strftime("%Y-%m-%d") < g["date"] else "unverified"
+
+
 def load_predictions():
     """Every fixture ever predicted, keyed so it can be matched to a result.
     Later files win: if a fixture was predicted on several days, the most recent
@@ -64,10 +85,11 @@ def load_predictions():
     out = {}
     for path in sorted(glob.glob(os.path.join(PRED_DIR, "*.json"))):
         try:
-            for g in json.load(open(path)):
-                # A price published after kick-off proves nothing. Older rows
-                # carry neither field and are graded as before.
-                if g.get("kickoff") and g.get("published") and g["published"][:16] >= g["kickoff"][:16]:
+            with open(path) as f:
+                archived = json.load(f)
+            for g in archived:
+                # A price published at or after kick-off proves nothing.
+                if verification(g) == "late":
                     continue
                 out[(g["league"], g["date"], g["home"], g["away"])] = g
         except Exception as e:
@@ -215,6 +237,7 @@ def main():
             "p": p, "pick": pick, "actual": actual,
             "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
             "unrated": bool(g.get("unrated")),
+            "verified": verification(g),
             "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
         })
@@ -271,6 +294,15 @@ def main():
         "archived": len(preds),
         "graded": len(rows),
         "overall": summarise(rows),
+        # Publication-time evidence for every graded prediction, overall and
+        # for the Daily List. "unverified" is mostly the archive from before
+        # publish/kick-off times were recorded (2 Oct 2026).
+        "verification": {
+            "all": {v: sum(1 for r in rows if r["verified"] == v)
+                    for v in ("verified", "verified-by-date", "unverified")},
+            "list": {v: sum(1 for r in rows if r["verified"] == v and r.get("list"))
+                     for v in ("verified", "verified-by-date", "unverified")},
+        },
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),
         "bands": bands,

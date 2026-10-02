@@ -195,6 +195,27 @@ KICKOFF_TZ = {
 }
 
 
+def parse_utc(ts):
+    """A timezone-aware UTC datetime from an ISO timestamp ("...Z" or
+    "...+01:00"), or None. A bare date or a timestamp with no zone returns
+    None: guessing the zone would let a late price pass as early, so such a
+    time is treated as unknown, never as UTC."""
+    if not ts:
+        return None
+    s = str(ts).strip()
+    if len(s) <= 10:
+        return None
+    s = s[:-1] + "+00:00" if s.endswith("Z") else s
+    try:
+        dt = datetime.fromisoformat(s)
+    except ValueError:
+        return None
+    if dt.tzinfo is None:
+        return None
+    from datetime import timezone
+    return dt.astimezone(timezone.utc)
+
+
 def kickoff_utc(row, iso):
     """The fixture's kick-off as "YYYY-MM-DDTHH:MM:00Z", or None if unknown.
 

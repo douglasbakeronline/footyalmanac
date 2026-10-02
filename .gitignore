@@ -9,3 +9,6 @@ __pycache__/
 .tenniscache/
 .afcache/
 .DS_Store
+# External audit bundles and generated audit outputs: kept out of git
+football_accuracy_audit/
+audit-out/

@@ -204,18 +204,22 @@ def archive_predictions(path, flat, now=None):
     fell back to yesterday's price. Now:
 
       - a fixture whose kick-off has passed keeps the price archived before it
-        (and one first seen after kick-off is not archived at all);
-      - with no kick-off time, a fixture dated today keeps the price from the
-        day's first build (each day has its own file), because whether a later
-        build came before kick-off cannot be established;
+        (and one first seen after kick-off is not archived at all). If its
+        kick-off moved, the archived kick-off is updated to the latest known,
+        so score.py judges the kept price against the real start;
+      - with no usable kick-off time, a fixture dated today keeps the price
+        from the day's first build (each day has its own file), because
+        whether a later build came before kick-off cannot be established;
       - anything else takes this build's price.
 
-    Every entry carries "published" (UTC) so score.py can check it was
-    published before kick-off.
+    Times are compared as timezone-aware UTC (sources.parse_utc); a kick-off
+    with no zone counts as unknown. Every entry carries "published" (UTC).
+    Historical prices are never rewritten.
     """
     from datetime import datetime, timezone
     now = now or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
-    today = now[:10]
+    now_dt = S.parse_utc(now)
+    today = now_dt.strftime("%Y-%m-%d")
     key = lambda g: (g["league"], g["date"], g["home"], g["away"])
     try:
         with open(path) as f:
@@ -225,11 +229,13 @@ def archive_predictions(path, flat, now=None):
     out = dict(old)
     for g in flat:
         k, prev = key(g), old.get(key(g))
-        ko = g.get("kickoff")
-        if ko and ko[:16] <= now[:16]:
-            continue                       # started: keep what was published before it, if anything
+        ko = S.parse_utc(g.get("kickoff"))
+        if ko and ko <= now_dt:
+            if prev and prev.get("kickoff") != g.get("kickoff"):
+                out[k] = {**prev, "kickoff": g.get("kickoff")}   # price kept, start corrected
+            continue
         if not ko and g["date"] <= today and prev:
-            continue                       # date only, match day: keep the day's first price
+            continue                       # no usable kick-off, match day: keep the day's first price
         out[k] = {**g, "published": now}
     with open(path, "w") as f:
         json.dump(list(out.values()), f, separators=(",", ":"))

@@ -87,6 +87,8 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `backtest.py` walk-forward backtest.
 - `tune.py` constant sweep and calibration refit, behind gates.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
+- `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`). Outputs go in `audit-out/` (gitignored).
+- `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
 - `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
 - `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.
 - `eurotest.py` cross-competition harness for league strength, writes `europe.json`.

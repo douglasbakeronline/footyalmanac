@@ -57,16 +57,33 @@ class SeasonValidation(unittest.TestCase):
         self.assertIn("overlap", v["reasons"][0])
         self.assertIn("1 identical in both", v["reasons"][0])
 
+    def test_rows_outside_the_season_window_are_refused(self):
+        stray = [("2025-01-01", "Ash", "Birch", 1, 1)] + TEST          # en.3 2025-26 holds January 2025
+        v = R.validate_split("en.3", "fit", PRIOR, stray, "2024-25", "2025-26")
+        self.assertFalse(v["ok"])
+        self.assertTrue(any("outside 2025-06-01..2026-07-31" in r for r in v["reasons"]), v["reasons"])
+        late = TEST + [("2026-08-01", "Ash", "Birch", 1, 5)]           # mx.1 2025-26 holds August 2026
+        v = R.validate_split("mx.1", "check", late, [("2026-08-08", "A", "B", 0, 0)], "2025-26", "2026-27")
+        self.assertTrue(any("prior season 2025-26: 1 of" in r for r in v["reasons"]), v["reasons"])
+
+    def test_unrecognised_season_labels_are_not_window_checked(self):
+        self.assertTrue(R.validate_split("x", "fit", PRIOR, TEST, "P", "T")["ok"])
+
+    def test_play_off_tails_inside_the_window_are_accepted(self):
+        v = R.validate_split("x.1", "fit", [("2025-07-30", "A", "B", 1, 0)], [("2025-08-10", "A", "B", 0, 0)],
+                             "2024-25", "2025-26")
+        self.assertTrue(v["ok"], v["reasons"])
+
     def test_missing_seasons_are_reported(self):
         self.assertEqual(R.validate_split("a", "fit", [], TEST)["reasons"], ["no prior season"])
         self.assertEqual(R.validate_split("a", "fit", PRIOR, [])["reasons"], ["no test season"])
 
     def test_coverage_lists_every_exclusion(self):
-        data = {("good", "T"): TEST, ("good", "P"): PRIOR,
-                ("bad", "T"): TEST, ("bad", "P"): PRIOR + [TEST[0]],
-                ("empty", "P"): PRIOR}
+        data = {("good", "2025-26"): TEST, ("good", "2024-25"): PRIOR,
+                ("bad", "2025-26"): TEST, ("bad", "2024-25"): PRIOR + [TEST[0]],
+                ("empty", "2024-25"): PRIOR}
         usable, excluded = R.coverage(data, ["good", "bad", "empty"],
-                                      lambda c: {"fit": ("T", "P")}, "fit")
+                                      lambda c: {"fit": ("2025-26", "2024-25")}, "fit")
         self.assertEqual(usable, ["good"])
         self.assertEqual(sorted(v["code"] for v in excluded), ["bad", "empty"])
 
@@ -136,7 +153,8 @@ class Replay(unittest.TestCase):
 
 class EngineRefactor(unittest.TestCase):
     def test_match_probabilities_unchanged(self):
-        g = json.load(open(os.path.join(HERE, "golden_match_probabilities.json")))
+        with open(os.path.join(HERE, "golden_match_probabilities.json")) as f:
+            g = json.load(f)
         saved = E.CALIBRATION
         try:
             E.CALIBRATION = g["calibration"]
@@ -169,53 +187,109 @@ class LiveBuild(unittest.TestCase):
         self.assertEqual(self.build.drop_current_from_prior("x", prior, [], current),
                          (prior, [], None))
 
-    def _row(self, kickoff, p, date_="2026-10-02"):
-        return {"league": "en.1", "date": date_, "home": "A", "away": "B", "p": p, "kickoff": kickoff}
-
-    def test_archive_keeps_the_price_published_before_kickoff(self):
-        with tempfile.TemporaryDirectory() as d:
-            path = os.path.join(d, "2026-10-02.json")
-            self.build.archive_predictions(path, [self._row("2026-10-02T14:00:00Z", 0.6)],
-                                           now="2026-10-02T05:15:00Z")
-            out = self.build.archive_predictions(path, [self._row("2026-10-02T14:00:00Z", 0.7)],
-                                                 now="2026-10-02T14:32:00Z")
-            g = list(out.values())[0]
-            self.assertEqual((g["p"], g["published"]), (0.6, "2026-10-02T05:15:00Z"))
-
     def test_archive_refuses_a_first_price_after_kickoff(self):
         with tempfile.TemporaryDirectory() as d:
-            out = self.build.archive_predictions(os.path.join(d, "f.json"),
-                                                 [self._row("2026-10-02T14:00:00Z", 0.7)],
-                                                 now="2026-10-02T14:32:00Z")
+            out = self.build.archive_predictions(
+                os.path.join(d, "f.json"),
+                [{"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B",
+                  "p": 0.7, "kickoff": "2026-10-02T14:00:00Z"}],
+                now="2026-10-02T14:32:00Z")
             self.assertEqual(out, {})
 
-    def test_archive_updates_a_fixture_not_yet_started(self):
-        with tempfile.TemporaryDirectory() as d:
-            path = os.path.join(d, "f.json")
-            self.build.archive_predictions(path, [self._row("2026-10-02T19:00:00Z", 0.6)],
-                                           now="2026-10-02T05:15:00Z")
-            out = self.build.archive_predictions(path, [self._row("2026-10-02T19:00:00Z", 0.7)],
-                                                 now="2026-10-02T14:32:00Z")
-            self.assertEqual(list(out.values())[0]["p"], 0.7)
 
-    def test_date_only_fixture_keeps_the_days_first_price(self):
-        with tempfile.TemporaryDirectory() as d:
-            path = os.path.join(d, "f.json")
-            self.build.archive_predictions(path, [self._row(None, 0.6)], now="2026-10-02T05:15:00Z")
-            out = self.build.archive_predictions(path, [self._row(None, 0.7)], now="2026-10-02T14:32:00Z")
-            self.assertEqual(list(out.values())[0]["p"], 0.6)
+class Timestamps(unittest.TestCase):
+    def test_parse_is_timezone_aware(self):
+        import sources as S
+        self.assertEqual(S.parse_utc("2026-10-02T15:00:00+01:00"), S.parse_utc("2026-10-02T14:00:00Z"))
+        self.assertEqual(S.parse_utc("2026-10-02T14:00Z"), S.parse_utc("2026-10-02T14:00:00Z"))
+
+    def test_zone_less_and_date_only_are_unknown(self):
+        import sources as S
+        for t in ("2026-10-02T14:00:00", "2026-10-02", "", None, "junk"):
+            self.assertIsNone(S.parse_utc(t), t)
+
+
+class Archive(unittest.TestCase):
+    def setUp(self):
+        import build
+        self.archive = build.archive_predictions
+        self.dir = tempfile.TemporaryDirectory()
+        self.path = os.path.join(self.dir.name, "2026-10-02.json")
+
+    def tearDown(self):
+        self.dir.cleanup()
+
+    def row(self, kickoff, p, date_="2026-10-02"):
+        return {"league": "en.1", "date": date_, "home": "A", "away": "B", "p": p, "kickoff": kickoff}
+
+    def test_offset_kickoff_compared_in_utc(self):
+        # 15:00 +01:00 is 14:00 UTC: a build at 14:30 UTC is after kick-off
+        self.archive(self.path, [self.row("2026-10-02T15:00:00+01:00", 0.6)], now="2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row("2026-10-02T15:00:00+01:00", 0.7)], now="2026-10-02T14:30:00Z")
+        self.assertEqual(list(out.values())[0]["p"], 0.6)
+
+    def test_zone_less_kickoff_is_treated_as_unknown(self):
+        self.archive(self.path, [self.row("2026-10-02T14:00:00", 0.6)], now="2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row("2026-10-02T14:00:00", 0.7)], now="2026-10-02T09:00:00Z")
+        self.assertEqual(list(out.values())[0]["p"], 0.6)       # day's first price kept
+
+    def test_missing_kickoff_future_date_updates(self):
+        self.archive(self.path, [self.row(None, 0.6, "2026-10-05")], now="2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row(None, 0.7, "2026-10-05")], now="2026-10-02T14:30:00Z")
+        self.assertEqual(list(out.values())[0]["p"], 0.7)
+
+    def test_rescheduled_later_takes_the_new_price(self):
+        self.archive(self.path, [self.row("2026-10-02T14:00:00Z", 0.6)], now="2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row("2026-10-02T19:00:00Z", 0.7)], now="2026-10-02T14:30:00Z")
+        g = list(out.values())[0]
+        self.assertEqual((g["p"], g["kickoff"]), (0.7, "2026-10-02T19:00:00Z"))
+
+    def test_rescheduled_earlier_keeps_price_and_corrects_kickoff(self):
+        import score
+        self.archive(self.path, [self.row("2026-10-02T19:00:00Z", 0.6)], now="2026-10-02T15:00:00Z")
+        out = self.archive(self.path, [self.row("2026-10-02T14:00:00Z", 0.7)], now="2026-10-02T16:00:00Z")
+        g = list(out.values())[0]
+        self.assertEqual((g["p"], g["kickoff"], g["published"]), (0.6, "2026-10-02T14:00:00Z", "2026-10-02T15:00:00Z"))
+        self.assertEqual(score.verification(g), "late")      # published after the real start: not graded
+
+    def test_rescheduled_to_another_day_is_a_separate_entry(self):
+        self.archive(self.path, [self.row("2026-10-02T14:00:00Z", 0.6)], now="2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row("2026-10-03T14:00:00Z", 0.7, "2026-10-03")], now="2026-10-02T09:00:00Z")
+        self.assertEqual(sorted((k[1], v["p"]) for k, v in out.items()), [("2026-10-02", 0.6), ("2026-10-03", 0.7)])
+
+    def test_repeat_builds_after_kickoff_leave_the_file_unchanged(self):
+        self.archive(self.path, [self.row("2026-10-02T14:00:00Z", 0.6)], now="2026-10-02T05:15:00Z")
+        with open(self.path) as f:
+            first = f.read()
+        for now in ("2026-10-02T14:30:00Z", "2026-10-02T18:00:00Z"):
+            self.archive(self.path, [self.row("2026-10-02T14:00:00Z", 0.7)], now=now)
+        with open(self.path) as f:
+            self.assertEqual(f.read(), first)
 
 
 class Grading(unittest.TestCase):
-    def test_score_skips_a_price_published_after_kickoff(self):
+    def test_verification_categories(self):
+        import score
+        base = {"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B"}
+        cases = [({}, "unverified"),                                                   # legacy row
+                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "verified"),
+                 ({"published": "2026-10-02T14:30:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "late"),
+                 ({"published": "2026-10-01T05:15:00Z"}, "verified-by-date"),
+                 ({"published": "2026-10-02T05:15:00Z"}, "unverified"),               # match day, no kick-off
+                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00"}, "unverified")]
+        for extra, want in cases:
+            self.assertEqual(score.verification({**base, **extra}), want, extra)
+
+    def test_score_skips_late_and_keeps_legacy_rows(self):
         import score
         with tempfile.TemporaryDirectory() as d:
             rows = [{"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B",
                      "kickoff": "2026-10-02T14:00:00Z", "published": "2026-10-02T14:30:00Z"},
                     {"league": "en.1", "date": "2026-10-02", "home": "C", "away": "D",
                      "kickoff": "2026-10-02T14:00:00Z", "published": "2026-10-02T05:15:00Z"},
-                    {"league": "en.1", "date": "2026-10-02", "home": "E", "away": "F"}]  # old row, no fields
-            json.dump(rows, open(os.path.join(d, "2026-10-02.json"), "w"))
+                    {"league": "en.1", "date": "2026-10-02", "home": "E", "away": "F"}]  # legacy, no fields
+            with open(os.path.join(d, "2026-10-02.json"), "w") as f:
+                json.dump(rows, f)
             saved = score.PRED_DIR
             try:
                 score.PRED_DIR = d
@@ -223,13 +297,40 @@ class Grading(unittest.TestCase):
             finally:
                 score.PRED_DIR = saved
         self.assertEqual(sorted(k[2] for k in got), ["C", "E"])
+        self.assertEqual(got[("en.1", "2026-10-02", "E", "F")].get("p"), None)    # untouched
 
 
 class Backfill(unittest.TestCase):
-    def test_split_year_window_stops_before_july(self):
+    def setUp(self):
         import backfill
-        start, end = backfill.season_window("mx.1", "2025-26")
-        self.assertEqual((start, end), (date(2025, 6, 1), date(2026, 6, 30)))
+        self.b = backfill
+
+    def test_evidenced_competitions_run_july_to_june(self):
+        for code in ("mx.1", "ru.1", "dnk.1"):
+            self.assertEqual(self.b.season_window(code, "2025-26"),
+                             (date(2025, 7, 1), date(2026, 6, 30)), code)
+
+    def test_other_competitions_keep_the_default_window(self):
+        self.assertEqual(self.b.season_window("nl.2", "2025-26"), (date(2025, 6, 1), date(2026, 7, 31)))
+        self.assertEqual(self.b.season_window("us.1", "2025"), (date(2025, 1, 1), date(2025, 12, 31)))
+
+    def test_walk_stops_before_the_next_cached_season(self):
+        import sources as S
+        saved = S.load_current
+        try:
+            S.load_current = lambda c, s: ({("2026-07-17", "A", "B"): {"date": "2026-07-17"}}, None) \
+                if s == "2026-27" else ({}, None)
+            self.assertEqual(self.b.clip_to_next_season("nl.2", "2025-26", date(2026, 7, 31)),
+                             date(2026, 7, 16))
+            S.load_current = lambda c, s: ({}, None)
+            self.assertEqual(self.b.clip_to_next_season("nl.2", "2025-26", date(2026, 7, 31)),
+                             date(2026, 7, 31))
+        finally:
+            S.load_current = saved
+
+    def test_next_season_strings(self):
+        self.assertEqual(self.b.next_season("2025-26"), "2026-27")
+        self.assertEqual(self.b.next_season("2025"), "2026")
 
 
 if __name__ == "__main__":

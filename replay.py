@@ -3,7 +3,12 @@
 One walk-forward replay for football, shared by backtest.py and tune.py, and
 the season checks that decide which competitions it may use.
 
-    python3 replay.py --audit          which competitions are usable, which are not, and why
+    python3 replay.py --audit                      which competitions are usable, which are not, and why
+    python3 replay.py --freeze FILE                freeze the data (harness seasons + current/ cache) with a sha256
+    python3 replay.py --audit --snapshot FILE      the same report from a frozen snapshot
+    python3 replay.py --audit --snapshot FILE --include-current
+                                                   advisory: original vs cache-expanded coverage, shipped
+                                                   calibration, nothing refitted or written
 
 Why this exists (audit, 2 Oct 2026)
 -----------------------------------
@@ -47,10 +52,37 @@ NEUTRAL = {"att": 1.0, "def": 1.0}
 # season checks
 # ---------------------------------------------------------------------------
 
-def validate_split(code, split, prior, test):
-    """{"code","split","ok","reasons",...}. prior/test: (date, home, away, hg, ag)."""
+def season_window(season):
+    """The widest dates a season's matches can fall on: a calendar year, or
+    1 June to 31 July of the next year for a split-year season (play-offs
+    and rearrangements included). A row outside it is mis-dated or belongs
+    to another season."""
+    import re
+    if re.fullmatch(r"\d{4}-\d{2}", season or ""):
+        y = int(season[:4])
+        return f"{y}-06-01", f"{y + 1}-07-31"
+    if re.fullmatch(r"\d{4}", season or ""):
+        return f"{season}-01-01", f"{season}-12-31"
+    return None                      # not a season string this check understands: no check
+
+
+def validate_split(code, split, prior, test, prior_season=None, test_season=None):
+    """{"code","split","ok","reasons",...}. prior/test: (date, home, away, hg, ag).
+    With season strings, rows outside each season's window are refused too
+    (en.3 2025-26 holds January 2025; mx.1 2025-26 holds August 2026)."""
     out = {"code": code, "split": split, "ok": True, "reasons": [],
            "priorMatches": len(prior or []), "testMatches": len(test or [])}
+    for label, rows, s in (("prior", prior, prior_season), ("test", test, test_season)):
+        if not rows or not s:
+            continue
+        win = season_window(s)
+        if not win:
+            continue
+        lo, hi = win
+        bad = [r[0] for r in rows if not (lo <= r[0] <= hi)]
+        if bad:
+            out["reasons"].append(f"{label} season {s}: {len(bad)} of {len(rows)} matches dated "
+                                  f"outside {lo}..{hi} ({min(bad)} to {max(bad)})")
     if not prior:
         out["reasons"].append("no prior season")
     if not test:
@@ -77,7 +109,7 @@ def coverage(data, codes, splits, split):
     for code in codes:
         test_s, prior_s = splits(code)[split]
         v = validate_split(code, split, data.get((code, prior_s)) or [],
-                           data.get((code, test_s)) or [])
+                           data.get((code, test_s)) or [], prior_s, test_s)
         v["seasons"] = {"prior": prior_s, "test": test_s}
         (usable if v["ok"] else excluded).append(code if v["ok"] else v)
     return usable, excluded
@@ -86,13 +118,14 @@ def coverage(data, codes, splits, split):
 def report_exclusions(excluded, out=sys.stderr):
     by_reason = defaultdict(list)
     for v in excluded:
-        key = "overlap" if any("overlap" in r for r in v["reasons"]) else "; ".join(v["reasons"])
+        key = ("overlap" if any("overlap" in r or "outside" in r for r in v["reasons"])
+               else "; ".join(v["reasons"]))
         by_reason[key].append(v)
     for key, vs in sorted(by_reason.items()):
         if key == "overlap":
             for v in vs:
                 print(f"  EXCLUDED {v['code']} ({v['split']}, {v['seasons']['prior']} -> "
-                      f"{v['seasons']['test']}): {v['reasons'][0]}", file=out)
+                      f"{v['seasons']['test']}): {'; '.join(v['reasons'])}", file=out)
         else:
             print(f"  excluded, {key}: {len(vs)} competition(s): "
                   f"{', '.join(v['code'] for v in vs)}", file=out)
@@ -149,16 +182,152 @@ def replay_league(prior, test, tier, params=None):
         running.extend(by_date[d])
 
 
+# ---------------------------------------------------------------------------
+# frozen snapshots and the advisory cache-expansion comparison
+# ---------------------------------------------------------------------------
+
+def _digest(obj):
+    import hashlib, json
+    return hashlib.sha256(json.dumps(obj, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+
+
+def freeze(data, path):
+    """Write the harness data plus the live build's season-so-far cache
+    (current/, played matches only) to one file with its SHA-256."""
+    import glob, json, time
+    cur = {}
+    here = os.path.dirname(os.path.abspath(__file__))
+    for p in sorted(glob.glob(os.path.join(here, "current", "*.json"))):
+        name = os.path.basename(p)[:-5]
+        code, season = name.rsplit("-", 2)[0], "-".join(name.rsplit("-", 2)[1:])
+        if "-" not in season or len(season) != 7:          # calendar year, e.g. us.1-2026
+            code, season = name.rsplit("-", 1)
+        with open(p) as f:
+            doc = json.load(f)
+        rows = [[r["date"], r["home"], r["away"], r["hg"], r["ag"]]
+                for r in doc.get("rows", []) if r.get("hg") is not None]
+        if rows:
+            cur[f"{code}|{season}"] = sorted(rows)
+    body = {"data": {f"{c}|{s}": [list(r) for r in v] for (c, s), v in data.items()}, "current": cur}
+    body["sha256"] = _digest({"data": body["data"], "current": cur})
+    body["created"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+    os.makedirs(os.path.dirname(os.path.abspath(path)), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(body, f, separators=(",", ":"))
+    return body
+
+
+def load_snapshot(path):
+    import json
+    with open(path) as f:
+        body = json.load(f)
+    if _digest({"data": body["data"], "current": body["current"]}) != body["sha256"]:
+        raise SystemExit(f"{path}: contents do not match its sha256; refusing to use it")
+    data = {tuple(k.split("|")): [tuple(r) for r in v] for k, v in body["data"].items()}
+    cur = {tuple(k.split("|")): [tuple(r) for r in v] for k, v in body["current"].items()}
+    return data, cur, body["sha256"]
+
+
+def expand_with_current(data, cur, codes, splits):
+    """Advisory: fill each missing test season from the season-so-far cache.
+    Returns (expanded copy, [(code, split, season, matches)] added)."""
+    out, added = dict(data), []
+    for code in codes:
+        for split, (test_s, _) in splits(code).items():
+            if not data.get((code, test_s)) and cur.get((code, test_s)):
+                out[(code, test_s)] = cur[(code, test_s)]
+                added.append((code, split, test_s, len(cur[(code, test_s)])))
+    return out, added
+
+
+def score_rows(rows):
+    """log loss, accuracy, Brier and calibration bands with the shipped
+    calibration, unchanged (advisory: nothing is refitted)."""
+    import math, tune
+    n = len(rows)
+    if not n:
+        return None
+    ll = hit = br = 0.0
+    bands = defaultdict(lambda: [0, 0, 0.0])
+    for lh, la, y, *_ in rows:
+        p = tune.outcome(lh, la, E.RHO)
+        t = tune.curve_T(max(p), E.CALIBRATION) if E.CALIBRATION else E.TEMPERATURE
+        q = [max(x, 1e-12) ** (1 / t) for x in p]
+        s = sum(q)
+        p = [x / s for x in q]
+        ll += -math.log(max(p[y], 1e-12))
+        k = p.index(max(p))
+        hit += k == y
+        br += sum((p[j] - (j == y)) ** 2 for j in range(3))
+        b = min(int(max(p) * 10) / 10, 0.7)
+        bands[b][0] += 1; bands[b][1] += k == y; bands[b][2] += max(p)
+    return {"n": n, "logLoss": ll / n, "accuracy": hit / n, "brier": br / n,
+            "bands": {f"{b:.1f}+": (v[0], v[1] / v[0], v[2] / v[0]) for b, v in sorted(bands.items())}}
+
+
+def advisory_expansion(data, cur, sha):
+    import tune
+    codes = tune.codes()
+    expanded, added = expand_with_current(data, cur, codes, tune.splits)
+    print(f"frozen snapshot {sha}", file=sys.stderr)
+    print("advisory only: calibration.json is used as shipped; nothing is refitted or written", file=sys.stderr)
+    for split in ("fit", "check"):
+        print(f"\n{split}", file=sys.stderr)
+        orig_codes, orig_ex = coverage(data, codes, tune.splits, split)
+        exp_codes, exp_ex = coverage(expanded, codes, tune.splits, split)
+        add = [a for a in added if a[1] == split]
+        print(f"  cache supplies a test season for {len(add)} competition(s): "
+              f"{', '.join(f'{c} ({n})' for c, _, _, n in add) or 'none'}", file=sys.stderr)
+        rows_o = [r for r in tune.lambdas(data, split, meta=True)]
+        rows_e = [r for r in tune.lambdas(expanded, split, meta=True)]
+        new_codes = sorted(set(exp_codes) - set(orig_codes))
+        rows_new = [r for r in rows_e if r[3] in new_codes]
+        for label, codes_, rows_ in (("original", orig_codes, rows_o), ("expanded", exp_codes, rows_e),
+                                      ("added by the cache only", new_codes, rows_new)):
+            m = score_rows(rows_)
+            if not m:
+                print(f"  {label:24} 0 competitions", file=sys.stderr)
+                continue
+            print(f"  {label:24} {len(codes_):3} competitions {m['n']:5} fixtures  "
+                  f"log loss {m['logLoss']:.4f}  accuracy {m['accuracy']:.1%}  Brier {m['brier']:.4f}",
+                  file=sys.stderr)
+            print("  " + " " * 24 + " quoted vs landed: " + "  ".join(
+                f"{b} n={v[0]} {v[2]:.0%}->{v[1]:.0%}" for b, v in m["bands"].items()), file=sys.stderr)
+        bad = lambda v: any("overlap" in r or "outside" in r for r in v["reasons"])
+        newly = [v for v in exp_ex if bad(v) and v["code"] not in {w["code"] for w in orig_ex if bad(w)}]
+        if newly:
+            print("  newly visible overlaps, excluded:", file=sys.stderr)
+            report_exclusions(newly)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--audit", action="store_true", help="report usable and excluded competitions")
+    ap.add_argument("--freeze", metavar="FILE", help="write a frozen data snapshot (harness data + current/) and stop")
+    ap.add_argument("--snapshot", metavar="FILE", help="run --audit from a frozen snapshot instead of fetching")
+    ap.add_argument("--include-current", action="store_true",
+                    help="advisory: also report coverage with test seasons filled from current/")
     ap.add_argument("--cache", default=os.path.join(os.path.dirname(os.path.abspath(__file__)), ".tunecache"))
     args = ap.parse_args()
-    if not args.audit:
-        ap.error("nothing to do: pass --audit")
+    if not (args.audit or args.freeze):
+        ap.error("nothing to do: pass --audit or --freeze")
     import tune
-    os.makedirs(args.cache, exist_ok=True)
-    data = tune.load(args.cache)
+    if args.freeze:
+        os.makedirs(args.cache, exist_ok=True)
+        body = freeze(tune.load(args.cache), args.freeze)
+        print(f"froze {len(body['data'])} harness seasons and {len(body['current'])} cached "
+              f"current seasons to {args.freeze}, sha256 {body['sha256']}", file=sys.stderr)
+        return
+    if args.snapshot:
+        data, cur, sha = load_snapshot(args.snapshot)
+    else:
+        os.makedirs(args.cache, exist_ok=True)
+        data, cur, sha = tune.load(args.cache), {}, None
+    if args.include_current:
+        if not args.snapshot:
+            ap.error("--include-current needs --snapshot (freeze first), so both coverages use one frozen data set")
+        advisory_expansion(data, cur, sha)
+        return
     for split in ("fit", "check"):
         usable, excluded = coverage(data, tune.codes(), tune.splits, split)
         n = sum(len(data.get((c, tune.splits(c)[split][0])) or []) for c in usable)
