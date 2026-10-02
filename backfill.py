@@ -53,12 +53,16 @@ def season_window(code, season):
     """The calendar range a season string covers.
 
     A calendar-year league ("2026") runs January to December. A split-year one
-    ("2026-27") runs July to June. Both are drawn wide by a month at each end,
-    because play-offs and rearranged fixtures do not respect the boundary.
+    ("2026-27") runs 1 June to 30 June: a month early for rearranged fixtures,
+    but never into July, when several leagues start their next season.
     """
     if "-" in season:
         y = int(season.split("-")[0])
-        return date(y, 6, 1), date(y + 1, 7, 31)
+        # Ends 30 June, not 31 July: Liga MX, the Russian Premier League and
+        # the Danish Superliga kick off in mid-July, and a July end put the
+        # next season's opening weeks into this file (fixed 2 Oct 2026; the
+        # replay now refuses any prior/test overlap).
+        return date(y, 6, 1), date(y + 1, 6, 30)
     y = int(season)
     return date(y, 1, 1), date(y, 12, 31)
 

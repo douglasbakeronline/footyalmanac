@@ -77,6 +77,7 @@ around them; if you think one is wrong, say so in your pull request instead.
 
 ```
 python3 nametest.py                              # always
+python3 -m unittest discover -s tests -v         # regression tests
 python3 build.py --days 2 --no-topup --no-odds   # football page builds
 python3 sports.py --build                        # if you touched sports.py
 python3 build_tennis.py --out /tmp/t.js          # if you touched tennis (restore predictions-tennis/ after)

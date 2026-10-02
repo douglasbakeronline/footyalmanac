@@ -24,63 +24,41 @@ from math import log
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
+import replay as R
 import sources as S
 
 EPS = 1e-9
 
 
 def evaluate(codes, season, prior_season, cache=None, blend_k=None, verbose=True):
-    if blend_k is not None:
-        E.BLEND_K = blend_k
-
-    rows = []
+    """Walk-forward rows for `season`, rated from `prior_season` and earlier
+    dates of `season` only (replay.replay_league, shared with tune.py).
+    Competitions with a missing season or overlapping prior/test dates are
+    skipped and reported, never repaired."""
+    params = {"blend_k": blend_k} if blend_k is not None else None
+    rows, excluded = [], []
     for code in codes:
         prior, ok_p = S.fetch_season(code, prior_season, cache)
         test, ok_t = S.fetch_season(code, season, cache)
-        if not ok_p or not ok_t or not prior or not test:
+        v = R.validate_split(code, season, prior if ok_p else [], test if ok_t else [])
+        if not v["ok"]:
+            v["seasons"] = {"prior": prior_season, "test": season}
+            excluded.append(v)
             continue
-
-        prior_tbl = E.build_table(prior)
-        prior_rt = E.strength_from_table(prior_tbl)
-        mu = E.league_goal_rate(prior_tbl)
-        tier = E.LEAGUES[code]["tier"]
-
-        # Teams that were not in this division last season need their rating
-        # imported. Without a full pyramid to hand we fall back to league
-        # average, which is roughly right for a promoted side anyway.
-        base = {}
-        for t in {m[1] for m in test} | {m[2] for m in test}:
-            base[t] = prior_rt.get(t, {"att": 1.0, "def": 1.0})
-
-        test = sorted(test, key=lambda m: m[0])
-        played = defaultdict(list)   # team -> list of (date, res, pts)
-        running = []                 # matches so far this season
-
-        for date, h, a, hg, ag in test:
-            tbl = E.build_table(running)
-            cur = E.strength_from_table(tbl) if running else {}
-
-            def rt(team):
-                r = tbl.get(team)
-                p = r["P"] if r else 0
-                return E.blend(base[team], cur.get(team), p), r
-
-            rh, rowh = rt(h)
-            ra, rowa = rt(a)
-            fh = E.form_factor(E.form_points(rowh))
-            fa = E.form_factor(E.form_points(rowa))
-
-            p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
-                                      mu, tier=tier, form_h=fh, form_a=fa)
-            actual = "h" if hg > ag else ("a" if ag > hg else "d")
+        for (date, h, a, hg, ag), lh, la, info in R.replay_league(
+                prior, test, E.LEAGUES[code]["tier"], params=params):
+            p = E.probabilities_from_xg(lh, la)
+            rowh = info["rows"][h]
             rows.append({
-                "code": code, "date": date, "played": (rowh["P"] if rowh else 0),
+                "code": code, "date": date, "home": h, "away": a,
+                "played": (rowh["P"] if rowh else 0),
                 "p": (p["home"], p["draw"], p["away"]),
-                "actual": actual, "conf": p["confidence"],
+                "actual": "h" if hg > ag else ("a" if ag > hg else "d"),
+                "conf": p["confidence"],
                 "pick": max((p["home"], "h"), (p["draw"], "d"), (p["away"], "a"))[1],
             })
-            running.append((date, h, a, hg, ag))
-
+    if verbose and excluded:
+        R.report_exclusions(excluded)
     return rows
 
 

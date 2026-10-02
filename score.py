@@ -65,6 +65,10 @@ def load_predictions():
     for path in sorted(glob.glob(os.path.join(PRED_DIR, "*.json"))):
         try:
             for g in json.load(open(path)):
+                # A price published after kick-off proves nothing. Older rows
+                # carry neither field and are graded as before.
+                if g.get("kickoff") and g.get("published") and g["published"][:16] >= g["kickoff"][:16]:
+                    continue
                 out[(g["league"], g["date"], g["home"], g["away"])] = g
         except Exception as e:
             print(f"  skipping {os.path.basename(path)}: {e}", file=sys.stderr)

@@ -33,6 +33,7 @@ from datetime import date as _date
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
+import replay as R
 import sources as S
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -91,29 +92,6 @@ DEFAULTS = dict(shrink=E.SHRINK_FULL_SEASON, blend_k=E.BLEND_K,
                 form_cap=E.FORM_MAX, form_n=5, ha_scale=1.0)
 
 
-def _strength(tbl, mu, k):
-    out = {}
-    for t, r in tbl.items():
-        p = r[0]
-        if not p:
-            out[t] = (1.0, 1.0)
-            continue
-        w = p / (p + k)
-        out[t] = (min(max(w * ((r[1] / p) / mu) + (1 - w), E.ATT_BOUNDS[0]), E.ATT_BOUNDS[1]),
-                  min(max(w * ((r[2] / p) / mu) + (1 - w), E.DEF_BOUNDS[0]), E.DEF_BOUNDS[1]))
-    return out
-
-
-def _form(res, cap, n):
-    if len(res) < 2:
-        return 1.0
-    last = res[-n:]
-    if len(last) * 3 < 6:
-        return 1.0
-    dev = (sum(last) / len(last) - 1.35) / 1.65
-    return 1.0 + max(-1.0, min(1.0, dev)) * cap
-
-
 def lambdas(data, split, params=None, meta=False, features=False):
     """Every fixture of the season, with the two expected-goal numbers the
     model would have published the morning before it kicked off.
@@ -124,69 +102,46 @@ def lambdas(data, split, params=None, meta=False, features=False):
     (games played, how far each rating has moved off its prior, recent
     points), for predictability.py. Neither changes the numbers.
 
-    The table is updated incrementally rather than rebuilt per fixture, which is
-    the only reason a full sweep finishes in minutes rather than hours.
+    The replay itself is replay.replay_league, shared with backtest.py and
+    built from the same engine functions as the live build: this season's
+    ratings use this season's goal rate, and a match only sees results from
+    earlier dates. Competitions whose prior and test seasons overlap, or that
+    lack either season, are left out; exclusions(data, split) says which.
     """
     p = {**DEFAULTS, **(params or {})}
     rows = []
-    for code in codes():
+    usable, _ = R.coverage(data, codes(), splits, split)
+    for code in usable:
         test_s, prior_s = splits(code)[split]
-        prior, test = data.get((code, prior_s)) or [], data.get((code, test_s)) or []
-        if not prior or not test:
-            continue
-
-        ptbl = E.build_table(prior)
-        mu = E.league_goal_rate(ptbl)
-        prior_rt = _strength({t: (r["P"], r["GF"], r["GA"]) for t, r in ptbl.items()},
-                             mu, p["shrink"])
-
-        tier = E.LEAGUES[code]["tier"]
-        hm, am = E.HOME_MULT.get(tier, 1.16), E.AWAY_MULT.get(tier, 0.87)
-        if p["ha_scale"] != 1.0:
-            # move the home/away tilt without touching the overall goal level
-            mid = math.sqrt(hm * am)
-            hm, am = mid * (hm / mid) ** p["ha_scale"], mid * (am / mid) ** p["ha_scale"]
-
-        tbl, form = {}, {}
-        for d, h, a, hg, ag in sorted(test, key=lambda m: m[0]):
-            cur = _strength(tbl, mu, p["shrink"]) if tbl else {}
-
-            def rate(team):
-                pri = prior_rt.get(team, (1.0, 1.0))
-                n = tbl[team][0] if team in tbl else 0
-                if not n or team not in cur:
-                    return pri
-                w = n / (n + p["blend_k"])
-                c = cur[team]
-                return (w * c[0] + (1 - w) * pri[0], w * c[1] + (1 - w) * pri[1])
-
-            rh, ra = rate(h), rate(a)
-            lh = max(0.15, rh[0] * ra[1] * mu * hm * _form(form.get(h, []), p["form_cap"], p["form_n"]))
-            la = max(0.15, ra[0] * rh[1] * mu * am * _form(form.get(a, []), p["form_cap"], p["form_n"]))
+        prior, test = data[(code, prior_s)], data[(code, test_s)]
+        for (d, h, a, hg, ag), lh, la, info in R.replay_league(
+                prior, test, E.LEAGUES[code]["tier"], params=p):
             y = 0 if hg > ag else (1 if hg == ag else 2)
             row = (lh, la, y, code, d, h, a) if meta else (lh, la, y)
             if features:
                 def drift(team):
                     # how far this season's evidence sits from the prior
-                    if team not in cur or team not in prior_rt:
+                    c, pri = info["current"][team], info["prior"][team]
+                    if not c or not pri:
                         return 0.0
-                    c, pri = cur[team], prior_rt[team]
-                    return abs(math.log(c[0] / pri[0])) + abs(math.log(c[1] / pri[1]))
+                    return (abs(math.log(c["att"] / pri["att"]))
+                            + abs(math.log(c["def"] / pri["def"])))
+                rh, ra = info["rows"][h], info["rows"][a]
                 row = row + ({
-                    "nH": tbl[h][0] if h in tbl else 0,
-                    "nA": tbl[a][0] if a in tbl else 0,
-                    "newH": h not in prior_rt, "newA": a not in prior_rt,
+                    "nH": rh["P"] if rh else 0,
+                    "nA": ra["P"] if ra else 0,
+                    "newH": info["prior"][h] is None, "newA": info["prior"][a] is None,
                     "driftH": drift(h), "driftA": drift(a),
-                    "formH": form.get(h, [])[-5:], "formA": form.get(a, [])[-5:],
+                    "formH": [x[2] for x in (rh["results"] if rh else [])][-5:],
+                    "formA": [x[2] for x in (ra["results"] if ra else [])][-5:],
                 },)
             rows.append(row)
-
-            for t, gf, ga, pts in ((h, hg, ag, 3 if hg > ag else (1 if hg == ag else 0)),
-                                   (a, ag, hg, 3 if ag > hg else (1 if hg == ag else 0))):
-                r = tbl.get(t) or (0, 0, 0)
-                tbl[t] = (r[0] + 1, r[1] + gf, r[2] + ga)
-                form.setdefault(t, []).append(pts)
     return rows
+
+
+def exclusions(data, split):
+    """Competitions lambdas() leaves out of a split, with the reason."""
+    return R.coverage(data, codes(), splits, split)[1]
 
 
 # ---------------------------------------------------------------------------
@@ -289,6 +244,8 @@ def mean(xs):
 # ---------------------------------------------------------------------------
 
 def report(data):
+    for split in ("fit", "check"):
+        R.report_exclusions(exclusions(data, split))
     fit = lambdas(data, "fit")
     base, base_acc, _ = score(fit)
     print(f"\nfit season: {len(fit)} fixtures, log loss {mean(base):.4f}, "
@@ -329,6 +286,10 @@ def report(data):
 def fit_calibration(data, verbose=True):
     """Fit the temperature curve on the last completed season, then check it on
     the current one. Returns (calibration, verdict dict)."""
+    excluded = {s: exclusions(data, s) for s in ("fit", "check")}
+    if verbose:
+        for s in ("fit", "check"):
+            R.report_exclusions(excluded[s])
     fit_raw = raw_probs(lambdas(data, "fit"))
     chk_raw = raw_probs(lambdas(data, "check"))
 
@@ -361,6 +322,10 @@ def fit_calibration(data, verbose=True):
     m, sd, pw = paired(new_chk, ship_chk)
 
     verdict = {
+        # what the fit could not use, and why: missing seasons and prior/test
+        # overlaps are left out, never repaired (replay.validate_split)
+        "excluded": {s: [{"code": v["code"], "reasons": v["reasons"]} for v in vs]
+                     for s, vs in excluded.items()},
         "fitted": cal,
         "fitSeason": {"n": len(fit_raw), "shipped": round(mean(ship_fit), 4),
                       "fitted": round(best[0], 4)},

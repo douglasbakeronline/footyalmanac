@@ -195,6 +195,70 @@ def list_reserve(g):
     return True
 
 
+def archive_predictions(path, flat, now=None):
+    """Merge this build's predictions into the day's archive file.
+
+    A build later in the day (any push to main deploys) used to rewrite the
+    file outright: a game already under way was re-priced and archived, and a
+    game finished since the morning vanished from today's file, so score.py
+    fell back to yesterday's price. Now:
+
+      - a fixture whose kick-off has passed keeps the price archived before it
+        (and one first seen after kick-off is not archived at all);
+      - with no kick-off time, a fixture dated today keeps the price from the
+        day's first build (each day has its own file), because whether a later
+        build came before kick-off cannot be established;
+      - anything else takes this build's price.
+
+    Every entry carries "published" (UTC) so score.py can check it was
+    published before kick-off.
+    """
+    from datetime import datetime, timezone
+    now = now or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+    today = now[:10]
+    key = lambda g: (g["league"], g["date"], g["home"], g["away"])
+    try:
+        with open(path) as f:
+            old = {key(g): g for g in json.load(f)}
+    except Exception:
+        old = {}
+    out = dict(old)
+    for g in flat:
+        k, prev = key(g), old.get(key(g))
+        ko = g.get("kickoff")
+        if ko and ko[:16] <= now[:16]:
+            continue                       # started: keep what was published before it, if anything
+        if not ko and g["date"] <= today and prev:
+            continue                       # date only, match day: keep the day's first price
+        out[k] = {**g, "published": now}
+    with open(path, "w") as f:
+        json.dump(list(out.values()), f, separators=(",", ":"))
+    return out
+
+
+def drop_current_from_prior(code, ms, newer_ms, current_rows):
+    """(prior, newer prior, warning or None). Removes from the prior any match
+    that is also in this season's results, and reports a prior that still
+    runs past this season's first match."""
+    played = [r for r in current_rows if r.get("hg") is not None]
+    if not played:
+        return ms, newer_ms, None
+    keys = {(r["date"], r["home"], r["away"]) for r in played}
+    first = min(r["date"] for r in played)
+    kept = [m for m in ms if (m[0], m[1], m[2]) not in keys]
+    kept_newer = [m for m in (newer_ms or []) if (m[0], m[1], m[2]) not in keys]
+    dropped = (len(ms) - len(kept)) + (len(newer_ms or []) - len(kept_newer))
+    late = sum(1 for m in kept + kept_newer if m[0] >= first)
+    if not dropped and not late:
+        return ms, newer_ms, None
+    msg = f"{code}: prior season overlaps this one (starts {first})"
+    if dropped:
+        msg += f"; {dropped} match(es) in both dropped from the prior"
+    if late:
+        msg += f"; {late} other prior match(es) dated on or after it kept, check the source"
+    return kept, kept_newer, msg
+
+
 def prev_of(code):
     return E.LEAGUES[code].get("prev", PREV)
 
@@ -387,6 +451,18 @@ def main():
     partial_prior, prior_log, prior_label = {}, [], {}
     for code, seasons in history.items():
         season_used, ms, share, expected, newer_ms = pick_prior(code, seasons, log=prior_log)
+        if not ms:
+            continue
+        # A prior season must end before this one starts. A backfill window
+        # drawn past a mid-July kick-off (mx.1, ru.1, dnk.1, Sep 2026) put this
+        # season's opening matches into last season's file too, so they were
+        # counted twice. Identical matches are dropped from the prior, loudly;
+        # anything else that overlaps is only reported (replay.validate_split
+        # excludes such competitions from tuning and backtests).
+        ms, newer_ms, overlap = drop_current_from_prior(
+            code, ms, newer_ms, list(fixtures.get(code, [])) + season_so_far.get(code, []))
+        if overlap:
+            prior_log.append(overlap)
         if not ms:
             continue
         prior_label[code] = season_label(season_used, share)
@@ -938,10 +1014,10 @@ def main():
              # fixed at publication, so the list is graded on what it said
              "list": g["list"], "reserve": g["reserve"],
              # archived so the prices a reader saw can be graded later
-             "market": g.get("market"), "value": g.get("value")}
+             "market": g.get("market"), "value": g.get("value"),
+             "kickoff": g.get("kickoff")}
             for d in days for g in d["games"]]
-    with open(os.path.join(pred_dir, f"{start.isoformat()}.json"), "w") as f:
-        json.dump(flat, f, separators=(",", ":"))
+    archive_predictions(os.path.join(pred_dir, f"{start.isoformat()}.json"), flat)
 
     out = args.out or os.path.join(here, "data.json")
     with open(out, "w") as f:
