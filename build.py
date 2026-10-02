@@ -201,25 +201,25 @@ def archive_predictions(path, flat, now=None):
     A build later in the day (any push to main deploys) used to rewrite the
     file outright: a game already under way was re-priced and archived, and a
     game finished since the morning vanished from today's file, so score.py
-    fell back to yesterday's price. Now:
+    fell back to yesterday's price. Now, with `start` the known kick-off or,
+    when there is none, the earliest instant the fixture's date exists
+    anywhere (sources.earliest_start):
 
-      - a fixture whose kick-off has passed keeps the price archived before it
-        (and one first seen after kick-off is not archived at all). If its
-        kick-off moved, the archived kick-off is updated to the latest known,
-        so score.py judges the kept price against the real start;
-      - with no usable kick-off time, a fixture dated today keeps the price
-        from the day's first build (each day has its own file), because
-        whether a later build came before kick-off cannot be established;
-      - anything else takes this build's price.
+      - once `start` has passed, a fixture keeps whatever price was archived
+        before it, and no new entry is accepted (a first price for a past or
+        possibly-started fixture is refused). If a known kick-off moved, the
+        archived kick-off is corrected so score.py judges the kept price
+        against the real start;
+      - before `start`, this build's price replaces the earlier one.
 
-    Times are compared as timezone-aware UTC (sources.parse_utc); a kick-off
-    with no zone counts as unknown. Every entry carries "published" (UTC).
-    Historical prices are never rewritten.
+    Times are timezone-aware UTC (sources.parse_utc); a kick-off with no zone
+    counts as unknown. Every new entry carries "published" (UTC). Existing
+    entries, legacy ones included, are never rewritten except for that
+    kick-off correction.
     """
     from datetime import datetime, timezone
     now = now or datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     now_dt = S.parse_utc(now)
-    today = now_dt.strftime("%Y-%m-%d")
     key = lambda g: (g["league"], g["date"], g["home"], g["away"])
     try:
         with open(path) as f:
@@ -230,12 +230,11 @@ def archive_predictions(path, flat, now=None):
     for g in flat:
         k, prev = key(g), old.get(key(g))
         ko = S.parse_utc(g.get("kickoff"))
-        if ko and ko <= now_dt:
-            if prev and prev.get("kickoff") != g.get("kickoff"):
+        start = ko or S.earliest_start(g["date"])
+        if start <= now_dt:
+            if ko and prev and prev.get("kickoff") != g.get("kickoff"):
                 out[k] = {**prev, "kickoff": g.get("kickoff")}   # price kept, start corrected
             continue
-        if not ko and g["date"] <= today and prev:
-            continue                       # no usable kick-off, match day: keep the day's first price
         out[k] = {**g, "published": now}
     with open(path, "w") as f:
         json.dump(list(out.values()), f, separators=(",", ":"))

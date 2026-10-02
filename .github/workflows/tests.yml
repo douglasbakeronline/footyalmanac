@@ -1,0 +1,31 @@
+name: Tests
+
+# Regression tests and the name-matcher guard on every pull request and every
+# push to a branch other than main, on the Python CI deploys with (3.12) and
+# the newest (3.13). Runs tests only: no build, no commit, no deploy.
+
+on:
+  pull_request:
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Regression tests
+        run: python -m unittest discover -s tests -v
+      - name: Club-name matcher
+        run: python nametest.py

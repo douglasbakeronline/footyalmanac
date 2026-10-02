@@ -216,6 +216,21 @@ def parse_utc(ts):
     return dt.astimezone(timezone.utc)
 
 
+def earliest_start(fixture_date):
+    """The earliest instant a fixture dated `fixture_date` could kick off.
+
+    Convention: a fixture's "date" is the calendar date its source gives,
+    with no zone guaranteed (openfootball prints local dates, ESPN UTC ones).
+    With no kick-off time, the date is read as the first instant that date
+    exists anywhere: 00:00 at UTC+14, i.e. 10:00 UTC the day before. A price
+    is only taken as published before kick-off if it came before this. It is
+    deliberately conservative: it can refuse an honest price, never pass a
+    late one."""
+    from datetime import timezone
+    d = date.fromisoformat(str(fixture_date)[:10])
+    return datetime(d.year, d.month, d.day, 10, 0, tzinfo=timezone.utc) - timedelta(days=1)
+
+
 def kickoff_utc(row, iso):
     """The fixture's kick-off as "YYYY-MM-DDTHH:MM:00Z", or None if unknown.
 

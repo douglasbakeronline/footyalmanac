@@ -60,22 +60,30 @@ def tier_of(confidence, celtic, unrated=False):
 def verification(g):
     """How sure we are that an archived price was published before kick-off.
 
-      verified           published and kick-off both known (timezone-aware),
-                         published before kick-off
-      verified-by-date   no usable kick-off time, published on an earlier date
-      unverified         no publish time (rows archived before 2 Oct 2026), or
-                         published on the match date with no usable kick-off
-      late               published at or after kick-off: not graded
+      verified            published before a known kick-off (timezone-aware)
+      verified-by-date    no usable kick-off; published before the earliest
+                          instant the fixture's date exists anywhere
+                          (sources.earliest_start: 10:00 UTC the day before)
+      legacy-unverified   no publish time: archived before 2 Oct 2026, when
+                          times started being recorded. Graded as before,
+                          prices never rewritten, reported separately
+      late                published at or after the kick-off, or after the
+                          earliest possible start when the kick-off is
+                          unknown. Not graded
 
-    Legacy rows are graded as before but reported as unverified; their
-    prices are never rewritten.
+    A row with a publish time is never "legacy": it is either evidenced as
+    early, or evidenced as late.
     """
-    pub, ko = S.parse_utc(g.get("published")), S.parse_utc(g.get("kickoff"))
+    pub = S.parse_utc(g.get("published"))
     if not pub:
-        return "unverified"
+        return "legacy-unverified"
+    ko = S.parse_utc(g.get("kickoff"))
     if ko:
         return "verified" if pub < ko else "late"
-    return "verified-by-date" if pub.strftime("%Y-%m-%d") < g["date"] else "unverified"
+    return "verified-by-date" if pub < S.earliest_start(g["date"]) else "late"
+
+
+LATE_SKIPPED = []      # (league, date, home, away) of archived prices refused as late, last load
 
 
 def load_predictions():
@@ -83,6 +91,7 @@ def load_predictions():
     Later files win: if a fixture was predicted on several days, the most recent
     build is the one judged, which is the one a reader would have seen."""
     out = {}
+    del LATE_SKIPPED[:]
     for path in sorted(glob.glob(os.path.join(PRED_DIR, "*.json"))):
         try:
             with open(path) as f:
@@ -90,6 +99,7 @@ def load_predictions():
             for g in archived:
                 # A price published at or after kick-off proves nothing.
                 if verification(g) == "late":
+                    LATE_SKIPPED.append((g["league"], g["date"], g["home"], g["away"]))
                     continue
                 out[(g["league"], g["date"], g["home"], g["away"])] = g
         except Exception as e:
@@ -295,13 +305,15 @@ def main():
         "graded": len(rows),
         "overall": summarise(rows),
         # Publication-time evidence for every graded prediction, overall and
-        # for the Daily List. "unverified" is mostly the archive from before
+        # for the Daily List. "legacy-unverified" is the archive from before
         # publish/kick-off times were recorded (2 Oct 2026).
         "verification": {
             "all": {v: sum(1 for r in rows if r["verified"] == v)
-                    for v in ("verified", "verified-by-date", "unverified")},
+                    for v in ("verified", "verified-by-date", "legacy-unverified")},
             "list": {v: sum(1 for r in rows if r["verified"] == v and r.get("list"))
-                     for v in ("verified", "verified-by-date", "unverified")},
+                     for v in ("verified", "verified-by-date", "legacy-unverified")},
+            # archived prices refused as published after kick-off (not graded)
+            "late": len(set(LATE_SKIPPED)),
         },
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),

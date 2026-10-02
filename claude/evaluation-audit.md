@@ -73,22 +73,41 @@ build re-priced games in play and overwrote the day's archive, which
 - `backtest.py`: `evaluate` uses the replay and validation; rows carry teams.
 - `build.py`: `drop_current_from_prior` (identical matches in both seasons
   removed from the prior, loudly); `archive_predictions` merges into the
-  day's file, never replaces a price for a fixture that has kicked off,
-  corrects the kick-off if it moved, keeps the day's first price when the
-  kick-off is unknown, stamps `kickoff` and `published`. Comparisons are
+  day's file; once a fixture's start has passed (its known kick-off, or the
+  earliest instant of its date when the kick-off is unknown) it keeps the
+  price archived before it and accepts no new entry; corrects the kick-off
+  if it moved; stamps `kickoff` and `published`. Comparisons are
   timezone-aware (`sources.parse_utc`); a time with no zone counts as unknown.
-- `score.py`: `verification()` per graded row: `verified` (published before
-  a known kick-off), `verified-by-date` (no kick-off, published on an earlier
-  date), `unverified` (legacy rows without times, or match-day with no
-  kick-off), `late` (not graded). `record.json` gains `verification` counts
-  overall and for the Daily List. Historical prices are never rewritten.
-- `sources.py`: `parse_utc`.
+- `score.py`: `verification()` per row: `verified` (published before a
+  known kick-off), `verified-by-date` (no kick-off, published before the
+  date's earliest instant), `legacy-unverified` (no publish time: archived
+  before 2 Oct 2026; graded as before), `late` (published at or after the
+  start, known or earliest-possible; not graded, counted). A row with a
+  publish time is never legacy. `record.json` gains `verification` counts
+  overall, for the Daily List, and the number refused as late. Historical
+  prices are never rewritten.
+- `sources.py`: `parse_utc`, `earliest_start`.
 - `backfill.py`: `SEASON_BOUNDS` sets 1 July to 30 June for mx.1, ru.1 and
   dnk.1 only, from the evidence below; every walk also stops the day before
   the next season's first cached result (`clip_to_next_season`).
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`:
   reproducible before/after on a frozen snapshot.
-- `tests/`: 30 tests.
+- `tests/`: 36 tests. Numeric golden outputs compared to 1e-12 (CPython
+  builds differ by one ulp in exp/pow: 1.1e-16 seen on 3.13), discrete
+  outputs exact, golden values not regenerated.
+- `.github/workflows/tests.yml`: tests and `nametest.py` on Python 3.12 and
+  3.13 for every pull request and non-main push. Tests only, no deploy.
+
+## Fixture-date convention
+
+A fixture's `date` is the calendar date its source gives, with no zone
+guaranteed (openfootball local, ESPN UTC). With no kick-off time it is read
+as the first instant that date exists anywhere: 00:00 at UTC+14, i.e.
+10:00 UTC the day before (`sources.earliest_start`). A price counts as
+published before kick-off only if it came before that. Conservative by
+design: it can refuse an honest price, never pass a late one. Review case:
+fixture dated 2026-10-01, no kick-off, archived 2026-10-02T12:00Z: refused
+by the archive, and `late` (not graded) if such a row exists.
 
 ## Season-boundary evidence for the backfill cutoff
 
@@ -107,8 +126,9 @@ default window, and the next-season clip guards all of them.
 
 ## Archive verification today
 
-40 files (20 Aug to 2 Oct 2026), 11,874 rows: all `unverified` (archived
-before times were recorded). They stay graded as before, labelled as such.
+40 files (20 Aug to 2 Oct 2026), 11,874 rows: all `legacy-unverified`
+(archived before times were recorded). They stay graded as before,
+labelled as such, prices untouched.
 
 ## Before / after on identical fixtures (snapshot aa19d05b...)
 

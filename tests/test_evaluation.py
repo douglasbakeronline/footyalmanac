@@ -152,7 +152,17 @@ class Replay(unittest.TestCase):
 
 
 class EngineRefactor(unittest.TestCase):
+    # Numeric outputs are compared to 1e-12, relative and absolute. Different
+    # CPython builds (3.7 here, 3.12 in CI, 3.13 at the reviewer) can differ in
+    # the last bit of exp() and pow(): Julius saw 0.9906923790478912 against
+    # ...911, a difference of 1.1e-16 (one ulp). 1e-12 is 10,000 times that,
+    # 50 million times smaller than the 4-dp rounding the archive stores
+    # (5e-5), and far below any real model change (>= 1e-6). The golden values
+    # are not regenerated. Discrete outputs (the likeliest scoreline) are exact.
+    TOL = 1e-12
+
     def test_match_probabilities_unchanged(self):
+        import math
         with open(os.path.join(HERE, "golden_match_probabilities.json")) as f:
             g = json.load(f)
         saved = E.CALIBRATION
@@ -161,9 +171,27 @@ class EngineRefactor(unittest.TestCase):
             for c in g["cases"]:
                 p = E.match_probabilities(*c["args"], tier=c["tier"],
                                           form_h=c["form"][0], form_a=c["form"][1])
+                self.assertEqual(set(p), set(c["out"]))
                 for k, v in c["out"].items():
                     got = list(p[k]) if isinstance(p[k], tuple) else p[k]
-                    self.assertEqual(got, v, k)
+                    if isinstance(v, float):
+                        self.assertTrue(math.isclose(got, v, rel_tol=self.TOL, abs_tol=self.TOL),
+                                        f"{k}: {got!r} != {v!r} (beyond {self.TOL})")
+                    else:
+                        self.assertEqual(got, v, k)            # discrete: exact
+        finally:
+            E.CALIBRATION = saved
+
+    def test_tolerance_still_catches_a_real_change(self):
+        """The tolerance must not hide a model change: nudging one input by a
+        realistic amount has to move the outputs well past it."""
+        import math
+        saved = E.CALIBRATION
+        try:
+            E.CALIBRATION = {"a": 1.05, "b": -0.3}
+            p = E.match_probabilities(1.4, 0.8, 0.9, 1.2, 1.4, tier=1)
+            q = E.match_probabilities(1.4 * 1.0001, 0.8, 0.9, 1.2, 1.4, tier=1)   # 0.01% stronger attack
+            self.assertFalse(math.isclose(p["home"], q["home"], rel_tol=self.TOL, abs_tol=self.TOL))
         finally:
             E.CALIBRATION = saved
 
@@ -229,9 +257,32 @@ class Archive(unittest.TestCase):
         self.assertEqual(list(out.values())[0]["p"], 0.6)
 
     def test_zone_less_kickoff_is_treated_as_unknown(self):
-        self.archive(self.path, [self.row("2026-10-02T14:00:00", 0.6)], now="2026-10-02T05:15:00Z")
+        # no usable kick-off: the price published before the date's earliest
+        # instant (2026-10-01T10:00Z) is kept, a later one refused
+        self.archive(self.path, [self.row("2026-10-02T14:00:00", 0.6)], now="2026-10-01T05:15:00Z")
         out = self.archive(self.path, [self.row("2026-10-02T14:00:00", 0.7)], now="2026-10-02T09:00:00Z")
-        self.assertEqual(list(out.values())[0]["p"], 0.6)       # day's first price kept
+        self.assertEqual(list(out.values())[0]["p"], 0.6)
+
+    def test_reviewer_case_past_date_unknown_kickoff_is_refused(self):
+        out = self.archive(self.path, [self.row(None, 0.6, "2026-10-01")], now="2026-10-02T12:00:00Z")
+        self.assertEqual(out, {})
+
+    def test_match_day_first_price_with_unknown_kickoff_is_refused(self):
+        out = self.archive(self.path, [self.row(None, 0.6, "2026-10-02")], now="2026-10-02T05:15:00Z")
+        self.assertEqual(out, {})
+
+    def test_unknown_kickoff_before_the_earliest_instant_is_accepted(self):
+        out = self.archive(self.path, [self.row(None, 0.6, "2026-10-03")], now="2026-10-02T05:15:00Z")
+        self.assertEqual(list(out.values())[0]["published"], "2026-10-02T05:15:00Z")
+        out = self.archive(self.path, [self.row(None, 0.7, "2026-10-03")], now="2026-10-02T14:30:00Z")
+        self.assertEqual(list(out.values())[0]["p"], 0.6)   # after 2026-10-02T10:00Z: kept, not replaced
+
+    def test_legacy_entries_are_preserved_untouched(self):
+        legacy = {"league": "en.1", "date": "2026-09-30", "home": "A", "away": "B", "p": 0.55}
+        with open(self.path, "w") as f:
+            json.dump([legacy], f)
+        out = self.archive(self.path, [self.row(None, 0.9, "2026-09-30")], now="2026-10-02T05:15:00Z")
+        self.assertEqual(list(out.values()), [legacy])
 
     def test_missing_kickoff_future_date_updates(self):
         self.archive(self.path, [self.row(None, 0.6, "2026-10-05")], now="2026-10-02T05:15:00Z")
@@ -268,36 +319,49 @@ class Archive(unittest.TestCase):
 
 
 class Grading(unittest.TestCase):
+    def test_earliest_start_convention(self):
+        import sources as S
+        self.assertEqual(S.earliest_start("2026-10-02"), S.parse_utc("2026-10-01T10:00:00Z"))
+
     def test_verification_categories(self):
         import score
         base = {"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B"}
-        cases = [({}, "unverified"),                                                   # legacy row
+        cases = [({}, "legacy-unverified"),                                          # no publish time
                  ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "verified"),
                  ({"published": "2026-10-02T14:30:00Z", "kickoff": "2026-10-02T14:00:00Z"}, "late"),
-                 ({"published": "2026-10-01T05:15:00Z"}, "verified-by-date"),
-                 ({"published": "2026-10-02T05:15:00Z"}, "unverified"),               # match day, no kick-off
-                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00"}, "unverified")]
+                 ({"published": "2026-10-01T05:15:00Z"}, "verified-by-date"),         # before 10-01T10:00Z
+                 ({"published": "2026-10-01T20:00:00Z"}, "late"),                     # after the earliest instant
+                 ({"published": "2026-10-02T05:15:00Z"}, "late"),                     # match day, no kick-off
+                 ({"published": "2026-10-02T12:00:00Z", "date": "2026-10-01"}, "late"),   # reviewer's case
+                 ({"published": "2026-10-02T05:15:00Z", "kickoff": "2026-10-02T14:00:00"}, "late")]  # zone-less
         for extra, want in cases:
             self.assertEqual(score.verification({**base, **extra}), want, extra)
 
-    def test_score_skips_late_and_keeps_legacy_rows(self):
+    def test_grading_keeps_legacy_and_evidenced_early_rows_and_drops_late_ones(self):
         import score
         with tempfile.TemporaryDirectory() as d:
-            rows = [{"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B",
+            rows = [{"league": "en.1", "date": "2026-10-02", "home": "A", "away": "B",          # late: kick-off known
                      "kickoff": "2026-10-02T14:00:00Z", "published": "2026-10-02T14:30:00Z"},
-                    {"league": "en.1", "date": "2026-10-02", "home": "C", "away": "D",
+                    {"league": "en.1", "date": "2026-10-02", "home": "C", "away": "D",          # verified
                      "kickoff": "2026-10-02T14:00:00Z", "published": "2026-10-02T05:15:00Z"},
-                    {"league": "en.1", "date": "2026-10-02", "home": "E", "away": "F"}]  # legacy, no fields
+                    {"league": "en.1", "date": "2026-10-02", "home": "E", "away": "F"},         # legacy
+                    {"league": "en.1", "date": "2026-10-01", "home": "G", "away": "H",          # late: past date,
+                     "kickoff": None, "published": "2026-10-02T12:00:00Z"},                    # no kick-off
+                    {"league": "en.1", "date": "2026-10-03", "home": "I", "away": "J",          # verified by date
+                     "kickoff": None, "published": "2026-10-02T05:15:00Z"}]
             with open(os.path.join(d, "2026-10-02.json"), "w") as f:
                 json.dump(rows, f)
             saved = score.PRED_DIR
             try:
                 score.PRED_DIR = d
                 got = score.load_predictions()
+                late = sorted(k[2] for k in score.LATE_SKIPPED)
             finally:
                 score.PRED_DIR = saved
-        self.assertEqual(sorted(k[2] for k in got), ["C", "E"])
-        self.assertEqual(got[("en.1", "2026-10-02", "E", "F")].get("p"), None)    # untouched
+        self.assertEqual(sorted(k[2] for k in got), ["C", "E", "I"])
+        self.assertEqual(late, ["A", "G"])
+        self.assertEqual({k[2]: score.verification(v) for k, v in got.items()},
+                         {"C": "verified", "E": "legacy-unverified", "I": "verified-by-date"})
 
 
 class Backfill(unittest.TestCase):
