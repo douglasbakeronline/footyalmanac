@@ -22,6 +22,58 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Independent evaluation layer and a merge gate that fails closed, without owner review
+
+**Merged 5 Oct 2026 on Douglas's approval, adapted to his 4 Oct instruction
+(no owner review).** `agents/policy.json` now lets every class except
+workflow/security merge without review, with no waiting period; model and
+calibration changes need an evaluation verdict of pass (n/a is not enough),
+so they hold until an approved snapshot exists. Agents cannot touch
+`agents/`, `CLAUDE.md` or `AGENTS.md`, so workflow/security changes only
+come from people. The office sprint opens each pull request with the
+footyalmanac-office App token and calls `merge_gate.py --pr N --wait`, which
+waits for Tests and Evaluation on the head commit before deciding. Bot paths
+now include the groupings archive and the other bot-written files.
+`tests/test_merge_gate.py` updated (25 cases).
+
+The original description follows.
+
+
+**What changed** Nothing on the site and nothing in the model.
+
+- **The office merge gate** now decides from evidence instead of labels:
+  - required checks green on the current head commit
+  - evaluation evidence from the verified run
+  - confirmed mergeability
+  - no non-bot changes on main since the evaluation
+  - Douglas's approval of that exact commit for anything beyond docs
+
+  Merges are pinned to the head commit.
+- **A new Evaluation check** runs on every pull request. Main's harness compares main against the pull request on an
+  approved frozen snapshot, on identical fixtures, and posts log loss, Brier, accuracy and a paired bootstrap.
+  Insufficient evidence holds the pull request.
+- **Agent pull requests** are opened with a GitHub App token so their checks actually run, and the script
+  that opens them can no longer be edited by the agent.
+
+**Evidence**
+- `python3 -m unittest discover -s tests`: 69 tests pass, including 22 new gate cases (stale labels, stale CI,
+  other-app checks, unknown mergeability, approvals of older commits, bot approvals, base drift) and 10 scorer cases.
+- End-to-end run of `predict.py` and `score_pair.py` on a synthetic snapshot: a changed `RHO` was detected and,
+  with 132 check fixtures, correctly returned `insufficient`.
+
+**Files**
+- `agents/merge_gate.py`, `agents/policy.json`, `agents/open_pr.sh`
+- `evaluation/`
+- `.github/workflows/evaluation.yml`, `.github/workflows/evaluation-freeze.yml`, `.github/workflows/office-agents.yml`, `.github/workflows/office-merge.yml`
+- `tests/test_merge_gate.py`, `tests/test_score_pair.py`
+- `claude/evaluation-layer.md`, `claude/office-agents.md`, `CLAUDE.md`
+
+**Not changed** `engine.py`, `calibration.json`, `tune.py`, `replay.py`, `build.py`, `deploy.yml`, `tune.yml`, any data.
+
+**Roll back** `git revert` the merge commit.
+
+---
+
 ## 2026-10-05: free source search for uncovered leagues, nothing to add (tag pending)
 
 **What changed.** Nothing a reader sees. Documented that no free automatable source exists for Croatia, Serbia, Ukraine, Hungary or South Korea (`claude/free-source-search-2026-10-05.md`).

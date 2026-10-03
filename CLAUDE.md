@@ -161,15 +161,36 @@ Open `dashboard.html` straight off disk to check the page.
   instruction, 4 Oct 2026: no owner review, every agent productive). Each of
   the fourteen agents in `agents/pick_task.py` SPRINT, one at a time, takes
   its most urgent live-scoreboard task or its standing task (each objective
-  rests 7 days), then `agents/open_pr.sh` runs nametest.py, the unittest
-  suite and (for pipeline code) a fast build, and opens a pull request.
-  `agents/merge_gate.py --pr` merges it at once if checks passed, it touches
-  no protected file and has no conflicts; model changes that did not pass
-  every gate, failed checks and changes the agent itself would not ship are
-  closed with the report kept. Each merge is tagged `release-YYYY-MM-DD[-n]`;
-  the site redeploys once at the end. See `claude/office-agents.md`.
-- `office-merge.yml` runs daily at 21:00 UTC and merges any leftover agent
-  pull request under the same gates. A person can stop one with `hold`.
+  rests 7 days). `agents/open_pr.sh` (run from a copy made before the agent
+  works) runs nametest.py, the unittest suite and (for pipeline code) a fast
+  build without tokens, replays the branch onto the latest main, and opens the
+  pull request with the footyalmanac-office GitHub App token so Tests and
+  Evaluation run on it. Failed checks, model changes without every gate
+  passed and changes the agent would not ship are closed with the report
+  kept. Agents cannot change `.github/`, `agents/`, `CLAUDE.md` or `AGENTS.md`.
+- `agents/merge_gate.py` fails closed and never trusts labels. A pull request
+  merges only if all of these hold (`agents/policy.json`):
+  - the required checks are green on its current head SHA
+  - the evidence artifact from the verified `evaluation.yml` run says pass or n/a
+  - it is confirmed mergeable
+  - `main` has had only bot commits since the evaluation base
+  - owner approval of that exact commit only for workflow/security paths
+    (agents cannot produce these); every other class ships without review
+    once the checks and evaluation pass (Douglas, 4 Oct 2026)
+
+  The sprint calls it with `--pr N --wait`, which waits for the checks, so
+  each merge lands before the next agent starts. `office-merge.yml` (21:00
+  UTC) catches leftovers. The merge is pinned with `--match-head-commit`.
+  Tests: `tests/test_merge_gate.py`.
+- `evaluation.yml` runs on every pull request. It uses main's harness
+  (`evaluation/predict.py`, `evaluation/score_pair.py`) on the last approved
+  frozen snapshot (`evaluation/approved-snapshots.json`; raw data only in the
+  private repo `footyalmanac-eval-data`). The candidate predicts offline with
+  no secrets. It compares on identical fixture keys and posts log loss, Brier,
+  accuracy and a paired bootstrap. Insufficient evidence is a hold, so model
+  changes cannot ship until a snapshot is approved. It never refits, applies
+  calibration or deploys. `evaluation-freeze.yml` (owner only) makes
+  snapshots. See `claude/evaluation-layer.md`.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.

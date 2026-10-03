@@ -2,7 +2,8 @@
 # Office agents: verify the agent's working-tree changes and open a pull request.
 set -uo pipefail
 KEY="$1"; OWNER="$2"; TITLE="$3"
-PROTECTED="record.json predictions predictions-sports predictions-tennis current history history-sports dashboard.html adjustments.json calibration.json tuning-report.json sports-record.json sports-record.js tennis-record.json tennis-record.js .github"
+HERE="$(cd "$(dirname "$0")" && pwd)"   # the trusted copy made before the agent worked
+PROTECTED="record.json predictions predictions-sports predictions-tennis current history history-sports dashboard.html adjustments.json calibration.json tuning-report.json sports-record.json sports-record.js tennis-record.json tennis-record.js .github agents CLAUDE.md AGENTS.md"
 restore() { for p in $PROTECTED; do git checkout -q HEAD -- "$p" 2>/dev/null || true; git clean -fdq -- "$p" 2>/dev/null || true; done; rm -f data.js data.json; }
 
 restore
@@ -10,10 +11,10 @@ git add -A
 if git diff --cached --quiet; then echo "The agent made no changes."; exit 0; fi
 
 CHECKS="passed"
-timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
-timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
+env -u GH_TOKEN -u GITHUB_TOKEN timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
+env -u GH_TOKEN -u GITHUB_TOKEN timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
 if git diff --cached --name-only | grep -qE '^(build|engine|sources|rankings|predictability|score|odds|backfill)\.py$'; then
-  timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
+  env -u GH_TOKEN -u GITHUB_TOKEN timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
 fi
 restore; git add -A
 
@@ -37,7 +38,7 @@ git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHU
 # replay onto the latest main, keeping both RELEASES.md entries if they collide.
 git fetch -q origin main
 if ! git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" rebase -q origin/main; then
-  if [ "$(git diff --name-only --diff-filter=U)" = "RELEASES.md" ] && python3 agents/merge_releases.py RELEASES.md; then
+  if [ "$(git diff --name-only --diff-filter=U)" = "RELEASES.md" ] && python3 "$HERE/merge_releases.py" RELEASES.md; then
     git add RELEASES.md && GIT_EDITOR=true git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" rebase --continue >/dev/null
   else
     git rebase --abort; echo "::warning::could not replay onto the latest main; the pull request may show conflicts"
@@ -50,7 +51,7 @@ for L in "office-agent:5b4bd6" "agent:$OWNER:f0b35a" "objective:$KEY:c5def5" "ch
 done
 LABELS="office-agent,agent:$OWNER,objective:$KEY,checks-$CHECKS"
 gh label create "rejected" --color "6e7781" --force >/dev/null 2>&1 || true
-if [ "$AUTO" = yes ] && [ "$CHECKS" = passed ]; then LABELS="$LABELS,auto-merge-ok"; NOTE="Checks passed, so this merges straight away without review. Roll back with git revert on the squash commit."; else LABELS="$LABELS,rejected"; NOTE="Not shipped: a $TYPE change, checks $CHECKS, gates $GATES. Closed with the report kept for the record."; fi
+if [ "$AUTO" = yes ] && [ "$CHECKS" = passed ]; then LABELS="$LABELS,auto-merge-ok"; NOTE="Checks passed here. It merges without review as soon as Tests and Evaluation are green on this commit (model changes need an evaluation pass). Roll back with git revert on the squash commit."; else LABELS="$LABELS,rejected"; NOTE="Not shipped: a $TYPE change, checks $CHECKS, gates $GATES. Closed with the report kept for the record."; fi
 CLOSES=""; case "$KEY" in issue-*) CLOSES="Closes #${KEY#issue-}";; esac
 BODY=$( { echo "> **Office agent:** $OWNER · type: $TYPE · checks: $CHECKS"; echo ">"; echo "> $SUMMARY"; echo ">"; echo "> $NOTE"; echo; [ -n "$CLOSES" ] && { echo "$CLOSES"; echo; }; cat /tmp/office-agent/report.md 2>/dev/null || echo "(no report written)"; } )
 URL=$(gh pr create --base main --head "$BRANCH" --title "[$OWNER] $TITLE" --body "$BODY" --label "$LABELS") || { echo "::error::could not open the pull request"; exit 1; }
