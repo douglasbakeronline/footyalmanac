@@ -76,6 +76,20 @@ Standard library only. `.github/workflows/tune.yml` runs it Mondays 04:40 UTC.
 Calibration auto-applies when it passes; structural constants are advisory
 output only and never move on their own.
 
+**Gate baseline (fixed 3 Oct 2026).** The gates compare a candidate curve
+with the calibration the site is using (`tune.live_baseline()`: the
+`calibration.json` curve, or the flat 1.15 only when there is no file), both
+scored on the same fixtures. Before, the baseline was always the flat 1.15,
+so any curve that beat 1.15 could replace a live curve it did not beat. Every
+refit from 14 to 30 Sep was gated that way. On the frozen snapshot
+`aa19d05b...` the Monday candidate (1.155 / −0.30) passed against 1.15
+(−0.0006, p(worse) 0.09) but against the live 1.135 / −0.30 it is +0.0001,
+p(worse) 0.75: it fails, and the live curve stays. The `--report` sweep's
+baseline is the live configuration too (curve, RHO, shrinkage, blend, form,
+home advantage, read from `engine.py`); with a curve live its flat
+temperature rows ask whether replacing the curve with one constant would do
+better. Tests: `tests/test_calibration_gate.py`.
+
 Rules that keep it honest, in priority order:
 
 1. Nothing is ever fitted on record.json. The live record is the scoreboard.

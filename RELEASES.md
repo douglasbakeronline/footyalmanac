@@ -22,6 +22,36 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Calibration refits must beat the live curve
+
+**What changed** Nothing on the page and no calibration change. `tune.py
+--fit` now gates a candidate curve against the calibration the site is using
+(`calibration.json`, or the flat 1.15 only when the file is missing), scored
+on the same fixtures. Before, it was always gated against the flat 1.15, so a
+curve that beat 1.15 but not the live curve could replace it. The `--report`
+sweep's baseline is the live configuration too. The fit report and
+`tuning-report.json` name the baseline and candidate parameters, the fixture
+counts and the exclusions. New `--snapshot FILE` runs either on a frozen
+snapshot and writes nothing.
+
+**Evidence** Frozen snapshot `aa19d05b...`, live curve 1.135 / −0.30: old
+gate passes candidate 1.155 / −0.30 (−0.0006 against 1.15, p(worse) 0.09);
+new gate fails it (+0.0001 against the live curve, p(worse) 0.75). Same
+fixtures, fit 6,474, check 1,386. Openfootball-only snapshot `cc08a335...`:
+candidate 1.13 / −0.30, gain 0.0000, fails minimum gain. 9 new tests in
+`tests/test_calibration_gate.py` (46 in all).
+
+**Files** `tune.py`, `tests/test_calibration_gate.py`, `CLAUDE.md`,
+`claude/tuning-evidence.md`.
+
+**Not changed** `calibration.json`, the gates' thresholds (250 fixtures,
+p(worse) 0.30, gain 0.0005), the bootstrap, every model constant,
+`tune.yml`, `deploy.yml`.
+
+**Roll back** `git revert` the merge or commit.
+
+---
+
 ## release-2026-10-03-2 — Football evaluation infrastructure (audit fixes)
 
 **What changed** Nothing on the page. Underneath, the harnesses that judge the
