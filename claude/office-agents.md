@@ -19,16 +19,10 @@ unattended, with him reviewing whenever he chooses.
    - It runs `nametest.py`, plus a fast build if pipeline code changed.
    - It opens a pull request labelled `office-agent`, `agent:<id>`, `objective:<key>` and `checks-passed` or `checks-failed`.
    - It adds `auto-merge-ok` or `needs-owner`.
-4. **21:00 UTC, `office-merge.yml`.** `agents/merge_gate.py` squash-merges every pull request that meets all of these:
-   - labelled `auto-merge-ok` and `checks-passed`
-   - not labelled `hold` or `needs-owner`
-   - at least 12 hours old
-   - no protected files
-   - no conflicts
-
-   It then tags `release-YYYY-MM-DD[-n]` and dispatches `deploy.yml`. A push made with
-   the Actions token does not trigger `deploy.yml` on its own, which is why the
-   gate dispatches it.
+4. **21:00 UTC, `office-merge.yml`.** `agents/merge_gate.py` decides from evidence, never from labels.
+   See `claude/evaluation-layer.md` (3 Oct 2026) for every condition. Docs-only changes can merge
+   unattended. Model, calibration, source-data, evaluation-rule, workflow/security, UI and unknown
+   paths need Douglas's approval of the exact head commit.
 
 ## Controls
 - Stop one change: add the `hold` label, or close the pull request.

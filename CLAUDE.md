@@ -161,12 +161,23 @@ Open `dashboard.html` straight off disk to check the page.
   agent works on it, then `agents/open_pr.sh` checks it and opens a pull
   request labelled `office-agent`. At most two agent pull requests stay
   open, and each objective rests for 7 days. See `claude/office-agents.md`.
-- `office-merge.yml` runs daily at 21:00 UTC. `agents/merge_gate.py` merges
-  only pull requests labelled `auto-merge-ok` and `checks-passed`, at least
-  12 hours old, with no `hold` or `needs-owner` label and no protected files.
-  It then tags `release-YYYY-MM-DD[-n]` and dispatches `deploy.yml`.
-  Visual changes, failed gates and model changes the agent is unsure of
-  always wait for Douglas.
+- `office-merge.yml` runs daily at 21:00 UTC. `agents/merge_gate.py` fails
+  closed and never trusts labels. A pull request merges only if all of these hold:
+  - the required checks (`agents/policy.json`) are green on its current head SHA
+  - the evidence artifact from the verified `evaluation.yml` run says pass or n/a
+  - it is confirmed mergeable
+  - `main` has had only bot commits since the evaluation base
+  - Douglas approved that exact commit, for anything beyond docs
+
+  The merge is pinned with `--match-head-commit`. Tests: `tests/test_merge_gate.py`.
+- `evaluation.yml` runs on every pull request. It uses main's harness
+  (`evaluation/predict.py`, `evaluation/score_pair.py`) on the last approved
+  frozen snapshot (`evaluation/approved-snapshots.json`; raw data only in the
+  private repo `footyalmanac-eval-data`). The candidate predicts offline with
+  no secrets. It compares on identical fixture keys and posts log loss, Brier,
+  accuracy and a paired bootstrap. Insufficient evidence is a hold. It never
+  refits, applies calibration or deploys. `evaluation-freeze.yml` (owner only)
+  makes snapshots. See `claude/evaluation-layer.md`.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.

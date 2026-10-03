@@ -1,0 +1,62 @@
+name: Evaluation snapshot (owner only)
+
+# Freeze the evaluation data with replay.py --freeze and store it in the
+# private repo footyalmanac-eval-data as a release. Raw rows never go to this
+# public repo or to Actions artifacts. The snapshot is NOT used until the
+# owner merges the pull request this workflow opens, which adds it to
+# evaluation/approved-snapshots.json.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  freeze:
+    if: github.actor == 'douglasbakeronline'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Freeze
+        env:
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+        run: |
+          mkdir -p /tmp/snap
+          python3 replay.py --freeze /tmp/snap/snapshot.json
+          python3 evaluation/predict.py --verify /tmp/snap/snapshot.json > /tmp/snap/sha
+      - name: Store privately
+        id: store
+        env:
+          GH_TOKEN: ${{ secrets.EVAL_DATA_WRITE }}
+        run: |
+          ID="snap-$(date -u +%Y%m%d-%H%M)"; SHA=$(cat /tmp/snap/sha)
+          gh release create "$ID" /tmp/snap/snapshot.json -R douglasbakeronline/footyalmanac-eval-data \
+            --title "$ID" --notes "sha256 $SHA, frozen by replay.py --freeze from footyalmanac@${GITHUB_SHA::7}"
+          echo "id=$ID" >> "$GITHUB_OUTPUT"; echo "sha=$SHA" >> "$GITHUB_OUTPUT"
+          rm -rf /tmp/snap
+      - name: Open the approval pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "footyalmanac-hq[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}"
+          B="snapshot/${{ steps.store.outputs.id }}"; git checkout -b "$B"
+          python3 - <<'PY'
+          import json, datetime
+          p = "evaluation/approved-snapshots.json"; a = json.load(open(p))
+          a["snapshots"].append({"id": "${{ steps.store.outputs.id }}", "sha256": "${{ steps.store.outputs.sha }}",
+                                 "frozen_from": "${{ github.sha }}", "created": datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%MZ"),
+                                 "made_by": "replay.py --freeze"})
+          json.dump(a, open(p, "w"), indent=2); open(p, "a").write("\n")
+          PY
+          git commit -qam "Approve evaluation snapshot ${{ steps.store.outputs.id }}"
+          git push -q origin "$B"
+          gh pr create --title "Approve evaluation snapshot ${{ steps.store.outputs.id }}" --label needs-owner \
+            --body "Adds snapshot \`${{ steps.store.outputs.id }}\` (sha256 \`${{ steps.store.outputs.sha }}\`) to the approved list. Raw data is in the private store only. Merge to make it the evaluation baseline."

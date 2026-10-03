@@ -10,9 +10,9 @@ git add -A
 if git diff --cached --quiet; then echo "The agent made no changes."; exit 0; fi
 
 CHECKS="passed"
-python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
+env -u GH_TOKEN -u GITHUB_TOKEN python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
 if git diff --cached --name-only | grep -qE '^(build|engine|sources|rankings|predictability|score|odds|backfill)\.py$'; then
-  python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
+  env -u GH_TOKEN -u GITHUB_TOKEN python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
 fi
 restore; git add -A
 
@@ -24,13 +24,13 @@ SUMMARY=$(python3 -c "import json;print(json.load(open('$META')).get('summary','
 BRANCH="office-agent/$(date -u +%Y-%m-%d)-${KEY}"
 git checkout -q -b "$BRANCH"
 git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Office agent ($OWNER): $TITLE"
-git push -q origin "$BRANCH"
+git push -q "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "$BRANCH"
 
 for L in "office-agent:5b4bd6" "agent:$OWNER:f0b35a" "objective:$KEY:c5def5" "checks-$CHECKS:$([ $CHECKS = passed ] && echo 0e8a16 || echo d93f0b)" "auto-merge-ok:0e8a16" "needs-owner:fbca04" "hold:b60205"; do
   gh label create "${L%:*}" --color "${L##*:}" --force >/dev/null 2>&1 || true
 done
 LABELS="office-agent,agent:$OWNER,objective:$KEY,checks-$CHECKS"
-if [ "$AUTO" = yes ] && [ "$CHECKS" = passed ]; then LABELS="$LABELS,auto-merge-ok"; NOTE="This will merge automatically at the next merge window (22:00 UK) if it is at least 12 hours old. Add the **hold** label or close it to stop that."; else LABELS="$LABELS,needs-owner"; NOTE="This one waits for the owner: it is a $TYPE change, checks $CHECKS, auto-merge was not recommended."; fi
+if [ "$AUTO" = yes ] && [ "$CHECKS" = passed ]; then LABELS="$LABELS,auto-merge-ok"; NOTE="Candidate for the 22:00 UK merge window. It merges only if Tests and Evaluation are green on this exact commit, the evaluation evidence passes, it is mergeable, at least 12 hours old, and (for anything beyond docs) Douglas has approved this commit. Add **hold** or close it to stop it."; else LABELS="$LABELS,needs-owner"; NOTE="This one waits for the owner: it is a $TYPE change, checks $CHECKS, auto-merge was not recommended."; fi
 CLOSES=""; case "$KEY" in issue-*) CLOSES="Closes #${KEY#issue-}";; esac
 BODY=$( { echo "> **Office agent:** $OWNER · type: $TYPE · checks: $CHECKS"; echo ">"; echo "> $SUMMARY"; echo ">"; echo "> $NOTE"; echo; [ -n "$CLOSES" ] && { echo "$CLOSES"; echo; }; cat /tmp/office-agent/report.md 2>/dev/null || echo "(no report written)"; } )
 gh pr create --base main --head "$BRANCH" --title "[$OWNER] $TITLE" --body "$BODY" --label "$LABELS"

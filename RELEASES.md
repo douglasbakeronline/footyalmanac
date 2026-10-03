@@ -81,6 +81,43 @@ ignores them.
 
 ---
 
+## release-2026-10-03-2 (tag pending) — Independent evaluation layer and a merge gate that fails closed
+
+**What changed** Nothing on the site and nothing in the model.
+
+- **The office merge gate** now decides from evidence instead of labels:
+  - required checks green on the current head commit
+  - evaluation evidence from the verified run
+  - confirmed mergeability
+  - no non-bot changes on main since the evaluation
+  - Douglas's approval of that exact commit for anything beyond docs
+
+  Merges are pinned to the head commit.
+- **A new Evaluation check** runs on every pull request. Main's harness compares main against the pull request on an
+  approved frozen snapshot, on identical fixtures, and posts log loss, Brier, accuracy and a paired bootstrap.
+  Insufficient evidence holds the pull request.
+- **Agent pull requests** are opened with a GitHub App token so their checks actually run, and the script
+  that opens them can no longer be edited by the agent.
+
+**Evidence**
+- `python3 -m unittest discover -s tests`: 69 tests pass, including 22 new gate cases (stale labels, stale CI,
+  other-app checks, unknown mergeability, approvals of older commits, bot approvals, base drift) and 10 scorer cases.
+- End-to-end run of `predict.py` and `score_pair.py` on a synthetic snapshot: a changed `RHO` was detected and,
+  with 132 check fixtures, correctly returned `insufficient`.
+
+**Files**
+- `agents/merge_gate.py`, `agents/policy.json`, `agents/open_pr.sh`
+- `evaluation/`
+- `.github/workflows/evaluation.yml`, `.github/workflows/evaluation-freeze.yml`, `.github/workflows/office-agents.yml`, `.github/workflows/office-merge.yml`
+- `tests/test_merge_gate.py`, `tests/test_score_pair.py`
+- `claude/evaluation-layer.md`, `claude/office-agents.md`, `CLAUDE.md`
+
+**Not changed** `engine.py`, `calibration.json`, `tune.py`, `replay.py`, `build.py`, `deploy.yml`, `tune.yml`, any data.
+
+**Roll back** `git revert` the merge commit.
+
+---
+
 ## release-2026-10-03 — Office agents develop the project unattended
 
 **What changed** Nothing on the site. Two scheduled workflows let the
