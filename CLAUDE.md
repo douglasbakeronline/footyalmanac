@@ -85,7 +85,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
 - `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder. Each row is `verified`, `verified-by-date` or `legacy-unverified` (graded), or `late` / `timing-unverifiable` (not graded, counted apart); see `claude/evaluation-audit.md`.
 - `backtest.py` walk-forward backtest.
-- `tune.py` constant sweep and calibration refit, behind gates.
+- `tune.py` constant sweep and calibration refit, behind gates, both measured against the live configuration (`live_baseline()`). `--snapshot FILE` runs either on a frozen snapshot and writes nothing.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
 - `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
@@ -106,7 +106,8 @@ Front end: `index.html` is the template (loads `data.js`). `dashboard.html` is
 the self-contained build output and is what gets published as the site's
 index. Edit `index.html`, never `dashboard.html`.
 
-Config the model reads: `calibration.json` (auto-refitted weekly),
+Config the model reads: `calibration.json` (auto-refitted weekly when a
+candidate beats the live curve under the gates),
 `europe.json` (structural, refitted by hand only), `adjustments.json`
 (deliberately empty, see rules).
 
@@ -224,8 +225,14 @@ These were each learned the hard way. Do not break them without asking.
   kick-off (promoted sides, unrated clubs, cross-division cup ties, overridden
   teams). Backtested as real. Flagged rows drop one confidence tier.
 - **Tiers**: Strong ≥70%, Firm ≥62%, Lean ≥55%, No read below.
-- **Calibration**: `T = 1.075 − 0.45 × (confidence − 0.45)` from
-  `calibration.json`, replacing the old flat temperature of 1.15.
+- **Calibration**: a line in raw confidence, `T = a + b × (confidence − 0.45)`,
+  read from `calibration.json` (`engine.CALIBRATION`); the flat
+  `engine.TEMPERATURE` 1.15 applies only if the file is missing. Live since
+  30 Sep 2026: `a = 1.135, b = −0.30` (first shipped 9 Sep as 1.075 / −0.45;
+  refitted 14, 20, 28 and 30 Sep). Read the file, not this line, for the
+  current values. `tune.py --fit` gates a candidate against the live curve on
+  the same fixtures (until 3 Oct 2026 it was gated against the flat 1.15, so
+  earlier refits were never shown to beat the curve they replaced).
 - **Sources**: openfootball spells clubs in full (*FC Bayern München*), ESPN
   abbreviates (*Bayern Munich*). football-data.co.uk's extra-league files
   are the sole source for Poland, Switzerland, Romania, Finland and Ireland

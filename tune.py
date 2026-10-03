@@ -6,6 +6,8 @@ calibration curve when the evidence supports it.
     python3 tune.py --report          full sweep, prints a table, changes nothing
     python3 tune.py --fit             refit calibration.json if it passes the gates
     python3 tune.py --fit --dry-run   as above, but write nothing
+    python3 tune.py --fit --snapshot FILE   advisory fit on a frozen snapshot
+                                      (replay.py --freeze); writes nothing
 
 Why this exists
 ---------------
@@ -213,6 +215,63 @@ def score(rows, rho=None, T=None, cal=None):
 
 
 # ---------------------------------------------------------------------------
+# the live calibration: what every candidate and the sweep are measured against
+# ---------------------------------------------------------------------------
+
+def live_baseline():
+    """The calibration the site prices with now, exactly as engine.temper
+    applies it: the calibration.json curve (E.CALIBRATION) when one is
+    configured, the flat E.TEMPERATURE only when none is.
+
+    Until 3 Oct 2026 the gate compared a candidate with the flat 1.15 even
+    while a curve was live, so a curve that beat 1.15 but lost to the live
+    one could still replace it."""
+    if E.CALIBRATION:
+        return {"kind": "curve", "a": E.CALIBRATION["a"], "b": E.CALIBRATION["b"],
+                "source": "calibration.json"}
+    return {"kind": "flat", "T": E.TEMPERATURE,
+            "source": "engine.TEMPERATURE (no calibration.json)"}
+
+
+def as_curve(cal):
+    return {"kind": "curve", "a": cal["a"], "b": cal["b"]}
+
+
+def describe(b):
+    if b["kind"] == "curve":
+        return f"T = {b['a']} + {b['b']} x (confidence - 0.45)"
+    return f"flat T = {b['T']}"
+
+
+def score_under(raws, b):
+    """score_raw under a baseline or candidate as returned by live_baseline()
+    or as_curve()."""
+    if b["kind"] == "curve":
+        return score_raw(raws, cal={"a": b["a"], "b": b["b"]})
+    return score_raw(raws, T=b["T"])
+
+
+def gate(chk_raw, candidate, baseline):
+    """Paired check of a candidate curve against the baseline on one fixture
+    list: the same rows scored twice, so the pairing is exact. Returns
+    (checkSeason summary, gates). "shipped" is the live baseline."""
+    base_per, base_acc, _ = score_under(chk_raw, baseline)
+    new_per, new_acc, _ = score_under(chk_raw, as_curve(candidate))
+    assert len(base_per) == len(new_per) == len(chk_raw)
+    m, sd, pw = paired(new_per, base_per)
+    check = {"n": len(chk_raw), "shipped": round(mean(base_per), 4),
+             "fitted": round(mean(new_per), 4),
+             "delta": round(m, 4), "sd": round(sd, 4), "pWorse": round(pw, 3),
+             "shippedAcc": round(base_acc, 4), "fittedAcc": round(new_acc, 4)}
+    gates = {
+        "enoughData": len(chk_raw) >= MIN_HOLDOUT,
+        "notWorse": pw <= MAX_P_WORSE,
+        "worthIt": -m >= MIN_GAIN,
+    }
+    return check, gates
+
+
+# ---------------------------------------------------------------------------
 # significance
 # ---------------------------------------------------------------------------
 
@@ -244,37 +303,52 @@ def mean(xs):
 # ---------------------------------------------------------------------------
 
 def report(data):
+    """Advisory sweep: each constant moved alone, everything else at the live
+    configuration, temperature included (the calibration.json curve when one
+    is configured), compared paired with that live configuration."""
     for split in ("fit", "check"):
         R.report_exclusions(exclusions(data, split))
+    live = live_baseline()
     fit = lambdas(data, "fit")
-    base, base_acc, _ = score(fit)
-    print(f"\nfit season: {len(fit)} fixtures, log loss {mean(base):.4f}, "
+    base, base_acc, _ = score_under(raw_probs(fit), live)
+    print(f"\nbaseline = the live configuration: {describe(live)} [{live['source']}], "
+          f"RHO {E.RHO:g}, SHRINK_FULL_SEASON {E.SHRINK_FULL_SEASON:g}, "
+          f"BLEND_K {E.BLEND_K:g}, FORM_MAX {E.FORM_MAX:g}, form window "
+          f"{DEFAULTS['form_n']}, home advantage scale {DEFAULTS['ha_scale']:g}")
+    print(f"fit season: {len(fit)} fixtures, log loss {mean(base):.4f}, "
           f"accuracy {base_acc:.2%}\n")
-    print(f"  {'constant':30} {'shipped':>9} {'trying':>8} {'Δ log loss':>11} "
+    print(f"  {'constant':30} {'live':>9} {'trying':>8} {'Δ log loss':>11} "
           f"{'sd':>7} {'p(worse)':>9} {'acc':>7}")
 
     def trial(label, shipped, value, params=None, rho=None, T=None):
         rows = lambdas(data, "fit", params) if params else fit
-        per, acc, _ = score(rows, rho=rho, T=T)
+        per, acc, _ = score_under(raw_probs(rows, rho),
+                                  {"kind": "flat", "T": T} if T is not None else live)
         m, sd, pw = paired(per, base)
         mark = "  <-" if pw < 0.05 and m < 0 else ""
         print(f"  {label:30} {shipped:>9} {value:>8} {m:>+11.4f} {sd:>7.4f} "
               f"{pw:>9.2f} {acc:>7.2%}{mark}")
 
-    for T in (1.00, 1.05, 1.10, 1.25):
-        trial("TEMPERATURE", 1.15, T, T=T)
+    # with a curve live, a flat temperature is not in use: these rows ask
+    # whether replacing the curve with one would be better
+    if live["kind"] == "curve":
+        for T in (1.00, 1.05, 1.10, E.TEMPERATURE, 1.25):
+            trial("flat TEMPERATURE (no curve)", "curve", T, T=T)
+    else:
+        for T in (1.00, 1.05, 1.10, 1.25):
+            trial("TEMPERATURE", f"{E.TEMPERATURE:g}", T, T=T)
     for r in (-0.12, -0.08, -0.04, 0.0):
-        trial("RHO", -0.06, r, rho=r)
+        trial("RHO", f"{E.RHO:g}", r, rho=r)
     for v in (2, 3, 6, 8, 12):
-        trial("SHRINK_FULL_SEASON", 4, v, {"shrink": v})
+        trial("SHRINK_FULL_SEASON", f"{E.SHRINK_FULL_SEASON:g}", v, {"shrink": v})
     for v in (3, 4, 8, 12, 20):
-        trial("BLEND_K", 6, v, {"blend_k": v})
+        trial("BLEND_K", f"{E.BLEND_K:g}", v, {"blend_k": v})
     for v in (0.0, 0.10, 0.15, 0.20, 0.30):
-        trial("FORM_MAX", 0.05, v, {"form_cap": v})
+        trial("FORM_MAX", f"{E.FORM_MAX:g}", v, {"form_cap": v})
     for v in (3, 8, 10):
-        trial("form window", 5, v, {"form_n": v})
+        trial("form window", DEFAULTS["form_n"], v, {"form_n": v})
     for v in (0.8, 0.9, 1.1, 1.2):
-        trial("home advantage scale", 1.0, v, {"ha_scale": v})
+        trial("home advantage scale", f"{DEFAULTS['ha_scale']:g}", v, {"ha_scale": v})
     print("\n  a change is worth making only where p(worse) is small AND the "
           "same change\n  survives on the current season. Run --fit for that check.")
 
@@ -283,9 +357,11 @@ def report(data):
 # calibration fit
 # ---------------------------------------------------------------------------
 
-def fit_calibration(data, verbose=True):
+def fit_calibration(data, verbose=True, baseline=None):
     """Fit the temperature curve on the last completed season, then check it on
-    the current one. Returns (calibration, verdict dict)."""
+    the current one against the live calibration (live_baseline()), on the
+    same fixtures. Returns (calibration, verdict dict)."""
+    baseline = baseline or live_baseline()
     excluded = {s: exclusions(data, s) for s in ("fit", "check")}
     if verbose:
         for s in ("fit", "check"):
@@ -316,12 +392,14 @@ def fit_calibration(data, verbose=True):
         best = coarse
     cal = best[1]
 
-    ship_fit, _, _ = score_raw(fit_raw)
-    ship_chk, ship_acc, ship_conf = score_raw(chk_raw)
-    new_chk, new_acc, new_conf = score_raw(chk_raw, cal=cal)
-    m, sd, pw = paired(new_chk, ship_chk)
+    ship_fit, _, _ = score_under(fit_raw, baseline)
+    check, gates = gate(chk_raw, cal, baseline)
 
     verdict = {
+        # what was compared: the live calibration against the candidate, each
+        # scored on the same fixtures
+        "baseline": {**baseline, "describe": describe(baseline)},
+        "candidate": {**as_curve(cal), "describe": describe(as_curve(cal))},
         # what the fit could not use, and why: missing seasons and prior/test
         # overlaps are left out, never repaired (replay.validate_split)
         "excluded": {s: [{"code": v["code"], "reasons": v["reasons"]} for v in vs]
@@ -329,28 +407,32 @@ def fit_calibration(data, verbose=True):
         "fitted": cal,
         "fitSeason": {"n": len(fit_raw), "shipped": round(mean(ship_fit), 4),
                       "fitted": round(best[0], 4)},
-        "checkSeason": {"n": len(chk_raw), "shipped": round(mean(ship_chk), 4),
-                        "fitted": round(mean(new_chk), 4),
-                        "delta": round(m, 4), "sd": round(sd, 4), "pWorse": round(pw, 3),
-                        "shippedAcc": round(ship_acc, 4), "fittedAcc": round(new_acc, 4)},
-        "gates": {
-            "enoughData": len(chk_raw) >= MIN_HOLDOUT,
-            "notWorse": pw <= MAX_P_WORSE,
-            "worthIt": -m >= MIN_GAIN,
-        },
+        "checkSeason": check,
+        "gates": gates,
     }
     verdict["pass"] = all(verdict["gates"].values())
 
     if verbose:
         c = verdict["checkSeason"]
-        print(f"\nfitted on the last completed season ({verdict['fitSeason']['n']} fixtures)")
-        print(f"  T(confidence) = {cal['a']} + {cal['b']} x (confidence - 0.45)")
-        print(f"  log loss there {verdict['fitSeason']['shipped']} -> {verdict['fitSeason']['fitted']}")
+        f = verdict["fitSeason"]
+        print(f"\nbaseline (live):  {describe(baseline)}  [{baseline['source']}]")
+        print(f"candidate:        {describe(as_curve(cal))}")
+        print(f"fixtures: fit {f['n']}, check {c['n']}; baseline and candidate "
+              f"scored on the same rows")
+        for s, vs in excluded.items():
+            bad = [v["code"] for v in vs
+                   if any("overlap" in r or "outside" in r for r in v["reasons"])]
+            print(f"excluded from {s}: {len(vs)} competitions, {len(vs) - len(bad)} "
+                  f"missing a season, {len(bad)} refused by validation"
+                  f"{' (' + ', '.join(bad) + ')' if bad else ''}; reasons above")
+        print(f"\nfitted on the last completed season ({f['n']} fixtures)")
+        print(f"  log loss baseline {f['shipped']} -> candidate {f['fitted']}")
         print(f"\nchecked on the current season ({c['n']} fixtures, never fitted on)")
-        print(f"  log loss {c['shipped']} -> {c['fitted']}  ({c['delta']:+.4f}, sd {c['sd']:.4f})")
+        print(f"  log loss baseline {c['shipped']} -> candidate {c['fitted']}  "
+              f"({c['delta']:+.4f}, sd {c['sd']:.4f})")
         print(f"  accuracy {c['shippedAcc']:.2%} -> {c['fittedAcc']:.2%}")
-        print(f"  probability this is actually worse: {c['pWorse']:.1%}")
-        print("\ngates")
+        print(f"  probability the candidate is actually worse: {c['pWorse']:.1%}")
+        print("\ngates (against the live baseline)")
         for k, v in verdict["gates"].items():
             print(f"  {'PASS' if v else 'FAIL'}  {k}")
     return cal, verdict
@@ -361,14 +443,23 @@ def main():
     ap.add_argument("--report", action="store_true", help="sweep every constant")
     ap.add_argument("--fit", action="store_true", help="refit the calibration curve")
     ap.add_argument("--dry-run", action="store_true", help="fit but write nothing")
+    ap.add_argument("--snapshot", metavar="FILE",
+                    help="read a frozen snapshot (replay.py --freeze) instead of fetching; "
+                         "advisory, implies --dry-run and writes no report")
     ap.add_argument("--cache", default=os.path.join(HERE, ".tunecache"))
     args = ap.parse_args()
     if not (args.report or args.fit):
         ap.error("nothing to do: pass --report or --fit")
 
-    os.makedirs(args.cache, exist_ok=True)
-    print(f"fetching {len(codes())} competitions ...", file=sys.stderr)
-    data = load(args.cache)
+    if args.snapshot:
+        data, _, digest = R.load_snapshot(args.snapshot)
+        args.dry_run = True
+        print(f"snapshot {digest} ({len(data)} seasons), advisory: nothing is written",
+              file=sys.stderr)
+    else:
+        os.makedirs(args.cache, exist_ok=True)
+        print(f"fetching {len(codes())} competitions ...", file=sys.stderr)
+        data = load(args.cache)
 
     if args.report:
         report(data)
@@ -387,9 +478,11 @@ def main():
                   f"on the next build")
         else:
             failed = [k for k, v in verdict["gates"].items() if not v]
-            print(f"\nnot written: failed {', '.join(failed)}. The shipped "
-                  f"TEMPERATURE of {E.TEMPERATURE} stays.")
-        json.dump(verdict, open(os.path.join(HERE, "tuning-report.json"), "w"), indent=1)
+            print(f"\nnot written: failed {', '.join(failed)}. The live "
+                  f"calibration stays: {verdict['baseline']['describe']}.")
+        if not args.snapshot:
+            with open(os.path.join(HERE, "tuning-report.json"), "w") as f:
+                json.dump(verdict, f, indent=1)
 
 
 if __name__ == "__main__":
