@@ -88,7 +88,12 @@ p(worse) 0.75: it fails, and the live curve stays. The `--report` sweep's
 baseline is the live configuration too (curve, RHO, shrinkage, blend, form,
 home advantage, read from `engine.py`); with a curve live its flat
 temperature rows ask whether replacing the curve with one constant would do
-better. Tests: `tests/test_calibration_gate.py`.
+better. Sweep on `aa19d05b...` (fit season, 6,474, baseline log loss
+1.0239 under the live curve): no flat temperature beats the curve (best
+1.10, +0.0001); BLEND_K 8 (−0.0005, p(worse) 0.02) and home advantage 0.9
+(−0.0004, p(worse) 0.04) are flagged on the fit season only, at or below the
+0.0005 gain gate and not checked on the current season. Advisory; nothing
+changed. Tests: `tests/test_calibration_gate.py`.
 
 Rules that keep it honest, in priority order:
 
