@@ -1,0 +1,26 @@
+{
+  "_comment": "Merge-gate policy for office-agent pull requests. This file is in the workflow-security class: changes need owner approval. Unknown paths default to owner approval.",
+  "owner": "douglasbakeronline",
+  "actions_app_id": 15368,
+  "required_checks": ["test (3.12)", "test (3.13)", "evaluation"],
+  "evaluation_workflow": ".github/workflows/evaluation.yml",
+  "evaluation_artifact": "evaluation-evidence",
+  "min_age_hours": 12,
+  "mergeable_retries": 3,
+  "auto_merge_classes": ["docs"],
+  "bot_paths": ["predictions/", "predictions-sports/", "predictions-tennis/", "record.json", "sports-record.json",
+                "sports-record.js", "tennis-record.json", "tennis-record.js", "current/", "dashboard.html"],
+  "classes": {
+    "workflow-security": [".github/", "agents/", "CLAUDE.md", "AGENTS.md"],
+    "calibration": ["calibration.json", "tune.py", "tuning-report.json", "tune_tennis.py"],
+    "model": ["engine.py", "build.py", "rankings.py", "predictability.py", "tune_", "adjustments.json",
+              "build_tennis.py", "sports.py", "tennis.json"],
+    "source-data": ["sources.py", "backfill.py", "odds.py", "current/", "history", "predictions", "record.json",
+                    "sports-record", "tennis-record"],
+    "evaluation-rules": ["replay.py", "backtest.py", "score.py", "score_tennis.py", "eurotest.py", "ranktest.py",
+                         "nametest.py", "tests/", "evaluation/"],
+    "ui": ["index.html", "dashboard.html", "brandassets.py"],
+    "docs": ["claude/", "RELEASES.md", "README.md"]
+  },
+  "model_classes": ["model", "calibration"]
+}
