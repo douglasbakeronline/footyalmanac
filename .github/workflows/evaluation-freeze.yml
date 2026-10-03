@@ -9,8 +9,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
 
 jobs:
   freeze:
@@ -41,9 +40,15 @@ jobs:
             --title "$ID" --notes "sha256 $SHA, frozen by replay.py --freeze from footyalmanac@${GITHUB_SHA::7}"
           echo "id=$ID" >> "$GITHUB_OUTPUT"; echo "sha=$SHA" >> "$GITHUB_OUTPUT"
           rm -rf /tmp/snap
+      - name: Mint the App token
+        id: app
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.OFFICE_APP_ID }}
+          private-key: ${{ secrets.OFFICE_APP_KEY }}
       - name: Open the approval pull request
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ steps.app.outputs.token }}
         run: |
           git config user.name "footyalmanac-hq[bot]"; git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${{ github.repository }}"
