@@ -10,10 +10,10 @@ git add -A
 if git diff --cached --quiet; then echo "The agent made no changes."; exit 0; fi
 
 CHECKS="passed"
-python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
-python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
+timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
+timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
 if git diff --cached --name-only | grep -qE '^(build|engine|sources|rankings|predictability|score|odds|backfill)\.py$'; then
-  python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
+  timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
 fi
 restore; git add -A
 
