@@ -22,6 +22,23 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — England Championship: home advantage and draw handling tested, rejected
+
+**What changed** Nothing a reader sees. A league-specific home advantage and a
+different draw correlation for the Championship were tested and rejected; a
+dated note records it so nobody repeats it.
+
+**Evidence** Paired bootstrap on history only. Fit season 2025-26 (557): ha 0.8
+-0.0019 log loss, p(worse) 0.13. Extra season 2024-25: +0.0027, p(worse) 0.95
+(sign flips). Confirm 2026-27 (95 fixtures, gate needs 250): -0.0002, p(worse)
+0.47. Rho from 0 to -0.10 moves log loss by 0.001 at most. Fails the gates.
+
+**Files** `claude/championship-test-2026-10-04.md`, `RELEASES.md`.
+
+**Not changed** `engine.py`, calibration, any model number.
+
+**Roll back** `git revert` the commit; nothing else depends on it.
+
 ## release-2026-10-04-3 — Office agents: daily sprint for every agent, merging without owner review
 
 **What changed** On Douglas's instruction the office agents no longer wait for
