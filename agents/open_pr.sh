@@ -33,6 +33,16 @@ git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[b
 # loudly if the push fails rather than letting the pull request call fail.
 git config --local --unset-all http.https://github.com/.extraheader 2>/dev/null || true
 git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+# Another agent (or the daily bot) may have merged while this one worked:
+# replay onto the latest main, keeping both RELEASES.md entries if they collide.
+git fetch -q origin main
+if ! git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" rebase -q origin/main; then
+  if [ "$(git diff --name-only --diff-filter=U)" = "RELEASES.md" ] && python3 agents/merge_releases.py RELEASES.md; then
+    git add RELEASES.md && GIT_EDITOR=true git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" rebase --continue >/dev/null
+  else
+    git rebase --abort; echo "::warning::could not replay onto the latest main; the pull request may show conflicts"
+  fi
+fi
 if ! git push -q origin "$BRANCH"; then echo "::error::could not push $BRANCH"; exit 1; fi
 
 for L in "office-agent:5b4bd6" "agent:$OWNER:f0b35a" "objective:$KEY:c5def5" "checks-$CHECKS:$([ $CHECKS = passed ] && echo 0e8a16 || echo d93f0b)" "auto-merge-ok:0e8a16" "needs-owner:fbca04" "hold:b60205"; do
