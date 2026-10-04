@@ -54,6 +54,16 @@ jobs:
           else
             echo "skip=0" >> "$GITHUB_OUTPUT"
           fi
+          # A pasted token can carry a space or line break, which the Claude
+          # action rejects in a quarter of a second. Report the shape (never
+          # the value) and pass a trimmed copy on.
+          for n in K1 K2; do
+            v="${!n}"; t="$(printf '%s' "$v" | tr -d '[:space:]')"
+            [ -n "$v" ] && echo "$n: length ${#v}, trimmed ${#t}"
+          done
+          T1="$(printf '%s' "$K1" | tr -d '[:space:]')"; T2="$(printf '%s' "$K2" | tr -d '[:space:]')"
+          [ -n "$T1" ] && echo "::add-mask::$T1"; [ -n "$T2" ] && echo "::add-mask::$T2"
+          { echo "AGENT_API_KEY=$T1"; echo "AGENT_OAUTH=$T2"; } >> "$GITHUB_ENV"
       - name: Pick today's task
         id: pick
         if: steps.key.outputs.skip == '0'
@@ -62,8 +72,8 @@ jobs:
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
         uses: anthropics/claude-code-action@v1
         with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ env.AGENT_API_KEY }}
+          claude_code_oauth_token: ${{ env.AGENT_OAUTH }}
           prompt: ${{ steps.pick.outputs.prompt }}
           claude_args: "--model sonnet --max-turns 50 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
       - name: Verify and open a pull request
