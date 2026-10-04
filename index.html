@@ -347,6 +347,43 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .seg button:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
 .ctl-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
 
+
+/* ---------- odds tab: groups of five ----------
+   Douglas, 4 Oct 2026: five-leg groups with a spread of bookmaker prices.
+   Built by groupings.py; the chance on each leg is its tested rate. */
+.og-days{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.og-stake{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:var(--ink-2)}
+.og-stake input{width:70px;font:600 14px var(--f-num);padding:5px 7px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
+.og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
+.og{background:var(--surface);border:1px solid var(--rule);display:flex;flex-direction:column}
+.og-h{display:flex;align-items:flex-start;gap:10px;padding:11px 13px 9px;border-bottom:1px solid var(--rule-soft)}
+.og-h h3{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.03em;text-transform:uppercase;line-height:1.05}
+.og-h h3 small{display:block;font-family:var(--f-ui);font-size:10.5px;letter-spacing:.1em;color:var(--mute);font-weight:700;margin-top:3px}
+.og-h .od{margin-left:auto;text-align:right}
+.og-h .od b{display:block;font:600 24px var(--f-num);letter-spacing:-.04em;line-height:1}
+.og-h .od span{font-size:11.5px;color:var(--ink-2)}
+.og.Steady .og-h{border-top:3px solid var(--home)}
+.og.Balanced .og-h{border-top:3px solid var(--draw)}
+.og.Stretch .og-h{border-top:3px solid var(--away)}
+.og-k{display:flex;gap:16px;padding:8px 13px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);flex-wrap:wrap}
+.og-k b{font-family:var(--f-num);color:var(--ink)}
+.og-sp{position:relative;height:30px;margin:6px 13px 2px}
+.og-sp:before{content:"";position:absolute;left:0;right:0;top:12px;height:2px;background:var(--rule)}
+.og-sp i{position:absolute;top:6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ink);border:2px solid var(--surface)}
+.og-sp i.e{background:var(--surface);border:2px dashed var(--ink-2)}
+.og-sp em{position:absolute;top:20px;font:10px var(--f-num);color:var(--mute);font-style:normal;transform:translateX(-50%)}
+.og-l{display:grid;grid-template-columns:44px minmax(0,1fr) 52px 44px;gap:8px;align-items:baseline;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:13px}
+.og-l:first-of-type{border-top:0}
+.og-l .t{font:12px var(--f-num);color:var(--mute)}
+.og-l .m b{display:block;font-weight:700}
+.og-l .m small{display:block;font-size:11.5px;color:var(--mute);line-height:1.35;margin-top:1px}
+.og-l .o{font:600 14px var(--f-num);text-align:right}
+.og-l .c{font:12px var(--f-num);text-align:right;color:var(--ink-2)}
+.og-l.on{opacity:.55}
+.og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+.og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
+@media (max-width:700px){ .og-grid{grid-template-columns:1fr} .og-stake{margin-left:0} }
+
 /* ---------- day ---------- */
 .day{margin-top:24px}
 /* Each day opens with a slice of the cover's star band, so the colour of the
@@ -896,6 +933,7 @@ footer b{color:var(--ink-2)}
 </header>
 <nav class="views" id="views" aria-label="Boards">
   <button data-view="list" aria-pressed="true">Daily List</button>
+  <button data-view="odds" aria-pressed="false">Odds</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
   <button data-view="sport:nfl" aria-pressed="false">NFL</button>
@@ -946,6 +984,7 @@ footer b{color:var(--ink-2)}
 
 <main id="days"></main>
 <section id="list" hidden></section>
+<section id="odds" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
 <section id="sport" hidden></section>
@@ -959,6 +998,7 @@ footer b{color:var(--ink-2)}
 <script src="tennis-record.js"></script>
 <script src="sports-data.js"></script>
 <script src="sports-record.js"></script>
+<script src="groupings-data.js"></script>
 <script>
 (function(){
 "use strict";
@@ -2538,6 +2578,74 @@ function renderResults(){
   });
 }
 
+
+/* ---------- the Odds tab: groups of five (groupings.py) ---------- */
+const OG = window.__GROUPINGS__;
+let OG_DAY = null;
+const ogEsc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const ogStake = () => { const v = parseFloat(localStorage.getItem("og-stake") || "10"); return v > 0 ? v : 10; };
+const OG_SPORT = {football:"Football", tennis:"Tennis", nfl:"NFL", mlb:"Baseball", nba:"Basketball", rugby:"Rugby"};
+const ogDate = l => { if(!l.when) return null; const d = new Date(l.when.length === 17 ? l.when.replace("Z", ":00Z") : l.when); return isNaN(d) ? null : d; };
+function ogTime(l){
+  const d = ogDate(l);
+  return d ? d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"}) : "";
+}
+function ogCard(g){
+  const stake = ogStake(), lo = 1, hi = 2.8;
+  const pos = o => Math.max(0, Math.min(100, (o - lo) / (hi - lo) * 100));
+  const dots = g.legs.map(l => `<i class="${l.est ? "e" : ""}" style="left:${pos(l.odds)}%" title="${ogEsc(l.pick)} ${l.odds.toFixed(2)}"></i>`).join("");
+  const ticks = [1.2, 1.5, 2, 2.5].map(t => `<em style="left:${pos(t)}%">${t}</em>`).join("");
+  const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
+  const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
+    return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small></span>
+      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
+      <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
+    <div class="og-k"><span>All five land <b>${pct(g.p)}%</b> on tested rates</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
+    <div class="og-sp" aria-hidden="true">${ticks}${dots}</div>
+    <div>${legs}</div>
+    <div class="og-f">${started ? `<b>${started} of 5 already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of 5 price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
+}
+function renderOdds(){
+  const host = $("#odds"); if(!host) return;
+  if(!OG || !(OG.days || []).length){
+    host.innerHTML = `<div class="lede"><h2>Groups of five</h2></div><div class="empty">No groupings in this build yet. They appear after the next daily build.</div>`;
+    return;
+  }
+  const days = OG.days.filter(d => d.groups.length);
+  if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
+  const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
+  const gen = new Date(OG.generated);
+  host.innerHTML = `<div class="lede"><h2>Groups of five, a spread of prices</h2>
+      <p>Each group is five of the model's picks with a mix of short and longer prices, chosen for the
+      best chance that all five land inside its odds range. <b>Steady</b> pays 2.5 to 4, <b>Balanced</b> 4 to 7,
+      <b>Stretch</b> 7 to 14. No pick is used twice in a day. The chance shown is how often calls at each
+      pick's level landed in testing, not the bookmaker's view.</p>
+      <details class="how"><summary>How the groups are picked</summary>
+        <p>A pick qualifies only if calls at its level landed at least ${pct(OG.rules.minHit)}% of the time over at
+        least ${OG.rules.minN} tested games; no draws, no tennis qualifying. Its chance is that tested rate, pulled
+        slightly toward the model's own number when the sample is small.</p>
+        <p>Every group needs a short price (under 1.30) and a middle one (1.30 to 1.60); Balanced and Stretch also
+        need one at 1.60 or longer. At most two very short prices (under 1.15), at most two estimates, no more than
+        two picks from one competition, and a small preference for mixing sports and for picks whose tested rate
+        beats the bookmaker's implied chance.</p>
+        <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from
+        ESPN. Tennis and rugby have no free price source yet, so they carry the model's fair price, marked *.
+        Prices are a snapshot from the build at ${gen.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"})}
+        and will have moved: check before placing anything.</p>
+        <p>Bookmaker prices never feed the model or the Daily List. Five legs multiply the bookmaker's margin, and
+        even a group at 40% misses more often than it lands. This is the model's read, not betting advice.</p>
+      </details></div>
+    <div class="og-days"><div class="seg" id="ogDay">${OG.days.map(d => `<button data-d="${d.date}" aria-pressed="${d.date === day.date}">${fmtDay(d.date)}</button>`).join("")}</div>
+      <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+    ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
+      `<div class="empty" style="margin-top:14px">Not enough tested picks with prices on ${fmtDay(day.date)} to build a group yet.</div>`}
+    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.priced} of ${day.legs} qualifying picks priced by a bookmaker for this day.</p>`;
+  $("#ogDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderOdds(); };
+  $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
+}
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -2548,6 +2656,7 @@ $("#views").addEventListener("click", e=>{
   const starred = v === "starred";
   const tennis = v === "tennis";
   const list = v === "list";
+  const odds = v === "odds";
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
   $("#days").hidden = !fixtures;
@@ -2557,9 +2666,11 @@ $("#views").addEventListener("click", e=>{
   $("#starred").hidden = !starred;
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
+  $("#odds").hidden = !odds;
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
+  if(odds) renderOdds();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   window.scrollTo({top:0});

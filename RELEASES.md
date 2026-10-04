@@ -22,6 +22,54 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-04 — The Odds tab: groups of five with a spread of prices
+
+**What changed** A new **Odds** tab, second in the nav after the Daily List,
+at Douglas's request (4 Oct 2026). Each day (today and tomorrow) it shows up
+to six five-leg groups, none sharing a pick: Steady (combined odds 2.5-4),
+Balanced (4-7) and Stretch (7-14), each with an alternative. Every card shows
+the combined price, what a stake returns (stake box, remembered on the
+device), the chance all five land on tested rates, the bookmakers' implied
+chance when every leg is priced, a strip showing the spread of prices, and
+each leg with its kick-off, price and tested chance. Legs already under way
+are greyed and the card says so.
+
+**How a group is picked** (`groupings.py`, docstring has the detail) A leg
+must be the model's pick (no draws, no tennis qualifying) with a tested rate
+of at least 65% over at least 30 games. Its chance is that tested rate,
+shrunk toward the model's number on small samples. Each group needs a short
+price (<1.30) and a middle one (1.30-1.60), Balanced and Stretch also one at
+1.60+, at most two under 1.15, at most two estimated prices, at most two legs
+from one competition; then the highest joint chance in the band, with a small
+preference for mixed sports and for legs whose tested rate beats the
+bookmaker's implied chance.
+
+**Prices** Football: API-Football `/odds` (Match Winner, average across
+bookmakers), matched by date, kick-off within 90 minutes and both names,
+about 50 calls a day on the Pro plan. NFL, baseball, basketball: ESPN
+scoreboards (DraftKings moneyline) by ESPN id. Tennis and rugby: the model's
+fair price, marked *, until a price source is added. Probe on 4 Oct: 47 of 76
+qualifying football legs and 10 of 10 NFL legs priced.
+
+**Evidence** `tests/test_groupings.py` (7 tests: tested-rate rule and
+shrinkage, band and spread, short and estimate limits, one competition at
+most twice, no shared legs). Full suite 53 tests OK. Checked in a browser at
+1366px and 400px.
+
+**Not changed** No model, calibration, Daily List, record or grading change.
+Bookmaker prices never feed a model or the list; they only price the groups.
+The owner's standing decision stands; the Odds tab is a separate board.
+
+**Files** `groupings.py` (new), `index.html` (Odds tab, styles, view switch),
+`.github/workflows/deploy.yml` (build groupings after the rebuild, allowed to
+fail; copy `groupings-data.js` and `groupings.json` to the site),
+`.gitignore`, `tests/test_groupings.py`, `CLAUDE.md`.
+
+**Roll back** `git revert --no-edit <commit>`; the tab disappears on the next
+deploy and nothing else moves.
+
+---
+
 ## (tag pending) — Calibration refits must beat the live curve
 
 **What changed** Nothing on the page and no calibration change. `tune.py

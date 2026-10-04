@@ -1,6 +1,9 @@
 # Local build outputs. build.py regenerates these; CI never commits them.
 data.js
 data.json
+# The Odds tab, rebuilt by groupings.py on every deploy
+groupings.json
+groupings-data.js
 __pycache__/
 *.pyc
 # Local fetch caches used by the tuning harnesses

@@ -201,6 +201,12 @@ jobs:
       - name: Rebuild with the updated record
         run: python3 build.py --days 7 --top 50
 
+      # The Odds tab (groupings.py): five-leg groups from the model's tested
+      # picks with bookmaker prices beside them. Prices never feed a model.
+      # Allowed to fail: a missing price source must not cost the deploy.
+      - name: Build the Odds tab groupings
+        run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
+
       - name: Assemble the site
         run: |
           mkdir -p _site
@@ -221,6 +227,8 @@ jobs:
             echo "::warning::no sports files this run — sport tabs will show their empty state"
           cp tennis-record.js _site/tennis-record.js 2>/dev/null || \
             echo "::warning::no tennis-record.js this run — tennis results will show their empty state"
+          cp groupings-data.js groupings.json _site/ 2>/dev/null || \
+            echo "::warning::no groupings this run — the Odds tab will show its empty state"
 
       - uses: actions/upload-pages-artifact@v3
         with:

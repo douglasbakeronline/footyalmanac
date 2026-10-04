@@ -95,6 +95,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `nametest.py` guards the club-name matcher. Runs before every deploy.
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
+- `groupings.py` the Odds tab (4 Oct 2026): five-leg groups from tested picks, priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI after the rebuild. Prices never feed a model.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
