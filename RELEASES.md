@@ -22,6 +22,41 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-04-2 — Odds tab: daily record of the groups, and a Google link on every pick
+
+**What changed** The Odds tab now reports how its groups did. The first build
+of each UK day archives that day's groups to `groupings-archive/<date>.json`
+(never overwritten), and every build grades every archived group from the
+site's own results: each leg Won, Lost, Void or Pending; a group Lost as soon
+as one leg loses, Won when every leg has won or been voided (a void leg drops
+out of the price). A "How the groups did" panel under the cards shows groups
+won against the number expected from their tested chances, first choices,
+legs won, the return on 1 unit a group, each band, and the last 14 days with
+every leg and its score. Every pick on the tab, in the cards and in the
+record, has a "Google predictions" link that searches "<home> vs <away>
+prediction <date>" in a new tab.
+
+**Seeded** `groupings-archive/2026-10-04.json` is the groups as published on
+the live tab at 13:12 UTC on 4 Oct (the tab's first day), so today's groups
+are graded tomorrow morning.
+
+**Evidence** `tests/test_groupings.py` adds leg grading (football by date and
+names, tennis by key with voids, other sports by id). Suite OK. Checked in a
+browser at 1366px and 400px.
+
+**Not changed** No model, list, record or grading change elsewhere; prices
+still never feed a model.
+
+**Files** `groupings.py` (archive, `grade()`, `--grade`), `index.html`
+(record panel, Google links), `.github/workflows/deploy.yml` (groupings step
+moved before the archive commit; `groupings-archive/` and
+`groupings-record.json` committed by the bot), `groupings-archive/`,
+`groupings-record.json`, `tests/test_groupings.py`, `CLAUDE.md`.
+
+**Roll back** `git revert --no-edit <commit>`; keep the bot's archive files.
+
+---
+
 ## release-2026-10-04 — The Odds tab: groups of five with a spread of prices
 
 **What changed** A new **Odds** tab, second in the nav after the Daily List,

@@ -5,6 +5,18 @@ with a spread of bookmaker prices. Douglas's request, 4 Oct 2026.
 
     python3 groupings.py            build groupings.json / groupings-data.js from the build's output
     python3 groupings.py --probe    count what the price sources return, write nothing
+    python3 groupings.py --grade    regrade the archive only (no price calls)
+
+The record
+----------
+The first build of each UK day archives that day's groups to
+groupings-archive/<date>.json (never overwritten, so the record is of groups
+published before their games). Each build grades every archived group from
+the site's own graded records (record.json, tennis-record.json,
+sports-record.json): a leg is Won, Lost, Void or Pending; a group is Lost as
+soon as one leg loses, Won when every leg has won or been voided (a void leg
+drops out of the price), Pending otherwise. groupings-record.json holds the
+totals, the return per 1 unit staked on every settled group, and each day.
 
 Nothing here feeds back into any model. The probabilities are the model's own
 tested numbers; bookmaker prices are only used to say what a group pays and
@@ -285,7 +297,93 @@ def build_day(L, after):
             used |= {l["event"] for l in g["legs"]}
     return groups
 
+# ---------- the record ----------
+ARCHIVE = os.path.join(HERE, "groupings-archive")
+
+def load(name):
+    try: return json.load(open(os.path.join(HERE, name)))
+    except Exception: return {}
+
+def results_index():
+    rec, trec, srec = load("record.json"), load("tennis-record.json"), load("sports-record.json")
+    fb = {}
+    for d in rec.get("days") or []:
+        for g in d.get("games") or []:
+            if g.get("result"): fb[(d.get("date"), norm(g["home"]), norm(g["away"]))] = g["result"]
+            if g.get("result"): fb.setdefault((None, norm(g["home"]), norm(g["away"])), g["result"])
+    tn = {str(g.get("key")): g for d in trec.get("days") or [] for g in d.get("games") or []}
+    sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
+    return fb, tn, sp
+
+def settle(l, idx):
+    fb, tn, sp = idx
+    if l["sport"] == "football":
+        r = fb.get((l["date"], norm(l["home"]), norm(l["away"]))) or fb.get((None, norm(l["home"]), norm(l["away"])))
+        if not r: return "pending", None
+        h, a = r; win = "h" if h > a else "a" if a > h else "d"
+        return ("won" if win == l["side"] else "lost"), f"{h}-{a}"
+    if l["sport"] == "tennis":
+        g = tn.get(str(l.get("id")))
+        if not g: return "pending", None
+        if g.get("void"): return "void", "void"
+        return ("won" if norm(g.get("winner")) == norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
+    g = sp.get(str(l.get("id")))
+    if not g or not g.get("winner"): return "pending", None
+    sc = g.get("score")
+    return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), ("-".join(map(str, sc)) if isinstance(sc, list) else sc)
+
+def archive(day, generated):
+    os.makedirs(ARCHIVE, exist_ok=True)
+    path = os.path.join(ARCHIVE, f"{day['date']}.json")
+    if os.path.exists(path) or not day["groups"]: return False
+    json.dump({"date": day["date"], "published": generated, "groups": day["groups"]}, open(path, "w"), indent=1, ensure_ascii=False)
+    return True
+
+def grade():
+    idx = results_index(); days = []
+    files = sorted(f for f in os.listdir(ARCHIVE) if f.endswith(".json")) if os.path.isdir(ARCHIVE) else []
+    for f in files[-60:]:
+        a = json.load(open(os.path.join(ARCHIVE, f))); gs = []
+        for g in a["groups"]:
+            legs = []
+            for l in g["legs"]:
+                st, res = settle(l, idx)
+                legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
+                             "odds": l["odds"], "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
+            sts = [l["status"] for l in legs]
+            status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
+            paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
+            gs.append({"name": g["name"], "rank": g.get("rank", "main"), "odds": g["odds"], "p": g["p"], "status": status,
+                       "paid": round(paid, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
+                       "legsPending": sts.count("pending"), "legs": legs})
+        days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
+    days.sort(key=lambda d: d["date"], reverse=True)
+    def tally(groups):
+        done = [g for g in groups if g["status"] != "pending"]
+        legs = [l for g in groups for l in g["legs"] if l["status"] in ("won", "lost")]
+        return {"groups": len(groups), "settled": len(done), "won": sum(g["status"] == "won" for g in done),
+                "lost": sum(g["status"] == "lost" for g in done), "pending": len(groups) - len(done),
+                "legs": len(legs), "legsWon": sum(l["status"] == "won" for l in legs),
+                "returned": round(sum(g["paid"] for g in done), 2), "staked": len(done),
+                "expected": round(sum(g["p"] for g in done), 2)}
+    allg = [g for d in days for g in d["groups"]]
+    out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
+           "byBand": {b[0]: tally([g for g in allg if g["name"] == b[0]]) for b in BANDS},
+           "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
+    json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
+    return out
+
+def write_page(out, record):
+    page = dict(out, record=record)
+    with open(os.path.join(HERE, "groupings-data.js"), "w") as f:
+        f.write("window.__GROUPINGS__=" + json.dumps(page, separators=(",", ":")).replace("</", "<\\/") + ";")
+
 def main():
+    if "--grade" in sys.argv:
+        rec = grade()
+        cur = load("groupings.json")
+        if cur: cur.pop("pool", None); write_page(cur, rec)
+        print(f"groupings record: {rec['overall']}", file=sys.stderr); return
     probe = "--probe" in sys.argv
     now = datetime.now(timezone.utc)
     # Days are the board's own dates (UK days on the football board).
@@ -306,8 +404,9 @@ def main():
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
     json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
-    with open(os.path.join(HERE, "groupings-data.js"), "w") as f:
-        f.write("window.__GROUPINGS__=" + json.dumps(out, separators=(",", ":")).replace("</", "<\\/") + ";")
+    if days and days[0]["date"] == today.isoformat(): archive(days[0], out["generated"])
+    record = grade()
+    write_page(out, record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
 

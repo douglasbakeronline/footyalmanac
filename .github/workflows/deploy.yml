@@ -132,6 +132,15 @@ jobs:
       # whatever main is now rather than to reconcile two versions of them.
       # Fetch, reset onto the remote tip, drop the freshly built files back in,
       # commit, push. Retried, because main can move again while that happens.
+      # The Odds tab (groupings.py): five-leg groups from the model's tested
+      # picks with bookmaker prices beside them, the day's first groups
+      # archived to groupings-archive/ and every archived group graded into
+      # groupings-record.json. Before the archive commit so both are kept.
+      # Prices never feed a model. Allowed to fail: a missing price source
+      # must not cost the deploy.
+      - name: Build and grade the Odds tab groupings
+        run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
+
       - name: Commit the archive
         run: |
           git config user.name  "github-actions[bot]"
@@ -156,6 +165,9 @@ jobs:
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
+          # The Odds tab's archive and record
+          cp -r groupings-archive /tmp/archive/ 2>/dev/null || true
+          cp groupings-record.json /tmp/archive/ 2>/dev/null || true
 
           for attempt in 1 2 3; do
             git fetch origin main
@@ -176,10 +188,13 @@ jobs:
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
             cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
             cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
+            mkdir -p groupings-archive
+            cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
+            cp /tmp/archive/groupings-record.json . 2>/dev/null || true
             git add -A predictions current record.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
-                       fifa-rankings.json
+                       fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
               exit 0
@@ -200,12 +215,6 @@ jobs:
 
       - name: Rebuild with the updated record
         run: python3 build.py --days 7 --top 50
-
-      # The Odds tab (groupings.py): five-leg groups from the model's tested
-      # picks with bookmaker prices beside them. Prices never feed a model.
-      # Allowed to fail: a missing price source must not cost the deploy.
-      - name: Build the Odds tab groupings
-        run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
 
       - name: Assemble the site
         run: |

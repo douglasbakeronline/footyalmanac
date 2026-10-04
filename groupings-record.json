@@ -1,0 +1,511 @@
+{
+ "graded": "2026-10-04T13:23:21Z",
+ "overall": {
+  "groups": 6,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 6,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "expected": 0
+ },
+ "byBand": {
+  "Steady": {
+   "groups": 2,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 2,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Balanced": {
+   "groups": 2,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 2,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Stretch": {
+   "groups": 2,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 2,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  }
+ },
+ "firstChoice": {
+  "groups": 3,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 3,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "expected": 0
+ },
+ "days": [
+  {
+   "date": "2026-10-04",
+   "published": "2026-10-04T13:12:14Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 2.77,
+     "p": 0.4407,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Chicago Bears",
+       "event": "Chicago Bears v New York Jets",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T17:00Z",
+       "odds": 1.54,
+       "est": false,
+       "p": 0.8042,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Montpellier Herault",
+       "event": "Montpellier Herault v Toulon",
+       "sport": "rugby",
+       "comp": "Top 14",
+       "when": "2026-10-04T19:05Z",
+       "odds": 1.25,
+       "est": true,
+       "p": 0.8833,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Seattle Seahawks",
+       "event": "Seattle Seahawks v Los Angeles Chargers",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T20:25Z",
+       "odds": 1.28,
+       "est": false,
+       "p": 0.8226,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Puerto Rico",
+       "event": "Puerto Rico v Cayman Islands",
+       "sport": "football",
+       "comp": "CONCACAF Nations League",
+       "when": "2026-10-04T22:00:00Z",
+       "odds": 1.06,
+       "est": false,
+       "p": 0.8371,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Aruba",
+       "event": "Aruba v Anguilla",
+       "sport": "football",
+       "comp": "CONCACAF Nations League",
+       "when": "2026-10-04T23:00:00Z",
+       "odds": 1.06,
+       "est": false,
+       "p": 0.901,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 4.1,
+     "p": 0.3451,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Saracens",
+       "event": "Saracens v Sale Sharks",
+       "sport": "rugby",
+       "comp": "Premiership",
+       "when": "2026-10-04T14:00Z",
+       "odds": 1.28,
+       "est": true,
+       "p": 0.834,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Lois Boisson",
+       "event": "Lois Boisson v Leolia Jeanjean",
+       "sport": "tennis",
+       "comp": "Adana Open Final",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.44,
+       "est": true,
+       "p": 0.7642,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Netherlands",
+       "event": "Netherlands v Serbia",
+       "sport": "football",
+       "comp": "UEFA Nations League",
+       "when": "2026-10-04T18:45:00Z",
+       "odds": 1.14,
+       "est": false,
+       "p": 0.8311,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Portugal",
+       "event": "Portugal v Norway",
+       "sport": "football",
+       "comp": "UEFA Nations League",
+       "when": "2026-10-04T18:45:00Z",
+       "odds": 1.64,
+       "est": false,
+       "p": 0.7993,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Minnesota Vikings",
+       "event": "Minnesota Vikings v Miami Dolphins",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T20:05Z",
+       "odds": 1.19,
+       "est": false,
+       "p": 0.8151,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "main",
+     "odds": 7.62,
+     "p": 0.261,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Portonovo",
+       "event": "Portonovo v Lalin",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 1",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.38,
+       "est": true,
+       "p": 0.7903,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "New York Giants",
+       "event": "New York Giants v Arizona Cardinals",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T17:00Z",
+       "odds": 2.14,
+       "est": false,
+       "p": 0.6839,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Morocco",
+       "event": "Morocco v Ghana",
+       "sport": "football",
+       "comp": "International friendly",
+       "when": "2026-10-04T18:00:00Z",
+       "odds": 1.21,
+       "est": true,
+       "p": 0.8348,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Egypt",
+       "event": "Egypt v South Africa",
+       "sport": "football",
+       "comp": "International friendly",
+       "when": "2026-10-04T18:00:00Z",
+       "odds": 1.68,
+       "est": false,
+       "p": 0.7321,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Montego Bay United",
+       "event": "Montego Bay United v Dunbeholden",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-04T20:30:00Z",
+       "odds": 1.27,
+       "est": false,
+       "p": 0.7901,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 2.99,
+     "p": 0.2639,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Stade Gabesien",
+       "event": "Stade Gabesien v Moknine",
+       "sport": "football",
+       "comp": "Ligue 2",
+       "when": "2026-10-04T14:00:00Z",
+       "odds": 1.47,
+       "est": false,
+       "p": 0.7119,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Osasuna II",
+       "event": "Osasuna II v Calamocha",
+       "sport": "football",
+       "comp": "Segunda División RFEF - Group 2",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.33,
+       "est": false,
+       "p": 0.748,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Castellón",
+       "event": "Castellón v Ceuta",
+       "sport": "football",
+       "comp": "LaLiga 2",
+       "when": "2026-10-04T16:30:00Z",
+       "odds": 1.23,
+       "est": false,
+       "p": 0.7356,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Baltimore Ravens",
+       "event": "Baltimore Ravens v Tennessee Titans",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T17:00Z",
+       "odds": 1.14,
+       "est": false,
+       "p": 0.8215,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Guyana",
+       "event": "Guyana v Dominica",
+       "sport": "football",
+       "comp": "CONCACAF Nations League",
+       "when": "2026-10-04T19:00:00Z",
+       "odds": 1.09,
+       "est": false,
+       "p": 0.8202,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "alternative",
+     "odds": 5.87,
+     "p": 0.1785,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Rodina Moskva II",
+       "event": "Rodina Moskva II v Kaluga",
+       "sport": "football",
+       "comp": "Second League A - Division A Gold",
+       "when": "2026-10-04T14:00:00Z",
+       "odds": 1.39,
+       "est": false,
+       "p": 0.7119,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Levante II",
+       "event": "Levante II v Crevillente",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 6",
+       "when": "2026-10-04T14:00:00Z",
+       "odds": 1.59,
+       "est": false,
+       "p": 0.7117,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "jerv",
+       "event": "Lysekloster v jerv",
+       "sport": "football",
+       "comp": "2. Division - Group 1",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.18,
+       "est": false,
+       "p": 0.7118,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Buffalo Bills",
+       "event": "Buffalo Bills v New England Patriots",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T17:00Z",
+       "odds": 1.34,
+       "est": false,
+       "p": 0.7027,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Houston Texans",
+       "event": "Houston Texans v Dallas Cowboys",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T17:00Z",
+       "odds": 1.68,
+       "est": false,
+       "p": 0.7044,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "alternative",
+     "odds": 7.51,
+     "p": 0.1492,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Calahorra",
+       "event": "Alfaro v Calahorra",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 16",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.62,
+       "est": true,
+       "p": 0.7118,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Agoncillo",
+       "event": "Agoncillo v Vianés",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 16",
+       "when": "2026-10-04T15:00:00Z",
+       "odds": 1.63,
+       "est": true,
+       "p": 0.7118,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Barcelona",
+       "event": "Barcelona v Real Madrid",
+       "sport": "football",
+       "comp": "Liga F",
+       "when": "2026-10-04T17:00:00Z",
+       "odds": 1.11,
+       "est": false,
+       "p": 0.6634,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Central Cordoba",
+       "event": "Central Cordoba v Yupanqui",
+       "sport": "football",
+       "comp": "Primera C",
+       "when": "2026-10-04T18:00:00Z",
+       "odds": 1.78,
+       "est": false,
+       "p": 0.6693,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Kansas City Chiefs",
+       "event": "Las Vegas Raiders v Kansas City Chiefs",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-04T20:25Z",
+       "odds": 1.44,
+       "est": false,
+       "p": 0.6633,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

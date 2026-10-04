@@ -51,3 +51,15 @@ class GroupRules(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+class Grading(unittest.TestCase):
+    def test_leg_results(self):
+        idx = ({("2026-10-04", "arsenal", "chelsea"): [2, 1]}, {"t1": {"winner": "Iga Swiatek"}, "t2": {"void": True}},
+               {"s1": {"winner": "Saracens", "score": [30, 10]}})
+        fb = {"sport": "football", "date": "2026-10-04", "home": "Arsenal", "away": "Chelsea", "side": "a", "pick": "Chelsea"}
+        self.assertEqual(G.settle(fb, idx), ("lost", "2-1"))
+        self.assertEqual(G.settle(dict(fb, side="h", pick="Arsenal"), idx)[0], "won")
+        self.assertEqual(G.settle(dict(fb, home="Spurs"), idx)[0], "pending")
+        self.assertEqual(G.settle({"sport": "tennis", "id": "t1", "pick": "Iga Swiatek"}, idx)[0], "won")
+        self.assertEqual(G.settle({"sport": "tennis", "id": "t2", "pick": "X"}, idx)[0], "void")
+        self.assertEqual(G.settle({"sport": "rugby", "id": "s1", "pick": "Sale Sharks"}, idx), ("lost", "30-10"))

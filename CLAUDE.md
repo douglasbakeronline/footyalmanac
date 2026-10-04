@@ -95,7 +95,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `nametest.py` guards the club-name matcher. Runs before every deploy.
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
-- `groupings.py` the Odds tab (4 Oct 2026): five-leg groups from tested picks, priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI after the rebuild. Prices never feed a model.
+- `groupings.py` the Odds tab (4 Oct 2026): five-leg groups from tested picks, priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI before the archive commit, archives each day's first groups to `groupings-archive/` and grades them into `groupings-record.json` (both bot-written). Prices never feed a model.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
@@ -120,7 +120,7 @@ points Copilot at it. `.gitignore` keeps `data.js`, `data.json` and caches out.
 Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
 `tennis-record.json`, `tennis-record.js`, `predictions-sports/`,
-`sports-data.js`, `sports-record.json`, `sports-record.js`, `fifa-rankings.json`
+`sports-data.js`, `sports-record.json`, `sports-record.js`, `fifa-rankings.json`, `groupings-archive/`, `groupings-record.json`
 (refreshed by the build when FIFA publishes). `history-sports/`
 is topped up by CI; its first walk was committed by hand. `history/` is written
 by `backfill.py` and committed by hand.

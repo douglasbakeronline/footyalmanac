@@ -382,7 +382,28 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
-@media (max-width:700px){ .og-grid{grid-template-columns:1fr} .og-stake{margin-left:0} }
+.og-g{display:inline-block;margin-top:3px;font-size:11px;font-weight:600;color:var(--home);text-decoration:underline;text-underline-offset:2px}
+.og-g:hover{color:var(--away)}
+.og-rec{margin-top:22px}
+.og-score{display:flex;gap:22px;flex-wrap:wrap;padding:12px 14px;background:var(--surface);border:1px solid var(--rule);margin-top:10px}
+.og-score div span{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.og-score div b{display:block;font:600 18px var(--f-num);letter-spacing:-.03em}
+.og-score div small{font:11px var(--f-num);color:var(--mute)}
+.og-rd{margin-top:10px;border:1px solid var(--rule);background:var(--surface)}
+.og-rd > summary{display:flex;gap:10px;align-items:center;flex-wrap:wrap;padding:9px 13px;cursor:pointer;list-style:none}
+.og-rd > summary::-webkit-details-marker{display:none}
+.og-rd > summary h4{font-family:var(--f-display);font-weight:400;font-size:16px;letter-spacing:.03em;text-transform:uppercase;min-width:150px}
+.og-chip{font:600 11.5px var(--f-num);padding:3px 7px;border:1px solid var(--rule);white-space:nowrap}
+.og-chip.won{background:var(--home);color:#fff;border-color:var(--home)}
+.og-chip.lost{background:var(--away-soft);color:#5e1e2e;border-color:#d9b3ab}
+.og-chip.pending{background:var(--paper);color:var(--ink-2)}
+.og-rg{padding:4px 13px 10px;border-top:1px solid var(--rule-soft)}
+.og-rg h5{font:700 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;margin:10px 0 4px;color:var(--ink-2)}
+.og-rl{display:grid;grid-template-columns:62px minmax(0,1fr) 46px 70px;gap:8px;font-size:12.5px;padding:4px 0;border-top:1px solid var(--rule-soft);align-items:baseline}
+.og-rl .s{font:700 10.5px var(--f-ui);text-transform:uppercase;letter-spacing:.05em}
+.og-rl .s.won{color:var(--home)} .og-rl .s.lost{color:var(--away)} .og-rl .s.pending,.og-rl .s.void{color:var(--mute)}
+.og-rl small{color:var(--mute)} .og-rl .o{font-family:var(--f-num);text-align:right} .og-rl .r{font:11px var(--f-num);color:var(--ink-2);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:700px){ .og-grid{grid-template-columns:1fr} .og-stake{margin-left:0} .og-rl{grid-template-columns:52px minmax(0,1fr) 42px} .og-rl .r{display:none} }
 
 /* ---------- day ---------- */
 .day{margin-top:24px}
@@ -2584,6 +2605,11 @@ const OG = window.__GROUPINGS__;
 let OG_DAY = null;
 const ogEsc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const ogStake = () => { const v = parseFloat(localStorage.getItem("og-stake") || "10"); return v > 0 ? v : 10; };
+const ogSearch = l => {
+  const d = ogDate(l), day = d ? d.toLocaleDateString("en-GB", {day:"numeric", month:"long", year:"numeric", timeZone:"Europe/London"}) : "";
+  const q = `${l.event.replace(/ v /, " vs ")} prediction ${day}`.trim();
+  return `<a class="og-g" href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener" aria-label="Search Google for ${ogEsc(l.event)} predictions">Google predictions ↗</a>`;
+};
 const OG_SPORT = {football:"Football", tennis:"Tennis", nfl:"NFL", mlb:"Baseball", nba:"Basketball", rugby:"Rugby"};
 const ogDate = l => { if(!l.when) return null; const d = new Date(l.when.length === 17 ? l.when.replace("Z", ":00Z") : l.when); return isNaN(d) ? null : d; };
 function ogTime(l){
@@ -2598,7 +2624,7 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small></span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
@@ -2606,6 +2632,30 @@ function ogCard(g){
     <div class="og-sp" aria-hidden="true">${ticks}${dots}</div>
     <div>${legs}</div>
     <div class="og-f">${started ? `<b>${started} of 5 already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of 5 price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
+}
+
+const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
+function ogRecord(){
+  const R = OG && OG.record;
+  if(!R || !(R.days || []).length) return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2></div>
+    <div class="empty" style="margin-top:10px">The record starts with today's groups; results appear after tomorrow's build grades them.</div></div>`;
+  const o = R.overall, f = R.firstChoice || o;
+  const roi = x => x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)}` : "–";
+  const band = Object.entries(R.byBand || {}).map(([k, v]) => `<div><span>${k}</span><b>${v.won} / ${v.settled}</b><small>expected ${v.expected.toFixed(1)}</small></div>`).join("");
+  const openAt = Math.max(0, R.days.findIndex(d => d.groups.some(g => g.status !== "pending")));
+  const dayRows = R.days.slice(0, 14).map((d, i) => {
+    const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/5` : ""}</span>`).join("");
+    const groups = d.groups.map(g => `<h5>${g.name}${g.rank === "alternative" ? " (alternative)" : ""} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
+      ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span><span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
+    return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
+  }).join("");
+  return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
+    <div class="og-score"><div><span>Groups won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
+      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>Steady, Balanced, Stretch</small></div>
+      <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
+      <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
+      ${band}</div>${dayRows}
+    <p style="font-size:12px;color:var(--mute);margin-top:8px">Every group is archived the morning it is published and graded from the site's own results. A group is lost as soon as one leg loses; a void leg drops out of the price. "Expected" is the sum of each group's tested chance.</p></div>`;
 }
 function renderOdds(){
   const host = $("#odds"); if(!host) return;
@@ -2641,7 +2691,8 @@ function renderOdds(){
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
       `<div class="empty" style="margin-top:14px">Not enough tested picks with prices on ${fmtDay(day.date)} to build a group yet.</div>`}
-    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.priced} of ${day.legs} qualifying picks priced by a bookmaker for this day.</p>`;
+    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.priced} of ${day.legs} qualifying picks priced by a bookmaker for this day.</p>
+    ${ogRecord()}`;
   $("#ogDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderOdds(); };
   $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
 }
