@@ -24,7 +24,12 @@ SUMMARY=$(python3 -c "import json;print(json.load(open('$META')).get('summary','
 BRANCH="office-agent/$(date -u +%Y-%m-%d)-${KEY}"
 git checkout -q -b "$BRANCH"
 git -c user.name="footyalmanac-hq[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -q -m "Office agent ($OWNER): $TITLE"
-git push -q origin "$BRANCH"
+# The Claude action points origin at its own app token and revokes that token
+# when it finishes, so push with the workflow's token instead, and stop
+# loudly if the push fails rather than letting the pull request call fail.
+git config --local --unset-all http.https://github.com/.extraheader 2>/dev/null || true
+git remote set-url origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+if ! git push -q origin "$BRANCH"; then echo "::error::could not push $BRANCH"; exit 1; fi
 
 for L in "office-agent:5b4bd6" "agent:$OWNER:f0b35a" "objective:$KEY:c5def5" "checks-$CHECKS:$([ $CHECKS = passed ] && echo 0e8a16 || echo d93f0b)" "auto-merge-ok:0e8a16" "needs-owner:fbca04" "hold:b60205"; do
   gh label create "${L%:*}" --color "${L##*:}" --force >/dev/null 2>&1 || true
