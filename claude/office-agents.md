@@ -1,4 +1,16 @@
-# Office agents (2 Oct 2026)
+# Office agents (2 Oct 2026, sprint and no owner review from 4 Oct 2026)
+
+**4 Oct 2026 change (Douglas: "I want this to happen without my review. Give
+all agents a task.")** The daily run is now a sprint: every agent in
+`SPRINT` works in turn on its most urgent task (the list below) or its own
+standing task in `STANDING`, and each pull request merges as soon as its
+checks pass (nametest.py, the unittest suite, a fast build for pipeline
+code), with no 12-hour wait and no `needs-owner` step. Closed instead of
+merged: failed checks, model changes without every gate passed, or the agent
+setting automerge false. One agent at a time, each starting from the main
+the previous agent merged into. The rest of this note describes the original
+loop; the gates on protected files, conflicts and `hold` are unchanged.
+
 
 Douglas asked for the Footyalmanac HQ office
 (github.com/douglasbakeronline/footyalmanac-hq) to develop this project

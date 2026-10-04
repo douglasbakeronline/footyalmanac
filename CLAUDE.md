@@ -157,18 +157,19 @@ Open `dashboard.html` straight off disk to check the page.
 - `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
   passes all gates), then `--report` and `eurotest.py --report` as advisory
   output for a human.
-- `office-agents.yml` runs daily at 06:30 UTC (Douglas's instruction, 2 Oct
-  2026: fully automated, he reviews when he chooses). `agents/pick_task.py`
-  picks the most important objective that is behind and the owning office
-  agent works on it, then `agents/open_pr.sh` checks it and opens a pull
-  request labelled `office-agent`. At most two agent pull requests stay
-  open, and each objective rests for 7 days. See `claude/office-agents.md`.
-- `office-merge.yml` runs daily at 21:00 UTC. `agents/merge_gate.py` merges
-  only pull requests labelled `auto-merge-ok` and `checks-passed`, at least
-  12 hours old, with no `hold` or `needs-owner` label and no protected files.
-  It then tags `release-YYYY-MM-DD[-n]` and dispatches `deploy.yml`.
-  Visual changes, failed gates and model changes the agent is unsure of
-  always wait for Douglas.
+- `office-agents.yml` runs daily at 06:30 UTC as a sprint (Douglas's
+  instruction, 4 Oct 2026: no owner review, every agent productive). Each of
+  the fourteen agents in `agents/pick_task.py` SPRINT, one at a time, takes
+  its most urgent live-scoreboard task or its standing task (each objective
+  rests 7 days), then `agents/open_pr.sh` runs nametest.py, the unittest
+  suite and (for pipeline code) a fast build, and opens a pull request.
+  `agents/merge_gate.py --pr` merges it at once if checks passed, it touches
+  no protected file and has no conflicts; model changes that did not pass
+  every gate, failed checks and changes the agent itself would not ship are
+  closed with the report kept. Each merge is tagged `release-YYYY-MM-DD[-n]`;
+  the site redeploys once at the end. See `claude/office-agents.md`.
+- `office-merge.yml` runs daily at 21:00 UTC and merges any leftover agent
+  pull request under the same gates. A person can stop one with `hold`.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.

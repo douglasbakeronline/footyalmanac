@@ -22,6 +22,30 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## release-2026-10-04-3 — Office agents: daily sprint for every agent, merging without owner review
+
+**What changed** On Douglas's instruction the office agents no longer wait for
+his review. `office-agents.yml` runs a sprint: all fourteen agents
+(`agents/pick_task.py` SPRINT, including Priya, Oscar and Jade) work one at a
+time on their most urgent task or their standing task, each starting from the
+latest main. `agents/open_pr.sh` now also runs the unittest suite, opens the
+pull request and closes it (report kept) if checks failed, a model change did
+not pass every gate, or the agent would not ship it; otherwise
+`agents/merge_gate.py --pr` merges it at once and tags it. The site redeploys
+once at the end. The 22:00 window keeps merging leftovers, without the 12-hour
+wait. The Claude token is trimmed of pasted whitespace and branches are pushed
+with the workflow token (earlier today's fixes).
+
+**Evidence** Workflow and scripts parse; `pick_task.py --agent` returns a task
+for every agent locally; first sprint dispatched straight after release.
+
+**Not changed** Protected files, the model, calibration, the Daily List.
+
+**Roll back** `git revert --no-edit <commit>`, or disable "Office agents" in
+the Actions tab to stop everything.
+
+---
+
 ## release-2026-10-04-2 — Odds tab: daily record of the groups, and a Google link on every pick
 
 **What changed** The Odds tab now reports how its groups did. The first build

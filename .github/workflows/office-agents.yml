@@ -1,11 +1,13 @@
 name: Office agents
 
 # The Footyalmanac HQ agents doing real development work, unattended.
-# Each morning, after the daily build, one agent picks the most important
-# objective that is behind (agents/pick_task.py), works on it with Claude
-# following CLAUDE.md and AGENTS.md, and the workflow opens a pull request.
-# It never pushes to main: agents/merge_gate.py (office-merge.yml) decides
-# what ships. Needs ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN); without
+# Each morning, after the daily build, the office runs a sprint: every agent
+# in turn (agents/pick_task.py SPRINT) takes its most important task that is
+# not in its seven-day cooldown, works on it with Claude following CLAUDE.md
+# and AGENTS.md, and the workflow opens a pull request. There is no owner
+# review: agents/merge_gate.py merges it at once if every check passes, so
+# the next agent builds on it, and the site is redeployed once at the end.
+# Agents run one at a time so their RELEASES.md entries never conflict. Needs ANTHROPIC_API_KEY (or CLAUDE_CODE_OAUTH_TOKEN); without
 # it this workflow skips quietly.
 on:
   schedule:
@@ -16,6 +18,10 @@ on:
         description: "Task key to force (blank = pick automatically)"
         required: false
         default: ""
+      agent:
+        description: "Agent to run (all = the whole sprint; blank = the single most urgent task)"
+        required: false
+        default: "all"
 
 permissions:
   contents: write
@@ -29,15 +35,36 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      agents: ${{ steps.p.outputs.agents }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: p
+        run: |
+          A="${{ inputs.agent }}"; T="${{ inputs.task }}"
+          [ "${{ github.event_name }}" = "schedule" ] && A=all
+          if [ -n "$T" ]; then echo 'agents=[""]' >> "$GITHUB_OUTPUT"
+          elif [ "$A" = all ]; then echo "agents=$(python3 agents/pick_task.py --list-agents)" >> "$GITHUB_OUTPUT"
+          else echo "agents=[\"$A\"]" >> "$GITHUB_OUTPUT"; fi
+
   work:
+    needs: plan
     runs-on: ubuntu-latest
     timeout-minutes: 75
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix:
+        agent: ${{ fromJSON(needs.plan.outputs.agents) }}
     env:
       GH_TOKEN: ${{ github.token }}
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
     steps:
       - uses: actions/checkout@v4
         with:
+          ref: main   # the latest main, including the agent merged just before this one
           fetch-depth: 0
       - uses: actions/setup-python@v5
         with:
@@ -67,7 +94,7 @@ jobs:
       - name: Pick today's task
         id: pick
         if: steps.key.outputs.skip == '0'
-        run: python3 agents/pick_task.py --task "${{ inputs.task }}"
+        run: python3 agents/pick_task.py --task "${{ inputs.task }}" --agent "${{ matrix.agent }}"
       - name: Agent works on the task
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
         uses: anthropics/claude-code-action@v1
@@ -77,7 +104,23 @@ jobs:
           prompt: ${{ steps.pick.outputs.prompt }}
           claude_args: "--model sonnet --max-turns 50 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
       - name: Verify and open a pull request
+        id: pr
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
         run: |
           mkdir -p /tmp/office-agent
           bash agents/open_pr.sh "${{ steps.pick.outputs.key }}" "${{ steps.pick.outputs.owner }}" "${{ steps.pick.outputs.title }}"
+      - name: Merge it if every gate passes
+        if: steps.pr.outputs.pr != ''
+        run: python3 agents/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --no-deploy
+
+  publish:
+    needs: work
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Redeploy the site once with everything merged
+        run: gh workflow run deploy.yml -R "${{ github.repository }}" --ref main

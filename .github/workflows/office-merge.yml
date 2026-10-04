@@ -2,7 +2,9 @@ name: Office merge window
 
 # Once a day, merge office-agent pull requests that are safe to ship
 # unattended (see agents/merge_gate.py for every gate), tag the release and
-# redeploy. Anything labelled hold or needs-owner waits for Douglas.
+# redeploy. No owner review or waiting period; a person can still stop one
+# with the hold label. The office sprint (office-agents.yml) merges as it goes,
+# so this window only catches leftovers.
 on:
   schedule:
     - cron: "0 21 * * *"   # 22:00 BST / 21:00 GMT
