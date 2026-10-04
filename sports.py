@@ -257,6 +257,7 @@ class Elo:
             e = self.r[k] = [1500.0, when, 0]
         elif (datetime.fromisoformat(when[:10]) - datetime.fromisoformat(e[1][:10])).days > OFFSEASON_DAYS:
             e[0] = 1500 + (e[0] - 1500) * (1 - self.p["regress"])
+            e[1] = when   # regress once per break: predict() is called again for later games
         return e
 
     def predict(self, g):

@@ -22,6 +22,35 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Tests for sports.py, and one Elo fix
+
+**What changed** `sports.py` (707 lines, the NFL / baseball / basketball / rugby
+model) had no tests. `tests/test_sports.py` adds 34: Elo update and margin
+step, the off-season regression, `replay` warm flag, calibration fit,
+`losses` / `bands` / `paired`, `list_threshold` (the Daily List gate),
+`accuracy_for`, ESPN event parsing and the form / record / head-to-head
+summaries. They exposed one bug: `Elo.get` regressed a team towards 1500 after a
+break of more than 90 days but left the team's last-game date alone, so each
+further `predict` for that team regressed it again. In `build`, a team with two
+upcoming games in the 7-day window after a break (MLB or NBA opening week) was
+priced from a doubly shrunk rating. `get` now stamps the date when it regresses.
+
+**Evidence** The new regression test fails without the fix and passes with it.
+History replay is unchanged: `update` already stamps the date straight after
+`predict`, so the tuned parameters and `sports.json` are untouched. Only
+repeated predictions without an update (the upcoming slate) change, and only
+after a break. No model constant moved.
+
+**Files** `sports.py` (one line), `tests/test_sports.py`, `RELEASES.md`.
+
+**Not changed** `sports.json`, calibration, thresholds, any record or archive.
+`nametest.py` could not complete in the sandbox (it fetches, and the network is
+blocked); CI is the check.
+
+**Roll back** `git revert` the release commit.
+
+---
+
 ## (tag pending) — England Championship: home advantage and draw handling tested, rejected
 
 **What changed** Nothing a reader sees. A league-specific home advantage and a
