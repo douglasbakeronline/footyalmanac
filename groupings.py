@@ -302,7 +302,10 @@ def main():
                      "groups": build_day(dl, now + timedelta(minutes=20))})
     out = {"generated": iso(now), "bands": BANDS, "rules": {"minN": MIN_N, "minHit": MIN_HIT, "shrink": SHRINK},
            "sources": report, "days": days}
-    json.dump(out, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
+    # The full priced pool goes in the JSON only (the page does not need it),
+    # so the office can regroup later in the day from games still to start.
+    full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
+    json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
     with open(os.path.join(HERE, "groupings-data.js"), "w") as f:
         f.write("window.__GROUPINGS__=" + json.dumps(out, separators=(",", ":")).replace("</", "<\\/") + ";")
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
