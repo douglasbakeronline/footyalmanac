@@ -148,7 +148,34 @@ jobs:
       - name: Build and grade the Odds tab groupings
         run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
 
+      # main is protected (ruleset "Protect main"): only the office App and the
+      # owner may push to it directly, so the archive is pushed with an App token.
+      - name: Normalise the App key
+        env:
+          RAW: ${{ secrets.OFFICE_APP_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, re, textwrap
+          raw = os.environ["RAW"].replace("\\n", "\n").replace("\r", "").strip().strip('"')
+          m = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", raw, re.S)
+          kind, body = (m.group(1), m.group(2)) if m else ("RSA PRIVATE KEY", raw)
+          body = re.sub(r"[^A-Za-z0-9+/=]", "", body)
+          pem = f"-----BEGIN {kind}-----\n" + "\n".join(textwrap.wrap(body, 64)) + f"\n-----END {kind}-----"
+          for line in textwrap.wrap(body, 64): print(f"::add-mask::{line}")
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write("APP_KEY<<__PEM__\n" + pem + "\n__PEM__\n")
+          PY
+      - name: Mint the App token
+        id: app
+        continue-on-error: true
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.OFFICE_APP_ID }}
+          private-key: ${{ env.APP_KEY }}
+
       - name: Commit the archive
+        env:
+          APP_TOKEN: ${{ steps.app.outputs.token }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -206,8 +233,10 @@ jobs:
               echo "nothing new to archive"
               exit 0
             fi
-            git commit -m "Archive predictions and record for $(date +%F)"
-            if git push; then
+            # [skip ci]: an App-token push triggers workflows, and this one must not rebuild itself
+            git commit -m "Archive predictions and record for $(date +%F) [skip ci]"
+            if [ -n "$APP_TOKEN" ]; then DEST="https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; else DEST=origin; fi
+            if git push "$DEST" HEAD:main; then
               exit 0
             fi
             echo "push rejected, main moved under us; retrying ($attempt of 3)"

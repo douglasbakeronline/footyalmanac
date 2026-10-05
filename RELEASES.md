@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Archive and retune pushes use the office App (release-2026-10-05-16)
+
+**What changed** `deploy.yml` and `tune.yml` mint an office App token and push
+to `main` with it (commit messages carry `[skip ci]` so the push does not
+rebuild the site again). Needed because `main` is now protected by the
+"Protect main" ruleset: only the owner and the office App may push directly;
+everyone else, including other AI platforms, goes through a pull request.
+
+**Roll back** `git revert` this commit and delete the ruleset first.
+
+---
+
 ## 2026-10-05 Other AI platforms can work on the project (release-2026-10-05-15)
 
 **What changed** `AGENTS.md` gains "Other AI platforms": one shared queue
