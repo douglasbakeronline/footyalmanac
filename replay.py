@@ -146,6 +146,10 @@ def replay_league(prior, test, tier, params=None):
       form_cap  engine.FORM_MAX             cap on the form nudge
       form_n    5                           matches in the form window
       ha_scale  1.0                         home/away tilt
+      extra_prior  None                     {team: rating} for clubs with no row in
+                                            `prior` (promoted / relegated sides). The
+                                            live build carries these across divisions;
+                                            without this they start at 1.00 / 1.00.
     """
     p = params or {}
     shrink = p.get("shrink", E.SHRINK_FULL_SEASON)
@@ -157,6 +161,8 @@ def replay_league(prior, test, tier, params=None):
     ptbl = E.build_table(prior)
     mu = E.league_goal_rate(ptbl)              # the level, as the live build uses
     prior_rt = E.strength_from_table(ptbl, k=shrink)
+    for t, r in (p.get("extra_prior") or {}).items():
+        prior_rt.setdefault(t, r)
 
     by_date = defaultdict(list)
     for m in test:

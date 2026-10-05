@@ -22,6 +22,29 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Championship misses broken down; carrying promoted/relegated ratings held, not shipped
+
+**What changed for a reader:** nothing on the site. A dated note records where
+the Championship's misses sit and one new test, so nobody repeats it.
+
+**Evidence:** history only, live model and calibration, paired bootstrap.
+Draws (about 27%) and the small-gap middle games carry the loss; big-gap games
+are fine. Carrying promoted/relegated clubs' ratings across divisions (the live
+path) scored worse than a neutral 1.00 start in all three seasons: +0.0040
+(2024-25, p(worse) 0.998), +0.0018 (2025-26, 0.831), +0.0088 (2026-27, 95
+fixtures, 0.941). The 2026-27 confirm sample is under the 250-fixture gate and
+only 3 clubs a source a season, so held, not applied.
+
+**Files:** `claude/championship-newcomers-2026-10-05.md`,
+`tools/championship_newcomers.py`, `replay.py` (optional `extra_prior`
+parameter, off by default, no behaviour change).
+
+**Not changed:** `engine.py`, `build.py`, calibration, any model number.
+
+**Roll back:** `git revert` the merge commit.
+
+---
+
 ## (tag pending) — Premier League home-advantage test: rejected, write-up only
 
 **What changed:** nothing a reader sees. Added `claude/premier-league-test-2026-10-05.md`
