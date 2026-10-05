@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Odds tab group rules backtested, unchanged (tag pending)
+
+**What changed:** nothing a reader sees. The group rules stay as they are. A replay script and a write-up only.
+**Evidence:** the live record is 7 groups (5 settled: 1 won, 4 lost, expected 1.49 wins). Archived predictions hold neither the tested rate shown that day nor bookmaker prices, so the replay (`tools/groupings_backtest.py`) uses the 14 graded football days in `record.json`, a pick's calibrated confidence as its chance and the fair price as its price. It produced 3 Steady groups (3 won, stated 35%) and no Balanced or Stretch groups at all: with fair prices on picks of 65%+ the products rarely reach 4. Three groups cannot support any rule change.
+**Files:** `tools/groupings_backtest.py`, `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any model, the 65% / 30 bar, the bands, the spread rules.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Odds tab: ESPN soccer prices for unpriced football legs (tag pending)
 
 **What changed:** football legs API-Football does not price now try ESPN's soccer scoreboards (DraftKings three-way moneyline), matched on the competition's ESPN slug, kick-off within 90 minutes and both team names. Fewer legs fall back to the model's fair price. Prices never feed any model.
