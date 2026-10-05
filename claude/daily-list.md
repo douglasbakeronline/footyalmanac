@@ -130,3 +130,39 @@ still needs 3.8+. CI runs 3.12.
   not, and have no list-specific backtest yet.
 - The 14 backfilled leagues have no walk-forward of their own (the harness
   needs two prior seasons). Their list picks rely on the global evidence.
+
+## Replay of the league bar, 5 Oct 2026 (Nina, office agent): no change
+
+Question: would a higher or lower league bar, or a per-league bar, raise the
+list's hit rate without losing too many picks? Replayed with `tune.lambdas`
+(the shared walk-forward, live calibration curve, openfootball/football-data
+seasons only; the API-Football seasons were unreachable from CI, so n is below
+the build's 131 at 80%). Win picks only, no draws. Celtic's Law and prior-season
+gates not applied, so these rates are slightly harsher than the live list.
+
+| Bar | 2025/26 n | hit | 2026/27 n | hit |
+|---|---|---|---|---|
+| 70% | 344 | 77.6% | 52 | 78.8% |
+| 75% | 189 | 79.4% | 20 | 80.0% |
+| 77.5% | 140 | 81.4% | 13 | 84.6% |
+| **80% (live)** | 94 | 81.9% | 11 | 81.8% |
+| 82.5% | 60 | 80.0% | 4 | 50.0% |
+| 85% | 39 | 69.2% | 2 | 50.0% |
+
+Paired bootstrap (2,000 resamples, 5th to 95th percentile of the hit-rate
+change from the 80% list):
+
+- Lower to 75%: +2.5 points median, interval -2.4 to +7.5 on 2025/26 (it does not
+  differ from 80%, and the extra 95 picks landed about 76.9%). Below the 80% rule.
+- Raise to 85%: -12.4 points median, interval -21.6 to -4.6 on 2025/26. Clearly
+  worse, as the earlier table showed: the extreme end is the least calibrated.
+- Hit rate is flat from 77.5% to 82.5%; nothing between 75% and 85% beats 80%.
+
+Per-league bar: at 80% only pt.1 (22 picks, 17 landed) and de.1 (14, 11) have
+more than ten picks across both seasons; no league has the 30 picks the shared
+rule needs, and a bar tuned per league on 5 to 20 picks would be fitted noise.
+Not built.
+
+Verdict: the 80% league bar stays. Rejected without new evidence: a bar of 75%
+or 85%, and per-league bars. Reopen per-league once 2026/27 gives a league 30+
+calls at 80%.
