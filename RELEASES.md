@@ -22,6 +22,35 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Data quality: Turkish Super Lig was fed twice
+
+**What changed** Four of the five Super Lig fixtures on 9-10 Oct appeared twice
+on the board, once from `tr.1` and once from API-Football's `af.203`, priced
+with different ratings (Galatasaray v Kasimpasa 61.6% vs 64.1%, the second a
+reserve pick). The build now skips `af.203` (`engine.AF_DUPLICATES`); `tr.1`
+stays the single feed. `af.203` remains in `LEAGUES` so archived rows still
+grade. `nametest.py` now fails if a listed duplicate feed is built again.
+
+**Evidence** Audit of `predictions/2026-10-04.json` (1,512 rows): no exact
+duplicates, no reversed fixtures, no unrated rows, every row has a kickoff.
+Names differ in spelling (Kasimpasa / Kasımpaşa) so the repeat only showed by
+kickoff time. Checked all 227 `af-leagues.json` entries against native leagues:
+`af.203` is the only one duplicating a feed that is live (af.144 Belgium and
+af.202 Tunisia are top flights too, but `be.1` / `tn.1` carry no fixtures, so
+nothing doubles today). Dates: 42 rows have a UTC kickoff on a different day
+from their row date (Americas evening games, 4 with kickoff 00:00-00:30Z the
+next day); consistent with the documented convention of local-day rows, so left.
+Cost: Samsunspor v Trabzonspor was only in `af.203`, so it drops off the board
+(a missed fixture rather than a doubled one).
+
+**Files** `engine.py`, `build.py`, `nametest.py`, `RELEASES.md`,
+`claude/data-integrity.md`.
+
+**Not changed** Any model number, `af-leagues.json`, Belgium and Tunisia
+(re-check if `be.1` / `tn.1` ever get fixtures).
+
+**Roll back** `git revert` the commit.
+
 ## (tag pending) — Tests for sports.py, and one Elo fix
 
 **What changed** `sports.py` (707 lines, the NFL / baseball / basketball / rugby

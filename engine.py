@@ -320,6 +320,11 @@ def _af_extra():
         return []
 
 AF_EXTRA = _af_extra()
+# API-Football leagues that repeat a league already fed natively. The live build
+# skips them so a fixture is never priced twice (4 Oct 2026: af.203 Super Lig
+# doubled tr.1, with different ratings for the same match). Kept in LEAGUES so
+# archived af.203 rows still grade.
+AF_DUPLICATES = {"af.203": "tr.1"}
 _ISO_BY_COUNTRY = {m["country"]: m["iso"] for m in LEAGUES.values()
                    if m.get("iso") and m["iso"] != "fifa"}
 for _i, _e in enumerate(AF_EXTRA):
