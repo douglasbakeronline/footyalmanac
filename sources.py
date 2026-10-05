@@ -11,7 +11,7 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import csv, io, json, os, re, sys, threading, time, urllib.request, concurrent.futures
+import csv, io, json, os, re, sys, threading, time, urllib.error, urllib.request, concurrent.futures
 from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
@@ -113,13 +113,34 @@ SUFFIXES = re.compile(
     r"US|SS|ASD|AS|OGC|RC|CA|NK|HNK|GNK)$", re.I)
 
 
+def _open(req, timeout, tries=3, pause=1.5):
+    """urlopen(...).read() with retries and backoff for transient failures
+    (timeouts, resets, 5xx, 429). A 4xx such as 404 is an answer, not an
+    outage: it is raised at once so callers can fall back. After the last try
+    the error is raised and a warning printed, never swallowed here."""
+    name = req if isinstance(req, str) else req.full_url
+    for attempt in range(tries):
+        try:
+            return urllib.request.urlopen(req, timeout=timeout).read()
+        except urllib.error.HTTPError as e:
+            if 400 <= e.code < 500 and e.code != 429:
+                raise
+            err = e
+        except Exception as e:
+            err = e
+        if attempt + 1 < tries:
+            time.sleep(pause * (2 ** attempt))
+    print(f"  source failed after {tries} tries: {name} ({err})", file=sys.stderr)
+    raise err
+
+
 def _get(url, cache_dir=None, timeout=30):
     if cache_dir:
         os.makedirs(cache_dir, exist_ok=True)
         p = os.path.join(cache_dir, re.sub(r"[^a-zA-Z0-9._-]", "_", url)[-120:])
         if os.path.exists(p):
             return open(p, "rb").read()
-    data = urllib.request.urlopen(url, timeout=timeout).read()
+    data = _open(url, timeout)
     if cache_dir:
         open(p, "wb").write(data)
     return data
@@ -438,9 +459,13 @@ def _fdx_text(path, cache_dir=None):
             return _FDX_CACHE[path]
     req = urllib.request.Request(FDX_BASE + path, headers={"User-Agent": "football-almanac/1.0"})
     try:
-        text = urllib.request.urlopen(req, timeout=40).read().decode("utf-8-sig", "replace")
+        text = _open(req, 40).decode("utf-8-sig", "replace")
+    except urllib.error.HTTPError as e:
+        if not 400 <= e.code < 500:
+            return ""                     # outage after retries: not remembered as empty
+        text = ""                         # file genuinely absent
     except Exception:
-        text = ""
+        return ""                         # outage after retries: not remembered as empty
     with _FDX_LOCK:
         _FDX_CACHE[path] = text
     return text
