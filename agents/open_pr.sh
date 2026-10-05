@@ -15,7 +15,7 @@ CHECKS="passed"
 env -u GH_TOKEN -u GITHUB_TOKEN -u API_FOOTBALL_KEY timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
 env -u GH_TOKEN -u GITHUB_TOKEN -u API_FOOTBALL_KEY timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
 if git diff --cached --name-only | grep -qE '^(build|engine|sources|rankings|predictability|score|odds|backfill)\.py$'; then
-  env -u GH_TOKEN -u GITHUB_TOKEN timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
+  env -u GH_TOKEN -u GITHUB_TOKEN -u API_FOOTBALL_KEY timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
 fi
 # show why, so a failed check is never a mystery
 if [ "$CHECKS" = failed ]; then for f in /tmp/office-agent/nametest.log /tmp/office-agent/tests.log /tmp/office-agent/build.log; do [ -f "$f" ] && { echo "--- $f"; tail -25 "$f"; }; done; fi

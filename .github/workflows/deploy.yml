@@ -11,19 +11,26 @@ on:
     #
     # Note: cron is always UTC and does not follow British Summer Time, so this
     # is 06:15 BST in summer and 05:15 GMT in winter.
+    - cron: "10 0 * * *"    # 00:10 UTC, just after API-Football's daily allowance resets
     - cron: "15 5 * * *"    # 05:15 UTC
   workflow_dispatch:
   push:
     branches: [main]
+    # Agent write-ups, release notes, tests and agent scripts do not change
+    # the site, and every rebuild spends API allowance.
+    paths-ignore: ["claude/**", "RELEASES.md", "tests/**", "tools/**", "agents/**"]
 
 permissions:
   contents: write        # predictions are committed back so the record survives
   pages: write
   id-token: write
 
+# Queue rather than cancel: on 5 Oct 2026 agent merges cancelled the daily
+# build one after another. GitHub keeps one queued run, so a burst of pushes
+# still costs at most one extra build.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:

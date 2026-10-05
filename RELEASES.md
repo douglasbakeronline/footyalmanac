@@ -3,6 +3,28 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Protect the API allowance and the daily build (release-2026-10-05-14)
+
+**What changed**
+- `sources.py`: when API-Football says the day's allowance is used up
+  (`errors.requests`), the build stops calling it for the rest of the run
+  instead of retrying every call six times. Burst limits (`rateLimit`) are
+  still retried. Tests: `tests/test_af_allowance.py`.
+- `deploy.yml`: rebuilds queue instead of cancelling each other; pushes that
+  only touch `claude/`, `RELEASES.md`, `tests/`, `tools/` or `agents/` no
+  longer rebuild; a new 00:10 UTC build runs just after the allowance resets.
+- Office agents and their checks run without `API_FOOTBALL_KEY`.
+- Raj's source retries (#7) restored: the earlier revert blamed it wrongly.
+
+**Why** On 5 Oct the allowance ran out by 01:43 UTC after several rebuilds and
+agent builds, every call was then retried, the build took 3 hours instead of
+7 minutes, and later merges cancelled the scheduled build. Today's Daily List
+was built with little football data.
+
+**Roll back** `git revert` this commit.
+
+---
+
 ## 2026-10-05 Odds tab group rules backtested, unchanged (tag pending)
 
 **What changed:** nothing a reader sees. The group rules stay as they are. A replay script and a write-up only.

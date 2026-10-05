@@ -77,7 +77,8 @@ jobs:
       matrix:
         agent: ${{ fromJSON(needs.plan.outputs.agents) }}
     env:
-      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      # No API_FOOTBALL_KEY here: agent work and checks must not spend the
+      # site's daily allowance (on 5 Oct 2026 it ran out before the daily build).
       HAS_APP: ${{ secrets.OFFICE_APP_ID != '' && 'yes' || 'no' }}
     steps:
       - uses: actions/checkout@v4

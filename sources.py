@@ -560,6 +560,7 @@ _AF_CACHE, _AF_LOCK = {}, threading.Lock()
 
 
 _AF_PACE, _AF_NEXT = 0.25, [0.0]   # Pro allows 5 calls a second; keep under it
+_AF_SPENT = [False]   # the day's allowance is gone: stop calling for the rest of this run
 
 
 def _af_get(path):
@@ -570,7 +571,7 @@ def _af_get(path):
     that way, each quietly read as "no data". A refused call is retried, and
     a failure is never remembered as an empty answer."""
     key = os.environ.get("API_FOOTBALL_KEY")
-    if not key:
+    if not key or _AF_SPENT[0]:
         return []
     with _AF_LOCK:
         if path in _AF_CACHE:
@@ -590,6 +591,17 @@ def _af_get(path):
             continue
         errs = doc.get("errors")
         if errs:
+            # {"requests": "...request limit for the day..."} is the daily
+            # allowance, not a burst limit: retrying it cost a 3-hour build on
+            # 5 Oct 2026. Stop calling for the rest of the run instead.
+            if isinstance(errs, dict) and "requests" in errs and "rateLimit" not in errs:
+                with _AF_LOCK:
+                    first = not _AF_SPENT[0]
+                    _AF_SPENT[0] = True
+                if first:
+                    print(f"  API-Football daily allowance used up; no more calls this run ({errs['requests']})",
+                          file=sys.stderr)
+                return []
             if "rateLimit" in str(errs) or "requests" in str(errs).lower():
                 time.sleep(2 + 2 * attempt)
                 continue
