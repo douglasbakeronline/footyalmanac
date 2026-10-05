@@ -124,7 +124,7 @@ def legs(dates):
             if pl is None: continue
             h, a = g["home"]["name"], g["away"]["name"]
             out.append({"sport": "football", "event": f"{h} v {a}", "home": h, "away": a, "side": side,
-                        "pick": h if side == "h" else a, "comp": g.get("leagueName"), "country": g.get("country"),
+                        "pick": h if side == "h" else a, "code": g.get("league"), "comp": g.get("leagueName"), "country": g.get("country"),
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
                         "hit": g["accuracy"]["hit"], "n": g["accuracy"]["n"], "list": bool(g.get("list"))})
     td = read_js("tennis-data.js") or {}
@@ -233,9 +233,52 @@ def price_espn(L, dates, report):
         out[sport] = {"matched": n, "legs": len(want)}
     report["espn"] = out
 
+def espn_ml(o, side):
+    """Decimal price for 'home' or 'away' from an ESPN odds block, or None."""
+    ml = (o.get("moneyline") or {}).get(side) or {}
+    return american((ml.get("close") or ml.get("open") or {}).get("odds") or (o.get(f"{side}TeamOdds") or {}).get("moneyLine"))
+
+def price_espn_soccer(L, dates, report):
+    """Second football source: ESPN soccer scoreboards (DraftKings three-way
+    moneyline), for legs API-Football did not price. ESPN's dates= is a US
+    Eastern day, so each UK date also asks for the day before. Matched on the
+    competition's ESPN slug, kick-off within 90 minutes and both team names."""
+    from sources import ESPN_SLUGS
+    want = [l for l in L if l["sport"] == "football" and not l.get("odds") and l.get("code") in ESPN_SLUGS]
+    if not want:
+        report["espn_soccer"] = {"matched": 0, "legs": 0}; return
+    calls, matched = 0, 0
+    for slug in sorted({s for l in want for s in ESPN_SLUGS[l["code"]]}):
+        mine = [l for l in want if slug in ESPN_SLUGS[l["code"]]]
+        days = set()
+        for l in mine:
+            d = datetime.fromisoformat(l["date"])
+            days |= {d, d - timedelta(days=1)}
+        for d in sorted(days):
+            try:
+                sb = get(f"{ESPN}/soccer/{slug}/scoreboard?dates={d.strftime('%Y%m%d')}"); calls += 1
+            except Exception as e:
+                report.setdefault("errors", []).append(f"espn soccer {slug} {d.date()}: {type(e).__name__}"); continue
+            for ev in sb.get("events") or []:
+                comp = (ev.get("competitions") or [{}])[0]
+                o = (comp.get("odds") or [None])[0]
+                if not o: continue
+                cs = {c.get("homeAway"): c.get("team", {}).get("displayName", "") for c in comp.get("competitors", [])}
+                ft = parse(ev.get("date"))
+                for l in mine:
+                    if l.get("odds"): continue
+                    t = parse(l["when"])
+                    if t and ft and abs((t - ft).total_seconds()) > 5400: continue
+                    if not (same(cs.get("home"), l["home"]) and same(cs.get("away"), l["away"])): continue
+                    dec = espn_ml(o, "home" if l["side"] == "h" else "away")
+                    if dec and dec > 1:
+                        l.update(odds=dec, src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); matched += 1
+    report["espn_soccer"] = {"calls": calls, "matched": matched, "legs": len(want)}
+
 def price(L, dates):
     report = {}
     price_football(L, dates, report)
+    price_espn_soccer(L, dates, report)
     price_espn(L, dates, report)
     for l in L:
         if not l.get("odds"):

@@ -49,6 +49,35 @@ class GroupRules(unittest.TestCase):
             self.assertEqual(len(g["legs"]), 5)
             self.assertTrue(g["band"][0] <= g["odds"] <= g["band"][1])
 
+class EspnSoccerPrices(unittest.TestCase):
+    def board(self, home, away, date="2026-10-10T11:30Z", ml=None):
+        ml = ml or {"home": {"close": {"odds": "-260"}}, "away": {"close": {"odds": "+700"}}}
+        return {"events": [{"date": date, "competitions": [{
+            "competitors": [{"homeAway": "home", "team": {"displayName": home}},
+                            {"homeAway": "away", "team": {"displayName": away}}],
+            "odds": [{"provider": {"name": "DraftKings"}, "moneyline": ml}]}]}]}
+    def run_price(self, legs_, board):
+        real, G.get = G.get, lambda url, *a, **k: board
+        try:
+            rep = {}; G.price_espn_soccer(legs_, {"2026-10-10"}, rep); return rep["espn_soccer"]
+        finally: G.get = real
+    def fb(self, **kw):
+        l = {"sport": "football", "code": "en.1", "home": "Arsenal", "away": "Leeds United", "side": "h",
+             "date": "2026-10-10", "when": "2026-10-10T11:30:00Z"}
+        l.update(kw); return l
+    def test_prices_an_unpriced_leg(self):
+        l = self.fb()
+        rep = self.run_price([l], self.board("Arsenal", "Leeds United"))
+        self.assertEqual(rep["matched"], 1); self.assertAlmostEqual(l["odds"], 1.38)
+        a = self.fb(side="a"); self.run_price([a], self.board("Arsenal", "Leeds United"))
+        self.assertAlmostEqual(a["odds"], 8.0)
+    def test_wrong_teams_or_time_not_matched(self):
+        for l in (self.fb(home="Spurs"), self.fb(when="2026-10-10T16:00:00Z")):
+            self.run_price([l], self.board("Arsenal", "Leeds United")); self.assertNotIn("odds", l)
+    def test_keeps_an_existing_price_and_skips_unknown_competitions(self):
+        l = self.fb(odds=1.5); self.run_price([l], self.board("Arsenal", "Leeds United")); self.assertEqual(l["odds"], 1.5)
+        u = self.fb(code="zz.9"); self.assertEqual(self.run_price([u], self.board("Arsenal", "Leeds United"))["legs"], 0)
+
 if __name__ == "__main__":
     unittest.main()
 

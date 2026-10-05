@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Odds tab: ESPN soccer prices for unpriced football legs (tag pending)
+
+**What changed:** football legs API-Football does not price now try ESPN's soccer scoreboards (DraftKings three-way moneyline), matched on the competition's ESPN slug, kick-off within 90 minutes and both team names. Fewer legs fall back to the model's fair price. Prices never feed any model.
+**Evidence:** today's published pool (generated 2026-10-05 04:23Z): 24 football legs, 0 priced by API-Football in that run; ESPN priced 12 of 24 (15 calls). Unmatched: friendlies, U21 and Africa/Concacaf qualifiers ESPN carries no odds for. Rugby and tennis checked: ESPN rugby and tennis scoreboards carry no odds, so they stay estimates (at most two per group). Tests in `tests/test_groupings.py`.
+**Files:** `groupings.py`, `tests/test_groupings.py`, `RELEASES.md`.
+**Not changed:** any model, calibration, group rules, tennis and rugby pricing, API-Football matching.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Daily List bar replayed, unchanged (tag pending)
 
 **What changed:** nothing a reader sees. The league bar stays at 80%. Write-up only.
