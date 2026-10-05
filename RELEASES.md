@@ -22,6 +22,20 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## 2026-10-05: openfootball and football-data.co.uk retry, and an outage is no longer remembered as "no data" (tag pending)
+
+**What changed.** Two sources had no retry. `_get` (openfootball, the source for most leagues) failed on the first timeout. `_fdx_text` (football-data.co.uk, the sole source for Poland, Switzerland, Romania, Finland and Ireland) swallowed every error and cached an empty string for the rest of the build, so one blip silently dropped a league's history and fixtures. Both now go through `sources._open`: 3 tries, 1.5s then 3s backoff, retrying timeouts, resets, 5xx and 429. A 4xx such as 404 is raised at once (openfootball callers rely on it to fall back to the plain-text schedule). A final failure prints a warning to stderr. `_fdx_text` no longer caches an outage; a genuinely missing file (4xx) is still cached as empty. Existing Rule 9 behaviour is unchanged: a build that comes out empty is still refused.
+
+**Evidence.** New `tests/test_source_failures.py` (5 tests, fake failing source): retry then success, 404 not retried, loud give-up, outage not cached, missing file cached. Full suite 93 tests pass, `nametest.py` all clear, fast build wrote 123 fixtures across 2 days.
+
+**Files.** `sources.py`, `tests/test_source_failures.py`, `RELEASES.md`.
+
+**Not changed.** No model numbers, no ESPN or API-Football paths (API-Football already retries), no output on a healthy build. Worst-case added latency per dead URL is about 4.5s plus timeouts.
+
+**Roll back.** `git revert` the merge commit.
+
+---
+
 ## (tag pending) — Data quality: Turkish Super Lig was fed twice
 
 **What changed** Four of the five Super Lig fixtures on 9-10 Oct appeared twice
