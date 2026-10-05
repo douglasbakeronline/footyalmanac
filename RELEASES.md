@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Office review and next week's priorities (tag pending)
+
+**What changed:** nothing a reader sees. Added `claude/office-review-2026-10-05.md`: what shipped since 21 Sep, rejected tests, record standing, three priorities (Raj, Andrew, Mia).
+**Evidence:** `record.json` read only: football Strong 79.2% of 48 (79.4% expected), List 72.7% of 22, tennis 57.5% of 294 (61.3% expected), sports List 85.7% of 14.
+**Files:** `claude/office-review-2026-10-05.md`, `RELEASES.md`.
+**Not changed:** any code, model number, record or archive.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Archive and retune pushes use the office App (release-2026-10-05-16)
 
 **What changed** `deploy.yml` and `tune.yml` mint an office App token and push
