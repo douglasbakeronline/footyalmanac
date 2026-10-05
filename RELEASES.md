@@ -22,6 +22,31 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Calibration by confidence band: new advisory tool and findings
+
+**What changed for a reader:** nothing on the site. Adds `calibration_bands.py`,
+which measures landed versus quoted by confidence band from history (never
+`record.json`) with a bootstrap 90% interval on each gap, for football and for
+NFL, baseball, basketball and rugby. Findings are in
+`claude/calibration-bands-2026-10-05.md`.
+
+**Evidence:** football's cumulative bands from 62% to 80% sit inside their
+intervals (e.g. 70%+: 77.4% quoted, 78.4% landed, n 310); the 85%+ tail is
+over-confident (40 calls, 89% quoted, 70% landed, in-sample). Baseball is
+over-confident out of sample (62%+: 65.8% quoted, 61.0% landed, n 608,
+interval -8.1 to -1.5); NFL, basketball and rugby are within noise. Football
+ran on openfootball and `history/` only (the sandbox could not reach the other
+sources): 866 check fixtures rather than 1,309.
+
+**Files:** `calibration_bands.py`, `tests/test_calibration_bands.py`,
+`claude/calibration-bands-2026-10-05.md`, `RELEASES.md`.
+
+**Not changed:** `calibration.json`, `sports.json`, `sports.py` gates, any
+model constant or displayed number. Proposals (baseball calibration guard, an
+85% display cap) are written up for Douglas.
+
+**Roll back:** `git revert` the merge commit; nothing else depends on the tool.
+
 ## (tag pending) — Championship misses broken down; carrying promoted/relegated ratings held, not shipped
 
 **What changed for a reader:** nothing on the site. A dated note records where
