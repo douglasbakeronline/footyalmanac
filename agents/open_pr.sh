@@ -11,11 +11,14 @@ git add -A
 if git diff --cached --quiet; then echo "The agent made no changes."; exit 0; fi
 
 CHECKS="passed"
-env -u GH_TOKEN -u GITHUB_TOKEN timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
-env -u GH_TOKEN -u GITHUB_TOKEN timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
+# nametest and the tests run offline, as in CI: with API_FOOTBALL_KEY set they make live calls and stall
+env -u GH_TOKEN -u GITHUB_TOKEN -u API_FOOTBALL_KEY timeout 600 python3 nametest.py > /tmp/office-agent/nametest.log 2>&1 || CHECKS="failed"
+env -u GH_TOKEN -u GITHUB_TOKEN -u API_FOOTBALL_KEY timeout 900 python3 -m unittest discover -s tests > /tmp/office-agent/tests.log 2>&1 || CHECKS="failed"
 if git diff --cached --name-only | grep -qE '^(build|engine|sources|rankings|predictability|score|odds|backfill)\.py$'; then
   env -u GH_TOKEN -u GITHUB_TOKEN timeout 1500 python3 build.py --days 2 --no-topup --no-odds > /tmp/office-agent/build.log 2>&1 || CHECKS="failed"
 fi
+# show why, so a failed check is never a mystery
+if [ "$CHECKS" = failed ]; then for f in /tmp/office-agent/nametest.log /tmp/office-agent/tests.log /tmp/office-agent/build.log; do [ -f "$f" ] && { echo "--- $f"; tail -25 "$f"; }; done; fi
 restore; git add -A
 
 META=/tmp/office-agent/meta.json; [ -f "$META" ] || echo '{"type":"code","gates":"n/a","automerge":false,"summary":"No summary written."}' > "$META"
