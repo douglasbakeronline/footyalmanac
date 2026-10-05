@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-05T00:40:14Z",
+ "graded": "2026-10-05T04:23:35Z",
  "overall": {
   "groups": 7,
   "settled": 5,
-  "won": 0,
-  "lost": 5,
+  "won": 1,
+  "lost": 4,
   "pending": 2,
-  "legs": 27,
-  "legsWon": 17,
-  "returned": 0,
+  "legs": 18,
+  "legsWon": 13,
+  "returned": 2.77,
   "staked": 5,
-  "expected": 1.2
+  "expected": 1.49
  },
  "byBand": {
   "Steady": {
    "groups": 3,
-   "settled": 1,
-   "won": 0,
+   "settled": 2,
+   "won": 1,
    "lost": 1,
-   "pending": 2,
-   "legs": 9,
+   "pending": 1,
+   "legs": 8,
    "legsWon": 7,
-   "returned": 0,
-   "staked": 1,
-   "expected": 0.26
+   "returned": 2.77,
+   "staked": 2,
+   "expected": 0.7
   },
   "Balanced": {
    "groups": 2,
@@ -31,36 +31,36 @@
    "won": 0,
    "lost": 2,
    "pending": 0,
-   "legs": 9,
-   "legsWon": 4,
+   "legs": 6,
+   "legsWon": 3,
    "returned": 0,
    "staked": 2,
    "expected": 0.52
   },
   "Stretch": {
    "groups": 2,
-   "settled": 2,
+   "settled": 1,
    "won": 0,
-   "lost": 2,
-   "pending": 0,
-   "legs": 9,
-   "legsWon": 6,
+   "lost": 1,
+   "pending": 1,
+   "legs": 4,
+   "legsWon": 3,
    "returned": 0,
-   "staked": 2,
-   "expected": 0.41
+   "staked": 1,
+   "expected": 0.26
   }
  },
  "firstChoice": {
   "groups": 4,
-  "settled": 2,
-  "won": 0,
+  "settled": 3,
+  "won": 1,
   "lost": 2,
-  "pending": 2,
-  "legs": 13,
+  "pending": 1,
+  "legs": 11,
   "legsWon": 9,
-  "returned": 0,
-  "staked": 2,
-  "expected": 0.61
+  "returned": 2.77,
+  "staked": 3,
+  "expected": 1.05
  },
  "days": [
   {
@@ -151,11 +151,11 @@
      "rank": "main",
      "odds": 2.77,
      "p": 0.4407,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 4,
+     "status": "won",
+     "paid": 2.77,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Chicago Bears",
@@ -214,8 +214,8 @@
        "odds": 1.06,
        "est": false,
        "p": 0.901,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       }
      ]
     },
@@ -227,8 +227,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 3,
-     "legsLost": 2,
-     "legsPending": 0,
+     "legsLost": 1,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Saracens",
@@ -239,8 +239,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.834,
-       "status": "lost",
-       "result": "17-21"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Lois Boisson",
@@ -299,9 +299,9 @@
      "p": 0.261,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 2,
-     "legsPending": 1,
+     "legsWon": 1,
+     "legsLost": 1,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Portonovo",
@@ -312,8 +312,8 @@
        "odds": 1.38,
        "est": true,
        "p": 0.7903,
-       "status": "lost",
-       "result": "0-1"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "New York Giants",
@@ -360,8 +360,8 @@
        "odds": 1.27,
        "est": false,
        "p": 0.7901,
-       "status": "won",
-       "result": "1-0"
+       "status": "pending",
+       "result": null
       }
      ]
     },
@@ -372,9 +372,9 @@
      "p": 0.2639,
      "status": "lost",
      "paid": 0,
-     "legsWon": 3,
-     "legsLost": 2,
-     "legsPending": 0,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Stade Gabesien",
@@ -385,8 +385,8 @@
        "odds": 1.47,
        "est": false,
        "p": 0.7119,
-       "status": "lost",
-       "result": "0-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Osasuna II",
@@ -397,8 +397,8 @@
        "odds": 1.33,
        "est": false,
        "p": 0.748,
-       "status": "won",
-       "result": "2-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Castellón",
@@ -445,9 +445,9 @@
      "p": 0.1785,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 3,
-     "legsPending": 1,
+     "legsWon": 0,
+     "legsLost": 2,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Rodina Moskva II",
@@ -458,8 +458,8 @@
        "odds": 1.39,
        "est": false,
        "p": 0.7119,
-       "status": "won",
-       "result": "3-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Levante II",
@@ -482,8 +482,8 @@
        "odds": 1.18,
        "est": false,
        "p": 0.7118,
-       "status": "lost",
-       "result": "3-3"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Buffalo Bills",
@@ -516,11 +516,11 @@
      "rank": "alternative",
      "odds": 7.51,
      "p": 0.1492,
-     "status": "lost",
+     "status": "pending",
      "paid": 0,
-     "legsWon": 4,
-     "legsLost": 1,
-     "legsPending": 0,
+     "legsWon": 2,
+     "legsLost": 0,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Calahorra",
@@ -531,8 +531,8 @@
        "odds": 1.62,
        "est": true,
        "p": 0.7118,
-       "status": "lost",
-       "result": "2-1"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Agoncillo",
@@ -543,8 +543,8 @@
        "odds": 1.63,
        "est": true,
        "p": 0.7118,
-       "status": "won",
-       "result": "2-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Barcelona",
@@ -567,8 +567,8 @@
        "odds": 1.78,
        "est": false,
        "p": 0.6693,
-       "status": "won",
-       "result": "1-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Kansas City Chiefs",
