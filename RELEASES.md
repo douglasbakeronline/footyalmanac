@@ -22,6 +22,20 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Ratings test: between-season carry-over and a prior for new sides (rejected / deferred, notes only)
+
+**What changed:** nothing in the model. Dated note added to `claude/tuning-evidence.md`.
+
+**Evidence:** paired bootstrap under the live curve, 2025/26 (6,474) and 2026/27 (1,386). Carry-over c 0.7 / 0.85: worse on both (+0.0020 / +0.0008; +0.0041 / +0.0017). c 1.1 / 1.25: -0.0003 on the fit season, below the 0.0005 gain gate. A 0.90/1.10 prior for sides with no prior season: -0.0014 fit, -0.0011 check (p(worse) 0.18), but measured in a replay that gives promoted sides 1.00 where live carries a transferred rating, and calibration was not refitted. Not shipped.
+
+**Files:** `claude/tuning-evidence.md`, `RELEASES.md`.
+
+**Not changed:** engine.py, replay.py, calibration.json, any site output.
+
+**Roll back:** `git revert` the commit; docs only.
+
+---
+
 ## (tag pending) — Tennis hit-rate check: no model change (write-up and advisory test)
 
 **What changed:** nothing a reader sees. Tennis showed 57% against 61% quoted over 294 matches; this checks why and tests one fix. No model number changed.
