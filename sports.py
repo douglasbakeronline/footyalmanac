@@ -144,6 +144,12 @@ def _day(path, d, errs):
     return None
 
 
+# A completed flag does not mean the game was played to a result: these carry a
+# partial or placeholder score and must never be graded or fed to the Elo.
+NOT_PLAYED = ("STATUS_CANCELED", "STATUS_POSTPONED", "STATUS_ABANDONED",
+              "STATUS_SUSPENDED", "STATUS_FORFEIT")
+
+
 def _game(ev, feed):
     """One ESPN event -> a game dict, or None for anything unusable."""
     if (ev.get("season") or {}).get("type") in feed["skip"]:
@@ -158,7 +164,7 @@ def _game(ev, feed):
     if not ht.get("id") or not at.get("id"):
         return None
     st = (comp.get("status") or {}).get("type") or {}
-    final = bool(st.get("completed")) and st.get("name") not in ("STATUS_CANCELED", "STATUS_POSTPONED")
+    final = bool(st.get("completed")) and st.get("name") not in NOT_PLAYED
     hs = as_ = None
     if final:
         try:
@@ -607,6 +613,17 @@ def build(start=None):
         for e in payload["sports"].values()), file=sys.stderr)
 
 
+def settle(r, g):
+    """The graded row for archived pick r against final game g, or None for a tie.
+
+    A tie is void: the pick is a two-way call (pHome) and neither side can be
+    right. Counting it a miss understated accuracy (2 of 52 graded on 5 Oct 2026)."""
+    if g["hs"] == g["as"]:
+        return None
+    winner = g["hn"] if g["hs"] > g["as"] else g["an"]
+    return {**r, "score": [g["hs"], g["as"]], "winner": winner, "ok": winner == r["pick"]}
+
+
 def score():
     """Grade archived picks against results already walked into history-sports/.
     Only prices published before the game started count."""
@@ -621,14 +638,16 @@ def score():
                     continue   # published after the start: proves nothing
                 if r["id"] not in best or r["published"] > best[r["id"]]["published"]:
                     best[r["id"]] = r
-    graded = []
+    graded, void = [], 0
     for gid, r in best.items():
         g = results.get(gid)
         if not g or not g["final"]:
             continue
-        winner = g["hn"] if g["hs"] > g["as"] else (g["an"] if g["as"] > g["hs"] else None)
-        graded.append({**r, "score": [g["hs"], g["as"]], "winner": winner,
-                       "ok": winner == r["pick"]})
+        row = settle(r, g)
+        if row is None:
+            void += 1
+            continue
+        graded.append(row)
 
     def summ(rows):
         if not rows:
@@ -641,6 +660,7 @@ def score():
     for r in graded:
         by_date.setdefault(r["when"][:10], []).append(r)
     out = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+           "void": void,
            "overall": summ(graded),
            "bySport": {s: summ([r for r in graded if r["sport"] == s]) for s in SPORTS},
            "list": summ([r for r in graded if r["list"]]),
@@ -654,7 +674,7 @@ def score():
     with open(RECORD_JS, "w") as f:
         f.write("window.__SPORTS_RECORD__=" + json.dumps(out, separators=(",", ":")) + ";")
     o = out["overall"]
-    print(f"sports: {o['n'] if o else 0} graded", file=sys.stderr)
+    print(f"sports: {o['n'] if o else 0} graded, {void} tied (void)", file=sys.stderr)
 
 
 def history(workers=6):

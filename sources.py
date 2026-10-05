@@ -1032,6 +1032,10 @@ def _espn_day(slug, day, timeout, errs):
     return []
 
 
+NOT_PLAYED = ("STATUS_CANCELED", "STATUS_POSTPONED", "STATUS_ABANDONED",
+              "STATUS_SUSPENDED", "STATUS_FORFEIT")
+
+
 def _row(ev):
     """One ESPN event -> the same row shape parse_fixture_txt produces."""
     comp = (ev.get("competitions") or [{}])[0]
@@ -1043,7 +1047,10 @@ def _row(ev):
     iso = comp.get("date") or ev.get("date") or ""
     if len(iso) < 10:
         return None
-    done = bool(((comp.get("status") or {}).get("type") or {}).get("completed"))
+    stype = (comp.get("status") or {}).get("type") or {}
+    # completed is also set on abandoned or forfeited games, whose score is
+    # partial or a placeholder: not a result, never graded.
+    done = bool(stype.get("completed")) and stype.get("name") not in NOT_PLAYED
     hg = ag = None
     if done:
         try:

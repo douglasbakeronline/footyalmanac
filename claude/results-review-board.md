@@ -47,3 +47,34 @@ largest category of miss.
 
 Model reference doc (every variable, with live figures):
 https://claude.ai/code/artifact/dcd9cb9e-0a95-4c6a-bcaa-531ed9bff60f
+
+## Grading audit, 5 Oct 2026 (Susie, Results Auditor)
+
+**Sample:** 419 football rows on the board (14 days), 52 sports, 295 tennis.
+ESPN was blocked (403) in the audit sandbox, so the independent check was
+openfootball only.
+
+- Football: 419 rows internally consistent (result vs `actual`, `p` vs `pick`,
+  `ok`). 36 rows in 12 competitions re-fetched from openfootball: 36 of 36 scores
+  match. The other 76 rows in those competitions come from ESPN / API-Football
+  sources and could not be re-checked here.
+- Sports: all 52 graded scores match `history-sports/` exactly (0 mismatches).
+- Tennis: no free independent source reachable. Reviewed handling only:
+  walkovers and cancellations are void (1 void in the record), retirements stand.
+
+**Bugs found and fixed (code only, no record file edited):**
+1. `sports.py` graded a tie as a miss. The pick is two-way (`pHome`), so a tie
+   cannot be right or wrong. 2 of the 52 graded were ties (rugby). Now void,
+   counted in `sports-record.json` "void" at the next `--score`. Expect rugby
+   accuracy to rise slightly (65% of 20 becomes up to 13 of 18).
+2. `sports._game` and football `sources._row` treated any ESPN `completed`
+   game as final unless cancelled or postponed. Abandoned, suspended and
+   forfeited games carry partial or placeholder scores. Now excluded.
+3. `score_tennis.py` flagged "retired" with a substring test, so
+   "Berrettini" showed as a retirement (2 records). Now a whole-word test. The
+   graded result was never affected, only the label.
+
+**Not changed, noted:** football draws stay graded as misses on the winner pick
+(deliberate, documented above). Cup ties decided in extra time use whatever
+score the source gives, not strictly 90 minutes; unverified, worth a check.
+Tests: `tests/test_grading.py`.

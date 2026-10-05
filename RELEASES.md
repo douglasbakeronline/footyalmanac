@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Grading audit: ties void, abandoned games ungraded (tag pending)
+
+**What changed:** the other-sports record no longer counts a tie as a miss (it is void), abandoned, suspended and forfeited games are never graded, and tennis no longer labels Berrettini's matches "retired".
+**Evidence:** 36 of 36 football scores match openfootball; 52 of 52 sports scores match history; 2 of 52 sports picks were ties graded as misses; 2 tennis records mislabelled by a substring test. ESPN unreachable from the audit sandbox. Tests in `tests/test_grading.py`.
+**Files:** `sports.py`, `sources.py`, `score_tennis.py`, `tests/test_grading.py`, `claude/results-review-board.md`, `RELEASES.md`.
+**Not changed:** any model, football draw grading, record files (they update at the next CI run).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Weakest-sport check: WTA, no change (tag pending)
 
 **What changed:** nothing a reader sees. Appended a re-read to `claude/tennis-hit-rate.md`.
