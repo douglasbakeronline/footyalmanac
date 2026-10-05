@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-05T04:23:35Z",
+ "graded": "2026-10-05T15:12:23Z",
  "overall": {
   "groups": 7,
   "settled": 5,
   "won": 1,
   "lost": 4,
   "pending": 2,
-  "legs": 18,
-  "legsWon": 13,
+  "legs": 21,
+  "legsWon": 15,
   "returned": 2.77,
   "staked": 5,
   "expected": 1.49
@@ -19,8 +19,8 @@
    "won": 1,
    "lost": 1,
    "pending": 1,
-   "legs": 8,
-   "legsWon": 7,
+   "legs": 10,
+   "legsWon": 9,
    "returned": 2.77,
    "staked": 2,
    "expected": 0.7
@@ -31,7 +31,7 @@
    "won": 0,
    "lost": 2,
    "pending": 0,
-   "legs": 6,
+   "legs": 7,
    "legsWon": 3,
    "returned": 0,
    "staked": 2,
@@ -56,8 +56,8 @@
   "won": 1,
   "lost": 2,
   "pending": 1,
-  "legs": 11,
-  "legsWon": 9,
+  "legs": 14,
+  "legsWon": 11,
   "returned": 2.77,
   "staked": 3,
   "expected": 1.05
@@ -74,9 +74,9 @@
      "p": 0.2985,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -87,8 +87,8 @@
        "odds": 1.18,
        "est": true,
        "p": 0.8652,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Iga Swiatek (POL) bt (30) Donna Vekic (CRO) 4-6 7-6 (7-0) 6-2"
       },
       {
        "pick": "Carlos Alcaraz",
@@ -99,8 +99,8 @@
        "odds": 1.13,
        "est": true,
        "p": 0.9094,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Carlos Alcaraz (ESP) bt Jaume Munar (ESP) 5-7 6-3 6-1"
       },
       {
        "pick": "TSC Backa Topola",
@@ -227,8 +227,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 3,
-     "legsLost": 1,
-     "legsPending": 1,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Saracens",
@@ -239,8 +239,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.834,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "17-21"
       },
       {
        "pick": "Lois Boisson",
