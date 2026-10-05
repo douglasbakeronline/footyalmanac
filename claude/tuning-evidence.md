@@ -174,3 +174,53 @@ Calibration refitted per setting, 2025/26 fit, 2026/27 check (789).
 A long half-life is a wash; anything that makes recent games dominate is
 worse, and more so the harder it leans. Over a full season, what a side did
 in August is still evidence in March. Rejected; nothing shipped.
+
+
+## Test, 5 October 2026: between-season carry-over and a prior for sides new to the league (Ben)
+
+Two untested ratings ideas, scored paired and bootstrapped under the live
+calibration curve (1.135 / -0.30), 2025/26 fit (6,474 fixtures) and 2026/27
+check (1,386), frozen on the data the session could fetch. Harness: the
+`replay.replay_league` loop with the prior ratings edited.
+
+**1. Carry-over of last season's rating.** Prior rating pulled toward 1.00 by
+a factor (`1 + c * (prior - 1)`), a "decay between seasons".
+
+| c | 2025/26 | 2026/27 |
+|---|---|---|
+| 0.70 | +0.0020, p(worse) 1.00 | +0.0041, 1.00 |
+| 0.85 | +0.0008, 1.00 | +0.0017, 0.99 |
+| 1.10 | -0.0003, 0.08 | -0.0007, 0.08 |
+| 1.25 | -0.0003, 0.28 | -0.0011, 0.19 |
+
+Extra decay is clearly worse. Less decay (c > 1) gains under 0.0005 on the
+fit season, so it fails the gain gate. Last season's rating is already
+shrunk enough (SHRINK_FULL_SEASON 4). Rejected.
+
+**2. A prior below 1.00 for sides with no prior season in the league**
+(replay gives them 1.00 / 1.00).
+
+| att / def | 2025/26 | 2026/27 |
+|---|---|---|
+| 0.95 / 1.05 | -0.0008, p(worse) 0.00 | -0.0008, 0.09 |
+| 0.90 / 1.10 | -0.0014, 0.00 | -0.0011, 0.18 |
+| 0.85 / 1.15 | -0.0017, 0.00 | -0.0009, 0.31 |
+
+These clear the gates numerically, but **nothing shipped**, for three reasons:
+
+- The replay's "no prior" sides are all newly promoted clubs. Live,
+  `build.rating_for` already gives a club promoted from a covered division a
+  `transfer_rating` carry, not 1.00 (see `claude/evaluation-audit.md`, "Not
+  replayed"). Only a club with no resolvable prior gets 1.00 live, and those
+  are already flagged unrated (Celtic's Law). The gain here is measured on a
+  population the live build mostly does not price this way, so it is not
+  evidence for changing the live 1.00.
+- The calibration curve was not refitted per setting (the trap above), so
+  the gain may partly be the curve compensating.
+- It confirms the direction, though: promoted sides are weaker than league
+  average, so 1.00 flatters them.
+
+**Next test worth running (not done):** make the replay carry promoted sides
+through `transfer_rating` from the division below (data for en.2, es.2, de.2,
+it.2, fr.2 is already fetched), then test SHRINK_ON_TRANSFER and a promoted
+discount on that, refitting calibration. Only then change `build.rating_for`.
