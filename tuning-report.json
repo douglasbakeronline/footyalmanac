@@ -1,28 +1,1294 @@
 {
- "fitted": {
+ "baseline": {
+  "kind": "curve",
   "a": 1.135,
+  "b": -0.3,
+  "source": "calibration.json",
+  "describe": "T = 1.135 + -0.3 x (confidence - 0.45)"
+ },
+ "candidate": {
+  "kind": "curve",
+  "a": 1.155,
+  "b": -0.3,
+  "describe": "T = 1.155 + -0.3 x (confidence - 0.45)"
+ },
+ "excluded": {
+  "fit": [
+   {
+    "code": "en.3",
+    "reasons": [
+     "test season 2025-26: 85 of 356 matches dated outside 2025-06-01..2026-07-31 (2025-01-01 to 2025-02-07)",
+     "prior/test overlap: prior ends 2025-05-03, test starts 2025-01-01; 288 prior matches on or after the test start, 85 test matches on or before the prior end, 0 identical in both"
+    ]
+   },
+   {
+    "code": "en.5",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.6n",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.6s",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "es.3",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "us.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "us.2",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "mx.1",
+    "reasons": [
+     "test season 2025-26: 3 of 358 matches dated outside 2025-06-01..2026-07-31 (2026-08-01 to 2026-08-01)"
+    ]
+   },
+   {
+    "code": "ar.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "br.2",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "co.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "cl.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "uy.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "pe.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "ec.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "jp.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "kr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cn.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "sa.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "ae.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "in.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "ru.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "pt.2",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "nl.2",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "de.3",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "sco.2",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "cze.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ukr.1",
+    "reasons": [
+     "prior season 2024-25: 2 of 240 matches dated outside 2024-06-01..2025-07-31 (2026-04-16 to 2026-04-30)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "srb.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "hrv.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "cyp.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "hun.1",
+    "reasons": [
+     "prior season 2024-25: 1 of 198 matches dated outside 2024-06-01..2025-07-31 (2026-02-05 to 2026-02-05)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "bgr.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "svk.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "svn.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "isr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "bih.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "alb.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "arm.1",
+    "reasons": [
+     "prior season 2024-25: 71 of 165 matches dated outside 2024-06-01..2025-07-31 (2026-02-24 to 2026-05-28)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "mkd.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mne.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "aze.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mda.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "nir.1",
+    "reasons": [
+     "prior season 2024-25: 101 of 231 matches dated outside 2024-06-01..2025-07-31 (2026-01-07 to 2026-05-11)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wal.1",
+    "reasons": [
+     "prior season 2024-25: 75 of 195 matches dated outside 2024-06-01..2025-07-31 (2026-01-01 to 2026-05-18)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "lux.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mlt.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "and.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ago.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "eg.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ma.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "tn.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "za.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "qa.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "th.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "py.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "bo.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ve.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "hn.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "us.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "de.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "es.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "it.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "fr.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "se.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.w2",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "dk.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.uefa",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.conmebol",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.concacaf",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.caf",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.afc",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.ofc",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "afc.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "concacaf.gold.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "afcon.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "u21.uefa.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "uefa.nations",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "concacaf.nations",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "friendly",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cosafa.u20",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "fifa.wwc.u20",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "asiangames",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   }
+  ],
+  "check": [
+   {
+    "code": "en.3",
+    "reasons": [
+     "prior season 2025-26: 85 of 356 matches dated outside 2025-06-01..2026-07-31 (2025-01-01 to 2025-02-07)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.4",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.5",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.6n",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.6s",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "es.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "es.3",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "de.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "it.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "fr.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "be.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "tr.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "us.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "us.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mx.1",
+    "reasons": [
+     "prior season 2025-26: 3 of 358 matches dated outside 2025-06-01..2026-07-31 (2026-08-01 to 2026-08-01)",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ar.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "br.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "co.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "cl.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "uy.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "pe.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ec.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "jp.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "kr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cn.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "au.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "sa.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ae.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "in.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ru.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "pt.2",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "nl.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "de.3",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "sco.2",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "nor.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "cze.1",
+    "reasons": [
+     "no prior season"
+    ]
+   },
+   {
+    "code": "dnk.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "swe.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ukr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "srb.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "hrv.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cyp.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "hun.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "bgr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "svk.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "svn.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "isr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "isl.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "bih.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "alb.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "arm.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "geo.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "ltu.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "lva.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "est.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mkd.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "mne.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "aze.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "blr.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "mda.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "nir.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wal.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "fro.1",
+    "reasons": [
+     "no test season"
+    ]
+   },
+   {
+    "code": "lux.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "mlt.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "and.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ago.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "eg.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ma.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "tn.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "za.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "qa.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "th.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "py.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "bo.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "ve.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cr.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "hn.1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "us.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "de.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "es.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "it.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "fr.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "se.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "en.w2",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "dk.w1",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.uefa",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.conmebol",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.concacaf",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.caf",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.afc",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "wc.q.ofc",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "afc.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "concacaf.gold.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "afcon.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "u21.uefa.q",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "uefa.nations",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "concacaf.nations",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "friendly",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "cosafa.u20",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "fifa.wwc.u20",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   },
+   {
+    "code": "asiangames",
+    "reasons": [
+     "no prior season",
+     "no test season"
+    ]
+   }
+  ]
+ },
+ "fitted": {
+  "a": 1.155,
   "b": -0.3
  },
  "fitSeason": {
-  "n": 7484,
-  "shipped": 1.0211,
-  "fitted": 1.0208
+  "n": 6474,
+  "shipped": 1.0239,
+  "fitted": 1.0239
  },
  "checkSeason": {
-  "n": 1309,
-  "shipped": 1.0249,
-  "fitted": 1.024,
-  "delta": -0.0008,
-  "sd": 0.0006,
-  "pWorse": 0.076,
+  "n": 1386,
+  "shipped": 1.0256,
+  "fitted": 1.0257,
+  "delta": 0.0001,
+  "sd": 0.0002,
+  "pWorse": 0.751,
   "shippedAcc": 0.482,
   "fittedAcc": 0.482
  },
  "gates": {
   "enoughData": true,
-  "notWorse": true,
-  "worthIt": true
+  "notWorse": false,
+  "worthIt": false
  },
- "pass": true,
- "generated": "2026-09-30"
+ "pass": false,
+ "generated": "2026-10-05"
 }
