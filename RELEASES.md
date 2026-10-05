@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Eredivisie accuracy test: rejected, write-up only (tag pending)
+
+**What changed:** nothing a reader sees. Added `claude/eredivisie-test-2026-10-05.md`.
+**Evidence:** history only. nl.1 home rate 43-45% over three full seasons (30% only in 63 games of 2026-27); model accuracy 52.6% and 50.8%, log loss 0.9715 and 0.9854. Home advantage x0.7-0.9 is worse on both full seasons. RHO -0.12 gains ~0.001 on both (p worse 0.18, 0.25) but the check season has 63 games against the 250 gate, so it cannot ship.
+**Files:** `claude/eredivisie-test-2026-10-05.md`, `RELEASES.md`.
+**Not changed:** any code, model constant, calibration, record or archive.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Office review and next week's priorities (tag pending)
 
 **What changed:** nothing a reader sees. Added `claude/office-review-2026-10-05.md`: what shipped since 21 Sep, rejected tests, record standing, three priorities (Raj, Andrew, Mia).
