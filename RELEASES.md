@@ -46,6 +46,26 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Revert "Make one data source fail more gracefully" (#7): it slowed the daily build from minutes to hours
+
+**What changed** `sources.py` is back to its pre-#7 state and
+`tests/test_source_failures.py` is removed. #7 retried every timeout three times
+with backoff and stopped remembering failed fetches within a run, so a slow
+source was re-fetched and retried on every call: `score.py` went from about a
+minute to two hours, `nametest.py` (with the key set) to 17 minutes, and the
+whole build from ~7 minutes to 3 hours. The 5 Oct scheduled build was then
+cancelled by later pushes before it finished.
+
+**Evidence** Deploy runs: 00:35 UTC 7 min (before), 01:42 UTC 3 h (after);
+step timings from the 01:42 log.
+
+**Not changed** Everything else. Raj's goal stands: a retry that remembers an
+outage for the rest of the run and has a total time budget, reopened as a
+backlog issue.
+
+**Roll back** `git revert` this commit (not recommended without the budget).
+
+---
 ## (tag pending) — Calibration by confidence band: new advisory tool and findings
 
 **What changed for a reader:** nothing on the site. Adds `calibration_bands.py`,
