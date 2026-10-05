@@ -22,6 +22,25 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Premier League home-advantage test: rejected, write-up only
+
+**What changed:** nothing a reader sees. Added `claude/premier-league-test-2026-10-05.md`
+recording a rejected en.1 home-advantage test so nobody repeats it.
+
+**Evidence:** the model over-states Premier League home wins (46-48% vs 41-43%
+actual) and under-states draws in 2024-25 and 2025-26. A lower en.1 home tilt
+(ha_scale 0.8) gained 0.0007 log loss on the fit season 2025-26 with p(worse)
+0.36 (limit 0.30), and the 2026-27 check has 50 fixtures (needs 250). Gates not
+passed, so no change.
+
+**Files:** `claude/premier-league-test-2026-10-05.md`, `RELEASES.md`.
+
+**Not changed:** `engine.py`, `calibration.json`, any model constant.
+
+**Roll back:** `git revert` the commit; no behaviour depends on it.
+
+---
+
 ## (tag pending) — Ratings test: between-season carry-over and a prior for new sides (rejected / deferred, notes only)
 
 **What changed:** nothing in the model. Dated note added to `claude/tuning-evidence.md`.
