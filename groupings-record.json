@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-05T00:12:13Z",
+ "graded": "2026-10-05T00:40:14Z",
  "overall": {
   "groups": 7,
   "settled": 5,
   "won": 0,
   "lost": 5,
   "pending": 2,
-  "legs": 26,
-  "legsWon": 16,
+  "legs": 27,
+  "legsWon": 17,
   "returned": 0,
   "staked": 5,
   "expected": 1.2
@@ -19,8 +19,8 @@
    "won": 0,
    "lost": 1,
    "pending": 2,
-   "legs": 8,
-   "legsWon": 6,
+   "legs": 9,
+   "legsWon": 7,
    "returned": 0,
    "staked": 1,
    "expected": 0.26
@@ -56,8 +56,8 @@
   "won": 0,
   "lost": 2,
   "pending": 2,
-  "legs": 12,
-  "legsWon": 8,
+  "legs": 13,
+  "legsWon": 9,
   "returned": 0,
   "staked": 2,
   "expected": 0.61
@@ -153,9 +153,9 @@
      "p": 0.4407,
      "status": "pending",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Chicago Bears",
@@ -178,8 +178,8 @@
        "odds": 1.25,
        "est": true,
        "p": 0.8833,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "28-0"
       },
       {
        "pick": "Seattle Seahawks",
