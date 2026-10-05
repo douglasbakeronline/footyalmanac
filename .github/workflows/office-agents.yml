@@ -12,6 +12,7 @@ name: Office agents
 on:
   schedule:
     - cron: "30 6 * * *"   # 07:30 BST / 06:30 GMT, after deploy.yml
+    - cron: "30 9 * * *"   # backup: GitHub sometimes skips a scheduled start; runs only if the first did not
   workflow_dispatch:
     inputs:
       task:
@@ -45,10 +46,20 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       agents: ${{ steps.p.outputs.agents }}
+      skip: ${{ steps.p.outputs.skip }}
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
       - id: p
         run: |
+          # the backup start stands down if a sprint already started today (UTC)
+          if [ "${{ github.event.schedule }}" = "30 9 * * *" ]; then
+            n=$(gh run list -R "${{ github.repository }}" -w office-agents.yml -L 20 --json createdAt,databaseId \
+                --jq "[.[] | select(.createdAt >= \"$(date -u +%F)\" and .databaseId != ${{ github.run_id }})] | length")
+            if [ "$n" -gt 0 ]; then echo "a sprint already ran today"; echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0; fi
+          fi
+          echo "skip=0" >> "$GITHUB_OUTPUT"
           A="${{ inputs.agent }}"; T="${{ inputs.task }}"
           [ "${{ github.event_name }}" = "schedule" ] && A=all
           if [ -n "$T" ]; then echo 'agents=[""]' >> "$GITHUB_OUTPUT"
@@ -57,6 +68,7 @@ jobs:
 
   work:
     needs: plan
+    if: needs.plan.outputs.skip != '1'
     runs-on: ubuntu-latest
     timeout-minutes: 75
     strategy:
@@ -158,8 +170,8 @@ jobs:
         run: python3 /tmp/agents-trusted/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --wait --no-deploy
 
   publish:
-    needs: work
-    if: always()
+    needs: [plan, work]
+    if: always() && needs.plan.outputs.skip != '1'
     runs-on: ubuntu-latest
     permissions:
       actions: write
