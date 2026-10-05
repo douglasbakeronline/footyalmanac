@@ -166,3 +166,13 @@ Not built.
 Verdict: the 80% league bar stays. Rejected without new evidence: a bar of 75%
 or 85%, and per-league bars. Reopen per-league once 2026/27 gives a league 30+
 calls at 80%.
+
+
+## Today's list is pinned (5 Oct 2026)
+
+`daylist.py` (run in deploy after the rebuild) writes `daylist.json` / `daylist.js`:
+every list and reserve pick for the UK day, chosen by the latest archived price
+published before its start, with results from the three record files. The page
+merges started picks into today's section (`pinnedRow`), so a day no longer
+empties as it is played. The office (footyalmanac-hq `pin_today`) reads the
+same file. Results land with site builds, not live.

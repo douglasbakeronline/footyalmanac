@@ -3,6 +3,16 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Today's Daily List stays put: started picks show In play, Won or Lost (release-2026-10-05-22)
+
+**What changed:** today's section of the Daily List no longer empties as the day is played. A pick that has started stays in place, frozen at the price published before its start, with a status: In play, Result due, Won, Lost or Void, plus the score or winner. The day header adds "So far: list W won, L lost · reserve ...". The office reads the same file, so its Today tab matches the site.
+**Why:** on 5 Oct the site opened with 2 list and 4 reserve tennis picks (plus Aruba). By 18:00 both the site and the office showed "0 picks", because the live data files only carry games that have not started.
+**How:** new `daylist.py`, run in `deploy.yml` after the rebuild, writes `daylist.json` / `daylist.js` for the UK day. Membership is the latest archived price published before each start (`predictions*/`), the rule the record grades by. Results are read from `record.json`, `tennis-record.json` and `sports-record.json`. Nothing is priced, fitted or graded anew. Results arrive with each site build, not live.
+**Evidence:** replayed 5 Oct from the archive: list 3 (Alcaraz, Swiatek, Aruba), all won; reserve 4, 2 won and 2 lost. Tests in `tests/test_daylist.py` (pre-start rule, late prices ignored, legacy unpublished prices skipped, UK day not UTC day, won/lost/void). Checked in a browser at 420px and 1280px.
+**Files:** `daylist.py`, `index.html`, `.github/workflows/deploy.yml`, `.gitignore`, `tests/test_daylist.py`, `claude/daily-list.md`, `RELEASES.md`.
+**Not changed:** any model, threshold, list rule, record or archive.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-05 Grading audit: ties void, abandoned games ungraded (tag pending)
 
 **What changed:** the other-sports record no longer counts a tie as a miss (it is void), abandoned, suspended and forfeited games are never graded, and tennis no longer labels Berrettini's matches "retired".

@@ -252,6 +252,14 @@ jobs:
       - name: Rebuild with the updated record
         run: python3 build.py --days 7 --top 50
 
+      # Today's Daily List, pinned for the UK day (daylist.py): every pick as it
+      # was published before its start, with its result from the record. The
+      # live files drop a game at kick-off, so without this the day's list
+      # emptied as it was played (5 Oct 2026). The office reads daylist.json.
+      # Allowed to fail: the live list still publishes without it.
+      - name: Pin today's Daily List
+        run: python3 daylist.py || echo "::warning::daylist failed; today's started picks will not show"
+
       - name: Assemble the site
         run: |
           mkdir -p _site
@@ -272,6 +280,8 @@ jobs:
             echo "::warning::no sports files this run — sport tabs will show their empty state"
           cp tennis-record.js _site/tennis-record.js 2>/dev/null || \
             echo "::warning::no tennis-record.js this run — tennis results will show their empty state"
+          cp daylist.js daylist.json _site/ 2>/dev/null || \
+            echo "::warning::no daylist this run — started picks will not show on today's list"
           cp groupings-data.js groupings.json _site/ 2>/dev/null || \
             echo "::warning::no groupings this run — the Odds tab will show its empty state"
 

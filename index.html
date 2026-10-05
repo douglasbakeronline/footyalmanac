@@ -299,6 +299,19 @@ details.how p{margin-top:8px;padding-left:22px}
 }
 .list-past .d{font-family:var(--f-num);font-size:12px;color:var(--mute)}
 .list-past .ok{color:var(--home);font-weight:700}
+/* started Daily List picks (pinnedRow): a status pill, no background tint */
+.row.pinned{cursor:default}
+.pin-gap{display:block}
+.pin-st{display:inline-block;font:700 11px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 6px;border:1px solid var(--cover-ink);white-space:nowrap}
+.pin-st.won{background:#2f6b52;color:#fff;border-color:#2f6b52}
+.pin-st.lost{background:var(--red);color:#fff;border-color:var(--red)}
+.pin-st.void,.pin-st.due,.pin-st.up{background:transparent;color:var(--ink-2)}
+.pin-st.live{background:var(--yellow);color:var(--cover-ink)}
+.row.pinned .pred{min-width:0;overflow:hidden;text-align:center}
+.row.pinned .pred small{display:block;color:var(--ink-2);font-size:12px;margin-top:4px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:860px){.row.pinned .pred{text-align:left}.row.pinned .pred small{display:inline;margin:0 0 0 8px}}
 .list-past .no{color:var(--away);font-weight:700}
 .list-past .sc{font-family:var(--f-num);font-size:12px;color:var(--ink-2);white-space:nowrap}
 
@@ -419,6 +432,8 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   text-shadow:1.5px 1.5px 0 var(--cover-ink);
 }
 .day-head .count{font-family:var(--f-num);font-size:12px;color:var(--yellow);margin-left:auto;font-weight:600;white-space:nowrap}
+.day-head .count .sofar{display:block;text-align:right}
+@media (max-width:860px){.day-head .count .sofar{text-align:left}}
 
 /* ---------- column ruler ---------- */
 .ruler{
@@ -1020,6 +1035,7 @@ footer b{color:var(--ink-2)}
 <script src="sports-data.js"></script>
 <script src="sports-record.js"></script>
 <script src="groupings-data.js"></script>
+<script src="daylist.js"></script>
 <script>
 (function(){
 "use strict";
@@ -1917,6 +1933,21 @@ function renderList(){
   if(TDL && TDL.matches) TDL.matches.map(tennisAsGame).forEach(g =>
     g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
            : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g}));
+  // Today's list stays put (daylist.py, 5 Oct 2026). The live files only carry
+  // games that have not started, so a day's picks used to vanish at kick-off.
+  // Once a pick starts it comes from the archive, frozen as it was published
+  // before the start, with its result from the record when one has landed.
+  const DL = window.__DAY_LIST__;
+  if(DL && DL.date && DL.date === localDay(new Date().toISOString())){
+    const nowMs = Date.now(), nm = s => String(s || "").toLowerCase();
+    const idOf = it => it.kind === "football"
+      ? `football|${nm(it.g.home.name)}|${nm(it.g.away.name)}` : `${it.g.sport}|${nm(it.g.home)}|${nm(it.g.away)}`;
+    const pins = [...(DL.list || []), ...(DL.reserve || [])]
+      .filter(p => p.status !== "upcoming" || Date.parse(p.start) <= nowMs);
+    const pinIds = new Set(pins.map(p => `${p.sport}|${nm(p.home)}|${nm(p.away)}`));
+    [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
+    pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
+  }
   const strength = it => [(it.g.accuracy && it.g.accuracy.hit) || 0, it.g.confidence];
   const byStrength = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
   // Kick-off order keeps the bar: picks that clear it still come before the
@@ -1932,10 +1963,16 @@ function renderList(){
     const extra = shown((resDay[date] || []).sort(byStrength).slice(0, Math.max(0, LIST_TARGET - items.length)));
     const sec = document.createElement("section");
     sec.className = "day";
+    const tally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result);
+      const w = d.filter(it => it.g.status === "won").length, l = d.filter(it => it.g.status === "lost").length;
+      return w + l ? `${w} won, ${l} lost` : ""; };
+    const tl = tally(items), tr = tally(extra);
+    const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}</div></div>`;
+      <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}</div></div>`;
     const put = (it, i) => it.kind === "football"
       ? appendFixture(sec, it.g, i, date, false)
+      : it.kind === "pinned" ? sec.appendChild(pinnedRow(it.g, i))
       : sec.appendChild(sportRow(it.g, i, true));
     items.forEach(put);
     if(extra.length){
@@ -2308,6 +2345,42 @@ function sportDetail(g){
   return `<div class="detail">${research}${verdict}${why}${sheets}${h2h}</div>`;
 }
 
+// A Daily List pick that has started: frozen as published before the start,
+// with Won / Lost / Void from the record, or In play / Result due until the
+// next build grades it. Results land on site builds, not live.
+const PLAY_HOURS = {football:2.25, tennis:3.5, nfl:3.5, mlb:3.5, nba:2.75, rugby:2};
+function pinStatus(g){
+  if(g.result) return g.result.void ? ["void", "Void"] : g.result.ok ? ["won", "Won"] : ["lost", "Lost"];
+  const t = Date.parse(g.start), now = Date.now();
+  if(now < t) return ["up", "Not started"];
+  return now - t < (PLAY_HOURS[g.sport] || 3) * 36e5 ? ["live", "In play"] : ["due", "Result due"];
+}
+function pinnedRow(g, i){
+  const k = SPORT_K[g.tier] ?? 0;
+  const [cls, label] = pinStatus(g);
+  const name = g.sport === "football" ? "Football" : g.sport === "tennis" ? "Tennis"
+    : (SD && SD.sports && SD.sports[g.sport] ? SD.sports[g.sport].name : String(g.sport).toUpperCase());
+  const barHtml = g.sport === "football" && g.p
+    ? probBar(pct(g.p.h), pct(g.p.d), 100 - pct(g.p.h) - pct(g.p.d), 13)
+    : (g.pHome != null ? tennisBar(Math.round(g.pHome*100), 100 - Math.round(g.pHome*100)) : "");
+  const r = g.result || {};
+  const detail = r.score ? r.score : r.winner ? `${r.winner} won` : "";
+  const line = document.createElement("div");
+  line.className = "row-line";
+  line.innerHTML = `<span class="star-btn pin-gap" aria-hidden="true"></span>
+    <div class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}">
+    <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
+    <div class="ko"><time datetime="${g.start}">${g.timed === false ? "" : localTime(g.start)}</time>
+      <div class="comp"><span class="tour-chip">${name}</span><span>${g.comp || ""}</span></div></div>
+    <div class="side"><div class="club${g.side === "h" ? " pick" : ""}">${g.home}</div>
+      <div class="stat">Pick: ${g.pick}</div></div>
+    <div class="barcell">${barHtml}</div>
+    <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? ` <small>${detail}</small>` : ""}</div>
+    <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}">${g.away}</div>
+      <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}</div></div>`;
+  return line;
+}
 function sportRow(g, i, showSport, host){
   const id = "s|" + (g.id || (g.when + "|" + g.home + "|" + g.away));
   const ph = Math.round(g.pHome*100), pa = 100 - ph;

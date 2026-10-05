@@ -15,3 +15,6 @@ __pycache__/
 # External audit bundles and generated audit outputs: kept out of git
 football_accuracy_audit/
 audit-out/
+# Today's pinned Daily List, rebuilt by daylist.py on every deploy
+daylist.json
+daylist.js
