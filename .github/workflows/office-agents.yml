@@ -115,13 +115,34 @@ jobs:
           claude_code_oauth_token: ${{ env.AGENT_OAUTH }}
           prompt: ${{ steps.pick.outputs.prompt }}
           claude_args: "--model sonnet --max-turns 50 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
+      # A pasted private key often loses its line breaks (or gains literal \n),
+      # which the token action rejects as "Invalid keyData". Report its shape,
+      # never its value, and rebuild a clean PEM.
+      - name: Normalise the App key
+        if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0' && env.HAS_APP == 'yes'
+        env:
+          RAW: ${{ secrets.OFFICE_APP_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, re, textwrap
+          raw = os.environ["RAW"].replace("\\n", "\n").replace("\r", "").strip().strip('"')
+          m = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", raw, re.S)
+          kind, body = (m.group(1), m.group(2)) if m else ("RSA PRIVATE KEY", raw)
+          body = re.sub(r"[^A-Za-z0-9+/=]", "", body)
+          print(f"key: {len(raw)} chars, {raw.count(chr(10)) + 1} lines, header {'found' if m else 'missing'}, body {len(body)} base64 chars")
+          pem = f"-----BEGIN {kind}-----\n" + "\n".join(textwrap.wrap(body, 64)) + f"\n-----END {kind}-----"
+          for line in textwrap.wrap(body, 64): print(f"::add-mask::{line}")
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write("APP_KEY<<__PEM__\n" + pem + "\n__PEM__\n")
+          PY
       - name: Mint the App token
         id: app
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0' && env.HAS_APP == 'yes'
+        continue-on-error: true   # without it the pull request still opens; the merge gate then holds it
         uses: actions/create-github-app-token@v1
         with:
           app-id: ${{ secrets.OFFICE_APP_ID }}
-          private-key: ${{ secrets.OFFICE_APP_KEY }}
+          private-key: ${{ env.APP_KEY }}
       - name: Verify and open a pull request
         id: pr
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
@@ -131,7 +152,7 @@ jobs:
           mkdir -p /tmp/office-agent
           bash /tmp/agents-trusted/open_pr.sh "${{ steps.pick.outputs.key }}" "${{ steps.pick.outputs.owner }}" "${{ steps.pick.outputs.title }}"
       - name: Merge it once Tests and Evaluation pass
-        if: steps.pr.outputs.pr != ''
+        if: steps.pr.outputs.pr != '' && steps.app.outputs.token != ''
         env:
           GH_TOKEN: ${{ github.token }}   # reads checks and evidence, merges and tags
         run: python3 /tmp/agents-trusted/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --wait --no-deploy
