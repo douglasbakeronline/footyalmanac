@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Daily List bar replayed, unchanged (tag pending)
+
+**What changed:** nothing a reader sees. The league bar stays at 80%. Write-up only.
+**Evidence:** walk-forward replay, win picks. 80%+: 81.9% of 94 (2025/26), 81.8% of 11 (2026/27). 75%+: 79.4% of 189, the extra 95 picks landed about 77%; bootstrap change vs 80% +2.5 points, 90% interval -2.4 to +7.5, so no real difference. 85%+: 69.2% of 39, change -12.4 points, interval -21.6 to -4.6, clearly worse. Per-league bars: no league reaches 30 picks at 80%, so nothing to fit.
+**Files:** `claude/daily-list.md`, `RELEASES.md`.
+**Not changed:** `build.py`, `LIST_MIN`, any model number.
+**Roll back:** `git revert` the merge commit.
+
 ## Rolling back
 
 The bot commits the daily archive to `main` between releases, so never
