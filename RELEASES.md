@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Weakest-sport check: WTA, no change (tag pending)
+
+**What changed:** nothing a reader sees. Appended a re-read to `claude/tennis-hit-rate.md`.
+**Evidence:** `tennis-record.json` read only. WTA 55.3% of 190 against 60.7% quoted; main draw 56.8% of 169 against 60.9% (1.1 standard errors); qualifying 42.9% of 21. ATP main 60.2% of 98 against 63.1%. NFL, MLB, rugby have 15-20 graded games each, too few to rank. The thin-player shrink was already rejected today; the surface lookup has no clay sample to test.
+**Files:** `claude/tennis-hit-rate.md`, `RELEASES.md`.
+**Not changed:** any code, model constant, record or archive.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-05 Eredivisie accuracy test: rejected, write-up only (tag pending)
 
 **What changed:** nothing a reader sees. Added `claude/eredivisie-test-2026-10-05.md`.

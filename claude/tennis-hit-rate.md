@@ -57,3 +57,23 @@ effect worth correcting.** Nothing in `tennis.json`, `build_tennis.py` or
   ITF/125 results), not a constant. Re-check at 500+ graded matches.
 - Surface hard-coding matters from clay season; plan the lookup before April.
 - Retirements are graded (7 matches, 2 landed); tiny, leave.
+
+## Re-read, 5 October 2026 (Theo, weakest-sport task): no change
+
+Record read only (rule 1), 330 rows, 1 void-excluded set: 
+
+| | n | landed | quoted |
+|---|---|---|---|
+| WTA all | 190 | 55.3% | 60.7% |
+| WTA main draw | 169 | 56.8% | 60.9% |
+| WTA qualifying | 21 | 42.9% | 59.6% |
+| WTA main, quoted 62%+ | 54 | 68.5% | 72.5% |
+| ATP main | 98 | 60.2% | 63.1% |
+
+WTA is still the weakest sport, but main draw is 1.1 standard errors under
+quote (SE about 3.7 points on 169) and the 62%+ band is 4 points under on 54
+matches, 0.7 SE. Other sports have 15-20 graded games each, too few to rank.
+The one candidate improvement not already tested today (thin-player shrink,
+above) is the surface lookup, which needs a maintained tournament list and has
+no clay sample to test on. Nothing met the bar to ship, so nothing changed.
+Re-check at 500+ graded WTA matches.
