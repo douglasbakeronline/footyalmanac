@@ -56,6 +56,17 @@ def latest_checks(check_runs, sha, policy):
     return best
 
 
+def model_change_cleared(evidence):
+    ev = evidence or {}
+    if ev.get("verdict") == "pass":
+        return True
+    if ev.get("verdict") != "n/a":
+        return False
+    chk = ((ev.get("splits") or {}).get("check") or {}).get("paired") or {}
+    fit = ((ev.get("splits") or {}).get("fit") or {}).get("paired") or {}
+    return bool(chk.get("n")) and chk.get("identical") is True and fit.get("identical", True) is True
+
+
 def decide(pr, check_runs, reviews, policy, now, evidence=None, main_commits_since_base=None):
     """(merge: bool, reasons: list[str]). Fails closed.
 
@@ -118,9 +129,12 @@ def decide(pr, check_runs, reviews, policy, now, evidence=None, main_commits_sin
             if drift:
                 reasons.append("main changed since evaluation (" + ", ".join(drift[:3]) + "): re-run evaluation")
 
-    # 4. model and calibration changes need a passing evaluation, not just n/a
+    # 4. model and calibration changes need a passing evaluation. The one n/a
+    # that counts is a scored run whose predictions are identical to the
+    # baseline on the snapshot (a grading or data fix with no model effect,
+    # Douglas 5 Oct 2026); an unscored n/a (docs) does not.
     cls = classes_for(files, policy)
-    if cls & set(policy.get("model_classes", [])) and (evidence or {}).get("verdict") != "pass":
+    if cls & set(policy.get("model_classes", [])) and not model_change_cleared(evidence):
         reasons.append("model or calibration change without an evaluation pass")
 
     # 5. owner approval of this exact commit, where the change needs it (workflow/security only)

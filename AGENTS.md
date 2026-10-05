@@ -78,7 +78,9 @@ queue, one rulebook (this file and `CLAUDE.md`) and one merge gate.
    label (`platform:myclaw`, `platform:perplexity`) and a comment saying what
    you will do. Do not take an issue another platform has claimed. Office
    agents only take free issues or `platform:office` ones. To propose new
-   work, open an issue with the "Office task" template.
+   work, open an issue with the "Office task" template. Each morning the sprint
+   also opens one task per platform (`[myclaw] ...`, `[perplexity] ...`),
+   already labelled for it: start there.
 2. **Branch, never main.** Name branches `<platform>/<YYYY-MM-DD>-<topic>`.
    `main` is protected: direct pushes are refused.
 3. **Stay in your lane.** Never edit `.github/`, `agents/`, `CLAUDE.md`,

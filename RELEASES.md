@@ -27,6 +27,27 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any code, model number, record or archive.
 **Roll back:** `git revert` the merge commit.
 
+## 2026-10-05 Every AI ships more, checks kept (release-2026-10-05-17)
+
+**What changed**
+- `agents/merge_gate.py`: a model- or calibration-class change whose
+  evaluation was scored and found the candidate's predictions identical to the
+  baseline on the snapshot (a grading or data fix with no model effect) now
+  merges like any other passing change. An unscored n/a still does not count,
+  and any change to predictions still needs an evaluation pass. Tests added.
+- `agents/pick_task.py --platform-tasks`: each sprint opens one task per other
+  AI platform (MyClaw, Perplexity) as a labelled `office-backlog` issue;
+  office agents leave platform-claimed objectives alone.
+- `office-agents.yml`: the plan job runs it.
+
+**Why** Douglas, 5 Oct: every AI should be able to make changes, with checks
+kept. Susie's grading fix (#18) was held only because it did not change any
+prediction.
+
+**Roll back** `git revert` this commit.
+
+---
+
 ## 2026-10-05 Archive and retune pushes use the office App (release-2026-10-05-16)
 
 **What changed** `deploy.yml` and `tune.yml` mint an office App token and push

@@ -174,9 +174,43 @@ def candidates():
         "rules (new leagues stay off the list until replayed above the bar)."))
     return out
 
+def claimed_objectives():
+    """Objectives held by open issues another AI platform has claimed: office agents leave them alone."""
+    held = set()
+    for i in gh(["issue", "list", "--label", "office-backlog", "--state", "open", "-L", "50", "--json", "labels"]):
+        names = [l["name"] for l in i.get("labels", [])]
+        if any(n.startswith("platform:") and n != "platform:office" for n in names):
+            held |= {n[10:] for n in names if n.startswith("objective:")}
+    return held
+
+def platform_tasks(platforms, recent):
+    """Give each other AI platform one open task of its own (Douglas 5 Oct 2026: every AI makes changes).
+    A platform with an open claimed issue already has work; otherwise it gets the next free candidate."""
+    issues = gh(["issue", "list", "--label", "office-backlog", "--state", "open", "-L", "50", "--json", "number,labels"])
+    taken = set(recent) | claimed_objectives()
+    for plat in platforms:
+        label = f"platform:{plat}"
+        if any(label in [l["name"] for l in i.get("labels", [])] for i in issues):
+            print(f"{plat}: already has an open task"); continue
+        pick = next((c for c in candidates() if c[0] not in taken), None)
+        if not pick:
+            print(f"{plat}: nothing free today"); continue
+        key, owner, title, brief = pick
+        taken.add(key)
+        subprocess.run(["gh", "label", "create", f"objective:{key}", "--color", "d4c5f9", "--force"], capture_output=True)
+        body = (f"{brief}\n\nAssigned to **{plat}** by the office sprint. Follow AGENTS.md, \"Other AI platforms\": "
+                f"branch `{plat}/<date>-{key}`, pull request labelled `office-agent`, `{label}`, `objective:{key}`, "
+                f"`auto-merge-ok`, with \"Closes #<this issue>\". The merge gate decides.")
+        r = subprocess.run(["gh", "issue", "create", "--title", f"[{plat}] {title}", "--body", body,
+                            "--label", "office-backlog", "--label", label, "--label", f"objective:{key}"],
+                           capture_output=True, text=True)
+        print(f"{plat}: {key} -> {r.stdout.strip() or r.stderr.strip()}")
+
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--task", default=""); ap.add_argument("--agent", default="")
-    ap.add_argument("--list-agents", action="store_true"); a = ap.parse_args()
+    ap.add_argument("--list-agents", action="store_true")
+    ap.add_argument("--platform-tasks", default="", help="comma-separated platforms to give one task each, e.g. myclaw,perplexity")
+    a = ap.parse_args()
     if a.list_agents:
         print(json.dumps(SPRINT)); return
     prs = gh(["pr", "list", "--label", "office-agent", "--state", "all", "-L", "60", "--json", "number,state,labels,createdAt"])
@@ -188,6 +222,9 @@ def main():
         for l in p.get("labels", []):
             if l["name"].startswith("objective:") and (p["state"] == "OPEN" or made > cutoff):
                 recent.add(l["name"][10:])
+    recent |= claimed_objectives()
+    if a.platform_tasks:
+        platform_tasks([x.strip() for x in a.platform_tasks.split(",") if x.strip()], recent); return
     out = os.environ.get("GITHUB_OUTPUT", "/dev/stdout")
     def emit(**kw):
         with open(out, "a") as f:

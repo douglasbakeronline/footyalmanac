@@ -65,6 +65,11 @@ jobs:
           if [ -n "$T" ]; then echo 'agents=[""]' >> "$GITHUB_OUTPUT"
           elif [ "$A" = all ]; then echo "agents=$(python3 agents/pick_task.py --list-agents)" >> "$GITHUB_OUTPUT"
           else echo "agents=[\"$A\"]" >> "$GITHUB_OUTPUT"; fi
+      # every AI platform gets its own task each sprint (AGENTS.md, "Other AI platforms")
+      - name: Give the other AI platforms a task each
+        if: steps.p.outputs.skip != '1' && inputs.task == ''
+        continue-on-error: true
+        run: python3 agents/pick_task.py --platform-tasks myclaw,perplexity
 
   work:
     needs: plan

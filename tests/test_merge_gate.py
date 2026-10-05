@@ -152,6 +152,19 @@ class OwnerApproval(unittest.TestCase):
             ok, why = decide(pr(files=[f]))
             self.assertFalse(ok, f); self.assertTrue(any("evaluation pass" in r for r in why), f)
 
+    def test_model_file_with_identical_predictions_merges(self):
+        ev = evidence(verdict="n/a")
+        ev["splits"] = {"check": {"paired": {"n": 300, "identical": True}}, "fit": {"paired": {"n": 6000, "identical": True}}}
+        ok, why = decide(pr(files=["sports.py", "score_tennis.py"]), ev=ev)
+        self.assertTrue(ok, why)
+
+    def test_identical_needs_a_scored_check_split(self):
+        for splits in ({}, {"check": {"paired": {"n": 0, "identical": True}}},
+                       {"check": {"paired": {"n": 300, "identical": True}}, "fit": {"paired": {"n": 9, "identical": False}}}):
+            ev = evidence(verdict="n/a"); ev["splits"] = splits
+            ok, _ = decide(pr(files=["engine.py"]), ev=ev)
+            self.assertFalse(ok, splits)
+
     def test_approval_of_older_commit_holds(self):
         ok, _ = decide(pr(files=["agents/open_pr.sh"]), reviews=[review(sha=OLD)])
         self.assertFalse(ok)
