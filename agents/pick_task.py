@@ -85,7 +85,8 @@ STANDING = {
 }
 PROTECTED = ["record.json", "predictions/", "predictions-sports/", "predictions-tennis/", "current/", "history/",
              "history-sports/", "dashboard.html", "adjustments.json", "calibration.json", "tuning-report.json",
-             "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js", ".github/"]
+             "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js", ".github/",
+             "agents/", "CLAUDE.md", "AGENTS.md"]
 MAX_OPEN = 6
 COOLDOWN_DAYS = 7
 
@@ -224,7 +225,7 @@ How to work:
 When finished, write two files:
 1. /tmp/office-agent/report.md: the pull request description (what and why, evidence with the actual numbers, files, what was not changed, how to roll back).
 2. /tmp/office-agent/meta.json: {{"type": "model|data|code|docs|ui", "gates": "passed|failed|n/a", "automerge": true or false, "summary": "one sentence for the office stand-up"}}
-Nobody reviews your pull request: if the checks pass (python3 nametest.py, python3 -m unittest discover -s tests, and the build when you touch the pipeline) it merges straight away. So only change code you are confident is right, never change model numbers unless every gate passed (a model change with gates other than passed is closed, not merged), and when in doubt ship the write-up instead of the change. Set automerge to false only if you believe the change should not ship; it will then be closed with your report kept."""
+Nobody reviews your pull request: if the checks pass (python3 nametest.py, python3 -m unittest discover -s tests, the build when you touch the pipeline, and the independent Evaluation, which needs a pass for any model change) it merges straight away. So only change code you are confident is right, never change model numbers unless every gate passed (a model change with gates other than passed is closed, not merged), and when in doubt ship the write-up instead of the change. Set automerge to false only if you believe the change should not ship; it will then be closed with your report kept."""
     print(f"Task: {key} -> {name} ({role}): {title}")
     emit(skip="0", key=key, owner=owner, title=title, prompt=prompt)
 

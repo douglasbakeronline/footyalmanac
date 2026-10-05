@@ -1,0 +1,5 @@
+{
+  "_comment": "Frozen evaluation snapshots the owner has approved. Raw data lives only in the private repo douglasbakeronline/footyalmanac-eval-data (one release per snapshot, asset snapshot.json). Add an entry only through a reviewed pull request. The evaluation workflow uses the last entry.",
+  "store": "douglasbakeronline/footyalmanac-eval-data",
+  "snapshots": []
+}

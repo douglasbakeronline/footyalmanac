@@ -1,0 +1,169 @@
+name: Evaluation
+
+# Independent evaluation of a pull request against main on an approved, frozen
+# snapshot. Trusted code (the harness and the scorer) always comes from main;
+# the candidate's code only produces per-fixture probabilities, offline and
+# with no secrets. Evidence (metrics, never raw rows) is uploaded as the
+# artifact "evaluation-evidence" and summarised on the pull request.
+#
+# The job's check, "evaluation", is green only for verdict pass or n/a
+# (no model or calibration change). fail and insufficient are red: the merge
+# gate holds them. Nothing here refits, applies calibration, writes to main or
+# deploys.
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: evaluation-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  evaluation:
+    name: evaluation
+    if: github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Check out main (trusted harness)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: base
+          persist-credentials: false
+      - name: Check out the candidate
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: cand
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Classify the change (policy from main)
+        id: cls
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p ev
+          gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/files?per_page=100" \
+            --paginate --jq '.[].filename' > ev/files.txt
+          python3 - <<'PY'
+          import json, os, sys
+          files = [l.strip() for l in open("ev/files.txt") if l.strip()]
+          if not os.path.exists("base/agents/policy.json"):
+              # The harness is not on main yet (first pull request): fail closed.
+              cls, model = ["harness-not-on-main"], True
+          else:
+              sys.path.insert(0, "base/agents")
+              import merge_gate as G
+              pol = G.load_policy("base/agents/policy.json")
+              cls = sorted(G.classes_for(files, pol))
+              model = bool(set(cls) & set(pol["model_classes"])) or "unknown" in cls
+          json.dump({"files": files, "classes": cls, "model_change": model}, open("ev/classes.json", "w"), indent=1)
+          open(__import__("os").environ["GITHUB_OUTPUT"], "a").write(f"model={'1' if model else '0'}\n")
+          print(cls, "model change" if model else "no model change")
+          PY
+          echo "base_sha=$(git -C base rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+      - name: Pick the approved snapshot
+        id: snap
+        if: steps.cls.outputs.model == '1'
+        run: |
+          python3 - <<'PY'
+          import json, os
+          p = "base/evaluation/approved-snapshots.json"
+          a = json.load(open(p)) if os.path.exists(p) else {"store": "", "snapshots": []}
+          s = a["snapshots"][-1] if a["snapshots"] else None
+          with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+              f.write(f"store={a['store']}\n")
+              f.write(f"id={s['id'] if s else ''}\nsha={s['sha256'] if s else ''}\n")
+          print(s or "no approved snapshot")
+          PY
+
+      - name: Fetch the snapshot (read-only token, this step only)
+        if: steps.cls.outputs.model == '1' && steps.snap.outputs.id != ''
+        env:
+          GH_TOKEN: ${{ secrets.EVAL_DATA_READ }}
+        run: |
+          mkdir -p /tmp/snap
+          if [ -z "$GH_TOKEN" ]; then echo "::warning::EVAL_DATA_READ is not set"; exit 0; fi
+          gh release download "${{ steps.snap.outputs.id }}" -R "${{ steps.snap.outputs.store }}" -p snapshot.json -D /tmp/snap || true
+
+      - name: Predict offline (no network, no secrets)
+        if: steps.cls.outputs.model == '1'
+        run: |
+          if [ ! -f /tmp/snap/snapshot.json ]; then echo "no snapshot available"; exit 0; fi
+          GOT=$(python3 base/evaluation/predict.py --verify /tmp/snap/snapshot.json)
+          if [ "$GOT" != "${{ steps.snap.outputs.sha }}" ]; then echo "::error::snapshot sha256 $GOT is not the approved ${{ steps.snap.outputs.sha }}"; rm -f /tmp/snap/snapshot.json; exit 0; fi
+          for side in base cand; do
+            sudo unshare --net -- sudo -u "$USER" env -i PATH="$PATH" HOME="$HOME" LANG=C.UTF-8 \
+              python3 base/evaluation/predict.py --repo "$side" --snapshot /tmp/snap/snapshot.json \
+                --out "/tmp/snap/$side.jsonl" --meta "ev/meta-$side.json" || echo "$side prediction failed"
+          done
+
+      - name: Score with main's code and write the evidence
+        id: score
+        run: |
+          cat > ev/context.json <<JSON
+          {"base_sha": "${{ steps.cls.outputs.base_sha }}", "candidate_sha": "${{ github.event.pull_request.head.sha }}",
+           "pr": ${{ github.event.pull_request.number }}, "snapshot_id": "${{ steps.snap.outputs.id }}",
+           "run": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"}
+          JSON
+          python3 - <<'PY'
+          import json, os, subprocess, sys
+          ctx = json.load(open("ev/context.json")); cls = json.load(open("ev/classes.json"))
+          if not cls["model_change"]:
+              ev = {"verdict": "n/a", "reasons": ["no model or calibration change: " + ", ".join(cls["classes"])],
+                    "context": ctx, "base_sha": ctx["base_sha"], "candidate_sha": ctx["candidate_sha"], "classes": cls}
+              json.dump(ev, open("ev/evidence.json", "w"), indent=1)
+              open("ev/summary.md", "w").write("### Evaluation: **n/a**\n\nNo model or calibration change (" + ", ".join(cls["classes"]) + ").")
+          elif not (os.path.exists("/tmp/snap/base.jsonl") and os.path.exists("/tmp/snap/cand.jsonl")):
+              why = ("the evaluation harness is not on main yet" if "harness-not-on-main" in cls["classes"]
+                     else "no approved snapshot yet" if not ctx["snapshot_id"] else "snapshot unavailable or predictions failed")
+              ev = {"verdict": "insufficient", "reasons": [why], "context": ctx, "base_sha": ctx["base_sha"],
+                    "candidate_sha": ctx["candidate_sha"], "classes": cls}
+              json.dump(ev, open("ev/evidence.json", "w"), indent=1)
+              open("ev/summary.md", "w").write(f"### Evaluation: **insufficient**\n\n- {why}\n\nTreated as a hold, not a pass.")
+          else:
+              subprocess.run([sys.executable, "base/evaluation/score_pair.py", "--base", "/tmp/snap/base.jsonl",
+                              "--cand", "/tmp/snap/cand.jsonl", "--meta-base", "ev/meta-base.json", "--meta-cand", "ev/meta-cand.json",
+                              "--context", "ev/context.json", "--out", "ev/evidence.json", "--summary", "ev/summary.md"], check=True)
+              ev = json.load(open("ev/evidence.json")); ev["classes"] = cls
+              json.dump(ev, open("ev/evidence.json", "w"), indent=1)
+          v = json.load(open("ev/evidence.json"))["verdict"]
+          open(os.environ["GITHUB_OUTPUT"], "a").write(f"verdict={v}\n")
+          print(v)
+          PY
+          rm -rf /tmp/snap
+          cat ev/summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the evidence (metrics only)
+        uses: actions/upload-artifact@v4
+        with:
+          name: evaluation-evidence
+          path: |
+            ev/evidence.json
+            ev/summary.md
+          retention-days: 90
+
+      - name: Post the summary on the pull request
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          { echo "<!-- office-evaluation -->"; cat ev/summary.md; echo; echo "[Evidence and run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})"; } > /tmp/body.md
+          ID=$(gh api "repos/${{ github.repository }}/issues/${{ github.event.pull_request.number }}/comments?per_page=100" \
+                --jq '[.[] | select(.user.login == "github-actions[bot]" and (.body | contains("<!-- office-evaluation -->")))][-1].id // empty')
+          if [ -n "$ID" ]; then gh api -X PATCH "repos/${{ github.repository }}/issues/comments/$ID" -F body=@/tmp/body.md >/dev/null
+          else gh pr comment "${{ github.event.pull_request.number }}" -R "${{ github.repository }}" --body-file /tmp/body.md; fi
+
+      - name: Verdict
+        run: |
+          case "${{ steps.score.outputs.verdict }}" in
+            pass|n/a) echo "evaluation ${{ steps.score.outputs.verdict }}";;
+            *) echo "::error::hold: evaluation ${{ steps.score.outputs.verdict }}"; exit 1;;
+          esac

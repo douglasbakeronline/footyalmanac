@@ -23,12 +23,18 @@ on:
         required: false
         default: "all"
 
+# Branches and pull requests are pushed with a short-lived token for the
+# footyalmanac-office GitHub App, so Tests and Evaluation run on them like any
+# other pull request, and the same App merges once they are green. Without the
+# App secrets it falls back to the workflow token: the pull request still
+# opens, but no checks run, so the merge gate holds it (fail closed).
 permissions:
   contents: write
   pull-requests: write
   issues: write
   id-token: write
   actions: read
+  checks: read
 
 concurrency:
   group: office-agents
@@ -59,13 +65,14 @@ jobs:
       matrix:
         agent: ${{ fromJSON(needs.plan.outputs.agents) }}
     env:
-      GH_TOKEN: ${{ github.token }}
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      HAS_APP: ${{ secrets.OFFICE_APP_ID != '' && 'yes' || 'no' }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: main   # the latest main, including the agent merged just before this one
           fetch-depth: 0
+          persist-credentials: false
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -94,7 +101,12 @@ jobs:
       - name: Pick today's task
         id: pick
         if: steps.key.outputs.skip == '0'
-        run: python3 agents/pick_task.py --task "${{ inputs.task }}" --agent "${{ matrix.agent }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 agents/pick_task.py --task "${{ inputs.task }}" --agent "${{ matrix.agent }}"
+          # keep a pristine copy: the agent must not be able to change the scripts that open and merge its pull request
+          cp -r agents /tmp/agents-trusted
       - name: Agent works on the task
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
         uses: anthropics/claude-code-action@v1
@@ -103,15 +115,26 @@ jobs:
           claude_code_oauth_token: ${{ env.AGENT_OAUTH }}
           prompt: ${{ steps.pick.outputs.prompt }}
           claude_args: "--model sonnet --max-turns 50 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
+      - name: Mint the App token
+        id: app
+        if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0' && env.HAS_APP == 'yes'
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.OFFICE_APP_ID }}
+          private-key: ${{ secrets.OFFICE_APP_KEY }}
       - name: Verify and open a pull request
         id: pr
         if: steps.key.outputs.skip == '0' && steps.pick.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
         run: |
           mkdir -p /tmp/office-agent
-          bash agents/open_pr.sh "${{ steps.pick.outputs.key }}" "${{ steps.pick.outputs.owner }}" "${{ steps.pick.outputs.title }}"
-      - name: Merge it if every gate passes
+          bash /tmp/agents-trusted/open_pr.sh "${{ steps.pick.outputs.key }}" "${{ steps.pick.outputs.owner }}" "${{ steps.pick.outputs.title }}"
+      - name: Merge it once Tests and Evaluation pass
         if: steps.pr.outputs.pr != ''
-        run: python3 agents/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --no-deploy
+        env:
+          GH_TOKEN: ${{ github.token }}   # reads checks and evidence, merges and tags
+        run: python3 /tmp/agents-trusted/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --wait --no-deploy
 
   publish:
     needs: work
