@@ -27,7 +27,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any code, model number, record or archive.
 **Roll back:** `git revert` the merge commit.
 
-## 2026-10-05 Every AI ships more, checks kept (release-2026-10-05-17)
+## 2026-10-05 Every AI ships more, checks kept (release-2026-10-05-20)
 
 **What changed**
 - `agents/merge_gate.py`: a model- or calibration-class change whose
