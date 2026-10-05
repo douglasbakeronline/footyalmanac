@@ -30,7 +30,7 @@ ESPN is unreachable costs nothing but that day's new grades.
 
 Standard library only.
 """
-import json, math, os, sys
+import json, math, os, re, sys
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
@@ -107,6 +107,11 @@ def find_result(m, by_id, by_pair):
     return cands[0] if len(cands) == 1 else None
 
 
+def is_retirement(note):
+    """'ret' as a word. A substring test flagged Berrettini as a retirement."""
+    return bool(re.search(r"\bret(?:ired)?\b", (note or "").lower()))
+
+
 def outcome(m, r):
     """(status, winner as a rating-pool name). status: graded, void or None."""
     note = (r.get("note") or "").lower()
@@ -180,7 +185,7 @@ def main():
                     "pick": m["pick"], "confidence": conf, "tier": B.tier_of(conf),
                     "list": bool(m.get("list")), "reserve": bool(m.get("reserve")),
                     "winner": winner, "ok": winner == m["pick"],
-                    "retired": "ret" in (r.get("note") or "").lower(),
+                    "retired": is_retirement(r.get("note")),
                     "note": r.get("note"), "published": m["published"],
                 }
                 new += 1
