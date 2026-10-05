@@ -183,6 +183,25 @@ def claimed_objectives():
             held |= {n[10:] for n in names if n.startswith("objective:")}
     return held
 
+# Work kept for the other AI platforms, so they add a second pair of eyes
+# rather than racing the office agents for the same objective.
+PLATFORM_POOL = [
+    ("results-crosscheck", "Cross-check yesterday's graded results against a second source",
+     "Take every graded game from yesterday in record.json, tennis-record.json and sports-record.json, check the "
+     "final score against an independent free source, and fix any grading or parsing bug you find with a test. "
+     "Known example: Saracens v Sale Sharks on 4 Oct 2026 is stored as 0-0; the real score was 17-21."),
+    ("draw-handling", "Test better draw handling in football",
+     "Draws are the hardest outcome. Measure how the model prices draws by league and confidence band on held-out "
+     "data, and test one change. Ship it only with an evaluation pass; otherwise ship the write-up."),
+    ("second-opinion", "Second opinion on the latest merged model or data change",
+     "Pick the most recent merged office-agent pull request that changed code. Re-check its evidence independently, "
+     "look for bugs or overfitting, and either fix what you find (with a test) or write a short note in claude/ "
+     "confirming it holds."),
+    ("list-misses", "Explain the Daily List misses of the last 14 days",
+     "Read the list games that lost in the record files. Group the misses by cause (upsets, data errors, stale "
+     "ratings, line-up news) and fix any data error you find; propose one tested improvement."),
+]
+
 def platform_tasks(platforms, recent):
     """Give each other AI platform one open task of its own (Douglas 5 Oct 2026: every AI makes changes).
     A platform with an open claimed issue already has work; otherwise it gets the next free candidate."""
@@ -192,7 +211,8 @@ def platform_tasks(platforms, recent):
         label = f"platform:{plat}"
         if any(label in [l["name"] for l in i.get("labels", [])] for i in issues):
             print(f"{plat}: already has an open task"); continue
-        pick = next((c for c in candidates() if c[0] not in taken), None)
+        pool = [(k, "experiment", t, b) for k, t, b in PLATFORM_POOL] + candidates()
+        pick = next((c for c in pool if c[0] not in taken), None)
         if not pick:
             print(f"{plat}: nothing free today"); continue
         key, owner, title, brief = pick
