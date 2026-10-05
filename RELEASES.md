@@ -22,6 +22,20 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## 2026-10-05: free source search for uncovered leagues, nothing to add (tag pending)
+
+**What changed.** Nothing a reader sees. Documented that no free automatable source exists for Croatia, Serbia, Ukraine, Hungary or South Korea (`claude/free-source-search-2026-10-05.md`).
+
+**Evidence.** football-data.co.uk has no file for those leagues, and its other 11 extra leagues match ESPN's volumes already (e.g. China 208 v 208, Norway 168 v 168, Sweden 176 v 176). ESPN has no scoreboard for them. TheSportsDB's free key returns 5 events per season in every league tried.
+
+**Files.** `claude/free-source-search-2026-10-05.md`, `RELEASES.md`.
+
+**Not changed.** No code, no model numbers, no sources, no Daily List rule. Suggested next step: API-Football ids for the five top flights, replayed before any list place.
+
+**Roll back.** `git revert` the merge commit.
+
+---
+
 ## 2026-10-05: openfootball and football-data.co.uk retry, and an outage is no longer remembered as "no data" (tag pending)
 
 **What changed.** Two sources had no retry. `_get` (openfootball, the source for most leagues) failed on the first timeout. `_fdx_text` (football-data.co.uk, the sole source for Poland, Switzerland, Romania, Finland and Ireland) swallowed every error and cached an empty string for the rest of the build, so one blip silently dropped a league's history and fixtures. Both now go through `sources._open`: 3 tries, 1.5s then 3s backoff, retrying timeouts, resets, 5xx and 429. A 4xx such as 404 is raised at once (openfootball callers rely on it to fall back to the plain-text schedule). A final failure prints a warning to stderr. `_fdx_text` no longer caches an outage; a genuinely missing file (4xx) is still cached as empty. Existing Rule 9 behaviour is unchanged: a build that comes out empty is still refused.
