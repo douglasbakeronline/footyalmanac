@@ -18,7 +18,7 @@ import rankings as RK
 
 SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
 PREV = ["2025-26", "2024-25"]
-CODES = list(E.LEAGUES.keys())
+CODES = [c for c in E.LEAGUES if c not in E.AF_DUPLICATES]
 
 # Manual per-team adjustment on expected goals. 1.0 = no change.
 # The model reads last season's results and nothing else, so it is blind to

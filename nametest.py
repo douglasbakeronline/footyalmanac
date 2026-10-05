@@ -131,6 +131,13 @@ def main():
                 fails.append(f"{a!r} and {b!r} are no longer distinct")
     print(f"distinct pairs: {len(DISTINCT)} checked")
 
+    # 4. an API-Football league never repeats a natively fed one
+    for dup, native in E.AF_DUPLICATES.items():
+        if dup in B.CODES or native not in B.CODES:
+            fails.append(f"{dup} must be skipped and {native} kept: the same fixtures "
+                         f"would be priced twice")
+    print(f"duplicate feeds: {len(E.AF_DUPLICATES)} skipped")
+
     if fails:
         print(f"\n{len(fails)} failure(s):", file=sys.stderr)
         for f in fails:

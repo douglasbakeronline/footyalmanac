@@ -147,3 +147,19 @@ gender (`engine.WOMEN_CODES`), and for a cup the cup's country or, for
 continental cups, its confederation (`engine._CONFED`, by iso). League
 fixtures use their own league first; remaining clashes take the higher
 strength. Nothing eligible means unrated, which the publish gate withholds.
+
+
+## 4 October 2026: duplicate league feeds
+
+Audit of `predictions/2026-10-04.json`: no exact or reversed duplicates, no
+unrated rows. One real fault: `af.203` (API-Football Super Lig) repeated
+`tr.1`, so four fixtures were priced twice under different spellings
+(Kasimpasa / Kasımpaşa), which exact-name checks cannot see; compare kickoff
+times. `engine.AF_DUPLICATES` now keeps it out of `build.CODES`, and
+`nametest.py` guards it. Of 227 `af-leagues.json` leagues it is the only live
+overlap; `af.144` (Belgium) and `af.202` (Tunisia) would overlap `be.1` /
+`tn.1` if those ever carry fixtures. Same-name clubs in different countries
+(Al Arabi in three Gulf leagues, Police in Uganda and Kenya, Andorra the club
+v the nation) are distinct, not matches. 42 rows carry a UTC kickoff on the
+next day from their row date (Americas evenings); left as the local-day
+convention.
