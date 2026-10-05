@@ -1,5 +1,13 @@
 {
   "_comment": "Frozen evaluation snapshots the owner has approved. Raw data lives only in the private repo douglasbakeronline/footyalmanac-eval-data (one release per snapshot, asset snapshot.json). Add an entry only through a reviewed pull request. The evaluation workflow uses the last entry.",
   "store": "douglasbakeronline/footyalmanac-eval-data",
-  "snapshots": []
+  "snapshots": [
+    {
+      "id": "snap-20261005-1317",
+      "sha256": "1cd6e62f986586e52f63735b2c59382c5d035c189eea4bba6eb9b36cd7779783",
+      "frozen_from": "70ca177afb866cfb765a123616040baddd6aa247",
+      "created": "2026-10-05T13:17Z",
+      "made_by": "replay.py --freeze"
+    }
+  ]
 }
