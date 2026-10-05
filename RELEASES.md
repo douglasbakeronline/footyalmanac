@@ -22,6 +22,18 @@ current copy: `git checkout --ours <file>`.
 
 ---
 
+## (tag pending) — Tennis hit-rate check: no model change (write-up and advisory test)
+
+**What changed:** nothing a reader sees. Tennis showed 57% against 61% quoted over 294 matches; this checks why and tests one fix. No model number changed.
+
+**Evidence:** ATP 61.9% landed vs 62.2% quoted (n=118); WTA 54.5% vs 60.6% (n=176), concentrated in sub-tour-level events and thin-history players (WTA under 20 rated matches: 47.6%, n=42). The gap is 1.3 standard errors. All 738 archived prices are labelled Hard (ESPN has no surface). Test: shrinking picks that involve a thin-history player, fit 2025, checked on 2026 with tune_tennis.py data, best log-loss gain 0.0012 against the 0.005 gate. Rejected.
+
+**Files:** `claude/tennis-hit-rate.md`, `tools/tennis_thin_test.py` (advisory, writes nothing), this entry.
+
+**Not changed:** `tennis.json`, `build_tennis.py`, `tune_tennis.py`, football, any record or archive.
+
+**Roll back:** `git revert` the commit; nothing else depends on it.
+
 ## (tag pending) — Independent evaluation layer and a merge gate that fails closed, without owner review
 
 **Merged 5 Oct 2026 on Douglas's approval, adapted to his 4 Oct instruction
