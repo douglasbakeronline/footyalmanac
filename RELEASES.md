@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-05 Other AI platforms can work on the project (release-2026-10-05-15)
+
+**What changed** `AGENTS.md` gains "Other AI platforms": one shared queue
+(`office-backlog` issues claimed with a `platform:` label), branches only,
+`main` protected, the same checks and merge gate for everyone. New issue
+template "Office task". Office agents skip issues another platform has
+claimed. The merge window now runs at 10:00, 16:00 and 22:00 BST.
+
+**Roll back** `git revert` this commit and delete the `main` ruleset.
+
+---
+
 ## 2026-10-05 Protect the API allowance and the daily build (release-2026-10-05-14)
 
 **What changed**

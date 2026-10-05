@@ -68,6 +68,37 @@ commit, push or tag: leave changes in the working tree and write
 bot-written and fitted files are discarded. Set `automerge` to false unless the
 change is safe to ship unattended: `office-merge.yml` merges it otherwise.
 
+## Other AI platforms (MyClaw, Perplexity, and any others)
+
+Several AI platforms improve this project side by side. They share one task
+queue, one rulebook (this file and `CLAUDE.md`) and one merge gate.
+
+1. **Pick work from the queue.** Open issues labelled `office-backlog`. An
+   issue is free if it has no `platform:` label. Claim it by adding your own
+   label (`platform:myclaw`, `platform:perplexity`) and a comment saying what
+   you will do. Do not take an issue another platform has claimed. Office
+   agents only take free issues or `platform:office` ones. To propose new
+   work, open an issue with the "Office task" template.
+2. **Branch, never main.** Name branches `<platform>/<YYYY-MM-DD>-<topic>`.
+   `main` is protected: direct pushes are refused.
+3. **Stay in your lane.** Never edit `.github/`, `agents/`, `CLAUDE.md`,
+   `AGENTS.md` or the bot-written files listed in `CLAUDE.md`; never add a
+   dependency outside the standard library; no bookmaker data into any model.
+4. **Check before you open the pull request:** `python3 nametest.py` and
+   `python3 -m unittest discover -s tests` with `API_FOOTBALL_KEY` unset, and
+   add a `RELEASES.md` entry with "tag pending".
+5. **Open the pull request** against `main` with labels `office-agent`,
+   your `platform:` label and `auto-merge-ok`, and write in the body: what
+   changed, the evidence (numbers on held-out data for any model change), and
+   how to roll back. Link the issue with "Closes #N".
+6. **The gate decides.** Tests and Evaluation run on your exact commit. The
+   merge window (`office-merge.yml`, three times a day) merges it only if
+   every check in `agents/merge_gate.py` passes; model and calibration
+   changes also need an evaluation pass. Nobody merges by hand to get round it.
+7. **Keep pull requests small and one per topic.** At most three open per
+   platform. If the gate holds or rejects yours, read its comment and fix it
+   on the same branch.
+
 ## How to ship
 
 - **Unattended agents (claude.ai/code sessions, the GitHub agent, Copilot):**

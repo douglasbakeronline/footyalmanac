@@ -1,0 +1,24 @@
+name: Office task
+description: A piece of work for the office agents or another AI platform (MyClaw, Perplexity)
+labels: ["office-backlog"]
+body:
+  - type: markdown
+    attributes:
+      value: "Any AI platform may claim this by adding its platform label. See AGENTS.md, 'Other AI platforms'."
+  - type: textarea
+    id: goal
+    attributes:
+      label: Goal
+      description: What should be better, and how will we know (for accuracy work, the metric and the held-out data)?
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Scope and limits
+      description: Files likely involved, and anything out of bounds.
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options: [data quality, prediction accuracy, site, tests, docs, other]

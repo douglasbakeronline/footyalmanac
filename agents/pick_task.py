@@ -113,6 +113,9 @@ def backlog():
     """Issues labelled office-backlog (from Douglas, Julius or Perplexity) come before the agents' own picks."""
     out = []
     for i in gh(["issue", "list", "--label", "office-backlog", "--state", "open", "-L", "20", "--json", "number,title,body,labels"]):
+        names = [l["name"] for l in i.get("labels", [])]
+        if any(n.startswith("platform:") and n != "platform:office" for n in names):
+            continue                      # claimed by another AI platform (AGENTS.md, "Other AI platforms")
         owner = next((l["name"][6:] for l in i.get("labels", []) if l["name"].startswith("agent:") and l["name"][6:] in AGENTS), "experiment")
         brief = (i.get("body") or "").strip()[:4000]
         out.append((f"issue-{i['number']}", owner, i["title"][:80],

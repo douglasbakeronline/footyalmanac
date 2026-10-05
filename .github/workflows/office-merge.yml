@@ -10,7 +10,7 @@ name: Office merge window
 # tag and redeploy. Decisions are logged on each pull request.
 on:
   schedule:
-    - cron: "0 21 * * *"   # 22:00 BST / 21:00 GMT
+    - cron: "0 9,15,21 * * *"   # 10:00, 16:00, 22:00 BST: picks up other AI platforms' pull requests
   workflow_dispatch:
 
 permissions:
