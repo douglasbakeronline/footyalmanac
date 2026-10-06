@@ -274,6 +274,7 @@ jobs:
           cp data.json _site/data.json         # handy if you want the raw numbers
           cp README.md _site/README.md
           cp record.json _site/record.json
+          cp analysis.html _site/analysis.html   # Almanac Analysis, reads record.json (6 Oct 2026)
           # The touch icons and the manifest are fetched by the device rather
           # than parsed out of the page, so they need to exist at real URLs or
           # a home-screen save falls back to a screenshot of the page.

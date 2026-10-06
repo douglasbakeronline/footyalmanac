@@ -115,6 +115,7 @@ archive for history.
 | `sources.py` | Football data fetching, name matching, ESPN slugs |
 | `build.py` | Football build: fetch, rate, price, write the page, archive |
 | `score.py` | Grades football predictions, writes `record.json` |
+| `analysis.html` | Almanac Analysis page: 5-point bands from 50%, day-by-day results, how the model works (reads `record.json`) |
 | `build_tennis.py`, `score_tennis.py`, `tune_tennis.py` | Tennis pipeline |
 | `sports.py` | NFL, baseball, basketball, rugby: history, tuning, build, grading |
 | `rankings.py` | FIFA and ATP/WTA world rankings and their tested adjustments |

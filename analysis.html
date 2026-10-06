@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Almanac Analysis — Sports Almanac</title>
+<meta name="description" content="How the Sports Almanac predicts football, and how its predictions have landed, band by band.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Bevan&family=Archivo+Black&family=Oswald:wght@600&family=Barlow+Semi+Condensed:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Home screen and browser icons.
+
+     The touch icon has to be a real PNG at a real URL: iOS fetches it when
+     someone adds the page to their home screen, and it will not take an SVG or
+     a data URI. The favicon is inlined instead, so dashboard.html stays the one
+     self-contained file it promises to be when it is emailed or opened off a
+     disk. Both are the same drawing, from brandassets.py. -->
+<link rel="icon" type="image/png" sizes="64x64" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAIAAAAlC+aJAAAKWUlEQVR42t1abYxUZxV+znnfO3fmziy7LMvSIlU+bEvKZyulhqb02xZTUkOUGKORmGgTE02a9E+jP/xrbMQ/Jv4xwcRoQtRoawzSamsNEWkBC21qseWrFugCy87ufN259z3HHzOzO7PzsTOzQKk3Nzt3d+f9OOd9znM+7qHcsWX4OF+2t69rw4PO+mMfF03/mP6oe7g6AihUAIAYYJABWCvPlcWI+t+/ak1+gQogpK72XFmR5iOAQAH2YZIKQEJIgeIrJHmWAkmRNCZ1kCKhPxkUnFIyIKucUg6U02oyyoEaHwCkRBKCUFNWDwIoVGAyCkZ4yuSPeoXjtnTSRJfYTZEWSSJoTNDqN/vdf03HBLLKHiilZkC9EUmudMG6OH1n5K9wELgctTsNamHECjBMWnOve2O/SOUOefE4ASALMoDR6VUbENyvDNWPmi7gSB00BgA7rJnN0ejXi5lNkcsTpMViTQIoyEIV554LLu9NSRkmrWQb8arXjFOowa40hssTJ7BoZ3HpMwUiaDxbBtuse1Wcfnpg4kXfDotNQR3UXS9SrClIa/LYQVXF2J6g/IFZvnsKjFnn0GAdKjBpPfdcMPGi7y0WyHXcejuJHCDwFsvEi/655wKT1gpBtRJAYDKae927vDdph0WjG8hbaQQ7LJf3JnOveyajkFYCKADG2J6klGk+1H6trIMgZRrbkwQ32CDPULKP8KTJveY1H9MNcQgCk9bca1540rA/QyQ8/W9Oau6IF48z2bl4hgjM87r7sm+yiMc5d8Tj5IyKG1iocNx2c5ZajjSK5oMGSiX7BmnhuMXOJholhoQUnjIVJ9B2acNxdmp01xdHv7ZDnZDpTZeqSkSl0/99/zs/cIZVtcfhIIvwlJGQiOsFUIAhBYovMVnthB8ijaPkqk8t2Lq57wNYsHXzGz/+mf/OmWQQqEiPKNL4EkuByNOKQ+CaauFyiKdmJOsghIZldSJhpE56vV1Yhurl+zaeLWUTxvTq04kRT5HLgUy9ESuI1eVYigTuIlIgIsN93taAaO22Ry9CINqrHYMhRXI5Jq4ipaZwAymQxp0C16tD58wAVm7Z7JYuyZWK3KvHYWgMKRDqT0ABELRIGncX2Ytq7CR2EscSu9bm1sZAiUidBEODi7ds+rAw6fWKIoLGpEUCVYHCDVFHV5MpB0myxiQTbC1b09pRtFetqkBx67aHL2iJ+wjGtSFCszOSRV0IIEoJP3/4zfO/+v25ckmZiGjdjicS6QCq05su5wsq4g9k2qKIcNtDWw8MLChFZWJGT3yq0GgmIK3SKBEkJAiooxQqwungygsvnd77h78gW0L+lpUbN+z8AlQrU4pzbMzbf9wPlQ1f3lH5tVkAVR1Z/smBO9dcOvDmTUMLI+eoWwQBAgmJahvl2cnE3CSqlEoOLhrZvuTTT5pbvvTNb1g/oa6WVioAvP3CvhP7X6klQS2DZAdg+eceOO9yto/Iol0+0HVcJXDOL7tMMli87UEA4OqUbI3E7vSBQ+eOHgPQrP6ajTCA1Y89NOF5sZtXztEvazJHhWJy/erU2tuhWiFHdQLgwvG3Lp49kzpzXt6/ACK08rWVGGTZhrXebSsn8nnLfL0FICYNw4XbHiDDlX1X6QU4se+vkYSLJ0u5fx4FoG28lcTOet4nHtxyPpy0bPQ6C6BOTBAMP/FwPX6IDYB/7385Q8lhNeOvHpoTx7dve+QiBKrX9wSYpVAM1q8O1q+ewY8IMWXPfnDm8L+WpAaChJ89eESdI2s6uORVW+7p0yXPRwBikmb8iAA4+bcD+dzlpam0DVLF986Ep94H0NoM5umS58VC9fipaa6SR7/xm+dJS8OFKArDaPxC9uV/dDCD+brkfqrTFfzkC+mNdwQbVkO1mtOokjFRoRgWi2vX37cks0iZvInJ8rmxeiGvskvuT4Aqfh5/gIzRuAZxIgA2mXxq/2+bqs9ol7hNu+RM7y65fwipExOkFm5/qFm1xNQiqptjNgdgRd8uuWcBKvyz9vb0xjtm8NMcSM/cc6ZG83XJ3Ad+hh6/n4yZ5p9pFlLRpv2rSiean3bJ9tYV/blk7hU/nEoNb3+kFX6YmGbfRMTcGUgVl7zswXsv9OWSba/4Sa+bjZ9KseT57z575vARk2ooNBBRuVzc8ZMffvIzG1WEWiq45pJf+umeNdeQhYjIsJTCocfvJzvDP5Xd5z4cO/jzX3JhapRSrlY0I4CtV4ovju17pYMAVZd87z1/XrokN1nyEwlpn5H2K4CIOtEoJmuHtzf4L3WOrH33pVezhbGtC1as4VTZMFW27wSAm0hmXj2K74HZtM+SXTA0OPLZu87/bt+qwZtiF7O1V08AVQ5SZsGAFIup1avSd65poHYiAGcPHVk0evPShTeXS3FpIstEUOVU0gxkMDRQGrsUj0/Y4aH6tHN2yQ24Y8cTb/39kD8yKqUwvpLtNkfLHVumDnZQr/zJP/30gBloKE2TNdHliZue+sryHz2r5ZjTKfYTzbOEuRxisdbkDhx+98lvyWCmfHG8Oip2xMxBql1UV194LE9OWTal/5w68fBXo1YwIoabouW7pxZ+PoyzRKZyAgRVsK+zSu/TE1PCM5l0h7X9TDV/LwT+oWhynQZmepR2nawS+YMLAESZ1KHy5K1eMMDWqVJjaQsM9rWWhNe9HyCv/UqqUNUobmtbqi6OoZqPo3ekWIZSRSuqGsfdW6Q4B9Uwit6JCkWVNhEIyGt6P1Apj3ZSVaXU047RiYgIREzk13+p86hW01Sm8ju8JKKZwmhVAKqcQErnKE13XcC8Cu9jOhaoKaXQqrZrLOTAgZJFy5fJ0GotkeY4/Wpw1v2o5noHsUqHoEhAFhwoXD2NElTIZIRTKlOE2a+YlPwEWWM60kilxpgcXNDTqKbLAAgWDlG7NNqB02oyolIt49rpwqjJwA5omG0An4pwEEy9cvDEt79/rJzrpExVEOUujMHzJHbdjmqBHQqz2ahSu9XmI4IdUJOZKY9WTwACDtSOSOm0Ib/OEkTZTxTefm/88LETmIygNEdsaBcHGRahXkY1TcKLg4wH0lalaTsiHKiGaDwBgfHVX+GmDnpEsxCk5CeCIPkYRrrw2qrOCSAq3Y9qN4lrlLzSK+GvcOxrXKQKFzWEEsG6GL9uM2Xs4j420seoua5gXdwiHyCGlChzV2SHpbkj5Ia4CBrDDkvmrkhKM+/ypmMySAh/pcvcHbl8N6/6rvv+GS5Pmbsjf6WTcEbFPKv0PrqrxAlVveEEUAUndHRXCY0NYlz/6HKU2RQt2lmKx5m8G0n9HuJxXrSzlNkUuRw17rrpmJY+Uxh6NIwucrVH8aPdugEY0UUeejRc+kyhGd4829UJiLB899ToroKWKM4SFGSqE033yV07SwVVmzvJAIo4S1qi0V2F5buniFpEOv9/TX+1GT/ObZd1oV+l8ZXrGl9djiRP17rxlefb+FozEAK0jLhEFRMnD96IYlSuaeuxhhQXq6Qyp0fqpsOpjouqXc2k17j5u3v2s32sN3vhj/T6H8kaALvGmZHuAAAAAElFTkSuQmCC">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icon-120.png">
+<link rel="manifest" href="manifest.webmanifest">
+
+<!-- Saved to a home screen this opens without Safari's chrome, which is what
+     you want for a board you check rather than a page you browse. The short
+     title is what fits under an icon; the full one would be truncated. -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Almanac">
+<meta name="application-name" content="Almanac">
+<meta name="theme-color" content="#f0e8d6">
+<meta name="color-scheme" content="light">
+<style>
+/* Lifted from index.html (masthead, nav band, prose, sheets, footer) so the
+   Analysis page reads as the same annual. Keep in step by hand. */
+:root{
+  /* A 1950s American sports annual: aged stock, banner red, foil gold,
+     and navy. The probability bar takes the cover's own three colours rather
+     than a home / away code: the year band's yellow for the side the model
+     favours, the jacket grey for the draw, the banner red for the side it
+     expects to lose. Position still says which side is home. */
+  --ink:#1a1511;
+  --ink-2:#4b4038;
+  --mute:#6e6355;        /* 4.8:1 on paper; was #867a6b at 3.4:1, too faint for small labels */
+  --mute-ink:#6e6355;
+  /* One column layout for every row in every sport, so the bar sits in the
+     same place at the same width whether the row is football, tennis, NFL,
+     basketball, baseball or rugby. The narrow middle column is football's
+     predicted score; the two-sided sports keep it empty to stay aligned. */
+  --row-cols:32px 132px minmax(0,1fr) 248px 72px minmax(0,1fr) 88px;
+  --rule:#c6b89e;
+  --rule-soft:#ded3bd;
+  --paper:#f0e8d6;
+  --surface:#fbf6ea;
+
+  --home:#1f3b5c;
+  --home-soft:#d3dae4;
+  --draw:#a8801f;
+  --draw-soft:#eee0c0;
+  --away:#96271d;
+  --away-soft:#eed6d1;
+  --gold:#b08a2e;
+
+  --yellow:#f4d21c;      /* the year band */
+  --yellow-mid:#f8e27a;
+  --yellow-soft:#fbf0bf;
+  --red:#c8102e;         /* the star band and stat panel */
+  --grey:#a4a9ad;        /* the jacket */
+  --cover-ink:#100e0c;
+
+  --rail:6px;
+
+  --f-display:'Anton','Barlow Semi Condensed',sans-serif;
+  --f-ui:'Barlow Semi Condensed','Barlow',system-ui,sans-serif;
+  --f-num:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:var(--f-ui);
+  font-size:15px;
+  line-height:1.4;
+  padding:0 20px 80px;
+  font-variant-numeric:tabular-nums;
+}
+.wrap{max-width:1180px;margin:0 auto}
+.num{font-family:var(--f-num);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+
+/* ---------- masthead ----------
+   A close restaging of the Grays Sports Almanac jacket. The details that carry
+   the resemblance, in order of how much they matter:
+     - the two title words are the full width of the cover, not centred text
+     - they are stretched horizontally and set solid, so they nearly touch
+     - the black outline is heavy and there is a hard offset shadow under it
+     - the star banner and year band bleed edge to edge inside a grey margin
+     - the lower panel is red, standing in for the sports artwork
+   Getting the words to fill the width is what actually makes it read as the
+   cover: the reference has almost no air anywhere. */
+header{padding:18px 0 0}
+.cover{
+  position:relative;overflow:hidden;
+  background:#9ba1a6;border:1px solid #100e0c;
+  /* flush: the star banner, year band and stat panel run edge to edge;
+     only the title block sits on the grey */
+  padding:0;text-align:center;
+}
+.starband{
+  background:#c8102e;border:0;border-bottom:1px solid #100e0c;
+  padding:3px 12px;display:flex;align-items:center;justify-content:space-between;
+}
+.starband b{
+  font-family:var(--f-display);font-weight:400;color:#fff;
+  font-size:clamp(15px,3.2vw,27px);letter-spacing:clamp(.16em,1.1vw,.34em);
+  text-transform:uppercase;line-height:1.1;padding-left:.28em;
+  text-shadow:2px 0 0 #100e0c,-2px 0 0 #100e0c,0 2px 0 #100e0c,0 -2px 0 #100e0c;
+}
+.starband i{
+  color:#fff;font-style:normal;letter-spacing:.18em;
+  font-size:clamp(9px,1.6vw,15px);
+}
+/* The title block gets its own width rather than running the full span of the
+   cover. The reference for this thing is a portrait book jacket; the page is a
+   wide landscape band, and filling 1180px with two words means either type
+   three hundred pixels tall or letterforms stretched out of shape. Capping the
+   block keeps the stack in book proportions and the type at a sane size. */
+h1{margin:clamp(14px,2.4vw,26px) auto 0;line-height:.82;max-width:min(100%,760px)}
+h1 span{
+  display:block;font-family:var(--f-display);font-weight:400;text-transform:uppercase;
+  letter-spacing:-.012em;white-space:nowrap;
+  /* --fit is measured and set by fitWordmark() once the display face has
+     loaded. The 1.05 fallback is what the CSS used to hard-code, so with no
+     JS the wordmark behaves exactly as it did before. */
+  transform:scaleX(var(--fit,1.05));transform-origin:center;
+}
+/* Three lines, three faces. The identity comes from the letterforms rather
+   than from effects piled on a single face:
+
+     SPORTS     Bevan, a heavy slab with crisp square serifs
+     ALMANAC    Archivo Black, wide and heavy with no serifs at all
+     strapline  Oswald, condensed and widely letterspaced
+
+   Both title words are fitted to the full width of the cover, so two faces of
+   very different natural width still stack flush. That is the fitting routine
+   earning its keep rather than being a nicety.
+
+   On effects: the stroke is gone. What is left is ONE hard offset per title
+   line, no blur, and it is not decoration. Measured on the cover's grey
+   ground the red reads 1.82:1 and the white 2.61:1, both under the 3:1
+   minimum for large text, so with no edge at all they are genuinely hard to
+   read rather than merely less pretty. A single offset is the cheapest thing
+   that fixes that and stays crisp. Ink measures 7.38:1, which is why the
+   strapline carries no shadow whatsoever.
+
+   If you want the titles clean too, the ground has to go dark: set .cover's
+   background to #14100c and both offsets can come off. */
+h1 .a,h1 .b{font-size:clamp(34px,8.9vw,88px)}
+h1 .a{
+  font-family:'Bevan','Alfa Slab One',var(--f-display);
+  color:#e0202c;text-shadow:.036em .036em 0 #100e0c;
+}
+h1 .b{
+  font-family:'Archivo Black','Anton',var(--f-display);
+  color:#fff;letter-spacing:-.035em;
+  /* set in em so the gap holds its proportion at every size, rather than
+     opening up on desktop and closing on a phone */
+  margin-top:.07em;
+  text-shadow:.05em .05em 0 #100e0c;
+}
+     
+.cover .sub{
+  font-family:'Oswald',var(--f-ui);font-weight:600;color:#100e0c;
+  font-size:clamp(11px,2.4vw,18px);letter-spacing:.17em;text-transform:uppercase;
+  margin-top:8px;text-align:center;
+}
+.cover .yr{margin-top:clamp(10px,1.6vw,16px);background:#100e0c;padding:2px 0;text-align:center}
+.cover .yr b{
+  font-family:var(--f-display);font-weight:400;font-style:italic;color:#f4d21c;
+  font-size:clamp(20px,4.8vw,40px);letter-spacing:.01em;
+  text-shadow:3px 3px 0 rgba(0,0,0,.5);
+}
+/* the red panel stands in for the cover artwork, and carries the numbers */
+.meta{
+  display:flex;gap:0;flex-wrap:wrap;
+  background:#c8102e;border:0;
+  position:relative;overflow:hidden;
+}
+.meta div{
+  flex:1 1 0;min-width:100px;padding:6px 9px;text-align:left;
+  border-right:1px solid rgba(255,255,255,.28);
+}
+.meta div:last-child{border-right:0}
+/* the last stat cell (the corner flash is .meta's final child) stops short of the yellow corner */
+.meta > div:nth-last-child(2){padding-right:96px}
+@media (max-width:700px){ .meta > div:nth-last-child(2){padding-right:9px} }
+.meta b{font-family:var(--f-num);font-weight:600;font-size:14.5px;color:#fff;display:block;letter-spacing:-.02em}
+.meta span{display:block;font-size:9.5px;letter-spacing:.11em;text-transform:uppercase;color:rgba(255,255,255,.75);font-weight:700;margin-bottom:2px}
+.meta small{font-family:var(--f-num);font-size:10.5px;color:rgba(255,255,255,.72)}
+.meta .good b{color:#f4d21c}
+.meta .bad b{color:#ffd9d9}
+.flash{
+  position:absolute;right:-66px;bottom:-8px;width:240px;z-index:3;
+  background:#f4d21c;border-top:1px solid #100e0c;border-bottom:1px solid #100e0c;
+  transform:rotate(-30deg);padding:5px 0;text-align:center;pointer-events:none;
+}
+.flash span{
+  font-family:var(--f-ui);font-weight:700;font-size:8.5px;letter-spacing:.01em;
+  text-transform:uppercase;color:#100e0c;line-height:1.3;display:block;white-space:nowrap;
+}
+@media (max-width:700px){ .flash{display:none} }
+
+/* ---------- honesty strip ---------- */
+.note{
+  margin-top:12px;padding:9px 13px;border-left:var(--rail) solid var(--draw);
+  background:var(--draw-soft);font-size:12.5px;color:#4a3712;max-width:100ch;line-height:1.5;
+}
+.note:empty{display:none}
+.note.stale{border-left-color:var(--away);background:var(--away-soft);color:#5e1e2e}
+.record{
+  margin-top:16px;padding:13px 15px;background:var(--surface);
+  border:1px solid var(--rule);display:flex;gap:26px;flex-wrap:wrap;align-items:flex-end;
+}
+.record h3{
+  font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);width:100%;margin-bottom:-4px;
+}
+.record div span{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.record div b{display:block;font-family:var(--f-num);font-size:17px;font-weight:600;letter-spacing:-.03em}
+.record div small{font-family:var(--f-num);font-size:11px;color:var(--mute);font-weight:400}
+.record .beat b{color:var(--home)}
+.record .lose b{color:var(--away)}
+.note b{font-weight:700}
+
+/* ---------- the daily list ----------
+   The site's headline: only the fixtures obvious enough to serve on their
+   own. The rule is stated in full above the list, because a short list is
+   only worth trusting if the reader can see what kept everything else off it. */
+/* ---------- ledes: a headline, one line of why, the rest behind a toggle ---------- */
+.lede{margin-top:18px;max-width:92ch}
+.lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,2.6vw,30px);
+  letter-spacing:.01em;text-transform:uppercase;line-height:1.05;color:var(--ink)}
+.lede p{margin-top:6px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.lede b{color:var(--ink)}
+.list-order{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.list-order .seg{width:max-content}
+details.how{margin-top:8px;font-size:13.5px;color:var(--ink-2);line-height:1.55}
+details.how summary{cursor:pointer;font-weight:700;color:var(--home);list-style:none;
+  display:inline-flex;align-items:center;gap:6px;font-size:13.5px}
+details.how summary::-webkit-details-marker{display:none}
+details.how summary::before{content:"+";font-family:var(--f-num);font-weight:600;
+  width:16px;height:16px;display:inline-grid;place-items:center;border:1px solid var(--home);border-radius:50%;font-size:12px;line-height:1}
+details.how[open] summary::before{content:"–"}
+details.how p{margin-top:8px;padding-left:22px}
+.list-rule{
+  margin-top:16px;padding:12px 15px;background:var(--surface);border:1px solid var(--rule);
+  border-left:1px solid var(--ink);font-size:14px;line-height:1.55;max-width:100ch;color:var(--ink-2);
+}
+.list-rule b{color:var(--ink)}
+.ko-local{font-family:var(--f-ui);font-size:10px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.list-past{margin-top:16px;border:1px solid var(--rule);background:var(--surface)}
+.slip-box{margin:16px 0 20px;border:1px solid var(--ink);background:var(--surface);padding:14px 15px}
+.slip-head{display:flex;gap:14px;align-items:flex-start;justify-content:space-between}
+.slip-head h3{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.slip-head p{font-size:13.5px;color:var(--ink-2);margin-top:4px}
+.slip-run{font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+  background:var(--ink);color:var(--yellow);border:0;padding:10px 18px;cursor:pointer;flex:none}
+.slip-total{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);margin-top:14px;border:1px solid var(--rule)}
+.slip-total>div{background:var(--surface);padding:10px 12px}
+.slip-total span{display:block;font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.slip-total b{display:block;font-family:var(--f-num);font-size:24px;margin:2px 0}
+.slip-total small,.slip small{display:block;font-size:12px;color:var(--mute);line-height:1.4}
+.slip-note{font-size:13.5px;color:var(--ink-2);line-height:1.5;margin:12px 0}
+.slip{width:100%;border-collapse:collapse;font-size:14px}
+.slip th{font-family:var(--f-ui);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);text-align:left;padding:6px 6px;border-bottom:1px solid var(--ink)}
+.slip td{padding:8px 6px;border-bottom:1px solid var(--rule-soft);vertical-align:top}
+.slip .n{text-align:right;font-family:var(--f-num);white-space:nowrap}
+.slip .verdict{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px}
+.v-strong .verdict{background:var(--ink);color:var(--yellow)}
+.v-reserve .verdict{border:1px solid var(--ink);color:var(--ink)}
+.v-wary .verdict{background:var(--red);color:#fff}
+@media (max-width:560px){.slip-total{grid-template-columns:1fr}.slip-total b{font-size:20px}
+  .slip thead{display:none}
+  .slip tr{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+  .slip td{border:0;padding:0}
+  .slip td:last-child{grid-column:1/-1}
+  .slip td:last-child small{display:inline;margin-left:6px}}
+.reserve-head{padding:14px 12px 8px;margin-top:6px;border-top:1px solid var(--ink);
+  font-family:var(--f-ui);font-size:13px;color:var(--mute);line-height:1.45}
+.reserve-head b{color:var(--ink);text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
+.list-past h3{
+  font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--mute);padding:10px 15px 6px;
+}
+.list-past li{
+  list-style:none;display:grid;grid-template-columns:5.5em 1.4em 1fr auto;gap:8px;
+  padding:6px 15px;border-top:1px solid var(--rule-soft);font-size:13.5px;align-items:baseline;
+}
+
+/* ---------- top-level views ----------
+   Two boards that answer different questions: what is coming, and how the last
+   one went. They sit above the controls because switching between them changes
+   what the controls even mean. Styled as a band rather than as tabs, so it
+   reads as part of the cover rather than as browser chrome. */
+.views{
+  display:flex;margin-top:0;border:1px solid #100e0c;border-top:0;
+  background:#100e0c;
+}
+/* The top-level nav sits flush under the red band above it, so no top
+   border is wanted there — but the same .views class is reused for the
+   standalone "How it went" sport switcher, which has nothing above it and
+   needs its stroke closed on all four sides or it reads as unfinished. */
+.views.standalone{border-top:1px solid #100e0c}
+.views button{
+  flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
+  letter-spacing:.08em;text-transform:uppercase;
+  border:0;background:#100e0c;color:var(--yellow);padding:7px 10px;cursor:pointer;
+  border-right:1px solid #3a342e;min-height:44px;
+}
+.views button:last-child{border-right:0}
+/* the links across to Almanac Analysis and FootyAlmanac HQ, styled as more boards (6 Oct 2026) */
+.views .hq-link + .hq-link{border-left:1px solid #3a342e}
+.views .hq-link{flex:1 1 0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);
+  font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
+  background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px}
+.views .hq-link:hover{text-decoration:underline}
+.views .hq-link:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+@media (max-width:700px){ #views .hq-link{flex:1 1 30%;border-bottom:1px solid #3a342e} }
+/* nine boards: three to a row on a phone rather than nine slivers */
+#views{flex-wrap:wrap;position:sticky;top:0;z-index:40;box-shadow:0 6px 14px -10px rgba(16,14,12,.55)}
+/* On a phone the nav is three rows tall; pinned, it would eat a third of
+   the screen. There it scrolls away, and so do the football filters. */
+@media (max-width:860px){ #views{position:static;box-shadow:none} .controls{position:static} }
+@media (max-width:700px){ #views button{flex:1 1 30%;border-bottom:1px solid #3a342e} }
+.views button[aria-pressed="true"]{
+  background:var(--yellow);color:#100e0c;
+}
+.views button:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+
+
+.prose{max-width:78ch;font-size:14px;line-height:1.6;color:var(--ink-2);margin-top:12px}
+.prose p{margin-top:11px}
+.prose b{color:var(--ink)}
+.prose em{font-style:normal;font-family:var(--f-num);font-size:13px;color:var(--ink)}
+.sect{
+  margin-top:34px;padding-bottom:6px;border-bottom:1px solid var(--ink);
+  font-family:var(--f-display);font-weight:400;font-size:16px;
+  letter-spacing:.01em;text-transform:uppercase;
+}
+
+/* ---------- expanded detail ---------- */
+.detail{background:#f3ead6;border-bottom:1px solid var(--ink);padding:16px 18px 18px}
+.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+.detail h3{
+  font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;
+  text-transform:uppercase;color:var(--mute);margin-bottom:8px;
+}
+table.sheet{border-collapse:collapse;width:100%;font-family:var(--f-num);font-size:12px}
+table.sheet th{
+  text-align:right;font-weight:500;color:var(--mute);padding:2px 7px 2px 0;
+  font-size:10px;letter-spacing:.06em;text-transform:uppercase;
+}
+table.sheet th:first-child{text-align:left}
+table.sheet td{text-align:right;padding:3px 7px 3px 0;border-top:1px solid var(--rule-soft)}
+table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.5px;font-weight:600}
+footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-size:12.5px;color:var(--mute);max-width:80ch}
+footer a{color:var(--ink-2)}
+footer p{margin-top:10px;line-height:1.6}
+footer b{color:var(--ink-2)}
+</style>
+<style>
+/* ---------- Almanac Analysis (6 Oct 2026) ----------
+   The rest of this sheet is lifted from index.html so the page reads as part
+   of the same annual. Only what follows is new. */
+.views a.nav-a,.views span.nav-on{flex:1 1 0;display:flex;align-items:center;justify-content:center;
+  font-family:var(--f-display);font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;
+  text-decoration:none;background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px;border-right:1px solid #3a342e}
+.views a.nav-a:last-child{border-right:0}
+.views a.nav-a:hover{text-decoration:underline}
+.views a.nav-a:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+.views span.nav-on{background:var(--yellow);color:#100e0c}
+#views{position:static;box-shadow:none}
+.toc{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:13.5px}
+.toc a{color:var(--home);font-weight:700;text-decoration:none}
+.toc a:hover{text-decoration:underline}
+.card{margin-top:14px;background:var(--surface);border:1px solid var(--rule);padding:12px 14px}
+.bandtab{width:100%;border-collapse:collapse;font-family:var(--f-num);font-size:13px;background:var(--surface);border:1px solid var(--rule)}
+.bandtab th{font-family:var(--f-ui);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--mute);text-align:right;padding:9px 8px 7px;border-bottom:1px solid var(--ink);white-space:nowrap}
+.bandtab th:first-child,.bandtab td:first-child{text-align:left}
+.bandtab td{text-align:right;padding:8px 8px;border-top:1px solid var(--rule-soft);white-space:nowrap}
+.bandtab tbody tr.b{cursor:pointer}
+.bandtab tbody tr.b:hover td{background:var(--yellow-soft)}
+.bandtab tbody tr.b:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.bandtab tbody tr.b td:first-child{font-family:var(--f-ui);font-weight:700;font-size:14px}
+.bandtab tbody tr.b td:first-child::before{content:"+";display:inline-grid;place-items:center;width:15px;height:15px;
+  border:1px solid var(--home);border-radius:50%;font:600 11px/1 var(--f-num);color:var(--home);margin-right:8px;vertical-align:1px}
+.bandtab tbody tr.b.open td:first-child::before{content:"–"}
+.bandtab tr.empty td{color:var(--mute)}
+.bandtab tfoot td{border-top:1px solid var(--ink);font-weight:600}
+.bandtab tfoot td:first-child{font-family:var(--f-ui);font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+.gap-pos{color:#2f6b52;font-weight:600}
+.gap-neg{color:var(--away);font-weight:600}
+.small-n{color:var(--mute)}
+.meter{display:inline-block;width:74px;height:8px;background:var(--rule-soft);position:relative;vertical-align:1px;margin-left:8px}
+.meter i{position:absolute;left:0;top:0;bottom:0;background:var(--home)}
+.meter b{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--away)}
+.bandtab tr.games td{background:#f3ead6;padding:10px 12px 12px;white-space:normal;text-align:left}
+.glist{font-family:var(--f-ui);font-size:13.5px}
+.glist h4{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin:4px 0 6px}
+.glist li{list-style:none;display:grid;grid-template-columns:6.2em 1.5em minmax(0,1fr) auto auto;gap:8px;align-items:baseline;
+  padding:5px 0;border-top:1px solid var(--rule-soft)}
+.glist .d{font-family:var(--f-num);font-size:12px;color:var(--mute)}
+.glist .ok{color:#2f6b52;font-weight:700}
+.glist .no{color:var(--away);font-weight:700}
+.glist .dr{color:var(--draw);font-weight:700}
+.glist .c{font-family:var(--f-num);font-size:12.5px}
+.glist .lg{color:var(--mute);font-size:12px}
+.glist .sc{font-family:var(--f-num);font-size:12.5px;white-space:nowrap}
+.chart{margin-top:14px;background:var(--surface);border:1px solid var(--rule);padding:12px 14px}
+.chart svg{display:block;width:100%;height:auto;max-width:720px}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:12.5px;color:var(--ink-2);margin-top:8px}
+.legend i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.steps{counter-reset:s;margin-top:12px;display:grid;grid-template-columns:minmax(0,1fr);gap:10px;max-width:96ch}
+.step{min-width:0;background:var(--surface);border:1px solid var(--rule);padding:12px 14px 12px 52px;position:relative}
+.step::before{counter-increment:s;content:counter(s);position:absolute;left:14px;top:12px;width:26px;height:26px;
+  display:grid;place-items:center;background:var(--ink);color:var(--yellow);font:400 15px/1 var(--f-display)}
+.step h3{font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.02em;text-transform:uppercase}
+.step .sp{margin-top:5px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.step b{color:var(--ink)}
+.step code,.prose code{font-family:var(--f-num);font-size:12.5px;background:var(--paper);padding:1px 4px;border:1px solid var(--rule-soft)}
+.formula{margin-top:8px;font-family:var(--f-num);font-size:13px;background:var(--paper);border-left:1px solid var(--ink);padding:8px 10px;overflow-x:auto;white-space:nowrap}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;max-width:96ch}
+.cols .card{margin-top:0}
+.cols h3{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.cols ul{padding-left:18px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.cols li{margin-top:4px}
+.daytab td.dd{font-family:var(--f-num);font-size:12.5px}
+details.more{margin-top:8px}
+details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:13.5px}
+@media (max-width:760px){
+  .cols{grid-template-columns:1fr}
+  .bandtab .hide-s{display:none}
+  .bandtab td,.bandtab th{padding-left:5px;padding-right:5px}
+  .meter{display:none}
+  .glist li{grid-template-columns:5em 1.3em minmax(0,1fr) auto}
+  .glist .lg{display:none}
+  .glist .wd{display:none}
+  .step{padding-left:46px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="cover">
+    <div class="starband"><i>★ ★ ★</i><b>The</b><i>★ ★ ★</i></div>
+    <h1><span class="a">Almanac</span><span class="b">Analysis</span></h1>
+    <div class="sub">What it predicts, how, and how it went</div>
+    <div class="yr"><b id="window">—</b></div>
+    <div class="meta" id="meta"><div><span>Loading</span><b>—</b></div></div>
+  </div>
+</header>
+<nav class="views" id="views" aria-label="Pages">
+  <a class="nav-a" href="./" title="Back to the Sports Almanac: the Daily List and every board">Almanac 🔗</a>
+  <span class="nav-on" aria-current="page">Analysis</span>
+  <a class="nav-a" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ 🔗</a>
+</nav>
+<div class="note" id="note"></div>
+
+<section class="lede">
+  <h2>Clear numbers, plainly graded</h2>
+  <p>Every football game the Almanac prices gets a chance for a home win, a draw and an away win. The biggest of the three is the <b>top pick</b>, and its chance is the <b>confidence</b>. This page puts the two side by side: what the model said before kick-off, and what happened. If calls quoted at 70% land about 70% of the time, the numbers can be trusted at face value. If they don't, this is where it shows.</p>
+  <div class="toc"><a href="#bands">The banding table</a><a href="#chart">Quoted against landed</a><a href="#days">Day by day</a><a href="#how">How a prediction is made</a><a href="#why">Why it works this way</a><a href="#grading">How it is graded</a><a href="#limits">What it cannot see</a></div>
+</section>
+
+<h2 class="sect" id="bands">The banding table, 50% to 100%</h2>
+<div class="prose">
+  <p>Every graded football game with a top pick of 50% or more, grouped by its confidence in 5-point bands. <b>Won</b> counts the top pick landing, and nothing else. <b>Read right</b> also counts a game the model called as a draw scoreline (1-1, 0-0) that finished level. Each has its own quoted figure, so neither is flattered. Click a band to see its most recent games.</p>
+</div>
+<div style="overflow-x:auto;margin-top:12px">
+<table class="bandtab" id="bandtab">
+  <thead><tr><th>Band</th><th>Games</th><th>Won</th><th>Won %</th><th>Quoted</th><th>Gap</th><th class="hide-s">Draws</th><th class="hide-s">Read right</th><th class="hide-s">Daily List</th></tr></thead>
+  <tbody></tbody><tfoot></tfoot>
+</table>
+</div>
+<div class="prose" id="bandnote"></div>
+
+<h2 class="sect" id="chart">Quoted against landed</h2>
+<div class="prose"><p>The same bands as a picture. The dashed line is perfect calibration: a band on the line landed exactly as often as it was quoted. Above the line the model was too cautious, below it too bold. Bigger dots are bigger samples, so the small top bands deserve less weight than they appear to.</p></div>
+<div class="chart" id="calchart"></div>
+
+<h2 class="sect" id="days">Day by day</h2>
+<div class="prose"><p>Every graded day, newest first. Most games are close calls, so the average quoted chance on a day is about 50%, and a day around that mark is normal. A bad day is one well below what was quoted, and it is usually a round full of draws and away wins. The 60%+ column shows how the confident calls did on their own.</p></div>
+<div style="overflow-x:auto;margin-top:12px">
+<table class="bandtab daytab" id="daytab">
+  <thead><tr><th>Day</th><th>Games</th><th>Won %</th><th>Quoted</th><th class="hide-s">Draws</th><th class="hide-s">Read right %</th><th>60%+ won</th></tr></thead>
+  <tbody></tbody>
+</table>
+</div>
+<details class="more" id="daymore" hidden><summary>Show every day</summary></details>
+
+<h2 class="sect" id="how">How a prediction is made</h2>
+<div class="prose"><p>Football runs through one engine, <code>engine.py</code>, in seven stages. Nothing here is a black box: each number on a fixture row comes from a function you can read, and the settings below are read from the live build, not typed in.</p></div>
+<div class="steps" id="steps"></div>
+
+<h2 class="sect" id="why">Why it works this way</h2>
+<div class="cols">
+  <div class="card"><h3>Built in on purpose</h3><ul>
+    <li><b>Ratings, not points tallies.</b> Points already encode wins, goal difference uses an arbitrary scale, and neither is a probability. Attack and defence ratings feed a score model that produces probabilities directly.</li>
+    <li><b>Last season, then this season.</b> Early in a season a few results say very little, so the prior carries the rating until enough games are in.</li>
+    <li><b>Calibration after the model.</b> Raw Poisson output is over-confident at the bottom and cautious at the top. A two-number curve corrects it, refitted weekly and only shipped when it also improves a season it was not fitted on.</li>
+    <li><b>The model's own read only.</b> No bookmaker prices go into any prediction. That keeps the list independent, at a known cost: see the next panel.</li>
+  </ul></div>
+  <div class="card"><h3>Tested and left out</h3><ul>
+    <li>Recent form beyond a small capped nudge, last season's head-to-head, rating drift, games played, separate home and away ratings, rest days and per-band temperatures all add nothing measurable once the model's own probability is known.</li>
+    <li>The one signal that does add something is bookmaker agreement, about seven times the rest combined. It carries team news the model cannot see, and it is deliberately not used.</li>
+    <li>Every change has to beat the live model on fit, confirm on the current season, and clear gates: 250+ check games, a paired bootstrap with p(worse) at most 0.30, and a minimum gain in log loss.</li>
+  </ul></div>
+</div>
+
+<h2 class="sect" id="grading">How it is graded</h2>
+<div class="prose">
+  <p><b>Only prices published before kick-off count.</b> Each morning's predictions are archived as they were published, with the publish time recorded since 2 October. Results are matched back on both team names. A price that appeared after kick-off is never graded, and nothing is ever fitted on this record.</p>
+  <p><b>Won and read right.</b> The model almost never picks a draw, because a draw is rarely the single likeliest result. So "won" is strict: the top pick happened. "Read right" adds games where the predicted scoreline was a draw and the game ended level. That is a correct read of the match, so the headline record uses it. Its quoted side adds the draw chance on those games, so a band's quoted and landed figures stay comparable.</p>
+  <p><b>Bets are different.</b> On the Odds tab a group is a bet, so a draw still loses a win leg there.</p>
+  <p><b>Where the results come from.</b> openfootball fills in results a few days after the whistle. ESPN covers the gap and the competitions openfootball does not. Results are kept once settled, so the record never forgets a game.</p>
+</div>
+
+<h2 class="sect" id="limits">What it cannot see</h2>
+<div class="prose">
+  <p><b>Team news.</b> Injuries, rotation, a new manager or a side with nothing to play for are not in the data. That is most of what a person adds when checking a game by hand, and most of the remaining misses.</p>
+  <p><b>Blind spots, flagged rather than hidden.</b> Promoted sides, unrated clubs and cross-division cup ties are flagged (Celtic's Law) and dropped a confidence tier. They never make the Daily List.</p>
+  <p><b>Small samples at the top.</b> Calls at 85% and above are rare, so one or two results move a band by ten points or more. Read those rows as direction, not proof.</p>
+  <p><b>Roughly one Daily List pick in five or six still misses.</b> That is sport, and a higher bar does not remove it.</p>
+</div>
+
+<footer id="footer"></footer>
+</div>
+<script>
+/* Almanac Analysis. Reads record.json, which score.py writes on every build:
+   bands5, byDay, range and model are there for this page (6 Oct 2026). */
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const pct = (x, d = 1) => x == null ? "—" : (100 * x).toFixed(d) + "%";
+const MON = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const day = iso => { const [y, m, d] = iso.split("-").map(Number); return `${d} ${MON[m - 1]}`; };
+const dayY = iso => day(iso) + " " + iso.slice(0, 4);
+const wkd = iso => ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"][new Date(iso + "T12:00:00Z").getUTCDay()];
+
+function textWidth(el){
+  const r = document.createRange();
+  r.selectNodeContents(el);
+  return r.getBoundingClientRect().width;
+}
+
+function fitWordmark(){
+  const h1 = document.querySelector("header h1");
+  const cover = document.querySelector(".cover");
+  if(!h1 || !cover) return;
+  // the cover's own padding, plus clearance for the hard offset that sits
+  // outside each title line's own advance width
+  const room = Math.min(cover.clientWidth - 20, h1.clientWidth);
+  if(room <= 0) return;
+
+  h1.querySelectorAll("span").forEach(el => {
+    // Size first, stretch second. The two title lines are set in different
+    // faces now, and Archivo Black is far wider per character than Anton, so
+    // fitting on horizontal scale alone would squash one of them out of shape
+    // to make the widths agree. Adjusting the size does most of the work at
+    // the face's own proportions, and the stretch only takes up the remainder.
+    el.style.removeProperty("font-size");
+    el.style.setProperty("--fit", 1);
+    const base = parseFloat(getComputedStyle(el).fontSize);
+    // A Range around the text, not the element's own box. These spans are
+    // display:block, so their width is the container's width whatever the
+    // type inside is doing, and measuring the box would report a perfect fit
+    // at every size while the letters sat at whatever width they liked.
+    const natural = textWidth(el);
+    if(!base || !natural) return;
+
+    // The ceiling is generous on purpose. Anton is narrow enough to need
+    // nearly three times the CSS size to fill the cover, and a tight clamp
+    // meant both lines pinned to the ceiling and the wider face then bled out
+    // of the box. Each line finds its own size; the stretch afterwards is
+    // held near 1 so neither face is visibly distorted to make them agree.
+    // Size does most of the fitting, at each face's own proportions, and the
+    // stretch takes up whatever is left. The size ceiling is what stops the
+    // masthead growing to fill a wide viewport; the stretch bound is what
+    // stops a narrow face being pulled out of shape to reach the edge.
+    const sized = Math.max(base * 0.4, Math.min(base * 1.9, base * (room / natural)));
+    el.style.fontSize = sized.toFixed(2) + "px";
+
+    const after = textWidth(el);
+    if(after) el.style.setProperty("--fit",
+      Math.max(0.9, Math.min(1.45, room / after)).toFixed(4));
+  });
+}
+
+
+/* Runs once now, again when the display face arrives, and on resize. Fonts
+   land after first paint, so fitting only on load measures the fallback. */
+fitWordmark();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(fitWordmark);
+let fitTimer;
+addEventListener("resize", () => {
+  clearTimeout(fitTimer);
+  fitTimer = setTimeout(fitWordmark, 120);
+});
+
+function meta(R){
+  const o = R.overall || {}, bd = R.byDay || [];
+  const won = bd.reduce((s, d) => s + d.won, 0), n = o.n || 0;
+  const b5 = R.bands5 || [], listN = b5.reduce((s, b) => s + b.listN, 0), listW = b5.reduce((s, b) => s + b.listWon, 0);
+  const h = b5.filter(b => b.from >= 0.6), hn = h.reduce((s, b) => s + b.n, 0), hw = h.reduce((s, b) => s + b.won, 0);
+  const cell = (k, v, s) => `<div><span>${k}</span><b>${v}</b><small>${s}</small></div>`;
+  $("#meta").innerHTML =
+    cell("Graded games", n.toLocaleString("en-GB"), "football") +
+    cell("Top pick won", pct(n ? won / n : null), `${won.toLocaleString("en-GB")} of ${n.toLocaleString("en-GB")}`) +
+    cell("Read right", pct(o.accuracy), `adds ${o.drawReads || 0} draw readings`) +
+    cell("60%+ calls won", pct(hn ? hw / hn : null), `${hw} of ${hn}`) +
+    cell("Daily List won", pct(listN ? listW / listN : null), `${listW} of ${listN}`);
+  if (R.range && R.range.from) $("#window").textContent = `${dayY(R.range.from)} – ${dayY(R.range.to)}`;
+  const g = R.generated ? new Date(R.generated + "Z") : null;
+  $("#note").innerHTML = `Football only. Graded from ${R.range ? dayY(R.range.from) : "—"} to ${R.range ? dayY(R.range.to) : "—"}` +
+    (g ? `, record updated ${g.toLocaleString("en-GB", {day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"})} UK time` : "") +
+    `. It refreshes with every site build. Tennis and the other sports grade separately on the Almanac's How it went board.`;
+}
+
+/* ---------- the banding table ---------- */
+let RECORD = null;
+function bandGames(b){
+  const out = [];
+  for (const d of RECORD.days || []) for (const g of d.games || [])
+    if (g.confidence >= b.from && (g.confidence < b.to || (b.to >= 1 && g.confidence >= 1))) out.push({...g, date: d.date});
+  return out;
+}
+function leagueName(c){ const L = (RECORD.byLeague || {})[c]; return L ? L.name.replace(/^(\S+) \1\b/, "$1") : c; }
+function gameLine(g){
+  const pickName = g.pick === "h" ? g.home : g.pick === "a" ? g.away : "Draw";
+  const won = g.pick === g.actual, mark = won ? `<span class="ok" title="Top pick won">✓</span>`
+    : g.drawRead ? `<span class="dr" title="Predicted a draw scoreline and it was drawn: read right">✓</span>`
+    : `<span class="no" title="Top pick lost">✗</span>`;
+  const r = g.result || [], ps = g.predScore || [];
+  return `<li><span class="d"><span class="wd">${wkd(g.date)} </span>${day(g.date)}</span>${mark}<span><b>${esc(g.home)}</b> v <b>${esc(g.away)}</b> <span class="lg">· ${esc(leagueName(g.league))}</span><br><small>Pick ${esc(pickName)} <span class="c">${pct(g.confidence, 0)}</span>${ps[0] >= 0 ? ` · predicted ${ps[0]}-${ps[1]}` : ""}${g.list ? " · Daily List" : ""}</small></span><span class="sc">${r[0]}-${r[1]}</span><span class="lg">${esc(g.tier || "")}</span></li>`;
+}
+function renderBands(R){
+  const tb = $("#bandtab tbody"), b5 = R.bands5 || [];
+  const rows = b5.map((b, i) => {
+    const lab = `${Math.round(b.from * 100)}–${Math.round(b.to * 100)}%`;
+    if (!b.n) return `<tr class="empty"><td>${lab}</td><td>0</td><td colspan="7" style="text-align:left">No graded games yet</td></tr>`;
+    const w = b.won / b.n, gap = w - b.quoted, small = b.n < 30;
+    return `<tr class="b" tabindex="0" role="button" aria-expanded="false" data-i="${i}"><td>${lab}</td><td>${b.n}${small ? `<span class="small-n" title="Under 30 games: read as direction, not proof">*</span>` : ""}</td><td>${b.won}</td>
+      <td><b>${pct(w)}</b><span class="meter" aria-hidden="true"><i style="width:${(100 * w).toFixed(1)}%"></i><b style="left:${(100 * b.quoted).toFixed(1)}%"></b></span></td>
+      <td>${pct(b.quoted)}</td><td class="${gap >= 0 ? "gap-pos" : "gap-neg"}">${gap >= 0 ? "+" : "−"}${Math.abs(100 * gap).toFixed(1)}</td>
+      <td class="hide-s">${b.draws}</td><td class="hide-s">${b.read} <span class="small-n">(${pct(b.read / b.n, 0)} v ${pct(b.quotedRead, 0)})</span></td>
+      <td class="hide-s">${b.listN ? `${b.listWon} of ${b.listN}` : "—"}</td></tr>`;
+  });
+  tb.innerHTML = rows.join("");
+  const T = b5.reduce((a, b) => ({n: a.n + b.n, won: a.won + b.won, read: a.read + b.read, q: a.q + (b.quoted || 0) * b.n, draws: a.draws + b.draws, ln: a.ln + b.listN, lw: a.lw + b.listWon}), {n: 0, won: 0, read: 0, q: 0, draws: 0, ln: 0, lw: 0});
+  if (T.n) {
+    const w = T.won / T.n, q = T.q / T.n, gap = w - q;
+    $("#bandtab tfoot").innerHTML = `<tr><td>50%+</td><td>${T.n}</td><td>${T.won}</td><td><b>${pct(w)}</b></td><td>${pct(q)}</td><td class="${gap >= 0 ? "gap-pos" : "gap-neg"}">${gap >= 0 ? "+" : "−"}${Math.abs(100 * gap).toFixed(1)}</td><td class="hide-s">${T.draws}</td><td class="hide-s">${T.read} <span class="small-n">(${pct(T.read / T.n, 0)})</span></td><td class="hide-s">${T.ln ? `${T.lw} of ${T.ln}` : "—"}</td></tr>`;
+  }
+  // a plain-words reading of the table, worked out from the numbers
+  const big = b5.filter(b => b.n >= 30), off = big.filter(b => Math.abs(b.won / b.n - b.quoted) > 0.05);
+  const top = b5.filter(b => b.from >= 0.8), tn = top.reduce((s, b) => s + b.n, 0), tw = top.reduce((s, b) => s + b.won, 0), tq = top.reduce((s, b) => s + b.quoted * b.n, 0);
+  let txt = `<p><b>How to read it.</b> <b>Gap</b> is won minus quoted, in percentage points: positive means the band landed more often than the model said. The red tick on each bar marks the quoted chance. Bands marked * have fewer than 30 games.</p>`;
+  if (big.length) txt += `<p><b>What it says now.</b> ${big.length} band${big.length > 1 ? "s have" : " has"} 30 or more games. ${off.length ? `${off.map(b => `${Math.round(b.from * 100)}–${Math.round(b.to * 100)}% (${b.won / b.n > b.quoted ? "+" : "−"}${Math.abs(100 * (b.won / b.n - b.quoted)).toFixed(1)})`).join(", ")} ${off.length > 1 ? "sit" : "sits"} more than 5 points off the quoted chance; the rest are within 5.` : "All of them are within 5 points of the quoted chance."}${tn ? ` Above 80%, ${tw} of ${tn} won (${pct(tw / tn)}) against ${pct(tq / tn)} quoted.` : ""}</p>`;
+  txt += `<p><b>Why this matters.</b> The Daily List only takes picks from levels that landed at least 80% of the time on games the model never saw in testing. This table is the live check on that promise, on games played since it was made.</p>`;
+  $("#bandnote").innerHTML = txt;
+
+  const toggle = tr => {
+    const open = tr.classList.toggle("open");
+    tr.setAttribute("aria-expanded", open);
+    const next = tr.nextElementSibling;
+    if (next && next.classList.contains("games")) next.remove();
+    if (!open) return;
+    const b = b5[+tr.dataset.i], gs = bandGames(b).sort((x, y) => y.date.localeCompare(x.date));
+    const shown = gs.slice(0, 30);
+    const days = (RECORD.days || []).length;
+    const html = gs.length
+      ? `<div class="glist"><h4>Most recent ${shown.length} of ${gs.length} in this band from the last ${days} graded days</h4><ul>${shown.map(gameLine).join("")}</ul></div>`
+      : `<div class="glist"><h4>No games in this band in the last ${days} graded days</h4></div>`;
+    tr.insertAdjacentHTML("afterend", `<tr class="games"><td colspan="9">${html}</td></tr>`);
+  };
+  tb.addEventListener("click", e => { const tr = e.target.closest("tr.b"); if (tr) toggle(tr); });
+  tb.addEventListener("keydown", e => { const tr = e.target.closest("tr.b"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(tr); } });
+}
+
+/* ---------- calibration chart ---------- */
+function renderChart(R){
+  const b5 = (R.bands5 || []).filter(b => b.n);
+  const box = $("#calchart"), W = Math.round(Math.max(320, Math.min(640, (box.clientWidth || 640) - 28))), H = Math.round(W < 480 ? W * 0.8 : 360), L = 46, Rm = 12, T = 14, B = 44;
+  const x = v => L + (v - 0.5) / 0.5 * (W - L - Rm), y = v => T + (1 - (v - 0.3) / 0.7) * (H - T - B);
+  const maxN = Math.max(1, ...b5.map(b => b.n));
+  let g = "";
+  for (let v = 0.5; v <= 1.0001; v += 0.1) g += `<line x1="${x(v)}" x2="${x(v)}" y1="${T}" y2="${H - B}" stroke="#ded3bd"/><text x="${x(v)}" y="${H - B + 18}" text-anchor="middle" font-size="12" fill="#6e6355" font-family="IBM Plex Mono">${Math.round(v * 100)}%</text>`;
+  for (let v = 0.3; v <= 1.0001; v += 0.1) g += `<line x1="${L}" x2="${W - Rm}" y1="${y(v)}" y2="${y(v)}" stroke="#ded3bd"/><text x="${L - 8}" y="${y(v) + 4}" text-anchor="end" font-size="12" fill="#6e6355" font-family="IBM Plex Mono">${Math.round(v * 100)}%</text>`;
+  g += `<line x1="${x(0.5)}" y1="${y(0.5)}" x2="${x(1)}" y2="${y(1)}" stroke="#1a1511" stroke-dasharray="5 4"/>`;
+  const pts = b5.map(b => [x(b.quoted), y(b.won / b.n)]);
+  g += `<polyline fill="none" stroke="#1f3b5c" stroke-width="1.5" points="${pts.map(p => p.join(",")).join(" ")}"/>`;
+  b5.forEach((b, i) => {
+    const r = 4 + 9 * Math.sqrt(b.n / maxN), w = b.won / b.n;
+    g += `<circle cx="${pts[i][0]}" cy="${pts[i][1]}" r="${r.toFixed(1)}" fill="${w >= b.quoted ? "#1f3b5c" : "#c8102e"}" fill-opacity=".85" stroke="#100e0c" stroke-width="1"><title>${Math.round(b.from * 100)}–${Math.round(b.to * 100)}%: ${b.won} of ${b.n} won (${pct(w)}), quoted ${pct(b.quoted)}</title></circle>`;
+  });
+  g += `<text x="${(L + W - Rm) / 2}" y="${H - 6}" text-anchor="middle" font-size="12" fill="#4b4038" font-family="Barlow Semi Condensed" font-weight="700" letter-spacing=".08em">QUOTED CHANCE (BAND AVERAGE)</text>`;
+  g += `<text transform="translate(14 ${(T + H - B) / 2}) rotate(-90)" text-anchor="middle" font-size="12" fill="#4b4038" font-family="Barlow Semi Condensed" font-weight="700" letter-spacing=".08em">TOP PICK WON</text>`;
+  $("#calchart").innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Quoted chance against how often the top pick won, by 5-point band">${g}</svg>
+    <div class="legend"><span><i style="background:#1f3b5c"></i>Landed at or above the quoted chance</span><span><i style="background:#c8102e"></i>Landed below it</span><span><i style="border-top:1px dashed #1a1511;height:0;width:16px;vertical-align:3px"></i>Perfect calibration</span></div>`;
+}
+
+/* ---------- day by day ---------- */
+function renderDays(R){
+  const bd = (R.byDay || []).slice().reverse(), tb = $("#daytab tbody");
+  tb.innerHTML = bd.map((d, i) => {
+    const w = d.won / d.n, gap = w - d.quoted, bad = d.n >= 20 && gap < -0.1;
+    return `<tr${i >= 14 ? ' class="old" hidden' : ""}><td class="dd">${wkd(d.date)} ${day(d.date)}</td><td>${d.n}</td><td class="${bad ? "gap-neg" : ""}"><b>${pct(w, 0)}</b><span class="meter" aria-hidden="true"><i style="width:${(100 * w).toFixed(1)}%"></i><b style="left:${(100 * d.quoted).toFixed(1)}%"></b></span></td><td>${pct(d.quoted, 0)}</td><td class="hide-s">${d.draws}</td><td class="hide-s">${pct(d.read / d.n, 0)}</td><td>${d.n60 ? `${d.won60} of ${d.n60}` : "—"}</td></tr>`;
+  }).join("");
+  if (bd.length > 14) {
+    const m = $("#daymore"); m.hidden = false;
+    m.querySelector("summary").textContent = `Show all ${bd.length} days`;
+    m.addEventListener("toggle", () => {
+      tb.querySelectorAll("tr.old").forEach(tr => tr.hidden = !m.open);
+      m.querySelector("summary").textContent = m.open ? "Show the last 14 days" : `Show all ${bd.length} days`;
+    });
+  }
+}
+
+/* ---------- the model, from the live settings ---------- */
+function renderSteps(R){
+  const M = R.model || {}, C = M.calibration || {}, Li = M.list || {};
+  const n2 = v => v == null ? "—" : String(+v);
+  const steps = [
+    ["Collect the results", `Every morning at 05:15 UTC the build reads completed results and upcoming fixtures for <b>${M.leagues || "70+"} competitions</b> from free sources: openfootball, ESPN's public scoreboards, football-data.co.uk and API-Football. No paid data, and no bookmaker prices.`],
+    ["Rate every team's attack and defence", `For each league, a side's <b>attack</b> is goals scored per game against the league average, and its <b>defence</b> is goals conceded the same way. 1.00 is average; an attack of 1.30 scores 30% more than an average side. Each rating is pulled toward 1.00 by <b>${M.shrink ?? "—"}</b> games of league-average results, so a short run cannot produce an extreme number, and kept within ${(M.attBounds || []).map(v => (+v).toFixed(2)).join("–")} (attack) and ${(M.defBounds || []).map(v => (+v).toFixed(2)).join("–")} (defence). A promoted or relegated side carries its rating across using league strengths.`],
+    ["Blend last season with this one", `Early in a season last season's rating does most of the work. The weight on this season grows with games played:<div class="formula">weight on this season = played ÷ (played + ${M.blendK ?? "—"})</div>So after ${M.blendK ?? "—"} games it is 50/50, and after 20 games about 77% this season.`],
+    ["Turn ratings into expected goals", `Each side's expected goals multiply its attack, the opponent's defence, the league's average goals per side, and a venue factor (top tier: home ×${n2(M.homeMult)}, away ×${n2(M.awayMult)}; lower divisions a little more). Recent form adds a nudge of at most ±${M.formMax != null ? Math.round(M.formMax * 100) : "—"}%.<div class="formula">home goals = attack(home) × defence(away) × league average × ${n2(M.homeMult)} × form</div>`],
+    ["Price every scoreline", `The two expected-goal numbers go into a Poisson grid covering every score from 0-0 to 10-10, with the Dixon-Coles correction (ρ = ${M.rho ?? "—"}) that fixes how often low scores such as 0-0 and 1-1 really happen. Adding up the cells gives the chance of a home win, a draw and an away win. The single likeliest cell is the <b>predicted score</b>.`],
+    ["Calibrate the confidence", `Raw Poisson numbers are over-confident on close games and cautious on strong ones. A curve flattens or sharpens each game by its own confidence:<div class="formula">T = ${C.a ?? "—"} ${C.b < 0 ? "−" : "+"} ${Math.abs(C.b ?? 0)} × (confidence − 0.45),  then p ↦ p^(1/T), renormalised</div>${C.fitted ? `Fitted ${dayY(C.fitted)}. ` : ""}It is refitted weekly and only replaces the live curve when it also improves a season it was not fitted on.`],
+    ["Tier it, and pick the Daily List", `Each game gets a confidence tier. A game the model is blind on before kick-off (a promoted side, an unrated club, a cross-division cup tie) is flagged under Celtic's Law and dropped a tier. The <b>Daily List</b> takes only win picks, never a draw, at <b>${Li.min ? Math.round(Li.min * 100) : 80}%</b> or more for leagues and <b>${Li.minIntl ? Math.round(Li.minIntl * 100) : 75}%</b> for internationals, from levels that landed at least 80% of the time in testing. Men's internationals use their own ratings, re-scored with the FIFA ranking.`],
+  ];
+  $("#steps").innerHTML = steps.map(([h, p]) => `<div class="step"><h3>${h}</h3><div class="sp">${p}</div></div>`).join("") +
+    `<div class="prose"><p><b>Other sports</b> use their own models and are graded separately. Tennis uses surface-blended Elo, re-scored with the ATP ranking for men's matches. The NFL, baseball, basketball and rugby use Elo with home advantage, margin of victory and off-season regression. A sport is only published if it beats simply backing the home side.</p></div>`;
+}
+
+$("#footer").innerHTML = `<p><b>Sports Almanac Analysis.</b> Built from <code>record.json</code>, which the site writes on every build. Every prediction is archived before kick-off and graded afterwards, and nothing is fitted on the record. <a href="./">Back to the Almanac</a> · <a href="https://douglasbakeronline.github.io/footyalmanac-hq/">FootyAlmanac HQ</a> · <a href="https://github.com/douglasbakeronline/footyalmanac">Source and release log</a></p>`;
+
+fetch("record.json?v=" + Date.now()).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(R => {
+  RECORD = R;
+  meta(R); renderBands(R); renderChart(R); renderDays(R); renderSteps(R);
+  let rt; addEventListener("resize", () => { clearTimeout(rt); rt = setTimeout(() => renderChart(R), 150); });
+  if (location.hash) { const t = document.querySelector(location.hash); if (t) t.scrollIntoView(); }
+}).catch(e => {
+  $("#note").className = "note stale";
+  $("#note").textContent = "The record could not be loaded (" + e.message + "). Try again after the next build.";
+  renderSteps({});
+});
+</script>
+</body>
+</html>

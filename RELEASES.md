@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Almanac Analysis page; 🔗 on the cross-site links (release-2026-10-06-4)
+
+**What changed:** a new page, `analysis.html` (linked as "Analysis 🔗" in the board bar), in the almanac's own masthead and styles. It shows the banding table from 50% to 100% in 5-point bands (games, top pick won, quoted, gap, draws, read right, Daily List), each band opening its recent games; a quoted-against-landed chart; every graded day; the model's seven stages with its live settings; why it is built that way; how it is graded; and what it cannot see. `score.py` adds `bands5`, `byDay`, `range` and `model` (read from engine.py, calibration.json and data.json) to `record.json`. The HQ link reads "HQ 🔗"; the twelve desktop nav labels are a touch smaller so none wraps. The deploy copies `analysis.html` into the site.
+**Why:** Douglas asked for one page that makes the predictions and results clear: the what, how and why.
+**Evidence:** tests in `tests/test_bands5.py`; checked at 1280px, 900px and 400px.
+**Files:** `analysis.html`, `score.py`, `index.html`, `.github/workflows/deploy.yml` (one copy line), `tests/test_bands5.py`, `README.md`, `RELEASES.md`.
+**Not changed:** any model, rule, grading rule or prediction.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Football results kept once settled: the list record stops shrinking (release-2026-10-06-3)
 
 **What changed:** results the live source (ESPN) settles are now kept in `current/settled-results.json` and reused on every build; openfootball still wins where it has the game. The live chase window goes from 6 to 10 days, so the games already lost come back on the next build.

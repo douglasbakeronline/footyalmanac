@@ -605,7 +605,11 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   border-right:1px solid #3a342e;min-height:44px;
 }
 .views button:last-child{border-right:0}
-/* the link across to FootyAlmanac HQ, styled as one more board (6 Oct 2026) */
+/* the links across to Almanac Analysis and FootyAlmanac HQ, styled as more boards (6 Oct 2026) */
+.views .hq-link + .hq-link{border-left:1px solid #3a342e}
+/* twelve boards on one desktop row: a touch smaller and unwrapped, so no
+   label breaks over two lines (6 Oct 2026) */
+@media (min-width:701px){ #views button,#views .hq-link{font-size:clamp(12px,1.25vw,16px);letter-spacing:.05em;white-space:nowrap;padding:7px 6px} }
 .views .hq-link{flex:1 1 0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);
   font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
   background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px}
@@ -992,7 +996,8 @@ footer b{color:var(--ink-2)}
   <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="results" aria-pressed="false">How it went</button>
-  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ ↗</a>
+  <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis 🔗</a>
+  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ 🔗</a>
 </nav>
 <div class="note" id="note"></div>
 

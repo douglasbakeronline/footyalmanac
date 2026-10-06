@@ -220,6 +220,72 @@ def expected(r):
     return r["confidence"] + extra
 
 
+def bands5(rows, lo=0.50, step=0.05):
+    """Quoted v landed in 5-point bands from `lo` to 100%, for the Analysis
+    page (6 Oct 2026). "won" is the top pick landing, strictly; "read" adds the
+    draw readings (correct()), and each has its own quoted figure so neither
+    comparison is flattered. The top band includes 100%."""
+    out = []
+    edges = [round(lo + i * step, 2) for i in range(int(round((1 - lo) / step)))]
+    for a in edges:
+        b = round(a + step, 2)
+        g = [r for r in rows if a <= r["confidence"] < b or (b >= 1.0 and r["confidence"] >= 1.0)]
+        L = [r for r in g if r.get("list")]
+        n = len(g)
+        out.append({
+            "from": a, "to": b, "n": n,
+            "won": sum(1 for r in g if r["pick"] == r["actual"]),
+            "read": sum(1 for r in g if correct(r)),
+            "quoted": round(sum(r["confidence"] for r in g) / n, 4) if n else None,
+            "quotedRead": round(sum(expected(r) for r in g) / n, 4) if n else None,
+            "draws": sum(1 for r in g if r["actual"] == "d"),
+            "listN": len(L), "listWon": sum(1 for r in L if r["pick"] == r["actual"]),
+        })
+    return out
+
+
+def by_day(rows):
+    """One line per graded day, oldest first: games, top picks won, readings
+    right, the average quoted chance, and the same for 60%+ calls."""
+    d = defaultdict(list)
+    for r in rows:
+        d[r["date"]].append(r)
+    out = []
+    for k in sorted(d):
+        g = d[k]
+        h = [r for r in g if r["confidence"] >= 0.60]
+        out.append({"date": k, "n": len(g),
+                    "won": sum(1 for r in g if r["pick"] == r["actual"]),
+                    "read": sum(1 for r in g if correct(r)),
+                    "draws": sum(1 for r in g if r["actual"] == "d"),
+                    "quoted": round(sum(r["confidence"] for r in g) / len(g), 4),
+                    "n60": len(h), "won60": sum(1 for r in h if r["pick"] == r["actual"])})
+    return out
+
+
+def model_card(rows=()):
+    """The live model's settings, read from engine.py, calibration.json and
+    the build's data.json, so the Analysis page can never describe a model
+    the site is not running."""
+    card = {"shrink": E.SHRINK_FULL_SEASON, "blendK": E.BLEND_K, "formMax": E.FORM_MAX,
+            "rho": E.RHO, "temperature": E.TEMPERATURE,
+            "homeMult": E.HOME_MULT.get(1), "awayMult": E.AWAY_MULT.get(1),
+            "attBounds": list(E.ATT_BOUNDS), "defBounds": list(E.DEF_BOUNDS),
+            # competitions with at least one graded game, not the size of the
+            # league table (which carries cups and leagues with no fixtures yet)
+            "competitions": len({r["league"] for r in rows})}
+    try:
+        cal = json.load(open(os.path.join(HERE, "calibration.json")))
+        card["calibration"] = {"a": cal["a"], "b": cal["b"], "fitted": cal.get("fitted")}
+    except Exception:
+        card["calibration"] = None
+    try:
+        card["list"] = json.load(open(os.path.join(HERE, "data.json"))).get("list")
+    except Exception:
+        card["list"] = None
+    return card
+
+
 def form_index(results):
     """{(code, team): [(date, opp, gf, ga, home)]} from the graded results, for
     the form lines on "How it went" (6 Oct 2026). Same-competition games only:
@@ -423,6 +489,13 @@ def main():
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),
         "bands": bands,
+        # Analysis page (6 Oct 2026): 5-point bands from 50%, per-day results,
+        # the graded date range and the live model's settings.
+        "bands5": bands5(rows),
+        "byDay": by_day(rows),
+        "range": {"from": min((r["date"] for r in rows), default=None),
+                  "to": max((r["date"] for r in rows), default=None)},
+        "model": model_card(rows),
         "tiers": tier_table(rows),
         # The Daily List on its own. Only fixtures archived with the flag set,
         # which means from the day the list was first published: membership is
