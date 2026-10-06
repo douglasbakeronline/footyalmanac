@@ -235,7 +235,14 @@ jobs:
             fi
             # [skip ci]: an App-token push triggers workflows, and this one must not rebuild itself
             git commit -m "Archive predictions and record for $(date +%F) [skip ci]"
-            if [ -n "$APP_TOKEN" ]; then DEST="https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; else DEST=origin; fi
+            # actions/checkout leaves the workflow token in an extraheader, and git
+            # sends it ahead of the App token in the URL: every archive push since
+            # main was protected went out as github-actions[bot] and was refused
+            # (GH013, 5-6 Oct 2026). Drop it so the App, a ruleset bypass actor, pushes.
+            if [ -n "$APP_TOKEN" ]; then
+              git config --local --unset-all http.https://github.com/.extraheader || true
+              DEST="https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+            else DEST=origin; fi
             if git push "$DEST" HEAD:main; then
               exit 0
             fi

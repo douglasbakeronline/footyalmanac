@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Archive push fixed: the record updates again (release-2026-10-06-2)
+
+**What changed:** the deploy's archive commit (and the retune push) now drop actions/checkout's workflow-token header before pushing with the office App token.
+**Why:** since main was protected, every archive push went out as github-actions[bot] and was refused (GH013), so `record.json`, the prediction archives and grading stopped being kept after the morning of 5 Oct, and each build reset to the old record. The App token was minted fine; git sent the checkout header instead.
+**Files:** `.github/workflows/deploy.yml`, `.github/workflows/tune.yml`, `RELEASES.md`.
+**Not changed:** any model, rule or file content.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Draw readings count as right; every played row opens; link to HQ (release-2026-10-06)
 
 **What changed:**

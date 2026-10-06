@@ -86,7 +86,8 @@ jobs:
           git add -A calibration.json tuning-report.json
           git diff --staged --quiet && exit 0
           git commit -m "Weekly retune $(date +%F) [skip ci]"
-          if [ -n "$APP_TOKEN" ]; then git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; fi
+          # drop checkout's workflow-token header, or it is sent instead of the App token (see deploy.yml)
+          if [ -n "$APP_TOKEN" ]; then git config --local --unset-all http.https://github.com/.extraheader || true; git remote set-url origin "https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; fi
           # main moves under a long job (the daily archive, a release): on
           # 30 Sep 2026 a push landed mid-run and the refit was lost. Only this
           # job writes these two files, so rebasing onto the new main is safe.
