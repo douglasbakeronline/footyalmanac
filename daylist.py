@@ -178,6 +178,47 @@ def attach_results(items, record, trec, srec):
     return items
 
 
+SITE = "https://douglasbakeronline.github.io/footyalmanac/"
+
+
+def previous_full(day, fetch=True):
+    """{key: full} from the daylist the site last published for this day.
+
+    A football row's detail (team sheets, form, links) comes from data.json,
+    and data.json drops a game once it has started. Every build before the
+    start carries the full object forward here, so a started pick keeps the
+    same click-through as an upcoming one (6 Oct 2026)."""
+    if not fetch: return {}
+    import urllib.request
+    try:
+        with urllib.request.urlopen(SITE + "daylist.json", timeout=30) as r: d = json.load(r)
+    except Exception:
+        return {}
+    if d.get("date") != day: return {}
+    return {it["key"]: it["full"] for it in (d.get("list") or []) + (d.get("reserve") or []) if it.get("full")}
+
+
+def attach_full(items, archives, data, prev):
+    """Each item's full object, in the shape the page's own rows take:
+    football the data.json game, tennis the tennis-data.js match, other sports
+    the sports-data.js game. Archived entries already are that shape for tennis
+    and the other sports; football needs data.json or the carried copy."""
+    fb = {}
+    for day in (data or {}).get("days") or []:
+        for g in day.get("games") or []:
+            try: fb[f"f|{g['league']}|{g['date']}|{g['home']['name']}|{g['away']['name']}"] = g
+            except Exception: pass
+    raw = {}
+    for kind, g in archives:
+        if kind == "tennis": raw[f"t|{g.get('id') or ''}|{g.get('date')}|{g.get('playerA')}|{g.get('playerB')}"] = g
+        elif kind == "sport": raw[f"s|{g.get('id') or ''}|{g.get('home')}|{g.get('away')}"] = g
+    for it in items:
+        full = fb.get(it["key"]) if it["sport"] == "football" else raw.get(it["key"])
+        if full is not None and it["sport"] != "football":
+            full = {k: v for k, v in full.items() if k != "published"}
+        it["full"] = full or prev.get(it["key"])
+
+
 def read_archives(day, here=HERE):
     d0 = datetime.fromisoformat(day).date()
     names = {(d0 - timedelta(days=i)).isoformat() for i in range(LOOKBACK)}
@@ -190,10 +231,12 @@ def read_archives(day, here=HERE):
     return out
 
 
-def build(now=None, here=HERE):
+def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
-    items = pinned(day, read_archives(day, here), now)
+    archives = read_archives(day, here)
+    items = pinned(day, archives, now)
+    attach_full(items, archives, _load(os.path.join(here, "data.json"), {}), previous_full(day, fetch))
     attach_results(items, _load(os.path.join(here, "record.json"), {}),
                    _load(os.path.join(here, "tennis-record.json"), {}),
                    _load(os.path.join(here, "sports-record.json"), {}))

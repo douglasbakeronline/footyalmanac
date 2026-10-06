@@ -58,8 +58,18 @@ class Results(unittest.TestCase):
             json.dump([tennis("2026-10-05T04:00:00Z")], open(os.path.join(d, "predictions-tennis", "2026-10-05.json"), "w"))
             json.dump({"graded": [{"key": "1", "ok": False, "void": False, "winner": "A"}]},
                       open(os.path.join(d, "tennis-record.json"), "w"))
-            out = DL.build(NOW, here=d)
+            out = DL.build(NOW, here=d, fetch=False)
         self.assertEqual(out["summary"]["list"], {"n": 1, "won": 0, "lost": 1, "void": 0, "started": 0, "upcoming": 0})
+
+
+class FullObjects(unittest.TestCase):
+    def test_tennis_full_from_archive_and_football_carried(self):
+        t = tennis("2026-10-05T04:00:00Z")
+        items = DL.pinned("2026-10-05", [("tennis", t)], NOW)
+        f = {"key": "f|en.1|2026-10-05|H|A", "sport": "football"}
+        DL.attach_full(items + [f], [("tennis", t)], {}, {"f|en.1|2026-10-05|H|A": {"home": {"name": "H"}}})
+        self.assertEqual(items[0]["full"]["playerA"], "A"); self.assertNotIn("published", items[0]["full"])
+        self.assertEqual(f["full"]["home"]["name"], "H")
 
 
 if __name__ == "__main__":

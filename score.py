@@ -175,25 +175,73 @@ def live_results(pending, log=None):
     return out
 
 
+def correct(r):
+    """A reading is right when the top pick landed, or when the predicted
+    scoreline was a draw and the game was drawn (Douglas, 6 Oct 2026: a 1-1
+    call on a game that ends level is a correct reading)."""
+    return r["pick"] == r["actual"] or (r["actual"] == "d" and score_draw(r))
+
+
+def score_draw(r):
+    sc = r.get("score") or (-1, -1)
+    return sc[0] >= 0 and sc[0] == sc[1]
+
+
+def expected(r):
+    """The chance of `correct(r)` on the model's own numbers: the top pick,
+    plus the draw when the predicted scoreline is a draw. Keeps the quoted
+    side of every quoted-vs-landed comparison on the same footing as the
+    landed side."""
+    extra = r["p"][1] if score_draw(r) and r["pick"] != "d" else 0.0
+    return r["confidence"] + extra
+
+
+def form_index(results):
+    """{(code, team): [(date, opp, gf, ga, home)]} from the graded results, for
+    the form lines on "How it went" (6 Oct 2026). Same-competition games only:
+    that is all the results dict holds, and the page says so."""
+    idx = defaultdict(list)
+    for (code, d, home, away), (hg, ag) in results.items():
+        idx[(code, home)].append((d, away, hg, ag, True))
+        idx[(code, away)].append((d, home, ag, hg, False))
+    for v in idx.values():
+        v.sort()
+    return idx
+
+
+def team_form(idx, code, team, before, n=5):
+    """The last n results before `before`, newest first, as the page's form rows."""
+    out = []
+    for d, opp, gf, ga, home in reversed(idx.get((code, team), [])):
+        if d >= before:
+            continue
+        out.append({"r": "W" if gf > ga else "L" if gf < ga else "D", "score": f"{gf}-{ga}",
+                    "opp": opp, "home": home, "date": d})
+        if len(out) == n:
+            break
+    return out
+
+
 def summarise(rows):
     if not rows:
         return None
     n = len(rows)
     idx = {"h": 0, "d": 1, "a": 2}
-    hit = sum(1 for r in rows if r["pick"] == r["actual"])
+    hit = sum(1 for r in rows if correct(r))
     ll = -sum(log(max(r["p"][idx[r["actual"]]], EPS)) for r in rows) / n
     home = sum(1 for r in rows if r["actual"] == "h") / n
     exact = sum(1 for r in rows if r["score"] == r["result"])
     # Where the misses actually come from. The model almost never picks a draw,
     # so a draw is a guaranteed loss on the top pick, and counting them is the
     # difference between "we got it wrong" and knowing why.
-    drawn = sum(1 for r in rows if r["actual"] == "d" and r["pick"] != "d")
+    drawn = sum(1 for r in rows if r["actual"] == "d" and not correct(r))
+    draw_reads = sum(1 for r in rows if r["actual"] == "d" and r["pick"] != "d" and score_draw(r))
     picks = {k: sum(1 for r in rows if r["pick"] == k) for k in "hda"}
     actual = {k: sum(1 for r in rows if r["actual"] == k) for k in "hda"}
     return {"n": n, "correct": hit, "accuracy": round(hit / n, 4),
             "logLoss": round(ll, 4), "homeRate": round(home, 4),
             "exactScores": exact, "exactRate": round(exact / n, 4),
-            "drawnOut": drawn, "picks": picks, "actuals": actual}
+            "drawnOut": drawn, "drawReads": draw_reads, "picks": picks, "actuals": actual}
 
 
 def tier_table(rows):
@@ -210,10 +258,10 @@ def tier_table(rows):
             continue
         out.append({
             "name": name, "k": k, "min": lo, "n": len(g),
-            "correct": sum(1 for r in g if r["pick"] == r["actual"]),
-            "hit": round(sum(1 for r in g if r["pick"] == r["actual"]) / len(g), 4),
-            "expected": round(sum(r["confidence"] for r in g) / len(g), 4),
-            "drawnOut": sum(1 for r in g if r["actual"] == "d" and r["pick"] != "d"),
+            "correct": sum(1 for r in g if correct(r)),
+            "hit": round(sum(1 for r in g if correct(r)) / len(g), 4),
+            "expected": round(sum(expected(r) for r in g) / len(g), 4),
+            "drawnOut": sum(1 for r in g if r["actual"] == "d" and not correct(r)),
         })
     return out
 
@@ -269,8 +317,8 @@ def main():
         if g:
             bands.append({
                 "from": lo, "to": min(hi, 1.0), "n": len(g),
-                "hit": round(sum(1 for r in g if r["pick"] == r["actual"]) / len(g), 4),
-                "expected": round(sum(r["confidence"] for r in g) / len(g), 4),
+                "hit": round(sum(1 for r in g if correct(r)) / len(g), 4),
+                "expected": round(sum(expected(r) for r in g) / len(g), 4),
             })
 
     per_league = {}
@@ -288,6 +336,20 @@ def main():
     # rather than a sample. The point of the board is to be able to read a whole
     # day back and see which tier the misses came from, so a truncated list
     # would defeat it.
+    # Form lines also read the season-so-far cache (current/), which holds the
+    # ESPN-sourced leagues openfootball does not.
+    form_res = {}
+    for path in glob.glob(os.path.join(HERE, "current", "*.json")):
+        code = os.path.basename(path).split("-")[0]
+        try:
+            for x in json.load(open(path)).get("rows", []):
+                if x.get("hg") is not None:
+                    form_res[(code, x["date"], x["home"], x["away"])] = (x["hg"], x["ag"])
+        except Exception:
+            continue
+    form_res.update(results)
+    fidx = form_index(form_res)
+
     def game_row(r):
         _, k, name = tier_of(r["confidence"], r["celtic"], r["unrated"])
         return {"league": r["league"], "home": r["home"], "away": r["away"],
@@ -295,7 +357,10 @@ def main():
                 "actual": r["actual"], "confidence": r["confidence"],
                 "celtic": r["celtic"], "tier": name, "k": k,
                 "predScore": list(r["score"]), "result": list(r["result"]),
-                "list": r["list"], "ok": r["pick"] == r["actual"]}
+                "list": r["list"], "ok": correct(r),
+                "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
+                "formH": team_form(fidx, r["league"], r["home"], r["date"]),
+                "formA": team_form(fidx, r["league"], r["away"], r["date"])}
 
     by_date = defaultdict(list)
     for r in rows:
@@ -347,7 +412,7 @@ def main():
                     "actual": r["actual"], "confidence": r["confidence"],
                     "celtic": r["celtic"], "predScore": list(r["score"]),
                     "result": list(r["result"]),
-                    "ok": r["pick"] == r["actual"]} for r in recent],
+                    "ok": correct(r)} for r in recent],
     }
     json.dump(payload, open(os.path.join(HERE, "record.json"), "w"),
               separators=(",", ":"))

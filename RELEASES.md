@@ -3,6 +3,16 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Draw readings count as right; every played row opens; link to HQ (release-2026-10-06)
+
+**What changed:**
+- **Draw readings.** A football game now counts as right when the top pick landed, or when the predicted scoreline was a draw and the game finished level (Douglas's decision). That applies everywhere the record is read: How it went ticks, tier and band tables, the list record, the day list's Won/Lost, the office. The quoted side of every quoted-vs-landed comparison adds the draw chance for those games (`score.expected`), so calibration stays a fair test. New `drawReads` count; `drawnOut` now counts only the draws that were not read.
+- **Started and played rows open.** Started Daily List picks are drawn by the same row code as upcoming ones (`daylist.py` carries each pick's full object forward from the last pre-start build), so they open the same detail: team sheets, form, Google links. Every How it went row (football, tennis, other sports) opens too: Google links (match report, highlights, head to head, table or draw) and, for football, each side's last five in that competition (`score.team_form`, from the results and `current/`).
+- **HQ link.** "HQ ↗" in the board bar opens FootyAlmanac HQ; HQ links back.
+**Evidence:** local re-grade on 6 Oct: 710 graded, 505 right (71.1%), 141 draw readings, 35 drawn out. Bands stay close to quoted (e.g. 70%+: 80.4% landed against 79.3% quoted). Tests `tests/test_draw_reads.py`, `tests/test_daylist.py`. Checked in a browser at 420px and 1280px.
+**Not changed:** any model, threshold, list rule or the tested "landed" rates (`backtest.py` still grades the top pick). Odds tab groups settle on the result as before: a draw still loses a win leg.
+**Roll back:** `git revert` this commit; the next build re-grades.
+
 ## 2026-10-05 Today's Daily List stays put: started picks show In play, Won or Lost (release-2026-10-05-22)
 
 **What changed:** today's section of the Daily List no longer empties as the day is played. A pick that has started stays in place, frozen at the price published before its start, with a status: In play, Result due, Won, Lost or Void, plus the score or winner. The day header adds "So far: list W won, L lost · reserve ...". The office reads the same file, so its Today tab matches the site.

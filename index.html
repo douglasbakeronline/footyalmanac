@@ -301,6 +301,9 @@ details.how p{margin-top:8px;padding-left:22px}
 .list-past .ok{color:var(--home);font-weight:700}
 /* started Daily List picks (pinnedRow): a status pill, no background tint */
 .row.pinned{cursor:default}
+.row .pred.pin-pred{min-width:0;overflow:hidden;text-align:center}
+.row .pred.pin-pred small{display:block;color:var(--ink-2);font-size:12px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media (max-width:860px){.row .pred.pin-pred{text-align:left}.row .pred.pin-pred small{display:inline;margin:0 0 0 8px}}
 .pin-gap{display:block}
 .pin-st{display:inline-block;font:700 11px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;
   padding:4px 6px;border:1px solid var(--cover-ink);white-space:nowrap}
@@ -602,6 +605,13 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   border-right:1px solid #3a342e;min-height:44px;
 }
 .views button:last-child{border-right:0}
+/* the link across to FootyAlmanac HQ, styled as one more board (6 Oct 2026) */
+.views .hq-link{flex:1 1 0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);
+  font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
+  background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px}
+.views .hq-link:hover{text-decoration:underline}
+.views .hq-link:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+@media (max-width:700px){ #views .hq-link{flex:1 1 30%;border-bottom:1px solid #3a342e} }
 /* nine boards: three to a row on a phone rather than nine slivers */
 #views{flex-wrap:wrap;position:sticky;top:0;z-index:40;box-shadow:0 6px 14px -10px rgba(16,14,12,.55)}
 /* On a phone the nav is three rows tall; pinned, it would eat a third of
@@ -676,6 +686,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   font-family:var(--f-ui);font-weight:700;font-size:15px;text-align:center;line-height:1;
 }
 .mark.ok{color:#2f6b52}
+.rrow[data-rx],.xrow[data-rx]{cursor:pointer}
+.rrow[data-rx]:hover,.xrow[data-rx]:hover{background:var(--yellow-soft)}
+.rrow[aria-expanded="true"],.xrow[aria-expanded="true"]{background:#f3ead6}
+.rrow[data-rx]:focus-visible,.xrow[data-rx]:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
 .mark.no{color:var(--away)}
 .rrow.miss .club{color:var(--ink-2);font-weight:500}
 .rrow.miss .bar{opacity:.55}
@@ -978,6 +992,7 @@ footer b{color:var(--ink-2)}
   <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="results" aria-pressed="false">How it went</button>
+  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ ↗</a>
 </nav>
 <div class="note" id="note"></div>
 
@@ -1202,7 +1217,7 @@ const metaCells = [
 if(R && R.overall && R.overall.n >= 5){
   const o = R.overall;
   metaCells.push(["Football record", pct(o.accuracy) + "%",
-                  "top pick, " + o.n + " graded · " + pct(o.homeRate) + "% baseline",
+                  "read right, " + o.n + " graded · " + pct(o.homeRate) + "% baseline",
                   o.accuracy > o.homeRate ? "good" : ""]);
 }
 $("#meta").insertAdjacentHTML("afterbegin", metaCells.map(([k,v,sub,cls])=>
@@ -1972,7 +1987,7 @@ function renderList(){
       <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}</div></div>`;
     const put = (it, i) => it.kind === "football"
       ? appendFixture(sec, it.g, i, date, false)
-      : it.kind === "pinned" ? sec.appendChild(pinnedRow(it.g, i))
+      : it.kind === "pinned" ? putPinned(sec, it.g, i, date)
       : sec.appendChild(sportRow(it.g, i, true));
     items.forEach(put);
     if(extra.length){
@@ -2170,13 +2185,57 @@ const resState = { day: null, tday: null, sday: null, sport: "football" };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
+// Every graded row opens a detail panel, like the boards' rows (6 Oct 2026):
+// form going into the game and Google links for the match. RES_ROWS holds
+// each rendered row's builder; one delegated handler toggles it.
+const RES_ROWS = [];
+const resKey = html => { RES_ROWS.push(html); return RES_ROWS.length - 1; };
+const gLinks = links => `<div class="research">${links.map(([label, q]) =>
+  `<a href="${gSearch(q)}" target="_blank" rel="noopener">${label} ↗</a>`).join("")}</div>`;
+function resultDetailFootball(g, d){
+  const L = lname(g.league) || {name:g.league, country:""};
+  const vs = g.home + " v " + g.away;
+  const side = (name, f) => `<div><h3>${name}</h3>${formLines(f)}</div>`;
+  const read = g.ok ? (g.drawRead ? "Right: the predicted scoreline was a draw and it finished level." : "Right: the top pick landed.")
+                    : g.actual === "d" ? "Wrong: the model backed a winner and it finished level." : "Wrong: the other side won.";
+  return `<div class="detail rdetail">${gLinks([["Match report", `${vs} ${d} match report`], ["Highlights", `${vs} highlights`],
+      ["Head to head", `${vs} head to head`], [`${L.name} table`, `${L.name} ${L.country} table`]])}
+    <div class="why"><b>${read}</b> Split ${pct(g.p[0])}–${pct(g.p[1])}–${pct(g.p[2])}, predicted ${g.predScore[0]}–${g.predScore[1]},
+      final ${g.result[0]}–${g.result[1]}.</div>
+    ${g.formH || g.formA ? `<div class="detail-grid" style="margin-top:16px">${side(g.home, g.formH)}${side(g.away, g.formA)}</div>
+      <div class="stat" style="margin-top:8px">Form before this game, in the same competition.</div>`
+      : `<div class="stat">Form for this game fills in from the next build.</div>`}</div>`;
+}
+function resultDetailOther(g, d, kind){
+  const a = g.playerA || g.home, b = g.playerB || g.away, vs = a + " v " + b;
+  const comp = kind === "tennis" ? [g.tournament, g.tour].filter(Boolean).join(" ") : (g.label || "");
+  return `<div class="detail rdetail">${gLinks([["Match report", `${vs} ${comp} ${d}`], ["Head to head", `${vs} head to head`],
+      [kind === "tennis" ? "Draw" : "Standings", `${comp} ${kind === "tennis" ? "draw" : "standings"}`]])}
+    ${g.formH ? `<div class="detail-grid" style="margin-top:4px"><div><h3>${g.home}</h3>${formLines(g.formH)}</div>
+      <div><h3>${g.away}</h3>${formLines(g.formA)}</div></div>`
+      : `<div class="stat">${kind === "tennis" ? "Recent form is not on file for tennis; the links above have it." : ""}</div>`}</div>`;
+}
+document.addEventListener("click", e => {
+  const row = e.target.closest(".rrow[data-rx], .xrow[data-rx]");
+  if(!row || e.target.closest("a")) return;
+  const nx = row.nextElementSibling;
+  if(nx && nx.classList.contains("rdetail")){ nx.remove(); row.setAttribute("aria-expanded", "false"); return; }
+  row.insertAdjacentHTML("afterend", RES_ROWS[+row.dataset.rx] || "");
+  row.setAttribute("aria-expanded", "true");
+});
+document.addEventListener("keydown", e => {
+  if((e.key === "Enter" || e.key === " ") && e.target.matches && e.target.matches(".rrow[data-rx], .xrow[data-rx]")){
+    e.preventDefault(); e.target.click(); }
+});
+const rxAttr = html => ` data-rx="${resKey(html)}" role="button" tabindex="0" aria-expanded="false"`;
+
 const mark = ok => `<div class="mark ${ok?"ok":"no"}" aria-label="${ok?"correct":"wrong"}">${ok?"✓":"✗"}</div>`;
 const OUTCOME = {h:"home win", d:"draw", a:"away win"};
 
 function resultRow(g, i){
   const L = lname(g.league) || {short:g.league, iso:"", country:""};
   const h = pct(g.p[0]), d = pct(g.p[1]), a = 100-h-d;
-  return `<div class="rrow${i%2?" alt":""}${g.celtic?" celtic":""}${g.ok?"":" miss"}">
+  return `<div class="rrow${i%2?" alt":""}${g.celtic?" celtic":""}${g.ok?"":" miss"}"${rxAttr(resultDetailFootball(g, resState.day))}>
     <div class="lg">${L.short}</div>
     <div class="side"><div class="club">${flag(L.iso,L.country)}<span>${g.home}</span></div></div>
     ${probBar(h, d, a, 15)}
@@ -2230,7 +2289,7 @@ const tScore = note => (note || "").replace(/^.*\([A-Z]{3}\)\s*/, "");
 
 function tennisRow(g, i){
   const loser = g.winner === g.playerA ? g.playerB : g.playerA;
-  return `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}">
+  return `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}"${rxAttr(resultDetailOther(g, g.date || "", "tennis"))}>
     <div class="lg">${g.tour}</div>
     <div class="tm"><b>${g.playerA}</b> v <b>${g.playerB}</b>
       <small>${[g.tournament, g.round].filter(Boolean).join(" · ")}</small></div>
@@ -2354,6 +2413,30 @@ function pinStatus(g){
   const t = Date.parse(g.start), now = Date.now();
   if(now < t) return ["up", "Not started"];
   return now - t < (PLAY_HOURS[g.sport] || 3) * 36e5 ? ["live", "In play"] : ["due", "Result due"];
+}
+// A started pick with its full object (daylist.py carries it) is drawn by the
+// same row code as an upcoming one, so it opens the same detail: team sheets,
+// form and the Google links. Only the middle cell changes, to the status.
+function putPinned(sec, g, i, date){
+  const f = g.full;
+  if(!f) return sec.appendChild(pinnedRow(g, i));
+  const n0 = sec.children.length;
+  try {
+    if(g.sport === "football") appendFixture(sec, f, i, date, false);
+    else sec.appendChild(sportRow(g.sport === "tennis" ? tennisAsGame(f) : f, i, true));
+  } catch(e){
+    while(sec.children.length > n0) sec.lastElementChild.remove();
+    return sec.appendChild(pinnedRow(g, i));
+  }
+  const line = sec.children[n0], pred = line && line.querySelector(".pred");
+  if(!pred) return;
+  const [cls, label] = pinStatus(g), r = g.result || {};
+  const final = r.score ? r.score : r.winner ? `${r.winner} won` : "";
+  const was = g.sport === "football" && f.score ? `pred ${f.score[0]}–${f.score[1]}` : "";
+  line.querySelector(".row").classList.add("pinned-full");
+  pred.removeAttribute("aria-hidden");
+  pred.classList.add("pin-pred");
+  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final || was ? `<small>${[final, was].filter(Boolean).join(" · ")}</small>` : ""}`;
 }
 function pinnedRow(g, i){
   const k = SPORT_K[g.tier] ?? 0;
@@ -2518,7 +2601,7 @@ function sportsResults(){
   const tl = (x, label) => x ? `<div class="${x.accuracy >= x.expected ? "good" : "bad"}">
       <span>${label}</span><b>${x.correct} / ${x.n}</b>
       <small>${pct(x.accuracy)}% · quoted ${pct(x.expected)}%</small></div>` : "";
-  const row = (g, i) => `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}">
+  const row = (g, i) => `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}"${rxAttr(resultDetailOther(g, (g.when || "").slice(0,10), "sport"))}>
       <div class="lg">${(SD && SD.sports[g.sport] || {name:g.sport}).name}</div>
       <div class="tm"><b>${g.home}</b> v <b>${g.away}</b><small>${g.label}</small></div>
       <div class="tp"><span>Picked</span>${g.pick} <em>${pct(g.confidence)}%</em></div>
@@ -2538,6 +2621,7 @@ function sportsResults(){
 }
 
 function renderResults(){
+  RES_ROWS.length = 0;
   const host = $("#results");
   // Two records, not one: a graded football fixture and a graded tennis
   // match are tracked completely separately (score.py, score_tennis.py), so
@@ -2608,10 +2692,10 @@ function renderResults(){
 
     <div class="scoreline">
       <div class="${day.accuracy >= day.homeRate ? "good":"bad"}">
-        <span>Top pick correct</span><b>${day.correct} / ${day.n}</b>
+        <span>Read right</span><b>${day.correct} / ${day.n}</b>
         <small>${pct(day.accuracy)}% · ${pct(day.homeRate)}% if you always backed home</small></div>
       <div><span>Drawn out</span><b>${day.drawnOut}</b>
-        <small>picked a winner, got a draw</small></div>
+        <small>picked a winner, got a draw${day.drawReads ? ` · ${day.drawReads} more read as a draw, counted right` : ""}</small></div>
       <div><span>Exact scorelines</span><b>${day.exactScores}</b>
         <small>of ${day.n}</small></div>
       <div><span>Log loss</span><b>${day.logLoss.toFixed(3)}</b>
@@ -2655,9 +2739,11 @@ function renderResults(){
     flagged row is dropped one tier before it is labelled.` : ""}</p>
     <p>${R && R.overall ? `Across every graded fixture so far, the model almost never picks a
     draw: <em>${R.overall.picks.d}</em> draw picks against <em>${R.overall.actuals.d}</em> matches
-    that actually finished level. Those <em>${R.overall.drawnOut}</em> drawn-out fixtures are the
-    single largest category of miss, and no amount of confidence in a favourite protects you
-    from one.` : ""}</p></div>`;
+    that actually finished level. A game counts as right when the top pick landed, or when the
+    predicted scoreline was a draw and it finished level${R.overall.drawReads != null ? ` (<em>${R.overall.drawReads}</em> so far)` : ""};
+    the quoted side of every comparison adds the draw chance for those games, so it stays a fair test.
+    The other <em>${R.overall.drawnOut}</em> drawn-out fixtures are the single largest category of miss,
+    and no amount of confidence in a favourite protects you from one.` : ""}</p></div>`;
 
   $("#dayseg").addEventListener("click", e=>{
     const b = e.target.closest("button"); if(!b) return;
