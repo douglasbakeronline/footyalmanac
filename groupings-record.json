@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-06T14:44:00Z",
+ "graded": "2026-10-06T14:59:45Z",
  "overall": {
   "groups": 11,
   "settled": 6,
   "won": 1,
   "lost": 5,
   "pending": 5,
-  "legs": 27,
-  "legsWon": 20,
+  "legs": 28,
+  "legsWon": 21,
   "returned": 2.77,
   "staked": 6,
   "expected": 1.79
@@ -43,8 +43,8 @@
    "won": 0,
    "lost": 1,
    "pending": 3,
-   "legs": 6,
-   "legsWon": 5,
+   "legs": 7,
+   "legsWon": 6,
    "returned": 0,
    "staked": 1,
    "expected": 0.26
@@ -293,9 +293,9 @@
      "p": 0.1679,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Nikola Bartunkova",
@@ -318,8 +318,8 @@
        "odds": 1.6,
        "est": true,
        "p": 0.7116,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Lucrezia Stefanini (ITA) bt Carole Monnet (FRA) 7-5 6-4"
       },
       {
        "pick": "England U21",
