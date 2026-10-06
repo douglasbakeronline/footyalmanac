@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 "How it went" opens on a Daily List review, with a board for every sport (release-2026-10-06-17)
+
+**What changed:**
+- "How it went" now opens on "The Daily List, day by day": every pick that made the Daily List, across all sports, for today and each earlier day, with the pick, its chance, the result and a tick or cross. Tiles show the last seven list days, every list day on file, and the chosen day. Today's rows come from the pinned list (`daylist.js`), so picks still to play, in play or awaiting a result show as such; earlier days come from `record.json`, `tennis-record.json` and `sports-record.json`.
+- The three-button switcher is replaced by a grid of boards, three to a row: Daily List, Football, Tennis, then each sport in `sports.json` (NFL, Baseball, Basketball, Rugby, Ice hockey, College football, College basketball, WNBA, Rugby league). Each shows its graded record; a sport with nothing graded is greyed.
+- Each of the other sports has its own board (its record, its Daily List record, its days), replacing the single "Other sports" board.
+**Why:** Douglas asked (6 Oct 2026) for "How it went" to review the daily picks from the day and the days before, then let him browse each sport on its own tab, in a grid.
+**Evidence:** read-only use of the existing record files; nothing regraded; the list total matches the header's list record (52 of 61); checked at 1400px and 400px; tests pass.
+**Files:** `index.html`, `RELEASES.md`.
+**Not changed:** grading, any probability, the football and tennis boards.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Tested rates by a pick's own band; fair odds labelled; sport and time on the slip (release-2026-10-06-16)
 
 **What changed:**

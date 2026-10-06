@@ -716,6 +716,16 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .xrow .tw{font-weight:600}
 .xrow.miss .tw{color:var(--away)}
 .xrow .conf{text-align:right}
+/* "How it went": the Daily List review and a grid of every sport (6 Oct 2026) */
+@media (min-width:701px){ .xruler.lrow,.xrow.lrow{grid-template-columns:104px 1.4fr 1fr 1.3fr 70px 26px} }
+.xrow .mark.wait{color:var(--mute);font-family:var(--f-num);font-size:11px;text-align:center}
+.views.resgrid{display:grid;grid-template-columns:repeat(3,1fr);max-width:720px;margin:18px 0 0;border:1px solid #100e0c}
+.views.resgrid button{border-right:1px solid #3a342e;border-bottom:1px solid #3a342e;line-height:1.15}
+.views.resgrid button:nth-child(3n){border-right:0}
+.views.resgrid button:nth-last-child(-n+3){border-bottom:0}
+.views.resgrid button i{display:block;font-family:var(--f-num);font-style:normal;font-size:11px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
+.views.resgrid button.quiet{color:#8d8577}
+.views.resgrid button.quiet[aria-pressed="true"]{color:#100e0c}
 @media (max-width:700px){
   .xruler{display:none}
   .xrow{grid-template-columns:1fr 1fr 26px;grid-template-areas:"tm tm mark" "tp tw mark" "lg conf conf";row-gap:6px}
@@ -2209,7 +2219,7 @@ function render(){
    came from. The tier hit rates underneath are the live version of the labels
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
-const resState = { day: null, tday: null, sday: null, sport: "football" };
+const resState = { day: null, tday: null, sday: null, lday: null, sport: "list" };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
@@ -2623,7 +2633,42 @@ function renderSport(key){
 }
 
 /* sports results on "How it went": same rows as tennis */
-function sportsResults(){
+function sportsResults(only){
+  const nameOf = k => (SD && SD.sports[k] || {name:k}).name;
+  if(only){
+    // one sport's own board (6 Oct 2026): the same rows, only that sport's days
+    const days = ((SR && SR.days) || []).map(d => {
+      const games = d.games.filter(g => g.sport === only);
+      return {date: d.date, games, n: games.length, correct: games.filter(g => g.ok).length};
+    }).filter(d => d.n);
+    const sp = SD && SD.sports[only];
+    if(!days.length){
+      return `<div class="empty" style="max-width:80ch;line-height:1.6;margin-top:20px"><b>Nothing graded yet for ${nameOf(only)}.</b>
+        ${sp && sp.published === false ? "This sport is not published: in testing the model did not beat simply backing the home side, so nothing is graded."
+          : "Picks are graded once played, and only if they were published before the start. This fills in from the first day one is on the site."}</div>`;
+    }
+    const all = days.flatMap(d => d.games), lst = all.filter(g => g.list);
+    const sum = (gs, label) => gs.length ? `<div class="${gs.filter(g=>g.ok).length / gs.length >= gs.reduce((a,g)=>a+g.confidence,0) / gs.length ? "good" : "bad"}">
+        <span>${label}</span><b>${gs.filter(g=>g.ok).length} / ${gs.length}</b>
+        <small>${pct(gs.filter(g=>g.ok).length / gs.length)}% · quoted ${pct(gs.reduce((a,g)=>a+g.confidence,0) / gs.length)}%</small></div>` : "";
+    const day = days.find(d => d.date === resState.sday) || days[0];
+    const row = (g, i) => `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}"${rxAttr(resultDetailOther(g, (g.when || "").slice(0,10), "sport"))}>
+      <div class="lg">${g.list ? "List" : g.reserve ? "Reserve" : ""}</div>
+      <div class="tm"><b>${g.home}</b> v <b>${g.away}</b><small>${g.label}</small></div>
+      <div class="tp"><span>Picked</span>${g.pick} <em>${pct(g.confidence)}%</em></div>
+      <div class="tw"><span>Won</span>${g.winner || "Draw"}<small>${g.score[0]}–${g.score[1]}</small></div>
+      <div class="conf"><span class="tier t${SPORT_K[g.tier] ?? 0}">${g.tier}</span></div>
+      ${mark(g.ok)}</div>`;
+    return `<div class="scoreline" style="margin-top:20px">${sum(all, `${nameOf(only)}: picked the winner`)}${sum(lst, "On the Daily List")}</div>
+    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">Completed day</div>
+      <div class="dayseg" id="sdayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
+        ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div></div>
+    <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
+      <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
+    <div class="xruler"><div>Board</div><div>Game</div><div>Prediction</div><div>Result</div>
+      <div style="text-align:right">Tier</div><div></div></div>
+    ${day.games.map(row).join("")}`;
+  }
   if(!SR || !SR.overall || !(SR.days||[]).length){
     return `<div class="empty" style="max-width:80ch;line-height:1.6"><b>Nothing graded yet.</b>
       NFL, baseball, basketball and rugby picks are graded once played, and only if they were
@@ -2652,20 +2697,120 @@ function sportsResults(){
     ${day.games.map(row).join("")}`;
 }
 
+/* The Daily List review (6 Oct 2026): every pick that was on the Daily List,
+   day by day across all sports, from the three record files (graded only if
+   published before the start) plus today's pinned list (daylist.js), which
+   also shows picks still to play or in play. Nothing is regraded here. */
+function listReviewDays(){
+  const byDate = {};
+  const put = (d, x) => (byDate[d] = byDate[d] || []).push(x);
+  const lg = code => ((D && D.leagues) || []).find(l => l.code === code);
+  const side = (g, k) => k === "h" ? g.home : k === "a" ? g.away : "Draw";
+  (R_DAYS || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+    sport: "Football", comp: (lg(g.league) || {}).name || g.league, home: g.home, away: g.away,
+    pick: side(g, g.pick), conf: g.confidence, tier: g.tier,
+    res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: g.ok ? "won" : "lost"})));
+  ((TT && TT.days) || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+    sport: "Tennis", comp: [g.tour, g.tournament, g.round].filter(Boolean).join(" · "), home: g.playerA, away: g.playerB,
+    pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: g.note || "",
+    status: g.void ? "void" : g.ok ? "won" : "lost"})));
+  ((SR && SR.days) || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+    sport: (SD && SD.sports[g.sport] || {name:g.sport}).name, comp: g.label, home: g.home, away: g.away,
+    pick: g.pick, conf: g.confidence, tier: g.tier, res: g.winner || "Draw",
+    small: g.score ? `${g.score[0]}–${g.score[1]}` : "", status: g.ok ? "won" : "lost"})));
+  const DLX = window.__DAY_LIST__;
+  if(DLX && DLX.date && (DLX.list || []).length){
+    // today's pinned list replaces the records' partial copy of the same day
+    byDate[DLX.date] = DLX.list.map(it => {
+      const r = it.result || {};
+      const sc = Array.isArray(r.score) ? `${r.score[0]}–${r.score[1]}` : "";
+      return {sport: it.sport === "football" ? "Football" : it.sport === "tennis" ? "Tennis" : (SD && SD.sports[it.sport] || {name:it.sport}).name,
+        comp: it.comp || "", home: it.home, away: it.away, pick: it.pick, conf: it.confidence, tier: it.tier,
+        res: it.status === "won" || it.status === "lost" ? (r.winner || (r.ok ? it.pick : "")) : it.status === "void" ? "Void" : "",
+        small: sc || r.note || (it.status === "started" ? `Started ${koFmt.format(new Date(it.start))}`
+          : it.status === "upcoming" ? `Starts ${koFmt.format(new Date(it.start))}` : ""),
+        // a game long past its start with no result yet is waiting on the next build, not still going
+        status: it.status, waiting: it.status === "started" && Date.now() - Date.parse(it.start) > 3.5 * 3600e3};
+    });
+  }
+  return Object.keys(byDate).sort().reverse().map(date => {
+    const items = byDate[date].slice().sort((a,b) => b.conf - a.conf);
+    const won = items.filter(x => x.status === "won").length, lost = items.filter(x => x.status === "lost").length;
+    return {date, items, won, lost, open: items.length - won - lost - items.filter(x => x.status === "void").length};
+  });
+}
+
+function listReview(){
+  const days = listReviewDays();
+  if(!days.length){
+    return `<div class="empty" style="max-width:80ch;line-height:1.6;margin-top:20px"><b>No Daily List picks graded yet.</b>
+      Each day's list is reviewed here once its games are played.</div>`;
+  }
+  const day = days.find(d => d.date === resState.lday) || days[0];
+  const tally = ds => ds.reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);
+  const [w7, n7] = tally(days.slice(0, 7)), [wa, na] = tally(days);
+  const tile = (label, w, n, note) => n ? `<div class="${w / n >= .8 ? "good" : "bad"}"><span>${label}</span><b>${w} / ${n}</b>
+      <small>${pct(w / n)}% landed${note ? " · " + note : ""}</small></div>` : "";
+  const st = x => x.status === "won" ? mark(true) : x.status === "lost" ? mark(false)
+    : `<div class="mark wait">${x.status === "void" ? "void" : x.status === "started" ? (x.waiting ? "due" : "live") : "–"}</div>`;
+  const row = (x, i) => `<div class="xrow lrow${i%2?" alt":""}${x.status === "lost" ? " miss" : ""}">
+      <div class="lg">${x.sport}</div>
+      <div class="tm"><b>${x.home}</b> v <b>${x.away}</b><small>${x.comp}</small></div>
+      <div class="tp"><span>Picked</span>${x.pick} <em>${pct(x.conf)}%</em></div>
+      <div class="tw"><span>${x.status === "won" || x.status === "lost" ? "Result" : x.status === "void" ? "Void" : x.status === "started" ? (x.waiting ? "Result due" : "In play") : "To play"}</span>${x.res}<small>${x.small}</small></div>
+      <div class="conf"><span class="tier t${TK[x.tier] ?? 0}">${x.tier || ""}</span></div>
+      ${st(x)}</div>`;
+  const sports = [...new Set(day.items.map(x => x.sport))];
+  return `<div class="lede" style="margin-top:22px"><h2>The Daily List, day by day</h2>
+      <p>Every pick that made the Daily List, across all sports, with how it went. Only picks
+      published before the start are graded; today's list stays as it stood before each game began.</p></div>
+    <div class="scoreline" style="margin-top:14px">${tile("Last 7 list days", w7, n7)}${tile("Every list day here", wa, na)}
+      ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}</div>
+    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
+      <div class="dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
+        ${fmtShort(d.date)}<i>${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}</i></button>`).join("")}</div></div>
+    <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
+      <div class="count">${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}</div></div>
+    <div class="xruler lrow"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
+      <div style="text-align:right">Tier</div><div></div></div>
+    ${day.items.map(row).join("")}`;
+}
+
+// The board picker: the Daily List, then every sport, three to a row
+function resGrid(){
+  const rec = x => x && x.n ? `${x.correct}/${x.n}` : "";
+  const ld = listReviewDays().reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);
+  const cells = [["list", "Daily List", ld[1] ? `${ld[0]}/${ld[1]}` : ""],
+    ["football", "Football", rec(R && R.overall)], ["tennis", "Tennis", rec(TT && TT.overall)]];
+  Object.entries((SD && SD.sports) || {}).forEach(([k, sp]) =>
+    cells.push([k, sp.name, rec(SR && SR.bySport && SR.bySport[k])]));
+  return `<div class="views standalone resgrid" id="resSport">${cells.map(([k, label, r]) =>
+    `<button data-sport="${k}" aria-pressed="${resState.sport === k}"${r ? "" : ' class="quiet"'}>${label}<i>${r || "no results yet"}</i></button>`).join("")}</div>`;
+}
+
 function renderResults(){
   RES_ROWS.length = 0;
   const host = $("#results");
   // Two records, not one: a graded football fixture and a graded tennis
   // match are tracked completely separately (score.py, score_tennis.py), so
   // "How it went" is two boards sharing a tab.
-  const sportTabs = `<div class="views standalone" id="resSport" style="margin:18px 0 0;max-width:520px">
-    <button data-sport="football" aria-pressed="${resState.sport==="football"}">Football</button>
-    <button data-sport="tennis" aria-pressed="${resState.sport==="tennis"}">Tennis</button>
-    <button data-sport="other" aria-pressed="${resState.sport==="other"}">Other sports</button>
-  </div>`;
+  const sportTabs = resGrid();
 
-  if(resState.sport === "other"){
-    host.innerHTML = sportTabs + sportsResults();
+  if(resState.sport === "list"){
+    host.innerHTML = sportTabs + listReview();
+    $("#ldayseg") && $("#ldayseg").addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.lday = b.dataset.day; renderResults();
+    });
+    $("#resSport").addEventListener("click", e=>{
+      const b = e.target.closest("button"); if(!b) return;
+      resState.sport = b.dataset.sport; resState.sday = null; renderResults();
+    });
+    return;
+  }
+
+  if(resState.sport !== "football" && resState.sport !== "tennis"){
+    host.innerHTML = sportTabs + sportsResults(resState.sport);
     const seg = $("#sdayseg");
     if(seg) seg.addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
@@ -2673,7 +2818,7 @@ function renderResults(){
     });
     $("#resSport").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
-      resState.sport = b.dataset.sport; renderResults();
+      resState.sport = b.dataset.sport; resState.sday = null; renderResults();
     });
     return;
   }
