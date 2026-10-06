@@ -555,6 +555,8 @@ AF_EXTRA = {e["code"] for e in _E.AF_EXTRA}
 # pool of fixtures by date (af_cup_pool), not one call per cup per build.
 AF_CUPS = set(_E.AF_CUPS)
 AF.update({c: _E.LEAGUES[c]["afId"] for c in AF_CUPS})
+AF_U21_START = set(_E.AF_U21)
+AF.update({c: _E.LEAGUES[c]["afId"] for c in AF_U21_START})
 # Replayed below the Daily List bar: board and reserve only, and kept out of
 # the shared calibration fit (build.NO_LIST, tune.codes).
 AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
@@ -727,6 +729,83 @@ def af_refresh_cups(path=None, max_age_days=3, log=None):
     return new
 
 
+# --- Academy (U21) sides: Premier League 2 (6 Oct 2026) ----------------------
+#
+# EFL Trophy group games pit every Category One academy's U21 side against
+# League One and Two clubs. Until today "Sunderland U21" matched Sunderland
+# and was priced as the Premier League first team; since the youth guard in
+# match_team those ties are unrated and dropped. Their own league, Premier
+# League 2, gives U21 sides a rating; build.fit_u21 then sets how strong that
+# league is against the senior game from last season's EFL Trophy ties.
+AF_U21 = set(AF_U21_START)
+_U21_NAME = re.compile(r"^premier league 2\b", re.I)
+
+
+def af_refresh_u21(path=None, max_age_days=7, log=None):
+    """Find Premier League 2 and the EFL Trophy on API-Football (one
+    /leagues?country=England call a week) and keep them in current/af-u21.json.
+    Returns the document, or the one on file."""
+    path = path or _E.AF_U21_FILE
+    try:
+        with open(path) as f:
+            doc = json.load(f)
+    except Exception:
+        doc = {}
+    fresh = doc.get("checked") and (time.time() - doc["checked"]) < max_age_days * 86400
+    if fresh or not os.environ.get("API_FOOTBALL_KEY"):
+        return doc
+    resp = _af_get("/leagues?country=England")
+    if not resp:
+        return doc
+    leagues, trophy = [], None
+    for item in resp:
+        lg = item.get("league") or {}
+        years = sorted({x.get("year") for x in item.get("seasons") or [] if x.get("year")})
+        cur = next((x.get("year") for x in item.get("seasons") or [] if x.get("current")), None)
+        if (lg.get("type") or "").lower() == "league" and _U21_NAME.search(lg.get("name") or ""):
+            leagues.append({"code": f"afu.{lg['id']}", "id": lg["id"], "name": lg["name"],
+                            "current": cur, "years": years})
+        if (lg.get("type") or "").lower() == "cup" and (lg.get("name") or "").lower() in ("efl trophy", "football league trophy"):
+            trophy = {"id": lg["id"], "years": years}
+    if not leagues:
+        return doc
+    doc = {"note": "Premier League 2 and the EFL Trophy on API-Football; written by the build (sources.af_refresh_u21).",
+           "checked": int(time.time()), "leagues": leagues, "trophy": trophy}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=0)
+    if log is not None:
+        log.append(f"{len(leagues)} Premier League 2 competition(s); EFL Trophy id {trophy and trophy['id']}")
+    return doc
+
+
+def register_u21(doc):
+    """Make Premier League 2 usable in this run. Returns the codes added."""
+    added = _E.register_u21(doc)
+    for c in added:
+        AF[c] = _E.LEAGUES[c]["afId"]
+        AF_U21.add(c)
+    return added
+
+
+def af_season_by_id(lid, year):
+    """A finished season of any API-Football competition by id: one call,
+    then on disk for good."""
+    path = os.path.join(AF_CACHE_DIR, f"{lid}-{year}.json")
+    if os.path.exists(path):
+        try:
+            with open(path) as f:
+                return json.load(f)
+        except Exception:
+            pass
+    rows = _af_get(f"/fixtures?league={lid}&season={year}")
+    if rows:
+        os.makedirs(AF_CACHE_DIR, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(rows, f, separators=(",", ":"))
+    return rows
+
+
 def register_new_cups(entries):
     """Make freshly found cups usable in this run."""
     added = _E.register_cups(entries)
@@ -847,6 +926,26 @@ def af_season_pool(season):
     # last year once a split season crosses New Year.
     first = min(date(today.year, 1, 1), date(today.year - (today.month < 7), 6, 1))
     return af_day_pool(first, today + timedelta(days=AF_CUP_AHEAD))
+
+
+def af_rows_from(src):
+    """API-Football fixtures as this project's fixture rows."""
+    out = []
+    for f in src:
+        st = ((f.get("fixture") or {}).get("status") or {}).get("short")
+        if st in AF_DEAD:
+            continue
+        when = (f.get("fixture") or {}).get("date") or ""
+        home = clean_name(((f.get("teams") or {}).get("home") or {}).get("name") or "")
+        away = clean_name(((f.get("teams") or {}).get("away") or {}).get("name") or "")
+        if len(when) < 16 or not home or not away:
+            continue
+        ft = (f.get("score") or {}).get("fulltime") or {}
+        played = st in AF_PLAYED and ft.get("home") is not None and ft.get("away") is not None
+        out.append({"date": when[:10], "time": when[11:16], "utc": True, "round": None,
+                    "home": home, "away": away,
+                    "hg": ft["home"] if played else None, "ag": ft["away"] if played else None})
+    return out
 
 
 def af_rows(code, season):
