@@ -240,7 +240,7 @@ def build(now=None, here=HERE, fetch=True):
     attach_results(items, _load(os.path.join(here, "record.json"), {}),
                    _load(os.path.join(here, "tennis-record.json"), {}),
                    _load(os.path.join(here, "sports-record.json"), {}))
-    strength = lambda it: (-((it.get("accuracy") or {}).get("hit") or 0), -(it.get("confidence") or 0))
+    strength = lambda it: (-((it.get("accuracy") or {}).get("cumHit") or (it.get("accuracy") or {}).get("hit") or 0), -(it.get("confidence") or 0))
     items.sort(key=strength)
     for it in items: it.pop("published", None)
     lst, res = [i for i in items if i["list"]], [i for i in items if i["reserve"]]

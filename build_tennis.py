@@ -37,6 +37,7 @@ Standard library only, like the rest of the project.
 """
 import argparse, json, os, re, sys, unicodedata, urllib.request
 import rankings as RK
+from bands import band_rate
 from datetime import date, datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -167,11 +168,8 @@ ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.6824, "n": 973, "quoted": 0.67
 
 
 def accuracy_for(conf, tour, ranked=False):
-    best = None
-    for b in (ACCURACY_BANDS_ATP_RANKED if ranked else ACCURACY_BANDS.get(tour.upper(), [])):
-        if conf >= b["from"]:
-            best = b
-    return {"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None
+    """Its own band, not every call above it (bands.band_rate, 6 Oct 2026)."""
+    return band_rate(conf, ACCURACY_BANDS_ATP_RANKED if ranked else ACCURACY_BANDS.get(tour.upper(), []))
 
 
 # The list's reserve, as football (build.RESERVE_MIN): below the bar, Firm

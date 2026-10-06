@@ -282,9 +282,10 @@ details.how p{margin-top:8px;padding-left:22px}
 .v-wary .verdict{background:var(--red);color:#fff}
 @media (max-width:560px){.slip-total{grid-template-columns:1fr}.slip-total b{font-size:20px}
   .slip thead{display:none}
-  .slip tr{display:grid;grid-template-columns:1fr auto auto;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
+  .slip tr{display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;padding:10px 0;border-bottom:1px solid var(--rule-soft)}
   .slip td{border:0;padding:0}
-  .slip td:last-child{grid-column:1/-1}
+  .slip td:first-child,.slip td:last-child{grid-column:1/-1}
+  .slip td.n:nth-child(2){text-align:left}
   .slip td:last-child small{display:inline;margin-left:6px}}
 .reserve-head{padding:14px 12px 8px;margin-top:6px;border-top:1px solid var(--ink);
   font-family:var(--f-ui);font-size:13px;color:var(--mute);line-height:1.45}
@@ -1745,7 +1746,7 @@ function starredLegs(){
     if(g.celtic) warn.push("Celtic's Law: " + g.celtic.reasons.join("; "));
     if(g.unrated) warn.push("a side has no rating on file");
     legs.push({name: `${g.home.name} v ${g.away.name}`, pick, p: g.p[k], acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn});
+      list: g.list, reserve: g.reserve, warn, where: `Football · ${g.leagueName}`, when: g.kickoff});
   }));
   const others = [];
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
@@ -1755,7 +1756,8 @@ function starredLegs(){
     const warn = [];
     if(/qualif/i.test(g.label || "")) warn.push("a qualifying round: thin ratings, and not what was tested");
     legs.push({name: `${g.home} v ${g.away}`, pick: g.pick, p: g.confidence, acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn});
+      list: g.list, reserve: g.reserve, warn, when: g.when,
+      where: g.sport === "tennis" ? `Tennis · ${g.label}` : `${OG_SPORT[g.sport] || g.sport} · ${g.label}`});
   });
   legs.forEach(l => {
     if(l.p < 0.62) l.warn.push("under Firm (62%): close to a coin flip on the model's numbers");
@@ -1765,10 +1767,24 @@ function starredLegs(){
   return legs;
 }
 
+// Fair odds are 1 / the model's chance, not a bookmaker's price, so they are
+// labelled as such, with the nearest fraction a bookmaker would print (6 Oct 2026:
+// "1.29 (1/3.4)" read like a price and was not a real fraction).
+const FRACTIONS = ["1/20","1/16","1/14","1/12","1/10","1/9","1/8","1/7","1/6","1/5","2/9","1/4","2/7","3/10","1/3",
+  "4/11","2/5","4/9","1/2","8/15","4/7","8/13","4/6","8/11","4/5","5/6","10/11","1/1","11/10","6/5","5/4","11/8",
+  "6/4","13/8","7/4","15/8","2/1","9/4","5/2","11/4","3/1","10/3","7/2","4/1","9/2","5/1","11/2","6/1","7/1","8/1",
+  "9/1","10/1","12/1","14/1","16/1","20/1","25/1","33/1","50/1","66/1","100/1","200/1","500/1","1000/1"];
+const fracOf = dec => FRACTIONS.reduce((a, f) => { const [n, d] = f.split("/").map(Number);
+  return Math.abs(1 + n / d - dec) < Math.abs(1 + a[1] - dec) ? [f, n / d] : a; }, ["1/1", 1])[0];
 const fairOdds = p => {
   const dec = 1 / p;
-  return `${dec.toFixed(2)} (${dec - 1 >= 1 ? (dec - 1).toFixed(dec - 1 >= 10 ? 0 : 1) + "/1" : "1/" + (1 / (dec - 1)).toFixed(1)})`;
+  return `${dec.toFixed(2)} fair (${fracOf(dec)})`;
 };
+
+// "Wed 7 Oct, 01:00" in UK time, for a slip row
+const slipWhen = iso => { if(!iso) return ""; const d = new Date(iso); if(isNaN(d)) return "";
+  return new Intl.DateTimeFormat("en-GB", {weekday:"short", day:"numeric", month:"short", timeZone: UK_TZ}).format(d)
+    + ", " + koFmt.format(d); };
 
 function runSlip(){
   const legs = starredLegs();
@@ -1778,9 +1794,9 @@ function runSlip(){
   const without = legs.length > 1 ? all / weakest.p : null;
   const rows = legs.slice().sort((a, b) => b.p - a.p).map(l => `
     <tr class="v-${l.verdict.toLowerCase()}">
-      <td><b>${l.pick}</b><small>${l.name}</small></td>
+      <td><b>${l.pick}</b><small>${l.name}</small><small class="slip-when">${[l.where, slipWhen(l.when)].filter(Boolean).join(" · ")}</small></td>
       <td class="n">${pct(l.p)}%<small>${fairOdds(l.p)}</small></td>
-      <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? "tested" : ""}</small></td>
+      <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? "tested at " + bandLabel(l.acc) : ""}</small></td>
       <td><span class="verdict">${l.verdict}</span>${l.warn.length ? `<small>${l.warn.map(w => w[0].toUpperCase() + w.slice(1)).join(". ")}.</small>`
         : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}</td>
     </tr>`).join("");
@@ -1913,9 +1929,10 @@ function renderList(){
   host.innerHTML = `
     <div class="lede">
       <h2>${_n} pick${_n === 1 ? "" : "s"} this week, ${LIST_ORDER === "time" ? "by kick-off" : "strongest first"}</h2>
-      <p>Every pick here is one the model's testing says lands at least <b>four times in five</b>.
-        Each row shows its own tested rate: <b>"86% landed"</b> means calls at that level came off
-        86% of the time on games the model never saw.
+      <p>Every pick here clears its sport's bar: in testing, calls from that level up landed at least
+        <b>four times in five</b>. Each row shows its own tested rate, for picks at its own level only:
+        <b>"86% landed"</b> means calls in that band came off 86% of the time on games the
+        model never saw. A pick just over the bar can show less than 80%.
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <div class="list-order"><span class="ctl-label">Order by</span>
         <div class="seg" id="listSort">
@@ -1974,7 +1991,7 @@ function renderList(){
     [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
     pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
   }
-  const strength = it => [(it.g.accuracy && it.g.accuracy.hit) || 0, it.g.confidence];
+  const strength = it => [(it.g.accuracy && (it.g.accuracy.cumHit || it.g.accuracy.hit)) || 0, it.g.confidence];
   const byStrength = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
   // Kick-off order keeps the bar: picks that clear it still come before the
   // reserve, each group in time order, and the same 20 a day are chosen
@@ -2373,8 +2390,11 @@ function tennisResults(){
 /* ---------- the shared two-sided row: NFL, baseball, basketball, rugby, tennis ----------
    Football's row features on every sport: a bookmark star, tap to expand the
    reasoning, and the tested accuracy of calls at this level. */
-const accChip = a => a ? `<span class="acc" title="Calls at ${pct(a.from)}% or more landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>` : "";
-const accLine = a => a ? `Calls at <em>${pct(a.from)}%</em> or more landed <em>${pct(a.hit)}%</em> of the time across
+// A pick's tested rate is its own band ("60-65%"), not every call above it
+// (bands.py, 6 Oct 2026). An older file without "to" reads as before.
+const bandLabel = a => a.to ? `${pct(a.from)}–${pct(a.to)}%` : `${pct(a.from)}% or more`;
+const accChip = a => a ? `<span class="acc" title="Calls at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>` : "";
+const accLine = a => a ? `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.hit)}%</em> of the time across
   <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.` : "";
 
 function rerenderOpen(){

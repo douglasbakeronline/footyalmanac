@@ -33,6 +33,7 @@ Standard library only.
 """
 import argparse, concurrent.futures as cf, json, math, os, random, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
+from bands import band_rate
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 HIST_DIR = os.path.join(HERE, "history-sports")
@@ -518,13 +519,9 @@ def upcoming(sport, start, days):
 
 
 def accuracy_for(conf, bands_chk):
-    """How calls at this level did on games the model never saw: the highest
-    tested band at or below this confidence."""
-    best = None
-    for b in bands_chk or []:
-        if conf >= b["from"]:
-            best = b
-    return ({"from": best["from"], "hit": best["hit"], "n": best["n"]} if best else None)
+    """How calls at this level did on games the model never saw: its own
+    band, not every call above it (bands.band_rate, 6 Oct 2026)."""
+    return band_rate(conf, bands_chk)
 
 
 def _result(g, team):

@@ -194,7 +194,9 @@ class ListThreshold(unittest.TestCase):
 
     def test_accuracy_for_picks_highest_band_at_or_below(self):
         bs = [band(0.55, 100, 0.6), band(0.65, 50, 0.7), band(0.75, 20, 0.8)]
-        self.assertEqual(S.accuracy_for(0.70, bs), {"from": 0.65, "hit": 0.7, "n": 50})
+        # its own band, 65-75%: (0.7 x 50 - 0.8 x 20) / 30 (bands.band_rate, 6 Oct 2026)
+        self.assertEqual(S.accuracy_for(0.70, bs), {"from": 0.65, "to": 0.75, "hit": 0.6333, "n": 30,
+                                                    "cumHit": 0.7, "cumN": 50})
         self.assertEqual(S.accuracy_for(0.75, bs)["from"], 0.75)
         self.assertIsNone(S.accuracy_for(0.54, bs))
         self.assertIsNone(S.accuracy_for(0.9, None))

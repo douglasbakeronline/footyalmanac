@@ -129,7 +129,7 @@ def legs(dates):
             out.append({"sport": "football", "event": f"{h} v {a}", "home": h, "away": a, "side": side,
                         "pick": h if side == "h" else a, "code": g.get("league"), "comp": g.get("leagueName"), "country": g.get("country"),
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"]["hit"], "n": g["accuracy"]["n"], "list": bool(g.get("list"))})
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list"))})
     td = read_js("tennis-data.js") or {}
     for m in td.get("matches") or []:
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
@@ -139,7 +139,7 @@ def legs(dates):
         if pl is None: continue
         out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
-                    "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"]["hit"], "n": m["accuracy"]["n"],
+                    "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
                     "list": bool(m.get("list"))})
     sd = read_js("sports-data.js") or {}
     for key, sp in (sd.get("sports") or {}).items():
@@ -152,7 +152,7 @@ def legs(dates):
             out.append({"sport": key, "event": f"{g['home']} v {g['away']}", "home": g["home"], "away": g["away"],
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"]["hit"], "n": g["accuracy"]["n"], "list": bool(g.get("list"))})
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list"))})
     return out
 
 # ---------- prices ----------

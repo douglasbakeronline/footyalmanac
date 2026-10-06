@@ -14,6 +14,7 @@ from datetime import date, timedelta
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
 import sources as S
+from bands import band_rate
 import rankings as RK
 
 SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
@@ -121,31 +122,24 @@ LIST_MIN_AFX = 0.75
 
 
 def accuracy_for(conf, intl, ranked=False, league=None):
-    def pick(bands):
-        best = None
-        for b in bands:
-            if conf >= b["from"]:
-                best = b
-        return best
+    """The tested rate for a pick at this confidence: its own band
+    (bands.band_rate), not every call above it (6 Oct 2026)."""
+    def tag(b, season):
+        return dict(b, season=season) if b else None
     if league in S.AF_CUPS:
         return None                      # no replay yet: no backtest band to quote
     if league in S.AF_EXTRA:
-        b = pick(ACCURACY_BANDS_AFX)
-        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025, wider leagues"} if b else None
+        return tag(band_rate(conf, ACCURACY_BANDS_AFX), "2025, wider leagues")
     if league in NO_LIST:
-        b = pick(ACCURACY_BANDS_STEP3)
-        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025-26, step 3"} if b else None
+        return tag(band_rate(conf, ACCURACY_BANDS_STEP3), "2025-26, step 3")
     if intl and ranked:
-        b = pick(ACCURACY_BANDS_RANKED)
-        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026, with FIFA ranking"} if b else None
+        return tag(band_rate(conf, ACCURACY_BANDS_RANKED), "2026, with FIFA ranking")
     if intl:
-        b = pick(ACCURACY_BANDS["intl"])
-        return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2026"} if b else None
-    c = pick(ACCURACY_BANDS["league"]["check"])
+        return tag(band_rate(conf, ACCURACY_BANDS["intl"]), "2026")
+    c = band_rate(conf, ACCURACY_BANDS["league"]["check"])
     if c and c["n"] >= 30:
-        return {"from": c["from"], "hit": c["hit"], "n": c["n"], "season": "2026-27"}
-    f = pick(ACCURACY_BANDS["league"]["fit"])
-    return {"from": f["from"], "hit": f["hit"], "n": f["n"], "season": "2025-26"} if f else None
+        return tag(c, "2026-27")
+    return tag(band_rate(conf, ACCURACY_BANDS["league"]["fit"]), "2025-26")
 
 
 def list_eligible(g):

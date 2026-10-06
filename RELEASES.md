@@ -3,6 +3,20 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Tested rates by a pick's own band; fair odds labelled; sport and time on the slip (release-2026-10-06-16)
+
+**What changed:**
+- The "tested" or "landed" rate beside every pick (football, tennis, the other sports) is now the rate for picks at its own level, not every call at that level or above. `bands.band_rate` derives it exactly from the cumulative bands already on file (the difference of two counts and hit totals); a band with fewer than 30 calls is widened upward until it holds 30. Each row's `accuracy` gains `to`, `cumHit` and `cumN`. Chips and lines read "Calls at 60–65% landed 57%".
+- Daily List ordering (`index.html`, `daylist.py`) and the Odds tab groupings (`groupings.py`) keep the cumulative rate, so neither the order nor the groupings move with this release.
+- The slip's prices are labelled "fair" (1 / the model's chance, not a bookmaker's price), with the nearest fraction a bookmaker would print ("1.29 fair (3/10)", not "1.29 (1/3.4)").
+- Each slip row shows its sport, competition and UK start time ("Tennis · WTA · China Open · Round 4 · Wed 7 Oct, 06:00"). On a phone the pick takes the full width, with chance and tested rate below.
+- The Daily List lede now says the bar is set on calls from that level up, and that a pick just over the bar can show less than 80%.
+**Why:** Douglas asked (6 Oct 2026) after a slip showed Sasnovich (WTA, 62%) as "72% tested" while calls at 60–65% had landed 57%.
+**Evidence:** `tests/test_bands.py` (Sasnovich's band, the open top band, widening a thin band); `tests/test_sports.py` updated to the band rate; full suite and `nametest.py` pass; slip checked at 1400px and 400px.
+**Files:** `bands.py`, `build.py`, `build_tennis.py`, `sports.py`, `groupings.py`, `daylist.py`, `index.html`, `tests/test_bands.py`, `tests/test_sports.py`, `RELEASES.md`.
+**Not changed:** any probability, the Daily List bar, the reserve floor, grading.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Five more sports from ESPN's free feeds (release-2026-10-06-15)
 
 **What changed:**
