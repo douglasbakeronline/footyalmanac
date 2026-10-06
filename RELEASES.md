@@ -3,6 +3,22 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Every domestic cup; academy sides no longer priced as first teams (release-2026-10-06-7)
+
+**What changed:**
+- Domestic cups worldwide from API-Football. The build finds every current senior domestic cup with one `/leagues?type=cup&current=true` call, at most every three days (`sources.af_refresh_cups`), and keeps the list in `current/af-cups.json` (written by the build, committed with the archive). Youth, women's, super cups, shields, friendlies and qualifying are left out, and so is any country with no rated league (every tie there would be dropped at the unrated gate).
+- Fixtures and results for all cups come from one shared pool, `/fixtures?date=D` for 12 days back and 8 ahead (`sources.af_cup_pool`): about ten calls a build after the first, not one per cup. Finished days stay on disk in `.afcache/`.
+- Each cup is priced like the native cups: clubs rated in their own country's leagues (`engine.eligible_league`, now through `engine.canon_country` so API-Football's country spellings meet ours), in a frame 0.03 below the country's top flight (`engine.cup_strength`).
+- A tie a native feed already carries (FA Cup, Copa del Rey, the ESPN cups) is dropped from the API-Football copy (`build.dedupe_cups`), so nothing is priced twice.
+- New cups are board only: off the Daily List and the reserve until a replay earns a place, no backtest band quoted.
+- `score.py` keeps API-Football cup results in `current/settled-results.json` as they land, so they stay graded after leaving the 12-day pool.
+- `sources.match_team`: a containment match now needs the same youth/reserve markers on both names. "Sunderland U21" (EFL Trophy) had matched "Sunderland" and was priced as the Premier League first team, 54% away at Sheffield Wednesday.
+**Why:** Douglas asked whether the EFL Trophy is predicted (it is: 19 ties on 6 Oct) and for every domestic cup in the world.
+**Evidence:** `tests/test_af_cups.py` (11 tests); full suite and `nametest.py` pass. Before/after local build, two days, same cache: the only change was the four EFL Trophy ties with a U21 side, now unrated and dropped at the publish gate; every other prediction identical.
+**Files:** `engine.py`, `sources.py`, `build.py`, `score.py`, `tests/test_af_cups.py`, `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** calibration, list thresholds, grading rules, workflows.
+**Roll back:** `git revert` this commit; `current/af-cups.json` is then ignored.
+
 ## 2026-10-06 Copyright notice (release-2026-10-06-6)
 
 **What changed:** added `LICENSE`, a proprietary all-rights-reserved notice in Douglas Baker's name, and a Copyright section at the end of `README.md`.

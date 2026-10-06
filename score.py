@@ -388,6 +388,14 @@ def main():
     settled = load_settled()
     kept = {k: v for k, v in settled.items() if k in preds and k not in results}
     results.update(kept)
+    # API-Football cup results come from a rolling date pool (sources.
+    # af_cup_pool), so they are kept the moment they land, as the live
+    # source's are, or they would drop out of the record after 12 days.
+    cup_new = {k: v for k, v in results.items()
+               if E.LEAGUES.get(k[0], {}).get("afCup") and settled.get(k) != v}
+    if cup_new:
+        settled.update(cup_new)
+        save_settled(settled)
 
     # Anything played but not yet backfilled gets one pass at the live source.
     pending = [k for k in preds if k not in results]

@@ -86,3 +86,9 @@ replay passes. A name mismatch fails loudly.
   To re-run: fetch `/leagues`, filter senior leagues with 3+ seasons, replay,
   keep those beating the outcome-share baseline, dedupe against current
   coverage by club-list overlap (>=0.5, plus split-season top flights).
+- **6 Oct, domestic cups.** Every current senior domestic cup on AF
+  (`sources.af_refresh_cups`, list in `current/af-cups.json`), read from one
+  date pool (`/fixtures?date=`, 12 back / 8 ahead, ~10 calls a build), rated
+  off each club's own country (`engine.canon_country`), deduped against native
+  cup feeds (`build.dedupe_cups`), board only until replayed. Youth/reserve
+  sides no longer fuzzy-match their senior club (`sources._side_marks`).

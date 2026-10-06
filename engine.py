@@ -8,6 +8,7 @@ Two stages:
 Everything here is deterministic and inspectable: no black boxes, every number a
 row shows on the dashboard is produced by a function in this file.
 """
+import json, os, re
 from math import exp, factorial, sqrt
 
 # ---------------------------------------------------------------------------
@@ -302,7 +303,7 @@ def eligible_league(src, comp):
         return True
     if cm["country"] in _CONFED:
         return sm.get("iso") in _CONFED[cm["country"]]
-    return sm["country"] == cm["country"]
+    return canon_country(sm["country"]) == canon_country(cm["country"])
 
 # API-Football's wider coverage (30 Sep 2026, claude/data-expansion-plan.md).
 # af-leagues.json lists every league that passed the discovery replay: priced
@@ -327,10 +328,78 @@ AF_EXTRA = _af_extra()
 AF_DUPLICATES = {"af.203": "tr.1"}
 _ISO_BY_COUNTRY = {m["country"]: m["iso"] for m in LEAGUES.values()
                    if m.get("iso") and m["iso"] != "fifa"}
+
+# API-Football spells a few countries differently from the rest of LEAGUES
+# ("Macedonia" v "North Macedonia"). A cup only looks its clubs up in its own
+# country (eligible_league), so both spellings must land on one name.
+COUNTRY_ALIASES = {"Macedonia": "North Macedonia", "United Arab Emirates": "UAE",
+                   "Czech Republic": "Czechia", "Korea Republic": "South Korea",
+                   "Usa": "USA", "Bosnia And Herzegovina": "Bosnia",
+                   "Bosnia and Herzegovina": "Bosnia", "Turkiye": "Turkey", "Türkiye": "Turkey"}
+
+
+def canon_country(c):
+    """One spelling per country: hyphens to spaces, then the alias table."""
+    c = (c or "").replace("-", " ").strip()
+    return COUNTRY_ALIASES.get(c, c)
 for _i, _e in enumerate(AF_EXTRA):
     LEAGUES[_e["code"]] = {"iso": _ISO_BY_COUNTRY.get(_e["country"], ""), "short": _e["name"][:3].upper(),
                            "name": _e["name"], "country": _e["country"], "tier": 2, "strength": 0.5,
                            "order": 400 + _i, "season": _e["season"], "prev": _e["prev"], "afExtra": True}
+
+# Domestic cups from API-Football (6 Oct 2026, Douglas: "all domestic cup
+# competitions around the world"). The list is found by the build itself
+# (sources.af_refresh_cups, one /leagues call) and kept in current/af-cups.json,
+# which the deploy commits, so score.py can still name and grade an archived
+# cup row after the cup has left the API's "current" list. Every cup here is
+# board only (build.NO_LIST) until a replay earns it a Daily List place.
+AF_CUPS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cups.json")
+
+
+def _cup_short(name):
+    words = [w for w in re.split(r"[^\w]+", name) if w]
+    s = "".join(w[0] for w in words if w[0].isalnum()).upper()
+    return (s if len(s) >= 2 else name[:3].upper())[:4]
+
+
+def cup_strength(country):
+    """A cup is priced in a frame a little below its country's top flight,
+    as the hand-set native cups are (FA Cup 0.92 v Premier League 1.0, Copa
+    del Rey 0.92 v La Liga 0.99). A country with only API-Football leagues
+    sits in their 0.5 frame."""
+    tops = [m["strength"] for m in LEAGUES.values()
+            if not m.get("cup") and not m.get("international") and not m.get("women")
+            and m.get("tier") == 1 and not m.get("afExtra")
+            and canon_country(m["country"]) == country]
+    return round(max(tops) - 0.03, 2) if tops else 0.5
+
+
+def register_cups(entries):
+    """Add API-Football cups to LEAGUES. Idempotent; returns the codes added."""
+    iso = {canon_country(k): v for k, v in _ISO_BY_COUNTRY.items()}
+    added = []
+    for e in entries:
+        code = e["code"]
+        if code in LEAGUES:
+            continue
+        country = canon_country(e["country"])
+        LEAGUES[code] = {"iso": iso.get(country, ""), "short": _cup_short(e["name"]),
+                         "name": e["name"], "country": country, "tier": 1,
+                         "strength": cup_strength(country), "order": 600 + int(e["id"]) % 10000,
+                         "cup": True, "afCup": True, "season": str(e.get("season") or ""),
+                         "afId": int(e["id"])}
+        added.append(code)
+    return added
+
+
+def _af_cups():
+    try:
+        return json.load(open(AF_CUPS_FILE)).get("cups", [])
+    except Exception:
+        return []
+
+
+AF_CUPS = register_cups(_af_cups())
 
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight

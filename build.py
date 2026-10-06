@@ -124,6 +124,8 @@ def accuracy_for(conf, intl, ranked=False, league=None):
             if conf >= b["from"]:
                 best = b
         return best
+    if league in S.AF_CUPS:
+        return None                      # no replay yet: no backtest band to quote
     if league in S.AF_EXTRA:
         b = pick(ACCURACY_BANDS_AFX)
         return {"from": b["from"], "hit": b["hit"], "n": b["n"], "season": "2025, wider leagues"} if b else None
@@ -157,8 +159,8 @@ def list_eligible(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
-    if g["league"] in NO_LIST:
-        return False
+    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS:
+        return False                     # board only until a replay passes
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if g["league"] in S.AF_EXTRA:
         bar = LIST_MIN_AFX
@@ -181,7 +183,7 @@ RESERVE_MIN = 0.62
 
 
 def list_reserve(g):
-    if g["list"]:
+    if g["list"] or g["league"] in S.AF_CUPS:
         return False
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
@@ -361,6 +363,44 @@ def team_leagues(history):
     return out
 
 
+def dedupe_cups(fixtures):
+    """Drop an API-Football cup tie that a native feed already carries.
+
+    The native cups (FA Cup, Copa del Rey, the ESPN-fed ones) keep their own
+    source; API-Football also lists them, under its own spellings. A tie is
+    the same tie when a native cup of the same country has a row on the same
+    date whose home and away both match (match_team, both ends, as
+    score.live_results does). Without this a fixture would be priced twice.
+    Returns the number dropped."""
+    native = defaultdict(list)
+    for c, rows in fixtures.items():
+        m = E.LEAGUES[c]
+        if m.get("cup") and not m.get("afCup"):
+            native[E.canon_country(m["country"])].extend(rows)
+    dropped = 0
+    for c in [c for c in fixtures if c in S.AF_CUPS]:
+        rows = native.get(E.LEAGUES[c]["country"])
+        if not rows:
+            continue
+        by_date = defaultdict(list)
+        for r in rows:
+            by_date[r["date"]].append(r)
+        keep = []
+        for r in fixtures[c]:
+            same = by_date.get(r["date"], [])
+            hp, ap = {x["home"] for x in same}, {x["away"] for x in same}
+            h = S.match_team(r["home"], hp) if hp else None
+            a = S.match_team(r["away"], ap) if ap else None
+            if h and a and any(x["home"] == h and x["away"] == a for x in same):
+                dropped += 1
+                continue
+            keep.append(r)
+        fixtures[c] = keep
+    if dropped:
+        print(f"  {dropped} API-Football cup tie(s) dropped: already on a native feed", file=sys.stderr)
+    return dropped
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=4, help="days of fixtures to include")
@@ -382,6 +422,14 @@ def main():
     start = date.fromisoformat(args.start) if args.start else date.today()
     end = start + timedelta(days=args.days - 1)
 
+    # Domestic cups on API-Football (6 Oct 2026): refresh the list at most
+    # every three days, one call, and use any new cup in this same run.
+    cup_log = []
+    new_cups = S.register_new_cups(S.af_refresh_cups(log=cup_log))
+    CODES.extend(c for c in new_cups if c not in CODES)
+    for line in cup_log:
+        print(f"  cups: {line}", file=sys.stderr)
+
     print(f"fetching {len(CODES)} competitions ...", file=sys.stderr)
     # Not every league runs August-to-May. Brazil and the Nordics use a calendar
     # year, so the season strings are per-competition rather than global.
@@ -396,6 +444,8 @@ def main():
              [] if E.LEAGUES[c].get("cup") or E.LEAGUES[c].get("international")
                 else E.LEAGUES[c].get("prev", PREV))
          for c in CODES}, cache_dir=args.cache)
+    # A cup with no tie inside the window is not missing data.
+    missing = {c for c in missing if c not in S.AF_CUPS}
     if missing:
         print(f"  no data for: {', '.join(sorted(missing))}", file=sys.stderr)
 
@@ -449,6 +499,7 @@ def main():
             for line in issues[:5]:
                 print(f"    topup {line}", file=sys.stderr)
 
+    dedupe_cups(fixtures)
     last_league = team_pool(history, fixtures)
 
     # ---- ratings -----------------------------------------------------------

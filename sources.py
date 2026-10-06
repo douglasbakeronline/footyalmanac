@@ -551,6 +551,10 @@ AF = {  # code: API-Football league id
 import engine as _E
 AF.update({e["code"]: e["id"] for e in _E.AF_EXTRA})
 AF_EXTRA = {e["code"] for e in _E.AF_EXTRA}
+# Domestic cups (engine.AF_CUPS, current/af-cups.json). Read off one shared
+# pool of fixtures by date (af_cup_pool), not one call per cup per build.
+AF_CUPS = set(_E.AF_CUPS)
+AF.update({c: _E.LEAGUES[c]["afId"] for c in AF_CUPS})
 # Replayed below the Daily List bar: board and reserve only, and kept out of
 # the shared calibration fit (build.NO_LIST, tune.codes).
 AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
@@ -634,13 +638,156 @@ def _af_season(code, year, current):
     return rows
 
 
+# --- API-Football domestic cups (6 Oct 2026) ---------------------------------
+#
+# Douglas asked for every domestic cup in the world. One /fixtures call per
+# cup per build would be ~200 more calls a build, and with twenty-odd builds
+# on a busy day the 7,500 daily allowance would run out before the leagues
+# were fetched. So the cups share one pool: /fixtures?date=D returns every
+# fixture worldwide on D in a single call, and a cup's rows are read out of
+# it. A finished day is kept on disk for good; a live or future day for
+# AF_DAY_TTL seconds, so the second build pass and score.py in the same run
+# cost nothing.
+AF_CUP_BACK, AF_CUP_AHEAD = 12, 8         # results to grade, fixtures to price
+AF_DAY_TTL = 45 * 60
+_AF_POOL = {}
+
+# Not domestic senior cups: youth, women's, one-off super cups, friendlies,
+# qualifying rounds of other competitions.
+_CUP_SKIP = re.compile(
+    r"\b(u-?\d{2}|under ?\d{2}|youth|junior|juniors|reserve|reserves|women|womens|feminin\w*|"
+    r"femenin\w*|frauen|ladies|girls|super ?cup|supercup|supercopa|supercoppa|super coupe|"
+    r"superkupa|supercupa|shield|charity|trophee des champions|friendl\w*|play-?offs?|"
+    r"qualif\w*|premier league 2|amateur)\b", re.I)
+
+
+def af_cup_wanted(league, country):
+    """Whether an API-Football /leagues entry is a senior domestic cup."""
+    if (league.get("type") or "").lower() != "cup":
+        return False
+    if not country or country.lower() in ("world", "europe", "asia", "africa",
+                                          "south-america", "north-america", "oceania"):
+        return False
+    return not _CUP_SKIP.search(league.get("name") or "")
+
+
+def af_refresh_cups(path=None, max_age_days=3, log=None):
+    """Find every current senior domestic cup (one /leagues call) and keep the
+    list in current/af-cups.json. Entries are only ever added or updated, never
+    dropped, so an archived prediction keeps its competition. A country with no
+    rated league is left out: both sides would come back unrated and every
+    tie would be dropped at the publish gate anyway. Returns new entries."""
+    path = path or _E.AF_CUPS_FILE
+    try:
+        doc = json.load(open(path))
+    except Exception:
+        doc = {"cups": []}
+    fresh = doc.get("checked") and (time.time() - doc["checked"]) < max_age_days * 86400
+    if fresh or not os.environ.get("API_FOOTBALL_KEY"):
+        return []
+    resp = _af_get("/leagues?type=cup&current=true")
+    if not resp:
+        return []
+    rated = {_E.canon_country(m["country"]) for m in _E.LEAGUES.values()
+             if not m.get("cup") and not m.get("international")}
+    have = {e["code"]: e for e in doc.get("cups", [])}
+    new, skipped = [], set()
+    for item in resp:
+        lg, ct = item.get("league") or {}, (item.get("country") or {}).get("name") or ""
+        if not lg.get("id") or not af_cup_wanted(lg, ct):
+            continue
+        country = _E.canon_country(ct)
+        if country not in rated:
+            skipped.add(country)
+            continue
+        season = next((x.get("year") for x in item.get("seasons") or [] if x.get("current")), None)
+        code = f"afc.{lg['id']}"
+        e = {"code": code, "id": lg["id"], "name": lg["name"], "country": country, "season": season}
+        if code not in have:
+            new.append(e)
+        have[code] = e
+    doc = {"note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
+           "checked": int(time.time()), "cups": sorted(have.values(), key=lambda e: (e["country"], e["name"]))}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=0)
+    if log is not None:
+        log.append(f"{len(have)} domestic cups on file ({len(new)} new); "
+                   f"{len(skipped)} countries skipped with no rated league")
+    return new
+
+
+def register_new_cups(entries):
+    """Make freshly found cups usable in this run."""
+    added = _E.register_cups(entries)
+    for c in added:
+        AF[c] = _E.LEAGUES[c]["afId"]
+        AF_CUPS.add(c)
+    return added
+
+
+def _af_day(d):
+    """Every API-Football fixture on one UTC date, cached on disk."""
+    path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json")
+    today = date.today()
+    if os.path.exists(path):
+        age = time.time() - os.path.getmtime(path)
+        try:
+            with open(path) as fh:
+                doc = json.load(fh)
+            if doc.get("final") or age < AF_DAY_TTL:
+                return doc.get("rows") or []
+        except Exception:
+            pass
+    rows = _af_get(f"/fixtures?date={d.isoformat()}")
+    if rows:
+        live = any(((f.get("fixture") or {}).get("status") or {}).get("short") not in AF_PLAYED | AF_DEAD
+                   for f in rows)
+        os.makedirs(AF_CACHE_DIR, exist_ok=True)
+        with open(path, "w") as f:
+            # Two days on, a game still not finished was postponed or
+            # abandoned; it will not change by asking again.
+            final = d < today - timedelta(days=2) or (d < today - timedelta(days=1) and not live)
+            json.dump({"final": final, "rows": rows}, f, separators=(",", ":"))
+    return rows
+
+
+def af_cup_pool():
+    """{API-Football league id: [fixture, ...]} over the cup window."""
+    if "pool" not in _AF_POOL:
+        ids = {_E.LEAGUES[c]["afId"] for c in AF_CUPS}
+        pool = {}
+        today = date.today()
+        # Day files outside the window are no longer read; keep the cache small.
+        try:
+            for fn in os.listdir(AF_CACHE_DIR):
+                if fn.startswith("day-") and fn[4:14] < (today - timedelta(days=AF_CUP_BACK + 3)).isoformat():
+                    os.remove(os.path.join(AF_CACHE_DIR, fn))
+        except OSError:
+            pass
+        days = [today + timedelta(days=i) for i in range(-AF_CUP_BACK, AF_CUP_AHEAD + 1)]
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+            for rows in ex.map(_af_day, days):
+                for f in rows:
+                    lid = (f.get("league") or {}).get("id")
+                    if lid in ids:
+                        pool.setdefault(lid, []).append(f)
+        _AF_POOL["pool"] = pool
+    return _AF_POOL["pool"]
+
+
 def af_rows(code, season):
-    """Every match of one season, played or still to come, as fixture rows."""
-    year = int(season.split("-")[0])
+    """Every match of one season, played or still to come, as fixture rows.
+    For a domestic cup, the matches inside the shared date pool's window."""
     from engine import LEAGUES as _L
-    current = season == _L.get(code, {}).get("season", season)
+    if code in AF_CUPS:
+        src = af_cup_pool().get(_L[code]["afId"], [])
+    else:
+        year = int(season.split("-")[0])
+        current = season == _L.get(code, {}).get("season", season)
+        src = _af_season(code, year, current)
     out = []
-    for f in _af_season(code, year, current):
+    for f in src:
         st = ((f.get("fixture") or {}).get("status") or {}).get("short")
         if st in AF_DEAD:
             continue
@@ -1246,6 +1393,19 @@ ALIASES = {
 }
 
 
+# Youth, academy and reserve sides (6 Oct 2026). "Sunderland U21" in the EFL
+# Trophy matched "Sunderland" by containment and was priced as the Premier
+# League first team (54% away at Sheffield Wednesday). A containment match
+# now needs the same markers on both sides; an exact name still matches.
+_SIDE_RE = re.compile(r"\b(u-?\d{2}|under[- ]?\d{2}|sub-?\d{2}|ii|iii|b|reserves?|youth|"
+                      r"academy|jong|castilla|primavera|juvenil|atl[eè]tic)\b", re.I)
+
+
+def _side_marks(name):
+    return frozenset(m.lower().replace("-", "").replace(" ", "")
+                     for m in _SIDE_RE.findall(name or ""))
+
+
 def match_team(name, pool):
     """Map a live-source club name onto a rated team, or None.
 
@@ -1267,10 +1427,13 @@ def match_team(name, pool):
     if target in norm:
         return norm[target]
 
+    side = _side_marks(name)
     hits = [(k, v) for k, v in norm.items()
             if (target in k or k in target) and min(len(k), len(target)) >= 4
             # guard one: a candidate that is only a city name identifies nobody
-            and not _bare_place(k)]
+            and not _bare_place(k)
+            # guard three: a youth or reserve side is not its senior club
+            and _side_marks(v) == side]
     # guard two: more than one candidate means the name is ambiguous, and a
     # guess here is a silently wrong rating rather than a visible gap
     if len(hits) == 1:
@@ -1284,6 +1447,6 @@ def match_team(name, pool):
     bare = _nonum(target)
     hits = [(k, v) for k, v in ((_nonum(k), v) for k, v in norm.items())
             if (bare in k or k in bare) and min(len(k), len(bare)) >= 4
-            and not _bare_place(k)]
+            and not _bare_place(k) and _side_marks(v) == side]
     hits = {v for _, v in hits}
     return next(iter(hits)) if len(hits) == 1 else None
