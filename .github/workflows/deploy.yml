@@ -33,7 +33,31 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
+  # A push during an office-agent sprint is held: the sprint's publish job
+  # rebuilds once at the end if anything merged. On 5 Oct 2026 one sprint's
+  # merges started a build each.
+  gate:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+    outputs:
+      go: ${{ steps.g.outputs.go }}
+    steps:
+      - id: g
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          go=1
+          if [ "${{ github.event_name }}" = "push" ]; then
+            n=$(gh run list -R "${{ github.repository }}" -w office-agents.yml -L 5 --json status \
+                  --jq '[.[] | select(.status == "in_progress" or .status == "queued")] | length' || echo 0)
+            if [ "${n:-0}" -gt 0 ]; then echo "an office sprint is running; its publish job rebuilds once at the end"; go=0; fi
+          fi
+          echo "go=$go" >> "$GITHUB_OUTPUT"
+
   build:
+    needs: gate
+    if: needs.gate.outputs.go == '1'
     runs-on: ubuntu-latest
     env:
       # API-Football (sources.AF), the paid source for step 3; absent means

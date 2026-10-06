@@ -229,6 +229,8 @@ def platform_tasks(platforms, recent):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument("--task", default=""); ap.add_argument("--agent", default="")
     ap.add_argument("--list-agents", action="store_true")
+    ap.add_argument("--active-agents", action="store_true",
+                    help="only the sprint agents with something to pick now (no runner for an idle agent)")
     ap.add_argument("--platform-tasks", default="", help="comma-separated platforms to give one task each, e.g. myclaw,perplexity")
     a = ap.parse_args()
     if a.list_agents:
@@ -254,6 +256,19 @@ def main():
     if len(open_prs) >= MAX_OPEN and not a.task and not a.agent:
         print(f"{len(open_prs)} agent pull requests already open; waiting for them to merge."); emit(skip="1"); return
     cands = backlog() + candidates()
+    if a.active_agents:
+        # Same choice as --agent below, for every agent at once. An agent with
+        # nothing now cannot gain a task later in the sprint (earlier agents
+        # only add to "busy"), so it gets no runner (6 Oct 2026).
+        busy = recent | {l["name"][10:] for p in open_prs for l in p.get("labels", []) if l["name"].startswith("objective:")}
+        live = []
+        for ag in SPRINT:
+            mine = [c for c in cands if c[1] == ag]
+            if ag in STANDING:
+                k, t, b = STANDING[ag]; mine.append((k, ag, t, b))
+            if any(c[0] not in busy for c in mine):
+                live.append(ag)
+        print(json.dumps(live)); return
     if a.task:
         pick = next((c for c in cands if c[0] == a.task), None)
     elif a.agent:

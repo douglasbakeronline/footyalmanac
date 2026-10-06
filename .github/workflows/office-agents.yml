@@ -47,6 +47,7 @@ jobs:
     outputs:
       agents: ${{ steps.p.outputs.agents }}
       skip: ${{ steps.p.outputs.skip }}
+      idle: ${{ steps.p.outputs.idle }}
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -59,12 +60,16 @@ jobs:
                 --jq "[.[] | select(.createdAt >= \"$(date -u +%F)\" and .databaseId != ${{ github.run_id }})] | length")
             if [ "$n" -gt 0 ]; then echo "a sprint already ran today"; echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0; fi
           fi
-          echo "skip=0" >> "$GITHUB_OUTPUT"
           A="${{ inputs.agent }}"; T="${{ inputs.task }}"
           [ "${{ github.event_name }}" = "schedule" ] && A=all
           if [ -n "$T" ]; then echo 'agents=[""]' >> "$GITHUB_OUTPUT"
-          elif [ "$A" = all ]; then echo "agents=$(python3 agents/pick_task.py --list-agents)" >> "$GITHUB_OUTPUT"
+          elif [ "$A" = all ]; then
+            # only agents with something to do get a runner (6 Oct 2026: all 14 started, none had work)
+            L=$(python3 agents/pick_task.py --active-agents) || L=$(python3 agents/pick_task.py --list-agents)
+            if [ "$L" = "[]" ]; then echo "nobody has work today"; echo "idle=1" >> "$GITHUB_OUTPUT"; L='[""]'; fi
+            echo "agents=$L" >> "$GITHUB_OUTPUT"
           else echo "agents=[\"$A\"]" >> "$GITHUB_OUTPUT"; fi
+          echo "skip=0" >> "$GITHUB_OUTPUT"
       # every AI platform gets its own task each sprint (AGENTS.md, "Other AI platforms")
       - name: Give the other AI platforms a task each
         if: steps.p.outputs.skip != '1' && inputs.task == ''
@@ -73,7 +78,7 @@ jobs:
 
   work:
     needs: plan
-    if: needs.plan.outputs.skip != '1'
+    if: needs.plan.outputs.skip != '1' && needs.plan.outputs.idle != '1'
     runs-on: ubuntu-latest
     timeout-minutes: 75
     strategy:
@@ -181,8 +186,18 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       actions: write
+      contents: read
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
-      - name: Redeploy the site once with everything merged
-        run: gh workflow run deploy.yml -R "${{ github.repository }}" --ref main
+      # deploy.yml holds its push builds while a sprint runs, so this is the
+      # one rebuild for the sprint, and only if something reached main
+      # (6 Oct 2026: a sprint with nothing merged still started a full build).
+      - name: Redeploy the site once, if anything merged
+        run: |
+          since=$(gh run view "${{ github.run_id }}" -R "${{ github.repository }}" --json createdAt -q .createdAt)
+          n=$(gh api "repos/${{ github.repository }}/commits?sha=main&since=$since&per_page=100" \
+                --jq '[.[] | select(.commit.message | test("\\[skip ci\\]") | not)] | length')
+          echo "$n commit(s) on main since the sprint started"
+          if [ "${n:-0}" -gt 0 ]; then gh workflow run deploy.yml -R "${{ github.repository }}" --ref main
+          else echo "nothing merged; no rebuild"; fi

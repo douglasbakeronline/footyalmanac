@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 One rebuild per agent sprint, no idle runners (release-2026-10-06-14)
+
+**What changed:**
+- `office-agents.yml` plan: only agents with something to pick now get a runner (`agents/pick_task.py --active-agents`, the same choice `--agent` makes). If nobody has work, no runner starts. Before, all 14 started every morning; this afternoon none had work.
+- `office-agents.yml` publish: rebuilds the site only if a commit reached main during the sprint (archive commits marked `[skip ci]` not counted). This afternoon a sprint with nothing merged still started a full build.
+- `deploy.yml`: a new `gate` job holds a push build while an office sprint is running or queued; the sprint's publish job does the one rebuild at the end. Scheduled and manual builds are never held. On 5 Oct one sprint's merges started a build each.
+**Why:** Douglas asked to optimise credit use across the whole project (6 Oct 2026, owner approval for these workflow changes).
+**Evidence:** both workflows parse; `--active-agents` against the live queue returns ["ratings", "calib"], and `--agent` for engineer, sports and chief says "Nothing new to work on today", which matches. Full test suite passes.
+**Files:** `.github/workflows/office-agents.yml`, `.github/workflows/deploy.yml`, `agents/pick_task.py`, `RELEASES.md`.
+**Not changed:** predictions, grading, the daily 00:10 and 05:15 builds, the merge gate.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 API-Football spend guards (release-2026-10-06-13)
 
 **What changed:**
