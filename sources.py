@@ -11,8 +11,8 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import csv, gzip, io, json, os, re, sys, threading, time, urllib.error, urllib.request, concurrent.futures
-from datetime import datetime, date, timedelta
+import atexit, csv, gzip, io, json, os, re, sys, threading, time, urllib.error, urllib.request, concurrent.futures
+from datetime import datetime, date, timedelta, timezone
 
 RAW = "https://raw.githubusercontent.com/openfootball"
 MONTHS = {m: i + 1 for i, m in enumerate(
@@ -567,6 +567,37 @@ _AF_CACHE, _AF_LOCK = {}, threading.Lock()
 
 _AF_PACE, _AF_NEXT = 0.25, [0.0]   # Pro allows 5 calls a second; keep under it
 _AF_SPENT = [False]   # the day's allowance is gone: stop calling for the rest of this run
+AF_USAGE = {"calls": 0, "left": None}
+
+
+# The allowance resets at 00:00 UTC. Once a script hears it is gone, it leaves
+# a marker in .afcache for the UTC day, so the next script in the run, and any
+# build later that day, does not spend a call to hear it again (6 Oct 2026).
+def _spent_marker():
+    return os.path.join(AF_CACHE_DIR, f"spent-{datetime.now(timezone.utc).date().isoformat()}")
+
+
+def _af_spent_today():
+    return os.path.exists(_spent_marker())
+
+
+def _af_mark_spent():
+    try:
+        os.makedirs(os.path.dirname(_spent_marker()), exist_ok=True)
+        open(_spent_marker(), "w").close()
+    except OSError:
+        pass
+
+
+def _af_usage_line():
+    if AF_USAGE["calls"] or _AF_SPENT[0]:
+        left = AF_USAGE["left"]
+        print(f"  API-Football: {AF_USAGE['calls']} calls by {os.path.basename(sys.argv[0])}"
+              + (f", {left} left today" if left is not None else "")
+              + ("; allowance used up" if _AF_SPENT[0] else ""), file=sys.stderr)
+
+
+atexit.register(_af_usage_line)
 
 
 def _af_get(path):
@@ -582,6 +613,10 @@ def _af_get(path):
     with _AF_LOCK:
         if path in _AF_CACHE:
             return _AF_CACHE[path]
+    if _af_spent_today():
+        with _AF_LOCK:
+            _AF_SPENT[0] = True
+        return []
     req = urllib.request.Request(AF_BASE + path, headers={"x-apisports-key": key,
                                                           "User-Agent": "football-almanac/1.0"})
     for attempt in range(6):
@@ -591,7 +626,14 @@ def _af_get(path):
         if wait > 0:
             time.sleep(wait)
         try:
-            doc = json.loads(urllib.request.urlopen(req, timeout=40).read().decode("utf-8"))
+            resp = urllib.request.urlopen(req, timeout=40)
+            doc = json.loads(resp.read().decode("utf-8"))
+            hdrs = getattr(resp, "headers", None)
+            left = hdrs.get("x-ratelimit-requests-remaining") if hasattr(hdrs, "get") else None
+            with _AF_LOCK:
+                AF_USAGE["calls"] += 1
+                if left and left.isdigit():
+                    AF_USAGE["left"] = int(left)
         except Exception:
             time.sleep(1 + attempt)
             continue
@@ -607,6 +649,7 @@ def _af_get(path):
                 if first:
                     print(f"  API-Football daily allowance used up; no more calls this run ({errs['requests']})",
                           file=sys.stderr)
+                    _af_mark_spent()
                 return []
             if "rateLimit" in str(errs) or "requests" in str(errs).lower():
                 time.sleep(2 + 2 * attempt)
@@ -843,16 +886,22 @@ def _af_day(d):
     trimmed to the fields read (_compact) so a season of days stays small."""
     path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json.gz")
     today = date.today()
+    stale = None
     if os.path.exists(path):
         age = time.time() - os.path.getmtime(path)
         try:
             with gzip.open(path, "rt", encoding="utf-8") as fh:
                 doc = json.load(fh)
+            stale = [_expand(c) for c in doc.get("rows") or []]
             if doc.get("final") or age < AF_DAY_TTL:
-                return [_expand(c) for c in doc.get("rows") or []]
+                return stale
         except Exception:
             pass
     rows = _af_get(f"/fixtures?date={d.isoformat()}")
+    if not rows and stale:
+        # No answer (allowance spent, network): the last copy beats an empty
+        # board. On 6 Oct 2026 the afternoon builds showed 471 games, not ~2,000.
+        return stale
     if rows:
         live = any(((f.get("fixture") or {}).get("status") or {}).get("short") not in AF_PLAYED | AF_DEAD
                    for f in rows)

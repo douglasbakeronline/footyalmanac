@@ -1,5 +1,5 @@
 """API-Football: a used-up daily allowance stops calls for the run, a burst limit is retried."""
-import io, json, os, sys, unittest
+import io, json, os, sys, tempfile, unittest
 from unittest import mock
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import sources as S
@@ -14,8 +14,16 @@ class Allowance(unittest.TestCase):
         S._AF_SPENT[0] = False
         S._AF_CACHE.clear()
         S._AF_NEXT[0] = 0.0
+        self._tmp = tempfile.TemporaryDirectory()
+        self._mark = mock.patch.object(S, "_spent_marker", return_value=os.path.join(self._tmp.name, "spent"))
+        self._mark.start()
 
-    tearDown = setUp
+    def tearDown(self):
+        self._mark.stop()
+        self._tmp.cleanup()
+        S._AF_SPENT[0] = False
+        S._AF_CACHE.clear()
+        S._AF_NEXT[0] = 0.0
 
     @mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"})
     def test_daily_limit_stops_further_calls(self):

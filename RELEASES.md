@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 API-Football spend guards (release-2026-10-06-13)
+
+**What changed:**
+- When API-Football says the day's allowance is gone, `sources` leaves a marker for the UTC day in `.afcache` (kept by the Actions cache). The next script in the run, and every later build that day, makes no call to hear it again. It clears itself at 00:00 UTC, when the allowance resets.
+- A day of fixtures whose cached copy has expired, and which cannot be fetched again (allowance spent, network), now uses the last copy instead of coming back empty. On the afternoon of 6 Oct the board fell to 471 games for this reason.
+- Each script prints one line at the end: how many API-Football calls it made and, from the API's own header, how many are left today. The overnight check reads it.
+**Why:** Douglas asked for every call, run and token to be checked for waste (6 Oct 2026).
+**Evidence:** `tests/test_af_spend.py` (marker stops calls before any request; a stale day beats an empty one); `tests/test_af_allowance.py` now keeps its marker in a temp folder. Full suite and `nametest.py` pass.
+**Files:** `sources.py`, `tests/test_af_spend.py`, `tests/test_af_allowance.py`, `RELEASES.md`.
+**Not changed:** ratings, calibration, grading rules, workflows.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 U21 sides rated from Premier League 2 (release-2026-10-06-10)
 
 **What changed:**
