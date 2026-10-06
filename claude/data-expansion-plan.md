@@ -92,3 +92,8 @@ replay passes. A name mismatch fails loudly.
   off each club's own country (`engine.canon_country`), deduped against native
   cup feeds (`build.dedupe_cups`), board only until replayed. Youth/reserve
   sides no longer fuzzy-match their senior club (`sources._side_marks`).
+- **6 Oct, call budget.** The allowance ran out mid-afternoon (~700 calls a
+  deploy, 23 deploys). Current seasons now come from the shared date pool
+  (`sources.af_season_pool`, `.afcache/day-*.json.gz`), finished seasons from
+  disk, and `groupings.py` prices legs one fixture at a time. ~10 calls a
+  deploy after a one-off ~290 to fill the year. Do not add per-league calls.

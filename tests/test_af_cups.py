@@ -131,7 +131,57 @@ class Pool(unittest.TestCase):
                 S._af_day(old)
                 S._af_day(old)
                 self.assertEqual(g.call_count, 1)
-            self.assertTrue(json.load(open(os.path.join(d, f"day-{old}.json")))["final"])
+            import gzip
+            with gzip.open(os.path.join(d, f"day-{old}.json.gz"), "rt") as fh:
+                self.assertTrue(json.load(fh)["final"])
+            # read back in the full shape
+            with mock.patch.object(S, "_af_get") as g:
+                f = S._af_day(old)[0]
+                g.assert_not_called()
+            self.assertEqual((f["teams"]["home"]["name"], f["score"]["fulltime"]["home"]), ("A", 1))
+
+
+class SeasonPool(unittest.TestCase):
+    """Current API-Football seasons come from the date pool, not one call per
+    league per build (6 Oct 2026)."""
+    def setUp(self):
+        S._AF_POOL.clear()
+
+    def tearDown(self):
+        S._AF_POOL.clear()
+
+    def test_window(self):
+        t = date(2026, 10, 6)
+        self.assertEqual(S.af_season_window("2026-27", t)[0], date(2026, 6, 1))
+        self.assertEqual(S.af_season_window("2026", t)[0], date(2026, 1, 1))
+        self.assertIsNone(S.af_season_window("2024-25", t))
+        self.assertIsNone(S.af_season_window("2025", t))
+
+    def test_current_league_reads_pool_only(self):
+        code = "en.6n"
+        lid = S.AF[code]
+        t = date.today()
+        y = t.year if t.month >= 6 else t.year - 1
+        season = f"{y}-{str(y + 1)[2:]}"
+        days = {t - timedelta(days=3): [fx(lid, t - timedelta(days=3), "A", "B", "FT", 2, 0),
+                                        fx(999, t - timedelta(days=3), "C", "D", "FT", 1, 1)],
+                t + timedelta(days=1): [fx(lid, t + timedelta(days=1), "B", "A")]}
+        for f in days[t - timedelta(days=3)] + days[t + timedelta(days=1)]:
+            f["league"]["season"] = y
+        with mock.patch.object(S, "_af_day", side_effect=lambda d: days.get(d, [])), \
+             mock.patch.object(S, "_af_get") as g, \
+             mock.patch.dict(E.LEAGUES[code], {"season": season}):
+            rows = S.af_rows(code, season)
+            g.assert_not_called()
+        self.assertEqual([(r["home"], r["hg"]) for r in rows], [("A", 2), ("B", None)])
+
+    def test_finished_season_one_call_then_disk(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "AF_CACHE_DIR", d), \
+             mock.patch.object(S, "_af_get", return_value=[fx(1, date(2025, 3, 1), "A", "B", "FT", 1, 0)]) as g, \
+             mock.patch.dict(E.LEAGUES["en.6n"], {"season": "2024-25"}):
+            S.af_rows("en.6n", "2024-25")
+            S.af_rows("en.6n", "2024-25")
+            self.assertEqual(g.call_count, 1)
 
 
 class Dedupe(unittest.TestCase):
@@ -156,3 +206,26 @@ class Dedupe(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class GroupingsOdds(unittest.TestCase):
+    """The Odds tab prices only the legs' fixtures, not every page of a date."""
+    def test_one_call_per_leg_then_cached(self):
+        import groupings as G
+        t = date.today().isoformat()
+        day = [fx(1, t, "Arsenal", "Chelsea"), fx(1, t, "Leeds", "Hull")]
+        day[0]["fixture"]["id"], day[1]["fixture"]["id"] = 11, 12
+        odds = {"response": [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.80"}, {"value": "Draw", "odd": "3.5"}, {"value": "Away", "odd": "4.0"}]}]}]}]}
+        legs = lambda: [{"sport": "football", "date": t, "when": f"{t}T19:00:00Z", "home": "Arsenal",
+                         "away": "Chelsea", "side": "h"}]
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "x"}), \
+             mock.patch.object(S, "AF_CACHE_DIR", d), mock.patch.object(S, "_af_day", return_value=day), \
+             mock.patch.object(G, "af", return_value=odds) as af:
+            L, rep = legs(), {}
+            G.price_football(L, {t}, rep)
+            self.assertEqual((L[0]["odds"], rep["football"]["calls"]), (1.8, 1))
+            self.assertIn("fixture=11", af.call_args[0][0])
+            L, rep = legs(), {}
+            G.price_football(L, {t}, rep)
+            self.assertEqual((L[0]["odds"], rep["football"]["calls"]), (1.8, 0))

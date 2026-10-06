@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 API-Football calls cut from ~700 a build to ~10 (release-2026-10-06-8)
+
+**What changed:**
+- Current seasons of every API-Football league (steps 1-3 and the 227 wider leagues) are read from one shared date pool, `/fixtures?date=D` (`sources.af_season_pool`), instead of one `/fixtures?league&season` call per league per script. One date call answers for every league. A finished day is kept on disk for good (`.afcache/day-*.json.gz`, gzipped and trimmed to the fields read); an open day (yesterday, today, the week ahead) for 45 minutes, so the two build passes, `score.py` and `groupings.py` in one run share it.
+- A season that is over is fetched once and kept (`_af_season`), and a finished season the API has nothing for is asked again weekly, not every build.
+- The Odds tab (`groupings.py`) no longer pages through `/odds?date=` (ten fixtures a page, up to 60 pages a date). Legs are matched to fixtures from the day pool and only those fixtures are priced, one call each, cached 90 minutes. Same prices, same averaging.
+**Why:** the 7,500 daily allowance ran out by 15:30 on 6 Oct. ~234 leagues x three passes a run (two build passes and score.py) is ~700 calls a deploy, and there were 23 deploys on 5 Oct. Every API-Football league dropped off the board for the rest of the day. Douglas: "reduce all calls that aren't necessary".
+**Evidence:** tests in `tests/test_af_cups.py` (season window, current league read from the pool with no per-league call, finished season one call then disk, odds one call per leg then cached); full suite and `nametest.py` pass. Expected cost: one-off ~290 calls to fill this year's days, then ~10 a deploy plus one per newly priced leg.
+**Files:** `sources.py`, `groupings.py`, `tests/test_af_cups.py`, `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** any rating, model, rule, grading rule, price source or workflow. The same matches reach the build; only how they are fetched changed.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Every domestic cup; academy sides no longer priced as first teams (release-2026-10-06-7)
 
 **What changed:**

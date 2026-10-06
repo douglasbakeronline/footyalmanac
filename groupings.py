@@ -60,7 +60,7 @@ Today and tomorrow, so six groups a day, none sharing a leg.
 
 Standard library only.
 """
-import itertools, json, math, os, re, sys, unicodedata, urllib.request
+import itertools, json, math, os, re, sys, time, unicodedata, urllib.request
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from zoneinfo import ZoneInfo
@@ -156,51 +156,76 @@ def legs(dates):
 def af(path, key):
     return get(AF_BASE + path, {"x-apisports-key": key})
 
+ODDS_TTL = 90 * 60     # a fixture's prices are re-read at most every 90 minutes
+
+
+def _odds_for(fid, key, cache_dir):
+    """Match Winner prices for one fixture, cached on disk for ODDS_TTL.
+    Returns (response items, calls made)."""
+    path = os.path.join(cache_dir, f"odds-{fid}.json")
+    try:
+        if time.time() - os.path.getmtime(path) < ODDS_TTL:
+            with open(path) as f:
+                return json.load(f), 0
+    except (OSError, ValueError):
+        pass
+    r = af(f"/odds?fixture={fid}&bet=1", key)
+    items = r.get("response") or []
+    os.makedirs(cache_dir, exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(items, f)
+    return items, 1
+
+
 def price_football(L, dates, report):
+    """API-Football prices for the football legs.
+
+    Until 6 Oct 2026 this paged through /odds?date= for every date, ten
+    fixtures a page and up to 60 pages, to price twenty-odd legs. Now the legs
+    are matched to fixtures first, from the day pool the build already holds
+    (sources._af_day, no call when cached), and only those fixtures are
+    priced, one call each, cached for ODDS_TTL."""
     key = os.environ.get("API_FOOTBALL_KEY")
     fb = [l for l in L if l["sport"] == "football"]
     if not key or not fb:
         report["football"] = "no key" if not key else "no legs"; return
+    sys.path.insert(0, HERE)
+    import sources as S
+    from datetime import date as _date
     calls, matched = 0, 0
     for d in sorted(dates):
         try:
-            fx = af(f"/fixtures?date={d}&timezone=UTC", key); calls += 1
+            fx = S._af_day(_date.fromisoformat(d))
         except Exception as e:
             report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}"); continue
         teams = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
-                 for f in fx.get("response") or []}
-        odds, page, total = {}, 1, 1
-        while page <= total and page <= 60:
+                 for f in fx}
+        for l in fb:
+            if l["date"] != d or l.get("odds"): continue
+            t = parse(l["when"])
+            fid = next((fid for fid, (h, a, ft) in teams.items()
+                        if not (t and ft and abs((t - ft).total_seconds()) > 5400)
+                        and same(h, l["home"]) and same(a, l["away"])), None)
+            if fid is None: continue
             try:
-                r = af(f"/odds?date={d}&bet=1&page={page}&timezone=UTC", key); calls += 1
+                items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:
-                report.setdefault("errors", []).append(f"odds {d} p{page}: {type(e).__name__}"); break
-            total = (r.get("paging") or {}).get("total") or 1
-            for item in r.get("response") or []:
-                prices = {"Home": [], "Away": [], "Draw": []}
-                books = set()
+                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
+            prices = {"Home": [], "Away": [], "Draw": []}
+            books = set()
+            for item in items:
                 for b in item.get("bookmakers") or []:
                     for bet in b.get("bets") or []:
                         if bet.get("id") != 1: continue
                         for v in bet.get("values") or []:
                             try: prices[v["value"]].append(float(v["odd"])); books.add(b.get("name"))
                             except (KeyError, ValueError): pass
-                odds[item["fixture"]["id"]] = (prices, sorted(books))
-            page += 1
-        for l in fb:
-            if l["date"] != d or l.get("odds"): continue
-            t = parse(l["when"])
-            for fid, (h, a, ft) in teams.items():
-                if fid not in odds: continue
-                if t and ft and abs((t - ft).total_seconds()) > 5400: continue
-                if not (same(h, l["home"]) and same(a, l["away"])): continue
-                prices, books = odds[fid]
-                side = prices["Home" if l["side"] == "h" else "Away"]
-                if side:
-                    l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
-                             src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
-                    matched += 1
-                break
+            books = sorted(books)
+            side = prices["Home" if l["side"] == "h" else "Away"]
+            if side:
+                l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
+                         src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
+                matched += 1
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
 
 def american(x):

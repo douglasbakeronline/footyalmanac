@@ -11,7 +11,7 @@ A live source (football-data.org or API-Football) should be layered on top for
 same-day results and kick-off changes; see README. The parsers below normalise
 everything into one shape so a second source only needs its own reader.
 """
-import csv, io, json, os, re, sys, threading, time, urllib.error, urllib.request, concurrent.futures
+import csv, gzip, io, json, os, re, sys, threading, time, urllib.error, urllib.request, concurrent.futures
 from datetime import datetime, date, timedelta
 
 RAW = "https://raw.githubusercontent.com/openfootball"
@@ -631,10 +631,20 @@ def _af_season(code, year, current):
             return json.load(open(path))
         except Exception:
             pass
+    # A finished season the API has nothing for is asked again only weekly,
+    # not every build (6 Oct 2026: each one was a call per build).
+    empty = path[:-5] + ".empty"
+    if not current and os.path.exists(empty) and time.time() - os.path.getmtime(empty) < 7 * 86400:
+        return []
     rows = _af_get(f"/fixtures?league={AF[code]}&season={year}")
     if not current and rows:
         os.makedirs(AF_CACHE_DIR, exist_ok=True)
         json.dump(rows, open(path, "w"), separators=(",", ":"))
+    elif not current and not _AF_SPENT[0] and os.environ.get("API_FOOTBALL_KEY") \
+            and f"/fixtures?league={AF[code]}&season={year}" in _AF_CACHE:
+        # cached as an answer, so the call succeeded and the season is empty
+        os.makedirs(AF_CACHE_DIR, exist_ok=True)
+        open(empty, "w").close()
     return rows
 
 
@@ -726,54 +736,117 @@ def register_new_cups(entries):
     return added
 
 
+def _compact(f):
+    """The fields this project reads from a fixture, as a short list."""
+    fx, lg = f.get("fixture") or {}, f.get("league") or {}
+    tm, ft = f.get("teams") or {}, (f.get("score") or {}).get("fulltime") or {}
+    return [lg.get("id"), lg.get("season"), fx.get("id"), fx.get("date"),
+            (fx.get("status") or {}).get("short"), (tm.get("home") or {}).get("name"),
+            (tm.get("away") or {}).get("name"), ft.get("home"), ft.get("away")]
+
+
+def _expand(c):
+    lid, season, fid, when, st, home, away, hg, ag = c
+    return {"league": {"id": lid, "season": season}, "fixture": {"id": fid, "date": when, "status": {"short": st}},
+            "teams": {"home": {"name": home}, "away": {"name": away}},
+            "score": {"fulltime": {"home": hg, "away": ag}}}
+
+
 def _af_day(d):
-    """Every API-Football fixture on one UTC date, cached on disk."""
-    path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json")
+    """Every API-Football fixture on one UTC date, cached on disk.
+
+    One /fixtures?date= call answers for every league at once, so this is the
+    one way the project reads API-Football's current seasons (6 Oct 2026: the
+    per-league calls, ~240 a build and three passes a run, spent the whole
+    7,500 daily allowance by mid-afternoon). A finished day is kept for good;
+    an open one (yesterday, today, the week ahead) for AF_DAY_TTL, so every
+    script in one run and any run inside that time share it. Kept gzipped and
+    trimmed to the fields read (_compact) so a season of days stays small."""
+    path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json.gz")
     today = date.today()
     if os.path.exists(path):
         age = time.time() - os.path.getmtime(path)
         try:
-            with open(path) as fh:
+            with gzip.open(path, "rt", encoding="utf-8") as fh:
                 doc = json.load(fh)
             if doc.get("final") or age < AF_DAY_TTL:
-                return doc.get("rows") or []
+                return [_expand(c) for c in doc.get("rows") or []]
         except Exception:
             pass
     rows = _af_get(f"/fixtures?date={d.isoformat()}")
     if rows:
         live = any(((f.get("fixture") or {}).get("status") or {}).get("short") not in AF_PLAYED | AF_DEAD
                    for f in rows)
+        # Two days on, a game still not finished was postponed or abandoned;
+        # it will not change by asking again.
+        final = d < today - timedelta(days=2) or (d < today - timedelta(days=1) and not live)
         os.makedirs(AF_CACHE_DIR, exist_ok=True)
-        with open(path, "w") as f:
-            # Two days on, a game still not finished was postponed or
-            # abandoned; it will not change by asking again.
-            final = d < today - timedelta(days=2) or (d < today - timedelta(days=1) and not live)
-            json.dump({"final": final, "rows": rows}, f, separators=(",", ":"))
+        tmp = path + ".tmp"
+        with gzip.open(tmp, "wt", encoding="utf-8") as fh:
+            json.dump({"final": final, "rows": [_compact(f) for f in rows]}, fh, separators=(",", ":"))
+        os.replace(tmp, path)
+        rows = [_expand(_compact(f)) for f in rows]
     return rows
+
+
+AF_KEEP_DAYS = 560      # day files older than this are never read again
+
+
+def af_day_pool(start, end):
+    """{API-Football league id: [fixture, ...]} for every day start..end."""
+    key = (start, end)
+    if key not in _AF_POOL:
+        try:
+            cut = (date.today() - timedelta(days=AF_KEEP_DAYS)).isoformat()
+            for fn in os.listdir(AF_CACHE_DIR):
+                if fn.startswith("day-") and (fn[4:14] < cut or fn.endswith(".json")):
+                    os.remove(os.path.join(AF_CACHE_DIR, fn))
+        except OSError:
+            pass
+        days = [start + timedelta(days=i) for i in range((end - start).days + 1)]
+        pool = {}
+        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
+            for rows in ex.map(_af_day, days):
+                for f in rows:
+                    pool.setdefault((f.get("league") or {}).get("id"), []).append(f)
+        _AF_POOL[key] = pool
+    return _AF_POOL[key]
 
 
 def af_cup_pool():
     """{API-Football league id: [fixture, ...]} over the cup window."""
-    if "pool" not in _AF_POOL:
-        ids = {_E.LEAGUES[c]["afId"] for c in AF_CUPS}
-        pool = {}
-        today = date.today()
-        # Day files outside the window are no longer read; keep the cache small.
-        try:
-            for fn in os.listdir(AF_CACHE_DIR):
-                if fn.startswith("day-") and fn[4:14] < (today - timedelta(days=AF_CUP_BACK + 3)).isoformat():
-                    os.remove(os.path.join(AF_CACHE_DIR, fn))
-        except OSError:
-            pass
-        days = [today + timedelta(days=i) for i in range(-AF_CUP_BACK, AF_CUP_AHEAD + 1)]
-        with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-            for rows in ex.map(_af_day, days):
-                for f in rows:
-                    lid = (f.get("league") or {}).get("id")
-                    if lid in ids:
-                        pool.setdefault(lid, []).append(f)
-        _AF_POOL["pool"] = pool
-    return _AF_POOL["pool"]
+    today = date.today()
+    return af_day_pool(today - timedelta(days=AF_CUP_BACK), today + timedelta(days=AF_CUP_AHEAD))
+
+
+def af_season_window(season, today=None):
+    """(first day, last day) of an API-Football season still being played, or
+    None once it is over. Calendar seasons ("2026") run January to December;
+    split seasons ("2026-27") are taken from 1 June, early enough for every
+    league in the set, to the end of the following June."""
+    today = today or date.today()
+    parts = season.split("-")
+    y = int(parts[0])
+    if len(parts) == 1:
+        start, end = date(y, 1, 1), date(y, 12, 31)
+    else:
+        start, end = date(y, 6, 1), date(y + 1, 6, 30)
+    if end < today - timedelta(days=AF_CUP_BACK):
+        return None
+    return start, min(end, today + timedelta(days=AF_CUP_AHEAD))
+
+
+def af_season_pool(season):
+    """One pool from the earliest open season's start to the window's end, so
+    every league reads the same cached days."""
+    today = date.today()
+    win = af_season_window(season, today)
+    if not win:
+        return None
+    # The earliest start any open season needs: 1 Jan this year, or 1 June
+    # last year once a split season crosses New Year.
+    first = min(date(today.year, 1, 1), date(today.year - (today.month < 7), 6, 1))
+    return af_day_pool(first, today + timedelta(days=AF_CUP_AHEAD))
 
 
 def af_rows(code, season):
@@ -785,7 +858,18 @@ def af_rows(code, season):
     else:
         year = int(season.split("-")[0])
         current = season == _L.get(code, {}).get("season", season)
-        src = _af_season(code, year, current)
+        pool = af_season_pool(season) if current else None
+        if pool is not None:
+            # A season still being played: read from the shared date pool,
+            # matches of this league and this season only.
+            win = af_season_window(season)
+            lo, hi = win[0].isoformat(), win[1].isoformat()
+            src = [f for f in pool.get(AF[code], [])
+                   if (f.get("league") or {}).get("season") == year
+                   and lo <= ((f.get("fixture") or {}).get("date") or "")[:10] <= hi]
+        else:
+            # Finished: one call, then on disk for good.
+            src = _af_season(code, year, False)
     out = []
     for f in src:
         st = ((f.get("fixture") or {}).get("status") or {}).get("short")
