@@ -147,3 +147,9 @@ python3 predictability.py                        # which signals separate hits f
   Hungary, Korea and others) have no free source this project can reach.
 - World Rugby rankings have no reachable source; rugby uses Elo alone.
 - Nothing here is betting advice.
+
+## Copyright
+
+Copyright (c) 2026 Douglas Baker. All rights reserved. This repository is
+proprietary: no licence is granted to copy, modify, distribute or use any part
+of it without written permission. See [LICENSE](LICENSE).

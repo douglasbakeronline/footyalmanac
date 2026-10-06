@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Copyright notice (release-2026-10-06-6)
+
+**What changed:** added `LICENSE`, a proprietary all-rights-reserved notice in Douglas Baker's name, and a Copyright section at the end of `README.md`.
+**Why:** Douglas asked for a copyright licence notice so nobody may lawfully copy or reuse the code.
+**Evidence:** documentation only; tests unchanged and passing.
+**Files:** `LICENSE`, `README.md`, `RELEASES.md`.
+**Not changed:** any code, model, rule, grading rule, prediction or workflow.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Analysis: day by day by bracket; no link emojis (release-2026-10-06-5)
 
 **What changed:** the Analysis page's day-by-day table now shows one confidence bracket, opening on 70% and above, with quick picks (All, 50%+, 60%+, 70%+, 80%+, 90%+) and a from/to picker for any 5-point range, plus a bracket summary line. `score.py` adds `b5` to each `byDay` entry (games, won, read right, quoted sum and draws per 5-point band) so any bracket sums exactly. The 🔗 marks are gone from the Analysis and HQ links on both pages.
