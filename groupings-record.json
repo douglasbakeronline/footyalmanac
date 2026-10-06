@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-06T09:28:09Z",
+ "graded": "2026-10-06T12:06:13Z",
  "overall": {
   "groups": 11,
   "settled": 7,
   "won": 1,
   "lost": 6,
   "pending": 4,
-  "legs": 33,
-  "legsWon": 22,
+  "legs": 35,
+  "legsWon": 24,
   "returned": 2.77,
   "staked": 7,
   "expected": 1.94
@@ -19,8 +19,8 @@
    "won": 1,
    "lost": 2,
    "pending": 1,
-   "legs": 15,
-   "legsWon": 12,
+   "legs": 16,
+   "legsWon": 13,
    "returned": 2.77,
    "staked": 3,
    "expected": 1.0
@@ -31,8 +31,8 @@
    "won": 0,
    "lost": 2,
    "pending": 1,
-   "legs": 9,
-   "legsWon": 4,
+   "legs": 10,
+   "legsWon": 5,
    "returned": 0,
    "staked": 2,
    "expected": 0.52
@@ -56,8 +56,8 @@
   "won": 1,
   "lost": 3,
   "pending": 3,
-  "legs": 19,
-  "legsWon": 14,
+  "legs": 21,
+  "legsWon": 16,
   "returned": 2.77,
   "staked": 4,
   "expected": 1.35
@@ -74,9 +74,9 @@
      "p": 0.4821,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -87,8 +87,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8457,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Carlos Alcaraz (ESP) bt Jiri Lehecka (CZE) 7-6 (7-4) 6-4"
       },
       {
        "pick": "Algeria",
@@ -147,9 +147,9 @@
      "p": 0.303,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Emerson Jones",
@@ -160,8 +160,8 @@
        "odds": 1.47,
        "est": true,
        "p": 0.7635,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Emerson Jones (AUS) bt Mai Hontama (JPN) 6-4 6-0"
       },
       {
        "pick": "South Korea",
