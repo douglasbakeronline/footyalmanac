@@ -68,7 +68,10 @@ from zoneinfo import ZoneInfo
 HERE = os.path.dirname(os.path.abspath(__file__))
 AF_BASE = "https://v3.football.api-sports.io"
 ESPN = "https://site.api.espn.com/apis/site/v2/sports"
-ESPN_PATH = {"nfl": "football/nfl", "mlb": "baseball/mlb", "nba": "basketball/nba"}
+ESPN_PATH = {"nfl": "football/nfl", "mlb": "baseball/mlb", "nba": "basketball/nba",
+             "nhl": "hockey/nhl", "cfb": "football/college-football",
+             "ncaab": "basketball/mens-college-basketball", "wnba": "basketball/wnba"}
+ESPN_Q = {"ncaab": "&groups=50"}   # all of Division I, as sports.py
 BANDS = [("Steady", 2.5, 4.0), ("Balanced", 4.0, 7.0), ("Stretch", 7.0, 14.0)]
 MIN_N, MIN_HIT, SHRINK = 30, 0.65, 30
 UA = {"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
@@ -240,7 +243,7 @@ def price_espn(L, dates, report):
         if not want: continue
         n = 0
         for d in sorted(dates):
-            try: sb = get(f"{ESPN}/{path}/scoreboard?dates={d.replace('-', '')}")
+            try: sb = get(f"{ESPN}/{path}/scoreboard?dates={d.replace('-', '')}&limit=400{ESPN_Q.get(sport, '')}")
             except Exception as e:
                 report.setdefault("errors", []).append(f"espn {sport} {d}: {type(e).__name__}"); continue
             for ev in sb.get("events") or []:

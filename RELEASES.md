@@ -3,6 +3,24 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Five more sports from ESPN's free feeds (release-2026-10-06-15)
+
+**What changed:**
+- `sports.py` gains ice hockey (NHL), college football (NCAA FBS), college basketball (all of Division I, `groups=50`), WNBA and rugby league (NRL). Each is its own sport with its own fitted constants, so the NBA and union rugby do not move. History from July 2023 on ESPN; the CI build walks it once (about three minutes), then tops up daily.
+- `sports.json`: the five new entries, fitted and gated by `sports.py --tune --only nhl,cfb,ncaab,wnba,nrl`; the four existing entries are unchanged.
+- `index.html`: a tab for each; a sport tab with no games this week and nothing graded is hidden (off-season), so the bar does not crowd. `groupings.py` prices the new US sports from ESPN's moneylines like the NFL, MLB and NBA.
+**Backtest (check window from July 2025, never fitted on):**
+- College football: 1,097 games, winner 72.3% v 58.4% backing home, PASS. 70%+ calls landed 84.2% (538). Daily List from 70%.
+- College basketball: 5,814 games, 71.3% v 64.4%, PASS. 70%+ landed 82.1% (3,172). Daily List from 70%.
+- WNBA: 531 games, 69.7% v 53.9%, PASS. 80%+ landed 81.2% (101). Daily List from 80%.
+- Rugby league: 298 games, 63.4% v 55.2%, PASS. No band earns a list place: board only.
+- Ice hockey: 1,429 games, 54.9% v 56.5% backing home, FAIL. Not published: no NHL games are shown until a model beats backing the home side.
+**Why:** Douglas wants every sport's games collected so the most accurate can be picked (6 Oct 2026).
+**Evidence:** the tune output above; `tests/test_sports_feeds.py`; full suite passes; checked at 1400px and 400px (College football tab, Daily List).
+**Files:** `sports.py`, `sports.json`, `index.html`, `groupings.py`, `tests/test_sports_feeds.py`, `RELEASES.md`.
+**Not changed:** football, tennis, the NFL, MLB, NBA and union rugby models, grading rules, workflows.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 One rebuild per agent sprint, no idle runners (release-2026-10-06-14)
 
 **What changed:**

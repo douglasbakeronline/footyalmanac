@@ -598,6 +598,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    standalone "How it went" sport switcher, which has nothing above it and
    needs its stroke closed on all four sides or it reads as unfinished. */
 .views.standalone{border-top:1px solid #100e0c}
+.views button[hidden]{display:none}
 .views button{
   flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
   letter-spacing:.08em;text-transform:uppercase;
@@ -994,6 +995,11 @@ footer b{color:var(--ink-2)}
   <button data-view="sport:mlb" aria-pressed="false">Baseball</button>
   <button data-view="sport:nba" aria-pressed="false">Basketball</button>
   <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
+  <button data-view="sport:nhl" aria-pressed="false">Ice hockey</button>
+  <button data-view="sport:cfb" aria-pressed="false">College football</button>
+  <button data-view="sport:ncaab" aria-pressed="false">College basketball</button>
+  <button data-view="sport:wnba" aria-pressed="false">WNBA</button>
+  <button data-view="sport:nrl" aria-pressed="false">Rugby league</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="results" aria-pressed="false">How it went</button>
   <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
@@ -2412,7 +2418,8 @@ function sportDetail(g){
 // A Daily List pick that has started: frozen as published before the start,
 // with Won / Lost / Void from the record, or In play / Result due until the
 // next build grades it. Results land on site builds, not live.
-const PLAY_HOURS = {football:2.25, tennis:3.5, nfl:3.5, mlb:3.5, nba:2.75, rugby:2};
+const PLAY_HOURS = {football:2.25, tennis:3.5, nfl:3.5, mlb:3.5, nba:2.75, rugby:2,
+  nhl:2.75, cfb:3.75, ncaab:2.25, wnba:2.25, nrl:2};
 function pinStatus(g){
   if(g.result) return g.result.void ? ["void", "Void"] : g.result.ok ? ["won", "Won"] : ["lost", "Lost"];
   const t = Date.parse(g.start), now = Date.now();
@@ -2774,7 +2781,8 @@ const ogSearch = l => {
   const q = `${l.event.replace(/ v /, " vs ")} prediction ${day}`.trim();
   return `<a class="og-g" href="https://www.google.com/search?q=${encodeURIComponent(q)}" target="_blank" rel="noopener" aria-label="Search Google for ${ogEsc(l.event)} predictions">Google predictions ↗</a>`;
 };
-const OG_SPORT = {football:"Football", tennis:"Tennis", nfl:"NFL", mlb:"Baseball", nba:"Basketball", rugby:"Rugby"};
+const OG_SPORT = {football:"Football", tennis:"Tennis", nfl:"NFL", mlb:"Baseball", nba:"Basketball", rugby:"Rugby",
+  nhl:"Ice hockey", cfb:"College football", ncaab:"College basketball", wnba:"WNBA", nrl:"Rugby league"};
 const ogDate = l => { if(!l.when) return null; const d = new Date(l.when.length === 17 ? l.when.replace("Z", ":00Z") : l.when); return isNaN(d) ? null : d; };
 function ogTime(l){
   const d = ogDate(l);
@@ -2909,6 +2917,13 @@ render();
 updateReadbar();
 renderResults();
 // The Daily List is the front page; the full board is one tap away.
+// A sport tab with nothing this week and nothing graded stays out of the way
+// (off-season), so nine sports do not crowd the bar (6 Oct 2026).
+document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
+  const k = b.dataset.view.slice(6), sp = SD && SD.sports && SD.sports[k];
+  const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
+  if(!sp || (!(sp.games || []).length && !graded)) b.hidden = true;
+});
 $('#views button[data-view="list"]').click();
 })();
 </script>

@@ -119,7 +119,29 @@ SPORTS = {
         {"path": "rugby/164205", "label": "World Cup", "pool": "intl", "months": (9, 10), "days": ALL_DAYS, "skip": ()},
         {"path": "rugby/242041", "label": "Super Rugby", "pool": "sr", "months": (2, 3, 4, 5, 6), "days": WEEKEND, "skip": ()},
     ]},
+    # Added 6 Oct 2026 from ESPN's free feeds. Each is tuned and gated like the
+    # others: on the board once it beats backing the home side, on the Daily
+    # List only once its backtest earns it.
+    "nhl": {"name": "Ice hockey", "feeds": [
+        {"path": "hockey/nhl", "label": "NHL", "pool": "nhl", "months": (10, 11, 12, 1, 2, 3, 4, 5, 6),
+         "days": ALL_DAYS, "skip": (1,)}]},
+    "cfb": {"name": "College football", "feeds": [
+        {"path": "football/college-football", "label": "NCAA FBS", "pool": "cfb", "months": (8, 9, 10, 11, 12, 1),
+         "days": ALL_DAYS, "skip": (1,)}]},
+    "ncaab": {"name": "College basketball", "feeds": [
+        # groups=50 is all of Division I; without it ESPN returns only a few featured games
+        {"path": "basketball/mens-college-basketball", "label": "NCAA", "pool": "ncaab", "q": "&groups=50",
+         "months": (11, 12, 1, 2, 3, 4), "days": ALL_DAYS, "skip": (1,)}]},
+    # Their own sports, not feeds of the NBA and union rugby: those share one
+    # set of fitted constants per sport, and adding games would move them.
+    "wnba": {"name": "WNBA", "feeds": [
+        {"path": "basketball/wnba", "label": "WNBA", "pool": "wnba", "months": (5, 6, 7, 8, 9, 10),
+         "days": ALL_DAYS, "skip": (1,)}]},
+    "nrl": {"name": "Rugby league", "feeds": [
+        {"path": "rugby-league/3", "label": "NRL", "pool": "nrl", "months": (3, 4, 5, 6, 7, 8, 9, 10),
+         "days": ALL_DAYS, "skip": ()}]},
 }
+
 TIERS = [(0.70, "Strong"), (0.62, "Firm"), (0.55, "Lean"), (0.0, "No read")]
 
 
@@ -133,9 +155,9 @@ def tier_of(p):
 # fetch
 # ---------------------------------------------------------------------------
 
-def _day(path, d, errs):
+def _day(path, d, errs, q=""):
     for host in ESPN_HOSTS:
-        url = f"{host}/apis/site/v2/sports/{path}/scoreboard?dates={d:%Y%m%d}&limit=400"
+        url = f"{host}/apis/site/v2/sports/{path}/scoreboard?dates={d:%Y%m%d}&limit=400{q}"
         try:
             req = urllib.request.Request(url, headers=ESPN_HEADERS)
             return json.loads(urllib.request.urlopen(req, timeout=25).read()).get("events") or []
@@ -200,7 +222,7 @@ def walk_history(feed, until=None, sleep=0.08, log=None):
     while d <= until:
         if d.month in feed["months"] and d.weekday() in feed["days"]:
             errs = []
-            evs = _day(feed["path"], d, errs)
+            evs = _day(feed["path"], d, errs, feed.get("q", ""))
             asked += 1
             if evs is None:
                 if log is not None:
@@ -487,7 +509,7 @@ def upcoming(sport, start, days):
             d = start + timedelta(days=i)
             if d.month not in f["months"]:
                 continue
-            for ev in _day(f["path"], d, errs) or []:
+            for ev in _day(f["path"], d, errs, f.get("q", "")) or []:
                 g = _game(ev, f)
                 if g and g["state"] == "pre" and g["id"] not in seen and _same_game(g) not in seen:
                     seen.update((g["id"], _same_game(g)))

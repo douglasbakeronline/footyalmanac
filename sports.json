@@ -132,7 +132,7 @@
    ]
   }
  },
- "generated": "2026-09-30",
+ "generated": "2026-10-06",
  "mlb": {
   "params": {
    "k": 8,
@@ -504,6 +504,662 @@
     "n": 76,
     "hit": 0.9079,
     "quoted": 0.8937
+   }
+  ],
+  "windows": {
+   "fit": [
+    "2024-07-01",
+    "2025-07-01"
+   ],
+   "check": [
+    "2025-07-01",
+    null
+   ]
+  }
+ },
+ "nhl": {
+  "params": {
+   "k": 20,
+   "hfa": 50,
+   "regress": 0.33,
+   "mov": 1
+  },
+  "fittedParams": {
+   "k": 8,
+   "hfa": 50,
+   "regress": 0.0,
+   "mov": 0
+  },
+  "usedFitted": false,
+  "games": 4237,
+  "check": {
+   "n": 1429,
+   "logLoss": 0.6907,
+   "accuracy": 0.5493,
+   "homeRate": 0.5655,
+   "vsHome": 0.0018,
+   "pWorseVsHome": 0.661
+  },
+  "publish": false,
+  "listMin": null,
+  "cal": {
+   "a": 0.0878,
+   "b": 0.6417
+  },
+  "calTested": {
+   "a": 0.0878,
+   "b": 0.6417,
+   "delta": -0.0063,
+   "pWorse": 0.001,
+   "topGapRaw": 0.1167,
+   "topGapCal": 0.0206
+  },
+  "bandsFit": [
+   {
+    "from": 0.55,
+    "n": 918,
+    "hit": 0.6155,
+    "quoted": 0.6186
+   },
+   {
+    "from": 0.6,
+    "n": 513,
+    "hit": 0.6589,
+    "quoted": 0.6526
+   },
+   {
+    "from": 0.65,
+    "n": 233,
+    "hit": 0.6867,
+    "quoted": 0.6887
+   },
+   {
+    "from": 0.7,
+    "n": 76,
+    "hit": 0.7237,
+    "quoted": 0.7247
+   },
+   {
+    "from": 0.75,
+    "n": 12,
+    "hit": 0.9167,
+    "quoted": 0.7658
+   },
+   {
+    "from": 0.8,
+    "n": 1,
+    "hit": 1.0,
+    "quoted": 0.8131
+   }
+  ],
+  "bandsCheck": [
+   {
+    "from": 0.55,
+    "n": 945,
+    "hit": 0.5503,
+    "quoted": 0.6097
+   },
+   {
+    "from": 0.6,
+    "n": 475,
+    "hit": 0.5705,
+    "quoted": 0.6432
+   },
+   {
+    "from": 0.65,
+    "n": 156,
+    "hit": 0.6667,
+    "quoted": 0.6873
+   },
+   {
+    "from": 0.7,
+    "n": 48,
+    "hit": 0.75,
+    "quoted": 0.7224
+   },
+   {
+    "from": 0.75,
+    "n": 2,
+    "hit": 0.5,
+    "quoted": 0.7848
+   },
+   {
+    "from": 0.8,
+    "n": 1,
+    "hit": 0.0,
+    "quoted": 0.8002
+   }
+  ],
+  "windows": {
+   "fit": [
+    "2024-07-01",
+    "2025-07-01"
+   ],
+   "check": [
+    "2025-07-01",
+    null
+   ]
+  }
+ },
+ "cfb": {
+  "params": {
+   "k": 32,
+   "hfa": 50,
+   "regress": 0.25,
+   "mov": 1
+  },
+  "fittedParams": {
+   "k": 32,
+   "hfa": 50,
+   "regress": 0.25,
+   "mov": 1
+  },
+  "usedFitted": true,
+  "games": 3279,
+  "check": {
+   "n": 1097,
+   "logLoss": 0.5423,
+   "accuracy": 0.7229,
+   "homeRate": 0.5841,
+   "vsHome": -0.1231,
+   "pWorseVsHome": 0.0
+  },
+  "publish": true,
+  "listMin": 0.7,
+  "cal": {
+   "a": 0.0462,
+   "b": 1.0467
+  },
+  "calTested": {
+   "a": 0.0462,
+   "b": 1.0467,
+   "delta": -0.003,
+   "pWorse": 0.002,
+   "topGapRaw": 0.049,
+   "topGapCal": 0.0384
+  },
+  "bandsFit": [
+   {
+    "from": 0.55,
+    "n": 680,
+    "hit": 0.7103,
+    "quoted": 0.7184
+   },
+   {
+    "from": 0.6,
+    "n": 561,
+    "hit": 0.7433,
+    "quoted": 0.7488
+   },
+   {
+    "from": 0.65,
+    "n": 476,
+    "hit": 0.7605,
+    "quoted": 0.771
+   },
+   {
+    "from": 0.7,
+    "n": 351,
+    "hit": 0.8091,
+    "quoted": 0.8051
+   },
+   {
+    "from": 0.75,
+    "n": 250,
+    "hit": 0.848,
+    "quoted": 0.8389
+   },
+   {
+    "from": 0.8,
+    "n": 166,
+    "hit": 0.9036,
+    "quoted": 0.8724
+   },
+   {
+    "from": 0.85,
+    "n": 101,
+    "hit": 0.9208,
+    "quoted": 0.9012
+   }
+  ],
+  "bandsCheck": [
+   {
+    "from": 0.55,
+    "n": 938,
+    "hit": 0.7505,
+    "quoted": 0.7286
+   },
+   {
+    "from": 0.6,
+    "n": 802,
+    "hit": 0.7805,
+    "quoted": 0.7547
+   },
+   {
+    "from": 0.65,
+    "n": 663,
+    "hit": 0.8205,
+    "quoted": 0.7821
+   },
+   {
+    "from": 0.7,
+    "n": 538,
+    "hit": 0.842,
+    "quoted": 0.8071
+   },
+   {
+    "from": 0.75,
+    "n": 370,
+    "hit": 0.8703,
+    "quoted": 0.845
+   },
+   {
+    "from": 0.8,
+    "n": 262,
+    "hit": 0.9122,
+    "quoted": 0.8736
+   },
+   {
+    "from": 0.85,
+    "n": 167,
+    "hit": 0.9341,
+    "quoted": 0.9006
+   }
+  ],
+  "windows": {
+   "fit": [
+    "2024-07-01",
+    "2025-07-01"
+   ],
+   "check": [
+    "2025-07-01",
+    null
+   ]
+  }
+ },
+ "ncaab": {
+  "params": {
+   "k": 32,
+   "hfa": 100,
+   "regress": 0.25,
+   "mov": 1
+  },
+  "fittedParams": {
+   "k": 32,
+   "hfa": 100,
+   "regress": 0.25,
+   "mov": 1
+  },
+  "usedFitted": true,
+  "games": 18835,
+  "check": {
+   "n": 5814,
+   "logLoss": 0.5523,
+   "accuracy": 0.7133,
+   "homeRate": 0.6442,
+   "vsHome": -0.1003,
+   "pWorseVsHome": 0.0
+  },
+  "publish": true,
+  "listMin": 0.7,
+  "cal": null,
+  "calTested": {
+   "a": 0.0839,
+   "b": 0.9812,
+   "delta": 0.0003,
+   "pWorse": 0.76,
+   "topGapRaw": 0.0131,
+   "topGapCal": 0.0185
+  },
+  "bandsFit": [
+   {
+    "from": 0.55,
+    "n": 5058,
+    "hit": 0.7404,
+    "quoted": 0.7389
+   },
+   {
+    "from": 0.6,
+    "n": 4325,
+    "hit": 0.7697,
+    "quoted": 0.7667
+   },
+   {
+    "from": 0.65,
+    "n": 3633,
+    "hit": 0.8004,
+    "quoted": 0.7937
+   },
+   {
+    "from": 0.7,
+    "n": 2961,
+    "hit": 0.8237,
+    "quoted": 0.8206
+   },
+   {
+    "from": 0.75,
+    "n": 2290,
+    "hit": 0.848,
+    "quoted": 0.8487
+   },
+   {
+    "from": 0.8,
+    "n": 1664,
+    "hit": 0.8756,
+    "quoted": 0.8765
+   },
+   {
+    "from": 0.85,
+    "n": 1084,
+    "hit": 0.9077,
+    "quoted": 0.9041
+   }
+  ],
+  "bandsCheck": [
+   {
+    "from": 0.55,
+    "n": 5158,
+    "hit": 0.7346,
+    "quoted": 0.7485
+   },
+   {
+    "from": 0.6,
+    "n": 4496,
+    "hit": 0.7562,
+    "quoted": 0.7741
+   },
+   {
+    "from": 0.65,
+    "n": 3792,
+    "hit": 0.7888,
+    "quoted": 0.8019
+   },
+   {
+    "from": 0.7,
+    "n": 3172,
+    "hit": 0.8206,
+    "quoted": 0.8267
+   },
+   {
+    "from": 0.75,
+    "n": 2514,
+    "hit": 0.8425,
+    "quoted": 0.8532
+   },
+   {
+    "from": 0.8,
+    "n": 1884,
+    "hit": 0.8737,
+    "quoted": 0.8793
+   },
+   {
+    "from": 0.85,
+    "n": 1258,
+    "hit": 0.9157,
+    "quoted": 0.9066
+   }
+  ],
+  "windows": {
+   "fit": [
+    "2024-07-01",
+    "2025-07-01"
+   ],
+   "check": [
+    "2025-07-01",
+    null
+   ]
+  }
+ },
+ "wnba": {
+  "params": {
+   "k": 20,
+   "hfa": 50,
+   "regress": 0.33,
+   "mov": 1
+  },
+  "fittedParams": {
+   "k": 16,
+   "hfa": 25,
+   "regress": 0.5,
+   "mov": 1
+  },
+  "usedFitted": false,
+  "games": 1092,
+  "check": {
+   "n": 531,
+   "logLoss": 0.5995,
+   "accuracy": 0.6968,
+   "homeRate": 0.5394,
+   "vsHome": -0.0872,
+   "pWorseVsHome": 0.0
+  },
+  "publish": true,
+  "listMin": 0.8,
+  "cal": null,
+  "calTested": {
+   "a": -0.0998,
+   "b": 0.9123,
+   "delta": 0.0013,
+   "pWorse": 0.665,
+   "topGapRaw": 0.0139,
+   "topGapCal": 0.0078
+  },
+  "bandsFit": [
+   {
+    "from": 0.55,
+    "n": 212,
+    "hit": 0.7123,
+    "quoted": 0.7174
+   },
+   {
+    "from": 0.6,
+    "n": 177,
+    "hit": 0.7401,
+    "quoted": 0.7453
+   },
+   {
+    "from": 0.65,
+    "n": 142,
+    "hit": 0.7535,
+    "quoted": 0.776
+   },
+   {
+    "from": 0.7,
+    "n": 120,
+    "hit": 0.7833,
+    "quoted": 0.7949
+   },
+   {
+    "from": 0.75,
+    "n": 88,
+    "hit": 0.7955,
+    "quoted": 0.8208
+   },
+   {
+    "from": 0.8,
+    "n": 56,
+    "hit": 0.8214,
+    "quoted": 0.8505
+   },
+   {
+    "from": 0.85,
+    "n": 28,
+    "hit": 0.8929,
+    "quoted": 0.8825
+   }
+  ],
+  "bandsCheck": [
+   {
+    "from": 0.55,
+    "n": 465,
+    "hit": 0.7247,
+    "quoted": 0.7103
+   },
+   {
+    "from": 0.6,
+    "n": 388,
+    "hit": 0.7268,
+    "quoted": 0.7371
+   },
+   {
+    "from": 0.65,
+    "n": 320,
+    "hit": 0.7469,
+    "quoted": 0.7608
+   },
+   {
+    "from": 0.7,
+    "n": 235,
+    "hit": 0.766,
+    "quoted": 0.7919
+   },
+   {
+    "from": 0.75,
+    "n": 158,
+    "hit": 0.7785,
+    "quoted": 0.8247
+   },
+   {
+    "from": 0.8,
+    "n": 101,
+    "hit": 0.8119,
+    "quoted": 0.8514
+   },
+   {
+    "from": 0.85,
+    "n": 47,
+    "hit": 0.8723,
+    "quoted": 0.8819
+   }
+  ],
+  "windows": {
+   "fit": [
+    "2024-07-01",
+    "2025-07-01"
+   ],
+   "check": [
+    "2025-07-01",
+    null
+   ]
+  }
+ },
+ "nrl": {
+  "params": {
+   "k": 20,
+   "hfa": 50,
+   "regress": 0.33,
+   "mov": 1
+  },
+  "fittedParams": {
+   "k": 25,
+   "hfa": 25,
+   "regress": 0.25,
+   "mov": 0
+  },
+  "usedFitted": false,
+  "games": 729,
+  "check": {
+   "n": 298,
+   "logLoss": 0.6517,
+   "accuracy": 0.6342,
+   "homeRate": 0.5519,
+   "vsHome": -0.0318,
+   "pWorseVsHome": 0.026
+  },
+  "publish": true,
+  "listMin": null,
+  "cal": {
+   "a": 0.0134,
+   "b": 0.6828
+  },
+  "calTested": {
+   "a": 0.0134,
+   "b": 0.6828,
+   "delta": -0.0076,
+   "pWorse": 0.165,
+   "topGapRaw": 0.066,
+   "topGapCal": 0.0107
+  },
+  "bandsFit": [
+   {
+    "from": 0.55,
+    "n": 163,
+    "hit": 0.6258,
+    "quoted": 0.6367
+   },
+   {
+    "from": 0.6,
+    "n": 105,
+    "hit": 0.6667,
+    "quoted": 0.6721
+   },
+   {
+    "from": 0.65,
+    "n": 66,
+    "hit": 0.7576,
+    "quoted": 0.7005
+   },
+   {
+    "from": 0.7,
+    "n": 28,
+    "hit": 0.6786,
+    "quoted": 0.7348
+   },
+   {
+    "from": 0.75,
+    "n": 7,
+    "hit": 0.8571,
+    "quoted": 0.7737
+   },
+   {
+    "from": 0.8,
+    "n": 1,
+    "hit": 1.0,
+    "quoted": 0.8004
+   }
+  ],
+  "bandsCheck": [
+   {
+    "from": 0.55,
+    "n": 234,
+    "hit": 0.6496,
+    "quoted": 0.6454
+   },
+   {
+    "from": 0.6,
+    "n": 157,
+    "hit": 0.6752,
+    "quoted": 0.6807
+   },
+   {
+    "from": 0.65,
+    "n": 100,
+    "hit": 0.7,
+    "quoted": 0.7107
+   },
+   {
+    "from": 0.7,
+    "n": 43,
+    "hit": 0.7907,
+    "quoted": 0.7535
+   },
+   {
+    "from": 0.75,
+    "n": 24,
+    "hit": 0.7083,
+    "quoted": 0.7798
+   },
+   {
+    "from": 0.8,
+    "n": 5,
+    "hit": 0.6,
+    "quoted": 0.8362
+   },
+   {
+    "from": 0.85,
+    "n": 2,
+    "hit": 0.5,
+    "quoted": 0.8642
    }
   ],
   "windows": {
