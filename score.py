@@ -33,7 +33,31 @@ EPS = 1e-9
 # result days after the whistle, which is fine for a season record and useless
 # for a page that reviews yesterday. Anything played inside this window and
 # still ungraded is worth one ESPN request per competition per date.
-LIVE_LOOKBACK = 6
+LIVE_LOOKBACK = 10
+
+# Results the live source settled, kept between builds (6 Oct 2026). Without
+# this a fixture openfootball never backfills (internationals, most ESPN-only
+# competitions) was graded only while it sat inside LIVE_LOOKBACK, then fell
+# out of the record: 29 Sep's 46 graded games, 14 of them Daily List picks,
+# went to 6 on 6 Oct. Lives in current/, which the deploy already commits.
+# Its key is "settled", not "rows", so replay.py's freeze of current/ skips it.
+SETTLED = os.path.join(HERE, "current", "settled-results.json")
+
+
+def load_settled(path=SETTLED):
+    try:
+        doc = json.load(open(path))
+    except Exception:
+        return {}
+    return {(c, d, h, a): (hg, ag) for c, d, h, a, hg, ag in doc.get("settled", [])}
+
+
+def save_settled(settled, path=SETTLED):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    rows = sorted([list(k) + list(v) for k, v in settled.items()], key=lambda r: (r[1], r[0], r[2]))
+    with open(path, "w") as f:
+        json.dump({"note": "Live-source results kept by score.py once settled; openfootball wins where it has the game.",
+                   "settled": rows}, f, separators=(",", ":"), ensure_ascii=False)
 
 # Days of graded fixtures handed to the dashboard's results board.
 REVIEW_DAYS = 14
@@ -277,6 +301,11 @@ def main():
     codes = sorted({k[0] for k in preds})
     results = load_results(codes)
 
+    # Results settled by an earlier build fill what openfootball lacks.
+    settled = load_settled()
+    kept = {k: v for k, v in settled.items() if k in preds and k not in results}
+    results.update(kept)
+
     # Anything played but not yet backfilled gets one pass at the live source.
     pending = [k for k in preds if k not in results]
     tried = []
@@ -287,6 +316,9 @@ def main():
         print(f"  live source settled {len(live)} fixture(s) openfootball has "
               f"not backfilled yet", file=sys.stderr)
     results.update(live)
+    if live:
+        settled.update(live)
+        save_settled(settled)
 
     rows = []
     for key, g in preds.items():

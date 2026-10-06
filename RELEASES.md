@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Football results kept once settled: the list record stops shrinking (release-2026-10-06-3)
+
+**What changed:** results the live source (ESPN) settles are now kept in `current/settled-results.json` and reused on every build; openfootball still wins where it has the game. The live chase window goes from 6 to 10 days, so the games already lost come back on the next build.
+**Why:** the record is rebuilt from scratch each run, and a fixture openfootball never backfills (internationals, most ESPN-only competitions) was graded only while it sat inside the 6-day window. On 6 Oct, 29 Sep dropped out: 46 graded games went to 6, and 14 Daily List picks (AFCON qualifiers, Nations League, CONCACAF) left the list record, 22 to 16 (8 newer picks graded since only partly made up for it).
+**Evidence:** local re-grade with the change: 29 Sep back to 46 graded, its 14 list picks back in the list record. The file uses the key `settled`, not `rows`, so `replay.py --freeze` (evaluation snapshots) does not read it. Tests in `tests/test_settled_results.py`.
+**Files:** `score.py`, `tests/test_settled_results.py`, `RELEASES.md`.
+**Not changed:** any model, rule, grading rule or workflow.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Archive push fixed: the record updates again (release-2026-10-06-2)
 
 **What changed:** the deploy's archive commit (and the retune push) now drop actions/checkout's workflow-token header before pushing with the office App token.
