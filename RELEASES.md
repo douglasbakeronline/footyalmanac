@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 U21 sides rated from Premier League 2 (release-2026-10-06-10)
+
+**What changed:**
+- The build finds Premier League 2 and the EFL Trophy on API-Football (`sources.af_refresh_u21`, one `/leagues?country=England` call a week, kept in `current/af-u21.json`) and rates U21 sides from their own PL2 results (`engine.register_u21`, codes `afu.<id>`). PL2's games are on their board, off the Daily List.
+- `build.fit_u21` sets PL2's strength against the senior game: one number, grid 0.20-0.80, chosen on last season's EFL Trophy U21 v League One/Two ties, with the build's own ratings. It must beat the outcome-share baseline on the same ties by 0.005 log loss, on 30+ ties, not at a grid edge. Kept in `current/u21-fit.json`, refitted weekly. Ratings are the prior season, so they have seen the season the ties were played in; one parameter, so the leak is small, and the file says so.
+- Until a fit passes, a U21 side is never priced against a senior club (`build.u21_cup_ok`) and its EFL Trophy ties stay off the board, as since release-2026-10-06-7. With a pass, they come back, flagged `u21Side`, board only: off the Daily List and the reserve until their live results are checked.
+**Why:** Douglas approved rating academy sides properly (6 Oct 2026) after "Sunderland U21" turned out to be priced as Sunderland's first team.
+**Evidence:** `tests/test_u21.py`: on ties drawn from the model at a known strength 0.40 the fit returns 0.43 and passes; too few ties fails; senior v senior and U21 v U21 ties are ignored; unfitted U21 sides are refused against seniors. Full suite and `nametest.py` pass. A local build without the key is unchanged (nothing registers without it).
+**Files:** `engine.py`, `sources.py`, `build.py`, `tests/test_u21.py`, `RELEASES.md`.
+**Not changed:** any senior rating, calibration, list threshold, grading rule or workflow.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 FA Cup qualifying on the board; tuning run keeps the API cache (release-2026-10-06-9)
 
 **What changed:**

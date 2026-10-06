@@ -7,7 +7,7 @@ Build the dashboard payload.
 Reads openfootball, rates every team, prices every upcoming fixture, keeps the
 top N by confidence per day, writes data.json next to index.html.
 """
-import argparse, concurrent.futures as cf, json, math, os, sys
+import argparse, concurrent.futures as cf, json, math, os, sys, time
 from collections import defaultdict
 from datetime import date, timedelta
 
@@ -162,7 +162,8 @@ def list_eligible(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
-    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY:
+    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY \
+            or E.LEAGUES[g["league"]].get("u21") or g.get("u21Side"):
         return False                     # board only until a replay passes
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if g["league"] in S.AF_EXTRA:
@@ -186,7 +187,8 @@ RESERVE_MIN = 0.62
 
 
 def list_reserve(g):
-    if g["list"] or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY:
+    if g["list"] or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY \
+            or E.LEAGUES[g["league"]].get("u21") or g.get("u21Side"):
         return False
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
@@ -366,6 +368,121 @@ def team_leagues(history):
     return out
 
 
+def u21_cup_ok(src, comp):
+    """A U21 side's Premier League 2 rating may price a tie against a senior
+    club only once fit_u21 has set, and passed, PL2's strength."""
+    m = E.LEAGUES.get(src) or {}
+    if not m.get("u21") or not comp or E.LEAGUES.get(comp, {}).get("u21"):
+        return True
+    return bool(m.get("u21Fitted"))
+
+
+U21_FIT_MAX_AGE = 7 * 86400
+U21_GRID = [round(0.20 + 0.01 * i, 2) for i in range(61)]     # 0.20 .. 0.80
+U21_MIN_TIES = 30
+U21_MIN_GAIN = 0.005      # log loss the fit must beat the outcome-share baseline by
+
+
+def u21_ties(rows, u21_codes, prior_ratings, league_mu, domestic_of, cup="efl.trophy"):
+    """Played EFL Trophy ties of one U21 side against one senior club, each
+    side with a prior rating: (u21 at home, u21 rating, mu u21, senior
+    rating, senior strength, mu senior, outcome h/d/a)."""
+    pool = {}
+    for c in u21_codes:
+        for t in prior_ratings.get(c, {}):
+            pool[t] = c
+    out = []
+    for r in rows:
+        if r.get("hg") is None:
+            continue
+        yh, ya = bool(S._side_marks(r["home"])), bool(S._side_marks(r["away"]))
+        if yh == ya:
+            continue
+        young, old = (r["home"], r["away"]) if yh else (r["away"], r["home"])
+        yname = young if young in pool else S.match_team(young, set(pool))
+        if not yname:
+            continue
+        src, pname = domestic_of(old, cup)
+        if not src or E.LEAGUES[src].get("u21") or pname not in prior_ratings.get(src, {}):
+            continue
+        yc = pool[yname]
+        res = "h" if r["hg"] > r["ag"] else ("a" if r["hg"] < r["ag"] else "d")
+        out.append((yh, prior_ratings[yc][yname], league_mu.get(yc, 1.35),
+                    prior_ratings[src][pname], E.LEAGUES[src]["strength"], league_mu.get(src, 1.35), res))
+    return out
+
+
+def u21_log_loss(ties, s_u21, tier=3):
+    ll = 0.0
+    for yh, ry, my, ro, so, mo, res in ties:
+        mu = (my + mo) / 2
+        if yh:
+            p = E.cup_match(ry, s_u21, ro, so, mu, tier=tier)
+        else:
+            p = E.cup_match(ro, so, ry, s_u21, mu, tier=tier)
+        q = {"h": p["home"], "d": p["draw"], "a": p["away"]}[res]
+        ll -= math.log(max(q, 1e-9))
+    return ll / len(ties)
+
+
+def u21_baseline(ties):
+    n = len(ties)
+    share = {k: sum(1 for t in ties if t[-1] == k) / n for k in "hda"}
+    return -sum(math.log(max(share[t[-1]], 1e-9)) for t in ties) / n
+
+
+def fit_u21(doc, prior_ratings, league_mu, domestic_of, path=None, now=None):
+    """Set Premier League 2's strength against the senior game.
+
+    One number, chosen on last season's EFL Trophy ties between a U21 side and
+    a League One or Two club, each side rated as the build rates it now (the
+    prior season, so the ratings have seen the season the ties were played in;
+    one parameter, so the leak is small, and said so in the file). It must beat
+    the outcome-share baseline on the same ties by U21_MIN_GAIN, on at least
+    U21_MIN_TIES ties, or U21 sides stay unpriced against senior clubs. Kept in
+    current/u21-fit.json and redone weekly. Never fitted on record.json."""
+    path = path or E.U21_FIT_FILE
+    codes = [c for c in S.AF_U21 if c in prior_ratings]
+    now = now or time.time()
+    fit = E.u21_fit()
+    stale = not fit or now - fit.get("fitted", 0) > U21_FIT_MAX_AGE
+    trophy = (doc or {}).get("trophy") or {}
+    if stale and codes and trophy.get("id"):
+        cur = max(int(E.LEAGUES[c]["season"].split("-")[0]) for c in codes)
+        year = cur - 1
+        rows = S.af_rows_from(S.af_season_by_id(trophy["id"], year))
+        if not rows:                   # no data this run (no key, allowance spent): try next build
+            print("  U21 fit: no EFL Trophy data this run; U21 sides stay unpriced", file=sys.stderr)
+            rows = None
+    if stale and codes and trophy.get("id") and rows:
+        ties = u21_ties(rows, codes, prior_ratings, league_mu, domestic_of)
+        fit = {"note": "Premier League 2 strength for U21 v senior ties, fitted by build.fit_u21 on the "
+                       "EFL Trophy season below. Ratings are the build's prior season, so they include "
+                       "that season: one parameter, small leak.",
+               "season": year, "ties": len(ties), "fitted": int(now)}
+        if len(ties) >= U21_MIN_TIES:
+            scores = [(u21_log_loss(ties, g), g) for g in U21_GRID]
+            best_ll, best = min(scores)
+            base = u21_baseline(ties)
+            fit.update(strength=best, logLoss=round(best_ll, 4), baseline=round(base, 4),
+                       edge=bool(best in (U21_GRID[0], U21_GRID[-1])),
+                       **{"pass": best_ll <= base - U21_MIN_GAIN and best not in (U21_GRID[0], U21_GRID[-1])})
+        else:
+            fit["pass"] = False
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(fit, f, indent=1)
+        print(f"  U21 fit: {fit['ties']} EFL Trophy ties ({year}); "
+              + (f"strength {fit.get('strength')}, log loss {fit.get('logLoss')} v baseline {fit.get('baseline')}, "
+                 f"{'PASS' if fit['pass'] else 'fail'}" if "strength" in fit else "too few to fit"),
+              file=sys.stderr)
+    if fit.get("pass") and fit.get("strength"):
+        for c in S.AF_U21:
+            E.LEAGUES[c]["strength"] = fit["strength"]
+            E.LEAGUES[c]["u21Fitted"] = True
+    return fit
+
+
 def dedupe_cups(fixtures):
     """Drop an API-Football cup tie that a native feed already carries.
 
@@ -430,6 +547,9 @@ def main():
     cup_log = []
     new_cups = S.register_new_cups(S.af_refresh_cups(log=cup_log))
     CODES.extend(c for c in new_cups if c not in CODES)
+    # Premier League 2, for U21 sides' ratings (6 Oct 2026): one call a week.
+    u21_doc = S.af_refresh_u21(log=cup_log)
+    CODES.extend(c for c in S.register_u21(u21_doc) if c not in CODES)
     for line in cup_log:
         print(f"  cups: {line}", file=sys.stderr)
 
@@ -634,6 +754,8 @@ def main():
                 src = max(cands, key=lambda c: (E.LEAGUES[c]["strength"], c))
             else:
                 src = None
+            if src and not u21_cup_ok(src, comp):
+                src = None                         # unpriced against seniors until fitted
             _dom_cache[key] = (src, name)
         return _dom_cache[key]
 
@@ -751,6 +873,9 @@ def main():
 
     # ---- price the fixtures ------------------------------------------------
     by_day = defaultdict(list)
+    fit_u21(u21_doc, prior_ratings, league_mu, domestic_of)
+    _dom_cache.clear()                 # the fit can change what u21_cup_ok allows
+
     dropped_unrated = 0
     for code, rows in fixtures.items():
         meta = E.LEAGUES[code]
@@ -954,7 +1079,10 @@ def main():
                 dropped_unrated += 1
                 continue
 
+            u21_side = bool(meta.get("cup") and not meta.get("u21") and any(
+                E.LEAGUES.get(x, {}).get("u21") for x in (h_league, a_league)))
             by_day[r["date"]].append({
+                "u21Side": u21_side,
                 "league": code, "leagueName": meta["name"], "short": meta["short"],
                 "country": meta["country"], "iso": meta["iso"],
                 "tier": meta["tier"], "order": meta["order"], "round": r["round"],

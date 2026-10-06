@@ -406,6 +406,57 @@ def _af_cups():
 
 AF_CUPS = register_cups(_af_cups())
 
+# Premier League 2 (sources.af_refresh_u21, current/af-u21.json). Its strength
+# against the senior game comes from current/u21-fit.json (build.fit_u21);
+# with no passing fit, a U21 side is never priced against a senior club
+# (build.u21_cup_ok) and its EFL Trophy ties stay off the board.
+AF_U21_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-u21.json")
+U21_FIT_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "u21-fit.json")
+U21_DEFAULT_STRENGTH = 0.35
+
+
+def _season_label(year, split=True):
+    return f"{year}-{str(year + 1)[2:]}" if split else str(year)
+
+
+def u21_fit():
+    try:
+        with open(U21_FIT_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+def register_u21(doc):
+    fit = u21_fit()
+    s_fit = fit.get("strength") if fit.get("pass") else None
+    added = []
+    for i, e in enumerate((doc or {}).get("leagues") or []):
+        code = e["code"]
+        if code in LEAGUES:
+            continue
+        cur = e.get("current") or (max(e["years"]) if e.get("years") else None)
+        if not cur:
+            continue
+        prev = [_season_label(y) for y in sorted(e.get("years") or [], reverse=True) if y < cur][:2]
+        LEAGUES[code] = {"iso": "eng", "short": "PL2", "name": e["name"], "country": "England",
+                         "tier": 7, "strength": s_fit or U21_DEFAULT_STRENGTH, "order": 230 + i,
+                         "season": _season_label(cur), "prev": prev, "afId": int(e["id"]),
+                         "u21": True, "u21Fitted": s_fit is not None}
+        added.append(code)
+    return added
+
+
+def _af_u21_doc():
+    try:
+        with open(AF_U21_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+AF_U21 = register_u21(_af_u21_doc())
+
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly
