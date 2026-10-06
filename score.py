@@ -246,7 +246,8 @@ def bands5(rows, lo=0.50, step=0.05):
 
 def by_day(rows):
     """One line per graded day, oldest first: games, top picks won, readings
-    right, the average quoted chance, and the same for 60%+ calls."""
+    right, the average quoted chance, the same for 60%+ calls, and the
+    counts per 5-point band (b5) for the page's bracket picker."""
     d = defaultdict(list)
     for r in rows:
         d[r["date"]].append(r)
@@ -259,8 +260,24 @@ def by_day(rows):
                     "read": sum(1 for r in g if correct(r)),
                     "draws": sum(1 for r in g if r["actual"] == "d"),
                     "quoted": round(sum(r["confidence"] for r in g) / len(g), 4),
-                    "n60": len(h), "won60": sum(1 for r in h if r["pick"] == r["actual"])})
+                    "n60": len(h), "won60": sum(1 for r in h if r["pick"] == r["actual"]),
+                    # per 5-point band from 0%: [games, won, read right, quoted sum, draws],
+                    # so the page can show any bracket the reader picks
+                    "b5": day_bands(g)})
     return out
+
+
+def day_bands(g):
+    out = [[0, 0, 0, 0.0, 0] for _ in range(20)]
+    for r in g:
+        i = min(19, max(0, int(r["confidence"] * 20 + 1e-9)))
+        c = out[i]
+        c[0] += 1
+        c[1] += r["pick"] == r["actual"]
+        c[2] += bool(correct(r))
+        c[3] += r["confidence"]
+        c[4] += r["actual"] == "d"
+    return [[a, b, c, round(q, 4), d] for a, b, c, q, d in out]
 
 
 def model_card(rows=()):

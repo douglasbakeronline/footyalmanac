@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 Analysis: day by day by bracket; no link emojis (release-2026-10-06-5)
+
+**What changed:** the Analysis page's day-by-day table now shows one confidence bracket, opening on 70% and above, with quick picks (All, 50%+, 60%+, 70%+, 80%+, 90%+) and a from/to picker for any 5-point range, plus a bracket summary line. `score.py` adds `b5` to each `byDay` entry (games, won, read right, quoted sum and draws per 5-point band) so any bracket sums exactly. The 🔗 marks are gone from the Analysis and HQ links on both pages.
+**Why:** Douglas asked for 70%+ by default with a choice of bracket, and no link emojis.
+**Evidence:** tests in `tests/test_bands5.py`; bracket totals match `bands5` at 50%, 70% and 80%; checked at 1280px and 400px.
+**Files:** `analysis.html`, `score.py`, `index.html`, `tests/test_bands5.py`, `RELEASES.md`.
+**Not changed:** any model, rule, grading rule, prediction or workflow.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 Almanac Analysis page; 🔗 on the cross-site links (release-2026-10-06-4)
 
 **What changed:** a new page, `analysis.html` (linked as "Analysis 🔗" in the board bar), in the almanac's own masthead and styles. It shows the banding table from 50% to 100% in 5-point bands (games, top pick won, quoted, gap, draws, read right, Daily List), each band opening its recent games; a quoted-against-landed chart; every graded day; the model's seven stages with its live settings; why it is built that way; how it is graded; and what it cannot see. `score.py` adds `bands5`, `byDay`, `range` and `model` (read from engine.py, calibration.json and data.json) to `record.json`. The HQ link reads "HQ 🔗"; the twelve desktop nav labels are a touch smaller so none wraps. The deploy copies `analysis.html` into the site.

@@ -29,6 +29,12 @@ class Bands5(unittest.TestCase):
         d = SC.by_day([row(0.7, "h", "h", d="2026-10-02"), row(0.5, "h", "a", d="2026-10-01")])
         self.assertEqual([x["date"] for x in d], ["2026-10-01", "2026-10-02"])
         self.assertEqual((d[1]["n60"], d[1]["won60"]), (1, 1))
+        self.assertEqual(len(d[1]["b5"]), 20)
+        self.assertEqual(d[1]["b5"][14][:3], [1, 1, 1])      # 0.70 sits in 70-75%
+        self.assertEqual(d[0]["b5"][10][:2], [1, 0])         # 0.50 sits in 50-55%
+
+    def test_day_bands_top(self):
+        self.assertEqual(SC.day_bands([row(1.0, "h", "h")])[19][0], 1)
 
     def test_model_card(self):
         c = SC.model_card()
