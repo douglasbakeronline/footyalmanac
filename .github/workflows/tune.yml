@@ -35,6 +35,15 @@ jobs:
         with:
           python-version: "3.12"
 
+      # The API-Football day pool and finished seasons (sources._af_day,
+      # _af_season), shared with the daily build: without it this run refills
+      # the year, ~290 calls every Monday (Douglas approved, 6 Oct 2026).
+      - uses: actions/cache@v4
+        with:
+          path: .afcache
+          key: afcache-${{ github.run_id }}
+          restore-keys: afcache-
+
       # Refit the calibration curve on the last completed season and check it
       # on the current one. tune.py writes calibration.json only if the fit
       # also improves fixtures it has never seen; otherwise the file is left

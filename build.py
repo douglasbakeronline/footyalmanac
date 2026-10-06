@@ -109,6 +109,9 @@ def solve_goals(grid, pick, target):
 # show these bands, its own, and may reach the reserve.
 ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
 NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
+# New competitions not yet replayed: on their board, off the Daily List and
+# the reserve (the standing rule for a new league).
+NEW_BOARD_ONLY = {"en.faq"}
 
 # The discovery-replay leagues (engine.AF_EXTRA): their own bands, from the
 # 2025 replay, and their own list bar by the shared rule: 75%+ landed 82.3%
@@ -159,7 +162,7 @@ def list_eligible(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
-    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS:
+    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY:
         return False                     # board only until a replay passes
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if g["league"] in S.AF_EXTRA:
@@ -183,7 +186,7 @@ RESERVE_MIN = 0.62
 
 
 def list_reserve(g):
-    if g["list"] or g["league"] in S.AF_CUPS:
+    if g["list"] or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY:
         return False
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])

@@ -3,6 +3,17 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-06 FA Cup qualifying on the board; tuning run keeps the API cache (release-2026-10-06-9)
+
+**What changed:**
+- New competition `en.faq`, FA Cup qualifying, from ESPN (`eng.fa_qual`, 40 ties on 3 Oct 2026). Ties are priced like the FA Cup, each club in its own division, in a frame at steps 1-2 (strength 0.42, tier 6). Clubs at step 4 and below have no rating, so their ties are dropped at the unrated gate. Board only (`build.NEW_BOARD_ONLY`): off the Daily List and the reserve until replayed.
+- `tune.yml` restores and saves `.afcache` like the daily build, so the Monday run reads the shared API-Football day pool instead of refilling the year (~290 calls).
+**Why:** Douglas asked whether FA Cup qualifying is covered (it was not), and approved the tune.yml cache on 6 Oct 2026.
+**Evidence:** full suite and `nametest.py` pass.
+**Files:** `engine.py`, `sources.py`, `build.py`, `.github/workflows/tune.yml`, `RELEASES.md`.
+**Not changed:** any existing prediction, rating, grading rule or list threshold.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 API-Football calls cut from ~700 a build to ~10 (release-2026-10-06-8)
 
 **What changed:**

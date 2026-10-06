@@ -237,6 +237,11 @@ LEAGUES = {
     "caf.cl":  {"iso": "fifa", "short": "CCL", "name": "CAF Champions League", "country": "Africa", "tier": 1, "strength": 0.58, "order": 211, "cup": True, "live": True},
     "br.cup":  {"iso": "bra", "short": "CDB", "name": "Copa do Brasil", "country": "Brazil", "tier": 1, "strength": 0.84, "order": 212, "cup": True, "live": True},
     "efl.trophy": {"iso": "eng", "short": "EFT", "name": "EFL Trophy", "country": "England", "tier": 3, "strength": 0.62, "order": 223, "cup": True, "live": True},
+    # FA Cup qualifying rounds (6 Oct 2026, Douglas). Entrants run from step 1
+    # (National League, joining at the fourth qualifying round) down to step 6;
+    # the frame sits at steps 1-2. Steps 4 and below have no rating here, so
+    # their ties are dropped at the unrated gate rather than guessed.
+    "en.faq": {"iso": "eng", "short": "FAQ", "name": "FA Cup qualifying", "country": "England", "tier": 6, "strength": 0.42, "order": 224, "cup": True, "live": True},
     "cl.cup":  {"iso": "chi", "short": "CDC", "name": "Copa Chile", "country": "Chile", "tier": 1, "strength": 0.68, "order": 224, "cup": True, "live": True},
     "py.cup":  {"iso": "par", "short": "CDP", "name": "Copa Paraguay", "country": "Paraguay", "tier": 1, "strength": 0.64, "order": 225, "cup": True, "live": True},
     "dk.w1":   {"iso": "dnk", "short": "DEL", "name": "Elitedivisionen", "country": "Denmark", "tier": 1, "strength": 0.58, "order": 226, "live": True},

@@ -1233,7 +1233,7 @@ ESPN_SLUGS = {
     "es.w1": ["esp.w.1"], "fr.w1": ["fra.w.1"],
     "uwcl": ["uefa.wchampions"], "en.w.cup": ["eng.w.league_cup"],
 
-    "sco.challenge": ["sco.challenge"], "efl.trophy": ["eng.trophy"],
+    "sco.challenge": ["sco.challenge"], "efl.trophy": ["eng.trophy"], "en.faq": ["eng.fa_qual"],
     "cl.cup": ["chi.copa_chi"],
 
     # International.
