@@ -3,6 +3,19 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 API-Football: one call per question, and the cache kept when a build fails (release-2026-10-07-1)
+
+**What changed:**
+- `sources._af_get` makes one call per API path however many threads ask at once: a per-path lock, and a waiting thread reads the answer the first one got.
+- `sources.af_day_pool` builds each pool once, under a lock; the other league threads wait for it rather than each fetching every day of the year. Days are fetched newest first, so if the allowance runs out part way the days the board prices and grades are already in hand.
+- Once the allowance is refused, the usage line reads "0 left today" (it read "7499 left today; allowance used up").
+- `deploy.yml` and `tune.yml` restore the `.afcache` cache at the start and save it with `if: always()`, so a failed build keeps the days it paid for.
+**Why:** the first builds of 7 Oct spent the whole 7,500-call allowance by about 14:00 UTC, against ~290 expected: 2,717 calls (05:48 build, failed), 2,198 (11:46, failed), 2,831 (13:55). Parallel league threads each built the same year-long day pool, and the two failed builds saved no cache, so each refetched the year. Douglas asked (7 Oct 2026) for every global fixture without wasted calls.
+**Evidence:** `tests/test_af_single_flight.py` (eight threads, one call; a ten-day pool asked for by eight threads makes ten calls, newest first; a refusal reads 0 left); full suite and `nametest.py` pass.
+**Files:** `sources.py`, `.github/workflows/deploy.yml`, `.github/workflows/tune.yml`, `tests/test_af_single_flight.py`, `RELEASES.md`.
+**Not changed:** which leagues, cups or days are read; any probability; grading.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 Daily List results refresh six times a day (tag pending)
 
 **What changed:** `deploy.yml` adds four scheduled rebuilds (12:00, 17:00, 19:30, 22:15 UTC) to the existing 00:10 and 05:15, timed to when results land rather than every four hours. Docs and the Analysis page copy updated to match.

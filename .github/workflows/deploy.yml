@@ -90,7 +90,9 @@ jobs:
 
       # Finished API-Football seasons (sources._af_season): fetched once and
       # kept, so a build costs about one call per league, not three.
-      - uses: actions/cache@v4
+      # Restored here and saved near the end even when a step fails (7 Oct
+      # 2026: two builds failed, saved nothing, and each refetched the year).
+      - uses: actions/cache/restore@v4
         with:
           path: .afcache
           key: afcache-${{ github.run_id }}
@@ -308,6 +310,13 @@ jobs:
       # Allowed to fail: the live list still publishes without it.
       - name: Pin today's Daily List
         run: python3 daylist.py || echo "::warning::daylist failed; today's started picks will not show"
+
+      - name: Keep the API-Football cache
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .afcache
+          key: afcache-${{ github.run_id }}
 
       - name: Assemble the site
         run: |

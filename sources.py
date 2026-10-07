@@ -563,6 +563,10 @@ AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
 AF_PLAYED = {"FT", "AET", "PEN"}          # full time reached; the 90-minute score is used
 AF_DEAD = {"PST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"}
 _AF_CACHE, _AF_LOCK = {}, threading.Lock()
+# One lock per API path: two threads asking for the same thing at once wait
+# for the one call, not make two (7 Oct 2026: unlocked, parallel league
+# threads each fetched the same days and one run spent 2,717 calls).
+_AF_PATH_LOCKS = {}
 
 
 _AF_PACE, _AF_NEXT = 0.25, [0.0]   # Pro allows 5 calls a second; keep under it
@@ -613,6 +617,17 @@ def _af_get(path):
     with _AF_LOCK:
         if path in _AF_CACHE:
             return _AF_CACHE[path]
+        plock = _AF_PATH_LOCKS.setdefault(path, threading.Lock())
+    with plock:
+        return _af_get_once(path, key)
+
+
+def _af_get_once(path, key):
+    with _AF_LOCK:
+        if path in _AF_CACHE:        # answered while this thread waited
+            return _AF_CACHE[path]
+        if _AF_SPENT[0]:
+            return []
     if _af_spent_today():
         with _AF_LOCK:
             _AF_SPENT[0] = True
@@ -646,6 +661,7 @@ def _af_get(path):
                 with _AF_LOCK:
                     first = not _AF_SPENT[0]
                     _AF_SPENT[0] = True
+                    AF_USAGE["left"] = 0     # the header can still read 7499 on a refusal
                 if first:
                     print(f"  API-Football daily allowance used up; no more calls this run ({errs['requests']})",
                           file=sys.stderr)
@@ -706,6 +722,7 @@ def _af_season(code, year, current):
 AF_CUP_BACK, AF_CUP_AHEAD = 12, 8         # results to grade, fixtures to price
 AF_DAY_TTL = 45 * 60
 _AF_POOL = {}
+_AF_POOL_LOCK = threading.Lock()   # a pool is built once, by one thread; the rest wait for it
 
 # Not domestic senior cups: youth, women's, one-off super cups, friendlies,
 # qualifying rounds of other competitions.
@@ -933,6 +950,11 @@ AF_KEEP_DAYS = 560      # day files older than this are never read again
 def af_day_pool(start, end):
     """{API-Football league id: [fixture, ...]} for every day start..end."""
     key = (start, end)
+    with _AF_POOL_LOCK:
+        return _af_day_pool_build(key, start, end)
+
+
+def _af_day_pool_build(key, start, end):
     if key not in _AF_POOL:
         try:
             cut = (date.today() - timedelta(days=AF_KEEP_DAYS)).isoformat()
@@ -941,12 +963,15 @@ def af_day_pool(start, end):
                     os.remove(os.path.join(AF_CACHE_DIR, fn))
         except OSError:
             pass
-        days = [start + timedelta(days=i) for i in range((end - start).days + 1)]
+        # Newest first: if the allowance runs out part way, the days the board
+        # prices and grades are in hand and only old backfill is missing.
+        days = [end - timedelta(days=i) for i in range((end - start).days + 1)]
         pool = {}
         with concurrent.futures.ThreadPoolExecutor(max_workers=4) as ex:
-            for rows in ex.map(_af_day, days):
-                for f in rows:
-                    pool.setdefault((f.get("league") or {}).get("id"), []).append(f)
+            got = list(ex.map(_af_day, days))
+        for rows in reversed(got):           # back into date order
+            for f in rows:
+                pool.setdefault((f.get("league") or {}).get("id"), []).append(f)
         _AF_POOL[key] = pool
     return _AF_POOL[key]
 
