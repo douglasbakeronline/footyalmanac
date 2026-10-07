@@ -10,7 +10,8 @@ never tuned on, and the site grades itself publicly against what happened.
 - **Sports:** football (more than seventy competitions rated, internationals
   included), tennis
   (ATP/WTA), NFL, baseball (MLB), basketball (NBA), rugby union.
-- **Rebuilt daily** at 05:15 UTC by GitHub Actions. No server, no paid data,
+- **Rebuilt six times a day** by GitHub Actions (05:15 UTC for the slate, then
+  result refreshes timed to when games finish; see `DEPLOY.md`). No server, no paid data,
   Python standard library only.
 
 The point of the site is honest confidence: surface the genuinely predictable

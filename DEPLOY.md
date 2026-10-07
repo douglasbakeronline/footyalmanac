@@ -14,19 +14,30 @@ Live at `https://<your-username>.github.io/<repo-name>/` within a couple of minu
 
 ## The rebuild schedule
 
-The workflow runs once a day at **05:15 UTC** and publishes a five-day window, so the
-day's slate is built before you are awake. That time also lands after late South
-American kick-offs have finished, which an end-of-day build would miss: Brazil is
-UTC-3, so a 20:00 local game runs past 23:00 UTC.
+The workflow runs six times a day, timed to when results land, so the Daily List
+shows wins and losses within a couple of hours of a game ending:
+
+| UTC   | BST   | GMT   | Catches |
+|-------|-------|-------|---------|
+| 00:10 | 01:10 | 00:10 | just after API-Football's daily allowance resets |
+| 05:15 | 06:15 | 05:15 | the day's slate, after late South American games (Brazil is UTC-3, so a 20:00 local game runs past 23:00 UTC) |
+| 12:00 | 13:00 | 12:00 | Asian and Australian games, early European games |
+| 17:00 | 18:00 | 17:00 | UK 15:00 kick-offs and afternoon tennis |
+| 19:30 | 20:30 | 19:30 | UK 17:30 kick-offs |
+| 22:15 | 23:15 | 22:15 | UK 19:45 / 20:00 kick-offs |
+
+There is no in-play feed: a started game shows as pending until the next run after its
+result is published. Each run costs roughly 10-25 API-Football calls against a 7,500
+daily allowance.
 
 Three things to know:
 
-**Cron is always UTC and does not follow British Summer Time.** 05:15 UTC is 06:15 in
-summer and 05:15 in winter. Shift the hour if that matters.
+**Cron is always UTC and does not follow British Summer Time.** The UTC times above are
+chosen so each run lands after its games in both summer and winter.
 
 **Scheduled jobs run late.** GitHub deprioritises them under load, so anywhere from a
-few minutes to an hour after the stated time. With a single daily run, an occasional
-dropped job means a day with no rebuild.
+few minutes to an hour after the stated time. An occasional dropped job is
+picked up by the next of the six runs.
 
 **Scheduled workflows switch off after 60 days of repository inactivity.** A repo you
 never touch will quietly stop updating. If the site goes stale, check this first.

@@ -149,7 +149,7 @@ Open `dashboard.html` straight off disk to check the page.
 
 ## Automation
 
-- `deploy.yml` runs daily at 05:15 UTC, on manual dispatch, **and on every
+- `deploy.yml` runs at 00:10, 05:15, 12:00, 17:00, 19:30 and 22:15 UTC, on manual dispatch, **and on every
   push to `main`**. Order: `nametest.py`, build, refuse-if-empty, `score.py`,
   tennis build, `score_tennis.py`, `sports.py --daily` (both allowed to fail),
   commit the archives back
