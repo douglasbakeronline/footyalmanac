@@ -82,6 +82,35 @@ def band_table(rows):
     return own, cum
 
 
+SPANS = ((0.60, 0.70),)   # wider than one band: the span the Daily List reserve sits in
+
+
+def boot_p_nonpositive(rows, reps=REPS, seed=31):
+    """Bootstrap chance that landed minus quoted is zero or below, i.e. how
+    often resampling the same calls shows no under-confidence. One-sided, and
+    one of several bands looked at, so read it with that in mind."""
+    n = len(rows)
+    rng = random.Random(seed)
+    k = 0
+    for _ in range(reps):
+        s = [rows[rng.randrange(n)] for _ in range(n)]
+        if sum(h for _, h in s) / n - sum(q for q, _ in s) / n <= 0:
+            k += 1
+    return k / reps
+
+
+def show_spans(rows):
+    for lo, hi in SPANS:
+        r = [x for x in rows if lo <= x[0] < hi]
+        if not r:
+            continue
+        b = summarise(r)
+        b["pNoGap"] = round(boot_p_nonpositive(r), 3)
+        print(f"  span {lo:.0%}-{hi:.0%}: n {b['n']}, quoted {b['quoted']:.1%}, landed "
+              f"{b['landed']:.1%}, gap {b['gap']:+.1%} [{b['lo']:+.1%},{b['hi']:+.1%}], "
+              f"P(gap <= 0) {b['pNoGap']:.3f}  {b['verdict']}")
+
+
 def show(title, rows):
     print(f"\n{title}  ({len(rows)} calls)")
     if not rows:
@@ -93,6 +122,7 @@ def show(title, rows):
         for b in tbl:
             print(f"  {b['band']:10} {b['n']:6} {b['quoted']:7.1%} {b['landed']:7.1%} "
                   f"{b['gap']:+7.1%}  [{b['lo']:+6.1%},{b['hi']:+6.1%}]  {b['verdict']}")
+    show_spans(rows)
     return {"calls": len(rows), "own": own, "cumulative": cum}
 
 
