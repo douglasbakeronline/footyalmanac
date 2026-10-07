@@ -1,66 +1,66 @@
 {
- "graded": "2026-10-06T22:01:21Z",
+ "graded": "2026-10-07T14:13:33Z",
  "overall": {
   "groups": 11,
-  "settled": 6,
-  "won": 1,
-  "lost": 5,
-  "pending": 5,
-  "legs": 28,
-  "legsWon": 21,
-  "returned": 2.77,
-  "staked": 6,
-  "expected": 1.79
+  "settled": 11,
+  "won": 3,
+  "lost": 8,
+  "pending": 0,
+  "legs": 53,
+  "legsWon": 39,
+  "returned": 9.65,
+  "staked": 11,
+  "expected": 3.08
  },
  "byBand": {
   "Steady": {
    "groups": 4,
-   "settled": 3,
-   "won": 1,
+   "settled": 4,
+   "won": 2,
    "lost": 2,
-   "pending": 1,
-   "legs": 13,
-   "legsWon": 11,
-   "returned": 2.77,
-   "staked": 3,
-   "expected": 1.0
+   "pending": 0,
+   "legs": 20,
+   "legsWon": 17,
+   "returned": 5.39,
+   "staked": 4,
+   "expected": 1.49
   },
   "Balanced": {
    "groups": 3,
-   "settled": 2,
-   "won": 0,
+   "settled": 3,
+   "won": 1,
    "lost": 2,
-   "pending": 1,
-   "legs": 8,
-   "legsWon": 4,
-   "returned": 0,
-   "staked": 2,
-   "expected": 0.52
+   "pending": 0,
+   "legs": 14,
+   "legsWon": 9,
+   "returned": 4.26,
+   "staked": 3,
+   "expected": 0.83
   },
   "Stretch": {
    "groups": 4,
-   "settled": 1,
+   "settled": 4,
    "won": 0,
-   "lost": 1,
-   "pending": 3,
-   "legs": 7,
-   "legsWon": 6,
+   "lost": 4,
+   "pending": 0,
+   "legs": 19,
+   "legsWon": 13,
    "returned": 0,
-   "staked": 1,
-   "expected": 0.26
+   "staked": 4,
+   "expected": 0.77
   }
  },
  "firstChoice": {
   "groups": 7,
-  "settled": 4,
-  "won": 1,
-  "lost": 3,
-  "pending": 3,
-  "legs": 19,
-  "legsWon": 15,
-  "returned": 2.77,
-  "staked": 4,
-  "expected": 1.35
+  "settled": 7,
+  "won": 3,
+  "lost": 4,
+  "pending": 0,
+  "legs": 34,
+  "legsWon": 28,
+  "returned": 9.65,
+  "staked": 7,
+  "expected": 2.32
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 2.62,
      "p": 0.4821,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 1,
+     "status": "won",
+     "paid": 2.62,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -99,8 +99,8 @@
        "odds": 1.22,
        "est": false,
        "p": 0.9177,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Switzerland",
@@ -111,8 +111,8 @@
        "odds": 1.08,
        "est": false,
        "p": 0.8989,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Slovakia",
@@ -123,8 +123,8 @@
        "odds": 1.37,
        "est": false,
        "p": 0.824,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-4"
       },
       {
        "pick": "Montserrat",
@@ -135,8 +135,8 @@
        "odds": 1.17,
        "est": false,
        "p": 0.8386,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       }
      ]
     },
@@ -145,11 +145,11 @@
      "rank": "main",
      "odds": 4.26,
      "p": 0.303,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 1,
+     "status": "won",
+     "paid": 4.26,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Emerson Jones",
@@ -172,8 +172,8 @@
        "odds": 1.65,
        "est": false,
        "p": 0.7353,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Spain U21",
@@ -184,8 +184,8 @@
        "odds": 1.06,
        "est": false,
        "p": 0.8651,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "7-1"
       },
       {
        "pick": "Croatia U21",
@@ -196,8 +196,8 @@
        "odds": 1.21,
        "est": false,
        "p": 0.7601,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-1"
       },
       {
        "pick": "Colombia",
@@ -208,8 +208,8 @@
        "odds": 1.37,
        "est": false,
        "p": 0.8209,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       }
      ]
     },
@@ -218,11 +218,11 @@
      "rank": "main",
      "odds": 7.48,
      "p": 0.1884,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 4,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Novak Djokovic",
@@ -245,8 +245,8 @@
        "odds": 1.9,
        "est": false,
        "p": 0.6693,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "Slovakia U21",
@@ -257,8 +257,8 @@
        "odds": 1.23,
        "est": false,
        "p": 0.7276,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-2"
       },
       {
        "pick": "Cleethorpes Town",
@@ -269,8 +269,8 @@
        "odds": 1.5,
        "est": false,
        "p": 0.7252,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Angola",
@@ -281,8 +281,8 @@
        "odds": 1.36,
        "est": false,
        "p": 0.7321,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       }
      ]
     },
@@ -291,11 +291,11 @@
      "rank": "alternative",
      "odds": 8.73,
      "p": 0.1679,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Nikola Bartunkova",
@@ -330,8 +330,8 @@
        "odds": 1.57,
        "est": false,
        "p": 0.688,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "3-1"
       },
       {
        "pick": "Spain",
@@ -342,8 +342,8 @@
        "odds": 1.27,
        "est": false,
        "p": 0.7255,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-2"
       },
       {
        "pick": "Braintree",
@@ -354,8 +354,8 @@
        "odds": 1.71,
        "est": false,
        "p": 0.6643,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-3"
       }
      ]
     }
@@ -372,9 +372,9 @@
      "p": 0.2985,
      "status": "lost",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -409,8 +409,8 @@
        "odds": 1.26,
        "est": false,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "Montenegro",
@@ -597,9 +597,9 @@
      "p": 0.261,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsWon": 2,
+     "legsLost": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Portonovo",
@@ -610,8 +610,8 @@
        "odds": 1.38,
        "est": true,
        "p": 0.7903,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-1"
       },
       {
        "pick": "New York Giants",
@@ -658,8 +658,8 @@
        "odds": 1.27,
        "est": false,
        "p": 0.7901,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -670,9 +670,9 @@
      "p": 0.2639,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 1,
-     "legsPending": 2,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Stade Gabesien",
@@ -683,8 +683,8 @@
        "odds": 1.47,
        "est": false,
        "p": 0.7119,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "Osasuna II",
@@ -695,8 +695,8 @@
        "odds": 1.33,
        "est": false,
        "p": 0.748,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Castellón",
@@ -743,9 +743,9 @@
      "p": 0.1785,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 2,
-     "legsPending": 3,
+     "legsWon": 1,
+     "legsLost": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Rodina Moskva II",
@@ -756,8 +756,8 @@
        "odds": 1.39,
        "est": false,
        "p": 0.7119,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Levante II",
@@ -780,8 +780,8 @@
        "odds": 1.18,
        "est": false,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "3-3"
       },
       {
        "pick": "Buffalo Bills",
@@ -814,11 +814,11 @@
      "rank": "alternative",
      "odds": 7.51,
      "p": 0.1492,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Calahorra",
@@ -829,8 +829,8 @@
        "odds": 1.62,
        "est": true,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-1"
       },
       {
        "pick": "Agoncillo",
@@ -841,8 +841,8 @@
        "odds": 1.63,
        "est": true,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Barcelona",
@@ -865,8 +865,8 @@
        "odds": 1.78,
        "est": false,
        "p": 0.6693,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Kansas City Chiefs",
