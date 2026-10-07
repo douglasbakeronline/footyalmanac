@@ -909,10 +909,20 @@ def _af_day(d):
         # it will not change by asking again.
         final = d < today - timedelta(days=2) or (d < today - timedelta(days=1) and not live)
         os.makedirs(AF_CACHE_DIR, exist_ok=True)
-        tmp = path + ".tmp"
-        with gzip.open(tmp, "wt", encoding="utf-8") as fh:
-            json.dump({"final": final, "rows": [_compact(f) for f in rows]}, fh, separators=(",", ":"))
-        os.replace(tmp, path)
+        # A temp name per thread: two pools (different date windows) can ask
+        # for the same day at once, and a shared name made one os.replace
+        # find the file already moved (7 Oct 2026 build failure). A failed
+        # cache write must never fail the build; the rows are in hand.
+        tmp = f"{path}.{os.getpid()}.{threading.get_ident()}.tmp"
+        try:
+            with gzip.open(tmp, "wt", encoding="utf-8") as fh:
+                json.dump({"final": final, "rows": [_compact(f) for f in rows]}, fh, separators=(",", ":"))
+            os.replace(tmp, path)
+        except OSError:
+            try:
+                os.remove(tmp)
+            except OSError:
+                pass
         rows = [_expand(_compact(f)) for f in rows]
     return rows
 
