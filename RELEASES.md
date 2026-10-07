@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 60-70% band checked: noise, no model change (tag pending)
+
+**What changed:** `calibration_bands.py` prints a bootstrapped 60-70% span under each football table; dated note `claude/calibration-60-70-2026-10-07.md`.
+**Evidence:** from history, not `record.json`. Fit season 2025-26: 603 games, quoted 64.2%, landed 64.8% (+0.6). Check season 2026-27: 124 games, 64.1% vs 73.4% (+9.3, interval +2.5 to +15.7, one-sided p 0.013, about 0.13 after allowing for the bands examined). Pooled 727: +2.1 (-0.8 to +5.1). `tune.py --fit --dry-run`: best candidate a 1.155 / b -0.30, check log loss +0.0001, P(worse) 72%, `notWorse` and `worthIt` fail, nothing written.
+**Files:** `calibration_bands.py`, `claude/calibration-60-70-2026-10-07.md`, `RELEASES.md`.
+**Not changed:** `calibration.json`, any constant, the tier ladder.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 Strong tier below expectation checked: noise, no model change (tag pending)
 
 **What changed:** a dated note only (`claude/strong-tier-check-2026-10-07.md`).
