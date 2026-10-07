@@ -3,7 +3,7 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
-## 2026-10-07 Daily List coverage: what each day's list was chosen from, and any gap (release-2026-10-07-2)
+## 2026-10-07 Daily List coverage: what each day's list was chosen from, and any gap (release-2026-10-07-4)
 
 **What changed:**
 - `build.list_reason` gives each football fixture off the Daily List one reason code (cup with no replay yet, new competition, under-21, step 3, draw pick, below the bar, Celtic's Law, unrated, ranking-only, no prior season). `list_eligible` is now `list_reason(g) is None`: the same tests in the same order, so no pick moves. The code is archived with each prediction (`why`).
