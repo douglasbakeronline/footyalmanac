@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 Strong tier below expectation checked: noise, no model change (tag pending)
+
+**What changed:** a dated note only (`claude/strong-tier-check-2026-10-07.md`).
+**Evidence:** 59 graded Strong games, 76 to 78% landed vs 79% quoted; one standard deviation at that size is 5.3 points. Splits by draw risk (82% vs 84% quoted at P(draw) under 15%, 68% vs 73% above), pick side and league show nothing that survives the number of cuts looked at; AFCON qualifying 5 of 9 is the largest deviation and would be expected to turn up across 15 league groups. No Strong pick carries Celtic's Law (demoted a tier). Backtest quoted 78.1 vs landed 79.2.
+**Files:** `claude/strong-tier-check-2026-10-07.md`, `RELEASES.md`.
+**Not changed:** any model constant, calibration, tier ladder.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 Daily build no longer fails on a racing API-Football day-cache write (tag pending)
 
 **What changed:** `_af_day` (`sources.py`) wrote each cached day through one shared temp name (`day-DATE.json.gz.tmp`). Two date-window pools running at once (the build fetches leagues in parallel) can ask for the same day; the first `os.replace` moved the file and the second raised `FileNotFoundError`, which killed the whole build (run 37616405304, day 2026-05-13). The temp name is now unique per process and thread, and a failed cache write is swallowed (rows are already in hand) with the temp removed.
