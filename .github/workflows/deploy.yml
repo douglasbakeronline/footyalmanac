@@ -1,18 +1,36 @@
 name: Rebuild and publish
 
-# Two triggers: a daily rebuild, and a manual button in the Actions tab for
+# Three triggers: scheduled rebuilds, pushes to main, and a manual button in the Actions tab for
 # when you have edited adjustments.json and want it live now.
 on:
   schedule:
-    # One run, early morning, so the day's slate is built before you are awake.
-    # 05:15 UTC also lands after late South American kick-offs have finished
-    # (Brazil is UTC-3, so a 20:00 local game runs past 23:00 UTC), which an
-    # end-of-UK-day build would miss.
+    # Six runs a day, timed to when results land rather than evenly spaced,
+    # so the Daily List shows wins and losses within a couple of hours of a
+    # game ending (Douglas, 7 Oct 2026). There is no in-play feed: a started
+    # game shows as pending until the next run after its result is published.
     #
-    # Note: cron is always UTC and does not follow British Summer Time, so this
-    # is 06:15 BST in summer and 05:15 GMT in winter.
-    - cron: "10 0 * * *"    # 00:10 UTC, just after API-Football's daily allowance resets
-    - cron: "15 5 * * *"    # 05:15 UTC
+    # Cron is always UTC and does not follow British Summer Time. The UTC
+    # times are chosen so each run still lands after the games it is for in
+    # both summer and winter; UK time is an hour later in summer.
+    #
+    #   UTC     BST     GMT     catches
+    #   00:10   01:10   00:10   just after API-Football's daily allowance resets
+    #   05:15   06:15   05:15   the day's slate, after late South American games
+    #                           (Brazil is UTC-3: a 20:00 local game runs past 23:00 UTC)
+    #   12:00   13:00   12:00   Asian and Australian games, early European games
+    #   17:00   18:00   17:00   UK 15:00 kick-offs and the afternoon tennis
+    #   19:30   20:30   19:30   UK 17:30 kick-offs
+    #   22:15   23:15   22:15   UK 19:45 / 20:00 kick-offs
+    #
+    # Each run costs roughly 10-25 API-Football calls (the shared date pool in
+    # sources._af_day; open dates are re-fetched after 45 minutes), against a
+    # 7,500 daily allowance. AI credits are not used by this workflow.
+    - cron: "10 0 * * *"
+    - cron: "15 5 * * *"
+    - cron: "0 12 * * *"
+    - cron: "0 17 * * *"
+    - cron: "30 19 * * *"
+    - cron: "15 22 * * *"
   workflow_dispatch:
   push:
     branches: [main]

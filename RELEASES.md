@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 Daily List results refresh six times a day (tag pending)
+
+**What changed:** `deploy.yml` adds four scheduled rebuilds (12:00, 17:00, 19:30, 22:15 UTC) to the existing 00:10 and 05:15, timed to when results land rather than every four hours. Docs and the Analysis page copy updated to match.
+**Evidence:** owner request, 7 Oct 2026: a 09:58 Daily List still showed no result for a 01:00 game. Each run costs roughly 10-25 API-Football calls through the shared date pool (7,500 daily allowance); no AI credits; GitHub Actions minutes are free on a public repository.
+**Files:** `.github/workflows/deploy.yml`, `DEPLOY.md`, `README.md`, `CLAUDE.md`, `analysis.html`, `RELEASES.md`.
+**Not changed:** predictions, grading, Daily List membership rules (a game is frozen at its start), the push trigger, the sprint hold.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 60-70% band checked: noise, no model change (tag pending)
 
 **What changed:** `calibration_bands.py` prints a bootstrapped 60-70% span under each football table; dated note `claude/calibration-60-70-2026-10-07.md`.
