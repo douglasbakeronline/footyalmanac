@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-07T22:39:00Z",
+ "graded": "2026-10-07T23:42:45Z",
  "overall": {
-  "groups": 11,
+  "groups": 12,
   "settled": 11,
   "won": 3,
   "lost": 8,
-  "pending": 0,
+  "pending": 1,
   "legs": 53,
   "legsWon": 39,
   "returned": 9.65,
@@ -14,11 +14,11 @@
  },
  "byBand": {
   "Steady": {
-   "groups": 4,
+   "groups": 5,
    "settled": 4,
    "won": 2,
    "lost": 2,
-   "pending": 0,
+   "pending": 1,
    "legs": 20,
    "legsWon": 17,
    "returned": 5.39,
@@ -51,11 +51,11 @@
   }
  },
  "firstChoice": {
-  "groups": 7,
+  "groups": 8,
   "settled": 7,
   "won": 3,
   "lost": 4,
-  "pending": 0,
+  "pending": 1,
   "legs": 34,
   "legsWon": 28,
   "returned": 9.65,
@@ -63,6 +63,85 @@
   "expected": 2.32
  },
  "days": [
+  {
+   "date": "2026-10-08",
+   "published": "2026-10-07T23:42:37Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 3.99,
+     "p": 0.3343,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Florida International Panthers",
+       "event": "Florida International Panthers v New Mexico State Aggies",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-08T00:04Z",
+       "odds": 1.42,
+       "est": true,
+       "p": 0.7686,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Karolina Muchova",
+       "event": "Nikola Bartunkova v Karolina Muchova",
+       "sport": "tennis",
+       "comp": "China Open Quarterfinal",
+       "when": "2026-10-08T07:00:00Z",
+       "odds": 1.34,
+       "est": true,
+       "p": 0.7791,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Mirra Andreeva",
+       "event": "Mirra Andreeva v Ekaterina Alexandrova",
+       "sport": "tennis",
+       "comp": "China Open Quarterfinal",
+       "when": "2026-10-08T11:00:00Z",
+       "odds": 1.4,
+       "est": true,
+       "p": 0.7731,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Al Ansar",
+       "event": "Al Ansar v Al Hikma",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-08T18:45:00Z",
+       "odds": 1.27,
+       "est": true,
+       "p": 0.7834,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Liberty Flames",
+       "event": "Liberty Flames v Sam Houston Bearkats",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-08T23:00Z",
+       "odds": 1.18,
+       "est": false,
+       "p": 0.9217,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-06",
    "published": "2026-10-06T07:20:09Z",
