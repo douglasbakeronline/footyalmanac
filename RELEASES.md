@@ -3,6 +3,19 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 Daily List coverage: what each day's list was chosen from, and any gap (release-2026-10-07-2)
+
+**What changed:**
+- `build.list_reason` gives each football fixture off the Daily List one reason code (cup with no replay yet, new competition, under-21, step 3, draw pick, below the bar, Celtic's Law, unrated, ranking-only, no prior season). `list_eligible` is now `list_reason(g) is None`: the same tests in the same order, so no pick moves. The code is archived with each prediction (`why`).
+- `data.json` gains `health`: API-Football calls this build, whether the allowance was gone, and the window's days with no fresh API-Football day file (`sources.af_days_missing`), plus the count of missing feeds.
+- `daylist.py` writes `coverage` into `daylist.json`: every game priced for the UK day, per sport, in how many competitions, how many made the list and reserve, why the rest did not; and gaps (a board not rebuilt for 12 hours, API-Football days not fetched, the allowance gone). Each gap is a `::warning::` on the run page.
+- The Daily List lede says what today's list was chosen from ("chosen from 94 games: 52 football in 24 competitions, 36 tennis in 4 …"), and shows any missing data in red.
+**Why:** Douglas asked (7 Oct 2026) that every day's list be drawn from the whole day's data: all leagues, cups and friendlies, every sport. The list already considered every published fixture; this makes each day's coverage, and any data the board did not get, visible instead of passing as a quiet day.
+**Evidence:** `tests/test_coverage.py`; full suite and `nametest.py` pass; Daily List checked at 1400px.
+**Files:** `build.py`, `sources.py`, `daylist.py`, `index.html`, `tests/test_coverage.py`, `RELEASES.md`.
+**Not changed:** which games make the list or reserve, any probability, grading. Domestic cups, FA Cup qualifying and under-21 ties stay off the list until a replay passes (standing rule).
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 API-Football: one call per question, and the cache kept when a build fails (release-2026-10-07-1)
 
 **What changed:**

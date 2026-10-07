@@ -242,6 +242,8 @@ h1 .b{
 .lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,2.6vw,30px);
   letter-spacing:.01em;text-transform:uppercase;line-height:1.05;color:var(--ink)}
 .lede p{margin-top:6px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.lede p.cov{font-size:13px;color:var(--mute)}
+.lede p.cov.gap{color:var(--red)}
 .lede b{color:var(--ink)}
 .list-order{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
 .list-order .seg{width:max-content}
@@ -1796,6 +1798,28 @@ const slipWhen = iso => { if(!iso) return ""; const d = new Date(iso); if(isNaN(
   return new Intl.DateTimeFormat("en-GB", {weekday:"short", day:"numeric", month:"short", timeZone: UK_TZ}).format(d)
     + ", " + koFmt.format(d); };
 
+/* What today's list was chosen from (daylist.py coverage, 7 Oct 2026): every
+   game priced for the day, per sport, and what the rules kept off. A gap is
+   data the board did not get, shown in red rather than passing as a quiet day. */
+const COV_WHY = {cup:"cup ties (no replay yet)", new:"new competitions (no replay yet)", step3:"English step 3",
+  u21:"under-21", draw:"draw picks", below:"below the bar", celtic:"Celtic's Law", unrated:"unrated sides",
+  rankOnly:"ranking-only", thin:"clubs with no prior season", boardOnly:"from board-only sports", rule:"other list rules",
+  older:"priced before this check"};
+function coverageLine(){
+  const DLX = window.__DAY_LIST__, cv = DLX && DLX.coverage;
+  if(!cv || !cv.sports) return "";
+  const nm = k => k === "football" ? "football" : k === "tennis" ? "tennis" : ((SD && SD.sports[k]) || {name:k}).name;
+  const ent = Object.entries(cv.sports).sort((a,b) => b[1].games - a[1].games);
+  const tot = ent.reduce((a,[,c]) => a + c.games, 0), onl = ent.reduce((a,[,c]) => a + c.list, 0);
+  const why = {}; ent.forEach(([,c]) => Object.entries(c.why || {}).forEach(([k,n]) => why[k] = (why[k] || 0) + n));
+  const off = Object.entries(why).filter(([k]) => k !== "below").sort((a,b) => b[1]-a[1])
+    .map(([k,n]) => `${n} ${COV_WHY[k] || k}`).join(", ");
+  return `<p class="cov">Today's list (${fmtShort(DLX.date)}) was chosen from <b>${tot.toLocaleString("en-GB")}</b> games:
+      ${ent.map(([k,c]) => `${c.games.toLocaleString("en-GB")} ${nm(k)} in ${c.comps} competition${c.comps===1?"":"s"}`).join(", ")}.
+      ${onl} made the list${why.below ? `, ${why.below.toLocaleString("en-GB")} fell below the bar` : ""}${off ? `; kept off by rule: ${off}` : ""}.</p>
+    ${(cv.gaps || []).length ? `<p class="cov gap"><b>Missing data today:</b> ${cv.gaps.join("; ")}. The list may be shorter than it should be.</p>` : ""}`;
+}
+
 function runSlip(){
   const legs = starredLegs();
   if(!legs.length) return `<p>Star some picks first.</p>`;
@@ -1944,6 +1968,7 @@ function renderList(){
         <b>"86% landed"</b> means calls in that band came off 86% of the time on games the
         model never saw. A pick just over the bar can show less than 80%.
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
+      ${coverageLine()}
       <div class="list-order"><span class="ctl-label">Order by</span>
         <div class="seg" id="listSort">
           <button data-lsort="strength" aria-pressed="${LIST_ORDER === "strength"}">Strongest</button>

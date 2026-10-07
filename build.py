@@ -153,23 +153,50 @@ def list_eligible(g):
     Slovenia, Sep 2026) produced confident-looking rows. National teams carry
     no domestic table, so their gate is simply having a rating at all.
     """
+    return list_reason(g) is None
+
+
+# Why a fixture is not on the Daily List, one short code, archived with it so
+# each day's coverage line can say what the list was chosen from and what the
+# rules kept off (7 Oct 2026, Douglas: the list must be drawn from every
+# fixture of the day). None means it is on the list. Same tests, same order,
+# as list_eligible always made.
+WHY = {"step3": "English step 3 (replayed, below the bar)", "cup": "domestic cup (no replay yet)",
+       "new": "new competition (no replay yet)", "u21": "under-21 side or competition",
+       "draw": "draw pick", "below": "below the list bar", "celtic": "Celtic's Law flag",
+       "unrated": "unrated side", "rankOnly": "only the ranking makes it confident",
+       "thin": "a club with no prior season on file"}
+
+
+def list_reason(g):
     p = g["p"]
     pick = max(("h", "d", "a"), key=lambda k: p[k])
     intl = bool(E.LEAGUES[g["league"]].get("international"))
-    if g["league"] in NO_LIST or g["league"] in S.AF_CUPS or g["league"] in NEW_BOARD_ONLY \
-            or E.LEAGUES[g["league"]].get("u21") or g.get("u21Side"):
-        return False                     # board only until a replay passes
+    if g["league"] in NO_LIST:
+        return "step3"                   # board only until a replay passes
+    if g["league"] in S.AF_CUPS:
+        return "cup"
+    if g["league"] in NEW_BOARD_ONLY:
+        return "new"
+    if E.LEAGUES[g["league"]].get("u21") or g.get("u21Side"):
+        return "u21"
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if g["league"] in S.AF_EXTRA:
         bar = LIST_MIN_AFX
-    if pick == "d" or p[pick] < bar or g["celtic"] or g["unrated"]:
-        return False
+    if pick == "d":
+        return "draw"
+    if p[pick] < bar:
+        return "below"
+    if g["celtic"]:
+        return "celtic"
+    if g["unrated"]:
+        return "unrated"
     if g.get("rankAdjusted") and (g.get("modelConfidence") or 0) < LIST_MIN["intl"]:
-        return False
+        return "rankOnly"
     for t in (g["home"], g["away"]):
         if t["played"] is not None and not t["last"]:
-            return False
-    return True
+            return "thin"
+    return None
 
 
 # The reserve (30 Sep 2026, Douglas): the Daily List fills out to LIST_TARGET
@@ -1157,6 +1184,7 @@ def main():
         for i, g in enumerate(games, 1):
             g["rank"] = i
             g["list"] = list_eligible(g)
+            g["why"] = list_reason(g)
             g["reserve"] = list_reserve(g)
             g["accuracy"] = accuracy_for(g["confidence"], E.LEAGUES[g["league"]].get("international"),
                                          g.get("rankAdjusted"), g["league"])
@@ -1171,6 +1199,10 @@ def main():
                      "haveFixtures": c in fixtures,
                      "haveHistory": c in prior_ratings} for c in CODES],
         "missing": sorted(missing),
+        # whether the day's fixtures were all fetched (daylist.py coverage)
+        "health": {"apiFootball": {"calls": S.AF_USAGE["calls"], "spent": bool(S._AF_SPENT[0]),
+                                   "daysMissing": S.af_days_missing(start, end)},
+                   "missingFeeds": len(missing)},
         "odds": odds_meta,
         "list": {"min": LIST_MIN["league"], "minIntl": LIST_MIN["intl"], "backtest": LIST_BACKTEST},
         "days": days,
@@ -1193,7 +1225,7 @@ def main():
              "confidence": g["confidence"], "celtic": bool(g["celtic"]),
              "unrated": g["unrated"],
              # fixed at publication, so the list is graded on what it said
-             "list": g["list"], "reserve": g["reserve"],
+             "list": g["list"], "reserve": g["reserve"], "why": g.get("why"),
              # archived so the prices a reader saw can be graded later
              "market": g.get("market"), "value": g.get("value"),
              "kickoff": g.get("kickoff")}

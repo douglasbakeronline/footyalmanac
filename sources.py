@@ -976,6 +976,25 @@ def _af_day_pool_build(key, start, end):
     return _AF_POOL[key]
 
 
+def af_days_missing(start, end):
+    """Days start..end with no API-Football day file on disk, or one older than
+    a day while the day is still open: the fixtures the board did not get.
+    Empty without a key (a local build reads no API-Football)."""
+    if not os.environ.get("API_FOOTBALL_KEY"):
+        return []
+    out, d = [], start
+    while d <= end:
+        path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json.gz")
+        try:
+            age = time.time() - os.path.getmtime(path)
+            if age > 86400 and d >= date.today() - timedelta(days=1):
+                out.append(d.isoformat())
+        except OSError:
+            out.append(d.isoformat())
+        d += timedelta(days=1)
+    return out
+
+
 def af_cup_pool():
     """{API-Football league id: [fixture, ...]} over the cup window."""
     today = date.today()

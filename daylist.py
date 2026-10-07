@@ -82,7 +82,7 @@ def football_item(g, leagues):
             "confidence": g.get("confidence"), "p": p,
             "tier": _football_tier(g.get("confidence") or 0, g.get("celtic"), g.get("unrated")),
             "accuracy": g.get("accuracy"), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
-            "published": g.get("published")}
+            "why": g.get("why"), "published": g.get("published")}
 
 
 def tennis_item(m):
@@ -231,6 +231,79 @@ def read_archives(day, here=HERE):
     return out
 
 
+def _load_js(path):
+    try:
+        t = open(path).read()
+        return json.loads(t[t.index("{"):t.rindex("}") + 1])
+    except Exception:
+        return None
+
+
+STALE_H = 12      # a feed not rebuilt for this long is a gap, not a quiet day
+
+
+def coverage(day, archives, here=HERE, now=None):
+    """What the day's list was chosen from (7 Oct 2026, Douglas: every day the
+    list must be drawn from the whole day's data, all leagues, cups and
+    friendlies, every sport). Every game priced for the UK day, per sport:
+    how many, in how many competitions, how many on the list and reserve, and,
+    for football, why each of the rest is off it (build.list_reason). Gaps are
+    data the board did not get: a feed not rebuilt, API-Football days not
+    fetched or its allowance gone."""
+    now = now or datetime.now(timezone.utc)
+    leagues = _leagues()
+    sp_doc = _load_js(os.path.join(here, "sports-data.js")) or {}
+    sp_cfg = sp_doc.get("sports") or {}
+    seen = {}
+    for kind, g in archives:
+        try:
+            it = {"football": lambda: football_item(g, leagues), "tennis": lambda: tennis_item(g),
+                  "sport": lambda: sport_item(g)}[kind]()
+        except Exception:
+            it = None
+        if not it or uk_day(parse_utc(it["start"])) != day: continue
+        prev = seen.get(it["key"])
+        pub, ppub = parse_utc(it.get("published")), parse_utc((prev or {}).get("published"))
+        if prev is None or (pub and (not ppub or pub > ppub)):
+            seen[it["key"]] = it
+    out = {}
+    for it in seen.values():
+        k = it["sport"]
+        c = out.setdefault(k, {"games": 0, "comps": set(), "list": 0, "reserve": 0, "why": {}})
+        c["games"] += 1
+        c["comps"].add(it.get("league") or (it.get("comp") or "").split(" · ")[1 if k == "tennis" else 0])
+        c["list"] += it["list"]; c["reserve"] += it["reserve"] and not it["list"]
+        if not it["list"]:
+            if k == "football":
+                why = it.get("why") or "older"
+            elif k == "tennis":
+                why = "below" if (it.get("confidence") or 0) < 0.80 else "rule"
+            else:
+                bar = (sp_cfg.get(k) or {}).get("listMin")
+                why = "boardOnly" if bar is None else "below" if (it.get("confidence") or 0) < bar else "rule"
+            c["why"][why] = c["why"].get(why, 0) + 1
+    for c in out.values():
+        c["comps"] = len(c["comps"])
+    gaps = []
+    data = _load(os.path.join(here, "data.json"), {}) or {}
+    for label, doc in (("football", data), ("tennis", _load_js(os.path.join(here, "tennis-data.js"))),
+                       ("other sports", sp_doc)):
+        gen = parse_utc(((doc or {}).get("generated") or "") + ("" if (doc or {}).get("generated", "").endswith("Z") else "Z")) \
+            if doc and doc.get("generated") else None
+        if not gen:
+            gaps.append(f"{label}: no board file")
+        elif (now - gen).total_seconds() > STALE_H * 3600:
+            gaps.append(f"{label}: board last rebuilt {gen.strftime('%d %b %H:%M')} UTC")
+    af = (data.get("health") or {}).get("apiFootball") or {}
+    miss = [d for d in af.get("daysMissing") or [] if d >= (datetime.fromisoformat(day).date() - timedelta(days=1)).isoformat()]
+    if miss:
+        gaps.append(f"football: API-Football fixtures not fetched for {', '.join(miss[:4])}"
+                    + (f" and {len(miss) - 4} more days" if len(miss) > 4 else ""))
+    elif af.get("spent") and not af.get("calls"):
+        gaps.append("football: API-Football allowance used up; the board used the last copy it had")
+    return {"sports": out, "gaps": gaps}
+
+
 def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
@@ -249,7 +322,7 @@ def build(now=None, here=HERE, fetch=True):
                    "started": count(xs, "started"), "upcoming": count(xs, "upcoming")}
                for k, xs in (("list", lst), ("reserve", res))}
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
-            "list": lst, "reserve": res}
+            "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res}
 
 
 def main():
@@ -261,6 +334,12 @@ def main():
     s = d["summary"]
     print(f"day list {d['date']}: {s['list']['n']} list ({s['list']['won']} won, {s['list']['lost']} lost), "
           f"{s['reserve']['n']} reserve ({s['reserve']['won']} won, {s['reserve']['lost']} lost)")
+    cv = d["coverage"]
+    print("coverage: " + "; ".join(f"{k} {c['games']} games in {c['comps']} competitions, {c['list']} on the list"
+                                   for k, c in sorted(cv["sports"].items())))
+    for gap in cv["gaps"]:
+        # a warning on the run page, so a thin day is seen, not just quiet
+        print(f"::warning::coverage gap: {gap}")
 
 
 if __name__ == "__main__":
