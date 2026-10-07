@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-07 Daily build no longer fails on a racing API-Football day-cache write (tag pending)
+
+**What changed:** `_af_day` (`sources.py`) wrote each cached day through one shared temp name (`day-DATE.json.gz.tmp`). Two date-window pools running at once (the build fetches leagues in parallel) can ask for the same day; the first `os.replace` moved the file and the second raised `FileNotFoundError`, which killed the whole build (run 37616405304, day 2026-05-13). The temp name is now unique per process and thread, and a failed cache write is swallowed (rows are already in hand) with the temp removed.
+**Evidence:** traceback in the run log: `os.replace(tmp, path)` at `sources.py` `_af_day`, `FileNotFoundError` on the shared `.tmp`. Nothing else in the pipeline touches that file.
+**Files:** `sources.py`, `RELEASES.md`.
+**Not changed:** any model number, the refuse-if-empty and keep-yesterday's-site safety (an upstream fetch failure still fails the build), cache contents or TTLs.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-06 "How it went" opens on a Daily List review, with a board for every sport (release-2026-10-06-17)
 
 **What changed:**
