@@ -728,6 +728,29 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .views.resgrid button i{display:block;font-family:var(--f-num);font-style:normal;font-size:11px;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
 .views.resgrid button.quiet{color:#8d8577}
 .views.resgrid button.quiet[aria-pressed="true"]{color:#100e0c}
+/* desktop: the twelve boards as two rows of six (8 Oct 2026) */
+@media (min-width:701px){
+  .views.resgrid{grid-template-columns:repeat(6,1fr);max-width:none}
+  .views.resgrid button{font-size:clamp(12px,1.25vw,16px);letter-spacing:.05em;padding:7px 6px}
+  .views.resgrid button:nth-child(3n){border-right:1px solid #3a342e}
+  .views.resgrid button:nth-child(6n){border-right:0}
+  .views.resgrid button:nth-last-child(-n+3){border-bottom:1px solid #3a342e}
+  .views.resgrid button:nth-last-child(-n+6){border-bottom:0}
+}
+/* the reserve under the Daily List review, folded away until asked for (8 Oct 2026) */
+.resv{margin-top:18px;border-top:1px solid var(--ink)}
+.resv>summary{list-style:none;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
+  gap:2px 10px;padding:12px 40px 10px 12px;min-height:44px;font-family:var(--f-ui);font-size:13px;
+  color:var(--mute);line-height:1.45}
+.resv>summary::-webkit-details-marker{display:none}
+.resv>summary b{color:var(--ink);text-transform:uppercase;letter-spacing:.06em}
+.resv>summary .resv-score{color:var(--ink);font-family:var(--f-num)}
+.resv>summary .resv-note{flex-basis:100%}
+.resv>summary i{position:absolute;right:16px;top:16px;width:8px;height:8px;
+  border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);transform:rotate(45deg);transition:transform .15s}
+.resv[open]>summary i{transform:rotate(-135deg);top:20px}
+.resv>summary:hover b{text-decoration:underline}
+.resv>summary:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 @media (max-width:700px){
   .xruler{display:none}
   .xrow{grid-template-columns:1fr 1fr 26px;grid-template-areas:"tm tm mark" "tp tw mark" "lg conf conf";row-gap:6px}
@@ -2244,7 +2267,7 @@ function render(){
    came from. The tier hit rates underneath are the live version of the labels
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
-const resState = { day: null, tday: null, sday: null, lday: null, sport: "list" };
+const resState = { day: null, tday: null, sday: null, lday: null, sport: "list", resOpen: false };
 const R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
@@ -2731,37 +2754,45 @@ function listReviewDays(){
   const put = (d, x) => (byDate[d] = byDate[d] || []).push(x);
   const lg = code => ((D && D.leagues) || []).find(l => l.code === code);
   const side = (g, k) => k === "h" ? g.home : k === "a" ? g.away : "Draw";
-  (R_DAYS || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+  // the list, and below it the reserve (graded as its own group, never in the list's record)
+  const grp = g => g.list ? "list" : g.reserve ? "reserve" : null;
+  (R_DAYS || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g),
     sport: "Football", comp: (lg(g.league) || {}).name || g.league, home: g.home, away: g.away,
     pick: side(g, g.pick), conf: g.confidence, tier: g.tier,
     res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: g.ok ? "won" : "lost"})));
-  ((TT && TT.days) || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+  ((TT && TT.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g),
     sport: "Tennis", comp: [g.tour, g.tournament, g.round].filter(Boolean).join(" · "), home: g.playerA, away: g.playerB,
     pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: g.note || "",
     status: g.void ? "void" : g.ok ? "won" : "lost"})));
-  ((SR && SR.days) || []).forEach(d => (d.games || []).filter(g => g.list).forEach(g => put(d.date, {
+  ((SR && SR.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g),
     sport: (SD && SD.sports[g.sport] || {name:g.sport}).name, comp: g.label, home: g.home, away: g.away,
     pick: g.pick, conf: g.confidence, tier: g.tier, res: g.winner || "Draw",
     small: g.score ? `${g.score[0]}–${g.score[1]}` : "", status: g.ok ? "won" : "lost"})));
   const DLX = window.__DAY_LIST__;
-  if(DLX && DLX.date && (DLX.list || []).length){
+  if(DLX && DLX.date && ((DLX.list || []).length || (DLX.reserve || []).length)){
     // today's pinned list replaces the records' partial copy of the same day
-    byDate[DLX.date] = DLX.list.map(it => {
+    const pin = grp => it => {
       const r = it.result || {};
       const sc = Array.isArray(r.score) ? `${r.score[0]}–${r.score[1]}` : "";
-      return {sport: it.sport === "football" ? "Football" : it.sport === "tennis" ? "Tennis" : (SD && SD.sports[it.sport] || {name:it.sport}).name,
+      return {grp, sport: it.sport === "football" ? "Football" : it.sport === "tennis" ? "Tennis" : (SD && SD.sports[it.sport] || {name:it.sport}).name,
         comp: it.comp || "", home: it.home, away: it.away, pick: it.pick, conf: it.confidence, tier: it.tier,
         res: it.status === "won" || it.status === "lost" ? (r.winner || (r.ok ? it.pick : "")) : it.status === "void" ? "Void" : "",
         small: sc || r.note || (it.status === "started" ? `Started ${koFmt.format(new Date(it.start))}`
           : it.status === "upcoming" ? `Starts ${koFmt.format(new Date(it.start))}` : ""),
         // a game long past its start with no result yet is waiting on the next build, not still going
         status: it.status, waiting: it.status === "started" && Date.now() - Date.parse(it.start) > 3.5 * 3600e3};
-    });
+    };
+    byDate[DLX.date] = [...(DLX.list || []).map(pin("list")), ...(DLX.reserve || []).map(pin("reserve"))];
   }
+  const tally = xs => {
+    const won = xs.filter(x => x.status === "won").length, lost = xs.filter(x => x.status === "lost").length;
+    return {won, lost, open: xs.length - won - lost - xs.filter(x => x.status === "void").length};
+  };
   return Object.keys(byDate).sort().reverse().map(date => {
-    const items = byDate[date].slice().sort((a,b) => b.conf - a.conf);
-    const won = items.filter(x => x.status === "won").length, lost = items.filter(x => x.status === "lost").length;
-    return {date, items, won, lost, open: items.length - won - lost - items.filter(x => x.status === "void").length};
+    const all = byDate[date].slice().sort((a,b) => b.conf - a.conf);
+    const items = all.filter(x => x.grp === "list"), reserve = all.filter(x => x.grp === "reserve");
+    const r = tally(reserve);
+    return {date, items, ...tally(items), reserve, rWon: r.won, rLost: r.lost, rOpen: r.open};
   });
 }
 
@@ -2773,7 +2804,8 @@ function listReview(){
   }
   const day = days.find(d => d.date === resState.lday) || days[0];
   const tally = ds => ds.reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);
-  const [w7, n7] = tally(days.slice(0, 7)), [wa, na] = tally(days);
+  const ldays = days.filter(d => d.items.length);
+  const [w7, n7] = tally(ldays.slice(0, 7)), [wa, na] = tally(ldays);
   const tile = (label, w, n, note) => n ? `<div class="${w / n >= .8 ? "good" : "bad"}"><span>${label}</span><b>${w} / ${n}</b>
       <small>${pct(w / n)}% landed${note ? " · " + note : ""}</small></div>` : "";
   const st = x => x.status === "won" ? mark(true) : x.status === "lost" ? mark(false)
@@ -2786,6 +2818,14 @@ function listReview(){
       <div class="conf"><span class="tier t${TK[x.tier] ?? 0}">${x.tier || ""}</span></div>
       ${st(x)}</div>`;
   const sports = [...new Set(day.items.map(x => x.sport))];
+  const ruler = `<div class="xruler lrow"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
+      <div style="text-align:right">Tier</div><div></div></div>`;
+  const [rwa, rna] = days.reduce((a, d) => [a[0] + d.rWon, a[1] + d.rWon + d.rLost], [0, 0]);
+  const reserve = day.reserve.length ? `<details class="resv" id="resv"${resState.resOpen ? " open" : ""}>
+      <summary><b>Reserve</b><span class="resv-score">${day.rWon} of ${day.rWon + day.rLost} landed${day.rOpen ? ` · ${day.rOpen} to finish` : ""}</span>
+        <span class="resv-note">${day.reserve.length} pick${day.reserve.length === 1 ? "" : "s"} under the bar, Firm 62% or better.
+        Graded as its own group, never in the list's record${rna ? `: ${rwa} of ${rna} landed across every day here` : ""}.</span><i aria-hidden="true"></i></summary>
+      ${ruler}${day.reserve.map(row).join("")}</details>` : "";
   return `<div class="lede" style="margin-top:22px"><h2>The Daily List, day by day</h2>
       <p>Every pick that made the Daily List, across all sports, with how it went. Only picks
       published before the start are graded; today's list stays as it stood before each game began.</p></div>
@@ -2793,12 +2833,12 @@ function listReview(){
       ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}</div>
     <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
       <div class="dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-        ${fmtShort(d.date)}<i>${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}</i></button>`).join("")}</div></div>
+        ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
-      <div class="count">${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}</div></div>
-    <div class="xruler lrow"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
-      <div style="text-align:right">Tier</div><div></div></div>
-    ${day.items.map(row).join("")}`;
+      <div class="count">${day.items.length ? `${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}`
+        : "no pick cleared the bar"}</div></div>
+    ${day.items.length ? ruler + day.items.map(row).join("") : ""}
+    ${reserve}`;
 }
 
 // The board picker: the Daily List, then every sport, three to a row
@@ -2823,6 +2863,8 @@ function renderResults(){
 
   if(resState.sport === "list"){
     host.innerHTML = sportTabs + listReview();
+    const rv = $("#resv");
+    rv && rv.addEventListener("toggle", () => { resState.resOpen = rv.open; });
     $("#ldayseg") && $("#ldayseg").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
       resState.lday = b.dataset.day; renderResults();

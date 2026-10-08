@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-08 How it went: the reserve under each Daily List day; boards in two rows of six on desktop (release-2026-10-08-4)
+
+**What changed:** the Daily List review on "How it went" has a **Reserve** section under each day's list picks, folded away until opened: the day's reserve picks, how many landed, and the reserve's own record across every day shown. It stays a separate group and never counts in the list's record. A day with reserve picks but no list pick now appears, marked "–" in the day picker, and the "last 7 list days" tile counts list days only. The board picker above (Daily List, Football, Tennis and the nine other sports) is two rows of six on desktop; phones keep three to a row. `score.py` now carries each football row's reserve flag into the day review (it already graded the reserve as a group).
+**Evidence:** checked in headless Chrome at 1280px and at a true 400px (inside a 400px frame; headless lays out at 500px minimum): 8 Oct shows 3 list picks and 15 reserve, 6 of 9 settled reserve landed, 54 of 86 across every day. Regraded locally: 19 football day rows carry the reserve flag. `nametest.py` passes; full suite passes in CI.
+**Files:** `index.html`, `score.py`, `RELEASES.md`.
+**Not changed:** any model, threshold, list rule or grading; the main navigation.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-08 Tennis ratings carry every result since June, not the last six days (release-2026-10-08-3)
 
 **What changed:** tennis ratings now include every completed ESPN result since the fitted archive stops (1-2 June 2026). Until now a build added only the last six days, so Wimbledon, the North American swing, the US Open and most of the Asian swing never reached anyone's rating. New `history-tennis/<tour>.json` keeps the results, topped up each build and committed by `deploy.yml` like `history-sports/`. `tennis.json` gains each tour's archive boundary (`tune_tennis.py --boundary`, ratings untouched) so no archive match counts twice. Walkovers are skipped, as in the archive. Agents may not edit `history-tennis/` (`agents/`).

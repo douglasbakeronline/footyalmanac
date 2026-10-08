@@ -480,7 +480,7 @@ def main():
                 "actual": r["actual"], "confidence": r["confidence"],
                 "celtic": r["celtic"], "tier": name, "k": k,
                 "predScore": list(r["score"]), "result": list(r["result"]),
-                "list": r["list"], "ok": correct(r),
+                "list": r["list"], "reserve": r["reserve"], "ok": correct(r),
                 "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
                 "formH": team_form(fidx, r["league"], r["home"], r["date"]),
                 "formA": team_form(fidx, r["league"], r["away"], r["date"])}
