@@ -410,7 +410,7 @@ def team_leagues(history):
 # fitted on record.json; nothing is fitted at all, the model is unchanged.
 # ---------------------------------------------------------------------------
 CUP_REPLAY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cup-replay.json")
-CUP_REPLAY_VERSION = 1
+CUP_REPLAY_VERSION = 2
 CUP_REPLAY_DAYS = 330          # how far back the day files are read
 CUP_BARS = (0.75, 0.80)        # the AF-extra and league bars; never lower
 CUP_MIN_N, CUP_MIN_HIT = 30, 0.80
@@ -1082,7 +1082,11 @@ def main():
                 res = "h" if hg > ag else ("a" if hg < ag else "d")
                 rows.append({"date": d, "cup": code, "conf": round(trip[pick], 4), "pick": pick,
                              "hit": int(pick == res), "flags": sorted(set(flags)),
-                             "thin": not hb["last"] or not ab["last"]})
+                             "thin": not hb["last"] or not ab["last"],
+                             # for reading the misses, not for the gate
+                             "tie": f"{home} ({hb['league']}, {domestic_of(home, code)[1]}) v "
+                                    f"{away} ({ab['league']}, {domestic_of(away, code)[1]}) {hg}-{ag}",
+                             "played": [hb["played"], ab["played"]]})
         finally:
             cur_tables.clear(); cur_tables.update(saved_t)
             cur_ratings.clear(); cur_ratings.update(saved_r)
@@ -1100,7 +1104,16 @@ def main():
                     "version": CUP_REPLAY_VERSION, "day": today.isoformat(), "ties": len(ties),
                     "priced": len(rows), "skipped": dict(skip),
                     "cups": len({r["cup"] for r in rows}), "bands": cup_bands(rows),
-                    "from": rows[0]["date"], "to": rows[-1]["date"]})
+                    "from": rows[0]["date"], "to": rows[-1]["date"],
+                    # the confident clean calls, each with how the clubs were resolved
+                    "confident": [{k: r[k] for k in ("date", "cup", "conf", "pick", "hit", "tie", "played")}
+                                  for r in rows if r["conf"] >= 0.7 and r["pick"] != "d"
+                                  and not r["flags"] and not r["thin"]][:150],
+                    "byCup": {c: [sum(r["hit"] for r in rows if r["cup"] == c and r["conf"] >= 0.7 and not r["flags"]
+                                      and not r["thin"] and r["pick"] != "d"),
+                                  sum(1 for r in rows if r["cup"] == c and r["conf"] >= 0.7 and not r["flags"]
+                                      and not r["thin"] and r["pick"] != "d")]
+                              for c in sorted({r["cup"] for r in rows})}})
         os.makedirs(os.path.dirname(CUP_REPLAY_FILE), exist_ok=True)
         with open(CUP_REPLAY_FILE, "w") as f:
             json.dump(doc, f, indent=1)
