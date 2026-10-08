@@ -11,10 +11,11 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 - `list_reason`: an API-Football cup stays "cup" until the replay passes, and it never lists a women's or youth tie. Reserve unchanged: cups stay out.
 - `sources.af_cached_fixtures`: reads day files from disk only.
 **Why:** Douglas (8 Oct 2026): build and test the domestic-cup replay so the cups that pass can join the Daily List.
-**Evidence:** `tests/test_cup_gate.py` covers the gate, windows, flags, women's/youth sides and `list_reason`. A local run on synthetic day files went end to end (12 of 15 ties priced, 3 refused as unrated across countries). The first real result is in the build log ("cup replay ...") and in `current/af-cup-replay.json`.
+- Board fix found by the replay: every API-Football wider league carries the same placeholder strength (0.5) whatever its level, so a cup tie between, say, a Belarusian third and second division side was priced as level frames and shown without the cross-division flag (Drut Belynichi 88% at home to Orsha, lost 0-7; Nykobing 95% against Middelfart, 4-4). `cup_placeholder`: a tie across two divisions where either has only the placeholder now carries the cross-division Celtic's Law flag, on the board and in the replay. Probabilities unchanged.
+**Evidence:** first real run (8 Oct 2026, no API calls): 6,203 cup ties on disk, 1,846 priced in 106 cups (1 Jan to 7 Oct 2026). Skipped: 3,434 with a side not rated, 515 where a prior season had not finished, 408 women's/youth. Clean win picks at 75%+ landed 47.4% of 19 (Jan-Jun) and 88.9% of 18 (Jul-Oct), 67.6% of 37 overall, against 80.7% quoted. At 80%+: 50.0% of 10 and 100% of 9. Cross-division ties at 75%+: 38.7% of 31 and 66.0% of 47. Bands for clean picks: 55%+ landed 57.3% (260) against 65.5% quoted, 70%+ landed 68.2% (66) against 77.0%. Result: fail. Cups stay off the Daily List, and the gate reruns daily. `tests/test_cup_gate.py` covers the gate, windows, flags, the placeholder rule, women's/youth sides and `list_reason`; full suite and `nametest.py` pass.
 **Files:** `build.py`, `sources.py`, `tests/test_cup_gate.py`, `RELEASES.md`.
-**Not changed:** the model, the board, prices, the reserve, grading, workflows.
-**Roll back:** `git revert` this commit; cups go back to board-only.
+**Not changed:** the model, prices, the reserve, grading, workflows.
+**Roll back:** `git revert` the four commits of this release; cups go back to board-only.
 
 ## 2026-10-08 Tennis rated from qualifying, Challenger and ITF matches; list bar 75% (release-2026-10-08-1)
 
