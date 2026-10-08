@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-08 Julius review export: every graded prediction as CSVs (release-2026-10-08-6)
+
+**What changed:** new `tools/julius_export.py` writes `julius/julius.ai.review.<date>/` and a `.zip` of it: `all_picks.csv` (every graded pick, all sports), `daily_list.csv`, `reserve.csv`, `by_sport/<sport>.csv`, `summary.csv`, `by_day.csv`, `calibration_bands.csv` and a `README.md` data dictionary. Each row carries ✓ / ✗ / – as on "How it went", the group (Daily List, Reserve, Board), publish time, verification, and `quoted_chance` so hit rates compare against the site's own rule (football counts draw readings). To make the football history complete, `score.py` now also writes `record-graded.json` (every graded fixture; `record.json` keeps 14 days for the page), committed by `deploy.yml` as a bot file and protected from agents. `score.py` and `sports.py` expose their graded rows (`graded_rows()`, `graded_games()`); their outputs are unchanged (record.json and sports-record.json compared identical before and after on the same data).
+**Why:** Douglas wants the grading history reviewed in Julius AI.
+**Evidence:** `tests/test_julius_export.py`; full suite in CI; `nametest.py` passes. First export from CI's grading: see the folder.
+**Files:** `tools/julius_export.py`, `score.py`, `sports.py`, `tests/test_julius_export.py`, `.github/workflows/deploy.yml`, `agents/policy.json`, `agents/pick_task.py`, `agents/open_pr.sh`, `CLAUDE.md`, `julius/`, `RELEASES.md`.
+**Not changed:** any model, grading rule, threshold or page.
+**Roll back:** `git revert` this release's commits; `record-graded.json` and `julius/` can be deleted.
+
 ## 2026-10-08 Daily List shows every pick that clears the bar; the reserve folds under each day (release-2026-10-08-5)
 
 **What changed:** the Daily List no longer stops at 20 a day. Every pick that clears the bar is shown, and the reserve sits in a fold under each day: open by itself when fewer than 20 picks clear the bar (so a thin day still offers a full slate), folded on a full day, and remembered once opened or closed. The fold carries the day's reserve tally once results land. "How the list works" and `CLAUDE.md` updated.

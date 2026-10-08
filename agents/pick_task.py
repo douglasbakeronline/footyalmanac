@@ -83,7 +83,7 @@ STANDING = {
         "three most valuable tasks for next week with an owner each from: " + ", ".join(f"{v[0]} ({k})" for k, v in AGENTS.items())
         + ". Keep it short and evidence-led."),
 }
-PROTECTED = ["record.json", "predictions/", "predictions-sports/", "predictions-tennis/", "current/", "history/",
+PROTECTED = ["record.json", "record-graded.json", "predictions/", "predictions-sports/", "predictions-tennis/", "current/", "history/",
              "history-sports/", "history-tennis/", "dashboard.html", "adjustments.json", "calibration.json", "tuning-report.json",
              "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js", ".github/",
              "agents/", "CLAUDE.md", "AGENTS.md"]

@@ -643,9 +643,10 @@ def settle(r, g):
     return {**r, "score": [g["hs"], g["as"]], "winner": winner, "ok": winner == r["pick"]}
 
 
-def score():
-    """Grade archived picks against results already walked into history-sports/.
-    Only prices published before the game started count."""
+def graded_games():
+    """Archived picks graded against results already walked into
+    history-sports/: (graded rows, void picks). Only the latest price
+    published before the game started counts."""
     results = {}
     for _, f in all_feeds():
         results.update(load_history(f)[0])
@@ -657,16 +658,23 @@ def score():
                     continue   # published after the start: proves nothing
                 if r["id"] not in best or r["published"] > best[r["id"]]["published"]:
                     best[r["id"]] = r
-    graded, void = [], 0
+    graded, void = [], []
     for gid, r in best.items():
         g = results.get(gid)
         if not g or not g["final"]:
             continue
         row = settle(r, g)
         if row is None:
-            void += 1
+            void.append({**r, "score": [g["hs"], g["as"]]})
             continue
         graded.append(row)
+    return graded, void
+
+
+def score():
+    """Grade archived picks, write sports-record.js."""
+    graded, voids = graded_games()
+    void = len(voids)
 
     def summ(rows):
         if not rows:

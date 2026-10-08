@@ -89,6 +89,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `tune.py` constant sweep and calibration refit, behind gates, both measured against the live configuration (`live_baseline()`). `--snapshot FILE` runs either on a frozen snapshot and writes nothing.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
+- `tools/julius_export.py` writes `julius/julius.ai.review.<date>/` (and a `.zip`): every graded prediction as CSVs, Daily List, reserve and each sport separately, with ✓ / ✗ marks, a summary, per-day tallies and calibration bands, for outside review (Julius AI). Reads `record-graded.json`, `tennis-record.json` and `sports.graded_games()`; nothing is regraded. Run it after the daily build: a local `score.py` lacks the paid results and grades about half the football.
 - `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
 - `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
 - `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.
@@ -119,7 +120,7 @@ candidate beats the live curve under the gates),
 points Copilot at it. `.gitignore` keeps `data.js`, `data.json` and caches out.
 
 Written by the bot, never hand-edit: `predictions/`, `current/`,
-`record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
+`record.json`, `record-graded.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
 `tennis-record.json`, `tennis-record.js`, `predictions-sports/`,
 `sports-data.js`, `sports-record.json`, `sports-record.js`, `fifa-rankings.json`, `groupings-archive/`, `groupings-record.json`
 (refreshed by the build when FIFA publishes). `history-sports/` and

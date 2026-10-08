@@ -42,6 +42,8 @@ LIVE_LOOKBACK = 10
 # went to 6 on 6 Oct. Lives in current/, which the deploy already commits.
 # Its key is "settled", not "rows", so replay.py's freeze of current/ skips it.
 SETTLED = os.path.join(HERE, "current", "settled-results.json")
+# Every graded fixture, not just the page's last REVIEW_DAYS (8 Oct 2026).
+GRADED = os.path.join(HERE, "record-graded.json")
 
 
 def load_settled(path=SETTLED):
@@ -373,13 +375,13 @@ def tier_table(rows):
     return out
 
 
-def main():
+def graded_rows(save=True):
+    """Every archived prediction that has a result, graded: (preds, rows,
+    results). The record below is built from these. save=False leaves the
+    settled-results cache untouched."""
     preds = load_predictions()
     if not preds:
-        print("no predictions archived yet", file=sys.stderr)
-        json.dump({"generated": None, "graded": 0, "overall": None},
-                  open(os.path.join(HERE, "record.json"), "w"))
-        return
+        return preds, [], {}
 
     codes = sorted({k[0] for k in preds})
     results = load_results(codes)
@@ -395,7 +397,8 @@ def main():
                if E.LEAGUES.get(k[0], {}).get("afCup") and settled.get(k) != v}
     if cup_new:
         settled.update(cup_new)
-        save_settled(settled)
+        if save:
+            save_settled(settled)
 
     # Anything played but not yet backfilled gets one pass at the live source.
     pending = [k for k in preds if k not in results]
@@ -409,7 +412,8 @@ def main():
     results.update(live)
     if live:
         settled.update(live)
-        save_settled(settled)
+        if save:
+            save_settled(settled)
 
     rows = []
     for key, g in preds.items():
@@ -428,7 +432,19 @@ def main():
             "verified": verification(g),
             "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
+            "published": g.get("published"), "kickoff": g.get("kickoff"),
         })
+    return preds, rows, results
+
+
+
+def main():
+    preds, rows, results = graded_rows()
+    if not preds:
+        print("no predictions archived yet", file=sys.stderr)
+        json.dump({"generated": None, "graded": 0, "overall": None},
+                  open(os.path.join(HERE, "record.json"), "w"))
+        return
 
     if not rows:
         print(f"{len(preds)} predictions archived, none resolved yet", file=sys.stderr)
@@ -546,6 +562,16 @@ def main():
     }
     json.dump(payload, open(os.path.join(HERE, "record.json"), "w"),
               separators=(",", ":"))
+    # Every graded fixture in full (record.json keeps REVIEW_DAYS of them for
+    # the page). Read by tools/julius_export.py; the page never loads it.
+    with open(GRADED, "w") as f:
+        json.dump({"generated": payload["generated"], "graded": [
+            {**r, "p": list(r["p"]), "score": list(r["score"]), "result": list(r["result"]),
+             "tier": tier_of(r["confidence"], r["celtic"], r["unrated"])[2],
+             "ok": correct(r), "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
+             "expected": round(expected(r), 4)}
+            for r in sorted(rows, key=lambda r: (r["date"], r["league"], r["home"]))]},
+            f, separators=(",", ":"), ensure_ascii=False)
 
     o = payload["overall"]
     if o:

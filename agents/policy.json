@@ -31,6 +31,7 @@
     "predictions-sports/",
     "predictions-tennis/",
     "predictions/",
+    "record-graded.json",
     "record.json",
     "sports-data.js",
     "sports-record.js",
@@ -70,6 +71,7 @@
       "current/",
       "history",
       "predictions",
+      "record-graded.json",
       "record.json",
       "sports-record",
       "tennis-record"

@@ -3,7 +3,7 @@
 set -uo pipefail
 KEY="$1"; OWNER="$2"; TITLE="$3"
 HERE="$(cd "$(dirname "$0")" && pwd)"   # the trusted copy made before the agent worked
-PROTECTED="record.json predictions predictions-sports predictions-tennis current history history-sports history-tennis dashboard.html adjustments.json calibration.json tuning-report.json sports-record.json sports-record.js tennis-record.json tennis-record.js .github agents CLAUDE.md AGENTS.md"
+PROTECTED="record.json record-graded.json predictions predictions-sports predictions-tennis current history history-sports history-tennis dashboard.html adjustments.json calibration.json tuning-report.json sports-record.json sports-record.js tennis-record.json tennis-record.js .github agents CLAUDE.md AGENTS.md"
 restore() { for p in $PROTECTED; do git checkout -q HEAD -- "$p" 2>/dev/null || true; git clean -fdq -- "$p" 2>/dev/null || true; done; rm -f data.js data.json; }
 
 restore

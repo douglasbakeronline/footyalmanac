@@ -227,6 +227,8 @@ jobs:
           mkdir -p /tmp/archive
           cp -r predictions /tmp/archive/
           cp record.json /tmp/archive/
+          # every graded fixture in full (score.py), for tools/julius_export.py
+          cp record-graded.json /tmp/archive/ 2>/dev/null || true
           # The season-so-far cache. Without it every run re-walks a hundred
           # days for each of sixty-one competitions instead of three.
           cp -r current /tmp/archive/ 2>/dev/null || true
@@ -259,6 +261,7 @@ jobs:
             cp -r /tmp/archive/predictions/. predictions/
             cp -r /tmp/archive/current/. current/ 2>/dev/null || true
             cp /tmp/archive/record.json .
+            cp /tmp/archive/record-graded.json . 2>/dev/null || true
             cp /tmp/archive/tennis-data.js . 2>/dev/null || true
             mkdir -p predictions-tennis
             cp -r /tmp/archive/predictions-tennis/. predictions-tennis/ 2>/dev/null || true
@@ -273,7 +276,7 @@ jobs:
             mkdir -p groupings-archive
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
             cp /tmp/archive/groupings-record.json . 2>/dev/null || true
-            git add -A predictions current record.json tennis-data.js \
+            git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
                        fifa-rankings.json groupings-archive groupings-record.json
