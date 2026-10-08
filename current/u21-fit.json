@@ -1,0 +1,11 @@
+{
+ "note": "Premier League 2 strength for U21 v senior ties, fitted by build.fit_u21 on the EFL Trophy season below. Ratings are the build's prior season, so they include that season: one parameter, small leak.",
+ "season": 2025,
+ "ties": 46,
+ "fitted": 1791424610,
+ "strength": 0.38,
+ "logLoss": 0.8256,
+ "baseline": 0.8223,
+ "edge": false,
+ "pass": false
+}

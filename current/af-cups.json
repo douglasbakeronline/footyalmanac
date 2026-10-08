@@ -1,0 +1,1266 @@
+{
+"note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
+"checked": 1791424501,
+"cups": [
+{
+"code": "afc.707",
+"id": 707,
+"name": "Cup",
+"country": "Albania",
+"season": 2026
+},
+{
+"code": "afc.514",
+"id": 514,
+"name": "Coupe Nationale",
+"country": "Algeria",
+"season": 2025
+},
+{
+"code": "afc.832",
+"id": 832,
+"name": "Coupe de la Ligue",
+"country": "Algeria",
+"season": 2020
+},
+{
+"code": "afc.655",
+"id": 655,
+"name": "Copa Constitució",
+"country": "Andorra",
+"season": 2025
+},
+{
+"code": "afc.130",
+"id": 130,
+"name": "Copa Argentina",
+"country": "Argentina",
+"season": 2026
+},
+{
+"code": "afc.483",
+"id": 483,
+"name": "Copa de la Superliga",
+"country": "Argentina",
+"season": 2020
+},
+{
+"code": "afc.810",
+"id": 810,
+"name": "Super Copa",
+"country": "Argentina",
+"season": 2026
+},
+{
+"code": "afc.1178",
+"id": 1178,
+"name": "Super Copa International",
+"country": "Argentina",
+"season": 2026
+},
+{
+"code": "afc.517",
+"id": 517,
+"name": "Trofeo de Campeones de la Superliga",
+"country": "Argentina",
+"season": 2026
+},
+{
+"code": "afc.709",
+"id": 709,
+"name": "Cup",
+"country": "Armenia",
+"season": 2026
+},
+{
+"code": "afc.874",
+"id": 874,
+"name": "Australia Cup",
+"country": "Australia",
+"season": 2026
+},
+{
+"code": "afc.1202",
+"id": 1202,
+"name": "Australian Championship",
+"country": "Australia",
+"season": 2026
+},
+{
+"code": "afc.220",
+"id": 220,
+"name": "Cup",
+"country": "Austria",
+"season": 2026
+},
+{
+"code": "afc.420",
+"id": 420,
+"name": "Cup",
+"country": "Azerbaijan",
+"season": 2025
+},
+{
+"code": "afc.486",
+"id": 486,
+"name": "Coppa",
+"country": "Belarus",
+"season": 2026
+},
+{
+"code": "afc.147",
+"id": 147,
+"name": "Cup",
+"country": "Belgium",
+"season": 2026
+},
+{
+"code": "afc.964",
+"id": 964,
+"name": "Copa de la División Profesional",
+"country": "Bolivia",
+"season": 2026
+},
+{
+"code": "afc.1172",
+"id": 1172,
+"name": "Torneo Amistoso de Verano",
+"country": "Bolivia",
+"season": 2026
+},
+{
+"code": "afc.314",
+"id": 314,
+"name": "Cup",
+"country": "Bosnia",
+"season": 2025
+},
+{
+"code": "afc.77",
+"id": 77,
+"name": "Alagoano",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1146",
+"id": 1146,
+"name": "Alagoano - 2",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.741",
+"id": 741,
+"name": "Brasileiro de Aspirantes",
+"country": "Brazil",
+"season": 2024
+},
+{
+"code": "afc.1063",
+"id": 1063,
+"name": "Copa Alagoas",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1225",
+"id": 1225,
+"name": "Copa Centro-Oeste",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.73",
+"id": 73,
+"name": "Copa Do Brasil",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1097",
+"id": 1097,
+"name": "Copa Espírito Santo",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1165",
+"id": 1165,
+"name": "Copa Fares Lopes",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1158",
+"id": 1158,
+"name": "Copa Gaúcha",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1184",
+"id": 1184,
+"name": "Copa Grão Pará",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1223",
+"id": 1223,
+"name": "Copa Norte",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.742",
+"id": 742,
+"name": "Copa Paulista",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1035",
+"id": 1035,
+"name": "Copa Rio",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1036",
+"id": 1036,
+"name": "Copa Santa Catarina",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1224",
+"id": 1224,
+"name": "Copa Sul-Sudeste",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.612",
+"id": 612,
+"name": "Copa do Nordeste",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.1205",
+"id": 1205,
+"name": "Kings Cup",
+"country": "Brazil",
+"season": 2025
+},
+{
+"code": "afc.1059",
+"id": 1059,
+"name": "Recopa Catarinense",
+"country": "Brazil",
+"season": 2026
+},
+{
+"code": "afc.174",
+"id": 174,
+"name": "Cup",
+"country": "Bulgaria",
+"season": 2026
+},
+{
+"code": "afc.1174",
+"id": 1174,
+"name": "Hun Sen Cup",
+"country": "Cambodia",
+"season": 2025
+},
+{
+"code": "afc.259",
+"id": 259,
+"name": "Canadian Championship",
+"country": "Canada",
+"season": 2026
+},
+{
+"code": "afc.267",
+"id": 267,
+"name": "Copa Chile",
+"country": "Chile",
+"season": 2026
+},
+{
+"code": "afc.1220",
+"id": 1220,
+"name": "Copa De La Liga",
+"country": "Chile",
+"season": 2026
+},
+{
+"code": "afc.171",
+"id": 171,
+"name": "FA Cup",
+"country": "China",
+"season": 2026
+},
+{
+"code": "afc.241",
+"id": 241,
+"name": "Copa Colombia",
+"country": "Colombia",
+"season": 2026
+},
+{
+"code": "afc.713",
+"id": 713,
+"name": "Superliga",
+"country": "Colombia",
+"season": 2026
+},
+{
+"code": "afc.958",
+"id": 958,
+"name": "Copa Costa Rica",
+"country": "Costa Rica",
+"season": 2025
+},
+{
+"code": "afc.1167",
+"id": 1167,
+"name": "Recopa",
+"country": "Costa Rica",
+"season": 2026
+},
+{
+"code": "afc.212",
+"id": 212,
+"name": "Cup",
+"country": "Croatia",
+"season": 2026
+},
+{
+"code": "afc.321",
+"id": 321,
+"name": "Cup",
+"country": "Cyprus",
+"season": 2026
+},
+{
+"code": "afc.347",
+"id": 347,
+"name": "Cup",
+"country": "Czechia",
+"season": 2026
+},
+{
+"code": "afc.121",
+"id": 121,
+"name": "DBU Pokalen",
+"country": "Denmark",
+"season": 2026
+},
+{
+"code": "afc.917",
+"id": 917,
+"name": "Copa Ecuador",
+"country": "Ecuador",
+"season": 2025
+},
+{
+"code": "afc.714",
+"id": 714,
+"name": "Cup",
+"country": "Egypt",
+"season": 2025
+},
+{
+"code": "afc.895",
+"id": 895,
+"name": "League Cup",
+"country": "Egypt",
+"season": 2026
+},
+{
+"code": "afc.46",
+"id": 46,
+"name": "EFL Trophy",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.45",
+"id": 45,
+"name": "FA Cup",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.47",
+"id": 47,
+"name": "FA Trophy",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.48",
+"id": 48,
+"name": "League Cup",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.1156",
+"id": 1156,
+"name": "National League Cup",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.871",
+"id": 871,
+"name": "Premier League Cup",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.697",
+"id": 697,
+"name": "WSL Cup",
+"country": "England",
+"season": 2026
+},
+{
+"code": "afc.657",
+"id": 657,
+"name": "Cup",
+"country": "Estonia",
+"season": 2026
+},
+{
+"code": "afc.491",
+"id": 491,
+"name": "Løgmanssteypid",
+"country": "Faroe Islands",
+"season": 2026
+},
+{
+"code": "afc.700",
+"id": 700,
+"name": "Kakkosen Cup",
+"country": "Finland",
+"season": 2021
+},
+{
+"code": "afc.899",
+"id": 899,
+"name": "League Cup",
+"country": "Finland",
+"season": 2026
+},
+{
+"code": "afc.246",
+"id": 246,
+"name": "Suomen Cup",
+"country": "Finland",
+"season": 2026
+},
+{
+"code": "afc.901",
+"id": 901,
+"name": "Ykköscup",
+"country": "Finland",
+"season": 2026
+},
+{
+"code": "afc.66",
+"id": 66,
+"name": "Coupe de France",
+"country": "France",
+"season": 2025
+},
+{
+"code": "afc.65",
+"id": 65,
+"name": "Coupe de la Ligue",
+"country": "France",
+"season": 2019
+},
+{
+"code": "afc.526",
+"id": 526,
+"name": "Trophée des Champions",
+"country": "France",
+"season": 2026
+},
+{
+"code": "afc.672",
+"id": 672,
+"name": "David Kipiani Cup",
+"country": "Georgia",
+"season": 2026
+},
+{
+"code": "afc.715",
+"id": 715,
+"name": "DFB Junioren Pokal",
+"country": "Germany",
+"season": 2026
+},
+{
+"code": "afc.81",
+"id": 81,
+"name": "DFB Pokal",
+"country": "Germany",
+"season": 2026
+},
+{
+"code": "afc.199",
+"id": 199,
+"name": "Cup",
+"country": "Greece",
+"season": 2026
+},
+{
+"code": "afc.544",
+"id": 544,
+"name": "FA Cup",
+"country": "Hong Kong",
+"season": 2027
+},
+{
+"code": "afc.1209",
+"id": 1209,
+"name": "Guangdong - Hong Kong Cup",
+"country": "Hong Kong",
+"season": 2026
+},
+{
+"code": "afc.1051",
+"id": 1051,
+"name": "HKPL Cup",
+"country": "Hong Kong",
+"season": 2024
+},
+{
+"code": "afc.1199",
+"id": 1199,
+"name": "League Cup",
+"country": "Hong Kong",
+"season": 2026
+},
+{
+"code": "afc.1160",
+"id": 1160,
+"name": "Sapling Cup",
+"country": "Hong Kong",
+"season": 2024
+},
+{
+"code": "afc.273",
+"id": 273,
+"name": "Magyar Kupa",
+"country": "Hungary",
+"season": 2026
+},
+{
+"code": "afc.167",
+"id": 167,
+"name": "Cup",
+"country": "Iceland",
+"season": 2026
+},
+{
+"code": "afc.815",
+"id": 815,
+"name": "Fotbolti.net Cup A",
+"country": "Iceland",
+"season": 2026
+},
+{
+"code": "afc.168",
+"id": 168,
+"name": "League Cup",
+"country": "Iceland",
+"season": 2026
+},
+{
+"code": "afc.814",
+"id": 814,
+"name": "Reykjavik Cup",
+"country": "Iceland",
+"season": 2026
+},
+{
+"code": "afc.325",
+"id": 325,
+"name": "Santosh Trophy",
+"country": "India",
+"season": 2025
+},
+{
+"code": "afc.718",
+"id": 718,
+"name": "Piala Indonesia",
+"country": "Indonesia",
+"season": 2018
+},
+{
+"code": "afc.924",
+"id": 924,
+"name": "Piala Presiden",
+"country": "Indonesia",
+"season": 2026
+},
+{
+"code": "afc.495",
+"id": 495,
+"name": "Hazfi Cup",
+"country": "Iran",
+"season": 2025
+},
+{
+"code": "afc.359",
+"id": 359,
+"name": "FAI Cup",
+"country": "Ireland",
+"season": 2026
+},
+{
+"code": "afc.546",
+"id": 546,
+"name": "FAI President's Cup",
+"country": "Ireland",
+"season": 2025
+},
+{
+"code": "afc.360",
+"id": 360,
+"name": "League Cup",
+"country": "Ireland",
+"season": 2020
+},
+{
+"code": "afc.384",
+"id": 384,
+"name": "State Cup",
+"country": "Israel",
+"season": 2026
+},
+{
+"code": "afc.385",
+"id": 385,
+"name": "Toto Cup Ligat Al",
+"country": "Israel",
+"season": 2026
+},
+{
+"code": "afc.137",
+"id": 137,
+"name": "Coppa Italia",
+"country": "Italy",
+"season": 2026
+},
+{
+"code": "afc.704",
+"id": 704,
+"name": "Coppa Italia Primavera",
+"country": "Italy",
+"season": 2026
+},
+{
+"code": "afc.891",
+"id": 891,
+"name": "Coppa Italia Serie C",
+"country": "Italy",
+"season": 2026
+},
+{
+"code": "afc.892",
+"id": 892,
+"name": "Coppa Italia Serie D",
+"country": "Italy",
+"season": 2026
+},
+{
+"code": "afc.102",
+"id": 102,
+"name": "Emperor Cup",
+"country": "Japan",
+"season": 2026
+},
+{
+"code": "afc.101",
+"id": 101,
+"name": "J-League Cup",
+"country": "Japan",
+"season": 2026
+},
+{
+"code": "afc.863",
+"id": 863,
+"name": "Cup",
+"country": "Jordan",
+"season": 2025
+},
+{
+"code": "afc.498",
+"id": 498,
+"name": "Cup",
+"country": "Kazakhstan",
+"season": 2026
+},
+{
+"code": "afc.820",
+"id": 820,
+"name": "Crown Prince Cup",
+"country": "Kuwait",
+"season": 2025
+},
+{
+"code": "afc.720",
+"id": 720,
+"name": "Emir Cup",
+"country": "Kuwait",
+"season": 2026
+},
+{
+"code": "afc.658",
+"id": 658,
+"name": "Cup",
+"country": "Latvia",
+"season": 2026
+},
+{
+"code": "afc.967",
+"id": 967,
+"name": "Cup",
+"country": "Lebanon",
+"season": 2025
+},
+{
+"code": "afc.1018",
+"id": 1018,
+"name": "Federation Cup",
+"country": "Lebanon",
+"season": 2023
+},
+{
+"code": "afc.661",
+"id": 661,
+"name": "Cup",
+"country": "Lithuania",
+"season": 2026
+},
+{
+"code": "afc.721",
+"id": 721,
+"name": "Cup",
+"country": "Luxembourg",
+"season": 2026
+},
+{
+"code": "afc.500",
+"id": 500,
+"name": "FA Cup",
+"country": "Malaysia",
+"season": 2026
+},
+{
+"code": "afc.1170",
+"id": 1170,
+"name": "MFL Cup",
+"country": "Malaysia",
+"season": 2026
+},
+{
+"code": "afc.499",
+"id": 499,
+"name": "Malaysia Cup",
+"country": "Malaysia",
+"season": 2025
+},
+{
+"code": "afc.1173",
+"id": 1173,
+"name": "Challenge Cup",
+"country": "Malta",
+"season": 2025
+},
+{
+"code": "afc.821",
+"id": 821,
+"name": "FA Trophy",
+"country": "Malta",
+"season": 2025
+},
+{
+"code": "afc.857",
+"id": 857,
+"name": "Campeón de Campeones",
+"country": "Mexico",
+"season": 2026
+},
+{
+"code": "afc.264",
+"id": 264,
+"name": "Copa MX",
+"country": "Mexico",
+"season": 2019
+},
+{
+"code": "afc.662",
+"id": 662,
+"name": "Copa por México",
+"country": "Mexico",
+"season": 2022
+},
+{
+"code": "afc.674",
+"id": 674,
+"name": "Cupa",
+"country": "Moldova",
+"season": 2026
+},
+{
+"code": "afc.723",
+"id": 723,
+"name": "Cup",
+"country": "Montenegro",
+"season": 2026
+},
+{
+"code": "afc.822",
+"id": 822,
+"name": "Cup",
+"country": "Morocco",
+"season": 2025
+},
+{
+"code": "afc.90",
+"id": 90,
+"name": "KNVB Beker",
+"country": "Netherlands",
+"season": 2026
+},
+{
+"code": "afc.1127",
+"id": 1127,
+"name": "Chatham Cup",
+"country": "New Zealand",
+"season": 2026
+},
+{
+"code": "afc.1187",
+"id": 1187,
+"name": "Copa Nicaragua",
+"country": "Nicaragua",
+"season": 2026
+},
+{
+"code": "afc.756",
+"id": 756,
+"name": "Cup",
+"country": "North Macedonia",
+"season": 2026
+},
+{
+"code": "afc.757",
+"id": 757,
+"name": "Irish Cup",
+"country": "Northern Ireland",
+"season": 2025
+},
+{
+"code": "afc.559",
+"id": 559,
+"name": "League Cup",
+"country": "Northern Ireland",
+"season": 2026
+},
+{
+"code": "afc.105",
+"id": 105,
+"name": "NM Cupen",
+"country": "Norway",
+"season": 2027
+},
+{
+"code": "afc.1197",
+"id": 1197,
+"name": "FA Cup",
+"country": "Oman",
+"season": 2026
+},
+{
+"code": "afc.726",
+"id": 726,
+"name": "Sultan Cup",
+"country": "Oman",
+"season": 2026
+},
+{
+"code": "afc.501",
+"id": 501,
+"name": "Copa Paraguay",
+"country": "Paraguay",
+"season": 2026
+},
+{
+"code": "afc.502",
+"id": 502,
+"name": "Copa Bicentenario",
+"country": "Peru",
+"season": 2020
+},
+{
+"code": "afc.1232",
+"id": 1232,
+"name": "Copa De La Liga",
+"country": "Peru",
+"season": 2026
+},
+{
+"code": "afc.503",
+"id": 503,
+"name": "Copa Perú",
+"country": "Peru",
+"season": 2025
+},
+{
+"code": "afc.108",
+"id": 108,
+"name": "Cup",
+"country": "Poland",
+"season": 2026
+},
+{
+"code": "afc.97",
+"id": 97,
+"name": "Taça da Liga",
+"country": "Portugal",
+"season": 2026
+},
+{
+"code": "afc.96",
+"id": 96,
+"name": "Taça de Portugal",
+"country": "Portugal",
+"season": 2026
+},
+{
+"code": "afc.824",
+"id": 824,
+"name": "Emir Cup",
+"country": "Qatar",
+"season": 2026
+},
+{
+"code": "afc.841",
+"id": 841,
+"name": "QFA Cup",
+"country": "Qatar",
+"season": 2022
+},
+{
+"code": "afc.677",
+"id": 677,
+"name": "QSL Cup",
+"country": "Qatar",
+"season": 2026
+},
+{
+"code": "afc.825",
+"id": 825,
+"name": "Qatar Cup",
+"country": "Qatar",
+"season": 2025
+},
+{
+"code": "afc.285",
+"id": 285,
+"name": "Cupa României",
+"country": "Romania",
+"season": 2026
+},
+{
+"code": "afc.237",
+"id": 237,
+"name": "Cup",
+"country": "Russia",
+"season": 2026
+},
+{
+"code": "afc.729",
+"id": 729,
+"name": "Coppa Titano",
+"country": "San Marino",
+"season": 2026
+},
+{
+"code": "afc.827",
+"id": 827,
+"name": "Crown Prince Cup",
+"country": "Saudi Arabia",
+"season": 2017
+},
+{
+"code": "afc.504",
+"id": 504,
+"name": "King's Cup",
+"country": "Saudi Arabia",
+"season": 2027
+},
+{
+"code": "afc.182",
+"id": 182,
+"name": "Challenge Cup",
+"country": "Scotland",
+"season": 2026
+},
+{
+"code": "afc.181",
+"id": 181,
+"name": "FA Cup",
+"country": "Scotland",
+"season": 2026
+},
+{
+"code": "afc.185",
+"id": 185,
+"name": "League Cup",
+"country": "Scotland",
+"season": 2026
+},
+{
+"code": "afc.1078",
+"id": 1078,
+"name": "SWF Scottish Cup",
+"country": "Scotland",
+"season": 2023
+},
+{
+"code": "afc.1074",
+"id": 1074,
+"name": "SWPL Cup",
+"country": "Scotland",
+"season": 2025
+},
+{
+"code": "afc.732",
+"id": 732,
+"name": "Cup",
+"country": "Serbia",
+"season": 2026
+},
+{
+"code": "afc.680",
+"id": 680,
+"name": "Cup",
+"country": "Slovakia",
+"season": 2026
+},
+{
+"code": "afc.375",
+"id": 375,
+"name": "Cup",
+"country": "Slovenia",
+"season": 2026
+},
+{
+"code": "afc.509",
+"id": 509,
+"name": "8 Cup",
+"country": "South Africa",
+"season": 2026
+},
+{
+"code": "afc.507",
+"id": 507,
+"name": "Cup",
+"country": "South Africa",
+"season": 2025
+},
+{
+"code": "afc.508",
+"id": 508,
+"name": "League Cup",
+"country": "South Africa",
+"season": 2025
+},
+{
+"code": "afc.294",
+"id": 294,
+"name": "FA Cup",
+"country": "South Korea",
+"season": 2026
+},
+{
+"code": "afc.735",
+"id": 735,
+"name": "Copa Federacion",
+"country": "Spain",
+"season": 2026
+},
+{
+"code": "afc.1248",
+"id": 1248,
+"name": "Copa de la Reina",
+"country": "Spain",
+"season": 2026
+},
+{
+"code": "afc.143",
+"id": 143,
+"name": "Copa del Rey",
+"country": "Spain",
+"season": 2026
+},
+{
+"code": "afc.115",
+"id": 115,
+"name": "Svenska Cupen",
+"country": "Sweden",
+"season": 2026
+},
+{
+"code": "afc.1044",
+"id": 1044,
+"name": "Erste Liga Cup",
+"country": "Switzerland",
+"season": 2026
+},
+{
+"code": "afc.209",
+"id": 209,
+"name": "Schweizer Cup",
+"country": "Switzerland",
+"season": 2026
+},
+{
+"code": "afc.298",
+"id": 298,
+"name": "FA Cup",
+"country": "Thailand",
+"season": 2025
+},
+{
+"code": "afc.898",
+"id": 898,
+"name": "League Cup",
+"country": "Thailand",
+"season": 2025
+},
+{
+"code": "afc.873",
+"id": 873,
+"name": "Thai Champions Cup",
+"country": "Thailand",
+"season": 2023
+},
+{
+"code": "afc.511",
+"id": 511,
+"name": "Cup",
+"country": "Tunisia",
+"season": 2025
+},
+{
+"code": "afc.206",
+"id": 206,
+"name": "Türkiye Kupası",
+"country": "Turkey",
+"season": 2026
+},
+{
+"code": "afc.302",
+"id": 302,
+"name": "League Cup",
+"country": "UAE",
+"season": 2026
+},
+{
+"code": "afc.560",
+"id": 560,
+"name": "Presidents Cup",
+"country": "UAE",
+"season": 2026
+},
+{
+"code": "afc.866",
+"id": 866,
+"name": "MLS All-Star",
+"country": "USA",
+"season": 2026
+},
+{
+"code": "afc.257",
+"id": 257,
+"name": "US Open Cup",
+"country": "USA",
+"season": 2026
+},
+{
+"code": "afc.335",
+"id": 335,
+"name": "Cup",
+"country": "Ukraine",
+"season": 2026
+},
+{
+"code": "afc.1212",
+"id": 1212,
+"name": "Copa De La Liga Auf",
+"country": "Uruguay",
+"season": 2026
+},
+{
+"code": "afc.930",
+"id": 930,
+"name": "Copa Uruguay",
+"country": "Uruguay",
+"season": 2026
+},
+{
+"code": "afc.842",
+"id": 842,
+"name": "Super Copa",
+"country": "Uruguay",
+"season": 2026
+},
+{
+"code": "afc.802",
+"id": 802,
+"name": "Cup",
+"country": "Uzbekistan",
+"season": 2026
+},
+{
+"code": "afc.1113",
+"id": 1113,
+"name": "Copa Venezuela",
+"country": "Venezuela",
+"season": 2026
+},
+{
+"code": "afc.341",
+"id": 341,
+"name": "Cup",
+"country": "Vietnam",
+"season": 2027
+},
+{
+"code": "afc.738",
+"id": 738,
+"name": "League Cup",
+"country": "Wales",
+"season": 2025
+},
+{
+"code": "afc.112",
+"id": 112,
+"name": "Welsh Cup",
+"country": "Wales",
+"season": 2026
+}
+]
+}

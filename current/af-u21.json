@@ -1,0 +1,42 @@
+{
+"note": "Premier League 2 and the EFL Trophy on API-Football; written by the build (sources.af_refresh_u21).",
+"checked": 1791424502,
+"leagues": [
+{
+"code": "afu.702",
+"id": 702,
+"name": "Premier League 2 Division One",
+"current": 2026,
+"years": [
+2020,
+2021,
+2022,
+2023,
+2024,
+2025,
+2026
+]
+}
+],
+"trophy": {
+"id": 46,
+"years": [
+2011,
+2012,
+2013,
+2014,
+2015,
+2016,
+2017,
+2018,
+2019,
+2020,
+2021,
+2022,
+2023,
+2024,
+2025,
+2026
+]
+}
+}
