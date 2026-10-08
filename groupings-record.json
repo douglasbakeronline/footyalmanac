@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-08T12:03:59Z",
+ "graded": "2026-10-08T14:01:48Z",
  "overall": {
   "groups": 12,
   "settled": 12,
   "won": 3,
   "lost": 9,
   "pending": 0,
-  "legs": 55,
-  "legsWon": 40,
+  "legs": 56,
+  "legsWon": 41,
   "returned": 9.65,
   "staked": 12,
   "expected": 3.41
@@ -19,8 +19,8 @@
    "won": 2,
    "lost": 3,
    "pending": 0,
-   "legs": 22,
-   "legsWon": 18,
+   "legs": 23,
+   "legsWon": 19,
    "returned": 5.39,
    "staked": 5,
    "expected": 1.82
@@ -56,8 +56,8 @@
   "won": 3,
   "lost": 5,
   "pending": 0,
-  "legs": 36,
-  "legsWon": 29,
+  "legs": 37,
+  "legsWon": 30,
   "returned": 9.65,
   "staked": 8,
   "expected": 2.65
@@ -74,9 +74,9 @@
      "p": 0.3343,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Florida International Panthers",
@@ -111,8 +111,8 @@
        "odds": 1.4,
        "est": true,
        "p": 0.7731,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(4) Mirra Andreeva (RUS) bt (19) Ekaterina Alexandrova (RUS) 7-6 (7-4) 7-6 (7-3)"
       },
       {
        "pick": "Al Ansar",
