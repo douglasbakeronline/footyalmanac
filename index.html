@@ -1947,6 +1947,7 @@ function renderStarred(){
    exactly what was shown. */
 // The Daily List's order (Douglas, 1 Oct 2026): strongest first by default,
 // or by kick-off to plan the day. Remembered on this device only.
+const LIST_RES_OPEN = {};   // reserve fold per day, once the reader has opened or closed it
 let LIST_ORDER = (() => { try { return localStorage.getItem("listOrder") === "time" ? "time" : "strength"; }
                           catch(e){ return "strength"; } })();
 document.addEventListener("click", e => {
@@ -2005,8 +2006,9 @@ function renderList(){
         clubs with no prior season) and never picks a draw. Tennis leaves out qualifying rounds.
         World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.
         An international also needs the model's own number to clear the bar before the ranking moves it.</p>
-        <p>Below the picks that clear the bar, a <b>reserve</b> fills each day out to 20: games under the bar
-        but otherwise clean, Firm (62%) or better, ranked the same way. Each carries its strength tag and
+        <p>Every pick that clears the bar is shown. Below them, folded away, is the <b>reserve</b>: games under
+        the bar but otherwise clean, Firm (62%) or better, ranked the same way. On a day where fewer than 20
+        picks clear the bar, the reserve opens by itself so there is still a full day to choose from. Each carries its strength tag and
         tested rate, and the reserve is graded as its own group so it never flatters the list's record.</p>
         <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in five or
         six will still miss; that is sport, and no bar removes it.
@@ -2017,10 +2019,13 @@ function renderList(){
   // Every sport's picks per day in one ranking: highest tested hit rate
   // first, then confidence. Confidence alone would not compare fairly: a
   // football number is one of three outcomes, the others one of two.
-  // Picks that clear the bar come first. Below them, the reserve fills the
-  // day out to LIST_TARGET: games under the bar but otherwise clean, Firm or
+  // Every pick that clears the bar is shown: the records grade every one, so
+  // a cap would hide graded picks (10 Oct 2026 had 36). Below them, in a
+  // fold, the reserve: games under the bar but otherwise clean, Firm or
   // better, flagged by each pipeline before kick-off and graded as their own
   // group by strength tag (record.json "reserve"), never in the list's record.
+  // The fold opens by itself on a thin day (under LIST_TARGET picks), so a
+  // day still offers a full slate; on a full day it waits to be asked.
   const LIST_TARGET = 20;
   const byDay = {}, resDay = {};
   const add = (bucket, date, item) => (bucket[date] = bucket[date] || []).push(item);
@@ -2052,16 +2057,16 @@ function renderList(){
   const strength = it => [(it.g.accuracy && (it.g.accuracy.cumHit || it.g.accuracy.hit)) || 0, it.g.confidence];
   const byStrength = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
   // Kick-off order keeps the bar: picks that clear it still come before the
-  // reserve, each group in time order, and the same 20 a day are chosen
-  // (strongest first) whichever order they are shown in.
+  // reserve, each group in time order; the same picks are shown whichever
+  // order is chosen.
   const ko = it => { const t = Date.parse(it.kind === "football" ? koKey(it.g) : it.g.when);
                      return isNaN(t) ? Infinity : t; };            // no time: end of its day
   const byTime = (a,b) => (ko(a) - ko(b)) || byStrength(a,b);
   const shown = xs => LIST_ORDER === "time" ? xs.sort(byTime) : xs;
   const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay)])].sort();
   dates.forEach(date => {
-    const items = shown((byDay[date] || []).sort(byStrength).slice(0, LIST_TARGET));
-    const extra = shown((resDay[date] || []).sort(byStrength).slice(0, Math.max(0, LIST_TARGET - items.length)));
+    const items = shown((byDay[date] || []).sort(byStrength));
+    const extra = shown((resDay[date] || []).sort(byStrength));
     const sec = document.createElement("section");
     sec.className = "day";
     const tally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result);
@@ -2077,9 +2082,18 @@ function renderList(){
       : sec.appendChild(sportRow(it.g, i, true));
     items.forEach(put);
     if(extra.length){
-      sec.insertAdjacentHTML("beforeend", `<div class="reserve-head"><b>Reserve</b>
-        Under the 80% bar, Firm or better. Weigh each by its tag and tested rate; graded separately.</div>`);
-      extra.forEach((it, j) => put(it, items.length + j));
+      const fold = document.createElement("details");
+      fold.className = "resv";
+      fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
+      fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
+        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.</span><i aria-hidden="true"></i></summary>`;
+      fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
+      sec.appendChild(fold);
+      const puts = (it, i) => it.kind === "football"
+        ? appendFixture(fold, it.g, i, date, false)
+        : it.kind === "pinned" ? putPinned(fold, it.g, i, date)
+        : fold.appendChild(sportRow(it.g, i, true));
+      extra.forEach((it, j) => puts(it, items.length + j));
     }
     host.appendChild(sec);
   });

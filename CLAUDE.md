@@ -299,9 +299,13 @@ zero. The real gap was four months of missing results, now fixed. See
 
 - 227 wider leagues from API-Football (`af-leagues.json`, `engine.AF_EXTRA`): tier 2, own bands, list bar 75% (`build.LIST_MIN_AFX`), out of the calibration fit. National League, North and South also come from `AF` now.
 - English step 3 (four leagues, `sources.AF`) is on the board and reserve, never the Daily List: replayed below the bar (`build.NO_LIST`).
-- The Daily List fills to 20 a day with a **reserve** (below the bar, Firm
-  62%+, clean), flagged per pipeline as `reserve` and graded as its own group
-  (`record.json` / `tennis-record.json` / `sports-record.json` "reserve").
+- The Daily List shows every pick that clears the bar (no cap since 8 Oct
+  2026: the records grade every list-flagged pick, and 10 Oct had 36). The
+  **reserve** (below the bar, Firm 62%+, clean) sits in a fold under each
+  day, open by itself when fewer than 20 picks clear the bar; flagged per
+  pipeline as `reserve` and graded as its own group (`record.json` /
+  `tennis-record.json` / `sports-record.json` "reserve"). "How it went" has
+  the same fold under each list day.
 - The Starred tab's **Run** button (`runSlip` in `index.html`) gives the
   chance all starred picks land, fair odds, and a Strong / Reserve / Wary
   verdict per leg. Site numbers only, never bookmaker prices.
