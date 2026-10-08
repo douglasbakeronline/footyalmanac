@@ -51,7 +51,10 @@ class SingleFlight(unittest.TestCase):
             self._run(self._patches(d, opener), lambda: S.af_day_pool(start, end))
         self.assertEqual(len(calls), 10)
         self.assertEqual(len(set(calls)), 10)
-        self.assertIn(end.isoformat(), calls[0])          # newest day asked first
+        # newest day asked first: the pool fetches on 4 threads, so it is among
+        # the first 4 requests; which one lands first is a race (it failed
+        # 15 in 40 runs asserting calls[0], 8 Oct 2026)
+        self.assertTrue(any(end.isoformat() in c for c in calls[:4]), calls[:4])
 
     def test_spent_reads_zero_left(self):
         def opener(req, timeout=None):
