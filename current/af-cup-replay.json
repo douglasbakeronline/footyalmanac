@@ -3,44 +3,44 @@
   "clean": {
    "0.75": {
     "2026H1": {
-     "hit": 0.4583,
-     "n": 24
+     "hit": 0.4737,
+     "n": 19
     },
     "2026H2": {
-     "hit": 0.7,
-     "n": 30
+     "hit": 0.8889,
+     "n": 18
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.4615,
-     "n": 13
+     "hit": 0.5,
+     "n": 10
     },
     "2026H2": {
-     "hit": 0.8125,
-     "n": 16
+     "hit": 1.0,
+     "n": 9
     }
    }
   },
   "cross": {
    "0.75": {
     "2026H1": {
-     "hit": 0.4,
-     "n": 30
+     "hit": 0.3871,
+     "n": 31
     },
     "2026H2": {
-     "hit": 0.6667,
-     "n": 45
+     "hit": 0.6596,
+     "n": 47
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.4667,
-     "n": 15
+     "hit": 0.4375,
+     "n": 16
     },
     "2026H2": {
-     "hit": 0.7273,
-     "n": 22
+     "hit": 0.6957,
+     "n": 23
     }
    }
   }
@@ -50,7 +50,7 @@
  "crossPass": false,
  "crossBar": null,
  "note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as of its own morning, prior season finished before the tie. Nothing fitted.",
- "version": 2,
+ "version": 3,
  "day": "2026-10-08",
  "ties": 6203,
  "priced": 1846,
@@ -63,45 +63,45 @@
  "bands": [
   {
    "from": 0.55,
-   "hit": 0.5395,
-   "n": 354,
-   "quoted": 0.6571
+   "hit": 0.5731,
+   "n": 260,
+   "quoted": 0.6551
   },
   {
    "from": 0.6,
-   "hit": 0.5472,
-   "n": 254,
-   "quoted": 0.6905
+   "hit": 0.5789,
+   "n": 190,
+   "quoted": 0.6851
   },
   {
    "from": 0.65,
-   "hit": 0.56,
-   "n": 150,
-   "quoted": 0.7373
+   "hit": 0.6147,
+   "n": 109,
+   "quoted": 0.7315
   },
   {
    "from": 0.7,
-   "hit": 0.5914,
-   "n": 93,
-   "quoted": 0.7773
+   "hit": 0.6818,
+   "n": 66,
+   "quoted": 0.7701
   },
   {
    "from": 0.75,
-   "hit": 0.5926,
-   "n": 54,
-   "quoted": 0.8156
+   "hit": 0.6757,
+   "n": 37,
+   "quoted": 0.8072
   },
   {
    "from": 0.8,
-   "hit": 0.6552,
-   "n": 29,
-   "quoted": 0.8542
+   "hit": 0.7368,
+   "n": 19,
+   "quoted": 0.8429
   },
   {
    "from": 0.85,
-   "hit": 0.6667,
-   "n": 12,
-   "quoted": 0.8915
+   "hit": 0.8333,
+   "n": 6,
+   "quoted": 0.8792
   }
  ],
  "from": "2026-01-01",
@@ -132,24 +132,24 @@
    ]
   },
   {
-   "date": "2026-01-24",
-   "cup": "afc.899",
-   "conf": 0.7331,
+   "date": "2026-01-22",
+   "cup": "afc.1212",
+   "conf": 0.8171,
    "pick": "h",
-   "hit": 1,
-   "tie": "Inter Turku (Veikkausliiga, Inter Turku) v Mariehamn (Veikkausliiga, Mariehamn) 1-0",
+   "hit": 0,
+   "tie": "Club Nacional (Primera Divisi\u00f3n, Nacional) v Progreso (Primera Divisi\u00f3n, Progreso) 1-1",
    "played": [
     0,
     0
    ]
   },
   {
-   "date": "2026-01-31",
-   "cup": "afc.168",
-   "conf": 0.8301,
+   "date": "2026-01-24",
+   "cup": "afc.899",
+   "conf": 0.7331,
    "pick": "h",
    "hit": 1,
-   "tie": "Vikingur Reykjavik (\u00darvalsdeild, Vikingur Reykjavik) v Grindavik (1. Deild, Grindavik) 2-0",
+   "tie": "Inter Turku (Veikkausliiga, Inter Turku) v Mariehamn (Veikkausliiga, Mariehamn) 1-0",
    "played": [
     0,
     0
@@ -314,18 +314,6 @@
   {
    "date": "2026-03-08",
    "cup": "afc.115",
-   "conf": 0.7801,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Falkenbergs FF (Superettan, Falkenbergs FF) v IFK Sk\u00f6vde (Ettan - S\u00f6dra, IFK Sk\u00f6vde) 3-2",
-   "played": [
-    0,
-    0
-   ]
-  },
-  {
-   "date": "2026-03-08",
-   "cup": "afc.115",
    "conf": 0.7438,
    "pick": "h",
    "hit": 1,
@@ -396,18 +384,6 @@
    ]
   },
   {
-   "date": "2026-04-16",
-   "cup": "afc.491",
-   "conf": 0.872,
-   "pick": "a",
-   "hit": 0,
-   "tie": "07 Vestur (Meistaradeildin, 07 Vestur) v Sk\u00e1la (1. Deild, Sk\u00e1la) 1-0",
-   "played": [
-    5,
-    0
-   ]
-  },
-  {
    "date": "2026-04-19",
    "cup": "afc.181",
    "conf": 0.7303,
@@ -452,18 +428,6 @@
    "tie": "B68 (Meistaradeildin, B68) v KI Klaksvik (Meistaradeildin, KI Klaksvik) 0-3",
    "played": [
     7,
-    7
-   ]
-  },
-  {
-   "date": "2026-04-29",
-   "cup": "afc.498",
-   "conf": 0.7283,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Irtysh (1. Division, Irtysh) v Kyzyl-Zhar (Premier League, Kyzyl-Zhar) 1-2",
-   "played": [
-    0,
     7
    ]
   },
@@ -528,18 +492,6 @@
    ]
   },
   {
-   "date": "2026-05-20",
-   "cup": "afc.486",
-   "conf": 0.8835,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Drut Belynichi (2. Division, Drut Belynichi) v Orsha (1. Division, Orsha) 0-7",
-   "played": [
-    0,
-    6
-   ]
-  },
-  {
    "date": "2026-05-23",
    "cup": "afc.544",
    "conf": 0.7507,
@@ -564,30 +516,6 @@
    ]
   },
   {
-   "date": "2026-05-27",
-   "cup": "afc.486",
-   "conf": 0.8328,
-   "pick": "h",
-   "hit": 0,
-   "tie": "BGU Minsk (2. Division, BGU Minsk) v Osipovichy (1. Division, Osipovichy) 0-2",
-   "played": [
-    1,
-    8
-   ]
-  },
-  {
-   "date": "2026-05-27",
-   "cup": "afc.486",
-   "conf": 0.7884,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Gazovik (2. Division, Gazovik) v Volna (1. Division, Volna) 1-4",
-   "played": [
-    1,
-    8
-   ]
-  },
-  {
    "date": "2026-05-29",
    "cup": "afc.721",
    "conf": 0.8193,
@@ -597,18 +525,6 @@
    "played": [
     0,
     0
-   ]
-  },
-  {
-   "date": "2026-06-10",
-   "cup": "afc.115",
-   "conf": 0.7324,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Falu BS (Division 2 - Norra Svealand, Falu BS) v Gefle IF (Ettan - Norra, Gefle IF) 0-0",
-   "played": [
-    11,
-    11
    ]
   },
   {
@@ -660,18 +576,6 @@
    ]
   },
   {
-   "date": "2026-07-12",
-   "cup": "afc.658",
-   "conf": 0.7081,
-   "pick": "h",
-   "hit": 0,
-   "tie": "M\u0101rupe (1. Liga, M\u0101rupe) v Grobi\u0146a (Virsliga, Grobi\u0146as) 0-1",
-   "played": [
-    12,
-    0
-   ]
-  },
-  {
    "date": "2026-07-17",
    "cup": "afc.359",
    "conf": 0.7335,
@@ -696,15 +600,15 @@
    ]
   },
   {
-   "date": "2026-07-22",
-   "cup": "afc.657",
-   "conf": 0.7514,
-   "pick": "a",
+   "date": "2026-07-18",
+   "cup": "afc.185",
+   "conf": 0.7752,
+   "pick": "h",
    "hit": 1,
-   "tie": "L\u00e4\u00e4nemaa Haapsalu (Esiliiga B, L\u00e4\u00e4nemaa Haapsalu) v Elva (Esiliiga A, Elva) 0-6",
+   "tie": "ST Johnstone (Championship, St Johnstone) v Morton (Championship, Greenock Morton) 3-0",
    "played": [
     0,
-    20
+    0
    ]
   },
   {
@@ -732,18 +636,6 @@
    ]
   },
   {
-   "date": "2026-08-04",
-   "cup": "afc.121",
-   "conf": 0.711,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Br\u00f8nsh\u00f8j (Denmark Series - Promotion Round, Br\u00f8nsh\u00f8j) v HB Koge (1. Division, HB Koge) 1-0",
-   "played": [
-    0,
-    2
-   ]
-  },
-  {
    "date": "2026-08-05",
    "cup": "afc.237",
    "conf": 0.7015,
@@ -753,42 +645,6 @@
    "played": [
     2,
     2
-   ]
-  },
-  {
-   "date": "2026-08-15",
-   "cup": "afc.209",
-   "conf": 0.8402,
-   "pick": "h",
-   "hit": 0,
-   "tie": "YF Juventus (1. Liga Classic - Group 3, YF Juventus) v Rapperswil (Challenge League, Rapperswil) 1-6",
-   "played": [
-    0,
-    3
-   ]
-  },
-  {
-   "date": "2026-08-18",
-   "cup": "afc.121",
-   "conf": 0.7401,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Nykobing (3. Division, Nykobing) v Naestved (2. Division, Naestved) 1-1",
-   "played": [
-    0,
-    3
-   ]
-  },
-  {
-   "date": "2026-08-19",
-   "cup": "afc.115",
-   "conf": 0.8682,
-   "pick": "h",
-   "hit": 1,
-   "tie": "FBK Karlstad (Division 2 - Norra G\u00f6taland, FBK Karlstad) v GIF Sundsvall (Superettan, GIF Sundsvall) 1-0",
-   "played": [
-    0,
-    19
    ]
   },
   {
@@ -816,18 +672,6 @@
    ]
   },
   {
-   "date": "2026-08-21",
-   "cup": "afc.335",
-   "conf": 0.7997,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Lokomotiv Kyiv (Druha Liga, Lokomotiv Kyiv) v Probiy Horodenka (Persha Liga, Probiy Horodenka) 1-3",
-   "played": [
-    0,
-    4
-   ]
-  },
-  {
    "date": "2026-08-25",
    "cup": "afc.1197",
    "conf": 0.78,
@@ -837,18 +681,6 @@
    "played": [
     0,
     0
-   ]
-  },
-  {
-   "date": "2026-08-25",
-   "cup": "afc.182",
-   "conf": 0.737,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Hamilton Academical (League One, Hamilton Academical) v Edinburgh City (League Two, Edinburgh City) 0-1",
-   "played": [
-    4,
-    4
    ]
   },
   {
@@ -872,18 +704,6 @@
    "tie": "Colo Colo (Primera Divisi\u00f3n, Colo Colo) v Union Espanola (Primera Divisi\u00f3n, Uni\u00f3n Espa\u00f1ola) 3-0",
    "played": [
     20,
-    0
-   ]
-  },
-  {
-   "date": "2026-09-02",
-   "cup": "afc.657",
-   "conf": 0.91,
-   "pick": "h",
-   "hit": 1,
-   "tie": "N\u00f5mme United (Esiliiga A, N\u00f5mme United) v Vaprus (Meistriliiga, P\u00e4rnu JK Vaprus) 3-2",
-   "played": [
-    0,
     0
    ]
   },
@@ -925,18 +745,6 @@
   },
   {
    "date": "2026-09-09",
-   "cup": "afc.121",
-   "conf": 0.9516,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Nykobing (3. Division, Nykobing) v Middelfart (1. Division, Middelfart) 4-4",
-   "played": [
-    0,
-    0
-   ]
-  },
-  {
-   "date": "2026-09-09",
    "cup": "afc.500",
    "conf": 0.7722,
    "pick": "h",
@@ -957,90 +765,6 @@
    "played": [
     2,
     2
-   ]
-  },
-  {
-   "date": "2026-09-12",
-   "cup": "afc.273",
-   "conf": 0.7523,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Cigand SE (NB III - Northeast, Cigand SE) v Dabas (NB III - Southeast, Dabas) 1-1",
-   "played": [
-    7,
-    7
-   ]
-  },
-  {
-   "date": "2026-09-12",
-   "cup": "afc.273",
-   "conf": 0.7706,
-   "pick": "a",
-   "hit": 1,
-   "tie": "FC Hatvan (NB III - Northeast, FC Hatvan) v Kaposvar (NB III - Southwest, Kaposvar) 1-4",
-   "played": [
-    0,
-    6
-   ]
-  },
-  {
-   "date": "2026-09-12",
-   "cup": "afc.273",
-   "conf": 0.9367,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Gyirmot SE (NB III - Northwest, Gyirmot SE) v Csakvar (NB II, Csakvar) 1-0",
-   "played": [
-    0,
-    7
-   ]
-  },
-  {
-   "date": "2026-09-12",
-   "cup": "afc.273",
-   "conf": 0.7261,
-   "pick": "h",
-   "hit": 1,
-   "tie": "P\u00e9csi MFC (NB III - Southwest, P\u00e9csi MFC) v Tiszakecske (NB II, Tiszakecske) 3-2",
-   "played": [
-    7,
-    7
-   ]
-  },
-  {
-   "date": "2026-09-13",
-   "cup": "afc.273",
-   "conf": 0.8296,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Gyulai Term\u00e1l (NB III - Southeast, Gyulai Term\u00e1l) v Szentl\u0151rinc SE (NB II, Szentl\u0151rinc SE) 0-1",
-   "played": [
-    7,
-    6
-   ]
-  },
-  {
-   "date": "2026-09-16",
-   "cup": "afc.105",
-   "conf": 0.7317,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Levanger (2. Division - Group 2, Levanger) v Ranheim (1. Division, Ranheim) 0-2",
-   "played": [
-    19,
-    22
-   ]
-  },
-  {
-   "date": "2026-09-16",
-   "cup": "afc.105",
-   "conf": 0.774,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Sotra (2. Division - Group 1, Sotra) v Sogndal (1. Division, Sogndal) 1-1",
-   "played": [
-    19,
-    22
    ]
   },
   {
@@ -1089,18 +813,6 @@
    "played": [
     0,
     7
-   ]
-  },
-  {
-   "date": "2026-10-01",
-   "cup": "afc.1199",
-   "conf": 0.7398,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Shatin (HKFA 1st Division, Shatin) v Hong Kong (Premier League, Hong Kong) 2-2",
-   "played": [
-    13,
-    3
    ]
   },
   {
@@ -1164,30 +876,6 @@
    ]
   },
   {
-   "date": "2026-10-06",
-   "cup": "afc.707",
-   "conf": 0.7324,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Skenderbeu Korce (1st Division, Skenderbeu Korce) v Naft\u00ebtari Ku\u00e7ov\u00eb (2nd Division - Group A, Naft\u00ebtari Ku\u00e7ov\u00eb) 4-1",
-   "played": [
-    0,
-    22
-   ]
-  },
-  {
-   "date": "2026-10-07",
-   "cup": "afc.206",
-   "conf": 0.7762,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Osmaniyespor (3. Lig - Group 2, Osmaniyespor) v Yeni Mersin Idmanyurdu (2. Lig, Yeni Mersin Idmanyurdu) 0-3",
-   "played": [
-    0,
-    0
-   ]
-  },
-  {
    "date": "2026-10-07",
    "cup": "afc.707",
    "conf": 0.7045,
@@ -1197,18 +885,6 @@
    "played": [
     22,
     22
-   ]
-  },
-  {
-   "date": "2026-10-07",
-   "cup": "afc.707",
-   "conf": 0.8187,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Laci (1st Division, Laci) v K\u00eblcyra (2nd Division - Group B, K\u00eblcyra) 8-2",
-   "played": [
-    0,
-    20
    ]
   },
   {
@@ -1243,7 +919,7 @@
   ],
   "afc.105": [
    0,
-   3
+   1
   ],
   "afc.1063": [
    0,
@@ -1262,8 +938,8 @@
    0
   ],
   "afc.115": [
-   4,
-   5
+   2,
+   2
   ],
   "afc.1158": [
    0,
@@ -1291,15 +967,15 @@
   ],
   "afc.1199": [
    0,
-   1
+   0
   ],
   "afc.121": [
-   1,
-   3
+   0,
+   0
   ],
   "afc.1212": [
    0,
-   0
+   1
   ],
   "afc.1220": [
    0,
@@ -1334,8 +1010,8 @@
    0
   ],
   "afc.168": [
-   4,
-   5
+   3,
+   4
   ],
   "afc.171": [
    0,
@@ -1351,11 +1027,11 @@
   ],
   "afc.182": [
    0,
-   1
+   0
   ],
   "afc.185": [
-   1,
-   2
+   2,
+   3
   ],
   "afc.199": [
    0,
@@ -1363,11 +1039,11 @@
   ],
   "afc.206": [
    0,
-   2
+   1
   ],
   "afc.209": [
    0,
-   1
+   0
   ],
   "afc.212": [
    0,
@@ -1402,8 +1078,8 @@
    2
   ],
   "afc.273": [
-   5,
-   7
+   2,
+   2
   ],
   "afc.285": [
    0,
@@ -1427,7 +1103,7 @@
   ],
   "afc.335": [
    0,
-   1
+   0
   ],
   "afc.341": [
    1,
@@ -1467,15 +1143,15 @@
   ],
   "afc.486": [
    0,
-   3
+   0
   ],
   "afc.491": [
    1,
-   2
+   1
   ],
   "afc.498": [
    1,
-   2
+   1
   ],
   "afc.499": [
    0,
@@ -1510,12 +1186,12 @@
    0
   ],
   "afc.657": [
-   4,
-   4
+   2,
+   2
   ],
   "afc.658": [
    0,
-   1
+   0
   ],
   "afc.66": [
    0,
@@ -1538,8 +1214,8 @@
    0
   ],
   "afc.707": [
-   4,
-   4
+   2,
+   2
   ],
   "afc.709": [
    0,
