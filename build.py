@@ -161,7 +161,7 @@ def list_eligible(g):
 # rules kept off (7 Oct 2026, Douglas: the list must be drawn from every
 # fixture of the day). None means it is on the list. Same tests, same order,
 # as list_eligible always made.
-WHY = {"step3": "English step 3 (replayed, below the bar)", "cup": "domestic cup (no replay yet)",
+WHY = {"step3": "English step 3 (replayed, below the bar)", "cup": "domestic cup (replay has not passed)",
        "new": "new competition (no replay yet)", "u21": "under-21 side or competition",
        "draw": "draw pick", "below": "below the list bar", "celtic": "Celtic's Law flag",
        "unrated": "unrated side", "rankOnly": "only the ranking makes it confident",
@@ -174,8 +174,9 @@ def list_reason(g):
     intl = bool(E.LEAGUES[g["league"]].get("international"))
     if g["league"] in NO_LIST:
         return "step3"                   # board only until a replay passes
-    if g["league"] in S.AF_CUPS:
-        return "cup"
+    cup = g["league"] in S.AF_CUPS
+    if cup and (not CUP_LIST.get("pass") or cup_other(g["league"], g["home"]["name"], g["away"]["name"])):
+        return "cup"                     # replay has not passed, or a women's / youth tie
     if g["league"] in NEW_BOARD_ONLY:
         return "new"
     if E.LEAGUES[g["league"]].get("u21") or g.get("u21Side"):
@@ -183,12 +184,19 @@ def list_reason(g):
     bar = LIST_MIN["intlRanked" if g.get("rankAdjusted") else ("intl" if intl else "league")]
     if g["league"] in S.AF_EXTRA:
         bar = LIST_MIN_AFX
+    if cup:
+        bar = CUP_LIST["bar"]
     if pick == "d":
         return "draw"
     if p[pick] < bar:
         return "below"
     if g["celtic"]:
-        return "celtic"
+        # A cup tie whose only flag is the cross-division one may list when
+        # the replay passed those ties too, at their own bar.
+        rs = g["celtic"].get("reasons") or []
+        cross_only = cup and rs and all(r.startswith(CUP_CROSS) for r in rs)
+        if not (cross_only and CUP_LIST.get("cross") and p[pick] >= CUP_LIST["crossBar"]):
+            return "celtic"
     if g["unrated"]:
         return "unrated"
     if g.get("rankAdjusted") and (g.get("modelConfidence") or 0) < LIST_MIN["intl"]:
@@ -387,6 +395,102 @@ def team_leagues(history):
             out[m[1]].add(code)
             out[m[2]].add(code)
     return out
+
+
+# ---------------------------------------------------------------------------
+# Domestic cups on the Daily List (8 Oct 2026, Douglas: build and test the
+# replay so cups that pass can join). cup_replay, inside main, prices every
+# played cup tie in the API-Football day files already on disk (no calls) the
+# way the board would have priced it on the morning of the tie: each club's
+# prior season (finished before the tie, or the tie is skipped) blended with
+# its division's results before that date, converted into the shared frame by
+# tie_strength. cup_gate then applies the list's own rule: the lowest bar at
+# which calls landed at least CUP_MIN_HIT in every window with CUP_MIN_N or
+# more calls. Redone once a day, kept in current/af-cup-replay.json. Never
+# fitted on record.json; nothing is fitted at all, the model is unchanged.
+# ---------------------------------------------------------------------------
+CUP_REPLAY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cup-replay.json")
+CUP_REPLAY_VERSION = 1
+CUP_REPLAY_DAYS = 330          # how far back the day files are read
+CUP_BARS = (0.75, 0.80)        # the AF-extra and league bars; never lower
+CUP_MIN_N, CUP_MIN_HIT = 30, 0.80
+CUP_SPLIT = "-07-01"           # windows: before and after 1 July of the year
+CUP_CROSS = "cup tie across divisions"
+CUP_LIST = {"pass": False, "cross": False}
+# Women's and youth sides: API-Football writes "Arsenal W", and a fuzzy match
+# can find the men's club, so such cups and sides are neither replayed nor
+# listed (the men's rating is not theirs).
+import re as _re
+CUP_OTHER_RE = _re.compile(r"\b(w|women'?s?|ladies|fem\w*|reina|wsl|junior\w*|junioren|aspirantes|"
+                           r"u-?\d{2}|sub-?\d{2}|youth)\b", _re.I)
+
+
+def cup_other(cup_code, home, away):
+    return bool(CUP_OTHER_RE.search(E.LEAGUES.get(cup_code, {}).get("name", "")) or CUP_OTHER_RE.search(home)
+                or CUP_OTHER_RE.search(away) or S._side_marks(home) or S._side_marks(away))
+
+
+def cup_windows(rows, bar, allow_cross=False):
+    """{window: [hit, n]} for win picks at bar or above, clean rows only
+    (allow_cross also admits rows whose only flag is the cross-division one)."""
+    out = {}
+    for r in rows:
+        if r["pick"] == "d" or r["conf"] < bar or r["thin"]:
+            continue
+        flags = set(r["flags"])
+        if flags and not (allow_cross and flags == {"cross"}):
+            continue
+        w = "H1" if r["date"][5:] < CUP_SPLIT[1:] else "H2"
+        w = r["date"][:4] + w
+        out.setdefault(w, [0, 0])
+        out[w][0] += r["hit"]
+        out[w][1] += 1
+    return out
+
+
+def cup_pass(win):
+    """The 80% rule: every window with CUP_MIN_N calls lands CUP_MIN_HIT, and
+    at least one window has that many; a window too small to judge must not
+    be clearly failing (below the bar by more than one call)."""
+    big = [v for v in win.values() if v[1] >= CUP_MIN_N]
+    if not big or any(h / n < CUP_MIN_HIT for h, n in big):
+        return False
+    return all(h + 1 >= CUP_MIN_HIT * n for h, n in win.values())
+
+
+def cup_gate(rows):
+    """The list decision from replayed rows; pure, so it is tested alone."""
+    doc = {"bars": {}}
+    for allow in (False, True):
+        key = "cross" if allow else "clean"
+        for bar in CUP_BARS:
+            win = cup_windows(rows, bar, allow)
+            doc["bars"].setdefault(key, {})[str(bar)] = {w: {"hit": round(h / n, 4), "n": n}
+                                                        for w, (h, n) in sorted(win.items())}
+            if cup_pass(win) and key not in doc:
+                doc[key] = bar
+    doc["pass"] = "clean" in doc
+    doc["bar"] = doc.get("clean")
+    doc["crossPass"] = "cross" in doc and doc["pass"]
+    doc["crossBar"] = doc.get("cross") if doc["crossPass"] else None
+    doc.pop("clean", None); doc.pop("cross", None)
+    return doc
+
+
+def cup_bands(rows):
+    """Cumulative bands for clean win picks: quoted against landed."""
+    out = []
+    for lo in (0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85):
+        sel = [r for r in rows if r["pick"] != "d" and not r["flags"] and not r["thin"] and r["conf"] >= lo]
+        if sel:
+            out.append({"from": lo, "hit": round(sum(r["hit"] for r in sel) / len(sel), 4), "n": len(sel),
+                        "quoted": round(sum(r["conf"] for r in sel) / len(sel), 4)})
+    return out
+
+
+def apply_cup_gate(doc):
+    CUP_LIST.update({"pass": bool(doc.get("pass")), "bar": doc.get("bar"),
+                     "cross": bool(doc.get("crossPass")), "crossBar": doc.get("crossBar")})
 
 
 def u21_cup_ok(src, comp):
@@ -650,6 +754,7 @@ def main():
     # ---- ratings -----------------------------------------------------------
     prior_ratings, prior_tables, league_mu = {}, {}, {}
     partial_prior, prior_log, prior_label = {}, [], {}
+    prior_end = {}                     # last date in the prior a league is rated from (cup_replay)
     for code, seasons in history.items():
         season_used, ms, share, expected, newer_ms = pick_prior(code, seasons, log=prior_log)
         if not ms:
@@ -667,6 +772,7 @@ def main():
         if not ms:
             continue
         prior_label[code] = season_label(season_used, share)
+        prior_end[code] = max(str(m[0]) for m in list(ms) + list(newer_ms or []))
         if share < S.PRIOR_MIN_SHARE:
             partial_prior[code] = (len(ms), expected, season_used)
         tbl = E.build_table(ms)
@@ -694,6 +800,7 @@ def main():
 
     # current-season tables, from whatever has been played so far
     cur_tables, cur_ratings = {}, {}
+    played_rows = {}                   # this season's results by league, in date order (cup_replay)
     for code, rows in fixtures.items():
         # The fixture list carries results for the competitions openfootball
         # supplies as a whole season; for the rest the cache above is the only
@@ -709,6 +816,7 @@ def main():
             seen.add(key)
             played.append((r["date"], r["home"], r["away"], r["hg"], r["ag"]))
         played.sort()
+        played_rows[code] = played
         tbl = E.build_table(played)
         cur_tables[code] = tbl
         # Shrunk, not raw. A one-match sample must regress hard toward the
@@ -897,6 +1005,122 @@ def main():
     by_day = defaultdict(list)
     fit_u21(u21_doc, prior_ratings, league_mu, domestic_of)
     _dom_cache.clear()                 # the fit can change what u21_cup_ok allows
+
+    def cup_replay():
+        """Replay every played domestic-cup tie on disk, priced as of its own
+        morning; see cup_gate. Once a day; costs no API calls."""
+        today = date.today()
+        try:
+            with open(CUP_REPLAY_FILE) as f:
+                old = json.load(f)
+        except (OSError, ValueError):
+            old = None
+        if old and old.get("day") == today.isoformat() and old.get("version") == CUP_REPLAY_VERSION:
+            apply_cup_gate(old)
+            print(f"  cup replay: today's on file, {'PASS at ' + str(old.get('bar')) if old.get('pass') else 'fail'}",
+                  file=sys.stderr)
+            return old
+        ids = {E.LEAGUES[c]["afId"]: c for c in S.AF_CUPS if E.LEAGUES[c].get("afId")}
+        ties = []
+        for f in S.af_cached_fixtures(today - timedelta(days=CUP_REPLAY_DAYS), today - timedelta(days=1)):
+            code = ids.get((f.get("league") or {}).get("id"))
+            fx = f.get("fixture") or {}
+            ft = (f.get("score") or {}).get("fulltime") or {}
+            if not code or (fx.get("status") or {}).get("short") not in S.AF_PLAYED \
+                    or ft.get("home") is None or ft.get("away") is None:
+                continue
+            home = S.clean_name(((f.get("teams") or {}).get("home") or {}).get("name") or "")
+            away = S.clean_name(((f.get("teams") or {}).get("away") or {}).get("name") or "")
+            if home and away and (fx.get("date") or "")[:10]:
+                ties.append((fx["date"][:10], code, home, away, ft["home"], ft["away"]))
+        ties.sort()
+        skip = defaultdict(int)
+        rows = []
+        saved_t, saved_r = dict(cur_tables), dict(cur_ratings)
+        try:
+            day = None
+            for d, code, home, away, hg, ag in ties:
+                if cup_other(code, home, away):
+                    skip["womenYouth"] += 1
+                    continue
+                h_src, a_src = domestic_of(home, code)[0], domestic_of(away, code)[0]
+                if not h_src or not a_src:
+                    skip["unrated"] += 1
+                    continue
+                if any(prior_end.get(x, "") >= d for x in (h_src, a_src)):
+                    skip["priorAfter"] += 1      # the prior season had not finished
+                    continue
+                if d != day:
+                    day = d
+                    cur_tables.clear(); cur_tables.update(saved_t)
+                    cur_ratings.clear(); cur_ratings.update(saved_r)
+                for x in {h_src, a_src}:
+                    if cur_tables.get(x) is saved_t.get(x):
+                        before = [m for m in played_rows.get(x, []) if m[0] < d]
+                        cur_tables[x] = E.build_table(before)
+                        cur_ratings[x] = E.strength_from_table(cur_tables[x]) if before else {}
+                hb, hr = team_block(home, h_src)
+                ab, ar = team_block(away, a_src)
+                if hb["unrated"] or ab["unrated"]:
+                    skip["unrated"] += 1
+                    continue
+                meta = E.LEAGUES[code]
+                cup_mu = (league_mu.get(h_src, 1.35) + league_mu.get(a_src, 1.35)) / 2
+                p = E.cup_match(hr, E.tie_strength(h_src, code), ar, E.tie_strength(a_src, code), cup_mu,
+                                tier=meta["tier"], form_h=E.form_factor(hb["form"]),
+                                form_a=E.form_factor(ab["form"]))
+                flags = []
+                if h_src != a_src and abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"]) > 0.05:
+                    flags.append("cross")
+                for t, src in ((hb, h_src), (ab, a_src)):
+                    if t["carriedFrom"]:
+                        flags.append("moved")
+                    if (t["carriedFrom"] or src) in partial_prior:
+                        flags.append("partial")
+                trip = {"h": p["home"], "d": p["draw"], "a": p["away"]}
+                pick = max(trip, key=trip.get)
+                res = "h" if hg > ag else ("a" if hg < ag else "d")
+                rows.append({"date": d, "cup": code, "conf": round(trip[pick], 4), "pick": pick,
+                             "hit": int(pick == res), "flags": sorted(set(flags)),
+                             "thin": not hb["last"] or not ab["last"]})
+        finally:
+            cur_tables.clear(); cur_tables.update(saved_t)
+            cur_ratings.clear(); cur_ratings.update(saved_r)
+            _dom_cache.clear()
+        if not rows:
+            # No day files (a local build, a lost cache): keep what is on file.
+            if old:
+                apply_cup_gate(old)
+            print(f"  cup replay: no ties on disk ({len(ties)} read); "
+                  f"{'kept the last result' if old else 'cups stay off the list'}", file=sys.stderr)
+            return old
+        doc = cup_gate(rows)
+        doc.update({"note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as "
+                            "of its own morning, prior season finished before the tie. Nothing fitted.",
+                    "version": CUP_REPLAY_VERSION, "day": today.isoformat(), "ties": len(ties),
+                    "priced": len(rows), "skipped": dict(skip),
+                    "cups": len({r["cup"] for r in rows}), "bands": cup_bands(rows),
+                    "from": rows[0]["date"], "to": rows[-1]["date"]})
+        os.makedirs(os.path.dirname(CUP_REPLAY_FILE), exist_ok=True)
+        with open(CUP_REPLAY_FILE, "w") as f:
+            json.dump(doc, f, indent=1)
+        apply_cup_gate(doc)
+        c75 = doc["bars"]["clean"]
+        print(f"  cup replay: {len(ties)} ties on disk, {len(rows)} priced in {doc['cups']} cups "
+              f"({doc['from']} to {doc['to']}); skipped {dict(skip)}", file=sys.stderr)
+        for key in ("clean", "cross"):
+            for bar, win in doc["bars"][key].items():
+                print(f"  cup replay {key} {bar}: " + ", ".join(f"{w} {v['hit']:.1%} of {v['n']}" for w, v in win.items()),
+                      file=sys.stderr)
+        print(f"  cup replay: {'PASS, list bar ' + str(doc['bar']) if doc['pass'] else 'fail, cups stay off the list'}"
+              + (f"; cross-division ties pass at {doc['crossBar']}" if doc["crossPass"] else ""), file=sys.stderr)
+        return doc
+
+    try:
+        cup_replay()
+    except Exception as e:             # advisory: a replay fault must never stop the board
+        CUP_LIST.update({"pass": False, "cross": False})
+        print(f"::warning::cup replay failed ({type(e).__name__}: {e}); cups stay off the list", file=sys.stderr)
 
     dropped_unrated = 0
     for code, rows in fixtures.items():

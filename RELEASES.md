@@ -3,6 +3,19 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-08 Domestic-cup replay: cups join the Daily List only if it passes (release-2026-10-08-2)
+
+**What changed:**
+- `build.cup_replay` (inside `build.py main`): once a day, every played API-Football domestic-cup tie in the day files already on disk (up to 330 days back, no API calls) is priced the way the board would have priced it on the morning of the tie. Each club gets its prior season, which must have finished before the tie or the tie is skipped, blended with its division's results before that date, then `tie_strength` and `cup_match` as live. Women's and youth ties are left out. Results go in `current/af-cup-replay.json`.
+- `build.cup_gate` applies the list's own rule: the lowest of 75% / 80% at which clean win picks landed at least 80% in every half-year window with 30+ calls, with at least one such window, and no small window clearly failing. Cross-division ties (the Celtic's Law cup flag) are judged separately and list only if they pass on their own.
+- `list_reason`: an API-Football cup stays "cup" until the replay passes, and it never lists a women's or youth tie. Reserve unchanged: cups stay out.
+- `sources.af_cached_fixtures`: reads day files from disk only.
+**Why:** Douglas (8 Oct 2026): build and test the domestic-cup replay so the cups that pass can join the Daily List.
+**Evidence:** `tests/test_cup_gate.py` covers the gate, windows, flags, women's/youth sides and `list_reason`. A local run on synthetic day files went end to end (12 of 15 ties priced, 3 refused as unrated across countries). The first real result is in the build log ("cup replay ...") and in `current/af-cup-replay.json`.
+**Files:** `build.py`, `sources.py`, `tests/test_cup_gate.py`, `RELEASES.md`.
+**Not changed:** the model, the board, prices, the reserve, grading, workflows.
+**Roll back:** `git revert` this commit; cups go back to board-only.
+
 ## 2026-10-08 Tennis rated from qualifying, Challenger and ITF matches; list bar 75% (release-2026-10-08-1)
 
 **What changed:**

@@ -976,6 +976,23 @@ def _af_day_pool_build(key, start, end):
     return _AF_POOL[key]
 
 
+def af_cached_fixtures(start, end):
+    """Every API-Football fixture start..end read from day files already on
+    disk, never asking the API: a day with no file is skipped. For replays
+    (build.cup_replay), which must cost no calls."""
+    out, d = [], start
+    while d <= end:
+        path = os.path.join(AF_CACHE_DIR, f"day-{d.isoformat()}.json.gz")
+        if os.path.exists(path):
+            try:
+                with gzip.open(path, "rt", encoding="utf-8") as fh:
+                    out.extend(_expand(c) for c in json.load(fh).get("rows") or [])
+            except Exception:
+                pass
+        d += timedelta(days=1)
+    return out
+
+
 def af_days_missing(start, end):
     """Days start..end with no API-Football day file on disk, or one older than
     a day while the day is still open: the fixtures the board did not get.
