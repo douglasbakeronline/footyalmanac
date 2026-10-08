@@ -65,6 +65,14 @@ class CupGate(unittest.TestCase):
         g = self._g(0.9); g["home"]["name"] = "Arsenal W"
         self.assertEqual(B.list_reason(g), "cup")
 
+    def test_placeholder(self):
+        ax = sorted(B.S.AF_EXTRA)
+        if len(ax) < 2:
+            self.skipTest("no wider leagues")
+        self.assertTrue(B.cup_placeholder(ax[0], ax[1]))
+        self.assertFalse(B.cup_placeholder(ax[0], ax[0]))
+        self.assertFalse(B.cup_placeholder("en.3", "en.4"))
+
     def test_other(self):
         self.assertTrue(B.cup_other("x", "Arsenal W", "Chelsea"))
         self.assertTrue(B.cup_other("x", "Flamengo U20", "Vasco"))

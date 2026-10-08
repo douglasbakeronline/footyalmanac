@@ -410,7 +410,7 @@ def team_leagues(history):
 # fitted on record.json; nothing is fitted at all, the model is unchanged.
 # ---------------------------------------------------------------------------
 CUP_REPLAY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cup-replay.json")
-CUP_REPLAY_VERSION = 2
+CUP_REPLAY_VERSION = 3
 CUP_REPLAY_DAYS = 330          # how far back the day files are read
 CUP_BARS = (0.75, 0.80)        # the AF-extra and league bars; never lower
 CUP_MIN_N, CUP_MIN_HIT = 30, 0.80
@@ -428,6 +428,13 @@ CUP_OTHER_RE = _re.compile(r"\b(w|women'?s?|ladies|fem\w*|reina|wsl|junior\w*|ju
 def cup_other(cup_code, home, away):
     return bool(CUP_OTHER_RE.search(E.LEAGUES.get(cup_code, {}).get("name", "")) or CUP_OTHER_RE.search(home)
                 or CUP_OTHER_RE.search(away) or S._side_marks(home) or S._side_marks(away))
+
+
+def cup_placeholder(h_src, a_src):
+    """Two different divisions, at least one with only the placeholder
+    strength every API-Football wider league carries: nothing on file says
+    how they compare, so the tie is a cross-division one whatever the gap."""
+    return h_src != a_src and (h_src in S.AF_EXTRA or a_src in S.AF_EXTRA)
 
 
 def cup_windows(rows, bar, allow_cross=False):
@@ -1070,7 +1077,8 @@ def main():
                                 tier=meta["tier"], form_h=E.form_factor(hb["form"]),
                                 form_a=E.form_factor(ab["form"]))
                 flags = []
-                if h_src != a_src and abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"]) > 0.05:
+                if h_src != a_src and (abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"]) > 0.05
+                                       or cup_placeholder(h_src, a_src)):
                     flags.append("cross")
                 for t, src in ((hb, h_src), (ab, a_src)):
                     if t["carriedFrom"]:
@@ -1294,7 +1302,12 @@ def main():
                                and a_src in E.CONTINENTAL_FITTED)
                 if meta.get("cup") and h_src and a_src and h_src != a_src and not fitted_pair:
                     gap = abs(E.LEAGUES[h_src]["strength"] - E.LEAGUES[a_src]["strength"])
-                    if gap > 0.05:
+                    # Every API-Football wider league carries the same
+                    # placeholder strength (0.5), whatever its level, so a
+                    # third-division side looked level with a first-division
+                    # one: the cup replay (8 Oct 2026) found such ties quoted
+                    # 88-95% for the lower side and lost 0-7 and 4-4.
+                    if gap > 0.05 or cup_placeholder(h_src, a_src):
                         reasons.append(
                             f"cup tie across divisions ({E.LEAGUES[h_src]['name']} v "
                             f"{E.LEAGUES[a_src]['name']}), priced entirely off league "
