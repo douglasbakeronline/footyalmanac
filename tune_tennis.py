@@ -78,11 +78,23 @@ def fetch(path, cache_dir):
     return text
 
 
-def load_tour(tour, cache_dir):
+# Qualifying and Challenger / ITF matches (7 Oct 2026). Tour-level files
+# alone left ~45% of the week's ESPN matches unpriced (82 ATP fetched, 37
+# dropped; 45 WTA, 21 dropped: "no rating on file for a side"), mostly
+# qualifiers and players who live below the tour. These files rate them.
+# They feed the Elo walk only: tuning and the check are still scored on
+# tour-level matches alone, so the test is the same set as before.
+EXTRA = {"atp": "qual_chall", "wta": "qual_itf"}
+
+
+def load_tour(tour, cache_dir, extra=True):
     rows = []
-    for y in YEARS:
+    files = [(f"{tour}/{tour}_matches_{y}.csv", False) for y in YEARS]
+    if extra and tour in EXTRA:
+        files += [(f"{tour}/{tour}_matches_{EXTRA[tour]}_{y}.csv", True) for y in YEARS]
+    for path, below in files:
         try:
-            text = fetch(f"{tour}/{tour}_matches_{y}.csv", cache_dir)
+            text = fetch(path, cache_dir)
         except Exception:
             continue
         for r in csv.DictReader(io.StringIO(text)):
@@ -100,8 +112,9 @@ def load_tour(tour, cache_dir):
                 "level": r["tourney_level"], "winner": r["winner_name"],
                 "loser": r["loser_name"], "retired": " RET" in score,
                 "w_rank": r.get("winner_rank"), "l_rank": r.get("loser_rank"),
+                "below": below,
             })
-    rows.sort(key=lambda x: x["date"])
+    rows.sort(key=lambda x: (x["date"], not x["below"]))   # a week's qualifying before its main draw
     return rows
 
 
@@ -164,8 +177,8 @@ def paired(a, b, reps=2000, seed=17):
 
 
 def tune_and_validate(matches, verbose, label):
-    tune_idx = [i for i, m in enumerate(matches) if m["date"].startswith(TUNE_YEAR)]
-    final_idx = [i for i, m in enumerate(matches) if m["date"].startswith(CHECK_YEAR)]
+    tune_idx = [i for i, m in enumerate(matches) if m["date"].startswith(TUNE_YEAR) and not m.get("below")]
+    final_idx = [i for i, m in enumerate(matches) if m["date"].startswith(CHECK_YEAR) and not m.get("below")]
 
     best = None
     for sw in SWEEP["surface_weight"]:

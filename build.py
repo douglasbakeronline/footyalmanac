@@ -589,7 +589,8 @@ def main():
                 else E.LEAGUES[c].get("prev", PREV))
          for c in CODES}, cache_dir=args.cache)
     # A cup with no tie inside the window is not missing data.
-    missing = {c for c in missing if c not in S.AF_CUPS}
+    missing = {c for c in missing if c not in S.AF_CUPS and not E.LEAGUES.get(c.split(" ")[0], {}).get("afCup")
+               and not c.startswith("afc.")}
     if missing:
         print(f"  no data for: {', '.join(sorted(missing))}", file=sys.stderr)
 

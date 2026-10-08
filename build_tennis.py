@@ -96,6 +96,11 @@ def build_index(ratings_pool):
         parts = norm.split()
         if len(parts) >= 2:
             by_initial_last.setdefault((parts[0][0], parts[-1]), set()).add(name)
+            # the same words in any order: ESPN writes Chinese names family
+            # name first ("Shang Juncheng"), the archive given name first
+            # (7 Oct 2026: 15 such players a week went unpriced). Kept only
+            # where one rated player has that set of words.
+            by_initial_last.setdefault(("words", frozenset(parts)), set()).add(name)
     return by_full, by_initial_last
 
 
@@ -110,6 +115,9 @@ def match_player(raw_name, by_full, by_initial_last):
     parts = norm.split()
     if len(parts) >= 2:
         cands = by_initial_last.get((parts[0][0], parts[-1]))
+        if cands and len(cands) == 1:
+            return next(iter(cands))
+        cands = by_initial_last.get(("words", frozenset(parts)))
         if cands and len(cands) == 1:
             return next(iter(cands))
     return None
@@ -141,6 +149,7 @@ def price_match(rating_a, rating_b, surface, surface_weight):
 # p(worse) 0.03, gap 5.0 -> 1.5 pts. WTA 0.95: -0.0034, p(worse) 0.04, gap
 # 5.7 -> 1.5 pts. 0.8 was under-quoting: its 75% calls landed 85%.
 CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
+ATP_RANK_LAYER = False
 
 # The Daily List. Same archive and filter, the shrink above. The shared rule
 # (sports.list_threshold): the lowest confidence at which calls landed 75%+
@@ -154,17 +163,22 @@ CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
 # with ranking 85.6% (118). 75% passes on 2026 too (81.0%, 81.0%, 83.2%) but
 # the 2025 bands at that level are not on file, so the list takes the level
 # both windows are well clear of rather than one only 2026 can vouch for.
-LIST_MIN = {"ATP": 0.80, "WTA": 0.80,
-            # an ATP match re-scored by the world ranking (rankings.py): that
-            # model's own test, 65%+ landed 76.9%/77% in 2025/2026
-            "ATP_RANKED": 0.80}
+# 7 Oct 2026: tennis.json now rates from the qualifying, Challenger and ITF
+# files too (tune_tennis.EXTRA), tested on the same tour-level matches as
+# before: 2026 log loss ATP 0.6241 -> 0.6055, WTA 0.6115 -> 0.5983, both
+# p(worse) 0.00. Re-read with tools/tennis_bands.py: 75% lands 83.0% / 83.5%
+# (ATP, 2025 / 2026, 499 / 243 calls) and 84.8% / 89.9% (WTA, 415 / 227), so
+# 75% passes the 80% rule in both windows on both tours. WTA would pass at
+# 70% too (81.4% / 83.2%), but only just; the list takes 75% on both.
+LIST_MIN = {"ATP": 0.75, "WTA": 0.75, "ATP_RANKED": 0.75}
 LIST_MIN_MATCHES = 10
-LIST_BACKTEST = {"ATP": {"2025": [0.791, 673], "2026": [0.781, 320]},
-                 "WTA": {"2025": [0.781, 661], "2026": [0.802, 384]}}
+LIST_BACKTEST = {"ATP": {"2025": [0.8297, 499], "2026": [0.8354, 243]},
+                 "WTA": {"2025": [0.8482, 415], "2026": [0.8987, 227]}}
 # ATP with the world ranking applied: how calls at each level landed in 2026.
 ACCURACY_BANDS_ATP_RANKED = [{"from": 0.55, "hit": 0.6938, "n": 921, "quoted": 0.6796}, {"from": 0.6, "hit": 0.7328, "n": 670, "quoted": 0.7183}, {"from": 0.65, "hit": 0.7688, "n": 519, "quoted": 0.746}, {"from": 0.7, "hit": 0.7867, "n": 347, "quoted": 0.7811}, {"from": 0.75, "hit": 0.8316, "n": 196, "quoted": 0.8256}, {"from": 0.8, "hit": 0.8559, "n": 118, "quoted": 0.8607}, {"from": 0.85, "hit": 0.9194, "n": 62, "quoted": 0.8938}]
 # How calls at each level landed in 2026 (never fitted on), for every row.
-ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.6824, "n": 973, "quoted": 0.6734}, {"from": 0.6, "hit": 0.7188, "n": 754, "quoted": 0.7019}, {"from": 0.65, "hit": 0.7514, "n": 523, "quoted": 0.7363}, {"from": 0.7, "hit": 0.7812, "n": 320, "quoted": 0.775}, {"from": 0.75, "hit": 0.8098, "n": 184, "quoted": 0.8137}, {"from": 0.8, "hit": 0.8913, "n": 92, "quoted": 0.852}, {"from": 0.85, "hit": 0.9048, "n": 42, "quoted": 0.8855}], "WTA": [{"from": 0.55, "hit": 0.6829, "n": 965, "quoted": 0.6843}, {"from": 0.6, "hit": 0.7151, "n": 737, "quoted": 0.7187}, {"from": 0.65, "hit": 0.7681, "n": 539, "quoted": 0.7534}, {"from": 0.7, "hit": 0.8021, "n": 384, "quoted": 0.7854}, {"from": 0.75, "hit": 0.8103, "n": 253, "quoted": 0.8161}, {"from": 0.8, "hit": 0.8696, "n": 138, "quoted": 0.8499}, {"from": 0.85, "hit": 0.9032, "n": 62, "quoted": 0.8795}]}
+# How calls at each level landed in 2026 (never used to choose anything), rated with the wider pool (tools/tennis_bands.py, 7 Oct 2026).
+ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.7039, "n": 1111, "quoted": 0.679}, {"from": 0.6, "hit": 0.7244, "n": 849, "quoted": 0.711}, {"from": 0.65, "hit": 0.7749, "n": 613, "quoted": 0.7442}, {"from": 0.7, "hit": 0.8116, "n": 414, "quoted": 0.7782}, {"from": 0.75, "hit": 0.8354, "n": 243, "quoted": 0.817}, {"from": 0.8, "hit": 0.8855, "n": 131, "quoted": 0.8532}, {"from": 0.85, "hit": 0.9483, "n": 58, "quoted": 0.8895}], "WTA": [{"from": 0.55, "hit": 0.7029, "n": 993, "quoted": 0.6784}, {"from": 0.6, "hit": 0.7561, "n": 734, "quoted": 0.7146}, {"from": 0.65, "hit": 0.8093, "n": 540, "quoted": 0.7475}, {"from": 0.7, "hit": 0.832, "n": 369, "quoted": 0.7821}, {"from": 0.75, "hit": 0.8987, "n": 227, "quoted": 0.8177}, {"from": 0.8, "hit": 0.9091, "n": 132, "quoted": 0.8485}, {"from": 0.85, "hit": 0.9464, "n": 56, "quoted": 0.8805}]}
 
 
 def accuracy_for(conf, tour, ranked=False):
@@ -443,7 +457,12 @@ def main():
             p = dampen(price_match(pool[a], pool[b], r["surface"], sw), CONFIDENCE_SHRINK[tour])
             rank_a, rank_b = world.get(r["id0"]), world.get(r["id1"])
             ranked = False
-            if tour == "atp" and (rank_a or rank_b):
+            # The ATP ranking layer (rankings.adjust_atp) was fitted on the old
+            # tour-only ratings. Refitted on 2025 over the wider pool it no
+            # longer passes (2026: -0.0020 log loss, p(worse) 0.077 against a
+            # 0.05 bar; tools/tennis_bands.py, 7 Oct 2026), so it is off:
+            # the ranking is shown, it does not move the number.
+            if ATP_RANK_LAYER and tour == "atp" and (rank_a or rank_b):
                 # ATP ranking gap on top of Elo (rankings.py): tested on 2026
                 # main-draw matches, -0.0037 log loss, p(worse) 0.03. WTA did
                 # not pass, so WTA ranks are shown but never move the number.

@@ -3,6 +3,20 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-08 Tennis rated from qualifying, Challenger and ITF matches; list bar 75% (release-2026-10-08-1)
+
+**What changed:**
+- `tune_tennis.py` feeds the Elo walk with the archive's qualifying/Challenger (ATP) and qualifying/ITF (WTA) files as well as tour level (`EXTRA`). Tuning and the check are still scored on tour-level matches only, the same test set as before. `tennis.json` refitted: 3,173 ATP and 10,175 WTA players rated (was 998 and 954).
+- `build_tennis.match_player` also matches a name written in another word order when exactly one rated player has those words (ESPN writes "Shang Juncheng", the archive "Juncheng Shang").
+- Tennis bands and list bar re-read with the new tool `tools/tennis_bands.py` (it reproduces the old bands exactly on the old pool). Daily List bar 80% -> 75% on both tours; reserve unchanged (62%).
+- The ATP ranking layer is off (`ATP_RANK_LAYER = False`): refitted on 2025 over the new ratings it no longer passes (2026 -0.0020 log loss, p(worse) 0.077 against 0.05). Rankings are still shown.
+- `build.py`: a cup with no tie in the window no longer counts as a missing feed in `health`.
+**Why:** Douglas asked (7 Oct 2026) for the list to be drawn from the whole day's data. About 45% of the week's ESPN tennis matches were dropped with "no rating on file for a side".
+**Evidence:** clean 2026 check, tour level: ATP log loss 0.6241 -> 0.6055, accuracy 64.2% -> 66.0%; WTA 0.6115 -> 0.5983, 65.1% -> 68.0%; paired against the old ratings on the same matches, p(worse) 0.00 (ATP) and 0.0025 (WTA). At 75%+: ATP 83.0% (499) / 83.5% (243), WTA 84.8% (415) / 89.9% (227), 2025 / 2026. This week's feed: unpriceable matches 65 of 381 -> 19. Local build: 39 priced, 8 on the list (was 0 at 80%). `tests/test_tennis_names.py`; full suite and `nametest.py` pass.
+**Files:** `tune_tennis.py`, `tennis.json`, `build_tennis.py`, `tools/tennis_bands.py`, `build.py`, `tests/test_tennis_names.py`, `RELEASES.md`.
+**Not changed:** football, the other sports, grading, the reserve floor.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-07 Daily List coverage: what each day's list was chosen from, and any gap (release-2026-10-07-4)
 
 **What changed:**
