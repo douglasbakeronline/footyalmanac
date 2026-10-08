@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-08 Tennis ratings carry every result since June, not the last six days (release-2026-10-08-3)
+
+**What changed:** tennis ratings now include every completed ESPN result since the fitted archive stops (1-2 June 2026). Until now a build added only the last six days, so Wimbledon, the North American swing, the US Open and most of the Asian swing never reached anyone's rating. New `history-tennis/<tour>.json` keeps the results, topped up each build and committed by `deploy.yml` like `history-sports/`. `tennis.json` gains each tour's archive boundary (`tune_tennis.py --boundary`, ratings untouched) so no archive match counts twice. Walkovers are skipped, as in the archive. Agents may not edit `history-tennis/` (`agents/`).
+**Why:** Daily List pick 13, Muchova 77.4% v Bartunkova (China Open QF, Bartunkova won). Bartunkova's ~30 matches since June were missing. With them, Muchova is 73.6%: still the favourite, but a reserve pick, not a list pick.
+**Evidence:** every match since the archive, priced from earlier days only, paired bootstrap (`tools/tennis_gap_eval.py`): WTA 2,563 matches, log loss -0.0042, p(worse) 0.023; ATP 1,470, -0.0035, p(worse) 0.095 (Aug-Oct -0.0109, p 0.016; Jun-Jul +0.0041 worse: ESPN has no surface, so grass results go in as hard court, an open item). Hot-form signals tested on top and rejected: K x 1.5 worse on both tours, a wins-in-this-tournament term fits to zero. Today's tennis list 8 -> 6 (Andreeva, De Minaur to reserve). First walk 3,091 ATP / 4,305 WTA results; repeat build identical. `tests/test_tennis_history.py` (8 tests); `nametest.py` passes; full suite passes except the four modules that need `zoneinfo` (Python 3.9+), which cannot run on this Mac's 3.7 and run in CI. Write-up: `claude/tennis-ratings-gap-2026-10-08.md`.
+**Files:** `build_tennis.py`, `tune_tennis.py`, `tennis.json` (boundary only), `history-tennis/`, `tools/tennis_gap_eval.py`, `tests/test_tennis_history.py`, `.github/workflows/deploy.yml`, `agents/pick_task.py`, `agents/open_pr.sh`, `agents/policy.json`, `CLAUDE.md`, `claude/tennis-ratings-gap-2026-10-08.md`, `RELEASES.md`.
+**Not changed:** tennis ratings, constants, bands, list bar and reserve floor; football and the other sports (their histories were already current); grading.
+**Roll back:** `git revert` this commit. Builds then fall back to the six-day window (an old `tennis.json` has no boundary). `history-tennis/` can stay.
+
 ## 2026-10-08 Domestic-cup replay: cups join the Daily List only if it passes (release-2026-10-08-2)
 
 **What changed:**

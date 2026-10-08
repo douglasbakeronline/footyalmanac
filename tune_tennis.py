@@ -7,6 +7,8 @@ data neither the fit nor the constant search ever saw.
 
     python3 tune_tennis.py --report        fit, validate, print, write nothing
     python3 tune_tennis.py --fit            as above, write tennis.json if it PASSES
+    python3 tune_tennis.py --boundary       record where the archive stops in tennis.json
+                                            (ratings untouched), for build_tennis.py
     python3 tune_tennis.py --fit --dry-run  fit and print the verdict, write nothing regardless
 
 Why Elo and not the Dixon-Coles Poisson model everywhere else in this project
@@ -45,7 +47,7 @@ data the constant search never saw.
 Standard library only, like the rest of the project.
 """
 import argparse, csv, io, json, math, os, random, sys, urllib.request
-from datetime import date as _date
+from datetime import date as _date, datetime as _dt, timedelta as _td
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RAW = "https://raw.githubusercontent.com/Aneeshers/tennis-sackmann-archive/main"
@@ -235,15 +237,44 @@ def run(cache_dir, verbose=True):
     return out
 
 
+BOUNDARY_DAYS = 14   # as build_tennis.BOUNDARY_DAYS
+
+
+def archive_boundary(rows):
+    """Where the archive stops, so build_tennis.py can carry the ratings on
+    from ESPN results without counting a match twice: the last tournament
+    start date, and every pair of players who met in a tournament that began
+    in the BOUNDARY_DAYS before it (those matches can run past that date)."""
+    last = max(r["date"] for r in rows)
+    lo = (_dt.strptime(last, "%Y%m%d") - _td(days=BOUNDARY_DAYS)).strftime("%Y%m%d")
+    pairs = sorted({tuple(sorted((r["winner"], r["loser"]))) for r in rows if r["date"] >= lo})
+    return {"through": _dt.strptime(last, "%Y%m%d").date().isoformat(),
+            "pairs": [list(p) for p in pairs]}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--fit", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--boundary", action="store_true",
+                    help="add the archive boundary to tennis.json without refitting")
     ap.add_argument("--cache", default=os.path.join(HERE, ".tenniscache"))
     args = ap.parse_args()
-    if not (args.report or args.fit):
-        ap.error("nothing to do: pass --report or --fit")
+    if not (args.report or args.fit or args.boundary):
+        ap.error("nothing to do: pass --report, --fit or --boundary")
+
+    if args.boundary:
+        out = os.path.join(HERE, "tennis.json")
+        with open(out) as f:
+            doc = json.load(f)
+        for t in ("atp", "wta"):
+            doc[t]["archive"] = archive_boundary(load_tour(t, args.cache))
+            print(f"{t}: archive through {doc[t]['archive']['through']}, "
+                  f"{len(doc[t]['archive']['pairs'])} boundary pairs")
+        with open(out, "w") as f:
+            json.dump(doc, f, separators=(",", ":"))
+        return
 
     result = run(args.cache)
     both_pass = all(result[t]["verdict"]["pass"] for t in ("atp", "wta"))
@@ -254,8 +285,10 @@ def main():
             print("\ndry run, nothing written")
         elif both_pass:
             payload = {"generated": _date.today().isoformat(),
-                       "atp": {"constants": result["atp"]["constants"], "ratings": result["atp"]["ratings"]},
-                       "wta": {"constants": result["wta"]["constants"], "ratings": result["wta"]["ratings"]}}
+                       "atp": {"constants": result["atp"]["constants"], "ratings": result["atp"]["ratings"],
+                               "archive": archive_boundary(load_tour("atp", args.cache))},
+                       "wta": {"constants": result["wta"]["constants"], "ratings": result["wta"]["ratings"],
+                               "archive": archive_boundary(load_tour("wta", args.cache))}}
             json.dump(payload, open(out, "w"), separators=(",", ":"))
             print(f"\nwrote {os.path.basename(out)} — {len(result['atp']['ratings'])} ATP + "
                   f"{len(result['wta']['ratings'])} WTA players rated")

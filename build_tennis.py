@@ -384,6 +384,119 @@ def archive(matches, published, day=None):
 
 
 # ---------------------------------------------------------------------------
+# results history: everything since the fitted archive ends
+# ---------------------------------------------------------------------------
+#
+# tennis.json is fitted on the Sackmann archive, which stops where its last
+# update stopped (1-2 June 2026 when this was written). Until 8 Oct 2026 a
+# build added only the last six days of ESPN results on top, so every result
+# in between (Wimbledon, the North American swing, the US Open) never reached
+# a rating: Bartunkova's whole summer was missing when Muchova was priced
+# 77.4% against her in the China Open quarterfinal. Every completed ESPN
+# result is now kept in history-tennis/<tour>.json (committed, topped up each
+# build) and applied in date order from where the archive stops. Tested on
+# every match June-Oct 2026, priced pre-match: -0.0043 log loss WTA (p(worse)
+# 0.005), -0.0039 ATP (0.054); claude/tennis-ratings-gap-2026-10-08.md.
+
+HIST_DIR = os.path.join(HERE, "history-tennis")
+HIST_RESCAN = 3          # days re-read every top-up, for results settled late
+BOUNDARY_DAYS = 14       # an archive tournament can still be running this long after it starts
+_HIST_FIELDS = ("id", "date", "time", "p0", "p1", "winner", "tournament", "round", "note")
+
+
+def _hist_path(tour):
+    return os.path.join(HIST_DIR, f"{tour}.json")
+
+
+def hist_key(r):
+    return str(r.get("id") or f"{r['date']}|{r['p0']}|{r['p1']}")
+
+
+def load_history(tour):
+    """({key: result}, date walked through) or ({}, None) if there is none."""
+    try:
+        with open(_hist_path(tour)) as f:
+            doc = json.load(f)
+    except Exception:
+        return {}, None
+    through = date.fromisoformat(doc["through"]) if doc.get("through") else None
+    return {hist_key(m): m for m in doc.get("matches", [])}, through
+
+
+def save_history(tour, games, through):
+    os.makedirs(HIST_DIR, exist_ok=True)
+    rows = sorted(games.values(), key=lambda m: (m["date"], m.get("time") or "", hist_key(m)))
+    tmp = _hist_path(tour) + ".tmp"
+    with open(tmp, "w") as f:
+        json.dump({"through": through.isoformat() if through else None, "matches": rows},
+                  f, separators=(",", ":"))
+    os.replace(tmp, _hist_path(tour))
+
+
+def add_results(games, rows):
+    """Keep every completed result with a winner; later fetches win."""
+    for r in rows:
+        if r.get("completed") and r.get("winner"):
+            games[hist_key(r)] = {k: r.get(k) for k in _HIST_FIELDS}
+
+
+def fetch_ok(tour, start, end, log):
+    """fetch_week, plus whether every day answered. A day that failed must
+    not be marked walked, or its results would never be fetched again."""
+    note = []
+    rows = fetch_week(tour, start, end, log=note)
+    log.extend(note)
+    return rows, not any("ERROR" in line for line in note)
+
+
+def is_walkover(r):
+    """The archive leaves walkovers out, so the build does too."""
+    n = (r.get("note") or "").lower()
+    return "walkover" in n or "w/o" in n
+
+
+def results_to_apply(games, boundary, by_full, by_initial, since=None):
+    """History results the fitted archive does not already hold, matched to
+    the ratings pool, oldest first. Returns (rows, counts).
+
+    boundary is tennis.json's per-tour "archive" entry (tune_tennis.py):
+    {"through": last archive tournament start, "pairs": players who met in a
+    tournament that started in the BOUNDARY_DAYS before it}. Any tournament
+    that began before `through` is in the archive, so earlier results are
+    skipped; up to through + BOUNDARY_DAYS a pair that met in those last
+    tournaments is the same match and is skipped too. Without a boundary (an
+    older tennis.json) only results from `since` are used, as before
+    8 Oct 2026."""
+    counts = {"applied": 0, "unmatched": 0, "archive": 0, "walkover": 0}
+    if boundary:
+        b = date.fromisoformat(boundary["through"])
+        lo = b.isoformat()
+        hi = (b + timedelta(days=BOUNDARY_DAYS)).isoformat()
+        pairs = {frozenset(p) for p in boundary.get("pairs", [])}
+    else:
+        lo, hi, pairs = (since.isoformat() if since else "0000"), "0000", set()
+    out = []
+    for r in sorted(games.values(), key=lambda m: (m["date"], m.get("time") or "", hist_key(m))):
+        if r["date"] < lo:
+            continue
+        if is_walkover(r):
+            counts["walkover"] += 1
+            continue
+        a = match_player(r["p0"], by_full, by_initial)
+        b_ = match_player(r["p1"], by_full, by_initial)
+        if not a or not b_:
+            counts["unmatched"] += 1
+            continue
+        if r["date"] <= hi and frozenset((a, b_)) in pairs:
+            counts["archive"] += 1
+            continue
+        winner = a if r["winner"] == r["p0"] else b_
+        out.append((winner, b_ if winner == a else a))
+        counts["applied"] += 1
+    return out, counts
+
+
+# ---------------------------------------------------------------------------
 # build
 # ---------------------------------------------------------------------------
 
@@ -424,22 +537,36 @@ def main():
         # result since that this script could actually see. Unmatched
         # players are skipped rather than guessed at, same rule as pricing.
         catchup_start = start - timedelta(days=args.catchup_days)
-        catchup_rows = fetch_week(tour, catchup_start, end, log=log)
-        completed = [r for r in catchup_rows if r["completed"] and r["winner"]]
-        completed.sort(key=lambda r: (r["date"], r["time"] or ""))
-        applied, skipped = 0, 0
-        for r in completed:
-            a = match_player(r["p0"], by_full, by_initial)
-            b = match_player(r["p1"], by_full, by_initial)
-            if not a or not b:
-                skipped += 1
-                continue
-            winner = a if r["winner"] == r["p0"] else b
-            loser = b if winner == a else a
-            apply_result(pool, winner, loser, r["surface"], k_base)
-            applied += 1
-        log.append(f"{tour}: {applied} completed results applied to ratings, "
-                    f"{skipped} skipped (no rating on file for a side)")
+        boundary = ratings[tour].get("archive")
+        games, walked = load_history(tour)
+        ok = True
+        # Fill whatever lies between the history (or, the first time, the
+        # archive's end) and this build's window: a first walk, or days the
+        # build did not run.
+        gap_from = (walked - timedelta(days=HIST_RESCAN) if walked else
+                    date.fromisoformat(boundary["through"]) if boundary else None)
+        if gap_from and gap_from < catchup_start:
+            gap_rows, gap_ok = fetch_ok(tour, gap_from, catchup_start - timedelta(days=1), log)
+            add_results(games, gap_rows)
+            ok = ok and gap_ok
+        catchup_rows, window_ok = fetch_ok(tour, catchup_start, end, log)
+        add_results(games, catchup_rows)
+        ok = ok and window_ok
+        if boundary:
+            save_history(tour, games, (start - timedelta(days=1)) if ok else walked)
+        else:
+            log.append(f"{tour}: WARNING tennis.json has no archive boundary "
+                       f"(run tune_tennis.py --boundary): only the last "
+                       f"{args.catchup_days} days of results reach the ratings")
+        todo, counts = results_to_apply(games, boundary, by_full, by_initial, since=catchup_start)
+        for winner, loser in todo:
+            # ESPN carries no surface; Hard, as before (a tournament lookup
+            # was tested 8 Oct 2026 and did not help)
+            apply_result(pool, winner, loser, "Hard", k_base)
+        log.append(f"{tour}: {counts['applied']} results since the archive applied to ratings "
+                   f"({len(games)} in history, walked through {walked}), "
+                   f"{counts['unmatched']} skipped (no rating on file for a side), "
+                   f"{counts['archive']} already in the archive, {counts['walkover']} walkovers")
 
         rows = [r for r in catchup_rows if r["date"] >= start.isoformat()]
         dropped = 0

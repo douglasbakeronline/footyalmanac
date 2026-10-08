@@ -64,6 +64,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |
 | `claude/multi-sport.md` | NFL, baseball, basketball, rugby: the model, its evidence, which sports earn a Daily List place and why. Read before touching `sports.py` or `sports.json`. |
 | `claude/tennis-record.md` | How tennis picks are archived and graded, the publish-before-start rule, the seed from git history. Read before touching `build_tennis.py` or `score_tennis.py`. |
+| `claude/tennis-ratings-gap-2026-10-08.md` | Why tennis ratings missed every result from June to October, `history-tennis/`, the archive boundary, the evidence, hot-form signals tested and rejected. Read before touching how `build_tennis.py` updates ratings. |
 | `claude/evaluation-audit.md` | The 2 Oct 2026 audit: prior/test overlaps, the tune/backtest calculation mismatch, same-day leakage, the archive's publish-time gap, what was fixed, before/after numbers, open questions. Read before touching `replay.py`, `tune.py`, `backtest.py` or the prediction archive. |
 | `claude/data-integrity.md` | The two-source name-matching failures, the season-so-far cache, `nametest.py`, matching rules. Read before touching `sources.py` or anything that looks up a club. |
 | `claude/tuning-evidence.md` | What every constant is worth, the calibration curve, what was tested and rejected, the tuning rules. Read before touching `engine.py` constants, `tune.py` or `calibration.json`. |
@@ -96,7 +97,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
 - `groupings.py` the Odds tab (4 Oct 2026): five-leg groups from tested picks, priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI before the archive commit, archives each day's first groups to `groupings-archive/` and grades them into `groupings-record.json` (both bot-written). Prices never feed a model.
-- `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings. Football must never depend on it.
+- `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings (with each tour's archive boundary). The build applies every ESPN result since the archive ends from `history-tennis/`. `tools/tennis_gap_eval.py` is the evidence. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
 - `rankings.py` FIFA and ATP/WTA world rankings: fetch, and the tested adjustments (FIFA for men's internationals, ATP for men's tennis; WTA shown only).
@@ -121,8 +122,8 @@ Written by the bot, never hand-edit: `predictions/`, `current/`,
 `record.json`, `tennis-data.js`, `tuning-report.json`, `predictions-tennis/`,
 `tennis-record.json`, `tennis-record.js`, `predictions-sports/`,
 `sports-data.js`, `sports-record.json`, `sports-record.js`, `fifa-rankings.json`, `groupings-archive/`, `groupings-record.json`
-(refreshed by the build when FIFA publishes). `history-sports/`
-is topped up by CI; its first walk was committed by hand. `history/` is written
+(refreshed by the build when FIFA publishes). `history-sports/` and
+`history-tennis/` are topped up by CI; their first walks were committed by hand. `history/` is written
 by `backfill.py` and committed by hand.
 
 ## Commands
@@ -272,6 +273,10 @@ after 3 games) is +0.005 log loss worse on both; FORM_MAX 0.10 a wash. What
 passed was this season counting sooner (SHRINK_FULL_SEASON 6 -> 4, shipped).
 Bottom-10%-away and weak-goal-record penalties (30 Sep 2026): worse at every
 strength, the ratings already carry it. See `claude/tuning-evidence.md`.
+Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
+Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
+zero. The real gap was four months of missing results, now fixed. See
+`claude/tennis-ratings-gap-2026-10-08.md`.
 
 ## Open items
 
@@ -285,6 +290,10 @@ strength, the ratings already carry it. See `claude/tuning-evidence.md`.
   confidence. Currently they do, deliberately. Douglas's call.
 - Tier ladder duplication (rule 7) could be collapsed to one definition.
 - "Lean or better only" filter on the fixtures board, not built.
+- Tennis results from ESPN carry no surface and go in as hard court; for ATP
+  that hurt over the grass season (`claude/tennis-ratings-gap-2026-10-08.md`).
+  Needs a surface source before June 2027. The Sackmann archive behind
+  `tennis.json` has not updated since 1-2 June 2026.
 - No dark theme. The flag sprite covers every country code in `engine.LEAGUES`
   (84 symbols); a new league with a new `iso` needs a symbol added.
 

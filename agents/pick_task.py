@@ -84,7 +84,7 @@ STANDING = {
         + ". Keep it short and evidence-led."),
 }
 PROTECTED = ["record.json", "predictions/", "predictions-sports/", "predictions-tennis/", "current/", "history/",
-             "history-sports/", "dashboard.html", "adjustments.json", "calibration.json", "tuning-report.json",
+             "history-sports/", "history-tennis/", "dashboard.html", "adjustments.json", "calibration.json", "tuning-report.json",
              "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js", ".github/",
              "agents/", "CLAUDE.md", "AGENTS.md"]
 MAX_OPEN = 6

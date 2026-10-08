@@ -239,6 +239,8 @@ jobs:
           # The tennis archive and its record, same reason again.
           cp -r predictions-tennis /tmp/archive/ 2>/dev/null || true
           cp tennis-record.json tennis-record.js /tmp/archive/ 2>/dev/null || true
+          # Every tennis result since the fitted archive ends (build_tennis.py)
+          cp -r history-tennis /tmp/archive/ 2>/dev/null || true
           cp -r history-sports predictions-sports /tmp/archive/ 2>/dev/null || true
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
@@ -261,6 +263,8 @@ jobs:
             mkdir -p predictions-tennis
             cp -r /tmp/archive/predictions-tennis/. predictions-tennis/ 2>/dev/null || true
             cp /tmp/archive/tennis-record.json /tmp/archive/tennis-record.js . 2>/dev/null || true
+            mkdir -p history-tennis
+            cp -r /tmp/archive/history-tennis/. history-tennis/ 2>/dev/null || true
             mkdir -p history-sports predictions-sports
             cp -r /tmp/archive/history-sports/. history-sports/ 2>/dev/null || true
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
@@ -270,7 +274,7 @@ jobs:
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
             cp /tmp/archive/groupings-record.json . 2>/dev/null || true
             git add -A predictions current record.json tennis-data.js \
-                       predictions-tennis tennis-record.json tennis-record.js \
+                       predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
