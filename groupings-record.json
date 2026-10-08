@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-08T21:52:26Z",
+ "graded": "2026-10-08T23:53:27Z",
  "overall": {
-  "groups": 12,
+  "groups": 16,
   "settled": 12,
   "won": 3,
   "lost": 9,
-  "pending": 0,
+  "pending": 4,
   "legs": 57,
   "legsWon": 42,
   "returned": 9.65,
@@ -14,11 +14,11 @@
  },
  "byBand": {
   "Steady": {
-   "groups": 5,
+   "groups": 7,
    "settled": 5,
    "won": 2,
    "lost": 3,
-   "pending": 0,
+   "pending": 2,
    "legs": 24,
    "legsWon": 20,
    "returned": 5.39,
@@ -26,11 +26,11 @@
    "expected": 1.82
   },
   "Balanced": {
-   "groups": 3,
+   "groups": 4,
    "settled": 3,
    "won": 1,
    "lost": 2,
-   "pending": 0,
+   "pending": 1,
    "legs": 14,
    "legsWon": 9,
    "returned": 4.26,
@@ -38,11 +38,11 @@
    "expected": 0.83
   },
   "Stretch": {
-   "groups": 4,
+   "groups": 5,
    "settled": 4,
    "won": 0,
    "lost": 4,
-   "pending": 0,
+   "pending": 1,
    "legs": 19,
    "legsWon": 13,
    "returned": 0,
@@ -51,11 +51,11 @@
   }
  },
  "firstChoice": {
-  "groups": 8,
+  "groups": 11,
   "settled": 8,
   "won": 3,
   "lost": 5,
-  "pending": 0,
+  "pending": 3,
   "legs": 38,
   "legsWon": 31,
   "returned": 9.65,
@@ -63,6 +63,304 @@
   "expected": 2.65
  },
  "days": [
+  {
+   "date": "2026-10-09",
+   "published": "2026-10-08T23:53:08Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 2.97,
+     "p": 0.4134,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Alexander Zverev",
+       "event": "Yibing Wu v Alexander Zverev",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-09T05:30:00Z",
+       "odds": 1.2,
+       "est": true,
+       "p": 0.8354,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Lorenzo Musetti",
+       "event": "Lorenzo Musetti v Yi Zhou",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-09T11:30:00Z",
+       "odds": 1.16,
+       "est": true,
+       "p": 0.9177,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Varketili",
+       "event": "Varketili v Dinamo Tbilisi II",
+       "sport": "football",
+       "comp": "Liga 3",
+       "when": "2026-10-09T17:00:00Z",
+       "odds": 1.44,
+       "est": false,
+       "p": 0.7835,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Almere City",
+       "event": "Almere City v FC Eindhoven",
+       "sport": "football",
+       "comp": "Eerste Divisie",
+       "when": "2026-10-09T18:00:00Z",
+       "odds": 1.36,
+       "est": false,
+       "p": 0.766,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "La Fiorita",
+       "event": "La Fiorita v Murata",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-10-09T19:15:00Z",
+       "odds": 1.09,
+       "est": false,
+       "p": 0.8984,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 4.06,
+     "p": 0.274,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Ben Shelton",
+       "event": "Daniel Altmaier v Ben Shelton",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-09T04:00:00Z",
+       "odds": 1.21,
+       "est": true,
+       "p": 0.8327,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Jwaaya",
+       "event": "Jwaaya v Al Mabarrah",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-09T13:30:00Z",
+       "odds": 1.33,
+       "est": true,
+       "p": 0.7823,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "PSV",
+       "event": "PSV v SC Heerenveen",
+       "sport": "football",
+       "comp": "Eredivisie",
+       "when": "2026-10-09T18:00:00Z",
+       "odds": 1.23,
+       "est": false,
+       "p": 0.7687,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Cork City",
+       "event": "Cork City v Finn Harps",
+       "sport": "football",
+       "comp": "First Division",
+       "when": "2026-10-09T18:45:00Z",
+       "odds": 1.12,
+       "est": false,
+       "p": 0.8079,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Montevideo City Torque",
+       "event": "Montevideo City Torque v Danubio",
+       "sport": "football",
+       "comp": "Primera División",
+       "when": "2026-10-09T20:00:00Z",
+       "odds": 1.83,
+       "est": false,
+       "p": 0.6772,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "main",
+     "odds": 7.11,
+     "p": 0.2065,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Jakub Mensik",
+       "event": "Jakub Mensik v Miomir Kecmanovic",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-09T08:30:00Z",
+       "odds": 1.39,
+       "est": true,
+       "p": 0.7693,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Al Arabi",
+       "event": "Al Arabi v Gulf United",
+       "sport": "football",
+       "comp": "Division 1",
+       "when": "2026-10-09T13:15:00Z",
+       "odds": 1.67,
+       "est": false,
+       "p": 0.679,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Tartu Welco",
+       "event": "Tartu Welco v Elva",
+       "sport": "football",
+       "comp": "Esiliiga A",
+       "when": "2026-10-09T16:30:00Z",
+       "odds": 1.61,
+       "est": false,
+       "p": 0.679,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Cham",
+       "event": "Cham v DJK Bamberg",
+       "sport": "football",
+       "comp": "Oberliga - Bayern Nord",
+       "when": "2026-10-09T17:00:00Z",
+       "odds": 1.22,
+       "est": true,
+       "p": 0.8081,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Louisville Cardinals",
+       "event": "Louisville Cardinals v Florida State Seminoles",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-09T23:00Z",
+       "odds": 1.56,
+       "est": false,
+       "p": 0.7205,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 3.39,
+     "p": 0.2301,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Novak Djokovic",
+       "event": "Hubert Hurkacz v Novak Djokovic",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-09T10:00:00Z",
+       "odds": 1.32,
+       "est": true,
+       "p": 0.7724,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Pakhtakor",
+       "event": "Pakhtakor v Bunyodkor",
+       "sport": "football",
+       "comp": "Super League",
+       "when": "2026-10-09T14:00:00Z",
+       "odds": 1.17,
+       "est": false,
+       "p": 0.7398,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Borussia Dortmund",
+       "event": "Borussia Dortmund v SV Werder Bremen",
+       "sport": "football",
+       "comp": "Bundesliga",
+       "when": "2026-10-09T18:30:00Z",
+       "odds": 1.32,
+       "est": false,
+       "p": 0.7209,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Glasgow Warriors",
+       "event": "Glasgow Warriors v Connacht",
+       "sport": "rugby",
+       "comp": "URC",
+       "when": "2026-10-09T18:45Z",
+       "odds": 1.28,
+       "est": true,
+       "p": 0.755,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Folgore",
+       "event": "Pennarossa v Folgore",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-10-09T19:15:00Z",
+       "odds": 1.3,
+       "est": false,
+       "p": 0.7399,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-08",
    "published": "2026-10-07T23:42:37Z",
