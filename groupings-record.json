@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-09T11:55:55Z",
+ "graded": "2026-10-09T17:38:59Z",
  "overall": {
   "groups": 16,
-  "settled": 13,
+  "settled": 14,
   "won": 3,
-  "lost": 10,
-  "pending": 3,
-  "legs": 62,
-  "legsWon": 46,
+  "lost": 11,
+  "pending": 2,
+  "legs": 66,
+  "legsWon": 49,
   "returned": 9.65,
-  "staked": 13,
-  "expected": 3.64
+  "staked": 14,
+  "expected": 4.06
  },
  "byBand": {
   "Steady": {
    "groups": 7,
-   "settled": 6,
+   "settled": 7,
    "won": 2,
-   "lost": 4,
-   "pending": 1,
-   "legs": 27,
-   "legsWon": 22,
+   "lost": 5,
+   "pending": 0,
+   "legs": 29,
+   "legsWon": 23,
    "returned": 5.39,
-   "staked": 6,
-   "expected": 2.05
+   "staked": 7,
+   "expected": 2.46
   },
   "Balanced": {
    "groups": 4,
@@ -31,8 +31,8 @@
    "won": 1,
    "lost": 2,
    "pending": 1,
-   "legs": 15,
-   "legsWon": 10,
+   "legs": 16,
+   "legsWon": 11,
    "returned": 4.26,
    "staked": 3,
    "expected": 0.83
@@ -43,8 +43,8 @@
    "won": 0,
    "lost": 4,
    "pending": 1,
-   "legs": 20,
-   "legsWon": 14,
+   "legs": 21,
+   "legsWon": 15,
    "returned": 0,
    "staked": 4,
    "expected": 0.77
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 11,
-  "settled": 8,
+  "settled": 9,
   "won": 3,
-  "lost": 5,
-  "pending": 3,
-  "legs": 42,
-  "legsWon": 35,
+  "lost": 6,
+  "pending": 2,
+  "legs": 45,
+  "legsWon": 37,
   "returned": 9.65,
-  "staked": 8,
-  "expected": 2.65
+  "staked": 9,
+  "expected": 3.07
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 2.97,
      "p": 0.4134,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 4,
+     "legsLost": 1,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Alexander Zverev",
@@ -99,8 +99,8 @@
        "odds": 1.16,
        "est": true,
        "p": 0.9177,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Yi Zhou (CHN) bt (24) Lorenzo Musetti (ITA) 7-6 (9-7) 3-6 7-6 (7-1)"
       },
       {
        "pick": "Varketili",
@@ -147,9 +147,9 @@
      "p": 0.274,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -172,8 +172,8 @@
        "odds": 1.33,
        "est": true,
        "p": 0.7823,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "PSV",
@@ -220,9 +220,9 @@
      "p": 0.2065,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Jakub Mensik",
@@ -245,8 +245,8 @@
        "odds": 1.67,
        "est": false,
        "p": 0.679,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Tartu Welco",
@@ -293,9 +293,9 @@
      "p": 0.2301,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Novak Djokovic",
@@ -318,8 +318,8 @@
        "odds": 1.17,
        "est": false,
        "p": 0.7398,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Borussia Dortmund",
