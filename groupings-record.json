@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-09T21:31:50Z",
+ "graded": "2026-10-09T23:27:11Z",
  "overall": {
-  "groups": 16,
+  "groups": 22,
   "settled": 14,
   "won": 3,
   "lost": 11,
-  "pending": 2,
+  "pending": 8,
   "legs": 71,
   "legsWon": 54,
   "returned": 9.65,
@@ -14,11 +14,11 @@
  },
  "byBand": {
   "Steady": {
-   "groups": 7,
+   "groups": 9,
    "settled": 7,
    "won": 2,
    "lost": 5,
-   "pending": 0,
+   "pending": 2,
    "legs": 31,
    "legsWon": 25,
    "returned": 5.39,
@@ -26,11 +26,11 @@
    "expected": 2.46
   },
   "Balanced": {
-   "groups": 4,
+   "groups": 6,
    "settled": 3,
    "won": 1,
    "lost": 2,
-   "pending": 1,
+   "pending": 3,
    "legs": 17,
    "legsWon": 12,
    "returned": 4.26,
@@ -38,11 +38,11 @@
    "expected": 0.83
   },
   "Stretch": {
-   "groups": 5,
+   "groups": 7,
    "settled": 4,
    "won": 0,
    "lost": 4,
-   "pending": 1,
+   "pending": 3,
    "legs": 23,
    "legsWon": 17,
    "returned": 0,
@@ -51,11 +51,11 @@
   }
  },
  "firstChoice": {
-  "groups": 11,
+  "groups": 14,
   "settled": 9,
   "won": 3,
   "lost": 6,
-  "pending": 2,
+  "pending": 5,
   "legs": 49,
   "legsWon": 41,
   "returned": 9.65,
@@ -63,6 +63,450 @@
   "expected": 3.07
  },
  "days": [
+  {
+   "date": "2026-10-10",
+   "published": "2026-10-09T23:26:36Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 2.66,
+     "p": 0.5793,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "New Zealand",
+       "event": "New Zealand v Australia",
+       "sport": "rugby",
+       "comp": "Test match",
+       "when": "2026-10-10T06:10Z",
+       "odds": 1.15,
+       "est": true,
+       "p": 0.8966,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Kitchee",
+       "event": "Kitchee v Hong Kong",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-10T08:00:00Z",
+       "odds": 1.11,
+       "est": false,
+       "p": 0.899,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Carlos Alcaraz",
+       "event": "Carlos Alcaraz v Juan Manuel Cerundolo",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-10T10:00:00Z",
+       "odds": 1.12,
+       "est": true,
+       "p": 0.9303,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Kairat Almaty",
+       "event": "Kairat Almaty v Zhetysu",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-10T12:00:00Z",
+       "odds": 1.21,
+       "est": false,
+       "p": 0.8974,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Pittsburgh Panthers",
+       "event": "Pittsburgh Panthers v North Carolina Tar Heels",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T16:00Z",
+       "odds": 1.54,
+       "est": false,
+       "p": 0.8608,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 4.3,
+     "p": 0.4536,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Laktaši",
+       "event": "Laktaši v Omarska",
+       "sport": "football",
+       "comp": "1st League - RS",
+       "when": "2026-10-10T13:00:00Z",
+       "odds": 1.1,
+       "est": false,
+       "p": 0.8975,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Hereford",
+       "event": "Hereford v Hednesford Town",
+       "sport": "football",
+       "comp": "National League North",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 2.06,
+       "est": false,
+       "p": 0.7568,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "East Carolina Pirates",
+       "event": "East Carolina Pirates v Rice Owls",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T17:00Z",
+       "odds": 1.26,
+       "est": false,
+       "p": 0.863,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Leinster",
+       "event": "Leinster v Cardiff Blues",
+       "sport": "rugby",
+       "comp": "URC",
+       "when": "2026-10-10T18:45Z",
+       "odds": 1.14,
+       "est": true,
+       "p": 0.8991,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "James Madison Dukes",
+       "event": "Georgia Southern Eagles v James Madison Dukes",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T23:30Z",
+       "odds": 1.32,
+       "est": false,
+       "p": 0.8607,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "main",
+     "odds": 7.24,
+     "p": 0.3816,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Täby",
+       "event": "Täby v Lidingö",
+       "sport": "football",
+       "comp": "Division 2 - Norra Svealand",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 1.5,
+       "est": false,
+       "p": 0.7826,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Billericay Town",
+       "event": "Billericay Town v Farnborough",
+       "sport": "football",
+       "comp": "National League South",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 1.7,
+       "est": false,
+       "p": 0.7627,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Racing Club Warwick",
+       "event": "Racing Club Warwick v Leiston",
+       "sport": "football",
+       "comp": "Southern League Premier Central",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 2.55,
+       "est": false,
+       "p": 0.7298,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Notre Dame Fighting Irish",
+       "event": "Notre Dame Fighting Irish v Stanford Cardinal",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T19:30Z",
+       "odds": 1.06,
+       "est": true,
+       "p": 0.935,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ohio State Buckeyes",
+       "event": "Ohio State Buckeyes v Maryland Terrapins",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T20:15Z",
+       "odds": 1.05,
+       "est": true,
+       "p": 0.937,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 2.78,
+     "p": 0.414,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Arthur Fils",
+       "event": "Pavel Kotov v Arthur Fils",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-10T07:00:00Z",
+       "odds": 1.19,
+       "est": true,
+       "p": 0.8369,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Gyulai Termál",
+       "event": "Gyulai Termál v Újpest II",
+       "sport": "football",
+       "comp": "NB III - Southeast",
+       "when": "2026-10-10T09:00:00Z",
+       "odds": 1.38,
+       "est": false,
+       "p": 0.7832,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Franke",
+       "event": "Franke v Helges",
+       "sport": "football",
+       "comp": "Division 2 - Norra Svealand",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 1.34,
+       "est": false,
+       "p": 0.7836,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Northwestern Wildcats",
+       "event": "Northwestern Wildcats v Ball State Cardinals",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T16:30Z",
+       "odds": 1.08,
+       "est": true,
+       "p": 0.9332,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Western Michigan Broncos",
+       "event": "Western Michigan Broncos v Kent State Golden Flashes",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T19:30Z",
+       "odds": 1.17,
+       "est": false,
+       "p": 0.8637,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "alternative",
+     "odds": 4.3,
+     "p": 0.3499,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "BYU Cougars",
+       "event": "BYU Cougars v Iowa State Cyclones",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T02:15Z",
+       "odds": 1.24,
+       "est": true,
+       "p": 0.8571,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Felix Auger Aliassime",
+       "event": "Felix Auger Aliassime v Camilo Ugo Carabelli",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-10T04:00:00Z",
+       "odds": 1.24,
+       "est": true,
+       "p": 0.8266,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Bodo/Glimt",
+       "event": "Bodo/Glimt v Kristiansund BK",
+       "sport": "football",
+       "comp": "Eliteserien",
+       "when": "2026-10-10T14:00:00Z",
+       "odds": 1.06,
+       "est": false,
+       "p": 0.8363,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Independiente del Valle",
+       "event": "Independiente del Valle v Aucas",
+       "sport": "football",
+       "comp": "Liga Pro",
+       "when": "2026-10-10T16:30:00Z",
+       "odds": 1.49,
+       "est": false,
+       "p": 0.7675,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ohio Bobcats",
+       "event": "Ohio Bobcats v Central Michigan Chippewas",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T19:30Z",
+       "odds": 1.77,
+       "est": false,
+       "p": 0.7694,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "alternative",
+     "odds": 7.29,
+     "p": 0.2815,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Taylor Fritz",
+       "event": "Taylor Fritz v Matteo Arnaldi",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 2",
+       "when": "2026-10-10T05:30:00Z",
+       "odds": 1.35,
+       "est": true,
+       "p": 0.7724,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Rot-weiss Oberhausen",
+       "event": "Rot-weiss Oberhausen v FC Bocholt",
+       "sport": "football",
+       "comp": "Regionalliga - West",
+       "when": "2026-10-10T12:00:00Z",
+       "odds": 1.68,
+       "est": false,
+       "p": 0.7406,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Bicskei",
+       "event": "Bicskei v Pápai Perutz",
+       "sport": "football",
+       "comp": "NB III - Northwest",
+       "when": "2026-10-10T12:00:00Z",
+       "odds": 1.62,
+       "est": false,
+       "p": 0.7398,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Toledo Rockets",
+       "event": "Toledo Rockets v Buffalo Bulls",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T19:30Z",
+       "odds": 1.09,
+       "est": false,
+       "p": 0.8659,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Navy Midshipmen",
+       "event": "Navy Midshipmen v Tulsa Golden Hurricane",
+       "sport": "cfb",
+       "comp": "NCAA FBS",
+       "when": "2026-10-10T19:30Z",
+       "odds": 1.82,
+       "est": false,
+       "p": 0.7682,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-09",
    "published": "2026-10-08T23:53:08Z",
