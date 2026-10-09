@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-09T02:10:41Z",
+ "graded": "2026-10-09T06:02:45Z",
  "overall": {
   "groups": 16,
   "settled": 12,
   "won": 3,
   "lost": 9,
   "pending": 4,
-  "legs": 57,
-  "legsWon": 42,
+  "legs": 58,
+  "legsWon": 43,
   "returned": 9.65,
   "staked": 12,
   "expected": 3.41
@@ -19,8 +19,8 @@
    "won": 2,
    "lost": 3,
    "pending": 2,
-   "legs": 24,
-   "legsWon": 20,
+   "legs": 25,
+   "legsWon": 21,
    "returned": 5.39,
    "staked": 5,
    "expected": 1.82
@@ -56,8 +56,8 @@
   "won": 3,
   "lost": 5,
   "pending": 3,
-  "legs": 38,
-  "legsWon": 31,
+  "legs": 39,
+  "legsWon": 32,
   "returned": 9.65,
   "staked": 8,
   "expected": 2.65
@@ -372,9 +372,9 @@
      "p": 0.3343,
      "status": "lost",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Florida International Panthers",
@@ -433,8 +433,8 @@
        "odds": 1.18,
        "est": false,
        "p": 0.9217,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "35-3"
       }
      ]
     }
