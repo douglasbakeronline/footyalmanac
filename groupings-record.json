@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-09T06:02:45Z",
+ "graded": "2026-10-09T11:55:55Z",
  "overall": {
   "groups": 16,
-  "settled": 12,
+  "settled": 13,
   "won": 3,
-  "lost": 9,
-  "pending": 4,
-  "legs": 58,
-  "legsWon": 43,
+  "lost": 10,
+  "pending": 3,
+  "legs": 62,
+  "legsWon": 46,
   "returned": 9.65,
-  "staked": 12,
-  "expected": 3.41
+  "staked": 13,
+  "expected": 3.64
  },
  "byBand": {
   "Steady": {
    "groups": 7,
-   "settled": 5,
+   "settled": 6,
    "won": 2,
-   "lost": 3,
-   "pending": 2,
-   "legs": 25,
-   "legsWon": 21,
+   "lost": 4,
+   "pending": 1,
+   "legs": 27,
+   "legsWon": 22,
    "returned": 5.39,
-   "staked": 5,
-   "expected": 1.82
+   "staked": 6,
+   "expected": 2.05
   },
   "Balanced": {
    "groups": 4,
@@ -31,8 +31,8 @@
    "won": 1,
    "lost": 2,
    "pending": 1,
-   "legs": 14,
-   "legsWon": 9,
+   "legs": 15,
+   "legsWon": 10,
    "returned": 4.26,
    "staked": 3,
    "expected": 0.83
@@ -43,8 +43,8 @@
    "won": 0,
    "lost": 4,
    "pending": 1,
-   "legs": 19,
-   "legsWon": 13,
+   "legs": 20,
+   "legsWon": 14,
    "returned": 0,
    "staked": 4,
    "expected": 0.77
@@ -56,8 +56,8 @@
   "won": 3,
   "lost": 5,
   "pending": 3,
-  "legs": 39,
-  "legsWon": 32,
+  "legs": 42,
+  "legsWon": 35,
   "returned": 9.65,
   "staked": 8,
   "expected": 2.65
@@ -74,9 +74,9 @@
      "p": 0.4134,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Alexander Zverev",
@@ -87,8 +87,8 @@
        "odds": 1.2,
        "est": true,
        "p": 0.8354,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Alexander Zverev (GER) bt Wu Yibing (CHN) 6-4 7-6 (7-4)"
       },
       {
        "pick": "Lorenzo Musetti",
@@ -147,9 +147,9 @@
      "p": 0.274,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -160,8 +160,8 @@
        "odds": 1.21,
        "est": true,
        "p": 0.8327,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(3) Ben Shelton (USA) bt Daniel Altmaier (GER) 6-3 7-6 (8-6)"
       },
       {
        "pick": "Jwaaya",
@@ -220,9 +220,9 @@
      "p": 0.2065,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Jakub Mensik",
@@ -233,8 +233,8 @@
        "odds": 1.39,
        "est": true,
        "p": 0.7693,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(13) Jakub Mensik (CZE) bt Miomir Kecmanovic (SER) 6-3 6-3"
       },
       {
        "pick": "Al Arabi",
@@ -291,11 +291,11 @@
      "rank": "alternative",
      "odds": 3.39,
      "p": 0.2301,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Novak Djokovic",
@@ -306,8 +306,8 @@
        "odds": 1.32,
        "est": true,
        "p": 0.7724,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Hubert Hurkacz (POL) bt (10) Novak Djokovic (SER) 6-4 6-3"
       },
       {
        "pick": "Pakhtakor",
