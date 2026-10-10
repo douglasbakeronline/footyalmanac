@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-10T01:49:41Z",
+ "graded": "2026-10-10T05:46:02Z",
  "overall": {
   "groups": 22,
-  "settled": 15,
-  "won": 4,
+  "settled": 16,
+  "won": 5,
   "lost": 11,
-  "pending": 7,
-  "legs": 76,
-  "legsWon": 58,
-  "returned": 13.71,
-  "staked": 15,
-  "expected": 4.33
+  "pending": 6,
+  "legs": 78,
+  "legsWon": 60,
+  "returned": 20.82,
+  "staked": 16,
+  "expected": 4.54
  },
  "byBand": {
   "Steady": {
@@ -31,36 +31,36 @@
    "won": 2,
    "lost": 2,
    "pending": 2,
-   "legs": 19,
-   "legsWon": 14,
+   "legs": 20,
+   "legsWon": 15,
    "returned": 8.32,
    "staked": 4,
    "expected": 1.1
   },
   "Stretch": {
    "groups": 7,
-   "settled": 4,
-   "won": 0,
+   "settled": 5,
+   "won": 1,
    "lost": 4,
-   "pending": 3,
-   "legs": 23,
-   "legsWon": 17,
-   "returned": 0,
-   "staked": 4,
-   "expected": 0.77
+   "pending": 2,
+   "legs": 24,
+   "legsWon": 18,
+   "returned": 7.11,
+   "staked": 5,
+   "expected": 0.97
   }
  },
  "firstChoice": {
   "groups": 14,
-  "settled": 10,
-  "won": 4,
+  "settled": 11,
+  "won": 5,
   "lost": 6,
-  "pending": 4,
-  "legs": 52,
-  "legsWon": 44,
-  "returned": 13.71,
-  "staked": 10,
-  "expected": 3.34
+  "pending": 3,
+  "legs": 53,
+  "legsWon": 45,
+  "returned": 20.82,
+  "staked": 11,
+  "expected": 3.55
  },
  "days": [
   {
@@ -366,9 +366,9 @@
      "p": 0.3499,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "BYU Cougars",
@@ -379,8 +379,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8571,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "24-10"
       },
       {
        "pick": "Felix Auger Aliassime",
@@ -662,11 +662,11 @@
      "rank": "main",
      "odds": 7.11,
      "p": 0.2065,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 4,
+     "status": "won",
+     "paid": 7.11,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Jakub Mensik",
@@ -725,8 +725,8 @@
        "odds": 1.56,
        "est": false,
        "p": 0.7205,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "44-20"
       }
      ]
     },
