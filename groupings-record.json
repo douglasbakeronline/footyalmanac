@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-10T11:16:18Z",
+ "graded": "2026-10-10T16:27:51Z",
  "overall": {
   "groups": 22,
-  "settled": 16,
+  "settled": 18,
   "won": 5,
-  "lost": 11,
-  "pending": 6,
-  "legs": 83,
-  "legsWon": 65,
+  "lost": 13,
+  "pending": 4,
+  "legs": 92,
+  "legsWon": 71,
   "returned": 20.82,
-  "staked": 16,
-  "expected": 4.54
+  "staked": 18,
+  "expected": 5.37
  },
  "byBand": {
   "Steady": {
@@ -19,48 +19,48 @@
    "won": 2,
    "lost": 5,
    "pending": 2,
-   "legs": 37,
-   "legsWon": 30,
+   "legs": 40,
+   "legsWon": 33,
    "returned": 5.39,
    "staked": 7,
    "expected": 2.46
   },
   "Balanced": {
    "groups": 6,
-   "settled": 4,
+   "settled": 5,
    "won": 2,
-   "lost": 2,
-   "pending": 2,
-   "legs": 21,
+   "lost": 3,
+   "pending": 1,
+   "legs": 22,
    "legsWon": 16,
    "returned": 8.32,
-   "staked": 4,
-   "expected": 1.1
+   "staked": 5,
+   "expected": 1.55
   },
   "Stretch": {
    "groups": 7,
-   "settled": 5,
+   "settled": 6,
    "won": 1,
-   "lost": 4,
-   "pending": 2,
-   "legs": 25,
-   "legsWon": 19,
+   "lost": 5,
+   "pending": 1,
+   "legs": 30,
+   "legsWon": 22,
    "returned": 7.11,
-   "staked": 5,
-   "expected": 0.97
+   "staked": 6,
+   "expected": 1.35
   }
  },
  "firstChoice": {
   "groups": 14,
-  "settled": 11,
+  "settled": 13,
   "won": 5,
-  "lost": 6,
-  "pending": 3,
-  "legs": 54,
-  "legsWon": 46,
+  "lost": 8,
+  "pending": 1,
+  "legs": 60,
+  "legsWon": 49,
   "returned": 20.82,
-  "staked": 11,
-  "expected": 3.55
+  "staked": 13,
+  "expected": 4.38
  },
  "days": [
   {
@@ -74,9 +74,9 @@
      "p": 0.5793,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "New Zealand",
@@ -111,8 +111,8 @@
        "odds": 1.12,
        "est": true,
        "p": 0.9303,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(2) Carlos Alcaraz (ESP) bt Juan Manuel Cerundolo (ARG) 6-3 6-3"
       },
       {
        "pick": "Kairat Almaty",
@@ -123,8 +123,8 @@
        "odds": 1.21,
        "est": false,
        "p": 0.8974,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Pittsburgh Panthers",
@@ -145,11 +145,11 @@
      "rank": "main",
      "odds": 4.3,
      "p": 0.4536,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Laktaši",
@@ -172,8 +172,8 @@
        "odds": 2.06,
        "est": false,
        "p": 0.7568,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-1"
       },
       {
        "pick": "East Carolina Pirates",
@@ -218,11 +218,11 @@
      "rank": "main",
      "odds": 7.24,
      "p": 0.3816,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 1,
+     "legsLost": 2,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Täby",
@@ -233,8 +233,8 @@
        "odds": 1.5,
        "est": false,
        "p": 0.7826,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-3"
       },
       {
        "pick": "Billericay Town",
@@ -245,8 +245,8 @@
        "odds": 1.7,
        "est": false,
        "p": 0.7627,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Racing Club Warwick",
@@ -257,8 +257,8 @@
        "odds": 2.55,
        "est": false,
        "p": 0.7298,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "Notre Dame Fighting Irish",
@@ -293,9 +293,9 @@
      "p": 0.414,
      "status": "pending",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Arthur Fils",
@@ -330,8 +330,8 @@
        "odds": 1.34,
        "est": false,
        "p": 0.7836,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-2"
       },
       {
        "pick": "Northwestern Wildcats",
@@ -439,9 +439,9 @@
      "p": 0.2815,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Taylor Fritz",
@@ -464,8 +464,8 @@
        "odds": 1.68,
        "est": false,
        "p": 0.7406,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Bicskei",
@@ -476,8 +476,8 @@
        "odds": 1.62,
        "est": false,
        "p": 0.7398,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Toledo Rockets",
