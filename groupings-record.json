@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-10T05:46:02Z",
+ "graded": "2026-10-10T11:16:18Z",
  "overall": {
   "groups": 22,
   "settled": 16,
   "won": 5,
   "lost": 11,
   "pending": 6,
-  "legs": 78,
-  "legsWon": 60,
+  "legs": 83,
+  "legsWon": 65,
   "returned": 20.82,
   "staked": 16,
   "expected": 4.54
@@ -19,8 +19,8 @@
    "won": 2,
    "lost": 5,
    "pending": 2,
-   "legs": 34,
-   "legsWon": 27,
+   "legs": 37,
+   "legsWon": 30,
    "returned": 5.39,
    "staked": 7,
    "expected": 2.46
@@ -31,8 +31,8 @@
    "won": 2,
    "lost": 2,
    "pending": 2,
-   "legs": 20,
-   "legsWon": 15,
+   "legs": 21,
+   "legsWon": 16,
    "returned": 8.32,
    "staked": 4,
    "expected": 1.1
@@ -43,8 +43,8 @@
    "won": 1,
    "lost": 4,
    "pending": 2,
-   "legs": 24,
-   "legsWon": 18,
+   "legs": 25,
+   "legsWon": 19,
    "returned": 7.11,
    "staked": 5,
    "expected": 0.97
@@ -56,8 +56,8 @@
   "won": 5,
   "lost": 6,
   "pending": 3,
-  "legs": 53,
-  "legsWon": 45,
+  "legs": 54,
+  "legsWon": 46,
   "returned": 20.82,
   "staked": 11,
   "expected": 3.55
@@ -74,9 +74,9 @@
      "p": 0.5793,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "New Zealand",
@@ -99,8 +99,8 @@
        "odds": 1.11,
        "est": false,
        "p": 0.899,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Carlos Alcaraz",
@@ -293,9 +293,9 @@
      "p": 0.414,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Arthur Fils",
@@ -306,8 +306,8 @@
        "odds": 1.19,
        "est": true,
        "p": 0.8369,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Arthur Fils (FRA) bt Pavel Kotov (RUS) 6-3 6-4"
       },
       {
        "pick": "Gyulai Termál",
@@ -318,8 +318,8 @@
        "odds": 1.38,
        "est": false,
        "p": 0.7832,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Franke",
@@ -366,9 +366,9 @@
      "p": 0.3499,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "BYU Cougars",
@@ -391,8 +391,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8266,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(4) Felix Auger-Aliassime (CAN) bt Camilo Ugo Carabelli (ARG) 4-6 7-6 (7-1) 7-5"
       },
       {
        "pick": "Bodo/Glimt",
@@ -439,9 +439,9 @@
      "p": 0.2815,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Taylor Fritz",
@@ -452,8 +452,8 @@
        "odds": 1.35,
        "est": true,
        "p": 0.7724,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(11) Taylor Fritz (USA) bt Matteo Arnaldi (ITA) 7-5 6-4"
       },
       {
        "pick": "Rot-weiss Oberhausen",
