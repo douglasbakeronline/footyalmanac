@@ -3,44 +3,44 @@
   "clean": {
    "0.75": {
     "2026H1": {
-     "hit": 0.4737,
-     "n": 19
+     "hit": 0.5,
+     "n": 18
     },
     "2026H2": {
-     "hit": 0.8333,
-     "n": 18
+     "hit": 0.8421,
+     "n": 19
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.5,
-     "n": 10
+     "hit": 0.5556,
+     "n": 9
     },
     "2026H2": {
-     "hit": 0.9,
-     "n": 10
+     "hit": 0.9091,
+     "n": 11
     }
    }
   },
   "cross": {
    "0.75": {
     "2026H1": {
-     "hit": 0.3871,
-     "n": 31
+     "hit": 0.4,
+     "n": 30
     },
     "2026H2": {
-     "hit": 0.6522,
-     "n": 46
+     "hit": 0.6596,
+     "n": 47
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.4375,
-     "n": 16
+     "hit": 0.4667,
+     "n": 15
     },
     "2026H2": {
-     "hit": 0.6957,
-     "n": 23
+     "hit": 0.7083,
+     "n": 24
     }
    }
   }
@@ -51,61 +51,61 @@
  "crossBar": null,
  "note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as of its own morning, prior season finished before the tie. Nothing fitted.",
  "version": 3,
- "day": "2026-10-09",
- "ties": 6221,
- "priced": 1852,
+ "day": "2026-10-10",
+ "ties": 6242,
+ "priced": 1857,
  "skipped": {
-  "unrated": 3446,
+  "unrated": 3449,
   "priorAfter": 515,
-  "womenYouth": 408
+  "womenYouth": 421
  },
  "cups": 106,
  "bands": [
   {
    "from": 0.55,
-   "hit": 0.5654,
-   "n": 260,
-   "quoted": 0.6553
+   "hit": 0.5709,
+   "n": 261,
+   "quoted": 0.6556
   },
   {
    "from": 0.6,
-   "hit": 0.5684,
-   "n": 190,
-   "quoted": 0.6854
+   "hit": 0.5759,
+   "n": 191,
+   "quoted": 0.6856
   },
   {
    "from": 0.65,
-   "hit": 0.6055,
-   "n": 109,
-   "quoted": 0.732
+   "hit": 0.6204,
+   "n": 108,
+   "quoted": 0.7337
   },
   {
    "from": 0.7,
-   "hit": 0.6667,
+   "hit": 0.6818,
    "n": 66,
-   "quoted": 0.771
+   "quoted": 0.7727
   },
   {
    "from": 0.75,
-   "hit": 0.6486,
+   "hit": 0.6757,
    "n": 37,
-   "quoted": 0.8088
+   "quoted": 0.8118
   },
   {
    "from": 0.8,
-   "hit": 0.7,
+   "hit": 0.75,
    "n": 20,
-   "quoted": 0.8425
+   "quoted": 0.848
   },
   {
    "from": 0.85,
-   "hit": 0.8333,
-   "n": 6,
-   "quoted": 0.8792
+   "hit": 0.8571,
+   "n": 7,
+   "quoted": 0.8862
   }
  ],
  "from": "2026-01-01",
- "to": "2026-10-08",
+ "to": "2026-10-09",
  "confident": [
   {
    "date": "2026-01-08",
@@ -126,18 +126,6 @@
    "pick": "h",
    "hit": 0,
    "tie": "Heart Of Midlothian (Premiership, Heart of Midlothian) v Falkirk (Premiership, Falkirk) 1-1",
-   "played": [
-    0,
-    0
-   ]
-  },
-  {
-   "date": "2026-01-22",
-   "cup": "afc.1212",
-   "conf": 0.8171,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Club Nacional (Primera Divisi\u00f3n, Nacional) v Progreso (Primera Divisi\u00f3n, Progreso) 1-1",
    "played": [
     0,
     0
@@ -898,6 +886,18 @@
     5,
     5
    ]
+  },
+  {
+   "date": "2026-10-09",
+   "cup": "afc.500",
+   "conf": 0.9279,
+   "pick": "h",
+   "hit": 1,
+   "tie": "Johor Darul Takzim (Super League, Johor Darul Takzim) v Penang (Super League, Penang) 4-1",
+   "played": [
+    5,
+    4
+   ]
   }
  ],
  "byCup": {
@@ -975,7 +975,7 @@
   ],
   "afc.1212": [
    0,
-   1
+   0
   ],
   "afc.1220": [
    0,
@@ -1158,8 +1158,8 @@
    0
   ],
   "afc.500": [
-   2,
-   2
+   3,
+   3
   ],
   "afc.504": [
    0,

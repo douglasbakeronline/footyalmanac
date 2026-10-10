@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-09T23:27:11Z",
+ "graded": "2026-10-10T01:49:41Z",
  "overall": {
   "groups": 22,
-  "settled": 14,
-  "won": 3,
+  "settled": 15,
+  "won": 4,
   "lost": 11,
-  "pending": 8,
-  "legs": 71,
-  "legsWon": 54,
-  "returned": 9.65,
-  "staked": 14,
-  "expected": 4.06
+  "pending": 7,
+  "legs": 76,
+  "legsWon": 58,
+  "returned": 13.71,
+  "staked": 15,
+  "expected": 4.33
  },
  "byBand": {
   "Steady": {
@@ -19,23 +19,23 @@
    "won": 2,
    "lost": 5,
    "pending": 2,
-   "legs": 31,
-   "legsWon": 25,
+   "legs": 34,
+   "legsWon": 27,
    "returned": 5.39,
    "staked": 7,
    "expected": 2.46
   },
   "Balanced": {
    "groups": 6,
-   "settled": 3,
-   "won": 1,
+   "settled": 4,
+   "won": 2,
    "lost": 2,
-   "pending": 3,
-   "legs": 17,
-   "legsWon": 12,
-   "returned": 4.26,
-   "staked": 3,
-   "expected": 0.83
+   "pending": 2,
+   "legs": 19,
+   "legsWon": 14,
+   "returned": 8.32,
+   "staked": 4,
+   "expected": 1.1
   },
   "Stretch": {
    "groups": 7,
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 14,
-  "settled": 9,
-  "won": 3,
+  "settled": 10,
+  "won": 4,
   "lost": 6,
-  "pending": 5,
-  "legs": 49,
-  "legsWon": 41,
-  "returned": 9.65,
-  "staked": 9,
-  "expected": 3.07
+  "pending": 4,
+  "legs": 52,
+  "legsWon": 44,
+  "returned": 13.71,
+  "staked": 10,
+  "expected": 3.34
  },
  "days": [
   {
@@ -518,9 +518,9 @@
      "p": 0.4134,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Alexander Zverev",
@@ -567,8 +567,8 @@
        "odds": 1.36,
        "est": false,
        "p": 0.766,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "La Fiorita",
@@ -589,11 +589,11 @@
      "rank": "main",
      "odds": 4.06,
      "p": 0.274,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 3,
+     "status": "won",
+     "paid": 4.06,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -628,8 +628,8 @@
        "odds": 1.23,
        "est": false,
        "p": 0.7687,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Cork City",
@@ -652,8 +652,8 @@
        "odds": 1.83,
        "est": false,
        "p": 0.6772,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -737,9 +737,9 @@
      "p": 0.2301,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 1,
-     "legsPending": 2,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Novak Djokovic",
@@ -774,8 +774,8 @@
        "odds": 1.32,
        "est": false,
        "p": 0.7209,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       },
       {
        "pick": "Glasgow Warriors",
@@ -786,8 +786,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.755,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "36-19"
       },
       {
        "pick": "Folgore",
