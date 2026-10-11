@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-11T05:40:48Z",
+ "graded": "2026-10-11T11:26:09Z",
  "overall": {
   "groups": 28,
-  "settled": 22,
+  "settled": 24,
   "won": 7,
-  "lost": 15,
-  "pending": 6,
-  "legs": 107,
-  "legsWon": 84,
+  "lost": 17,
+  "pending": 4,
+  "legs": 113,
+  "legsWon": 88,
   "returned": 27.9,
-  "staked": 22,
-  "expected": 7.0
+  "staked": 24,
+  "expected": 7.54
  },
  "byBand": {
   "Steady": {
    "groups": 11,
-   "settled": 9,
+   "settled": 10,
    "won": 3,
-   "lost": 6,
-   "pending": 2,
-   "legs": 44,
-   "legsWon": 36,
+   "lost": 7,
+   "pending": 1,
+   "legs": 46,
+   "legsWon": 37,
    "returned": 8.17,
-   "staked": 9,
-   "expected": 3.46
+   "staked": 10,
+   "expected": 3.79
   },
   "Balanced": {
    "groups": 8,
@@ -31,36 +31,36 @@
    "won": 3,
    "lost": 3,
    "pending": 2,
-   "legs": 29,
-   "legsWon": 23,
+   "legs": 31,
+   "legsWon": 25,
    "returned": 12.62,
    "staked": 6,
    "expected": 1.9
   },
   "Stretch": {
    "groups": 9,
-   "settled": 7,
+   "settled": 8,
    "won": 1,
-   "lost": 6,
-   "pending": 2,
-   "legs": 34,
-   "legsWon": 25,
+   "lost": 7,
+   "pending": 1,
+   "legs": 36,
+   "legsWon": 26,
    "returned": 7.11,
-   "staked": 7,
-   "expected": 1.64
+   "staked": 8,
+   "expected": 1.85
   }
  },
  "firstChoice": {
   "groups": 17,
-  "settled": 14,
+  "settled": 15,
   "won": 5,
-  "lost": 9,
-  "pending": 3,
-  "legs": 68,
-  "legsWon": 56,
+  "lost": 10,
+  "pending": 2,
+  "legs": 70,
+  "legsWon": 57,
   "returned": 20.82,
-  "staked": 14,
-  "expected": 4.96
+  "staked": 15,
+  "expected": 5.18
  },
  "days": [
   {
@@ -147,9 +147,9 @@
      "p": 0.3441,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Hubert Hurkacz",
@@ -160,8 +160,8 @@
        "odds": 1.2,
        "est": true,
        "p": 0.8346,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Hubert Hurkacz (POL) bt Yi Zhou (CHN) 6-2 3-6 6-3"
       },
       {
        "pick": "Virtus",
@@ -218,11 +218,11 @@
      "rank": "main",
      "odds": 7.13,
      "p": 0.2181,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -233,8 +233,8 @@
        "odds": 1.38,
        "est": true,
        "p": 0.7701,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Arthur Gea (FRA) bt (3) Ben Shelton (USA) 7-6 (7-5) 7-6 (7-3)"
       },
       {
        "pick": "Alexander Zverev",
@@ -291,11 +291,11 @@
      "rank": "alternative",
      "odds": 2.76,
      "p": 0.3287,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 1,
+     "legsLost": 1,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Yangon United",
@@ -306,8 +306,8 @@
        "odds": 1.19,
        "est": true,
        "p": 0.8088,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-2"
       },
       {
        "pick": "Ranger's",
@@ -318,8 +318,8 @@
        "odds": 1.16,
        "est": false,
        "p": 0.8078,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Slávia TU Košice",
@@ -366,9 +366,9 @@
      "p": 0.2509,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -379,8 +379,8 @@
        "odds": 1.42,
        "est": true,
        "p": 0.7668,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(9) Alex de Minaur (AUS) bt Rei Sakamoto (JPN) 7-6 (8-6) 6-4"
       },
       {
        "pick": "Guangzhou E-Power",
@@ -439,9 +439,9 @@
      "p": 0.1833,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Suwon Bluewings",
@@ -452,8 +452,8 @@
        "odds": 1.2,
        "est": false,
        "p": 0.7829,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "CSKA Moscow",
