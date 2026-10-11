@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-11T11:26:09Z",
+ "graded": "2026-10-11T16:51:28Z",
  "overall": {
   "groups": 28,
-  "settled": 24,
+  "settled": 25,
   "won": 7,
-  "lost": 17,
-  "pending": 4,
-  "legs": 113,
-  "legsWon": 88,
+  "lost": 18,
+  "pending": 3,
+  "legs": 122,
+  "legsWon": 95,
   "returned": 27.9,
-  "staked": 24,
-  "expected": 7.54
+  "staked": 25,
+  "expected": 8.01
  },
  "byBand": {
   "Steady": {
    "groups": 11,
-   "settled": 10,
+   "settled": 11,
    "won": 3,
-   "lost": 7,
-   "pending": 1,
-   "legs": 46,
-   "legsWon": 37,
+   "lost": 8,
+   "pending": 0,
+   "legs": 50,
+   "legsWon": 39,
    "returned": 8.17,
-   "staked": 10,
-   "expected": 3.79
+   "staked": 11,
+   "expected": 4.25
   },
   "Balanced": {
    "groups": 8,
@@ -31,8 +31,8 @@
    "won": 3,
    "lost": 3,
    "pending": 2,
-   "legs": 31,
-   "legsWon": 25,
+   "legs": 34,
+   "legsWon": 28,
    "returned": 12.62,
    "staked": 6,
    "expected": 1.9
@@ -43,8 +43,8 @@
    "won": 1,
    "lost": 7,
    "pending": 1,
-   "legs": 36,
-   "legsWon": 26,
+   "legs": 38,
+   "legsWon": 28,
    "returned": 7.11,
    "staked": 8,
    "expected": 1.85
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 17,
-  "settled": 15,
+  "settled": 16,
   "won": 5,
-  "lost": 10,
-  "pending": 2,
-  "legs": 70,
-  "legsWon": 57,
+  "lost": 11,
+  "pending": 1,
+  "legs": 76,
+  "legsWon": 62,
   "returned": 20.82,
-  "staked": 15,
-  "expected": 5.18
+  "staked": 16,
+  "expected": 5.65
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 2.56,
      "p": 0.4669,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Angby",
@@ -87,8 +87,8 @@
        "odds": 1.24,
        "est": false,
        "p": 0.8088,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-2"
       },
       {
        "pick": "Lijabatho",
@@ -99,8 +99,8 @@
        "odds": 1.16,
        "est": true,
        "p": 0.8979,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Sunnersta",
@@ -111,8 +111,8 @@
        "odds": 1.14,
        "est": false,
        "p": 0.9002,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "7-1"
       },
       {
        "pick": "Exeter Chiefs",
@@ -147,9 +147,9 @@
      "p": 0.3441,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Hubert Hurkacz",
@@ -172,8 +172,8 @@
        "odds": 1.1,
        "est": false,
        "p": 0.8977,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-0"
       },
       {
        "pick": "New England Patriots",
@@ -220,9 +220,9 @@
      "p": 0.2181,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -245,8 +245,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8268,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Alexander Zverev (GER) bt Quentin Halys (FRA) 6-4 6-7 (8-10) 6-3"
       },
       {
        "pick": "Österlen",
@@ -257,8 +257,8 @@
        "odds": 1.71,
        "est": false,
        "p": 0.6791,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-0"
       },
       {
        "pick": "Union Magdalena",
@@ -294,8 +294,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 1,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsLost": 2,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Yangon United",
@@ -342,8 +342,8 @@
        "odds": 1.23,
        "est": false,
        "p": 0.8089,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "BK Häcken",
@@ -366,9 +366,9 @@
      "p": 0.2509,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -391,8 +391,8 @@
        "odds": 1.21,
        "est": false,
        "p": 0.783,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Talasgücü Belediyespor",
@@ -403,8 +403,8 @@
        "odds": 1.25,
        "est": true,
        "p": 0.7836,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "6-1"
       },
       {
        "pick": "Toledo",
