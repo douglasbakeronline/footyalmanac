@@ -1,68 +1,512 @@
 {
- "graded": "2026-10-10T22:49:49Z",
+ "graded": "2026-10-11T01:02:09Z",
  "overall": {
-  "groups": 22,
-  "settled": 18,
-  "won": 5,
-  "lost": 13,
-  "pending": 4,
-  "legs": 92,
-  "legsWon": 71,
-  "returned": 20.82,
-  "staked": 18,
-  "expected": 5.37
+  "groups": 28,
+  "settled": 22,
+  "won": 7,
+  "lost": 15,
+  "pending": 6,
+  "legs": 106,
+  "legsWon": 83,
+  "returned": 27.9,
+  "staked": 22,
+  "expected": 7.0
  },
  "byBand": {
   "Steady": {
-   "groups": 9,
-   "settled": 7,
-   "won": 2,
-   "lost": 5,
+   "groups": 11,
+   "settled": 9,
+   "won": 3,
+   "lost": 6,
    "pending": 2,
-   "legs": 40,
-   "legsWon": 33,
-   "returned": 5.39,
-   "staked": 7,
-   "expected": 2.46
+   "legs": 44,
+   "legsWon": 36,
+   "returned": 8.17,
+   "staked": 9,
+   "expected": 3.46
   },
   "Balanced": {
-   "groups": 6,
-   "settled": 5,
-   "won": 2,
+   "groups": 8,
+   "settled": 6,
+   "won": 3,
    "lost": 3,
-   "pending": 1,
-   "legs": 22,
-   "legsWon": 16,
-   "returned": 8.32,
-   "staked": 5,
-   "expected": 1.55
+   "pending": 2,
+   "legs": 28,
+   "legsWon": 22,
+   "returned": 12.62,
+   "staked": 6,
+   "expected": 1.9
   },
   "Stretch": {
-   "groups": 7,
-   "settled": 6,
+   "groups": 9,
+   "settled": 7,
    "won": 1,
-   "lost": 5,
-   "pending": 1,
-   "legs": 30,
-   "legsWon": 22,
+   "lost": 6,
+   "pending": 2,
+   "legs": 34,
+   "legsWon": 25,
    "returned": 7.11,
-   "staked": 6,
-   "expected": 1.35
+   "staked": 7,
+   "expected": 1.64
   }
  },
  "firstChoice": {
-  "groups": 14,
-  "settled": 13,
+  "groups": 17,
+  "settled": 14,
   "won": 5,
-  "lost": 8,
-  "pending": 1,
-  "legs": 60,
-  "legsWon": 49,
+  "lost": 9,
+  "pending": 3,
+  "legs": 67,
+  "legsWon": 55,
   "returned": 20.82,
-  "staked": 13,
-  "expected": 4.38
+  "staked": 14,
+  "expected": 4.96
  },
  "days": [
+  {
+   "date": "2026-10-11",
+   "published": "2026-10-11T01:01:56Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 2.56,
+     "p": 0.4669,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Angby",
+       "event": "Angby v Viggbyholms IK",
+       "sport": "football",
+       "comp": "Division 2 - Norra Svealand",
+       "when": "2026-10-11T11:00:00Z",
+       "odds": 1.24,
+       "est": false,
+       "p": 0.8088,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Lijabatho",
+       "event": "Lijabatho v Members",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-11T13:00:00Z",
+       "odds": 1.16,
+       "est": true,
+       "p": 0.8979,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Sunnersta",
+       "event": "Sunnersta v Korsnäs",
+       "sport": "football",
+       "comp": "Division 2 - Norra Svealand",
+       "when": "2026-10-11T14:00:00Z",
+       "odds": 1.14,
+       "est": false,
+       "p": 0.9002,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Exeter Chiefs",
+       "event": "Exeter Chiefs v Newcastle Falcons",
+       "sport": "rugby",
+       "comp": "Premiership",
+       "when": "2026-10-11T14:00Z",
+       "odds": 1.09,
+       "est": true,
+       "p": 0.9115,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Vikingur Reykjavik",
+       "event": "Vikingur Reykjavik v IA Akranes",
+       "sport": "football",
+       "comp": "Úrvalsdeild",
+       "when": "2026-10-11T19:15:00Z",
+       "odds": 1.43,
+       "est": false,
+       "p": 0.7835,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 4.01,
+     "p": 0.3441,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Hubert Hurkacz",
+       "event": "Yi Zhou v Hubert Hurkacz",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 3",
+       "when": "2026-10-11T05:30:00Z",
+       "odds": 1.2,
+       "est": true,
+       "p": 0.8346,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Virtus",
+       "event": "Virtus v San Marino Academy",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-10-11T13:00:00Z",
+       "odds": 1.1,
+       "est": false,
+       "p": 0.8977,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "New England Patriots",
+       "event": "New England Patriots v Las Vegas Raiders",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-11T17:00Z",
+       "odds": 1.52,
+       "est": false,
+       "p": 0.7527,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Minnesota Vikings",
+       "event": "New Orleans Saints v Minnesota Vikings",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-11T17:00Z",
+       "odds": 1.77,
+       "est": false,
+       "p": 0.6761,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Stade Toulousain",
+       "event": "Stade Toulousain v Bayonne",
+       "sport": "rugby",
+       "comp": "Top 14",
+       "when": "2026-10-11T19:05Z",
+       "odds": 1.13,
+       "est": true,
+       "p": 0.9024,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "main",
+     "odds": 7.13,
+     "p": 0.2181,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Ben Shelton",
+       "event": "Arthur Gea v Ben Shelton",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 3",
+       "when": "2026-10-11T04:00:00Z",
+       "odds": 1.38,
+       "est": true,
+       "p": 0.7701,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Alexander Zverev",
+       "event": "Quentin Halys v Alexander Zverev",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 3",
+       "when": "2026-10-11T10:00:00Z",
+       "odds": 1.24,
+       "est": true,
+       "p": 0.8268,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Österlen",
+       "event": "Österlen v Torns",
+       "sport": "football",
+       "comp": "Division 2 - Södra Götaland",
+       "when": "2026-10-11T11:00:00Z",
+       "odds": 1.71,
+       "est": false,
+       "p": 0.6791,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Union Magdalena",
+       "event": "Union Magdalena v Leones",
+       "sport": "football",
+       "comp": "Primera B",
+       "when": "2026-10-11T22:00:00Z",
+       "odds": 1.45,
+       "est": false,
+       "p": 0.7406,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Pachuca",
+       "event": "Pachuca v Necaxa",
+       "sport": "football",
+       "comp": "Liga MX",
+       "when": "2026-10-11T23:10:00Z",
+       "odds": 1.68,
+       "est": false,
+       "p": 0.681,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 2.76,
+     "p": 0.3287,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Yangon United",
+       "event": "Yangon United v Yangon Royals",
+       "sport": "football",
+       "comp": "National League",
+       "when": "2026-10-11T09:00:00Z",
+       "odds": 1.19,
+       "est": true,
+       "p": 0.8088,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ranger's",
+       "event": "Ranger's v Carroi",
+       "sport": "football",
+       "comp": "1a Divisió",
+       "when": "2026-10-11T09:00:00Z",
+       "odds": 1.16,
+       "est": false,
+       "p": 0.8078,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Slávia TU Košice",
+       "event": "Slávia TU Košice v Kežmarok",
+       "sport": "football",
+       "comp": "3. liga - East",
+       "when": "2026-10-11T09:00:00Z",
+       "odds": 1.24,
+       "est": true,
+       "p": 0.8075,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Union St. Gilloise",
+       "event": "Union St. Gilloise v OH Leuven",
+       "sport": "football",
+       "comp": "Jupiler Pro League",
+       "when": "2026-10-11T14:00:00Z",
+       "odds": 1.23,
+       "est": false,
+       "p": 0.8089,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "BK Häcken",
+       "event": "BK Häcken v Örgryte IS",
+       "sport": "football",
+       "comp": "Allsvenskan",
+       "when": "2026-10-11T14:30:00Z",
+       "odds": 1.31,
+       "est": false,
+       "p": 0.7702,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "alternative",
+     "odds": 4.24,
+     "p": 0.2509,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Alex De Minaur",
+       "event": "Rei Sakamoto v Alex De Minaur",
+       "sport": "tennis",
+       "comp": "Rolex Shanghai Masters Round 3",
+       "when": "2026-10-11T05:30:00Z",
+       "odds": 1.42,
+       "est": true,
+       "p": 0.7668,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Guangzhou E-Power",
+       "event": "Guangzhou E-Power v Heilongjiang Lava Spring",
+       "sport": "football",
+       "comp": "League One",
+       "when": "2026-10-11T11:30:00Z",
+       "odds": 1.21,
+       "est": false,
+       "p": 0.783,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Talasgücü Belediyespor",
+       "event": "Talasgücü Belediyespor v Adanaspor",
+       "sport": "football",
+       "comp": "3. Lig - Group 3",
+       "when": "2026-10-11T12:00:00Z",
+       "odds": 1.25,
+       "est": true,
+       "p": 0.7836,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Toledo",
+       "event": "Toledo v Huracán Balazote",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 18",
+       "when": "2026-10-11T16:00:00Z",
+       "odds": 1.21,
+       "est": false,
+       "p": 0.7835,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "SE Palmeiras",
+       "event": "SE Palmeiras v SC Corinthians Paulista",
+       "sport": "football",
+       "comp": "Serie A",
+       "when": "2026-10-11T20:30:00Z",
+       "odds": 1.63,
+       "est": false,
+       "p": 0.6806,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "alternative",
+     "odds": 7.3,
+     "p": 0.1833,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Suwon Bluewings",
+       "event": "Suwon Bluewings v Ansan Greeners",
+       "sport": "football",
+       "comp": "K League 2",
+       "when": "2026-10-11T05:00:00Z",
+       "odds": 1.2,
+       "est": false,
+       "p": 0.7829,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "CSKA Moscow",
+       "event": "CSKA Moscow v Rodina Moscow",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-11T13:30:00Z",
+       "odds": 1.48,
+       "est": true,
+       "p": 0.7647,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Kongsvinger",
+       "event": "Kongsvinger v Ranheim",
+       "sport": "football",
+       "comp": "1. Division",
+       "when": "2026-10-11T15:00:00Z",
+       "odds": 1.51,
+       "est": false,
+       "p": 0.7399,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Pittsburgh Steelers",
+       "event": "Pittsburgh Steelers v Indianapolis Colts",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-11T17:00Z",
+       "odds": 1.68,
+       "est": false,
+       "p": 0.6375,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Seattle Seahawks",
+       "event": "Seattle Seahawks v San Francisco 49ers",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-11T20:25Z",
+       "odds": 1.62,
+       "est": false,
+       "p": 0.6492,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-10",
    "published": "2026-10-09T23:26:36Z",
@@ -72,11 +516,11 @@
      "rank": "main",
      "odds": 2.66,
      "p": 0.5793,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 3,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "New Zealand",
@@ -87,8 +531,8 @@
        "odds": 1.15,
        "est": true,
        "p": 0.8966,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "50-19"
       },
       {
        "pick": "Kitchee",
@@ -135,8 +579,8 @@
        "odds": 1.54,
        "est": false,
        "p": 0.8608,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "17-21"
       }
      ]
     },
@@ -147,9 +591,9 @@
      "p": 0.4536,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 1,
-     "legsPending": 4,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Laktaši",
@@ -160,8 +604,8 @@
        "odds": 1.1,
        "est": false,
        "p": 0.8975,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Hereford",
@@ -184,8 +628,8 @@
        "odds": 1.26,
        "est": false,
        "p": 0.863,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "28-12"
       },
       {
        "pick": "Leinster",
@@ -196,8 +640,8 @@
        "odds": 1.14,
        "est": true,
        "p": 0.8991,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "29-5"
       },
       {
        "pick": "James Madison Dukes",
@@ -220,9 +664,9 @@
      "p": 0.3816,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 2,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Täby",
@@ -269,8 +713,8 @@
        "odds": 1.06,
        "est": true,
        "p": 0.935,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "58-7"
       },
       {
        "pick": "Ohio State Buckeyes",
@@ -281,8 +725,8 @@
        "odds": 1.05,
        "est": true,
        "p": 0.937,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "45-16"
       }
      ]
     },
@@ -291,11 +735,11 @@
      "rank": "alternative",
      "odds": 2.78,
      "p": 0.414,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 3,
+     "status": "won",
+     "paid": 2.78,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Arthur Fils",
@@ -342,8 +786,8 @@
        "odds": 1.08,
        "est": true,
        "p": 0.9332,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "45-14"
       },
       {
        "pick": "Western Michigan Broncos",
@@ -354,8 +798,8 @@
        "odds": 1.17,
        "est": false,
        "p": 0.8637,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "38-7"
       }
      ]
     },
@@ -364,11 +808,11 @@
      "rank": "alternative",
      "odds": 4.3,
      "p": 0.3499,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 2,
+     "status": "won",
+     "paid": 4.3,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "BYU Cougars",
@@ -403,8 +847,8 @@
        "odds": 1.06,
        "est": false,
        "p": 0.8363,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Independiente del Valle",
@@ -415,8 +859,8 @@
        "odds": 1.49,
        "est": false,
        "p": 0.7675,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Ohio Bobcats",
@@ -427,8 +871,8 @@
        "odds": 1.77,
        "est": false,
        "p": 0.7694,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "31-14"
       }
      ]
     },
@@ -437,11 +881,11 @@
      "rank": "alternative",
      "odds": 7.29,
      "p": 0.2815,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 3,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Taylor Fritz",
@@ -488,8 +932,8 @@
        "odds": 1.09,
        "est": false,
        "p": 0.8659,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "8-23"
       },
       {
        "pick": "Navy Midshipmen",
@@ -500,8 +944,8 @@
        "odds": 1.82,
        "est": false,
        "p": 0.7682,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "34-26"
       }
      ]
     }
