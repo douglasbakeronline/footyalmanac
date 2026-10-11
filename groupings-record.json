@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-11T01:02:09Z",
+ "graded": "2026-10-11T05:40:48Z",
  "overall": {
   "groups": 28,
   "settled": 22,
   "won": 7,
   "lost": 15,
   "pending": 6,
-  "legs": 106,
-  "legsWon": 83,
+  "legs": 107,
+  "legsWon": 84,
   "returned": 27.9,
   "staked": 22,
   "expected": 7.0
@@ -31,8 +31,8 @@
    "won": 3,
    "lost": 3,
    "pending": 2,
-   "legs": 28,
-   "legsWon": 22,
+   "legs": 29,
+   "legsWon": 23,
    "returned": 12.62,
    "staked": 6,
    "expected": 1.9
@@ -56,8 +56,8 @@
   "won": 5,
   "lost": 9,
   "pending": 3,
-  "legs": 67,
-  "legsWon": 55,
+  "legs": 68,
+  "legsWon": 56,
   "returned": 20.82,
   "staked": 14,
   "expected": 4.96
@@ -591,9 +591,9 @@
      "p": 0.4536,
      "status": "lost",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Laktaši",
@@ -652,8 +652,8 @@
        "odds": 1.32,
        "est": false,
        "p": 0.8607,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "24-27"
       }
      ]
     },

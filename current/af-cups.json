@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1791424501,
+"checked": 1791697104,
 "cups": [
 {
 "code": "afc.707",
@@ -133,7 +133,7 @@
 "id": 314,
 "name": "Cup",
 "country": "Bosnia",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.77",
@@ -700,7 +700,7 @@
 "id": 863,
 "name": "Cup",
 "country": "Jordan",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.498",
@@ -1141,7 +1141,7 @@
 "id": 298,
 "name": "FA Cup",
 "country": "Thailand",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.898",
