@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-12 Fixture audit of predictions/2026-10-12.json: matching clean (tag pending)
+
+**What changed:** write-up only, in `claude/data-integrity.md`. No code, model or data changed.
+**Evidence:** 2,014 rows, 84 dated 12 Oct and the rest 13-18 Oct. No exact or reversed duplicates within a date, no club twice on one date in one league, no unrated rows, no row whose kick-off falls before its row date. 19 rows have no kick-off (Brazil, dated by day). Same-name clubs on one date (Santos, Platense, Liverpool, Barcelona, San Miguel, Sandviken, Atenas) are different clubs in different leagues, each priced inside its own league. `nametest.py` passes. One real finding: 2 fixtures (Llerenense v Puebla Calzada, Atletico Mineros v Velarde, Spanish Tercera RFEF) sit under both 17 and 18 Oct because the source moved the date and the archive keys on date. Across 2026 archives 46 such stale pairs, 4 touching a list or reserve flag. Not fixed: the archive merge and grading are bot-owned and tied to the scoreboard.
+**Files:** `claude/data-integrity.md`, `RELEASES.md`.
+**Not changed:** matcher, `LIVE_NAMES`, archive merge, grading.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-12 Tests for odds.py, the untested price module (tag pending)
 
 **What changed:** new `tests/test_odds.py` (26 tests) covering `odds.py`, the largest module with no test: CSV parsing and row rejection, margin removal (`fair`), the stale-max cap (`best`), club-name matching and the one-price-one-fixture rule (`match`), the value gate and ROI/CLV in `evaluate`, the bootstrap, and report staleness.

@@ -163,3 +163,29 @@ overlap; `af.144` (Belgium) and `af.202` (Tunisia) would overlap `be.1` /
 v the nation) are distinct, not matches. 42 rows carry a UTC kickoff on the
 next day from their row date (Americas evenings); left as the local-day
 convention.
+
+
+## 12 October 2026: fixture audit, rescheduled games leave stale rows
+
+Audit of `predictions/2026-10-12.json` (2,014 rows, dated 12-18 Oct). Clean:
+no exact or reversed duplicates, no club playing twice on one date in one
+league, no unrated rows, no kick-off earlier than its row date, no two feeds
+repeating a fixture (`AF_DUPLICATES` holds). 19 rows have no kick-off (Brazil
+Serie A) and are dated by day. Same-name clubs on one date (Santos in Brazil
+and Mexico, Platense in Argentina and Honduras, Liverpool in England women's
+and Uruguay, Barcelona in Ecuador and Spain women's, San Miguel, Sandviken,
+Atenas) are different clubs, each priced inside its own league, so nothing
+forced and no `LIVE_NAMES` change.
+
+One real finding, not fixed: `build.archive_predictions` keys rows on
+`(league, date, home, away)`, so when the source moves a game the old-date row
+stays beside the new one. Llerenense v Puebla Calzada (af.452) and Atletico
+Mineros v Velarde (af.441) sit under both 17 and 18 Oct, the earlier build
+carrying the 18th (01:21 UTC) and the later one the 17th (13:11 UTC). Across all 2026
+archives: 46 such pairs, 4 touching a list or reserve flag. The site is built
+from the current fixtures, so the page is right; the stale row never gets a
+result on its date, so it is not graded as a hit or miss. Open question for
+Douglas: drop an unplayed row when a later build moves the same
+(league, home, away) to another date. It touches the archive and the
+scoreboard, so it was left alone. Check first that stale rows do not inflate
+the pending count in the records.
