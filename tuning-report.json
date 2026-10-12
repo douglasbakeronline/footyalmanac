@@ -8,9 +8,9 @@
  },
  "candidate": {
   "kind": "curve",
-  "a": 1.155,
-  "b": -0.3,
-  "describe": "T = 1.155 + -0.3 x (confidence - 0.45)"
+  "a": 1.17,
+  "b": -0.25,
+  "describe": "T = 1.17 + -0.25 x (confidence - 0.45)"
  },
  "excluded": {
   "fit": [
@@ -19,27 +19,6 @@
     "reasons": [
      "test season 2025-26: 85 of 356 matches dated outside 2025-06-01..2026-07-31 (2025-01-01 to 2025-02-07)",
      "prior/test overlap: prior ends 2025-05-03, test starts 2025-01-01; 288 prior matches on or after the test start, 85 test matches on or before the prior end, 0 identical in both"
-    ]
-   },
-   {
-    "code": "en.5",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "en.6n",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "en.6s",
-    "reasons": [
-     "no prior season",
-     "no test season"
     ]
    },
    {
@@ -591,27 +570,6 @@
     ]
    },
    {
-    "code": "en.5",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "en.6n",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "en.6s",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
     "code": "es.2",
     "reasons": [
      "no test season"
@@ -644,12 +602,6 @@
    },
    {
     "code": "be.1",
-    "reasons": [
-     "no test season"
-    ]
-   },
-   {
-    "code": "tr.1",
     "reasons": [
      "no test season"
     ]
@@ -1266,23 +1218,23 @@
   ]
  },
  "fitted": {
-  "a": 1.155,
-  "b": -0.3
+  "a": 1.17,
+  "b": -0.25
  },
  "fitSeason": {
-  "n": 6474,
-  "shipped": 1.0239,
-  "fitted": 1.0239
+  "n": 8449,
+  "shipped": 1.0258,
+  "fitted": 1.0257
  },
  "checkSeason": {
-  "n": 1386,
-  "shipped": 1.0256,
-  "fitted": 1.0257,
+  "n": 1901,
+  "shipped": 1.0302,
+  "fitted": 1.0303,
   "delta": 0.0001,
-  "sd": 0.0002,
-  "pWorse": 0.751,
-  "shippedAcc": 0.482,
-  "fittedAcc": 0.482
+  "sd": 0.0003,
+  "pWorse": 0.638,
+  "shippedAcc": 0.4819,
+  "fittedAcc": 0.4819
  },
  "gates": {
   "enoughData": true,
@@ -1290,5 +1242,5 @@
   "worthIt": false
  },
  "pass": false,
- "generated": "2026-10-05"
+ "generated": "2026-10-12"
 }
