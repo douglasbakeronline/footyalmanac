@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-12 Goal cap in the ratings: tested, rejected (tag pending)
+
+**What changed:** write-up only: `claude/goal-cap-test-2026-10-12.md` and the advisory script `tools/goal_cap_test.py`. No model, constant or data changed.
+**Evidence:** clipping each side's goals per match at 5, 4 or 3 before ratings, paired bootstrap, live curve and a per-setting refit. Fit 2025/26 (6,474 fixtures): cap 5 -0.0002, cap 4 +0.0005, cap 3 +0.0025. Check 2026/27 (1,428): +0.0004, +0.0009, +0.0026, p(worse) 0.90 or more. Nothing passes the gain gate on both seasons.
+**Files:** `claude/goal-cap-test-2026-10-12.md`, `tools/goal_cap_test.py`, `RELEASES.md`.
+**Not changed:** `engine.py`, `calibration.json`, anything live.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-12 Free source for uncovered leagues: re-checked, none exists (tag pending)
 
 **What changed:** write-up only, an addendum to `claude/free-source-search-2026-10-05.md`. No code, model or data changed.
