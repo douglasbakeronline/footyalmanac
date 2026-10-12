@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-12 Free source for uncovered leagues: re-checked, none exists (tag pending)
+
+**What changed:** write-up only, an addendum to `claude/free-source-search-2026-10-05.md`. No code, model or data changed.
+**Evidence:** TheSportsDB free key for Hungary NB I returns 5 events per season, 5 of 6 games per round and 5 of 12 table rows; football-data.co.uk has no file and ESPN no scoreboard for Croatia, Serbia, Ukraine, Hungary or Korea. A truncated round would be a wrong price, not a missed one.
+**Files:** `claude/free-source-search-2026-10-05.md`, `RELEASES.md`.
+**Not changed:** `sources.py`, any league, the Daily List rules.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-12 ESPN fixtures retry a blip instead of dropping the day (tag pending)
 
 **What changed:** `sources._espn_day`, the one-day ESPN fetch behind live fixtures and top-ups, tried each host once and returned an empty day on any error, so one timeout silently lost a whole competition-day. If every host fails on something transient (timeout, reset, 5xx, 429) it now waits 1s and goes round once more. A 4xx such as 404 is not retried. After 20 consecutive days fail outright ESPN is treated as unreachable and the retry is skipped, so a blocked network costs one pass, not two. Persistent failures are still appended to `errs` and reported in the build log, never swallowed.
