@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Odds tab price coverage measured, no change (tag pending)
+
+**What changed:** nothing a reader sees. A dated note on which legs lack bookmaker prices.
+
+**Evidence:** archived groups 4-12 Oct: football 81 priced / 12 estimated, tennis 0 of 29, rugby 0 of 7, NFL 12 of 12. Football gaps are unlisted small leagues, not name or date mismatches. No new source could be tested (ESPN 403, no API key in the sandbox).
+
+**Files:** `claude/odds-pricing-coverage-2026-10-12.md`, this entry.
+
+**Not changed:** `groupings.py`, any model number, any record or archive.
+
+**Roll back:** `git revert` the commit; nothing depends on it.
+
+
 ## 2026-10-12: Daily List bar replay rerun, no change (tag pending)
 
 **What changed:** nothing a reader sees. Replay script saved and the 5 Oct result confirmed.
