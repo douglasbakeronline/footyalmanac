@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Calibration by band and sport, full-data rerun (tag pending)
+
+**What changed:** nothing a reader sees. A dated note with the calibration tables run on full data.
+
+**Evidence:** football 55-80% inside noise in both seasons; 85%+ over-confident (41 pooled calls, 68% landed vs 89% quoted). Hockey check window over-confident by 5.6-6.2 points at 55-62%+ (intervals exclude 0), as is baseball; list sports calibrated or conservative at their bars.
+
+**Files:** `claude/calibration-rerun-2026-10-12.md`.
+
+**Not changed:** `calibration.json`, `sports.json`, any code or model number.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-12: Championship shrink test, rejected (tag pending)
 
 **What changed:** nothing a reader sees. A dated note and the harness for a
