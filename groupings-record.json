@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-11T23:04:20Z",
+ "graded": "2026-10-12T01:22:48Z",
  "overall": {
   "groups": 31,
-  "settled": 25,
-  "won": 7,
-  "lost": 18,
-  "pending": 6,
-  "legs": 125,
-  "legsWon": 97,
-  "returned": 27.9,
-  "staked": 25,
-  "expected": 8.01
+  "settled": 28,
+  "won": 9,
+  "lost": 19,
+  "pending": 3,
+  "legs": 137,
+  "legsWon": 106,
+  "returned": 36.15,
+  "staked": 28,
+  "expected": 8.79
  },
  "byBand": {
   "Steady": {
@@ -19,48 +19,48 @@
    "won": 3,
    "lost": 8,
    "pending": 2,
-   "legs": 51,
-   "legsWon": 39,
+   "legs": 54,
+   "legsWon": 42,
    "returned": 8.17,
    "staked": 11,
    "expected": 4.25
   },
   "Balanced": {
    "groups": 9,
-   "settled": 6,
-   "won": 3,
+   "settled": 8,
+   "won": 5,
    "lost": 3,
-   "pending": 3,
-   "legs": 35,
-   "legsWon": 29,
-   "returned": 12.62,
-   "staked": 6,
-   "expected": 1.9
+   "pending": 1,
+   "legs": 39,
+   "legsWon": 33,
+   "returned": 20.87,
+   "staked": 8,
+   "expected": 2.5
   },
   "Stretch": {
    "groups": 9,
-   "settled": 8,
+   "settled": 9,
    "won": 1,
-   "lost": 7,
-   "pending": 1,
-   "legs": 39,
-   "legsWon": 29,
+   "lost": 8,
+   "pending": 0,
+   "legs": 44,
+   "legsWon": 31,
    "returned": 7.11,
-   "staked": 8,
-   "expected": 1.85
+   "staked": 9,
+   "expected": 2.04
   }
  },
  "firstChoice": {
   "groups": 19,
-  "settled": 16,
-  "won": 5,
+  "settled": 17,
+  "won": 6,
   "lost": 11,
-  "pending": 3,
-  "legs": 77,
-  "legsWon": 62,
-  "returned": 20.82,
-  "staked": 16,
-  "expected": 5.65
+  "pending": 2,
+  "legs": 83,
+  "legsWon": 66,
+  "returned": 24.83,
+  "staked": 17,
+  "expected": 5.99
  },
  "days": [
   {
@@ -299,9 +299,9 @@
      "p": 0.4669,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 2,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Angby",
@@ -348,8 +348,8 @@
        "odds": 1.09,
        "est": true,
        "p": 0.9115,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "34-28"
       },
       {
        "pick": "Vikingur Reykjavik",
@@ -370,11 +370,11 @@
      "rank": "main",
      "odds": 4.01,
      "p": 0.3441,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 2,
+     "status": "won",
+     "paid": 4.01,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Hubert Hurkacz",
@@ -409,8 +409,8 @@
        "odds": 1.52,
        "est": false,
        "p": 0.7527,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "45-17"
       },
       {
        "pick": "Minnesota Vikings",
@@ -421,8 +421,8 @@
        "odds": 1.77,
        "est": false,
        "p": 0.6761,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "13-23"
       },
       {
        "pick": "Stade Toulousain",
@@ -433,8 +433,8 @@
        "odds": 1.13,
        "est": true,
        "p": 0.9024,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "45-34"
       }
      ]
     },
@@ -446,8 +446,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 2,
-     "legsLost": 1,
-     "legsPending": 2,
+     "legsLost": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Ben Shelton",
@@ -494,8 +494,8 @@
        "odds": 1.45,
        "est": false,
        "p": 0.7406,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       },
       {
        "pick": "Pachuca",
@@ -506,8 +506,8 @@
        "odds": 1.68,
        "est": false,
        "p": 0.681,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "3-3"
       }
      ]
     },
@@ -518,9 +518,9 @@
      "p": 0.3287,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 2,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Yangon United",
@@ -555,8 +555,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8075,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Union St. Gilloise",
@@ -579,8 +579,8 @@
        "odds": 1.31,
        "est": false,
        "p": 0.7702,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       }
      ]
     },
@@ -589,11 +589,11 @@
      "rank": "alternative",
      "odds": 4.24,
      "p": 0.2509,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 4,
+     "status": "won",
+     "paid": 4.24,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -652,8 +652,8 @@
        "odds": 1.63,
        "est": false,
        "p": 0.6806,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       }
      ]
     },
@@ -662,11 +662,11 @@
      "rank": "alternative",
      "odds": 7.3,
      "p": 0.1833,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Suwon Bluewings",
@@ -689,8 +689,8 @@
        "odds": 1.48,
        "est": true,
        "p": 0.7647,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Kongsvinger",
@@ -713,8 +713,8 @@
        "odds": 1.68,
        "est": false,
        "p": 0.6375,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "34-22"
       },
       {
        "pick": "Seattle Seahawks",
@@ -725,8 +725,8 @@
        "odds": 1.62,
        "est": false,
        "p": 0.6492,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "29-32"
       }
      ]
     }

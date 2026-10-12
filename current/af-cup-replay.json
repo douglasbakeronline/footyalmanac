@@ -7,8 +7,8 @@
      "n": 19
     },
     "2026H2": {
-     "hit": 0.8421,
-     "n": 19
+     "hit": 0.8095,
+     "n": 21
     }
    },
    "0.8": {
@@ -17,8 +17,8 @@
      "n": 10
     },
     "2026H2": {
-     "hit": 0.9091,
-     "n": 11
+     "hit": 0.8333,
+     "n": 12
     }
    }
   },
@@ -29,8 +29,8 @@
      "n": 31
     },
     "2026H2": {
-     "hit": 0.6596,
-     "n": 47
+     "hit": 0.64,
+     "n": 50
     }
    },
    "0.8": {
@@ -39,8 +39,8 @@
      "n": 16
     },
     "2026H2": {
-     "hit": 0.7083,
-     "n": 24
+     "hit": 0.6538,
+     "n": 26
     }
    }
   }
@@ -51,11 +51,11 @@
  "crossBar": null,
  "note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as of its own morning, prior season finished before the tie. Nothing fitted.",
  "version": 3,
- "day": "2026-10-11",
- "ties": 6250,
- "priced": 1859,
+ "day": "2026-10-12",
+ "ties": 6258,
+ "priced": 1863,
  "skipped": {
-  "unrated": 3454,
+  "unrated": 3458,
   "priorAfter": 515,
   "womenYouth": 422
  },
@@ -63,49 +63,49 @@
  "bands": [
   {
    "from": 0.55,
-   "hit": 0.5665,
-   "n": 263,
-   "quoted": 0.6563
+   "hit": 0.5639,
+   "n": 266,
+   "quoted": 0.6572
   },
   {
    "from": 0.6,
-   "hit": 0.5699,
-   "n": 193,
-   "quoted": 0.6862
+   "hit": 0.5692,
+   "n": 195,
+   "quoted": 0.6875
   },
   {
    "from": 0.65,
-   "hit": 0.6091,
-   "n": 110,
-   "quoted": 0.7338
+   "hit": 0.6071,
+   "n": 112,
+   "quoted": 0.7353
   },
   {
    "from": 0.7,
-   "hit": 0.6716,
-   "n": 67,
-   "quoted": 0.7734
+   "hit": 0.6667,
+   "n": 69,
+   "quoted": 0.7746
   },
   {
    "from": 0.75,
-   "hit": 0.6579,
-   "n": 38,
-   "quoted": 0.8119
+   "hit": 0.65,
+   "n": 40,
+   "quoted": 0.812
   },
   {
    "from": 0.8,
-   "hit": 0.7143,
-   "n": 21,
-   "quoted": 0.8465
+   "hit": 0.6818,
+   "n": 22,
+   "quoted": 0.8469
   },
   {
    "from": 0.85,
-   "hit": 0.8571,
-   "n": 7,
-   "quoted": 0.8862
+   "hit": 0.75,
+   "n": 8,
+   "quoted": 0.8821
   }
  ],
  "from": "2026-01-01",
- "to": "2026-10-10",
+ "to": "2026-10-11",
  "confident": [
   {
    "date": "2026-01-08",
@@ -600,6 +600,18 @@
    ]
   },
   {
+   "date": "2026-07-18",
+   "cup": "afc.185",
+   "conf": 0.7752,
+   "pick": "h",
+   "hit": 1,
+   "tie": "ST Johnstone (Championship, St Johnstone) v Morton (Championship, Greenock Morton) 3-0",
+   "played": [
+    0,
+    0
+   ]
+  },
+  {
    "date": "2026-07-25",
    "cup": "afc.220",
    "conf": 0.8478,
@@ -910,6 +922,18 @@
     5,
     4
    ]
+  },
+  {
+   "date": "2026-10-11",
+   "cup": "afc.500",
+   "conf": 0.8538,
+   "pick": "h",
+   "hit": 0,
+   "tie": "Selangor (Super League, Selangor) v Imigresen (Super League, Imigresen) 2-3",
+   "played": [
+    4,
+    4
+   ]
   }
  ],
  "byCup": {
@@ -1042,8 +1066,8 @@
    0
   ],
   "afc.185": [
-   1,
-   2
+   2,
+   3
   ],
   "afc.199": [
    0,
@@ -1171,7 +1195,7 @@
   ],
   "afc.500": [
    3,
-   3
+   4
   ],
   "afc.504": [
    0,
