@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-12 ESPN fixtures retry a blip instead of dropping the day (tag pending)
+
+**What changed:** `sources._espn_day`, the one-day ESPN fetch behind live fixtures and top-ups, tried each host once and returned an empty day on any error, so one timeout silently lost a whole competition-day. If every host fails on something transient (timeout, reset, 5xx, 429) it now waits 1s and goes round once more. A 4xx such as 404 is not retried. After 20 consecutive days fail outright ESPN is treated as unreachable and the retry is skipped, so a blocked network costs one pass, not two. Persistent failures are still appended to `errs` and reported in the build log, never swallowed.
+**Evidence:** four new tests in `tests/test_source_failures.py` with a fake failing source: blip then success (3 calls, no error), persistent 503 (4 calls, one error reported), 404 (2 calls, no retry), blocked-network breaker (2 calls). `nametest.py` passes. No build run: ESPN is unreachable from this sandbox, so the live effect is for CI to show.
+**Files:** `sources.py`, `tests/test_source_failures.py`, `RELEASES.md`.
+**Not changed:** any model, rating, threshold, name matching, other source (openfootball, football-data, API-Football already retry via `_open`), or the fall-through of `fetch_season`.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-12 Fixture audit of predictions/2026-10-12.json: matching clean (tag pending)
 
 **What changed:** write-up only, in `claude/data-integrity.md`. No code, model or data changed.

@@ -1466,17 +1466,40 @@ ESPN_SLUGS = {
 }
 
 
-def _espn_day(slug, day, timeout, errs):
-    """One competition, one date. Returns a list of raw event dicts."""
+_ESPN_DOWN = {"run": 0}      # consecutive days that failed on every host and retry
+_ESPN_DOWN_AT = 20           # then ESPN is treated as unreachable: no more retries
+
+
+def _espn_day(slug, day, timeout, errs, pause=1.0):
+    """One competition, one date. Returns a list of raw event dicts.
+
+    Each host is tried in turn; if all fail on something transient (timeout,
+    reset, 5xx, 429) the round is repeated once after a pause, because one
+    blip used to drop a whole day of fixtures silently. A 4xx such as 404 is an
+    answer and is not retried. After _ESPN_DOWN_AT days in a row fail outright
+    the retry is skipped, so a blocked network costs one pass, not two."""
     d = day.strftime("%Y%m%d")
     last = None
-    for host in ESPN_HOSTS:
-        url = host + ESPN_PATH.format(slug=slug, d=d)
-        try:
-            req = urllib.request.Request(url, headers=ESPN_HEADERS)
-            return json.loads(urllib.request.urlopen(req, timeout=timeout).read()).get("events") or []
-        except Exception as e:
-            last = f"{type(e).__name__} {e}"
+    for rnd in range(2):
+        transient = False
+        for host in ESPN_HOSTS:
+            url = host + ESPN_PATH.format(slug=slug, d=d)
+            try:
+                req = urllib.request.Request(url, headers=ESPN_HEADERS)
+                ev = json.loads(urllib.request.urlopen(req, timeout=timeout).read()).get("events") or []
+                _ESPN_DOWN["run"] = 0
+                return ev
+            except urllib.error.HTTPError as e:
+                last = f"{type(e).__name__} {e}"
+                if e.code >= 500 or e.code == 429:
+                    transient = True
+            except Exception as e:
+                last = f"{type(e).__name__} {e}"
+                transient = True
+        if not transient or _ESPN_DOWN["run"] >= _ESPN_DOWN_AT or rnd:
+            break
+        time.sleep(pause)
+    _ESPN_DOWN["run"] += 1
     if last:
         errs.append(f"{slug} {d}: {last}")
     return []
