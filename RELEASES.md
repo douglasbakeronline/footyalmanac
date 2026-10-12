@@ -3,6 +3,22 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+
+## 2026-10-12: Championship shrink test, rejected (tag pending)
+
+**What changed:** nothing a reader sees. A dated note and the harness for a
+rejected test: a league-specific rating shrink / prior blend for the England Championship.
+
+**Evidence:** paired bootstrap, live curve. On the fit season 2025-26 the best
+setting gains 0.0002 log loss (gate 0.0005, p(worse) 0.41); the sign flips
+across 2023-24 to 2026-27; 2026-27 has 95 fixtures against 250. Fails Rule 3.
+
+**Files:** `claude/championship-shrink-2026-10-12.md`, `tools/championship_shrink.py`.
+
+**Not changed:** `engine.py`, `calibration.json`, any model number.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-12 Goal cap in the ratings: tested, rejected (tag pending)
 
 **What changed:** write-up only: `claude/goal-cap-test-2026-10-12.md` and the advisory script `tools/goal_cap_test.py`. No model, constant or data changed.
