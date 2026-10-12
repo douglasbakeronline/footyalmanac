@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-10-12: Office review and next week's priorities (tag pending)
+
+**What changed:** nothing a reader sees. A dated review note: what the office shipped since 28 Sep, rejected tests, accuracy by group, data quality, three tasks for next week (Susie, Theo, Andrew).
+
+**Evidence:** record summaries read only. Football Daily List 60 of 72 (83.3%), Strong 79.9% v 78.3% quoted, tennis 59.5% v 61.7% (n=526), sports 70.3% v 65.1% (n=158).
+
+**Files:** `claude/office-review-2026-10-12.md`, this entry.
+
+**Not changed:** any code, model number, record or archive.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-10-12: Grading audit, extra-time scores no longer graded (tag pending)
 
 **What changed:** ESPN football results after extra time or penalties are not graded or used as live results, because the board prices 90 minutes. Tennis voids on ESPN's walkover status as well as the `w/o` note.
