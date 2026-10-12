@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-12T20:30:30Z",
+ "graded": "2026-10-12T23:33:36Z",
  "overall": {
-  "groups": 31,
+  "groups": 34,
   "settled": 31,
   "won": 9,
   "lost": 22,
-  "pending": 0,
+  "pending": 3,
   "legs": 146,
   "legsWon": 110,
   "returned": 36.15,
@@ -14,11 +14,11 @@
  },
  "byBand": {
   "Steady": {
-   "groups": 13,
+   "groups": 15,
    "settled": 13,
    "won": 3,
    "lost": 10,
-   "pending": 0,
+   "pending": 2,
    "legs": 60,
    "legsWon": 44,
    "returned": 8.17,
@@ -26,11 +26,11 @@
    "expected": 4.97
   },
   "Balanced": {
-   "groups": 9,
+   "groups": 10,
    "settled": 9,
    "won": 5,
    "lost": 4,
-   "pending": 0,
+   "pending": 1,
    "legs": 42,
    "legsWon": 35,
    "returned": 20.87,
@@ -51,11 +51,11 @@
   }
  },
  "firstChoice": {
-  "groups": 19,
+  "groups": 21,
   "settled": 19,
   "won": 6,
   "lost": 13,
-  "pending": 0,
+  "pending": 2,
   "legs": 88,
   "legsWon": 69,
   "returned": 24.83,
@@ -63,6 +63,231 @@
   "expected": 6.74
  },
  "days": [
+  {
+   "date": "2026-10-13",
+   "published": "2026-10-12T23:33:30Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 3.74,
+     "p": 0.5149,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Raluka Serban",
+       "event": "Raluka Serban v Analu Freitas",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 1",
+       "when": "2026-10-13T11:30:00Z",
+       "odds": 1.06,
+       "est": true,
+       "p": 0.9451,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Jessica Bouzas Maneiro",
+       "event": "Milana Ivantsiv v Jessica Bouzas Maneiro",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 1",
+       "when": "2026-10-13T14:30:00Z",
+       "odds": 1.06,
+       "est": true,
+       "p": 0.9449,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Slavia Prague",
+       "event": "Sabah FK v Slavia Prague",
+       "sport": "football",
+       "comp": "Champions League",
+       "when": "2026-10-13T16:45:00Z",
+       "odds": 2.04,
+       "est": false,
+       "p": 0.8383,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "IFK Norrkoping",
+       "event": "IFK Norrkoping v GIF Sundsvall",
+       "sport": "football",
+       "comp": "Superettan",
+       "when": "2026-10-13T17:00:00Z",
+       "odds": 1.19,
+       "est": false,
+       "p": 0.8979,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ebbsfleet United",
+       "event": "Ebbsfleet United v AFC Totton",
+       "sport": "football",
+       "comp": "National League South",
+       "when": "2026-10-13T18:45:00Z",
+       "odds": 1.37,
+       "est": false,
+       "p": 0.766,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 4.38,
+     "p": 0.2042,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Tamara Zidansek",
+       "event": "Despina Papamichail v Tamara Zidansek",
+       "sport": "tennis",
+       "comp": "Vanda Pharmaceuticals Mallorca Women's Championships presented by Ecotrans Group Round 1",
+       "when": "2026-10-13T09:30:00Z",
+       "odds": 1.47,
+       "est": true,
+       "p": 0.7487,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Orlando Pirates",
+       "event": "Orlando Pirates v TS Galaxy",
+       "sport": "football",
+       "comp": "Premiership",
+       "when": "2026-10-13T17:30:00Z",
+       "odds": 1.16,
+       "est": false,
+       "p": 0.7683,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Al Ittihad",
+       "event": "Al Ittihad v Shabab Al-Ahli",
+       "sport": "football",
+       "comp": "AFC Champions League Elite",
+       "when": "2026-10-13T18:15:00Z",
+       "odds": 1.6,
+       "est": true,
+       "p": 0.683,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Gainsborough Trinity",
+       "event": "Gainsborough Trinity v Ilkeston Town",
+       "sport": "football",
+       "comp": "Northern Premier League",
+       "when": "2026-10-13T18:45:00Z",
+       "odds": 1.46,
+       "est": false,
+       "p": 0.7627,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Bayern Munich",
+       "event": "Viking FK v Bayern Munich",
+       "sport": "football",
+       "comp": "Champions League",
+       "when": "2026-10-13T19:00:00Z",
+       "odds": 1.1,
+       "est": false,
+       "p": 0.6815,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 2.52,
+     "p": 0.5775,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Sorana Cirstea",
+       "event": "Sorana Cirstea v Hanyu Guo",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 1",
+       "when": "2026-10-13T04:30:00Z",
+       "odds": 1.16,
+       "est": true,
+       "p": 0.9177,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Francesca Jones",
+       "event": "Francesca Jones v Martina Colmegna",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 1",
+       "when": "2026-10-13T10:00:00Z",
+       "odds": 1.16,
+       "est": true,
+       "p": 0.9183,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Fiona Ferro",
+       "event": "Fiona Ferro v Aurora Zantedeschi",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 1",
+       "when": "2026-10-13T11:30:00Z",
+       "odds": 1.32,
+       "est": true,
+       "p": 0.8545,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ekaterine Gorgodze",
+       "event": "Ekaterine Gorgodze v Lucia Cortez Llorca",
+       "sport": "tennis",
+       "comp": "Vanda Pharmaceuticals Mallorca Women's Championships presented by Ecotrans Group Round 1",
+       "when": "2026-10-13T12:00:00Z",
+       "odds": 1.3,
+       "est": true,
+       "p": 0.8561,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Dominika Salkova",
+       "event": "Elisa Visentin v Dominika Salkova",
+       "sport": "tennis",
+       "comp": "RoveretOpen Città della Pace Round 1",
+       "when": "2026-10-13T16:00:00Z",
+       "odds": 1.09,
+       "est": true,
+       "p": 0.9367,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-12",
    "published": "2026-10-11T23:04:16Z",
