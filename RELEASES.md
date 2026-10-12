@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Odds tab group rules backtest rerun, no change (tag pending)
+
+**What changed:** nothing a reader sees. A dated section added to `claude/odds-groupings.md`.
+
+**Evidence:** 30 settled groups, 4 to 12 Oct: 9 won against 9.51 stated. Steady 3 of 13 (4.97 expected), Balanced 5 of 8 (2.50), Stretch 1 of 9 (2.04). Bootstrap of won minus expected: -0.51, 90% interval -4.5 to +3.5. Legs 106 of 140 against 110.4 expected; tennis 18 of 26 against 21.1 is the only gap. Historical replay still impossible: no archived tested rate or price.
+
+**Files:** `claude/odds-groupings.md`, this entry.
+
+**Not changed:** `groupings.py`, any model number, any record or archive.
+
+**Roll back:** `git revert` the commit; nothing depends on it.
+
+
 ## 2026-10-12: Odds tab price coverage measured, no change (tag pending)
 
 **What changed:** nothing a reader sees. A dated note on which legs lack bookmaker prices.
