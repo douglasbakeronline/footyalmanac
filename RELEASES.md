@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Daily List bar replay rerun, no change (tag pending)
+
+**What changed:** nothing a reader sees. Replay script saved and the 5 Oct result confirmed.
+
+**Evidence:** league win picks, walk-forward. 2025/26 hit: 75% 79.4% (n=189), 77.5% 81.4% (140), 80% 81.9% (94), 82.5% 80.0% (60), 85% 69.2% (39). Paired bootstrap v 80%: 75% -2.4 pts (-7.5 to +2.5), 85% -12.5 (-21.3 to -4.4). 2026/27 still thin (11 picks at 80%). No league has 30 calls at 80%, so no per-league bar.
+
+**Files:** `tools/list_bar_replay.py`, `claude/daily-list.md`, this entry.
+
+**Not changed:** `build.py` `LIST_MIN`, any model number, any record or archive.
+
+**Roll back:** `git revert` the commit; nothing depends on it.
+
+
 ## 2026-10-12: Tennis hit-rate second look, no model change (tag pending)
 
 **What changed:** nothing a reader sees. Tennis showed 59.5% against 61.7% quoted over 526 matches; this checks by tour and surface. No model number changed.

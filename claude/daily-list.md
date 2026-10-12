@@ -176,3 +176,21 @@ published before its start, with results from the three record files. The page
 merges started picks into today's section (`pinnedRow`), so a day no longer
 empties as it is played. The office (footyalmanac-hq `pin_today`) reads the
 same file. Results land with site builds, not live.
+
+## Replay of the league bar rerun, 12 Oct 2026 (Nina): no change, script saved
+
+The 5 Oct replay was not reproducible (no script). `tools/list_bar_replay.py`
+now is: `tune.lambdas` walk-forward, live calibration, win picks only, paired
+bootstrap (2,000 resamples, 5th to 95th percentile of the hit-rate change from
+the 80% list). It reproduces the 5 Oct table exactly: 2025/26 n=344/189/140/94/60/39
+at 70/75/77.5/80/82.5/85%, hit 77.6/79.4/81.4/81.9/80.0/69.2%. 2026/27 is
+still thin (n=11 at 80%, 81.8%; 20 at 75%, 80.0%).
+
+Bootstrap on 2025/26: 75% is -2.4 points (-7.5 to +2.5); 77.5% -0.3 (-4.3 to
++3.2); 82.5% -1.9 (-6.7 to +3.0); 85% -12.5 (-21.3 to -4.4). Only 85% differs
+from 80%, and it is worse. Per league at 80%: pt.1 17/22, de.1 11/14, fr.1
+7/8, es.1 7/7; none has the 30 calls the shared rule needs, so a per-league bar
+would be noise. 2026/27 adds no league with 30+.
+
+Verdict: 80% league bar stays; per-league bars not built. Reopen when 2026/27
+has at least 100 calls at 80%.
