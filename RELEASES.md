@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-12 Tests for odds.py, the untested price module (tag pending)
+
+**What changed:** new `tests/test_odds.py` (26 tests) covering `odds.py`, the largest module with no test: CSV parsing and row rejection, margin removal (`fair`), the stale-max cap (`best`), club-name matching and the one-price-one-fixture rule (`match`), the value gate and ROI/CLV in `evaluate`, the bootstrap, and report staleness.
+**Evidence:** all 26 pass; full suite 249 tests OK; `nametest.py` passes. The tests exposed no bug. One minor observation, not changed: `_num` accepts the string "inf" as a price.
+**Files:** `tests/test_odds.py`, `RELEASES.md`.
+**Not changed:** `odds.py` or any model, page or data. Prices never feed a model.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-08 Julius review export: every graded prediction as CSVs (release-2026-10-08-6)
 
 **What changed:** new `tools/julius_export.py` writes `julius/julius.ai.review.<date>/` and a `.zip` of it: `all_picks.csv` (every graded pick, all sports), `daily_list.csv`, `reserve.csv`, `by_sport/<sport>.csv`, `summary.csv`, `by_day.csv`, `calibration_bands.csv` and a `README.md` data dictionary. Each row carries ✓ / ✗ / – as on "How it went", the group (Daily List, Reserve, Board), publish time, verification, and `quoted_chance` so hit rates compare against the site's own rule (football counts draw readings). To make the football history complete, `score.py` now also writes `record-graded.json` (every graded fixture; `record.json` keeps 14 days for the page), committed by `deploy.yml` as a bot file and protected from agents. `score.py` and `sports.py` expose their graded rows (`graded_rows()`, `graded_games()`); their outputs are unchanged (record.json and sports-record.json compared identical before and after on the same data).
