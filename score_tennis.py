@@ -115,7 +115,7 @@ def is_retirement(note):
 def outcome(m, r):
     """(status, winner as a rating-pool name). status: graded, void or None."""
     note = (r.get("note") or "").lower()
-    if r.get("statusName") == "STATUS_CANCELED" or "w/o" in note or "walkover" in note:
+    if r.get("statusName") in ("STATUS_CANCELED", "STATUS_WALKOVER") or "w/o" in note or "walkover" in note:
         return "void", None
     if not r.get("winner"):
         return None, None

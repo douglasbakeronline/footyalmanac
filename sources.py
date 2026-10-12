@@ -1507,6 +1507,7 @@ def _espn_day(slug, day, timeout, errs, pause=1.0):
 
 NOT_PLAYED = ("STATUS_CANCELED", "STATUS_POSTPONED", "STATUS_ABANDONED",
               "STATUS_SUSPENDED", "STATUS_FORFEIT")
+AFTER_90 = ("STATUS_FINAL_AET", "STATUS_FINAL_PEN")
 
 
 def _row(ev):
@@ -1524,6 +1525,11 @@ def _row(ev):
     # completed is also set on abandoned or forfeited games, whose score is
     # partial or a placeholder: not a result, never graded.
     done = bool(stype.get("completed")) and stype.get("name") not in NOT_PLAYED
+    # The board prices the 90-minute result. After extra time or a shootout
+    # ESPN's score is the 120-minute one (a game level at 90 can read 2-1), so
+    # it is not graded, as API-Football's AET / PEN rows use the 90-minute score.
+    if stype.get("name") in AFTER_90:
+        done = False
     hg = ag = None
     if done:
         try:
