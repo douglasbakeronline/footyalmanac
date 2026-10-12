@@ -77,5 +77,41 @@ class SourceFailureTests(unittest.TestCase):
         self.assertEqual(f.calls, 1)
 
 
+class EspnDayTests(unittest.TestCase):
+    DAY = __import__("datetime").date(2026, 10, 12)
+
+    def setUp(self):
+        sources._ESPN_DOWN["run"] = 0
+
+    def run_day(self, *outcomes):
+        f = Flaky(*outcomes)
+        errs = []
+        with mock.patch.object(sources.urllib.request, "urlopen", f):
+            rows = sources._espn_day("eng.1", self.DAY, 5, errs, pause=0)
+        return rows, errs, f.calls
+
+    def test_blip_on_every_host_is_retried(self):
+        rows, errs, calls = self.run_day(TimeoutError("a"), TimeoutError("b"),
+                                         b'{"events": [{"id": 1}]}')
+        self.assertEqual(rows, [{"id": 1}])
+        self.assertEqual((errs, calls), ([], 3))
+
+    def test_persistent_failure_is_reported_not_swallowed(self):
+        rows, errs, calls = self.run_day(*[http(503)] * 4)
+        self.assertEqual((rows, calls), ([], 4))
+        self.assertEqual(len(errs), 1)
+        self.assertIn("eng.1", errs[0])
+
+    def test_404_not_retried(self):
+        rows, errs, calls = self.run_day(http(404), http(404))
+        self.assertEqual((rows, calls), ([], 2))
+        self.assertEqual(len(errs), 1)
+
+    def test_blocked_network_skips_retry(self):
+        sources._ESPN_DOWN["run"] = sources._ESPN_DOWN_AT
+        rows, errs, calls = self.run_day(OSError("x"), OSError("y"))
+        self.assertEqual((rows, calls), ([], 2))
+
+
 if __name__ == "__main__":
     unittest.main()
