@@ -12,3 +12,7 @@ First divisions in `engine.LEAGUES` with `live: True` but no working source: Cro
 
 ## Decision
 Not built (Rule 10). The only route that works today is API-Football, already paid for: add the five top flights to `sources.AF` with their league ids, replay each, and keep them off the Daily List until they pass 80% (`claude/data-expansion-plan.md`, "Next"). That is a model/data change for a session that can replay it, not an unattended one.
+
+## Re-checked 12 Oct 2026 (Ava): same answer
+- TheSportsDB free key, Hungary NB I (4690), 2026-2027: `eventsseason` 5 events, `eventsround` 5 events for rounds 3, 9 and 10 (a 12-club league plays 6 a round, so one game per round is missing), `eventsnextleague` and `eventspastleague` 1 each, `lookuptable` 5 of 12 clubs. Truncated everywhere, so it can neither rate a league nor price a full round, and a partial round would break the "missing is better than wrong" balance (Rule 6).
+- football-data.co.uk `new/` files still cover only the 16 leagues listed above; ESPN still has nothing for Croatia, Serbia, Ukraine, Hungary or Korea. The standing recommendation is unchanged: use the paid API-Football (`sources.AF`) for the five top flights, replay them, keep them off the Daily List until they pass the bar.
