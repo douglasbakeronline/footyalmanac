@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Tennis hit-rate second look, no model change (tag pending)
+
+**What changed:** nothing a reader sees. Tennis showed 59.5% against 61.7% quoted over 526 matches; this checks by tour and surface. No model number changed.
+
+**Evidence:** the gap is 1.07 standard errors overall. ATP 63.1% v 62.3% (n=225, on target). WTA 56.8% v 61.3% (n=301, z -1.63), main draw 55.5% v 60.9%. By tournament-name surface, WTA hard main draw 59.8% v 62.7% (n=174), WTA clay main draw 41.8% v 55.4% (n=55, z -2.04, one of seven cells, found after looking). ESPN has no surface so clay events are priced on hard ratings. The surface-weighting test could not run: the Sackmann archive is unreachable from the sandbox. Descriptive only, nothing fitted on the record.
+
+**Files:** `claude/tennis-hit-rate-2026-10-12.md`, this entry.
+
+**Not changed:** `tennis.json`, `build_tennis.py`, `tune_tennis.py`, `surfaceWeight`, football, any record or archive.
+
+**Roll back:** `git revert` the commit; nothing depends on it.
+
 ## 2026-10-12: Calibration by band and sport, full-data rerun (tag pending)
 
 **What changed:** nothing a reader sees. A dated note with the calibration tables run on full data.
