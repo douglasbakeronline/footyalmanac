@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-12T05:50:44Z",
+ "graded": "2026-10-12T13:11:48Z",
  "overall": {
   "groups": 31,
-  "settled": 28,
+  "settled": 30,
   "won": 9,
-  "lost": 19,
-  "pending": 3,
-  "legs": 137,
+  "lost": 21,
+  "pending": 1,
+  "legs": 140,
   "legsWon": 106,
   "returned": 36.15,
-  "staked": 28,
-  "expected": 8.79
+  "staked": 30,
+  "expected": 9.51
  },
  "byBand": {
   "Steady": {
    "groups": 13,
-   "settled": 11,
+   "settled": 13,
    "won": 3,
-   "lost": 8,
-   "pending": 2,
-   "legs": 54,
+   "lost": 10,
+   "pending": 0,
+   "legs": 57,
    "legsWon": 42,
    "returned": 8.17,
-   "staked": 11,
-   "expected": 4.25
+   "staked": 13,
+   "expected": 4.97
   },
   "Balanced": {
    "groups": 9,
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 19,
-  "settled": 17,
+  "settled": 18,
   "won": 6,
-  "lost": 11,
-  "pending": 2,
-  "legs": 83,
+  "lost": 12,
+  "pending": 1,
+  "legs": 84,
   "legsWon": 66,
   "returned": 24.83,
-  "staked": 17,
-  "expected": 5.99
+  "staked": 18,
+  "expected": 6.42
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 3.31,
      "p": 0.427,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -87,8 +87,8 @@
        "odds": 1.15,
        "est": true,
        "p": 0.9225,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Zizou Bergs (BEL) bt (2) Carlos Alcaraz (ESP) 7-5 7-6 (7-4)"
       },
       {
        "pick": "Julia Grabher",
@@ -218,11 +218,11 @@
      "rank": "alternative",
      "odds": 2.87,
      "p": 0.2925,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 2,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Iva Jovic",
@@ -233,8 +233,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.8602,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Mia Pohankova (SVK) bt Anna Bondar (HUN) 6-1 6-3"
       },
       {
        "pick": "Arthur Fils",
@@ -245,8 +245,8 @@
        "odds": 1.34,
        "est": true,
        "p": 0.773,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Botic Van De Zandschulp (NED) bt (8) Arthur Fils (FRA) 7-5 6-4"
       },
       {
        "pick": "Struga",
