@@ -78,3 +78,39 @@ openfootball only.
 (deliberate, documented above). Cup ties decided in extra time use whatever
 score the source gives, not strictly 90 minutes; unverified, worth a check.
 Tests: `tests/test_grading.py`.
+
+## Grading audit, 12 Oct 2026 (Susie, Results Auditor)
+
+ESPN was reachable this time, so the check is against the live scoreboards.
+
+**Sample (168 games, 0 mismatches):**
+- Football: 51 of 60 sampled rows (1 to 12 Oct, ESPN-covered leagues) found on
+  ESPN and compared: 51 scores match, `actual` and `ok` consistent. 9 not found
+  in the lookup window (name differences), not counted.
+- Tennis: 60 of 60 sampled graded matches (2 to 12 Oct) re-fetched by ESPN match
+  id: winner and `ok` match.
+- Other sports: all 157 games in the `sports-record.json` 14-day window (MLB,
+  NFL, NBA, rugby and the rest) match ESPN scores.
+- Caveat: the football leagues covered here are ESPN's, which is also a
+  grading source for them, so this tests the pipeline's handling, not ESPN.
+
+**Edge cases checked against live feeds (last 11 to 29 days):** tennis statuses
+are FINAL, RETIRED (213 in 11 days), WALKOVER (11), CANCELED (48). Every walkover
+carries a `w/o` note and every retirement a `ret` note, so the note tests hold.
+Postponed, abandoned and forfeited football and sports games never carry a
+score into the record.
+
+**Bug found and fixed:** ESPN's football score after extra time
+(`STATUS_FINAL_AET`) or a shootout (`STATUS_FINAL_PEN`) is the 120-minute
+score, but the board prices 90 minutes (API-Football rows already use the 90
+minute score). A game level at 90 and won in extra time would be graded a home
+or away result. 12 such games in the last 29 days, all cup or continental
+ties; none was in the graded record, so no published number changes. `_row`
+now gives them no score (not graded, and not fed to the ratings from the live
+top-up). Past `history/` seasons are untouched. Tennis `outcome` also voids on
+`STATUS_WALKOVER`, not only on the `w/o` note.
+
+**Open:** two-legged tie legs that go to penalties are real 90-minute scores
+in ESPN's feed, and are now dropped as well. Recovering the 90-minute score
+needs a per-match source (ESPN's scoreboard has no goal times). Tests:
+`tests/test_grading.py`.

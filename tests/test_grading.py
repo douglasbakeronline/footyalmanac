@@ -21,6 +21,10 @@ class Grading(unittest.TestCase):
         for n in ("STATUS_ABANDONED", "STATUS_POSTPONED", "STATUS_CANCELED", "STATUS_FORFEIT"):
             self.assertIsNone(S._row(ev(n))["hg"], n)
 
+    def test_football_row_not_graded_after_extra_time_or_penalties(self):
+        for n in ("STATUS_FINAL_AET", "STATUS_FINAL_PEN"):
+            self.assertIsNone(S._row(ev(n, hs="3", as_="3"))["hg"], n)
+
     def test_sports_game_ignores_unplayed_statuses(self):
         feed = {"path": "football/nfl", "label": "NFL", "pool": "nfl", "skip": ()}
         self.assertTrue(SP._game(ev("STATUS_FINAL"), feed)["final"])
@@ -41,6 +45,7 @@ class Grading(unittest.TestCase):
     def test_walkover_and_cancelled_void(self):
         self.assertEqual(ST.outcome({}, {"note": "A bt B w/o"})[0], "void")
         self.assertEqual(ST.outcome({}, {"statusName": "STATUS_CANCELED"})[0], "void")
+        self.assertEqual(ST.outcome({}, {"statusName": "STATUS_WALKOVER", "winner": "A", "pool": {}})[0], "void")
         self.assertEqual(ST.outcome({}, {"note": "A bt B 6-4 ret", "winner": "A", "pool": {}})[0], "graded")
 
 

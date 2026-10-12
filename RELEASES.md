@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-12: Grading audit, extra-time scores no longer graded (tag pending)
+
+**What changed:** ESPN football results after extra time or penalties are not graded or used as live results, because the board prices 90 minutes. Tennis voids on ESPN's walkover status as well as the `w/o` note.
+
+**Evidence:** 168 sampled graded games (51 football, 60 tennis, 157 other sports checked in full) all match ESPN, 0 mismatches. 12 AET / PEN games in 29 days carried the 120-minute score; none was in the graded record, so no published number changes.
+
+**Files:** `sources.py`, `score_tennis.py`, `tests/test_grading.py`, `claude/results-review-board.md`, this entry.
+
+**Not changed:** any record file, `history/`, any model constant or calibration.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-10-12: Odds tab group rules backtest rerun, no change (tag pending)
 
 **What changed:** nothing a reader sees. A dated section added to `claude/odds-groupings.md`.
