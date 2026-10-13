@@ -71,6 +71,20 @@ MIN_HOLDOUT, MAX_P_WORSE, MIN_GAIN = 250, 0.30, 0.0005
 LIST_THRESHOLDS = (0.55, 0.60, 0.65, 0.70, 0.75, 0.80, 0.85)
 LIST_MIN_HIT, LIST_MIN_N = 0.80, 30
 RESERVE_MIN = 0.62   # the list's reserve floor, Firm, as football and tennis
+# A sport's bar never sits below its floor here, whatever the cumulative rule
+# finds. College football (13 Oct 2026): 70%+ clears 80% cumulatively, but its
+# own bands do not: 70-75% landed 71.3% (fit, n=101) and 78.0% (check, n=168),
+# 75-80% landed 73.8% (n=84) and 76.9% (n=108); 80-85% landed 87.7% and
+# 87.4%. Live List 7-11 Oct: 70-80% won 11 of 17, 80%+ 10 of 12.
+LIST_FLOOR = {"cfb": 0.80}
+
+
+def list_bar(sport, found):
+    """The Daily List bar for a sport: the backtest's threshold, raised to the
+    sport's floor. None stays None: a floor never earns a sport a place."""
+    if found is None:
+        return None
+    return max(found, LIST_FLOOR.get(sport, 0.0))
 
 
 def list_threshold(windows):
@@ -468,7 +482,7 @@ def tune_sport(sport, verbose=True):
         f"65%+ gap {gap_raw:.3f} -> {gap_cal:.3f} -> {'applied' if use_cal else 'not applied'}")
 
     b_fit, b_chk = bands(rows_fit), bands(rows_chk)
-    list_min = list_threshold([b_fit, b_chk])
+    list_min = list_bar(sport, list_threshold([b_fit, b_chk]))
 
     acc = sum(r[1] for r in rows_chk) / max(len(rows_chk), 1)
     say(f"  fitted {fitted} (fit window log loss {best[0]:.4f})")
@@ -574,7 +588,7 @@ def build(start=None):
     for sport, cfg in SPORTS.items():
         sp = P.get(sport)
         entry = {"name": cfg["name"], "published": bool(sp and sp.get("publish")),
-                 "listMin": sp.get("listMin") if sp else None,
+                 "listMin": list_bar(sport, sp.get("listMin")) if sp else None,
                  "check": sp.get("check") if sp else None,
                  "bands": sp.get("bandsCheck") if sp else None, "games": []}
         payload["sports"][sport] = entry
