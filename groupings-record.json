@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-13T14:33:57Z",
+ "graded": "2026-10-13T18:37:12Z",
  "overall": {
   "groups": 34,
   "settled": 32,
   "won": 9,
   "lost": 23,
   "pending": 2,
-  "legs": 156,
-  "legsWon": 118,
+  "legs": 160,
+  "legsWon": 121,
   "returned": 36.15,
   "staked": 32,
   "expected": 10.41
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 11,
    "pending": 1,
-   "legs": 67,
-   "legsWon": 49,
+   "legs": 71,
+   "legsWon": 52,
    "returned": 8.17,
    "staked": 14,
    "expected": 5.55
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 13,
   "pending": 2,
-  "legs": 95,
-  "legsWon": 75,
+  "legs": 96,
+  "legsWon": 76,
   "returned": 24.83,
   "staked": 19,
   "expected": 6.74
@@ -74,9 +74,9 @@
      "p": 0.5149,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Raluka Serban",
@@ -99,8 +99,8 @@
        "odds": 1.06,
        "est": true,
        "p": 0.9449,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Jessica Bouzas Maneiro (ESP) bt Milana Ivantsiv (POR) 6-2 6-1"
       },
       {
        "pick": "Slavia Prague",
@@ -220,9 +220,9 @@
      "p": 0.5775,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Sorana Cirstea",
@@ -257,8 +257,8 @@
        "odds": 1.32,
        "est": true,
        "p": 0.8545,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(3) Fiona Ferro (FRA) bt Aurora Zantedeschi (ITA) 6-3 6-4"
       },
       {
        "pick": "Ekaterine Gorgodze",
@@ -269,8 +269,8 @@
        "odds": 1.3,
        "est": true,
        "p": 0.8561,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Lucia Cortez Llorca (ESP) bt (8) Ekaterine Gorgodze (GEO) 6-4 7-6 (7-3)"
       },
       {
        "pick": "Dominika Salkova",
@@ -281,8 +281,8 @@
        "odds": 1.09,
        "est": true,
        "p": 0.9367,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(6) Dominika Salkova (CZE) bt Elisa Visentin (ITA) 6-0 6-1"
       }
      ]
     }
