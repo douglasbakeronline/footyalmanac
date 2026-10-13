@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-13T18:37:12Z",
+ "graded": "2026-10-13T21:47:54Z",
  "overall": {
   "groups": 34,
   "settled": 32,
   "won": 9,
   "lost": 23,
   "pending": 2,
-  "legs": 160,
-  "legsWon": 121,
+  "legs": 163,
+  "legsWon": 124,
   "returned": 36.15,
   "staked": 32,
   "expected": 10.41
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 11,
    "pending": 1,
-   "legs": 71,
-   "legsWon": 52,
+   "legs": 73,
+   "legsWon": 54,
    "returned": 8.17,
    "staked": 14,
    "expected": 5.55
@@ -31,8 +31,8 @@
    "won": 5,
    "lost": 4,
    "pending": 1,
-   "legs": 45,
-   "legsWon": 38,
+   "legs": 46,
+   "legsWon": 39,
    "returned": 20.87,
    "staked": 9,
    "expected": 2.82
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 13,
   "pending": 2,
-  "legs": 96,
-  "legsWon": 76,
+  "legs": 99,
+  "legsWon": 79,
   "returned": 24.83,
   "staked": 19,
   "expected": 6.74
@@ -74,9 +74,9 @@
      "p": 0.5149,
      "status": "pending",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 4,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Raluka Serban",
@@ -123,8 +123,8 @@
        "odds": 1.19,
        "est": false,
        "p": 0.8979,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Ebbsfleet United",
@@ -135,8 +135,8 @@
        "odds": 1.37,
        "est": false,
        "p": 0.766,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-0"
       }
      ]
     },
@@ -147,9 +147,9 @@
      "p": 0.2042,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Tamara Zidansek",
@@ -196,8 +196,8 @@
        "odds": 1.46,
        "est": false,
        "p": 0.7627,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Bayern Munich",
