@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-13T06:44:37Z",
+ "graded": "2026-10-13T12:45:05Z",
  "overall": {
   "groups": 34,
-  "settled": 31,
+  "settled": 32,
   "won": 9,
-  "lost": 22,
-  "pending": 3,
-  "legs": 152,
-  "legsWon": 115,
+  "lost": 23,
+  "pending": 2,
+  "legs": 155,
+  "legsWon": 117,
   "returned": 36.15,
-  "staked": 31,
-  "expected": 9.83
+  "staked": 32,
+  "expected": 10.41
  },
  "byBand": {
   "Steady": {
    "groups": 15,
-   "settled": 13,
+   "settled": 14,
    "won": 3,
-   "lost": 10,
-   "pending": 2,
-   "legs": 64,
-   "legsWon": 47,
+   "lost": 11,
+   "pending": 1,
+   "legs": 66,
+   "legsWon": 48,
    "returned": 8.17,
-   "staked": 13,
-   "expected": 4.97
+   "staked": 14,
+   "expected": 5.55
   },
   "Balanced": {
    "groups": 10,
@@ -31,8 +31,8 @@
    "won": 5,
    "lost": 4,
    "pending": 1,
-   "legs": 44,
-   "legsWon": 37,
+   "legs": 45,
+   "legsWon": 38,
    "returned": 20.87,
    "staked": 9,
    "expected": 2.82
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 13,
   "pending": 2,
-  "legs": 93,
-  "legsWon": 73,
+  "legs": 94,
+  "legsWon": 74,
   "returned": 24.83,
   "staked": 19,
   "expected": 6.74
@@ -147,9 +147,9 @@
      "p": 0.2042,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Tamara Zidansek",
@@ -160,8 +160,8 @@
        "odds": 1.47,
        "est": true,
        "p": 0.7487,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(6) Tamara Zidansek (SLO) bt Despina Papamichail (GRE) 6-4 6-2"
       },
       {
        "pick": "Orlando Pirates",
@@ -218,11 +218,11 @@
      "rank": "alternative",
      "odds": 2.52,
      "p": 0.5775,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 1,
+     "legsLost": 1,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Sorana Cirstea",
@@ -233,8 +233,8 @@
        "odds": 1.16,
        "est": true,
        "p": 0.9177,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Hanyu Guo (CHN) bt (12) Sorana Cirstea (ROM) 1-6 7-6 (8-6) 7-5"
       },
       {
        "pick": "Francesca Jones",
@@ -245,8 +245,8 @@
        "odds": 1.16,
        "est": true,
        "p": 0.9183,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(2) Francesca Jones (GBR) bt Martina Colmegna (ITA) 7-5 6-1"
       },
       {
        "pick": "Fiona Ferro",
