@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-12T23:33:36Z",
+ "graded": "2026-10-13T01:34:17Z",
  "overall": {
   "groups": 34,
   "settled": 31,
   "won": 9,
   "lost": 22,
   "pending": 3,
-  "legs": 146,
-  "legsWon": 110,
+  "legs": 152,
+  "legsWon": 115,
   "returned": 36.15,
   "staked": 31,
   "expected": 9.83
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 10,
    "pending": 2,
-   "legs": 60,
-   "legsWon": 44,
+   "legs": 64,
+   "legsWon": 47,
    "returned": 8.17,
    "staked": 13,
    "expected": 4.97
@@ -31,8 +31,8 @@
    "won": 5,
    "lost": 4,
    "pending": 1,
-   "legs": 42,
-   "legsWon": 35,
+   "legs": 44,
+   "legsWon": 37,
    "returned": 20.87,
    "staked": 9,
    "expected": 2.82
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 13,
   "pending": 2,
-  "legs": 88,
-  "legsWon": 69,
+  "legs": 93,
+  "legsWon": 73,
   "returned": 24.83,
   "staked": 19,
   "expected": 6.74
@@ -299,9 +299,9 @@
      "p": 0.427,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -336,8 +336,8 @@
        "odds": 1.19,
        "est": false,
        "p": 0.8399,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-3"
       },
       {
        "pick": "Novorizontino",
@@ -348,8 +348,8 @@
        "odds": 1.07,
        "est": false,
        "p": 0.8367,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-1"
       },
       {
        "pick": "Nacional Asunción",
@@ -360,8 +360,8 @@
        "odds": 1.74,
        "est": false,
        "p": 0.7691,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -372,9 +372,9 @@
      "p": 0.3202,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 4,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Andranik",
@@ -421,8 +421,8 @@
        "odds": 1.32,
        "est": false,
        "p": 0.7663,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Malmö FF",
@@ -433,8 +433,8 @@
        "odds": 1.75,
        "est": false,
        "p": 0.6885,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -445,9 +445,9 @@
      "p": 0.2925,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 3,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Iva Jovic",
@@ -506,8 +506,8 @@
        "odds": 1.07,
        "est": false,
        "p": 0.7596,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       }
      ]
     }

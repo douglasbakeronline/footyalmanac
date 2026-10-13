@@ -3,44 +3,44 @@
   "clean": {
    "0.75": {
     "2026H1": {
-     "hit": 0.4737,
-     "n": 19
+     "hit": 0.5,
+     "n": 20
     },
     "2026H2": {
-     "hit": 0.8095,
-     "n": 21
+     "hit": 0.8,
+     "n": 20
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.5,
+     "hit": 0.6,
      "n": 10
     },
     "2026H2": {
-     "hit": 0.8333,
-     "n": 12
+     "hit": 0.8182,
+     "n": 11
     }
    }
   },
   "cross": {
    "0.75": {
     "2026H1": {
-     "hit": 0.3871,
-     "n": 31
+     "hit": 0.4062,
+     "n": 32
     },
     "2026H2": {
-     "hit": 0.64,
-     "n": 50
+     "hit": 0.6327,
+     "n": 49
     }
    },
    "0.8": {
     "2026H1": {
-     "hit": 0.4375,
+     "hit": 0.5,
      "n": 16
     },
     "2026H2": {
-     "hit": 0.6538,
-     "n": 26
+     "hit": 0.64,
+     "n": 25
     }
    }
   }
@@ -51,51 +51,51 @@
  "crossBar": null,
  "note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as of its own morning, prior season finished before the tie. Nothing fitted.",
  "version": 3,
- "day": "2026-10-12",
- "ties": 6258,
+ "day": "2026-10-13",
+ "ties": 6273,
  "priced": 1863,
  "skipped": {
-  "unrated": 3458,
+  "unrated": 3470,
   "priorAfter": 515,
-  "womenYouth": 422
+  "womenYouth": 425
  },
  "cups": 106,
  "bands": [
   {
    "from": 0.55,
-   "hit": 0.5639,
-   "n": 266,
-   "quoted": 0.6572
+   "hit": 0.5572,
+   "n": 271,
+   "quoted": 0.6569
   },
   {
    "from": 0.6,
-   "hit": 0.5692,
-   "n": 195,
+   "hit": 0.5556,
+   "n": 198,
    "quoted": 0.6875
   },
   {
    "from": 0.65,
-   "hit": 0.6071,
-   "n": 112,
-   "quoted": 0.7353
+   "hit": 0.5913,
+   "n": 115,
+   "quoted": 0.7342
   },
   {
    "from": 0.7,
-   "hit": 0.6667,
+   "hit": 0.6522,
    "n": 69,
-   "quoted": 0.7746
+   "quoted": 0.7743
   },
   {
    "from": 0.75,
    "hit": 0.65,
    "n": 40,
-   "quoted": 0.812
+   "quoted": 0.8113
   },
   {
    "from": 0.8,
-   "hit": 0.6818,
-   "n": 22,
-   "quoted": 0.8469
+   "hit": 0.7143,
+   "n": 21,
+   "quoted": 0.8493
   },
   {
    "from": 0.85,
@@ -126,18 +126,6 @@
    "pick": "h",
    "hit": 0,
    "tie": "Heart Of Midlothian (Premiership, Heart of Midlothian) v Falkirk (Premiership, Falkirk) 1-1",
-   "played": [
-    0,
-    0
-   ]
-  },
-  {
-   "date": "2026-01-22",
-   "cup": "afc.1212",
-   "conf": 0.8171,
-   "pick": "h",
-   "hit": 0,
-   "tie": "Club Nacional (Primera Divisi\u00f3n, Nacional) v Progreso (Primera Divisi\u00f3n, Progreso) 1-1",
    "played": [
     0,
     0
@@ -330,6 +318,18 @@
    "pick": "h",
    "hit": 1,
    "tie": "Paide (Meistriliiga, Paide Linnameeskond) v Tallinna Kalev (Meistriliiga, JK Tallinna Kalev) 6-0",
+   "played": [
+    0,
+    0
+   ]
+  },
+  {
+   "date": "2026-03-20",
+   "cup": "afc.1220",
+   "conf": 0.7656,
+   "pick": "h",
+   "hit": 0,
+   "tie": "Universidad de Chile (Primera Divisi\u00f3n, Universidad de Chile) v D. La Serena (Primera Divisi\u00f3n, La Serena) 2-2",
    "played": [
     0,
     0
@@ -530,12 +530,12 @@
   {
    "date": "2026-06-20",
    "cup": "afc.267",
-   "conf": 0.7173,
+   "conf": 0.8228,
    "pick": "h",
    "hit": 1,
    "tie": "Coquimbo Unido (Primera Divisi\u00f3n, Coquimbo Unido) v Deportes Iquique (Primera Divisi\u00f3n, Deportes Iquique) 3-0",
    "played": [
-    15,
+    0,
     0
    ]
   },
@@ -696,18 +696,6 @@
    ]
   },
   {
-   "date": "2026-08-27",
-   "cup": "afc.267",
-   "conf": 0.8019,
-   "pick": "h",
-   "hit": 1,
-   "tie": "Colo Colo (Primera Divisi\u00f3n, Colo Colo) v Union Espanola (Primera Divisi\u00f3n, Uni\u00f3n Espa\u00f1ola) 3-0",
-   "played": [
-    20,
-    0
-   ]
-  },
-  {
    "date": "2026-09-02",
    "cup": "afc.674",
    "conf": 0.8648,
@@ -813,6 +801,18 @@
    "played": [
     0,
     7
+   ]
+  },
+  {
+   "date": "2026-09-27",
+   "cup": "afc.267",
+   "conf": 0.7279,
+   "pick": "h",
+   "hit": 0,
+   "tie": "Universidad de Chile (Primera Divisi\u00f3n, Universidad de Chile) v Everton de Vina (Primera Divisi\u00f3n, Everton) 1-1",
+   "played": [
+    0,
+    0
    ]
   },
   {
@@ -1011,11 +1011,11 @@
   ],
   "afc.1212": [
    0,
-   1
+   0
   ],
   "afc.1220": [
    0,
-   0
+   1
   ],
   "afc.1223": [
    0,
@@ -1110,7 +1110,7 @@
    0
   ],
   "afc.267": [
-   2,
+   1,
    2
   ],
   "afc.273": [
