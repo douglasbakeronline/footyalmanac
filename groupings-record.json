@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-13T21:47:54Z",
+ "graded": "2026-10-13T23:24:25Z",
  "overall": {
-  "groups": 34,
+  "groups": 38,
   "settled": 32,
   "won": 9,
   "lost": 23,
-  "pending": 2,
+  "pending": 6,
   "legs": 163,
   "legsWon": 124,
   "returned": 36.15,
@@ -14,11 +14,11 @@
  },
  "byBand": {
   "Steady": {
-   "groups": 15,
+   "groups": 17,
    "settled": 14,
    "won": 3,
    "lost": 11,
-   "pending": 1,
+   "pending": 3,
    "legs": 73,
    "legsWon": 54,
    "returned": 8.17,
@@ -26,11 +26,11 @@
    "expected": 5.55
   },
   "Balanced": {
-   "groups": 10,
+   "groups": 11,
    "settled": 9,
    "won": 5,
    "lost": 4,
-   "pending": 1,
+   "pending": 2,
    "legs": 46,
    "legsWon": 39,
    "returned": 20.87,
@@ -38,11 +38,11 @@
    "expected": 2.82
   },
   "Stretch": {
-   "groups": 9,
+   "groups": 10,
    "settled": 9,
    "won": 1,
    "lost": 8,
-   "pending": 0,
+   "pending": 1,
    "legs": 44,
    "legsWon": 31,
    "returned": 7.11,
@@ -51,11 +51,11 @@
   }
  },
  "firstChoice": {
-  "groups": 21,
+  "groups": 24,
   "settled": 19,
   "won": 6,
   "lost": 13,
-  "pending": 2,
+  "pending": 5,
   "legs": 99,
   "legsWon": 79,
   "returned": 24.83,
@@ -63,6 +63,304 @@
   "expected": 6.74
  },
  "days": [
+  {
+   "date": "2026-10-14",
+   "published": "2026-10-13T23:24:20Z",
+   "groups": [
+    {
+     "name": "Steady",
+     "rank": "main",
+     "odds": 3.25,
+     "p": 0.3719,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Iga Swiatek",
+       "event": "Iga Swiatek v Magdalena Frech",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T03:00:00Z",
+       "odds": 1.17,
+       "est": true,
+       "p": 0.9133,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Aryna Sabalenka",
+       "event": "Ann Li v Aryna Sabalenka",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T11:00:00Z",
+       "odds": 1.19,
+       "est": true,
+       "p": 0.8707,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Parnu JK Vaprus U21",
+       "event": "Parnu JK Vaprus U21 v JK Tabasalu",
+       "sport": "football",
+       "comp": "Esiliiga B",
+       "when": "2026-10-14T15:00:00Z",
+       "odds": 1.43,
+       "est": false,
+       "p": 0.8074,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "FCI Levadia II",
+       "event": "FCI Levadia II v Nõmme Kalju II",
+       "sport": "football",
+       "comp": "Esiliiga A",
+       "when": "2026-10-14T16:00:00Z",
+       "odds": 1.34,
+       "est": false,
+       "p": 0.7825,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Haugesund",
+       "event": "Haugesund v Lyn",
+       "sport": "football",
+       "comp": "1. Division",
+       "when": "2026-10-14T17:00:00Z",
+       "odds": 1.22,
+       "est": false,
+       "p": 0.7402,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Balanced",
+     "rank": "main",
+     "odds": 5.3,
+     "p": 0.288,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Jessica Pegula",
+       "event": "Jessica Pegula v Jelena Ostapenko",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T06:00:00Z",
+       "odds": 1.22,
+       "est": true,
+       "p": 0.8644,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Fiona Ferro",
+       "event": "Fiona Ferro v Selena Janicijevic",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 2",
+       "when": "2026-10-14T10:00:00Z",
+       "odds": 1.24,
+       "est": true,
+       "p": 0.8598,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Batman Petrolspor",
+       "event": "Batman Petrolspor v İstanbulspor",
+       "sport": "football",
+       "comp": "1. Lig",
+       "when": "2026-10-14T11:30:00Z",
+       "odds": 1.63,
+       "est": false,
+       "p": 0.7404,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Liverpool",
+       "event": "LASK Linz v Liverpool",
+       "sport": "football",
+       "comp": "Champions League",
+       "when": "2026-10-14T16:45:00Z",
+       "odds": 1.31,
+       "est": false,
+       "p": 0.6887,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Aston Villa",
+       "event": "Aston Villa v Fenerbahce",
+       "sport": "football",
+       "comp": "Champions League",
+       "when": "2026-10-14T19:00:00Z",
+       "odds": 1.64,
+       "est": false,
+       "p": 0.76,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Stretch",
+     "rank": "main",
+     "odds": 7.05,
+     "p": 0.2447,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Katie Volynets",
+       "event": "Hanyu Guo v Katie Volynets",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T06:00:00Z",
+       "odds": 1.31,
+       "est": true,
+       "p": 0.8553,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Punjab",
+       "event": "Punjab v Odisha",
+       "sport": "football",
+       "comp": "Super League",
+       "when": "2026-10-14T14:00:00Z",
+       "odds": 1.57,
+       "est": false,
+       "p": 0.6858,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Guiomar Maristany Zuleta De Reales",
+       "event": "Guiomar Maristany Zuleta De Reales v Martha Matoula",
+       "sport": "tennis",
+       "comp": "Lisboa Belem Open Round 2",
+       "when": "2026-10-14T14:30:00Z",
+       "odds": 1.28,
+       "est": true,
+       "p": 0.8597,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Bryne",
+       "event": "Bryne v Raufoss",
+       "sport": "football",
+       "comp": "1. Division",
+       "when": "2026-10-14T17:00:00Z",
+       "odds": 1.24,
+       "est": false,
+       "p": 0.6791,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Manchester City",
+       "event": "Manchester City v Paris Saint-Germain",
+       "sport": "football",
+       "comp": "Champions League",
+       "when": "2026-10-14T19:00:00Z",
+       "odds": 2.16,
+       "est": false,
+       "p": 0.7145,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Steady",
+     "rank": "alternative",
+     "odds": 3.88,
+     "p": 0.2676,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Karolina Muchova",
+       "event": "Caty Mcnally v Karolina Muchova",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T04:30:00Z",
+       "odds": 1.31,
+       "est": true,
+       "p": 0.8548,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Julia Grabher",
+       "event": "Lidia Encheva v Julia Grabher",
+       "sport": "tennis",
+       "comp": "Vanda Pharmaceuticals Mallorca Women's Championships Round 2",
+       "when": "2026-10-14T09:30:00Z",
+       "odds": 1.35,
+       "est": true,
+       "p": 0.7277,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Leylah Fernandez",
+       "event": "Leylah Fernandez v Han Shi",
+       "sport": "tennis",
+       "comp": "Dongfeng Voyah Wuhan Open Round 2",
+       "when": "2026-10-14T12:30:00Z",
+       "odds": 1.29,
+       "est": true,
+       "p": 0.8585,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Royal Vision",
+       "event": "Royal Vision v Kayanza United",
+       "sport": "football",
+       "comp": "Ligue A",
+       "when": "2026-10-14T13:45:00Z",
+       "odds": 1.37,
+       "est": true,
+       "p": 0.7402,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Atlético Junior",
+       "event": "Atlético Junior v Deportivo Pereira",
+       "sport": "football",
+       "comp": "Primera A",
+       "when": "2026-10-14T21:30:00Z",
+       "odds": 1.24,
+       "est": false,
+       "p": 0.6771,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-13",
    "published": "2026-10-12T23:33:30Z",
