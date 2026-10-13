@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-13: Tennis surface by tournament name tested, rejected (tag pending)
+
+**What changed:** nothing a reader sees. A new advisory tool and a dated note. Pricing WTA/ATP results since June by tournament-name surface (clay / grass / hard) instead of all-Hard is worse, so `surfaceWeight` 0.3 and the all-Hard feed stay.
+
+**Evidence:** walk-forward on every ESPN result since the archive ended, paired bootstrap, nothing fitted, scoreboard untouched. WTA: 2,686 matches, +0.0024 log loss worse (p(worse) 0.88); WTA clay events 631, +0.0060 worse (0.86). ATP: 1,523, +0.0031 worse (0.95); ATP grass +0.0142 worse; ATP clay -0.0099 (p(worse) 0.13, n=187, under the 250 gate). 75%+ main draw hit rate no better.
+
+**Files:** `tools/tennis_surface_eval.py`, `claude/tennis-surface-test-2026-10-13.md`, this entry.
+
+**Not changed:** any model number, `tennis.json`, `build_tennis.py`, record or archive.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-10-12: Office review and next week's priorities (tag pending)
 
 **What changed:** nothing a reader sees. A dated review note: what the office shipped since 28 Sep, rejected tests, accuracy by group, data quality, three tasks for next week (Susie, Theo, Andrew).
