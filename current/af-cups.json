@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1791697104,
+"checked": 1791972714,
 "cups": [
 {
 "code": "afc.707",
@@ -98,7 +98,7 @@
 "id": 420,
 "name": "Cup",
 "country": "Azerbaijan",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.486",
@@ -265,6 +265,13 @@
 "code": "afc.174",
 "id": 174,
 "name": "Cup",
+"country": "Bulgaria",
+"season": 2026
+},
+{
+"code": "afc.1249",
+"id": 1249,
+"name": "Pro Cup",
 "country": "Bulgaria",
 "season": 2026
 },
