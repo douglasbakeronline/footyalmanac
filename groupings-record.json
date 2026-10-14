@@ -1,66 +1,66 @@
 {
- "graded": "2026-10-14T10:13:47Z",
+ "graded": "2026-10-14T16:02:58Z",
  "overall": {
   "groups": 38,
-  "settled": 34,
+  "settled": 37,
   "won": 9,
-  "lost": 25,
-  "pending": 4,
-  "legs": 169,
-  "legsWon": 127,
+  "lost": 28,
+  "pending": 1,
+  "legs": 176,
+  "legsWon": 131,
   "returned": 36.15,
-  "staked": 34,
-  "expected": 11.12
+  "staked": 37,
+  "expected": 12.03
  },
  "byBand": {
   "Steady": {
    "groups": 17,
-   "settled": 15,
+   "settled": 16,
    "won": 3,
-   "lost": 12,
-   "pending": 2,
-   "legs": 76,
-   "legsWon": 56,
+   "lost": 13,
+   "pending": 1,
+   "legs": 79,
+   "legsWon": 58,
    "returned": 8.17,
-   "staked": 15,
-   "expected": 6.06
+   "staked": 16,
+   "expected": 6.44
   },
   "Balanced": {
    "groups": 11,
-   "settled": 10,
+   "settled": 11,
    "won": 5,
-   "lost": 5,
-   "pending": 1,
-   "legs": 49,
-   "legsWon": 40,
+   "lost": 6,
+   "pending": 0,
+   "legs": 52,
+   "legsWon": 42,
    "returned": 20.87,
-   "staked": 10,
-   "expected": 3.02
+   "staked": 11,
+   "expected": 3.31
   },
   "Stretch": {
    "groups": 10,
-   "settled": 9,
+   "settled": 10,
    "won": 1,
-   "lost": 8,
-   "pending": 1,
-   "legs": 44,
+   "lost": 9,
+   "pending": 0,
+   "legs": 45,
    "legsWon": 31,
    "returned": 7.11,
-   "staked": 9,
-   "expected": 2.04
+   "staked": 10,
+   "expected": 2.28
   }
  },
  "firstChoice": {
   "groups": 24,
-  "settled": 21,
+  "settled": 24,
   "won": 6,
-  "lost": 15,
-  "pending": 3,
-  "legs": 104,
-  "legsWon": 81,
+  "lost": 18,
+  "pending": 0,
+  "legs": 109,
+  "legsWon": 83,
   "returned": 24.83,
-  "staked": 21,
-  "expected": 7.46
+  "staked": 24,
+  "expected": 8.36
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 3.25,
      "p": 0.3719,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 4,
+     "legsLost": 1,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -99,8 +99,8 @@
        "odds": 1.19,
        "est": true,
        "p": 0.8707,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Ann Li (USA) bt (1) Aryna Sabalenka (BLR) 3-6 6-4 7-6 (7-5)"
       },
       {
        "pick": "Parnu JK Vaprus U21",
@@ -145,11 +145,11 @@
      "rank": "main",
      "odds": 5.3,
      "p": 0.288,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Jessica Pegula",
@@ -160,8 +160,8 @@
        "odds": 1.22,
        "est": true,
        "p": 0.8644,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Jelena Ostapenko (LAT) bt (2) Jessica Pegula (USA) 2-6 7-6 (9-7) 6-3"
       },
       {
        "pick": "Fiona Ferro",
@@ -172,8 +172,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8598,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(3) Fiona Ferro (FRA) bt Selena Janicijevic (FRA) 7-5 6-1"
       },
       {
        "pick": "Batman Petrolspor",
@@ -184,8 +184,8 @@
        "odds": 1.63,
        "est": false,
        "p": 0.7404,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-2"
       },
       {
        "pick": "Liverpool",
@@ -218,11 +218,11 @@
      "rank": "main",
      "odds": 7.05,
      "p": 0.2447,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Katie Volynets",
@@ -233,8 +233,8 @@
        "odds": 1.31,
        "est": true,
        "p": 0.8553,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Hanyu Guo (CHN) bt Katie Volynets (USA) 6-4 4-6 7-6 (7-3)"
       },
       {
        "pick": "Punjab",
@@ -293,9 +293,9 @@
      "p": 0.2676,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Karolina Muchova",
@@ -318,8 +318,8 @@
        "odds": 1.35,
        "est": true,
        "p": 0.7277,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Julia Grabher (AUT) bt Lidia Encheva (BUL) 4-6 7-5 6-4"
       },
       {
        "pick": "Leylah Fernandez",
@@ -330,8 +330,8 @@
        "odds": 1.29,
        "est": true,
        "p": 0.8585,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Leylah Fernandez (CAN) bt Han Shi (CHN) 6-3 6-4"
       },
       {
        "pick": "Royal Vision",
