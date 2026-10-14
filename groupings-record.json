@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-14T16:02:58Z",
+ "graded": "2026-10-14T20:31:31Z",
  "overall": {
   "groups": 38,
   "settled": 37,
   "won": 9,
   "lost": 28,
   "pending": 1,
-  "legs": 176,
-  "legsWon": 131,
+  "legs": 182,
+  "legsWon": 136,
   "returned": 36.15,
   "staked": 37,
   "expected": 12.03
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 13,
    "pending": 1,
-   "legs": 79,
-   "legsWon": 58,
+   "legs": 83,
+   "legsWon": 62,
    "returned": 8.17,
    "staked": 16,
    "expected": 6.44
@@ -43,8 +43,8 @@
    "won": 1,
    "lost": 9,
    "pending": 0,
-   "legs": 45,
-   "legsWon": 31,
+   "legs": 47,
+   "legsWon": 32,
    "returned": 7.11,
    "staked": 10,
    "expected": 2.28
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 18,
   "pending": 0,
-  "legs": 109,
-  "legsWon": 83,
+  "legs": 114,
+  "legsWon": 87,
   "returned": 24.83,
   "staked": 24,
   "expected": 8.36
@@ -74,9 +74,9 @@
      "p": 0.3719,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 4,
      "legsLost": 1,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -111,8 +111,8 @@
        "odds": 1.43,
        "est": false,
        "p": 0.8074,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "FCI Levadia II",
@@ -123,8 +123,8 @@
        "odds": 1.34,
        "est": false,
        "p": 0.7825,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Haugesund",
@@ -135,8 +135,8 @@
        "odds": 1.22,
        "est": false,
        "p": 0.7402,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       }
      ]
     },
@@ -220,9 +220,9 @@
      "p": 0.2447,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 4,
+     "legsWon": 1,
+     "legsLost": 2,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Katie Volynets",
@@ -257,8 +257,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.8597,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(5) Guiomar Maristany Zuleta De Reales (ESP) bt Martha Matoula (GRE) 6-0 7-6 (7-4)"
       },
       {
        "pick": "Bryne",
@@ -269,8 +269,8 @@
        "odds": 1.24,
        "est": false,
        "p": 0.6791,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Manchester City",
@@ -293,9 +293,9 @@
      "p": 0.2676,
      "status": "pending",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Karolina Muchova",
@@ -342,8 +342,8 @@
        "odds": 1.37,
        "est": true,
        "p": 0.7402,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Atlético Junior",
