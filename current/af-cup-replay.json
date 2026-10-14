@@ -29,8 +29,8 @@
      "n": 32
     },
     "2026H2": {
-     "hit": 0.6327,
-     "n": 49
+     "hit": 0.64,
+     "n": 50
     }
    },
    "0.8": {
@@ -51,13 +51,13 @@
  "crossBar": null,
  "note": "Domestic cups (API-Football) replayed by build.cup_replay: each played tie priced as of its own morning, prior season finished before the tie. Nothing fitted.",
  "version": 3,
- "day": "2026-10-13",
- "ties": 6273,
- "priced": 1863,
+ "day": "2026-10-14",
+ "ties": 6325,
+ "priced": 1869,
  "skipped": {
-  "unrated": 3470,
+  "unrated": 3486,
   "priorAfter": 515,
-  "womenYouth": 425
+  "womenYouth": 455
  },
  "cups": 106,
  "bands": [
@@ -105,7 +105,7 @@
   }
  ],
  "from": "2026-01-01",
- "to": "2026-10-11",
+ "to": "2026-10-13",
  "confident": [
   {
    "date": "2026-01-08",
