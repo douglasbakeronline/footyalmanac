@@ -192,6 +192,12 @@ class ListThreshold(unittest.TestCase):
         self.assertIsNone(S.list_threshold([[band(0.55, 40, 0.5)]]))
         self.assertIsNone(S.list_threshold([]))
 
+    def test_floor_raises_bar_never_grants_one(self):
+        self.assertEqual(S.list_bar("cfb", 0.70), 0.80)
+        self.assertEqual(S.list_bar("cfb", 0.85), 0.85)
+        self.assertIsNone(S.list_bar("cfb", None))
+        self.assertEqual(S.list_bar("rugby", 0.70), 0.70)
+
     def test_accuracy_for_picks_highest_band_at_or_below(self):
         bs = [band(0.55, 100, 0.6), band(0.65, 50, 0.7), band(0.75, 20, 0.8)]
         # its own band, 65-75%: (0.7 x 50 - 0.8 x 20) / 30 (bands.band_rate, 6 Oct 2026)

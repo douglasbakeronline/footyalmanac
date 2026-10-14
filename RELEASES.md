@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-13: College football Daily List bar 70% -> 80% (tag pending)
+
+**What changed:** college football picks need 80% confidence to make the Daily List, up from 70%. Picks from 62% to 80% sit in the reserve. Every other sport keeps its bar. A new `sports.LIST_FLOOR` raises a sport's backtest threshold, and never grants a sport a place it has not earned.
+
+**Evidence:** the 70% bar clears 80% cumulatively (fit 80.9%, check 84.2%), but its own bands miss: 70-75% landed 71.3% (fit, n=101) and 78.0% (check, n=168); 75-80% landed 73.8% (n=84) and 76.9% (n=108). 80-85% landed 87.7% and 87.4%. On the live List, 7-11 Oct, college football at 70-80% won 11 of 17, and at 80%+ 10 of 12. Probabilities are unchanged: only List membership moves.
+
+**Files:** `sports.py`, `tests/test_sports.py`, this entry.
+
+**Not changed:** any model number, calibration, `sports.json`, record or archive. Tennis bars stay at 75%: WTA 75-80% landed 88.4% in testing (n=95), and 12 of 14 live across the board.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-10-13: Tennis surface by tournament name tested, rejected (tag pending)
 
 **What changed:** nothing a reader sees. A new advisory tool and a dated note. Pricing WTA/ATP results since June by tournament-name surface (clay / grass / hard) instead of all-Hard is worse, so `surfaceWeight` 0.3 and the all-Hard feed stay.
