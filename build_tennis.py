@@ -171,6 +171,15 @@ ATP_RANK_LAYER = False
 # 75% passes the 80% rule in both windows on both tours. WTA would pass at
 # 70% too (81.4% / 83.2%), but only just; the list takes 75% on both.
 LIST_MIN = {"ATP": 0.75, "WTA": 0.75, "ATP_RANKED": 0.75}
+# 15 Oct 2026, at Douglas's request: tennis is off the Daily List. Live List
+# picks won 39 of 51 against 42.1 expected from their quotes: WTA 18 of 27
+# (mean quote 83%, 22.3 expected), ATP 21 of 24 (19.8 expected). A higher bar
+# does not fix it: every graded tennis call at 85%+ won 22 of 27 (81.5%) at a
+# mean quote of 89%, and 90%+ gives 9 calls in three weeks. The backtest bands
+# overstate live tennis, so no bar can be vouched for. Calls from 62% stay in
+# the reserve, graded on their own. LIST_MIN is kept for when a tour is
+# reopened on new evidence.
+LIST_ON = {"ATP": False, "WTA": False}
 LIST_MIN_MATCHES = 10
 LIST_BACKTEST = {"ATP": {"2025": [0.8297, 499], "2026": [0.8354, 243]},
                  "WTA": {"2025": [0.8482, 415], "2026": [0.8987, 227]}}
@@ -198,7 +207,7 @@ def list_reserve(conf, tour, round_name, matches_a, matches_b, ranked=False):
 
 
 def list_eligible(conf, tour, round_name, matches_a, matches_b, ranked=False):
-    return (conf >= LIST_MIN["ATP_RANKED" if ranked else tour.upper()] and "qualif" not in (round_name or "").lower()
+    return (LIST_ON.get(tour.upper(), False) and conf >= LIST_MIN["ATP_RANKED" if ranked else tour.upper()] and "qualif" not in (round_name or "").lower()
             and matches_a >= LIST_MIN_MATCHES and matches_b >= LIST_MIN_MATCHES)
 
 
@@ -632,7 +641,7 @@ def main():
 
     generated = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     payload = {"generated": generated,
-               "list": {"min": LIST_MIN, "backtest": LIST_BACKTEST},
+               "list": {"min": {t: LIST_MIN[t] for t, on in LIST_ON.items() if on} or None, "off": not any(LIST_ON.values()), "backtest": LIST_BACKTEST},
                "from": start.isoformat(), "to": end.isoformat(),
                "count": len(matches), "matches": matches}
     archive(matches, generated)

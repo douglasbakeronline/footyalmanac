@@ -254,6 +254,7 @@ def coverage(day, archives, here=HERE, now=None):
     leagues = _leagues()
     sp_doc = _load_js(os.path.join(here, "sports-data.js")) or {}
     sp_cfg = sp_doc.get("sports") or {}
+    t_off = ((_load_js(os.path.join(here, "tennis-data.js")) or {}).get("list") or {}).get("off")
     seen = {}
     for kind, g in archives:
         try:
@@ -277,7 +278,7 @@ def coverage(day, archives, here=HERE, now=None):
             if k == "football":
                 why = it.get("why") or "older"
             elif k == "tennis":
-                why = "below" if (it.get("confidence") or 0) < 0.80 else "rule"
+                why = "boardOnly" if t_off else "below" if (it.get("confidence") or 0) < 0.75 else "rule"
             else:
                 bar = (sp_cfg.get(k) or {}).get("listMin")
                 why = "boardOnly" if bar is None else "below" if (it.get("confidence") or 0) < bar else "rule"
