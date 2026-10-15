@@ -1972,6 +1972,7 @@ function renderList(){
   if(TDL && TDL.list && TDL.list.min) thresholds.push(`tennis ${pc(typeof TDL.list.min === "number"
     ? TDL.list.min : Math.min(...Object.values(TDL.list.min)))}`);
   const absent = [];
+  if(TDL && TDL.list && TDL.list.off) absent.push("Tennis");
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp =>
     sp.published && sp.listMin ? thresholds.push(`${sp.name === "NFL" ? "NFL" : sp.name.toLowerCase()} ${pc(sp.listMin)}`) : absent.push(sp.name));
 

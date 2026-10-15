@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-15: Tennis off the Daily List (tag pending)
+
+**What changed:** no tennis match makes the Daily List, on either tour. Main-draw calls from 62% with both players rated go to the reserve instead, graded as their own group. The site's List note names tennis among the sports not on the list. `build_tennis.LIST_ON` turns a tour back on, and `LIST_MIN` (75%) is kept.
+
+**Evidence:** tennis List picks won 39 of 51, against 42.1 expected from their quoted chances. WTA won 18 of 27 (mean quote 83%, 22.3 expected) and ATP 21 of 24 (19.8 expected). A higher bar doesn't help: across all graded tennis calls, 85%+ won 22 of 27 (81.5%) at a mean quote of 89%, and 90%+ produced only 9 calls in three weeks. The backtest bands (WTA 75%+ landing 89.9%) overstate live tennis.
+
+**Files:** `build_tennis.py`, `daylist.py` (the coverage reason for tennis is now "boardOnly"), `index.html`, `tests/test_tennis_names.py`, this entry.
+
+**Not changed:** tennis ratings, probabilities, the board, records or archives. Past tennis List picks stay in the record.
+
+**Roll back:** `git revert` the commit, or set a tour in `LIST_ON` to True.
+
+
 ## 2026-10-13: College football Daily List bar 70% -> 80% (tag pending)
 
 **What changed:** college football picks need 80% confidence to make the Daily List, up from 70%. Picks from 62% to 80% sit in the reserve. Every other sport keeps its bar. A new `sports.LIST_FLOOR` raises a sport's backtest threshold, and never grants a sport a place it has not earned.
