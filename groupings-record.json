@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-15T20:13:38Z",
+ "graded": "2026-10-15T22:36:39Z",
  "overall": {
   "groups": 41,
-  "settled": 39,
+  "settled": 40,
   "won": 9,
-  "lost": 30,
-  "pending": 2,
-  "legs": 195,
+  "lost": 31,
+  "pending": 1,
+  "legs": 196,
   "legsWon": 145,
   "returned": 36.15,
-  "staked": 39,
-  "expected": 12.49
+  "staked": 40,
+  "expected": 12.8
  },
  "byBand": {
   "Steady": {
@@ -27,15 +27,15 @@
   },
   "Balanced": {
    "groups": 12,
-   "settled": 11,
+   "settled": 12,
    "won": 5,
-   "lost": 6,
-   "pending": 1,
-   "legs": 56,
+   "lost": 7,
+   "pending": 0,
+   "legs": 57,
    "legsWon": 46,
    "returned": 20.87,
-   "staked": 11,
-   "expected": 3.31
+   "staked": 12,
+   "expected": 3.62
   },
   "Stretch": {
    "groups": 11,
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 27,
-  "settled": 25,
+  "settled": 26,
   "won": 6,
-  "lost": 19,
-  "pending": 2,
-  "legs": 126,
+  "lost": 20,
+  "pending": 1,
+  "legs": 127,
   "legsWon": 96,
   "returned": 24.83,
-  "staked": 25,
-  "expected": 8.55
+  "staked": 26,
+  "expected": 8.86
  },
  "days": [
   {
@@ -145,11 +145,11 @@
      "rank": "main",
      "odds": 6.35,
      "p": 0.3082,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Laura Samson",
@@ -196,8 +196,8 @@
        "odds": 1.58,
        "est": false,
        "p": 0.6793,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Dinamo Zagreb",
