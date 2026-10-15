@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-15T15:52:32Z",
+ "graded": "2026-10-15T18:50:22Z",
  "overall": {
   "groups": 41,
   "settled": 39,
   "won": 9,
   "lost": 30,
   "pending": 2,
-  "legs": 193,
-  "legsWon": 143,
+  "legs": 195,
+  "legsWon": 145,
   "returned": 36.15,
   "staked": 39,
   "expected": 12.49
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 14,
    "pending": 1,
-   "legs": 85,
-   "legsWon": 63,
+   "legs": 86,
+   "legsWon": 64,
    "returned": 8.17,
    "staked": 17,
    "expected": 6.7
@@ -43,8 +43,8 @@
    "won": 1,
    "lost": 10,
    "pending": 0,
-   "legs": 52,
-   "legsWon": 34,
+   "legs": 53,
+   "legsWon": 35,
    "returned": 7.11,
    "staked": 11,
    "expected": 2.47
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 19,
   "pending": 2,
-  "legs": 124,
-  "legsWon": 94,
+  "legs": 126,
+  "legsWon": 96,
   "returned": 24.83,
   "staked": 25,
   "expected": 8.55
@@ -74,9 +74,9 @@
      "p": 0.3203,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Elina Svitolina",
@@ -99,8 +99,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.8608,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Clara Burel (FRA) bt Mathilde Lollia (FRA) 6-0 6-1"
       },
       {
        "pick": "Sint-Truidense",
@@ -220,9 +220,9 @@
      "p": 0.1923,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 2,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Karolina Muchova",
@@ -269,8 +269,8 @@
        "odds": 1.43,
        "est": false,
        "p": 0.679,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-7"
       },
       {
        "pick": "SC Freiburg",
