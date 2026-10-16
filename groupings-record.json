@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-16T09:51:46Z",
+ "graded": "2026-10-16T15:41:08Z",
  "overall": {
   "groups": 42,
   "settled": 41,
   "won": 9,
   "lost": 32,
   "pending": 1,
-  "legs": 202,
-  "legsWon": 150,
+  "legs": 204,
+  "legsWon": 152,
   "returned": 36.15,
   "staked": 41,
   "expected": 13.12
@@ -19,8 +19,8 @@
    "won": 3,
    "lost": 15,
    "pending": 1,
-   "legs": 89,
-   "legsWon": 66,
+   "legs": 91,
+   "legsWon": 68,
    "returned": 8.17,
    "staked": 18,
    "expected": 7.02
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 21,
   "pending": 1,
-  "legs": 133,
-  "legsWon": 101,
+  "legs": 135,
+  "legsWon": 103,
   "returned": 24.83,
   "staked": 27,
   "expected": 9.18
@@ -74,9 +74,9 @@
      "p": 0.3338,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Sport Academy Kairat",
@@ -87,8 +87,8 @@
        "odds": 1.08,
        "est": true,
        "p": 0.9007,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Iga Swiatek",
@@ -99,8 +99,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.859,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(7) Iga Swiatek (POL) bt Ann Li (USA) 6-4 6-1"
       },
       {
        "pick": "Al Qadsiah",
