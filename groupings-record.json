@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-16T15:41:08Z",
+ "graded": "2026-10-16T19:51:58Z",
  "overall": {
   "groups": 42,
-  "settled": 41,
+  "settled": 42,
   "won": 9,
-  "lost": 32,
-  "pending": 1,
-  "legs": 204,
+  "lost": 33,
+  "pending": 0,
+  "legs": 205,
   "legsWon": 152,
   "returned": 36.15,
-  "staked": 41,
-  "expected": 13.12
+  "staked": 42,
+  "expected": 13.45
  },
  "byBand": {
   "Steady": {
    "groups": 19,
-   "settled": 18,
+   "settled": 19,
    "won": 3,
-   "lost": 15,
-   "pending": 1,
-   "legs": 91,
+   "lost": 16,
+   "pending": 0,
+   "legs": 92,
    "legsWon": 68,
    "returned": 8.17,
-   "staked": 18,
-   "expected": 7.02
+   "staked": 19,
+   "expected": 7.36
   },
   "Balanced": {
    "groups": 12,
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 28,
-  "settled": 27,
+  "settled": 28,
   "won": 6,
-  "lost": 21,
-  "pending": 1,
-  "legs": 135,
+  "lost": 22,
+  "pending": 0,
+  "legs": 136,
   "legsWon": 103,
   "returned": 24.83,
-  "staked": 27,
-  "expected": 9.18
+  "staked": 28,
+  "expected": 9.52
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 3.0,
      "p": 0.3338,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Sport Academy Kairat",
@@ -123,8 +123,8 @@
        "odds": 1.55,
        "est": false,
        "p": 0.6795,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       },
       {
        "pick": "Rapid Wien",
