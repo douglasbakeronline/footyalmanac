@@ -1,66 +1,66 @@
 {
- "graded": "2026-10-17T09:23:38Z",
+ "graded": "2026-10-17T14:34:48Z",
  "overall": {
   "groups": 48,
-  "settled": 42,
+  "settled": 45,
   "won": 9,
-  "lost": 33,
-  "pending": 6,
-  "legs": 207,
-  "legsWon": 154,
+  "lost": 36,
+  "pending": 3,
+  "legs": 213,
+  "legsWon": 157,
   "returned": 36.15,
-  "staked": 42,
-  "expected": 13.45
+  "staked": 45,
+  "expected": 14.56
  },
  "byBand": {
   "Steady": {
    "groups": 21,
-   "settled": 19,
+   "settled": 20,
    "won": 3,
-   "lost": 16,
-   "pending": 2,
-   "legs": 94,
-   "legsWon": 70,
+   "lost": 17,
+   "pending": 1,
+   "legs": 96,
+   "legsWon": 71,
    "returned": 8.17,
-   "staked": 19,
-   "expected": 7.36
+   "staked": 20,
+   "expected": 7.82
   },
   "Balanced": {
    "groups": 14,
-   "settled": 12,
+   "settled": 13,
    "won": 5,
-   "lost": 7,
-   "pending": 2,
-   "legs": 59,
-   "legsWon": 48,
+   "lost": 8,
+   "pending": 1,
+   "legs": 61,
+   "legsWon": 49,
    "returned": 20.87,
-   "staked": 12,
-   "expected": 3.62
+   "staked": 13,
+   "expected": 3.94
   },
   "Stretch": {
    "groups": 13,
-   "settled": 11,
+   "settled": 12,
    "won": 1,
-   "lost": 10,
-   "pending": 2,
-   "legs": 54,
-   "legsWon": 36,
+   "lost": 11,
+   "pending": 1,
+   "legs": 56,
+   "legsWon": 37,
    "returned": 7.11,
-   "staked": 11,
-   "expected": 2.47
+   "staked": 12,
+   "expected": 2.79
   }
  },
  "firstChoice": {
   "groups": 31,
-  "settled": 28,
+  "settled": 30,
   "won": 6,
-  "lost": 22,
-  "pending": 3,
-  "legs": 138,
-  "legsWon": 105,
+  "lost": 24,
+  "pending": 1,
+  "legs": 141,
+  "legsWon": 106,
   "returned": 24.83,
-  "staked": 28,
-  "expected": 9.52
+  "staked": 30,
+  "expected": 10.3
  },
  "days": [
   {
@@ -72,11 +72,11 @@
      "rank": "main",
      "odds": 3.21,
      "p": 0.464,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -87,8 +87,8 @@
        "odds": 1.24,
        "est": true,
        "p": 0.86,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "(16) Maja Chwalinska (POL) bt (7) Iga Swiatek (POL) 7-5 6-1"
       },
       {
        "pick": "Stockholm Internazionale",
@@ -147,9 +147,9 @@
      "p": 0.3945,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Gyulai Termál",
@@ -160,8 +160,8 @@
        "odds": 1.3,
        "est": true,
        "p": 0.7827,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "Folkestone Invicta",
@@ -218,11 +218,11 @@
      "rank": "main",
      "odds": 7.33,
      "p": 0.3202,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Alexander Zverev",
@@ -233,8 +233,8 @@
        "odds": 1.42,
        "est": true,
        "p": 0.767,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "(25) Alejandro Davidovich Fokina (ESP) bt (1) Alexander Zverev (GER) 5-7 6-4 6-3"
       },
       {
        "pick": "Harborough Town",
@@ -293,9 +293,9 @@
      "p": 0.3997,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Cigand SE",
@@ -306,8 +306,8 @@
        "odds": 1.19,
        "est": true,
        "p": 0.8089,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "6-0"
       },
       {
        "pick": "Altyn Asyr",
@@ -364,11 +364,11 @@
      "rank": "alternative",
      "odds": 4.11,
      "p": 0.3213,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Grorud",
@@ -379,8 +379,8 @@
        "odds": 1.19,
        "est": false,
        "p": 0.8075,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-3"
       },
       {
        "pick": "B71",
@@ -439,9 +439,9 @@
      "p": 0.2771,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Selangor",
@@ -452,8 +452,8 @@
        "odds": 1.18,
        "est": false,
        "p": 0.8072,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Altrincham",
