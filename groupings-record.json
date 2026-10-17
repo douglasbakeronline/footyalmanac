@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-17T14:34:48Z",
+ "graded": "2026-10-17T19:05:47Z",
  "overall": {
   "groups": 48,
   "settled": 45,
   "won": 9,
   "lost": 36,
   "pending": 3,
-  "legs": 213,
-  "legsWon": 157,
+  "legs": 216,
+  "legsWon": 159,
   "returned": 36.15,
   "staked": 45,
   "expected": 14.56
@@ -19,7 +19,7 @@
    "won": 3,
    "lost": 17,
    "pending": 1,
-   "legs": 96,
+   "legs": 97,
    "legsWon": 71,
    "returned": 8.17,
    "staked": 20,
@@ -31,8 +31,8 @@
    "won": 5,
    "lost": 8,
    "pending": 1,
-   "legs": 61,
-   "legsWon": 49,
+   "legs": 63,
+   "legsWon": 51,
    "returned": 20.87,
    "staked": 13,
    "expected": 3.94
@@ -56,8 +56,8 @@
   "won": 6,
   "lost": 24,
   "pending": 1,
-  "legs": 141,
-  "legsWon": 106,
+  "legs": 143,
+  "legsWon": 107,
   "returned": 24.83,
   "staked": 30,
   "expected": 10.3
@@ -75,8 +75,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 4,
+     "legsLost": 2,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -99,8 +99,8 @@
        "odds": 1.24,
        "est": false,
        "p": 0.809,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Boreham Wood",
@@ -147,9 +147,9 @@
      "p": 0.3945,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Gyulai Termál",
@@ -172,8 +172,8 @@
        "odds": 1.61,
        "est": false,
        "p": 0.7693,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Texas Longhorns",
@@ -366,9 +366,9 @@
      "p": 0.3213,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Grorud",
@@ -391,8 +391,8 @@
        "odds": 1.32,
        "est": true,
        "p": 0.7824,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "6-0"
       },
       {
        "pick": "Barrow",
