@@ -189,12 +189,7 @@ jobs:
       # groupings-record.json. Before the archive commit so both are kept.
       # Prices never feed a model. Allowed to fail: a missing price source
       # must not cost the deploy.
-      # ODDS_API_KEY (the-odds-api.com, free 500 credits a month): tennis and
-      # rugby prices, capped in groupings.price_odds_api. Absent means those
-      # legs keep the model's fair price.
       - name: Build and grade the Odds tab groupings
-        env:
-          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
 
       # main is protected (ruleset "Protect main"): only the office App and the

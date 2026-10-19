@@ -11,7 +11,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Credits:** the free plan has 500 a month. The free `/sports` list picks only the tournaments and leagues with an unpriced leg, at one credit each (UK region, match odds). Each one is cached for 4 hours in `.afcache`. A ledger caps spending at 15 credits a UK day and 480 a month, and calls stop when the API reports fewer than 20 left.
 
-**Files:** `groupings.py`, `.github/workflows/deploy.yml` (the key on the groupings step only), `index.html` (the Odds tab's price note), `tests/test_groupings.py`, this entry.
+**Files:** `groupings.py`, `index.html` (the Odds tab's price note), `tests/test_groupings.py`, this entry.
 
 **Not changed:** any model, probability, the Daily List or the records. Prices never feed a model.
 
