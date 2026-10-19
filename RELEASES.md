@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Football team news (injuries, suspensions) tested: nothing shipped (release-2026-10-19-3)
+
+**What changed:** nothing a reader sees. Two tools: `tools/af_team_news.py` (fetches API-Football injury lists and player minutes; run from a workflow, output kept out of the repo) and `tools/team_news_eval.py` (backtest), and a dated section in `claude/tuning-evidence.md`.
+**Evidence:** 8 leagues, 730 calls, 2025-26 fit (2,919 fixtures) and 2026-27 check (470), live calibration, paired. Players missing by count: no effect. By last season's minutes: -0.0002 on the fit season (under the 0.0005 bar), -0.0010 on the check (p(worse) 0.16), with a wrong-signed attack effect, found after widening the search. New absences since the previous match: no effect. Not shipped; revisit at about 1,500 check fixtures.
+**Files:** `tools/af_team_news.py`, `tools/team_news_eval.py`, `claude/tuning-evidence.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model number, the live build, the API budget (730 of 7,500 calls used once).
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-19 Football form by stage of season: tested, nothing shipped (release-2026-10-19-2)
 
 **What changed:** nothing a reader sees. A dated section in `claude/tuning-evidence.md` and a line in `CLAUDE.md`'s tested-and-rejected list.

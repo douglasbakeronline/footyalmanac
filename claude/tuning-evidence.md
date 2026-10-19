@@ -263,3 +263,38 @@ worse, so this season's results are already doing real work. The 4-6 dip is
 real but no weighting of results fixes it. What changes between seasons and
 is not in the results (transfers, injuries, line-ups) is the untested lever:
 API-Football Pro carries injuries, line-ups and transfers. Nothing shipped.
+
+
+## Test, 19 October 2026: team news (injuries and suspensions) from API-Football
+
+The lever left after the stage-of-season test: what changes and is not in the
+results. API-Football Pro lists, per fixture, every player missing (injured or
+suspended) or doubtful. Fetched for the Premier League, Championship, La Liga,
+Bundesliga, Serie A, Ligue 1, Eredivisie and Primeira Liga (730 calls; data
+kept out of the repo in `audit-out/team-news/`, not for redistribution):
+2,500-6,000 rows a league for 2025-26, Portugal almost none. Player importance
+from the previous season's league minutes. Harness `tools/team_news_eval.py`:
+each fixture priced as the replay would that morning, then
+`lh *= exp(-a*missH + b*missA)` (and the mirror), a and b fitted on 2025-26,
+checked on 2026-27, paired, live calibration curve.
+
+| Measure | Fitted a, b | 2025-26 (2,919) | 2026-27 (470) |
+|---|---|---|---|
+| count of players missing | 0, 0 | 0 | 0 |
+| missing minutes (regulars ~1) | -0.02, +0.02 | -0.0002, p(worse) 0.30 | -0.0010, p 0.16 |
+| new absences since last match | -0.02, +0.04 | -0.0001 | -0.0000 |
+
+Sides average 3.7 players listed missing (about one regular), barely related
+to strength (r 0.08), so the data is real and varied. The first two measures
+were declared with a, b >= 0 (absences hurt); both fitted to zero. The grid was
+then opened to both signs and "new absences" added: post hoc. The one
+measure that clears the check gates does so by about one standard deviation,
+gains 0.0002 on the season it was fitted on (under the 0.0005 bar), and has
+the wrong sign for attack (a side missing regulars "scores more"). Not
+shipped. Listed absences are mostly long-term, and a long absence is already
+in the side's recent results, which the ratings read.
+
+Revisit with the tool when 2026-27 has about 1,500 fixtures (re-fetch the
+2026 injuries, 8 calls): a real effect would show the right sign and hold.
+Not tested: confirmed line-ups (published about an hour before kick-off,
+after the site's morning prices; using them means re-pricing late).

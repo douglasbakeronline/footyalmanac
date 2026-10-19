@@ -89,6 +89,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `tune.py` constant sweep and calibration refit, behind gates, both measured against the live configuration (`live_baseline()`). `--snapshot FILE` runs either on a frozen snapshot and writes nothing.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
+- `tools/af_team_news.py` fetches API-Football injuries and player minutes (needs the secret: run from a workflow); `tools/team_news_eval.py` backtests them. Output stays in `audit-out/` (API-Football data is not for redistribution).
 - `tools/julius_export.py` writes `julius/julius.ai.review.<date>/` (and a `.zip`): every graded prediction as CSVs, Daily List, reserve and each sport separately, with ✓ / ✗ marks, a summary, per-day tallies and calibration bands, for outside review (Julius AI). Reads `record-graded.json`, `tennis-record.json` and `sports.graded_games()`; nothing is regraded. Run it after the daily build: a local `score.py` lacks the paid results and grades about half the football.
 - `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
 - `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
@@ -275,6 +276,7 @@ passed was this season counting sooner (SHRINK_FULL_SEASON 6 -> 4, shipped).
 Bottom-10%-away and weak-goal-record penalties (30 Sep 2026): worse at every
 strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 Football form by stage of season (19 Oct 2026): games 4-6 are the weak spot in both seasons, but no weighting fixes it (faster season, more form, slower season, last season only: none passes both seasons); team news is the untested lever.
+Football team news (19 Oct 2026): API-Football injury and suspension lists, by count, by last season's minutes and as new absences, add nothing that passes cleanly (best: wrong-signed, under the gain bar on the fit season). `tools/team_news_eval.py`; data in `audit-out/team-news/`, never committed.
 Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
 Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
 zero. The real gap was four months of missing results, now fixed. See
