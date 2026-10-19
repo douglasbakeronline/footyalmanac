@@ -89,6 +89,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `tune.py` constant sweep and calibration refit, behind gates, both measured against the live configuration (`live_baseline()`). `--snapshot FILE` runs either on a frozen snapshot and writes nothing.
 - `replay.py` the one walk-forward replay for football, shared by `backtest.py` and `tune.py`, built from the live build's engine functions and batched by date; `validate_split` refuses overlapping or missing seasons. `python3 replay.py --audit` lists what is usable and what is excluded.
 - `tools/capture_predictions.py`, `tools/compare_predictions.py`: reproducible before/after comparison of tune.py and backtest.py across two checkouts on one frozen snapshot (`replay.py --freeze`; `--filter-snapshot` derives an openfootball-only, public-domain copy). Outputs go in `audit-out/` (gitignored).
+- `tools/cup_calibration.py` fits the domestic cup calibration from `current/af-cup-replay.json` "rows" (cup replay version 4+); advisory, a human commits the constant.
 - `tools/af_team_news.py` fetches API-Football injuries and player minutes (needs the secret: run from a workflow); `tools/team_news_eval.py` backtests them. Output stays in `audit-out/` (API-Football data is not for redistribution).
 - `tools/julius_export.py` writes `julius/julius.ai.review.<date>/` (and a `.zip`): every graded prediction as CSVs, Daily List, reserve and each sport separately, with ✓ / ✗ marks, a summary, per-day tallies and calibration bands, for outside review (Julius AI). Reads `record-graded.json`, `tennis-record.json` and `sports.graded_games()`; nothing is regraded. Run it after the daily build: a local `score.py` lacks the paid results and grades about half the football.
 - `claude/proposals/` follow-up proposals awaiting a decision (history regeneration, League One prior, cache expansion).
@@ -259,6 +260,7 @@ These were each learned the hard way. Do not break them without asking.
   current values. `tune.py --fit` gates a candidate against the live curve on
   the same fixtures (until 3 Oct 2026 it was gated against the flat 1.15, so
   earlier refits were never shown to beat the curve they replaced).
+- **Cup calibration**: domestic cups (API-Football, `afCup`) carry a second curve on top, `engine.CUP_CALIBRATION` (T = 0.90 + 2.75 x (conf - 0.45), 19 Oct 2026), fitted by `tools/cup_calibration.py` on the cup replay's stored ties (Jan-Jun) and checked on Jul-Oct. A raw 75% cup favourite shows about 59%. Refit by hand only.
 - **Sources**: openfootball spells clubs in full (*FC Bayern München*), ESPN
   abbreviates (*Bayern Munich*). football-data.co.uk's extra-league files
   are the sole source for Poland, Switzerland, Romania, Finland and Ireland

@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Honest cup numbers: domestic cup ties carry their own calibration (release-2026-10-19-6)
+
+**What changed:** domestic cup ties (API-Football cups) now quote what cups actually deliver. A second calibration curve, on top of the league one, pulls confident cup favourites down: a raw 75% favourite now shows about 59%, a close tie barely moves. The cup replay's Daily List gate reads the same calibrated numbers (cups stay off the list unless it passes). Continental cups (Champions League and others) are unchanged: there is no replay evidence on them.
+**Evidence:** `tools/cup_calibration.py` on the cup replay's 1,968 priced ties, fitted on 747 before 1 Jul 2026, checked on 1,221 after, paired against no cup adjustment: -0.0047 log loss, p(worse) 0.164, all tune.py gates passed. Check ties quoted 60%+: 62.0% landed against 69.9% quoted before, 66.7% against 63.9% after. A single temperature was tried first and failed (p(worse) 0.43). `tests/test_cup_calibration.py`; full suite and `nametest.py` pass.
+**Files:** `engine.py`, `build.py`, `tools/cup_calibration.py`, `tests/test_cup_calibration.py`, `claude/tuning-evidence.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** league football, the league calibration, internationals, continental cups, every other sport.
+**Roll back:** `git revert` this commit, or set `engine.CUP_CALIBRATION = None`.
+
 ## 2026-10-19 Recent form on football rows; the cup replay keeps every tie (release-2026-10-19-5)
 
 **What changed:** every football row (boards and the Daily List) shows each side's last five league results as W / D / L squares, oldest first, on a line of their own, and a yellow **Hot** badge when the side won each of its last three. The expanded team sheet adds last-three points. Display only, Douglas's choice: the model's numbers are unchanged, because favourites on three straight wins landed 68.2% against 70.8% quoted (`claude/tuning-evidence.md`). The cup replay (`build.cup_replay`, version 4) now keeps every priced tie's probabilities and result in `current/af-cup-replay.json`, so a cup calibration can be fitted on one half-year and checked on the other; nothing is fitted yet.

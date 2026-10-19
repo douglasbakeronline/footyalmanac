@@ -410,7 +410,7 @@ def team_leagues(history):
 # fitted on record.json; nothing is fitted at all, the model is unchanged.
 # ---------------------------------------------------------------------------
 CUP_REPLAY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cup-replay.json")
-CUP_REPLAY_VERSION = 4        # 4: every priced tie kept ("rows") for fitting cup calibration
+CUP_REPLAY_VERSION = 5        # 4: every priced tie kept ("rows"); 5: gate on cup-calibrated prices
 CUP_REPLAY_DAYS = 330          # how far back the day files are read
 CUP_BARS = (0.75, 0.80)        # the AF-extra and league bars; never lower
 CUP_MIN_N, CUP_MIN_HIT = 30, 0.80
@@ -1085,12 +1085,16 @@ def main():
                         flags.append("moved")
                     if (t["carriedFrom"] or src) in partial_prior:
                         flags.append("partial")
-                trip = {"h": p["home"], "d": p["draw"], "a": p["away"]}
+                # raw prices are kept for refitting; the gate reads them as
+                # published, after the cup calibration
+                raw = [round(p["home"], 4), round(p["draw"], 4), round(p["away"], 4)]
+                pc = E.cup_temper(p)
+                trip = {"h": pc["home"], "d": pc["draw"], "a": pc["away"]}
                 pick = max(trip, key=trip.get)
                 res = "h" if hg > ag else ("a" if hg < ag else "d")
                 rows.append({"date": d, "cup": code, "conf": round(trip[pick], 4), "pick": pick,
                              "hit": int(pick == res), "flags": sorted(set(flags)), "res": res,
-                             "p": [round(trip["h"], 4), round(trip["d"], 4), round(trip["a"], 4)],
+                             "p": raw,
                              "thin": not hb["last"] or not ab["last"],
                              # for reading the misses, not for the gate
                              "tie": f"{home} ({hb['league']}, {domestic_of(home, code)[1]}) v "
@@ -1261,6 +1265,8 @@ def main():
                 p = E.cup_match(rh, s_h, ra, s_a, cup_mu,
                                 tier=meta["tier"], form_h=fh, form_a=fa,
                                 frame_k=(E.CONTINENTAL_FRAME_K if E.continental(code) else None))
+                if meta.get("afCup"):
+                    p = E.cup_temper(p)     # domestic cups: the cup calibration (engine)
             else:
                 p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
                                           mu, tier=meta["tier"], form_h=fh, form_a=fa)

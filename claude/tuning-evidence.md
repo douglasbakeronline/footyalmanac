@@ -333,3 +333,26 @@ against 69.7% (46), 70%+ 60.0% against 80.3% (15). Cups stay off the Daily List
 on the daily gate. If anything, cup confidence is too high.
 
 Nothing shipped.
+
+
+## Domestic cup calibration, 19 October 2026 (shipped)
+
+Douglas chose honest cup numbers. The cup replay (`build.cup_replay`, version
+4+) now keeps every priced tie: the model's home / draw / away as of the tie's
+morning, and the result. `tools/cup_calibration.py` fits a cup adjustment on
+ties before 1 Jul 2026 (747) and checks it on ties after (1,221), paired,
+against no cup adjustment, under tune.py's gates. Two candidates, declared in
+order:
+
+| Candidate | Fit (747) | Check (1,221) | Gates |
+|---|---|---|---|
+| one temperature, T = 1.4 | -0.0076, p(worse) 0.064 | -0.0007, p(worse) 0.426 | fails notWorse |
+| curve T = 0.90 + 2.75 x (conf - 0.45) | -0.0141, p 0.009 | -0.0047, p 0.164 | passes |
+
+Confident cup calls before and after, check ties: 60%+ landed 62.0% against
+69.9% quoted before, 66.7% against 63.9% after. A raw 75% cup favourite now
+shows about 59%. Shipped as `engine.CUP_CALIBRATION` / `engine.cup_temper`,
+applied to API-Football domestic cups (`afCup`) live and inside the cup
+replay's gate (version 5, which still stores the raw prices for refits).
+Continental cups are not covered: the replay has no evidence on them. A
+structural constant: refit by hand with the tool, never automatically.

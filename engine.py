@@ -1062,6 +1062,31 @@ def cup_frame(s_home, s_away):
     return (s_home + s_away) / 2.0
 
 
+# Domestic cups (API-Football, LEAGUES "afCup"): a second calibration on top
+# of the league curve. Cup favourites land far under their league-style
+# quote (rotation, one-off ties, sides from lower divisions). Fitted 19 Oct
+# 2026 by tools/cup_calibration.py on the cup replay (build.cup_replay rows):
+# 747 ties before 1 Jul 2026, checked on 1,221 after, against no cup
+# adjustment: -0.0047 log loss, p(worse) 0.164, tune.py's gates. Before it,
+# Jul-Oct cup picks quoted 60%+ landed 62.0% against 69.9%; after, 66.7%
+# against 63.9%. A single temperature (1.4) failed the check. A structural
+# constant: refit by hand, never automatically. None switches it off.
+CUP_CALIBRATION = {"a": 0.90, "b": 2.75}
+
+
+def cup_temper(p, cal=None):
+    """p (a match_probabilities dict) with home / draw / away softened by the
+    cup curve T = a + b * (confidence - 0.45); everything else unchanged."""
+    cal = CUP_CALIBRATION if cal is None else cal
+    if not cal:
+        return p
+    trip = (p["home"], p["draw"], p["away"])
+    t = min(max(cal["a"] + cal["b"] * (max(trip) - 0.45), 0.6), 3.0)
+    q = [max(x, 1e-12) ** (1.0 / t) for x in trip]
+    s = sum(q)
+    return {**p, "home": q[0] / s, "draw": q[1] / s, "away": q[2] / s}
+
+
 def cup_match(rating_h, s_h, rating_a, s_a, mu, tier=1, neutral=False,
               form_h=1.0, form_a=1.0, frame_k=None):
     """Price a tie between sides rated in different competitions.
