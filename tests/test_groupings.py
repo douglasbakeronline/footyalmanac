@@ -92,3 +92,63 @@ class Grading(unittest.TestCase):
         self.assertEqual(G.settle({"sport": "tennis", "id": "t1", "pick": "Iga Swiatek"}, idx)[0], "won")
         self.assertEqual(G.settle({"sport": "tennis", "id": "t2", "pick": "X"}, idx)[0], "void")
         self.assertEqual(G.settle({"sport": "rugby", "id": "s1", "pick": "Sale Sharks"}, idx), ("lost", "30-10"))
+
+
+class OddsApiTest(unittest.TestCase):
+    SPORTS = [{"key": "tennis_atp_european_open", "title": "ATP European Open", "active": True},
+              {"key": "tennis_wta_ningbo", "title": "WTA Ningbo Open", "active": True},
+              {"key": "rugbyunion_premiership_rugby", "title": "Premiership Rugby", "active": True},
+              {"key": "rugbyunion_top_14", "title": "Top 14", "active": True}]
+    EV = [{"home_team": "Martin Damm", "away_team": "Yannick Hanfmann", "commence_time": "2026-10-19T11:30:00Z",
+           "bookmakers": [{"title": "Bet365", "markets": [{"key": "h2h", "outcomes": [{"name": "Yannick Hanfmann", "price": 1.6}, {"name": "Martin Damm", "price": 2.3}]}]},
+                          {"title": "William Hill", "markets": [{"key": "h2h", "outcomes": [{"name": "Yannick Hanfmann", "price": 1.7}]}]}]}]
+
+    def setUp(self):
+        import tempfile
+        self.dir = tempfile.mkdtemp(); self.calls = []
+        os.environ["ODDS_API_KEY"] = "test"
+
+    def tearDown(self):
+        os.environ.pop("ODDS_API_KEY", None)
+
+    def fetch(self, url):
+        self.calls.append(url)
+        if "/odds?" not in url: return self.SPORTS, None
+        return (self.EV if "european" in url else []), 400
+
+    def tleg(self, **kw):
+        return dict({"sport": "tennis", "tour": "ATP", "tournament": "BNP Paribas Fortis European Open",
+                     "players": ["Martin Damm", "Yannick Hanfmann"], "pick": "Yannick Hanfmann",
+                     "when": "2026-10-19T11:30:00Z", "date": "2026-10-19"}, **kw)
+
+    def run_(self, L, now=None):
+        from datetime import datetime, timezone
+        r = {}
+        G.price_odds_api(L, {"2026-10-19"}, r, cache_dir=self.dir, fetch=self.fetch,
+                         now=now or datetime(2026, 10, 19, 9, tzinfo=timezone.utc))
+        return r["oddsApi"]
+
+    def test_prices_a_tennis_leg_one_credit_and_caches(self):
+        l = self.tleg(); rep = self.run_([l])
+        self.assertEqual((l["odds"], l["best"], l["books"]), (1.65, 1.7, 2))
+        self.assertEqual(rep["calls"], 1)                       # only the tournament it needs
+        self.assertFalse(any("ningbo" in u for u in self.calls))
+        n = len(self.calls); self.run_([self.tleg()])
+        self.assertEqual(len(self.calls), n)                    # second build: all from cache
+
+    def test_no_key_or_already_priced_costs_nothing(self):
+        os.environ.pop("ODDS_API_KEY")
+        self.assertEqual(self.run_([self.tleg()]), "no key")
+        os.environ["ODDS_API_KEY"] = "test"
+        self.assertEqual(self.run_([self.tleg(odds=1.5)]), "no legs")
+        self.assertEqual(self.calls, [])
+
+    def test_daily_cap(self):
+        from datetime import datetime, timezone
+        old = G.ODDS_API_DAY; G.ODDS_API_DAY = 1
+        try:
+            rugby = {"sport": "rugby", "comp": "Top 14", "home": "Toulon", "away": "Pau", "pick": "Toulon", "when": None, "date": "2026-10-19"}
+            rep = self.run_([self.tleg(), rugby])
+            self.assertEqual(rep["calls"], 1); self.assertEqual(len(rep["skipped"]), 1)
+        finally:
+            G.ODDS_API_DAY = old
