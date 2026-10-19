@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-19T16:19:08Z",
+ "graded": "2026-10-19T17:15:07Z",
  "overall": {
   "groups": 56,
   "settled": 55,
   "won": 9,
   "lost": 46,
   "pending": 1,
-  "legs": 268,
-  "legsWon": 194,
+  "legs": 269,
+  "legsWon": 195,
   "returned": 36.15,
   "staked": 55,
   "expected": 17.81
@@ -31,8 +31,8 @@
    "won": 3,
    "lost": 21,
    "pending": 1,
-   "legs": 117,
-   "legsWon": 85,
+   "legs": 118,
+   "legsWon": 86,
    "returned": 8.17,
    "staked": 24,
    "expected": 9.29
@@ -159,9 +159,9 @@
      "p": 0.2758,
      "status": "lost",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 2,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Thiago Agustin Tirante",
@@ -208,8 +208,8 @@
        "odds": 1.11,
        "est": false,
        "p": 0.7824,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "7-0"
       },
       {
        "pick": "Lorenzo Sonego",
