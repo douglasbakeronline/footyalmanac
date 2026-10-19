@@ -46,8 +46,12 @@ Where the prices come from
                   month, so capped at ODDS_API_DAY credits a UK day and
                   ODDS_API_MONTH a month, each sport's odds cached for
                   ODDS_API_TTL (see price_odds_api)
-  otherwise       the model's fair price (1 / p), marked as an estimate, and
-                  at most two estimates in any group
+  otherwise       no bookmaker price: the leg is shown with the model's fair
+                  price (1 / p), marked as an estimate, and never used in a
+                  group (19 Oct 2026)
+
+A leg's chance in a group is the lower of its tested rate (above) and the
+bookmaker's fair chance (1 / price, less the book's margin; see honest()).
 
 How a group is chosen
 ---------------------
@@ -56,11 +60,8 @@ each band the five legs with the highest joint tested chance, subject to:
   - a spread of prices: at least one short leg (under 1.30), at least one
     middle leg (1.30-1.60), and Balanced and Stretch at least one leg 1.60+
   - at most two very short legs (under 1.15), which add risk but little return
-  - at most two estimated prices (more only if priced legs cannot fill the
-    group at all, and the group shows how many)
   - one leg per game, no more than two from one competition
-  - a small preference for mixing sports, and for legs where the tested rate
-    beats the bookmaker's implied chance
+  - a small preference for mixing sports
 Then a second, separate group per band ("alternative") from the legs left.
 Today and tomorrow, so six groups a day, none sharing a leg.
 
@@ -233,7 +234,9 @@ def price_football(L, dates, report):
             books = sorted(books)
             side = prices["Home" if l["side"] == "h" else "Away"]
             if side:
+                avg = [sum(v) / len(v) for v in prices.values() if v]
                 l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
+                         margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
@@ -264,9 +267,15 @@ def price_espn(L, dates, report):
                 ml = (o.get("moneyline") or {}).get(side) or {}
                 dec = american((ml.get("close") or ml.get("open") or {}).get("odds") or (o.get(f"{side}TeamOdds") or {}).get("moneyLine"))
                 if dec and dec > 1:
-                    l.update(odds=dec, src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); n += 1
+                    l.update(odds=dec, margin=margin_of([espn_ml(o, "home"), espn_ml(o, "away")]),
+                             src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); n += 1
         out[sport] = {"matched": n, "legs": len(want)}
     report["espn"] = out
+
+def margin_of(decs):
+    """A book's margin from every outcome's decimal price (1.05 = 5%), or None."""
+    decs = [d for d in decs if d and d > 1]
+    return round(sum(1 / d for d in decs), 4) if len(decs) >= 2 else None
 
 def espn_ml(o, side):
     """Decimal price for 'home' or 'away' from an ESPN odds block, or None."""
@@ -307,7 +316,9 @@ def price_espn_soccer(L, dates, report):
                     if not (same(cs.get("home"), l["home"]) and same(cs.get("away"), l["away"])): continue
                     dec = espn_ml(o, "home" if l["side"] == "h" else "away")
                     if dec and dec > 1:
-                        l.update(odds=dec, src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); matched += 1
+                        draw = american(((o.get("drawOdds") or {}).get("moneyLine")))
+                        l.update(odds=dec, margin=margin_of([espn_ml(o, "home"), espn_ml(o, "away"), draw]) if draw else None,
+                                 src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); matched += 1
     report["espn_soccer"] = {"calls": calls, "matched": matched, "legs": len(want)}
 
 # ---------- The Odds API (optional, last) ----------
@@ -420,16 +431,19 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 if not (any(same(h, x) for x in names if x) and any(same(a, x) for x in names if x)): continue
                 ct = parse(ev.get("commence_time"))
                 if t and ct and abs((t - ct).total_seconds()) > 6 * 3600: continue
-                prices, books = [], set()
+                prices, books, margins = [], set(), []
                 for b in ev.get("bookmakers") or []:
                     for m in b.get("markets") or []:
                         if m.get("key") != "h2h": continue
+                        mg = margin_of([o.get("price") for o in m.get("outcomes") or []])
+                        if mg: margins.append(mg)
                         for o in m.get("outcomes") or []:
                             if same(o.get("name", ""), l["pick"]):
                                 try: prices.append(float(o["price"])); books.add(b.get("title") or b.get("key"))
                                 except (KeyError, ValueError): pass
                 if prices:
                     l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books),
+                             margin=round(sum(margins) / len(margins), 4) if margins else None,
                              src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
                     rep["matched"] += 1
                 break
@@ -446,13 +460,34 @@ def price(L, dates):
     for l in L:
         if not l.get("odds"):
             l.update(odds=round(1 / l["pModel"], 2), est=True, src="estimate: the model's fair price, no bookmaker price found")
-        l["implied"] = round(1 / l["odds"], 4)
-        l["edge"] = round(l["p"] * l["odds"] - 1, 4)
+        honest(l)
     report["priced"] = sum(1 for l in L if not l.get("est")); report["legs"] = len(L)
     return report
 
+# ---------- honest chances (19 Oct 2026) ----------
+# 4-18 Oct: 8 of 48 groups won against 15.9 expected. Legs won 73.1% while the
+# tested rates said 79.8% and the bookmakers' prices implied 75.7%, nearer 72%
+# without their margin: the market was the better guide. Choosing the five
+# legs with the best tested chance for the odds also picked the legs where the
+# model and the bookmakers disagreed most, and those won least (10+ points
+# above the price: 66.7%). Estimated legs (no bookmaker price) won 68.5% of
+# tennis against 83.4% stated. So a leg's chance is now the lower of its tested
+# rate and the bookmaker's fair chance, and a leg needs a bookmaker price.
+MARGIN = 1.05   # assumed book margin when a source gives only the one side
+
+def honest(l):
+    """Set implied, fair and the leg's chance p = min(tested, fair). Prices
+    pick and weigh legs here only; they never feed a model."""
+    l["implied"] = round(1 / l["odds"], 4)
+    l.setdefault("pTested", l["p"])
+    if not l.get("est"):
+        l["fair"] = round(l["implied"] / max(l.get("margin") or MARGIN, 1.0), 4)
+        l["p"] = round(min(l["pTested"], l["fair"]), 4)
+    l["edge"] = round(l["p"] * l["odds"] - 1, 4)
+    return l
+
 # ---------- groups ----------
-def ok_combo(c, lo, hi, name, max_est=2):
+def ok_combo(c, lo, hi, name, max_est=0):
     o = math.prod(l["odds"] for l in c)
     if not (lo <= o <= hi): return None
     if len({l["event"] for l in c}) < 5: return None
@@ -465,16 +500,15 @@ def ok_combo(c, lo, hi, name, max_est=2):
     return o
 
 def pool(L, used, after):
-    c = [l for l in L if l["event"] not in used and 1.05 <= l["odds"] <= 2.8 and (parse(l["when"]) or after) >= after]
+    c = [l for l in L if l["event"] not in used and not l.get("est") and 1.05 <= l["odds"] <= 2.8 and (parse(l["when"]) or after) >= after]
     # Keep the strongest legs in each price range, so every band can be met
     # without trying every combination of several hundred legs.
     rng = lambda lo, hi, k: sorted([l for l in c if lo <= l["odds"] < hi], key=lambda l: -l["p"])[:k]
     return rng(1.05, 1.30, 12) + rng(1.30, 1.60, 12) + rng(1.60, 2.81, 9)
 
 def best(L, used, after, name, lo, hi):
-    # At most two estimated prices; only when the priced legs cannot fill a
-    # group at all does it fall back to more, and the group says so.
-    return _best(L, used, after, name, lo, hi, 2) or _best(L, used, after, name, lo, hi, 5)
+    # Bookmaker-priced legs only (19 Oct 2026): no estimates, no fallback.
+    return _best(L, used, after, name, lo, hi, 0)
 
 def _best(L, used, after, name, lo, hi, max_est):
     top = None
@@ -483,8 +517,7 @@ def _best(L, used, after, name, lo, hi, max_est):
         if o is None: continue
         p = math.prod(l["p"] for l in c)
         sports = len({l["sport"] for l in c})
-        value = sum(1 for l in c if not l.get("est") and l["edge"] > 0)
-        score = p * (1 + 0.03 * (sports - 1)) * (1 + 0.02 * value)
+        score = p * (1 + 0.03 * (sports - 1))
         if not top or score > top[0]: top = (score, c, o, p)
     if not top: return None
     _, c, o, p = top
