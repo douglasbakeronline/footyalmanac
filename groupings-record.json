@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-19T04:35:16Z",
+ "graded": "2026-10-19T10:48:33Z",
  "overall": {
   "groups": 56,
-  "settled": 47,
+  "settled": 48,
   "won": 8,
-  "lost": 39,
-  "pending": 9,
-  "legs": 232,
-  "legsWon": 170,
+  "lost": 40,
+  "pending": 8,
+  "legs": 234,
+  "legsWon": 171,
   "returned": 33.38,
-  "staked": 47,
-  "expected": 15.6
+  "staked": 48,
+  "expected": 15.87
  },
  "byBand": {
   "Steady": {
    "groups": 25,
-   "settled": 20,
+   "settled": 21,
    "won": 2,
-   "lost": 18,
-   "pending": 5,
-   "legs": 99,
-   "legsWon": 71,
+   "lost": 19,
+   "pending": 4,
+   "legs": 101,
+   "legsWon": 72,
    "returned": 5.4,
-   "staked": 20,
-   "expected": 8.01
+   "staked": 21,
+   "expected": 8.29
   },
   "Balanced": {
    "groups": 16,
@@ -56,8 +56,8 @@
   "won": 5,
   "lost": 25,
   "pending": 5,
-  "legs": 149,
-  "legsWon": 113,
+  "legs": 150,
+  "legsWon": 114,
   "returned": 22.06,
   "staked": 30,
   "expected": 10.56
@@ -74,9 +74,9 @@
      "p": 0.3573,
      "status": "pending",
      "paid": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Diriangén",
@@ -99,8 +99,8 @@
        "odds": 1.23,
        "est": true,
        "p": 0.8624,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Sorana Cirstea (ROM) bt Han Shi (CHN) 6-3 6-2"
       },
       {
        "pick": "Luunja",
@@ -145,11 +145,11 @@
      "rank": "alternative",
      "odds": 3.93,
      "p": 0.2758,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsLost": 1,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Thiago Agustin Tirante",
@@ -160,8 +160,8 @@
        "odds": 1.37,
        "est": true,
        "p": 0.7707,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Facundo Diaz Acosta (ARG) bt (8) Thiago Agustin Tirante (ARG) 6-7 (3-7) 6-1 6-4"
       },
       {
        "pick": "Jaime Faria",
