@@ -5,6 +5,21 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19: Odds tab groups use honest chances (tag pending)
+
+**What changed:** each leg's chance in a group is now the lower of its tested rate and the bookmaker's fair chance (1 / price, less the book's margin, worked out from every outcome's price where the source gives them, otherwise 5%). Legs with no bookmaker price are never grouped, with no fallback. The bonus for legs whose tested rate beat the bookmaker is gone. HQ regroups with these same rules from the same pool, so it follows.
+
+**Evidence:** from 4 to 18 Oct, 8 of 48 settled groups won against 15.9 expected (about 2.4 standard deviations short), and 48 staked returned 33.38. Legs won 73.1%, while the tested rates said 79.8% and bookmaker prices implied 75.7%, about 72% without their margin. Legs priced 10+ points under the tested rate won 66.7%. Estimated tennis legs won 68.5% against 83.4% stated, and college football 63.6% against 84.7%. A replay on the archived legs gave 4.4 expected and 4 won under the new rules (22 groups), against 14.6 expected and 8 won under the old ones (43 groups). That's directional only: a small sample, chosen by the old rules.
+
+**What a reader sees:** lower chances. Today's pool gives Steady 2.96 at 25% (the old rules said 30–35% at similar odds), and fewer groups on days with few priced legs. These are honest figures, and at bookmaker prices they still imply a loss on average.
+
+**Files:** `groupings.py`, `index.html` (the group chance label and the "How the groups are picked" note), `tests/test_groupings.py`, this entry.
+
+**Not changed:** any model, probability, the Daily List, or past groups and their record.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-10-19: The Odds API prices tennis and rugby on the Odds tab (tag pending)
 
 **What changed:** when the `ODDS_API_KEY` secret is set, the Odds tab prices tennis, rugby union and rugby league legs that API-Football and ESPN did not price, using the average of UK bookmakers' match odds from The Odds API. Without the key, nothing changes. HQ already reuses the Odds tab's priced pool, so it picks these prices up without a change of its own.
