@@ -48,7 +48,7 @@
      same place at the same width whether the row is football, tennis, NFL,
      basketball, baseball or rugby. The narrow middle column is football's
      predicted score; the two-sided sports keep it empty to stay aligned. */
-  --row-cols:32px 132px minmax(0,1fr) 248px 72px minmax(0,1fr) 88px;
+  --row-cols:32px 132px minmax(0,1fr) 248px 96px minmax(0,1fr) 88px;
   --rule:#c6b89e;
   --rule-soft:#ded3bd;
   --paper:#f0e8d6;
@@ -286,9 +286,9 @@ details.how p{margin-top:8px;padding-left:22px}
 .fchips{display:inline-flex;gap:2px;vertical-align:-2px}
 .fchips .fc{display:inline-block;width:14px;height:14px;line-height:14px;text-align:center;
   font:700 9.5px var(--f-num);font-style:normal;border-radius:2px}
-.fc.W{background:var(--home);color:#fff}
-.fc.D{background:var(--draw-soft);color:var(--ink)}
-.fc.L{background:var(--away-soft);color:var(--away)}
+.fc.W{background:#2f6b52;color:#fff}
+.fc.D{background:var(--yellow);color:var(--cover-ink)}
+.fc.L{background:var(--red);color:#fff}
 .hot{display:inline-block;margin-left:5px;padding:0 5px;font:700 9.5px/14px var(--f-ui);letter-spacing:.08em;
   text-transform:uppercase;background:var(--yellow);color:var(--cover-ink);border-radius:2px;vertical-align:1px}
 .v-wary .verdict{background:var(--red);color:#fff}
@@ -318,8 +318,8 @@ details.how p{margin-top:8px;padding-left:22px}
 .row .pred.pin-pred small{display:block;color:var(--ink-2);font-size:12px;margin-top:4px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:860px){.row .pred.pin-pred{text-align:left}.row .pred.pin-pred small{display:inline;margin:0 0 0 8px}}
 .pin-gap{display:block}
-.pin-st{display:inline-block;font:700 11px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;
-  padding:4px 6px;border:1px solid var(--cover-ink);white-space:nowrap}
+.pin-st{display:inline-block;font:700 10.5px/1 var(--f-ui);letter-spacing:.05em;text-transform:uppercase;
+  padding:4px 6px;border:1px solid var(--cover-ink);white-space:nowrap;max-width:100%;box-sizing:border-box}
 .pin-st.won{background:#2f6b52;color:#fff;border-color:#2f6b52}
 .pin-st.lost{background:var(--red);color:#fff;border-color:var(--red)}
 .pin-st.void,.pin-st.due,.pin-st.up{background:transparent;color:var(--ink-2)}
@@ -1004,7 +1004,7 @@ footer b{color:var(--ink-2)}
   .ko .comp{margin-top:0}
   .day-head h2{font-size:15px}
   .day-head{flex-wrap:wrap;row-gap:2px}
-  .day-head .count{margin-left:0;width:100%}
+  .day-head .count{margin-left:0;width:100%;white-space:normal}
   .side{grid-area:home}
   .side.away{grid-area:away;text-align:left}
   .bar{grid-area:bar;margin:2px 0}
@@ -2187,7 +2187,7 @@ function tennisStat(r, surface){
   // specific match (the surface-specific one, falling back to overall for
   // a player new to this surface); matches is how much of it to trust.
   if(!r) return `<div class="stat none">not rated</div>`;
-  return `<div class="stat">${r.surfaceElo} ${surface} Elo &middot; ${r.matches} matches</div>`;
+  return `<div class="stat"><span title="${ratingHelp()}">${surface} rating ${r.surfaceElo}</span> &middot; ${r.matches} matches</div>`;
 }
 
 function renderTennis(){
@@ -2524,7 +2524,8 @@ function sportDetail(g){
   const why = g.sport === "tennis" ? `<div class="why">${g.why || ""}</div>` : `<div class="why">
       Rated <em>${g.eloH}</em> against <em>${g.eloA}</em>${g.hfa ? `, plus <em>${g.hfa}</em> for playing at home` : g.neutral ? ", neutral venue" : ""}:
       a gap of <em>${Math.abs(Math.round(gap))}</em> rating points in ${gap >= 0 ? g.home : g.away}'s favour.
-      Ratings move with every result, more for bigger wins, and drift back toward average over an off-season.</div>`;
+      Ratings move with every result, more for bigger wins, and drift back toward average over an off-season.
+      About 1500 is average, and a 100-point gap makes the higher-rated side roughly a 64% favourite.</div>`;
   const rec = r => r ? `${r.w}–${r.l}${r.d ? "–" + r.d : ""} this season` : "";
   const sheets = g.formH ? `<div class="detail-grid" style="margin-top:16px">
       <div><h3>${g.home} · ${rec(g.recordH)}</h3>${formLines(g.formH)}</div>
@@ -2562,12 +2563,19 @@ function putPinned(sec, g, i, date){
   const line = sec.children[n0], pred = line && line.querySelector(".pred");
   if(!pred) return;
   const [cls, label] = pinStatus(g), r = g.result || {};
-  const final = r.score ? r.score : r.winner ? `${r.winner} won` : "";
-  const was = g.sport === "football" && f.score ? `pred ${f.score[0]}–${f.score[1]}` : "";
+  const final = pinFinal(g, r);
+  const was = g.sport === "football" && f.score ? `Pred ${f.score[0]}–${f.score[1]}` : "";
   line.querySelector(".row").classList.add("pinned-full");
   pred.removeAttribute("aria-hidden");
   pred.classList.add("pin-pred");
-  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final || was ? `<small>${[final, was].filter(Boolean).join(" · ")}</small>` : ""}`;
+  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final ? `<small>${final}</small>` : ""}${was ? `<small class="was">${was}</small>` : ""}`;
+}
+// The settled result for the middle cell: "Final 1–0" for football, the
+// score for the other team sports, "Golubic won" for tennis (surname, so it fits).
+function pinFinal(g, r){
+  const sc = Array.isArray(r.score) ? `${r.score[0]}–${r.score[1]}` : (r.score ? String(r.score).replace("-", "–") : "");
+  if(sc) return g.sport === "football" ? `Final ${sc}` : sc;
+  return r.winner ? `${String(r.winner).trim().split(/\s+/).slice(-1)[0]} won` : "";
 }
 function pinnedRow(g, i){
   const k = SPORT_K[g.tier] ?? 0;
@@ -2578,7 +2586,7 @@ function pinnedRow(g, i){
     ? probBar(pct(g.p.h), pct(g.p.d), 100 - pct(g.p.h) - pct(g.p.d), 13)
     : (g.pHome != null ? tennisBar(Math.round(g.pHome*100), 100 - Math.round(g.pHome*100)) : "");
   const r = g.result || {};
-  const detail = r.score ? r.score : r.winner ? `${r.winner} won` : "";
+  const detail = pinFinal(g, r);
   const line = document.createElement("div");
   line.className = "row-line";
   line.innerHTML = `<span class="star-btn pin-gap" aria-hidden="true"></span>
@@ -2589,11 +2597,20 @@ function pinnedRow(g, i){
     <div class="side"><div class="club${g.side === "h" ? " pick" : ""}">${g.home}</div>
       <div class="stat">Pick: ${g.pick}</div></div>
     <div class="barcell">${barHtml}</div>
-    <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? ` <small>${detail}</small>` : ""}</div>
+    <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}">${g.away}</div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
     <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}</div></div>`;
   return line;
+}
+// "rating 1947": an Elo strength score built from every result; "· only 15
+// matches" when it rests on few. Hover (or open the row) for the scale.
+function ratingHelp(){
+  return "Strength rating from every result on record. About 1500 is a newcomer; a side or player rated 100 points higher wins about 64% of the time.";
+}
+function ratingStat(r, n, unit){
+  // the count only where it matters: a rating resting on few results is shaky
+  return `<span title="${ratingHelp()} Based on ${n} ${unit}.">rating ${r}</span>${n < 60 ? ` · only ${n} ${unit}` : ""}`;
 }
 function sportRow(g, i, showSport, host){
   const id = "s|" + (g.id || (g.when + "|" + g.home + "|" + g.away));
@@ -2624,11 +2641,11 @@ function sportRow(g, i, showSport, host){
       <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
         <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span></div></div>
     <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
-      <div class="stat">${g.statH || `rating ${g.eloH} · ${g.gamesH} games`}</div></div>
+      <div class="stat">${g.statH || ratingStat(g.eloH, g.gamesH, "games")}</div></div>
     <div class="barcell">${tennisBar(ph, pa)}</div>
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
-      <div class="stat">${g.statA || `rating ${g.eloA} · ${g.gamesA} games`}</div></div>
+      <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
     <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}</div>`;
   btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
   line.appendChild(star); line.appendChild(btn);
@@ -2650,11 +2667,12 @@ function tennisAsGame(m){
     chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
     when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,
     confidence:m.confidence, tier:m.tier, accuracy:m.accuracy, list:m.list, reserve:m.reserve,
-    statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}Elo ${m.ratingA.surfaceElo} · ${m.ratingA.matches} played`,
-    statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}Elo ${m.ratingB.surfaceElo} · ${m.ratingB.matches} played`,
+    statH:`${m.rankA ? `<b class="wr">${m.tour} #${m.rankA}</b> · ` : ""}${ratingStat(m.ratingA.surfaceElo, m.ratingA.matches, "matches")}`,
+    statA:`${m.rankB ? `<b class="wr">${m.tour} #${m.rankB}</b> · ` : ""}${ratingStat(m.ratingB.surfaceElo, m.ratingB.matches, "matches")}`,
     research:tennisResearch(m),
-    why:`Career Elo <em>${m.ratingA.elo}</em> against <em>${m.ratingB.elo}</em>, ${m.surface.toLowerCase()}-court
-      Elo <em>${m.ratingA.surfaceElo}</em> against <em>${m.ratingB.surfaceElo}</em>, blended and pulled toward a coin flip
+    why:`Ratings are strength scores built from every result on record: about 1500 for a newcomer, and a player
+      rated 100 points higher wins about 64% of the time. Career rating <em>${m.ratingA.elo}</em> against <em>${m.ratingB.elo}</em>,
+      ${m.surface.toLowerCase()}-court rating <em>${m.ratingA.surfaceElo}</em> against <em>${m.ratingB.surfaceElo}</em>, blended and pulled toward a coin flip
       by the amount testing found honest for the ${m.tour}.${m.rankAdjusted
         ? ` Then re-scored with the ATP world ranking (${m.rankA ? "#" + m.rankA : "outside the top 150"} v ${m.rankB ? "#" + m.rankB : "outside the top 150"}), which made ATP calls measurably more accurate in testing.`
         : (m.tour === "WTA" ? " WTA rankings are shown for reference: in testing they did not improve on the ratings, so they do not move the number." : "")}${m.list ? "" : m.confidence >= 0.75 ? " Not on the Daily List: qualifying rounds and thinly-rated players are excluded, because that is not what was tested." : ""}`};

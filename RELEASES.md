@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Fixture rows tidied: status boxes fit, form in green / yellow / red, final and predicted scores, plain ratings (release-2026-10-19-7)
+
+**What changed:**
+- The middle cell of every row is wider (72px to 96px), so status boxes such as RESULT DUE are no longer cut off on the right, and scores no longer trail off.
+- Form squares: green win, yellow draw, red loss.
+- A settled football pick shows "Final 1–0" and, under it, the model's "Pred 2–0"; other sports show the score, tennis "Golubic won".
+- Ratings read "rating 1917" instead of "Elo 1917 · 252 played". The match count shows only when a rating rests on few results ("only 15 matches"); hovering the rating explains the scale (about 1500 for a newcomer; 100 points higher wins about 64% of the time), and each sport's row detail says the same.
+- On a phone, the day header's "So far" line wraps instead of running off the edge.
+**Evidence:** checked in headless Chrome at 1280px and a true 400px on today's Daily List and reserve. `nametest.py` passes.
+**Files:** `index.html`, `RELEASES.md`.
+**Not changed:** any number, rule or record.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-19 Honest cup numbers: domestic cup ties carry their own calibration (release-2026-10-19-6)
 
 **What changed:** domestic cup ties (API-Football cups) now quote what cups actually deliver. A second calibration curve, on top of the league one, pulls confident cup favourites down: a raw 75% favourite now shows about 59%, a close tie barely moves. The cup replay's Daily List gate reads the same calibrated numbers (cups stay off the list unless it passes). Continental cups (Champions League and others) are unchanged: there is no replay evidence on them.
