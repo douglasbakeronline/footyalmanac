@@ -298,3 +298,38 @@ Revisit with the tool when 2026-27 has about 1,500 fixtures (re-fetch the
 2026 injuries, 8 calls): a real effect would show the right sign and hold.
 Not tested: confirmed line-ups (published about an hour before kick-off,
 after the site's morning prices; using them means re-pricing late).
+
+
+## Test, 19 October 2026: hot form, big clubs and cups, against the quoted chance
+
+Douglas: recent form (last 3, last 5) should carry more weight, bigger clubs
+are more consistent, and cups hold more opportunity. Tested as "at the same
+quoted chance, do these picks land more often than quoted?" If they did, the
+model would be under-rating them. Frozen snapshot `aa19d05b...`, both seasons,
+favourites quoted 60%+ under the live curve (1,121). Big club: last season's
+top four by points per game in its league (a free stand-in for squad value).
+
+| Group | n | Landed | Quoted | Gap (95%) |
+|---|---|---|---|---|
+| favourite won all of last 3 | 192 | 68.2% | 70.8% | -2.5% (6.4) |
+| favourite won 2 of last 3 | 413 | 70.9% | 69.4% | +1.6% (4.4) |
+| favourite won 0-1 of last 3 | 342 | 66.7% | 66.4% | +0.2% (5.0) |
+| favourite won 4-5 of last 5 | 285 | 71.9% | 71.2% | +0.7% (5.3) |
+| favourite won 0-2 of last 5 | 286 | 67.8% | 66.1% | +1.7% (5.5) |
+| underdog won 2-3 of last 3 | 144 | 71.5% | 68.3% | +3.2% (7.6) |
+| favourite is a big club | 744 | 72.3% | 70.1% | +2.2% (3.3) |
+| favourite is not | 377 | 66.3% | 65.8% | +0.5% (4.8) |
+| big club, quoted 70%+ | 324 | 78.1% | 77.6% | +0.5% (4.5) |
+
+Hot favourites land slightly under their quote, cold ones on it: form beyond
+what the ratings hold carries nothing, as the weighting tests found. Big clubs
+supply two thirds of the confident picks and land as quoted: consistent, and
+already priced as such.
+
+Cups, the opposite of an opportunity: the cup replay (`current/af-cup-replay.json`,
+1,968 priced ties) has clean 75%+ calls landing 47% (n 19, Jan-Jun) and 80%
+(n 20, Jul-Oct), cross-division 39-66%; live cup picks quoted 60%+ landed 56.5%
+against 69.7% (46), 70%+ 60.0% against 80.3% (15). Cups stay off the Daily List
+on the daily gate. If anything, cup confidence is too high.
+
+Nothing shipped.

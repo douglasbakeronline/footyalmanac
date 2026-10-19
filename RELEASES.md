@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Hot form, big clubs and cups tested against the quoted chance: nothing shipped (release-2026-10-19-4)
+
+**What changed:** nothing a reader sees; a dated section in `claude/tuning-evidence.md`.
+**Evidence:** frozen snapshot, both seasons, favourites quoted 60%+ (1,121). Won all of last 3: 68.2% landed against 70.8% quoted; won 0-1 of last 3: 66.7% against 66.4%. Big clubs (last season's top four): 72.3% against 70.1% (inside noise), 78.1% against 77.6% at 70%+. Cups: live 60%+ 56.5% against 69.7%, replay clean 75%+ 47% and 80%.
+**Files:** `claude/tuning-evidence.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model number.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-19 Football team news (injuries, suspensions) tested: nothing shipped (release-2026-10-19-3)
 
 **What changed:** nothing a reader sees. Two tools: `tools/af_team_news.py` (fetches API-Football injury lists and player minutes; run from a workflow, output kept out of the repo) and `tools/team_news_eval.py` (backtest), and a dated section in `claude/tuning-evidence.md`.
