@@ -14,10 +14,10 @@ class LegProbability(unittest.TestCase):
         self.assertIsNone(G.leg_p(0.9, None))
     def test_needs_a_tested_rate_of_65(self):
         self.assertIsNone(G.leg_p(0.7, {"hit": 0.6, "n": 500}))
-    def test_shrinks_toward_the_model_when_small(self):
-        p = G.leg_p(0.70, {"hit": 0.90, "n": 30})
-        self.assertAlmostEqual(p, 0.80, places=6)
-        self.assertGreater(G.leg_p(0.70, {"hit": 0.90, "n": 3000}), 0.89)
+    def test_tested_rate_capped_at_the_model(self):
+        # 19 Oct 2026: min(tested rate, model), no longer pulled toward the model
+        self.assertAlmostEqual(G.leg_p(0.70, {"hit": 0.90, "n": 30}), 0.70, places=6)
+        self.assertAlmostEqual(G.leg_p(0.95, {"hit": 0.90, "n": 3000}), 0.90, places=6)
 
 class GroupRules(unittest.TestCase):
     def test_band_and_spread(self):
@@ -63,7 +63,7 @@ class GroupRules(unittest.TestCase):
         seen = [l["event"] for g in gs for l in g["legs"]]
         self.assertEqual(len(seen), len(set(seen)))
         for g in gs:
-            self.assertEqual(len(g["legs"]), 5)
+            self.assertEqual(len(g["legs"]), G.LEGS_IN.get(g["name"], 5))
             self.assertTrue(g["band"][0] <= g["odds"] <= g["band"][1])
 
 class EspnSoccerPrices(unittest.TestCase):

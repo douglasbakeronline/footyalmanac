@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Odds groups rebuilt after the 13-18 Oct collapse; tennis grading fix; college football off the Daily List (release-2026-10-19)
+
+**What changed:**
+- **Odds groups:** legs come from football and rugby only; tennis, college football and NFL legs landed far under their tested rates. A leg's chance is also capped at the model's own number (it used to be the tested rate pulled toward it), on top of the bookmaker fair-chance cap merged earlier today (#47): the lowest of the three counts. A new **Banker** group, three legs paying 1.5 to 2.5, is built first each day: the group built to land most often. Legs settle from each sport's full graded history, so days older than two weeks no longer revert to Pending (5 Oct now reads lost, 4 of 5).
+- **Tennis grading:** a match is graded only if both priced players played it. ESPN reuses a match id when a draw slot changes hands; 7 of 765 stored grades were against someone else's match (5 losses, 2 wins, including Daily List pick Jovic on 12 Oct) and are now void.
+- **Daily List:** college football is off it, as tennis has been since 15 Oct; its Firm+ picks go to the reserve.
+**Why:** Douglas, 19 Oct: the groups won 0 of 25 from 13 to 18 Oct against about 8 expected.
+**Evidence:** legs 12-18 Oct: football 73.1% landed against 77.2% quoted (78), tennis 61.8% against 85.4% (34), college football 53.8% against 85.7% (13), NFL 40.0% against 75.7% (5). Whole archive (234 legs): 73.1% against 79.8%, shortfall in legs quoted 80%+. College football on the Daily List won 30 of 41 against 33.6 expected. Tennis re-tested on 1,096 Sep-Oct main-draw matches: 75%+ landed about 85%, live prices match the replay, a confidence refit fails the tennis gates, so no tennis model change. Write-up: `claude/odds-groupings.md`. Tests: `tests/test_groupings_banker.py`, `tests/test_tennis_slot.py`, `tests/test_groupings.py` updated; full suite passes; `nametest.py` passes. Odds tab checked at 1280px and 400px.
+**Files:** `groupings.py`, `score_tennis.py`, `sports.py`, `index.html`, `tests/`, `claude/odds-groupings.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model, rating, calibration or tested band; football's Daily List; prices never feed a model.
+**Roll back:** `git revert` this commit; `sports.LIST_OFF = set()` restores college football to the list alone.
+
 ## 2026-10-19: Odds tab groups use honest chances (tag pending)
 
 **What changed:** each leg's chance in a group is now the lower of its tested rate and the bookmaker's fair chance (1 / price, less the book's margin, worked out from every outcome's price where the source gives them, otherwise 5%). Legs with no bookmaker price are never grouped, with no fallback. The bonus for legs whose tested rate beat the bookmaker is gone. HQ regroups with these same rules from the same pool, so it follows.

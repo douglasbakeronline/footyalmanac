@@ -26,10 +26,11 @@ Which probability a leg carries
 -------------------------------
 Every pick on the site already says how often calls at its level landed in
 testing ("86% landed"). That tested rate is the honest number for a leg, so a
-group's chance is the product of its legs' tested rates, shrunk toward the
-model's own number when the tested sample is small:
+group's chance is the product of its legs' tested rates, each capped at the
+model's own number (19 Oct 2026; before, the rate was pulled toward the
+model's number, which ran high):
 
-    p_leg = (hit * n + p_model * 30) / (n + 30)
+    p_leg = min(hit, p_model)
 
 A leg needs a tested rate (n >= 30), a tested rate of at least 65%, and must
 be one the board does not flag (football: rated, not a draw pick).
@@ -79,8 +80,23 @@ ESPN_PATH = {"nfl": "football/nfl", "mlb": "baseball/mlb", "nba": "basketball/nb
              "nhl": "hockey/nhl", "cfb": "football/college-football",
              "ncaab": "basketball/mens-college-basketball", "wnba": "basketball/wnba"}
 ESPN_Q = {"ncaab": "&groups=50"}   # all of Division I, as sports.py
-BANDS = [("Steady", 2.5, 4.0), ("Balanced", 4.0, 7.0), ("Stretch", 7.0, 14.0)]
-MIN_N, MIN_HIT, SHRINK = 30, 0.65, 30
+# Banker (19 Oct 2026): three legs paying 1.5 to 2.5, the group built to land
+# most often. Built first each day so it takes the strongest legs. A group's
+# price all but sets its chance: five legs paying 2.5+ is a 25-40% shot even
+# when every leg is honest, so a group that lands often has to pay less.
+BANDS = [("Banker", 1.5, 2.5), ("Steady", 2.5, 4.0), ("Balanced", 4.0, 7.0), ("Stretch", 7.0, 14.0)]
+LEGS_IN = {"Banker": 3}                 # every other band: five
+# Sports whose tested rates have held up on live legs (19 Oct 2026, 234
+# settled legs, 5-18 Oct): football landed 75.5% against 77.5% quoted.
+# Tennis (68.5% v 83.4%, n=54), college football (70.4% v 85.4%, n=27) and
+# NFL (55.6% v 72.2%, n=9) landed far under, and since 12 Oct worse still
+# (61.8%, 53.8%, 40.0%), so they stay out. Rugby's held (5 of 5, and 16 of 17
+# on the Daily List). Tennis re-tested the same day on every main-draw match
+# since 1 Sep (1,096, walk-forward): its 75%+ calls landed about 85%, and the
+# live prices match that replay, so the model is sound and the fortnight was a
+# bad run; it stays out on caution, as it is off the Daily List (15 Oct).
+GROUP_SPORTS = {"football", "rugby"}
+MIN_N, MIN_HIT = 30, 0.65
 UA = {"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
 
 def norm(s):
@@ -114,10 +130,14 @@ def parse(s):
     except ValueError: return None
 
 def leg_p(p, acc):
+    """A leg's chance: its band's tested rate, never above the model's own
+    number. Until 19 Oct 2026 it was the tested rate pulled toward the
+    model's number, which is the side that runs high at the top end (a 90%
+    pick with a 77% tested rate was quoted 83%); legs landed 73.1% against
+    79.8% quoted, 5-18 Oct."""
     if not acc or not acc.get("n") or acc.get("hit") is None: return None
-    n = acc["n"]
-    if n < MIN_N or acc["hit"] < MIN_HIT: return None
-    return (acc["hit"] * n + p * SHRINK) / (n + SHRINK)
+    if acc["n"] < MIN_N or acc["hit"] < MIN_HIT: return None
+    return min(acc["hit"], p)
 
 # ---------- the board ----------
 def legs(dates):
@@ -137,7 +157,7 @@ def legs(dates):
                         "pick": h if side == "h" else a, "code": g.get("league"), "comp": g.get("leagueName"), "country": g.get("country"),
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
                         "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list"))})
-    td = read_js("tennis-data.js") or {}
+    td = (read_js("tennis-data.js") or {}) if "tennis" in GROUP_SPORTS else {}
     for m in td.get("matches") or []:
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
         d = m.get("date")
@@ -151,7 +171,7 @@ def legs(dates):
                     "list": bool(m.get("list"))})
     sd = read_js("sports-data.js") or {}
     for key, sp in (sd.get("sports") or {}).items():
-        if not sp.get("published"): continue
+        if not sp.get("published") or key not in GROUP_SPORTS: continue
         for g in sp.get("games") or []:
             t = parse(g.get("when"))
             if not t or t.date().isoformat() not in dates: continue
@@ -490,10 +510,11 @@ def honest(l):
 def ok_combo(c, lo, hi, name, max_est=0):
     o = math.prod(l["odds"] for l in c)
     if not (lo <= o <= hi): return None
-    if len({l["event"] for l in c}) < 5: return None
+    if len({l["event"] for l in c}) < LEGS_IN.get(name, 5): return None
     if sum(l["odds"] < 1.15 for l in c) > 2 or sum(1 for l in c if l.get("est")) > max_est: return None
-    if not any(l["odds"] < 1.30 for l in c) or not any(1.30 <= l["odds"] < 1.60 for l in c): return None
-    if name != "Steady" and not any(l["odds"] >= 1.60 for l in c): return None
+    if name != "Banker":
+        if not any(l["odds"] < 1.30 for l in c) or not any(1.30 <= l["odds"] < 1.60 for l in c): return None
+        if name != "Steady" and not any(l["odds"] >= 1.60 for l in c): return None
     comps = {}
     for l in c: comps[l.get("comp")] = comps.get(l.get("comp"), 0) + 1
     if max(comps.values()) > 2: return None
@@ -512,7 +533,7 @@ def best(L, used, after, name, lo, hi):
 
 def _best(L, used, after, name, lo, hi, max_est):
     top = None
-    for c in itertools.combinations(pool(L, used, after), 5):
+    for c in itertools.combinations(pool(L, used, after), LEGS_IN.get(name, 5)):
         o = ok_combo(c, lo, hi, name, max_est)
         if o is None: continue
         p = math.prod(l["p"] for l in c)
@@ -544,14 +565,28 @@ def load(name):
     except Exception: return {}
 
 def results_index():
-    rec, trec, srec = load("record.json"), load("tennis-record.json"), load("sports-record.json")
+    """Every graded result, from each sport's full history. The records'
+    "days" hold only their last 14 days, so a leg older than that used to
+    fall back to Pending on the next regrade (5 Oct 2026 showed 0/5)."""
+    rec, trec = load("record.json"), load("tennis-record.json")
     fb = {}
-    for d in rec.get("days") or []:
-        for g in d.get("games") or []:
-            if g.get("result"): fb[(d.get("date"), norm(g["home"]), norm(g["away"]))] = g["result"]
-            if g.get("result"): fb.setdefault((None, norm(g["home"]), norm(g["away"])), g["result"])
-    tn = {str(g.get("key")): g for d in trec.get("days") or [] for g in d.get("games") or []}
-    sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
+    full = load("record-graded.json").get("graded") or []
+    rows = [(g.get("date"), g) for g in full] or \
+           [(d.get("date"), g) for d in rec.get("days") or [] for g in d.get("games") or []]
+    for date, g in rows:
+        if g.get("result"):
+            fb[(date, norm(g["home"]), norm(g["away"]))] = g["result"]
+            fb.setdefault((None, norm(g["home"]), norm(g["away"])), g["result"])
+    tn = {str(g.get("key")): g for g in trec.get("graded") or []} or \
+         {str(g.get("key")): g for d in trec.get("days") or [] for g in d.get("games") or []}
+    try:
+        import sports as SP
+        graded, voids = SP.graded_games()
+        sp = {str(g.get("id")): g for g in graded}
+        sp.update({str(g.get("id")): {**g, "void": True} for g in voids})
+    except Exception:
+        srec = load("sports-record.json")
+        sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
     return fb, tn, sp
 
 def settle(l, idx):
@@ -567,6 +602,7 @@ def settle(l, idx):
         if g.get("void"): return "void", "void"
         return ("won" if norm(g.get("winner")) == norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
     g = sp.get(str(l.get("id")))
+    if g and g.get("void"): return "void", "tie"
     if not g or not g.get("winner"): return "pending", None
     sc = g.get("score")
     return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), ("-".join(map(str, sc)) if isinstance(sc, list) else sc)
@@ -637,7 +673,7 @@ def main():
         dl = [l for l in L if l["date"] == d]
         days.append({"date": d, "legs": len(dl), "priced": sum(1 for l in dl if not l.get("est")),
                      "groups": build_day(dl, now + timedelta(minutes=20))})
-    out = {"generated": iso(now), "bands": BANDS, "rules": {"minN": MIN_N, "minHit": MIN_HIT, "shrink": SHRINK},
+    out = {"generated": iso(now), "bands": BANDS, "rules": {"minN": MIN_N, "minHit": MIN_HIT},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.

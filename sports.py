@@ -77,6 +77,13 @@ RESERVE_MIN = 0.62   # the list's reserve floor, Firm, as football and tennis
 # 75-80% landed 73.8% (n=84) and 76.9% (n=108); 80-85% landed 87.7% and
 # 87.4%. Live List 7-11 Oct: 70-80% won 11 of 17, 80%+ 10 of 12.
 LIST_FLOOR = {"cfb": 0.80}
+# Sports kept off the Daily List on their live record (19 Oct 2026), as tennis
+# was on 15 Oct: their picks from RESERVE_MIN go to the reserve instead.
+# College football's List picks won 30 of 41 against 33.6 expected (27 Sep to
+# 18 Oct), and 9 of 12 at the 80% bar since 13 Oct against a mean quote of
+# 86.9%; in the Odds groups its legs landed 70.4% against 85.4% quoted.
+# Probabilities are unchanged. Remove a sport here to put it back.
+LIST_OFF = {"cfb"}
 
 
 def list_bar(sport, found):
@@ -589,6 +596,7 @@ def build(start=None):
         sp = P.get(sport)
         entry = {"name": cfg["name"], "published": bool(sp and sp.get("publish")),
                  "listMin": list_bar(sport, sp.get("listMin")) if sp else None,
+                 "listOff": sport in LIST_OFF,
                  "check": sp.get("check") if sp else None,
                  "bands": sp.get("bandsCheck") if sp else None, "games": []}
         payload["sports"][sport] = entry
@@ -620,10 +628,12 @@ def build(start=None):
                    "recordH": record(by_team.get((g["pool"], g["h"]), []), g["h"]),
                    "recordA": record(by_team.get((g["pool"], g["a"]), []), g["a"]),
                    "h2h": head_to_head(by_team.get((g["pool"], g["h"]), []), g["h"], g["a"]),
-                   "list": bool(entry["listMin"] and conf >= entry["listMin"]),
+                   "list": bool(entry["listMin"] and not entry["listOff"] and conf >= entry["listMin"]),
                    # the list's reserve: a sport with a list place, below its
-                   # bar, Firm or better (build.RESERVE_MIN)
-                   "reserve": bool(entry["listMin"] and RESERVE_MIN <= conf < entry["listMin"])}
+                   # bar, Firm or better (build.RESERVE_MIN); every Firm+ pick
+                   # of a sport kept off the list (LIST_OFF)
+                   "reserve": bool(entry["listMin"] and RESERVE_MIN <= conf
+                                   and (entry["listOff"] or conf < entry["listMin"]))}
             entry["games"].append(row)
             archive.append({**row, "published": now})
         entry["games"].sort(key=lambda r: r["when"])

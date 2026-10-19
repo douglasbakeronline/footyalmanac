@@ -97,7 +97,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `nametest.py` guards the club-name matcher. Runs before every deploy.
 - `backfill.py` walks a past season from ESPN into `history/`.
 - `odds.py` football-data.co.uk prices and the value backtest.
-- `groupings.py` the Odds tab (4 Oct 2026): five-leg groups from tested picks, priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI before the archive commit, archives each day's first groups to `groupings-archive/` and grades them into `groupings-record.json` (both bot-written). Prices never feed a model.
+- `groupings.py` the Odds tab (4 Oct 2026): a three-leg Banker (1.5-2.5) and five-leg groups from tested picks, football and rugby legs only since 19 Oct (`GROUP_SPORTS`), each leg at min(tested rate, model), settled from each sport's full graded history (`claude/odds-groupings.md`), priced by API-Football (football) and ESPN (NFL, MLB, NBA); writes `groupings.json` / `groupings-data.js` in CI before the archive commit, archives each day's first groups to `groupings-archive/` and grades them into `groupings-record.json` (both bot-written). Prices never feed a model.
 - `build_tennis.py`, `tune_tennis.py` separate tennis pipeline, `tennis.json` ratings (with each tour's archive boundary). The build applies every ESPN result since the archive ends from `history-tennis/`. `tools/tennis_gap_eval.py` is the evidence. Football must never depend on it.
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
@@ -307,6 +307,7 @@ zero. The real gap was four months of missing results, now fixed. See
   pipeline as `reserve` and graded as its own group (`record.json` /
   `tennis-record.json` / `sports-record.json` "reserve"). "How it went" has
   the same fold under each list day.
+- College football is off the Daily List (`sports.LIST_OFF`, 19 Oct 2026), as tennis is (`build_tennis.LIST_ON`, 15 Oct), on their live record; their Firm+ picks go to the reserve. The tennis model re-tested sound on 1,096 Sep-Oct matches; both return when their live record holds.
 - The Starred tab's **Run** button (`runSlip` in `index.html`) gives the
   chance all starred picks land, fair odds, and a Strong / Reserve / Wary
   verdict per leg. Site numbers only, never bookmaker prices.

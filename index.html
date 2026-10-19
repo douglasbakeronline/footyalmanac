@@ -381,6 +381,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-h .od{margin-left:auto;text-align:right}
 .og-h .od b{display:block;font:600 24px var(--f-num);letter-spacing:-.04em;line-height:1}
 .og-h .od span{font-size:11.5px;color:var(--ink-2)}
+.og.Banker .og-h{border-top:3px solid var(--yellow)}
 .og.Steady .og-h{border-top:3px solid var(--home)}
 .og.Balanced .og-h{border-top:3px solid var(--draw)}
 .og.Stretch .og-h{border-top:3px solid var(--away)}
@@ -1974,7 +1975,7 @@ function renderList(){
   const absent = [];
   if(TDL && TDL.list && TDL.list.off) absent.push("Tennis");
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp =>
-    sp.published && sp.listMin ? thresholds.push(`${sp.name === "NFL" ? "NFL" : sp.name.toLowerCase()} ${pc(sp.listMin)}`) : absent.push(sp.name));
+    sp.published && sp.listMin && !sp.listOff ? thresholds.push(`${sp.name === "NFL" ? "NFL" : sp.name.toLowerCase()} ${pc(sp.listMin)}`) : absent.push(sp.name));
 
   // One live record for the list, across every sport that has graded picks.
   const recs = [R.list, window.__TENNIS_RECORD__ && window.__TENNIS_RECORD__.list, SR && SR.list].filter(Boolean);
@@ -3047,10 +3048,10 @@ function ogCard(g){
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
-    <div class="og-k"><span>All five land <b>${pct(g.p)}%</b> (tested rate or bookmaker, whichever is lower)</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
+    <div class="og-k"><span>All ${g.legs.length === 5 ? "five" : g.legs.length === 3 ? "three" : g.legs.length} land <b>${pct(g.p)}%</b> (tested rate, model or bookmaker, whichever is lowest)</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div class="og-sp" aria-hidden="true">${ticks}${dots}</div>
     <div>${legs}</div>
-    <div class="og-f">${started ? `<b>${started} of 5 already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of 5 price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
+    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3063,14 +3064,14 @@ function ogRecord(){
   const band = Object.entries(R.byBand || {}).map(([k, v]) => `<div><span>${k}</span><b>${v.won} / ${v.settled}</b><small>expected ${v.expected.toFixed(1)}</small></div>`).join("");
   const openAt = Math.max(0, R.days.findIndex(d => d.groups.some(g => g.status !== "pending")));
   const dayRows = R.days.slice(0, 14).map((d, i) => {
-    const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/5` : ""}</span>`).join("");
+    const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
     const groups = d.groups.map(g => `<h5>${g.name}${g.rank === "alternative" ? " (alternative)" : ""} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
       ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span><span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
     return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
   }).join("");
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
     <div class="og-score"><div><span>Groups won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
-      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>Steady, Balanced, Stretch</small></div>
+      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>Banker, Steady, Balanced, Stretch</small></div>
       <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
       <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
       ${band}</div>${dayRows}
@@ -3079,24 +3080,28 @@ function ogRecord(){
 function renderOdds(){
   const host = $("#odds"); if(!host) return;
   if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Groups of five</h2></div><div class="empty">No groupings in this build yet. They appear after the next daily build.</div>`;
+    host.innerHTML = `<div class="lede"><h2>Groups</h2></div><div class="empty">No groupings in this build yet. They appear after the next daily build.</div>`;
     return;
   }
   const days = OG.days.filter(d => d.groups.length);
   if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const gen = new Date(OG.generated);
-  host.innerHTML = `<div class="lede"><h2>Groups of five, a spread of prices</h2>
-      <p>Each group is five of the model's picks with a mix of short and longer prices, chosen for the
-      best chance that all five land inside its odds range. <b>Steady</b> pays 2.5 to 4, <b>Balanced</b> 4 to 7,
-      <b>Stretch</b> 7 to 14. No pick is used twice in a day. The chance shown is how often calls at each
+  host.innerHTML = `<div class="lede"><h2>Groups, a spread of prices</h2>
+      <p><b>Banker</b> is three of the model's strongest picks paying 1.5 to 2.5: the group built to land most
+      often. The others are five picks with a mix of short and longer prices, chosen for the best chance that
+      all five land inside their odds range: <b>Steady</b> pays 2.5 to 4, <b>Balanced</b> 4 to 7,
+      <b>Stretch</b> 7 to 14. The price all but sets the chance: a group paying 3 lands about one time in three
+      however good its picks. No pick is used twice in a day. The chance shown is how often calls at each
       pick's level landed in testing, not the bookmaker's view.</p>
       <details class="how"><summary>How the groups are picked</summary>
         <p>A pick qualifies only if calls at its level landed at least ${pct(OG.rules.minHit)}% of the time over at
         least ${OG.rules.minN} tested games; no draws, no tennis qualifying, and it needs a bookmaker price. Its chance
-        is the lower of its tested rate and the bookmaker's fair chance (the price with the bookmaker's margin taken
-        out). Until 18 October the tested rate alone was used, and groups landed about half as often as it said.</p>
-        <p>Every group needs a short price (under 1.30) and a middle one (1.30 to 1.60); Balanced and Stretch also
+        is the lowest of its tested rate, the model's own number and the bookmaker's fair chance (the price with the
+        bookmaker's margin taken out). Until 18 October the tested rate alone was used, and groups landed about half
+        as often as it said. Picks come from football and rugby only: tennis, college football and NFL picks landed
+        well under their tested rates in October 2026, so they stay out until their live record holds.</p>
+        <p>Every five-pick group needs a short price (under 1.30) and a middle one (1.30 to 1.60); Balanced and Stretch also
         need one at 1.60 or longer. At most two very short prices (under 1.15), no more than
         two picks from one competition, and a small preference for mixing sports.</p>
         <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from

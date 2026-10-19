@@ -30,7 +30,7 @@ ESPN is unreachable costs nothing but that day's new grades.
 
 Standard library only.
 """
-import json, math, os, re, sys
+import json, math, os, re, sys, unicodedata
 from collections import defaultdict
 from datetime import date, datetime, timedelta, timezone
 
@@ -112,10 +112,40 @@ def is_retirement(note):
     return bool(re.search(r"\bret(?:ired)?\b", (note or "").lower()))
 
 
+def _surname(name):
+    return unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode().lower().split()[-1:] or [""]
+
+
+def played_by_both(m, r):
+    """Did the two players priced actually play this result? ESPN reuses a
+    match id when a draw slot changes hands (a seed's bye, a withdrawal, a
+    lucky loser): on 12 Oct 2026 "Pohankova v Jovic" was played by Bondar and
+    graded as a Jovic loss. Matched pool names first, surnames as a fallback
+    for a player the pool could not name."""
+    if not (m.get("playerA") and m.get("playerB") and r.get("p0") and r.get("p1")):
+        return True                       # nothing to compare: grade as before
+    sides = []
+    for raw in (r.get("p0"), r.get("p1")):
+        mapped = (r.get("pool") or {}).get(raw)
+        sides.append(mapped or raw or "")
+    if {m["playerA"], m["playerB"]} == set(sides):
+        return True
+    got = {_surname(x)[0] for x in sides}
+    return {_surname(m["playerA"])[0], _surname(m["playerB"])[0]} == got
+
+
+def named_in_note(g):
+    """A stored grade whose result line names both priced players."""
+    note = unicodedata.normalize("NFKD", g.get("note") or "").encode("ascii", "ignore").decode().lower()
+    return all(_surname(p)[0] in note for p in (g["playerA"], g["playerB"]))
+
+
 def outcome(m, r):
     """(status, winner as a rating-pool name). status: graded, void or None."""
     note = (r.get("note") or "").lower()
     if r.get("statusName") in ("STATUS_CANCELED", "STATUS_WALKOVER") or "w/o" in note or "walkover" in note:
+        return "void", None
+    if not played_by_both(m, r):
         return "void", None
     if not r.get("winner"):
         return None, None
@@ -151,6 +181,13 @@ def main():
     except Exception:
         old = []
     graded = {g["key"]: g for g in old}
+    # Grades made before 19 Oct 2026 against a match the priced players did
+    # not play (see played_by_both) become void: 7 of 765, 5 losses, 2 wins.
+    for k, g in list(graded.items()):
+        if not g.get("void") and g.get("note") and not named_in_note(g):
+            graded[k] = {"key": k, "result": g.get("result"), "published": g.get("published"), "void": True,
+                         "date": g["date"], "tour": g["tour"], "playerA": g["playerA"], "playerB": g["playerB"],
+                         "note": g.get("note"), "reason": "not played by the priced players"}
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     cutoff = (date.today() - timedelta(days=LOOKBACK_DAYS)).isoformat()

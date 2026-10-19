@@ -40,3 +40,29 @@ Lost groups: 10 lost on one leg, 9 on two, 2 on three. A single-leg-loss group i
 ## Verdict
 
 No rule change. No candidate rule beats the current one on a paired, gated comparison, and the data cannot support one: 30 groups, correlated by day, with no historical prices. Rules 2 and 3 apply. Revisit at about 100 settled groups, or once each leg's tested rate and price are archived at publish time. Prices never feed a model.
+
+## The 13-18 Oct collapse and what changed (19 Oct 2026)
+
+To 12 Oct the groups were on their stated chances (9 won, 9.51 expected). From 13 to 18 Oct they won 0 of 25 against about 8 expected, far outside noise. The legs show why (unique settled legs, 12-18 Oct):
+
+| Sport | Legs | Landed | Quoted | Bookmakers implied |
+|---|---|---|---|---|
+| Football | 78 | 73.1% | 77.2% | 74.2% |
+| Tennis | 34 | 61.8% | 85.4% | 79.8% |
+| College football | 13 | 53.8% | 85.7% | 77.1% |
+| NFL | 5 | 40.0% | 75.7% | 73.3% |
+
+Over the whole archive (5-18 Oct, 234 legs) legs landed 73.1% against 79.8% quoted; the shortfall sat in legs quoted 80%+ (landed about 75%) and in those three sports. Football's 70-80% legs were on their quotes.
+
+Tennis was re-tested on every main-draw match since 1 Sep with both players on 10+ matches (1,096, walk-forward from `history-tennis/`): 75%+ calls landed about 85%, live prices match the replay to 0.002, and refitting the confidence shrink on Jun-Aug fails the tennis gates on Sep-Oct (ATP worse, WTA -0.0008 against a 0.005 bar). So the tennis model is sound and the fortnight was a bad run; it stays out on caution, as it is off the Daily List (15 Oct).
+
+What changed in `groupings.py`:
+
+- **Legs from football and rugby only** (`GROUP_SPORTS`). Tennis, college football and NFL return when their live legs hold their tested rates.
+- **A leg's chance is min(tested rate, model's number)**. It used to be the tested rate pulled toward the model's number, which is the side that runs high at the top end.
+- **Banker**: three legs paying 1.5 to 2.5, built first each day. A group's price all but sets its chance: five legs paying 2.5+ is a 25-40% shot even when every leg is honest, so a group meant to land most days has to pay less.
+- **Legs settle from each sport's full graded history** (`record-graded.json`, `tennis-record.json` "graded", `sports.graded_games()`). Before, only the records' last 14 days were read, so older legs fell back to Pending on each regrade (5 Oct showed 0/5; it is now lost, 4 of 5).
+
+Alongside: tennis grading voids a match its two priced players did not both play (`score_tennis.played_by_both`; ESPN reuses an id when a draw slot changes hands), which corrected 7 of 765 stored grades (5 losses, 2 wins, among them a Daily List pick, Jovic on 12 Oct); and college football is off the Daily List (`sports.LIST_OFF`), its Firm+ picks in the reserve.
+
+No group can be made to always win. The stated chance on each card is the honest one; check the record against it, not against every group landing.
