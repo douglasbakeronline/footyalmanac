@@ -274,6 +274,7 @@ after 3 games) is +0.005 log loss worse on both; FORM_MAX 0.10 a wash. What
 passed was this season counting sooner (SHRINK_FULL_SEASON 6 -> 4, shipped).
 Bottom-10%-away and weak-goal-record penalties (30 Sep 2026): worse at every
 strength, the ratings already carry it. See `claude/tuning-evidence.md`.
+Football form by stage of season (19 Oct 2026): games 4-6 are the weak spot in both seasons, but no weighting fixes it (faster season, more form, slower season, last season only: none passes both seasons); team news is the untested lever.
 Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
 Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
 zero. The real gap was four months of missing results, now fixed. See

@@ -224,3 +224,42 @@ These clear the gates numerically, but **nothing shipped**, for three reasons:
 through `transfer_rating` from the division below (data for en.2, es.2, de.2,
 it.2, fr.2 is already fetched), then test SHRINK_ON_TRANSFER and a promoted
 discount on that, refitting calibration. Only then change `build.rating_for`.
+
+
+## Re-test, 19 October 2026: form by stage of the season
+
+Douglas asked again for recent form to count, "so much can change between
+seasons". New angle: score the model by how many games each side has played
+this season, then test the weighting there. Frozen snapshot `aa19d05b...`,
+live calibration curve, paired.
+
+Where the model is weak (log loss, top-pick accuracy):
+
+| Games played (fewer of the two) | 2025/26 | 2026/27 |
+|---|---|---|
+| 0-3 | 1.0185, 49.0% (1,100) | 1.0072, 49.3% (582) |
+| **4-6** | **1.0552, 45.2%** (725) | **1.0533, 45.9%** (314) |
+| 7-12 | 1.0231, 48.6% (1,252) | 1.0000, 54.1% (185) |
+| 13+ | 1.0193, 49.1% (3,397) | 1.0480, 44.9% (305) |
+
+Games 4-6 are the weak spot in both seasons: the point where this season's
+results start moving the ratings. Not the first games, where last season
+carries the ratings.
+
+Weighting changes, paired change in log loss (negative better):
+
+| Setting | 2025/26 at 4-6 | 2025/26 all | 2026/27 at 4-6 | 2026/27 all |
+|---|---|---|---|---|
+| BLEND_K 4 (season counts faster) | +0.0040 | +0.0012 | +0.0002 | +0.0004 |
+| FORM_MAX 0.15 | +0.0035 | +0.0006 | +0.0004 | -0.0004 |
+| BLEND_K 10 (slower) | -0.0031, p 0.01 | -0.0006, p 0.09 | +0.0013 | +0.0001 |
+| BLEND_K 15 | -0.0043 | -0.0002 | +0.0032 | +0.0007 |
+| SHRINK 8 | -0.0025 | +0.0011 | -0.0001 | +0.0026 |
+| last season only | -0.0027 | +0.0138 | +0.0137 | +0.0068 |
+
+More weight on recent results is worse; less weight helps games 4-6 in one
+season and not the other, so it fails rule 3. Ignoring this season is far
+worse, so this season's results are already doing real work. The 4-6 dip is
+real but no weighting of results fixes it. What changes between seasons and
+is not in the results (transfers, injuries, line-ups) is the untested lever:
+API-Football Pro carries injuries, line-ups and transfers. Nothing shipped.

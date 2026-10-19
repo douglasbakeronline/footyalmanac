@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Football form by stage of season: tested, nothing shipped (release-2026-10-19-2)
+
+**What changed:** nothing a reader sees. A dated section in `claude/tuning-evidence.md` and a line in `CLAUDE.md`'s tested-and-rejected list.
+**Evidence:** frozen snapshot `aa19d05b`, live calibration, paired. The model is weakest at games 4-6 of a season in both seasons (log loss 1.055 / 1.053 against about 1.02 elsewhere; top pick 45-46% against 49%). Counting this season faster or adding more form makes it worse; counting it slower helps games 4-6 on 2025/26 (-0.0031, p 0.01) but not on 2026/27 (+0.0013), so it fails the confirm-on-the-current-season rule; ignoring this season is far worse (+0.0138 / +0.0068). Team news (injuries, line-ups, transfers) is the untested lever.
+**Files:** `claude/tuning-evidence.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model number.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-19 Odds groups rebuilt after the 13-18 Oct collapse; tennis grading fix; college football off the Daily List (release-2026-10-19)
 
 **What changed:**
