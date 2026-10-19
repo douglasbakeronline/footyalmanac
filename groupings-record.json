@@ -1,66 +1,78 @@
 {
- "graded": "2026-10-19T14:46:01Z",
+ "graded": "2026-10-19T15:10:03Z",
  "overall": {
   "groups": 56,
-  "settled": 48,
-  "won": 8,
-  "lost": 40,
-  "pending": 8,
-  "legs": 235,
-  "legsWon": 172,
-  "returned": 33.38,
-  "staked": 48,
-  "expected": 15.87
+  "settled": 55,
+  "won": 9,
+  "lost": 46,
+  "pending": 1,
+  "legs": 268,
+  "legsWon": 194,
+  "returned": 36.15,
+  "staked": 55,
+  "expected": 17.81
  },
  "byBand": {
+  "Banker": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
   "Steady": {
    "groups": 25,
-   "settled": 21,
-   "won": 2,
-   "lost": 19,
-   "pending": 4,
-   "legs": 102,
-   "legsWon": 73,
-   "returned": 5.4,
-   "staked": 21,
-   "expected": 8.29
+   "settled": 24,
+   "won": 3,
+   "lost": 21,
+   "pending": 1,
+   "legs": 117,
+   "legsWon": 85,
+   "returned": 8.17,
+   "staked": 24,
+   "expected": 9.29
   },
   "Balanced": {
    "groups": 16,
-   "settled": 14,
+   "settled": 16,
    "won": 5,
-   "lost": 9,
-   "pending": 2,
-   "legs": 70,
-   "legsWon": 57,
+   "lost": 11,
+   "pending": 0,
+   "legs": 79,
+   "legsWon": 61,
    "returned": 20.87,
-   "staked": 14,
-   "expected": 4.44
+   "staked": 16,
+   "expected": 4.96
   },
   "Stretch": {
    "groups": 15,
-   "settled": 13,
+   "settled": 15,
    "won": 1,
-   "lost": 12,
-   "pending": 2,
-   "legs": 63,
-   "legsWon": 42,
+   "lost": 14,
+   "pending": 0,
+   "legs": 72,
+   "legsWon": 48,
    "returned": 7.11,
-   "staked": 13,
-   "expected": 3.15
+   "staked": 15,
+   "expected": 3.56
   }
  },
  "firstChoice": {
   "groups": 35,
-  "settled": 30,
-  "won": 5,
-  "lost": 25,
-  "pending": 5,
-  "legs": 150,
-  "legsWon": 114,
-  "returned": 22.06,
-  "staked": 30,
-  "expected": 10.56
+  "settled": 34,
+  "won": 6,
+  "lost": 28,
+  "pending": 1,
+  "legs": 169,
+  "legsWon": 128,
+  "returned": 24.83,
+  "staked": 34,
+  "expected": 11.9
  },
  "days": [
   {
@@ -148,8 +160,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 1,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsLost": 2,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Thiago Agustin Tirante",
@@ -172,8 +184,8 @@
        "odds": 1.3,
        "est": true,
        "p": 0.7758,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Felix Balshaw (FRA) bt Jaime Faria (POR) 6-2 4-6 6-3"
       },
       {
        "pick": "Alex Michelsen",
@@ -2088,7 +2100,7 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 2,
-     "legsLost": 3,
+     "legsLost": 2,
      "legsPending": 0,
      "legs": [
       {
@@ -2100,8 +2112,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.8602,
-       "status": "lost",
-       "result": "Mia Pohankova (SVK) bt Anna Bondar (HUN) 6-1 6-3"
+       "status": "void",
+       "result": "void"
       },
       {
        "pick": "Arthur Fils",
@@ -3727,11 +3739,11 @@
      "rank": "main",
      "odds": 3.83,
      "p": 0.2985,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -3742,8 +3754,8 @@
        "odds": 1.18,
        "est": true,
        "p": 0.8652,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Iga Swiatek (POL) bt (30) Donna Vekic (CRO) 4-6 7-6 (7-0) 6-2"
       },
       {
        "pick": "Carlos Alcaraz",
@@ -3754,8 +3766,8 @@
        "odds": 1.13,
        "est": true,
        "p": 0.9094,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Carlos Alcaraz (ESP) bt Jaume Munar (ESP) 5-7 6-3 6-1"
       },
       {
        "pick": "TSC Backa Topola",
@@ -3766,8 +3778,8 @@
        "odds": 1.26,
        "est": false,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "Montenegro",
@@ -3778,8 +3790,8 @@
        "odds": 1.52,
        "est": false,
        "p": 0.7332,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "France",
@@ -3790,8 +3802,8 @@
        "odds": 1.5,
        "est": false,
        "p": 0.727,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       }
      ]
     }
@@ -3806,11 +3818,11 @@
      "rank": "main",
      "odds": 2.77,
      "p": 0.4407,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 0,
+     "status": "won",
+     "paid": 2.77,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Chicago Bears",
@@ -3821,8 +3833,8 @@
        "odds": 1.54,
        "est": false,
        "p": 0.8042,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "23-12"
       },
       {
        "pick": "Montpellier Herault",
@@ -3833,8 +3845,8 @@
        "odds": 1.25,
        "est": true,
        "p": 0.8833,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "28-0"
       },
       {
        "pick": "Seattle Seahawks",
@@ -3845,8 +3857,8 @@
        "odds": 1.28,
        "est": false,
        "p": 0.8226,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "30-23"
       },
       {
        "pick": "Puerto Rico",
@@ -3857,8 +3869,8 @@
        "odds": 1.06,
        "est": false,
        "p": 0.8371,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Aruba",
@@ -3869,8 +3881,8 @@
        "odds": 1.06,
        "est": false,
        "p": 0.901,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       }
      ]
     },
@@ -3879,11 +3891,11 @@
      "rank": "main",
      "odds": 4.1,
      "p": 0.3451,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Saracens",
@@ -3894,8 +3906,8 @@
        "odds": 1.28,
        "est": true,
        "p": 0.834,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "17-21"
       },
       {
        "pick": "Lois Boisson",
@@ -3906,8 +3918,8 @@
        "odds": 1.44,
        "est": true,
        "p": 0.7642,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "(4) Leolia Jeanjean (FRA) bt Lois Boisson (FRA) 7-6 (7-3) 4-6 6-4"
       },
       {
        "pick": "Netherlands",
@@ -3918,8 +3930,8 @@
        "odds": 1.14,
        "est": false,
        "p": 0.8311,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Portugal",
@@ -3930,8 +3942,8 @@
        "odds": 1.64,
        "est": false,
        "p": 0.7993,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Minnesota Vikings",
@@ -3942,8 +3954,8 @@
        "odds": 1.19,
        "est": false,
        "p": 0.8151,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "15-10"
       }
      ]
     },
@@ -3952,11 +3964,11 @@
      "rank": "main",
      "odds": 7.62,
      "p": 0.261,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 2,
+     "legsLost": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Portonovo",
@@ -3967,8 +3979,8 @@
        "odds": 1.38,
        "est": true,
        "p": 0.7903,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-1"
       },
       {
        "pick": "New York Giants",
@@ -3979,8 +3991,8 @@
        "odds": 2.14,
        "est": false,
        "p": 0.6839,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "36-24"
       },
       {
        "pick": "Morocco",
@@ -4003,8 +4015,8 @@
        "odds": 1.68,
        "est": false,
        "p": 0.7321,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-1"
       },
       {
        "pick": "Montego Bay United",
@@ -4015,8 +4027,8 @@
        "odds": 1.27,
        "est": false,
        "p": 0.7901,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -4025,11 +4037,11 @@
      "rank": "alternative",
      "odds": 2.99,
      "p": 0.2639,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 3,
+     "legsLost": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Stade Gabesien",
@@ -4040,8 +4052,8 @@
        "odds": 1.47,
        "est": false,
        "p": 0.7119,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "Osasuna II",
@@ -4052,8 +4064,8 @@
        "odds": 1.33,
        "est": false,
        "p": 0.748,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Castellón",
@@ -4064,8 +4076,8 @@
        "odds": 1.23,
        "est": false,
        "p": 0.7356,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Baltimore Ravens",
@@ -4076,8 +4088,8 @@
        "odds": 1.14,
        "est": false,
        "p": 0.8215,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "24-18"
       },
       {
        "pick": "Guyana",
@@ -4088,8 +4100,8 @@
        "odds": 1.09,
        "est": false,
        "p": 0.8202,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "8-1"
       }
      ]
     },
@@ -4098,11 +4110,11 @@
      "rank": "alternative",
      "odds": 5.87,
      "p": 0.1785,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 1,
+     "legsLost": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Rodina Moskva II",
@@ -4113,8 +4125,8 @@
        "odds": 1.39,
        "est": false,
        "p": 0.7119,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Levante II",
@@ -4137,8 +4149,8 @@
        "odds": 1.18,
        "est": false,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "3-3"
       },
       {
        "pick": "Buffalo Bills",
@@ -4149,8 +4161,8 @@
        "odds": 1.34,
        "est": false,
        "p": 0.7027,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "26-29"
       },
       {
        "pick": "Houston Texans",
@@ -4161,8 +4173,8 @@
        "odds": 1.68,
        "est": false,
        "p": 0.7044,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "30-34"
       }
      ]
     },
@@ -4171,11 +4183,11 @@
      "rank": "alternative",
      "odds": 7.51,
      "p": 0.1492,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 5,
+     "legsWon": 4,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Calahorra",
@@ -4186,8 +4198,8 @@
        "odds": 1.62,
        "est": true,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-1"
       },
       {
        "pick": "Agoncillo",
@@ -4198,8 +4210,8 @@
        "odds": 1.63,
        "est": true,
        "p": 0.7118,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Barcelona",
@@ -4210,8 +4222,8 @@
        "odds": 1.11,
        "est": false,
        "p": 0.6634,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "7-0"
       },
       {
        "pick": "Central Cordoba",
@@ -4222,8 +4234,8 @@
        "odds": 1.78,
        "est": false,
        "p": 0.6693,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Kansas City Chiefs",
@@ -4234,8 +4246,8 @@
        "odds": 1.44,
        "est": false,
        "p": 0.6633,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "27-30"
       }
      ]
     }
