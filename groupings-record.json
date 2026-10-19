@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-19T17:50:45Z",
+ "graded": "2026-10-19T18:00:29Z",
  "overall": {
   "groups": 56,
   "settled": 55,
   "won": 9,
   "lost": 46,
   "pending": 1,
-  "legs": 269,
-  "legsWon": 195,
+  "legs": 270,
+  "legsWon": 196,
   "returned": 36.15,
   "staked": 55,
   "expected": 17.81
@@ -31,8 +31,8 @@
    "won": 3,
    "lost": 21,
    "pending": 1,
-   "legs": 118,
-   "legsWon": 86,
+   "legs": 119,
+   "legsWon": 87,
    "returned": 8.17,
    "staked": 24,
    "expected": 9.29
@@ -68,8 +68,8 @@
   "won": 6,
   "lost": 28,
   "pending": 1,
-  "legs": 169,
-  "legsWon": 128,
+  "legs": 170,
+  "legsWon": 129,
   "returned": 24.83,
   "staked": 34,
   "expected": 11.9
@@ -86,9 +86,9 @@
      "p": 0.3573,
      "status": "pending",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Diriangén",
@@ -123,8 +123,8 @@
        "odds": 1.14,
        "est": true,
        "p": 0.8985,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "11-0"
       },
       {
        "pick": "Bursaspor",
