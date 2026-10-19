@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-19T18:38:12Z",
+ "graded": "2026-10-19T21:23:49Z",
  "overall": {
   "groups": 56,
   "settled": 55,
   "won": 9,
   "lost": 46,
   "pending": 1,
-  "legs": 270,
-  "legsWon": 196,
+  "legs": 272,
+  "legsWon": 197,
   "returned": 36.15,
   "staked": 55,
   "expected": 17.81
@@ -31,8 +31,8 @@
    "won": 3,
    "lost": 21,
    "pending": 1,
-   "legs": 119,
-   "legsWon": 87,
+   "legs": 121,
+   "legsWon": 88,
    "returned": 8.17,
    "staked": 24,
    "expected": 9.29
@@ -68,8 +68,8 @@
   "won": 6,
   "lost": 28,
   "pending": 1,
-  "legs": 170,
-  "legsWon": 129,
+  "legs": 171,
+  "legsWon": 130,
   "returned": 24.83,
   "staked": 34,
   "expected": 11.9
@@ -86,9 +86,9 @@
      "p": 0.3573,
      "status": "pending",
      "paid": 0,
-     "legsWon": 3,
+     "legsWon": 4,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Diriangén",
@@ -135,8 +135,8 @@
        "odds": 1.38,
        "est": false,
        "p": 0.7405,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Al Hilal",
@@ -160,8 +160,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 2,
-     "legsLost": 2,
-     "legsPending": 1,
+     "legsLost": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Thiago Agustin Tirante",
@@ -220,8 +220,8 @@
        "odds": 1.42,
        "est": true,
        "p": 0.7671,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Moise Kouame (FRA) bt Lorenzo Sonego (ITA) 7-6 (7-2) 6-4"
       }
      ]
     }
