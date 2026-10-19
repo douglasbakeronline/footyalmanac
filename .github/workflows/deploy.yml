@@ -190,6 +190,8 @@ jobs:
       # Prices never feed a model. Allowed to fail: a missing price source
       # must not cost the deploy.
       - name: Build and grade the Odds tab groupings
+        env:
+          ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
         run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
 
       # main is protected (ruleset "Protect main"): only the office App and the
