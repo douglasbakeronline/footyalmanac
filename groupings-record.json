@@ -1,29 +1,29 @@
 {
- "graded": "2026-10-19T00:15:57Z",
+ "graded": "2026-10-19T04:35:16Z",
  "overall": {
   "groups": 56,
-  "settled": 48,
+  "settled": 47,
   "won": 8,
-  "lost": 40,
-  "pending": 8,
-  "legs": 235,
-  "legsWon": 172,
+  "lost": 39,
+  "pending": 9,
+  "legs": 232,
+  "legsWon": 170,
   "returned": 33.38,
-  "staked": 48,
-  "expected": 15.89
+  "staked": 47,
+  "expected": 15.6
  },
  "byBand": {
   "Steady": {
    "groups": 25,
-   "settled": 21,
+   "settled": 20,
    "won": 2,
-   "lost": 19,
-   "pending": 4,
-   "legs": 103,
-   "legsWon": 74,
+   "lost": 18,
+   "pending": 5,
+   "legs": 99,
+   "legsWon": 71,
    "returned": 5.4,
-   "staked": 21,
-   "expected": 8.31
+   "staked": 20,
+   "expected": 8.01
   },
   "Balanced": {
    "groups": 16,
@@ -31,8 +31,8 @@
    "won": 5,
    "lost": 9,
    "pending": 2,
-   "legs": 69,
-   "legsWon": 56,
+   "legs": 70,
+   "legsWon": 57,
    "returned": 20.87,
    "staked": 14,
    "expected": 4.44
@@ -52,15 +52,15 @@
  },
  "firstChoice": {
   "groups": 35,
-  "settled": 31,
+  "settled": 30,
   "won": 5,
-  "lost": 26,
-  "pending": 4,
-  "legs": 153,
-  "legsWon": 116,
+  "lost": 25,
+  "pending": 5,
+  "legs": 149,
+  "legsWon": 113,
   "returned": 22.06,
-  "staked": 31,
-  "expected": 10.86
+  "staked": 30,
+  "expected": 10.56
  },
  "days": [
   {
@@ -74,9 +74,9 @@
      "p": 0.3573,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Diriangén",
@@ -87,8 +87,8 @@
        "odds": 1.25,
        "est": false,
        "p": 0.7399,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-1"
       },
       {
        "pick": "Sorana Cirstea",
@@ -518,9 +518,9 @@
      "p": 0.2332,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 2,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Hammarby IF",
@@ -579,8 +579,8 @@
        "odds": 1.51,
        "est": true,
        "p": 0.761,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
@@ -3727,11 +3727,11 @@
      "rank": "main",
      "odds": 3.83,
      "p": 0.2985,
-     "status": "lost",
+     "status": "pending",
      "paid": 0,
-     "legsWon": 4,
-     "legsLost": 1,
-     "legsPending": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
      "legs": [
       {
        "pick": "Iga Swiatek",
@@ -3742,8 +3742,8 @@
        "odds": 1.18,
        "est": true,
        "p": 0.8652,
-       "status": "won",
-       "result": "(8) Iga Swiatek (POL) bt (30) Donna Vekic (CRO) 4-6 7-6 (7-0) 6-2"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Carlos Alcaraz",
@@ -3754,8 +3754,8 @@
        "odds": 1.13,
        "est": true,
        "p": 0.9094,
-       "status": "won",
-       "result": "(1) Carlos Alcaraz (ESP) bt Jaume Munar (ESP) 5-7 6-3 6-1"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "TSC Backa Topola",
@@ -3766,8 +3766,8 @@
        "odds": 1.26,
        "est": false,
        "p": 0.7118,
-       "status": "won",
-       "result": "4-1"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "Montenegro",
@@ -3778,8 +3778,8 @@
        "odds": 1.52,
        "est": false,
        "p": 0.7332,
-       "status": "lost",
-       "result": "0-0"
+       "status": "pending",
+       "result": null
       },
       {
        "pick": "France",
@@ -3790,8 +3790,8 @@
        "odds": 1.5,
        "est": false,
        "p": 0.727,
-       "status": "won",
-       "result": "4-1"
+       "status": "pending",
+       "result": null
       }
      ]
     }
