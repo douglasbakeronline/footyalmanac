@@ -31,7 +31,24 @@ class GroupRules(unittest.TestCase):
         self.assertIsNone(G.ok_combo(short, 2.5, 4.0, "Steady"))
         est = [leg(i, o, est=i < 3) for i, o in enumerate([1.2, 1.35, 1.65, 1.25, 1.4])]
         self.assertIsNone(G.ok_combo(est, 4.0, 7.0, "Balanced"))
+        one = [leg(i, o, est=i < 1) for i, o in enumerate([1.2, 1.35, 1.65, 1.25, 1.4])]
+        self.assertIsNone(G.ok_combo(one, 4.0, 7.0, "Balanced"))      # 19 Oct 2026: none at all
         self.assertIsNotNone(G.ok_combo(est, 4.0, 7.0, "Balanced", max_est=5))
+
+    def test_honest_chance_is_the_lower(self):
+        l = G.honest({"p": 0.85, "odds": 1.25, "margin": 1.06})      # fair 0.8 / 1.06 = 0.7547
+        self.assertEqual((l["pTested"], l["fair"], l["p"]), (0.85, 0.7547, 0.7547))
+        l = G.honest({"p": 0.70, "odds": 1.25})                      # tested lower: kept; default margin
+        self.assertEqual((l["p"], l["fair"]), (0.70, 0.7619))
+        l = G.honest({"p": 0.85, "odds": 1.18, "est": True})         # estimate: no fair, never grouped
+        self.assertNotIn("fair", l)
+        self.assertEqual(G.margin_of([1.6, 2.3]), round(1 / 1.6 + 1 / 2.3, 4))
+        self.assertIsNone(G.margin_of([1.6]))
+
+    def test_estimates_never_grouped(self):
+        from datetime import datetime, timezone
+        L = [leg(i, o, est=True) for i, o in enumerate([1.2, 1.35, 1.65, 1.25, 1.4, 1.1, 1.5, 1.8])]
+        self.assertEqual(G.build_day(L, datetime(2000, 1, 1, tzinfo=timezone.utc)), [])
     def test_one_competition_at_most_twice(self):
         same = [leg(i, o, comp="X") for i, o in enumerate([1.2, 1.35, 1.65, 1.25, 1.4])]
         self.assertIsNone(G.ok_combo(same, 4.0, 7.0, "Balanced"))

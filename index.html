@@ -3047,7 +3047,7 @@ function ogCard(g){
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
-    <div class="og-k"><span>All five land <b>${pct(g.p)}%</b> on tested rates</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
+    <div class="og-k"><span>All five land <b>${pct(g.p)}%</b> (tested rate or bookmaker, whichever is lower)</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div class="og-sp" aria-hidden="true">${ticks}${dots}</div>
     <div>${legs}</div>
     <div class="og-f">${started ? `<b>${started} of 5 already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of 5 price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
@@ -3093,14 +3093,14 @@ function renderOdds(){
       pick's level landed in testing, not the bookmaker's view.</p>
       <details class="how"><summary>How the groups are picked</summary>
         <p>A pick qualifies only if calls at its level landed at least ${pct(OG.rules.minHit)}% of the time over at
-        least ${OG.rules.minN} tested games; no draws, no tennis qualifying. Its chance is that tested rate, pulled
-        slightly toward the model's own number when the sample is small.</p>
+        least ${OG.rules.minN} tested games; no draws, no tennis qualifying, and it needs a bookmaker price. Its chance
+        is the lower of its tested rate and the bookmaker's fair chance (the price with the bookmaker's margin taken
+        out). Until 18 October the tested rate alone was used, and groups landed about half as often as it said.</p>
         <p>Every group needs a short price (under 1.30) and a middle one (1.30 to 1.60); Balanced and Stretch also
-        need one at 1.60 or longer. At most two very short prices (under 1.15), at most two estimates, no more than
-        two picks from one competition, and a small preference for mixing sports and for picks whose tested rate
-        beats the bookmaker's implied chance.</p>
+        need one at 1.60 or longer. At most two very short prices (under 1.15), no more than
+        two picks from one competition, and a small preference for mixing sports.</p>
         <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from
-        ESPN, tennis and rugby from The Odds API (UK bookmakers) where it lists the match. Anything left unpriced carries the model's fair price, marked *.
+        ESPN, tennis and rugby from The Odds API (UK bookmakers) where it lists the match. A pick with no bookmaker price is left out of the groups.
         Prices are a snapshot from the build at ${gen.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"})}
         and will have moved: check before placing anything.</p>
         <p>Bookmaker prices never feed the model or the Daily List. Five legs multiply the bookmaker's margin, and
