@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-19T14:38:57Z",
+ "graded": "2026-10-19T14:46:01Z",
  "overall": {
   "groups": 56,
   "settled": 48,
   "won": 8,
   "lost": 40,
   "pending": 8,
-  "legs": 234,
-  "legsWon": 171,
+  "legs": 235,
+  "legsWon": 172,
   "returned": 33.38,
   "staked": 48,
   "expected": 15.87
@@ -19,8 +19,8 @@
    "won": 2,
    "lost": 19,
    "pending": 4,
-   "legs": 101,
-   "legsWon": 72,
+   "legs": 102,
+   "legsWon": 73,
    "returned": 5.4,
    "staked": 21,
    "expected": 8.29
@@ -147,9 +147,9 @@
      "p": 0.2758,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Thiago Agustin Tirante",
@@ -184,8 +184,8 @@
        "odds": 1.4,
        "est": true,
        "p": 0.7687,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(5) Alex Michelsen (USA) bt Andrea Guerrieri (ITA) 6-1 6-2"
       },
       {
        "pick": "Al Kuwait",
