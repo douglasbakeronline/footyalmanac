@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19: The Odds API prices tennis and rugby on the Odds tab (tag pending)
+
+**What changed:** when the `ODDS_API_KEY` secret is set, the Odds tab prices tennis, rugby union and rugby league legs that API-Football and ESPN did not price, using the average of UK bookmakers' match odds from The Odds API. Without the key, nothing changes. HQ already reuses the Odds tab's priced pool, so it picks these prices up without a change of its own.
+
+**Credits:** the free plan has 500 a month. The free `/sports` list picks only the tournaments and leagues with an unpriced leg, at one credit each (UK region, match odds). Each one is cached for 4 hours in `.afcache`. A ledger caps spending at 15 credits a UK day and 480 a month, and calls stop when the API reports fewer than 20 left.
+
+**Files:** `groupings.py`, `index.html` (the Odds tab's price note), `tests/test_groupings.py`, this entry.
+
+**Not changed:** any model, probability, the Daily List or the records. Prices never feed a model.
+
+**Roll back:** delete the secret, or `git revert` the commit.
+
+
 ## 2026-10-15: Tennis off the Daily List (tag pending)
 
 **What changed:** no tennis match makes the Daily List, on either tour. Main-draw calls from 62% with both players rated go to the reserve instead, graded as their own group. The site's List note names tennis among the sports not on the list. `build_tennis.LIST_ON` turns a tour back on, and `LIST_MIN` (75%) is kept.

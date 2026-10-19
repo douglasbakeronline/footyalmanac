@@ -3100,7 +3100,7 @@ function renderOdds(){
         two picks from one competition, and a small preference for mixing sports and for picks whose tested rate
         beats the bookmaker's implied chance.</p>
         <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from
-        ESPN. Tennis and rugby have no free price source yet, so they carry the model's fair price, marked *.
+        ESPN, tennis and rugby from The Odds API (UK bookmakers) where it lists the match. Anything left unpriced carries the model's fair price, marked *.
         Prices are a snapshot from the build at ${gen.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"})}
         and will have moved: check before placing anything.</p>
         <p>Bookmaker prices never feed the model or the Daily List. Five legs multiply the bookmaker's margin, and

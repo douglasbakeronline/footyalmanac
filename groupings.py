@@ -40,8 +40,14 @@ Where the prices come from
                   fixture; average and best), matched to our games by date,
                   kick-off within 90 minutes, and both team names
   NFL, MLB, NBA   ESPN scoreboards (DraftKings moneyline), matched by ESPN id
-  tennis, rugby   no free source yet: the model's fair price (1 / p), marked
-                  as an estimate, and at most two estimates in any group
+  tennis, rugby,  The Odds API (the-odds-api.com, UK bookmakers, match odds),
+  anything else   only when the ODDS_API_KEY secret is set and only for legs
+                  the sources above did not price; free plan of 500 credits a
+                  month, so capped at ODDS_API_DAY credits a UK day and
+                  ODDS_API_MONTH a month, each sport's odds cached for
+                  ODDS_API_TTL (see price_odds_api)
+  otherwise       the model's fair price (1 / p), marked as an estimate, and
+                  at most two estimates in any group
 
 How a group is chosen
 ---------------------
@@ -137,7 +143,8 @@ def legs(dates):
         if d not in dates or "qualif" in (m.get("round") or "").lower(): continue
         pl = leg_p(m.get("confidence") or 0, m.get("accuracy"))
         if pl is None: continue
-        out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"],
+        out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"], "tour": m.get("tour"), "tournament": m.get("tournament"),
+                    "players": [m.get("playerA"), m.get("playerB")],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
                     "list": bool(m.get("list"))})
@@ -303,11 +310,139 @@ def price_espn_soccer(L, dates, report):
                         l.update(odds=dec, src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); matched += 1
     report["espn_soccer"] = {"calls": calls, "matched": matched, "legs": len(want)}
 
+# ---------- The Odds API (optional, last) ----------
+ODDS_API = "https://api.the-odds-api.com/v4/sports"
+ODDS_API_DAY = 15      # credits a UK day: 15 x 31 = 465, inside the free 500
+ODDS_API_MONTH = 480   # and never past this in a calendar month (UTC)
+ODDS_API_FLOOR = 20    # stop when the API says fewer than this are left
+ODDS_API_TTL = 4 * 3600   # a sport's odds are re-read at most every 4 hours
+ODDS_RUGBY = {"Premiership": ("premiership",), "URC": ("united rugby", "urc"), "Top 14": ("top 14",),
+              "Test match": ("international", "test", "autumn nations", "rugby championship", "six nations")}
+ODDS_STOP = {"atp", "wta", "open", "tennis", "the", "de", "di", "cup", "tournament", "international", "championships"}
+
+
+def _words(s):
+    return {w for w in norm(s).split() if len(w) > 2 and w not in ODDS_STOP}
+
+
+def _odds_get(url):
+    """(json, credits left or None)."""
+    req = urllib.request.Request(url, headers=UA)
+    with urllib.request.urlopen(req, timeout=40) as r:
+        left = r.headers.get("x-requests-remaining")
+        return json.loads(r.read()), (int(float(left)) if left not in (None, "") else None)
+
+
+def _odds_keys(l, active):
+    """The Odds API sport keys that could price leg l, from the free /sports list."""
+    out = []
+    for sp in active:
+        k, title = sp.get("key", ""), f"{sp.get('title', '')} {sp.get('description', '')}"
+        if l["sport"] == "tennis":
+            tour = (l.get("tour") or "").lower()
+            if tour and k.startswith(f"tennis_{tour}") and _words(l.get("tournament")) & _words(title):
+                out.append(k)
+        elif l["sport"] == "rugby":
+            if k.startswith("rugbyunion") and any(w in title.lower() for w in ODDS_RUGBY.get(l.get("comp"), (norm(l.get("comp") or ""),))):
+                out.append(k)
+        elif l["sport"] == "nrl":
+            if k == "rugbyleague_nrl": out.append(k)
+    return out
+
+
+def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
+    """UK bookmaker match odds from The Odds API for legs nothing else priced.
+
+    Only with ODDS_API_KEY. The /sports list is free; each sport key's odds
+    (regions=uk, markets=h2h) cost one credit, so a key is fetched only when an
+    unpriced leg needs it, cached on disk for ODDS_API_TTL (.afcache, kept
+    between builds), most-needed first, inside a ledger of ODDS_API_DAY credits
+    a UK day and ODDS_API_MONTH a month, and never once the API reports fewer
+    than ODDS_API_FLOOR left. Prices never feed a model."""
+    key = os.environ.get("ODDS_API_KEY")
+    want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")]
+    if not key or not want:
+        report["oddsApi"] = "no key" if not key else "no legs"; return
+    fetch = fetch or _odds_get
+    now = now or datetime.now(timezone.utc)
+    if cache_dir is None:
+        sys.path.insert(0, HERE)
+        import sources as S
+        cache_dir = S.AF_CACHE_DIR
+    os.makedirs(cache_dir, exist_ok=True)
+    led_path = os.path.join(cache_dir, "oddsapi-ledger.json")
+    try: led = json.load(open(led_path))
+    except (OSError, ValueError): led = {}
+    day = now.astimezone(ZoneInfo("Europe/London")).date().isoformat(); month = now.strftime("%Y-%m")
+    if led.get("month") != month: led = {"month": month, "used": 0, "days": {}, "left": None}
+    rep = {"calls": 0, "cached": 0, "matched": 0, "legs": len(want), "skipped": []}
+
+    def cached(name, ttl):
+        path = os.path.join(cache_dir, f"oddsapi-{name}.json")
+        try:
+            if time.time() - os.path.getmtime(path) < ttl: return json.load(open(path))
+        except (OSError, ValueError): pass
+        return None
+
+    def keep(name, data):
+        with open(os.path.join(cache_dir, f"oddsapi-{name}.json"), "w") as f: json.dump(data, f)
+
+    sports = cached("sports", 12 * 3600)
+    if sports is None:
+        try: sports, _ = fetch(f"{ODDS_API}?apiKey={key}"); keep("sports", sports)
+        except Exception as e:
+            report["oddsApi"] = dict(rep, error=type(e).__name__); return
+    active = [s for s in sports if s.get("active")]
+    need = {}
+    for l in want:
+        for k in _odds_keys(l, active): need.setdefault(k, []).append(l)
+    for k in sorted(need, key=lambda k: -len(need[k])):
+        events = cached(k, ODDS_API_TTL)
+        if events is None:
+            spent = led["days"].get(day, 0)
+            left = led.get("left")
+            if spent >= ODDS_API_DAY or led["used"] >= ODDS_API_MONTH or (left is not None and left < ODDS_API_FLOOR):
+                rep["skipped"].append(k); continue
+            try: events, left = fetch(f"{ODDS_API}/{k}/odds?apiKey={key}&regions=uk&markets=h2h&oddsFormat=decimal")
+            except Exception as e:
+                report.setdefault("errors", []).append(f"odds api {k}: {type(e).__name__}"); continue
+            keep(k, events); rep["calls"] += 1
+            led["used"] += 1; led["days"][day] = spent + 1
+            if left is not None: led["left"] = left
+        else:
+            rep["cached"] += 1
+        for l in need[k]:
+            if l.get("odds"): continue
+            names = l.get("players") or [l.get("home"), l.get("away")]
+            t = parse(l.get("when"))
+            for ev in events:
+                h, a = ev.get("home_team", ""), ev.get("away_team", "")
+                if not (any(same(h, x) for x in names if x) and any(same(a, x) for x in names if x)): continue
+                ct = parse(ev.get("commence_time"))
+                if t and ct and abs((t - ct).total_seconds()) > 6 * 3600: continue
+                prices, books = [], set()
+                for b in ev.get("bookmakers") or []:
+                    for m in b.get("markets") or []:
+                        if m.get("key") != "h2h": continue
+                        for o in m.get("outcomes") or []:
+                            if same(o.get("name", ""), l["pick"]):
+                                try: prices.append(float(o["price"])); books.add(b.get("title") or b.get("key"))
+                                except (KeyError, ValueError): pass
+                if prices:
+                    l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books),
+                             src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
+                    rep["matched"] += 1
+                break
+    with open(led_path, "w") as f: json.dump(led, f)
+    rep.update(usedToday=led["days"].get(day, 0), usedMonth=led["used"], left=led.get("left"))
+    report["oddsApi"] = rep
+
 def price(L, dates):
     report = {}
     price_football(L, dates, report)
     price_espn_soccer(L, dates, report)
     price_espn(L, dates, report)
+    price_odds_api(L, dates, report)
     for l in L:
         if not l.get("odds"):
             l.update(odds=round(1 / l["pModel"], 2), est=True, src="estimate: the model's fair price, no bookmaker price found")
