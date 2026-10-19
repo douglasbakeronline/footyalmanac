@@ -410,7 +410,7 @@ def team_leagues(history):
 # fitted on record.json; nothing is fitted at all, the model is unchanged.
 # ---------------------------------------------------------------------------
 CUP_REPLAY_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-cup-replay.json")
-CUP_REPLAY_VERSION = 3
+CUP_REPLAY_VERSION = 4        # 4: every priced tie kept ("rows") for fitting cup calibration
 CUP_REPLAY_DAYS = 330          # how far back the day files are read
 CUP_BARS = (0.75, 0.80)        # the AF-extra and league bars; never lower
 CUP_MIN_N, CUP_MIN_HIT = 30, 0.80
@@ -1089,7 +1089,8 @@ def main():
                 pick = max(trip, key=trip.get)
                 res = "h" if hg > ag else ("a" if hg < ag else "d")
                 rows.append({"date": d, "cup": code, "conf": round(trip[pick], 4), "pick": pick,
-                             "hit": int(pick == res), "flags": sorted(set(flags)),
+                             "hit": int(pick == res), "flags": sorted(set(flags)), "res": res,
+                             "p": [round(trip["h"], 4), round(trip["d"], 4), round(trip["a"], 4)],
                              "thin": not hb["last"] or not ab["last"],
                              # for reading the misses, not for the gate
                              "tie": f"{home} ({hb['league']}, {domestic_of(home, code)[1]}) v "
@@ -1117,6 +1118,11 @@ def main():
                     "confident": [{k: r[k] for k in ("date", "cup", "conf", "pick", "hit", "tie", "played")}
                                   for r in rows if r["conf"] >= 0.7 and r["pick"] != "d"
                                   and not r["flags"] and not r["thin"]][:150],
+                    # every priced tie, for fitting a cup calibration on one half-year and
+                    # checking it on the other (19 Oct 2026): date, cup, p home/draw/away,
+                    # result, cross-division, thin
+                    "rows": [[r["date"], r["cup"], *r["p"], r["res"], int("cross" in r["flags"]), int(r["thin"])]
+                             for r in rows],
                     "byCup": {c: [sum(r["hit"] for r in rows if r["cup"] == c and r["conf"] >= 0.7 and not r["flags"]
                                       and not r["thin"] and r["pick"] != "d"),
                                   sum(1 for r in rows if r["cup"] == c and r["conf"] >= 0.7 and not r["flags"]

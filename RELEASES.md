@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-10-19 Recent form on football rows; the cup replay keeps every tie (release-2026-10-19-5)
+
+**What changed:** every football row (boards and the Daily List) shows each side's last five league results as W / D / L squares, oldest first, on a line of their own, and a yellow **Hot** badge when the side won each of its last three. The expanded team sheet adds last-three points. Display only, Douglas's choice: the model's numbers are unchanged, because favourites on three straight wins landed 68.2% against 70.8% quoted (`claude/tuning-evidence.md`). The cup replay (`build.cup_replay`, version 4) now keeps every priced tie's probabilities and result in `current/af-cup-replay.json`, so a cup calibration can be fitted on one half-year and checked on the other; nothing is fitted yet.
+**Evidence:** checked in headless Chrome at 1280px and a true 400px (Dortmund four wins and Hot; Roma WWWWD, not Hot). Full suite and `nametest.py` pass.
+**Files:** `index.html`, `build.py`, `RELEASES.md`.
+**Not changed:** any probability, the list, grading.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-19 Hot form, big clubs and cups tested against the quoted chance: nothing shipped (release-2026-10-19-4)
 
 **What changed:** nothing a reader sees; a dated section in `claude/tuning-evidence.md`.

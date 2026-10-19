@@ -281,6 +281,16 @@ details.how p{margin-top:8px;padding-left:22px}
 .slip .verdict{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 6px}
 .v-strong .verdict{background:var(--ink);color:var(--yellow)}
 .v-reserve .verdict{border:1px solid var(--ink);color:var(--ink)}
+/* recent form on football rows (19 Oct 2026): display only */
+.form-line{margin-top:4px;line-height:14px;white-space:nowrap}
+.fchips{display:inline-flex;gap:2px;vertical-align:-2px}
+.fchips .fc{display:inline-block;width:14px;height:14px;line-height:14px;text-align:center;
+  font:700 9.5px var(--f-num);font-style:normal;border-radius:2px}
+.fc.W{background:var(--home);color:#fff}
+.fc.D{background:var(--draw-soft);color:var(--ink)}
+.fc.L{background:var(--away-soft);color:var(--away)}
+.hot{display:inline-block;margin-left:5px;padding:0 5px;font:700 9.5px/14px var(--f-ui);letter-spacing:.08em;
+  text-transform:uppercase;background:var(--yellow);color:var(--cover-ink);border-radius:2px;vertical-align:1px}
 .v-wary .verdict{background:var(--red);color:#fff}
 @media (max-width:560px){.slip-total{grid-template-columns:1fr}.slip-total b{font-size:20px}
   .slip thead{display:none}
@@ -1515,9 +1525,24 @@ function sideStats(t, isCup){
     return `${tag}<div class="stat none">not rated — no season on file</div>`;
   }
   const gd = s.GD>0 ? `<i class="pos">+${s.GD}</i>` : (s.GD<0?`<i class="neg">${s.GD}</i>`:`<i>0</i>`);
-  const f = t.form ? ` · ${t.form.seq}` : "";
+  const f = t.form ? `<div class="form-line">${formChips(t.form.seq)}</div>` : "";
   const miss = t.out ? ` · <span class="mini-out">${t.out.length} out</span>` : "";
-  return `${tag}<div class="stat">${s.PPG.toFixed(2)} ppg · ${s.W}-${s.D}-${s.L} · ${gd}${f}${miss}</div>`;
+  return `${tag}<div class="stat">${s.PPG.toFixed(2)} ppg · ${s.W}-${s.D}-${s.L} · ${gd}${miss}</div>${f}`;
+}
+
+/* Last five league results, oldest first, as W / D / L squares, and "Hot"
+   when the last three were all won (19 Oct 2026, Douglas). Shown, not
+   weighted: tested the same day, favourites on three straight wins landed
+   68.2% against 70.8% quoted, so form beyond the ratings stays out of the
+   numbers (claude/tuning-evidence.md). */
+function formChips(seq){
+  const s = String(seq || "");
+  const hot = s.length >= 3 && s.slice(-3) === "WWW";
+  return `<span class="fchips" title="Last ${s.length} results, oldest first">${[...s].map(c =>
+    `<i class="fc ${c}">${c}</i>`).join("")}</span>${hot ? `<span class="hot" title="Won each of the last three">Hot</span>` : ""}`;
+}
+function last3pts(seq){
+  return [...String(seq || "").slice(-3)].reduce((a, c) => a + (c === "W" ? 3 : c === "D" ? 1 : 0), 0);
 }
 
 /* Which side the model favours decides the colours: yellow for it, red for
@@ -1585,7 +1610,7 @@ function teamSheet(t, label){
     </table>
     <div class="stat" style="margin-top:8px">
       attack ${t.att.toFixed(2)} · defence ${t.def.toFixed(2)}
-      ${t.form ? " · last "+(t.form.max/3)+": "+t.form.pts+" pts ("+t.form.seq+")" : " · form: not yet available"}
+      ${t.form ? " · last "+(t.form.max/3)+": "+t.form.pts+" pts"+(t.form.seq.length >= 3 ? " · last 3: "+last3pts(t.form.seq)+" pts" : "")+" "+formChips(t.form.seq) : " · form: not yet available"}
     </div>
     ${t.adj ? `<div class="stat" style="margin-top:6px;color:#2b3560">
         hand-adjusted: attack x${t.adj.att.toFixed(2)}, defence x${t.adj.def.toFixed(2)}${t.adj.why?" — "+t.adj.why:""}
