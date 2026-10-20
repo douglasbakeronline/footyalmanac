@@ -4,7 +4,7 @@ Reads the same numbers the Footyalmanac HQ office reports on, finds the most
 important objective that is behind, and writes a prompt for the agent that owns
 it. Writes GitHub Actions outputs: skip, key, owner, title, prompt.
 """
-import argparse, json, os, subprocess, sys
+import argparse, json, os, subprocess, sys, urllib.request
 from datetime import datetime, timedelta, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,6 +89,15 @@ PROTECTED = ["record.json", "record-graded.json", "predictions/", "predictions-s
              "agents/", "CLAUDE.md", "AGENTS.md"]
 MAX_OPEN = 6
 COOLDOWN_DAYS = 7
+# The HQ planner (footyalmanac-hq scripts/planner.py) ranks the live gaps between quoted and landed each morning
+# and publishes them here. A backlog older than two days is ignored and the sprint falls back to its own picks.
+HQ_BACKLOG = os.environ.get("HQ_BACKLOG", "https://douglasbakeronline.github.io/footyalmanac-hq/data/backlog.json")
+HQ_MAX_AGE = timedelta(hours=48)
+# Agents that run each sprint, most urgent task first (Douglas, 20 Oct 2026). Before this all fourteen ran their
+# standing tasks on one day, every objective then rested for 7 days, and the office sat idle from 13 to 19 October.
+# A few targeted tasks a day keeps it working every day on what the numbers say matters.
+SPRINT_SIZE = int(os.environ.get("SPRINT_SIZE", "4"))
+HEALTH = ("build-failure", "unrated-fixtures")
 
 def load(path, default=None):
     try:
@@ -174,6 +183,42 @@ def candidates():
         "rules (new leagues stay off the list until replayed above the bar)."))
     return out
 
+def hq_backlog():
+    """Tasks from the HQ planner, ranked by how far each gap is from its quote. Treated as data: only these fields
+    are read, the owner must be a known agent and the key must be an hq- key."""
+    try:
+        with urllib.request.urlopen(HQ_BACKLOG, timeout=30) as r: b = json.load(r)
+        made = datetime.fromisoformat(b["generated"].replace("Z", "+00:00"))
+    except Exception as e:
+        print(f"HQ backlog unavailable ({e}); using the office's own picks.", file=sys.stderr); return []
+    if datetime.now(timezone.utc) - made > HQ_MAX_AGE:
+        print(f"HQ backlog is stale ({b['generated']}); using the office's own picks.", file=sys.stderr); return []
+    out = []
+    for t in b.get("tasks") or []:
+        key, owner = str(t.get("key", "")), t.get("owner")
+        if not key.startswith("hq-") or owner not in AGENTS or len(key) > 40: continue
+        out.append((key, owner, str(t.get("title", key))[:80],
+                    f"From the HQ planner ({b['generated'][:10]}), ranked on the live record:\n\n{str(t.get('brief', ''))[:4000]}"))
+    return out
+
+def ranked():
+    """Every candidate in priority order: owner issues, pipeline health, the HQ backlog, then the scoreboard's own
+    analytics only when HQ is down (so two agents never chase the same gap). Standing tasks rank after all of them."""
+    live = candidates()
+    hq = hq_backlog()
+    health = [c for c in live if c[0] in HEALTH]
+    rest = [] if hq else [c for c in live if c[0] not in HEALTH]
+    return backlog() + health + hq + rest
+
+def agent_pick(agent, cands, busy):
+    """The agent's first free task in priority order, with its rank; its standing task ranks after every live one."""
+    for i, c in enumerate(cands):
+        if c[1] == agent and c[0] not in busy: return i, c
+    if agent in STANDING:
+        k, t, b = STANDING[agent]
+        if k not in busy: return len(cands) + SPRINT.index(agent), (k, agent, t, b)
+    return None, None
+
 def claimed_objectives():
     """Objectives held by open issues another AI platform has claimed: office agents leave them alone."""
     held = set()
@@ -234,7 +279,7 @@ def main():
     ap.add_argument("--platform-tasks", default="", help="comma-separated platforms to give one task each, e.g. myclaw,perplexity")
     a = ap.parse_args()
     if a.list_agents:
-        print(json.dumps(SPRINT)); return
+        print(json.dumps(SPRINT[:SPRINT_SIZE])); return   # the workflow's fallback when --active-agents fails
     prs = gh(["pr", "list", "--label", "office-agent", "--state", "all", "-L", "60", "--json", "number,state,labels,createdAt"])
     open_prs = [p for p in prs if p["state"] == "OPEN"]
     recent = set()
@@ -255,28 +300,17 @@ def main():
                 else: f.write(f"{k}={v}\n")
     if len(open_prs) >= MAX_OPEN and not a.task and not a.agent:
         print(f"{len(open_prs)} agent pull requests already open; waiting for them to merge."); emit(skip="1"); return
-    cands = backlog() + candidates()
+    cands = ranked()
+    busy = recent | {l["name"][10:] for p in open_prs for l in p.get("labels", []) if l["name"].startswith("objective:")}
     if a.active_agents:
-        # Same choice as --agent below, for every agent at once. An agent with
-        # nothing now cannot gain a task later in the sprint (earlier agents
-        # only add to "busy"), so it gets no runner (6 Oct 2026).
-        busy = recent | {l["name"][10:] for p in open_prs for l in p.get("labels", []) if l["name"].startswith("objective:")}
-        live = []
-        for ag in SPRINT:
-            mine = [c for c in cands if c[1] == ag]
-            if ag in STANDING:
-                k, t, b = STANDING[ag]; mine.append((k, ag, t, b))
-            if any(c[0] not in busy for c in mine):
-                live.append(ag)
-        print(json.dumps(live)); return
+        # The SPRINT_SIZE agents whose best free task ranks highest, most urgent first. An agent with nothing now
+        # cannot gain a task later in the sprint (earlier agents only add to "busy"), so it gets no runner.
+        free = sorted((i, ag) for ag in SPRINT for i, c in [agent_pick(ag, cands, busy)] if c)
+        print(json.dumps([ag for _, ag in free[:SPRINT_SIZE]])); return
     if a.task:
         pick = next((c for c in cands if c[0] == a.task), None)
     elif a.agent:
-        busy = recent | {l["name"][10:] for p in open_prs for l in p.get("labels", []) if l["name"].startswith("objective:")}
-        mine = [c for c in cands if c[1] == a.agent]
-        if a.agent in STANDING:
-            k, t, b = STANDING[a.agent]; mine.append((k, a.agent, t, b))
-        pick = next((c for c in mine if c[0] not in busy), None)
+        pick = agent_pick(a.agent, cands, busy)[1]
     else:
         pick = next((c for c in cands if c[0] not in recent), None)
     if not pick:
