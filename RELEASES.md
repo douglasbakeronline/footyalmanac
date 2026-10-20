@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20: College football List shortfall located; no change (tag pending)
+
+**What changed:** a note only. The planner's 30 of 41 against 33.6 on the college football Daily List was already acted on (80% bar on 13 Oct, off the List on 19 Oct). No code or model change.
+
+**Evidence:** the shortfall is a uniform 4 to 11 points under quote in every band (70-75%: 6/10 v 73%; 75-80%: 5/7 v 77%; 80-85%: 8/11 v 83%; 85%+: 11/14 v 91%), home picks 23/31 and away 7/10, 12 picks at the 80% bar 9 landed. No cut isolates it, and at n=41 it is z -1.5. Live record used only to locate, never fitted. Full table in `claude/cfb-list-shortfall-2026-10-20.md`.
+
+**Files:** `claude/cfb-list-shortfall-2026-10-20.md`, `RELEASES.md`.
+
+**Not changed:** probabilities, `LIST_FLOOR`, `LIST_OFF`, the tested-rate display on rows.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Elena answers and acts; the Groups & Odds Desk opens (tag pending)
 
 **What changed:**
