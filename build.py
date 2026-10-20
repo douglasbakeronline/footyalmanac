@@ -112,7 +112,7 @@ ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.562
 NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
 # New competitions not yet replayed: on their board, off the Daily List and
 # the reserve (the standing rule for a new league).
-NEW_BOARD_ONLY = {"en.faq"}
+NEW_BOARD_ONLY = {"en.faq"} | set(S.AF_NEW)   # AF_NEW: Croatia, Hungary, Serbia, Ukraine, Korea (21 Oct 2026)
 
 # The discovery-replay leagues (engine.AF_EXTRA): their own bands, from the
 # 2025 replay, and their own list bar by the shared rule: 75%+ landed 82.3%

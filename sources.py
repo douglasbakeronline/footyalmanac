@@ -560,6 +560,14 @@ AF.update({c: _E.LEAGUES[c]["afId"] for c in AF_U21_START})
 # Replayed below the Daily List bar: board and reserve only, and kept out of
 # the shared calibration fit (build.NO_LIST, tune.codes).
 AF_BOARD_ONLY = {"en.7sc", "en.7ss", "en.7i", "en.7n"}
+# Top flights that ESPN, openfootball and football-data.co.uk do not carry
+# (claude/free-source-search-2026-10-05.md), fed from API-Football instead.
+# UAE is not here: its Pro League already arrives as af.301 (AF_EXTRA).
+# Board only until replayed (build.NEW_BOARD_ONLY), out of the calibration fit
+# (tune.codes). Current seasons ride the shared date pool, so no per-build
+# calls; the two finished seasons each cost one call, once, then sit on disk.
+AF_NEW = {"hrv.1": 210, "hun.1": 271, "srb.1": 286, "ukr.1": 333, "kr.1": 292}
+AF.update(AF_NEW)
 AF_PLAYED = {"FT", "AET", "PEN"}          # full time reached; the 90-minute score is used
 AF_DEAD = {"PST", "CANC", "ABD", "AWD", "WO", "SUSP", "INT"}
 _AF_CACHE, _AF_LOCK = {}, threading.Lock()
@@ -1089,22 +1097,16 @@ def af_rows(code, season):
         else:
             # Finished: one call, then on disk for good.
             src = _af_season(code, year, False)
-    out = []
-    for f in src:
-        st = ((f.get("fixture") or {}).get("status") or {}).get("short")
-        if st in AF_DEAD:
-            continue
-        when = (f.get("fixture") or {}).get("date") or ""
-        home = clean_name(((f.get("teams") or {}).get("home") or {}).get("name") or "")
-        away = clean_name(((f.get("teams") or {}).get("away") or {}).get("name") or "")
-        if len(when) < 16 or not home or not away:
-            continue
-        ft = (f.get("score") or {}).get("fulltime") or {}
-        played = st in AF_PLAYED and ft.get("home") is not None and ft.get("away") is not None
-        out.append({"date": when[:10], "time": when[11:16], "utc": True, "round": None,
-                    "home": home, "away": away,
-                    "hg": ft["home"] if played else None, "ag": ft["away"] if played else None})
-    return out
+    if code in AF_NEW and src:
+        # The league ids were set by hand: a feed from the wrong country is
+        # dropped, loudly, never rated (rule 6).
+        want = _E.canon_country(_L[code]["country"])
+        got = {_E.canon_country((f.get("league") or {}).get("country") or "") for f in src}
+        if got != {want}:
+            print(f"WARNING: {code} (AF id {AF[code]}) returned {sorted(got)}, expected {want}: ignored",
+                  file=sys.stderr)
+            return []
+    return af_rows_from(src)
 
 
 def fetch_season(code, season, cache_dir=None):

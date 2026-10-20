@@ -60,7 +60,7 @@ def codes():
     # curve without a deliberate decision (30 Sep 2026).
     return [c for c, m in E.LEAGUES.items()
             if not m.get("cup") and not m.get("ratingsOnly")
-            and c not in S.AF_BOARD_ONLY and c not in S.AF_EXTRA]
+            and c not in S.AF_BOARD_ONLY and c not in S.AF_EXTRA and c not in S.AF_NEW]
 
 
 def splits(code):
