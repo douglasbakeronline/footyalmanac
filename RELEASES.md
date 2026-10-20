@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Croatia, Hungary, Serbia, Ukraine and Korea: current season actually reaches the board (tag pending)
+
+**What changed:** the five top flights added this morning showed no fixtures and no current season. Their current season reads the shared API-Football date pool, whose rows pass through the day cache (`_compact` / `_expand`), and the cache kept no country. The new country guard in `af_rows` then saw an empty country, called every row "wrong country" and dropped the whole league. Prior seasons come from a separate call that keeps the country, so they arrived and ratings moved, while this season stayed empty. Visible symptom: Shakhtar Donetsk went into Inter v Shakhtar (Champions League, 21 Oct) with "form: not yet available" and no "This season" row. The cache now keeps the country as a tenth field; nine-field day files written earlier still read, and their rows are judged by the rows that carry a country. A feed with no country at all, or any wrong one, is still dropped loudly.
+
+**Evidence:** reproduced offline: a Ukrainian fixture through `_compact` / `_expand` and the pool returned no rows before the fix and both rows after. Archives since the 12:13 UTC build hold 0 rows for all five leagues, while their second divisions from the same pool (af.334, af.287, af.272, af.293) hold 80-99 each. Open days refetch within `AF_DAY_TTL` (45 min), so the first build after merge carries countries. Three new tests fail on the old code. `nametest.py` and 321 unit tests pass. Not run end to end: no API key in this sandbox.
+
+**Files:** `sources.py` (`_compact`, `_expand`, guard in `af_rows`), `tests/test_af_new_leagues.py`.
+
+**Not changed:** any probability, constant, calibration, the List bar, `NEW_BOARD_ONLY`, records or archives. Expect Champions and Europa League ties involving clubs from these five countries to reprice once their current form arrives.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Accumulator calculator on the Odds tab (tag pending)
 
 **What changed:** the Odds tab has an accumulator calculator above the groups. Type a selection and its price in fractional (1/7, 2/11), decimal (1.14), evens or American (+150) form, add as many rows as needed, and it shows the combined odds (decimal and nearest fraction), the return and profit at the tab's stake, and the chance the combined price implies. Each group leg has an "Add to acca" link that drops it in. Rows persist in the browser (`og-acca`). A price it cannot read is marked and left out of the total.

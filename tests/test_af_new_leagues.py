@@ -43,6 +43,39 @@ class AfNew(unittest.TestCase):
         with mock.patch.object(S, "_af_season", return_value=[fx("South-Korea", "Jeonbuk", "Ulsan", 292)]):
             self.assertEqual(len(S.af_rows("kr.1", "2025")), 1)
 
+    # 20 Oct 2026: the current season reads the shared date pool, whose rows
+    # pass through the day cache (_compact / _expand). The cache dropped the
+    # country, so the guard threw away every current-season row of all five
+    # leagues and Shakhtar went into a Champions League tie with no form.
+    def pool_row(self, country, when="2026-10-25T15:00:00+00:00", st="NS", hg=None, ag=None):
+        f = {"league": {"id": 333, "season": 2026, "country": country},
+             "fixture": {"id": 1, "date": when, "status": {"short": st}},
+             "teams": {"home": {"name": "Shakhtar Donetsk"}, "away": {"name": "Dynamo Kyiv"}},
+             "score": {"fulltime": {"home": hg, "away": ag}}}
+        return S._expand(S._compact(f))
+
+    def test_country_survives_the_day_cache(self):
+        self.assertEqual(self.pool_row("Ukraine")["league"]["country"], "Ukraine")
+
+    def test_current_season_reads_through_the_pool(self):
+        pool = {333: [self.pool_row("Ukraine", "2026-09-20T15:00:00+00:00", "FT", 2, 1),
+                      self.pool_row("Ukraine")]}
+        with mock.patch.object(S, "af_season_pool", return_value=pool):
+            rows = S.af_rows("ukr.1", E.LEAGUES["ukr.1"]["season"])
+        self.assertEqual(len(rows), 2)
+        self.assertEqual([r["hg"] for r in rows], [2, None])
+
+    def test_old_cache_rows_judged_by_new_ones(self):
+        old = S._expand(S._compact(self.pool_row("Ukraine"))[:9])   # nine-field day file
+        self.assertNotIn("country", old["league"])
+        pool = {333: [old, self.pool_row("Ukraine")]}
+        with mock.patch.object(S, "af_season_pool", return_value=pool):
+            self.assertEqual(len(S.af_rows("ukr.1", E.LEAGUES["ukr.1"]["season"])), 2)
+        with mock.patch.object(S, "af_season_pool", return_value={333: [old]}):
+            self.assertEqual(S.af_rows("ukr.1", E.LEAGUES["ukr.1"]["season"]), [])
+        with mock.patch.object(S, "af_season_pool", return_value={333: [self.pool_row("Spain")]}):
+            self.assertEqual(S.af_rows("ukr.1", E.LEAGUES["ukr.1"]["season"]), [])
+
 
 if __name__ == "__main__":
     unittest.main()
