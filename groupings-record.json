@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-19T23:03:55Z",
+ "graded": "2026-10-20T01:09:43Z",
  "overall": {
   "groups": 58,
-  "settled": 55,
-  "won": 9,
+  "settled": 56,
+  "won": 10,
   "lost": 46,
-  "pending": 3,
-  "legs": 272,
-  "legsWon": 197,
-  "returned": 36.15,
-  "staked": 55,
-  "expected": 17.81
+  "pending": 2,
+  "legs": 273,
+  "legsWon": 198,
+  "returned": 38.69,
+  "staked": 56,
+  "expected": 18.17
  },
  "byBand": {
   "Banker": {
@@ -27,15 +27,15 @@
   },
   "Steady": {
    "groups": 25,
-   "settled": 24,
-   "won": 3,
+   "settled": 25,
+   "won": 4,
    "lost": 21,
-   "pending": 1,
-   "legs": 121,
-   "legsWon": 88,
-   "returned": 8.17,
-   "staked": 24,
-   "expected": 9.29
+   "pending": 0,
+   "legs": 122,
+   "legsWon": 89,
+   "returned": 10.71,
+   "staked": 25,
+   "expected": 9.65
   },
   "Balanced": {
    "groups": 17,
@@ -64,15 +64,15 @@
  },
  "firstChoice": {
   "groups": 37,
-  "settled": 34,
-  "won": 6,
+  "settled": 35,
+  "won": 7,
   "lost": 28,
-  "pending": 3,
-  "legs": 171,
-  "legsWon": 130,
-  "returned": 24.83,
-  "staked": 34,
-  "expected": 11.9
+  "pending": 2,
+  "legs": 172,
+  "legsWon": 131,
+  "returned": 27.37,
+  "staked": 35,
+  "expected": 12.26
  },
  "days": [
   {
@@ -212,11 +212,11 @@
      "rank": "main",
      "odds": 2.54,
      "p": 0.3573,
-     "status": "pending",
-     "paid": 0,
-     "legsWon": 4,
+     "status": "won",
+     "paid": 2.54,
+     "legsWon": 5,
      "legsLost": 0,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Diriangén",
@@ -275,8 +275,8 @@
        "odds": 1.05,
        "est": false,
        "p": 0.8416,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       }
      ]
     },
