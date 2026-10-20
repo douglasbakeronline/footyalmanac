@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Tests for rankings.py (tag pending)
+
+**What changed:** nothing a reader sees. `rankings.py` (FIFA and ATP adjustments, FIFA name mapping, release refresh, ESPN tennis rank parsing) had no tests; `tests/test_rankings.py` adds 22, offline (`_get` and the FIFA file are patched).
+
+**Evidence:** the module was the largest untested one that feeds a model number (0 of 169 lines covered). Tests pin the formulas to `FIFA_W` / `ATP_W`, the missing-ranking fallbacks, the 151 cap, the 21-day refresh rule, newest-id selection and the failure paths. All pass; no bug found, so no code changed. `nametest.py` and the full unittest suite pass.
+
+**Files:** `tests/test_rankings.py`.
+
+**Not changed:** any model constant, `rankings.py`, records or archives. Left as is: `rankings.py` opens files without closing them (harmless ResourceWarning).
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Log why tennis tournaments miss an Odds API key (tag pending)
 
 **What changed:** `groupings.py --probe` (and every build's `sources.oddsApi`) now lists the active `tennis_*` keys from the free /sports list and the tour + tournament of every unpriced tennis leg that matched no key (`tennisKeys`, `noKey`). Matching also reads the key's own words, not only the title. Prices still never feed a model.
