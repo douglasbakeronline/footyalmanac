@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Elena answers and acts; the Groups & Odds Desk opens (tag pending)
+
+**What changed:**
+- **Elena, the CEO, is a working agent.** `ceo.yml` runs when Douglas opens or comments on an issue labelled `ceo`. Claude, as Elena, reads the whole repository and the office's data, answers on the issue, ships a change herself through `agents/open_pr.sh` and the merge gate (so only if every check and the Evaluation pass), and delegates bigger work as `office-backlog` issues for named agents, which the next sprint works before anything else. `agents/ceo_prompt.py` passes her only Douglas's words and her own earlier replies; the repository is public. She runs on Opus with 80 turns.
+- **Groups & Odds Desk.** Two new working agents join Oscar and Jade: Kofi, Value Analyst (does the model have any edge over bookmaker prices, measured on history?), and Hannah, Leg Selector (which legs land at or above their quote?). Each has a standing task, the HQ planner gives the desk tasks by sport, price range and group band, and one desk member works every sprint (`pick_task.DESK`).
+- **Bigger sprint:** `SPRINT_SIZE` 4 to 5, plus the desk's place: up to six agents a day.
+- Oscar's standing task updated for the 19 Oct rule (unpriced legs are never grouped).
+**Evidence:** dry runs of the picker with HQ up and down; `tests/test_ceo_prompt.py` (strangers' comments and Elena's status lines never reach the prompt, delegation drops unknown owners and caps at five) and new sprint-selection tests; full suite and `nametest.py` pass. `ceo.yml` validated as YAML; its first real run is the check that matters.
+**Files:** `.github/workflows/ceo.yml` (new), `agents/ceo_prompt.py` (new), `agents/pick_task.py`, `tests/test_ceo_prompt.py`, `tests/test_pick_task.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the merge gate, the Evaluation, protected paths, any model or record. Prices still never feed a model.
+**Roll back:** `git revert` this commit. To pause Elena alone, remove the `ceo` label from an issue or disable `ceo.yml` in Actions.
+
 ## 2026-10-20 Office sprint works HQ's ranked backlog, four agents a day (tag pending)
 
 **What changed:** the office agents now work on what the live record says is wrong, every day, instead of all fourteen running generic standing tasks on one day and then resting for a week. Each morning HQ's planner (footyalmanac-hq `scripts/planner.py`) measures every gap between quoted and landed: the Daily List by sport, football 5-point bands, leagues, tennis tours, the other sports and the Odds tab's legs, each as a z-score so small samples don't shout. It publishes the ranked tasks, each with its evidence and the testing rules, as `data/backlog.json` on HQ's Pages; the README's priority list (own-band admission, tennis surface, coverage, Odds API keys) sits below the measured gaps until an agent ships each one. `agents/pick_task.py` reads it after owner issues and pipeline health, and the sprint runs the four agents whose best free task ranks highest (`SPRINT_SIZE`). When HQ is down or its backlog is over 48 hours old, the picker uses its own scoreboard picks as before.

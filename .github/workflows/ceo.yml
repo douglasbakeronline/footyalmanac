@@ -1,0 +1,153 @@
+name: CEO
+
+# Elena, the office's CEO (Douglas, 20 Oct 2026). Douglas opens an issue
+# labelled `ceo` (the HQ office's CEO tab does this for him) or comments on
+# one, and Elena works on it with Claude: she answers on the issue, ships a
+# change herself through the same open_pr.sh and merge gate as the office
+# agents, and/or delegates work as office-backlog issues that the next sprint
+# picks up first. Only Douglas's words reach her: the repository is public.
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      issue:
+        description: "Issue number to (re)answer"
+        required: true
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+  id-token: write
+  actions: write
+  checks: read
+
+concurrency:
+  group: ceo-${{ github.event.issue.number || inputs.issue }}
+  cancel-in-progress: false
+
+jobs:
+  elena:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (contains(github.event.issue.labels.*.name, 'ceo') && github.event.issue.pull_request == null &&
+       ((github.event_name == 'issues' && github.event.issue.user.login == 'douglasbakeronline' &&
+         (github.event.action == 'opened' || github.event.label.name == 'ceo')) ||
+        (github.event_name == 'issue_comment' && github.event.comment.user.login == 'douglasbakeronline')))
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      ISSUE: ${{ github.event.issue.number || inputs.issue }}
+      HAS_APP: ${{ secrets.OFFICE_APP_ID != '' && 'yes' || 'no' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Check for a Claude key
+        id: key
+        env:
+          K1: ${{ secrets.ANTHROPIC_API_KEY }}
+          K2: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+        run: |
+          if [ -z "$K1$K2" ]; then echo "::warning::No Claude key, so Elena is off."; echo "skip=1" >> "$GITHUB_OUTPUT"; else echo "skip=0" >> "$GITHUB_OUTPUT"; fi
+          T1="$(printf '%s' "$K1" | tr -d '[:space:]')"; T2="$(printf '%s' "$K2" | tr -d '[:space:]')"
+          [ -n "$T1" ] && echo "::add-mask::$T1"; [ -n "$T2" ] && echo "::add-mask::$T2"
+          { echo "AGENT_API_KEY=$T1"; echo "AGENT_OAUTH=$T2"; } >> "$GITHUB_ENV"
+      - name: Read the brief
+        id: brief
+        if: steps.key.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          python3 agents/ceo_prompt.py --issue "$ISSUE"
+          # keep a pristine copy: Elena must not be able to change the scripts that open and merge her pull request
+          cp -r agents /tmp/agents-trusted
+      - name: Tell Douglas she's on it
+        if: steps.brief.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        # a status line, marked differently so it never reads as one of Elena's answers
+        run: |
+          gh issue comment "$ISSUE" --body "<!-- elena-status --> On it. I'll reply here when I'm done ([progress](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))."
+      - name: Elena works on it
+        if: steps.brief.outputs.skip == '0'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ env.AGENT_API_KEY }}
+          claude_code_oauth_token: ${{ env.AGENT_OAUTH }}
+          prompt: ${{ steps.brief.outputs.prompt }}
+          claude_args: "--model opus --max-turns 80 --allowedTools Bash,Read,Edit,Write,Glob,Grep,WebFetch"
+      - name: Delegate to the office
+        if: steps.brief.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 /tmp/agents-trusted/ceo_prompt.py --issue "$ISSUE" --delegate
+      - name: Normalise the App key
+        if: steps.brief.outputs.skip == '0' && env.HAS_APP == 'yes'
+        env:
+          RAW: ${{ secrets.OFFICE_APP_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, re, textwrap
+          raw = os.environ["RAW"].replace("\\n", "\n").replace("\r", "").strip().strip('"')
+          m = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", raw, re.S)
+          kind, body = (m.group(1), m.group(2)) if m else ("RSA PRIVATE KEY", raw)
+          body = re.sub(r"[^A-Za-z0-9+/=]", "", body)
+          pem = f"-----BEGIN {kind}-----\n" + "\n".join(textwrap.wrap(body, 64)) + f"\n-----END {kind}-----"
+          for line in textwrap.wrap(body, 64): print(f"::add-mask::{line}")
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write("APP_KEY<<__PEM__\n" + pem + "\n__PEM__\n")
+          PY
+      - name: Mint the App token
+        id: app
+        if: steps.brief.outputs.skip == '0' && env.HAS_APP == 'yes'
+        continue-on-error: true
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.OFFICE_APP_ID }}
+          private-key: ${{ env.APP_KEY }}
+      - name: Verify and open a pull request
+        id: pr
+        if: steps.brief.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token || github.token }}
+        run: |
+          bash /tmp/agents-trusted/open_pr.sh "ceo-$ISSUE" ceo "Elena on issue $ISSUE"
+      - name: Merge it once Tests and Evaluation pass
+        id: merge
+        if: steps.pr.outputs.pr != '' && steps.app.outputs.token != ''
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: python3 /tmp/agents-trusted/merge_gate.py --pr "${{ steps.pr.outputs.pr }}" --wait --no-deploy
+      - name: Reply to Douglas
+        if: always() && steps.brief.outputs.skip == '0'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR: ${{ steps.pr.outputs.pr }}
+        run: |
+          {
+            echo "<!-- elena -->"
+            if [ -s /tmp/office-agent/reply.md ]; then cat /tmp/office-agent/reply.md
+            else echo "I couldn't finish this one: the run stopped before I wrote a reply ([log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}))."; fi
+            if [ -n "$PR" ]; then
+              state=$(gh pr view "$PR" --json state -q .state 2>/dev/null)
+              echo; echo "**Shipped:** #$PR ($( [ "$state" = MERGED ] && echo "merged, the site rebuilds now" || echo "${state,,}, the merge gate's comment on it says why" ))."
+            fi
+            if [ -s /tmp/office-agent/delegated.md ]; then echo; echo "**Delegated:**"; cat /tmp/office-agent/delegated.md; fi
+          } > /tmp/office-agent/post.md
+          gh issue comment "$ISSUE" --body-file /tmp/office-agent/post.md
+      - name: Rebuild the site if anything merged
+        if: steps.pr.outputs.pr != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if [ "$(gh pr view "${{ steps.pr.outputs.pr }}" --json state -q .state)" = MERGED ]; then gh workflow run deploy.yml --ref main; fi

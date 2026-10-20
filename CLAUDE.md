@@ -163,7 +163,7 @@ Open `dashboard.html` straight off disk to check the page.
   output for a human.
 - `office-agents.yml` runs daily at 06:30 UTC as a sprint (Douglas's
   instruction, 4 Oct 2026: no owner review, every agent productive). Since
-  20 Oct 2026 the sprint runs the `SPRINT_SIZE` (4) agents whose best free task
+  20 Oct 2026 the sprint runs the `SPRINT_SIZE` (5) agents whose best free task
   ranks highest, one at a time, in this order: owner `office-backlog` issues,
   pipeline health (failed build, unrated fixtures), then the **HQ backlog**:
   footyalmanac-hq's `scripts/planner.py` ranks every gap between quoted and
@@ -171,7 +171,9 @@ Open `dashboard.html` straight off disk to check the page.
   legs) by z-score each morning and publishes `data/backlog.json` on HQ's
   Pages, with the README's priority list below the measured gaps. A backlog
   over 48 hours old is ignored and the scoreboard's own picks take over.
-  Standing tasks fill any spare places. Each objective still rests 7 days. `agents/open_pr.sh` (run from a copy made before the agent
+  Standing tasks fill any spare places. Each objective still rests 7 days.
+  The **Groups & Odds Desk** (`pick_task.DESK`: Jade, Oscar, Kofi on value,
+  Hannah on leg selection) always gets one more place. `agents/open_pr.sh` (run from a copy made before the agent
   works) runs nametest.py, the unittest suite and (for pipeline code) a fast
   build without tokens, replays the branch onto the latest main, and opens the
   pull request with the footyalmanac-office GitHub App token so Tests and
@@ -201,6 +203,13 @@ Open `dashboard.html` straight off disk to check the page.
   changes cannot ship until a snapshot is approved. It never refits, applies
   calibration or deploys. `evaluation-freeze.yml` (owner only) makes
   snapshots. See `claude/evaluation-layer.md`.
+- `ceo.yml` is **Elena, the CEO** (20 Oct 2026). Douglas opens an issue
+  labelled `ceo` (HQ's CEO tab does it for him) or comments on one; only his
+  words reach her (`agents/ceo_prompt.py`). Claude, as Elena, answers on the
+  issue, ships what is safe through `open_pr.sh` and the merge gate (PR key
+  `ceo-<issue>`), and delegates bigger work as `office-backlog` issues with an
+  `agent:` label, which the next sprint works first. She cannot change the
+  workflow-security paths either.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.

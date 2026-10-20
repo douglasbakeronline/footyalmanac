@@ -56,5 +56,18 @@ class TestAgentPick(unittest.TestCase):
         self.assertEqual(T.agent_pick("engineer", [], {T.STANDING["engineer"][0]}), (None, None))
 
 
+class TestSprintAgents(unittest.TestCase):
+    def test_desk_always_gets_a_place(self):
+        cands = [(f"hq-{i}", ag, "t", "b") for i, ag in enumerate(["sports", "curator", "scout", "calib", "ratings", "experiment"])]
+        got = T.sprint_agents(cands, set())
+        self.assertEqual(got[:T.SPRINT_SIZE], ["sports", "curator", "scout", "calib", "ratings"][:T.SPRINT_SIZE])
+        self.assertTrue(any(a in T.DESK for a in got)); self.assertEqual(len(got), T.SPRINT_SIZE + 1)
+
+    def test_no_extra_place_when_desk_already_in(self):
+        cands = [("hq-a", "accas", "t", "b"), ("hq-b", "sports", "t", "b")]
+        got = T.sprint_agents(cands, set())
+        self.assertEqual(got[:2], ["accas", "sports"]); self.assertEqual(len(got), T.SPRINT_SIZE)
+
+
 if __name__ == "__main__":
     unittest.main()
