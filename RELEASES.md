@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Croatia, Hungary, Serbia, Ukraine and Korea top flights from API-Football (tag pending)
+
+**What changed:** HNL, NB I, SuperLiga, Ukrainian Premier League and K League 1 had ratings slots but no source (openfootball 404s, no football-data file, ESPN has none), so no fixture ever appeared. They now read from API-Football (ids 210, 271, 286, 333, 292). Board only: off the Daily List and the reserve (`build.NEW_BOARD_ONLY`), out of the calibration fit (`tune.codes`), until a replay earns a place. A feed whose country is not the expected one is dropped with a warning, because the ids were set by hand and could not be checked from this sandbox (no key). The UAE is not added: its Pro League already arrives as `af.301`, and the other divisions of all six countries are in `af-leagues.json`.
+
+**Evidence:** no model number changed. API allowance: current seasons ride the shared date pool, so 0 extra calls per build; the two finished seasons each are 5 x 2 = 10 one-off calls, then on disk. Not replayed: no API key here, so no hit-rate claim is made. Neighbouring ids in `af-leagues.json` (NB II 272, Prva Liga 287, Persha Liga 334, K League 2 293) fit the pattern. `nametest.py` and 295 unit tests pass; a fast build runs.
+
+**Files:** `sources.py` (`AF_NEW`, country guard in `af_rows`), `build.py`, `tune.py`, `tests/test_af_new_leagues.py`.
+
+**Not changed:** any probability, constant, calibration, strength, the List bar, UAE, records or archives. Replaying these five (and the first-day name check of their clubs against `LIVE_NAMES`) is the next step before any List place.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Own-band Daily List admission for the other sports (tag pending)
 
 **What changed:** a rugby, basketball, NBA or WNBA pick now reaches the Daily List only if its own 5-point band landed 80% in testing, not only "this level and everything above it". Bars: rugby 70% -> 80%, college basketball 70% -> 85%, NBA 75% -> 80%, WNBA 80% -> 85%. NFL and college football (off the List) unchanged. Picks that miss go to the reserve if 62%+. Probabilities are unchanged.
