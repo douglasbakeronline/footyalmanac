@@ -414,6 +414,46 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
 .og-g{display:inline-block;margin-top:3px;font-size:11px;font-weight:600;color:var(--home);text-decoration:underline;text-underline-offset:2px}
 .og-g:hover{color:var(--away)}
+/* accumulator calculator: Douglas, 20 Oct 2026. Type any prices (1/7, 2/11,
+   evens, 1.14), or add a group leg, and see the combined price and return.
+   A calculator only: nothing here feeds a model or the groups. */
+.acca{margin-top:14px;background:var(--surface);border:1px solid var(--rule)}
+.acca-h{display:flex;align-items:baseline;gap:10px;padding:11px 13px 9px;border-bottom:1px solid var(--rule-soft)}
+.acca-h h3{font-family:var(--f-ui);font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
+.acca-h p{font-size:12px;color:var(--mute)}
+.acca-r{display:grid;grid-template-columns:22px minmax(0,1fr) 84px 64px 30px;gap:8px;align-items:center;padding:6px 13px;border-top:1px solid var(--rule-soft)}
+.acca-r:first-child{border-top:0}
+.acca-r .i{font:12px var(--f-num);color:var(--mute);text-align:right}
+.acca-r input{width:100%;min-width:0;font:14px var(--f-ui);padding:6px 8px;border:1px solid var(--rule);background:var(--paper);color:var(--ink)}
+.acca-r input.p{font:600 14px var(--f-num);text-align:right}
+.acca-r input:focus-visible{outline:2px solid var(--home);outline-offset:-1px;border-color:var(--home)}
+.acca-r input.bad{border-color:var(--away);color:var(--away)}
+.acca-r .d{font:12px var(--f-num);color:var(--ink-2);text-align:right;white-space:nowrap}
+.acca-r .d.bad{font-family:var(--f-ui);color:var(--away)}
+.acca-r .x{border:0;background:none;color:var(--mute);font-size:18px;line-height:1;cursor:pointer;padding:4px}
+.acca-r .x:hover{color:var(--away)}
+.acca-a{display:flex;gap:16px;padding:8px 13px 10px;border-top:1px solid var(--rule-soft)}
+.acca-a button{border:0;background:none;padding:0;cursor:pointer;font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--home)}
+.acca-a button.clr{color:var(--mute);margin-left:auto}
+.acca-a button:hover{color:var(--ink)}
+.acca-t{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule-soft);border-top:1px solid var(--rule)}
+.acca-t>div{background:var(--surface);padding:10px 13px}
+.acca-t span{display:block;font-family:var(--f-ui);font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.acca-t b{display:block;font:600 22px var(--f-num);letter-spacing:-.03em;margin:2px 0;line-height:1.1}
+.acca-t small{display:block;font-size:11.5px;color:var(--ink-2)}
+.acca-n{padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
+.og-l .og-g{margin-right:12px}
+.og-add{display:inline-block;margin:3px 0 0;border:0;background:none;padding:0;cursor:pointer;font:600 11px var(--f-ui);color:var(--home);text-decoration:underline;text-underline-offset:2px}
+.og-add:hover{color:var(--away)}
+.og-add[disabled]{color:var(--mute);text-decoration:none;cursor:default}
+@media (max-width:560px){
+  .acca-r{grid-template-columns:minmax(0,1fr) 74px 30px;gap:6px 8px}
+  .acca-r .i{display:none}
+  .acca-r .d{grid-column:1/-1;grid-row:2;text-align:left;margin-top:-2px}
+  .acca-t{grid-template-columns:1fr}
+  .acca-t>div{display:flex;align-items:baseline;gap:10px}
+  .acca-t b{font-size:18px;margin:0}
+  .acca-t span{min-width:92px}}
 .og-rec{margin-top:22px}
 .og-score{display:flex;gap:22px;flex-wrap:wrap;padding:12px 14px;background:var(--surface);border:1px solid var(--rule);margin-top:10px}
 .og-score div span{display:block;font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-weight:600}
@@ -3087,7 +3127,8 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
+        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
@@ -3120,10 +3161,123 @@ function ogRecord(){
       ${band}</div>${dayRows}
     <p style="font-size:12px;color:var(--mute);margin-top:8px">Every group is archived the morning it is published and graded from the site's own results. A group is lost as soon as one leg loses; a void leg drops out of the price. "Expected" is the sum of each group's tested chance.</p></div>`;
 }
+/* ---------- the Odds tab: accumulator calculator ----------
+   Douglas, 20 Oct 2026: type each selection's price (1/7, 2/11, evens, 1.14,
+   +150) and see them multiplied, with the return at the tab's stake. Rows can
+   also come from a group leg's "Add to acca". A calculator only: the prices
+   typed here are never stored anywhere but this browser and never reach a model. */
+const ACCA_KEY = "og-acca";
+function accaLoad(){
+  try {
+    const r = JSON.parse(localStorage.getItem(ACCA_KEY) || "null");
+    if(Array.isArray(r) && r.length) return r.map(x => ({name: String(x.name || ""), price: String(x.price || "")}));
+  } catch(e) {}
+  return [{name:"", price:""}, {name:"", price:""}];
+}
+let ACCA = accaLoad();
+const accaSave = () => { try { localStorage.setItem(ACCA_KEY, JSON.stringify(ACCA)); } catch(e) {} };
+// A typed price as decimal odds, or null if it cannot be read. "" is empty, not an error.
+function accaDec(s){
+  const t = String(s).trim().toLowerCase().replace(/\s+/g, "");
+  if(!t) return undefined;
+  if(/^(evs|evens?|1\/1)$/.test(t)) return 2;
+  let m = t.match(/^(\d+(?:\.\d+)?)[\/\-](\d+(?:\.\d+)?)$/);
+  if(m){ const n = +m[1], d = +m[2]; return d > 0 && n > 0 ? 1 + n / d : null; }
+  m = t.match(/^([+-])(\d{3,})$/);                       // American, +150 / -200
+  if(m){ const v = +m[2]; return v >= 100 ? (m[1] === "+" ? 1 + v / 100 : 1 + 100 / v) : null; }
+  if(/^\d*\.?\d+$/.test(t)){ const v = +t; return v > 1 ? v : null; }
+  return null;
+}
+const accaMoney = v => "£" + v.toLocaleString("en-GB", {minimumFractionDigits:2, maximumFractionDigits:2});
+const accaFrac = dec => dec >= 1001 ? `${Math.round(dec - 1)}/1` : fracOf(dec);
+function accaRowOut(dec){
+  if(dec === undefined) return `<span class="d"></span>`;
+  if(dec === null) return `<span class="d bad">Not a price</span>`;
+  return `<span class="d">${dec.toFixed(2)}</span>`;
+}
+function accaTotals(){
+  const decs = ACCA.map(r => accaDec(r.price));
+  const ok = decs.filter(d => typeof d === "number"), bad = decs.filter(d => d === null).length;
+  const stake = ogStake(), stakeTxt = accaMoney(stake);
+  if(!ok.length) return `<div><span>Combined odds</span><b>–</b><small>Enter a price to start</small></div>
+    <div><span>Returns</span><b>–</b><small>from ${stakeTxt}</small></div>
+    <div><span>Price implies</span><b>–</b><small>all landing</small></div>`;
+  const dec = ok.reduce((a, d) => a * d, 1);
+  const n = ok.length, leg = n === 1 ? "single" : n === 2 ? "double" : n === 3 ? "treble" : `${n}-fold`;
+  const imp = 1 / dec;
+  return `<div><span>Combined odds</span><b>${dec < 100 ? dec.toFixed(2) : Math.round(dec).toLocaleString("en-GB")}</b>
+      <small>about ${accaFrac(dec)} · ${leg}${bad ? ` · ${bad} not counted` : ""}</small></div>
+    <div><span>Returns</span><b>${accaMoney(stake * dec)}</b><small>from ${stakeTxt}, profit ${accaMoney(stake * dec - stake)}</small></div>
+    <div><span>Price implies</span><b>${(imp * 100).toFixed(imp < 0.1 ? 1 : 0)}%</b><small>all landing, before the bookmaker's margin</small></div>`;
+}
+function accaHtml(){
+  const rows = ACCA.map((r, i) => `<div class="acca-r" data-i="${i}"><span class="i">${i + 1}</span>
+      <input class="n" type="text" value="${ogEsc(r.name)}" placeholder="Selection ${i + 1}" aria-label="Selection ${i + 1} name" autocomplete="off">
+      <input class="p${accaDec(r.price) === null ? " bad" : ""}" type="text" value="${ogEsc(r.price)}" placeholder="1/7" aria-label="Selection ${i + 1} price" inputmode="text" autocomplete="off" spellcheck="false">
+      ${accaRowOut(accaDec(r.price))}
+      <button type="button" class="x" aria-label="Remove selection ${i + 1}" title="Remove">×</button></div>`).join("");
+  return `<div class="acca-h"><h3>Accumulator</h3><p>Fractional, decimal or evens. Every price multiplies.</p></div>
+    <div class="acca-rows">${rows}</div>
+    <div class="acca-a"><button type="button" class="add">+ Add a selection</button><button type="button" class="clr">Clear</button></div>
+    <div class="acca-t" aria-live="polite">${accaTotals()}</div>
+    <div class="acca-n">Returns include the stake and use the stake set above. The implied chance is the price's own, with the bookmaker's margin still in it, not the site's view of the picks.</div>`;
+}
+function accaMount(box){
+  if(!box) return;
+  box.innerHTML = accaHtml();
+  document.querySelectorAll(".og-grid .og-add").forEach(b => {   // keep group legs in step
+    const inA = ACCA.some(r => r.name === b.dataset.pick && r.price === (+b.dataset.odds).toFixed(2));
+    b.disabled = inA; b.textContent = inA ? "In acca ✓" : "Add to acca +"; });
+  box.oninput = e => {
+    const row = e.target.closest(".acca-r"); if(!row) return;
+    const r = ACCA[+row.dataset.i]; if(!r) return;
+    if(e.target.classList.contains("n")) r.name = e.target.value;
+    if(e.target.classList.contains("p")){
+      r.price = e.target.value;
+      const dec = accaDec(r.price);
+      e.target.classList.toggle("bad", dec === null);
+      row.querySelector(".d").outerHTML = accaRowOut(dec);
+      box.querySelector(".acca-t").innerHTML = accaTotals();
+    }
+    accaSave();
+  };
+  box.onclick = e => {
+    if(e.target.closest(".add")){
+      ACCA.push({name:"", price:""}); accaSave(); accaMount(box);
+      const ins = box.querySelectorAll(".acca-r input.n"); ins[ins.length - 1].focus();
+    } else if(e.target.closest(".clr")){
+      ACCA = [{name:"", price:""}, {name:"", price:""}]; accaSave(); accaMount(box);
+    } else if(e.target.closest(".x")){
+      const i = +e.target.closest(".acca-r").dataset.i;
+      ACCA.splice(i, 1); if(!ACCA.length) ACCA.push({name:"", price:""});
+      accaSave(); accaMount(box);
+    }
+  };
+  box.onkeydown = e => {     // Enter in the last price field adds a row
+    if(e.key !== "Enter" || !e.target.classList.contains("p")) return;
+    e.preventDefault();
+    if(+e.target.closest(".acca-r").dataset.i === ACCA.length - 1) box.querySelector(".add").click();
+  };
+}
+// A group leg into the calculator: fills the first empty row, else adds one.
+function accaAdd(name, dec){
+  const price = dec.toFixed(2);
+  if(ACCA.some(r => r.name === name && r.price === price)) return false;
+  const empty = ACCA.find(r => !r.name.trim() && !r.price.trim());
+  if(empty){ empty.name = name; empty.price = price; } else ACCA.push({name, price});
+  accaSave(); accaMount($("#acca"));
+  return true;
+}
+
 function renderOdds(){
   const host = $("#odds"); if(!host) return;
   if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Groups</h2></div><div class="empty">No groupings in this build yet. They appear after the next daily build.</div>`;
+    host.innerHTML = `<div class="lede"><h2>Groups</h2></div>
+      <div class="og-days"><label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+      <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
+      <div class="empty" style="margin-top:14px">No groupings in this build yet. They appear after the next daily build.</div>`;
+    accaMount($("#acca"));
+    $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
     return;
   }
   const days = OG.days.filter(d => d.groups.length);
@@ -3156,10 +3310,15 @@ function renderOdds(){
       </details></div>
     <div class="og-days"><div class="seg" id="ogDay">${OG.days.map(d => `<button data-d="${d.date}" aria-pressed="${d.date === day.date}">${fmtDay(d.date)}</button>`).join("")}</div>
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
       `<div class="empty" style="margin-top:14px">Not enough tested picks with prices on ${fmtDay(day.date)} to build a group yet.</div>`}
     <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.priced} of ${day.legs} qualifying picks priced by a bookmaker for this day.</p>
     ${ogRecord()}`;
+  accaMount($("#acca"));
+  host.querySelectorAll(".og-grid .og-add").forEach(btn => btn.onclick = () => {
+    accaAdd(btn.dataset.pick, +btn.dataset.odds);
+  });
   $("#ogDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderOdds(); };
   $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
 }

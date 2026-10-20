@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Accumulator calculator on the Odds tab (tag pending)
+
+**What changed:** the Odds tab has an accumulator calculator above the groups. Type a selection and its price in fractional (1/7, 2/11), decimal (1.14), evens or American (+150) form, add as many rows as needed, and it shows the combined odds (decimal and nearest fraction), the return and profit at the tab's stake, and the chance the combined price implies. Each group leg has an "Add to acca" link that drops it in. Rows persist in the browser (`og-acca`). A price it cannot read is marked and left out of the total.
+
+**Evidence:** checked in a headless browser at 1280px and 400px with test groupings: 1/7, 2/11, evens and 1.14 give 3.08, £30.79 from £10, matching the hand calculation (8/7 x 13/11 x 2 x 1.14). No console errors. `nametest.py` passes.
+
+**Files:** `index.html` (calculator styles, `accaDec` / `accaMount` / `accaAdd`, mount in `renderOdds`, leg button in `ogCard`).
+
+**Not changed:** any model, probability, the groups, `groupings.py`, records or archives. Typed prices stay in the viewer's browser and never feed anything.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Tests for rankings.py (tag pending)
 
 **What changed:** nothing a reader sees. `rankings.py` (FIFA and ATP adjustments, FIFA name mapping, release refresh, ESPN tennis rank parsing) had no tests; `tests/test_rankings.py` adds 22, offline (`_get` and the FIFA file are patched).
