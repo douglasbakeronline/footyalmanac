@@ -171,9 +171,20 @@ class Losses(unittest.TestCase):
 
 class ListThreshold(unittest.TestCase):
     def test_lowest_clearing_threshold(self):
-        w = [[band(0.55, 100, 0.70), band(0.60, 80, 0.75), band(0.65, 60, 0.82), band(0.70, 40, 0.9),
-              band(0.75, 30, 0.9), band(0.80, 30, 0.9), band(0.85, 30, 0.9)]]
+        w = [[band(0.55, 200, 0.70), band(0.60, 160, 0.75), band(0.65, 120, 0.88), band(0.70, 80, 0.9),
+              band(0.75, 50, 0.9), band(0.80, 30, 0.9), band(0.85, 30, 0.9)]]
         self.assertEqual(S.list_threshold(w), 0.65)
+
+    def test_own_band_must_clear_not_just_the_cumulative(self):
+        # 70%+ is 80.9% cumulatively, but 70-80% on its own landed 72%
+        # (the college football shape, 13 Oct 2026); only 80%+ is admitted.
+        w = [[band(0.55, 400, 0.72), band(0.60, 350, 0.74), band(0.65, 300, 0.77),
+              band(0.70, 250, 0.809), band(0.75, 200, 0.82), band(0.80, 100, 0.92),
+              band(0.85, 60, 0.95)]]
+        self.assertEqual(S.list_threshold(w), 0.80)
+        # a thin tail cannot veto: 85%+ under 30 calls is not an own band
+        self.assertTrue(S.own_bands_clear([band(0.80, 100, 0.9), band(0.85, 10, 0.5)], 0.80))
+        self.assertFalse(S.own_bands_clear(w[0], 0.70))
 
     def test_every_big_window_must_clear(self):
         good = [band(t, 40, 0.9) for t in S.LIST_THRESHOLDS]

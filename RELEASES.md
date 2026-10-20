@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Own-band Daily List admission for the other sports (tag pending)
+
+**What changed:** a rugby, basketball, NBA or WNBA pick now reaches the Daily List only if its own 5-point band landed 80% in testing, not only "this level and everything above it". Bars: rugby 70% -> 80%, college basketball 70% -> 85%, NBA 75% -> 80%, WNBA 80% -> 85%. NFL and college football (off the List) unchanged. Picks that miss go to the reserve if 62%+. Probabilities are unchanged.
+
+**Evidence:** held out (bar set on Jul 2024-Jun 2025, applied to games since Jul 2025): rugby 451 picks landing 79.6% -> 247 landing 84.2% (dropped 204 landed 74.0%, p(worse) 0.002); college basketball 3,792 at 78.9% -> 1,884 at 87.4% (dropped 1,908 landed 70.5%, p 0.000). NBA and WNBA are unchanged on the fit season alone; their move rests on the reverse direction only. Cost is volume: roughly 40-60% fewer picks per sport. Full tables in `claude/own-band-admission-2026-10-20.md`.
+
+**Files:** `sports.py` (`own_bands_clear`, `list_threshold`, `stored_threshold`), `tests/test_sports.py`, `tools/own_band_replay.py`, `claude/own-band-admission-2026-10-20.md`, `RELEASES.md`.
+
+**Not changed:** any probability, calibration, `sports.json`, football, tennis, records or archives.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20: College football List shortfall located; no change (tag pending)
 
 **What changed:** a note only. The planner's 30 of 41 against 33.6 on the college football Daily List was already acted on (80% bar on 13 Oct, off the List on 19 Oct). No code or model change.

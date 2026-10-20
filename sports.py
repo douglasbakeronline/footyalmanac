@@ -94,7 +94,25 @@ def list_bar(sport, found):
     return max(found, LIST_FLOOR.get(sport, 0.0))
 
 
+def own_bands_clear(w, t):
+    """True when every 5-point band from t up, read on its own (bands.band_rate,
+    widened upward to LIST_MIN_N calls), landed LIST_MIN_HIT in this window.
+    A band still under LIST_MIN_N calls after widening (the thin top) cannot
+    veto."""
+    for s in LIST_THRESHOLDS:
+        if s < t - 1e-9:
+            continue
+        br = band_rate(s, w, LIST_MIN_N)
+        if br and br["n"] >= LIST_MIN_N and br["hit"] < LIST_MIN_HIT:
+            return False
+    return True
+
+
 def list_threshold(windows):
+    """Lowest threshold at which calls landed LIST_MIN_HIT cumulatively AND in
+    each 5-point band of their own (own-band admission, 20 Oct 2026): a
+    cumulative 80% can hide 70-80% calls landing in the low 70s under a
+    90%+ tail."""
     for t in LIST_THRESHOLDS:
         ok, big = True, 0
         for w in windows:
@@ -104,10 +122,21 @@ def list_threshold(windows):
                 break
             if b["n"] >= LIST_MIN_N:
                 big += 1
-                ok = ok and b["hit"] >= LIST_MIN_HIT
+                ok = ok and b["hit"] >= LIST_MIN_HIT and own_bands_clear(w, t)
         if ok and big:
             return t
     return None
+
+
+def stored_threshold(sp):
+    """The bar from the bands saved in sports.json under the current rule, so
+    a rule change reaches the board without rerunning --tune. Falls back to
+    the saved listMin when the bands are missing."""
+    if sp.get("bandsFit") and sp.get("bandsCheck"):
+        return list_threshold([sp["bandsFit"], sp["bandsCheck"]])
+    return sp.get("listMin")
+
+
 DEFAULTS = {"k": 20, "hfa": 50, "regress": 0.33, "mov": 1}
 GRID = {"k": (8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
         "regress": (0.0, 0.25, 0.5), "mov": (0, 1)}
@@ -595,7 +624,7 @@ def build(start=None):
     for sport, cfg in SPORTS.items():
         sp = P.get(sport)
         entry = {"name": cfg["name"], "published": bool(sp and sp.get("publish")),
-                 "listMin": list_bar(sport, sp.get("listMin")) if sp else None,
+                 "listMin": list_bar(sport, stored_threshold(sp)) if sp else None,
                  "listOff": sport in LIST_OFF,
                  "check": sp.get("check") if sp else None,
                  "bands": sp.get("bandsCheck") if sp else None, "games": []}
