@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-20T20:41:37Z",
+ "graded": "2026-10-20T21:06:01Z",
  "overall": {
   "groups": 58,
   "settled": 57,
   "won": 10,
   "lost": 47,
   "pending": 1,
-  "legs": 275,
-  "legsWon": 198,
+  "legs": 277,
+  "legsWon": 199,
   "returned": 38.69,
   "staked": 57,
   "expected": 18.26
@@ -19,8 +19,8 @@
    "won": 0,
    "lost": 0,
    "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "expected": 0
@@ -43,7 +43,7 @@
    "won": 5,
    "lost": 12,
    "pending": 0,
-   "legs": 81,
+   "legs": 82,
    "legsWon": 61,
    "returned": 20.87,
    "staked": 17,
@@ -68,8 +68,8 @@
   "won": 7,
   "lost": 29,
   "pending": 1,
-  "legs": 173,
-  "legsWon": 131,
+  "legs": 175,
+  "legsWon": 132,
   "returned": 27.37,
   "staked": 36,
   "expected": 12.35
@@ -86,9 +86,9 @@
      "p": 0.4324,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Borussia Dortmund",
@@ -111,8 +111,8 @@
        "odds": 1.21,
        "est": false,
        "p": 0.7097,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "AS Roma",
@@ -136,8 +136,8 @@
      "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 4,
+     "legsLost": 2,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Al Qadsiah",
@@ -196,8 +196,8 @@
        "odds": 1.43,
        "est": false,
        "p": 0.6368,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       }
      ]
     }
