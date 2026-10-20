@@ -887,14 +887,22 @@ def _compact(f):
     """The fields this project reads from a fixture, as a short list."""
     fx, lg = f.get("fixture") or {}, f.get("league") or {}
     tm, ft = f.get("teams") or {}, (f.get("score") or {}).get("fulltime") or {}
+    # The country rides last (20 Oct 2026): af_rows checks it for the hand-set
+    # AF_NEW ids, and without it every current-season row of those five
+    # leagues was dropped as "wrong country". Day files written before then
+    # have nine fields and expand with no country.
     return [lg.get("id"), lg.get("season"), fx.get("id"), fx.get("date"),
             (fx.get("status") or {}).get("short"), (tm.get("home") or {}).get("name"),
-            (tm.get("away") or {}).get("name"), ft.get("home"), ft.get("away")]
+            (tm.get("away") or {}).get("name"), ft.get("home"), ft.get("away"), lg.get("country")]
 
 
 def _expand(c):
-    lid, season, fid, when, st, home, away, hg, ag = c
-    return {"league": {"id": lid, "season": season}, "fixture": {"id": fid, "date": when, "status": {"short": st}},
+    lid, season, fid, when, st, home, away, hg, ag = c[:9]
+    country = c[9] if len(c) > 9 else None
+    league = {"id": lid, "season": season}
+    if country:
+        league["country"] = country
+    return {"league": league, "fixture": {"id": fid, "date": when, "status": {"short": st}},
             "teams": {"home": {"name": home}, "away": {"name": away}},
             "score": {"fulltime": {"home": hg, "away": ag}}}
 
@@ -1100,8 +1108,11 @@ def af_rows(code, season):
     if code in AF_NEW and src:
         # The league ids were set by hand: a feed from the wrong country is
         # dropped, loudly, never rated (rule 6).
+        # A row from a day file cached before the country was kept carries
+        # none; it is judged by the rows that do. At least one must, and every
+        # one that does must match, or the whole feed is dropped.
         want = _E.canon_country(_L[code]["country"])
-        got = {_E.canon_country((f.get("league") or {}).get("country") or "") for f in src}
+        got = {_E.canon_country(c) for c in ((f.get("league") or {}).get("country") for f in src) if c}
         if got != {want}:
             print(f"WARNING: {code} (AF id {AF[code]}) returned {sorted(got)}, expected {want}: ignored",
                   file=sys.stderr)
