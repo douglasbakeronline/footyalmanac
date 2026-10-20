@@ -370,6 +370,7 @@ def _odds_keys(l, active):
     for sp in active:
         k, title = sp.get("key", ""), f"{sp.get('title', '')} {sp.get('description', '')}"
         if l["sport"] == "tennis":
+            title += " " + k.replace("_", " ")   # the key often names the event when the title is only the tour
             tour = (l.get("tour") or "").lower()
             if tour and k.startswith(f"tennis_{tour}") and _words(l.get("tournament")) & _words(title):
                 out.append(k)
@@ -427,6 +428,11 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     need = {}
     for l in want:
         for k in _odds_keys(l, active): need.setdefault(k, []).append(l)
+    # Why a tennis tournament finds no key (19 Oct: Almaty, European Open, Japan Open): the
+    # free /sports list is logged so --probe shows what the API carries and what matched nothing.
+    rep["tennisKeys"] = sorted(f"{s.get('key')} | {s.get('title')}" for s in active if str(s.get("key", "")).startswith("tennis"))
+    rep["noKey"] = sorted({f"{l.get('tour')} {l.get('tournament')}" for l in want
+                           if l["sport"] == "tennis" and not _odds_keys(l, active)})
     for k in sorted(need, key=lambda k: -len(need[k])):
         events = cached(k, ODDS_API_TTL)
         if events is None:

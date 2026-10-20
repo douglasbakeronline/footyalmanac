@@ -153,6 +153,11 @@ class OddsApiTest(unittest.TestCase):
         n = len(self.calls); self.run_([self.tleg()])
         self.assertEqual(len(self.calls), n)                    # second build: all from cache
 
+    def test_logs_active_tennis_keys_and_unkeyed_tournaments(self):
+        rep = self.run_([self.tleg(), self.tleg(tournament="Almaty Open")])
+        self.assertTrue(rep["tennisKeys"])
+        self.assertEqual(rep["noKey"], ["ATP Almaty Open"])
+
     def test_no_key_or_already_priced_costs_nothing(self):
         os.environ.pop("ODDS_API_KEY")
         self.assertEqual(self.run_([self.tleg()]), "no key")
