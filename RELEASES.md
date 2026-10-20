@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Log why tennis tournaments miss an Odds API key (tag pending)
+
+**What changed:** `groupings.py --probe` (and every build's `sources.oddsApi`) now lists the active `tennis_*` keys from the free /sports list and the tour + tournament of every unpriced tennis leg that matched no key (`tennisKeys`, `noKey`). Matching also reads the key's own words, not only the title. Prices still never feed a model.
+
+**Evidence:** no model number changed. Not tested against the live list: no key in this sandbox, so the cause of the 19 Oct misses (Almaty, European Open, Japan Open) is not yet known. Likely suspect: The Odds API carries mainly Slams and Masters, so ATP 250/500 events may have no key at all, and no matching fix could price them. The next CI probe will show it. `nametest.py` and the unit tests pass.
+
+**Files:** `groupings.py`, `tests/test_groupings.py`.
+
+**Not changed:** any probability, the ledger caps, the matching of rugby or NRL, records or archives.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Croatia, Hungary, Serbia, Ukraine and Korea top flights from API-Football (tag pending)
 
 **What changed:** HNL, NB I, SuperLiga, Ukrainian Premier League and K League 1 had ratings slots but no source (openfootball 404s, no football-data file, ESPN has none), so no fixture ever appeared. They now read from API-Football (ids 210, 271, 286, 333, 292). Board only: off the Daily List and the reserve (`build.NEW_BOARD_ONLY`), out of the calibration fit (`tune.codes`), until a replay earns a place. A feed whose country is not the expected one is dropped with a warning, because the ids were set by hand and could not be checked from this sandbox (no key). The UAE is not added: its Pro League already arrives as `af.301`, and the other divisions of all six countries are in `af-leagues.json`.
