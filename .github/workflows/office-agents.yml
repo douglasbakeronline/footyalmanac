@@ -1,9 +1,10 @@
 name: Office agents
 
 # The Footyalmanac HQ agents doing real development work, unattended.
-# Each morning, after the daily build, the office runs a sprint: every agent
-# in turn (agents/pick_task.py SPRINT) takes its most important task that is
-# not in its seven-day cooldown, works on it with Claude following CLAUDE.md
+# Each morning, after the daily build, the office runs a sprint: the
+# SPRINT_SIZE agents whose best task ranks highest (agents/pick_task.py: owner
+# issues, pipeline health, then the HQ planner's ranked backlog, then standing
+# tasks; each objective rests seven days) work on it with Claude following CLAUDE.md
 # and AGENTS.md, and the workflow opens a pull request. There is no owner
 # review: agents/merge_gate.py merges it at once if every check passes, so
 # the next agent builds on it, and the site is redeployed once at the end.

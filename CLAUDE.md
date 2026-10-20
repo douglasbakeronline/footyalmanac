@@ -162,10 +162,16 @@ Open `dashboard.html` straight off disk to check the page.
   passes all gates), then `--report` and `eurotest.py --report` as advisory
   output for a human.
 - `office-agents.yml` runs daily at 06:30 UTC as a sprint (Douglas's
-  instruction, 4 Oct 2026: no owner review, every agent productive). Each of
-  the fourteen agents in `agents/pick_task.py` SPRINT, one at a time, takes
-  its most urgent live-scoreboard task or its standing task (each objective
-  rests 7 days). `agents/open_pr.sh` (run from a copy made before the agent
+  instruction, 4 Oct 2026: no owner review, every agent productive). Since
+  20 Oct 2026 the sprint runs the `SPRINT_SIZE` (4) agents whose best free task
+  ranks highest, one at a time, in this order: owner `office-backlog` issues,
+  pipeline health (failed build, unrated fixtures), then the **HQ backlog**:
+  footyalmanac-hq's `scripts/planner.py` ranks every gap between quoted and
+  landed (Daily List by sport, 5-point bands, leagues, tours, sports, Odds tab
+  legs) by z-score each morning and publishes `data/backlog.json` on HQ's
+  Pages, with the README's priority list below the measured gaps. A backlog
+  over 48 hours old is ignored and the scoreboard's own picks take over.
+  Standing tasks fill any spare places. Each objective still rests 7 days. `agents/open_pr.sh` (run from a copy made before the agent
   works) runs nametest.py, the unittest suite and (for pipeline code) a fast
   build without tokens, replays the branch onto the latest main, and opens the
   pull request with the footyalmanac-office GitHub App token so Tests and

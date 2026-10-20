@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-20 Office sprint works HQ's ranked backlog, four agents a day (tag pending)
+
+**What changed:** the office agents now work on what the live record says is wrong, every day, instead of all fourteen running generic standing tasks on one day and then resting for a week. Each morning HQ's planner (footyalmanac-hq `scripts/planner.py`) measures every gap between quoted and landed: the Daily List by sport, football 5-point bands, leagues, tennis tours, the other sports and the Odds tab's legs, each as a z-score so small samples don't shout. It publishes the ranked tasks, each with its evidence and the testing rules, as `data/backlog.json` on HQ's Pages; the README's priority list (own-band admission, tennis surface, coverage, Odds API keys) sits below the measured gaps until an agent ships each one. `agents/pick_task.py` reads it after owner issues and pipeline health, and the sprint runs the four agents whose best free task ranks highest (`SPRINT_SIZE`). When HQ is down or its backlog is over 48 hours old, the picker uses its own scoreboard picks as before.
+**Evidence:** no agent pull request from 13 to 19 Oct: every sprint planned, found nobody with work (all fourteen ran on 12 Oct, then the 7-day rest) and stopped. Of the 14 agent pull requests on 12-13 Oct, none changed a model; nine were notes or scripts. Today's backlog (dry run): college football List 30 of 41 against 33.6 expected, rugby union landing above its quotes, then the four priorities; football is on its quotes in every band (widest 65-70%, z +1.4). `tests/test_pick_task.py` (new), full suite and `nametest.py` pass.
+**Files:** `agents/pick_task.py`, `tests/test_pick_task.py`, `.github/workflows/office-agents.yml` (comment only), `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the merge gate, the evaluation gate, the cooldown, any model or record. Every task still ships only through the same checks.
+**Roll back:** `git revert` this commit; `SPRINT_SIZE=14` in the job environment restores the old breadth without a revert.
+
 
 
 ## 2026-10-19 Fixture rows tidied: status boxes fit, form in green / yellow / red, final and predicted scores, plain ratings (release-2026-10-19-7)
