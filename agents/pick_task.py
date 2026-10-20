@@ -14,10 +14,15 @@ AGENTS = {
     "sports": ("Theo", "New Sports Researcher"), "auditor": ("Susie", "Results Auditor"),
     "calib": ("Andrew", "Calibration & Market Analyst"), "curator": ("Nina", "Picks Curator"), "engineer": ("Allan", "Engineer"),
     "champ": ("Priya", "England Championship Specialist"), "odds": ("Oscar", "Odds Analyst"), "accas": ("Jade", "Accumulator Strategist"),
+    "value": ("Kofi", "Value Analyst"), "legs": ("Hannah", "Leg Selector"),
+    "ceo": ("Elena", "CEO"),   # works on Douglas's briefs through ceo.yml, never in the sprint
 }
+# The Groups & Odds Desk (Douglas, 20 Oct 2026): picks the games for the Odds tab's groups and the prices they
+# go at. One desk member works every sprint, whatever the rest of the backlog says.
+DESK = ["accas", "legs", "value", "odds"]
 # Sprint order: the people who keep the pipeline healthy first, then the modellers, then the write-ups.
 SPRINT = ["engineer", "quality", "source", "scout", "ratings", "experiment", "champ", "calib", "sports",
-          "curator", "odds", "accas", "auditor", "chief"]
+          "curator", "odds", "accas", "value", "legs", "auditor", "chief"]
 GATES = ("test it paired and bootstrapped (Rule 2), fit on the last completed season and confirm on the current one "
          "(Rule 3 gates). If it passes, ship it with evidence. If it fails, ship only a dated claude/ note recording "
          "the rejected test so nobody repeats it.")
@@ -63,8 +68,8 @@ STANDING = {
         "or a per-league bar, raise the list's hit rate without losing too many picks? Bootstrap it. Change the rule only if "
         "it clearly passes; otherwise write up the replay in claude/daily-list.md."),
     "odds": ("odds-coverage", "Price more of the Odds tab legs",
-        "Read groupings.py. About a third of football legs and all tennis and rugby legs have no bookmaker price and fall back "
-        "to the model's fair price. Find a free, automatable price source (or a better API-Football match: date, team-name "
+        "Read groupings.py. Since 19 Oct 2026 a leg without a bookmaker price is never grouped, so every unpriced candidate "
+        "is a leg the desk cannot use. Find a free, automatable price source (or a better API-Football match: date, team-name "
         "normalisation) that prices more legs, add it with a test in tests/test_groupings.py, and keep the rule that prices "
         "never feed any model. Measure before and after on today's pool."),
     "accas": ("group-rules", "Backtest the Odds tab group rules",
@@ -72,6 +77,20 @@ STANDING = {
         "spread rules, the bands) on past days and measure how often each band's groups would have won against their stated "
         "chance. If one rule change clearly improves the hit rate at the same odds, ship it with tests; otherwise write the "
         "backtest up in claude/odds-groupings.md."),
+    "value": ("value-edge", "Test whether the model has any edge over bookmaker prices",
+        "Groups lose to the bookmakers' margin on average, so better odds are only worth having where the model knows "
+        "something the price does not. Using odds.py's value backtest on history (football-data.co.uk closing prices, "
+        "never record.json), measure whether legs where the model's chance beats the bookmaker's fair chance by 2, 4 "
+        "or 6 points land above that fair chance, by sport, band and price range. If an edge survives the last "
+        "completed season and the current one (paired, bootstrapped), propose a group rule that prefers those legs, "
+        "with prices still never feeding a model. If it does not, say so plainly in claude/odds-groupings.md: "
+        "\"there is no edge\" is a result worth having. " + GATES),
+    "legs": ("firm-legs", "Find which legs land at or above their quote",
+        "Using predictability.py on history (not record.json), find which leg properties separate legs that land at "
+        "their quoted chance from those that fall short: sport, competition tier, tested band, home or away, price "
+        "range, rating gap, Celtic's Law. Replay ONE leg-selection rule through groupings.py's rules on past days. "
+        "Ship it only if groups' landed rate rises against their honest chance without losing more than a fifth of "
+        "the eligible legs; otherwise write the replay up in claude/odds-groupings.md. " + GATES),
     "auditor": ("grading-audit", "Audit the grading of recent results",
         "Take a sample of at least 50 recently graded games across football, tennis and other sports. Check each result in the "
         "graded files against an independent free source where possible, and check score.py's handling of postponed, "
@@ -96,7 +115,7 @@ HQ_MAX_AGE = timedelta(hours=48)
 # Agents that run each sprint, most urgent task first (Douglas, 20 Oct 2026). Before this all fourteen ran their
 # standing tasks on one day, every objective then rested for 7 days, and the office sat idle from 13 to 19 October.
 # A few targeted tasks a day keeps it working every day on what the numbers say matters.
-SPRINT_SIZE = int(os.environ.get("SPRINT_SIZE", "4"))
+SPRINT_SIZE = int(os.environ.get("SPRINT_SIZE", "5"))   # plus one Groups & Odds Desk place
 HEALTH = ("build-failure", "unrated-fixtures")
 
 def load(path, default=None):
@@ -219,6 +238,15 @@ def agent_pick(agent, cands, busy):
         if k not in busy: return len(cands) + SPRINT.index(agent), (k, agent, t, b)
     return None, None
 
+def sprint_agents(cands, busy):
+    """Today's runners: the SPRINT_SIZE agents whose best free task ranks highest, plus the Groups & Odds Desk's
+    best-placed member if none of the desk made the cut."""
+    free = sorted((i, ag) for ag in SPRINT for i, c in [agent_pick(ag, cands, busy)] if c)
+    chosen = [ag for _, ag in free[:SPRINT_SIZE]]
+    desk = next((ag for _, ag in free if ag in DESK), None)
+    if desk and not any(ag in DESK for ag in chosen): chosen.append(desk)
+    return chosen
+
 def claimed_objectives():
     """Objectives held by open issues another AI platform has claimed: office agents leave them alone."""
     held = set()
@@ -279,7 +307,7 @@ def main():
     ap.add_argument("--platform-tasks", default="", help="comma-separated platforms to give one task each, e.g. myclaw,perplexity")
     a = ap.parse_args()
     if a.list_agents:
-        print(json.dumps(SPRINT[:SPRINT_SIZE])); return   # the workflow's fallback when --active-agents fails
+        print(json.dumps(SPRINT[:SPRINT_SIZE] + DESK[:1])); return   # the workflow's fallback when --active-agents fails
     prs = gh(["pr", "list", "--label", "office-agent", "--state", "all", "-L", "60", "--json", "number,state,labels,createdAt"])
     open_prs = [p for p in prs if p["state"] == "OPEN"]
     recent = set()
@@ -305,8 +333,7 @@ def main():
     if a.active_agents:
         # The SPRINT_SIZE agents whose best free task ranks highest, most urgent first. An agent with nothing now
         # cannot gain a task later in the sprint (earlier agents only add to "busy"), so it gets no runner.
-        free = sorted((i, ag) for ag in SPRINT for i, c in [agent_pick(ag, cands, busy)] if c)
-        print(json.dumps([ag for _, ag in free[:SPRINT_SIZE]])); return
+        print(json.dumps(sprint_agents(cands, busy))); return
     if a.task:
         pick = next((c for c in cands if c[0] == a.task), None)
     elif a.agent:
