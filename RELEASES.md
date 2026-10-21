@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Rugby union home advantage tested at the grid edge, not shipped (tag pending)
+
+**What changed:** nothing in the product. A dated note, `claude/rugby-home-advantage-2026-10-21.md`, records a test of rugby's Elo settings after the planner flagged 33 of 40 landed v 68% quoted.
+
+**Evidence:** history only. Rugby's fitted home advantage (100) sits on the edge of the search grid. Widened to 150 (k 16) it beats the live setting on the check season by 0.007 log loss (p(worse) ~0.07, 773 games), but strong calls turn from underquoted to overquoted by 2-3 points (80%+: 83.8% landed v 87.3% quoted) and the list bar would rise to 85%. That fails the honesty guard, so no change. K and season carry-over: flat or worse.
+
+**Files:** `claude/rugby-home-advantage-2026-10-21.md`, `RELEASES.md`.
+
+**Not changed:** any model, constant, `sports.json`, the Daily List, records or archives.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-20 Croatia, Hungary, Serbia, Ukraine and Korea: current season actually reaches the board (tag pending)
 
 **What changed:** the five top flights added this morning showed no fixtures and no current season. Their current season reads the shared API-Football date pool, whose rows pass through the day cache (`_compact` / `_expand`), and the cache kept no country. The new country guard in `af_rows` then saw an empty country, called every row "wrong country" and dropped the whole league. Prior seasons come from a separate call that keeps the country, so they arrived and ratings moved, while this season stayed empty. Visible symptom: Shakhtar Donetsk went into Inter v Shakhtar (Champions League, 21 Oct) with "form: not yet available" and no "This season" row. The cache now keeps the country as a tenth field; nine-field day files written earlier still read, and their rows are judged by the rows that carry a country. A feed with no country at all, or any wrong one, is still dropped loudly.
