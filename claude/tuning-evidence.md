@@ -356,3 +356,33 @@ applied to API-Football domestic cups (`afCup`) live and inside the cup
 replay's gate (version 5, which still stores the raw prices for refits).
 Continental cups are not covered: the replay has no evidence on them. A
 structural constant: refit by hand with the tool, never automatically.
+
+
+## Test, 21 October 2026: capping blowout goals in the ratings (Ben)
+
+Idea not tested before: a 7-0 inflates an attack and a defence rating more
+than a 2-0 tells us about either, so cap each side's goals per match at c
+when building the table (`GF` / `GA`, and so the league goal rate) and leave
+the results alone. Replay as in `replay.replay_league`, `build_table` wrapped
+to cap; frozen fetch of the harness seasons, 2025/26 fit (6,474 fixtures),
+2026/27 check (1,490). Paired change in log loss against the shipped model
+under the live curve (negative better), 1,000-draw bootstrap. "Refit" picks
+the best (a, b) on the fit season for that cap, then applies it to the check
+(rule 4, so a cap cannot hide behind the curve).
+
+| Cap | Calibration | 2025/26 | 2026/27 |
+|---|---|---|---|
+| 5 | live | -0.0002, p(worse) 0.19 | +0.0005, 0.96 |
+| 5 | refit 1.15 / -0.30 | -0.0002, 0.22 | +0.0006, 0.96 |
+| 4 | live | +0.0005, 0.90 | +0.0011, 0.94 |
+| 4 | refit 1.15 / -0.45 | +0.0005, 0.90 | +0.0010, 0.94 |
+| 3 | live | +0.0025, 1.00 | +0.0031, 0.98 |
+| 3 | refit 1.05 / -0.45 | +0.0019, 1.00 | +0.0018, 0.94 |
+
+Worse or a wash at every cap, and worse the harder it bites. Heavy wins are
+information about a side's level, not noise to trim; the only cap that is
+not worse on the fit season (5) gains 0.0002, under the 0.0005 gate, and loses
+on the check season. Rejected; nothing shipped. (Capping both sides can turn a
+6-5 into a 5-5 for the form points; this touches a handful of games and does
+not change the verdict.) Harness: `tools/goal_cap_eval.py` (fetches the seasons
+via `tune.load`, about a minute).

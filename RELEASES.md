@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Ratings test: capping blowout goals, rejected (tag pending)
+
+**What changed:** nothing in the product. A dated note in `claude/tuning-evidence.md` and the harness `tools/goal_cap_eval.py`.
+
+**Evidence:** goals per side per match capped at 5, 4 and 3 when building ratings, paired and bootstrapped under the live curve and with the curve refitted per cap. 2025/26 fit (6,474): cap 5 -0.0002, cap 4 +0.0005, cap 3 +0.0025. 2026/27 check (1,490): +0.0005, +0.0011, +0.0031, p(worse) 0.94-0.98. Fails the gain gate and rule 3.
+
+**Files:** `claude/tuning-evidence.md`, `tools/goal_cap_eval.py`, `RELEASES.md`.
+
+**Not changed:** any constant, model, calibration or record.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Free-source check for uncovered leagues: none feasible (tag pending)
 
 **What changed:** nothing in the product. `claude/data-expansion-plan.md` gains a dated progress line.
