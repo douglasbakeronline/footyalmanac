@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Odds tab: rugby legs priced from any union market (tag pending)
+
+**What changed:** a rugby leg whose competition is not named in any of The Odds API's market titles (URC and Top 14 this week) now tries every active rugby union market instead of none. The event is still matched on both team names and kick-off, so a wrong market prices nothing, and calls stay inside the existing daily (15) and monthly (480) credit caps. The build report now lists the API's active rugby markets (`rugbyKeys`) and any rugby competition with no market (`noKey`), so a gap shows in the next build's output.
+
+**Evidence:** the 19:11 build on 21 Oct had five rugby legs at 81-91% (Connacht, Stormers, Leinster, Ospreys, Toulouse) and made no Odds API calls for them: no market title matched. That left Saturday one safe leg short of a Double. Two new tests: a URC leg is priced from an unnamed union market; a market without the right teams prices nothing.
+
+**Files:** `groupings.py`, `tests/test_groupings.py`, `RELEASES.md`.
+
+**Not changed:** the leg and group rules, football pricing, any model.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Odds tab: groups three days ahead, re-checked on every build (tag pending)
 
 **What changed:** the Odds tab now builds groups for today and the next three UK days (`DAYS_AHEAD`), not today and tomorrow. Every build (six a day) first reads the groups the last build published and re-checks each one against the current board and prices (`recheck()`). A group that still passes every rule keeps its place, marked "Still holds", so a group someone has placed does not reshuffle under them. One that fails is dropped, the reason is logged in plain words under that day ("Stade Toulousain: price 1.40, the bookmakers now give 68%, under 75%"), and its slot is rebuilt from the legs left ("Replacement"). A group with a leg already kicked off is kept as published ("Underway"). Each leg shows its price when the group was first shown ("was 1.04"). If a price source fails for one build the last confirmed price stands, marked "last price", rather than the group being dropped. When a first choice fails with nothing to replace it, the second choice is promoted. Day buttons are now short (Today, Tomorrow, Fri 23) with a count of groups.
