@@ -189,3 +189,42 @@ Douglas: drop an unplayed row when a later build moves the same
 (league, home, away) to another date. It touches the archive and the
 scoreboard, so it was left alone. Check first that stale rows do not inflate
 the pending count in the records.
+
+## 21 October 2026: fixture audit, Tanzania and Leatherhead double-booked, case-variant spellings
+
+Audit of `predictions/2026-10-21.json` (1,999 rows, dated 21-27 Oct). Clean:
+no exact, reversed or accent/case-folded duplicates, no unrated rows, no
+kick-off earlier than its row date, no fixture repeated across two feeds
+(`AF_DUPLICATES` holds; `nametest.py` passes). 29 rows have no kick-off and
+are dated by day. No `LIVE_NAMES` change needed; `match_team` maps
+`EAST BENGAL`, `KYOTO SANGA` and `VIKING FK` onto the right clubs.
+
+Findings, none fixed (no network or API key in this run, so the source could
+not be re-read, and a guessed fix would break Rule 6):
+
+1. **Clubs playing twice at one kick-off.** af.567 (Tanzania) on 24 Oct 13:00
+   UTC: Young Africans v Tabora United, Dodoma Jiji v Young Africans, Singida
+   Black Stars v Tabora United. en.7i on 27 Oct 19:45 UTC: Welling United v
+   Leatherhead and Leatherhead v Wingate & Finchley. A club cannot play two
+   games at once, so at least one date or time in each set is the source's
+   placeholder. The Tanzania set has been in every archive since 19 Oct, so
+   it is the source, not a build glitch. None is on the Daily List
+   (the list pick in af.567 is Young Africans v Mashujaa, 27 Oct, a different
+   day). Whichever row is wrong will not be graded on its date.
+2. **Rescheduled games leave a stale row** (same cause as 12 Oct): uy.1
+   Defensor Sporting v Racing (23 and 24 Oct), fr.2 Montpellier v Red Star
+   (24 and 26 Oct), and six Spanish and Greek lower-league games (24 and 25 Oct).
+   The later build moved each; the earlier row is unplayed. None carries a
+   list flag. Still the open question from 12 Oct.
+3. **Case-variant spellings split a fixture in the 18 Oct archive.** Four
+   fixtures (Churchill Brothers and Inter Kashi v East Bengal, Kyoto Sanga v
+   Kashima Antlers, Aston Villa v Viking FK) sit twice, once as
+   `EAST BENGAL` / `KYOTO SANGA` / `VIKING FK`, published 09:38, 14:57 and
+   19:15 UTC, between builds with the normal spelling. The two spellings were
+   priced differently (Viking FK home 73.8% v 57.5%; East Bengal rows flagged
+   `celtic` on the upper-case copy only), so the upper-case source gave a
+   worse read. `archive_predictions` keys on the exact spelling, so both
+   stayed. It has not recurred since 18 Oct (19 to 21 Oct clean). Open
+   suggestion: fold case in the archive key and the within-build backstop in
+   `build.py`. It changes the archive and scoreboard, so it is left for
+   Douglas; the cause (which source emitted upper case) is unknown.

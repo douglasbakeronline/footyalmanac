@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Fixture audit: double-booked clubs and case-variant spellings, no fix (tag pending)
+
+**What changed:** nothing in the product. A dated section in `claude/data-integrity.md` records the audit of `predictions/2026-10-21.json`.
+
+**Evidence:** 1,999 rows, no exact, reversed or case/accent-folded duplicates, no unrated rows, no early kick-offs, `nametest.py` passes. Real source faults: Tanzania (af.567, 24 Oct) and Leatherhead (en.7i, 27 Oct) have clubs in two games at one kick-off; 9 rescheduled games leave a stale earlier row; the 18 Oct archive holds four fixtures twice under upper-case spellings priced differently. None is on the Daily List and none has recurred since 18 Oct.
+
+**Files:** `claude/data-integrity.md`, `RELEASES.md`.
+
+**Not changed:** `sources.py`, `LIVE_NAMES`, the archive key, any model, record or archive. The source could not be re-read here and a guessed fix would risk a wrong match.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Rugby union home advantage tested at the grid edge, not shipped (tag pending)
 
 **What changed:** nothing in the product. A dated note, `claude/rugby-home-advantage-2026-10-21.md`, records a test of rugby's Elo settings after the planner flagged 33 of 40 landed v 68% quoted.
