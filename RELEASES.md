@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Odds tab pricing re-check: no further free source found (tag pending)
+
+**What changed:** nothing in the product. A dated section in `claude/odds-pricing-coverage-2026-10-12.md`.
+
+**Evidence:** today's pool in the sandbox (no API-Football or Odds API key): 8 football legs, 8 priced by ESPN soccer (10 calls). ESPN tennis (ATP 162 matches, WTA 124) and the rugby scoreboards carry 0 odds blocks, so ESPN cannot price either. Of 291 grouped legs 4-21 Oct, the football legs still unpriced were small leagues no book lists (Lebanon, Lesotho, Myanmar, Burundi, Latvia 1. Liga, Cambodia, Russia second tier, Tercera RFEF) plus Al Ittihad v Shabab Al-Ahli, whose ESPN names match the existing matcher, so it was not a matching gap. Looser matching would add wrong-match risk (Rule 6) for no gain. Tennis and rugby depend on the Odds API key.
+
+**Files:** `claude/odds-pricing-coverage-2026-10-12.md`, `RELEASES.md`.
+
+**Not changed:** any source, matcher, model, group rule, record or archive.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Ratings test: capping blowout goals, rejected (tag pending)
 
 **What changed:** nothing in the product. A dated note in `claude/tuning-evidence.md` and the harness `tools/goal_cap_eval.py`.
