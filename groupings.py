@@ -20,20 +20,30 @@ totals, the return per 1 unit staked on every settled group, and each day.
 
 Nothing here feeds back into any model. The probabilities are the model's own
 tested numbers; bookmaker prices are only used to say what a group pays and
-to keep a spread of prices inside each group. The Daily List is untouched.
+to keep out legs the market rates lower than the model does. The Daily List is
+untouched.
 
 Which probability a leg carries
 -------------------------------
 Every pick on the site already says how often calls at its level landed in
-testing ("86% landed"). That tested rate is the honest number for a leg, so a
-group's chance is the product of its legs' tested rates, each capped at the
-model's own number (19 Oct 2026; before, the rate was pulled toward the
-model's number, which ran high):
+testing ("86% landed"). A leg's chance is the lowest of that tested rate, the
+model's own number and the bookmaker's fair chance (1 / price, less the
+book's margin; see honest()):
 
-    p_leg = min(hit, p_model)
+    p_leg = min(hit, p_model, fair)
 
-A leg needs a tested rate (n >= 30), a tested rate of at least 65%, and must
-be one the board does not flag (football: rated, not a draw pick).
+What a leg must be (21 Oct 2026, Douglas: groups built to land, nothing risky)
+------------------------------------------------------------------------------
+  - football or rugby (GROUP_SPORTS), a win pick, priced by a bookmaker
+  - tested rate of at least LEG_MIN over at least MIN_N tested games
+  - the model's number AND the bookmaker's fair chance both LEG_MIN or more
+  - the model no more than MAX_ABOVE_BOOK above the bookmaker: where the model
+    rated a leg 5+ points above the market it landed 70% (53 football legs,
+    4-21 Oct) against 82% where it sat at or below the market
+  - football: nothing the Daily List would exclude for blindness. Celtic's
+    Law, unrated, thin history, new competition, unreplayed cup, step 3 and
+    under-21 games are all out; only "on the list" or "under the list bar"
+    remain (CLEAN_WHY). Flagged 65-70% calls landed 64% live against 70%.
 
 Where the prices come from
 --------------------------
@@ -51,20 +61,21 @@ Where the prices come from
                   price (1 / p), marked as an estimate, and never used in a
                   group (19 Oct 2026)
 
-A leg's chance in a group is the lower of its tested rate (above) and the
-bookmaker's fair chance (1 / price, less the book's margin; see honest()).
+How a group is chosen (21 Oct 2026)
+-----------------------------------
+Two kinds only, built in this order each day:
+  Double  two legs, combined chance at least 60%
+  Treble  three legs, combined chance at least 50%
+In each, the legs with the highest joint chance (a small nudge toward legs on
+the Daily List), one leg per game, no more than two from one competition.
+Then a second ("alternative") Double and Treble from the legs left, each held
+to the same floor. When nothing clears a floor there is no group: sitting a
+day out is the rule, not a fault. Today and tomorrow, no leg used twice.
 
-How a group is chosen
----------------------
-Three bands by combined odds: Steady 2.5-4, Balanced 4-7, Stretch 7-14. In
-each band the five legs with the highest joint tested chance, subject to:
-  - a spread of prices: at least one short leg (under 1.30), at least one
-    middle leg (1.30-1.60), and Balanced and Stretch at least one leg 1.60+
-  - at most two very short legs (under 1.15), which add risk but little return
-  - one leg per game, no more than two from one competition
-  - a small preference for mixing sports
-Then a second, separate group per band ("alternative") from the legs left.
-Today and tomorrow, so six groups a day, none sharing a leg.
+The five-leg Steady, Balanced and Stretch groups (4-20 Oct) and the 1.5-2.5
+Banker (19-20 Oct) are retired. Their rule forced a 1.30-1.60 leg and, above
+Steady, a 1.60+ leg into every group; those legs landed 61-70% and 47%, and
+the groups landed 11 of 58 (19%). They stay in the record under their names.
 
 Standard library only.
 """
@@ -80,12 +91,20 @@ ESPN_PATH = {"nfl": "football/nfl", "mlb": "baseball/mlb", "nba": "basketball/nb
              "nhl": "hockey/nhl", "cfb": "football/college-football",
              "ncaab": "basketball/mens-college-basketball", "wnba": "basketball/wnba"}
 ESPN_Q = {"ncaab": "&groups=50"}   # all of Division I, as sports.py
-# Banker (19 Oct 2026): three legs paying 1.5 to 2.5, the group built to land
-# most often. Built first each day so it takes the strongest legs. A group's
-# price all but sets its chance: five legs paying 2.5+ is a 25-40% shot even
-# when every leg is honest, so a group that lands often has to pay less.
-BANDS = [("Banker", 1.5, 2.5), ("Steady", 2.5, 4.0), ("Balanced", 4.0, 7.0), ("Stretch", 7.0, 14.0)]
-LEGS_IN = {"Banker": 3}                 # every other band: five
+# 21 Oct 2026, Douglas: groups that land, not groups that pay. Name, legs,
+# lowest combined chance, and combined odds range (a sanity range only: legs
+# at LEG_MIN or better cannot pay much). Built in this order.
+GROUP_KINDS = [("Double", 2, 0.60, 1.10, 2.0), ("Treble", 3, 0.50, 1.20, 2.6)]
+BANDS = [(n, lo, hi) for n, _, _, lo, hi in GROUP_KINDS]
+LEGS_IN = {n: k for n, k, _, _, _ in GROUP_KINDS}
+MIN_CHANCE = {n: f for n, _, f, _, _ in GROUP_KINDS}
+RISK = {"Double": "Lowest risk", "Treble": "Low risk"}
+# Retired kinds, kept so the record still tallies them under their own names.
+RETIRED = ["Banker", "Steady", "Balanced", "Stretch"]
+LEG_MIN = 0.75          # tested rate, model and bookmaker's fair chance, each
+MAX_ABOVE_BOOK = 0.05   # the model may sit at most this far above the market
+CLEAN_WHY = (None, "below")   # football: on the Daily List, or off it only for the bar
+LIST_NUDGE = 0.02       # per leg on the Daily List: 78% landed v 69% off it, 4-21 Oct
 # Sports whose tested rates have held up on live legs (19 Oct 2026, 234
 # settled legs, 5-18 Oct): football landed 75.5% against 77.5% quoted.
 # Tennis (68.5% v 83.4%, n=54), college football (70.4% v 85.4%, n=27) and
@@ -96,7 +115,7 @@ LEGS_IN = {"Banker": 3}                 # every other band: five
 # live prices match that replay, so the model is sound and the fortnight was a
 # bad run; it stays out on caution, as it is off the Daily List (15 Oct).
 GROUP_SPORTS = {"football", "rugby"}
-MIN_N, MIN_HIT = 30, 0.65
+MIN_N, MIN_HIT = 30, 0.75   # 0.65 until 21 Oct 2026
 UA = {"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
 
 def norm(s):
@@ -148,6 +167,8 @@ def legs(dates):
         for g in day.get("games", []):
             p = g.get("p") or {}
             if not p or g.get("unrated"): continue
+            # 21 Oct 2026: nothing the Daily List keeps out for blindness
+            if g.get("celtic") or g.get("why") not in CLEAN_WHY: continue
             side = max(p, key=p.get)
             if side == "d": continue
             pl = leg_p(p[side], g.get("accuracy"))
@@ -513,45 +534,51 @@ def honest(l):
     return l
 
 # ---------- groups ----------
+def safe_leg(l):
+    """Whether a priced leg may go in a group (21 Oct 2026): a bookmaker price,
+    the model and the market both at LEG_MIN or more, and the model no more
+    than MAX_ABOVE_BOOK above the market. Where they disagree the market has
+    been the better guide (see the module notes)."""
+    if l.get("est") or l.get("fair") is None: return False
+    if l["pModel"] < LEG_MIN or l["fair"] < LEG_MIN or l.get("pTested", l["p"]) < LEG_MIN: return False
+    return l["pModel"] - l["fair"] <= MAX_ABOVE_BOOK
+
 def ok_combo(c, lo, hi, name, max_est=0):
     o = math.prod(l["odds"] for l in c)
     if not (lo <= o <= hi): return None
     if len({l["event"] for l in c}) < LEGS_IN.get(name, 5): return None
-    if sum(l["odds"] < 1.15 for l in c) > 2 or sum(1 for l in c if l.get("est")) > max_est: return None
-    if name != "Banker":
-        if not any(l["odds"] < 1.30 for l in c) or not any(1.30 <= l["odds"] < 1.60 for l in c): return None
-        if name != "Steady" and not any(l["odds"] >= 1.60 for l in c): return None
+    if sum(1 for l in c if l.get("est")) > max_est: return None
     comps = {}
     for l in c: comps[l.get("comp")] = comps.get(l.get("comp"), 0) + 1
     if max(comps.values()) > 2: return None
     return o
 
-def pool(L, used, after):
-    c = [l for l in L if l["event"] not in used and not l.get("est") and 1.05 <= l["odds"] <= 2.8 and (parse(l["when"]) or after) >= after]
-    # Keep the strongest legs in each price range, so every band can be met
-    # without trying every combination of several hundred legs.
-    rng = lambda lo, hi, k: sorted([l for l in c if lo <= l["odds"] < hi], key=lambda l: -l["p"])[:k]
-    return rng(1.05, 1.30, 12) + rng(1.30, 1.60, 12) + rng(1.60, 2.81, 9)
+def pool(L, used, after, max_est=0):
+    c = [l for l in L if l["event"] not in used and (max_est or safe_leg(l)) and l["odds"] >= 1.01
+         and (parse(l["when"]) or after) >= after]
+    # The strongest twenty are plenty for two or three legs.
+    return sorted(c, key=lambda l: -l["p"])[:20]
 
 def best(L, used, after, name, lo, hi):
-    # Bookmaker-priced legs only (19 Oct 2026): no estimates, no fallback.
+    # Bookmaker-priced, safe legs only: no estimates, no fallback.
     return _best(L, used, after, name, lo, hi, 0)
 
 def _best(L, used, after, name, lo, hi, max_est):
     top = None
-    for c in itertools.combinations(pool(L, used, after), LEGS_IN.get(name, 5)):
+    for c in itertools.combinations(pool(L, used, after, max_est), LEGS_IN.get(name, 5)):
         o = ok_combo(c, lo, hi, name, max_est)
         if o is None: continue
         p = math.prod(l["p"] for l in c)
-        sports = len({l["sport"] for l in c})
-        score = p * (1 + 0.03 * (sports - 1))
+        if p < MIN_CHANCE.get(name, 0): continue
+        score = p * (1 + LIST_NUDGE * sum(1 for l in c if l.get("list")))
         if not top or score > top[0]: top = (score, c, o, p)
     if not top: return None
     _, c, o, p = top
-    legs5 = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
-    implied = math.prod(l["implied"] for l in legs5)
-    return {"name": name, "band": [lo, hi], "odds": round(o, 2), "p": round(p, 4), "implied": round(implied, 4),
-            "estimates": sum(1 for l in legs5 if l.get("est")), "legs": legs5}
+    legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
+    implied = math.prod(l["implied"] for l in legs_)
+    return {"name": name, "risk": RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE.get(name),
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(implied, 4),
+            "estimates": sum(1 for l in legs_ if l.get("est")), "legs": legs_}
 
 def build_day(L, after):
     used, groups = set(), []
@@ -649,7 +676,9 @@ def grade():
                 "expected": round(sum(g["p"] for g in done), 2)}
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
-           "byBand": {b[0]: tally([g for g in allg if g["name"] == b[0]]) for b in BANDS},
+           "byBand": {n: tally([g for g in allg if g["name"] == n])
+                      for n in [b[0] for b in BANDS] + RETIRED if n in [b[0] for b in BANDS] or any(g["name"] == n for g in allg)},
+           "current": [b[0] for b in BANDS], "retired": RETIRED,
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -678,8 +707,11 @@ def main():
     for d in dates:
         dl = [l for l in L if l["date"] == d]
         days.append({"date": d, "legs": len(dl), "priced": sum(1 for l in dl if not l.get("est")),
+                     "safe": sum(1 for l in dl if safe_leg(l)),
                      "groups": build_day(dl, now + timedelta(minutes=20))})
-    out = {"generated": iso(now), "bands": BANDS, "rules": {"minN": MIN_N, "minHit": MIN_HIT},
+    out = {"generated": iso(now), "bands": BANDS,
+           "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS],
+           "rules": {"minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.

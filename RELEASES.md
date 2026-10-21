@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Odds tab rebuilt: Double and Treble, groups built to land (tag pending)
+
+**What changed:** the Odds tab now builds two kinds of group, each labelled with its risk. **Double**: two picks, at least 60% to land together, "Lowest risk". **Treble**: three, at least 50%, "Low risk". Each card says how often it should land ("about 7 in 10"). A pick needs its tested rate, the model and the bookmaker's fair chance all at 75%+, the model no more than 5 points above the market, and (football) none of the Daily List's blind-spot exclusions. No group on a day when nothing clears. Groups sit above the accumulator. Banker, Steady, Balanced and Stretch are retired and stay in the record as "(retired)". Separately, an advisory study of whether 60-80% calls land above quote.
+
+**Evidence:** 4-21 Oct the groups won 11 of 58 (18.7 expected); legs landed 72.4%, the bookmakers' fair rate. Legs at 1.45-1.60 landed 61%, 1.80+ 47%; legs the model rated 5+ points above the market 70%, at or below it 82%. Archived legs that pass the new gate landed 42 of 49 (85.7%, average 1.15). Replay on the full graded history: 31 of 43 groups won. Mid-band study: 60-80% calls on quote overall (68.3% v 66.8%, n=783); core-league 65-75% calls landed 87% of 83 against about 69% quoted, this season only. `claude/odds-groupings.md`, `claude/midband-calibration-2026-10-21.md`.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings.py`, `tests/test_groupings_banker.py`, `tools/groupings_backtest.py`, `tools/midband_calibration.py`, `claude/odds-groupings.md`, `claude/midband-calibration-2026-10-21.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, calibration, the Daily List, pricing sources, grading rules, the archive or record files. Bookmaker prices only veto legs; they never feed a model.
+
+**Roll back:** `git revert` this commit. The next build rebuilds the old groups; archived Double and Treble days stay graded under their names.
+
 ## 2026-10-21 Odds tab pricing re-check: no further free source found (tag pending)
 
 **What changed:** nothing in the product. A dated section in `claude/odds-pricing-coverage-2026-10-12.md`.

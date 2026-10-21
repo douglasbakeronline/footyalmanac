@@ -377,9 +377,11 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .ctl-label{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
 
 
-/* ---------- odds tab: groups of five ----------
-   Douglas, 4 Oct 2026: five-leg groups with a spread of bookmaker prices.
-   Built by groupings.py; the chance on each leg is its tested rate. */
+/* ---------- odds tab: groups ----------
+   Douglas, 21 Oct 2026: groups built to land, Double and Treble only, each
+   carrying a plain risk label. Built by groupings.py. Banker, Steady,
+   Balanced and Stretch (4-20 Oct) are retired but keep their colours for
+   the record. */
 .og-days{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
 .og-stake{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:var(--ink-2)}
 .og-stake input{width:70px;font:600 14px var(--f-num);padding:5px 7px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
@@ -391,17 +393,18 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-h .od{margin-left:auto;text-align:right}
 .og-h .od b{display:block;font:600 24px var(--f-num);letter-spacing:-.04em;line-height:1}
 .og-h .od span{font-size:11.5px;color:var(--ink-2)}
+.og.Double .og-h{border-top:3px solid var(--home)}
+.og.Treble .og-h{border-top:3px solid var(--yellow)}
+.og-risk{display:inline-block;margin:2px 0 4px;padding:1px 6px;border:1px solid currentColor;color:var(--home);font-size:10px;letter-spacing:.08em}
+.og.Treble .og-risk{color:var(--draw-ink,#7a5c12)}
+.og-land{font-size:13px;color:var(--ink)}
+.og-land b{font-size:15px}
 .og.Banker .og-h{border-top:3px solid var(--yellow)}
 .og.Steady .og-h{border-top:3px solid var(--home)}
 .og.Balanced .og-h{border-top:3px solid var(--draw)}
 .og.Stretch .og-h{border-top:3px solid var(--away)}
 .og-k{display:flex;gap:16px;padding:8px 13px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);flex-wrap:wrap}
 .og-k b{font-family:var(--f-num);color:var(--ink)}
-.og-sp{position:relative;height:30px;margin:6px 13px 2px}
-.og-sp:before{content:"";position:absolute;left:0;right:0;top:12px;height:2px;background:var(--rule)}
-.og-sp i{position:absolute;top:6px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:var(--ink);border:2px solid var(--surface)}
-.og-sp i.e{background:var(--surface);border:2px dashed var(--ink-2)}
-.og-sp em{position:absolute;top:20px;font:10px var(--f-num);color:var(--mute);font-style:normal;transform:translateX(-50%)}
 .og-l{display:grid;grid-template-columns:44px minmax(0,1fr) 52px 44px;gap:8px;align-items:baseline;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:13px}
 .og-l:first-of-type{border-top:0}
 .og-l .t{font:12px var(--f-num);color:var(--mute)}
@@ -3102,7 +3105,7 @@ function renderResults(){
 }
 
 
-/* ---------- the Odds tab: groups of five (groupings.py) ---------- */
+/* ---------- the Odds tab: Double and Treble groups (groupings.py) ---------- */
 const OG = window.__GROUPINGS__;
 let OG_DAY = null;
 const ogEsc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -3119,21 +3122,20 @@ function ogTime(l){
   const d = ogDate(l);
   return d ? d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"}) : "";
 }
+const OG_NUM = {2:"two", 3:"three", 5:"five"};
+const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10`;
 function ogCard(g){
-  const stake = ogStake(), lo = 1, hi = 2.8;
-  const pos = o => Math.max(0, Math.min(100, (o - lo) / (hi - lo) * 100));
-  const dots = g.legs.map(l => `<i class="${l.est ? "e" : ""}" style="left:${pos(l.odds)}%" title="${ogEsc(l.pick)} ${l.odds.toFixed(2)}"></i>`).join("");
-  const ticks = [1.2, 1.5, 2, 2.5].map(t => `<em style="left:${pos(t)}%">${t}</em>`).join("");
+  const stake = ogStake();
+  const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
-  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${g.rank === "alternative" ? "Alternative" : "First choice"} · odds ${g.band[0]} to ${g.band[1]}</small></h3>
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
-    <div class="og-k"><span>All ${g.legs.length === 5 ? "five" : g.legs.length === 3 ? "three" : g.legs.length} land <b>${pct(g.p)}%</b> (tested rate, model or bookmaker, whichever is lowest)</span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
-    <div class="og-sp" aria-hidden="true">${ticks}${dots}</div>
+    <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
     <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
 }
@@ -3145,7 +3147,9 @@ function ogRecord(){
     <div class="empty" style="margin-top:10px">The record starts with today's groups; results appear after tomorrow's build grades them.</div></div>`;
   const o = R.overall, f = R.firstChoice || o;
   const roi = x => x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)}` : "–";
-  const band = Object.entries(R.byBand || {}).map(([k, v]) => `<div><span>${k}</span><b>${v.won} / ${v.settled}</b><small>expected ${v.expected.toFixed(1)}</small></div>`).join("");
+  const cur = R.current || ["Double", "Treble"];
+  const band = Object.entries(R.byBand || {}).filter(([k, v]) => v.groups || cur.includes(k))
+    .map(([k, v]) => `<div><span>${k}${cur.includes(k) ? "" : " (retired)"}</span><b>${v.won} / ${v.settled}</b><small>${v.settled ? `expected ${v.expected.toFixed(1)}` : "none settled yet"}</small></div>`).join("");
   const openAt = Math.max(0, R.days.findIndex(d => d.groups.some(g => g.status !== "pending")));
   const dayRows = R.days.slice(0, 14).map((d, i) => {
     const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
@@ -3155,7 +3159,7 @@ function ogRecord(){
   }).join("");
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
     <div class="og-score"><div><span>Groups won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
-      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>Banker, Steady, Balanced, Stretch</small></div>
+      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>every kind, old and new</small></div>
       <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
       <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
       ${band}</div>${dayRows}
@@ -3284,36 +3288,39 @@ function renderOdds(){
   if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const gen = new Date(OG.generated);
-  host.innerHTML = `<div class="lede"><h2>Groups, a spread of prices</h2>
-      <p><b>Banker</b> is three of the model's strongest picks paying 1.5 to 2.5: the group built to land most
-      often. The others are five picks with a mix of short and longer prices, chosen for the best chance that
-      all five land inside their odds range: <b>Steady</b> pays 2.5 to 4, <b>Balanced</b> 4 to 7,
-      <b>Stretch</b> 7 to 14. The price all but sets the chance: a group paying 3 lands about one time in three
-      however good its picks. No pick is used twice in a day. The chance shown is how often calls at each
-      pick's level landed in testing, not the bookmaker's view.</p>
+  const R = OG.rules || {}, legMin = pct(R.legMin || 0.75), above = Math.round((R.maxAboveBook || 0.05) * 100);
+  host.innerHTML = `<div class="lede"><h2>Groups built to land</h2>
+      <p>Two kinds, both made only from the safest picks of the day. A <b>Double</b> is two picks that come in
+      together at least 6 times in 10: the lowest-risk group. A <b>Treble</b> is three, at least 5 times in 10.
+      Each card says how often it should land. Safe groups pay little, usually 1.2 to 1.6; that is the price of
+      landing often. On a day with nothing safe enough there is no group, by design. No pick is used twice.</p>
       <details class="how"><summary>How the groups are picked</summary>
-        <p>A pick qualifies only if calls at its level landed at least ${pct(OG.rules.minHit)}% of the time over at
-        least ${OG.rules.minN} tested games; no draws, no tennis qualifying, and it needs a bookmaker price. Its chance
-        is the lowest of its tested rate, the model's own number and the bookmaker's fair chance (the price with the
-        bookmaker's margin taken out). Until 18 October the tested rate alone was used, and groups landed about half
-        as often as it said. Picks come from football and rugby only: tennis, college football and NFL picks landed
-        well under their tested rates in October 2026, so they stay out until their live record holds.</p>
-        <p>Every five-pick group needs a short price (under 1.30) and a middle one (1.30 to 1.60); Balanced and Stretch also
-        need one at 1.60 or longer. At most two very short prices (under 1.15), no more than
-        two picks from one competition, and a small preference for mixing sports.</p>
+        <p>A pick qualifies only if all three reads put it at ${legMin}% or better: how often calls at its level
+        landed in testing (over at least ${R.minN || 30} games), the model's own number, and the bookmaker's fair
+        chance (the price with the bookmaker's margin taken out). The model may sit no more than ${above} points above
+        the bookmaker: in October, picks the model rated well above the market landed 70%, against 82% where it
+        agreed. Football picks must also be clean: no Celtic's Law flag, no unrated side, no new competition or
+        thin history. No draws. Football and rugby only.</p>
+        <p>A group's chance is the product of each pick's lowest read. Within those rules the picks with the
+        highest combined chance are chosen, with a slight preference for Daily List picks (78% landed in October
+        against 69% for others), no more than two from one competition.</p>
+        <p>Until 20 October the tab also built five-pick Steady, Balanced and Stretch groups and a 1.5 to 2.5
+        Banker. Their rules forced longer prices into every group, and 11 of 58 landed. They are retired and stay
+        in the record below.</p>
         <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from
         ESPN, tennis and rugby from The Odds API (UK bookmakers) where it lists the match. A pick with no bookmaker price is left out of the groups.
         Prices are a snapshot from the build at ${gen.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"})}
         and will have moved: check before placing anything.</p>
-        <p>Bookmaker prices never feed the model or the Daily List. Five legs multiply the bookmaker's margin, and
-        even a group at 40% misses more often than it lands. This is the model's read, not betting advice.</p>
+        <p>Bookmaker prices never feed the model or the Daily List. No group lands every time: a Double at 70% still
+        misses about one day in three, and every pick carries the bookmaker's margin. This is the model's read, not
+        betting advice.</p>
       </details></div>
     <div class="og-days"><div class="seg" id="ogDay">${OG.days.map(d => `<button data-d="${d.date}" aria-pressed="${d.date === day.date}">${fmtDay(d.date)}</button>`).join("")}</div>
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
-      `<div class="empty" style="margin-top:14px">Not enough tested picks with prices on ${fmtDay(day.date)} to build a group yet.</div>`}
-    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.priced} of ${day.legs} qualifying picks priced by a bookmaker for this day.</p>
+      `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one. Sitting a day out is the rule, not a fault.</div>`}
+    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
+    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${ogRecord()}`;
   accaMount($("#acca"));
   host.querySelectorAll(".og-grid .og-add").forEach(btn => btn.onclick = () => {

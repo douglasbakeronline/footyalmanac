@@ -66,3 +66,59 @@ What changed in `groupings.py`:
 Alongside: tennis grading voids a match its two priced players did not both play (`score_tennis.played_by_both`; ESPN reuses an id when a draw slot changes hands), which corrected 7 of 765 stored grades (5 losses, 2 wins, among them a Daily List pick, Jovic on 12 Oct); and college football is off the Daily List (`sports.LIST_OFF`), its Firm+ picks in the reserve.
 
 No group can be made to always win. The stated chance on each card is the honest one; check the record against it, not against every group landing.
+
+## Double and Treble: groups built to land (21 Oct 2026)
+
+Douglas: groups that come in, nothing risky. Live record 4-21 Oct: 11 of 58
+groups won (19%) against 18.7 expected; legs 205 of 283 (72.4%), which is the
+bookmakers' fair chance, so the legs had no edge on the market and every leg
+compounded its margin. Returned 40.50 from 58 staked.
+
+Where the losses came from (football legs unless stated):
+
+| Leg | n | Landed |
+|---|---|---|
+| Price under 1.15 | 47 | 85% |
+| 1.15-1.30 | 94 | 77% |
+| 1.30-1.45 | 63 | 70% |
+| 1.45-1.60 | 31 | 61% |
+| 1.80+ | 15 | 47% |
+| Model 5+ points above the bookmaker's fair chance | 53 | 70% |
+| Model at or below the bookmaker | 71 | 82% |
+| On the Daily List / off it (all sports) | 111 / 172 | 78% / 69% |
+
+The spread rule forced a 1.30-1.60 leg, and above Steady a 1.60+ leg, into
+every group: the weakest legs by some way. Choosing for "best tested chance
+for the odds" also picked the legs where the model disagreed with the market
+most, which landed least.
+
+What changed in `groupings.py`:
+
+- Two kinds only: **Double** (two legs, combined chance 60%+, "Lowest risk")
+  and **Treble** (three, 50%+, "Low risk"), built in that order, then a
+  second of each from the legs left if it clears the same floor. No group
+  when nothing clears: sitting a day out is the rule.
+- A leg needs the tested rate, the model and the bookmaker's fair chance all
+  at 75%+ (`LEG_MIN`; `MIN_HIT` raised from 65%), and the model no more than
+  5 points above the market (`MAX_ABOVE_BOOK`). `safe_leg()`.
+- Football legs exclude everything the Daily List keeps out for blindness:
+  Celtic's Law, unrated, thin history, new competition, unreplayed cup, step 3,
+  under-21 (`CLEAN_WHY`). Before, only unrated and draw picks were excluded,
+  although the docstring said "one the board does not flag".
+- No price-spread rule, no sport-mix bonus; a 2% nudge per Daily List leg.
+- Banker, Steady, Balanced and Stretch are retired; the record keeps them
+  under their names (`RETIRED`, `byBand`, `current`).
+
+Evidence for the new gate: archived legs 4-21 Oct that would have passed it
+landed 42 of 49 (85.7%) at an average 1.15. Replay on the full graded history
+(`tools/groupings_backtest.py`, now on `record-graded.json`, fair prices,
+model and flag gates only): 43 groups, 31 won (72%); Doubles 24 of 33, Trebles
+7 of 10. Those are upper bounds on volume (the live rule also needs the
+market to agree) and small samples.
+
+Not changed: any model, the Daily List, pricing sources, grading, the archive.
+Bookmaker prices still never feed a model; here they only veto legs.
+
+The honest limit, as before: no group lands every time. At 86% legs a Double
+lands about 3 in 4 and a Treble about 3 in 5. They pay roughly 1.2 to 1.7,
+and at the market's own rate they still lose its margin over time.
