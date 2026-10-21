@@ -70,7 +70,30 @@ In each, the legs with the highest joint chance (a small nudge toward legs on
 the Daily List), one leg per game, no more than two from one competition.
 Then a second ("alternative") Double and Treble from the legs left, each held
 to the same floor. When nothing clears a floor there is no group: sitting a
-day out is the rule, not a fault. Today and tomorrow, no leg used twice.
+day out is the rule, not a fault. No game used twice in a day.
+
+Days ahead and the re-check (21 Oct 2026, Douglas)
+--------------------------------------------------
+Groups are built for today and the next DAYS_AHEAD (3) UK days. Every build
+(six a day, deploy.yml) first reads the groups the last build published
+(previous(): the local groupings.json or the published copy, the newer) and
+re-checks each one against this build's board and prices (recheck()):
+
+  holding      every leg is still a clean pick on the same side, priced, and
+               passes safe_leg at today's price; the group still clears its
+               floor and odds range. It keeps its place, so a group someone
+               has placed does not reshuffle under them, even if a slightly
+               stronger one has appeared.
+  replacement  it failed. The reasons go in the day's "log" in plain words
+               (leg_fault()) and the slot is rebuilt from the legs left.
+  new          the slot was empty last build, or this is its first.
+  underway     a leg has kicked off; kept as published, never re-priced.
+
+Each leg carries firstOdds, its price when the group was first published, so
+the page can show the drift. The record is unchanged: it is still the first
+build of each UK day (archive()), whatever was shown in the days before.
+Prices for games three days out are thinner (fewer bookmakers have opened
+them), so far days fill in as the week goes on.
 
 The five-leg Steady, Balanced and Stretch groups (4-20 Oct) and the 1.5-2.5
 Banker (19-20 Oct) are retired. Their rule forced a 1.30-1.60 leg and, above
@@ -116,7 +139,15 @@ LIST_NUDGE = 0.02       # per leg on the Daily List: 78% landed v 69% off it, 4-
 # bad run; it stays out on caution, as it is off the Daily List (15 Oct).
 GROUP_SPORTS = {"football", "rugby"}
 MIN_N, MIN_HIT = 30, 0.75   # 0.65 until 21 Oct 2026
-UA = {"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
+# 21 Oct 2026, Douglas: groups for today and the next three UK days, each
+# re-checked on every build. Until then today and tomorrow only.
+DAYS_AHEAD = 3
+# Where the last build's groups are read from, so this build can re-check
+# them. The CI workspace starts clean, so the published copy is the one that
+# exists there; a local run also has its own groupings.json. The newer wins.
+PUBLISHED = "https://douglasbakeronline.github.io/footyalmanac/groupings.json"
+LOG_KEEP = 12           # replacement notes kept per day
+UA ={"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
 
 def norm(s):
     s = unicodedata.normalize("NFKD", s or "").encode("ascii", "ignore").decode().lower()
@@ -580,15 +611,131 @@ def _best(L, used, after, name, lo, hi, max_est):
             "odds": round(o, 2), "p": round(p, 4), "implied": round(implied, 4),
             "estimates": sum(1 for l in legs_ if l.get("est")), "legs": legs_}
 
-def build_day(L, after):
+def build_day(L, after, prev=None, now=None, log=None):
+    """The day's groups. With prev (the groups an earlier build published for
+    this date), each is re-checked first: one still passing every rule keeps
+    its place, so a group someone has already placed does not reshuffle under
+    them; one that fails is dropped, the reasons go in log, and its slot is
+    rebuilt from the legs left. A group with a leg already started is kept as
+    published, marked underway, and its games are not reused."""
     used, groups = set(), []
+    now = now or after
+    stamp = iso(now)
+    kept = {}
+    for g in prev or []:
+        if g.get("name") not in LEGS_IN: continue
+        if underway(g, now):
+            u = dict(g, status="underway"); groups.append(u)
+            used |= {l["event"] for l in g["legs"]}; continue
+        ng, why = recheck(g, L)
+        if ng is None:
+            if log is not None:
+                log.append({"at": stamp, "name": g["name"], "rank": g.get("rank", "main"),
+                            "odds": g.get("odds"), "picks": [l["pick"] for l in g["legs"]], "why": why})
+            continue
+        if (g.get("rank", "main"), g["name"]) in kept: continue
+        kept[(g.get("rank", "main"), g["name"])] = ng
+        used |= {l["event"] for l in ng["legs"]}
+    replaced = {(e["rank"], e["name"]) for e in (log or []) if e["at"] == stamp}
     for rank in ("main", "alternative"):
         for name, lo, hi in BANDS:
-            g = best(L, used, after, name, lo, hi)
-            if not g: continue
-            g["rank"] = rank; groups.append(g)
-            used |= {l["event"] for l in g["legs"]}
-    return groups
+            g = kept.get((rank, name))
+            if g is None:
+                g = best(L, used, after, name, lo, hi)
+                if not g: continue
+                g.update(rank=rank, first=stamp, status="replacement" if (rank, name) in replaced else "new")
+                for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+                used |= {l["event"] for l in g["legs"]}
+            g["checked"] = stamp
+            groups.append(g)
+    # A first choice that failed with nothing to replace it leaves the second
+    # choice as the best of its kind, so it is shown as the first.
+    for name, _, _ in BANDS:
+        live = [g for g in groups if g["name"] == name and g.get("status") != "underway"]
+        if live and not any(g["rank"] == "main" for g in live):
+            live[0]["rank"] = "main"
+    # Underway groups last: they can no longer be placed.
+    return sorted(groups, key=lambda g: g.get("status") == "underway")
+
+# ---------- the re-check (21 Oct 2026) ----------
+def gid(g):
+    """A group's identity: its picks, whatever their prices."""
+    return "|".join(sorted(f"{l['event']}>{l['pick']}" for l in g["legs"]))
+
+def underway(g, now):
+    return any((parse(l.get("when")) or now) <= now for l in g["legs"] if l.get("when"))
+
+def leg_fault(l):
+    """Why a priced leg is no longer safe to group, in plain words, or None."""
+    if l.get("est") or l.get("fair") is None:
+        return f"{l['pick']}: no bookmaker price this build"
+    if l["pModel"] < LEG_MIN:
+        return f"{l['pick']}: the model now gives {pct(l['pModel'])}, under {pct(LEG_MIN)}"
+    if l["fair"] < LEG_MIN:
+        return f"{l['pick']}: price {l['odds']:.2f}, the bookmakers now give {pct(l['fair'])}, under {pct(LEG_MIN)}"
+    if l.get("pTested", l["p"]) < LEG_MIN:
+        return f"{l['pick']}: tested rate now {pct(l['pTested'])}, under {pct(LEG_MIN)}"
+    if l["pModel"] - l["fair"] > MAX_ABOVE_BOOK:
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) now sits {round((l['pModel'] - l['fair']) * 100)} "
+                f"points above the bookmakers ({pct(l['fair'])})")
+    return None
+
+def pct(x): return f"{round(x * 100)}%"
+
+def recheck(g, L):
+    """Re-test a published group against this build's legs and prices.
+    Returns (the group at today's prices, []) if every rule still holds, else
+    (None, reasons). A leg missing from this build's pool has left the board as
+    a clean pick: moved, postponed, flagged, or the model has changed its side."""
+    by = {(l["event"], l["pick"]): l for l in L}
+    legs_, why = [], []
+    for old in g["legs"]:
+        cur = by.get((old["event"], old["pick"]))
+        if cur is None:
+            why.append(f"{old['pick']}: no longer a clean pick for this day (moved, postponed, flagged or the model's side changed)")
+            continue
+        if cur.get("est") and not old.get("est") and old.get("odds"):
+            # A price source that failed this build is not a reason to drop a
+            # group: the last confirmed price stands, flagged, until a build
+            # can read one again. The model's side of the check still runs.
+            cur = dict(cur, **{k: old[k] for k in ("odds", "best", "books", "margin", "src") if k in old}, est=False, stale=True)
+            cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
+            honest(cur)
+        fault = leg_fault(cur)
+        if fault: why.append(fault); continue
+        nl = dict(cur, firstOdds=old.get("firstOdds", old.get("odds")))
+        legs_.append(nl)
+    if why: return None, why
+    name = g["name"]
+    lo, hi = next((lo, hi) for n, lo, hi in BANDS if n == name)
+    o = ok_combo(legs_, lo, hi, name)
+    p = math.prod(l["p"] for l in legs_)
+    if o is None:
+        return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f}"]
+    if p < MIN_CHANCE[name]:
+        return None, [f"combined chance now {pct(p)}, under the {pct(MIN_CHANCE[name])} floor"]
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    return {**{k: v for k, v in g.items() if k not in ("legs", "odds", "p", "implied", "status", "checked")},
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
+            "estimates": 0, "legs": legs_, "status": "holding",
+            "first": g.get("first") or g.get("checked")}, []
+
+def previous():
+    """The groups the last build published: {date: day}. Local file or the
+    published copy, whichever is newer; {} when neither can be read, in which
+    case every group this build is new."""
+    best_ = {}
+    cands = [load("groupings.json")]
+    try: cands.append(get(PUBLISHED, timeout=20))
+    except Exception: pass
+    for c in cands:
+        if c and c.get("generated", "") > best_.get("generated", ""): best_ = c
+    out = {}
+    for d in best_.get("days") or []:
+        for g in d.get("groups") or []:
+            g.setdefault("first", best_.get("generated"))   # groups from before 21 Oct carry no date
+        out[d["date"]] = d
+    return out
 
 # ---------- the record ----------
 ARCHIVE = os.path.join(HERE, "groupings-archive")
@@ -698,17 +845,27 @@ def main():
     now = datetime.now(timezone.utc)
     # Days are the board's own dates (UK days on the football board).
     today = now.astimezone(ZoneInfo("Europe/London")).date()
-    dates = [today.isoformat(), (today + timedelta(days=1)).isoformat()]
+    dates = [(today + timedelta(days=i)).isoformat() for i in range(DAYS_AHEAD + 1)]
     L = legs(set(dates))
     report = price(L, set(dates))
     if probe:
         print(json.dumps(report, indent=1)); return
+    prev = previous()
     days = []
     for d in dates:
         dl = [l for l in L if l["date"] == d]
+        pd = prev.get(d) or {}
+        log = list(pd.get("log") or [])
+        groups = build_day(dl, now + timedelta(minutes=20), prev=pd.get("groups"), now=now, log=log)
+        live = [g for g in groups if g.get("status") != "underway"]
         days.append({"date": d, "legs": len(dl), "priced": sum(1 for l in dl if not l.get("est")),
-                     "safe": sum(1 for l in dl if safe_leg(l)),
-                     "groups": build_day(dl, now + timedelta(minutes=20))})
+                     "safe": sum(1 for l in dl if safe_leg(l)), "groups": groups,
+                     "checked": iso(now), "log": log[-LOG_KEEP:],
+                     "review": {s: sum(1 for g in groups if g.get("status") == s)
+                                for s in ("new", "holding", "replacement", "underway")},
+                     "previously": len(pd.get("groups") or []) if pd else None,
+                     "dropped": sum(1 for e in log if e["at"] == iso(now))})
+        report.setdefault("review", {})[d] = days[-1]["review"]
     out = {"generated": iso(now), "bands": BANDS,
            "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS],
            "rules": {"minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK},
@@ -722,6 +879,11 @@ def main():
     write_page(out, record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
+    for d in days:
+        r = d["review"]
+        print(f"  {d['date']}: {r['holding']} holding, {r['replacement']} replaced, {r['new']} new, "
+              f"{r['underway']} underway" + "".join(f"\n    dropped {e['name']} ({e['rank']}): {'; '.join(e['why'])}"
+                                                   for e in d["log"] if e["at"] == d["checked"]), file=sys.stderr)
 
 if __name__ == "__main__":
     main()
