@@ -154,6 +154,28 @@ class OddsApiTest(unittest.TestCase):
         self.assertTrue(rep["tennisKeys"])
         self.assertEqual(rep["noKey"], ["ATP Almaty Open"])
 
+    def test_rugby_with_no_named_key_tries_every_union_key(self):
+        urc = {"sport": "rugby", "comp": "URC", "home": "Stormers", "away": "Scarlets", "pick": "Stormers",
+               "when": "2026-10-19T15:00:00Z", "date": "2026-10-19"}
+        ev = [{"home_team": "Stormers", "away_team": "Scarlets", "commence_time": "2026-10-19T15:00:00Z",
+               "bookmakers": [{"title": "Bet365", "markets": [{"key": "h2h", "outcomes": [
+                   {"name": "Stormers", "price": 1.14}, {"name": "Scarlets", "price": 6.0}]}]}]}]
+        def fetch(url):
+            self.calls.append(url)
+            if "/odds?" not in url: return self.SPORTS, None
+            return (ev if "premiership" in url else []), 400
+        self.fetch = fetch
+        rep = self.run_([urc])
+        self.assertEqual(urc["odds"], 1.14)
+        self.assertEqual(rep["noKey"], [])
+        self.assertTrue(any(k.startswith("rugbyunion_top_14") for k in rep["rugbyKeys"]))
+
+    def test_rugby_key_tried_but_wrong_teams_price_nothing(self):
+        l = {"sport": "rugby", "comp": "URC", "home": "Leinster", "away": "Munster", "pick": "Leinster",
+             "when": "2026-10-19T15:00:00Z", "date": "2026-10-19"}
+        self.run_([l])
+        self.assertNotIn("odds", l)
+
     def test_no_key_or_already_priced_costs_nothing(self):
         os.environ.pop("ODDS_API_KEY")
         self.assertEqual(self.run_([self.tleg()]), "no key")

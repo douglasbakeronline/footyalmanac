@@ -431,6 +431,12 @@ def _odds_keys(l, active):
                 out.append(k)
         elif l["sport"] == "nrl":
             if k == "rugbyleague_nrl": out.append(k)
+    # 21 Oct 2026: five URC and Top 14 legs (81-91%) went unpriced because no
+    # key's title named their competition. When none does, try every active
+    # union key: the event is still matched on both team names and kick-off,
+    # so a wrong key prices nothing, and credits stay inside the day's cap.
+    if l["sport"] == "rugby" and not out:
+        out = [sp["key"] for sp in active if str(sp.get("key", "")).startswith("rugbyunion")]
     return out
 
 
@@ -483,8 +489,10 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     # Why a tennis tournament finds no key (19 Oct: Almaty, European Open, Japan Open): the
     # free /sports list is logged so --probe shows what the API carries and what matched nothing.
     rep["tennisKeys"] = sorted(f"{s.get('key')} | {s.get('title')}" for s in active if str(s.get("key", "")).startswith("tennis"))
+    rep["rugbyKeys"] = sorted(f"{s.get('key')} | {s.get('title')}" for s in active if str(s.get("key", "")).startswith("rugby"))
     rep["noKey"] = sorted({f"{l.get('tour')} {l.get('tournament')}" for l in want
-                           if l["sport"] == "tennis" and not _odds_keys(l, active)})
+                           if l["sport"] == "tennis" and not _odds_keys(l, active)} |
+                          {f"rugby {l.get('comp')}" for l in want if l["sport"] == "rugby" and not _odds_keys(l, active)})
     for k in sorted(need, key=lambda k: -len(need[k])):
         events = cached(k, ODDS_API_TTL)
         if events is None:
