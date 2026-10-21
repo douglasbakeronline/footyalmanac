@@ -415,6 +415,28 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
+/* 21 Oct 2026: groups for today and three days ahead, re-checked on every
+   build. Each card says whether it still holds, is new, or replaced one that
+   failed; each leg shows its price when the group was first published. */
+#ogDay button .n{margin-left:5px;font:600 11px var(--f-num);color:var(--mute-ink,var(--mute))}
+#ogDay button[aria-pressed="true"] .n{color:var(--yellow)}
+#ogDay button.none{color:var(--mute-ink,var(--mute));font-weight:500}
+.og-st{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:6px 13px;border-bottom:1px solid var(--rule-soft);font-size:11.5px;color:var(--mute-ink,var(--mute))}
+.og-st b{font:700 10px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor}
+.og-st b.holding{color:var(--home)}
+.og-st b.new{color:var(--ink)}
+.og-st b.replacement{color:var(--draw-ink,#7a5c12)}
+.og-st b.underway{color:var(--mute-ink,var(--mute))}
+.og-l .o small{display:block;font:500 10.5px var(--f-num);color:var(--mute-ink,var(--mute));white-space:nowrap}
+.og-l .o small.up{color:var(--away)}
+.og-l .o small.dn{color:var(--home)}
+.og-chk{margin-top:12px;font-size:12px;color:var(--ink-2)}
+.og-chk summary{cursor:pointer;font-weight:600}
+.og-chk ul{margin:6px 0 0;padding:0;list-style:none;border:1px solid var(--rule);background:var(--surface)}
+.og-chk li{padding:7px 12px;border-top:1px solid var(--rule-soft);line-height:1.4}
+.og-chk li:first-child{border-top:0}
+.og-chk li .w{font:12px var(--f-num);color:var(--mute-ink,var(--mute));margin-right:6px}
+.og-chk li small{display:block;color:var(--mute-ink,var(--mute))}
 .og-g{display:inline-block;margin-top:3px;font-size:11px;font-weight:600;color:var(--home);text-decoration:underline;text-underline-offset:2px}
 .og-g:hover{color:var(--away)}
 /* accumulator calculator: Douglas, 20 Oct 2026. Type any prices (1/7, 2/11,
@@ -3122,6 +3144,49 @@ function ogTime(l){
   const d = ogDate(l);
   return d ? d.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"}) : "";
 }
+// A build time as "17:00" today, "Tue 18:00" on another day (UK time).
+function ogAt(s){
+  if(!s) return "";
+  const d = new Date(s); if(isNaN(d)) return "";
+  const uk = o => d.toLocaleString("en-GB", Object.assign({timeZone:"Europe/London"}, o));
+  const t = uk({hour:"2-digit", minute:"2-digit"});
+  const same = uk({year:"numeric", month:"numeric", day:"numeric"}) ===
+    new Date().toLocaleString("en-GB", {timeZone:"Europe/London", year:"numeric", month:"numeric", day:"numeric"});
+  return same ? t : `${uk({weekday:"short"})} ${t}`;
+}
+// Day buttons: Today, Tomorrow, then "Fri 24".
+function ogDayLabel(iso){
+  const uk = new Date().toLocaleDateString("en-CA", {timeZone:"Europe/London"});
+  const diff = Math.round((new Date(iso + "T12:00:00Z") - new Date(uk + "T12:00:00Z")) / 864e5);
+  if(diff === 0) return "Today";
+  if(diff === 1) return "Tomorrow";
+  return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {weekday:"short", day:"numeric", timeZone:"UTC"});
+}
+const OG_STATUS = {holding:"Still holds", new:"New", replacement:"Replacement", underway:"Underway"};
+function ogStatus(g){
+  const s = g.status; if(!s) return "";
+  const first = ogAt(g.first), checked = ogAt(g.checked);
+  const say = s === "holding" ? `first shown ${first}${checked ? ` · re-checked ${checked}` : ""}`
+    : s === "new" ? `first shown ${first}`
+    : s === "replacement" ? `replaced an earlier ${g.name.toLowerCase()} that failed its check at ${first}`
+    : `a pick has kicked off, so this is shown as it was published and no longer re-checked`;
+  return `<div class="og-st"><b class="${s}">${OG_STATUS[s] || s}</b><span>${say}</span></div>`;
+}
+// A leg's price against its price when the group was first shown.
+function ogMove(l){
+  if(l.stale) return `<small title="This build could not read a price for this pick; the last confirmed price stands.">last price</small>`;
+  const f = l.firstOdds;
+  if(!f || Math.abs(f - l.odds) < 0.005) return "";
+  return `<small class="${l.odds > f ? "up" : "dn"}" title="${l.odds > f ? "Drifted" : "Shortened"} since the group was first shown">was ${(+f).toFixed(2)}</small>`;
+}
+// What the re-check dropped on this day, newest first.
+function ogLog(day){
+  const log = (day.log || []).slice().reverse();
+  if(!log.length) return "";
+  return `<details class="og-chk"${(day.dropped || 0) ? " open" : ""}><summary>${log.length} group${log.length === 1 ? "" : "s"} dropped by the re-check on this day</summary><ul>${
+    log.map(e => `<li><span class="w">${ogAt(e.at)}</span><b>${ogEsc(e.name)}${e.rank === "alternative" ? " (second choice)" : ""}</b> at ${(+e.odds || 0).toFixed(2)}: ${e.picks.map(ogEsc).join(", ")}
+      <small>${e.why.map(ogEsc).join(". ")}.</small></li>`).join("")}</ul></details>`;
+}
 const OG_NUM = {2:"two", 3:"three", 5:"five"};
 const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10`;
 function ogCard(g){
@@ -3132,12 +3197,13 @@ function ogCard(g){
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
-      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
+      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
+    ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
-    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}</div></article>`;
+    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3294,6 +3360,10 @@ function renderOdds(){
       together at least 6 times in 10: the lowest-risk group. A <b>Treble</b> is three, at least 5 times in 10.
       Each card says how often it should land. Safe groups pay little, usually 1.2 to 1.6; that is the price of
       landing often. On a day with nothing safe enough there is no group, by design. No pick is used twice.</p>
+      <p>Groups are shown for today and the next three days, and every build (six a day) checks each one again
+      against the latest board and prices. A group that still passes keeps its place, so one you have placed
+      does not change under you. One that fails is dropped and replaced where the rules allow, and the reason is
+      listed under that day.</p>
       <details class="how"><summary>How the groups are picked</summary>
         <p>A pick qualifies only if all three reads put it at ${legMin}% or better: how often calls at its level
         landed in testing (over at least ${R.minN || 30} games), the model's own number, and the bookmaker's fair
@@ -3304,6 +3374,13 @@ function renderOdds(){
         <p>A group's chance is the product of each pick's lowest read. Within those rules the picks with the
         highest combined chance are chosen, with a slight preference for Daily List picks (78% landed in October
         against 69% for others), no more than two from one competition.</p>
+        <p>The re-check runs every rule again on every pick in a group: still a clean pick on the same side,
+        still priced, the model and the bookmakers both still at ${legMin}% or better and no more than ${above}
+        points apart, and the group still above its floor. A pick that leaves the board (moved, postponed or
+        flagged) fails it. If a price source is down for one build, the last confirmed price stands and is marked
+        "last price" rather than the group being dropped. "Was" under a price is what it was when the group was
+        first shown. The record below is unchanged: it grades each day's groups as they stood at that day's first
+        build.</p>
         <p>Until 20 October the tab also built five-pick Steady, Balanced and Stretch groups and a 1.5 to 2.5
         Banker. Their rules forced longer prices into every group, and 11 of 58 landed. They are retired and stay
         in the record below.</p>
@@ -3315,11 +3392,13 @@ function renderOdds(){
         misses about one day in three, and every pick carries the bookmaker's margin. This is the model's read, not
         betting advice.</p>
       </details></div>
-    <div class="og-days"><div class="seg" id="ogDay">${OG.days.map(d => `<button data-d="${d.date}" aria-pressed="${d.date === day.date}">${fmtDay(d.date)}</button>`).join("")}</div>
+    <div class="og-days"><div class="seg" id="ogDay" aria-label="Day">${OG.days.map(d => { const n = d.groups.filter(g => g.status !== "underway").length;
+        return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}" title="${fmtDay(d.date)}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
-      `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one. Sitting a day out is the rule, not a fault.</div>`}
-    <p style="font-size:12px;color:var(--mute);margin-top:12px">${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
+      `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one.${day.date > OG.days[0].date ? " Bookmakers open more prices nearer the day, so this can fill in on a later build." : " Sitting a day out is the rule, not a fault."}</div>`}
+    ${ogLog(day)}
+    <p style="font-size:12px;color:var(--mute-ink,var(--mute));margin-top:12px">${day.checked ? `Checked at ${ogAt(day.checked)}, and again on every build. ` : ""}${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
     <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${ogRecord()}`;
   accaMount($("#acca"));

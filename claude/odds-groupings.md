@@ -122,3 +122,38 @@ Bookmaker prices still never feed a model; here they only veto legs.
 The honest limit, as before: no group lands every time. At 86% legs a Double
 lands about 3 in 4 and a Treble about 3 in 5. They pay roughly 1.2 to 1.7,
 and at the market's own rate they still lose its margin over time.
+
+
+## Days ahead and the re-check (21 Oct 2026, Douglas)
+
+Douglas asked for groups a few days in advance, reviewed on every rebuild.
+`groupings.py` now builds today plus `DAYS_AHEAD` (3) UK days. Each build
+reads the previous build's `groupings.json` (the local file or the published
+copy at `PUBLISHED`, whichever is newer: the CI workspace starts clean, so in
+CI it is the published one) and, per day, before building anything:
+
+- **underway**: a leg has kicked off. Kept as published, never re-priced,
+  its games not reused.
+- **holding**: `recheck()` finds every leg still in this build's pool (a clean
+  pick, same side), priced, passing `safe_leg` at today's price, and the
+  group still inside its odds range and above its floor. It keeps its slot
+  even if a stronger group has appeared, because someone may have placed it.
+- otherwise dropped, with each reason from `leg_fault()` written to the day's
+  `log` (last `LOG_KEEP` kept), and the slot rebuilt from the legs left
+  (**replacement**). A first choice with no replacement promotes the second.
+
+A leg this build could not price, which had a bookmaker price before, keeps
+its last confirmed price (`stale`) rather than failing: an API-Football
+outage should not wipe every group. Its model side is still checked.
+
+Each leg carries `firstOdds`, so the page shows drift ("was 1.04", red when
+the price has lengthened, blue when it has shortened).
+
+The record is untouched: `archive()` still keeps the first build of each UK
+day, so a Saturday group shown from Wednesday is graded as it stood at
+Saturday's 00:10 build. Whether groups that held for days land better than
+ones built on the day is now measurable from the archive's `first` and
+`status` fields, and is worth a look after a few weeks.
+
+Three days out, fewer bookmakers have opened prices, so far days are often
+empty until midweek; the page says so rather than calling it a day off.

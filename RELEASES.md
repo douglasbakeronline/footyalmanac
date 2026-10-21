@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Odds tab: groups three days ahead, re-checked on every build (tag pending)
+
+**What changed:** the Odds tab now builds groups for today and the next three UK days (`DAYS_AHEAD`), not today and tomorrow. Every build (six a day) first reads the groups the last build published and re-checks each one against the current board and prices (`recheck()`). A group that still passes every rule keeps its place, marked "Still holds", so a group someone has placed does not reshuffle under them. One that fails is dropped, the reason is logged in plain words under that day ("Stade Toulousain: price 1.40, the bookmakers now give 68%, under 75%"), and its slot is rebuilt from the legs left ("Replacement"). A group with a leg already kicked off is kept as published ("Underway"). Each leg shows its price when the group was first shown ("was 1.04"). If a price source fails for one build the last confirmed price stands, marked "last price", rather than the group being dropped. When a first choice fails with nothing to replace it, the second choice is promoted. Day buttons are now short (Today, Tomorrow, Fri 23) with a count of groups.
+
+**Evidence:** `tests/test_groupings_review.py` (11 tests: hold, price move, drift replacement with reason, game leaving the board, underway, no game reused, failed price source, previous-build reading). End-to-end on a local build's real board with synthetic prices: build 1 published two Saturday Doubles; build 2, with one leg drifted to 1.40, dropped the first with that reason, held the second and promoted it. Odds tab checked in Chromium at 1280px and 400px, no console errors.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_review.py`, `claude/odds-groupings.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, the leg and group rules (`safe_leg`, floors, odds ranges), pricing sources, grading, the archive or the record. The record still grades each day's groups as they stood at that day's first build. API-Football use rises to cover four days of odds, about 20 to 80 calls a build against 7,500 a day.
+
+**Roll back:** `git revert` this commit. The next build goes back to two days and rebuilds every group from scratch.
+
 ## 2026-10-21 Odds tab rebuilt: Double and Treble, groups built to land (tag pending)
 
 **What changed:** the Odds tab now builds two kinds of group, each labelled with its risk. **Double**: two picks, at least 60% to land together, "Lowest risk". **Treble**: three, at least 50%, "Low risk". Each card says how often it should land ("about 7 in 10"). A pick needs its tested rate, the model and the bookmaker's fair chance all at 75%+, the model no more than 5 points above the market, and (football) none of the Daily List's blind-spot exclusions. No group on a day when nothing clears. Groups sit above the accumulator. Banker, Steady, Balanced and Stretch are retired and stay in the record as "(retired)". Separately, an advisory study of whether 60-80% calls land above quote.
