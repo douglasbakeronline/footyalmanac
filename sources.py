@@ -402,7 +402,7 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     slugs = ESPN_SLUGS.get(code) or []
     if not slugs:
         return rows, 0
-    slug, fetched = slugs[0], 0
+    slug, fetched, first_bad, ok_days = slugs[0], 0, None, 0
     while day <= until:
         errs = []
         for ev in _espn_day(slug, day, 25, errs):
@@ -411,15 +411,32 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
                 rows[(r["date"], r["home"], r["away"])] = {
                     "date": r["date"], "home": r["home"], "away": r["away"],
                     "hg": r["hg"], "ag": r["ag"]}
-        if errs and log is not None:
-            log.append(f"{code} {day.isoformat()}: {errs[0]}")
+        if errs:
+            if first_bad is None:
+                first_bad = day
+            if log is not None:
+                log.append(f"{code} {day.isoformat()}: {errs[0]}")
+        else:
+            ok_days += 1
         fetched += 1
         day += timedelta(days=1)
         time.sleep(sleep)
 
+    # A day that failed on every host is not a day with no games. Do not mark it
+    # walked: stop `through` just before the first failure so the next build asks
+    # again, instead of losing those results for good. A competition that has
+    # never answered (dead slug, no cache yet) is saved as before, or every
+    # build would re-walk the whole season.
+    mark = until
+    if first_bad is not None and (through is not None or ok_days):
+        mark = first_bad - timedelta(days=1)
+        if through is not None:
+            mark = max(mark, through)
+        if log is not None:
+            log.append(f"{code}: kept through {mark.isoformat()}, {first_bad.isoformat()} failed and will be retried")
     os.makedirs(CURRENT_DIR, exist_ok=True)
     tmp = _current_path(code, season) + ".tmp"
-    json.dump({"through": until.isoformat(), "rows": sorted(rows.values(),
+    json.dump({"through": mark.isoformat(), "rows": sorted(rows.values(),
                key=lambda r: (r["date"], r["home"]))},
               open(tmp, "w"), separators=(",", ":"))
     os.replace(tmp, _current_path(code, season))
