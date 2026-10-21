@@ -12,3 +12,6 @@ Tennis and rugby. ESPN tennis scoreboards carry no moneyline in the usual feed a
 
 ## Next step
 Add a probe of ESPN tennis (`tennis/atp`, `tennis/wta`) and rugby scoreboards to `--probe` so CI reports whether odds blocks exist.
+
+## Re-check, 21 Oct 2026
+ESPN is reachable from CI-type sandboxes but carries no odds on tennis (ATP 162, WTA 124 matches) or rugby scoreboards, so it cannot price them; the Odds API (key needed) remains the only route. Football legs still unpriced 4-21 Oct are leagues no bookmaker lists. The one major-competition miss (Al Ittihad v Shabab Al-Ahli, AFC Champions League Elite, 13 Oct) matches ESPN's names under `same()`, so it was not a name or date failure. No code change: looser matching risks wrong matches (Rule 6).
