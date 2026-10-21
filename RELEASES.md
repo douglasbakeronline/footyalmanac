@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 A failed ESPN day no longer counts as walked (tag pending)
+
+**What changed:** `sources.topup_current` marked every day up to yesterday as walked even when ESPN failed on it (all hosts, after the retry), so a one-day outage silently lost that day's results from the season-so-far cache for good, beyond the 3-day rescan. Now `through` stops just before the first failed day, so the next build asks again, and the failure is logged. A competition that has never answered (dead slug, no cache) is saved as before, so it does not re-walk the season every build.
+
+**Evidence:** `tests/test_topup_failures.py` (fake failing source): a failed day holds the marker back, a clean walk advances it, a total outage keeps the old marker, a dead slug is saved as before. nametest and the source-failure tests pass.
+
+**Files:** `sources.py`, `tests/test_topup_failures.py`, `RELEASES.md`.
+
+**Not changed:** any model, constant, retry policy, or committed cache.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Fixture audit: double-booked clubs and case-variant spellings, no fix (tag pending)
 
 **What changed:** nothing in the product. A dated section in `claude/data-integrity.md` records the audit of `predictions/2026-10-21.json`.
