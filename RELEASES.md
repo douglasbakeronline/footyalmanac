@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-21 Free-source check for uncovered leagues: none feasible (tag pending)
+
+**What changed:** nothing in the product. `claude/data-expansion-plan.md` gains a dated progress line.
+
+**Evidence:** the five top flights previously without a source (Croatia, Hungary, Serbia, Ukraine, Korea) are now on the board via `sources.AF_NEW`. football-data.co.uk `new/` still lists the same 16 leagues, all already in `sources.FDX` or covered by ESPN at matching volume. TheSportsDB's free key was truncated on 12 Oct. Nothing free covers Poland 2, the 3. Liga or the UAE.
+
+**Files:** `claude/data-expansion-plan.md`, `RELEASES.md`.
+
+**Not changed:** any source, model, name map, Daily List rule, record or archive.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 A failed ESPN day no longer counts as walked (tag pending)
 
 **What changed:** `sources.topup_current` marked every day up to yesterday as walked even when ESPN failed on it (all hosts, after the retry), so a one-day outage silently lost that day's results from the season-so-far cache for good, beyond the 3-day rescan. Now `through` stops just before the first failed day, so the next build asks again, and the failure is logged. A competition that has never answered (dead slug, no cache) is saved as before, so it does not re-walk the season every build.
