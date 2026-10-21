@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-21T10:10:00Z",
+ "graded": "2026-10-21T12:33:22Z",
  "overall": {
   "groups": 59,
   "settled": 58,
   "won": 11,
   "lost": 47,
   "pending": 1,
-  "legs": 282,
-  "legsWon": 204,
+  "legs": 283,
+  "legsWon": 205,
   "returned": 40.5,
   "staked": 58,
   "expected": 18.69
@@ -19,8 +19,8 @@
    "won": 1,
    "lost": 0,
    "pending": 1,
-   "legs": 3,
-   "legsWon": 3,
+   "legs": 4,
+   "legsWon": 4,
    "returned": 1.81,
    "staked": 1,
    "expected": 0.43
@@ -68,8 +68,8 @@
   "won": 8,
   "lost": 29,
   "pending": 1,
-  "legs": 180,
-  "legsWon": 137,
+  "legs": 181,
+  "legsWon": 138,
   "returned": 29.18,
   "staked": 37,
   "expected": 12.78
@@ -86,9 +86,9 @@
      "p": 0.3294,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Vegalta Sendai",
@@ -99,8 +99,8 @@
        "odds": 1.42,
        "est": false,
        "p": 0.6436,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Internazionale",
