@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Championship gap-dependent draw lift tested and rejected (tag pending)
+
+**What changed:** nothing in the model or site. A dated note and a reproducible script for the last untested Championship idea: extra draw mass when the sides are close.
+
+**Evidence:** replay of en.2, 2023-24 to 2026-27, paired bootstrap 1500 reps. On the fit season (2025-26, 557 games) every lift is worse (k 0.1 +0.0012, k 0.3 +0.0044 log loss, p(worse) 0.92 to 0.97). 2023-24 is worse too; 2024-25 is flat; 2026-27 (95 games) gains at most 0.0010 at p(worse) 0.40. Predicted draw share already matches actual (27.5% v 26.8% in 2025-26).
+
+**Files:** `claude/championship-draw-lift-2026-10-22.md`, `tools/championship_draw_lift.py`, `RELEASES.md`.
+
+**Not changed:** any constant, `engine.py`, `calibration.json`.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-22 Tennis hit rate: gap checked, surface weighting tested and kept (tag pending)
 
 **What changed:** nothing in the model or site. A note recording why tennis (61.0% landed v 62.7% quoted, 828 matches) is not yet a real shortfall, and the surface-weight sweep behind keeping 0.3.
