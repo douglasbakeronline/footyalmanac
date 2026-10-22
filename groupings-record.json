@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-22T22:44:29Z",
+ "graded": "2026-10-22T22:52:38Z",
  "overall": {
   "groups": 59,
   "settled": 59,
@@ -50,6 +50,18 @@
    "expected": 0
   },
   "Wider Treble": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Wider Fourfold": {
    "groups": 0,
    "settled": 0,
    "won": 0,
@@ -114,7 +126,8 @@
   "Double",
   "Treble",
   "Wider Double",
-  "Wider Treble"
+  "Wider Treble",
+  "Wider Fourfold"
  ],
  "retired": [
   "Banker",
