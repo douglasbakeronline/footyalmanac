@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Odds tab: Wider Fourfold so the strongest picks reach 2.00 (tag pending)
+
+**What changed:** a fourth Wider kind, **Wider Fourfold** (four picks, 30%+ together), so the day's strongest picks can form a group at 2.00 or more. Three 80% picks pay about 1.69 after the bookmakers' margin, so the first 2.00 build left them out and made only 1, 2 and 3 groups for Fri to Sun. The fill still takes whichever kind is most likely to land.
+
+**Evidence:** live build at 23:38 on 22 Oct: Fri 1 group, Sat 2, Sun 3. Four 80% picks pay about 2.0 and land about 41%, as often as a Treble of 75% picks. Tests updated in `tests/test_groupings_return.py`.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_return.py`, `RELEASES.md`.
+
+**Not changed:** the 2.00 floor, leg rules, any model.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-22 Odds tab: every group pays at least double the stake (tag pending)
 
 **What changed:** every group's combined price must now be 2.00 or more (`MIN_RETURN`). The fill takes the most likely group of either Wider kind rather than Doubles first. A strict Double cannot reach 2.00 (two 75%+ picks pay about 1.6), so strict groups are now Trebles from picks at about 75%, floor 40%; Wider Treble floor 30%. Estimated prices (no bookmaker price) now carry a typical 5% bookmaker margin, so a group shown at 2.00+ should pay that when placed. Wider groups from the previous rule are rebuilt (`WIDE_RULE` 3). Odds tab wording explains the trade.

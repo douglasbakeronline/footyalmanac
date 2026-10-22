@@ -128,7 +128,8 @@ MIN_RETURN = 2.0
 BANDS = [(n, lo, hi) for n, _, _, lo, hi in GROUP_KINDS]
 LEGS_IN = {n: k for n, k, _, _, _ in GROUP_KINDS}
 MIN_CHANCE = {n: f for n, _, f, _, _ in GROUP_KINDS}
-RISK = {"Double": "Lowest risk", "Treble": "Low risk", "Wider Double": "Higher risk", "Wider Treble": "Higher risk"}
+RISK = {"Double": "Lowest risk", "Treble": "Low risk", "Wider Double": "Higher risk", "Wider Treble": "Higher risk",
+        "Wider Fourfold": "Higher risk"}
 # Retired kinds, kept so the record still tallies them under their own names.
 RETIRED = ["Banker", "Steady", "Balanced", "Stretch"]
 LEG_MIN = 0.75          # tested rate, model and bookmaker's fair chance, each
@@ -156,7 +157,11 @@ DAYS_AHEAD = 3
 # no bookmaker price (an estimated price, marked). Labelled "Higher risk",
 # graded under their own names, never mixed into the strict record.
 MIN_GROUPS = 3
-WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.5), ("Wider Treble", 3, 0.30, 1.20, 4.5)]
+WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.5), ("Wider Treble", 3, 0.30, 1.20, 4.5),
+              # 22 Oct 2026: at 2.00+ the strongest picks (80%+) are too short to
+              # group in threes (three pay ~1.69), so four of them make one: ~2.0,
+              # landing ~41%, as often as a Treble of 75% picks.
+              ("Wider Fourfold", 4, 0.30, 1.20, 6.0)]
 WIDE_MIN = 0.65
 WIDE_ABOVE_BOOK = 0.08
 WIDE_EST_MIN = 0.75     # an unpriced leg: Daily List, tested rate and model 75%+
@@ -658,7 +663,7 @@ def best(L, used, after, name, lo, hi):
 
 # Rule version of the Wider groups. A published Wider group from an older
 # rule is rebuilt, not held, the first build after the rule changes.
-WIDE_RULE = 3      # 3: every group pays MIN_RETURN or more (22 Oct 2026)
+WIDE_RULE = 4      # 3: every group pays MIN_RETURN or more; 4: Fourfolds (22 Oct 2026)
 
 def best_wide(L, used, after, name, lo, hi):
     """A Wider group from the strongest legs, priced or not (22 Oct 2026,

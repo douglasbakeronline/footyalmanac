@@ -34,15 +34,23 @@ class MinimumReturn(unittest.TestCase):
         self.assertGreaterEqual(len(gs), 3)
         self.assertTrue(all(g["odds"] >= 2.0 for g in gs), [g["odds"] for g in gs])
 
-    def test_three_80_percent_legs_cannot_reach_two(self):
-        # with the bookmakers' margin three 80% legs pay about 1.69
-        self.assertEqual(G.build_day([leg(i, 0.80) for i in range(9)], AFTER, now=NOW, min_groups=3), [])
+    def test_80_percent_legs_go_in_fours(self):
+        # with the bookmakers' margin three 80% legs pay about 1.69, four about 2.0
+        gs = G.build_day([leg(i, 0.80) for i in range(9)], AFTER, now=NOW, min_groups=3)
+        self.assertTrue(gs)
+        self.assertTrue(all(len(g["legs"]) == 4 and g["odds"] >= 2.0 for g in gs))
+
+    def test_four_strong_legs_make_a_fourfold(self):
+        L = [leg(i, 0.82, est=True) for i in range(4)]
+        g = G.build_day(L, AFTER, now=NOW, min_groups=1)[0]
+        self.assertEqual(g["name"], "Wider Fourfold")
+        self.assertGreaterEqual(g["odds"], 2.0)
 
     def test_75_percent_legs_make_trebles_not_doubles(self):
         L = [leg(i, 0.75) for i in range(9)]
         gs = G.build_day(L, AFTER, now=NOW, min_groups=3)
         self.assertTrue(gs)
-        self.assertTrue(all(len(g["legs"]) == 3 for g in gs))
+        self.assertTrue(all(len(g["legs"]) >= 3 for g in gs))
 
     def test_the_most_likely_kind_is_chosen(self):
         L = [leg(i, 0.82, est=True) for i in range(3)] + [leg(10 + i, 0.69) for i in range(2)]
