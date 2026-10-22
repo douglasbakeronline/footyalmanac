@@ -617,7 +617,7 @@ def wide_leg(l):
     """A leg for the Wider groups (22 Oct 2026): priced, with tested rate,
     model and bookmaker all WIDE_MIN+ and the model at most WIDE_ABOVE_BOOK
     over the market; or unpriced, on the Daily List, tested and model
-    WIDE_EST_MIN+."""
+    WIDE_EST_MIN+. Both compete on their chance (best_wide)."""
     if l.get("est") or l.get("fair") is None:
         return bool(l.get("list") and l.get("pTested", l["p"]) >= WIDE_EST_MIN and l["pModel"] >= WIDE_EST_MIN)
     if min(l["pModel"], l["fair"], l.get("pTested", l["p"])) < WIDE_MIN: return False
@@ -646,10 +646,20 @@ def best(L, used, after, name, lo, hi):
     # Bookmaker-priced, safe legs only: no estimates, no fallback.
     return _best(L, used, after, name, lo, hi, 0)
 
-def best_wide(L, used, after, name, lo, hi, prefer_priced=True):
-    """A Wider group: priced legs first; estimates only when that fails."""
-    g = _best(L, used, after, name, lo, hi, 0, wide=True, priced_only=True)
-    return g or _best(L, used, after, name, lo, hi, LEGS_IN[name], wide=True)
+# Rule version of the Wider groups. A published Wider group from an older
+# rule is rebuilt, not held, the first build after the rule changes.
+WIDE_RULE = 2
+
+def best_wide(L, used, after, name, lo, hi):
+    """A Wider group from the strongest legs, priced or not (22 Oct 2026,
+    rule 2, Douglas: "why are you not using stronger picks from the daily
+    list"). Rule 1 took bookmaker-priced legs first, so 71% priced legs went
+    in ahead of 80%+ unpriced Daily List picks; list picks have won 84.8% of
+    79, clean 65-75% picks 70.9% of 220. An unpriced leg's chance is its
+    tested rate, capped by the model; its price is an estimate, marked."""
+    g = _best(L, used, after, name, lo, hi, LEGS_IN[name], wide=True)
+    if g: g["rule"] = WIDE_RULE
+    return g
 
 def _best(L, used, after, name, lo, hi, max_est, wide=False, priced_only=False):
     top = None
@@ -693,6 +703,12 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
                             "odds": g.get("odds"), "picks": [l["pick"] for l in g["legs"]], "why": why})
             continue
         if is_wide(g["name"]):
+            if g.get("rule") != WIDE_RULE:
+                if log is not None:
+                    log.append({"at": stamp, "name": g["name"], "rank": g.get("rank", "fill"), "odds": g.get("odds"),
+                                "picks": [l["pick"] for l in g["legs"]],
+                                "why": ["rebuilt under the new rule: strongest Daily List picks first, priced or not"]})
+                continue
             wide_kept.append(ng); used |= {l["event"] for l in ng["legs"]}; continue
         if (g.get("rank", "main"), g["name"]) in kept: continue
         kept[(g.get("rank", "main"), g["name"])] = ng

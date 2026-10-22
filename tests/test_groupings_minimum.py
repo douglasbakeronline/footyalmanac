@@ -50,12 +50,28 @@ class Minimum(unittest.TestCase):
         self.assertFalse(G.wide_leg(leg(0, 0.70, odds=1.55, model=0.80)))   # model 13 points over the market
         self.assertFalse(G.safe_leg(priced(0, 0.68)))                       # never a strict leg
 
-    def test_unpriced_daily_list_picks_only_as_a_last_resort(self):
+    def test_unpriced_daily_list_picks_can_fill_a_day(self):
         L = [leg(i, 0.80, est=True, lst=True) for i in range(6)] + [leg(9, 0.80, est=True, lst=False)]
         gs = G.build_day(L, AFTER, now=NOW, min_groups=3)
         self.assertEqual(len(gs), 3)
         self.assertTrue(all(g["estimates"] == len(g["legs"]) for g in gs))
         self.assertNotIn("E9", [l["event"] for g in gs for l in g["legs"]])
+
+    def test_stronger_unpriced_list_picks_beat_weaker_priced_ones(self):
+        L = [priced(i, 0.70) for i in range(4)] + [leg(10 + i, 0.84, est=True, lst=True) for i in range(4)]
+        gs = G.build_day(L, AFTER, now=NOW, min_groups=3)
+        first = gs[0]
+        self.assertTrue(all(l["list"] and l.get("est") for l in first["legs"]))
+        self.assertEqual(first["rule"], G.WIDE_RULE)
+
+    def test_a_wider_group_from_the_old_rule_is_rebuilt(self):
+        L = [priced(i, 0.70) for i in range(6)]
+        old = G.build_day(L, AFTER, now=NOW - timedelta(hours=3), min_groups=3)
+        for g in old: g.pop("rule", None)
+        log = []
+        G.build_day(copy.deepcopy(L), AFTER, prev=copy.deepcopy(old), now=NOW, log=log, min_groups=3)
+        self.assertEqual(len(log), len(old))
+        self.assertIn("new rule", log[0]["why"][0])
 
     def test_too_few_legs_gives_what_it_can(self):
         gs = G.build_day([priced(0, 0.70), priced(1, 0.70)], AFTER, now=NOW, min_groups=3)

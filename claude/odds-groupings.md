@@ -197,3 +197,9 @@ strict rule still demands 75% through `safe_leg`, so the strict groups are
 unchanged. Worth checking after two or three weeks: whether Wider groups land
 near their stated chance. If they land well under it, the honest move is a
 higher `WIDE_MIN`, not a lower floor.
+
+Rule 2 (22 Oct 2026, late): `best_wide` no longer takes priced legs first.
+Rule 1 put 71% priced legs ahead of 80%+ unpriced Daily List picks; list
+picks have won 84.8% of 79 against 70.9% of 220 for clean 65-75% picks.
+Both now compete on their chance. `WIDE_RULE` marks each Wider group; one
+from an older rule is rebuilt, with the reason logged, on the next build.
