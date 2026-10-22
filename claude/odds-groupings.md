@@ -203,3 +203,13 @@ Rule 1 put 71% priced legs ahead of 80%+ unpriced Daily List picks; list
 picks have won 84.8% of 79 against 70.9% of 220 for clean 65-75% picks.
 Both now compete on their chance. `WIDE_RULE` marks each Wider group; one
 from an older rule is rebuilt, with the reason logged, on the next build.
+
+## At least double the stake (22 Oct 2026, late, Douglas)
+
+`MIN_RETURN = 2.0`: `ok_combo` refuses any group under it. With a ~5%
+margin per leg, 2.00 needs two legs of about 67% or three of about 75%, so
+every group lands roughly 43-48%: three 80% legs pay only ~1.69. The strict
+Double cannot qualify; the strict Treble floor is 40%. The Wider fill takes
+whichever kind gives the higher chance. Estimated prices now include
+`MARGIN`, so "2.00" is roughly what a bookmaker would pay. Days with few
+legs in the 67-76% range may get fewer than three groups.

@@ -117,7 +117,14 @@ ESPN_Q = {"ncaab": "&groups=50"}   # all of Division I, as sports.py
 # 21 Oct 2026, Douglas: groups that land, not groups that pay. Name, legs,
 # lowest combined chance, and combined odds range (a sanity range only: legs
 # at LEG_MIN or better cannot pay much). Built in this order.
-GROUP_KINDS = [("Double", 2, 0.60, 1.10, 2.0), ("Treble", 3, 0.50, 1.20, 2.6)]
+GROUP_KINDS = [("Double", 2, 0.60, 1.10, 3.0), ("Treble", 3, 0.40, 1.20, 3.5)]
+# 22 Oct 2026, Douglas: "make all groups return at least double the stake".
+# Every group's combined price must be MIN_RETURN or more. Two strict legs
+# (75%+ on every read) pay about 1.6 at most, so a strict Double cannot
+# reach it; a strict Treble can (three ~78% legs pay about 2.0), so its
+# floor drops from 50% to 40%. At 2.00 the bookmakers' own chance is under
+# 50% before their margin, so no group can honestly be quoted above that.
+MIN_RETURN = 2.0
 BANDS = [(n, lo, hi) for n, _, _, lo, hi in GROUP_KINDS]
 LEGS_IN = {n: k for n, k, _, _, _ in GROUP_KINDS}
 MIN_CHANCE = {n: f for n, _, f, _, _ in GROUP_KINDS}
@@ -149,7 +156,7 @@ DAYS_AHEAD = 3
 # no bookmaker price (an estimated price, marked). Labelled "Higher risk",
 # graded under their own names, never mixed into the strict record.
 MIN_GROUPS = 3
-WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.0), ("Wider Treble", 3, 0.27, 1.20, 4.5)]
+WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.5), ("Wider Treble", 3, 0.30, 1.20, 4.5)]
 WIDE_MIN = 0.65
 WIDE_ABOVE_BOOK = 0.08
 WIDE_EST_MIN = 0.75     # an unpriced leg: Daily List, tested rate and model 75%+
@@ -576,7 +583,10 @@ def price(L, dates):
     price_odds_api(L, dates, report)
     for l in L:
         if not l.get("odds"):
-            l.update(odds=round(1 / l["pModel"], 2), est=True, src="estimate: the model's fair price, no bookmaker price found")
+            # 22 Oct 2026: with a typical bookmaker margin (MARGIN), so a group
+            # shown at 2.00+ should still pay that much when placed.
+            l.update(odds=round(1 / (l["pModel"] * MARGIN), 2), est=True,
+                     src="estimate: the model's price less a typical bookmaker margin, no bookmaker price found")
         honest(l)
     report["priced"] = sum(1 for l in L if not l.get("est")); report["legs"] = len(L)
     return report
@@ -627,7 +637,7 @@ def is_wide(name): return str(name).startswith("Wider")
 
 def ok_combo(c, lo, hi, name, max_est=0):
     o = math.prod(l["odds"] for l in c)
-    if not (lo <= o <= hi): return None
+    if not (max(lo, MIN_RETURN) <= o <= hi): return None
     if len({l["event"] for l in c}) < LEGS_IN.get(name, 5): return None
     if sum(1 for l in c if l.get("est")) > max_est: return None
     comps = {}
@@ -648,7 +658,7 @@ def best(L, used, after, name, lo, hi):
 
 # Rule version of the Wider groups. A published Wider group from an older
 # rule is rebuilt, not held, the first build after the rule changes.
-WIDE_RULE = 2
+WIDE_RULE = 3      # 3: every group pays MIN_RETURN or more (22 Oct 2026)
 
 def best_wide(L, used, after, name, lo, hi):
     """A Wider group from the strongest legs, priced or not (22 Oct 2026,
@@ -735,11 +745,12 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     while live_n() < min_groups:
         # A Double first, as it needs the fewest legs and lands most often;
         # a Treble only when no Double can be made from what is left.
-        g = None
-        for name, lo, hi in WIDE_BANDS:
-            g = best_wide(L, used, after, name, lo, hi)
-            if g: break
-        if not g: break
+        # The most likely group of either kind (22 Oct 2026: at 2.00 or more
+        # a Treble of three ~80% picks lands about as often as a Double of
+        # two ~70% picks, so neither kind goes first by rule).
+        cands = [x for x in (best_wide(L, used, after, n, lo, hi) for n, lo, hi in WIDE_BANDS) if x]
+        if not cands: break
+        g = max(cands, key=lambda x: x["p"])
         g.update(rank="fill", first=stamp, status="replacement" if wide_replaced > 0 else "new")
         wide_replaced -= 1
         for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
@@ -980,7 +991,7 @@ def main():
         report.setdefault("review", {})[d] = days[-1]["review"]
     out = {"generated": iso(now), "bands": BANDS,
            "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS + WIDE_KINDS],
-           "rules": {"minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK,
+           "rules": {"minReturn": MIN_RETURN, "minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK,
                      "minGroups": MIN_GROUPS, "wideMin": WIDE_MIN, "wideAboveBook": WIDE_ABOVE_BOOK,
                      "wideEstMin": WIDE_EST_MIN},
            "sources": report, "days": days}

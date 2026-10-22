@@ -12,6 +12,17 @@ sys.path.insert(0, os.path.dirname(HERE))
 
 import groupings as G
 
+# 22 Oct 2026: these tests check grouping mechanics on short-priced boards;
+# the 2.00 minimum return (groupings.MIN_RETURN) is tested on its own in
+# tests/test_groupings_return.py.
+_MIN_RETURN = None
+def setUpModule():
+    global _MIN_RETURN
+    _MIN_RETURN, G.MIN_RETURN = G.MIN_RETURN, 1.0
+def tearDownModule():
+    G.MIN_RETURN = _MIN_RETURN
+
+
 
 def leg(i, odds, p):
     l = {"sport": "football", "event": f"E{i}", "pick": f"P{i}", "home": f"P{i}", "away": f"Q{i}",
