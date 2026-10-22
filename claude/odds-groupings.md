@@ -173,3 +173,27 @@ Live Double/Treble record: no settled groups yet (the rules went live 21 Oct; th
 Overall 32 won against about 30.2 expected: on the stated chance. The main groups alone won 19 of 30 against 21.4 expected (a binomial tail of roughly 0.2, inside noise), and the alternatives won 13 of 14; the two offset, and a main/alternative gap this size across 44 correlated-by-day groups is not a rule signal. The 75% leg bar, the 5-point model-over-market veto and the 60% / 50% floors cannot be tested for lift here, since the replay has no bookmaker prices (the veto is untestable) and every variant of the floors would be chosen on the same 44 groups.
 
 Verdict: no rule change. No candidate was shown to beat the current rules on a paired comparison; a change tuned on 44 groups would break Rule 3. Revisit when the live archive holds about 100 settled Doubles and Trebles (at 1 to 4 a day, late December).
+
+
+## At least three groups a day (22 Oct 2026, Douglas)
+
+Douglas asked for at least three groups every day, today and ahead. The
+strict Double and Treble stay exactly as they were and are built first.
+`build_day(..., min_groups=MIN_GROUPS)` then fills the day up to three with
+**Wider** groups, Doubles before Trebles (fewest legs, lands most often):
+
+- `wide_leg`: priced, with tested rate, model and the bookmakers' fair chance
+  all `WIDE_MIN` (65%)+, the model at most `WIDE_ABOVE_BOOK` (8) points above
+  the market; or, only when no priced group can be made, a Daily List pick
+  with no price, tested and model `WIDE_EST_MIN` (75%)+, at an estimated price.
+- floors: Wider Double 40% together, Wider Treble 27%; rank `fill`.
+- re-checked each build by `leg_fault(l, wide=True)`; a Wider group that holds
+  keeps its place even if a strict one appears later.
+- graded under its own names; the record's `strict` and `wider` tallies are
+  the page's headline, the retired kinds a fold.
+
+The pool now takes legs from a 65% tested rate (`leg_p(..., WIDE_MIN)`); the
+strict rule still demands 75% through `safe_leg`, so the strict groups are
+unchanged. Worth checking after two or three weeks: whether Wider groups land
+near their stated chance. If they land well under it, the honest move is a
+higher `WIDE_MIN`, not a lower floor.

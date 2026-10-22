@@ -397,6 +397,12 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og.Treble .og-h{border-top:3px solid var(--yellow)}
 .og-risk{display:inline-block;margin:2px 0 4px;padding:1px 6px;border:1px solid currentColor;color:var(--home);font-size:10px;letter-spacing:.08em}
 .og.Treble .og-risk{color:var(--draw-ink,#7a5c12)}
+/* 22 Oct 2026: Wider groups fill a day up to three. Marked apart: a red
+   rule and a red risk label, so they never read as the strict kinds. */
+.og.Wider .og-h{border-top:3px solid var(--away)}
+.og.Wider .og-risk{color:var(--away)}
+.og-rec details.og-old{margin-top:10px}
+.og-rec details.og-old summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--ink-2)}
 .og-land{font-size:13px;color:var(--ink)}
 .og-land b{font-size:15px}
 .og.Banker .og-h{border-top:3px solid var(--yellow)}
@@ -3200,7 +3206,7 @@ function ogCard(g){
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
-  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
@@ -3213,11 +3219,14 @@ function ogRecord(){
   const R = OG && OG.record;
   if(!R || !(R.days || []).length) return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2></div>
     <div class="empty" style="margin-top:10px">The record starts with today's groups; results appear after tomorrow's build grades them.</div></div>`;
-  const o = R.overall, f = R.firstChoice || o;
+  const o = R.strict || R.overall, f = R.firstChoice || o, w = R.wider;
   const roi = x => x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)}` : "–";
   const cur = R.current || ["Double", "Treble"];
-  const band = Object.entries(R.byBand || {}).filter(([k, v]) => v.groups || cur.includes(k))
-    .map(([k, v]) => `<div><span>${k}${cur.includes(k) ? "" : " (retired)"}</span><b>${v.won} / ${v.settled}</b><small>${v.settled ? `expected ${v.expected.toFixed(1)}` : "none settled yet"}</small></div>`).join("");
+  const tile = ([k, v]) => `<div><span>${k}${cur.includes(k) ? "" : " (retired)"}</span><b>${v.won} / ${v.settled}</b><small>${v.settled ? `expected ${v.expected.toFixed(1)}` : "none settled yet"}</small></div>`;
+  const band = Object.entries(R.byBand || {}).filter(([k, v]) => cur.includes(k)).map(tile).join("");
+  const old = Object.entries(R.byBand || {}).filter(([k, v]) => !cur.includes(k) && v.groups);
+  const oldHtml = old.length ? `<details class="og-old"><summary>Retired kinds (to 21 October): ${old.reduce((a, [, v]) => a + v.won, 0)} won of ${old.reduce((a, [, v]) => a + v.settled, 0)}</summary>
+      <div class="og-score">${old.map(tile).join("")}</div></details>` : "";
   const openAt = Math.max(0, R.days.findIndex(d => d.groups.some(g => g.status !== "pending")));
   const dayRows = R.days.slice(0, 14).map((d, i) => {
     const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
@@ -3226,11 +3235,11 @@ function ogRecord(){
     return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
   }).join("");
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
-    <div class="og-score"><div><span>Groups won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
-      <div><span>First choices</span><b>${f.won} / ${f.settled}</b><small>every kind, old and new</small></div>
+    <div class="og-score"><div><span>Doubles and Trebles won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
+      ${w ? `<div><span>Wider groups won</span><b>${w.won} / ${w.settled}</b><small>${w.settled ? `expected ${w.expected.toFixed(1)}` : "none settled yet"}</small></div>` : ""}
       <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
       <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
-      ${band}</div>${dayRows}
+      ${band}</div>${oldHtml}${dayRows}
     <p style="font-size:12px;color:var(--mute);margin-top:8px">Every group is archived the morning it is published and graded from the site's own results. A group is lost as soon as one leg loses; a void leg drops out of the price. "Expected" is the sum of each group's tested chance.</p></div>`;
 }
 /* ---------- the Odds tab: accumulator calculator ----------
@@ -3361,7 +3370,11 @@ function renderOdds(){
       <p>Two kinds, both made only from the safest picks of the day. A <b>Double</b> is two picks that come in
       together at least 6 times in 10: the lowest-risk group. A <b>Treble</b> is three, at least 5 times in 10.
       Each card says how often it should land. Safe groups pay little, usually 1.2 to 1.6; that is the price of
-      landing often. On a day with nothing safe enough there is no group, by design. No pick is used twice.</p>
+      landing often. No pick is used twice.</p>
+      <p>Every day gets at least ${(OG.rules && OG.rules.minGroups) || 3} groups. When the safest picks cannot make that many,
+      <b>Wider</b> groups fill the gap from picks one step down (${pct((OG.rules && OG.rules.wideMin) || 0.65)}%+ on every read),
+      or from Daily List picks with no bookmaker price yet. They are marked <b>Higher risk</b> in red, say how
+      often they should land, and are graded on their own line below.</p>
       <p>Groups are shown for today and the next three days, and every build (six a day) checks each one again
       against the latest board and prices. A group that still passes keeps its place, so one you have placed
       does not change under you. One that fails is dropped and replaced where the rules allow, and the reason is

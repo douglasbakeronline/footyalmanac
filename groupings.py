@@ -121,7 +121,7 @@ GROUP_KINDS = [("Double", 2, 0.60, 1.10, 2.0), ("Treble", 3, 0.50, 1.20, 2.6)]
 BANDS = [(n, lo, hi) for n, _, _, lo, hi in GROUP_KINDS]
 LEGS_IN = {n: k for n, k, _, _, _ in GROUP_KINDS}
 MIN_CHANCE = {n: f for n, _, f, _, _ in GROUP_KINDS}
-RISK = {"Double": "Lowest risk", "Treble": "Low risk"}
+RISK = {"Double": "Lowest risk", "Treble": "Low risk", "Wider Double": "Higher risk", "Wider Treble": "Higher risk"}
 # Retired kinds, kept so the record still tallies them under their own names.
 RETIRED = ["Banker", "Steady", "Balanced", "Stretch"]
 LEG_MIN = 0.75          # tested rate, model and bookmaker's fair chance, each
@@ -142,6 +142,21 @@ MIN_N, MIN_HIT = 30, 0.75   # 0.65 until 21 Oct 2026
 # 21 Oct 2026, Douglas: groups for today and the next three UK days, each
 # re-checked on every build. Until then today and tomorrow only.
 DAYS_AHEAD = 3
+# 22 Oct 2026, Douglas: at least three groups every day. When the strict
+# Double and Treble cannot make three, "Wider" groups fill the gap from legs
+# one step down: tested rate, model and bookmaker all 65%+, the model no more
+# than WIDE_ABOVE_BOOK above the market; failing that, Daily List picks with
+# no bookmaker price (an estimated price, marked). Labelled "Higher risk",
+# graded under their own names, never mixed into the strict record.
+MIN_GROUPS = 3
+WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.0), ("Wider Treble", 3, 0.27, 1.20, 4.5)]
+WIDE_MIN = 0.65
+WIDE_ABOVE_BOOK = 0.08
+WIDE_EST_MIN = 0.75     # an unpriced leg: Daily List, tested rate and model 75%+
+WIDE_BANDS = [(n, lo, hi) for n, _, _, lo, hi in WIDE_KINDS]
+LEGS_IN.update({n: k for n, k, _, _, _ in WIDE_KINDS})
+MIN_CHANCE.update({n: f for n, _, f, _, _ in WIDE_KINDS})
+RANGE = {n: (lo, hi) for n, lo, hi in BANDS + WIDE_BANDS}
 # Where the last build's groups are read from, so this build can re-check
 # them. The CI workspace starts clean, so the published copy is the one that
 # exists there; a local run also has its own groupings.json. The newer wins.
@@ -179,14 +194,14 @@ def parse(s):
     try: return datetime.fromisoformat(s).astimezone(timezone.utc)
     except ValueError: return None
 
-def leg_p(p, acc):
+def leg_p(p, acc, min_hit=None):
     """A leg's chance: its band's tested rate, never above the model's own
     number. Until 19 Oct 2026 it was the tested rate pulled toward the
     model's number, which is the side that runs high at the top end (a 90%
     pick with a 77% tested rate was quoted 83%); legs landed 73.1% against
     79.8% quoted, 5-18 Oct."""
     if not acc or not acc.get("n") or acc.get("hit") is None: return None
-    if acc["n"] < MIN_N or acc["hit"] < MIN_HIT: return None
+    if acc["n"] < MIN_N or acc["hit"] < (MIN_HIT if min_hit is None else min_hit): return None
     return min(acc["hit"], p)
 
 # ---------- the board ----------
@@ -202,7 +217,7 @@ def legs(dates):
             if g.get("celtic") or g.get("why") not in CLEAN_WHY: continue
             side = max(p, key=p.get)
             if side == "d": continue
-            pl = leg_p(p[side], g.get("accuracy"))
+            pl = leg_p(p[side], g.get("accuracy"), WIDE_MIN)
             if pl is None: continue
             h, a = g["home"]["name"], g["away"]["name"]
             out.append({"sport": "football", "event": f"{h} v {a}", "home": h, "away": a, "side": side,
@@ -214,7 +229,7 @@ def legs(dates):
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
         d = m.get("date")
         if d not in dates or "qualif" in (m.get("round") or "").lower(): continue
-        pl = leg_p(m.get("confidence") or 0, m.get("accuracy"))
+        pl = leg_p(m.get("confidence") or 0, m.get("accuracy"), WIDE_MIN)
         if pl is None: continue
         out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"], "tour": m.get("tour"), "tournament": m.get("tournament"),
                     "players": [m.get("playerA"), m.get("playerB")],
@@ -227,7 +242,7 @@ def legs(dates):
         for g in sp.get("games") or []:
             t = parse(g.get("when"))
             if not t or t.date().isoformat() not in dates: continue
-            pl = leg_p(g.get("confidence") or 0, g.get("accuracy"))
+            pl = leg_p(g.get("confidence") or 0, g.get("accuracy"), WIDE_MIN)
             if pl is None: continue
             out.append({"sport": key, "event": f"{g['home']} v {g['away']}", "home": g["home"], "away": g["away"],
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
@@ -598,6 +613,18 @@ def safe_leg(l):
     if l["pModel"] < LEG_MIN or l["fair"] < LEG_MIN or l.get("pTested", l["p"]) < LEG_MIN: return False
     return l["pModel"] - l["fair"] <= MAX_ABOVE_BOOK
 
+def wide_leg(l):
+    """A leg for the Wider groups (22 Oct 2026): priced, with tested rate,
+    model and bookmaker all WIDE_MIN+ and the model at most WIDE_ABOVE_BOOK
+    over the market; or unpriced, on the Daily List, tested and model
+    WIDE_EST_MIN+."""
+    if l.get("est") or l.get("fair") is None:
+        return bool(l.get("list") and l.get("pTested", l["p"]) >= WIDE_EST_MIN and l["pModel"] >= WIDE_EST_MIN)
+    if min(l["pModel"], l["fair"], l.get("pTested", l["p"])) < WIDE_MIN: return False
+    return l["pModel"] - l["fair"] <= WIDE_ABOVE_BOOK
+
+def is_wide(name): return str(name).startswith("Wider")
+
 def ok_combo(c, lo, hi, name, max_est=0):
     o = math.prod(l["odds"] for l in c)
     if not (lo <= o <= hi): return None
@@ -608,8 +635,9 @@ def ok_combo(c, lo, hi, name, max_est=0):
     if max(comps.values()) > 2: return None
     return o
 
-def pool(L, used, after, max_est=0):
-    c = [l for l in L if l["event"] not in used and (max_est or safe_leg(l)) and l["odds"] >= 1.01
+def pool(L, used, after, max_est=0, wide=False):
+    ok = wide_leg if wide else safe_leg
+    c = [l for l in L if l["event"] not in used and (max_est or ok(l)) and l["odds"] >= 1.01
          and (parse(l["when"]) or after) >= after]
     # The strongest twenty are plenty for two or three legs.
     return sorted(c, key=lambda l: -l["p"])[:20]
@@ -618,9 +646,16 @@ def best(L, used, after, name, lo, hi):
     # Bookmaker-priced, safe legs only: no estimates, no fallback.
     return _best(L, used, after, name, lo, hi, 0)
 
-def _best(L, used, after, name, lo, hi, max_est):
+def best_wide(L, used, after, name, lo, hi, prefer_priced=True):
+    """A Wider group: priced legs first; estimates only when that fails."""
+    g = _best(L, used, after, name, lo, hi, 0, wide=True, priced_only=True)
+    return g or _best(L, used, after, name, lo, hi, LEGS_IN[name], wide=True)
+
+def _best(L, used, after, name, lo, hi, max_est, wide=False, priced_only=False):
     top = None
-    for c in itertools.combinations(pool(L, used, after, max_est), LEGS_IN.get(name, 5)):
+    cands = pool(L, used, after, 0, wide=wide)
+    if priced_only: cands = [l for l in cands if not l.get("est")]
+    for c in itertools.combinations(cands, LEGS_IN.get(name, 5)):
         o = ok_combo(c, lo, hi, name, max_est)
         if o is None: continue
         p = math.prod(l["p"] for l in c)
@@ -635,7 +670,7 @@ def _best(L, used, after, name, lo, hi, max_est):
             "odds": round(o, 2), "p": round(p, 4), "implied": round(implied, 4),
             "estimates": sum(1 for l in legs_ if l.get("est")), "legs": legs_}
 
-def build_day(L, after, prev=None, now=None, log=None):
+def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     """The day's groups. With prev (the groups an earlier build published for
     this date), each is re-checked first: one still passing every rule keeps
     its place, so a group someone has already placed does not reshuffle under
@@ -645,7 +680,7 @@ def build_day(L, after, prev=None, now=None, log=None):
     used, groups = set(), []
     now = now or after
     stamp = iso(now)
-    kept = {}
+    kept, wide_kept = {}, []
     for g in prev or []:
         if g.get("name") not in LEGS_IN: continue
         if underway(g, now):
@@ -657,6 +692,8 @@ def build_day(L, after, prev=None, now=None, log=None):
                 log.append({"at": stamp, "name": g["name"], "rank": g.get("rank", "main"),
                             "odds": g.get("odds"), "picks": [l["pick"] for l in g["legs"]], "why": why})
             continue
+        if is_wide(g["name"]):
+            wide_kept.append(ng); used |= {l["event"] for l in ng["legs"]}; continue
         if (g.get("rank", "main"), g["name"]) in kept: continue
         kept[(g.get("rank", "main"), g["name"])] = ng
         used |= {l["event"] for l in ng["legs"]}
@@ -672,6 +709,27 @@ def build_day(L, after, prev=None, now=None, log=None):
                 used |= {l["event"] for l in g["legs"]}
             g["checked"] = stamp
             groups.append(g)
+    # Wider groups (22 Oct 2026): only while the day has fewer than
+    # min_groups that can still be placed. A Wider group that still holds is
+    # kept even when a strict one has since appeared, as strict ones are.
+    live_n = lambda: sum(1 for g in groups if g.get("status") != "underway")
+    for g in wide_kept:
+        g["checked"] = stamp; groups.append(g)
+    wide_replaced = sum(1 for e in (log or []) if e["at"] == stamp and is_wide(e["name"]))
+    while live_n() < min_groups:
+        # A Double first, as it needs the fewest legs and lands most often;
+        # a Treble only when no Double can be made from what is left.
+        g = None
+        for name, lo, hi in WIDE_BANDS:
+            g = best_wide(L, used, after, name, lo, hi)
+            if g: break
+        if not g: break
+        g.update(rank="fill", first=stamp, status="replacement" if wide_replaced > 0 else "new")
+        wide_replaced -= 1
+        for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+        g["checked"] = stamp
+        used |= {l["event"] for l in g["legs"]}
+        groups.append(g)
     # A first choice that failed with nothing to replace it leaves the second
     # choice as the best of its kind, so it is shown as the first.
     for name, _, _ in BANDS:
@@ -689,8 +747,16 @@ def gid(g):
 def underway(g, now):
     return any((parse(l.get("when")) or now) <= now for l in g["legs"] if l.get("when"))
 
-def leg_fault(l):
+def leg_fault(l, wide=False):
     """Why a priced leg is no longer safe to group, in plain words, or None."""
+    if wide:
+        if wide_leg(l): return None
+        if l.get("est") or l.get("fair") is None:
+            return f"{l['pick']}: no bookmaker price and not a Daily List pick at {pct(WIDE_EST_MIN)}+"
+        low = min(("model", l["pModel"]), ("bookmakers", l["fair"]), ("tested rate", l.get("pTested", l["p"])), key=lambda x: x[1])
+        if low[1] < WIDE_MIN: return f"{l['pick']}: {low[0]} now {pct(low[1])}, under {pct(WIDE_MIN)}"
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) now sits {round((l['pModel'] - l['fair']) * 100)} "
+                f"points above the bookmakers ({pct(l['fair'])})")
     if l.get("est") or l.get("fair") is None:
         return f"{l['pick']}: no bookmaker price this build"
     if l["pModel"] < LEG_MIN:
@@ -725,14 +791,14 @@ def recheck(g, L):
             cur = dict(cur, **{k: old[k] for k in ("odds", "best", "books", "margin", "src") if k in old}, est=False, stale=True)
             cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
             honest(cur)
-        fault = leg_fault(cur)
+        fault = leg_fault(cur, wide=is_wide(g["name"]))
         if fault: why.append(fault); continue
         nl = dict(cur, firstOdds=old.get("firstOdds", old.get("odds")))
         legs_.append(nl)
     if why: return None, why
     name = g["name"]
-    lo, hi = next((lo, hi) for n, lo, hi in BANDS if n == name)
-    o = ok_combo(legs_, lo, hi, name)
+    lo, hi = RANGE[name]
+    o = ok_combo(legs_, lo, hi, name, LEGS_IN[name] if is_wide(name) else 0)
     p = math.prod(l["p"] for l in legs_)
     if o is None:
         return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f}"]
@@ -741,7 +807,7 @@ def recheck(g, L):
     legs_.sort(key=lambda l: l.get("when") or "9")
     return {**{k: v for k, v in g.items() if k not in ("legs", "odds", "p", "implied", "status", "checked")},
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
-            "estimates": 0, "legs": legs_, "status": "holding",
+            "estimates": sum(1 for l in legs_ if l.get("est")), "legs": legs_, "status": "holding",
             "first": g.get("first") or g.get("checked")}, []
 
 def previous():
@@ -848,8 +914,13 @@ def grade():
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
-                      for n in [b[0] for b in BANDS] + RETIRED if n in [b[0] for b in BANDS] or any(g["name"] == n for g in allg)},
-           "current": [b[0] for b in BANDS], "retired": RETIRED,
+                      for n in [b[0] for b in BANDS + WIDE_BANDS] + RETIRED
+                      if n in [b[0] for b in BANDS + WIDE_BANDS] or any(g["name"] == n for g in allg)},
+           "current": [b[0] for b in BANDS + WIDE_BANDS], "retired": RETIRED,
+           # 22 Oct 2026: the record headline is the groups the tab builds now,
+           # strict and Wider apart; the retired kinds keep their own lines.
+           "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
+           "wider": tally([g for g in allg if is_wide(g["name"])]),
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -880,7 +951,8 @@ def main():
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
         log = list(pd.get("log") or [])
-        groups = build_day(dl, now + timedelta(minutes=20), prev=pd.get("groups"), now=now, log=log)
+        groups = build_day(dl, now + timedelta(minutes=20), prev=pd.get("groups"), now=now, log=log,
+                           min_groups=MIN_GROUPS)
         live = [g for g in groups if g.get("status") != "underway"]
         days.append({"date": d, "legs": len(dl), "priced": sum(1 for l in dl if not l.get("est")),
                      "safe": sum(1 for l in dl if safe_leg(l)), "groups": groups,
@@ -891,8 +963,10 @@ def main():
                      "dropped": sum(1 for e in log if e["at"] == iso(now))})
         report.setdefault("review", {})[d] = days[-1]["review"]
     out = {"generated": iso(now), "bands": BANDS,
-           "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS],
-           "rules": {"minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK},
+           "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS + WIDE_KINDS],
+           "rules": {"minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK,
+                     "minGroups": MIN_GROUPS, "wideMin": WIDE_MIN, "wideAboveBook": WIDE_ABOVE_BOOK,
+                     "wideEstMin": WIDE_EST_MIN},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
