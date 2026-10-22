@@ -3211,7 +3211,7 @@ function ogCard(g){
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
-    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's fair price, no bookmaker price found.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's price less a typical bookmaker margin, no bookmaker price found yet.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3367,10 +3367,11 @@ function renderOdds(){
   const gen = new Date(OG.generated);
   const R = OG.rules || {}, legMin = pct(R.legMin || 0.75), above = Math.round((R.maxAboveBook || 0.05) * 100);
   host.innerHTML = `<div class="lede"><h2>Groups built to land</h2>
-      <p>Two kinds, both made only from the safest picks of the day. A <b>Double</b> is two picks that come in
-      together at least 6 times in 10: the lowest-risk group. A <b>Treble</b> is three, at least 5 times in 10.
-      Each card says how often it should land. Safe groups pay little, usually 1.2 to 1.6; that is the price of
-      landing often. No pick is used twice.</p>
+      <p>Every group pays <b>at least double your stake</b> (combined odds of ${((OG.rules && OG.rules.minReturn) || 2).toFixed(2)} or more).
+      To pay that, a group needs two picks of about 67% each or three of about 75%, so each one lands a little
+      under half the time, and each card says how often. That is the price of doubling your money, not a weakness
+      of the picks. A <b>Treble</b> is built from the strict picks (75%+ on every read); <b>Wider</b> groups fill each
+      day to three from the strongest picks left. No pick is used twice.</p>
       <p>Every day gets at least ${(OG.rules && OG.rules.minGroups) || 3} groups. When the safest picks cannot make that many,
       <b>Wider</b> groups fill the gap from picks one step down (${pct((OG.rules && OG.rules.wideMin) || 0.65)}%+ on every read),
       or from Daily List picks with no bookmaker price yet. They are marked <b>Higher risk</b> in red, say how

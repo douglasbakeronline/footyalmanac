@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Odds tab: every group pays at least double the stake (tag pending)
+
+**What changed:** every group's combined price must now be 2.00 or more (`MIN_RETURN`). The fill takes the most likely group of either Wider kind rather than Doubles first. A strict Double cannot reach 2.00 (two 75%+ picks pay about 1.6), so strict groups are now Trebles from picks at about 75%, floor 40%; Wider Treble floor 30%. Estimated prices (no bookmaker price) now carry a typical 5% bookmaker margin, so a group shown at 2.00+ should pay that when placed. Wider groups from the previous rule are rebuilt (`WIDE_RULE` 3). Odds tab wording explains the trade.
+
+**Evidence:** Douglas, 22 Oct: "make all groups return at least double of stake". With a 5% margin per leg, 2.00 needs two picks of about 67% or three of about 75%; each group then lands about 43-48% of the time. `tests/test_groupings_return.py` (7 tests); older mechanics tests run with the floor off. Scratch run built Trebles at 2.02 and 2.09; page checked at 400px and 1200px.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_return.py`, `tests/test_groupings*.py`, `claude/odds-groupings.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** leg rules, any model, pricing sources, the record.
+
+**Roll back:** `git revert` this commit, or set `MIN_RETURN = 1.0`.
+
 ## 2026-10-22 Odds tab: Wider groups use the strongest Daily List picks first (tag pending)
 
 **What changed:** Wider groups now take the strongest legs whether or not a bookmaker has priced them. Before, priced legs went first and unpriced Daily List picks only when no priced group could be made, so Friday's groups used 71% priced legs while Cham (83%), Vipers (81%), Royal Vision (78%) and Connacht (89%) sat out. An unpriced leg's chance is its tested rate capped by the model, and its price is an estimate, marked with *. Wider groups published under the old rule are rebuilt on the next build, with the reason logged, not held.
