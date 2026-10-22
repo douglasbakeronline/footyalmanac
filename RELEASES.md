@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Odds tab: at least three groups a day, with Wider groups to fill (tag pending)
+
+**What changed:** every day on the Odds tab now gets at least three groups (`MIN_GROUPS`), today and each day ahead, where the legs exist. The strict Double and Treble are built first, unchanged. When they make fewer than three, **Wider Double** (two legs, 40%+ together) and **Wider Treble** (three, 27%+) fill the gap, Doubles first: legs with tested rate, model and bookmaker all 65%+ and the model at most 8 points above the market (`wide_leg`); failing that, Daily List picks with no bookmaker price yet (tested and model 75%+, estimated price, marked). They carry a red "Higher risk" label, say how often they should land, are re-checked on every build by their own rule, and are graded on their own line. The record headline is now the current kinds only (Doubles and Trebles; Wider groups beside it), with the retired Banker, Steady, Balanced and Stretch folded away ("11 won of 59").
+
+**Evidence:** Douglas, 22 Oct: "always make sure there are 3 groups minimum every day and for the two days ahead". The board on 22 Oct had 9 priced legs at 65%+ on both reads for Friday, 9 for Saturday and 10 for Sunday, against 4, 3 and 0 at the strict 75%. A Wider Double of two 70% legs lands about half the time; the cards say so. `tests/test_groupings_minimum.py` (8 tests). A scratch run of the real `groupings.main()` built a strict Double and two Wider Doubles for one day; page checked at 1200px and 400px, no console errors.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_minimum.py`, `claude/odds-groupings.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the strict Double and Treble rules, any model, pricing sources. A day with fewer than four usable legs still gets fewer than three groups: there is nothing to build them from.
+
+**Roll back:** `git revert` this commit, or set `MIN_GROUPS = 0` to stop the fill.
+
 ## 2026-10-22 Bookmaker prices from API-Football for every fixture it lists (tag pending)
 
 **What changed:** the fixture board's bookmaker line and "Against the bookmakers" panel now draw on API-Football as well as football-data.co.uk. Each build reads every Match Winner price API-Football carries for today and the next four days (`/odds?date=`, ten fixtures a page, `odds.af_odds_day`), cached in `.afcache` for 90 minutes (today, tomorrow) or 4 hours (further out), and matches each to a board fixture on both team names and a kick-off within 90 minutes (`odds.match_af`; ambiguous matches are dropped). football-data.co.uk still prices first where it has the game. The Odds tab reads the same prices before falling back to its one-fixture call, so it spends fewer calls and finds more legs. Each panel says which source and how many bookmakers.
