@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Tennis hit rate: gap checked, surface weighting tested and kept (tag pending)
+
+**What changed:** nothing in the model or site. A note recording why tennis (61.0% landed v 62.7% quoted, 828 matches) is not yet a real shortfall, and the surface-weight sweep behind keeping 0.3.
+
+**Evidence:** gap z = -1.03 overall (ATP -0.32, WTA -1.06); worst slices (70%+ calls z -1.57, WTA September -1.46) are under 2 standard errors. Sweep of `surface_weight` 0 to 1.0 on the 2026 check set: 0.3 is best or within noise on both tours (WTA 0.2 is -0.0005 log loss, p(worse) 0.28, under the gain bar). The live record cannot be cut by surface: ESPN has none and every live match is priced as Hard.
+
+**Files:** `claude/tennis-hit-rate-check-2026-10-22.md`, `RELEASES.md`.
+
+**Not changed:** any constant, `tennis.json`, `build_tennis.py`, football.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Odds tab: rugby legs priced from any union market (tag pending)
 
 **What changed:** a rugby leg whose competition is not named in any of The Odds API's market titles (URC and Top 14 this week) now tries every active rugby union market instead of none. The event is still matched on both team names and kick-off, so a wrong market prices nothing, and calls stay inside the existing daily (15) and monthly (480) credit caps. The build report now lists the API's active rugby markets (`rugbyKeys`) and any rugby competition with no market (`noKey`), so a gap shows in the next build's output.
