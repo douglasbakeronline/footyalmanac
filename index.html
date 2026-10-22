@@ -1748,7 +1748,21 @@ function detail(g){
   const T = tier(g);
   const side = g.p.h>=g.p.d && g.p.h>=g.p.a ? g.home.name
              : (g.p.a>=g.p.d ? g.away.name : "a draw");
-  const verdict = T.k === 0
+  // 22 Oct 2026 (Betlemi v Lokomotivi Tbilisi, 61%): a call demoted to No read
+  // only by its flag was told it was "close to the 33% you would get from
+  // guessing", with the No read band's rate, under a row showing its own
+  // landed rate. Say what actually happened instead.
+  const raw = g.unrated ? null : TIERS.find(t => g.confidence >= t.min);
+  const demoted = T.k === 0 && g.celtic && raw && raw.k > 0;
+  const verdict = demoted
+    ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
+         <b>No read, because it is flagged.</b> The model makes ${side} ${pct(g.confidence)}%, a
+         ${raw.name} call on the numbers alone. ${g.accuracy ? accLine(g.accuracy) : `Fixtures quoted around
+         ${pct(g.confidence)}% came in ${raw.was} of the time last season.`} It is shown a tier lower
+         because of the flag below: in the wider leagues, flagged picks at 55-75% have landed about
+         4 to 9 points under their quote, unflagged ones on it.
+       </div>`
+    : T.k === 0
     ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
          <b>No read.</b> At ${pct(g.confidence)}% this is close to the 33% you would get from
          guessing between three outcomes. Fixtures the model quoted in this range came in
