@@ -136,6 +136,10 @@ def lambdas(data, split, params=None, meta=False, features=False):
                     "driftH": drift(h), "driftA": drift(a),
                     "formH": [x[2] for x in (rh["results"] if rh else [])][-5:],
                     "formA": [x[2] for x in (ra["results"] if ra else [])][-5:],
+                    # 22 Oct 2026: share of this season's games lost, for the
+                    # "sides that lose most of their games" test (predictability.py)
+                    "lostH": (rh["L"] / rh["P"]) if rh and rh["P"] else None,
+                    "lostA": (ra["L"] / ra["P"]) if ra and ra["P"] else None,
                 },)
             rows.append(row)
     return rows

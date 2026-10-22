@@ -386,3 +386,28 @@ on the check season. Rejected; nothing shipped. (Capping both sides can turn a
 6-5 into a 5-5 for the form points; this touches a handful of games and does
 not change the verdict.) Harness: `tools/goal_cap_eval.py` (fetches the seasons
 via `tune.load`, about a minute).
+
+## Re-test, 22 October 2026: sides that have lost most of their games
+
+Douglas asked for a tweak to back the opponents of sides that lose most of
+their matches (after Betlemi, 3-4-16 in Georgia's Liga 3, were 17% to beat
+Lokomotivi Tbilisi). Tested in `predictability.py` as two signals on the
+pick's opponent, from 6 games played: lost more than half ("opponent lost most
+games") and share of games lost ("opponent share lost"). Walk-forward, fit
+2025/26, check 2026/27; `tune.py` features now carry `lostH` / `lostA`.
+
+| Picks against | Season | n | Quoted | Landed | 60%+ calls quoted / landed |
+|---|---|---|---|---|---|
+| a side that lost >50% | 2025/26 | 1,003 | 53.2% | 51.8% | 70.7% / 71.6% (261) |
+| everyone else | 2025/26 | 4,250 | 48.3% | 48.6% | 68.4% / 69.0% (581) |
+| a side that lost >50% | 2026/27 | 33 | 51.9% | 39.4% | 64.3% / 50.0% (6) |
+
+Both signals fit a *negative* coefficient (-0.027, -0.028): picks against
+habitual losers land at or slightly under their quote, never above it. The
+share signal clears the log-loss gate only by trimming those calls; neither
+moves the top 10% or 20%. The ratings are built from goals for and against,
+and a side that loses most games has already conceded its way to a low
+rating, so the model already prices it to lose. Same conclusion as the
+30 September bottom-10% and weak-goal-record tests. Rejected as a boost.
+Limit: the replay covers the openfootball and ESPN leagues only; the
+API-Football wider leagues (Georgia's Liga 3 among them) are not in it.
