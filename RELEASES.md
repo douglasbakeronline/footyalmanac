@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Odds tab: Wider groups use the strongest Daily List picks first (tag pending)
+
+**What changed:** Wider groups now take the strongest legs whether or not a bookmaker has priced them. Before, priced legs went first and unpriced Daily List picks only when no priced group could be made, so Friday's groups used 71% priced legs while Cham (83%), Vipers (81%), Royal Vision (78%) and Connacht (89%) sat out. An unpriced leg's chance is its tested rate capped by the model, and its price is an estimate, marked with *. Wider groups published under the old rule are rebuilt on the next build, with the reason logged, not held.
+
+**Evidence:** Douglas, 22 Oct: "why are you not using stronger picks from the daily list". Graded record: Daily List picks won 84.8% of 79 (wider leagues 82.0% of 61); clean 65-75% picks off the list won 70.9% of 220. Two new tests in `tests/test_groupings_minimum.py`.
+
+**Files:** `groupings.py`, `tests/test_groupings_minimum.py`, `claude/odds-groupings.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the strict Double and Treble (still bookmaker-priced only), the 65% priced-leg rule, any model.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-22 Replay test: core-league 65-75% calls, this season only (tag pending)
 
 **What changed:** nothing in the product. `tools/core_midband_replay.py` (advisory) and a dated section in `claude/midband-calibration-2026-10-21.md`.
