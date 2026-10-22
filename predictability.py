@@ -58,6 +58,11 @@ def build_rows(data, split):
         pick = p.index(max(p))
         fav_form, dog_form = (f["formH"], f["formA"]) if pick != 2 else (f["formA"], f["formH"])
         ff, df = _ppg(fav_form), _ppg(dog_form)
+        # 22 Oct 2026, Douglas: sides that have lost most of their games. The
+        # pick's opponent (the home side for an away pick, the away side
+        # otherwise; a draw pick has none), from 6 games played.
+        dog_n = f["nA"] if pick == 0 else f["nH"]
+        dog_lost = None if pick == 1 or dog_n < 6 else (f["lostA"] if pick == 0 else f["lostH"])
         out.append({
             "key": (code, d, h, a), "code": code, "p": p, "pick": pick,
             "conf": p[pick], "hit": int(pick == y),
@@ -69,6 +74,8 @@ def build_rows(data, split):
                 "total expected goals": lh + la,
                 "form against the pick": 0.0 if ff is None or df is None else (df - ff) / 3.0,
                 "away pick":            float(pick == 2),
+                "opponent lost most games": float(bool(dog_lost is not None and dog_lost > 0.5)),
+                "opponent share lost":  0.0 if dog_lost is None else dog_lost - 0.37,
             },
         })
     return out

@@ -296,6 +296,7 @@ Bottom-10%-away and weak-goal-record penalties (30 Sep 2026): worse at every
 strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 Football form by stage of season (19 Oct 2026): games 4-6 are the weak spot in both seasons, but no weighting fixes it (faster season, more form, slower season, last season only: none passes both seasons); team news is the untested lever.
 Football team news (19 Oct 2026): API-Football injury and suspension lists, by count, by last season's minutes and as new absences, add nothing that passes cleanly (best: wrong-signed, under the gain bar on the fit season). `tools/team_news_eval.py`; data in `audit-out/team-news/`, never committed.
+Sides that lose most of their games (22 Oct 2026): picks against them landed at or under quote (2025/26: 51.8% v 53.2%, n=1,003; 60%+ calls 71.6% v 70.7%), so no boost; `predictability.py` signals "opponent lost most games" / "opponent share lost". See `claude/tuning-evidence.md`.
 Hot form, big clubs, cups (19 Oct 2026): favourites that won their last 3 land under their quote (68.2% v 70.8%), big clubs land as quoted, cup favourites land far under (live 60%+: 56.5% v 69.7%). See `claude/tuning-evidence.md`.
 Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
 Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to

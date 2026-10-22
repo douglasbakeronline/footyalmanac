@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Signal test: backing sides against habitual losers, rejected (tag pending)
+
+**What changed:** nothing in the product. `predictability.py` gains two advisory signals (the pick's opponent has lost more than half its games; its share of games lost), `tune.py`'s replay features carry each side's share lost, and the result is written up.
+
+**Evidence:** fit season 2025/26: picks against sides that had lost more than half their games landed 51.8% of 1,003 against 53.2% quoted; their 60%+ calls 71.6% of 261 against 70.7%. Both signals fit a negative coefficient: these picks land at or under quote. The model already prices those sides to lose. `claude/tuning-evidence.md`.
+
+**Files:** `predictability.py`, `tune.py`, `claude/tuning-evidence.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, constant, calibration, list or group rule.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Odds tab: rugby legs priced from any union market (tag pending)
 
 **What changed:** a rugby leg whose competition is not named in any of The Odds API's market titles (URC and Top 14 this week) now tries every active rugby union market instead of none. The event is still matched on both team names and kick-off, so a wrong market prices nothing, and calls stay inside the existing daily (15) and monthly (480) credit caps. The build report now lists the API's active rugby markets (`rugbyKeys`) and any rugby competition with no market (`noKey`), so a gap shows in the next build's output.
