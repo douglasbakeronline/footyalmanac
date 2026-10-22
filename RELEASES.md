@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Fixture detail: honest copy for a flagged call shown as No read (tag pending)
+
+**What changed:** a call the model rates Lean or better that drops to No read only because of its Celtic's Law flag no longer says it is "close to the 33% you would get from guessing" with the No read band's rate. It now says the call is shown as No read because it is flagged, gives the model's number and its own landed rate, and says what the flag is worth. Every other No read keeps its copy.
+
+**Evidence:** Betlemi v Lokomotivi Tbilisi (Georgia Liga 3, 22 Oct), 61% away, flagged because Lokomotivi were relegated last season. Its row said "65% landed" while the explainer said 44% and "close to 33%". On the graded record (verified rows, API-Football wider leagues, win picks), flagged 55-65% calls landed 56.9% of 109 against 59.0% quoted; flagged 65-75% landed 60.0% of 60 against 69.4%. Unflagged: 60.3% of 365 against 59.4%, and 66.7% of 147 against 69.1%. Checked in Chromium at 1100px and 400px, no console errors.
+
+**Files:** `index.html`, `RELEASES.md`.
+
+**Not changed:** any number, the flag, the tiers (`TIERS`, `score.py`), the Daily List.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-21 Odds tab: rugby legs priced from any union market (tag pending)
 
 **What changed:** a rugby leg whose competition is not named in any of The Odds API's market titles (URC and Top 14 this week) now tries every active rugby union market instead of none. The event is still matched on both team names and kick-off, so a wrong market prices nothing, and calls stay inside the existing daily (15) and monthly (480) credit caps. The build report now lists the API's active rugby markets (`rugbyKeys`) and any rugby competition with no market (`noKey`), so a gap shows in the next build's output.
