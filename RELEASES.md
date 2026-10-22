@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Replay test: core-league 65-75% calls, this season only (tag pending)
+
+**What changed:** nothing in the product. `tools/core_midband_replay.py` (advisory) and a dated section in `claude/midband-calibration-2026-10-21.md`.
+
+**Evidence:** walk-forward replay, core leagues, win picks. 65-75% calls: 2025/26 landed 67.3% of 343 against 69.1% quoted (on quote); 2026/27 (partial, cloud session) 82.3% of 51 against 69.0% (interval +1.5 to +23.4 points). Confirms the live finding for this season only, so rule 3 blocks a change. Re-run in December with the full check season. The lower leagues were already replayed on both seasons on 30 Sep.
+
+**Files:** `tools/core_midband_replay.py`, `claude/midband-calibration-2026-10-21.md`, `RELEASES.md`.
+
+**Not changed:** any model, curve, band or list rule.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-22 Odds tab: at least three groups a day, with Wider groups to fill (tag pending)
 
 **What changed:** every day on the Odds tab now gets at least three groups (`MIN_GROUPS`), today and each day ahead, where the legs exist. The strict Double and Treble are built first, unchanged. When they make fewer than three, **Wider Double** (two legs, 40%+ together) and **Wider Treble** (three, 27%+) fill the gap, Doubles first: legs with tested rate, model and bookmaker all 65%+ and the model at most 8 points above the market (`wide_leg`); failing that, Daily List picks with no bookmaker price yet (tested and model 75%+, estimated price, marked). They carry a red "Higher risk" label, say how often they should land, are re-checked on every build by their own rule, and are graded on their own line. The record headline is now the current kinds only (Doubles and Trebles; Wider groups beside it), with the retired Banker, Steady, Balanced and Stretch folded away ("11 won of 59").
