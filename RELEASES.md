@@ -55,6 +55,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` this commit.
 
+## 2026-10-22 Bookmaker prices from API-Football for every fixture it lists (tag pending)
+
+**What changed:** the fixture board's bookmaker line and "Against the bookmakers" panel now draw on API-Football as well as football-data.co.uk. Each build reads every Match Winner price API-Football carries for today and the next four days (`/odds?date=`, ten fixtures a page, `odds.af_odds_day`), cached in `.afcache` for 90 minutes (today, tomorrow) or 4 hours (further out), and matches each to a board fixture on both team names and a kick-off within 90 minutes (`odds.match_af`; ambiguous matches are dropped). football-data.co.uk still prices first where it has the game. The Odds tab reads the same prices before falling back to its one-fixture call, so it spends fewer calls and finds more legs. Each panel says which source and how many bookmakers.
+
+**Evidence:** on 22 Oct, 0 of 2,188 upcoming fixtures carried a price (football-data.co.uk covers 22 divisions, updated Friday and Tuesday; it peaked at ~180 fixtures on Fridays). The API-Football plan allows 7,500 calls a day and the builds used under 100. Expected cost: about 100-250 calls a build, inside the allowance. `tests/test_af_odds.py` (8 tests: parsing, paging, cache, stale copy kept, matching). A local build with simulated API-Football answers priced 56 of 66 fixtures (the other 10 had no kick-off time); page checked at 1100px and 400px.
+
+**Files:** `odds.py`, `sources.py` (records API paging), `build.py`, `groupings.py`, `index.html`, `tests/test_af_odds.py`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** no price feeds any model, the Daily List or the reserve. The value tag still comes only from football-data.co.uk prices, the source its gate was tested on. The group leg rules are unchanged.
+
+**Roll back:** `git revert` this commit. Prices go back to football-data.co.uk only.
+
 ## 2026-10-21 Odds tab: rugby legs priced from any union market (tag pending)
 
 **What changed:** a rugby leg whose competition is not named in any of The Odds API's market titles (URC and Top 14 this week) now tries every active rugby union market instead of none. The event is still matched on both team names and kick-off, so a wrong market prices nothing, and calls stay inside the existing daily (15) and monthly (480) credit caps. The build report now lists the API's active rugby markets (`rugbyKeys`) and any rugby competition with no market (`noKey`), so a gap shows in the next build's output.

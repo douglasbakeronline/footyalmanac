@@ -47,7 +47,7 @@ committed with the rest of current/.
 
 Standard library only.
 """
-import csv, io, json, math, os, random, sys, time, urllib.request
+import csv, gzip, io, json, math, os, random, sys, time, urllib.request
 from datetime import date, datetime, timedelta, timezone
 from difflib import SequenceMatcher
 
@@ -261,6 +261,152 @@ def market_block(r, model_p=None):
 
 def fetch_live(log=None):
     return parse(_get(LIVE_URL, log=log))
+
+
+# ---------------------------------------------------------------------------
+# API-Football prices for every fixture it lists (22 Oct 2026, Douglas)
+# ---------------------------------------------------------------------------
+# football-data.co.uk covers 22 divisions and updates twice a week, so on
+# 22 Oct 0 of 2,188 upcoming fixtures carried a price. API-Football (paid,
+# 7,500 calls a day, ~100 used) lists Match Winner prices from every bookmaker
+# it carries, ten fixtures a page, by date. One date is read whole, cached in
+# .afcache (kept between CI runs), so a build costs a page per ten priced
+# fixtures and only when the cache has aged out. Display only: these prices
+# never feed a model or the Daily List, and do not set the value tag, whose
+# gate was tested on football-data.co.uk's prices alone.
+
+AF_ODDS_TTL_NEAR = 90 * 60       # today and tomorrow: prices move
+AF_ODDS_TTL_FAR = 4 * 3600       # further out: they barely do
+AF_ODDS_MAX_PAGES = 150          # a date's ceiling: 1,500 priced fixtures
+AF_ODDS_SIDE = {"Home": 0, "Draw": 1, "Away": 2}
+
+
+def _af_odds_path(d):
+    return os.path.join(S.AF_CACHE_DIR, f"odds-date-{d.isoformat()}.json.gz")
+
+
+def af_parse_odds(items):
+    """{fixture id: {"avg": [h, d, a], "max": [h, d, a], "books": n}} from
+    /odds response items, Match Winner (bet 1) only, every bookmaker."""
+    out = {}
+    for item in items or []:
+        fid = (item.get("fixture") or {}).get("id")
+        if not fid:
+            continue
+        sides, books = ([], [], []), set()
+        for b in item.get("bookmakers") or []:
+            for bet in b.get("bets") or []:
+                if bet.get("id") != 1:
+                    continue
+                for v in bet.get("values") or []:
+                    i = AF_ODDS_SIDE.get(v.get("value"))
+                    try:
+                        o = float(v.get("odd"))
+                    except (TypeError, ValueError):
+                        continue
+                    if i is not None and o > 1.0:
+                        sides[i].append(o); books.add(b.get("name") or b.get("id"))
+        if all(sides):
+            out[str(fid)] = {"avg": [round(sum(x) / len(x), 3) for x in sides],
+                             "max": [max(x) for x in sides], "books": len(books)}
+    return out
+
+
+def af_odds_day(d, log=None, now=None):
+    """Every API-Football Match Winner price on one UTC date, {fid: row}.
+    Cached; a failed fetch keeps the last copy rather than an empty one."""
+    now = now or time.time()
+    path, stale = _af_odds_path(d), None
+    try:
+        with gzip.open(path, "rt", encoding="utf-8") as fh:
+            doc = json.load(fh)
+        stale = doc.get("rows") or {}
+        near = (d - datetime.fromtimestamp(now, timezone.utc).date()).days <= 1
+        if now - doc.get("fetched", 0) < (AF_ODDS_TTL_NEAR if near else AF_ODDS_TTL_FAR):
+            return stale
+    except (OSError, ValueError):
+        pass
+    if not os.environ.get("API_FOOTBALL_KEY"):
+        return stale or {}
+    rows, page, total, calls = {}, 1, 1, 0
+    while page <= min(total, AF_ODDS_MAX_PAGES):
+        q = f"/odds?date={d.isoformat()}&bet=1&page={page}"
+        items = S._af_get(q); calls += 1
+        if not items and page == 1:
+            break
+        rows.update(af_parse_odds(items))
+        total = int((S.AF_PAGING.get(q) or {}).get("total") or page)
+        page += 1
+    if not rows:
+        if log is not None:
+            log.append(f"API-Football odds {d}: nothing returned ({calls} calls), "
+                       + ("kept the last copy" if stale else "no copy on file"))
+        return stale or {}
+    os.makedirs(S.AF_CACHE_DIR, exist_ok=True)
+    with gzip.open(path, "wt", encoding="utf-8") as fh:
+        json.dump({"fetched": now, "rows": rows}, fh)
+    if log is not None:
+        log.append(f"API-Football odds {d}: {len(rows)} fixtures priced, {calls} calls")
+    return rows
+
+
+def af_fixture_index(dates):
+    """API-Football's own fixtures on these UTC dates (the build's cached day
+    pool, normally no calls): [(fid, kick-off, home, away)]."""
+    out = []
+    for d in sorted(dates):
+        try:
+            fx = S._af_day(d)
+        except Exception:
+            continue
+        for f in fx:
+            when = (f.get("fixture") or {}).get("date")
+            try:
+                t = datetime.fromisoformat(when.replace("Z", "+00:00")) if when else None
+            except ValueError:
+                t = None
+            out.append((str(f["fixture"]["id"]), t, f["teams"]["home"]["name"], f["teams"]["away"]["name"]))
+    return out
+
+
+def match_af(games, index):
+    """{key: fid} for games = [(key, kick-off datetime or None, date str, home,
+    away)]. A fixture matches on both names (name_sim >= 0.5 each) and a
+    kick-off within 90 minutes, or the same date when the board has no time.
+    Ambiguous or reused fixtures are dropped: a wrong price misleads."""
+    by_date = {}
+    for fid, t, h, a in index:
+        if t:
+            by_date.setdefault(t.date().isoformat(), []).append((fid, t, h, a))
+    out, used = {}, set()
+    for key, t, d, h, a in games:
+        d0 = date.fromisoformat(d)
+        cands = [c for off in (0, -1, 1) for c in by_date.get((d0 + timedelta(days=off)).isoformat(), [])]
+        scored = []
+        for fid, ft, fh, fa in cands:
+            if t and abs((t - ft).total_seconds()) > 5400:
+                continue
+            if not t and ft.date() != d0:
+                continue
+            sh, sa = name_sim(h, fh), name_sim(a, fa)
+            if min(sh, sa) >= 0.5:
+                scored.append((sh + sa, fid))
+        scored.sort(reverse=True)
+        if not scored or (len(scored) > 1 and scored[0][0] - scored[1][0] < 0.25):
+            continue
+        fid = scored[0][1]
+        if fid in used:
+            continue
+        used.add(fid); out[key] = fid
+    return out
+
+
+def af_prices(dates, log=None):
+    """Every API-Football price for these UTC dates, {fid: row}."""
+    out = {}
+    for d in sorted(dates):
+        out.update(af_odds_day(d, log=log))
+    return out
 
 
 # ---------------------------------------------------------------------------

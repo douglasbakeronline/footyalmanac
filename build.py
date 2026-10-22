@@ -9,7 +9,7 @@ top N by confidence per day, writes data.json next to index.html.
 """
 import argparse, concurrent.futures as cf, json, math, os, sys, time
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import engine as E
@@ -1435,6 +1435,37 @@ def main():
                   f"value gate {'open' if odds_meta['gate'] else 'closed'}", file=sys.stderr)
         except Exception as e:
             olog.append(f"odds failed: {e}")
+        # 22 Oct 2026: API-Football prices for every fixture football-data.co.uk
+        # did not price (see odds.af_odds_day). Display only; no value tag.
+        try:
+            rest = [g for d in by_day for g in by_day[d] if not g.get("market")]
+            if rest:
+                def _ko(g):
+                    try:
+                        return datetime.fromisoformat(g["kickoff"].replace("Z", "+00:00")) if g.get("kickoff") else None
+                    except ValueError:
+                        return None
+                days = {date.fromisoformat(g["date"]) + timedelta(days=o) for g in rest for o in (-1, 0, 1)}
+                days = {x for x in days if x >= date.today() - timedelta(days=1)}
+                prices = O.af_prices({x for x in days if x <= date.today() + timedelta(days=4)}, log=olog)
+                idx = O.af_fixture_index(days)
+                keys = {id(g): g for g in rest}
+                hit = O.match_af([(k, _ko(g), g["date"], g["home"]["name"], g["away"]["name"])
+                                  for k, g in keys.items()], idx)
+                n = 0
+                for k, fid in hit.items():
+                    row = prices.get(fid)
+                    if not row:
+                        continue
+                    g = keys[k]
+                    mp = [g["p"]["h"], g["p"]["d"], g["p"]["a"]]
+                    g["market"] = dict(O.market_block(row, mp), src="API-Football", books=row["books"])
+                    n += 1
+                odds_meta["afPriced"] = n
+                print(f"odds: API-Football priced {n} more of {len(rest)} fixtures "
+                      f"({len(prices)} prices on file, {len(hit)} fixtures matched)", file=sys.stderr)
+        except Exception as e:
+            olog.append(f"API-Football odds failed: {type(e).__name__}: {e}")
         for line in olog[:8]:
             print(f"  ODDS {line}", file=sys.stderr)
 

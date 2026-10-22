@@ -1641,7 +1641,7 @@ function mktLine(g){
   const mp = [g.p.h, g.p.d, g.p.a];
   const i = mp.indexOf(Math.max(...mp));
   const v = g.value ? ` · <b class="val">value +${Math.round(g.value.ev*100)}%</b>` : "";
-  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. Collected Friday for the weekend and Tuesday for midweek, so it will have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${v}</div>`;
+  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. ${g.market.src === "API-Football" ? `API-Football, ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build` : "Collected Friday for the weekend and Tuesday for midweek"}, so it may have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${v}</div>`;
 }
 
 function bar(g){
@@ -1774,7 +1774,9 @@ function detail(g){
       ${g.value ? `The best price on ${g.value.side==="h"?g.home.name:g.value.side==="a"?g.away.name:"the draw"} is
         worth about <em>${Math.round(g.value.ev*100)}%</em> more than the model's own fair price.`
         : (O.verdict || "")}
-      Prices from football-data.co.uk, collected Friday for the weekend and Tuesday for midweek.
+      ${g.market.src === "API-Football"
+        ? `Prices from API-Football, the average of ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build. Shown beside the model, never used by it.`
+        : "Prices from football-data.co.uk, collected Friday for the weekend and Tuesday for midweek."}
     </div>` : "";
 
   return `<div class="detail">
@@ -3448,7 +3450,8 @@ $("#footer").innerHTML = `
   before kick-off, never after.</p>
   <p><b>Sources.</b> Fixtures and results from <a href="https://github.com/openfootball">openfootball</a>
   (public domain), ESPN's public scoreboards and
-  <a href="https://www.football-data.co.uk">football-data.co.uk</a>; world rankings from FIFA, ATP and
+  <a href="https://www.football-data.co.uk">football-data.co.uk</a>; bookmaker prices from football-data.co.uk
+  and API-Football; world rankings from FIFA, ATP and
   WTA; tennis history from Jeff Sackmann's archive.</p>
   <p>This is a model, not a tip sheet. It is the model's own independent read; the betting market
   sees team news it does not, and on average prices matches better.</p>`;
