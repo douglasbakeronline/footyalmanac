@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Calibration by band and sport, rerun (tag pending)
+
+**What changed:** nothing in the model or site. A dated note re-running `calibration_bands.py` (football and nine other sports) on current history.
+
+**Evidence:** football fit season 6,474 calls, bars 55-80% inside their intervals; 85%+ still over-confident (88.8% quoted, 69.2% landed, 39 calls). Check season (1,491 calls) 60-70% span now under-confident, 71.6% landed v 64.1% quoted, +7.5 [+1.1,+13.5], but the fit season disagrees so a refit would fail Rule 3. Baseball (-4.8 at 62%+) and hockey (-5.5) remain over-confident; list-bar sports calibrated or conservative.
+
+**Files:** `claude/calibration-rerun-2026-10-22.md`, `RELEASES.md`.
+
+**Not changed:** any constant, `calibration.json`, `sports.json`, code.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-22 Championship gap-dependent draw lift tested and rejected (tag pending)
 
 **What changed:** nothing in the model or site. A dated note and a reproducible script for the last untested Championship idea: extra draw mass when the sides are close.
