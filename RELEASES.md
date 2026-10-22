@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Odds tab group rules backtest (tag pending)
+
+**What changed:** nothing for readers. Double and Treble rules unchanged.
+**Evidence:** replay of 44 groups on the full graded history: 32 won against about 30.2 stated (68.6% stated, 72.7% actual). Main groups 19 of 30 (stated 71.3%), alternatives 13 of 14. No settled live Double or Treble yet; retired bands 11 of 59 against 19.02 expected.
+**Files:** `claude/odds-groupings.md` (note added), `RELEASES.md`.
+**Not changed:** any code, rule or model number.
+**Roll back:** `git revert` the commit; docs only.
+
 ## 2026-10-22 Daily List bar replay rerun (tag pending)
 
 **What changed:** nothing for readers. The 80% league bar stays.

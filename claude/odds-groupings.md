@@ -157,3 +157,19 @@ ones built on the day is now measurable from the archive's `first` and
 
 Three days out, fewer bookmakers have opened prices, so far days are often
 empty until midweek; the page says so rather than calling it a day off.
+
+## Backtest rerun on Double and Treble (22 Oct 2026)
+
+Live Double/Treble record: no settled groups yet (the rules went live 21 Oct; the 59 settled groups are all retired bands, 11 won against 19.02 expected). So the replay is the only evidence. `tools/groupings_backtest.py` on the full graded history (fair prices, model and flag gates, no market veto), 44 groups:
+
+| Band | Rank | n | Won | Stated | Actual |
+|---|---|---|---|---|---|
+| Double | main | 22 | 14 | 74.8% | 63.6% |
+| Double | alternative | 12 | 11 | 64.6% | 91.7% |
+| Treble | main | 8 | 5 | 61.8% | 62.5% |
+| Treble | alternative | 2 | 2 | 51.8% | 100% |
+| All | both | 44 | 32 | 68.6% | 72.7% |
+
+Overall 32 won against about 30.2 expected: on the stated chance. The main groups alone won 19 of 30 against 21.4 expected (a binomial tail of roughly 0.2, inside noise), and the alternatives won 13 of 14; the two offset, and a main/alternative gap this size across 44 correlated-by-day groups is not a rule signal. The 75% leg bar, the 5-point model-over-market veto and the 60% / 50% floors cannot be tested for lift here, since the replay has no bookmaker prices (the veto is untestable) and every variant of the floors would be chosen on the same 44 groups.
+
+Verdict: no rule change. No candidate was shown to beat the current rules on a paired comparison; a change tuned on 44 groups would break Rule 3. Revisit when the live archive holds about 100 settled Doubles and Trebles (at 1 to 4 a day, late December).
