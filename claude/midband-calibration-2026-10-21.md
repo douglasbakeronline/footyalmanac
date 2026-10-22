@@ -66,3 +66,31 @@ calibration curve for the core leagues (as the cups have one), fitted on
 2025/26 and gated on 2026/27. Because 2025/26 looks calibrated, expect it to
 fail rule 3; if so, the honest change is shrinkage by stage of season, which
 was tested on 19 Oct without the league split.
+
+## The replay test, 22 October 2026
+
+`tools/core_midband_replay.py` (advisory; writes `audit-out/core-midband.json`):
+every core-league fixture on the walk-forward replay (`tune.codes()`, the
+leagues the calibration curve is fitted on), live engine and curve, win
+picks, strict test. Run from a cloud session, so the check season lacks the
+ESPN and football-data.co.uk leagues (902 fixtures, not the full slate).
+
+| 65-75% calls | n | Quoted | Landed | 95% interval on the gap |
+|---|---|---|---|---|
+| 2025/26 (fit) | 343 | 69.1% | 67.3% | -6.7 to +3.2 points |
+| 2026/27 (check, partial) | 51 | 69.0% | 82.3% | +1.5 to +23.4 points |
+
+The replay confirms the live finding for this season (the 65-70% band alone:
+85.3% of 34 against 67.3%), and confirms that last season was on quote. A
+change has to hold on both (rule 3), and the calibration curve is already
+fitted on these same core leagues, so the "wider leagues dominate the curve"
+explanation above is wrong: `tune.codes()` excludes `AF_EXTRA`. What is left
+is a this-season effect. No change. Re-run in December, when the check
+season's 65-75% band should pass 250 fixtures in CI (the rule 3 gate); if it
+still holds then, test stage-of-season shrinkage for the core leagues alone.
+
+Lower leagues (asked the same day): already replayed on both seasons on
+30 Sep (75%+ landed 82.3% of 2,236 in 2025, 80.0% of 765 in 2026; see
+`build.ACCURACY_BANDS_AFX`), and the live list agrees (82% of 61). Not
+re-run. The unreplayed group is `sources.AF_NEW` (Croatia, Hungary, Serbia,
+Ukraine, Korea), board only.
