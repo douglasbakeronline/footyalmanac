@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-22T20:29:02Z",
+ "graded": "2026-10-22T20:58:25Z",
  "overall": {
   "groups": 59,
   "settled": 59,
@@ -26,6 +26,30 @@
    "expected": 0
   },
   "Treble": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Wider Double": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Wider Treble": {
    "groups": 0,
    "settled": 0,
    "won": 0,
@@ -88,7 +112,9 @@
  },
  "current": [
   "Double",
-  "Treble"
+  "Treble",
+  "Wider Double",
+  "Wider Treble"
  ],
  "retired": [
   "Banker",
@@ -96,6 +122,30 @@
   "Balanced",
   "Stretch"
  ],
+ "strict": {
+  "groups": 0,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 0,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "expected": 0
+ },
+ "wider": {
+  "groups": 0,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 0,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "expected": 0
+ },
  "firstChoice": {
   "groups": 38,
   "settled": 38,
