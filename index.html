@@ -3195,7 +3195,7 @@ function ogLog(day){
     log.map(e => `<li><span class="w">${ogAt(e.at)}</span><b>${ogEsc(e.name)}${e.rank === "alternative" ? " (second choice)" : ""}</b> at ${(+e.odds || 0).toFixed(2)}: ${e.picks.map(ogEsc).join(", ")}
       <small>${e.why.map(ogEsc).join(". ")}.</small></li>`).join("")}</ul></details>`;
 }
-const OG_NUM = {2:"two", 3:"three", 5:"five"};
+const OG_NUM = {2:"two", 3:"three", 4:"four", 5:"five"};
 const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10`;
 function ogCard(g){
   const stake = ogStake();
@@ -3371,7 +3371,8 @@ function renderOdds(){
       To pay that, a group needs two picks of about 67% each or three of about 75%, so each one lands a little
       under half the time, and each card says how often. That is the price of doubling your money, not a weakness
       of the picks. A <b>Treble</b> is built from the strict picks (75%+ on every read); <b>Wider</b> groups fill each
-      day to three from the strongest picks left. No pick is used twice.</p>
+      day to three from the strongest picks left, as a Double, Treble or Fourfold, whichever is most likely to land.
+      The strongest picks are priced so short that it takes four of them to reach 2.00. No pick is used twice.</p>
       <p>Every day gets at least ${(OG.rules && OG.rules.minGroups) || 3} groups. When the safest picks cannot make that many,
       <b>Wider</b> groups fill the gap from picks one step down (${pct((OG.rules && OG.rules.wideMin) || 0.65)}%+ on every read),
       or from Daily List picks with no bookmaker price yet. They are marked <b>Higher risk</b> in red, say how
