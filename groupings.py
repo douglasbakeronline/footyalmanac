@@ -276,6 +276,15 @@ def price_football(L, dates, report):
     import sources as S
     from datetime import date as _date
     calls, matched = 0, 0
+    # 22 Oct 2026: the build now reads every API-Football price by date
+    # (odds.af_odds_day, cached); a leg found there costs no call. The
+    # one-fixture call stays as the fallback for anything it missed.
+    try:
+        import odds as O
+        bulk = O.af_prices({_date.fromisoformat(d) for d in dates})
+    except Exception as e:
+        bulk = {}
+        report.setdefault("errors", []).append(f"bulk odds: {type(e).__name__}")
     for d in sorted(dates):
         try:
             fx = S._af_day(_date.fromisoformat(d))
@@ -290,6 +299,13 @@ def price_football(L, dates, report):
                         if not (t and ft and abs((t - ft).total_seconds()) > 5400)
                         and same(h, l["home"]) and same(a, l["away"])), None)
             if fid is None: continue
+            row = bulk.get(str(fid))
+            if row:
+                i = 0 if l["side"] == "h" else 2
+                l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
+                         margin=margin_of(row["avg"]),
+                         src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
+                matched += 1; continue
             try:
                 items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:

@@ -597,6 +597,7 @@ _AF_PATH_LOCKS = {}
 _AF_PACE, _AF_NEXT = 0.25, [0.0]   # Pro allows 5 calls a second; keep under it
 _AF_SPENT = [False]   # the day's allowance is gone: stop calling for the rest of this run
 AF_USAGE = {"calls": 0, "left": None}
+AF_PAGING = {}   # path -> the response's "paging" block, for paged endpoints (/odds)
 
 
 # The allowance resets at 00:00 UTC. Once a script hears it is gone, it leaves
@@ -699,6 +700,8 @@ def _af_get_once(path, key):
         out = doc.get("response") or []
         with _AF_LOCK:
             _AF_CACHE[path] = out
+            if isinstance(doc.get("paging"), dict):
+                AF_PAGING[path] = doc["paging"]
         return out
     print(f"  API-Football gave up on {path} after retries", file=sys.stderr)
     return []
