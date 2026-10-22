@@ -194,3 +194,15 @@ would be noise. 2026/27 adds no league with 30+.
 
 Verdict: 80% league bar stays; per-league bars not built. Reopen when 2026/27
 has at least 100 calls at 80%.
+
+## Replay of the league bar rerun, 22 Oct 2026 (Nina): no change
+
+`tools/list_bar_replay.py` rerun unchanged. 2025/26 reproduces the 12 Oct table
+exactly (n=344/189/140/94/60/39 at 70/75/77.5/80/82.5/85%; 77.6/79.4/81.4/81.9/
+80.0/69.2%; only 85% differs from 80%, -12.5 points, interval -21.3 to -4.4).
+2026/27 (check season) is still thin: 11 calls at 80% (81.8%), 20 at 75%
+(80.0%), 54 at 70% (77.8%); every interval spans zero except 77.5% (+2.1,
+0.0 to +8.3 on 13 picks, not evidence). Per league at 80% on 2026/27: pt.1 4/4,
+es.1 2/2, nl.1 1/2, fin.1 1/2, de.1 1/1; none near the 30 a per-league bar
+needs. Verdict: 80% stays, no per-league bars. Reopen at 100 calls at 80% on
+2026/27, as set on 12 Oct; reruns before then add nothing.

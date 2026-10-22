@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-22 Daily List bar replay rerun (tag pending)
+
+**What changed:** nothing for readers. The 80% league bar stays.
+**Evidence:** `tools/list_bar_replay.py` rerun: 2025/26 identical to 12 Oct (80%: 94 picks, 81.9%; 75%: -2.4 pts, -7.5 to +2.5; 85%: -12.5 pts, -21.3 to -4.4). 2026/27 only 11 calls at 80% (81.8%); no league near 30 calls, so no per-league bar.
+**Files:** `claude/daily-list.md` (note added).
+**Not changed:** any code, bar or model number.
+**Roll back:** `git revert` the commit; docs only.
+
 ## 2026-10-22 Calibration by band and sport, rerun (tag pending)
 
 **What changed:** nothing in the model or site. A dated note re-running `calibration_bands.py` (football and nine other sports) on current history.
