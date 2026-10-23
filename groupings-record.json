@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-22T22:52:38Z",
+ "graded": "2026-10-23T00:42:40Z",
  "overall": {
-  "groups": 59,
+  "groups": 61,
   "settled": 59,
   "won": 11,
   "lost": 48,
-  "pending": 0,
+  "pending": 2,
   "legs": 285,
   "legsWon": 206,
   "returned": 40.5,
@@ -50,11 +50,11 @@
    "expected": 0
   },
   "Wider Treble": {
-   "groups": 0,
+   "groups": 1,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 0,
+   "pending": 1,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -62,11 +62,11 @@
    "expected": 0
   },
   "Wider Fourfold": {
-   "groups": 0,
+   "groups": 1,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 0,
+   "pending": 1,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -148,11 +148,11 @@
   "expected": 0
  },
  "wider": {
-  "groups": 0,
+  "groups": 2,
   "settled": 0,
   "won": 0,
   "lost": 0,
-  "pending": 0,
+  "pending": 2,
   "legs": 0,
   "legsWon": 0,
   "returned": 0,
@@ -172,6 +172,122 @@
   "expected": 13.11
  },
  "days": [
+  {
+   "date": "2026-10-23",
+   "published": "2026-10-23T00:42:26Z",
+   "groups": [
+    {
+     "name": "Wider Treble",
+     "rank": "fill",
+     "odds": 2.02,
+     "p": 0.3901,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Al-Shabab",
+       "event": "Al-Shabab v Smail",
+       "sport": "football",
+       "comp": "Professional League",
+       "when": "2026-10-23T12:50:00Z",
+       "odds": 1.28,
+       "est": false,
+       "p": 0.7078,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Vipers",
+       "event": "Vipers v Police",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-23T17:00:00Z",
+       "odds": 1.17,
+       "est": true,
+       "p": 0.8075,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Oddevold",
+       "event": "Oddevold v GIF Sundsvall",
+       "sport": "football",
+       "comp": "Superettan",
+       "when": "2026-10-23T17:00:00Z",
+       "odds": 1.35,
+       "est": false,
+       "p": 0.6825,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Wider Fourfold",
+     "rank": "fill",
+     "odds": 2.04,
+     "p": 0.3726,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Royal Vision",
+       "event": "Royal Vision v Inter Star",
+       "sport": "football",
+       "comp": "Ligue A",
+       "when": "2026-10-23T13:00:00Z",
+       "odds": 1.22,
+       "est": true,
+       "p": 0.7788,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Al Seeb",
+       "event": "Al Seeb v Sohar",
+       "sport": "football",
+       "comp": "Professional League",
+       "when": "2026-10-23T15:50:00Z",
+       "odds": 1.36,
+       "est": false,
+       "p": 0.6636,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Cham",
+       "event": "Cham v ASV Neumarkt",
+       "sport": "football",
+       "comp": "Oberliga - Bayern Nord",
+       "when": "2026-10-23T17:00:00Z",
+       "odds": 1.15,
+       "est": true,
+       "p": 0.8075,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Connacht",
+       "event": "Connacht v Zebre",
+       "sport": "rugby",
+       "comp": "URC",
+       "when": "2026-10-23T18:45Z",
+       "odds": 1.07,
+       "est": true,
+       "p": 0.8929,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-21",
    "published": "2026-10-21T00:39:43Z",
