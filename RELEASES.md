@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Weakest-sport scan, no model change (tag pending)
+
+**What changed:** nothing a reader sees. Added a dated note on which sport or tour sits furthest below quote.
+**Evidence:** WTA main-draw 70%+ landed 70.5% of 88 v 77.8% quoted (z -1.6); NFL 57.5% of 47 v 64.0%; college football 65.3% of 124 v 69.3%. None past 2 sigma; archive tests say the tennis shrink under-quotes and NFL calibration fails its gate. A change would mean fitting on the record (Rule 1).
+**Files:** claude/weakest-sport-scan-2026-10-23.md, RELEASES.md.
+**Not changed:** every model constant, shrink and list threshold.
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-22 Odds tab group rules backtest (tag pending)
 
 **What changed:** nothing for readers. Double and Treble rules unchanged.
