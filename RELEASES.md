@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Office review and next week's priorities, 23 Oct (tag pending)
+
+**What changed:** nothing a reader sees. A dated review of the fortnight 12-23 Oct and three priorities for next week (Jade, Susie, Andrew).
+**Evidence:** read from `record.json` (football 5,931 graded, 67.8%; Daily List 84 of 103), `sports-record.json`, `tennis-record.json` (61.6% v 62.7% quoted) and `groupings-record.json` (11 of 59 won, 19.0 expected, mostly retired kinds).
+**Files:** claude/office-review-2026-10-23.md, RELEASES.md.
+**Not changed:** code, every model constant, the record files.
+**Roll back:** `git revert` the commit.
+
 ## Grading audit: extra-time ties in openfootball results (tag pending)
 
 **What changed:** nothing a reader sees. The openfootball parser now reads the 90-minute score of a tie decided in extra time or on penalties, as the board prices 90 minutes.
