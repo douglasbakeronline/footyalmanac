@@ -218,3 +218,8 @@ legs in the 67-76% range may get fewer than three groups.
 ## Edge over the price tested, none found (23 Oct 2026)
 
 Legs where the model beat the bookmaker's fair chance by 2, 4 or 6 points landed *below* fair on both seasons (fit -2.0 to -2.8 pts on 1,584-4,133 legs; check -1.7 to -1.9 on 319-682); legs where the model sat below the market landed above fair. No positive cell survives both seasons. No rule preferring value legs; the 5-point cap stays. Full table in `claude/odds-edge-test-2026-10-23.md`.
+
+
+## Leg-property scan, no rule found (23 Oct 2026)
+
+Legs in the Wider pool (65%+) landed above their quote on both seasons (+7.4 pts on 321 legs fit, +11.8 on 44 check). No cut by home/away, price, chance band, tier or league keeps its sign and a lead on both seasons, except model-at-or-below-market, which is already the rule. Tightening the cap from 5 points to 0 removes 54% of eligible legs on the fit season, over the fifth allowed. Full table: `claude/leg-property-scan-2026-10-23.md`.
