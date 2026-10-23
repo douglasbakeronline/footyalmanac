@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Grading audit: extra-time ties in openfootball results (tag pending)
+
+**What changed:** nothing a reader sees. The openfootball parser now reads the 90-minute score of a tie decided in extra time or on penalties, as the board prices 90 minutes.
+**Evidence:** 88 graded games re-checked on ESPN (30 football, 25 tennis, 33 other sports): 0 mismatches. Parser bug: "Birkirkara FC  0-1 a.e.t. (0-0)" stayed in the away name (game read unplayed, junk team); "3-2 a.e.t. (2-2, 1-1)" graded 3-2. None of the 4 cached games is in the graded record.
+**Files:** sources.py, tests/test_grading.py, claude/results-review-board.md, RELEASES.md.
+**Not changed:** ESPN and API-Football handling, tennis and sports grading, every model constant.
+**Roll back:** `git revert` the commit.
+
 ## Leg-property scan, no rule found (tag pending)
 
 **What changed:** nothing a reader sees. Added `tools/leg_property_test.py` and a dated note recording which leg properties were tested against landed-v-quote and found not to separate.

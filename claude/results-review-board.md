@@ -114,3 +114,39 @@ top-up). Past `history/` seasons are untouched. Tennis `outcome` also voids on
 in ESPN's feed, and are now dropped as well. Recovering the 90-minute score
 needs a per-match source (ESPN's scoreboard has no goal times). Tests:
 `tests/test_grading.py`.
+
+## Grading audit, 23 Oct 2026 (Susie, Results Auditor)
+
+ESPN was reachable. 88 recently graded games re-fetched and compared.
+
+**Sample (0 result mismatches):**
+- Football: 30 of 30 random rows (10 to 23 Oct, ESPN-covered leagues): score,
+  `actual` and `ok` match. All 5,931 rows in `record-graded.json` are internally
+  consistent (`actual` from `result`, `ok` from `pick`).
+- Tennis: 25 of 25 random matches (12 to 23 Oct) by ESPN match id: winner and
+  `ok` match (3 differ only in spelling, Han Shi / Shi Han, Auger-Aliassime,
+  McNally, which `named_in_note` already handles). 12 void rows (6 walkovers
+  or cancelled, 6 not played by the priced players): all correctly void.
+- Other sports: 33 of 40 sampled found by id (the rest are rugby on a date
+  ESPN's rugby scoreboard did not answer): scores, winner and `ok` match. The
+  3 voids are level scores (2 rugby, 1 NFL).
+- Status values on the live tennis feed, last 14 days: FINAL 6,858, RETIRED 293,
+  WALKOVER 104, CANCELED 24, SCHEDULED 205. Walkovers void, retirements stand,
+  cancelled and scheduled are never graded. Walkovers are also kept out of the
+  ratings (`build_tennis.is_walkover`).
+
+**Bug found and fixed:** the openfootball parser (`sources.parse_fixture_txt`)
+mishandled ties decided after 90 minutes. In the "A v B  0-1 a.e.t. (0-0)"
+layout the score text stayed in the away side's name, so the game read as
+unplayed under a junk team name (Malta playoff, Slovakia ECL playoff in the
+2024-25 cache: 4 games). In the "A  3-2 a.e.t. (2-2, 1-1)  B" layout it took the
+extra-time score as the 90-minute one. Both now use the bracket's first pair
+(the 90-minute score); an extra-time marker with no bracket gives no result.
+This is the openfootball counterpart of the 12 Oct ESPN AET fix. No graded
+record row was affected (none of these games is in `record-graded.json`), so no
+published number moves; ratings gain or correct a handful of cup and playoff
+results. Tests: `tests/test_grading.py`.
+
+**Not changed, noted:** a "pen." line with no "a.e.t." in the played layout
+keeps its first score (a level game either way). Tennis retirements in the first
+set (for example "4-1 ret") stand as graded, by design (`score_tennis.py`).

@@ -1211,6 +1211,17 @@ _PLAYED = re.compile(
 # the score is silently absorbed into the away team's name and every played
 # match is read as a future fixture.
 _TRAILING = re.compile(r"^(.+?)\s{2,}(\d+)\s*-\s*(\d+)(?:\s*\(\s*\d+\s*-\s*\d+\s*\))?\s*$")
+# A tie decided after 90 minutes carries the extra-time or shootout score first
+# and the 90-minute score in the bracket: "0-1 a.e.t. (0-0)", "4-5 pen. 2-2
+# a.e.t. (2-2, 2-1)". The board prices 90 minutes, so that bracket is the result
+# (23 Oct 2026: before this the whole string stayed in the away side's name and
+# the game read as unplayed). The same marker between the sides, in the layout
+# above, would otherwise grade the extra-time score as the 90-minute one.
+_EXTRA = re.compile(r"\b(?:a\.e\.t\.|pen\.)")
+_TRAILING_ET = re.compile(
+    r"^(.+?)\s{2,}(?:\d+\s*-\s*\d+\s+pen\.\s+)?(?:\d+\s*-\s*\d+\s+a\.e\.t\.|\d+\s*-\s*\d+\s+pen\.)"
+    r"\s*\(\s*(\d+)\s*-\s*(\d+)\s*(?:,[^)]*)?\)\s*$")
+_REGULAR = re.compile(r"\(\s*(\d+)\s*-\s*(\d+)\s*(?:,[^)]*)?\)")
 
 
 def parse_fixture_txt(text):
@@ -1269,10 +1280,15 @@ def parse_fixture_txt(text):
         if mp and cur_date:
             if mp.group(1):
                 cur_time = mp.group(1)
+            hg, ag = int(mp.group(3)), int(mp.group(4))
+            between = line[mp.end(4):mp.start(5)]
+            if _EXTRA.search(between):
+                reg = _REGULAR.search(between)
+                hg, ag = (int(reg.group(1)), int(reg.group(2))) if reg else (None, None)
             rows.append({"date": cur_date.isoformat(), "time": cur_time,
                          "round": cur_round, "home": clean_name(mp.group(2)),
                          "away": clean_name(mp.group(5)),
-                         "hg": int(mp.group(3)), "ag": int(mp.group(4))})
+                         "hg": hg, "ag": ag})
             continue
         mm = _MATCH.match(line)
         if mm and cur_date and " v " in line.replace(" vs ", " v "):
@@ -1282,6 +1298,10 @@ def parse_fixture_txt(text):
             mt = _TRAILING.match(away)
             if mt:
                 away, hg, ag = mt.group(1), int(mt.group(2)), int(mt.group(3))
+            else:
+                me = _TRAILING_ET.match(away)
+                if me:
+                    away, hg, ag = me.group(1), int(me.group(2)), int(me.group(3))
             rows.append({"date": cur_date.isoformat(), "time": cur_time,
                          "round": cur_round, "home": clean_name(mm.group(2)),
                          "away": clean_name(away), "hg": hg, "ag": ag})
