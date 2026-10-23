@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Leg-property scan, no rule found (tag pending)
+
+**What changed:** nothing a reader sees. Added `tools/leg_property_test.py` and a dated note recording which leg properties were tested against landed-v-quote and found not to separate.
+**Evidence:** football replay, 2025-26 (321 pool legs) and 2026-27 (44): legs landed +7.4 / +11.8 pts above chance. No cut by home/away, price, chance band, tier or league holds on both seasons; model-at-or-below-market (+11.1 / +14.1 v +5.3 / -6.1) is already the 5-point cap. Cap 5 -> 0 would drop 54% of eligible legs (limit: a fifth), check season 44 legs against the 250 gate.
+**Files:** claude/leg-property-scan-2026-10-23.md, claude/odds-groupings.md, tools/leg_property_test.py, RELEASES.md.
+**Not changed:** groupings.py, every model constant.
+**Roll back:** `git revert` the commit.
+
 ## Edge over bookmaker prices tested, none found (tag pending)
 
 **What changed:** nothing a reader sees. Added `tools/odds_edge_test.py` and a dated note recording that the model has no edge over the price.
