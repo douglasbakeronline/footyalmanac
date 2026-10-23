@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Edge over bookmaker prices tested, none found (tag pending)
+
+**What changed:** nothing a reader sees. Added `tools/odds_edge_test.py` and a dated note recording that the model has no edge over the price.
+**Evidence:** football, 2025-26 (12,510 legs) and 2026-27 (1,749). Legs 2/4/6+ points above the bookmaker's fair chance landed below it: -2.0/-2.8/-2.2 pts (fit), -1.9/-1.9/-1.7 (check); model-favourite legs at 4+ points -3.6 / -6.5. Legs below the market landed above fair. 75%+ cell +3.1 pts on n 70 (p 0.26), 4 legs on check.
+**Files:** claude/odds-edge-test-2026-10-23.md, claude/odds-groupings.md, tools/odds_edge_test.py, RELEASES.md.
+**Not changed:** groupings.py, every model constant.
+**Roll back:** `git revert` the commit.
+
 ## Weakest-sport scan, no model change (tag pending)
 
 **What changed:** nothing a reader sees. Added a dated note on which sport or tour sits furthest below quote.
