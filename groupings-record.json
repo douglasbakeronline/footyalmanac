@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-23T16:01:48Z",
+ "graded": "2026-10-23T20:16:21Z",
  "overall": {
   "groups": 61,
-  "settled": 60,
+  "settled": 61,
   "won": 11,
-  "lost": 49,
-  "pending": 1,
-  "legs": 287,
-  "legsWon": 207,
+  "lost": 50,
+  "pending": 0,
+  "legs": 291,
+  "legsWon": 210,
   "returned": 40.5,
-  "staked": 60,
-  "expected": 19.39
+  "staked": 61,
+  "expected": 19.78
  },
  "byBand": {
   "Double": {
@@ -51,15 +51,15 @@
   },
   "Wider Treble": {
    "groups": 1,
-   "settled": 0,
+   "settled": 1,
    "won": 0,
-   "lost": 0,
-   "pending": 1,
-   "legs": 1,
-   "legsWon": 1,
+   "lost": 1,
+   "pending": 0,
+   "legs": 3,
+   "legsWon": 2,
    "returned": 0,
-   "staked": 0,
-   "expected": 0
+   "staked": 1,
+   "expected": 0.39
   },
   "Wider Fourfold": {
    "groups": 1,
@@ -67,8 +67,8 @@
    "won": 0,
    "lost": 1,
    "pending": 0,
-   "legs": 1,
-   "legsWon": 0,
+   "legs": 3,
+   "legsWon": 2,
    "returned": 0,
    "staked": 1,
    "expected": 0.37
@@ -149,15 +149,15 @@
  },
  "wider": {
   "groups": 2,
-  "settled": 1,
+  "settled": 2,
   "won": 0,
-  "lost": 1,
-  "pending": 1,
-  "legs": 2,
-  "legsWon": 1,
+  "lost": 2,
+  "pending": 0,
+  "legs": 6,
+  "legsWon": 4,
   "returned": 0,
-  "staked": 1,
-  "expected": 0.37
+  "staked": 2,
+  "expected": 0.76
  },
  "firstChoice": {
   "groups": 38,
@@ -181,11 +181,11 @@
      "rank": "fill",
      "odds": 2.02,
      "p": 0.3901,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
-     "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Al-Shabab",
@@ -208,8 +208,8 @@
        "odds": 1.17,
        "est": true,
        "p": 0.8075,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "0-0"
       },
       {
        "pick": "Oddevold",
@@ -220,8 +220,8 @@
        "odds": 1.35,
        "est": false,
        "p": 0.6825,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "7-0"
       }
      ]
     },
@@ -232,9 +232,9 @@
      "p": 0.3726,
      "status": "lost",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Royal Vision",
@@ -257,8 +257,8 @@
        "odds": 1.36,
        "est": false,
        "p": 0.6636,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Cham",
@@ -269,8 +269,8 @@
        "odds": 1.15,
        "est": true,
        "p": 0.8075,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-1"
       },
       {
        "pick": "Connacht",
