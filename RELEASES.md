@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Odds tab order: Multipliers above underway groups, 24 Oct (tag pending)
+
+**What changed:** on the Odds tab, groups that can still be placed come first, then the Multipliers, then groups already underway under their own heading. A "Multipliers ↓" button beside the day picker jumps to them. On Saturday evening every group was underway, which pushed the Multipliers a long scroll down on a phone.
+**Files:** index.html, RELEASES.md.
+**Not changed:** groupings.py, every rule and model.
+**Roll back:** `git revert` the commit.
+
 ## Multipliers, cup confidence fix, market check, 24 Oct (tag pending)
 
 **What changed:** the Odds tab has a new **Multipliers** section under the groups built to land: for a target return of 3x or 5x, the 2-4 football picks with the highest combined chance whose combined price reaches it. Each pick is priced 1.30-1.90, the bookmakers give it 45%+, and the model sits no more than 5 points above them; its chance is the bookmakers' fair chance (price less margin), shown as such. Built after the other groups from the picks they leave, re-checked on every build, archived and graded on their own line ("Multipliers won"). They do not count toward the three groups a day. Separately, domestic cup ties no longer show their untempered confidence: `engine.cup_temper` now resets `confidence` to the tempered maximum (Berkhamsted v Cray showed 80% beside a 61% win chance; 200 rows on 24 Oct), so cup rows rank, tier and band on the number they display.

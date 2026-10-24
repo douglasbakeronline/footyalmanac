@@ -407,6 +407,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og.Multiplier .og-h{border-top:3px solid var(--ink)}
 .og.Multiplier .og-risk{color:var(--ink)}
 .og-mult{margin-top:28px}
+.og-done{margin-top:28px}
+.og-jump{font:600 12.5px var(--f-ui);padding:6px 10px;border:1px solid var(--ink);background:var(--ink);color:var(--yellow);cursor:pointer;letter-spacing:.02em}
+.og-jump:hover{background:var(--surface);color:var(--ink)}
 .og-mult-p{font-size:13px;color:var(--ink-2);max-width:72ch;margin-top:10px;line-height:1.5}
 .og-rec details.og-old{margin-top:10px}
 .og-rec details.og-old summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--ink-2)}
@@ -3375,9 +3378,14 @@ function renderOdds(){
   if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const gen = new Date(OG.generated);
+  // 24 Oct 2026: groups that can still be placed first, then the Multipliers,
+  // then anything already underway. Underway cards above the Multipliers hid
+  // them a long scroll down on a phone.
   const core = day.groups.filter(g => !isMult(g)), mults = day.groups.filter(isMult);
+  const coreLive = core.filter(g => g.status !== "underway"), coreDone = core.filter(g => g.status === "underway");
+  const multLive = mults.filter(g => g.status !== "underway").length;
   const MR = (OG.rules || {}).mult || {};
-  const multHtml = `<section class="og-mult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
+  const multHtml = `<section class="og-mult" id="ogMult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
       <p class="og-mult-p">For a bigger return: the picks with the best chance of turning your stake into ${(OG.kinds || []).filter(k => k.target).map(k => k.target + "x").join(" or ") || "3x or 5x"}.
       Each pick is priced ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} (no 1/20 shots: they add almost nothing and still carry the
       margin), the bookmakers give it ${pct(MR.fairMin || 0.45)}%+, and the model does not rate it more than
@@ -3432,11 +3440,15 @@ function renderOdds(){
       </details></div>
     <div class="og-days"><div class="seg" id="ogDay" aria-label="Day">${OG.days.map(d => { const n = d.groups.filter(g => g.status !== "underway" && !isMult(g)).length;
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}" title="${fmtDay(d.date)}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
+      ${multLive ? `<button type="button" class="og-jump" id="ogJump">${multLive} Multiplier${multLive === 1 ? "" : "s"} ↓</button>` : ""}
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-    ${core.length ? `<div class="og-grid">${core.map(ogCard).join("")}</div>` :
+    ${coreLive.length ? `<div class="og-grid">${coreLive.map(ogCard).join("")}</div>` : coreDone.length ?
+      `<div class="empty" style="margin-top:14px">Every group for ${fmtDay(day.date)} has a pick already underway, so none can be placed as it stands. They are below the Multipliers.</div>` :
       `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one.${day.date > OG.days[0].date ? " Bookmakers open more prices nearer the day, so this can fill in on a later build." : " Sitting a day out is the rule, not a fault."}</div>`}
-    ${ogLog(day)}
     ${multHtml}
+    ${coreDone.length ? `<div class="og-done"><div class="day-head"><h2>Already underway</h2><div class="count">shown as published</div></div>
+      <div class="og-grid">${coreDone.map(ogCard).join("")}</div></div>` : ""}
+    ${ogLog(day)}
     <p style="font-size:12px;color:var(--mute-ink,var(--mute));margin-top:12px">${day.checked ? `Checked at ${ogAt(day.checked)}, and again on every build. ` : ""}${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
     <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${ogRecord()}`;
@@ -3444,6 +3456,8 @@ function renderOdds(){
   host.querySelectorAll(".og-grid .og-add").forEach(btn => btn.onclick = () => {
     accaAdd(btn.dataset.pick, +btn.dataset.odds);
   });
+  const jump = $("#ogJump");
+  if(jump) jump.onclick = () => { const m = $("#ogMult"); if(m) m.scrollIntoView({behavior:"smooth", block:"start"}); };
   $("#ogDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderOdds(); };
   $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
 }
