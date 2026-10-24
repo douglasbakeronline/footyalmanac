@@ -37,9 +37,17 @@ class MultLeg(unittest.TestCase):
     def test_very_short_prices_are_out(self):
         self.assertIn("outside", G.mult_fault(leg(0, 1.05, 0.93)))
 
-    def test_needs_a_price_and_football(self):
+    def test_needs_a_price_any_sport(self):
+        # 24 Oct 2026 evening: Multipliers across all sports
         self.assertIn("no bookmaker price", G.mult_fault(leg(0, 1.40, 0.66, est=True)))
-        self.assertIn("not football", G.mult_fault(leg(1, 1.40, 0.66, sport="rugby")))
+        for sport in ("rugby", "tennis", "nfl", "nba", "cfb"):
+            self.assertIsNone(G.mult_fault(leg(1, 1.40, 0.66, sport=sport)))
+
+    def test_mult_only_legs_never_enter_the_safer_groups(self):
+        l = dict(leg(0, 1.20, 0.85, sport="tennis"), multOnly=True)
+        G.honest(l)
+        self.assertFalse(G.safe_leg(l))
+        self.assertFalse(G.wide_leg(l))
 
     def test_chance_is_the_bookmakers(self):
         l = G.as_mult(leg(0, 1.43, 0.57))

@@ -3227,7 +3227,7 @@ function ogCard(g){
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>
-      <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || "")}" data-away="${ogEsc(l.away || "")}"
+      <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
@@ -3385,7 +3385,11 @@ function ogFill(host){
   host.querySelectorAll(".og-fx").forEach((ph, i) => {
     const {sport, home, away, date, id} = ph.dataset;
     try {
-      if(sport === "football"){
+      if(sport === "tennis"){
+        const TD = window.__TENNIS_DATA__;
+        const m = TD && (TD.matches || []).find(m => m.id === id || (m.playerA === home && m.playerB === away));
+        if(m){ ph.appendChild(sportRow(tennisAsGame(m), i, true)); return; }
+      } else if(sport === "football"){
         for(const day of upcoming){
           const g = day.games.find(g => g.home.name === home && g.away.name === away);
           if(g){ appendFixture(ph, g, i, day.date, false); return; }
@@ -3426,7 +3430,7 @@ function renderOdds(){
   const multLive = mults.filter(g => g.status !== "underway").length;
   const MR = (OG.rules || {}).mult || {};
   const multHtml = `<section class="og-mult" id="ogMult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
-      <p class="og-mult-p">Up to ${MR.perDay || 3} a day for a bigger return: three or four picks each, every one rated
+      <p class="og-mult-p">Up to ${MR.perDay || 3} a day for a bigger return, from every sport the site covers: three or four picks each, every one rated
       <b>${pct(MR.fairMin || 0.6)}%+</b> by the bookmakers (the price with their margin taken out), priced
       ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} and paying about ${((OG.kinds || []).find(k => k.target) || {target: 2.8}).target}x or more
       together. No 1/20 shots: they add almost nothing and still carry the margin. The model vetoes any pick it rates

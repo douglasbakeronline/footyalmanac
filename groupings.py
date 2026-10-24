@@ -183,7 +183,9 @@ WIDE_BANDS = [(n, lo, hi) for n, _, _, lo, hi in WIDE_KINDS]
 # nothing to the price and still carry the margin. Fewer, longer legs beat
 # many short ones for the same return, because each leg adds the margin
 # again; the chooser maximises combined chance, so it finds that by itself.
-# Football only: no other sport has been tested at these prices.
+# All sports since the evening of 24 Oct 2026 (Douglas). Only football was tested
+# at these prices; the chance quoted is the bookmakers' own, so it holds for any
+# sport, but the archive evidence above is football only.
 # 24 Oct 2026 evening, Douglas: "at least 2-3 groups per day, at least 3
 # teams in each group ... all picks must be likely to come in". So up to
 # MULT_PER_DAY Multipliers a day, each three or four picks the bookmakers
@@ -194,7 +196,7 @@ WIDE_BANDS = [(n, lo, hi) for n, _, _, lo, hi in WIDE_KINDS]
 MULT_KINDS = [("Multiplier", 2.8, 5.0, 0.20)]
 MULT_PER_DAY = 3
 MULT_LEGS = (3, 4)
-MULT_SPORTS = {"football"}
+MULT_SPORTS = None        # every sport (Douglas, 24 Oct 2026 evening); a set limits it
 MULT_ODDS = (1.30, 1.90)   # a leg's own price range: the range the evidence covers
 MULT_FAIR_MIN = 0.60       # the bookmakers' fair chance on the pick: likely to come in
 MULT_MODEL_MIN = 0.40      # the model must not think the pick unlikely
@@ -283,30 +285,35 @@ def legs(dates):
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
                         "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
                         "pDraw": round(p.get("d", 0), 4), "multOnly": pl < WIDE_MIN})
-    td = (read_js("tennis-data.js") or {}) if "tennis" in GROUP_SPORTS else {}
+    # 24 Oct 2026, Douglas: "Multipliers should be across all sports". Every
+    # published sport's picks now enter the pool; those outside GROUP_SPORTS,
+    # or under the Wider tested rate, are multOnly: the Multipliers can use
+    # them, the groups built to land cannot (safe_leg, wide_leg).
+    td = read_js("tennis-data.js") or {}
     for m in td.get("matches") or []:
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
         d = m.get("date")
         if d not in dates or "qualif" in (m.get("round") or "").lower(): continue
-        pl = leg_p(m.get("confidence") or 0, m.get("accuracy"), WIDE_MIN)
-        if pl is None: continue
+        pl = leg_p(m.get("confidence") or 0, m.get("accuracy"), ADMIT_MIN)
+        if pl is None or (m.get("confidence") or 0) < MULT_MODEL_MIN: continue
         out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"], "tour": m.get("tour"), "tournament": m.get("tournament"),
                     "players": [m.get("playerA"), m.get("playerB")],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
-                    "list": bool(m.get("list"))})
+                    "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN})
     sd = read_js("sports-data.js") or {}
     for key, sp in (sd.get("sports") or {}).items():
-        if not sp.get("published") or key not in GROUP_SPORTS: continue
+        if not sp.get("published"): continue
         for g in sp.get("games") or []:
             t = parse(g.get("when"))
             if not t or t.date().isoformat() not in dates: continue
-            pl = leg_p(g.get("confidence") or 0, g.get("accuracy"), WIDE_MIN)
-            if pl is None: continue
+            pl = leg_p(g.get("confidence") or 0, g.get("accuracy"), ADMIT_MIN)
+            if pl is None or (g.get("confidence") or 0) < MULT_MODEL_MIN: continue
             out.append({"sport": key, "event": f"{g['home']} v {g['away']}", "home": g["home"], "away": g["away"],
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list"))})
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN})
     return out
 
 # ---------- prices ----------
@@ -585,7 +592,9 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     rep["noKey"] = sorted({f"{l.get('tour')} {l.get('tournament')}" for l in want
                            if l["sport"] == "tennis" and not _odds_keys(l, active)} |
                           {f"rugby {l.get('comp')}" for l in want if l["sport"] == "rugby" and not _odds_keys(l, active)})
-    for k in sorted(need, key=lambda k: -len(need[k])):
+    # Keys the groups built to land need come first; Multiplier-only legs
+    # (multOnly, 24 Oct 2026) ride on the same keys and spend what is left.
+    for k in sorted(need, key=lambda k: (-sum(1 for l in need[k] if not l.get("multOnly")), -len(need[k]))):
         events = cached(k, ODDS_API_TTL)
         if events is None:
             spent = led["days"].get(day, 0)
@@ -673,7 +682,7 @@ def safe_leg(l):
     the model and the market both at LEG_MIN or more, and the model no more
     than MAX_ABOVE_BOOK above the market. Where they disagree the market has
     been the better guide (see the module notes)."""
-    if l.get("est") or l.get("fair") is None: return False
+    if l.get("multOnly") or l.get("est") or l.get("fair") is None: return False
     if l["pModel"] < LEG_MIN or l["fair"] < LEG_MIN or l.get("pTested", l["p"]) < LEG_MIN: return False
     return l["pModel"] - l["fair"] <= MAX_ABOVE_BOOK
 
@@ -682,6 +691,7 @@ def wide_leg(l):
     model and bookmaker all WIDE_MIN+ and the model at most WIDE_ABOVE_BOOK
     over the market; or unpriced, on the Daily List, tested and model
     WIDE_EST_MIN+. Both compete on their chance (best_wide)."""
+    if l.get("multOnly"): return False
     if l.get("est") or l.get("fair") is None:
         return bool(l.get("list") and l.get("pTested", l["p"]) >= WIDE_EST_MIN and l["pModel"] >= WIDE_EST_MIN)
     if min(l["pModel"], l["fair"], l.get("pTested", l["p"])) < WIDE_MIN: return False
@@ -730,7 +740,7 @@ def is_mult(name): return str(name).startswith("Multiplier")
 def mult_fault(l):
     """Why a leg cannot go in a Multiplier, in plain words, or None
     (24 Oct 2026). See MULT_KINDS for the evidence."""
-    if l.get("sport") not in MULT_SPORTS: return f"{l['pick']}: not football"
+    if MULT_SPORTS and l.get("sport") not in MULT_SPORTS: return f"{l['pick']}: not a Multiplier sport"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
     if not MULT_ODDS[0] <= l["odds"] <= MULT_ODDS[1]:
         return f"{l['pick']}: price {l['odds']:.2f}, outside {MULT_ODDS[0]:.2f} to {MULT_ODDS[1]:.2f}"

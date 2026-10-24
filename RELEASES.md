@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Multipliers across all sports, 24 Oct (tag pending)
+
+**What changed:** Douglas: "Multipliers should be across all sports". Picks from every published sport (football, rugby, tennis, NFL, college football, baseball, basketball, WNBA, and any other on the site) now enter the Multiplier pool on the same rule: priced 1.30-1.90, the bookmakers 60%+, the model 40%+ and no more than 5 points above them. Tennis rows show under their picks like the others.
+**Evidence:** the quoted chance is the bookmakers' own, so it is honest for any sport; the archive evidence (legs at these prices landing above fair) is football only, said on the page note.
+**Safety:** picks from sports outside `GROUP_SPORTS` are `multOnly`: `safe_leg` and `wide_leg` refuse them, so the Doubles, Trebles and Wider groups are unchanged. The Odds API (tennis, rugby; 15 credits a day) spends on keys the safer groups need first; Multiplier-only legs use what is left.
+**Files:** groupings.py, index.html, tests/test_groupings_multiplier.py, tests/test_groupings_banker.py, CLAUDE.md, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Odds tab: every pick carries its full board row, 24 Oct (tag pending)
 
 **What changed:** Douglas: "the fixture rows from the daily lists, and all content and links, in the groups". Under each pick in every group (Doubles, Trebles, Wider, Multipliers) is the same row the Daily List draws: kick-off, form, probability bar, predicted score, tier, tested rate, bookmark star; tap it for the full detail (season tables, the why, head to head, predictions, search and table links). A pick that has started shows its pinned row from the day list where one exists. Group cards are now full width so the rows fit.

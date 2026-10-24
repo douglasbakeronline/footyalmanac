@@ -114,7 +114,10 @@ class Sports(unittest.TestCase):
         with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "HERE", d), \
              mock.patch.object(G, "read_js", lambda name: {"tennis-data.js": td, "sports-data.js": sd}.get(name)):
             out = G.legs({"2026-10-20"})
-        self.assertEqual({l["sport"] for l in out}, {"rugby"})
+        # 24 Oct 2026 evening: every sport enters the pool for the Multipliers,
+        # but only GROUP_SPORTS can go in the groups built to land.
+        self.assertEqual({l["sport"] for l in out if not l.get("multOnly")}, {"rugby"})
+        self.assertEqual({l["sport"] for l in out}, {"rugby", "cfb", "nfl", "tennis"})
 
 
 class Settle(unittest.TestCase):
