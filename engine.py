@@ -1084,7 +1084,14 @@ def cup_temper(p, cal=None):
     t = min(max(cal["a"] + cal["b"] * (max(trip) - 0.45), 0.6), 3.0)
     q = [max(x, 1e-12) ** (1.0 / t) for x in trip]
     s = sum(q)
-    return {**p, "home": q[0] / s, "draw": q[1] / s, "away": q[2] / s}
+    out = {**p, "home": q[0] / s, "draw": q[1] / s, "away": q[2] / s}
+    # 24 Oct 2026: "confidence" was carried over untempered, so a cup tie
+    # showed its raw number (Berkhamsted 80%) beside a tempered 61% win
+    # chance, and was ranked, tiered and banded on the raw one. It is the
+    # largest of the three outcomes, as match_probabilities defines it.
+    if "confidence" in p:
+        out["confidence"] = max(out["home"], out["draw"], out["away"])
+    return out
 
 
 def cup_match(rating_h, s_h, rating_a, s_a, mu, tier=1, neutral=False,

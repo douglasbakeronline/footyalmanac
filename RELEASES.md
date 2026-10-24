@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Multipliers, cup confidence fix, market check, 24 Oct (tag pending)
+
+**What changed:** the Odds tab has a new **Multipliers** section under the groups built to land: for a target return of 3x or 5x, the 2-4 football picks with the highest combined chance whose combined price reaches it. Each pick is priced 1.30-1.90, the bookmakers give it 45%+, and the model sits no more than 5 points above them; its chance is the bookmakers' fair chance (price less margin), shown as such. Built after the other groups from the picks they leave, re-checked on every build, archived and graded on their own line ("Multipliers won"). They do not count toward the three groups a day. Separately, domestic cup ties no longer show their untempered confidence: `engine.cup_temper` now resets `confidence` to the tempered maximum (Berkhamsted v Cray showed 80% beside a 61% win chance; 200 rows on 24 Oct), so cup rows rank, tier and band on the number they display.
+**Evidence:** `tools/market_check.py` (new, advisory) on 909 archived football picks with a pre-kick-off price, 11 Sep-24 Oct: the market beats the model on log loss (0.979 v 1.013; 50/50 blend better than the model, +0.023, 90% +0.017 to +0.029); picks landed at the market's rate, not the model's (model 5-10 points above: 47% landed; 10+: 42%); Multiplier-eligible legs (n=181) landed 66.9% against 58.2% fair (+8.6 pts, 90% +2.7 to +14.0), profit per unit +6.0% (90% -3.6% to +14.8%, no proven edge). Draw share at a fixed win chance did not change landing (50-70% picks: landed 62/62/52% against quoted 67/59/54%), so no draw filter. Agrees with `claude/odds-edge-test-2026-10-23.md` (no edge over the price on 12,510 replay legs).
+**Files:** groupings.py, index.html, engine.py, tools/market_check.py, tests/test_groupings_multiplier.py, tests/test_groupings.py, tests/test_cup_calibration.py, claude/multipliers-2026-10-24.md, claude/odds-groupings.md, CLAUDE.md, RELEASES.md.
+**Not changed:** the Daily List, every model probability and constant, Double / Treble / Wider rules (the leg pool now admits mid-priced football picks marked `multOnly`; the strict and Wider gates already required their own tested rate, so they pick from the same legs as before, and `multOnly` legs never cost a per-fixture price call). No bookmaker input into any model: the market is used only for the Multipliers' quoted chance and as a veto, as prices already were.
+**Roll back:** `git revert` the commit. Archived Multiplier groups stay in `groupings-archive/` and the record tallies them by name.
+
 ## Office review and next week's priorities, 23 Oct (tag pending)
 
 **What changed:** nothing a reader sees. A dated review of the fortnight 12-23 Oct and three priorities for next week (Jade, Susie, Andrew).

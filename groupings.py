@@ -166,6 +166,42 @@ WIDE_MIN = 0.65
 WIDE_ABOVE_BOOK = 0.08
 WIDE_EST_MIN = 0.75     # an unpriced leg: Daily List, tested rate and model 75%+
 WIDE_BANDS = [(n, lo, hi) for n, _, _, lo, hi in WIDE_KINDS]
+# 24 Oct 2026, Douglas: "a way of surfacing predictions that have the best
+# odds of multiplying a stake ... still some level of confidence". The
+# Multipliers: for a target return (3x, 5x), the 2-4 legs with the highest
+# combined chance whose combined price reaches it. Evidence, 909 archived
+# football picks with a pre-kick-off market price (11 Sep - 24 Oct):
+#  - the market's chance beats the model's on log loss (0.979 v 1.013), and
+#    where the model sat 5+ points above the market its picks landed at the
+#    market's rate, not the model's (47% at +5-10, 42% at +10)
+#  - clean legs priced 1.30-1.85 with the model no more than 5 points above
+#    the market (n=191) landed 65.4% against 58.5% fair; profit per unit
+#    +3.1%, 90% interval -5.9% to +12.6% (no proven edge)
+# So a Multiplier leg's chance is the bookmakers' fair chance (1/price less
+# the margin), the model is a veto, and a leg is priced 1.30-1.90 (the range
+# the evidence covers) with the market giving it 45%+. Shorter legs (1/20) are left out: they add almost
+# nothing to the price and still carry the margin. Fewer, longer legs beat
+# many short ones for the same return, because each leg adds the margin
+# again; the chooser maximises combined chance, so it finds that by itself.
+# Football only: no other sport has been tested at these prices.
+# (name, lowest combined price, highest, lowest combined chance)
+MULT_KINDS = [("Multiplier 3x", 3.0, 4.6, 0.25), ("Multiplier 5x", 5.0, 7.6, 0.15)]
+MULT_LEGS = (2, 3, 4)
+MULT_SPORTS = {"football"}
+MULT_ODDS = (1.30, 1.90)   # a leg's own price range: the range the evidence covers
+MULT_FAIR_MIN = 0.45       # the bookmakers' fair chance on the pick
+MULT_MODEL_MIN = 0.40      # the model must not think the pick unlikely
+MULT_ABOVE_BOOK = 0.05     # and must not sit more than this above the market
+MULT_POOL = 24
+MULT_RULE = 1
+RISK.update({n: "Higher return" for n, _, _, _ in MULT_KINDS})
+MIN_CHANCE.update({n: f for n, _, _, f in MULT_KINDS})
+MULT_RANGE = {n: (lo, hi) for n, lo, hi, _ in MULT_KINDS}
+# Admission to the leg pool: a tested band with MIN_N games behind it. The
+# strict and Wider gates (safe_leg, wide_leg) still require their own tested
+# rate (pTested, which is min(tested rate, model)), so lowering this changes
+# nothing for them; it lets the Multipliers see mid-priced picks.
+ADMIT_MIN = 0.0
 LEGS_IN.update({n: k for n, k, _, _, _ in WIDE_KINDS})
 MIN_CHANCE.update({n: f for n, _, f, _, _ in WIDE_KINDS})
 RANGE = {n: (lo, hi) for n, lo, hi in BANDS + WIDE_BANDS}
@@ -229,13 +265,17 @@ def legs(dates):
             if g.get("celtic") or g.get("why") not in CLEAN_WHY: continue
             side = max(p, key=p.get)
             if side == "d": continue
-            pl = leg_p(p[side], g.get("accuracy"), WIDE_MIN)
-            if pl is None: continue
+            pl = leg_p(p[side], g.get("accuracy"), ADMIT_MIN)
+            # 24 Oct 2026: mid-priced picks join the pool for the Multipliers
+            # only (multOnly); they are priced from the bulk day prices and
+            # never cost a per-fixture call (price_football, price_espn_soccer).
+            if pl is None or p[side] < MULT_MODEL_MIN: continue
             h, a = g["home"]["name"], g["away"]["name"]
             out.append({"sport": "football", "event": f"{h} v {a}", "home": h, "away": a, "side": side,
                         "pick": h if side == "h" else a, "code": g.get("league"), "comp": g.get("leagueName"), "country": g.get("country"),
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list"))})
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "pDraw": round(p.get("d", 0), 4), "multOnly": pl < WIDE_MIN})
     td = (read_js("tennis-data.js") or {}) if "tennis" in GROUP_SPORTS else {}
     for m in td.get("matches") or []:
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
@@ -333,6 +373,7 @@ def price_football(L, dates, report):
                          margin=margin_of(row["avg"]),
                          src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
                 matched += 1; continue
+            if l.get("multOnly"): continue    # bulk prices only, no call of its own
             try:
                 items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:
@@ -403,7 +444,8 @@ def price_espn_soccer(L, dates, report):
     Eastern day, so each UK date also asks for the day before. Matched on the
     competition's ESPN slug, kick-off within 90 minutes and both team names."""
     from sources import ESPN_SLUGS
-    want = [l for l in L if l["sport"] == "football" and not l.get("odds") and l.get("code") in ESPN_SLUGS]
+    want = [l for l in L if l["sport"] == "football" and not l.get("odds") and l.get("code") in ESPN_SLUGS
+            and not l.get("multOnly")]
     if not want:
         report["espn_soccer"] = {"matched": 0, "legs": 0}; return
     calls, matched = 0, 0
@@ -676,6 +718,98 @@ def best_wide(L, used, after, name, lo, hi):
     if g: g["rule"] = WIDE_RULE
     return g
 
+def is_mult(name): return str(name).startswith("Multiplier")
+
+def mult_fault(l):
+    """Why a leg cannot go in a Multiplier, in plain words, or None
+    (24 Oct 2026). See MULT_KINDS for the evidence."""
+    if l.get("sport") not in MULT_SPORTS: return f"{l['pick']}: not football"
+    if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
+    if not MULT_ODDS[0] <= l["odds"] <= MULT_ODDS[1]:
+        return f"{l['pick']}: price {l['odds']:.2f}, outside {MULT_ODDS[0]:.2f} to {MULT_ODDS[1]:.2f}"
+    if l["fair"] < MULT_FAIR_MIN:
+        return f"{l['pick']}: the bookmakers now give {pct(l['fair'])}, under {pct(MULT_FAIR_MIN)}"
+    if l["pModel"] < MULT_MODEL_MIN:
+        return f"{l['pick']}: the model now gives {pct(l['pModel'])}, under {pct(MULT_MODEL_MIN)}"
+    if l["pModel"] - l["fair"] > MULT_ABOVE_BOOK:
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) now sits {round((l['pModel'] - l['fair']) * 100)} "
+                f"points above the bookmakers ({pct(l['fair'])})")
+    return None
+
+def mult_leg(l): return mult_fault(l) is None
+
+def as_mult(l):
+    """A leg as a Multiplier carries it: its chance is the bookmakers' fair
+    chance, which has been the better guide at these prices."""
+    return dict(l, p=l["fair"], basis="bookmakers")
+
+def mult_combo(c, lo, hi):
+    """Combined price if the legs make a valid Multiplier, else None."""
+    o = math.prod(l["odds"] for l in c)
+    if not lo <= o <= hi: return None
+    if len({l["event"] for l in c}) < len(c): return None
+    comps = {}
+    for l in c: comps[l.get("comp")] = comps.get(l.get("comp"), 0) + 1
+    if max(comps.values()) > 2: return None
+    return o
+
+def best_mult(L, used, after, name):
+    """The 2-4 legs with the highest combined chance (bookmakers' fair) whose
+    combined price reaches the kind's target, or None."""
+    lo, hi = MULT_RANGE[name]
+    cands = [as_mult(l) for l in L if l["event"] not in used and mult_leg(l)
+             and (parse(l["when"]) or after) >= after]
+    # Keep the legs that give up the least chance per unit of price: chance
+    # lost is -log(fair), price gained is log(odds); their ratio is about
+    # 1 + log(margin) / log(odds), so lower-margin and longer legs come first.
+    # Sorting by chance alone kept only the shortest legs, which cannot reach
+    # 3x in four (found on 24 Oct's board: 128 legs passed, no group).
+    cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:MULT_POOL]
+    top = None
+    for k in MULT_LEGS:
+        for c in itertools.combinations(cands, k):
+            o = mult_combo(c, lo, hi)
+            if o is None: continue
+            p = math.prod(l["p"] for l in c)
+            if p < MIN_CHANCE[name]: continue
+            if not top or p > top[0] or (p == top[0] and o > top[2]): top = (p, c, o)
+    if not top: return None
+    p, c, o = top
+    legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
+    return {"name": name, "risk": RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
+            "estimates": 0, "basis": "bookmakers", "rule": MULT_RULE, "legs": legs_}
+
+def recheck_mult(g, L):
+    """recheck() for a Multiplier: every leg still a clean pick on the same
+    side, still passing mult_leg at today's price, and the group still at or
+    above its target and floor."""
+    by = {(l["event"], l["pick"]): l for l in L}
+    legs_, why = [], []
+    if g.get("rule") != MULT_RULE:
+        return None, ["rebuilt under the current Multiplier rule"]
+    for old in g["legs"]:
+        cur = by.get((old["event"], old["pick"]))
+        if cur is None:
+            why.append(f"{old['pick']}: no longer a clean pick for this day (moved, postponed, flagged or the model's side changed)")
+            continue
+        fault = mult_fault(cur)
+        if fault: why.append(fault); continue
+        legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
+    if why: return None, why
+    name = g["name"]
+    lo, hi = MULT_RANGE[name]
+    o = mult_combo(legs_, lo, hi)
+    p = math.prod(l["p"] for l in legs_)
+    if o is None:
+        return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f}"]
+    if p < MIN_CHANCE[name]:
+        return None, [f"combined chance now {pct(p)}, under the {pct(MIN_CHANCE[name])} floor"]
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    return {**{k: v for k, v in g.items() if k not in ("legs", "odds", "p", "implied", "status", "checked")},
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
+            "estimates": 0, "legs": legs_, "status": "holding", "first": g.get("first") or g.get("checked")}, []
+
 def _best(L, used, after, name, lo, hi, max_est, wide=False, priced_only=False):
     top = None
     cands = pool(L, used, after, 0, wide=wide)
@@ -705,12 +839,22 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     used, groups = set(), []
     now = now or after
     stamp = iso(now)
-    kept, wide_kept = {}, []
+    kept, wide_kept, mult_kept = {}, [], {}
     for g in prev or []:
-        if g.get("name") not in LEGS_IN: continue
+        if g.get("name") not in LEGS_IN and not is_mult(g.get("name")): continue
         if underway(g, now):
             u = dict(g, status="underway"); groups.append(u)
             used |= {l["event"] for l in g["legs"]}; continue
+        if is_mult(g["name"]):
+            if g["name"] not in MULT_RANGE: continue
+            ng, why = recheck_mult(g, L)
+            if ng is None:
+                if log is not None:
+                    log.append({"at": stamp, "name": g["name"], "rank": "main", "odds": g.get("odds"),
+                                "picks": [l["pick"] for l in g["legs"]], "why": why})
+                continue
+            if g["name"] in mult_kept: continue
+            mult_kept[g["name"]] = ng; used |= {l["event"] for l in ng["legs"]}; continue
         ng, why = recheck(g, L)
         if ng is None:
             if log is not None:
@@ -761,6 +905,20 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
         for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
         g["checked"] = stamp
         used |= {l["event"] for l in g["legs"]}
+        groups.append(g)
+    # Multipliers (24 Oct 2026): after the groups built to land, from the
+    # picks those left, so they never take a leg the safer groups need. They
+    # do not count toward min_groups: they are a different kind of bet.
+    for name, _, _, _ in MULT_KINDS:
+        g = mult_kept.get(name)
+        if g is None:
+            g = best_mult(L, used, after, name)
+            if not g: continue
+            g.update(rank="main", first=stamp,
+                     status="replacement" if ("main", name) in replaced else "new")
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+        used |= {l["event"] for l in g["legs"]}
+        g["checked"] = stamp
         groups.append(g)
     # A first choice that failed with nothing to replace it leaves the second
     # choice as the best of its kind, so it is shown as the first.
@@ -946,13 +1104,14 @@ def grade():
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
-                      for n in [b[0] for b in BANDS + WIDE_BANDS] + RETIRED
-                      if n in [b[0] for b in BANDS + WIDE_BANDS] or any(g["name"] == n for g in allg)},
-           "current": [b[0] for b in BANDS + WIDE_BANDS], "retired": RETIRED,
+                      for n in [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
+                      if n in [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] or any(g["name"] == n for g in allg)},
+           "current": [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS], "retired": RETIRED,
            # 22 Oct 2026: the record headline is the groups the tab builds now,
            # strict and Wider apart; the retired kinds keep their own lines.
            "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
            "wider": tally([g for g in allg if is_wide(g["name"])]),
+           "multiplier": tally([g for g in allg if is_mult(g["name"])]),
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -986,8 +1145,10 @@ def main():
         groups = build_day(dl, now + timedelta(minutes=20), prev=pd.get("groups"), now=now, log=log,
                            min_groups=MIN_GROUPS)
         live = [g for g in groups if g.get("status") != "underway"]
-        days.append({"date": d, "legs": len(dl), "priced": sum(1 for l in dl if not l.get("est")),
-                     "safe": sum(1 for l in dl if safe_leg(l)), "groups": groups,
+        core = [l for l in dl if not l.get("multOnly")]   # the counts the page has always shown
+        days.append({"date": d, "legs": len(core), "priced": sum(1 for l in core if not l.get("est")),
+                     "safe": sum(1 for l in core if safe_leg(l)), "multLegs": sum(1 for l in dl if mult_leg(l)),
+                     "groups": groups,
                      "checked": iso(now), "log": log[-LOG_KEEP:],
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway")},
@@ -995,10 +1156,14 @@ def main():
                      "dropped": sum(1 for e in log if e["at"] == iso(now))})
         report.setdefault("review", {})[d] = days[-1]["review"]
     out = {"generated": iso(now), "bands": BANDS,
-           "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS + WIDE_KINDS],
+           "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS + WIDE_KINDS]
+                    + [{"name": n, "legs": list(MULT_LEGS), "minChance": f, "risk": RISK.get(n), "target": lo}
+                       for n, lo, _, f in MULT_KINDS],
            "rules": {"minReturn": MIN_RETURN, "minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK,
                      "minGroups": MIN_GROUPS, "wideMin": WIDE_MIN, "wideAboveBook": WIDE_ABOVE_BOOK,
-                     "wideEstMin": WIDE_EST_MIN},
+                     "wideEstMin": WIDE_EST_MIN,
+                     "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
+                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS)}},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.

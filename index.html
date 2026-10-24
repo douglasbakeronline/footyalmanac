@@ -401,6 +401,13 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    rule and a red risk label, so they never read as the strict kinds. */
 .og.Wider .og-h{border-top:3px solid var(--away)}
 .og.Wider .og-risk{color:var(--away)}
+/* 24 Oct 2026: Multipliers, a different bet: a target return (3x, 5x) at the
+   best chance the bookmakers' own prices allow. Set apart in their own
+   section with an ink rule, never mixed into the groups built to land. */
+.og.Multiplier .og-h{border-top:3px solid var(--ink)}
+.og.Multiplier .og-risk{color:var(--ink)}
+.og-mult{margin-top:28px}
+.og-mult-p{font-size:13px;color:var(--ink-2);max-width:72ch;margin-top:10px;line-height:1.5}
 .og-rec details.og-old{margin-top:10px}
 .og-rec details.og-old summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--ink-2)}
 .og-land{font-size:13px;color:var(--ink)}
@@ -3200,18 +3207,19 @@ const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10
 function ogCard(g){
   const stake = ogStake();
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
+  const mult = g.name.startsWith("Multiplier");
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
-  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `pays ${g.band[0]}x or more` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
     ${ogStatus(g)}
-    <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
+    <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
-    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's price less a typical bookmaker margin, no bookmaker price found yet.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's price less a typical bookmaker margin, no bookmaker price found yet.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3237,6 +3245,7 @@ function ogRecord(){
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
     <div class="og-score"><div><span>Doubles and Trebles won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
       ${w ? `<div><span>Wider groups won</span><b>${w.won} / ${w.settled}</b><small>${w.settled ? `expected ${w.expected.toFixed(1)}` : "none settled yet"}</small></div>` : ""}
+      ${R.multiplier && R.multiplier.groups ? `<div><span>Multipliers won</span><b>${R.multiplier.won} / ${R.multiplier.settled}</b><small>${R.multiplier.settled ? `expected ${R.multiplier.expected.toFixed(1)} · return ${roi(R.multiplier)}` : "none settled yet"}</small></div>` : ""}
       <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
       <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
       ${band}</div>${oldHtml}${dayRows}
@@ -3361,10 +3370,22 @@ function renderOdds(){
     $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
     return;
   }
+  const isMult = g => String(g.name).startsWith("Multiplier");
   const days = OG.days.filter(d => d.groups.length);
   if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const gen = new Date(OG.generated);
+  const core = day.groups.filter(g => !isMult(g)), mults = day.groups.filter(isMult);
+  const MR = (OG.rules || {}).mult || {};
+  const multHtml = `<section class="og-mult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
+      <p class="og-mult-p">For a bigger return: the picks with the best chance of turning your stake into ${(OG.kinds || []).filter(k => k.target).map(k => k.target + "x").join(" or ") || "3x or 5x"}.
+      Each pick is priced ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} (no 1/20 shots: they add almost nothing and still carry the
+      margin), the bookmakers give it ${pct(MR.fairMin || 0.45)}%+, and the model does not rate it more than
+      ${Math.round((MR.aboveBook || 0.05) * 100)} points above them. Fewer, longer picks win out over many short ones for the
+      same payout, because every extra pick adds the bookmaker's margin again. These land about one time in three
+      (3x) or one in six (5x): a different bet from the groups above, graded on its own line below.</p>
+    ${mults.length ? `<div class="og-grid">${mults.map(ogCard).join("")}</div>` :
+      `<div class="empty" style="margin-top:10px">No multiplier on ${fmtDay(day.date)}: ${day.multLegs ?? 0} pick${(day.multLegs ?? 0) === 1 ? "" : "s"} qualified, not enough to reach a target at the floor.</div>`}</section>`;
   const R = OG.rules || {}, legMin = pct(R.legMin || 0.75), above = Math.round((R.maxAboveBook || 0.05) * 100);
   host.innerHTML = `<div class="lede"><h2>Groups built to land</h2>
       <p>Every group pays <b>at least double your stake</b> (combined odds of ${((OG.rules && OG.rules.minReturn) || 2).toFixed(2)} or more).
@@ -3409,12 +3430,13 @@ function renderOdds(){
         misses about one day in three, and every pick carries the bookmaker's margin. This is the model's read, not
         betting advice.</p>
       </details></div>
-    <div class="og-days"><div class="seg" id="ogDay" aria-label="Day">${OG.days.map(d => { const n = d.groups.filter(g => g.status !== "underway").length;
+    <div class="og-days"><div class="seg" id="ogDay" aria-label="Day">${OG.days.map(d => { const n = d.groups.filter(g => g.status !== "underway" && !isMult(g)).length;
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}" title="${fmtDay(d.date)}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-    ${day.groups.length ? `<div class="og-grid">${day.groups.map(ogCard).join("")}</div>` :
+    ${core.length ? `<div class="og-grid">${core.map(ogCard).join("")}</div>` :
       `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one.${day.date > OG.days[0].date ? " Bookmakers open more prices nearer the day, so this can fill in on a later build." : " Sitting a day out is the rule, not a fault."}</div>`}
     ${ogLog(day)}
+    ${multHtml}
     <p style="font-size:12px;color:var(--mute-ink,var(--mute));margin-top:12px">${day.checked ? `Checked at ${ogAt(day.checked)}, and again on every build. ` : ""}${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
     <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${ogRecord()}`;
