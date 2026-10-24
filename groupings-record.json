@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-23T22:33:21Z",
+ "graded": "2026-10-24T00:45:08Z",
  "overall": {
-  "groups": 61,
+  "groups": 63,
   "settled": 61,
   "won": 11,
   "lost": 50,
-  "pending": 0,
-  "legs": 291,
-  "legsWon": 210,
+  "pending": 2,
+  "legs": 292,
+  "legsWon": 211,
   "returned": 40.5,
   "staked": 61,
   "expected": 19.78
@@ -50,11 +50,11 @@
    "expected": 0
   },
   "Wider Treble": {
-   "groups": 1,
+   "groups": 2,
    "settled": 1,
    "won": 0,
    "lost": 1,
-   "pending": 0,
+   "pending": 1,
    "legs": 3,
    "legsWon": 2,
    "returned": 0,
@@ -62,13 +62,13 @@
    "expected": 0.39
   },
   "Wider Fourfold": {
-   "groups": 1,
+   "groups": 2,
    "settled": 1,
    "won": 0,
    "lost": 1,
-   "pending": 0,
-   "legs": 3,
-   "legsWon": 2,
+   "pending": 1,
+   "legs": 4,
+   "legsWon": 3,
    "returned": 0,
    "staked": 1,
    "expected": 0.37
@@ -148,13 +148,13 @@
   "expected": 0
  },
  "wider": {
-  "groups": 2,
+  "groups": 4,
   "settled": 2,
   "won": 0,
   "lost": 2,
-  "pending": 0,
-  "legs": 6,
-  "legsWon": 4,
+  "pending": 2,
+  "legs": 7,
+  "legsWon": 5,
   "returned": 0,
   "staked": 2,
   "expected": 0.76
@@ -172,6 +172,122 @@
   "expected": 13.11
  },
  "days": [
+  {
+   "date": "2026-10-24",
+   "published": "2026-10-24T00:44:28Z",
+   "groups": [
+    {
+     "name": "Wider Fourfold",
+     "rank": "fill",
+     "odds": 2.08,
+     "p": 0.3609,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Spišská Nová Ves",
+       "event": "Spišská Nová Ves v Kežmarok",
+       "sport": "football",
+       "comp": "3. liga - East",
+       "when": "2026-10-24T11:30:00Z",
+       "odds": 1.21,
+       "est": true,
+       "p": 0.7832,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Bodo/Glimt",
+       "event": "Bodo/Glimt v Vålerenga",
+       "sport": "football",
+       "comp": "Eliteserien",
+       "when": "2026-10-24T14:00:00Z",
+       "odds": 1.13,
+       "est": false,
+       "p": 0.8042,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Hamilton Academical",
+       "event": "Hamilton Academical v East Fife",
+       "sport": "football",
+       "comp": "League One",
+       "when": "2026-10-24T14:00:00Z",
+       "odds": 1.29,
+       "est": false,
+       "p": 0.708,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Ospreys",
+       "event": "Ospreys v Dragons",
+       "sport": "rugby",
+       "comp": "URC",
+       "when": "2026-10-24T18:00Z",
+       "odds": 1.18,
+       "est": true,
+       "p": 0.8093,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Wider Treble",
+     "rank": "fill",
+     "odds": 2.02,
+     "p": 0.3632,
+     "status": "pending",
+     "paid": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Púchov",
+       "event": "Púchov v Slovan Duslo Šaľa",
+       "sport": "football",
+       "comp": "3. liga - West",
+       "when": "2026-10-24T11:30:00Z",
+       "odds": 1.26,
+       "est": false,
+       "p": 0.676,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Fiorentino",
+       "event": "Fiorentino v Cailungo",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-10-24T13:00:00Z",
+       "odds": 1.38,
+       "est": false,
+       "p": 0.6526,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Leinster",
+       "event": "Leinster v Munster",
+       "sport": "rugby",
+       "comp": "URC",
+       "when": "2026-10-24T17:00Z",
+       "odds": 1.16,
+       "est": true,
+       "p": 0.8233,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-23",
    "published": "2026-10-23T00:42:26Z",
@@ -232,9 +348,9 @@
      "p": 0.3726,
      "status": "lost",
      "paid": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Royal Vision",
@@ -281,8 +397,8 @@
        "odds": 1.07,
        "est": true,
        "p": 0.8929,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "48-27"
       }
      ]
     }
