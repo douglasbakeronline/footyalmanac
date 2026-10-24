@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Multipliers rule 2: three a day, 3-4 likely picks each, 24 Oct (tag pending)
+
+**What changed:** Douglas: "at least 2-3 groups per day, at least 3 teams in each group ... all picks must be likely to come in". The 3x / 5x Multipliers are replaced by up to three Multipliers a day (first, second, third choice), each three or four picks the bookmakers rate 60%+ (was 45%+), paying 2.8x or more together, no pick shared. Chosen for the highest combined chance, so they come out as three picks at about 1.35-1.55. About 28-30% each to land.
+**Evidence:** on the archive, clean legs priced 1.30-1.90 at 60%+ fair with the model no more than 5 points above the market landed 76.1% (n=67, fair 64.8%; `tools/market_check.py` section 4 at the higher floor). On 24 Oct's board this gives three groups at 2.82-2.86 (Huddersfield, Nashville, Lazio; Häcken, Arsenal, Porto; Brighton, Madryn, Philadelphia), on 25 Oct three at 2.80-2.82.
+**Files:** groupings.py, index.html, tests/test_groupings_multiplier.py, claude/multipliers-2026-10-24.md, CLAUDE.md, RELEASES.md.
+**Not changed:** the groups built to land, every model, the Daily List. Rule 1 groups published earlier today are rebuilt under rule 2 on the next build.
+**Roll back:** `git revert` the commit.
+
 ## Odds tab order: Multipliers above underway groups, 24 Oct (tag pending)
 
 **What changed:** on the Odds tab, groups that can still be placed come first, then the Multipliers, then groups already underway under their own heading. A "Multipliers ↓" button beside the day picker jumps to them. On Saturday evening every group was underway, which pushed the Multipliers a long scroll down on a phone.

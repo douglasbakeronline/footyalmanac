@@ -184,16 +184,23 @@ WIDE_BANDS = [(n, lo, hi) for n, _, _, lo, hi in WIDE_KINDS]
 # many short ones for the same return, because each leg adds the margin
 # again; the chooser maximises combined chance, so it finds that by itself.
 # Football only: no other sport has been tested at these prices.
+# 24 Oct 2026 evening, Douglas: "at least 2-3 groups per day, at least 3
+# teams in each group ... all picks must be likely to come in". So up to
+# MULT_PER_DAY Multipliers a day, each three or four picks the bookmakers
+# rate 60%+ (MULT_FAIR_MIN), paying MULT_KINDS' lowest price or more. On the
+# archive, legs at 60%+ fair in this range landed 76.1% (n=67, fair 64.8%).
+# Three such picks pay about 3x and land about one time in four.
 # (name, lowest combined price, highest, lowest combined chance)
-MULT_KINDS = [("Multiplier 3x", 3.0, 4.6, 0.25), ("Multiplier 5x", 5.0, 7.6, 0.15)]
-MULT_LEGS = (2, 3, 4)
+MULT_KINDS = [("Multiplier", 2.8, 5.0, 0.20)]
+MULT_PER_DAY = 3
+MULT_LEGS = (3, 4)
 MULT_SPORTS = {"football"}
 MULT_ODDS = (1.30, 1.90)   # a leg's own price range: the range the evidence covers
-MULT_FAIR_MIN = 0.45       # the bookmakers' fair chance on the pick
+MULT_FAIR_MIN = 0.60       # the bookmakers' fair chance on the pick: likely to come in
 MULT_MODEL_MIN = 0.40      # the model must not think the pick unlikely
 MULT_ABOVE_BOOK = 0.05     # and must not sit more than this above the market
 MULT_POOL = 24
-MULT_RULE = 1
+MULT_RULE = 2      # 2: three a day, 3-4 picks, 60%+ each (24 Oct 2026 evening)
 RISK.update({n: "Higher return" for n, _, _, _ in MULT_KINDS})
 MIN_CHANCE.update({n: f for n, _, _, f in MULT_KINDS})
 MULT_RANGE = {n: (lo, hi) for n, lo, hi, _ in MULT_KINDS}
@@ -839,22 +846,22 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     used, groups = set(), []
     now = now or after
     stamp = iso(now)
-    kept, wide_kept, mult_kept = {}, [], {}
+    kept, wide_kept, mult_kept = {}, [], []
     for g in prev or []:
         if g.get("name") not in LEGS_IN and not is_mult(g.get("name")): continue
         if underway(g, now):
             u = dict(g, status="underway"); groups.append(u)
             used |= {l["event"] for l in g["legs"]}; continue
         if is_mult(g["name"]):
-            if g["name"] not in MULT_RANGE: continue
+            if g["name"] not in MULT_RANGE: continue      # a retired Multiplier kind
             ng, why = recheck_mult(g, L)
             if ng is None:
                 if log is not None:
-                    log.append({"at": stamp, "name": g["name"], "rank": "main", "odds": g.get("odds"),
+                    log.append({"at": stamp, "name": g["name"], "rank": g.get("rank", "main"), "odds": g.get("odds"),
                                 "picks": [l["pick"] for l in g["legs"]], "why": why})
                 continue
-            if g["name"] in mult_kept: continue
-            mult_kept[g["name"]] = ng; used |= {l["event"] for l in ng["legs"]}; continue
+            if len(mult_kept) >= MULT_PER_DAY: continue
+            mult_kept.append(ng); used |= {l["event"] for l in ng["legs"]}; continue
         ng, why = recheck(g, L)
         if ng is None:
             if log is not None:
@@ -909,16 +916,21 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     # Multipliers (24 Oct 2026): after the groups built to land, from the
     # picks those left, so they never take a leg the safer groups need. They
     # do not count toward min_groups: they are a different kind of bet.
-    for name, _, _, _ in MULT_KINDS:
-        g = mult_kept.get(name)
-        if g is None:
-            g = best_mult(L, used, after, name)
-            if not g: continue
-            g.update(rank="main", first=stamp,
-                     status="replacement" if ("main", name) in replaced else "new")
-            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+    name = MULT_KINDS[0][0]
+    mults = list(mult_kept)
+    mult_replaced = sum(1 for e in (log or []) if e["at"] == stamp and is_mult(e["name"]))
+    while len(mults) < MULT_PER_DAY:
+        g = best_mult(L, used, after, name)
+        if not g: break
+        g.update(first=stamp, status="replacement" if mult_replaced > 0 else "new")
+        mult_replaced -= 1
+        for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
         used |= {l["event"] for l in g["legs"]}
-        g["checked"] = stamp
+        mults.append(g)
+    # Strongest first; the rank says first, second or third choice.
+    mults.sort(key=lambda g: -g["p"])
+    for g, rank in zip(mults, ("main", "alternative", "third")):
+        g["rank"] = rank; g["checked"] = stamp
         groups.append(g)
     # A first choice that failed with nothing to replace it leaves the second
     # choice as the best of its kind, so it is shown as the first.
@@ -1163,7 +1175,7 @@ def main():
                      "minGroups": MIN_GROUPS, "wideMin": WIDE_MIN, "wideAboveBook": WIDE_ABOVE_BOOK,
                      "wideEstMin": WIDE_EST_MIN,
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
-                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS)}},
+                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY}},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.

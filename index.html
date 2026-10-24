@@ -3217,7 +3217,7 @@ function ogCard(g){
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
-  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `pays ${g.band[0]}x or more` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
@@ -3386,12 +3386,12 @@ function renderOdds(){
   const multLive = mults.filter(g => g.status !== "underway").length;
   const MR = (OG.rules || {}).mult || {};
   const multHtml = `<section class="og-mult" id="ogMult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
-      <p class="og-mult-p">For a bigger return: the picks with the best chance of turning your stake into ${(OG.kinds || []).filter(k => k.target).map(k => k.target + "x").join(" or ") || "3x or 5x"}.
-      Each pick is priced ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} (no 1/20 shots: they add almost nothing and still carry the
-      margin), the bookmakers give it ${pct(MR.fairMin || 0.45)}%+, and the model does not rate it more than
-      ${Math.round((MR.aboveBook || 0.05) * 100)} points above them. Fewer, longer picks win out over many short ones for the
-      same payout, because every extra pick adds the bookmaker's margin again. These land about one time in three
-      (3x) or one in six (5x): a different bet from the groups above, graded on its own line below.</p>
+      <p class="og-mult-p">Up to ${MR.perDay || 3} a day for a bigger return: three or four picks each, every one rated
+      <b>${pct(MR.fairMin || 0.6)}%+</b> by the bookmakers (the price with their margin taken out), priced
+      ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} and paying about ${((OG.kinds || []).find(k => k.target) || {target: 2.8}).target}x or more
+      together. No 1/20 shots: they add almost nothing and still carry the margin. The model vetoes any pick it rates
+      more than ${Math.round((MR.aboveBook || 0.05) * 100)} points above the market. Each pick is likely, but three likely picks
+      all landing is not: these come in about one time in four. Picks like these landed 76% in the archive.</p>
     ${mults.length ? `<div class="og-grid">${mults.map(ogCard).join("")}</div>` :
       `<div class="empty" style="margin-top:10px">No multiplier on ${fmtDay(day.date)}: ${day.multLegs ?? 0} pick${(day.multLegs ?? 0) === 1 ? "" : "s"} qualified, not enough to reach a target at the floor.</div>`}</section>`;
   const R = OG.rules || {}, legMin = pct(R.legMin || 0.75), above = Math.round((R.maxAboveBook || 0.05) * 100);

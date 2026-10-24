@@ -99,3 +99,16 @@ rule is graded over weeks, not afternoons.
   prices. Re-run `tools/market_check.py` as the archive grows.
 - No other sport has been tested at these prices, so Multipliers are football
   only (`MULT_SPORTS`).
+
+## Rule 2, the same evening (Douglas)
+
+"At least 2-3 groups per day, at least 3 teams in each group with the
+corresponding multiplier effect good. All picks must be likely to come in."
+So: up to `MULT_PER_DAY` (3) Multipliers a day, one kind (`Multiplier`), each
+three or four picks (`MULT_LEGS`), every pick at 60%+ by the bookmakers'
+fair chance (`MULT_FAIR_MIN`, was 45%), paying 2.8x to 5.0x with a 20% floor.
+Ranked first, second, third by combined chance. Old 3x / 5x groups are
+rebuilt (`MULT_RULE` 2). Archive evidence at the 60% floor: 67 legs landed
+76.1% against 64.8% fair. The honest limit stands: three 65% picks land
+together about 28% of the time. Every pick being likely does not make the
+group likely.
