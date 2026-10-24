@@ -223,3 +223,14 @@ Legs where the model beat the bookmaker's fair chance by 2, 4 or 6 points landed
 ## Leg-property scan, no rule found (23 Oct 2026)
 
 Legs in the Wider pool (65%+) landed above their quote on both seasons (+7.4 pts on 321 legs fit, +11.8 on 44 check). No cut by home/away, price, chance band, tier or league keeps its sign and a lead on both seasons, except model-at-or-below-market, which is already the rule. Tightening the cap from 5 points to 0 removes 54% of eligible legs on the fit season, over the fifth allowed. Full table: `claude/leg-property-scan-2026-10-23.md`.
+
+## Multipliers (24 Oct 2026, Douglas)
+
+A separate section below the groups built to land: for a 3x or 5x target,
+the 2-4 football legs with the highest combined chance whose price reaches
+it. Legs priced 1.30-1.90, the bookmakers' fair chance 45%+, the model 40%+
+and no more than 5 points above the market; a leg's chance is the
+bookmakers' fair chance, the model is a veto. Built after the other groups
+from the legs they leave, re-checked every build, graded as "multiplier".
+Evidence and design: `claude/multipliers-2026-10-24.md`; the archive check
+is `tools/market_check.py`.

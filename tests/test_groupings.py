@@ -69,6 +69,10 @@ class GroupRules(unittest.TestCase):
         seen = [l["event"] for g in gs for l in g["legs"]]
         self.assertEqual(len(seen), len(set(seen)))
         for g in gs:
+            if G.is_mult(g["name"]):      # 24 Oct 2026: 2 to 4 legs, by target return
+                self.assertIn(len(g["legs"]), G.MULT_LEGS)
+                self.assertGreaterEqual(g["p"], G.MIN_CHANCE[g["name"]])
+                continue
             self.assertEqual(len(g["legs"]), G.LEGS_IN[g["name"]])
             self.assertTrue(g["band"][0] <= g["odds"] <= g["band"][1])
             self.assertGreaterEqual(g["p"], G.MIN_CHANCE[g["name"]])

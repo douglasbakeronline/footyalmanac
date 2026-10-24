@@ -20,6 +20,14 @@ class CupTemper(unittest.TestCase):
         q = E.cup_temper({"home": 0.40, "draw": 0.30, "away": 0.30})
         self.assertLess(abs(q["home"] - 0.40), 0.03)
 
+    def test_confidence_follows_the_tempered_outcomes(self):
+        # 24 Oct 2026: Berkhamsted v Cray showed confidence 0.80 beside a
+        # 0.61 home chance; confidence must be the tempered maximum.
+        raw = {"home": 0.80, "draw": 0.13, "away": 0.07, "confidence": 0.80}
+        q = E.cup_temper(raw)
+        self.assertAlmostEqual(q["confidence"], max(q["home"], q["draw"], q["away"]), places=12)
+        self.assertLess(q["confidence"], 0.70)
+
     def test_switched_off_with_none(self):
         p = {"home": 0.75, "draw": 0.17, "away": 0.08}
         self.assertEqual(E.cup_temper(p, cal={}), p)
