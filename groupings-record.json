@@ -1,16 +1,16 @@
 {
- "graded": "2026-10-24T09:35:13Z",
+ "graded": "2026-10-24T15:03:54Z",
  "overall": {
   "groups": 63,
-  "settled": 61,
+  "settled": 62,
   "won": 11,
-  "lost": 50,
-  "pending": 2,
-  "legs": 292,
+  "lost": 51,
+  "pending": 1,
+  "legs": 293,
   "legsWon": 211,
   "returned": 40.5,
-  "staked": 61,
-  "expected": 19.78
+  "staked": 62,
+  "expected": 20.14
  },
  "byBand": {
   "Double": {
@@ -51,15 +51,15 @@
   },
   "Wider Treble": {
    "groups": 2,
-   "settled": 1,
+   "settled": 2,
    "won": 0,
-   "lost": 1,
-   "pending": 1,
-   "legs": 3,
+   "lost": 2,
+   "pending": 0,
+   "legs": 4,
    "legsWon": 2,
    "returned": 0,
-   "staked": 1,
-   "expected": 0.39
+   "staked": 2,
+   "expected": 0.75
   },
   "Wider Fourfold": {
    "groups": 2,
@@ -149,15 +149,15 @@
  },
  "wider": {
   "groups": 4,
-  "settled": 2,
+  "settled": 3,
   "won": 0,
-  "lost": 2,
-  "pending": 2,
-  "legs": 7,
+  "lost": 3,
+  "pending": 1,
+  "legs": 8,
   "legsWon": 5,
   "returned": 0,
-  "staked": 2,
-  "expected": 0.76
+  "staked": 3,
+  "expected": 1.13
  },
  "firstChoice": {
   "groups": 38,
@@ -242,11 +242,11 @@
      "rank": "fill",
      "odds": 2.02,
      "p": 0.3632,
-     "status": "pending",
+     "status": "lost",
      "paid": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Púchov",
@@ -269,8 +269,8 @@
        "odds": 1.38,
        "est": false,
        "p": 0.6526,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Leinster",
