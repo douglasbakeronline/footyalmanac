@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-24T15:03:54Z",
+ "graded": "2026-10-24T17:50:35Z",
  "overall": {
   "groups": 63,
   "settled": 62,
   "won": 11,
   "lost": 51,
   "pending": 1,
-  "legs": 293,
-  "legsWon": 211,
+  "legs": 294,
+  "legsWon": 212,
   "returned": 40.5,
   "staked": 62,
   "expected": 20.14
@@ -67,11 +67,35 @@
    "won": 0,
    "lost": 1,
    "pending": 1,
-   "legs": 4,
-   "legsWon": 3,
+   "legs": 5,
+   "legsWon": 4,
    "returned": 0,
    "staked": 1,
    "expected": 0.37
+  },
+  "Multiplier 3x": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
+  },
+  "Multiplier 5x": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "expected": 0
   },
   "Banker": {
    "groups": 2,
@@ -127,7 +151,9 @@
   "Treble",
   "Wider Double",
   "Wider Treble",
-  "Wider Fourfold"
+  "Wider Fourfold",
+  "Multiplier 3x",
+  "Multiplier 5x"
  ],
  "retired": [
   "Banker",
@@ -153,11 +179,23 @@
   "won": 0,
   "lost": 3,
   "pending": 1,
-  "legs": 8,
-  "legsWon": 5,
+  "legs": 9,
+  "legsWon": 6,
   "returned": 0,
   "staked": 3,
   "expected": 1.13
+ },
+ "multiplier": {
+  "groups": 0,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 0,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "expected": 0
  },
  "firstChoice": {
   "groups": 38,
@@ -183,9 +221,9 @@
      "p": 0.3609,
      "status": "pending",
      "paid": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Spišská Nová Ves",
@@ -220,8 +258,8 @@
        "odds": 1.29,
        "est": false,
        "p": 0.708,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Ospreys",
