@@ -386,6 +386,14 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-stake{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:var(--ink-2)}
 .og-stake input{width:70px;font:600 14px var(--f-num);padding:5px 7px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
 .og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
+/* 24 Oct 2026: each pick carries its full board row, so a card is a full-width
+   block like a Daily List day rather than a narrow tile. */
+#odds .og-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+#odds .og{min-width:0}
+.og-fx{min-width:0;overflow-x:auto}
+.og-fx:empty{display:none}
+.og-fx{border-top:1px solid var(--rule-soft);background:var(--paper,transparent)}
+.og-fx .row-line{margin:0}
 .og{background:var(--surface);border:1px solid var(--rule);display:flex;flex-direction:column}
 .og-h{display:flex;align-items:flex-start;gap:10px;padding:11px 13px 9px;border-bottom:1px solid var(--rule-soft)}
 .og-h h3{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.03em;text-transform:uppercase;line-height:1.05}
@@ -1856,6 +1864,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     render();
     if(!$("#starred").hidden) renderStarred();
     if(!$("#list").hidden) renderList();
+    if(!$("#odds").hidden) renderOdds();
   });
 
   line.appendChild(star);
@@ -2580,6 +2589,7 @@ const accLine = a => a ? `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.h
   <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.` : "";
 
 function rerenderOpen(){
+  if(!$("#odds").hidden) renderOdds();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
   if(!$("#tennis").hidden) renderTennis();
   if(!$("#list").hidden) renderList();
@@ -3216,7 +3226,9 @@ function ogCard(g){
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
-      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("");
+      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>
+      <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || "")}" data-away="${ogEsc(l.away || "")}"
+        data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
     ${ogStatus(g)}
@@ -3362,6 +3374,34 @@ function accaAdd(name, dec){
   return true;
 }
 
+/* 24 Oct 2026, Douglas: "the fixture rows from the daily lists, and all
+   content and links, in the groups". Under each pick, the same row the Daily
+   List and the boards draw (appendFixture / sportRow), tap to open its full
+   detail and research links. A pick that has started comes from the pinned
+   day list (putPinned) when it is there; otherwise only the pick line shows. */
+function ogFill(host){
+  const nm = s => String(s || "").toLowerCase();
+  const DL = window.__DAY_LIST__;
+  host.querySelectorAll(".og-fx").forEach((ph, i) => {
+    const {sport, home, away, date, id} = ph.dataset;
+    try {
+      if(sport === "football"){
+        for(const day of upcoming){
+          const g = day.games.find(g => g.home.name === home && g.away.name === away);
+          if(g){ appendFixture(ph, g, i, day.date, false); return; }
+        }
+      } else {
+        const sp = SD && SD.sports && SD.sports[sport];
+        const g = sp && (sp.games || []).find(g => String(g.id) === id || (g.home === home && g.away === away));
+        if(g){ ph.appendChild(sportRow(g, i, true)); return; }
+      }
+      const pin = DL && [...(DL.list || []), ...(DL.reserve || [])]
+        .find(p => p.sport === sport && nm(p.home) === nm(home) && nm(p.away) === nm(away));
+      if(pin) putPinned(ph, {...pin, when: pin.start}, i, date);
+    } catch(e) { ph.innerHTML = ""; }
+  });
+}
+
 function renderOdds(){
   const host = $("#odds"); if(!host) return;
   if(!OG || !(OG.days || []).length){
@@ -3453,6 +3493,7 @@ function renderOdds(){
     <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
     ${ogRecord()}`;
   accaMount($("#acca"));
+  ogFill(host);
   host.querySelectorAll(".og-grid .og-add").forEach(btn => btn.onclick = () => {
     accaAdd(btn.dataset.pick, +btn.dataset.odds);
   });

@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Odds tab: every pick carries its full board row, 24 Oct (tag pending)
+
+**What changed:** Douglas: "the fixture rows from the daily lists, and all content and links, in the groups". Under each pick in every group (Doubles, Trebles, Wider, Multipliers) is the same row the Daily List draws: kick-off, form, probability bar, predicted score, tier, tested rate, bookmark star; tap it for the full detail (season tables, the why, head to head, predictions, search and table links). A pick that has started shows its pinned row from the day list where one exists. Group cards are now full width so the rows fit.
+**Files:** index.html, RELEASES.md.
+**Not changed:** groupings.py, every rule and model.
+**Roll back:** `git revert` the commit.
+
 ## Multipliers rule 2: three a day, 3-4 likely picks each, 24 Oct (tag pending)
 
 **What changed:** Douglas: "at least 2-3 groups per day, at least 3 teams in each group ... all picks must be likely to come in". The 3x / 5x Multipliers are replaced by up to three Multipliers a day (first, second, third choice), each three or four picks the bookmakers rate 60%+ (was 45%+), paying 2.8x or more together, no pick shared. Chosen for the highest combined chance, so they come out as three picks at about 1.35-1.55. About 28-30% each to land.
