@@ -1,22 +1,22 @@
 {
- "graded": "2026-10-25T17:23:43Z",
+ "graded": "2026-10-25T19:32:34Z",
  "overall": {
   "groups": 73,
   "settled": 64,
   "won": 11,
   "lost": 53,
   "pending": 9,
-  "legs": 305,
-  "legsWon": 221,
+  "legs": 306,
+  "legsWon": 222,
   "returned": 40.5,
   "staked": 64,
   "returnedBest": 43.39,
   "expected": 20.78,
   "clv": {
    "n": 23,
-   "shortened": 11,
-   "drifted": 4,
-   "mean": 0.0056
+   "shortened": 12,
+   "drifted": 5,
+   "mean": 0.0057
   }
  },
  "byBand": {
@@ -26,8 +26,8 @@
    "won": 0,
    "lost": 0,
    "pending": 2,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -36,7 +36,7 @@
     "n": 6,
     "shortened": 1,
     "drifted": 0,
-    "mean": 0.0024
+    "mean": 0.0012
    }
   },
   "Card 3x": {
@@ -53,9 +53,9 @@
    "expected": 0,
    "clv": {
     "n": 6,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 1,
-    "mean": -0.0012
+    "mean": 0.0043
    }
   },
   "Wider Treble": {
@@ -93,7 +93,7 @@
     "n": 2,
     "shortened": 1,
     "drifted": 1,
-    "mean": -0.0508
+    "mean": -0.0476
    }
   },
   "Multiplier": {
@@ -111,8 +111,8 @@
    "clv": {
     "n": 9,
     "shortened": 6,
-    "drifted": 2,
-    "mean": 0.0088
+    "drifted": 3,
+    "mean": 0.0055
    }
   },
   "Banker": {
@@ -243,7 +243,7 @@
    "n": 6,
    "shortened": 4,
    "drifted": 1,
-   "mean": 0.0072
+   "mean": 0.0083
   }
  },
  "multiplier": {
@@ -261,8 +261,8 @@
   "clv": {
    "n": 9,
    "shortened": 6,
-   "drifted": 2,
-   "mean": 0.0088
+   "drifted": 3,
+   "mean": 0.0055
   }
  },
  "card": {
@@ -271,17 +271,17 @@
   "won": 0,
   "lost": 0,
   "pending": 4,
-  "legs": 0,
-  "legsWon": 0,
+  "legs": 1,
+  "legsWon": 1,
   "returned": 0,
   "staked": 0,
   "returnedBest": 0,
   "expected": 0,
   "clv": {
    "n": 12,
-   "shortened": 1,
+   "shortened": 2,
    "drifted": 1,
-   "mean": 0.0006
+   "mean": 0.0027
   }
  },
  "cardWide": {
@@ -329,8 +329,8 @@
    "won": 0,
    "lost": 0,
    "pending": 2,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -356,9 +356,9 @@
    "expected": 0,
    "clv": {
     "n": 6,
-    "shortened": 1,
+    "shortened": 2,
     "drifted": 1,
-    "mean": 0.0012
+    "mean": 0.0055
    }
   }
  },
@@ -563,7 +563,7 @@
        "when": "2026-10-25T23:00:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.37,
+       "lastOdds": 1.36,
        "est": false,
        "p": 0.7268,
        "status": "pending",
@@ -677,7 +677,7 @@
        "when": "2026-10-25T20:00:00Z",
        "odds": 1.31,
        "best": 1.37,
-       "lastOdds": 1.31,
+       "lastOdds": 1.35,
        "est": false,
        "p": 0.6948,
        "status": "pending",
@@ -751,9 +751,9 @@
      "status": "pending",
      "paid": 0,
      "paidBest": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Zenit St Petersburg",
@@ -780,8 +780,8 @@
        "lastOdds": 1.35,
        "est": false,
        "p": 0.6704,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Panathinaikos",
@@ -905,7 +905,7 @@
        "when": "2026-10-25T21:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": 1.39,
+       "lastOdds": 1.4,
        "est": false,
        "p": 0.6802,
        "status": "pending",
@@ -948,7 +948,7 @@
        "when": "2026-10-25T20:25Z",
        "odds": 1.56,
        "best": 1.56,
-       "lastOdds": 1.56,
+       "lastOdds": 1.51,
        "est": false,
        "p": 0.6158,
        "status": "pending",
