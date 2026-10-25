@@ -46,6 +46,48 @@ MAXG = E.MAX_GOALS
 MIN_HOLDOUT = 250      # fixtures in the current season before a fit means anything
 MAX_P_WORSE = 0.30     # bootstrapped chance the change is actually worse
 MIN_GAIN = 0.0005      # log loss improvement worth the churn
+# ... on two consecutive weekly runs (25 Oct 2026, bug 20). At p(worse) 0.30
+# one false pass a season is likely; the same candidate passing again a week
+# later, on a check season that has grown, is not. The pending candidate and
+# its run of passes live in tuning-pending.json, committed by tune.yml.
+PASSES_TO_APPLY = 2
+PENDING_FILE = os.path.join(HERE, "tuning-pending.json")
+
+
+def consecutive_passes(key, candidate, passed, pending, today=None):
+    """The two-pass rule, pure. `pending` is the state dict read from
+    tuning-pending.json ({key: {"candidate", "passes", "since", "last"}}).
+    Returns (apply: bool, new_state). A pass for the same candidate as last
+    week adds to its run; a pass for a different candidate starts a run of
+    one; a failed week clears the entry. Applying clears it too, so the next
+    change starts again from one."""
+    today = today or _date.today().isoformat()
+    state = dict(pending or {})
+    if not passed:
+        state.pop(key, None)
+        return False, state
+    prev = state.get(key) or {}
+    run = (prev.get("passes") or 0) + 1 if prev.get("candidate") == candidate else 1
+    if run >= PASSES_TO_APPLY:
+        state.pop(key, None)
+        return True, state
+    state[key] = {"candidate": candidate, "passes": run,
+                  "since": prev.get("since", today) if run > 1 else today, "last": today}
+    return False, state
+
+
+def load_pending(path=PENDING_FILE):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def save_pending(state, path=PENDING_FILE):
+    with open(path, "w") as f:
+        json.dump(state, f, indent=1, sort_keys=True)
 
 
 # ---------------------------------------------------------------------------
@@ -471,16 +513,28 @@ def main():
         out = os.path.join(HERE, "calibration.json")
         if args.dry_run:
             print("\ndry run, nothing written")
-        elif verdict["pass"]:
-            json.dump({**cal, "fitted": verdict["generated"],
-                       "check": verdict["checkSeason"]},
-                      open(out, "w"), indent=1)
-            print(f"\nwrote {os.path.basename(out)} — engine.py will pick it up "
-                  f"on the next build")
         else:
-            failed = [k for k, v in verdict["gates"].items() if not v]
-            print(f"\nnot written: failed {', '.join(failed)}. The live "
-                  f"calibration stays: {verdict['baseline']['describe']}.")
+            # the gates, then the same candidate passing them two Mondays running
+            pending = load_pending()
+            apply, pending = consecutive_passes("calibration", as_curve(cal), verdict["pass"],
+                                                pending, verdict["generated"])
+            save_pending(pending)
+            verdict["consecutivePasses"] = (pending.get("calibration") or {}).get("passes", PASSES_TO_APPLY if apply else 0)
+            verdict["applied"] = apply
+            if apply:
+                json.dump({**cal, "fitted": verdict["generated"],
+                           "check": verdict["checkSeason"]},
+                          open(out, "w"), indent=1)
+                print(f"\nwrote {os.path.basename(out)} — engine.py will pick it up "
+                      f"on the next build (passed {PASSES_TO_APPLY} weeks running)")
+            elif verdict["pass"]:
+                print(f"\nnot written yet: pass {verdict['consecutivePasses']} of {PASSES_TO_APPLY}. "
+                      f"The same candidate must pass again next week before it ships; "
+                      f"the live calibration stays: {verdict['baseline']['describe']}.")
+            else:
+                failed = [k for k, v in verdict["gates"].items() if not v]
+                print(f"\nnot written: failed {', '.join(failed)}. The live "
+                      f"calibration stays: {verdict['baseline']['describe']}.")
         if not args.snapshot:
             with open(os.path.join(HERE, "tuning-report.json"), "w") as f:
                 json.dump(verdict, f, indent=1)

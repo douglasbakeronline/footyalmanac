@@ -34,9 +34,12 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    # Agent write-ups, release notes, tests and agent scripts do not change
-    # the site, and every rebuild spends API allowance.
-    paths-ignore: ["claude/**", "RELEASES.md", "tests/**", "tools/**", "agents/**"]
+    # Agent write-ups, release notes, root notes (README, DEPLOY, AGENTS and
+    # any other *.md), the evaluation harness, tests and agent scripts do not
+    # change the site, and every rebuild spends API allowance. README.md is
+    # copied into the site but a stale copy for a few hours costs nothing.
+    paths-ignore: ["claude/**", "evaluation/**", "tests/**", "tools/**", "agents/**",
+                   "RELEASES.md", "README.md", "DEPLOY.md", "AGENTS.md", "*.md"]
 
 permissions:
   contents: write        # predictions are committed back so the record survives
@@ -111,15 +114,29 @@ jobs:
 
       # A build that returns nothing is a broken upstream, not a quiet
       # publish of an empty page. Fail loudly and keep yesterday's site.
+      # The same for a build that comes back with a fraction of the slate
+      # (25 Oct 2026, bug 7): a partial API-Football or ESPN day used to
+      # publish a degraded site. The floor is 40% of the fixtures in the
+      # most recent committed predictions/<date>.json, the same seven-day
+      # window as the build (build.py --days 7); no archive, no floor.
       - name: Check the build is not empty
         run: |
-          python3 - <<'PY'
-          import json, sys
+          latest=$( { git ls-tree --name-only HEAD predictions/ | grep -E 'predictions/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json$' | sort | tail -1; } || true)
+          if [ -n "$latest" ]; then
+            prev=$( { git show "HEAD:$latest" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))'; } || echo 0)
+          else prev=0; fi
+          echo "previous archive: ${latest:-none} (${prev} fixtures)"
+          PREV_N="$prev" python3 - <<'PY'
+          import json, os, sys
           d = json.load(open("data.json"))
           n = sum(day["count"] for day in d["days"])
+          prev = int(os.environ.get("PREV_N") or 0)
           print(f"{n} fixtures across {len(d['days'])} days")
           if n == 0:
               sys.exit("build produced zero fixtures, refusing to publish")
+          if prev > 0 and n < 0.4 * prev:
+              sys.exit(f"build produced {n} fixtures against {prev} in the last committed archive "
+                       f"(under 40%): a partial upstream day, refusing to publish")
           PY
 
       # Grade every past prediction against results that have landed since.
@@ -167,9 +184,37 @@ jobs:
       # NFL, baseball, basketball, rugby: top up results, price the next five
       # days, grade the archive. Uses the committed sports.json (fitted by hand
       # with sports.py --tune, never refitted here). Allowed to fail: football
-      # and tennis must publish regardless.
+      # and tennis must publish regardless. Guarded like tennis (25 Oct 2026,
+      # bug 7): a day ESPN answers with nothing must not overwrite a working
+      # board with an empty one, which the archive commit below would then
+      # keep as the new baseline. Compare game counts, keep yesterday's files.
       - name: Build and score the other sports
-        run: python3 sports.py --daily || echo "::warning::sports build failed; keeping the last files"
+        run: |
+          mkdir -p /tmp/sports-prev
+          cp sports-data.js sports-record.json sports-record.js /tmp/sports-prev/ 2>/dev/null || true
+          python3 sports.py --daily || echo "::warning::sports build failed; keeping the last files"
+          python3 - <<'PY'
+          import json, os, shutil
+
+          def count(path):
+              try:
+                  text = open(path).read()
+                  i = text.index("{")
+                  d = json.loads(text[i:-1])
+                  return sum(len(s.get("games") or []) for s in (d.get("sports") or {}).values())
+              except Exception:
+                  return 0
+
+          new_n = count("sports-data.js")
+          old_n = count("/tmp/sports-prev/sports-data.js")
+          if new_n == 0 and old_n > 0:
+              print(f"::warning::today's sports build returned 0 games — keeping yesterday's {old_n} instead")
+              for f in ("sports-data.js", "sports-record.json", "sports-record.js"):
+                  src = os.path.join("/tmp/sports-prev", f)
+                  if os.path.exists(src): shutil.copy(src, f)
+          else:
+              print(f"today's sports build: {new_n} games")
+          PY
 
       # Pages artifacts do not persist between runs, so the prediction archive
       # has to live in the repository or the record resets to zero every day.
@@ -188,13 +233,42 @@ jobs:
       # archived to groupings-archive/ and every archived group graded into
       # groupings-record.json. Before the archive commit so both are kept.
       # Prices never feed a model. Allowed to fail: a missing price source
-      # must not cost the deploy.
+      # must not cost the deploy. Guarded like tennis (25 Oct 2026, bug 7):
+      # groupings.json / groupings-data.js are rebuilt from scratch each run
+      # and never committed, so the committed record and archive are what a
+      # bad run could wreck. If the regraded record comes back with no groups
+      # where the committed one had some, both are put back as they were.
       - name: Build and grade the Odds tab groupings
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           PINNWIRE_KEY: ${{ secrets.PINNWIRE_KEY }}
-        run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
+        run: |
+          rm -rf /tmp/groupings-prev && mkdir -p /tmp/groupings-prev
+          cp groupings-record.json /tmp/groupings-prev/ 2>/dev/null || true
+          cp -r groupings-archive /tmp/groupings-prev/ 2>/dev/null || true
+          python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
+          python3 - <<'PY'
+          import json, os, shutil
+
+          def count(path):
+              try:
+                  d = json.load(open(path))
+                  return sum(len(day.get("groups") or []) for day in d.get("days") or [])
+              except Exception:
+                  return 0
+
+          new_n = count("groupings-record.json")
+          old_n = count("/tmp/groupings-prev/groupings-record.json")
+          if new_n == 0 and old_n > 0:
+              print(f"::warning::today's groupings record has 0 groups — keeping yesterday's {old_n} instead")
+              shutil.copy("/tmp/groupings-prev/groupings-record.json", "groupings-record.json")
+              if os.path.isdir("/tmp/groupings-prev/groupings-archive"):
+                  shutil.rmtree("groupings-archive", ignore_errors=True)
+                  shutil.copytree("/tmp/groupings-prev/groupings-archive", "groupings-archive")
+          else:
+              print(f"today's groupings record: {new_n} groups")
+          PY
 
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
@@ -220,6 +294,16 @@ jobs:
         with:
           app-id: ${{ secrets.OFFICE_APP_ID }}
           private-key: ${{ env.APP_KEY }}
+
+      # A scheduled run without an App token cannot push the archive (main is
+      # protected), so the day's predictions would never be graded. That is a
+      # red run, not a warning (25 Oct 2026, bug 7). A manual or push run can
+      # still go on with the workflow token, where the owner is watching.
+      - name: Refuse a scheduled run without the App token
+        if: github.event_name == 'schedule' && steps.app.outputs.token == ''
+        run: |
+          echo "::error::the office App token could not be minted (OFFICE_APP_ID / OFFICE_APP_KEY): the archive cannot be pushed to the protected main, so today's predictions would not be graded"
+          exit 1
 
       - name: Commit the archive
         env:

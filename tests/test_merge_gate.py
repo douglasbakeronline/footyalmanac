@@ -57,7 +57,7 @@ class Happy(unittest.TestCase):
         self.assertTrue(ok, why)
 
     def test_ui_tests_sources_merge_without_review(self):
-        for f in ("index.html", "tests/test_x.py", "sources.py", "mystery.txt"):
+        for f in ("index.html", "tests/test_x.py", "sources.py"):
             ok, why = decide(pr(files=[f]))
             self.assertTrue(ok, (f, why))
 
@@ -147,8 +147,23 @@ class OwnerApproval(unittest.TestCase):
             ok, why = decide(pr(files=[f]))
             self.assertFalse(ok, f); self.assertTrue(any("owner approval" in r for r in why), f)
 
+    def test_unknown_path_needs_owner(self):
+        """A path outside the class map is not auto-merged (25 Oct 2026, bug 19)."""
+        self.assertNotIn("unknown", POLICY["auto_merge_classes"])
+        for f in ("mystery.txt", "newscript.py", "requirements.txt", ".gitignore"):
+            self.assertEqual(G.classify(f, POLICY), ["unknown"], f)
+            ok, why = decide(pr(files=[f]))
+            self.assertFalse(ok, f); self.assertTrue(any("owner approval" in r and "unknown" in r for r in why), f)
+        ok, why = decide(pr(files=["claude/note.md", "mystery.txt"]))
+        self.assertFalse(ok, why)
+        ok, why = decide(pr(files=["mystery.txt"]), reviews=[review()])
+        self.assertTrue(ok, why)
+
+    def test_home_advantage_is_calibration_class(self):
+        self.assertEqual(G.classify("home-advantage.json", POLICY), ["calibration"])
+
     def test_model_change_needs_pass_not_na(self):
-        for f in ("engine.py", "calibration.json", "tune.py"):
+        for f in ("engine.py", "calibration.json", "home-advantage.json", "tune.py"):
             ok, why = decide(pr(files=[f]))
             self.assertFalse(ok, f); self.assertTrue(any("evaluation pass" in r for r in why), f)
 

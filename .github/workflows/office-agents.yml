@@ -12,8 +12,12 @@ name: Office agents
 # it this workflow skips quietly.
 on:
   schedule:
+    # One start a day. GitHub can delay a scheduled start by an hour or more
+    # at busy times, so a second "backup" cron at 09:30 usually began before
+    # the delayed 06:30 run and the 06:30 one then stood down (25 Oct 2026,
+    # bug 17). The concurrency group below stops two sprints overlapping;
+    # a day GitHub skips entirely is run by hand from the Actions tab.
     - cron: "30 6 * * *"   # 07:30 BST / 06:30 GMT, after deploy.yml
-    - cron: "30 9 * * *"   # backup: GitHub sometimes skips a scheduled start; runs only if the first did not
   workflow_dispatch:
     inputs:
       task:
@@ -55,11 +59,16 @@ jobs:
       - uses: actions/checkout@v4
       - id: p
         run: |
-          # the backup start stands down if a sprint already started today (UTC)
-          if [ "${{ github.event.schedule }}" = "30 9 * * *" ]; then
-            n=$(gh run list -R "${{ github.repository }}" -w office-agents.yml -L 20 --json createdAt,databaseId \
-                --jq "[.[] | select(.createdAt >= \"$(date -u +%F)\" and .databaseId != ${{ github.run_id }})] | length")
-            if [ "$n" -gt 0 ]; then echo "a sprint already ran today"; echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0; fi
+          # Spend guard (25 Oct 2026): a sprint opens at most SPRINT_SIZE + 1
+          # pull requests, so more than 8 office pull requests in one UTC day
+          # means something is looping (a rerun, a dispatch on top of the
+          # schedule). Stand down rather than pay for a ninth.
+          n=$(gh api "repos/${{ github.repository }}/pulls?state=all&sort=created&direction=desc&per_page=100" \
+                --jq "[.[] | select(.created_at >= \"$(date -u +%F)T00:00:00Z\" and ((.labels | map(.name) | index(\"office-agent\")) != null or (.head.ref | startswith(\"office-agent/\"))))] | length" || echo 0)
+          echo "$n office pull request(s) opened today"
+          if [ "${n:-0}" -gt 8 ]; then
+            echo "::warning::skipping the sprint: $n office pull requests already opened today (limit 8); something is looping"
+            echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0
           fi
           A="${{ inputs.agent }}"; T="${{ inputs.task }}"
           [ "${{ github.event_name }}" = "schedule" ] && A=all
