@@ -1,22 +1,22 @@
 {
- "graded": "2026-10-25T00:42:39Z",
+ "graded": "2026-10-25T04:35:44Z",
  "overall": {
   "groups": 69,
   "settled": 63,
   "won": 11,
   "lost": 52,
   "pending": 6,
-  "legs": 297,
-  "legsWon": 214,
+  "legs": 299,
+  "legsWon": 216,
   "returned": 40.5,
   "staked": 63,
   "returnedBest": 43.39,
   "expected": 20.5,
   "clv": {
    "n": 15,
-   "shortened": 0,
-   "drifted": 0,
-   "mean": 0.0
+   "shortened": 7,
+   "drifted": 2,
+   "mean": 0.0083
   }
  },
  "byBand": {
@@ -83,17 +83,17 @@
    "won": 0,
    "lost": 2,
    "pending": 2,
-   "legs": 5,
-   "legsWon": 3,
+   "legs": 6,
+   "legsWon": 4,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
    "expected": 0.75,
    "clv": {
     "n": 4,
-    "shortened": 0,
+    "shortened": 3,
     "drifted": 0,
-    "mean": 0.0
+    "mean": 0.0301
    }
   },
   "Wider Fourfold": {
@@ -102,8 +102,8 @@
    "won": 0,
    "lost": 2,
    "pending": 1,
-   "legs": 7,
-   "legsWon": 5,
+   "legs": 8,
+   "legsWon": 6,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -111,8 +111,8 @@
    "clv": {
     "n": 2,
     "shortened": 0,
-    "drifted": 0,
-    "mean": 0.0
+    "drifted": 1,
+    "mean": -0.012
    }
   },
   "Multiplier": {
@@ -129,9 +129,9 @@
    "expected": 0,
    "clv": {
     "n": 9,
-    "shortened": 0,
-    "drifted": 0,
-    "mean": 0.0
+    "shortened": 4,
+    "drifted": 1,
+    "mean": 0.0031
    }
   },
   "Banker": {
@@ -250,17 +250,17 @@
   "won": 0,
   "lost": 4,
   "pending": 3,
-  "legs": 12,
-  "legsWon": 8,
+  "legs": 14,
+  "legsWon": 10,
   "returned": 0,
   "staked": 4,
   "returnedBest": 0,
   "expected": 1.49,
   "clv": {
    "n": 6,
-   "shortened": 0,
-   "drifted": 0,
-   "mean": 0.0
+   "shortened": 3,
+   "drifted": 1,
+   "mean": 0.0161
   }
  },
  "multiplier": {
@@ -277,9 +277,9 @@
   "expected": 0,
   "clv": {
    "n": 9,
-   "shortened": 0,
-   "drifted": 0,
-   "mean": 0.0
+   "shortened": 4,
+   "drifted": 1,
+   "mean": 0.0031
   }
  },
  "firstChoice": {
@@ -296,9 +296,9 @@
   "expected": 13.11,
   "clv": {
    "n": 3,
-   "shortened": 0,
+   "shortened": 1,
    "drifted": 0,
-   "mean": 0.0
+   "mean": 0.0022
   }
  },
  "days": [
@@ -340,7 +340,7 @@
        "when": "2026-10-25T15:00:00Z",
        "odds": 1.34,
        "best": 1.39,
-       "lastOdds": 1.34,
+       "lastOdds": 1.33,
        "est": false,
        "p": 0.6968,
        "status": "pending",
@@ -382,7 +382,7 @@
        "when": "2026-10-25T14:00:00Z",
        "odds": 1.3,
        "best": 1.32,
-       "lastOdds": 1.3,
+       "lastOdds": 1.27,
        "est": false,
        "p": 0.7116,
        "status": "pending",
@@ -396,7 +396,7 @@
        "when": "2026-10-25T15:00:00Z",
        "odds": 1.22,
        "best": 1.28,
-       "lastOdds": 1.22,
+       "lastOdds": 1.12,
        "est": false,
        "p": 0.7402,
        "status": "pending",
@@ -480,7 +480,7 @@
        "when": "2026-10-25T23:00:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.22,
+       "lastOdds": 1.25,
        "est": false,
        "p": 0.7268,
        "status": "pending",
@@ -522,7 +522,7 @@
        "when": "2026-10-25T16:15:00Z",
        "odds": 1.56,
        "best": 1.6,
-       "lastOdds": 1.56,
+       "lastOdds": 1.55,
        "est": false,
        "p": 0.6118,
        "status": "pending",
@@ -564,7 +564,7 @@
        "when": "2026-10-25T17:00:00Z",
        "odds": 1.48,
        "best": 1.51,
-       "lastOdds": 1.48,
+       "lastOdds": 1.49,
        "est": false,
        "p": 0.6446,
        "status": "pending",
@@ -578,7 +578,7 @@
        "when": "2026-10-25T18:15:00Z",
        "odds": 1.46,
        "best": 1.52,
-       "lastOdds": 1.46,
+       "lastOdds": 1.44,
        "est": false,
        "p": 0.6408,
        "status": "pending",
@@ -620,7 +620,7 @@
        "when": "2026-10-25T14:00:00Z",
        "odds": 1.46,
        "best": 1.5,
-       "lastOdds": 1.46,
+       "lastOdds": 1.45,
        "est": false,
        "p": 0.6404,
        "status": "pending",
@@ -648,7 +648,7 @@
        "when": "2026-10-25T15:45:00Z",
        "odds": 1.45,
        "best": 1.5,
-       "lastOdds": 1.45,
+       "lastOdds": 1.44,
        "est": false,
        "p": 0.6515,
        "status": "pending",
@@ -670,9 +670,9 @@
      "status": "lost",
      "paid": 0,
      "paidBest": 0,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Spišská Nová Ves",
@@ -685,8 +685,8 @@
        "lastOdds": null,
        "est": true,
        "p": 0.7832,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "Bodo/Glimt",
@@ -740,9 +740,9 @@
      "status": "lost",
      "paid": 0,
      "paidBest": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Púchov",
@@ -755,8 +755,8 @@
        "lastOdds": null,
        "est": false,
        "p": 0.676,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Fiorentino",
