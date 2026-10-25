@@ -143,6 +143,15 @@ def accuracy_for(conf, intl, ranked=False, league=None):
         return dict(b, season=season) if b else None
     if league in S.AF_CUPS:
         return None                      # no replay yet: no backtest band to quote
+    meta = E.LEAGUES.get(league) or {}
+    if league is not None and meta.get("cup") and not meta.get("international"):
+        # Native cups and continental ties (FA Cup, EFL Trophy, eu.*, UWCL,
+        # CAF CL...) were quoting the core-league rate, which was never
+        # measured on them; cup favourites land far under it (56.5% v 69.7%,
+        # 19 Oct 2026). No family of its own, no rate (25 Oct 2026, bug 12).
+        return None
+    if league in S.AF_NEW:
+        return None                      # new competitions, no replay yet (NEW_BOARD_ONLY)
     if league in S.AF_EXTRA:
         return tag(band_rate(conf, ACCURACY_BANDS_AFX), "2025, wider leagues")
     if league in NO_LIST:
