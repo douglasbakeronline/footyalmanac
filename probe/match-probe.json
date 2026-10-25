@@ -1,0 +1,1023 @@
+{
+ "legs": 20,
+ "rows": [
+  {
+   "sport": "nba",
+   "leg": [
+    "Utah Jazz",
+    "Los Angeles Lakers",
+    "2026-10-25T21:00Z",
+    "2026-10-25"
+   ],
+   "top": [
+    [
+     2.0,
+     "Utah Jazz",
+     "Los Angeles Lakers",
+     "2026-10-25T21:00:00+00:00",
+     1792962000,
+     "NBA"
+    ],
+    [
+     1.0421052631578946,
+     "Oklahoma City Thunder",
+     "Los Angeles Clippers",
+     "2026-10-25T23:00:00+00:00",
+     1792969200,
+     "NBA"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "New York Knicks",
+    "Orlando Magic",
+    "2026-10-25T23:00Z",
+    "2026-10-25"
+   ],
+   "top": [
+    [
+     2.0,
+     "New York Knicks",
+     "Orlando Magic",
+     "2026-10-25T23:00:00+00:00",
+     1792969200,
+     "NBA"
+    ],
+    [
+     0.8862876254180602,
+     "Tenerife",
+     "Obradoiro CAB",
+     "2026-10-25T12:00:00+00:00",
+     1792929600,
+     "ACB"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Minnesota Timberwolves",
+    "Toronto Raptors",
+    "2026-10-25T23:00Z",
+    "2026-10-25"
+   ],
+   "top": [
+    [
+     2.0,
+     "Minnesota Timberwolves",
+     "Toronto Raptors",
+     "2026-10-25T23:00:00+00:00",
+     1792969200,
+     "NBA"
+    ],
+    [
+     0.8542857142857143,
+     "Baerum",
+     "TNT Towers",
+     "2026-10-25T17:00:00+00:00",
+     1792947600,
+     "BLNO"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Oklahoma City Thunder",
+    "LA Clippers",
+    "2026-10-25T23:00Z",
+    "2026-10-25"
+   ],
+   "top": [
+    [
+     1.7096774193548387,
+     "Oklahoma City Thunder",
+     "Los Angeles Clippers",
+     "2026-10-25T23:00:00+00:00",
+     1792969200,
+     "NBA"
+    ],
+    [
+     0.8329411764705883,
+     "Brooklyn Nets",
+     "Indiana Pacers",
+     "2026-10-25T22:00:00+00:00",
+     1792965600,
+     "NBA"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Charlotte Hornets",
+    "Washington Wizards",
+    "2026-10-26T23:00Z",
+    "2026-10-26"
+   ],
+   "top": [
+    [
+     2.0,
+     "Charlotte Hornets",
+     "Washington Wizards",
+     "2026-10-26T23:00:00+00:00",
+     1793055600,
+     "NBA"
+    ],
+    [
+     0.7233115468409586,
+     "Miami Heat",
+     "Dallas Mavericks",
+     "2026-10-26T23:30:00+00:00",
+     1793057400,
+     "NBA"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Boston Celtics",
+    "Chicago Bulls",
+    "2026-10-26T23:30Z",
+    "2026-10-26"
+   ],
+   "top": [
+    [
+     2.0,
+     "Boston Celtics",
+     "Chicago Bulls",
+     "2026-10-26T23:30:00+00:00",
+     1793057400,
+     "NBA"
+    ],
+    [
+     0.7222222222222222,
+     "Ningbo Rockets",
+     "Jilin",
+     "2026-10-26T11:35:00+00:00",
+     1793014500,
+     "CBA"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Miami Heat",
+    "Dallas Mavericks",
+    "2026-10-26T23:30Z",
+    "2026-10-26"
+   ],
+   "top": [
+    [
+     2.0,
+     "Miami Heat",
+     "Dallas Mavericks",
+     "2026-10-26T23:30:00+00:00",
+     1793057400,
+     "NBA"
+    ],
+    [
+     0.8,
+     "UCD Marian",
+     "Limerick Celtics",
+     "2026-10-26T15:00:00+00:00",
+     1793026800,
+     "Super League"
+    ]
+   ]
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Oklahoma City Thunder",
+    "Phoenix Suns",
+    "2026-10-27T00:00Z",
+    "2026-10-27"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Houston Rockets",
+    "Atlanta Hawks",
+    "2026-10-27T00:30Z",
+    "2026-10-27"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Denver Nuggets",
+    "Golden State Warriors",
+    "2026-10-27T02:00Z",
+    "2026-10-27"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Boston Celtics",
+    "Brooklyn Nets",
+    "2026-10-27T23:30Z",
+    "2026-10-27"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "New York Knicks",
+    "Detroit Pistons",
+    "2026-10-28T00:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "San Antonio Spurs",
+    "Sacramento Kings",
+    "2026-10-28T00:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Los Angeles Lakers",
+    "Portland Trail Blazers",
+    "2026-10-28T03:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Atlanta Hawks",
+    "Miami Heat",
+    "2026-10-28T23:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Cleveland Cavaliers",
+    "Washington Wizards",
+    "2026-10-28T23:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Detroit Pistons",
+    "Charlotte Hornets",
+    "2026-10-28T23:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Indiana Pacers",
+    "Philadelphia 76ers",
+    "2026-10-28T23:00Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "nba",
+   "leg": [
+    "Toronto Raptors",
+    "Orlando Magic",
+    "2026-10-28T23:30Z",
+    "2026-10-28"
+   ],
+   "top": []
+  },
+  {
+   "sport": "rugby",
+   "leg": [
+    "Harlequins",
+    "Saracens",
+    "2026-10-25T15:00Z",
+    "2026-10-25"
+   ],
+   "top": [
+    [
+     2.0,
+     "Harlequins",
+     "Saracens",
+     "2026-10-25T15:00:00+00:00",
+     1792940400,
+     "Premiership Rugby"
+    ],
+    [
+     0.7559523809523809,
+     "Batumi",
+     "Armia Tbilisi",
+     "2026-10-25T11:00:00+00:00",
+     1792926000,
+     "Didi 10"
+    ]
+   ]
+  }
+ ],
+ "calls": [
+  {
+   "host": "v1.basketball.api-sports.io",
+   "date": "2026-10-25",
+   "games": 252,
+   "errors": null,
+   "sample": [
+    {
+     "date": "2026-10-25T00:00:00+00:00",
+     "ts": 1792886400,
+     "league": "NBA",
+     "home": "Chicago Bulls",
+     "away": "Washington Wizards"
+    },
+    {
+     "date": "2026-10-25T00:00:00+00:00",
+     "ts": 1792886400,
+     "league": "NBA",
+     "home": "Dallas Mavericks",
+     "away": "San Antonio Spurs"
+    },
+    {
+     "date": "2026-10-25T00:00:00+00:00",
+     "ts": 1792886400,
+     "league": "NBA",
+     "home": "Denver Nuggets",
+     "away": "New Orleans Pelicans"
+    }
+   ]
+  },
+  {
+   "host": "v1.basketball.api-sports.io",
+   "date": "2026-10-26",
+   "games": 58,
+   "errors": null,
+   "sample": [
+    {
+     "date": "2026-10-26T01:00:00+00:00",
+     "ts": 1792976400,
+     "league": "NBA",
+     "home": "Sacramento Kings",
+     "away": "Memphis Grizzlies"
+    },
+    {
+     "date": "2026-10-26T09:00:00+00:00",
+     "ts": 1793005200,
+     "league": "National League Women",
+     "home": "Okzhetpes W",
+     "away": "Zhetysu W"
+    },
+    {
+     "date": "2026-10-26T10:00:00+00:00",
+     "ts": 1793008800,
+     "league": "KBL",
+     "home": "Goyang Sono",
+     "away": "LG Sakers"
+    }
+   ]
+  },
+  {
+   "host": "v1.basketball.api-sports.io",
+   "date": "2026-10-27",
+   "games": 0,
+   "errors": {
+    "plan": "Free plans do not have access to this date, try from 2026-10-24 to 2026-10-26."
+   },
+   "sample": []
+  },
+  {
+   "host": "v1.basketball.api-sports.io",
+   "date": "2026-10-28",
+   "games": 0,
+   "errors": {
+    "plan": "Free plans do not have access to this date, try from 2026-10-24 to 2026-10-26."
+   },
+   "sample": []
+  },
+  {
+   "host": "v1.rugby.api-sports.io",
+   "date": "2026-10-25",
+   "games": 15,
+   "errors": null,
+   "sample": [
+    {
+     "date": "2026-10-25T11:00:00+00:00",
+     "ts": 1792926000,
+     "league": "Division de Honor",
+     "home": "AMPO Ordizia",
+     "away": "Valladolid RAC"
+    },
+    {
+     "date": "2026-10-25T11:00:00+00:00",
+     "ts": 1792926000,
+     "league": "Division de Honor",
+     "home": "El Salvador",
+     "away": "Alcobendas"
+    },
+    {
+     "date": "2026-10-25T11:00:00+00:00",
+     "ts": 1792926000,
+     "league": "Didi 10",
+     "home": "Batumi",
+     "away": "Armia Tbilisi"
+    }
+   ]
+  }
+ ],
+ "odds": [
+  {
+   "sport": "nba",
+   "game": 519569,
+   "items": 1,
+   "errors": null,
+   "books": [
+    {
+     "name": "Marathon Bet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Away -1",
+        "Away -3",
+        "Away -2",
+        "Away +1"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 228.5",
+        "Over 229",
+        "Over 229.5",
+        "Over 230"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 121.5",
+        "Under 121.5",
+        "Over 117.5",
+        "Under 117.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "1xBet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1",
+        "Away -1",
+        "Home +1",
+        "Away +1"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 217.5",
+        "Under 217.5",
+        "Over 222.5",
+        "Under 222.5"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 111.5",
+        "Under 111.5",
+        "Over 119.5",
+        "Under 119.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Betano",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1.5",
+        "Away -1.5",
+        "Home +1.5",
+        "Away +1.5"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 217.5",
+        "Under 217.5",
+        "Over 218.5",
+        "Under 218.5"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 114.5",
+        "Under 114.5",
+        "Over 116.5",
+        "Under 116.5"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sport": "nba",
+   "game": 519573,
+   "items": 1,
+   "errors": null,
+   "books": [
+    {
+     "name": "Marathon Bet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -3",
+        "Home -2",
+        "Home +1",
+        "Home +2"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 215.5",
+        "Over 216",
+        "Over 216.5",
+        "Over 217"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 114.5",
+        "Under 114.5",
+        "Over 115.5",
+        "Under 115.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "1xBet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1",
+        "Away -1",
+        "Home -3",
+        "Away -3"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 215.5",
+        "Under 215.5",
+        "Over 216",
+        "Under 216"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 109.5",
+        "Under 109.5",
+        "Over 111.5",
+        "Under 111.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Betano",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1.5",
+        "Away -1.5",
+        "Home +1.5",
+        "Away +1.5"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 213.5",
+        "Under 213.5",
+        "Over 214.5",
+        "Under 214.5"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 109.5",
+        "Under 109.5",
+        "Over 111.5",
+        "Under 111.5"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "sport": "nba",
+   "game": 519572,
+   "items": 1,
+   "errors": null,
+   "books": [
+    {
+     "name": "Marathon Bet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1",
+        "Away -1",
+        "Home -3",
+        "Away -3"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 223.5",
+        "Over 224",
+        "Over 224.5",
+        "Over 225"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 111.5",
+        "Under 111.5",
+        "Over 114.5",
+        "Under 114.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "1xBet",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1",
+        "Away -1",
+        "Home -3",
+        "Away -3"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 227.5",
+        "Under 227.5",
+        "Over 228",
+        "Under 228"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 111.5",
+        "Under 111.5",
+        "Over 114.5",
+        "Under 114.5"
+       ]
+      }
+     ]
+    },
+    {
+     "name": "Betano",
+     "bets": [
+      {
+       "id": 1,
+       "name": "3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 2,
+       "name": "Home/Away",
+       "labels": [
+        "Home",
+        "Away"
+       ]
+      },
+      {
+       "id": 30,
+       "name": "2nd Half 3Way Result",
+       "labels": [
+        "Home",
+        "Draw",
+        "Away"
+       ]
+      },
+      {
+       "id": 3,
+       "name": "Asian Handicap",
+       "labels": [
+        "Home -1.5",
+        "Away -1.5",
+        "Home +1.5",
+        "Away +1.5"
+       ]
+      },
+      {
+       "id": 4,
+       "name": "Over/Under",
+       "labels": [
+        "Over 213.5",
+        "Under 213.5",
+        "Over 214.5",
+        "Under 214.5"
+       ]
+      },
+      {
+       "id": 5,
+       "name": "Over/Under 1st Half",
+       "labels": [
+        "Over 109.5",
+        "Under 109.5",
+        "Over 111.5",
+        "Under 111.5"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
