@@ -115,7 +115,7 @@ class Build(unittest.TestCase):
 class Archive(unittest.TestCase):
     def test_only_locked_groups_archived_once(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[])
+        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[], archived=[])
         with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d):
             self.assertEqual(G.archive_locked({"date": DATE, "groups": gs}, "t0"), 0)
             n = G.archive_locked({"date": DATE, "groups": locked}, "t1")
@@ -123,6 +123,38 @@ class Archive(unittest.TestCase):
             self.assertEqual(G.archive_locked({"date": DATE, "groups": locked}, "t2"), 0)
             a = json.load(open(os.path.join(d, f"{DATE}.json")))
         self.assertEqual(len(a["groups"]), len(locked))
+
+    def test_archive_is_the_source_of_truth_for_locked_slots(self):
+        """25 Oct 2026 (review bug 9): the published groupings.json lags (prev is
+        empty), but the day's archive holds the locked groups. They are reused
+        as archived, no late group is built for their slots, and the archive
+        never gets a second group for one slot."""
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[], archived=[])
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d):
+            G.archive_locked({"date": DATE, "groups": locked}, "t1")
+            again = G.build_card(board(), DATE, AFTER_LOCK + timedelta(hours=1), prev=None, log=[])
+            self.assertEqual({G.card_slot(g) for g in again}, {G.card_slot(g) for g in locked})
+            for g in again:
+                src = next(x for x in locked if G.card_slot(x) == G.card_slot(g))
+                self.assertEqual(G.gid(g), G.gid(src))
+                self.assertFalse(g.get("late"))
+                self.assertEqual(g["status"], "locked")
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": again}, "t2"), 0)
+            # a late group with different picks for an archived slot is refused too
+            other = dict(locked[0], legs=[dict(l, event="z v z", pick="z") for l in locked[0]["legs"]], late=True)
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": [other]}, "t3"), 0)
+            a = json.load(open(os.path.join(d, f"{DATE}.json")))
+        self.assertEqual(len(a["groups"]), len(locked))
+
+    def test_archived_slot_beats_a_different_published_group(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Daytime")
+        other = dict(g0, legs=[dict(l, event="z v z", pick="z") for l in g0["legs"]], locked=True)
+        again = G.build_card(board(), DATE, AFTER_LOCK, prev=[other], log=[], archived=[dict(g0, locked=True)])
+        g1 = next(g for g in again if G.card_slot(g) == G.card_slot(g0))
+        self.assertEqual(G.gid(g1), G.gid(g0))
+        self.assertEqual(sum(1 for g in again if G.card_slot(g) == G.card_slot(g0)), 1)
 
 
 if __name__ == "__main__":

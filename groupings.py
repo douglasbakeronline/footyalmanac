@@ -1365,18 +1365,43 @@ def recheck_card(g, L):
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2),
             "legs": legs_, "status": "holding"}, []
 
-def build_card(L, date, now, prev=None, log=None):
+def card_slot(g):
+    """A Card group's slot: (window, kind). One group per slot per day."""
+    return (g.get("window"), g.get("name"))
+
+def archived_card(date):
+    """The locked Card groups in groupings-archive/<date>.json, one per slot
+    (the first archived wins). 25 Oct 2026 (review bug 9): a locked group used
+    to survive only through the published groupings.json; if Pages lagged, the
+    next build made a fresh late group and the archive held two for one slot.
+    The archive is now the source of truth for locked slots."""
+    try:
+        with open(os.path.join(ARCHIVE, f"{date}.json")) as f: a = json.load(f)
+    except (OSError, ValueError):
+        return []
+    out, seen = [], set()
+    for g in a.get("groups") or []:
+        if not is_card(g.get("name")) or not g.get("locked") or not g.get("window"): continue
+        if card_slot(g) in seen: continue
+        seen.add(card_slot(g)); out.append(g)
+    return out
+
+def build_card(L, date, now, prev=None, log=None, archived=None):
     """The Card for one UK date: up to two groups in each window. L holds the
-    day's legs (any board date); each is placed by its UK kick-off."""
+    day's legs (any board date); each is placed by its UK kick-off. A slot
+    locked in the day's archive (archived, read from disk when None) is reused
+    as it was archived, never rebuilt or duplicated; the last build's published
+    groups (prev) fill the rest."""
     stamp = iso(now); after = now + timedelta(minutes=20)
     by_win = {w: [] for w, _, _ in CARD_WINDOWS}
     for l in L:
         s = uk_slot(l)
         if s and s[0] == date: by_win[s[1]].append(l)
     groups, used, filled = [], set(), set()
-    for g in prev or []:
+    if archived is None: archived = archived_card(date)
+    for g in list(archived) + list(prev or []):
         if not is_card(g.get("name")) or g.get("window") not in by_win: continue
-        slot = (g["window"], g["name"])
+        slot = card_slot(g)
         if slot in filled: continue
         lock = lock_time(date, g["window"])
         if g.get("locked") or now >= lock:
@@ -1434,10 +1459,14 @@ def archive_locked(day, generated):
     except (OSError, ValueError):
         a = {"date": day["date"], "published": generated, "groups": []}
     have = {gid(g) for g in a.get("groups") or []}
+    # 25 Oct 2026 (review bug 9): one group per (window, kind) slot a day. A
+    # slot already archived is never given a second group, whatever its picks.
+    slots = {card_slot(g) for g in a.get("groups") or [] if is_card(g.get("name")) and g.get("window")}
     n = 0
     for g in locked:
         if gid(g) in have: continue
-        a.setdefault("groups", []).append(dict(g, archivedAt=generated)); have.add(gid(g)); n += 1
+        if is_card(g.get("name")) and g.get("window") and card_slot(g) in slots: continue
+        a.setdefault("groups", []).append(dict(g, archivedAt=generated)); have.add(gid(g)); slots.add(card_slot(g)); n += 1
     if n:
         with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
     return n
