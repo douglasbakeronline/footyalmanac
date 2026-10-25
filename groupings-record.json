@@ -1,31 +1,31 @@
 {
- "graded": "2026-10-25T13:41:17Z",
+ "graded": "2026-10-25T14:50:21Z",
  "overall": {
-  "groups": 69,
+  "groups": 73,
   "settled": 63,
   "won": 11,
   "lost": 52,
-  "pending": 6,
-  "legs": 299,
-  "legsWon": 216,
+  "pending": 10,
+  "legs": 300,
+  "legsWon": 217,
   "returned": 40.5,
   "staked": 63,
   "returnedBest": 43.39,
   "expected": 20.5,
   "clv": {
-   "n": 15,
+   "n": 23,
    "shortened": 10,
    "drifted": 3,
-   "mean": 0.0085
+   "mean": 0.0055
   }
  },
  "byBand": {
-  "Double": {
-   "groups": 0,
+  "Card 2x": {
+   "groups": 2,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 0,
+   "pending": 2,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -33,18 +33,18 @@
    "returnedBest": 0,
    "expected": 0,
    "clv": {
-    "n": 0,
+    "n": 6,
     "shortened": 0,
     "drifted": 0,
-    "mean": null
+    "mean": 0.0
    }
   },
-  "Treble": {
-   "groups": 0,
+  "Card 3x": {
+   "groups": 2,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 0,
+   "pending": 2,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -52,29 +52,10 @@
    "returnedBest": 0,
    "expected": 0,
    "clv": {
-    "n": 0,
+    "n": 6,
     "shortened": 0,
     "drifted": 0,
-    "mean": null
-   }
-  },
-  "Wider Double": {
-   "groups": 0,
-   "settled": 0,
-   "won": 0,
-   "lost": 0,
-   "pending": 0,
-   "legs": 0,
-   "legsWon": 0,
-   "returned": 0,
-   "staked": 0,
-   "returnedBest": 0,
-   "expected": 0,
-   "clv": {
-    "n": 0,
-    "shortened": 0,
-    "drifted": 0,
-    "mean": null
+    "mean": 0.0
    }
   },
   "Wider Treble": {
@@ -102,8 +83,8 @@
    "won": 0,
    "lost": 2,
    "pending": 1,
-   "legs": 8,
-   "legsWon": 6,
+   "legs": 9,
+   "legsWon": 7,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -212,18 +193,20 @@
   }
  },
  "current": [
+  "Card 2x",
+  "Card 3x"
+ ],
+ "retired": [
+  "Banker",
+  "Steady",
+  "Balanced",
+  "Stretch",
   "Double",
   "Treble",
   "Wider Double",
   "Wider Treble",
   "Wider Fourfold",
   "Multiplier"
- ],
- "retired": [
-  "Banker",
-  "Steady",
-  "Balanced",
-  "Stretch"
  ],
  "strict": {
   "groups": 0,
@@ -250,8 +233,8 @@
   "won": 0,
   "lost": 4,
   "pending": 3,
-  "legs": 14,
-  "legsWon": 10,
+  "legs": 15,
+  "legsWon": 11,
   "returned": 0,
   "staked": 4,
   "returnedBest": 0,
@@ -282,6 +265,84 @@
    "mean": 0.0093
   }
  },
+ "card": {
+  "groups": 4,
+  "settled": 0,
+  "won": 0,
+  "lost": 0,
+  "pending": 4,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "returnedBest": 0,
+  "expected": 0,
+  "clv": {
+   "n": 12,
+   "shortened": 0,
+   "drifted": 0,
+   "mean": 0.0
+  }
+ },
+ "cardByWindow": {
+  "Overnight": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "expected": 0,
+   "clv": {
+    "n": 0,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": null
+   }
+  },
+  "Daytime": {
+   "groups": 2,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 2,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "expected": 0,
+   "clv": {
+    "n": 6,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": 0.0
+   }
+  },
+  "Evening": {
+   "groups": 2,
+   "settled": 0,
+   "won": 0,
+   "lost": 0,
+   "pending": 2,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "expected": 0,
+   "clv": {
+    "n": 6,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": 0.0
+   }
+  }
+ },
  "firstChoice": {
   "groups": 39,
   "settled": 38,
@@ -309,6 +370,7 @@
     {
      "name": "Wider Treble",
      "rank": "fill",
+     "window": null,
      "odds": 2.03,
      "p": 0.4192,
      "status": "pending",
@@ -365,6 +427,7 @@
     {
      "name": "Wider Treble",
      "rank": "fill",
+     "window": null,
      "odds": 2.06,
      "p": 0.3782,
      "status": "pending",
@@ -421,14 +484,15 @@
     {
      "name": "Wider Fourfold",
      "rank": "fill",
+     "window": null,
      "odds": 2.11,
      "p": 0.345,
      "status": "pending",
      "paid": 0,
      "paidBest": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Slávia TU Košice",
@@ -455,8 +519,8 @@
        "lastOdds": null,
        "est": true,
        "p": 0.8694,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-0"
       },
       {
        "pick": "Bantu",
@@ -491,6 +555,7 @@
     {
      "name": "Multiplier",
      "rank": "main",
+     "window": null,
      "odds": 2.93,
      "p": 0.2906,
      "status": "pending",
@@ -547,6 +612,7 @@
     {
      "name": "Multiplier",
      "rank": "alternative",
+     "window": null,
      "odds": 2.83,
      "p": 0.287,
      "status": "pending",
@@ -603,6 +669,7 @@
     {
      "name": "Multiplier",
      "rank": "third",
+     "window": null,
      "odds": 2.92,
      "p": 0.2732,
      "status": "pending",
@@ -655,6 +722,234 @@
        "result": null
       }
      ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Daytime",
+     "window": "Daytime",
+     "odds": 2.19,
+     "p": 0.3732,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Zenit St Petersburg",
+       "event": "Zenit St Petersburg v Dynamo Makhachkala",
+       "sport": "football",
+       "comp": "Premier League",
+       "when": "2026-10-25T15:30:00Z",
+       "odds": 1.26,
+       "best": 1.29,
+       "lastOdds": 1.26,
+       "est": false,
+       "p": 0.765,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Toledo",
+       "event": "Toledo v Almansa",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 18",
+       "when": "2026-10-25T15:30:00Z",
+       "odds": 1.35,
+       "best": 1.42,
+       "lastOdds": 1.35,
+       "est": false,
+       "p": 0.6704,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Panathinaikos",
+       "event": "Volos v Panathinaikos",
+       "sport": "football",
+       "comp": "Super League",
+       "when": "2026-10-25T16:00:00Z",
+       "odds": 1.29,
+       "best": 1.32,
+       "lastOdds": 1.29,
+       "est": false,
+       "p": 0.7277,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 3x",
+     "rank": "Daytime",
+     "window": "Daytime",
+     "odds": 3.03,
+     "p": 0.2779,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Hammarby IF",
+       "event": "Mjällby AIF v Hammarby IF",
+       "sport": "football",
+       "comp": "Allsvenskan",
+       "when": "2026-10-25T15:30:00Z",
+       "odds": 1.42,
+       "best": 1.45,
+       "lastOdds": 1.42,
+       "est": false,
+       "p": 0.6567,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "AFC Ajax",
+       "event": "Sparta Rotterdam v AFC Ajax",
+       "sport": "football",
+       "comp": "Eredivisie",
+       "when": "2026-10-25T15:45:00Z",
+       "odds": 1.44,
+       "best": 1.48,
+       "lastOdds": 1.44,
+       "est": false,
+       "p": 0.6553,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Olympique de Marseille",
+       "event": "Olympique de Marseille v Le Havre",
+       "sport": "football",
+       "comp": "Ligue 1",
+       "when": "2026-10-25T16:15:00Z",
+       "odds": 1.48,
+       "best": 1.53,
+       "lastOdds": 1.48,
+       "est": false,
+       "p": 0.6457,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Evening",
+     "window": "Evening",
+     "odds": 2.03,
+     "p": 0.4157,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Houston Texans",
+       "event": "Houston Texans v New York Giants",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-25T17:00Z",
+       "odds": 1.19,
+       "best": 1.19,
+       "lastOdds": 1.19,
+       "est": false,
+       "p": 0.8077,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Deportivo Maipu",
+       "event": "Deportivo Maipu v Club Atlético Güemes",
+       "sport": "football",
+       "comp": "Primera Nacional",
+       "when": "2026-10-25T20:00:00Z",
+       "odds": 1.21,
+       "best": 1.23,
+       "lastOdds": 1.21,
+       "est": false,
+       "p": 0.7566,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Los Angeles Lakers",
+       "event": "Utah Jazz v Los Angeles Lakers",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-10-25T21:00Z",
+       "odds": 1.41,
+       "best": 1.41,
+       "lastOdds": 1.41,
+       "est": false,
+       "p": 0.6802,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 3x",
+     "rank": "Evening",
+     "window": "Evening",
+     "odds": 3.05,
+     "p": 0.2903,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "New York Jets",
+       "event": "New York Jets v Miami Dolphins",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-25T17:00Z",
+       "odds": 1.46,
+       "best": 1.46,
+       "lastOdds": 1.46,
+       "est": false,
+       "p": 0.6572,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Detroit Lions",
+       "event": "Detroit Lions v Green Bay Packers",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-10-25T20:25Z",
+       "odds": 1.56,
+       "best": 1.56,
+       "lastOdds": 1.56,
+       "est": false,
+       "p": 0.6158,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "New York Knicks",
+       "event": "New York Knicks v Orlando Magic",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-10-25T23:00Z",
+       "odds": 1.34,
+       "best": 1.34,
+       "lastOdds": 1.34,
+       "est": false,
+       "p": 0.7173,
+       "status": "pending",
+       "result": null
+      }
+     ]
     }
    ]
   },
@@ -665,6 +960,7 @@
     {
      "name": "Wider Fourfold",
      "rank": "fill",
+     "window": null,
      "odds": 2.08,
      "p": 0.3609,
      "status": "lost",
@@ -735,6 +1031,7 @@
     {
      "name": "Wider Treble",
      "rank": "fill",
+     "window": null,
      "odds": 2.02,
      "p": 0.3632,
      "status": "lost",
@@ -797,6 +1094,7 @@
     {
      "name": "Wider Treble",
      "rank": "fill",
+     "window": null,
      "odds": 2.02,
      "p": 0.3901,
      "status": "lost",
@@ -853,6 +1151,7 @@
     {
      "name": "Wider Fourfold",
      "rank": "fill",
+     "window": null,
      "odds": 2.04,
      "p": 0.3726,
      "status": "lost",
@@ -929,6 +1228,7 @@
     {
      "name": "Banker",
      "rank": "main",
+     "window": null,
      "odds": 2.04,
      "p": 0.3294,
      "status": "lost",
@@ -991,6 +1291,7 @@
     {
      "name": "Banker",
      "rank": "main",
+     "window": null,
      "odds": 1.81,
      "p": 0.4324,
      "status": "won",
@@ -1047,6 +1348,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 6.02,
      "p": 0.0904,
      "status": "lost",
@@ -1137,6 +1439,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.54,
      "p": 0.3573,
      "status": "won",
@@ -1221,6 +1524,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 3.93,
      "p": 0.2758,
      "status": "lost",
@@ -1311,6 +1615,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.68,
      "p": 0.5272,
      "status": "lost",
@@ -1395,6 +1700,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.03,
      "p": 0.3939,
      "status": "lost",
@@ -1479,6 +1785,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.12,
      "p": 0.2868,
      "status": "lost",
@@ -1563,6 +1870,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 3.87,
      "p": 0.265,
      "status": "lost",
@@ -1647,6 +1955,7 @@
     {
      "name": "Balanced",
      "rank": "alternative",
+     "window": null,
      "odds": 4.78,
      "p": 0.2332,
      "status": "lost",
@@ -1731,6 +2040,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 7.42,
      "p": 0.198,
      "status": "lost",
@@ -1821,6 +2131,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.21,
      "p": 0.464,
      "status": "lost",
@@ -1905,6 +2216,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.14,
      "p": 0.3945,
      "status": "lost",
@@ -1989,6 +2301,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.33,
      "p": 0.3202,
      "status": "lost",
@@ -2073,6 +2386,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.5,
      "p": 0.3997,
      "status": "lost",
@@ -2157,6 +2471,7 @@
     {
      "name": "Balanced",
      "rank": "alternative",
+     "window": null,
      "odds": 4.11,
      "p": 0.3213,
      "status": "lost",
@@ -2241,6 +2556,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 7.02,
      "p": 0.2771,
      "status": "lost",
@@ -2331,6 +2647,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.0,
      "p": 0.3338,
      "status": "lost",
@@ -2421,6 +2738,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.18,
      "p": 0.3203,
      "status": "lost",
@@ -2505,6 +2823,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 6.35,
      "p": 0.3082,
      "status": "lost",
@@ -2589,6 +2908,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 10.14,
      "p": 0.1923,
      "status": "lost",
@@ -2679,6 +2999,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.25,
      "p": 0.3719,
      "status": "lost",
@@ -2763,6 +3084,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 5.3,
      "p": 0.288,
      "status": "lost",
@@ -2847,6 +3169,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.05,
      "p": 0.2447,
      "status": "lost",
@@ -2931,6 +3254,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 3.88,
      "p": 0.2676,
      "status": "lost",
@@ -3021,6 +3345,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.74,
      "p": 0.5149,
      "status": "lost",
@@ -3105,6 +3430,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.38,
      "p": 0.2042,
      "status": "lost",
@@ -3189,6 +3515,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.52,
      "p": 0.5775,
      "status": "lost",
@@ -3279,6 +3606,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.31,
      "p": 0.427,
      "status": "lost",
@@ -3363,6 +3691,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.05,
      "p": 0.3202,
      "status": "lost",
@@ -3447,6 +3776,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.87,
      "p": 0.2925,
      "status": "lost",
@@ -3537,6 +3867,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.56,
      "p": 0.4669,
      "status": "lost",
@@ -3621,6 +3952,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.01,
      "p": 0.3441,
      "status": "won",
@@ -3705,6 +4037,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.13,
      "p": 0.2181,
      "status": "lost",
@@ -3789,6 +4122,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.76,
      "p": 0.3287,
      "status": "lost",
@@ -3873,6 +4207,7 @@
     {
      "name": "Balanced",
      "rank": "alternative",
+     "window": null,
      "odds": 4.24,
      "p": 0.2509,
      "status": "won",
@@ -3957,6 +4292,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 7.3,
      "p": 0.1833,
      "status": "lost",
@@ -4047,6 +4383,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.66,
      "p": 0.5793,
      "status": "lost",
@@ -4131,6 +4468,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.3,
      "p": 0.4536,
      "status": "lost",
@@ -4215,6 +4553,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.24,
      "p": 0.3816,
      "status": "lost",
@@ -4299,6 +4638,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.78,
      "p": 0.414,
      "status": "won",
@@ -4383,6 +4723,7 @@
     {
      "name": "Balanced",
      "rank": "alternative",
+     "window": null,
      "odds": 4.3,
      "p": 0.3499,
      "status": "won",
@@ -4467,6 +4808,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 7.29,
      "p": 0.2815,
      "status": "lost",
@@ -4557,6 +4899,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.97,
      "p": 0.4134,
      "status": "lost",
@@ -4641,6 +4984,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.06,
      "p": 0.274,
      "status": "won",
@@ -4725,6 +5069,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.11,
      "p": 0.2065,
      "status": "won",
@@ -4809,6 +5154,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 3.39,
      "p": 0.2301,
      "status": "lost",
@@ -4899,6 +5245,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.99,
      "p": 0.3343,
      "status": "lost",
@@ -4989,6 +5336,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.62,
      "p": 0.4821,
      "status": "won",
@@ -5073,6 +5421,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.26,
      "p": 0.303,
      "status": "won",
@@ -5157,6 +5506,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.48,
      "p": 0.1884,
      "status": "lost",
@@ -5241,6 +5591,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 8.73,
      "p": 0.1679,
      "status": "lost",
@@ -5331,6 +5682,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 3.83,
      "p": 0.2985,
      "status": "lost",
@@ -5421,6 +5773,7 @@
     {
      "name": "Steady",
      "rank": "main",
+     "window": null,
      "odds": 2.77,
      "p": 0.4407,
      "status": "won",
@@ -5505,6 +5858,7 @@
     {
      "name": "Balanced",
      "rank": "main",
+     "window": null,
      "odds": 4.1,
      "p": 0.3451,
      "status": "lost",
@@ -5589,6 +5943,7 @@
     {
      "name": "Stretch",
      "rank": "main",
+     "window": null,
      "odds": 7.62,
      "p": 0.261,
      "status": "lost",
@@ -5673,6 +6028,7 @@
     {
      "name": "Steady",
      "rank": "alternative",
+     "window": null,
      "odds": 2.99,
      "p": 0.2639,
      "status": "lost",
@@ -5757,6 +6113,7 @@
     {
      "name": "Balanced",
      "rank": "alternative",
+     "window": null,
      "odds": 5.87,
      "p": 0.1785,
      "status": "lost",
@@ -5841,6 +6198,7 @@
     {
      "name": "Stretch",
      "rank": "alternative",
+     "window": null,
      "odds": 7.51,
      "p": 0.1492,
      "status": "lost",
