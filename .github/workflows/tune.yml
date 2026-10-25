@@ -46,8 +46,9 @@ jobs:
 
       # Refit the calibration curve on the last completed season and check it
       # on the current one. tune.py writes calibration.json only if the fit
-      # also improves fixtures it has never seen; otherwise the file is left
-      # alone and the shipped constant stays in force.
+      # also improves fixtures it has never seen, on two Mondays running (the
+      # pending candidate is kept in tuning-pending.json, committed below);
+      # otherwise the file is left alone and the shipped constant stays.
       - name: Refit calibration
         run: python3 tune.py --fit
 
@@ -112,7 +113,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A calibration.json tuning-report.json home-advantage.json
+          git add -A calibration.json tuning-report.json tuning-pending.json home-advantage.json
           git diff --staged --quiet && exit 0
           git commit -m "Weekly retune $(date +%F) [skip ci]"
           # drop checkout's workflow-token header, or it is sent instead of the App token (see deploy.yml)

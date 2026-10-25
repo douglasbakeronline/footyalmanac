@@ -187,12 +187,22 @@ def fit_home(data, live, write):
     print(f"home advantage per league: live k {k_live:g}, fitted k {best:g}; fit {m_f:+.4f}; "
           f"check {len(chk)} fixtures {m_c:+.4f}, p(worse) {pw_c:.2f}; "
           + ("PASS" if ok else "not applied: " + ", ".join(g for g, v in gates.items() if not v)))
-    if ok and write:
+    if not write:
+        return ok
+    # Two consecutive weekly passes before it ships (tune.consecutive_passes,
+    # 25 Oct 2026): the pending k and its run live in tuning-pending.json.
+    pending = T.load_pending()
+    apply, pending = T.consecutive_passes("home", {"k": best}, ok, pending)
+    T.save_pending(pending)
+    if apply:
         json.dump({"k": best, "fitted": __import__("datetime").date.today().isoformat(),
                    "check": {"n": len(chk), "delta": round(m_c, 5), "pWorse": round(pw_c, 3)},
                    "leagues": league_factors(data, best)}, open(HOME_FILE, "w"), indent=1)
-        print("wrote home-advantage.json: the build picks it up next run")
-    return ok
+        print(f"wrote home-advantage.json (passed {T.PASSES_TO_APPLY} weeks running): the build picks it up next run")
+    elif ok:
+        n = (pending.get("home") or {}).get("passes", 1)
+        print(f"not written yet: pass {n} of {T.PASSES_TO_APPLY}; k {best:g} must pass again next week")
+    return apply
 
 
 def main():

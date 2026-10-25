@@ -51,6 +51,7 @@
       "home-advantage.json",
       "tune.py",
       "tuning-report.json",
+      "tuning-pending.json",
       "tune_tennis.py"
     ],
     "model": [
