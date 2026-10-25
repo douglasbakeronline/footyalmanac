@@ -88,6 +88,9 @@ note and the code disagree, trust the code and tell Douglas the note is stale.
 Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt**:
 
 - `engine.py` ratings and match model. Every number on a row comes from here.
+  `current_season(code, today)` derives every season string from the date
+  (`tests/test_seasons.py` fails CI on a rollover miss); `uk_today()` is the
+  build's anchor day; `apply_af_seasons` reads `current/af-seasons.json`.
 - `sources.py` openfootball + ESPN + football-data.co.uk (`FDX`) + API-Football (`AF`, paid, key `API_FOOTBALL_KEY` in secrets and the cloud env) fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
 - `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
 - `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder. Each row is `verified`, `verified-by-date` or `legacy-unverified` (graded), or `late` / `timing-unverifiable` (not graded, counted apart); see `claude/evaluation-audit.md`.
@@ -167,12 +170,12 @@ Open `dashboard.html` straight off disk to check the page.
   tennis build, `score_tennis.py`, `sports.py --daily` (both allowed to fail),
   commit the archives back
   to `main`, rebuild, publish to Pages.
-- `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
-  passes all gates), `tools/model_ideas.py --fit-home` (per-league home
+- `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only after
+  two consecutive Monday passes of all gates, tracked in `tuning-pending.json`), `tools/model_ideas.py --fit-home` (per-league home
   advantage, writes `home-advantage.json` only if it passes the same gates;
   Douglas's exception to rule 5, 25 Oct 2026), then `tools/model_ideas.py`,
   `--report` and `eurotest.py --report` as advisory output for a human.
-- `office-agents.yml` runs daily at 06:30 UTC as a sprint (Douglas's
+- `office-agents.yml` runs daily at 06:30 UTC as a sprint (single cron since 25 Oct 2026; skips when more than 8 office pull requests exist that day) (Douglas's
   instruction, 4 Oct 2026: no owner review, every agent productive). Since
   20 Oct 2026 the sprint runs the `SPRINT_SIZE` (5) agents whose best free task
   ranks highest, one at a time, in this order: owner `office-backlog` issues,
@@ -255,7 +258,8 @@ These were each learned the hard way. Do not break them without asking.
 4. **Fit one thing, then re-test everything else.** Two constants looked like
    wins and evaporated once calibration went in.
 5. **Structural constants never move on their own.** Only `calibration.json`
-   auto-applies. Everything else is advisory until a human commits it.
+   (and `home-advantage.json`) auto-apply, and only after two consecutive
+   weekly passes. Everything else is advisory until a human commits it.
 6. **A name mismatch or a missing current season must fail loudly.** A wrong
    match is worse than a missed one. When a "not rated" row turns out to be a
    spelling, fix it and add the spelling to `LIVE_NAMES`. In normalisation,
@@ -277,7 +281,9 @@ These were each learned the hard way. Do not break them without asking.
 - **Celtic's Law**: fixtures where the model is structurally blind before
   kick-off (promoted sides, unrated clubs, cross-division cup ties, overridden
   teams). Backtested as real. Flagged rows drop one confidence tier.
-- **Tiers**: Strong ≥70%, Firm ≥62%, Lean ≥55%, No read below.
+- **Tiers**: Strong ≥70%, Firm ≥62%, Lean ≥55%, No read below. Headline, tier
+  and band figures are strict (the pick won); draw reads are a labelled
+  secondary figure (25 Oct 2026).
 - **Calibration**: a line in raw confidence, `T = a + b × (confidence − 0.45)`,
   read from `calibration.json` (`engine.CALIBRATION`); the flat
   `engine.TEMPERATURE` 1.15 applies only if the file is missing. Live since
