@@ -48,7 +48,7 @@ Draws: the model picked a draw 100 times in 7,222 and 25.1% of fixtures finished
 
 ## Bugs
 
-Twenty-two found, none fatal to the daily build. The high ones are about honesty of the record or silent staleness.
+Twenty-two found, none fatal to the daily build. **Status, 25 Oct 23:50 UK: 21 of 22 fixed and live in release `a68bc1f` (see RELEASES.md). Bug 14 is open, pending evidence from `build_tennis.py --unrated-report`, which puts the real gap at 2.7% ATP / 4.1% WTA. `claude.yml` was not a bug.** Lines below are the findings as written before the fixes.
 
 | # | Sev | Where | What happens | Fix |
 |---|---|---|---|---|
@@ -162,13 +162,13 @@ API-Football usage runs 1,000-4,000 calls/day against 7,500. What can run away: 
 
 ## Timeline
 
-**Tomorrow, Mon 26 Oct (one release, no model change)**
+**Tomorrow, Mon 26 Oct (one release, no model change)** DONE 25 Oct, release `a68bc1f`
 1. Groupings record: carry `wide`, `late`, `locked`, `lockAt` into graded rows; grade `late` apart (bug 1). UK-only best price (bug 2). Quota marker and stale fallback for the Card (bug 8). Locked slots from the archive (bug 9).
 2. FIFA rankings refresh fixed and warning added (bug 4); rebuild.
 3. Confirm the API-Football renewal on 30 Oct.
 4. `ceo.yml` double-fire (bug 18); merge policy `unknown` class and `home-advantage.json` protection (bug 19).
 
-**This week, 27-31 Oct**
+**This week, 27-31 Oct** DONE 25 Oct, same release
 1. Deploy guards for sports and groupings; refuse under 40% of yesterday's count; fail on empty App token (bug 7).
 2. Price-only job at 06:00Z or `lockPrice` archived and graded (bug 10).
 3. Strict headline on `pick == actual` (bug 3).
@@ -177,8 +177,8 @@ API-Football usage runs 1,000-4,000 calls/day against 7,500. What can run away: 
 
 **2-13 Nov (the model change)**
 1. Home/away tilt by league family, replayed on 2025 and 2026 under the three gates. Expected 0.001-0.002 log loss and away picks in the 40-60% bands moving from 7 points under quote to on quote.
-2. Tennis: retirement weight, provisional ratings, real-start rule, live own-band chip (bugs 13-15).
-3. Cap `sports.py` CHECK at 27 Sep and re-tune (bug 16).
+2. Tennis: retirement weight and real-start rule DONE 25 Oct; provisional ratings (bug 14) and the live own-band chip still open.
+3. Cap `sports.py` CHECK at 27 Sep DONE 25 Oct; the `--tune` re-run is Douglas's by-hand step, still open.
 4. `tune_strengths.py --fit`, checked on the cup replay.
 
 **16-27 Nov (the page)**
@@ -192,11 +192,11 @@ API-Football usage runs 1,000-4,000 calls/day against 7,500. What can run away: 
 1. Judge the Card on ~300 locked UK-priced legs; change the rules or retire it as a profit instrument.
 2. Let the Monday refit switch on `home-advantage.json` when it passes.
 3. Re-run the stage-of-season shrink test at 250+ fixtures.
-4. Calibration gate to p(worse) 0.10 or two consecutive passes (bug 20).
+4. Calibration gate: two consecutive passes DONE 25 Oct (bug 20).
 
 **Before April 2027**
 1. Tennis surface source, or `surfaceWeight` 0 for live pricing until one exists.
-2. November added to the Rugby World Cup months; probe CFL, NBL, women's college basketball, Super League.
+2. November added to the Rugby World Cup months DONE 25 Oct; probe CFL, NBL, women's college basketball, Super League still open.
 3. Second prior season for the 14 backfilled leagues.
 
 **How you are stronger tomorrow.** Tomorrow's release does not change a forecast; it makes the record trustworthy, stops a stale ranking feeding every international, keeps the paid data flowing and halves the most expensive agent workload. The forecasting gain lands in the second week of November from the one signal the live record shows at five standard deviations, tested the way the rules require. The page work after that turns a correct site into one you can place bets from at 07:00 on a phone.
