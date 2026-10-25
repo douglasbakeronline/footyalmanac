@@ -406,8 +406,8 @@ def price_football(L, dates, report):
     # 22 Oct 2026: the build now reads every API-Football price by date
     # (odds.af_odds_day, cached); a leg found there costs no call. The
     # one-fixture call stays as the fallback for anything it missed.
+    import odds as O
     try:
-        import odds as O
         bulk = O.af_prices({_date.fromisoformat(d) for d in dates})
     except Exception as e:
         bulk = {}
@@ -440,22 +440,25 @@ def price_football(L, dates, report):
             except Exception as e:
                 report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
-            books = set(); top = {}
+            books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
             for item in items:
                 for b in item.get("bookmakers") or []:
+                    uk = O.uk_book(b.get("name"))
                     for bet in b.get("bets") or []:
                         if bet.get("id") != 1: continue
                         for v in bet.get("values") or []:
                             try:
                                 o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
-                                if o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
+                                if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
                             except (KeyError, ValueError): pass
             books = sorted(books)
             side = prices["Home" if l["side"] == "h" else "Away"]
             if side:
                 avg = [sum(v) / len(v) for v in prices.values() if v]
-                l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
-                         bestBook=top.get("Home" if l["side"] == "h" else "Away", (0, None))[1],
+                mean = sum(side) / len(side)
+                uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
+                l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
+                         bestBook=uk_top[1],
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
@@ -712,7 +715,11 @@ AS_BETS = ("Home/Away", "Match Winner", "3Way Result", "Moneyline", "Winner")
 
 def _as_side(item, pick_home):
     """(average price for the pick, best price, best book, books, margin) from
-    one /odds item, using the first match-winner bet found per bookmaker."""
+    one /odds item, using the first match-winner bet found per bookmaker. The
+    best price is among UK-licensed books only (odds.UK_BOOKS; API-Sports
+    shares API-Football's bookmaker list); none pricing it leaves best at the
+    average and the book None."""
+    import odds as O
     side, books, margins, top = [], set(), [], (0.0, None)
     for bk in item.get("bookmakers") or []:
         bets = {b.get("name"): b for b in bk.get("bets") or []}
@@ -725,11 +732,12 @@ def _as_side(item, pick_home):
         o = vals.get("Home" if pick_home else "Away")
         if not o or o <= 1: continue
         side.append(o); books.add(bk.get("name"))
-        if o > top[0]: top = (o, bk.get("name"))
+        if O.uk_book(bk.get("name")) and o > top[0]: top = (o, bk.get("name"))
         mg = margin_of(list(vals.values()))
         if mg: margins.append(mg)
     if not side: return None
-    return (round(sum(side) / len(side), 2), round(max(side), 2), top[1], len(books),
+    mean = sum(side) / len(side)
+    return (round(mean, 2), round(top[0] if top[1] else mean, 2), top[1], len(books),
             round(sum(margins) / len(margins), 4) if margins else None)
 
 
