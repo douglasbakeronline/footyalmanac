@@ -107,9 +107,9 @@ def find_result(m, by_id, by_pair):
     return cands[0] if len(cands) == 1 else None
 
 
-def is_retirement(note):
-    """'ret' as a word. A substring test flagged Berrettini as a retirement."""
-    return bool(re.search(r"\bret(?:ired)?\b", (note or "").lower()))
+# 'ret' as a word; lives in build_tennis since 25 Oct 2026 so the ratings
+# update and the grading agree on what a retirement is.
+is_retirement = B.is_retirement
 
 
 def _surname(name):

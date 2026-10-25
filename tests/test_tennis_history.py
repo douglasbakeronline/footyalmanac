@@ -54,9 +54,16 @@ class ResultsToApply(unittest.TestCase):
             res(5, "2026-07-01", "Dee Dune", "Cat Clay", winner="Cat Clay"),
         ]
         todo, counts = self.apply(rows)
-        self.assertEqual(todo, [("Cat Clay", "Ann Able"), ("Cat Clay", "Dee Dune"),
-                                ("Bea Bold", "Ann Able")])
-        self.assertEqual(counts, {"applied": 3, "unmatched": 0, "archive": 1, "walkover": 0})
+        self.assertEqual(todo, [("Cat Clay", "Ann Able", False), ("Cat Clay", "Dee Dune", False),
+                                ("Bea Bold", "Ann Able", False)])
+        self.assertEqual(counts, {"applied": 3, "unmatched": 0, "archive": 1, "walkover": 0, "retired": 0})
+
+    def test_a_retirement_is_applied_and_marked(self):
+        rows = [res(1, "2026-07-01", "Cat Clay", "Dee Dune", note="Clay (X) bt Dune (Y) 6-4 3-1 ret"),
+                res(2, "2026-07-02", "Cat Clay", "Dee Dune", note="Clay (X) bt Dune (Y) 6-4 6-3")]
+        todo, counts = self.apply(rows)
+        self.assertEqual(todo, [("Cat Clay", "Dee Dune", True), ("Cat Clay", "Dee Dune", False)])
+        self.assertEqual(counts["retired"], 1)
 
     def test_walkovers_and_unrated_players_are_left_out(self):
         rows = [res(1, "2026-07-01", "Cat Clay", "Dee Dune", note="Clay bt Dune walkover"),
@@ -69,7 +76,7 @@ class ResultsToApply(unittest.TestCase):
         rows = [res(1, "2026-07-01", "Cat Clay", "Dee Dune"),
                 res(2, "2026-10-05", "Dee Dune", "Cat Clay")]
         todo, _ = self.apply(rows, boundary=None, since=date(2026, 10, 2))
-        self.assertEqual(todo, [("Dee Dune", "Cat Clay")])
+        self.assertEqual(todo, [("Dee Dune", "Cat Clay", False)])
 
     def test_a_result_fetched_twice_counts_once(self):
         games = {}
@@ -114,12 +121,40 @@ class Ratings(unittest.TestCase):
         for _ in range(2):                                    # two builds, same history
             pool = {k: dict(v) for k, v in POOL.items()}
             todo, _ = BT.results_to_apply(games, BOUNDARY, by_full, by_init)
-            for w, l in todo:
+            for w, l, _ret in todo:
                 BT.apply_result(pool, w, l, "Hard", 250)
             ratings.append(pool["Cat Clay"]["overall"])
         self.assertEqual(ratings[0], ratings[1])
         self.assertGreater(ratings[0], POOL["Cat Clay"]["overall"])
         self.assertEqual(POOL["Cat Clay"]["overall"], 1800.0)   # the snapshot itself is never changed
+
+    def test_a_retirement_moves_the_ratings_by_the_fitted_weight(self):
+        """Bug 13 (25 Oct 2026): the live update matches tune_tennis.run_elo,
+        where a retirement is scaled by retirementWeight (WTA 0.5)."""
+        full = {k: dict(v) for k, v in POOL.items()}
+        half = {k: dict(v) for k, v in POOL.items()}
+        BT.apply_result(full, "Cat Clay", "Dee Dune", "Hard", 250)
+        BT.apply_result(half, "Cat Clay", "Dee Dune", "Hard", 250, weight=0.5)
+        gain_full = full["Cat Clay"]["overall"] - 1800.0
+        gain_half = half["Cat Clay"]["overall"] - 1800.0
+        self.assertGreater(gain_full, 0)
+        self.assertAlmostEqual(gain_half, gain_full / 2)
+        self.assertAlmostEqual(half["Cat Clay"]["surface_Hard"] - 1800.0, gain_half)
+        self.assertAlmostEqual(half["Dee Dune"]["overall"] - 1800.0, -gain_half)
+        self.assertEqual(half["Cat Clay"]["matches"], 51)      # still counts as a match played
+        # and the same number run_elo produces for one retirement
+        m = [{"winner": "Cat Clay", "loser": "Dee Dune", "surface": "Hard", "retired": True}]
+        _, overall, _, _ = TT.run_elo(m, 0.3, 250, 0.5, start=1800.0)
+        self.assertAlmostEqual(overall["Cat Clay"], 1800.0 + BT.dynamic_k(0, 250) * 0.5 * 0.5)
+        fresh = {"Cat Clay": {"overall": 1800.0, "matches": 0}, "Dee Dune": {"overall": 1800.0, "matches": 0}}
+        BT.apply_result(fresh, "Cat Clay", "Dee Dune", "Hard", 250, weight=0.5)
+        self.assertAlmostEqual(fresh["Cat Clay"]["overall"], overall["Cat Clay"])
+
+    def test_tennis_json_carries_a_retirement_weight_per_tour(self):
+        import json
+        doc = json.load(open(os.path.join(os.path.dirname(HERE), "tennis.json")))
+        for tour in ("atp", "wta"):
+            self.assertIn("retirementWeight", doc[tour]["constants"])
 
 
 class ArchiveBoundary(unittest.TestCase):

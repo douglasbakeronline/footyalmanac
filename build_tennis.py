@@ -219,12 +219,18 @@ def dynamic_k(matches_played, k_base):
     return k_base / ((matches_played + 5) ** 0.4)
 
 
-def apply_result(pool, winner, loser, surface, k_base):
+def apply_result(pool, winner, loser, surface, k_base, weight=1.0):
     """Nudges both players' overall and surface ratings by one result, the
     exact update tune_tennis.py's run_elo() applies during a full fit.
     This is what keeps tennis.json from just being a snapshot frozen at
     whatever date it was last fitted on: every real ESPN result this script
-    can see gets folded in, in order, before anything is priced."""
+    can see gets folded in, in order, before anything is priced.
+
+    weight scales the update as run_elo's `wt` does: 1.0 for a completed
+    match, the tour's fitted `retirementWeight` for a retirement (WTA 0.5,
+    ATP 1.0 in tennis.json). Until 25 Oct 2026 the live update ignored it
+    and every retirement counted in full, so the ratings drifted from the
+    fitted model (89 WTA and 41 ATP retirements since June)."""
     surf_key = f"surface_{surface}"
     ow = pool[winner]["overall"]
     ol = pool[loser]["overall"]
@@ -232,7 +238,7 @@ def apply_result(pool, winner, loser, surface, k_base):
     sl = pool[loser].get(surf_key, ol)
     nw = pool[winner].get("matches", 0)
     nl = pool[loser].get("matches", 0)
-    kw, kl = dynamic_k(nw, k_base), dynamic_k(nl, k_base)
+    kw, kl = dynamic_k(nw, k_base) * weight, dynamic_k(nl, k_base) * weight
 
     e_ow = 1.0 / (1.0 + 10 ** ((ol - ow) / 400.0))
     pool[winner]["overall"] = ow + kw * (1 - e_ow)
@@ -464,9 +470,17 @@ def is_walkover(r):
     return "walkover" in n or "w/o" in n
 
 
+def is_retirement(note):
+    """'ret' as a word in ESPN's result line ("... 5-7 5-3 ret"). A substring
+    test flagged Berrettini as a retirement. Shared with score_tennis.py."""
+    return bool(re.search(r"\bret(?:ired)?\b", (note or "").lower()))
+
+
 def results_to_apply(games, boundary, by_full, by_initial, since=None):
     """History results the fitted archive does not already hold, matched to
-    the ratings pool, oldest first. Returns (rows, counts).
+    the ratings pool, oldest first. Returns (rows, counts); each row is
+    (winner, loser, retired), retired as the archive marks it (" RET" in the
+    score) so apply_result can weight it as the fit did.
 
     boundary is tennis.json's per-tour "archive" entry (tune_tennis.py):
     {"through": last archive tournament start, "pairs": players who met in a
@@ -476,7 +490,7 @@ def results_to_apply(games, boundary, by_full, by_initial, since=None):
     tournaments is the same match and is skipped too. Without a boundary (an
     older tennis.json) only results from `since` are used, as before
     8 Oct 2026."""
-    counts = {"applied": 0, "unmatched": 0, "archive": 0, "walkover": 0}
+    counts = {"applied": 0, "unmatched": 0, "archive": 0, "walkover": 0, "retired": 0}
     if boundary:
         b = date.fromisoformat(boundary["through"])
         lo = b.isoformat()
@@ -500,8 +514,10 @@ def results_to_apply(games, boundary, by_full, by_initial, since=None):
             counts["archive"] += 1
             continue
         winner = a if r["winner"] == r["p0"] else b_
-        out.append((winner, b_ if winner == a else a))
+        retired = is_retirement(r.get("note"))
+        out.append((winner, b_ if winner == a else a, retired))
         counts["applied"] += 1
+        counts["retired"] += retired
     return out, counts
 
 
@@ -536,6 +552,9 @@ def main():
         pool = ratings[tour]["ratings"]
         k_base = ratings[tour]["constants"]["kBase"]
         sw = ratings[tour]["constants"]["surfaceWeight"]
+        # the fitted weight of a retirement (tune_tennis.run_elo); 1.0 if an
+        # older tennis.json has none, which is what the build always did
+        ret_w = ratings[tour]["constants"].get("retirementWeight", 1.0)
         by_full, by_initial = build_index(pool)
         world = RK.tennis_ranks(tour)   # {ESPN athlete id: rank}, top 150; {} if unavailable
         log.append(f"{tour}: {len(world)} players with a world ranking")
@@ -568,12 +587,14 @@ def main():
                        f"(run tune_tennis.py --boundary): only the last "
                        f"{args.catchup_days} days of results reach the ratings")
         todo, counts = results_to_apply(games, boundary, by_full, by_initial, since=catchup_start)
-        for winner, loser in todo:
+        for winner, loser, retired in todo:
             # ESPN carries no surface; Hard, as before (a tournament lookup
-            # was tested 8 Oct 2026 and did not help)
-            apply_result(pool, winner, loser, "Hard", k_base)
+            # was tested 8 Oct 2026 and did not help). A retirement moves the
+            # ratings by the tour's fitted retirementWeight, as in the fit.
+            apply_result(pool, winner, loser, "Hard", k_base, ret_w if retired else 1.0)
         log.append(f"{tour}: {counts['applied']} results since the archive applied to ratings "
-                   f"({len(games)} in history, walked through {walked}), "
+                   f"({counts['retired']} retirements at weight {ret_w}; "
+                   f"{len(games)} in history, walked through {walked}), "
                    f"{counts['unmatched']} skipped (no rating on file for a side), "
                    f"{counts['archive']} already in the archive, {counts['walkover']} walkovers")
 
