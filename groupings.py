@@ -649,11 +649,183 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     rep.update(usedToday=led["days"].get(day, 0), usedMonth=led["used"], left=led.get("left"))
     report["oddsApi"] = rep
 
+
+# ---------- API-Sports, other sports (25 Oct 2026) ----------
+# The API-Football account carries a free plan on each of API-Sports' other
+# products (tools/odds_probe.py, 25 Oct 2026: rugby, basketball, hockey,
+# baseball, american-football all answer, "Free", 100 calls a day each).
+# Odds come per game (/odds?game=), not by date, so each build reads the
+# day's games once per sport and date (cached), then prices only the legs
+# that still need one, inside AS_DAY calls a UK day per product.
+AS_HOST = {"rugby": "v1.rugby.api-sports.io", "nba": "v1.basketball.api-sports.io",
+           "wnba": "v1.basketball.api-sports.io", "ncaab": "v1.basketball.api-sports.io",
+           "nhl": "v1.hockey.api-sports.io", "mlb": "v1.baseball.api-sports.io",
+           "nfl": "v1.american-football.api-sports.io", "cfb": "v1.american-football.api-sports.io"}
+AS_DAY = 85            # of the free 100 a day per product, leaving room for a probe
+AS_GAMES_TTL = 4 * 3600
+AS_ODDS_TTL = 90 * 60
+AS_BETS = ("Home/Away", "Match Winner", "3Way Result", "Moneyline", "Winner")
+
+
+def _as_side(item, pick_home):
+    """(average price for the pick, best price, best book, books, margin) from
+    one /odds item, using the first match-winner bet found per bookmaker."""
+    side, books, margins, top = [], set(), [], (0.0, None)
+    for bk in item.get("bookmakers") or []:
+        bets = {b.get("name"): b for b in bk.get("bets") or []}
+        bet = next((bets[n] for n in AS_BETS if n in bets), None)
+        if not bet: continue
+        vals = {}
+        for v in bet.get("values") or []:
+            try: vals[str(v.get("value"))] = float(v.get("odd"))
+            except (TypeError, ValueError): pass
+        o = vals.get("Home" if pick_home else "Away")
+        if not o or o <= 1: continue
+        side.append(o); books.add(bk.get("name"))
+        if o > top[0]: top = (o, bk.get("name"))
+        mg = margin_of(list(vals.values()))
+        if mg: margins.append(mg)
+    if not side: return None
+    return (round(sum(side) / len(side), 2), round(max(side), 2), top[1], len(books),
+            round(sum(margins) / len(margins), 4) if margins else None)
+
+
+def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
+    key = os.environ.get("API_FOOTBALL_KEY")
+    want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l.get("home") and l.get("away")]
+    if not key or not want:
+        report["apiSports"] = "no key" if not key else "no legs"; return
+    fetch = fetch or (lambda url: get(url, {"x-apisports-key": key}))
+    now = now or datetime.now(timezone.utc)
+    if cache_dir is None:
+        sys.path.insert(0, HERE)
+        import sources as S
+        cache_dir = S.AF_CACHE_DIR
+    os.makedirs(cache_dir, exist_ok=True)
+    day = now.astimezone(ZoneInfo("Europe/London")).date().isoformat()
+    led_path = os.path.join(cache_dir, "apisports-ledger.json")
+    try: led = json.load(open(led_path))
+    except (OSError, ValueError): led = {}
+    if led.get("day") != day: led = {"day": day, "used": {}}
+    rep = {"legs": len(want), "matched": 0, "calls": 0, "cached": 0, "skipped": 0}
+
+    def cached(name, ttl):
+        path = os.path.join(cache_dir, f"apisports-{name}.json")
+        try:
+            if time.time() - os.path.getmtime(path) < ttl: return json.load(open(path))
+        except (OSError, ValueError): pass
+        return None
+
+    def call(host, path, name, ttl):
+        c = cached(name, ttl)
+        if c is not None: rep["cached"] += 1; return c
+        if led["used"].get(host, 0) >= AS_DAY: rep["skipped"] += 1; return None
+        try: d = fetch(f"https://{host}{path}")
+        except Exception as e:
+            report.setdefault("errors", []).append(f"api-sports {host}{path}: {type(e).__name__}"); return None
+        led["used"][host] = led["used"].get(host, 0) + 1; rep["calls"] += 1
+        items = d.get("response") or [] if isinstance(d, dict) else []
+        with open(os.path.join(cache_dir, f"apisports-{name}.json"), "w") as f: json.dump(items, f)
+        return items
+
+    for l in sorted(want, key=lambda l: l.get("when") or "9"):
+        host = AS_HOST[l["sport"]]
+        t = parse(l.get("when"))
+        days = sorted({(t or now).date().isoformat(), l["date"]})
+        game = None
+        for dd in days:
+            games = call(host, f"/games?date={dd}", f"{host.split('.')[1]}-games-{dd}", AS_GAMES_TTL) or []
+            for g in games:
+                tm = g.get("teams") or {}
+                h, a = (tm.get("home") or {}).get("name", ""), (tm.get("away") or {}).get("name", "")
+                gt = parse(g.get("date")) if isinstance(g.get("date"), str) else None
+                if gt is None and g.get("timestamp"):
+                    gt = datetime.fromtimestamp(g["timestamp"], timezone.utc)
+                if t and gt and abs((t - gt).total_seconds()) > 3 * 3600: continue
+                if same(h, l["home"]) and same(a, l["away"]):
+                    game = g; break
+            if game: break
+        if not game: continue
+        gid_ = game.get("id")
+        items = call(host, f"/odds?game={gid_}", f"{host.split('.')[1]}-odds-{gid_}", AS_ODDS_TTL) or []
+        r = _as_side(items[0], same(l["pick"], l["home"])) if items else None
+        if not r: continue
+        avg, best, book, n, mg = r
+        l.update(odds=avg, best=best, bestBook=book, books=n, margin=mg,
+                 src="API-Sports, average of " + (f"{n} bookmakers" if n != 1 else (book or "1 bookmaker")))
+        rep["matched"] += 1
+    with open(led_path, "w") as f: json.dump(led, f)
+    rep["used"] = led["used"]
+    report["apiSports"] = rep
+
+
+# ---------- PinnWire: Pinnacle prices (25 Oct 2026) ----------
+# Pinnacle's own prices for 13 sports (tennis and rugby among them), through
+# PinnWire's free key (100 calls a day, no card; the shared demo key is used
+# up by others each day, tools/odds_probe.py). Only with PINNWIRE_KEY. One
+# call per build at most (sport_id=all, prematch, cached PW_TTL), so six
+# builds use six calls. Pinnacle runs a thin margin, so its price is close to
+# a fair one; it prices legs nothing else did, never football (API-Football
+# covers that).
+PW_URL = "https://pinnwire.com/kit/v1/markets?sport_id=all&event_type=prematch"
+PW_TTL = 60 * 60
+
+
+def same_any(a, b):
+    """same(), and also names in either order ("Sinner, Jannik" / "Jannik Sinner")."""
+    if same(a, b): return True
+    ta, tb = sorted(norm(a).split()), sorted(norm(b).split())
+    return bool(ta) and ta == tb
+
+def price_pinnwire(L, dates, report, cache_dir=None, fetch=None):
+    key = os.environ.get("PINNWIRE_KEY")
+    want = [l for l in L if not l.get("odds") and l["sport"] != "football"]
+    if not key or not want:
+        report["pinnwire"] = "no key" if not key else "no legs"; return
+    if cache_dir is None:
+        sys.path.insert(0, HERE)
+        import sources as S
+        cache_dir = S.AF_CACHE_DIR
+    os.makedirs(cache_dir, exist_ok=True)
+    path = os.path.join(cache_dir, "pinnwire-prematch.json")
+    events, calls = None, 0
+    try:
+        if time.time() - os.path.getmtime(path) < PW_TTL: events = json.load(open(path))
+    except (OSError, ValueError): pass
+    if events is None:
+        try:
+            d = (fetch or (lambda u: get(u, {"x-api-key": key})))(PW_URL); calls = 1
+            events = d.get("events") or [] if isinstance(d, dict) else []
+            with open(path, "w") as f: json.dump(events, f)
+        except Exception as e:
+            report["pinnwire"] = {"error": type(e).__name__}; return
+    matched = 0
+    for l in want:
+        names = l.get("players") or [l.get("home"), l.get("away")]
+        if not all(names): continue
+        t = parse(l.get("when"))
+        for ev in events:
+            st = parse(ev.get("starts") or ev.get("start_ts"))
+            if t and st and abs((t - st).total_seconds()) > 6 * 3600: continue
+            h, a = ev.get("home", ""), ev.get("away", "")
+            if not (same_any(h, names[0]) and same_any(a, names[1])) and not (same_any(h, names[1]) and same_any(a, names[0])): continue
+            ml = ((ev.get("periods") or {}).get("num_0") or {}).get("money_line") or {}
+            side = "home" if same_any(l["pick"], h) else "away" if same_any(l["pick"], a) else None
+            o = ml.get(side) if side else None
+            if not o or o <= 1: break
+            l.update(odds=round(float(o), 2), best=round(float(o), 2), bestBook="Pinnacle", books=1,
+                     margin=margin_of([ml.get("home"), ml.get("away"), ml.get("draw")]),
+                     src="Pinnacle (PinnWire)")
+            matched += 1; break
+    report["pinnwire"] = {"calls": calls, "events": len(events), "legs": len(want), "matched": matched}
+
 def price(L, dates):
     report = {}
     price_football(L, dates, report)
     price_espn_soccer(L, dates, report)
     price_espn(L, dates, report)
+    price_api_sports(L, dates, report)
+    price_pinnwire(L, dates, report)
     price_odds_api(L, dates, report)
     for l in L:
         if not l.get("odds"):

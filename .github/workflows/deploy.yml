@@ -192,6 +192,8 @@ jobs:
       - name: Build and grade the Odds tab groupings
         env:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
+          API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+          PINNWIRE_KEY: ${{ secrets.PINNWIRE_KEY }}
         run: python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
 
       # main is protected (ruleset "Protect main"): only the office App and the

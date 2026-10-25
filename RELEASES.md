@@ -3,6 +3,17 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Prices for more sports: API-Sports (free) and PinnWire, 25 Oct (tag pending)
+
+**What changed:** Douglas: "scope a few different free sources, let's utilise what we can". `tools/odds_probe.py` (run in CI by `.github/workflows/odds-probe.yml`, report on the `odds-probe-report` branch, counts and field names only) found:
+- **API-Sports' other products** answer on the existing API-Football key, each on its own free plan of 100 calls a day: rugby, basketball, hockey, baseball, american-football (and handball, volleyball). Odds come per game; on 25 Oct they priced 2 of 3 rugby, 3 of 3 basketball, 3 of 3 hockey, 3 of 3 NFL games tried (baseball 0 of 3, end of season).
+- **PinnWire** (Pinnacle prices, 13 sports including tennis and rugby): the shared demo key is used up by others each day; a free personal key (100 calls a day, no card) needs an email signup by Douglas.
+- **ESPN** carries NBA odds on the day of the game only (25 Oct: 7 of 7 that day, 0 of 25 for the next three days).
+Built: `price_api_sports` (rugby, NBA, WNBA, college basketball, NHL, MLB, NFL, college football; games cached 4 hours, odds 90 minutes, at most 85 calls a UK day per product; average, best price and its bookmaker) and `price_pinnwire` (only with the `PINNWIRE_KEY` secret: one call per build at most, every prematch market at once, legs nothing else priced, never football). Order: API-Football, ESPN soccer, ESPN, API-Sports, PinnWire, The Odds API.
+**Files:** groupings.py, .github/workflows/deploy.yml (passes the keys to the groupings step), tools/odds_probe.py, .github/workflows/odds-probe.yml, tests/test_groupings_sources.py, claude/the-card-2026-10-25.md, RELEASES.md.
+**Not changed:** every model and rule; prices still never feed a model.
+**Roll back:** `git revert` the commit.
+
 ## The Card: windowed, locked groups at 2x and 3x, and the playbook, 25 Oct (tag pending)
 
 **What changed:** Douglas, after the weekend: bet the day before or in the morning and leave it; groups over the same hours; one fixture per group; 2x and 3x+ returns; all sports considered. **The Card** replaces the Double / Treble / Wider / Multiplier groups as what the site puts forward:
