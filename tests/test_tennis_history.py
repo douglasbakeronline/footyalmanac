@@ -157,6 +157,39 @@ class Ratings(unittest.TestCase):
             self.assertIn("retirementWeight", doc[tour]["constants"])
 
 
+class UnratedReport(unittest.TestCase):
+    """build_tennis.py --unrated-report (25 Oct 2026): advisory evidence for
+    bug 14, counts only; nothing is seeded or applied."""
+
+    def test_counts_dropped_results_per_month_and_sets_the_other_tour_apart(self):
+        ratings = {"atp": {"ratings": {"Ann Able": player(), "Bea Bold": player()}, "archive": BOUNDARY},
+                   "wta": {"ratings": {"Cat Clay": player(), "Dee Dune": player()}, "archive": BOUNDARY}}
+        atp = {}
+        BT.add_results(atp, [
+            res(1, "2026-05-01", "Ann Able", "Bea Bold"),            # before the boundary: not counted
+            res(2, "2026-07-01", "Ann Able", "Bea Bold"),            # both rated
+            res(3, "2026-07-02", "Ann Able", "Zed Unknown", note=None),             # dropped
+            res(4, "2026-08-02", "Zed Unknown", "Yan Nobody"),       # dropped, both unrated
+            res(5, "2026-08-03", "Cat Clay", "Dee Dune"),            # the other tour's (combined event)
+            res(6, "2026-08-04", "Ann Able", "Bea Bold", note="Able bt Bold w/o"),  # walkover: not counted
+        ])
+        atp["3"]["round"] = "Qualifying Round 1"
+        with mock.patch.object(BT, "load_history", lambda tour: (atp if tour == "atp" else {}, date(2026, 10, 1))):
+            rep = BT.unrated_report(ratings)
+        t = rep["atp"]
+        self.assertEqual((t["results"], t["dropped"], t["otherTour"]), (4, 2, 1))
+        self.assertEqual(t["months"]["2026-07"], {"results": 2, "dropped": 1, "otherTour": 0, "bothUnrated": 0, "qualifying": 1})
+        self.assertEqual(t["months"]["2026-08"], {"results": 2, "dropped": 1, "otherTour": 1, "bothUnrated": 1, "qualifying": 0})
+        self.assertEqual(t["players"], [("Zed Unknown", 2), ("Yan Nobody", 1)])
+        self.assertEqual(rep["wta"]["results"], 0)
+        self.assertEqual(ratings["atp"]["ratings"]["Ann Able"], player())    # nothing applied
+        import io
+        buf = io.StringIO()
+        BT.print_unrated_report(rep, file=buf)
+        self.assertIn("ATP: 2 of 3 own-tour results", buf.getvalue())
+        self.assertIn("advisory", buf.getvalue())
+
+
 class ArchiveBoundary(unittest.TestCase):
 
     def test_boundary_is_the_last_start_and_the_pairs_of_its_last_fortnight(self):

@@ -521,6 +521,77 @@ def results_to_apply(games, boundary, by_full, by_initial, since=None):
     return out, counts
 
 
+def unrated_report(ratings, tours=("atp", "wta")):
+    """How many history results since each tour's archive boundary never
+    reached a rating because one side is not in tennis.json: per tour, per
+    month, and the players most often unmatched. Local files only.
+
+    Advisory (bug 14, 25 Oct 2026): seeding unmatched players at a
+    provisional rating would change the model, and needs
+    tools/tennis_gap_eval.py evidence first. This prints the size of the
+    gap so that evidence can be gathered; it changes nothing.
+
+    Found while writing it: ESPN's combined events (the US Open, Cincinnati)
+    return both draws on either tour's feed, so each tour's history holds
+    the other tour's results too. Those are not unrated players and are
+    counted apart ("otherTour"): a side that matches the other tour's pool."""
+    out = {}
+    index = {t: build_index(ratings[t]["ratings"]) for t in tours}
+    for tour in tours:
+        by_full, by_initial = index[tour]
+        others = [index[t] for t in tours if t != tour]
+        boundary = ratings[tour].get("archive")
+        games, walked = load_history(tour)
+        lo = boundary["through"] if boundary else "0000"
+        months = {}
+        players = {}
+        total = dropped = other = 0
+        blank = {"results": 0, "dropped": 0, "otherTour": 0, "bothUnrated": 0, "qualifying": 0}
+        for r in sorted(games.values(), key=lambda m: m["date"]):
+            if r["date"] < lo or is_walkover(r):
+                continue
+            total += 1
+            m = months.setdefault(r["date"][:7], dict(blank))
+            m["results"] += 1
+            a = match_player(r["p0"], by_full, by_initial)
+            b = match_player(r["p1"], by_full, by_initial)
+            if a and b:
+                continue
+            if any(match_player(raw, *o) for raw, hit in ((r["p0"], a), (r["p1"], b)) if not hit for o in others):
+                other += 1
+                m["otherTour"] += 1
+                continue
+            dropped += 1
+            m["dropped"] += 1
+            m["bothUnrated"] += (not a and not b)
+            m["qualifying"] += "qualif" in (r.get("round") or "").lower()
+            for raw, hit in ((r["p0"], a), (r["p1"], b)):
+                if not hit:
+                    players[raw] = players.get(raw, 0) + 1
+        out[tour] = {"since": lo, "walked": walked.isoformat() if walked else None,
+                     "results": total, "dropped": dropped, "otherTour": other,
+                     "months": dict(sorted(months.items())),
+                     "players": sorted(players.items(), key=lambda kv: (-kv[1], kv[0]))[:15]}
+    return out
+
+
+def print_unrated_report(rep, file=sys.stdout):
+    print("Tennis results dropped for an unrated side (advisory, nothing changed)", file=file)
+    for tour, t in rep.items():
+        own = t["results"] - t["otherTour"]
+        share = t["dropped"] / own if own else 0
+        print(f"\n{tour.upper()}: {t['dropped']} of {own} own-tour results since {t['since']} "
+              f"({share:.1%}) had a side with no rating; {t['otherTour']} results in this history "
+              f"are the other tour's (combined events) and are not counted; walked through {t['walked']}", file=file)
+        print("  month    results  dropped   share  both unrated  qualifying  other tour", file=file)
+        for mo, m in t["months"].items():
+            n = m["results"] - m["otherTour"]
+            sh = m["dropped"] / n if n else 0
+            print(f"  {mo}  {n:7}  {m['dropped']:7}  {sh:6.1%}  {m['bothUnrated']:12}  {m['qualifying']:10}  {m['otherTour']:10}", file=file)
+        if t["players"]:
+            print("  most often unmatched: " + ", ".join(f"{n} ({c})" for n, c in t["players"]), file=file)
+
+
 # ---------------------------------------------------------------------------
 # build
 # ---------------------------------------------------------------------------
@@ -536,12 +607,19 @@ def main():
                           "from just getting staler forever between full refits.")
     ap.add_argument("--ratings", default=os.path.join(HERE, "tennis.json"))
     ap.add_argument("--out", default=os.path.join(HERE, "tennis-data.js"))
+    ap.add_argument("--unrated-report", action="store_true",
+                     help="print how many history results since the archive boundary were dropped "
+                          "because a side has no rating (bug 14 evidence), then exit; local files only")
     args = ap.parse_args()
 
     if not os.path.exists(args.ratings):
         print(f"no {args.ratings} — run tune_tennis.py --fit first", file=sys.stderr)
         sys.exit(1)
     ratings = json.load(open(args.ratings))
+
+    if args.unrated_report:
+        print_unrated_report(unrated_report(ratings))
+        return
 
     start = date.fromisoformat(args.start) if args.start else date.today()
     end = start + timedelta(days=args.days - 1)
