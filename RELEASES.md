@@ -3,6 +3,17 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Daytime and Evening groups: tennis times fixed, a wider rule for empty windows, 25 Oct (tag pending)
+
+**What changed:** Douglas: "There is no day time and evening bets. There needs to be some even if they update on later rebuilds."
+- **The cause:** before the order of play is out, ESPN dates every tennis match at midnight New York (04:00 or 05:00 UTC). So Monday's Vienna, Basel and Aosta first rounds, 30 of the 38 tennis picks, were filed in the Overnight window, and Daytime and Evening were left with a handful of picks. Such a match now takes its tournament's usual first start from `history-tennis/` (Vienna and Basel 09:00 UTC), marked `timeEst` and shown as "TBC" (`tennis_placeholder`, `tennis_starts`). On Monday's board: Daytime 31 tennis picks, Overnight 7 (was 36).
+- **Wider rule:** a window the full rule leaves empty takes the best group under a wider rule: three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still no more than 5 points above them (the weekend's losing pattern stays out). Marked "Wider rule" in red, rebuilt on every build until the lock, replaced by a full-rule group once one can be made, archived and locked like any Card group, and graded apart (`cardWide`; `card` and `cardByWindow` stay full-rule only). A fifth pick lets five short favourites (1.17 each) reach 2x.
+- An empty window now says why (too few priced picks so far) and that it is checked on every build.
+**Checked:** unit tests (8 new), nametest, Playwright at 1280px and 390px.
+**Files:** groupings.py, index.html, tests/test_groupings_card.py, claude/the-card-2026-10-25.md, CLAUDE.md, RELEASES.md.
+**Not changed:** the full Card rule, lock times, any model.
+**Roll back:** `git revert` the commit.
+
 ## One Bets page, Daily List first, fewer tabs, cup rows banded right, 25 Oct (tag pending)
 
 **What changed:** Douglas: "merge today's bets in odds ... into one page to be the 2nd tab behind daily list", drop the WNBA and Baseball tabs, and make sure Analysis is accurate.

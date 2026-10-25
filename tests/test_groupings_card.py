@@ -126,3 +126,64 @@ class TennisOnTheCard(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WiderRule(unittest.TestCase):
+    """25 Oct 2026, Douglas: a window the full rule leaves empty still gets a
+    group, under the wider rule (to 2.10, bookmakers 55%+), marked wide."""
+
+    def weak_daytime(self):
+        # fair about 57%: under the full rule's 60%, inside the wider 55%
+        # two full-rule picks and three at about 57%: no full-rule group
+        strong = [leg(i, 1.40, 0.70, f"{DATE}T12:{i * 10:02d}:00Z", margin=1.0) for i in range(2)]
+        return strong + [leg(i, 1.75, 0.58, f"{DATE}T13:{i * 10:02d}:00Z", margin=1.0) for i in range(2, 5)]
+
+    def test_empty_window_gets_a_wide_group(self):
+        L = self.weak_daytime()
+        for l in L[2:]: self.assertIsNotNone(G.card_fault(l)); self.assertIsNone(G.card_fault(l, wide=True))
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        self.assertTrue(gs)
+        self.assertTrue(all(g["wide"] and g["window"] == "Daytime" for g in gs))
+        self.assertEqual(gs[0]["risk"], "Wider rule")
+
+    def test_full_rule_window_gets_no_wide_group(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        self.assertFalse(any(g.get("wide") for g in gs))
+
+    def test_wide_group_gives_way_to_a_full_rule_group(self):
+        first = G.build_card(self.weak_daytime(), DATE, EARLY, log=[])
+        again = G.build_card(board(), DATE, EARLY + timedelta(hours=1), prev=first, log=[])
+        self.assertTrue(any(g["window"] == "Daytime" for g in again))
+        self.assertFalse(any(g.get("wide") for g in again))
+
+    def test_locked_wide_group_stays(self):
+        first = G.build_card(self.weak_daytime(), DATE, EARLY, log=[])
+        again = G.build_card(board(), DATE, AFTER_LOCK, prev=first, log=[])
+        self.assertTrue(any(g.get("wide") and g["locked"] for g in again))
+
+    def test_wide_price_cap(self):
+        self.assertIsNotNone(G.card_fault(leg(1, 2.30, 0.45, f"{DATE}T12:00:00Z", margin=1.0), wide=True))
+
+    def test_short_favourites_reach_2x_with_five(self):
+        L = [leg(i, 1.17, 0.85, f"{DATE}T12:{i * 10:02d}:00Z", margin=1.0) for i in range(5)]
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        self.assertTrue(gs and gs[0]["wide"] and len(gs[0]["legs"]) == 5 and gs[0]["odds"] >= 2.0)
+
+
+class TennisTimes(unittest.TestCase):
+    def test_placeholder_is_midnight_new_york(self):
+        self.assertTrue(G.tennis_placeholder("2026-10-26T04:00:00Z"))     # EDT
+        self.assertTrue(G.tennis_placeholder("2026-11-09T05:00:00Z"))     # EST
+        self.assertFalse(G.tennis_placeholder("2026-10-26T09:00:00Z"))
+
+    def test_placeholder_takes_the_tournaments_first_start(self):
+        td = {"matches": [{"date": DATE, "time": "05:00", "tournament": "Vienna", "round": "Round 1",
+                           "playerA": "A", "playerB": "B", "pick": "B", "confidence": 0.7,
+                           "accuracy": {"n": 500, "hit": 0.8}}]}
+        with mock.patch.object(G, "read_js", side_effect=lambda n: td if n == "tennis-data.js" else {}), \
+             mock.patch.object(G, "tennis_starts", return_value={"Vienna": "09:30"}), \
+             mock.patch.object(G.os.path, "exists", return_value=False):
+            L = G.legs({DATE})
+        self.assertEqual(L[0]["when"], f"{DATE}T09:30:00Z")
+        self.assertTrue(L[0]["timeEst"])
+        self.assertEqual(G.uk_slot(L[0])[1], "Daytime")

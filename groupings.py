@@ -266,6 +266,34 @@ def leg_p(p, acc, min_hit=None):
     return min(acc["hit"], p)
 
 # ---------- the board ----------
+def tennis_placeholder(when):
+    """ESPN's stand-in time for a match with no order of play yet: exactly
+    midnight in New York."""
+    t = parse(when)
+    if not t: return False
+    ny = t.astimezone(ZoneInfo("America/New_York"))
+    return ny.hour == 0 and ny.minute == 0
+
+def tennis_starts(days=21):
+    """Each tournament's usual first start (UTC "HH:MM"): the earliest real
+    time it has used over the last `days` days in history-tennis/, ignoring
+    ESPN's placeholders. Tournaments with no timed match are left out."""
+    out = {}
+    cut = (datetime.now(timezone.utc) - timedelta(days=days)).date().isoformat()
+    for tour in ("atp", "wta"):
+        try:
+            rows = json.load(open(os.path.join(HERE, "history-tennis", f"{tour}.json"))).get("matches") or []
+        except (OSError, ValueError):
+            continue
+        times = {}
+        for m in rows:
+            if m.get("date", "") < cut or not m.get("time") or not m.get("tournament"): continue
+            if tennis_placeholder(f"{m['date']}T{m['time']}:00Z"): continue
+            times.setdefault(m["tournament"], []).append(m["time"])
+        for k, v in times.items():
+            out[k] = min(v)
+    return out
+
 def legs(dates):
     out = []
     data = json.load(open(os.path.join(HERE, "data.json"))) if os.path.exists(os.path.join(HERE, "data.json")) else {}
@@ -294,15 +322,24 @@ def legs(dates):
     # or under the Wider tested rate, are multOnly: the Multipliers can use
     # them, the groups built to land cannot (safe_leg, wide_leg).
     td = read_js("tennis-data.js") or {}
+    starts = tennis_starts()
     for m in td.get("matches") or []:
         when = f"{m['date']}T{m['time']}:00Z" if m.get("time") else None
+        # 25 Oct 2026: before the order of play is out ESPN dates a match at
+        # midnight US Eastern (04:00 or 05:00 UTC), which put Vienna and Basel
+        # in the Overnight window. Such a match takes its tournament's usual
+        # first start from history-tennis/ instead (timeEst), or no time.
+        time_est = False
+        if when and tennis_placeholder(when):
+            first = starts.get(m.get("tournament"))
+            when, time_est = (f"{m['date']}T{first}:00Z" if first else None), True
         d = m.get("date")
         if d not in dates or "qualif" in (m.get("round") or "").lower(): continue
         pl = leg_p(m.get("confidence") or 0, m.get("accuracy"), ADMIT_MIN)
         if pl is None or (m.get("confidence") or 0) < MULT_MODEL_MIN: continue
         out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"], "tour": m.get("tour"), "tournament": m.get("tournament"),
                     "players": [m.get("playerA"), m.get("playerB")],
-                    "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
+                    "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "timeEst": time_est, "date": d, "id": m.get("id"),
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
                     "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
                     # 25 Oct 2026, Douglas: tennis back on the Card. It stays off the
@@ -1224,14 +1261,28 @@ def window_end(date, window):
     base = datetime(d.year, d.month, d.day, tzinfo=UK) + timedelta(hours=end)
     return base.astimezone(timezone.utc)
 
-def card_fault(l):
+# 25 Oct 2026, Douglas: "There is no daytime and evening bets. There needs to
+# be some even if they update on later rebuilds." When the full rule fills
+# neither kind in a window, the window takes the best group under the wider
+# rule: picks priced 1.08 to 2.10 at the bookmakers' 55%+, three to five of
+# them (short favourites need a fifth to reach 2x). The model still may
+# not sit more than 5 points above the market (the weekend's losing pattern).
+# Wider groups are labelled, rebuilt on every build until the lock, replaced
+# by a full-rule group as soon as one can be made, and graded apart
+# (cardWide) so the full rule's record stays clean.
+CARD_WIDE_ODDS = (1.08, 2.10)
+CARD_WIDE_LEGS = (3, 4, 5)
+CARD_WIDE_FAIR_MIN = 0.55
+
+def card_fault(l, wide=False):
     """Why a leg cannot go on the Card, in plain words, or None."""
+    lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
-    if not CARD_ODDS[0] <= l["odds"] <= CARD_ODDS[1]:
-        return f"{l['pick']}: price {l['odds']:.2f}, outside {CARD_ODDS[0]:.2f} to {CARD_ODDS[1]:.2f}"
-    if l["fair"] < CARD_FAIR_MIN:
-        return f"{l['pick']}: the bookmakers give {pct(l['fair'])}, under {pct(CARD_FAIR_MIN)}"
+    if not lo_hi[0] <= l["odds"] <= lo_hi[1]:
+        return f"{l['pick']}: price {l['odds']:.2f}, outside {lo_hi[0]:.2f} to {lo_hi[1]:.2f}"
+    if l["fair"] < fair_min:
+        return f"{l['pick']}: the bookmakers give {pct(l['fair'])}, under {pct(fair_min)}"
     if l["pModel"] < MULT_MODEL_MIN:
         return f"{l['pick']}: the model gives {pct(l['pModel'])}, under {pct(MULT_MODEL_MIN)}"
     if l["pModel"] - l["fair"] > MULT_ABOVE_BOOK:
@@ -1239,15 +1290,15 @@ def card_fault(l):
                 f"points above the bookmakers ({pct(l['fair'])})")
     return None
 
-def best_card(L, used, after, name):
+def best_card(L, used, after, name, wide=False):
     """The CARD_LEGS picks with the highest combined chance (bookmakers'
     fair) whose combined price falls in the kind's range, or None."""
     lo, hi = CARD_RANGE[name]
-    cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l) is None
+    cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l, wide) is None
              and (parse(l["when"]) or after) >= after]
     cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
     top = None
-    for k in CARD_LEGS:
+    for k in (CARD_WIDE_LEGS if wide else CARD_LEGS):
         for c in itertools.combinations(cands, k):
             o = mult_combo(c, lo, hi)
             if o is None: continue
@@ -1257,9 +1308,9 @@ def best_card(L, used, after, name):
     if not top: return None
     p, c, o = top
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
-    return {"name": name, "risk": RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
+    return {"name": name, "risk": "Wider rule" if wide else RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
-            "estimates": 0, "basis": "bookmakers", "rule": CARD_RULE, "legs": legs_,
+            "estimates": 0, "basis": "bookmakers", "rule": CARD_RULE, "wide": wide, "legs": legs_,
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
 
 def recheck_card(g, L):
@@ -1273,7 +1324,7 @@ def recheck_card(g, L):
         cur = by.get((old["event"], old["pick"]))
         if cur is None:
             why.append(f"{old['pick']}: no longer on the board for this day (moved, postponed, flagged or the model's side changed)"); continue
-        f = card_fault(cur)
+        f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
         legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
     if why: return None, why
@@ -1305,6 +1356,7 @@ def build_card(L, date, now, prev=None, log=None):
             g = dict(g, locked=True, lockAt=iso(lock))
             g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
             groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot); continue
+        if g.get("wide"): continue    # rebuilt below: a full-rule group takes its place when one can be made
         ng, why = recheck_card(g, by_win[g["window"]])
         if ng is None:
             if log is not None:
@@ -1323,6 +1375,18 @@ def build_card(L, date, now, prev=None, log=None):
             late = now >= lock
             g.update(window=w, rank=w, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
                      status="late" if late else ("replacement" if f"{w}|{name}" in replaced else "new"))
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
+    # The wider rule, only for a window the full rule left empty.
+    for w, _, _ in CARD_WINDOWS:
+        if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
+        lock = lock_time(date, w)
+        for name, _, _, _ in CARD_KINDS:
+            g = best_card(by_win[w], used, after, name, wide=True)
+            if not g: continue
+            late = now >= lock
+            g.update(window=w, rank=w, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
+                     status="late" if late else "new")
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
             used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
     order = {w: i for i, (w, _, _) in enumerate(CARD_WINDOWS)}
@@ -1613,8 +1677,9 @@ def grade():
            "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
            "wider": tally([g for g in allg if is_wide(g["name"])]),
            "multiplier": tally([g for g in allg if is_mult(g["name"])]),
-           "card": tally([g for g in allg if is_card(g["name"])]),
-           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
+           "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide")]),
+           "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide")]),
+           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -1676,6 +1741,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
+                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days}
