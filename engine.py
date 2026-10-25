@@ -600,7 +600,7 @@ SHRINK_ON_TRANSFER = 10.0  # extra pull applied when a team changes division
 BLEND_K = 6.0              # current-season matches needed before new data outweighs the prior
 FORM_MAX = 0.05            # hard cap on how much last-5 form may move expected goals
 RHO = -0.06                # Dixon-Coles low-score correlation term
-MAX_GOALS = 10
+MAX_GOALS = 15   # was 10 until 25 Oct 2026: a 10x10 grid left up to 31% of the Poisson mass off it in lopsided ties (bug 21)
 
 # Temperature. Raw Poisson output from season-aggregate ratings is measurably
 # over-confident: in backtesting, matches priced at 90% came in around 77%.
