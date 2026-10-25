@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-25T04:35:44Z",
+ "graded": "2026-10-25T09:52:03Z",
  "overall": {
   "groups": 69,
   "settled": 63,
@@ -14,9 +14,9 @@
   "expected": 20.5,
   "clv": {
    "n": 15,
-   "shortened": 7,
-   "drifted": 2,
-   "mean": 0.0083
+   "shortened": 9,
+   "drifted": 3,
+   "mean": 0.0075
   }
  },
  "byBand": {
@@ -93,7 +93,7 @@
     "n": 4,
     "shortened": 3,
     "drifted": 0,
-    "mean": 0.0301
+    "mean": 0.0362
    }
   },
   "Wider Fourfold": {
@@ -110,9 +110,9 @@
    "expected": 0.73,
    "clv": {
     "n": 2,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 1,
-    "mean": -0.012
+    "mean": -0.0374
    }
   },
   "Multiplier": {
@@ -129,9 +129,9 @@
    "expected": 0,
    "clv": {
     "n": 9,
-    "shortened": 4,
-    "drifted": 1,
-    "mean": 0.0031
+    "shortened": 5,
+    "drifted": 2,
+    "mean": 0.0047
    }
   },
   "Banker": {
@@ -258,9 +258,9 @@
   "expected": 1.49,
   "clv": {
    "n": 6,
-   "shortened": 3,
+   "shortened": 4,
    "drifted": 1,
-   "mean": 0.0161
+   "mean": 0.0116
   }
  },
  "multiplier": {
@@ -277,9 +277,9 @@
   "expected": 0,
   "clv": {
    "n": 9,
-   "shortened": 4,
-   "drifted": 1,
-   "mean": 0.0031
+   "shortened": 5,
+   "drifted": 2,
+   "mean": 0.0047
   }
  },
  "firstChoice": {
@@ -296,9 +296,9 @@
   "expected": 13.11,
   "clv": {
    "n": 3,
-   "shortened": 1,
-   "drifted": 0,
-   "mean": 0.0022
+   "shortened": 2,
+   "drifted": 1,
+   "mean": 0.0089
   }
  },
  "days": [
@@ -340,7 +340,7 @@
        "when": "2026-10-25T15:00:00Z",
        "odds": 1.34,
        "best": 1.39,
-       "lastOdds": 1.33,
+       "lastOdds": 1.34,
        "est": false,
        "p": 0.6968,
        "status": "pending",
@@ -382,7 +382,7 @@
        "when": "2026-10-25T14:00:00Z",
        "odds": 1.3,
        "best": 1.32,
-       "lastOdds": 1.27,
+       "lastOdds": 1.26,
        "est": false,
        "p": 0.7116,
        "status": "pending",
@@ -410,7 +410,7 @@
        "when": "2026-10-25T15:30:00Z",
        "odds": 1.3,
        "best": 1.33,
-       "lastOdds": 1.3,
+       "lastOdds": 1.27,
        "est": false,
        "p": 0.718,
        "status": "pending",
@@ -438,7 +438,7 @@
        "when": "2026-10-25T10:00:00Z",
        "odds": 1.29,
        "best": 1.34,
-       "lastOdds": 1.29,
+       "lastOdds": 1.28,
        "est": false,
        "p": 0.6993,
        "status": "pending",
@@ -480,7 +480,7 @@
        "when": "2026-10-25T23:00:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.25,
+       "lastOdds": 1.33,
        "est": false,
        "p": 0.7268,
        "status": "pending",
@@ -508,7 +508,7 @@
        "when": "2026-10-25T16:00:00Z",
        "odds": 1.33,
        "best": 1.36,
-       "lastOdds": 1.33,
+       "lastOdds": 1.32,
        "est": false,
        "p": 0.7035,
        "status": "pending",
@@ -522,7 +522,7 @@
        "when": "2026-10-25T16:15:00Z",
        "odds": 1.56,
        "best": 1.6,
-       "lastOdds": 1.55,
+       "lastOdds": 1.52,
        "est": false,
        "p": 0.6118,
        "status": "pending",
@@ -536,7 +536,7 @@
        "when": "2026-10-25T16:30:00Z",
        "odds": 1.41,
        "best": 1.47,
-       "lastOdds": 1.41,
+       "lastOdds": 1.42,
        "est": false,
        "p": 0.6752,
        "status": "pending",
@@ -564,7 +564,7 @@
        "when": "2026-10-25T17:00:00Z",
        "odds": 1.48,
        "best": 1.51,
-       "lastOdds": 1.49,
+       "lastOdds": 1.52,
        "est": false,
        "p": 0.6446,
        "status": "pending",
@@ -578,7 +578,7 @@
        "when": "2026-10-25T18:15:00Z",
        "odds": 1.46,
        "best": 1.52,
-       "lastOdds": 1.44,
+       "lastOdds": 1.43,
        "est": false,
        "p": 0.6408,
        "status": "pending",
@@ -620,7 +620,7 @@
        "when": "2026-10-25T14:00:00Z",
        "odds": 1.46,
        "best": 1.5,
-       "lastOdds": 1.45,
+       "lastOdds": 1.44,
        "est": false,
        "p": 0.6404,
        "status": "pending",
