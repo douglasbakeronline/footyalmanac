@@ -1466,7 +1466,14 @@ def archive_locked(day, generated):
     for g in locked:
         if gid(g) in have: continue
         if is_card(g.get("name")) and g.get("window") and card_slot(g) in slots: continue
-        a.setdefault("groups", []).append(dict(g, archivedAt=generated)); have.add(gid(g)); slots.add(card_slot(g)); n += 1
+        g = dict(g, archivedAt=generated)
+        if g.get("late"):
+            # A late group is built after its lock, so its published price is
+            # already a post-lock price: it is the price at lock (bug 10).
+            g["legs"] = [dict(l, lockPrice=l.get("lockPrice") or {"odds": l["odds"], "best": l.get("best") or l["odds"],
+                                                                   "book": l.get("bestBook"), "at": generated})
+                         if not l.get("est") else dict(l) for l in g["legs"]]
+        a.setdefault("groups", []).append(g); have.add(gid(g)); slots.add(card_slot(g)); n += 1
     if n:
         with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
     return n
@@ -1665,12 +1672,22 @@ def update_closing(L, now, dates):
         with open(path) as f: a = json.load(f)
         changed = False
         for g in a.get("groups") or []:
+            lock = parse(g.get("lockAt")) if is_card(g.get("name")) else None
             for l in g.get("legs") or []:
                 t = parse(l.get("when"))
                 if t and t <= now: continue
                 cur = by.get((l["event"], l["pick"]))
                 if not cur: continue
                 l.update(lastOdds=cur["odds"], lastBest=cur.get("best") or cur["odds"], lastAt=iso(now))
+                # 25 Oct 2026 (review bug 10): the price at lock. A group is
+                # priced by the last build before its lock, which can be hours
+                # earlier, so the first build after the lock that still finds a
+                # price records it once (lockPrice: average, best UK price and
+                # its book), and the record grades returnedLock on it. A leg no
+                # post-lock build has priced keeps lockPrice null.
+                if lock and now >= lock and not l.get("lockPrice"):
+                    l["lockPrice"] = {"odds": cur["odds"], "best": cur.get("best") or cur["odds"],
+                                      "book": cur.get("bestBook"), "at": iso(now)}
                 changed = True
         if changed:
             with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
@@ -1691,19 +1708,28 @@ def grade():
             legs = []
             for l in g["legs"]:
                 st, res = settle(l, idx)
+                lp = l.get("lockPrice") or {}
                 legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                              "odds": l["odds"], "best": max(l.get("best") or l["odds"], l["odds"]), "lastOdds": l.get("lastOdds"),
+                             "lockOdds": lp.get("odds"), "lockBest": lp.get("best"), "lockBook": lp.get("book"),
                              "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
             sts = [l["status"] for l in legs]
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
-            paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
-            paid_best = math.prod(l["best"] for l in legs if l["status"] != "void") if status == "won" else 0
+            live = [l for l in legs if l["status"] != "void"]
+            paid = math.prod(l["odds"] for l in live) if status == "won" else 0
+            paid_best = math.prod(l["best"] for l in live) if status == "won" else 0
+            # 25 Oct 2026 (bug 10): the return at the price at lock, only when
+            # every paying leg has one; a group without is left out of that tally.
+            at_lock = all(l["lockOdds"] for l in live) if live else False
+            paid_lock = (math.prod(l["lockOdds"] for l in live) if status == "won" else 0) if at_lock else None
             # 25 Oct 2026 (review bug 1): wide, late, locked and lockAt were
             # dropped here, so wider-rule and post-lock groups were tallied as
             # the full Card. They travel with the graded row and are tallied apart.
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "odds": g["odds"], "p": g["p"], "status": status,
                        "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
-                       "paid": round(paid, 2), "paidBest": round(paid_best, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
+                       "paid": round(paid, 2), "paidBest": round(paid_best, 2),
+                       "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
+                       "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
                        "legsPending": sts.count("pending"), "legs": legs})
         days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
     days.sort(key=lambda d: d["date"], reverse=True)
@@ -1722,6 +1748,10 @@ def grade():
                 "legs": len(legs), "legsWon": sum(l["status"] == "won" for l in legs),
                 "returned": round(sum(g["paid"] for g in done), 2), "staked": len(done),
                 "returnedBest": round(sum(g.get("paidBest", g["paid"]) for g in done), 2),
+                # 25 Oct 2026 (bug 10): at the price at lock, over the settled
+                # groups that have one (stakedLock), so it reads against its own stake.
+                "returnedLock": round(sum(g["paidLock"] for g in done if g.get("paidLock") is not None), 2),
+                "stakedLock": sum(1 for g in done if g.get("paidLock") is not None),
                 "expected": round(sum(g["p"] for g in done), 2),
                 # 25 Oct 2026: published price v the last price before kick-off.
                 # Positive = the price shortened after we published (beat the close).

@@ -3687,7 +3687,8 @@ function tbCheckHtml(){
 function tbRecord(){
   const R = OG && OG.record; if(!R) return "";
   const k = R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
-  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}` : "none settled yet";
+  // 25 Oct 2026: returnedLock is the return at the price recorded at the window's lock (the price a punter placing at 07:00 could take)
+  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}${x.stakedLock ? `, ${(x.returnedLock - x.stakedLock >= 0 ? "+" : "")}${(x.returnedLock - x.stakedLock).toFixed(2)} per ${x.stakedLock} at the price at lock` : ""}` : "none settled yet";
   const w = n => { const t = bw[n] || {}; return `<div><span>${n}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${roi(t)}</small></div>`; };
   return `<div class="tb-proof">
     <div><span>Card groups won</span><b>${k.settled ? `${k.won} / ${k.settled}` : "–"}</b><small>${k.settled ? `expected ${k.expected.toFixed(1)} · ${roi(k)}` : "the card starts 26 October; graded as each window settles"}</small></div>
