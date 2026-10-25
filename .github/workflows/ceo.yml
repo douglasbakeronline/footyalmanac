@@ -6,9 +6,15 @@ name: CEO
 # change herself through the same open_pr.sh and merge gate as the office
 # agents, and/or delegates work as office-backlog issues that the next sprint
 # picks up first. Only Douglas's words reach her: the repository is public.
+#
+# `labeled` only, not `opened` (25 Oct 2026, bug 18): HQ opens its issues
+# with the ceo label already on them, and GitHub sends both events, so Elena
+# ran twice per brief. An issue opened with the label still fires `labeled`.
+# Should a second event slip through, the per-issue concurrency group below
+# cancels the earlier run rather than queueing a duplicate.
 on:
   issues:
-    types: [opened, labeled]
+    types: [labeled]
   issue_comment:
     types: [created]
   workflow_dispatch:
@@ -27,7 +33,7 @@ permissions:
 
 concurrency:
   group: ceo-${{ github.event.issue.number || inputs.issue }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   elena:
@@ -35,7 +41,7 @@ jobs:
       github.event_name == 'workflow_dispatch' ||
       (contains(github.event.issue.labels.*.name, 'ceo') && github.event.issue.pull_request == null &&
        ((github.event_name == 'issues' && github.event.issue.user.login == 'douglasbakeronline' &&
-         (github.event.action == 'opened' || github.event.label.name == 'ceo')) ||
+         github.event.label.name == 'ceo') ||
         (github.event_name == 'issue_comment' && github.event.comment.user.login == 'douglasbakeronline')))
     runs-on: ubuntu-latest
     timeout-minutes: 90
