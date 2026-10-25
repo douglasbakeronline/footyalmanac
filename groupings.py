@@ -1637,7 +1637,11 @@ def grade():
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
             paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
             paid_best = math.prod(l["best"] for l in legs if l["status"] != "void") if status == "won" else 0
+            # 25 Oct 2026 (review bug 1): wide, late, locked and lockAt were
+            # dropped here, so wider-rule and post-lock groups were tallied as
+            # the full Card. They travel with the graded row and are tallied apart.
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "odds": g["odds"], "p": g["p"], "status": status,
+                       "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
                        "legsPending": sts.count("pending"), "legs": legs})
         days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
@@ -1677,9 +1681,13 @@ def grade():
            "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
            "wider": tally([g for g in allg if is_wide(g["name"])]),
            "multiplier": tally([g for g in allg if is_mult(g["name"])]),
-           "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide")]),
-           "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide")]),
-           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
+           # The Card record is the full rule, locked on time. Wider-rule groups
+           # (cardWide) and groups added after a window's lock (cardLate, any
+           # rule) are tallied on their own lines and never count toward it.
+           "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
+           "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
+           "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
+           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
