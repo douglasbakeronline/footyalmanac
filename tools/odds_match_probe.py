@@ -34,6 +34,22 @@ for l in L[:20]:
         best.append((sc, h, a, g.get("date"), g.get("timestamp"), (g.get("league") or {}).get("name")))
     best.sort(reverse=True)
     out["rows"].append({"sport": l["sport"], "leg": [l["home"], l["away"], l.get("when"), l["date"]], "top": best[:2]})
+# the odds for the first two matched NBA games and one NFL game: bet names and value labels only
+seen = 0
+for row in out["rows"]:
+    if not row["top"] or row["top"][0][0] < 1.9 or seen >= 3: continue
+    host = G.AS_HOST[row["sport"]]
+    gid = None
+    for g in games.get((host, (G.parse(row["leg"][2]).date().isoformat())), []):
+        tm = g.get("teams") or {}
+        if (tm.get("home") or {}).get("name") == row["top"][0][1]: gid = g.get("id") or (g.get("game") or {}).get("id"); break
+    if not gid: continue
+    d = G.get(f"https://{host}/odds?game={gid}", {"x-apisports-key": key})
+    items = d.get("response") or []
+    out.setdefault("odds", []).append({"sport": row["sport"], "game": gid, "items": len(items), "errors": d.get("errors") or None,
+        "books": [{"name": bk.get("name"), "bets": [{"id": b.get("id"), "name": b.get("name"), "labels": [v.get("value") for v in b.get("values") or []][:4]}
+                                                   for b in (bk.get("bets") or [])[:6]]} for it in items[:1] for bk in (it.get("bookmakers") or [])[:3]]})
+    seen += 1
 os.makedirs("probe", exist_ok=True)
 json.dump(out, open("probe/match-probe.json", "w"), indent=1, default=str)
 print("ok")
