@@ -1,5 +1,5 @@
 {
-  "_comment": "Merge-gate policy for office-agent pull requests. No owner review except workflow/security paths (Douglas, 4 Oct 2026); model and calibration changes need an evaluation verdict of pass. This file is in the workflow-security class: changes need owner approval.",
+  "_comment": "Merge-gate policy for office-agent pull requests. No owner review except workflow/security paths (Douglas, 4 Oct 2026) and paths outside the class map (class unknown, 25 Oct 2026); model and calibration changes need an evaluation verdict of pass. This file is in the workflow-security class: changes need owner approval.",
   "owner": "douglasbakeronline",
   "actions_app_id": 15368,
   "required_checks": [
@@ -17,8 +17,7 @@
     "evaluation-rules",
     "source-data",
     "model",
-    "calibration",
-    "unknown"
+    "calibration"
   ],
   "bot_paths": [
     "current/",
@@ -49,6 +48,7 @@
     ],
     "calibration": [
       "calibration.json",
+      "home-advantage.json",
       "tune.py",
       "tuning-report.json",
       "tune_tennis.py"
