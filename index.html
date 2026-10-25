@@ -1196,6 +1196,7 @@ footer b{color:var(--ink-2)}
   <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
   <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
 </nav>
+<section class="lede" id="fbLede" hidden></section>
 <div class="note" id="note"></div>
 
 <div class="controls" id="controls">
@@ -1417,12 +1418,17 @@ const metaCells = [
   _ln ? ["List record", pct(_lc/_ln) + "%", _lc + " of " + _ln + " landed", _lc/_ln >= 0.80 ? "good" : ""]
       : ["List record", "Starts now", "graded from its first day"],
 ];
-if(R && R.overall && R.overall.n >= 5){
-  const o = R.overall;
-  metaCells.push(["Football record", pct(o.accuracy) + "%",
-                  "read right, " + o.n + " graded · " + pct(o.homeRate) + "% baseline",
-                  o.accuracy > o.homeRate ? "good" : ""]);
-}
+// 25 Oct 2026, Douglas: the football record moved out of the header to the
+// top of the Football page, as the other sports carry theirs (#fbLede).
+(() => {
+  const o = R && R.overall, strong = R && (R.tiers || []).find(t => t.name === "Strong"), L = R && R.list;
+  $("#fbLede").innerHTML = `<h2>Football</h2><p>${o && o.n >= 5
+    ? `Graded on <b>${o.n.toLocaleString("en-GB")}</b> games, every one published before kick-off: read right
+      <b>${pct(o.accuracy)}%</b> of the time, against ${pct(o.homeRate)}% for always backing the home side.${strong && strong.n
+        ? ` Strong calls (70% or more) landed <b>${pct(strong.hit)}%</b> (${strong.n.toLocaleString("en-GB")} games).` : ""}
+      Picks whose level landed 80% or more in testing go on the Daily List${L && L.n ? `; so far <b>${pct(L.accuracy)}%</b> of them came in (${L.n} games)` : ""}.`
+    : "The record starts with the first graded games."}</p>`;
+})();
 $("#meta").insertAdjacentHTML("afterbegin", metaCells.map(([k,v,sub,cls])=>
   `<div class="${cls||""}"><span>${k}</span><b>${v}</b>${sub?`<small>${sub}</small>`:""}</div>`).join(""));
 
@@ -3785,6 +3791,8 @@ $("#views").addEventListener("click", e=>{
   const today = v === "today";
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
+  $("#fbLede").hidden = !fixtures;
+  try { history.replaceState(null, "", v === "list" ? location.pathname + location.search : "#" + v); } catch(err) {}
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
   readbarEl.hidden = !fixtures;
@@ -3834,7 +3842,13 @@ document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
 // checker, the calculator and the record, merged from Today's bets and Odds)
 // is the second tab. Baseball and WNBA have no tab: too few games; their picks
 // still reach the Daily List.
-$('#views button[data-view="list"]').click();
+// 25 Oct 2026: a tab can be opened by link (index.html#fixtures, #sport:nba),
+// so the Analysis page's tab bar lands on the same board.
+(() => {
+  const want = decodeURIComponent(location.hash.slice(1));
+  const btn = want && [...document.querySelectorAll('#views button[data-view]')].find(b => b.dataset.view === want && !b.hidden);
+  (btn || $('#views button[data-view="list"]')).click();
+})();
 })();
 </script>
 </body>

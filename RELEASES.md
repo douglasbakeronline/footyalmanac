@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## The tab bar on Analysis, and the football record on the Football page, 25 Oct (tag pending)
+
+**What changed:** Douglas: "I want all sports tabs to stay where they are when you click into the analysis page" and "the football record removed from the header and held at the top of the football page like the other sports give an overview."
+- **Analysis** now carries the Almanac's own tab bar, same order and size, with Analysis highlighted. Each tab links back to that board: the Almanac opens the tab named after the `#` (`index.html#fixtures`, `#sport:nba`, `#today`), and keeps the address in step as tabs change, so the browser's back button returns to the same board. Sport tabs hide by the same rule as on the Almanac (Analysis now loads `sports-data.js` and `sports-record.js` for it).
+- **Football record** is out of the red header panel (now: this week, Daily List, games priced, list record). The Football page opens with an overview like the other sports: games graded, read right against always backing the home side, Strong calls landed, the Daily List's football record.
+**Checked:** unit tests, nametest, Playwright at 1280px and 390px on both pages, no horizontal scroll, no script errors.
+**Files:** index.html, analysis.html, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Daytime and Evening groups: tennis times fixed, a wider rule for empty windows, 25 Oct (tag pending)
 
 **What changed:** Douglas: "There is no day time and evening bets. There needs to be some even if they update on later rebuilds."

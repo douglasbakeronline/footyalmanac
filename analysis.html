@@ -385,6 +385,7 @@ footer b{color:var(--ink-2)}
 .views a.nav-a:hover{text-decoration:underline}
 .views a.nav-a:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
 .views span.nav-on{background:var(--yellow);color:#100e0c}
+#views [hidden]{display:none}
 #views{position:static;box-shadow:none}
 .toc{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:13.5px}
 .toc a{color:var(--home);font-weight:700;text-decoration:none}
@@ -479,11 +480,38 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
     <div class="meta" id="meta"><div><span>Loading</span><b>—</b></div></div>
   </div>
 </header>
-<nav class="views" id="views" aria-label="Pages">
-  <a class="nav-a" href="./" title="Back to the Sports Almanac: the Daily List and every board">Almanac</a>
-  <span class="nav-on" aria-current="page">Analysis</span>
-  <a class="nav-a" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
+<!-- 25 Oct 2026, Douglas: the Almanac's tab bar stays as it is on this page.
+     Each tab links back to that board (index.html#<view>); sport tabs hide by
+     the same rule as on the Almanac (no games and nothing graded). -->
+<nav class="views" id="views" aria-label="Boards">
+  <a class="hq-link" href="./">Daily List</a>
+  <a class="hq-link" href="./#today">Bets</a>
+  <a class="hq-link" href="./#fixtures">Football</a>
+  <a class="hq-link" href="./#tennis">Tennis</a>
+  <a class="hq-link" href="./#sport:nfl" data-sport="nfl">NFL</a>
+  <a class="hq-link" href="./#sport:nba" data-sport="nba">Basketball</a>
+  <a class="hq-link" href="./#sport:rugby" data-sport="rugby">Rugby</a>
+  <a class="hq-link" href="./#sport:nhl" data-sport="nhl">Ice hockey</a>
+  <a class="hq-link" href="./#sport:cfb" data-sport="cfb">College football</a>
+  <a class="hq-link" href="./#sport:ncaab" data-sport="ncaab">College basketball</a>
+  <a class="hq-link" href="./#sport:nrl" data-sport="nrl">Rugby league</a>
+  <a class="hq-link" href="./#starred">Starred</a>
+  <a class="hq-link" href="./#results">How it went</a>
+  <span class="hq-link nav-on" aria-current="page">Analysis</span>
+  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
 </nav>
+<script src="sports-data.js"></script>
+<script src="sports-record.js"></script>
+<script>
+(() => {
+  const SD = window.__SPORTS_DATA__, SR = window.__SPORTS_RECORD__;
+  document.querySelectorAll('#views a[data-sport]').forEach(a => {
+    const k = a.dataset.sport, sp = SD && SD.sports && SD.sports[k];
+    const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
+    if(!sp || (!(sp.games || []).length && !graded)) a.hidden = true;
+  });
+})();
+</script>
 <div class="note" id="note"></div>
 
 <section class="lede">
