@@ -11,7 +11,7 @@ from difflib import SequenceMatcher
 key = os.environ["API_FOOTBALL_KEY"]
 today = datetime.now(timezone.utc).date()
 dates = {(today + timedelta(days=i)).isoformat() for i in range(4)}
-L = [l for l in G.legs(dates) if l["sport"] in ("nba", "rugby", "nfl")]
+L = [l for l in G.legs(dates) if l["sport"] in ("nba", "rugby")]
 out = {"legs": len(L), "rows": []}
 games = {}
 for l in L[:20]:
