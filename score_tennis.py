@@ -13,7 +13,9 @@ A prediction is graded only if it was published before the match started.
 build_tennis.py stamps every archived price with its publish time; a match
 whose scheduled start is earlier than that is skipped, not graded, because a
 number published mid-match proves nothing. A match with no start time is
-held to the start of its day.
+held to the start of its day. A match archived with ESPN's placeholder time
+(midnight New York, before the order of play is out) is held to the real
+start history-tennis/ later recorded for it, when there is one (start_of).
 
 Walkovers and cancellations are void: no ball was struck, so there is nothing
 to be right or wrong about. A retirement is graded (the result stands) and
@@ -36,6 +38,7 @@ from datetime import date, datetime, timedelta, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_tennis as B
+import groupings as G       # tennis_placeholder: ESPN's midnight-New-York stand-in time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 RECORD = os.path.join(HERE, "tennis-record.json")
@@ -49,8 +52,41 @@ def kickoff(m):
     return f"{m['date']}T{m.get('time') or '00:00'}:00Z"
 
 
-def load_predictions():
+def history_starts():
+    """{ESPN match id: start} from history-tennis/, the time ESPN carried
+    once the match was played. Only timed, non-placeholder starts."""
+    out = {}
+    for tour in ("atp", "wta"):
+        games, _ = B.load_history(tour)
+        for r in games.values():
+            if r.get("id") and r.get("time"):
+                when = f"{r['date']}T{r['time']}:00Z"
+                if not G.tennis_placeholder(when):
+                    out[str(r["id"])] = when
+    return out
+
+
+def start_of(m, starts):
+    """When the match began, for the publish-before-start rule.
+
+    Before the order of play is out ESPN dates a match at midnight New York
+    (04:00 or 05:00 UTC, groupings.tennis_placeholder), and a price archived
+    with that stand-in was held to it: a 09:07 UTC price for a 10:00 match
+    was refused as late (bug 15, 25 Oct 2026). When the archived time is the
+    placeholder and the result in history-tennis/ carries the real start, the
+    price is judged against the real start. Any other archived time is a
+    scheduled start and is kept as it is."""
+    when = kickoff(m)
+    if m.get("time") and G.tennis_placeholder(when):
+        real = starts.get(str(m.get("id") or ""))
+        if real and real[:10] == m["date"]:
+            return real
+    return when
+
+
+def load_predictions(starts=None):
     """{key: prediction}, the latest price published before the match began."""
+    starts = history_starts() if starts is None else starts
     best = {}
     skipped = 0
     for name in sorted(os.listdir(B.PRED_DIR)) if os.path.isdir(B.PRED_DIR) else []:
@@ -62,7 +98,7 @@ def load_predictions():
             print(f"  skipping {name}: {e}", file=sys.stderr)
             continue
         for m in rows:
-            if not m.get("published") or m["published"] >= kickoff(m):
+            if not m.get("published") or m["published"] >= start_of(m, starts):
                 skipped += 1
                 continue
             k = B.pred_key(m)
