@@ -48,6 +48,35 @@ class Grading(unittest.TestCase):
         self.assertEqual(ST.outcome({}, {"statusName": "STATUS_WALKOVER", "winner": "A", "pool": {}})[0], "void")
         self.assertEqual(ST.outcome({}, {"note": "A bt B 6-4 ret", "winner": "A", "pool": {}})[0], "graded")
 
+    def test_placeholder_start_is_judged_against_the_real_start(self):
+        """Bug 15 (25 Oct 2026): a price archived against ESPN's midnight
+        New York placeholder is held to the start history-tennis/ recorded."""
+        starts = {"185363": "2026-10-15T10:00:00Z", "185999": "2026-10-16T10:00:00Z"}
+        ph = {"id": "185363", "date": "2026-10-15", "time": "04:00", "published": "2026-10-15T04:30:00Z"}
+        self.assertEqual(ST.start_of(ph, starts), "2026-10-15T10:00:00Z")
+        self.assertLess(ph["published"], ST.start_of(ph, starts))
+        # a placeholder with no history time keeps today's behaviour
+        self.assertEqual(ST.start_of({**ph, "id": "0"}, starts), "2026-10-15T04:00:00Z")
+        # a real start in history on a different day (rescheduled) is not used
+        self.assertEqual(ST.start_of({**ph, "id": "185999"}, starts), "2026-10-15T04:00:00Z")
+        # a scheduled (non-placeholder) time is kept even if history differs
+        sched = {**ph, "time": "09:00"}
+        self.assertEqual(ST.start_of(sched, starts), "2026-10-15T09:00:00Z")
+        # no time at all: the start of the day, as before
+        self.assertEqual(ST.start_of({"id": "185363", "date": "2026-10-15"}, starts), "2026-10-15T00:00:00Z")
+        # EST placeholder (05:00 UTC) is a placeholder too
+        est = {"id": "1", "date": "2026-11-09", "time": "05:00", "published": "2026-11-09T06:00:00Z"}
+        self.assertEqual(ST.start_of(est, {"1": "2026-11-09T12:00:00Z"}), "2026-11-09T12:00:00Z")
+
+    def test_history_starts_skips_placeholders_and_untimed_rows(self):
+        from unittest import mock
+        import build_tennis as B
+        rows = {"1": {"id": 1, "date": "2026-10-15", "time": "10:00"},
+                "2": {"id": 2, "date": "2026-10-15", "time": "04:00"},
+                "3": {"id": 3, "date": "2026-10-15", "time": None}}
+        with mock.patch.object(B, "load_history", lambda tour: (rows if tour == "wta" else {}, None)):
+            self.assertEqual(ST.history_starts(), {"1": "2026-10-15T10:00:00Z"})
+
     def test_openfootball_extra_time_uses_the_90_minute_score(self):
         txt = ("Matchday 1\nSun May 4 2025\n"
                "  18:00  Sliema Wanderers   v Birkirkara FC   0-1 a.e.t. (0-0)\n"

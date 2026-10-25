@@ -55,7 +55,14 @@ ESPN_HEADERS = {
 
 HIST_START = date(2023, 7, 1)
 FIT = (date(2024, 7, 1), date(2025, 7, 1))     # the season before last
-CHECK = (date(2025, 7, 1), None)                # the most recent, up to today
+# The most recent season, which the fit never saw. Capped (25 Oct 2026, bug
+# 16) at the first archived sports prediction (predictions-sports/2026-09-27):
+# left open-ended, the "never seen" window grew into the live record, and
+# every game the site had already called would have been tuned and listed
+# on. Rule 1 applies to every sport. sports.json is NOT refitted here: a
+# --tune run that writes it is Douglas's by-hand step (rule 5).
+ARCHIVE_START = date(2026, 9, 27)
+CHECK = (date(2025, 7, 1), ARCHIVE_START)
 OFFSEASON_DAYS = 90
 MIN_GAMES = 8          # a team needs this many rated games before its number counts
 WINDOW_DAYS = 7          # always reaches the coming weekend, when most rugby is played
@@ -165,9 +172,15 @@ SPORTS = {
         {"path": "rugby/271937", "label": "Champions Cup", "pool": "club", "months": (12, 1, 4, 5), "days": WEEKEND, "skip": ()},
         {"path": "rugby/272073", "label": "Challenge Cup", "pool": "club", "months": (12, 1, 4, 5), "days": WEEKEND, "skip": ()},
         {"path": "rugby/180659", "label": "Six Nations", "pool": "intl", "months": (2, 3), "days": WEEKEND, "skip": ()},
+        # Dead in 2026: last answered 4 Oct 2025 (30 games on file, 2023-25).
+        # The 2026 southern-hemisphere tests came through rugby/289234
+        # instead. Left in place: an empty weekend call costs nothing, and
+        # it may answer again in 2027.
         {"path": "rugby/244293", "label": "Rugby Championship", "pool": "intl", "months": (7, 8, 9, 10), "days": WEEKEND, "skip": ()},
         {"path": "rugby/289234", "label": "Test match", "pool": "intl", "months": (6, 7, 8, 10, 11), "days": WEEKEND, "skip": ()},
-        {"path": "rugby/164205", "label": "World Cup", "pool": "intl", "months": (9, 10), "days": ALL_DAYS, "skip": ()},
+        # RWC 2027 (Australia) runs 1 Oct to 13 Nov, so November is in; 2023
+        # was Sep-Oct. Walked every day: pool matches fall midweek.
+        {"path": "rugby/164205", "label": "World Cup", "pool": "intl", "months": (9, 10, 11), "days": ALL_DAYS, "skip": ()},
         {"path": "rugby/242041", "label": "Super Rugby", "pool": "sr", "months": (2, 3, 4, 5, 6), "days": WEEKEND, "skip": ()},
     ]},
     # Added 6 Oct 2026 from ESPN's free feeds. Each is tuned and gated like the
@@ -538,7 +551,7 @@ def tune_sport(sport, verbose=True):
                                                            "topGapRaw": round(gap_raw, 4), "topGapCal": round(gap_cal, 4)},
             "bandsFit": b_fit, "bandsCheck": b_chk,
             "windows": {"fit": [FIT[0].isoformat(), FIT[1].isoformat()],
-                        "check": [CHECK[0].isoformat(), None]}}
+                        "check": [CHECK[0].isoformat(), CHECK[1].isoformat() if CHECK[1] else None]}}
 
 
 # ---------------------------------------------------------------------------
@@ -645,7 +658,7 @@ def build(start=None):
             raw, eh, ea = elo.predict(g)
             ph = calibrate(raw, sp.get("cal"))
             conf = max(ph, 1 - ph)
-            row = {"id": g["id"], "sport": sport, "label": g["label"], "when": g["when"],
+            row = {"id": g["id"], "sport": sport, "label": g["label"], "feed": g["feed"], "when": g["when"],
                    "home": g["hn"], "away": g["an"], "neutral": g["neutral"],
                    "pHome": round(ph, 4), "pick": g["hn"] if ph >= 0.5 else g["an"],
                    "confidence": round(conf, 4), "tier": tier_of(conf),
@@ -696,13 +709,46 @@ def settle(r, g):
     return {**r, "score": [g["hs"], g["as"]], "winner": winner, "ok": winner == r["pick"]}
 
 
-def graded_games():
+# An archived game with no final result this long after its start was never
+# played: MLB and WNBA list every "if necessary" game of a series and ESPN
+# drops or cancels the ones the series does not reach. Until 25 Oct 2026
+# they sat pending forever (16 on that day). A cancelled or postponed status
+# never reaches history-sports/ (_game marks it not final), so absence from
+# the history after this long is the signal.
+NOT_PLAYED_DAYS = 7
+
+
+def not_played(r, results, walked, today):
+    """True when archived pick r is void for want of a game: no final result
+    on file NOT_PLAYED_DAYS after its start, and its feed's history has been
+    walked past that point, so a stalled walk cannot void a real result."""
+    g = results.get(r["id"])
+    if g and g["final"]:
+        return False
+    due = date.fromisoformat(r["when"][:10]) + timedelta(days=NOT_PLAYED_DAYS)
+    through = walked.get(r.get("feed") or _feed_of(r))
+    return due <= today and through is not None and through >= due
+
+
+def _feed_of(r):
+    """The feed path of an archived row (older rows carry label, not path)."""
+    for sport, f in all_feeds():
+        if f["label"] == r.get("label") and sport == r.get("sport"):
+            return f["path"]
+    return None
+
+
+def graded_games(today=None):
     """Archived picks graded against results already walked into
     history-sports/: (graded rows, void picks). Only the latest price
-    published before the game started counts."""
-    results = {}
+    published before the game started counts. A void row carries "void":
+    True and a "reason": "tie", or "not played" (NOT_PLAYED_DAYS)."""
+    today = today or date.today()
+    results, walked = {}, {}
     for _, f in all_feeds():
-        results.update(load_history(f)[0])
+        games, through = load_history(f)
+        results.update(games)
+        walked[f["path"]] = through
     best = {}
     if os.path.isdir(PRED_DIR):
         for name in sorted(os.listdir(PRED_DIR)):
@@ -715,10 +761,12 @@ def graded_games():
     for gid, r in best.items():
         g = results.get(gid)
         if not g or not g["final"]:
+            if not_played(r, results, walked, today):
+                void.append({**r, "score": None, "void": True, "reason": "not played"})
             continue
         row = settle(r, g)
         if row is None:
-            void.append({**r, "score": [g["hs"], g["as"]]})
+            void.append({**r, "score": [g["hs"], g["as"]], "void": True, "reason": "tie"})
             continue
         graded.append(row)
     return graded, void
@@ -728,6 +776,7 @@ def score():
     """Grade archived picks, write sports-record.js."""
     graded, voids = graded_games()
     void = len(voids)
+    unplayed = sum(1 for v in voids if v.get("reason") == "not played")
 
     def summ(rows):
         if not rows:
@@ -740,7 +789,7 @@ def score():
     for r in graded:
         by_date.setdefault(r["when"][:10], []).append(r)
     out = {"generated": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
-           "void": void,
+           "void": void, "voidNotPlayed": unplayed,
            "overall": summ(graded),
            "bySport": {s: summ([r for r in graded if r["sport"] == s]) for s in SPORTS},
            "list": summ([r for r in graded if r["list"]]),
@@ -754,7 +803,8 @@ def score():
     with open(RECORD_JS, "w") as f:
         f.write("window.__SPORTS_RECORD__=" + json.dumps(out, separators=(",", ":")) + ";")
     o = out["overall"]
-    print(f"sports: {o['n'] if o else 0} graded, {void} tied (void)", file=sys.stderr)
+    print(f"sports: {o['n'] if o else 0} graded, {void} void ({void - unplayed} tied, "
+          f"{unplayed} never played)", file=sys.stderr)
 
 
 def history(workers=6):

@@ -219,12 +219,18 @@ def dynamic_k(matches_played, k_base):
     return k_base / ((matches_played + 5) ** 0.4)
 
 
-def apply_result(pool, winner, loser, surface, k_base):
+def apply_result(pool, winner, loser, surface, k_base, weight=1.0):
     """Nudges both players' overall and surface ratings by one result, the
     exact update tune_tennis.py's run_elo() applies during a full fit.
     This is what keeps tennis.json from just being a snapshot frozen at
     whatever date it was last fitted on: every real ESPN result this script
-    can see gets folded in, in order, before anything is priced."""
+    can see gets folded in, in order, before anything is priced.
+
+    weight scales the update as run_elo's `wt` does: 1.0 for a completed
+    match, the tour's fitted `retirementWeight` for a retirement (WTA 0.5,
+    ATP 1.0 in tennis.json). Until 25 Oct 2026 the live update ignored it
+    and every retirement counted in full, so the ratings drifted from the
+    fitted model (89 WTA and 41 ATP retirements since June)."""
     surf_key = f"surface_{surface}"
     ow = pool[winner]["overall"]
     ol = pool[loser]["overall"]
@@ -232,7 +238,7 @@ def apply_result(pool, winner, loser, surface, k_base):
     sl = pool[loser].get(surf_key, ol)
     nw = pool[winner].get("matches", 0)
     nl = pool[loser].get("matches", 0)
-    kw, kl = dynamic_k(nw, k_base), dynamic_k(nl, k_base)
+    kw, kl = dynamic_k(nw, k_base) * weight, dynamic_k(nl, k_base) * weight
 
     e_ow = 1.0 / (1.0 + 10 ** ((ol - ow) / 400.0))
     pool[winner]["overall"] = ow + kw * (1 - e_ow)
@@ -464,9 +470,17 @@ def is_walkover(r):
     return "walkover" in n or "w/o" in n
 
 
+def is_retirement(note):
+    """'ret' as a word in ESPN's result line ("... 5-7 5-3 ret"). A substring
+    test flagged Berrettini as a retirement. Shared with score_tennis.py."""
+    return bool(re.search(r"\bret(?:ired)?\b", (note or "").lower()))
+
+
 def results_to_apply(games, boundary, by_full, by_initial, since=None):
     """History results the fitted archive does not already hold, matched to
-    the ratings pool, oldest first. Returns (rows, counts).
+    the ratings pool, oldest first. Returns (rows, counts); each row is
+    (winner, loser, retired), retired as the archive marks it (" RET" in the
+    score) so apply_result can weight it as the fit did.
 
     boundary is tennis.json's per-tour "archive" entry (tune_tennis.py):
     {"through": last archive tournament start, "pairs": players who met in a
@@ -476,7 +490,7 @@ def results_to_apply(games, boundary, by_full, by_initial, since=None):
     tournaments is the same match and is skipped too. Without a boundary (an
     older tennis.json) only results from `since` are used, as before
     8 Oct 2026."""
-    counts = {"applied": 0, "unmatched": 0, "archive": 0, "walkover": 0}
+    counts = {"applied": 0, "unmatched": 0, "archive": 0, "walkover": 0, "retired": 0}
     if boundary:
         b = date.fromisoformat(boundary["through"])
         lo = b.isoformat()
@@ -500,9 +514,82 @@ def results_to_apply(games, boundary, by_full, by_initial, since=None):
             counts["archive"] += 1
             continue
         winner = a if r["winner"] == r["p0"] else b_
-        out.append((winner, b_ if winner == a else a))
+        retired = is_retirement(r.get("note"))
+        out.append((winner, b_ if winner == a else a, retired))
         counts["applied"] += 1
+        counts["retired"] += retired
     return out, counts
+
+
+def unrated_report(ratings, tours=("atp", "wta")):
+    """How many history results since each tour's archive boundary never
+    reached a rating because one side is not in tennis.json: per tour, per
+    month, and the players most often unmatched. Local files only.
+
+    Advisory (bug 14, 25 Oct 2026): seeding unmatched players at a
+    provisional rating would change the model, and needs
+    tools/tennis_gap_eval.py evidence first. This prints the size of the
+    gap so that evidence can be gathered; it changes nothing.
+
+    Found while writing it: ESPN's combined events (the US Open, Cincinnati)
+    return both draws on either tour's feed, so each tour's history holds
+    the other tour's results too. Those are not unrated players and are
+    counted apart ("otherTour"): a side that matches the other tour's pool."""
+    out = {}
+    index = {t: build_index(ratings[t]["ratings"]) for t in tours}
+    for tour in tours:
+        by_full, by_initial = index[tour]
+        others = [index[t] for t in tours if t != tour]
+        boundary = ratings[tour].get("archive")
+        games, walked = load_history(tour)
+        lo = boundary["through"] if boundary else "0000"
+        months = {}
+        players = {}
+        total = dropped = other = 0
+        blank = {"results": 0, "dropped": 0, "otherTour": 0, "bothUnrated": 0, "qualifying": 0}
+        for r in sorted(games.values(), key=lambda m: m["date"]):
+            if r["date"] < lo or is_walkover(r):
+                continue
+            total += 1
+            m = months.setdefault(r["date"][:7], dict(blank))
+            m["results"] += 1
+            a = match_player(r["p0"], by_full, by_initial)
+            b = match_player(r["p1"], by_full, by_initial)
+            if a and b:
+                continue
+            if any(match_player(raw, *o) for raw, hit in ((r["p0"], a), (r["p1"], b)) if not hit for o in others):
+                other += 1
+                m["otherTour"] += 1
+                continue
+            dropped += 1
+            m["dropped"] += 1
+            m["bothUnrated"] += (not a and not b)
+            m["qualifying"] += "qualif" in (r.get("round") or "").lower()
+            for raw, hit in ((r["p0"], a), (r["p1"], b)):
+                if not hit:
+                    players[raw] = players.get(raw, 0) + 1
+        out[tour] = {"since": lo, "walked": walked.isoformat() if walked else None,
+                     "results": total, "dropped": dropped, "otherTour": other,
+                     "months": dict(sorted(months.items())),
+                     "players": sorted(players.items(), key=lambda kv: (-kv[1], kv[0]))[:15]}
+    return out
+
+
+def print_unrated_report(rep, file=sys.stdout):
+    print("Tennis results dropped for an unrated side (advisory, nothing changed)", file=file)
+    for tour, t in rep.items():
+        own = t["results"] - t["otherTour"]
+        share = t["dropped"] / own if own else 0
+        print(f"\n{tour.upper()}: {t['dropped']} of {own} own-tour results since {t['since']} "
+              f"({share:.1%}) had a side with no rating; {t['otherTour']} results in this history "
+              f"are the other tour's (combined events) and are not counted; walked through {t['walked']}", file=file)
+        print("  month    results  dropped   share  both unrated  qualifying  other tour", file=file)
+        for mo, m in t["months"].items():
+            n = m["results"] - m["otherTour"]
+            sh = m["dropped"] / n if n else 0
+            print(f"  {mo}  {n:7}  {m['dropped']:7}  {sh:6.1%}  {m['bothUnrated']:12}  {m['qualifying']:10}  {m['otherTour']:10}", file=file)
+        if t["players"]:
+            print("  most often unmatched: " + ", ".join(f"{n} ({c})" for n, c in t["players"]), file=file)
 
 
 # ---------------------------------------------------------------------------
@@ -520,12 +607,19 @@ def main():
                           "from just getting staler forever between full refits.")
     ap.add_argument("--ratings", default=os.path.join(HERE, "tennis.json"))
     ap.add_argument("--out", default=os.path.join(HERE, "tennis-data.js"))
+    ap.add_argument("--unrated-report", action="store_true",
+                     help="print how many history results since the archive boundary were dropped "
+                          "because a side has no rating (bug 14 evidence), then exit; local files only")
     args = ap.parse_args()
 
     if not os.path.exists(args.ratings):
         print(f"no {args.ratings} — run tune_tennis.py --fit first", file=sys.stderr)
         sys.exit(1)
     ratings = json.load(open(args.ratings))
+
+    if args.unrated_report:
+        print_unrated_report(unrated_report(ratings))
+        return
 
     start = date.fromisoformat(args.start) if args.start else date.today()
     end = start + timedelta(days=args.days - 1)
@@ -536,6 +630,9 @@ def main():
         pool = ratings[tour]["ratings"]
         k_base = ratings[tour]["constants"]["kBase"]
         sw = ratings[tour]["constants"]["surfaceWeight"]
+        # the fitted weight of a retirement (tune_tennis.run_elo); 1.0 if an
+        # older tennis.json has none, which is what the build always did
+        ret_w = ratings[tour]["constants"].get("retirementWeight", 1.0)
         by_full, by_initial = build_index(pool)
         world = RK.tennis_ranks(tour)   # {ESPN athlete id: rank}, top 150; {} if unavailable
         log.append(f"{tour}: {len(world)} players with a world ranking")
@@ -568,12 +665,14 @@ def main():
                        f"(run tune_tennis.py --boundary): only the last "
                        f"{args.catchup_days} days of results reach the ratings")
         todo, counts = results_to_apply(games, boundary, by_full, by_initial, since=catchup_start)
-        for winner, loser in todo:
+        for winner, loser, retired in todo:
             # ESPN carries no surface; Hard, as before (a tournament lookup
-            # was tested 8 Oct 2026 and did not help)
-            apply_result(pool, winner, loser, "Hard", k_base)
+            # was tested 8 Oct 2026 and did not help). A retirement moves the
+            # ratings by the tour's fitted retirementWeight, as in the fit.
+            apply_result(pool, winner, loser, "Hard", k_base, ret_w if retired else 1.0)
         log.append(f"{tour}: {counts['applied']} results since the archive applied to ratings "
-                   f"({len(games)} in history, walked through {walked}), "
+                   f"({counts['retired']} retirements at weight {ret_w}; "
+                   f"{len(games)} in history, walked through {walked}), "
                    f"{counts['unmatched']} skipped (no rating on file for a side), "
                    f"{counts['archive']} already in the archive, {counts['walkover']} walkovers")
 
