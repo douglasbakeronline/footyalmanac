@@ -55,7 +55,14 @@ ESPN_HEADERS = {
 
 HIST_START = date(2023, 7, 1)
 FIT = (date(2024, 7, 1), date(2025, 7, 1))     # the season before last
-CHECK = (date(2025, 7, 1), None)                # the most recent, up to today
+# The most recent season, which the fit never saw. Capped (25 Oct 2026, bug
+# 16) at the first archived sports prediction (predictions-sports/2026-09-27):
+# left open-ended, the "never seen" window grew into the live record, and
+# every game the site had already called would have been tuned and listed
+# on. Rule 1 applies to every sport. sports.json is NOT refitted here: a
+# --tune run that writes it is Douglas's by-hand step (rule 5).
+ARCHIVE_START = date(2026, 9, 27)
+CHECK = (date(2025, 7, 1), ARCHIVE_START)
 OFFSEASON_DAYS = 90
 MIN_GAMES = 8          # a team needs this many rated games before its number counts
 WINDOW_DAYS = 7          # always reaches the coming weekend, when most rugby is played
@@ -538,7 +545,7 @@ def tune_sport(sport, verbose=True):
                                                            "topGapRaw": round(gap_raw, 4), "topGapCal": round(gap_cal, 4)},
             "bandsFit": b_fit, "bandsCheck": b_chk,
             "windows": {"fit": [FIT[0].isoformat(), FIT[1].isoformat()],
-                        "check": [CHECK[0].isoformat(), None]}}
+                        "check": [CHECK[0].isoformat(), CHECK[1].isoformat() if CHECK[1] else None]}}
 
 
 # ---------------------------------------------------------------------------

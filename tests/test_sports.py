@@ -278,5 +278,23 @@ class Summaries(unittest.TestCase):
         self.assertEqual(len(S.head_to_head(self.games, "a", "b")), 2)
 
 
+class Windows(unittest.TestCase):
+    """Bug 16 (25 Oct 2026): the check window must stop where the live
+    record starts, or the model is judged on games it already called."""
+
+    def test_check_window_ends_before_the_first_archived_prediction(self):
+        self.assertIsNotNone(S.CHECK[1])
+        self.assertEqual(S.CHECK[1], S.ARCHIVE_START)
+        self.assertLess(S.FIT[1], S.CHECK[1])
+        self.assertEqual(S.FIT[1], S.CHECK[0])
+        files = sorted(n for n in os.listdir(S.PRED_DIR) if n.endswith(".json"))
+        self.assertTrue(files, "predictions-sports/ is empty")
+        first = date.fromisoformat(files[0][:10])
+        self.assertLessEqual(S.CHECK[1], first)
+        live = game("a", "b", 2, 1, when=f"{first.isoformat()}T17:00Z")
+        self.assertFalse(S.in_window(live, S.CHECK))
+        self.assertTrue(S.in_window(game("a", "b", 2, 1, when="2026-09-26T17:00Z"), S.CHECK))
+
+
 if __name__ == "__main__":
     unittest.main()
