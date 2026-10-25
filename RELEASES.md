@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## API-Sports pricing fix: pace calls, never cache an error, 25 Oct (tag pending)
+
+**What changed:** the first live run matched 0 of 15 NBA legs although names and times matched exactly (`tools/odds_match_probe.py`, run in CI): the free plan allows 10 calls a minute per product, the burst got rate-limit replies, and those were cached as "no games" for four hours. Calls are now paced 6.5 seconds apart per product, error replies are logged and never cached (new cache prefix, so the bad copies are ignored), and legs past tomorrow are skipped (the free plan only serves yesterday to tomorrow).
+**Files:** groupings.py, tests/test_groupings_sources.py, tools/odds_match_probe.py, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Prices for more sports: API-Sports (free) and PinnWire, 25 Oct (tag pending)
 
 **What changed:** Douglas: "scope a few different free sources, let's utilise what we can". `tools/odds_probe.py` (run in CI by `.github/workflows/odds-probe.yml`, report on the `odds-probe-report` branch, counts and field names only) found:

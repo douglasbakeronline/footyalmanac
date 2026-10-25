@@ -66,3 +66,22 @@ class PinnWire(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ApiSportsErrors(unittest.TestCase):
+    def test_an_error_reply_is_not_cached(self):
+        calls = []
+        def f(url):
+            calls.append(url)
+            if len(calls) == 1: return {"errors": {"rateLimit": "Too many requests"}, "response": []}
+            return as_fetch(url)
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}):
+            rep = {}; G.price_api_sports([leg()], {"2026-10-26"}, rep, cache_dir=d, now=NOW, fetch=f)
+            L = [leg()]
+            rep2 = {}; G.price_api_sports(L, {"2026-10-26"}, rep2, cache_dir=d, now=NOW, fetch=f)
+        self.assertIn("errors", rep["apiSports"])
+        self.assertEqual(L[0].get("odds"), 1.42)     # the second build asked again and priced it
+
+
+if __name__ == "__main__":
+    unittest.main()

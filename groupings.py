@@ -664,6 +664,8 @@ AS_HOST = {"rugby": "v1.rugby.api-sports.io", "nba": "v1.basketball.api-sports.i
 AS_DAY = 85            # of the free 100 a day per product, leaving room for a probe
 AS_GAMES_TTL = 4 * 3600
 AS_ODDS_TTL = 90 * 60
+AS_GAP = 6.5           # seconds between calls to one product (free plan: 10 a minute)
+AS_AHEAD = 1           # the free plan only serves yesterday to tomorrow
 AS_BETS = ("Home/Away", "Match Winner", "3Way Result", "Moneyline", "Winner")
 
 
@@ -695,6 +697,7 @@ def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
     want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l.get("home") and l.get("away")]
     if not key or not want:
         report["apiSports"] = "no key" if not key else "no legs"; return
+    stub = fetch is not None
     fetch = fetch or (lambda url: get(url, {"x-apisports-key": key}))
     now = now or datetime.now(timezone.utc)
     if cache_dir is None:
@@ -710,28 +713,42 @@ def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
     rep = {"legs": len(want), "matched": 0, "calls": 0, "cached": 0, "skipped": 0}
 
     def cached(name, ttl):
-        path = os.path.join(cache_dir, f"apisports-{name}.json")
+        path = os.path.join(cache_dir, f"apisports2-{name}.json")
         try:
             if time.time() - os.path.getmtime(path) < ttl: return json.load(open(path))
         except (OSError, ValueError): pass
         return None
 
+    last = {}
     def call(host, path, name, ttl):
         c = cached(name, ttl)
         if c is not None: rep["cached"] += 1; return c
         if led["used"].get(host, 0) >= AS_DAY: rep["skipped"] += 1; return None
+        # The free plan allows 10 calls a minute per product: pace them.
+        wait = AS_GAP - (time.time() - last.get(host, 0))
+        if wait > 0 and not stub: time.sleep(wait)
         try: d = fetch(f"https://{host}{path}")
         except Exception as e:
             report.setdefault("errors", []).append(f"api-sports {host}{path}: {type(e).__name__}"); return None
+        last[host] = time.time()
         led["used"][host] = led["used"].get(host, 0) + 1; rep["calls"] += 1
         items = d.get("response") or [] if isinstance(d, dict) else []
-        with open(os.path.join(cache_dir, f"apisports-{name}.json"), "w") as f: json.dump(items, f)
+        errs = d.get("errors") if isinstance(d, dict) else None
+        if errs:
+            # 25 Oct 2026: a rate-limit reply was cached as "no games" for four
+            # hours, so nothing matched. Errors are logged, never cached.
+            rep.setdefault("errors", []).append(f"{host.split('.')[1]} {path.split('?')[0]}: {list(errs)[:2] if isinstance(errs, dict) else errs}")
+            return items or None
+        with open(os.path.join(cache_dir, f"apisports2-{name}.json"), "w") as f: json.dump(items, f)
         return items
 
+    horizon = (now.date() + timedelta(days=AS_AHEAD)).isoformat()
+    want = [l for l in want if (l.get("date") or "") <= horizon]
+    rep["legs"] = len(want)
     for l in sorted(want, key=lambda l: l.get("when") or "9"):
         host = AS_HOST[l["sport"]]
         t = parse(l.get("when"))
-        days = sorted({(t or now).date().isoformat(), l["date"]})
+        days = sorted(d for d in {(t or now).date().isoformat(), l["date"]} if d <= horizon)
         game = None
         for dd in days:
             games = call(host, f"/games?date={dd}", f"{host.split('.')[1]}-games-{dd}", AS_GAMES_TTL) or []
