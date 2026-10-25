@@ -55,7 +55,13 @@
      "firstOdds": 1.16,
      "lastOdds": 1.16,
      "lastBest": 1.16,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.16,
+      "best": 1.16,
+      "book": "Pinnacle",
+      "at": "2026-10-25T23:01:54Z"
+     }
     },
     {
      "sport": "tennis",
@@ -94,7 +100,13 @@
      "firstOdds": 1.56,
      "lastOdds": 1.53,
      "lastBest": 1.53,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.53,
+      "best": 1.53,
+      "book": "Pinnacle",
+      "at": "2026-10-25T23:01:54Z"
+     }
     },
     {
      "sport": "tennis",
@@ -133,7 +145,13 @@
      "firstOdds": 1.47,
      "lastOdds": 1.49,
      "lastBest": 1.49,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.49,
+      "best": 1.49,
+      "book": "Pinnacle",
+      "at": "2026-10-25T23:01:54Z"
+     }
     }
    ],
    "bestOdds": 2.66,
@@ -202,8 +220,14 @@
      "basis": "bookmakers",
      "firstOdds": 1.29,
      "lastOdds": 1.27,
-     "lastBest": 1.31,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastBest": 1.29,
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.27,
+      "best": 1.29,
+      "book": "BetVictor",
+      "at": "2026-10-25T23:01:54Z"
+     }
     },
     {
      "sport": "tennis",
@@ -242,7 +266,13 @@
      "firstOdds": 1.56,
      "lastOdds": 1.53,
      "lastBest": 1.53,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.53,
+      "best": 1.53,
+      "book": "Pinnacle",
+      "at": "2026-10-25T23:01:54Z"
+     }
     },
     {
      "sport": "tennis",
@@ -281,7 +311,13 @@
      "firstOdds": 1.56,
      "lastOdds": 1.52,
      "lastBest": 1.52,
-     "lastAt": "2026-10-25T22:02:05Z"
+     "lastAt": "2026-10-25T23:01:54Z",
+     "lockPrice": {
+      "odds": 1.52,
+      "best": 1.52,
+      "book": "Pinnacle",
+      "at": "2026-10-25T23:01:54Z"
+     }
     }
    ],
    "status": "locked",
