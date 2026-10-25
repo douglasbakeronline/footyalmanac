@@ -892,6 +892,15 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 /* ---------- expanded detail ---------- */
 .detail{background:#f3ead6;border-bottom:1px solid var(--ink);padding:16px 18px 18px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
+/* 25 Oct 2026: on a phone the season tables pushed past the screen edge.
+   Grid items no longer grow to their content, every table sits in a box
+   that scrolls sideways, and the attack / defence / form line wraps. */
+.detail,.detail-grid>*{min-width:0}
+.tscroll{max-width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain}
+.tscroll>table{min-width:100%}
+.tscroll table.sheet th,.tscroll table.sheet td,.tscroll table.mktgrid th,.tscroll table.mktgrid td{white-space:nowrap}
+.detail .stat{white-space:normal;overflow:visible;text-overflow:clip;line-height:1.7}
+.detail .fchips{flex-wrap:wrap}
 .detail h3{
   font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;
   text-transform:uppercase;color:var(--mute);margin-bottom:8px;
@@ -1693,12 +1702,12 @@ function teamSheet(t, label){
   return `<div>
     <h3>${label} — ${t.name}${t.league ? ` <span class="sheet-league">(${t.league})</span>` : ""}</h3>
     ${flags}
-    <table class="sheet">
+    <div class="tscroll"><table class="sheet">
       <tr><th>Record</th><th>P</th><th>W</th><th>D</th><th>L</th><th>GF</th><th>GA</th><th>GD</th><th>Pts</th><th>PPG</th></tr>
       ${body || (t.played === null && !t.unrated
         ? `<tr><td colspan="10">Rated from international results, not a domestic table — see attack/defence below.</td></tr>`
         : `<tr><td colspan="10">No completed matches on record.</td></tr>`)}
-    </table>
+    </table></div>
     <div class="stat" style="margin-top:8px">
       attack ${t.att.toFixed(2)} · defence ${t.def.toFixed(2)}
       ${t.form ? " · last "+(t.form.max/3)+": "+t.form.pts+" pts"+(t.form.seq.length >= 3 ? " · last 3: "+last3pts(t.form.seq)+" pts" : "")+" "+formChips(t.form.seq) : " · form: not yet available"}
@@ -1791,12 +1800,12 @@ function detail(g){
   const O = D.odds || {};
   const mk = g.market ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
       <b>Against the bookmakers.</b>
-      <table class="mktgrid"><thead><tr><th></th><th>${g.home.name}</th><th>Draw</th><th>${g.away.name}</th></tr></thead>
+      <div class="tscroll"><table class="mktgrid"><thead><tr><th></th><th>${g.home.name}</th><th>Draw</th><th>${g.away.name}</th></tr></thead>
       <tbody>
         <tr><td>Model</td><td>${pct(g.p.h)}%</td><td>${pct(g.p.d)}%</td><td>${pct(g.p.a)}%</td></tr>
         <tr><td>Bookies</td><td>${pct(g.market.p[0])}%</td><td>${pct(g.market.p[1])}%</td><td>${pct(g.market.p[2])}%</td></tr>
         <tr><td>Best price</td><td>${g.market.best[0].toFixed(2)}</td><td>${g.market.best[1].toFixed(2)}</td><td>${g.market.best[2].toFixed(2)}</td></tr>
-      </tbody></table>
+      </tbody></table></div>
       ${g.value ? `The best price on ${g.value.side==="h"?g.home.name:g.value.side==="a"?g.away.name:"the draw"} is
         worth about <em>${Math.round(g.value.ev*100)}%</em> more than the model's own fair price.`
         : (O.verdict || "")}
@@ -1989,8 +1998,8 @@ function runSlip(){
     <p class="slip-note">${legs.length > 1 ? `Weakest leg: <b>${weakest.pick}</b> at ${pct(weakest.p)}%.
       Without it, the rest land ${(without * 100).toFixed(0)}% of the time. ` : ""}Fair odds are 1 ÷ the site's chance,
       not a bookmaker's price; a bookmaker pays less, and the gap widens with every leg.</p>
-    <table class="slip"><thead><tr><th>Pick</th><th class="n">Chance</th><th class="n">Landed</th><th>Verdict</th></tr></thead>
-    <tbody>${rows}</tbody></table>`;
+    <div class="tscroll"><table class="slip"><thead><tr><th>Pick</th><th class="n">Chance</th><th class="n">Landed</th><th>Verdict</th></tr></thead>
+    <tbody>${rows}</tbody></table></div>`;
 }
 
 function renderStarred(){
@@ -2600,8 +2609,8 @@ function rerenderOpen(){
 
 function formLines(f){
   if(!f || !f.length) return `<div class="stat">no recent games on file</div>`;
-  return `<table class="sheet"><tr><th>Last ${f.length}</th><th>Score</th><th></th></tr>${f.map(x =>
-    `<tr><td>${x.home ? "v" : "at"} ${x.opp}</td><td>${x.score}</td><td class="r${x.r}">${x.r}</td></tr>`).join("")}</table>`;
+  return `<div class="tscroll"><table class="sheet"><tr><th>Last ${f.length}</th><th>Score</th><th></th></tr>${f.map(x =>
+    `<tr><td>${x.home ? "v" : "at"} ${x.opp}</td><td>${x.score}</td><td class="r${x.r}">${x.r}</td></tr>`).join("")}</table></div>`;
 }
 
 function sportDetail(g){

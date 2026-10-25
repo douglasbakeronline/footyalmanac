@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Detail tables scroll sideways on phones, 25 Oct (tag pending)
+
+**What changed:** opening a row on a phone could push the season tables (GD, Pts, PPG) and the form chips past the screen edge (Douglas's screenshot, Oita Trinita v Ventforet Kofu). Every detail table (season sheets, the bookmakers grid, form lists, the Starred slip) now sits in a box that scrolls sideways, grid columns no longer grow to their content, and the attack / defence / form line wraps. Checked at 360px, 390px and 1280px on the Daily List, Football, Rugby, College football, Tennis and Odds tabs: page width equals the screen on all, no console errors.
+**Files:** index.html, RELEASES.md.
+**Not changed:** content, data, every model.
+**Roll back:** `git revert` the commit.
+
 ## Best prices, closing-line check, profit record, 25 Oct (tag pending)
 
 **What changed:** Douglas: "I need the model to beat the bookies' odds". Three measures, no rule or model change:
