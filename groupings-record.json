@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-25T23:01:58Z",
+ "graded": "2026-10-25T23:56:14Z",
  "overall": {
   "groups": 75,
   "settled": 65,
@@ -16,9 +16,9 @@
   "expected": 21.06,
   "clv": {
    "n": 29,
-   "shortened": 16,
+   "shortened": 17,
    "drifted": 6,
-   "mean": 0.0059
+   "mean": 0.006
   }
  },
  "byBand": {
@@ -38,9 +38,9 @@
    "expected": 0,
    "clv": {
     "n": 9,
-    "shortened": 2,
+    "shortened": 3,
     "drifted": 1,
-    "mean": 0.0015
+    "mean": 0.0024
    }
   },
   "Card 3x": {
@@ -61,7 +61,7 @@
     "n": 9,
     "shortened": 4,
     "drifted": 1,
-    "mean": 0.0072
+    "mean": 0.0065
    }
   },
   "Wider Treble": {
@@ -307,9 +307,9 @@
   "expected": 0,
   "clv": {
    "n": 6,
-   "shortened": 4,
+   "shortened": 5,
    "drifted": 1,
-   "mean": 0.01
+   "mean": 0.0103
   }
  },
  "cardWide": {
@@ -371,9 +371,9 @@
    "expected": 0,
    "clv": {
     "n": 6,
-    "shortened": 4,
+    "shortened": 5,
     "drifted": 1,
-    "mean": 0.01
+    "mean": 0.0103
    }
   },
   "Daytime": {
@@ -471,7 +471,7 @@
        "when": "2026-10-26T01:35:00Z",
        "odds": 1.16,
        "best": 1.16,
-       "lastOdds": 1.16,
+       "lastOdds": 1.15,
        "lockOdds": 1.16,
        "lockBest": 1.16,
        "lockBook": "Pinnacle",
@@ -576,7 +576,7 @@
        "when": "2026-10-26T03:00:00Z",
        "odds": 1.56,
        "best": 1.56,
-       "lastOdds": 1.52,
+       "lastOdds": 1.53,
        "lockOdds": 1.52,
        "lockBest": 1.52,
        "lockBook": "Pinnacle",
