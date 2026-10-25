@@ -167,8 +167,8 @@ def live_results(pending, log=None):
     Returns the same {(code, date, home, away): (hg, ag)} shape as load_results,
     so the caller cannot tell which source settled a fixture.
     """
-    cutoff = (date.today() - timedelta(days=LIVE_LOOKBACK)).isoformat()
-    today = date.today().isoformat()
+    cutoff = (E.uk_today() - timedelta(days=LIVE_LOOKBACK)).isoformat()
+    today = E.uk_today().isoformat()      # UK day, not UTC (bug 22)
     wanted = defaultdict(list)
     for code, d, home, away in pending:
         if cutoff <= d < today:

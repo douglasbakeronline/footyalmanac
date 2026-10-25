@@ -9,8 +9,25 @@ Everything here is deterministic and inspectable: no black boxes, every number a
 row shows on the dashboard is produced by a function in this file.
 """
 import json, os, re
-from datetime import date
+from datetime import date, datetime
 from math import exp, factorial, sqrt
+
+try:
+    from zoneinfo import ZoneInfo as _ZoneInfo          # Python 3.9+
+except ImportError:                                      # the local Python 3.7 Mac
+    _ZoneInfo = None
+
+
+def uk_today(now=None):
+    """Today's date in the UK, the day the site is anchored on (25 Oct 2026,
+    bug 22 of claude/full-review-2026-10-25.md: date.today() on the CI runner
+    is UTC, so the 00:10Z build in summer anchored on yesterday's UK date).
+    Matches daylist.py and groupings.py. Without zoneinfo, falls back to the
+    local date."""
+    if _ZoneInfo is None:
+        return date.today()
+    now = now or datetime.now(_ZoneInfo("UTC"))
+    return now.astimezone(_ZoneInfo("Europe/London")).date()
 
 # ---------------------------------------------------------------------------
 # League strength coefficients.

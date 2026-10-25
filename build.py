@@ -695,7 +695,7 @@ def main():
                     help="skip walking this season for live-sourced competitions")
     args = ap.parse_args()
 
-    start = date.fromisoformat(args.start) if args.start else date.today()
+    start = date.fromisoformat(args.start) if args.start else E.uk_today()   # UK day, not UTC (bug 22)
     end = start + timedelta(days=args.days - 1)
 
     # Domestic cups on API-Football (6 Oct 2026): refresh the list at most
