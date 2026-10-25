@@ -15,7 +15,7 @@ happened. It began as football-only, which is why many notes and names say
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
-Since 25 Oct 2026 the front page is **Today's bets** (`renderToday` in `index.html`, Douglas's decision): the day's placeable Double / Treble and Multipliers, the picks to leave out (`groupings.avoid_list`), a slip checker and the honest scoreboard. See `claude/todays-bets-2026-10-25.md`. The **Daily List**, one tap away, is the most likely results across every
+Since 25 Oct 2026 the front page is **Today's bets** (`renderToday` in `index.html`, Douglas's decision): **the Card** (`groupings.build_card`: per UK window Overnight / Daytime / Evening, a Card 2x and a Card 3x of 3-4 bookmaker-priced 60%+ picks from different fixtures, locked 21:00 the night before or 07:00 on the day and never changed after), the playbook, the picks to leave out (`groupings.avoid_list`), a slip checker and the scoreboard by window. See `claude/the-card-2026-10-25.md` and `claude/todays-bets-2026-10-25.md`. The Double / Treble / Wider / Multiplier kinds are no longer built; their record stays. The **Daily List**, one tap away, is the most likely results across every
 sport, one ranking per day, strongest tested hit rate first. One rule for
 all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
@@ -73,6 +73,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/results-review-board.md` | The "How it went" board, tier ladder, live calibration. |
 | `claude/data-expansion-plan.md` | API-Football Pro (bought 30 Sep 2026), where the key lives, the order of work: coverage, lower leagues, replay test, U21, UFC, boxing. Read before any paid-data or new-sport work. |
 | `claude/brand-identity.md` | Mark, type, colour tokens with contrast ratios, sticky bar, assets. |
+| `claude/the-card-2026-10-25.md` | The Card and the playbook: windows, 2x / 3x kinds, leg rule, lock times, archive of locked groups only, prices for every sport and what would close the gap. Read before touching `build_card` or the front page. |
 | `claude/todays-bets-2026-10-25.md` | The Today's bets front page, the weekend's losing slips and the six rules taken from them, the avoid list and slip checker, no forced groups. Read before touching the front page or `MIN_GROUPS`. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 

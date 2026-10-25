@@ -971,6 +971,193 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
     # Underway groups last: they can no longer be placed.
     return sorted(groups, key=lambda g: g.get("status") == "underway")
 
+
+# ---------- the Card (25 Oct 2026) ----------
+# Douglas, after the weekend of 24-25 Oct: "make bets the day before or
+# morning and leave it", "groups play over the same sort of hours", "only one
+# fixture per group", "at least 2.0 or 3.0+ returns on all groups", "all
+# sports considered". The Card replaces the Double / Treble / Wider /
+# Multiplier groups as what the site puts forward (those kinds stay in the
+# record under their names). For each UK day, three windows by kick-off:
+#   Overnight 00:00-09:00 (US evening sport, Asia, Oceania)
+#   Daytime   09:00-17:00 (Asia late, Europe lunch and afternoon)
+#   Evening   17:00-24:00 (Europe evening, US afternoon)
+# and in each window two groups: Card 2x (pays 2.0 or more) and Card 3x (3.0
+# or more), each of CARD_LEGS picks from different fixtures, no fixture in
+# two groups the same day. Every pick is priced by a bookmaker, rated 60%+ by
+# them (CARD_FAIR_MIN), the model no more than 5 points above them, clean,
+# from a sport on the Daily List; its chance is the bookmakers' own.
+#
+# Locking. A group can be rebuilt while prices settle, until its window's
+# lock: 21:00 UK the evening before for Overnight, 07:00 UK on the day for
+# Daytime and Evening. From then it never changes, whatever happens to a
+# price or a leg: it is the bet to place and leave. A window that had no
+# group by its lock may still get one later from games not yet started,
+# marked late. Only locked groups are archived and graded.
+CARD_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]
+CARD_KINDS = [("Card 2x", 2.0, 3.0, 0.30), ("Card 3x", 3.0, 4.6, 0.18)]
+CARD_LEGS = (3, 4)
+CARD_ODDS = (1.15, 1.90)
+CARD_FAIR_MIN = 0.60
+CARD_POOL = 24
+CARD_RULE = 1
+UK = ZoneInfo("Europe/London")
+RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
+MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
+CARD_RANGE = {n: (lo, hi) for n, lo, hi, _ in CARD_KINDS}
+
+def is_card(name): return str(name).startswith("Card")
+
+def uk_slot(l):
+    """(UK date, window name) of a leg's kick-off, or None without a time."""
+    t = parse(l.get("when"))
+    if not t: return None
+    u = t.astimezone(UK)
+    w = next(n for n, a, b in CARD_WINDOWS if a <= u.hour < b)
+    return u.date().isoformat(), w
+
+def lock_time(date, window):
+    """When a window's groups freeze, as a UTC datetime."""
+    d = datetime.fromisoformat(date).date()
+    if window == "Overnight":
+        loc = datetime(d.year, d.month, d.day, 21, 0, tzinfo=UK) - timedelta(days=1)
+    else:
+        loc = datetime(d.year, d.month, d.day, 7, 0, tzinfo=UK)
+    return loc.astimezone(timezone.utc)
+
+def window_end(date, window):
+    d = datetime.fromisoformat(date).date()
+    end = dict((n, b) for n, _, b in CARD_WINDOWS)[window]
+    base = datetime(d.year, d.month, d.day, tzinfo=UK) + timedelta(hours=end)
+    return base.astimezone(timezone.utc)
+
+def card_fault(l):
+    """Why a leg cannot go on the Card, in plain words, or None."""
+    if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
+    if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
+    if not CARD_ODDS[0] <= l["odds"] <= CARD_ODDS[1]:
+        return f"{l['pick']}: price {l['odds']:.2f}, outside {CARD_ODDS[0]:.2f} to {CARD_ODDS[1]:.2f}"
+    if l["fair"] < CARD_FAIR_MIN:
+        return f"{l['pick']}: the bookmakers give {pct(l['fair'])}, under {pct(CARD_FAIR_MIN)}"
+    if l["pModel"] < MULT_MODEL_MIN:
+        return f"{l['pick']}: the model gives {pct(l['pModel'])}, under {pct(MULT_MODEL_MIN)}"
+    if l["pModel"] - l["fair"] > MULT_ABOVE_BOOK:
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) sits {round((l['pModel'] - l['fair']) * 100)} "
+                f"points above the bookmakers ({pct(l['fair'])})")
+    return None
+
+def best_card(L, used, after, name):
+    """The CARD_LEGS picks with the highest combined chance (bookmakers'
+    fair) whose combined price falls in the kind's range, or None."""
+    lo, hi = CARD_RANGE[name]
+    cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l) is None
+             and (parse(l["when"]) or after) >= after]
+    cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
+    top = None
+    for k in CARD_LEGS:
+        for c in itertools.combinations(cands, k):
+            o = mult_combo(c, lo, hi)
+            if o is None: continue
+            p = math.prod(l["p"] for l in c)
+            if p < MIN_CHANCE[name]: continue
+            if not top or p > top[0] or (p == top[0] and o > top[2]): top = (p, c, o)
+    if not top: return None
+    p, c, o = top
+    legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
+    return {"name": name, "risk": RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
+            "estimates": 0, "basis": "bookmakers", "rule": CARD_RULE, "legs": legs_,
+            "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
+
+def recheck_card(g, L):
+    """An unlocked Card group against this build: every leg still on the
+    board on the same side and passing card_fault, the group in range and
+    above its floor. (group at today's prices, []) or (None, reasons)."""
+    if g.get("rule") != CARD_RULE: return None, ["rebuilt under the current Card rule"]
+    by = {(l["event"], l["pick"]): l for l in L}
+    legs_, why = [], []
+    for old in g["legs"]:
+        cur = by.get((old["event"], old["pick"]))
+        if cur is None:
+            why.append(f"{old['pick']}: no longer on the board for this day (moved, postponed, flagged or the model's side changed)"); continue
+        f = card_fault(cur)
+        if f: why.append(f); continue
+        legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
+    if why: return None, why
+    lo, hi = CARD_RANGE[g["name"]]
+    o = mult_combo(legs_, lo, hi); p = math.prod(l["p"] for l in legs_)
+    if o is None: return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f}"]
+    if p < MIN_CHANCE[g["name"]]: return None, [f"combined chance now {pct(p)}, under the {pct(MIN_CHANCE[g['name']])} floor"]
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    return {**{k: v for k, v in g.items() if k not in ("legs", "odds", "p", "implied", "status", "checked", "bestOdds")},
+            "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
+            "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2),
+            "legs": legs_, "status": "holding"}, []
+
+def build_card(L, date, now, prev=None, log=None):
+    """The Card for one UK date: up to two groups in each window. L holds the
+    day's legs (any board date); each is placed by its UK kick-off."""
+    stamp = iso(now); after = now + timedelta(minutes=20)
+    by_win = {w: [] for w, _, _ in CARD_WINDOWS}
+    for l in L:
+        s = uk_slot(l)
+        if s and s[0] == date: by_win[s[1]].append(l)
+    groups, used, filled = [], set(), set()
+    for g in prev or []:
+        if not is_card(g.get("name")) or g.get("window") not in by_win: continue
+        slot = (g["window"], g["name"])
+        if slot in filled: continue
+        lock = lock_time(date, g["window"])
+        if g.get("locked") or now >= lock:
+            g = dict(g, locked=True, lockAt=iso(lock))
+            g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
+            groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot); continue
+        ng, why = recheck_card(g, by_win[g["window"]])
+        if ng is None:
+            if log is not None:
+                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
+                            "picks": [l["pick"] for l in g["legs"]], "why": why})
+            continue
+        ng["checked"] = stamp; groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
+    replaced = {e["rank"] + "|" + e["name"] for e in (log or []) if e["at"] == stamp}
+    for w, _, _ in CARD_WINDOWS:
+        if now >= window_end(date, w): continue
+        lock = lock_time(date, w)
+        for name, _, _, _ in CARD_KINDS:
+            if (w, name) in filled: continue
+            g = best_card(by_win[w], used, after, name)
+            if not g: continue
+            late = now >= lock
+            g.update(window=w, rank=w, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
+                     status="late" if late else ("replacement" if f"{w}|{name}" in replaced else "new"))
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
+    order = {w: i for i, (w, _, _) in enumerate(CARD_WINDOWS)}
+    return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), g["name"]))
+
+def card_windows(date):
+    return [{"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w))} for w, a, b in CARD_WINDOWS]
+
+def archive_locked(day, generated):
+    """Add each locked group to the day's archive file once. A group already
+    there is never changed (update_closing adds closing prices only)."""
+    locked = [g for g in day["groups"] if g.get("locked")]
+    if not locked: return 0
+    os.makedirs(ARCHIVE, exist_ok=True)
+    path = os.path.join(ARCHIVE, f"{day['date']}.json")
+    try:
+        with open(path) as f: a = json.load(f)
+    except (OSError, ValueError):
+        a = {"date": day["date"], "published": generated, "groups": []}
+    have = {gid(g) for g in a.get("groups") or []}
+    n = 0
+    for g in locked:
+        if gid(g) in have: continue
+        a.setdefault("groups", []).append(dict(g, archivedAt=generated)); have.add(gid(g)); n += 1
+    if n:
+        with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
+    return n
+
 # ---------- the re-check (21 Oct 2026) ----------
 def gid(g):
     """A group's identity: its picks, whatever their prices."""
@@ -1193,7 +1380,7 @@ def grade():
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
             paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
             paid_best = math.prod(l["best"] for l in legs if l["status"] != "void") if status == "won" else 0
-            gs.append({"name": g["name"], "rank": g.get("rank", "main"), "odds": g["odds"], "p": g["p"], "status": status,
+            gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "odds": g["odds"], "p": g["p"], "status": status,
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
                        "legsPending": sts.count("pending"), "legs": legs})
         days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
@@ -1222,14 +1409,19 @@ def grade():
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
-                      for n in [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
-                      if n in [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] or any(g["name"] == n for g in allg)},
-           "current": [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS], "retired": RETIRED,
+                      for n in [c[0] for c in CARD_KINDS] + [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
+                      if n in [c[0] for c in CARD_KINDS] or any(g["name"] == n for g in allg)},
+           # 25 Oct 2026: the Card is what the site puts forward; the older kinds
+           # are no longer built and stay in the record under their names.
+           "current": [c[0] for c in CARD_KINDS],
+           "retired": RETIRED + [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS],
            # 22 Oct 2026: the record headline is the groups the tab builds now,
            # strict and Wider apart; the retired kinds keep their own lines.
            "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
            "wider": tally([g for g in allg if is_wide(g["name"])]),
            "multiplier": tally([g for g in allg if is_mult(g["name"])]),
+           "card": tally([g for g in allg if is_card(g["name"])]),
+           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -1262,16 +1454,19 @@ def main():
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
         log = list(pd.get("log") or [])
-        groups = build_day(dl, now + timedelta(minutes=20), prev=pd.get("groups"), now=now, log=log,
-                           min_groups=MIN_GROUPS)
+        # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
+        # Legs are placed by UK kick-off, so a day takes legs from every board date.
+        groups = build_card(L, d, now, prev=pd.get("groups"), log=log)
         live = [g for g in groups if g.get("status") != "underway"]
         core = [l for l in dl if not l.get("multOnly")]   # the counts the page has always shown
         days.append({"date": d, "legs": len(core), "priced": sum(1 for l in core if not l.get("est")),
                      "safe": sum(1 for l in core if safe_leg(l)), "multLegs": sum(1 for l in dl if mult_leg(l)),
                      "groups": groups,
                      "checked": iso(now), "log": log[-LOG_KEEP:],
+                     "windows": card_windows(d),
+                     "cardLegs": sum(1 for l in L if uk_slot(l) and uk_slot(l)[0] == d and card_fault(l) is None),
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
-                                for s in ("new", "holding", "replacement", "underway")},
+                                for s in ("new", "holding", "replacement", "underway", "locked", "late")},
                      "previously": len(pd.get("groups") or []) if pd else None,
                      "avoid": avoid_list(dl),
                      "dropped": sum(1 for e in log if e["at"] == iso(now))})
@@ -1279,19 +1474,25 @@ def main():
     out = {"generated": iso(now), "bands": BANDS,
            "kinds": [{"name": n, "legs": k, "minChance": f, "risk": RISK.get(n)} for n, k, f, _, _ in GROUP_KINDS + WIDE_KINDS]
                     + [{"name": n, "legs": list(MULT_LEGS), "minChance": f, "risk": RISK.get(n), "target": lo}
-                       for n, lo, _, f in MULT_KINDS],
+                       for n, lo, _, f in MULT_KINDS]
+                    + [{"name": n, "legs": list(CARD_LEGS), "minChance": f, "risk": RISK.get(n), "target": lo}
+                       for n, lo, _, f in CARD_KINDS],
            "rules": {"minReturn": MIN_RETURN, "minN": MIN_N, "minHit": MIN_HIT, "legMin": LEG_MIN, "maxAboveBook": MAX_ABOVE_BOOK,
                      "minGroups": MIN_GROUPS, "wideMin": WIDE_MIN, "wideAboveBook": WIDE_ABOVE_BOOK,
                      "wideEstMin": WIDE_EST_MIN,
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
-                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY}},
+                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
+                     "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
+                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
+                              "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
     json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
-    if days and days[0]["date"] == today.isoformat(): archive(days[0], out["generated"])
-    update_closing(L, now, [(today - timedelta(days=1)).isoformat(), today.isoformat()])
+    # 25 Oct 2026: the record is the locked Card, archived as each window locks.
+    for d in days: archive_locked(d, out["generated"])
+    update_closing(L, now, [(today + timedelta(days=i)).isoformat() for i in (-1, 0, 1)])
     record = grade()
     write_page(dict(out, check=check_pool(L)), record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "

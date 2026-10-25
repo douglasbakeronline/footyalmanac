@@ -441,6 +441,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 @media (max-width:480px){
   .og-l{grid-template-columns:40px minmax(0,1fr) 66px 34px;gap:6px;padding:8px 10px}
   .og-l .o small.best{font-size:10px}
+  .og-l.on .t{font-size:8.5px;letter-spacing:0}
 }
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
@@ -927,6 +928,11 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-proof b{display:block;font:600 22px var(--f-num);margin:2px 0}
 .tb-proof small{font-size:12px;color:var(--ink-2);line-height:1.4}
 .tb-foot{margin-top:16px;font-size:12px;color:var(--mute)}
+.tb-play{margin:14px 0 0;padding:12px 14px 12px 32px;background:var(--surface);border:1px solid var(--rule);font-size:13.5px;line-height:1.5;color:var(--ink-2)}
+.tb-play li{margin:2px 0}
+.tb-play b{color:var(--ink)}
+.tb-hours{font-family:var(--f-num);font-size:14px;letter-spacing:0;color:var(--ink-2)}
+.tb-why-rules{margin-top:16px}
 #today .og-grid{grid-template-columns:minmax(0,1fr);gap:18px}
 #today .og{min-width:0}
 /* ---------- expanded detail ---------- */
@@ -3245,10 +3251,20 @@ function ogDayLabel(iso){
   if(diff === 1) return "Tomorrow";
   return new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {weekday:"short", day:"numeric", timeZone:"UTC"});
 }
-const OG_STATUS = {holding:"Still holds", new:"New", replacement:"Replacement", underway:"Underway"};
+const OG_STATUS = {holding:"Still holds", new:"New", replacement:"Replacement", underway:"Underway", locked:"Locked", late:"Late"};
 function ogStatus(g){
   const s = g.status; if(!s) return "";
   const first = ogAt(g.first), checked = ogAt(g.checked);
+  // 25 Oct 2026: Card groups lock (21:00 the night before for Overnight,
+  // 07:00 for Daytime and Evening) and never change after.
+  if(String(g.name).startsWith("Card")){
+    const lk = ogAt(g.lockAt);
+    const say = s === "locked" ? `locked at ${lk}: place it and leave it`
+      : s === "late" ? `added after the window locked, from games not yet started; locked as it is`
+      : s === "underway" ? `under way: leave it, the result shows here once every pick has finished`
+      : `can still change until it locks at ${lk}; place it after that`;
+    return `<div class="og-st"><b class="${s}">${OG_STATUS[s] || s}</b><span>${say}</span></div>`;
+  }
   const say = s === "holding" ? `first shown ${first}${checked ? ` · re-checked ${checked}` : ""}`
     : s === "new" ? `first shown ${first}`
     : s === "replacement" ? `replaced an earlier ${g.name.toLowerCase()} that failed its check at ${first}`
@@ -3282,7 +3298,8 @@ const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10
 function ogCard(g){
   const stake = ogStake();
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
-  const mult = g.name.startsWith("Multiplier");
+  const card = String(g.name).startsWith("Card");
+  const mult = g.name.startsWith("Multiplier") || card;
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
@@ -3291,7 +3308,7 @@ function ogCard(g){
       <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}${ogBest(l)}</span><span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
-  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? `${ogEsc(g.window)} window` : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span>${g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(stake * g.bestOdds).toFixed(2)}</span>` : ""}</div></div>
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
@@ -3656,56 +3673,60 @@ function tbCheckHtml(){
 }
 function tbRecord(){
   const R = OG && OG.record; if(!R) return "";
-  const o = R.strict || {}, m = R.multiplier || {}, c = (R.overall || {}).clv;
-  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked}` : "none settled yet";
+  const k = R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
+  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}` : "none settled yet";
+  const w = n => { const t = bw[n] || {}; return `<div><span>${n}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${roi(t)}</small></div>`; };
   return `<div class="tb-proof">
-    <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "counting from 25 October: the early sign of a real edge"}</small></div>
-    <div><span>Doubles and Trebles</span><b>${o.settled ? `${o.won} / ${o.settled}` : "–"}</b><small>${roi(o)}</small></div>
-    <div><span>Multipliers</span><b>${m.settled ? `${m.won} / ${m.settled}` : "–"}</b><small>${roi(m)}</small></div>
+    <div><span>Card groups won</span><b>${k.settled ? `${k.won} / ${k.settled}` : "–"}</b><small>${k.settled ? `expected ${k.expected.toFixed(1)} · ${roi(k)}` : "the card starts 26 October; graded as each window settles"}</small></div>
+    ${w("Overnight")}${w("Daytime")}${w("Evening")}
+    <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "the early sign of a real edge"}</small></div>
     <div><span>Model v bookmakers</span><b>Not yet</b><small>on 909 archived picks the bookmakers priced better; only the best price has paid</small></div>
   </div>`;
 }
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Today's bets</h2></div><div class="empty">No groups in this build yet. They appear after the next build.</div>`;
+    host.innerHTML = `<div class="lede"><h2>Today's bets</h2></div><div class="empty">No card in this build yet. It appears after the next build.</div>`;
     return;
   }
   if(!OG_DAY || !OG.days.some(d => d.date === OG_DAY)) OG_DAY = OG.days[0].date;
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
-  const live = g => g.status !== "underway";
-  const strict = day.groups.filter(g => live(g) && (g.name === "Double" || g.name === "Treble"));
-  const mult = day.groups.filter(g => live(g) && String(g.name).startsWith("Multiplier"));
-  const other = day.groups.filter(g => live(g) && !strict.includes(g) && !mult.includes(g));
+  const isCard = g => String(g.name).startsWith("Card");
+  const wins = day.windows || [{name:"Overnight", from:0, to:9}, {name:"Daytime", from:9, to:17}, {name:"Evening", from:17, to:24}];
+  const other = day.groups.filter(g => !isCard(g) && g.status !== "underway");
   const avoid = day.avoid || [];
-  const nPlace = d => d.groups.filter(g => live(g) && (g.name === "Double" || g.name === "Treble" || String(g.name).startsWith("Multiplier"))).length;
+  const nCard = d => d.groups.filter(g => isCard(g) && g.status !== "underway").length;
+  const hh = h => String(h % 24).padStart(2, "0") + ":00";
+  const now = Date.now();
+  const winHtml = w => {
+    const gs = day.groups.filter(g => isCard(g) && g.window === w.name);
+    const lk = w.lockAt ? new Date(w.lockAt) : null, locked = lk && lk.getTime() <= now;
+    const when = lk ? `${locked ? "Locked" : "Locks"} ${ogAt(w.lockAt)}` : "";
+    return `<section class="tb-win"><h3 class="tb-h">${w.name} <span class="tb-hours">${hh(w.from)}–${hh(w.to)}</span>
+        <small>${when}${locked ? " · placed? leave it" : " · place it once it locks"}</small></h3>
+      ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
+        : `<div class="empty tb-empty">Nothing qualifies in this window${locked ? "" : " yet: prices firm up nearer the lock"}. Sitting it out is the right call.</div>`}</section>`;
+  };
+  const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Today's bets</h2>
-      <p>What qualifies to place, what to leave out, and a checker for any slip before you place it. Every group here
-      passed the almanac's rules; on a day when nothing does, nothing is shown, and sitting out is the right call.</p>
-      <details class="how"><summary>The rules, from this weekend and the archive</summary>
-        <ol class="tb-rules">
-          <li><b>Only what qualifies.</b> Groups are no longer forced to three a day; the weekend's losses came from the weaker picks used to fill them.</li>
-          <li><b>Never back a pick the model rates well above the bookmakers.</b> On 909 archived picks, those landed at the bookmakers' rate, not the model's (Oita Trinita: model 63%, bookmakers 50%, lost).</li>
-          <li><b>Never back a sport kept off the Daily List</b> (college football, tennis): their live picks have landed well under their tested rate (North Carolina lost).</li>
-          <li><b>Fewer picks.</b> Each extra pick adds the bookmaker's margin again, and one late goal ends the slip. The weekend's one winner was five short favourites; the six-, seven- and ten-folds all lost on one pick.</li>
-          <li><b>Take the best price.</b> Worth about 3p in the pound on the archive, the one edge that needs no prediction. Each pick below shows it.</li>
-          <li><b>Judge by weeks, not days.</b> The tiles at the foot of this page grow every day: the closing price shows an edge first, the profit record proves it.</li>
-        </ol></details></div>
-    <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nPlace(d);
+      <p>The card for the day: two groups in each time window, one paying <b>2x or more</b> and one <b>3x or more</b>,
+      three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
+      with the model in agreement, any sport still on the Daily List. Each window's groups lock and never change after.</p></div>
+    <ol class="tb-play">
+      <li><b>Place once.</b> Overnight by 21:00 the night before; Daytime and Evening once they lock at 07:00.</li>
+      <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here the next morning.</li>
+      <li><b>Only the card.</b> Anything else goes through the checker below first. Avoid means out.</li>
+      <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
+      <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
+    </ol>
+    <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-
-    <h3 class="tb-h">Built to land <small>Double and Treble: the strictest picks, 75%+ on every read</small></h3>
-    ${strict.length ? `<div class="og-grid">${strict.map(ogCard).join("")}</div>`
-      : `<div class="empty tb-empty">Nothing strict enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet: prices open nearer the day" : ""}.</div>`}
-
-    <h3 class="tb-h">Multipliers <small>three or four picks each at 60%+ by the bookmakers, about 3x, land about one time in four</small></h3>
-    ${mult.length ? `<div class="og-grid">${mult.map(ogCard).join("")}</div>`
-      : `<div class="empty tb-empty">No Multiplier qualifies on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}.</div>`}
-    ${other.length ? `<details class="tb-older"><summary>${other.length} older group${other.length === 1 ? "" : "s"} published before the rules changed (higher risk)</summary>
+    ${wins.map(winHtml).join("")}
+    ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
 
-    <h3 class="tb-h">Leave these out <small>picks that look tempting but carry the losing patterns</small></h3>
+    <h3 class="tb-h">Leave these out <small>tempting picks that carry the losing patterns</small></h3>
     ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>
         <span class="tb-m"><b>${ogEsc(a.pick)}</b><small>${ogEsc(a.event)} · ${ogEsc(a.comp || OG_SPORT[a.sport] || a.sport)}${a.when ? " · " + ogTime(a) : ""}</small>
         <small class="tb-why">${a.kind === "gap" ? `Model ${pct(a.model)}%, bookmakers ${pct(a.fair)}%: ${Math.round((a.model - a.fair) * 100)} points apart${a.level === "caution" ? ". At this strength the archive is too thin to call it; trust the bookmakers' number." : ", the pattern that lost most."}`
@@ -3713,12 +3734,20 @@ function renderToday(){
         <span class="tb-p">${a.odds.toFixed(2)}</span></div>`).join("")}</div>`
       : `<div class="empty tb-empty">No flagged picks among the priced games on ${fmtDay(day.date)}.</div>`}
 
-    <h3 class="tb-h">Check a slip <small>before you place it</small></h3>
+    <h3 class="tb-h">Check a slip <small>anything not on the card, before you place it</small></h3>
     <div class="tb-check"><textarea id="tbSlip" rows="5" placeholder="Astana&#10;Club Brugge&#10;Minnesota Vikings" spellcheck="false" autocomplete="off">${ogEsc(TB_TEXT)}</textarea>
       <div id="tbOut" aria-live="polite">${tbCheckHtml()}</div></div>
 
-    <h3 class="tb-h">Is it working? <small>the honest scoreboard</small></h3>
+    <h3 class="tb-h">Is it working? <small>read on Mondays</small></h3>
     ${tbRecord()}
+    <details class="how tb-why-rules"><summary>Why these rules: the weekend of 24-25 October</summary>
+      <ol class="tb-rules">
+        <li>Most losing slips lost on one pick, and most of those picks were already flagged: Oita Trinita (model 63%, bookmakers 50%), North Carolina (a sport off the Daily List), Folgore, Ordino, Wolves.</li>
+        <li>On 909 archived priced picks, the bookmakers priced better than the model; picks the model rated 8+ points above them landed at the bookmakers' rate (under 70%: 31 picks quoted 61% landed 35%).</li>
+        <li>Long slips lose on one late goal: every extra pick adds the bookmaker's margin again. The weekend's one winner was five short favourites.</li>
+        <li>Checking in mid-game led to cash-outs and new bets on the fly; a locked card placed once removes that.</li>
+        <li>Taking the best price was worth about 3p in the pound on the archive, the one edge that needs no prediction.</li>
+      </ol></details>
     <p class="tb-foot">Prices are bookmaker averages from the latest build and will have moved; the best price and its bookmaker
       are shown where known. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ogFill(host);

@@ -3,6 +3,19 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## The Card: windowed, locked groups at 2x and 3x, and the playbook, 25 Oct (tag pending)
+
+**What changed:** Douglas, after the weekend: bet the day before or in the morning and leave it; groups over the same hours; one fixture per group; 2x and 3x+ returns; all sports considered. **The Card** replaces the Double / Treble / Wider / Multiplier groups as what the site puts forward:
+- Three UK windows by kick-off: **Overnight** 00:00-09:00, **Daytime** 09:00-17:00, **Evening** 17:00-24:00. In each, a **Card 2x** (pays 2.0+) and a **Card 3x** (3.0+), each 3-4 picks from different fixtures, no fixture twice in a day.
+- Every pick: bookmaker-priced 1.15-1.90, the bookmakers 60%+, the model no more than 5 points above them, clean, any sport still on the Daily List. Chance quoted is the bookmakers'.
+- **Locking:** Overnight groups lock at 21:00 UK the evening before, Daytime and Evening at 07:00 on the day. Before the lock a group can be rebuilt as prices settle; after it, it never changes. A window empty at its lock may get a late group from games not yet started, marked Late.
+- **Record:** only locked groups are archived (`archive_locked`) and graded, by window (`card`, `cardByWindow`); closing prices are tracked for yesterday, today and tomorrow.
+- **Today's bets** page: the five-rule playbook at the top (place once, leave it, only the card, best price, review weekly), each window with its lock time and its 2x and 3x groups, then Leave these out, Check a slip, the scoreboard by window, and the reasons from the weekend in a fold.
+**Evidence:** the weekend's slips and the archive work in `claude/todays-bets-2026-10-25.md` and `claude/multipliers-2026-10-24.md`. On 25 Oct's prices the card would have had Daytime 2.05 (39%) and 3.01 (27%), Evening 2.08 (38%) and 3.03 (27%).
+**Files:** groupings.py, index.html, tests/test_groupings_card.py, CLAUDE.md, claude/the-card-2026-10-25.md, RELEASES.md.
+**Not changed:** every model, the Daily List, the avoid list and slip checker, older kinds' code and record (no longer built).
+**Roll back:** `git revert` the commit; build_day and the older kinds return.
+
 ## Today's bets: a front page built on the weekend's lessons, 25 Oct (tag pending)
 
 **What changed:** Douglas, after a losing weekend: "a rebuild that takes in all the learnings and surfaces what serves our purpose of making money". New front page, **Today's bets** (the Daily List and Odds tabs stay one tap away):

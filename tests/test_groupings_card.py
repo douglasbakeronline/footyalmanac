@@ -1,0 +1,108 @@
+"""The Card (groupings.py, 25 Oct 2026): groups by UK time window, 2x and
+3x, 3-4 picks from different fixtures, locked the evening before (Overnight)
+or at 07:00 (Daytime, Evening) and never changed after. Standard library only."""
+import json, os, sys, tempfile, unittest
+from datetime import datetime, timedelta, timezone
+from unittest import mock
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import groupings as G
+
+DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
+
+
+def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
+    l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
+         "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE}
+    return G.honest(l)
+
+
+def board():
+    out = []
+    for i in range(8):      # daytime, 12:00-15:30
+        out.append(leg(i, round(1.28 + 0.03 * i, 2), 0.66, f"{DATE}T{12 + i // 2:02d}:{(i % 2) * 30:02d}:00Z"))
+    for i in range(8, 14):  # evening, 19:00-21:30
+        out.append(leg(i, round(1.30 + 0.03 * (i - 8), 2), 0.66, f"{DATE}T{19 + (i - 8) // 2:02d}:{(i % 2) * 30:02d}:00Z"))
+    return out
+
+
+EARLY = datetime(2026, 11, 6, 18, 0, tzinfo=timezone.utc)     # the evening before
+AFTER_LOCK = datetime(2026, 11, 7, 8, 0, tzinfo=timezone.utc)
+
+
+class Windows(unittest.TestCase):
+    def test_slots_and_lock_times(self):
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T00:30:00Z"}), (DATE, "Overnight"))
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T15:00:00Z"}), (DATE, "Daytime"))
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T19:45:00Z"}), (DATE, "Evening"))
+        self.assertEqual(G.lock_time(DATE, "Overnight"), datetime(2026, 11, 6, 21, 0, tzinfo=timezone.utc))
+        self.assertEqual(G.lock_time(DATE, "Daytime"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))
+        # in summer time the same UK hours are an hour earlier in UTC
+        self.assertEqual(G.lock_time("2026-07-04", "Evening"), datetime(2026, 7, 4, 6, 0, tzinfo=timezone.utc))
+
+
+class Build(unittest.TestCase):
+    def test_groups_per_window_at_target_returns(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        self.assertTrue(gs)
+        self.assertEqual({g["window"] for g in gs}, {"Daytime", "Evening"})
+        seen = [l["event"] for g in gs for l in g["legs"]]
+        self.assertEqual(len(seen), len(set(seen)))                  # no fixture twice
+        for g in gs:
+            self.assertIn(len(g["legs"]), G.CARD_LEGS)
+            self.assertGreaterEqual(g["odds"], G.CARD_RANGE[g["name"]][0])
+            self.assertGreaterEqual(g["odds"], 2.0)
+            self.assertEqual({G.uk_slot(l)[1] for l in g["legs"]}, {g["window"]})   # one window
+            self.assertFalse(g["locked"])
+
+    def test_locked_group_never_changes(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Daytime")
+        moved = [dict(l) for l in board()]
+        for l in moved:          # every daytime price collapses: unlocked, it would be dropped
+            if l["event"] in {x["event"] for x in g0["legs"]}:
+                l.update(odds=1.05); G.honest(l)
+        again = G.build_card(moved, DATE, AFTER_LOCK, prev=gs, log=[])
+        g1 = next(g for g in again if g["window"] == "Daytime" and g["name"] == g0["name"])
+        self.assertTrue(g1["locked"])
+        self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
+        self.assertEqual(g1["status"], "locked")
+
+    def test_unlocked_group_is_rebuilt_when_a_leg_fails(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Evening")
+        moved = [dict(l) for l in board()]
+        for l in moved:
+            if l["event"] == g0["legs"][0]["event"]:
+                l.update(odds=2.40); G.honest(l)
+        log = []
+        again = G.build_card(moved, DATE, EARLY + timedelta(hours=2), prev=gs, log=log)
+        self.assertTrue(any(e["name"] == g0["name"] for e in log))
+
+    def test_late_group_after_lock(self):
+        gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
+        self.assertTrue(gs)
+        self.assertTrue(all(g["late"] and g["locked"] for g in gs))
+
+    def test_off_list_sports_and_unpriced_legs_are_out(self):
+        l = dict(leg(0, 1.40, 0.66, f"{DATE}T12:00:00Z", sport="cfb"), listOff=True)
+        self.assertIn("off the Daily List", G.card_fault(l))
+        e = dict(leg(1, 1.40, 0.66, f"{DATE}T12:00:00Z"), est=True)
+        self.assertIn("no bookmaker price", G.card_fault(e))
+        self.assertIsNone(G.card_fault(leg(2, 1.40, 0.66, f"{DATE}T12:00:00Z", sport="nba")))
+
+
+class Archive(unittest.TestCase):
+    def test_only_locked_groups_archived_once(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[])
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d):
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": gs}, "t0"), 0)
+            n = G.archive_locked({"date": DATE, "groups": locked}, "t1")
+            self.assertEqual(n, len(locked))
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": locked}, "t2"), 0)
+            a = json.load(open(os.path.join(d, f"{DATE}.json")))
+        self.assertEqual(len(a["groups"]), len(locked))
+
+
+if __name__ == "__main__":
+    unittest.main()
