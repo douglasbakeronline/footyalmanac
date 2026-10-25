@@ -305,7 +305,11 @@ def legs(dates):
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
                     "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
-                    "listOff": bool((td.get("list") or {}).get("off"))})
+                    # 25 Oct 2026, Douglas: tennis back on the Card. It stays off the
+                    # Daily List (build_tennis.LIST_ON) until its live record holds;
+                    # on the Card a tennis pick still needs a bookmaker price, the
+                    # bookmakers at 60%+ and the model within 5 points of them.
+                    "listOff": False, "tennisListOff": bool((td.get("list") or {}).get("off"))})
     sd = read_js("sports-data.js") or {}
     for key, sp in (sd.get("sports") or {}).items():
         if not sp.get("published"): continue

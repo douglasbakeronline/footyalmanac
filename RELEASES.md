@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Tennis back on the Card, 25 Oct (tag pending)
+
+**What changed:** Douglas: "yes put tennis back on". Tennis picks may go on the Card again (`listOff` False for tennis legs in `groupings.legs`), held to the Card rule like every sport: a bookmaker price (now mostly Pinnacle, through PinnWire), the bookmakers at 60%+, the model no more than 5 points above them, no qualifying rounds. Tennis stays off the Daily List (`build_tennis.LIST_ON`) until its live record holds, and is still never used in the retired strict groups.
+**Evidence:** the tennis model re-tested sound on 1,096 Sep-Oct main-draw matches (75%+ calls landed about 85%); it came off the list on 15 Oct as a precaution after a bad fortnight. With Pinnacle prices the Card can hold each pick to the market's number.
+**Files:** groupings.py, tests/test_groupings_card.py, claude/the-card-2026-10-25.md, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## API-Sports pricing fix: pace calls, never cache an error, 25 Oct (tag pending)
 
 **What changed:** the first live run matched 0 of 15 NBA legs although names and times matched exactly (`tools/odds_match_probe.py`, run in CI): the free plan allows 10 calls a minute per product, the burst got rate-limit replies, and those were cached as "no games" for four hours. Calls are now paced 6.5 seconds apart per product, error replies are logged and never cached (new cache prefix, so the bad copies are ignored), and legs past tomorrow are skipped (the free plan only serves yesterday to tomorrow).

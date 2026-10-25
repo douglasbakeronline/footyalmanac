@@ -106,3 +106,23 @@ class Archive(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TennisOnTheCard(unittest.TestCase):
+    def test_tennis_leg_is_not_listoff(self):
+        acc = {"hit": 0.8, "n": 200, "cumHit": 0.8, "cumN": 200}
+        td = {"list": {"off": True}, "matches": [{"date": DATE, "time": "12:00", "round": "Round 1", "playerA": "X",
+              "playerB": "Y", "pick": "X", "confidence": 0.72, "accuracy": acc, "id": "t1"}]}
+        with mock.patch.object(G, "read_js", lambda name: {"tennis-data.js": td}.get(name)), \
+             mock.patch.object(G, "HERE", tempfile.mkdtemp()):
+            out = G.legs({DATE})
+        t = [l for l in out if l["sport"] == "tennis"]
+        self.assertTrue(t)
+        self.assertFalse(t[0]["listOff"])
+        l = G.honest(dict(t[0], odds=1.40, margin=1.04, est=False))
+        self.assertIsNone(G.card_fault(l))
+        self.assertFalse(G.safe_leg(l))          # still never in the old strict groups
+
+
+if __name__ == "__main__":
+    unittest.main()
