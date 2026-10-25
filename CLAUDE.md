@@ -15,7 +15,7 @@ happened. It began as football-only, which is why many notes and names say
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
-Since 25 Oct 2026 the front page is **Today's bets** (`renderToday` in `index.html`, Douglas's decision): **the Card** (`groupings.build_card`: per UK window Overnight / Daytime / Evening, a Card 2x and a Card 3x of 3-4 bookmaker-priced 60%+ picks from different fixtures, locked 21:00 the night before or 07:00 on the day and never changed after), the playbook, the picks to leave out (`groupings.avoid_list`), a slip checker and the scoreboard by window. See `claude/the-card-2026-10-25.md` and `claude/todays-bets-2026-10-25.md`. The Double / Treble / Wider / Multiplier kinds are no longer built; their record stays. The **Daily List**, one tap away, is the most likely results across every
+The front page is the **Daily List**; **Bets**, the second tab (`renderToday` in `index.html`, the `today` view: Today's bets and the Odds tab merged on 25 Oct 2026, Douglas's decision), holds **the Card** (`groupings.build_card`: per UK window Overnight / Daytime / Evening, a Card 2x and a Card 3x of 3-4 bookmaker-priced 60%+ picks from different fixtures, locked 21:00 the night before or 07:00 on the day and never changed after), the playbook, the picks to leave out (`groupings.avoid_list`), a slip checker, the re-check log, the accumulator calculator, the scoreboard by window and the day-by-day group history (`ogRecord(true)`). There is no Odds tab, and no Baseball or WNBA tab (too few games; their picks still reach the Daily List). See `claude/the-card-2026-10-25.md` and `claude/todays-bets-2026-10-25.md`. The Double / Treble / Wider / Multiplier kinds are no longer built; their record stays. The **Daily List** is the most likely results across every
 sport, one ranking per day, strongest tested hit rate first. One rule for
 all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
@@ -41,8 +41,8 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
   way it is: the comment above it, the matching `claude/` note, `RELEASES.md`
   and `git log -p`. Most odd-looking choices here were deliberate and tested.
   Extend rather than rewrite; remove only with a stated reason.
-- **Owner's standing decisions** (do not reverse without asking): Today's
-  bets is the front page (25 Oct 2026; the Daily List until then); no bookmaker input into any model; no manual data
+- **Owner's standing decisions** (do not reverse without asking): the Daily
+  List is the front page and Bets the second tab (25 Oct 2026); no bookmaker input into any model; no manual data
   entry; the cover header (star banner, grey cover, stacked SPORTS / ALMANAC,
   year band, red stat panel) stays; no dark border thicker than 1px; every
   release is tagged and logged.

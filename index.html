@@ -922,7 +922,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-check textarea{width:100%;font:14px var(--f-ui);padding:10px 12px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);resize:vertical;box-sizing:border-box}
 .tb-hint{font-size:13px;color:var(--mute)}
 .tb-sum{margin-top:10px;font-size:13.5px;color:var(--ink-2)}
-.tb-proof{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.tb-proof{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
 .tb-proof>div{background:var(--surface);padding:10px 12px}
 .tb-proof span{display:block;font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .tb-proof b{display:block;font:600 22px var(--f-num);margin:2px 0}
@@ -1180,19 +1180,16 @@ footer b{color:var(--ink-2)}
   </div>
 </header>
 <nav class="views" id="views" aria-label="Boards">
-  <button data-view="today" aria-pressed="true">Today's bets</button>
-  <button data-view="list" aria-pressed="false">Daily List</button>
-  <button data-view="odds" aria-pressed="false">Odds</button>
+  <button data-view="list" aria-pressed="true">Daily List</button>
+  <button data-view="today" aria-pressed="false">Bets</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
   <button data-view="sport:nfl" aria-pressed="false">NFL</button>
-  <button data-view="sport:mlb" aria-pressed="false">Baseball</button>
   <button data-view="sport:nba" aria-pressed="false">Basketball</button>
   <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
   <button data-view="sport:nhl" aria-pressed="false">Ice hockey</button>
   <button data-view="sport:cfb" aria-pressed="false">College football</button>
   <button data-view="sport:ncaab" aria-pressed="false">College basketball</button>
-  <button data-view="sport:wnba" aria-pressed="false">WNBA</button>
   <button data-view="sport:nrl" aria-pressed="false">Rugby league</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="results" aria-pressed="false">How it went</button>
@@ -3317,7 +3314,7 @@ function ogCard(g){
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
-function ogRecord(){
+function ogRecord(compact){
   const R = OG && OG.record;
   if(!R || !(R.days || []).length) return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2></div>
     <div class="empty" style="margin-top:10px">The record starts with today's groups; results appear after tomorrow's build grades them.</div></div>`;
@@ -3331,11 +3328,16 @@ function ogRecord(){
       <div class="og-score">${old.map(tile).join("")}</div></details>` : "";
   const openAt = Math.max(0, R.days.findIndex(d => d.groups.some(g => g.status !== "pending")));
   const dayRows = R.days.slice(0, 14).map((d, i) => {
-    const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.rank === "alternative" ? "Alternative" : "First choice"}">${g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
-    const groups = d.groups.map(g => `<h5>${g.name}${g.rank === "alternative" ? " (alternative)" : ""} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
+    const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.window ? g.window + " window" : g.rank === "alternative" ? "Alternative" : "First choice"}">${g.window ? g.window + " " + String(g.name).replace("Card ", "") : g.name}${g.rank === "alternative" ? " alt" : ""} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
+    const groups = d.groups.map(g => `<h5>${g.window ? g.window + " · " : ""}${g.name}${g.rank === "alternative" ? " (alternative)" : ""} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
       ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span><span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
     return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
   }).join("");
+  // 25 Oct 2026: on the merged Bets page the scoreboard tiles sit above
+  // (tbRecord), so only the day-by-day history is drawn here.
+  if(compact) return `<div class="og-rec"><div class="day-head"><h2>Results, day by day</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
+    ${dayRows}${oldHtml}
+    <p style="font-size:12px;color:var(--mute);margin-top:8px">Each Card group is archived as its window locks and graded from the site's own results. A group is lost as soon as one pick loses; a void pick drops out of the price. Days before 26 October show the retired kinds.</p></div>`;
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
     <div class="og-score"><div><span>Doubles and Trebles won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
       ${w ? `<div><span>Wider groups won</span><b>${w.won} / ${w.settled}</b><small>${w.settled ? `expected ${w.expected.toFixed(1)}` : "none settled yet"}</small></div>` : ""}
@@ -3686,7 +3688,7 @@ function tbRecord(){
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Today's bets</h2></div><div class="empty">No card in this build yet. It appears after the next build.</div>`;
+    host.innerHTML = `<div class="lede"><h2>Bets</h2></div><div class="empty">No card in this build yet. It appears after the next build.</div>`;
     return;
   }
   if(!OG_DAY || !OG.days.some(d => d.date === OG_DAY)) OG_DAY = OG.days[0].date;
@@ -3708,7 +3710,7 @@ function renderToday(){
         : `<div class="empty tb-empty">Nothing qualifies in this window${locked ? "" : " yet: prices firm up nearer the lock"}. Sitting it out is the right call.</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
-  host.innerHTML = `<div class="lede"><h2>Today's bets</h2>
+  host.innerHTML = `<div class="lede"><h2>Bets</h2>
       <p>The card for the day: two groups in each time window, one paying <b>2x or more</b> and one <b>3x or more</b>,
       three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. Each window's groups lock and never change after.</p></div>
@@ -3738,8 +3740,13 @@ function renderToday(){
     <div class="tb-check"><textarea id="tbSlip" rows="5" placeholder="Astana&#10;Club Brugge&#10;Minnesota Vikings" spellcheck="false" autocomplete="off">${ogEsc(TB_TEXT)}</textarea>
       <div id="tbOut" aria-live="polite">${tbCheckHtml()}</div></div>
 
+    ${ogLog(day)}
+    <h3 class="tb-h">Accumulator <small>check the return on any slip</small></h3>
+    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
+
     <h3 class="tb-h">Is it working? <small>read on Mondays</small></h3>
     ${tbRecord()}
+    ${ogRecord(true)}
     <details class="how tb-why-rules"><summary>Why these rules: the weekend of 24-25 October</summary>
       <ol class="tb-rules">
         <li>Most losing slips lost on one pick, and most of those picks were already flagged: Oita Trinita (model 63%, bookmakers 50%), North Carolina (a sport off the Daily List), Folgore, Ordino, Wolves.</li>
@@ -3751,6 +3758,7 @@ function renderToday(){
     <p class="tb-foot">Prices are bookmaker averages from the latest build and will have moved; the best price and its bookmaker
       are shown where known. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ogFill(host);
+  accaMount($("#acca"));
   host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
   $("#tbDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderToday(); };
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
@@ -3816,9 +3824,11 @@ document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
   const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
   if(!sp || (!(sp.games || []).length && !graded)) b.hidden = true;
 });
-// 25 Oct 2026, Douglas: the front page is Today's bets (the day's placeable
-// slips, picks to avoid, the slip checker). The Daily List is one tap away.
-$('#views button[data-view="today"]').click();
+// 25 Oct 2026, Douglas: the Daily List opens first, Bets (the Card, the
+// checker, the calculator and the record, merged from Today's bets and Odds)
+// is the second tab. Baseball and WNBA have no tab: too few games; their picks
+// still reach the Daily List.
+$('#views button[data-view="list"]').click();
 })();
 </script>
 </body>

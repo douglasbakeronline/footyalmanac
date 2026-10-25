@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## One Bets page, Daily List first, fewer tabs, cup rows banded right, 25 Oct (tag pending)
+
+**What changed:** Douglas: "merge today's bets in odds ... into one page to be the 2nd tab behind daily list", drop the WNBA and Baseball tabs, and make sure Analysis is accurate.
+- **Bets** (the `today` view) is now the one betting page, second tab. It keeps everything from Today's bets (the playbook, the Card by window with lock times, Leave these out, Check a slip, the scoreboard by window) and takes from Odds what was still useful: the re-check log, the accumulator calculator and the day-by-day results history (`ogRecord(true)`, compact: the scoreboard tiles already sit above it; Card chips now read "Daytime 2x 2.19"). The Odds tab is gone; the Multipliers and Wider groups it showed are no longer built (since the Card), and their record stays in the history.
+- **The Daily List opens first** again. Tabs: Daily List, Bets, Football, Tennis, the sport boards, Starred, How it went, Analysis, HQ. **Baseball and WNBA have no tab** (too few games); their picks still reach the Daily List and the record. The tab grid is 15 cells, five even rows of three on a phone.
+- **Analysis and the record:** until 24 Oct domestic cup rows (afc.*) stored the untempered confidence beside tempered probabilities (Berkhamsted showed 61% but was banded at 80%). `score.py` now grades every row on its published top probability (`max(p)`), so those rows move to the band and tier they were shown at, on the record, How it went and the Analysis page (which reads `record.json` on every build). On the archive the two numbers differ on 643 of 56,732 rows, every one a cup row.
+- The scoreboard tiles fit six to a row on desktop.
+**Checked:** nametest, the unit tests, Playwright at 1280px and 390px (no horizontal scroll, no script errors, one calculator on the page).
+**Files:** index.html, score.py, CLAUDE.md, RELEASES.md.
+**Not changed:** every model, the Card rules, the Daily List rule, `renderOdds` (left in the code, unreachable, so a revert restores the tab).
+**Roll back:** `git revert` the commit.
+
 ## Tennis back on the Card, 25 Oct (tag pending)
 
 **What changed:** Douglas: "yes put tennis back on". Tennis picks may go on the Card again (`listOff` False for tennis legs in `groupings.legs`), held to the Card rule like every sport: a bookmaker price (now mostly Pinnacle, through PinnWire), the bookmakers at 60%+, the model no more than 5 points above them, no qualifying rounds. Tennis stays off the Daily List (`build_tennis.LIST_ON`) until its live record holds, and is still never used in the retired strict groups.

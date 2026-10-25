@@ -427,7 +427,13 @@ def graded_rows(save=True):
             "league": g["league"], "date": g["date"],
             "home": g["home"], "away": g["away"],
             "p": p, "pick": pick, "actual": actual,
-            "confidence": g["confidence"], "celtic": bool(g.get("celtic")),
+            # 25 Oct 2026: the published top probability, not the stored
+            # "confidence". Until 24 Oct domestic cup rows (afc.*) stored the
+            # untempered number beside tempered probabilities (Berkhamsted:
+            # 80% beside 61%), which put them in the wrong bands and tiers
+            # on the record and the Analysis page. max(p) is what the row
+            # showed as its pick's chance; for every other row the two agree.
+            "confidence": max(p), "celtic": bool(g.get("celtic")),
             "unrated": bool(g.get("unrated")),
             "verified": verification(g),
             "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
