@@ -24,6 +24,15 @@ class Feeds(unittest.TestCase):
             SP.upcoming("ncaab", date(2026, 12, 5), 1)
         self.assertTrue(seen and all("groups=50" in u for u in seen))
 
+    def test_rugby_world_cup_covers_november_for_2027(self):
+        """RWC 2027 runs 1 Oct to 13 Nov (25 Oct 2026); the feed was Sep-Oct only."""
+        wc = next(f for f in SP.SPORTS["rugby"]["feeds"] if f["path"] == "rugby/164205")
+        for m in (9, 10, 11):
+            self.assertIn(m, wc["months"])
+        self.assertEqual(wc["days"], SP.ALL_DAYS)
+        # the Rugby Championship feed stays registered, dead or not
+        self.assertIn("rugby/244293", [f["path"] for f in SP.SPORTS["rugby"]["feeds"]])
+
 
 if __name__ == "__main__":
     unittest.main()

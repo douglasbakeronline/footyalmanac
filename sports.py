@@ -172,9 +172,15 @@ SPORTS = {
         {"path": "rugby/271937", "label": "Champions Cup", "pool": "club", "months": (12, 1, 4, 5), "days": WEEKEND, "skip": ()},
         {"path": "rugby/272073", "label": "Challenge Cup", "pool": "club", "months": (12, 1, 4, 5), "days": WEEKEND, "skip": ()},
         {"path": "rugby/180659", "label": "Six Nations", "pool": "intl", "months": (2, 3), "days": WEEKEND, "skip": ()},
+        # Dead in 2026: last answered 4 Oct 2025 (30 games on file, 2023-25).
+        # The 2026 southern-hemisphere tests came through rugby/289234
+        # instead. Left in place: an empty weekend call costs nothing, and
+        # it may answer again in 2027.
         {"path": "rugby/244293", "label": "Rugby Championship", "pool": "intl", "months": (7, 8, 9, 10), "days": WEEKEND, "skip": ()},
         {"path": "rugby/289234", "label": "Test match", "pool": "intl", "months": (6, 7, 8, 10, 11), "days": WEEKEND, "skip": ()},
-        {"path": "rugby/164205", "label": "World Cup", "pool": "intl", "months": (9, 10), "days": ALL_DAYS, "skip": ()},
+        # RWC 2027 (Australia) runs 1 Oct to 13 Nov, so November is in; 2023
+        # was Sep-Oct. Walked every day: pool matches fall midweek.
+        {"path": "rugby/164205", "label": "World Cup", "pool": "intl", "months": (9, 10, 11), "days": ALL_DAYS, "skip": ()},
         {"path": "rugby/242041", "label": "Super Rugby", "pool": "sr", "months": (2, 3, 4, 5, 6), "days": WEEKEND, "skip": ()},
     ]},
     # Added 6 Oct 2026 from ESPN's free feeds. Each is tuned and gated like the
