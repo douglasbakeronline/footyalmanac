@@ -34,9 +34,12 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    # Agent write-ups, release notes, tests and agent scripts do not change
-    # the site, and every rebuild spends API allowance.
-    paths-ignore: ["claude/**", "RELEASES.md", "tests/**", "tools/**", "agents/**"]
+    # Agent write-ups, release notes, root notes (README, DEPLOY, AGENTS and
+    # any other *.md), the evaluation harness, tests and agent scripts do not
+    # change the site, and every rebuild spends API allowance. README.md is
+    # copied into the site but a stale copy for a few hours costs nothing.
+    paths-ignore: ["claude/**", "evaluation/**", "tests/**", "tools/**", "agents/**",
+                   "RELEASES.md", "README.md", "DEPLOY.md", "AGENTS.md", "*.md"]
 
 permissions:
   contents: write        # predictions are committed back so the record survives
