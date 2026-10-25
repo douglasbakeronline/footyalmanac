@@ -112,3 +112,21 @@ rebuilt (`MULT_RULE` 2). Archive evidence at the 60% floor: 67 legs landed
 76.1% against 64.8% fair. The honest limit stands: three 65% picks land
 together about 28% of the time. Every pick being likely does not make the
 group likely.
+
+## 25 Oct 2026: beating the bookmakers, what is measured now
+
+Douglas lost a six-fold at 17.02 on one late equaliser and asked for every
+group at that price, then for the model to beat the bookmakers. Declined
+the first (six ~60% picks land together about 4% of the time, returning
+about 73p in the pound); built the measures for the second.
+
+Profit per £1 on the 909 archived priced picks, average price then best:
+every model pick -6.8p / -3.8p (both 90% intervals below or touching zero);
+model 5+ points above the market -15.8p / -12.8p; clean 1.30-1.90 legs the
+market rates 60%+ (n=72) +6.8p / +9.8p, 90% about -2p to +22p.
+
+Built: best price and bookmaker on every leg, groups priced at best too;
+the closing-line tally (each leg's published price against its last price
+before kick-off, `update_closing`); the record at both prices. Read the
+closing-line tile first: if picks shorten more often than they drift, the
+edge is real before the profit can prove it.

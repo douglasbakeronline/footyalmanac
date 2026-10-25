@@ -384,6 +384,7 @@ def price_football(L, dates, report):
             if row:
                 i = 0 if l["side"] == "h" else 2
                 l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
+                         bestBook=(row.get("maxBook") or [None, None, None])[i],
                          margin=margin_of(row["avg"]),
                          src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
                 matched += 1; continue
@@ -393,19 +394,22 @@ def price_football(L, dates, report):
             except Exception as e:
                 report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
-            books = set()
+            books = set(); top = {}
             for item in items:
                 for b in item.get("bookmakers") or []:
                     for bet in b.get("bets") or []:
                         if bet.get("id") != 1: continue
                         for v in bet.get("values") or []:
-                            try: prices[v["value"]].append(float(v["odd"])); books.add(b.get("name"))
+                            try:
+                                o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
+                                if o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
                             except (KeyError, ValueError): pass
             books = sorted(books)
             side = prices["Home" if l["side"] == "h" else "Away"]
             if side:
                 avg = [sum(v) / len(v) for v in prices.values() if v]
                 l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
+                         bestBook=top.get("Home" if l["side"] == "h" else "Away", (0, None))[1],
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
@@ -618,7 +622,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 if not (any(same(h, x) for x in names if x) and any(same(a, x) for x in names if x)): continue
                 ct = parse(ev.get("commence_time"))
                 if t and ct and abs((t - ct).total_seconds()) > 6 * 3600: continue
-                prices, books, margins = [], set(), []
+                prices, books, margins, top = [], set(), [], (0, None)
                 for b in ev.get("bookmakers") or []:
                     for m in b.get("markets") or []:
                         if m.get("key") != "h2h": continue
@@ -626,10 +630,12 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                         if mg: margins.append(mg)
                         for o in m.get("outcomes") or []:
                             if same(o.get("name", ""), l["pick"]):
-                                try: prices.append(float(o["price"])); books.add(b.get("title") or b.get("key"))
+                                try:
+                                    pr = float(o["price"]); prices.append(pr); books.add(b.get("title") or b.get("key"))
+                                    if pr > top[0]: top = (pr, b.get("title") or b.get("key"))
                                 except (KeyError, ValueError): pass
                 if prices:
-                    l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books),
+                    l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books), bestBook=top[1],
                              margin=round(sum(margins) / len(margins), 4) if margins else None,
                              src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
                     rep["matched"] += 1
@@ -948,6 +954,11 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
         live = [g for g in groups if g["name"] == name and g.get("status") != "underway"]
         if live and not any(g["rank"] == "main" for g in live):
             live[0]["rank"] = "main"
+    # 25 Oct 2026: every group also carries its combined price at the best
+    # price on offer for each pick (bestOdds); the headline stays the average.
+    for g in groups:
+        if g.get("status") != "underway":
+            g["bestOdds"] = round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in g["legs"]), 2)
     # Underway groups last: they can no longer be placed.
     return sorted(groups, key=lambda g: g.get("status") == "underway")
 
@@ -1000,7 +1011,7 @@ def recheck(g, L):
             # A price source that failed this build is not a reason to drop a
             # group: the last confirmed price stands, flagged, until a build
             # can read one again. The model's side of the check still runs.
-            cur = dict(cur, **{k: old[k] for k in ("odds", "best", "books", "margin", "src") if k in old}, est=False, stale=True)
+            cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
             cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
             honest(cur)
         fault = leg_fault(cur, wide=is_wide(g["name"]))
@@ -1089,6 +1100,31 @@ def settle(l, idx):
     sc = g.get("score")
     return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), ("-".join(map(str, sc)) if isinstance(sc, list) else sc)
 
+def update_closing(L, now, dates):
+    """Closing prices for the record (25 Oct 2026, Douglas: "I need the model
+    to beat the bookies' odds"). On every build, each archived leg that has not
+    started takes this build's price for the same pick as lastOdds / lastBest.
+    The last build before kick-off leaves the nearest thing to a closing price.
+    A pick whose price shortens after we published it beat the closing line,
+    the standard early sign of an edge; one that drifts did not. Only lastOdds,
+    lastBest and lastAt are added: what was published is never changed."""
+    by = {(l["event"], l["pick"]): l for l in L if not l.get("est") and l.get("odds")}
+    for d in dates:
+        path = os.path.join(ARCHIVE, f"{d}.json")
+        if not os.path.exists(path): continue
+        with open(path) as f: a = json.load(f)
+        changed = False
+        for g in a.get("groups") or []:
+            for l in g.get("legs") or []:
+                t = parse(l.get("when"))
+                if t and t <= now: continue
+                cur = by.get((l["event"], l["pick"]))
+                if not cur: continue
+                l.update(lastOdds=cur["odds"], lastBest=cur.get("best") or cur["odds"], lastAt=iso(now))
+                changed = True
+        if changed:
+            with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
+
 def archive(day, generated):
     os.makedirs(ARCHIVE, exist_ok=True)
     path = os.path.join(ARCHIVE, f"{day['date']}.json")
@@ -1106,23 +1142,38 @@ def grade():
             for l in g["legs"]:
                 st, res = settle(l, idx)
                 legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
-                             "odds": l["odds"], "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
+                             "odds": l["odds"], "best": max(l.get("best") or l["odds"], l["odds"]), "lastOdds": l.get("lastOdds"),
+                             "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
             sts = [l["status"] for l in legs]
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
             paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
+            paid_best = math.prod(l["best"] for l in legs if l["status"] != "void") if status == "won" else 0
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "odds": g["odds"], "p": g["p"], "status": status,
-                       "paid": round(paid, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
+                       "paid": round(paid, 2), "paidBest": round(paid_best, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
                        "legsPending": sts.count("pending"), "legs": legs})
         days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
     days.sort(key=lambda d: d["date"], reverse=True)
     def tally(groups):
         done = [g for g in groups if g["status"] != "pending"]
         legs = [l for g in groups for l in g["legs"] if l["status"] in ("won", "lost")]
+        # closing line: each leg once (a leg can sit in more than one group)
+        seen, clv = set(), []
+        for g in groups:
+            for l in g["legs"]:
+                k = (l["event"], l["pick"])
+                if k in seen or not l.get("lastOdds") or l.get("est"): continue
+                seen.add(k); clv.append(l["odds"] / l["lastOdds"] - 1)
         return {"groups": len(groups), "settled": len(done), "won": sum(g["status"] == "won" for g in done),
                 "lost": sum(g["status"] == "lost" for g in done), "pending": len(groups) - len(done),
                 "legs": len(legs), "legsWon": sum(l["status"] == "won" for l in legs),
                 "returned": round(sum(g["paid"] for g in done), 2), "staked": len(done),
-                "expected": round(sum(g["p"] for g in done), 2)}
+                "returnedBest": round(sum(g.get("paidBest", g["paid"]) for g in done), 2),
+                "expected": round(sum(g["p"] for g in done), 2),
+                # 25 Oct 2026: published price v the last price before kick-off.
+                # Positive = the price shortened after we published (beat the close).
+                "clv": {"n": len(clv), "shortened": sum(1 for x in clv if x > 0.005),
+                        "drifted": sum(1 for x in clv if x < -0.005),
+                        "mean": round(sum(clv) / len(clv), 4) if clv else None}}
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
@@ -1192,6 +1243,7 @@ def main():
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
     json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
     if days and days[0]["date"] == today.isoformat(): archive(days[0], out["generated"])
+    update_closing(L, now, [(today - timedelta(days=1)).isoformat(), today.isoformat()])
     record = grade()
     write_page(out, record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "

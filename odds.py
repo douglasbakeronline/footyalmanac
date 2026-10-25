@@ -294,6 +294,7 @@ def af_parse_odds(items):
         if not fid:
             continue
         sides, books = ([], [], []), set()
+        top = [(0.0, None), (0.0, None), (0.0, None)]   # best price per side and who offers it
         for b in item.get("bookmakers") or []:
             for bet in b.get("bets") or []:
                 if bet.get("id") != 1:
@@ -306,9 +307,12 @@ def af_parse_odds(items):
                         continue
                     if i is not None and o > 1.0:
                         sides[i].append(o); books.add(b.get("name") or b.get("id"))
+                        if o > top[i][0]: top[i] = (o, b.get("name"))
         if all(sides):
             out[str(fid)] = {"avg": [round(sum(x) / len(x), 3) for x in sides],
-                             "max": [max(x) for x in sides], "books": len(books)}
+                             "max": [max(x) for x in sides], "books": len(books),
+                             # 25 Oct 2026: which bookmaker has the best price, for the Odds tab
+                             "maxBook": [t[1] for t in top]}
     return out
 
 

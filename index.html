@@ -429,13 +429,15 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og.Stretch .og-h{border-top:3px solid var(--away)}
 .og-k{display:flex;gap:16px;padding:8px 13px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);flex-wrap:wrap}
 .og-k b{font-family:var(--f-num);color:var(--ink)}
-.og-l{display:grid;grid-template-columns:44px minmax(0,1fr) 52px 44px;gap:8px;align-items:baseline;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:13px}
+.og-l{display:grid;grid-template-columns:44px minmax(0,1fr) 88px 44px;gap:8px;align-items:baseline;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:13px}
 .og-l:first-of-type{border-top:0}
 .og-l .t{font:12px var(--f-num);color:var(--mute)}
 .og-l .m b{display:block;font-weight:700}
 .og-l .m small{display:block;font-size:11.5px;color:var(--mute);line-height:1.35;margin-top:1px}
 .og-l .o{font:600 14px var(--f-num);text-align:right}
 .og-l .c{font:12px var(--f-num);text-align:right;color:var(--ink-2)}
+.og-l .o small.best{display:block;font:600 10.5px var(--f-ui);color:var(--home);letter-spacing:.01em;line-height:1.3;margin-top:2px}
+.og-h .od span.best{display:block;margin-top:2px;font-weight:600;color:var(--home)}
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
@@ -3215,6 +3217,13 @@ function ogLog(day){
     log.map(e => `<li><span class="w">${ogAt(e.at)}</span><b>${ogEsc(e.name)}${e.rank === "alternative" ? " (second choice)" : ""}</b> at ${(+e.odds || 0).toFixed(2)}: ${e.picks.map(ogEsc).join(", ")}
       <small>${e.why.map(ogEsc).join(". ")}.</small></li>`).join("")}</ul></details>`;
 }
+// 25 Oct 2026: the best price on offer for a pick, and who has it. The
+// average is the headline; taking the best price was worth about 3p in the £
+// on the archive, the one edge that needs no prediction.
+function ogBest(l){
+  if(l.est || !l.best || l.best < l.odds + 0.005) return "";
+  return `<small class="best" title="Best price across ${l.books || "the"} bookmakers${l.bestBook ? `: ${ogEsc(l.bestBook)}` : ""}">best ${(+l.best).toFixed(2)}${l.bestBook ? ` ${ogEsc(l.bestBook)}` : ""}</small>`;
+}
 const OG_NUM = {2:"two", 3:"three", 4:"four", 5:"five"};
 const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10`;
 function ogCard(g){
@@ -3226,11 +3235,11 @@ function ogCard(g){
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
-      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}</span><span class="c">${pct(l.p)}%</span></div>
+      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}${ogBest(l)}</span><span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
-      <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span></div></div>
+      <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span>${g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(stake * g.bestOdds).toFixed(2)}</span>` : ""}</div></div>
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
@@ -3260,9 +3269,11 @@ function ogRecord(){
   return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2><div class="count">graded ${new Date(R.graded).toLocaleDateString("en-GB", {day:"numeric", month:"short", timeZone:"Europe/London"})}</div></div>
     <div class="og-score"><div><span>Doubles and Trebles won</span><b>${o.won} / ${o.settled}</b><small>${o.pending} to settle · expected ${o.expected.toFixed(1)}</small></div>
       ${w ? `<div><span>Wider groups won</span><b>${w.won} / ${w.settled}</b><small>${w.settled ? `expected ${w.expected.toFixed(1)}` : "none settled yet"}</small></div>` : ""}
-      ${R.multiplier && R.multiplier.groups ? `<div><span>Multipliers won</span><b>${R.multiplier.won} / ${R.multiplier.settled}</b><small>${R.multiplier.settled ? `expected ${R.multiplier.expected.toFixed(1)} · return ${roi(R.multiplier)}` : "none settled yet"}</small></div>` : ""}
+      ${R.multiplier && R.multiplier.groups ? `<div><span>Multipliers won</span><b>${R.multiplier.won} / ${R.multiplier.settled}</b><small>${R.multiplier.settled ? `expected ${R.multiplier.expected.toFixed(1)} · return ${roi(R.multiplier)}${R.multiplier.returnedBest != null ? `, ${(R.multiplier.returnedBest - R.multiplier.staked >= 0 ? "+" : "")}${(R.multiplier.returnedBest - R.multiplier.staked).toFixed(2)} at best prices` : ""}` : "none settled yet"}</small></div>` : ""}
       <div><span>Legs won</span><b>${o.legsWon} / ${o.legs}</b><small>${o.legs ? pct(o.legsWon / o.legs) + "%" : "–"}</small></div>
-      <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}</small></div>
+      <div><span>Return, 1 unit a group</span><b>${roi(o)}</b><small>${o.returned.toFixed(2)} back from ${o.staked}${o.returnedBest != null && o.staked ? ` · at best prices ${(o.returnedBest - o.staked >= 0 ? "+" : "")}${(o.returnedBest - o.staked).toFixed(2)}` : ""}</small></div>
+      ${(() => { const c = (R.overall || {}).clv; if(!c || !c.n) return `<div><span>Beat the closing price</span><b>–</b><small>measured from today: does a pick's price shorten after we publish it?</small></div>`;
+        return `<div><span>Beat the closing price</span><b>${c.shortened} / ${c.n}</b><small>shortened after publishing, ${c.drifted} drifted · average ${c.mean >= 0 ? "+" : ""}${(c.mean * 100).toFixed(1)}%</small></div>`; })()}
       ${band}</div>${oldHtml}${dayRows}
     <p style="font-size:12px;color:var(--mute);margin-top:8px">Every group is archived the morning it is published and graded from the site's own results. A group is lost as soon as one leg loses; a void leg drops out of the price. "Expected" is the sum of each group's tested chance.</p></div>`;
 }

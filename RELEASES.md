@@ -3,6 +3,16 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Best prices, closing-line check, profit record, 25 Oct (tag pending)
+
+**What changed:** Douglas: "I need the model to beat the bookies' odds". Three measures, no rule or model change:
+- **Best price on every pick.** Each Odds tab leg shows the best price on offer and the bookmaker offering it ("best 1.52 Bet365"), and each group its combined price at best prices. On the archive (909 priced picks), taking the best price instead of the average was worth about 3p in the pound on every pick (-6.8p to -3.8p overall; the Multiplier-type legs +6.8p to +9.8p).
+- **Closing-line check.** Every build writes each archived leg's latest price before kick-off (`lastOdds`, `lastBest`) into `groupings-archive/`; what was published is never changed. The record counts how many picks' prices shortened after we published them ("Beat the closing price"). A model with a real edge sees its picks shorten; this shows within weeks, profit within months.
+- **Profit record.** Groups are graded at average and at best prices (`paidBest`, `returnedBest`).
+**Files:** groupings.py, odds.py (records the best price's bookmaker, `maxBook`), index.html, tests/test_groupings_closing.py, CLAUDE.md, RELEASES.md.
+**Not changed:** every group rule, every model, the Daily List.
+**Roll back:** `git revert` the commit.
+
 ## Multipliers across all sports, 24 Oct (tag pending)
 
 **What changed:** Douglas: "Multipliers should be across all sports". Picks from every published sport (football, rugby, tennis, NFL, college football, baseball, basketball, WNBA, and any other on the site) now enter the Multiplier pool on the same rule: priced 1.30-1.90, the bookmakers 60%+, the model 40%+ and no more than 5 points above them. Tennis rows show under their picks like the others.
