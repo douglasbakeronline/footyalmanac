@@ -106,7 +106,7 @@
      "firstOdds": 1.27,
      "lastOdds": 1.33,
      "lastBest": 1.38,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     }
    ],
    "status": "holding",
@@ -365,7 +365,7 @@
      "firstOdds": 1.22,
      "lastOdds": 1.37,
      "lastBest": 1.4,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     }
    ],
    "status": "holding",
@@ -543,7 +543,7 @@
      "firstOdds": 1.47,
      "lastOdds": 1.55,
      "lastBest": 1.6,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "football",
@@ -575,9 +575,9 @@
      "edge": -0.1145,
      "basis": "bookmakers",
      "firstOdds": 1.46,
-     "lastOdds": 1.4,
+     "lastOdds": 1.39,
      "lastBest": 1.43,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "football",
@@ -611,7 +611,7 @@
      "firstOdds": 1.31,
      "lastOdds": 1.31,
      "lastBest": 1.37,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     }
    ],
    "status": "holding",
@@ -1047,7 +1047,7 @@
      "firstOdds": 1.19,
      "lastOdds": 1.19,
      "lastBest": 1.19,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "football",
@@ -1082,7 +1082,7 @@
      "firstOdds": 1.21,
      "lastOdds": 1.21,
      "lastBest": 1.23,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "nba",
@@ -1110,9 +1110,9 @@
      "edge": -0.0409,
      "basis": "bookmakers",
      "firstOdds": 1.41,
-     "lastOdds": 1.4,
-     "lastBest": 1.4,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-10-25T16:42:02Z"
     }
    ],
    "bestOdds": 2.06,
@@ -1169,7 +1169,7 @@
      "firstOdds": 1.46,
      "lastOdds": 1.46,
      "lastBest": 1.46,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "nfl",
@@ -1199,7 +1199,7 @@
      "firstOdds": 1.56,
      "lastOdds": 1.56,
      "lastBest": 1.56,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     },
     {
      "sport": "nba",
@@ -1229,7 +1229,7 @@
      "firstOdds": 1.34,
      "lastOdds": 1.34,
      "lastBest": 1.34,
-     "lastAt": "2026-10-25T16:30:05Z"
+     "lastAt": "2026-10-25T16:42:02Z"
     }
    ],
    "bestOdds": 3.05,

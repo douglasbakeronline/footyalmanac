@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-25T16:30:08Z",
+ "graded": "2026-10-25T16:42:10Z",
  "overall": {
   "groups": 73,
   "settled": 63,
@@ -16,7 +16,7 @@
    "n": 23,
    "shortened": 11,
    "drifted": 3,
-   "mean": 0.0053
+   "mean": 0.0059
   }
  },
  "byBand": {
@@ -36,7 +36,7 @@
     "n": 6,
     "shortened": 1,
     "drifted": 0,
-    "mean": 0.0012
+    "mean": 0.0024
    }
   },
   "Card 3x": {
@@ -112,7 +112,7 @@
     "n": 9,
     "shortened": 6,
     "drifted": 2,
-    "mean": 0.0079
+    "mean": 0.0088
    }
   },
   "Banker": {
@@ -262,7 +262,7 @@
    "n": 9,
    "shortened": 6,
    "drifted": 2,
-   "mean": 0.0079
+   "mean": 0.0088
   }
  },
  "card": {
@@ -281,7 +281,7 @@
    "n": 12,
    "shortened": 1,
    "drifted": 0,
-   "mean": 0.0006
+   "mean": 0.0012
   }
  },
  "cardWide": {
@@ -358,7 +358,7 @@
     "n": 6,
     "shortened": 1,
     "drifted": 0,
-    "mean": 0.0012
+    "mean": 0.0024
    }
   }
  },
@@ -663,7 +663,7 @@
        "when": "2026-10-25T18:15:00Z",
        "odds": 1.46,
        "best": 1.52,
-       "lastOdds": 1.4,
+       "lastOdds": 1.39,
        "est": false,
        "p": 0.6408,
        "status": "pending",
@@ -905,7 +905,7 @@
        "when": "2026-10-25T21:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": 1.4,
+       "lastOdds": 1.39,
        "est": false,
        "p": 0.6802,
        "status": "pending",
