@@ -112,7 +112,7 @@ class Minimum(unittest.TestCase):
 
     def test_record_keeps_strict_and_wider_apart(self):
         self.assertIn("Wider Double", [b[0] for b in G.WIDE_BANDS])
-        self.assertEqual(G.MIN_GROUPS, 3)
+        self.assertEqual(G.MIN_GROUPS, 0)   # 25 Oct 2026: only what qualifies (Douglas)
 
 
 if __name__ == "__main__":

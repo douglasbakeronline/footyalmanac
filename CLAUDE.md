@@ -15,7 +15,7 @@ happened. It began as football-only, which is why many notes and names say
 The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
-The front page is the **Daily List**: the most likely results across every
+Since 25 Oct 2026 the front page is **Today's bets** (`renderToday` in `index.html`, Douglas's decision): the day's placeable Double / Treble and Multipliers, the picks to leave out (`groupings.avoid_list`), a slip checker and the honest scoreboard. See `claude/todays-bets-2026-10-25.md`. The **Daily List**, one tap away, is the most likely results across every
 sport, one ranking per day, strongest tested hit rate first. One rule for
 all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
@@ -41,8 +41,8 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
   way it is: the comment above it, the matching `claude/` note, `RELEASES.md`
   and `git log -p`. Most odd-looking choices here were deliberate and tested.
   Extend rather than rewrite; remove only with a stated reason.
-- **Owner's standing decisions** (do not reverse without asking): the Daily
-  List is the front page; no bookmaker input into any model; no manual data
+- **Owner's standing decisions** (do not reverse without asking): Today's
+  bets is the front page (25 Oct 2026; the Daily List until then); no bookmaker input into any model; no manual data
   entry; the cover header (star banner, grey cover, stacked SPORTS / ALMANAC,
   year band, red stat panel) stays; no dark border thicker than 1px; every
   release is tagged and logged.
@@ -73,6 +73,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/results-review-board.md` | The "How it went" board, tier ladder, live calibration. |
 | `claude/data-expansion-plan.md` | API-Football Pro (bought 30 Sep 2026), where the key lives, the order of work: coverage, lower leagues, replay test, U21, UFC, boxing. Read before any paid-data or new-sport work. |
 | `claude/brand-identity.md` | Mark, type, colour tokens with contrast ratios, sticky bar, assets. |
+| `claude/todays-bets-2026-10-25.md` | The Today's bets front page, the weekend's losing slips and the six rules taken from them, the avoid list and slip checker, no forced groups. Read before touching the front page or `MIN_GROUPS`. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
 **The code on `main` is the source of truth.** The notes are snapshots from

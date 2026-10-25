@@ -3,6 +3,20 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Today's bets: a front page built on the weekend's lessons, 25 Oct (tag pending)
+
+**What changed:** Douglas, after a losing weekend: "a rebuild that takes in all the learnings and surfaces what serves our purpose of making money". New front page, **Today's bets** (the Daily List and Odds tabs stay one tap away):
+- **Built to land** (strict Double / Treble) and **Multipliers**, placeable groups only, each pick with its full board row and best price.
+- **Leave these out**: the day's priced picks where the model sits 8+ points above the bookmakers (Avoid under 70%, Caution at 70%+, where the archive is thin), and strong picks from sports off the Daily List.
+- **Check a slip**: paste picks, one a line; each is matched to the almanac and marked Back, Caution, Avoid or No read, with the chance they all land.
+- **Is it working?**: beat-the-closing-price, the strict and Multiplier records, and a plain "model v bookmakers: not yet".
+- The six rules from the weekend and the archive, in a fold at the top.
+Rules changed in `groupings.py`: no more forced groups (`MIN_GROUPS` 3 -> 0, Douglas: "only show what qualifies"); Multipliers exclude sports off the Daily List (`listOff`: college football, tennis).
+**Evidence:** the weekend's slips (losing picks Oita Trinita, model 63% v bookmakers 50%; North Carolina, college football; Folgore, Ordino, Wolves all flagged); 909 archived priced picks: under 70%, model 8+ points above the market, 31 picks quoted 61% landed 35%; 70%+ with that gap, 5 picks (all won), hence Caution.
+**Files:** groupings.py, index.html, tests/test_groupings_multiplier.py, tests/test_groupings_minimum.py, CLAUDE.md, claude/todays-bets-2026-10-25.md, RELEASES.md.
+**Not changed:** every model, the Daily List rule, the strict and Multiplier leg rules (other than `listOff`). No stake advice, by Douglas's choice.
+**Roll back:** `git revert` the commit; the front page returns to the Daily List.
+
 ## Detail tables scroll sideways on phones, 25 Oct (tag pending)
 
 **What changed:** opening a row on a phone could push the season tables (GD, Pts, PPG) and the form chips past the screen edge (Douglas's screenshot, Oita Trinita v Ventforet Kofu). Every detail table (season sheets, the bookmakers grid, form lists, the Starred slip) now sits in a box that scrolls sideways, grid columns no longer grow to their content, and the attack / defence / form line wraps. Checked at 360px, 390px and 1280px on the Daily List, Football, Rugby, College football, Tennis and Odds tabs: page width equals the screen on all, no console errors.

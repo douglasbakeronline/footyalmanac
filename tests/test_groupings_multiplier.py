@@ -114,5 +114,23 @@ class InTheDay(unittest.TestCase):
         self.assertIsNone(ng)
 
 
+class Weekend(unittest.TestCase):
+    """25 Oct 2026: the weekend's lessons as rules."""
+    def test_sport_off_the_daily_list_is_out(self):
+        l = dict(leg(0, 1.40, 0.66, sport="cfb"), listOff=True)
+        self.assertIn("off the Daily List", G.mult_fault(l))
+
+    def test_avoid_list_flags_the_model_above_the_market(self):
+        oita = dict(leg(0, 1.92, 0.63), event="Oita v Kofu", pick="Oita")   # fair ~0.50
+        ok = dict(leg(1, 1.43, 0.62), event="A v B", pick="A")
+        unc = dict(leg(2, 1.25, 0.80, sport="cfb"), event="UNC v Syracuse", pick="UNC", listOff=True)
+        out = G.avoid_list([oita, ok, unc])
+        self.assertEqual([a["pick"] for a in out], ["Oita", "UNC"])
+        self.assertEqual(out[0]["kind"], "gap")
+
+    def test_no_forced_groups(self):
+        self.assertEqual(G.MIN_GROUPS, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

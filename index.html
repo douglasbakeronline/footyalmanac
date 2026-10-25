@@ -438,6 +438,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l .c{font:12px var(--f-num);text-align:right;color:var(--ink-2)}
 .og-l .o small.best{display:block;font:600 10.5px var(--f-ui);color:var(--home);letter-spacing:.01em;line-height:1.3;margin-top:2px}
 .og-h .od span.best{display:block;margin-top:2px;font-weight:600;color:var(--home)}
+@media (max-width:480px){
+  .og-l{grid-template-columns:40px minmax(0,1fr) 66px 34px;gap:6px;padding:8px 10px}
+  .og-l .o small.best{font-size:10px}
+}
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
@@ -447,6 +451,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 #ogDay button .n{margin-left:5px;font:600 11px var(--f-num);color:var(--mute-ink,var(--mute))}
 #ogDay button[aria-pressed="true"] .n{color:var(--yellow)}
 #ogDay button.none{color:var(--mute-ink,var(--mute));font-weight:500}
+#tbDay button .n{margin-left:5px;font:600 11px var(--f-num);color:var(--mute-ink,var(--mute))}
+#tbDay button[aria-pressed="true"] .n{color:var(--yellow)}
+#tbDay button.none{color:var(--mute-ink,var(--mute));font-weight:500}
 .og-st{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap;padding:6px 13px;border-bottom:1px solid var(--rule-soft);font-size:11.5px;color:var(--mute-ink,var(--mute))}
 .og-st b{font:700 10px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border:1px solid currentColor}
 .og-st b.holding{color:var(--home)}
@@ -889,6 +896,39 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   letter-spacing:.01em;text-transform:uppercase;
 }
 
+
+/* ---------- Today's bets (25 Oct 2026) ---------- */
+.tb-h{margin-top:30px;padding-bottom:6px;border-bottom:1px solid var(--ink);font-family:var(--f-display);font-weight:400;
+  font-size:18px;letter-spacing:.02em;text-transform:uppercase;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.tb-h small{font-family:var(--f-ui);font-size:12px;letter-spacing:0;text-transform:none;color:var(--mute)}
+.tb-empty{margin-top:12px}
+.tb-rules{margin:10px 0 0 18px;font-size:13.5px;color:var(--ink-2);line-height:1.5}
+.tb-rules li{margin-bottom:6px}
+.tb-older{margin-top:14px}
+.tb-older summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--ink-2)}
+.tb-avoid,.tb-rows{margin-top:12px;border:1px solid var(--rule);background:var(--surface)}
+.tb-row{display:grid;grid-template-columns:72px minmax(0,1fr) 52px;gap:10px;align-items:baseline;padding:9px 12px;border-top:1px solid var(--rule-soft)}
+.tb-row:first-child{border-top:0}
+.tb-v{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;justify-self:start}
+.tb-row.back .tb-v{color:var(--home)}
+.tb-row.caution .tb-v{color:var(--draw-ink,#7a5c12)}
+.tb-row.avoid .tb-v,.tb-row.unknown .tb-v{color:var(--away)}
+.tb-m b{display:block;font-size:14px}
+.tb-m small{display:block;font-size:12px;color:var(--mute);line-height:1.4;margin-top:1px}
+.tb-m small.tb-why{color:var(--ink-2)}
+.tb-p{font:600 14px var(--f-num);text-align:right}
+.tb-check{margin-top:12px;display:grid;gap:12px}
+.tb-check textarea{width:100%;font:14px var(--f-ui);padding:10px 12px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);resize:vertical;box-sizing:border-box}
+.tb-hint{font-size:13px;color:var(--mute)}
+.tb-sum{margin-top:10px;font-size:13.5px;color:var(--ink-2)}
+.tb-proof{margin-top:12px;display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule)}
+.tb-proof>div{background:var(--surface);padding:10px 12px}
+.tb-proof span{display:block;font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.tb-proof b{display:block;font:600 22px var(--f-num);margin:2px 0}
+.tb-proof small{font-size:12px;color:var(--ink-2);line-height:1.4}
+.tb-foot{margin-top:16px;font-size:12px;color:var(--mute)}
+#today .og-grid{grid-template-columns:minmax(0,1fr);gap:18px}
+#today .og{min-width:0}
 /* ---------- expanded detail ---------- */
 .detail{background:#f3ead6;border-bottom:1px solid var(--ink);padding:16px 18px 18px}
 .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
@@ -1134,7 +1174,8 @@ footer b{color:var(--ink-2)}
   </div>
 </header>
 <nav class="views" id="views" aria-label="Boards">
-  <button data-view="list" aria-pressed="true">Daily List</button>
+  <button data-view="today" aria-pressed="true">Today's bets</button>
+  <button data-view="list" aria-pressed="false">Daily List</button>
   <button data-view="odds" aria-pressed="false">Odds</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
@@ -1192,6 +1233,7 @@ footer b{color:var(--ink-2)}
 </div>
 
 <main id="days"></main>
+<section id="today" hidden></section>
 <section id="list" hidden></section>
 <section id="odds" hidden></section>
 <section id="starred" hidden></section>
@@ -1876,6 +1918,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     if(!$("#starred").hidden) renderStarred();
     if(!$("#list").hidden) renderList();
     if(!$("#odds").hidden) renderOdds();
+    if(!$("#today").hidden) renderToday();
   });
 
   line.appendChild(star);
@@ -2600,6 +2643,7 @@ const accLine = a => a ? `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.h
   <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.` : "";
 
 function rerenderOpen(){
+  if(!$("#today").hidden) renderToday();
   if(!$("#odds").hidden) renderOdds();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
   if(!$("#tennis").hidden) renderTennis();
@@ -3527,6 +3571,163 @@ function renderOdds(){
   $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
 }
 
+
+/* ---------- Today's bets (25 Oct 2026) ----------
+   Douglas, after a losing weekend: "a rebuild that takes in all the learnings
+   and surfaces what serves our purpose of making money". The front page now
+   answers three questions for the day: what qualifies to place, what to
+   leave out, and whether a slip someone is about to place has a weak pick in
+   it. Every number comes from groupings.py and the boards; nothing new is
+   modelled here. The rules it applies, from the weekend and the archive:
+   1. only groups that qualify; a blank day is the right answer
+   2. never a pick the model rates well above the bookmakers (it lost most)
+   3. never a sport kept off the Daily List on its live record
+   4. few picks: every extra pick adds the bookmaker's margin again
+   5. take the best price on offer
+   6. judge by the closing price and the profit record, not by one day */
+const TB_GAP = 0.08;
+function tbNorm(s){
+  return String(s || "").normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase()
+    .replace(/\b(\d+\/\d+|evs|evens|\d+\.\d+)\b/g, " ")
+    .replace(/\b(fc|afc|cf|sc|ac|fk|sk|cd|the|club|90 minutes|match betting|money line|acca boost|live)\b/g, " ")
+    .replace(/[^a-z0-9 ]/g, " ").replace(/\s+/g, " ").trim();
+}
+// The picks a typed line could mean: priced picks first (they carry the
+// bookmakers' chance), then the football board's favourite for a club.
+function tbFind(line){
+  const q = tbNorm(line); if(q.length < 3) return null;
+  const hit = (name) => { const n = tbNorm(name); return n && (n === q || n.includes(q) || q.includes(n)); };
+  const pool = (OG && OG.check) || [];
+  const c = pool.find(x => hit(x.k));
+  if(c) return {pick:c.k, event:c.e, sport:c.s, date:c.d, odds:c.o, fair:c.f, model:c.m, off:!!c.x};
+  for(const day of upcoming){
+    for(const g of day.games){
+      const side = hit(g.home.name) ? "h" : hit(g.away.name) ? "a" : null;
+      if(!side) continue;
+      const i = side === "h" ? 0 : 2;
+      return {pick: side === "h" ? g.home.name : g.away.name, event:`${g.home.name} v ${g.away.name}`, sport:"football",
+        date:day.date, model:g.p[side], fair: g.market ? g.market.p[i] : null, odds: g.market && g.market.avg ? g.market.avg[i] : null,
+        celtic:!!g.celtic, unrated:!!g.unrated, fav: g.p[side] >= Math.max(g.p.h, g.p.d, g.p.a)};
+    }
+  }
+  if(SD && SD.sports) for(const [k, sp] of Object.entries(SD.sports)) for(const g of sp.games || []){
+    const side = hit(g.home) ? g.home : hit(g.away) ? g.away : null;
+    if(!side) continue;
+    const pm = side === g.home ? g.pHome : 1 - g.pHome;
+    return {pick:side, event:`${g.home} v ${g.away}`, sport:k, model:pm, fair:null, odds:null, off:!!sp.listOff};
+  }
+  return null;
+}
+function tbVerdict(m){
+  if(!m) return {v:"unknown", why:["Not on the board: the almanac has no read on it, so it is a guess."]};
+  const why = [];
+  let v = "back";
+  if(m.fav === false){ v = "avoid"; why.push("The model does not favour this side."); }
+  if(m.unrated){ v = "avoid"; why.push("A side has no rating: the model is blind here."); }
+  if(m.celtic){ v = "avoid"; why.push("Celtic's Law: promoted side, cup tie across divisions or thin history."); }
+  if(m.off){ v = "avoid"; why.push("Its sport is off the Daily List: live picks have landed well under their tested rate."); }
+  if(m.fair != null && m.model - m.fair >= TB_GAP){
+    if(m.model < 0.70){ v = "avoid";
+      why.push(`The model (${pct(m.model)}%) sits ${Math.round((m.model - m.fair) * 100)} points above the bookmakers (${pct(m.fair)}%): the pattern that has lost most.`); }
+    else { if(v === "back") v = "caution";
+      why.push(`The model (${pct(m.model)}%) is ${Math.round((m.model - m.fair) * 100)} points above the bookmakers (${pct(m.fair)}%); trust their number.`); } }
+  const p = m.fair != null ? Math.min(m.fair, m.model + 0.05) : m.model;
+  if(v === "caution" && m.fair != null && m.model >= 0.70) { /* already explained */ }
+  else if(v === "back" && p < 0.55){ v = "caution"; why.push(`About ${pct(p)}% to land: closer to a coin flip than a banker.`); }
+  else if(v === "back" && p < 0.62){ v = "caution"; why.push(`About ${pct(p)}% to land: fine alone, a weak link in a long slip.`); }
+  if(v === "back") why.push(`About ${pct(p)}% to land${m.fair != null ? ", model and bookmakers agree" : ""}.`);
+  return {v, why, p};
+}
+let TB_TEXT = (() => { try { return localStorage.getItem("tb-slip") || ""; } catch(e) { return ""; } })();
+function tbCheckHtml(){
+  const lines = TB_TEXT.split(/\n|,/).map(x => x.trim()).filter(x => x.length >= 3);
+  if(!lines.length) return `<p class="tb-hint">Type or paste one pick per line (a team or player name; prices are ignored).
+    Each is matched to the almanac and marked Back, Caution or Avoid.</p>`;
+  const rows = lines.map(l => { const m = tbFind(l); return {l, m, r: tbVerdict(m)}; });
+  const known = rows.filter(x => x.r.p != null);
+  const all = known.reduce((a, x) => a * x.r.p, 1);
+  const bad = rows.filter(x => x.r.v === "avoid" || x.r.v === "unknown").length;
+  return `<div class="tb-rows">${rows.map(x => `<div class="tb-row ${x.r.v}">
+      <span class="tb-v">${{back:"Back", caution:"Caution", avoid:"Avoid", unknown:"No read"}[x.r.v]}</span>
+      <span class="tb-m"><b>${ogEsc(x.m ? x.m.pick : x.l)}</b>${x.m ? `<small>${ogEsc(x.m.event)} · ${ogEsc(OG_SPORT[x.m.sport] || x.m.sport)}</small>` : ""}
+        <small class="tb-why">${x.r.why.map(ogEsc).join(" ")}</small></span>
+      <span class="tb-p">${x.r.p != null ? pct(x.r.p) + "%" : "–"}</span></div>`).join("")}</div>
+    <div class="tb-sum">${known.length ? `<b>${known.length === rows.length ? "All" : known.length + " of " + rows.length} together: about ${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>, roughly 1 in ${Math.max(1, Math.round(1 / all))}. ` : ""}${bad ? `Take out the ${bad} marked Avoid or No read first.` : "No pick is flagged."}</div>`;
+}
+function tbRecord(){
+  const R = OG && OG.record; if(!R) return "";
+  const o = R.strict || {}, m = R.multiplier || {}, c = (R.overall || {}).clv;
+  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked}` : "none settled yet";
+  return `<div class="tb-proof">
+    <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "counting from 25 October: the early sign of a real edge"}</small></div>
+    <div><span>Doubles and Trebles</span><b>${o.settled ? `${o.won} / ${o.settled}` : "–"}</b><small>${roi(o)}</small></div>
+    <div><span>Multipliers</span><b>${m.settled ? `${m.won} / ${m.settled}` : "–"}</b><small>${roi(m)}</small></div>
+    <div><span>Model v bookmakers</span><b>Not yet</b><small>on 909 archived picks the bookmakers priced better; only the best price has paid</small></div>
+  </div>`;
+}
+function renderToday(){
+  const host = $("#today"); if(!host) return;
+  if(!OG || !(OG.days || []).length){
+    host.innerHTML = `<div class="lede"><h2>Today's bets</h2></div><div class="empty">No groups in this build yet. They appear after the next build.</div>`;
+    return;
+  }
+  if(!OG_DAY || !OG.days.some(d => d.date === OG_DAY)) OG_DAY = OG.days[0].date;
+  const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
+  const live = g => g.status !== "underway";
+  const strict = day.groups.filter(g => live(g) && (g.name === "Double" || g.name === "Treble"));
+  const mult = day.groups.filter(g => live(g) && String(g.name).startsWith("Multiplier"));
+  const other = day.groups.filter(g => live(g) && !strict.includes(g) && !mult.includes(g));
+  const avoid = day.avoid || [];
+  const nPlace = d => d.groups.filter(g => live(g) && (g.name === "Double" || g.name === "Treble" || String(g.name).startsWith("Multiplier"))).length;
+  host.innerHTML = `<div class="lede"><h2>Today's bets</h2>
+      <p>What qualifies to place, what to leave out, and a checker for any slip before you place it. Every group here
+      passed the almanac's rules; on a day when nothing does, nothing is shown, and sitting out is the right call.</p>
+      <details class="how"><summary>The rules, from this weekend and the archive</summary>
+        <ol class="tb-rules">
+          <li><b>Only what qualifies.</b> Groups are no longer forced to three a day; the weekend's losses came from the weaker picks used to fill them.</li>
+          <li><b>Never back a pick the model rates well above the bookmakers.</b> On 909 archived picks, those landed at the bookmakers' rate, not the model's (Oita Trinita: model 63%, bookmakers 50%, lost).</li>
+          <li><b>Never back a sport kept off the Daily List</b> (college football, tennis): their live picks have landed well under their tested rate (North Carolina lost).</li>
+          <li><b>Fewer picks.</b> Each extra pick adds the bookmaker's margin again, and one late goal ends the slip. The weekend's one winner was five short favourites; the six-, seven- and ten-folds all lost on one pick.</li>
+          <li><b>Take the best price.</b> Worth about 3p in the pound on the archive, the one edge that needs no prediction. Each pick below shows it.</li>
+          <li><b>Judge by weeks, not days.</b> The tiles at the foot of this page grow every day: the closing price shows an edge first, the profit record proves it.</li>
+        </ol></details></div>
+    <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nPlace(d);
+        return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
+      <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+
+    <h3 class="tb-h">Built to land <small>Double and Treble: the strictest picks, 75%+ on every read</small></h3>
+    ${strict.length ? `<div class="og-grid">${strict.map(ogCard).join("")}</div>`
+      : `<div class="empty tb-empty">Nothing strict enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet: prices open nearer the day" : ""}.</div>`}
+
+    <h3 class="tb-h">Multipliers <small>three or four picks each at 60%+ by the bookmakers, about 3x, land about one time in four</small></h3>
+    ${mult.length ? `<div class="og-grid">${mult.map(ogCard).join("")}</div>`
+      : `<div class="empty tb-empty">No Multiplier qualifies on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}.</div>`}
+    ${other.length ? `<details class="tb-older"><summary>${other.length} older group${other.length === 1 ? "" : "s"} published before the rules changed (higher risk)</summary>
+      <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
+
+    <h3 class="tb-h">Leave these out <small>picks that look tempting but carry the losing patterns</small></h3>
+    ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>
+        <span class="tb-m"><b>${ogEsc(a.pick)}</b><small>${ogEsc(a.event)} · ${ogEsc(a.comp || OG_SPORT[a.sport] || a.sport)}${a.when ? " · " + ogTime(a) : ""}</small>
+        <small class="tb-why">${a.kind === "gap" ? `Model ${pct(a.model)}%, bookmakers ${pct(a.fair)}%: ${Math.round((a.model - a.fair) * 100)} points apart${a.level === "caution" ? ". At this strength the archive is too thin to call it; trust the bookmakers' number." : ", the pattern that lost most."}`
+          : `Model ${pct(a.model)}%, but its sport is off the Daily List on its live record.`}</small></span>
+        <span class="tb-p">${a.odds.toFixed(2)}</span></div>`).join("")}</div>`
+      : `<div class="empty tb-empty">No flagged picks among the priced games on ${fmtDay(day.date)}.</div>`}
+
+    <h3 class="tb-h">Check a slip <small>before you place it</small></h3>
+    <div class="tb-check"><textarea id="tbSlip" rows="5" placeholder="Astana&#10;Club Brugge&#10;Minnesota Vikings" spellcheck="false" autocomplete="off">${ogEsc(TB_TEXT)}</textarea>
+      <div id="tbOut" aria-live="polite">${tbCheckHtml()}</div></div>
+
+    <h3 class="tb-h">Is it working? <small>the honest scoreboard</small></h3>
+    ${tbRecord()}
+    <p class="tb-foot">Prices are bookmaker averages from the latest build and will have moved; the best price and its bookmaker
+      are shown where known. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
+  ogFill(host);
+  host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
+  $("#tbDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderToday(); };
+  $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
+  $("#tbSlip").oninput = e => { TB_TEXT = e.target.value; try { localStorage.setItem("tb-slip", TB_TEXT); } catch(err) {} $("#tbOut").innerHTML = tbCheckHtml(); };
+}
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -3538,6 +3739,7 @@ $("#views").addEventListener("click", e=>{
   const tennis = v === "tennis";
   const list = v === "list";
   const odds = v === "odds";
+  const today = v === "today";
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
   $("#days").hidden = !fixtures;
@@ -3548,10 +3750,12 @@ $("#views").addEventListener("click", e=>{
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
   $("#odds").hidden = !odds;
+  $("#today").hidden = !today;
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
   if(odds) renderOdds();
+  if(today) renderToday();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   window.scrollTo({top:0});
@@ -3583,7 +3787,9 @@ document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
   const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
   if(!sp || (!(sp.games || []).length && !graded)) b.hidden = true;
 });
-$('#views button[data-view="list"]').click();
+// 25 Oct 2026, Douglas: the front page is Today's bets (the day's placeable
+// slips, picks to avoid, the slip checker). The Daily List is one tap away.
+$('#views button[data-view="today"]').click();
 })();
 </script>
 </body>

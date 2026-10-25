@@ -156,7 +156,11 @@ DAYS_AHEAD = 3
 # than WIDE_ABOVE_BOOK above the market; failing that, Daily List picks with
 # no bookmaker price (an estimated price, marked). Labelled "Higher risk",
 # graded under their own names, never mixed into the strict record.
-MIN_GROUPS = 3
+# 25 Oct 2026, Douglas: "only show what qualifies". The weekend's losses came
+# from forced, weaker picks, so Wider groups no longer fill a day to three:
+# a day with no qualifying group shows none. Wider kinds stay defined so the
+# record keeps grading the ones already published.
+MIN_GROUPS = 0
 WIDE_KINDS = [("Wider Double", 2, 0.40, 1.10, 3.5), ("Wider Treble", 3, 0.30, 1.20, 4.5),
               # 22 Oct 2026: at 2.00+ the strongest picks (80%+) are too short to
               # group in threes (three pay ~1.69), so four of them make one: ~2.0,
@@ -300,7 +304,8 @@ def legs(dates):
                     "players": [m.get("playerA"), m.get("playerB")],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "date": d, "id": m.get("id"),
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
-                    "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN})
+                    "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
+                    "listOff": bool((td.get("list") or {}).get("off"))})
     sd = read_js("sports-data.js") or {}
     for key, sp in (sd.get("sports") or {}).items():
         if not sp.get("published"): continue
@@ -313,7 +318,7 @@ def legs(dates):
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
                         "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
-                        "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN})
+                        "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN, "listOff": bool(sp.get("listOff"))})
     return out
 
 # ---------- prices ----------
@@ -747,6 +752,10 @@ def mult_fault(l):
     """Why a leg cannot go in a Multiplier, in plain words, or None
     (24 Oct 2026). See MULT_KINDS for the evidence."""
     if MULT_SPORTS and l.get("sport") not in MULT_SPORTS: return f"{l['pick']}: not a Multiplier sport"
+    # 25 Oct 2026: a sport kept off the Daily List for its live record (college
+    # football, tennis) is kept out of the Multipliers too. North Carolina, a
+    # college football leg, lost Douglas a five-fold on 24 Oct.
+    if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
     if not MULT_ODDS[0] <= l["odds"] <= MULT_ODDS[1]:
         return f"{l['pick']}: price {l['odds']:.2f}, outside {MULT_ODDS[0]:.2f} to {MULT_ODDS[1]:.2f}"
@@ -1100,6 +1109,42 @@ def settle(l, idx):
     sc = g.get("score")
     return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), ("-".join(map(str, sc)) if isinstance(sc, list) else sc)
 
+AVOID_GAP = 0.08      # the model this far above the market: the pattern that lost most
+AVOID_MIN = 0.55      # only picks someone might back (Lean or better)
+
+def avoid_list(dl, limit=12):
+    """Picks to avoid for one day (25 Oct 2026). Two kinds, both from the
+    weekend's losses and the archive:
+      gap      the model sits AVOID_GAP+ above the bookmakers' fair chance.
+               On 909 archived picks, 5-10 points above landed 47%, 10+ 42%,
+               at the market's rate, not the model's (Oita Trinita, 63% v 50%,
+               lost a five-fold on 25 Oct).
+      off      a strong-looking pick from a sport kept off the Daily List on its
+               live record (college football, tennis).
+    Most suspect first."""
+    out = []
+    for l in dl:
+        if l.get("est") or l.get("fair") is None or l["pModel"] < AVOID_MIN: continue
+        gap = l["pModel"] - l["fair"]
+        if gap >= AVOID_GAP:
+            # 70%+ picks: the archive has only 5 with this gap (all won), so
+            # they are marked caution, not avoid; under 70% it is 31 picks
+            # quoted 61% that landed 35%.
+            out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
+                        "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "gap",
+                        "level": "caution" if l["pModel"] >= 0.70 else "avoid", "score": gap})
+        elif l.get("listOff") and l["pModel"] >= 0.70:
+            out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
+                        "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "off", "level": "avoid", "score": 0.05})
+    return sorted(out, key=lambda x: (x["level"] != "avoid", -x["score"]))[:limit]
+
+def check_pool(L):
+    """Every priced pick, compact, for the page's slip checker (25 Oct 2026):
+    paste a slip, see each pick's model and bookmaker chance and any flag."""
+    return [{"s": l["sport"], "e": l["event"], "k": l["pick"], "d": l["date"], "o": l["odds"],
+             "f": l.get("fair"), "m": l["pModel"], "x": 1 if l.get("listOff") else 0}
+            for l in L if not l.get("est") and l.get("fair") is not None]
+
 def update_closing(L, now, dates):
     """Closing prices for the record (25 Oct 2026, Douglas: "I need the model
     to beat the bookies' odds"). On every build, each archived leg that has not
@@ -1198,7 +1243,9 @@ def main():
     if "--grade" in sys.argv:
         rec = grade()
         cur = load("groupings.json")
-        if cur: cur.pop("pool", None); write_page(cur, rec)
+        if cur:
+            pool = cur.pop("pool", None) or {}
+            write_page(dict(cur, check=check_pool([l for v in pool.values() for l in v])), rec)
         print(f"groupings record: {rec['overall']}", file=sys.stderr); return
     probe = "--probe" in sys.argv
     now = datetime.now(timezone.utc)
@@ -1226,6 +1273,7 @@ def main():
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway")},
                      "previously": len(pd.get("groups") or []) if pd else None,
+                     "avoid": avoid_list(dl),
                      "dropped": sum(1 for e in log if e["at"] == iso(now))})
         report.setdefault("review", {})[d] = days[-1]["review"]
     out = {"generated": iso(now), "bands": BANDS,
@@ -1245,7 +1293,7 @@ def main():
     if days and days[0]["date"] == today.isoformat(): archive(days[0], out["generated"])
     update_closing(L, now, [(today - timedelta(days=1)).isoformat(), today.isoformat()])
     record = grade()
-    write_page(out, record)
+    write_page(dict(out, check=check_pool(L)), record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
     for d in days:
