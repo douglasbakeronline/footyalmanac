@@ -70,6 +70,16 @@ REVIEW_DAYS = 14
 # Celtic's Law drops a fixture one rung: flagged rows measurably underperform
 # their quoted number, so they are not allowed to claim the same tier.
 TIERS = [(0.70, 3, "Strong"), (0.62, 2, "Firm"), (0.55, 1, "Lean"), (0.00, 0, "No read")]
+# Recalibrated 2025/26 backtest hit rate per tier, shown beside the live rate.
+# The page reads the ladder from record.json ("ladder"); its own copy of TIERS
+# is only a fallback for a page built without a record, so this is the one
+# definition to change (25 Oct 2026).
+TIER_BACKTEST = {"Strong": "79%", "Firm": "66%", "Lean": "61%", "No read": "44%"}
+
+
+def ladder():
+    return [{"min": lo, "k": k, "name": name, "was": TIER_BACKTEST[name]} for lo, k, name in TIERS]
+
 
 
 def tier_of(confidence, celtic, unrated=False):
@@ -571,6 +581,7 @@ def main():
         "range": {"from": min((r["date"] for r in rows), default=None),
                   "to": max((r["date"] for r in rows), default=None)},
         "model": model_card(rows),
+        "ladder": ladder(),
         "tiers": tier_table(rows),
         # The Daily List on its own. Only fixtures archived with the flag set,
         # which means from the day the list was first published: membership is

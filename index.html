@@ -1584,7 +1584,7 @@ $("#sort").addEventListener("click", e=>{
    own backtested hit rates across 5,281 fixtures in 2025/26, so the label is a
    measurement rather than a description. Celtic's Law drops a fixture one band,
    because flagged fixtures measurably underperform their quoted confidence. */
-const TIERS = [
+const TIERS = (window.__RECORD__ && window.__RECORD__.ladder) || [
   {min:0.70, k:3, name:"Strong",  was:"79%"},
   {min:0.62, k:2, name:"Firm",    was:"66%"},
   {min:0.55, k:1, name:"Lean",    was:"61%"},

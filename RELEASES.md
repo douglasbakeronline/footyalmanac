@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## One tier ladder, 25 Oct (tag pending)
+
+**What changed:** `score.py` is now the only definition of the confidence tiers: `TIERS` plus `TIER_BACKTEST` are written to `record.json` as `ladder`, and `index.html` reads that, keeping its literal only as a fallback for a page built without a record. `tests/test_ladder.py` fails if the fallback drifts. Rule 7 and the open item updated in CLAUDE.md. No number changes.
+**Files:** score.py, index.html, tests/test_ladder.py, CLAUDE.md, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Full review: 21 fixes from the 25 Oct audit, 25 Oct (tag pending)
 
 **What changed:** the review in `claude/full-review-2026-10-25.md` found 22 bugs; 21 are fixed here, one commit each, all behind the test suite (508 tests) and `nametest.py`. Nothing fits anything on the live record and no model constant moves.

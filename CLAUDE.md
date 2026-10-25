@@ -265,8 +265,10 @@ These were each learned the hard way. Do not break them without asking.
    spelling, fix it and add the spelling to `LIVE_NAMES`. In normalisation,
    aliases before city exonyms, and founding years are stripped only at the
    last-resort step, never in the normalised form.
-7. **The tier ladder lives in two places**: `TIERS` in `index.html` and in
-   `score.py`. Change one, change the other.
+7. **The tier ladder has one definition**: `score.TIERS` (with
+   `TIER_BACKTEST`), written to `record.json` as `ladder` and read by the page
+   (25 Oct 2026). `index.html`'s `TIERS` literal is only the fallback for a page
+   built without a record; `tests/test_ladder.py` keeps it in step.
 8. **Automation first.** No manual data entry. Manual injury input was built
    and removed on purpose. `adjustments.json` stays empty.
 9. **Honesty over confidence.** Celtic's Law fixtures are flagged and demoted,
@@ -328,7 +330,6 @@ zero. The real gap was four months of missing results, now fixed. See
   second prior season).
 - Whether unrated rows should compete for the top of the board on raw
   confidence. Currently they do, deliberately. Douglas's call.
-- Tier ladder duplication (rule 7) could be collapsed to one definition.
 - "Lean or better only" filter on the fixtures board, not built.
 - Tennis results from ESPN carry no surface and go in as hard court; for ATP
   that hurt over the grass season (`claude/tennis-ratings-gap-2026-10-08.md`).
