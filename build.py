@@ -17,8 +17,10 @@ import sources as S
 from bands import band_rate
 import rankings as RK
 
-SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
-PREV = ["2025-26", "2024-25"]
+# The global split-year season, from today's date (engine.current_season;
+# 25 Oct 2026, bug 6). ALMANAC_SEASON still overrides it for a replay.
+SEASON = os.environ.get("ALMANAC_SEASON") or E.current_season("en.1")
+PREV = E.season_prev(SEASON)
 CODES = [c for c in E.LEAGUES if c not in E.AF_DUPLICATES]
 
 # Manual per-team adjustment on expected goals. 1.0 = no change.
@@ -110,6 +112,19 @@ def solve_goals(grid, pick, target):
 # show these bands, its own, and may reach the reserve.
 ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
 NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
+# A club with no prior season stays flagged under Celtic's Law until it has
+# this many games this season (25 Oct 2026, bug 11). Matches the point at
+# which engine.blend has mostly stopped leaning on the (absent) prior.
+NO_PRIOR_GAMES = 6
+
+
+def no_prior_reason(name, prow, played):
+    """The Celtic's Law reason for a club with no prior season and fewer than
+    NO_PRIOR_GAMES games this season, or None. (A side with nothing played
+    at all is "unrated" and never reaches the board.)"""
+    if prow is not None or not played or played >= NO_PRIOR_GAMES:
+        return None
+    return f"{name} has no prior season on file, rated from {played} game{'' if played == 1 else 's'} this season"
 # New competitions not yet replayed: on their board, off the Daily List and
 # the reserve (the standing rule for a new league).
 NEW_BOARD_ONLY = {"en.faq"} | set(S.AF_NEW)   # AF_NEW: Croatia, Hungary, Serbia, Ukraine, Korea (21 Oct 2026)
@@ -128,6 +143,15 @@ def accuracy_for(conf, intl, ranked=False, league=None):
         return dict(b, season=season) if b else None
     if league in S.AF_CUPS:
         return None                      # no replay yet: no backtest band to quote
+    meta = E.LEAGUES.get(league) or {}
+    if league is not None and meta.get("cup") and not meta.get("international"):
+        # Native cups and continental ties (FA Cup, EFL Trophy, eu.*, UWCL,
+        # CAF CL...) were quoting the core-league rate, which was never
+        # measured on them; cup favourites land far under it (56.5% v 69.7%,
+        # 19 Oct 2026). No family of its own, no rate (25 Oct 2026, bug 12).
+        return None
+    if league in S.AF_NEW:
+        return None                      # new competitions, no replay yet (NEW_BOARD_ONLY)
     if league in S.AF_EXTRA:
         return tag(band_rate(conf, ACCURACY_BANDS_AFX), "2025, wider leagues")
     if league in NO_LIST:
@@ -671,7 +695,7 @@ def main():
                     help="skip walking this season for live-sourced competitions")
     args = ap.parse_args()
 
-    start = date.fromisoformat(args.start) if args.start else date.today()
+    start = date.fromisoformat(args.start) if args.start else E.uk_today()   # UK day, not UTC (bug 22)
     end = start + timedelta(days=args.days - 1)
 
     # Domestic cups on API-Football (6 Oct 2026): refresh the list at most
@@ -682,6 +706,13 @@ def main():
     # Premier League 2, for U21 sides' ratings (6 Oct 2026): one call a week.
     u21_doc = S.af_refresh_u21(log=cup_log)
     CODES.extend(c for c in S.register_u21(u21_doc) if c not in CODES)
+    # The wider leagues' seasons come from the API, not af-leagues.json
+    # (25 Oct 2026, bug 5): one /leagues call every three days.
+    season_log = []
+    for c, (old, new) in sorted(E.apply_af_seasons(S.af_refresh_seasons(log=season_log)).items()):
+        season_log.append(f"{c}: season {old} -> {new} (API-Football current)")
+    for line in season_log:
+        print(line if line.startswith("WARNING:") else f"  seasons: {line}", file=sys.stderr)
     for line in cup_log:
         print(f"  cups: {line}", file=sys.stderr)
 
@@ -953,6 +984,12 @@ def main():
             # rating is a placeholder, not a judgement. Usually a side promoted
             # from a division this build does not cover.
             "unrated": (prow is None and played == 0),
+            # No prior season but some games played: the rating is this
+            # season's handful of results shrunk toward average, not a
+            # judgement, so the fixture stays flagged under Celtic's Law
+            # until the side has NO_PRIOR_GAMES behind it (25 Oct 2026,
+            # bug 11: one match used to clear the flag).
+            "noPrior": (prow is None and 0 < played < NO_PRIOR_GAMES),
             "carriedFrom": src if carried else None,
             # The division these ratings actually come from — distinct from
             # carriedFrom, which is only set when a promoted side's rating
@@ -1329,6 +1366,8 @@ def main():
                 for side, t in (("home", hb), ("away", ab)):
                     if t["unrated"]:
                         reasons.append(f"{t['name']} has no rating on file")
+                    elif t.get("noPrior"):
+                        reasons.append(no_prior_reason(t["name"], None, t["played"]))
                     elif t["carriedFrom"]:
                         moved = E.LEAGUES[t["carriedFrom"]]
                         # Same tier is a sideways move (English step 3 clubs are

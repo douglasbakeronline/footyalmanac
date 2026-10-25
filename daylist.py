@@ -159,7 +159,10 @@ def attach_results(items, record, trec, srec):
         if it["sport"] == "football":
             g = fb.get((it["date"], it.get("league"), it["home"], it["away"]))
             if g and g.get("result"):
-                res = {"ok": bool(g.get("ok")), "void": False, "score": f"{g['result'][0]}-{g['result'][1]}"}
+                # strict: the pick landed ("won", 25 Oct 2026); an older record
+                # row has only "ok", which also counted a draw scoreline read
+                won = g["won"] if g.get("won") is not None else bool(g.get("ok")) and not g.get("drawRead")
+                res = {"ok": bool(won), "void": False, "score": f"{g['result'][0]}-{g['result'][1]}"}
         elif it["sport"] == "tennis":
             g = tn.get(str(it.get("id"))) or tn2.get((it["date"], it["home"], it["away"]))
             if g:

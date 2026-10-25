@@ -21,6 +21,14 @@
   index.html, with the Celtic's Law one-tier demotion. **Change one, change the other.**
 - `summarise()` now also emits `drawnOut`, `picks` and `actuals`.
 - record.json gains `tiers` (overall) and `days` (last 14 days, every graded fixture).
+- **25 Oct 2026 (bug 3, `claude/full-review-2026-10-25.md`):** `correct` / `accuracy`,
+  the tier `hit` and the band `hit` are strict, `score.won` (the pick landed). From
+  6 Oct to 25 Oct they also counted a predicted draw scoreline on a level game
+  (`score.correct`), which made the Football lede 67.6% where the pick had landed
+  50.3%. That figure is kept as `reads` / `readRate` (`quotedRead` its quoted side;
+  `readHit` / `expectedRead` on tiers and bands) and shown second, labelled. Per-game
+  rows carry `won` beside `ok`; the page's `fbWon` falls back to `ok && !drawRead` for
+  rows graded before the change. No key was renamed.
 
 ## Live calibration at the time of writing (232 graded)
 

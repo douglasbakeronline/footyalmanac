@@ -127,26 +127,78 @@ class Refresh(unittest.TestCase):
         with mock.patch.object(R, "_get", side_effect=AssertionError("fetched")):
             self.assertEqual(R.refresh_fifa(), cur)
 
-    def test_stale_file_takes_newest_release(self):
-        self.write(30, id_=100)
-        calls = []
-
+    @staticmethod
+    def fake_api(releases, calls, latest=None):
+        """A FIFA API: `releases` maps id -> date string; the dateless
+        overview names `latest`; other ids return no rankings."""
         def fake(url, timeout=20):
-            i = int(url.rsplit("id", 1)[1])
+            if "dateId" not in url:
+                calls.append("latest")
+                if latest is None:
+                    raise OSError("overview down")
+                return {"dates": [{"dateId": f"id{latest}"}]}
+            i = int(url.rsplit("dateId=id", 1)[1])
             calls.append(i)
-            if i in (103, 105):
-                return {"rankings": [{"lastUpdateDate": f"2026-10-{i - 100:02d}T00:00:00",
+            if i in releases:
+                return {"rankings": [{"lastUpdateDate": f"{releases[i]}T00:00:00",
                                       "rankingItem": {"name": "Spain", "rank": 1, "totalPoints": 1900 + i}}]}
             return {"rankings": []}
+        return fake
+
+    def test_stale_file_takes_newest_release(self):
+        base = R.FIFA_SEED
+        self.write(30, id_=base)
+        calls = []
+        fake = self.fake_api({base + 3: "2026-10-03", base + 5: "2026-10-05"}, calls)
         log = []
         with mock.patch.object(R, "_get", fake):
             new = R.refresh_fifa(scan=10, log=log)
-        self.assertEqual(new["id"], 105)
+        self.assertEqual(new["id"], base + 5)
         self.assertEqual(new["date"], "2026-10-05")
-        self.assertEqual(new["teams"]["Spain"], [1, 2005])
-        self.assertEqual(min(calls), 101)
-        self.assertEqual(json.load(open(self.path))["id"], 105)
+        self.assertEqual(new["teams"]["Spain"], [1, 1900 + base + 5])
+        self.assertEqual(min(i for i in calls if i != "latest"), base + 1)
+        self.assertEqual(json.load(open(self.path))["id"], base + 5)
         self.assertIn("new release", log[0])
+
+    def test_scan_starts_after_the_file_id_not_the_seed(self):
+        # Bug 4: the file sat at the seed id, so a scan from the seed could
+        # never pass it. The scan starts after max(seed, file id).
+        base = R.FIFA_SEED + 40
+        self.write(30, id_=base)
+        calls = []
+        fake = self.fake_api({base + 2: "2026-10-02"}, calls)
+        with mock.patch.object(R, "_get", fake):
+            new = R.refresh_fifa(scan=5)
+        self.assertEqual(new["id"], base + 2)
+        self.assertNotIn(R.FIFA_SEED + 1, calls)
+        self.assertEqual(min(i for i in calls if i != "latest"), base + 1)
+
+    def test_file_below_seed_scans_from_seed(self):
+        self.write(30, id_=100)
+        calls = []
+        fake = self.fake_api({}, calls)
+        with mock.patch.object(R, "_get", fake):
+            R.refresh_fifa(scan=3)
+        self.assertEqual(min(i for i in calls if i != "latest"), R.FIFA_SEED + 1)
+
+    def test_overview_latest_id_beats_the_scan_window(self):
+        # The dateless overview names a release far beyond the scan window.
+        base = R.FIFA_SEED
+        self.write(30, id_=base)
+        calls = []
+        fake = self.fake_api({base + 500: "2026-10-20"}, calls, latest=base + 500)
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            new = R.refresh_fifa(scan=5, log=log)
+        self.assertEqual(new["id"], base + 500)
+        self.assertEqual(calls[0], "latest")
+        self.assertIn(base + 500, calls)
+        self.assertEqual(json.load(open(self.path))["id"], base + 500)
+
+    def test_release_ids_parsing(self):
+        doc = {"dates": [{"dateId": "id15175"}, {"dateId": "id15190"}], "x": {"id": 7}, "s": "id15200"}
+        self.assertEqual(R._release_ids(doc), {15175, 15190, 15200})
+        self.assertEqual(R._release_ids({"rankings": []}), set())
 
     def test_nothing_newer_keeps_file_untouched(self):
         cur = self.write(30)
@@ -155,6 +207,29 @@ class Refresh(unittest.TestCase):
             self.assertEqual(R.refresh_fifa(scan=5, log=log), cur)
         self.assertEqual(json.load(open(self.path)), cur)
         self.assertIn("no newer", log[0])
+
+    def test_fetch_failure_is_logged_not_swallowed(self):
+        self.write(30)
+        log = []
+        with mock.patch.object(R, "_get", side_effect=OSError("down")):
+            R.refresh_fifa(scan=5, log=log)
+        failures = [l for l in log if "fetch failure" in l]
+        self.assertEqual(len(failures), 1)
+        self.assertIn("OSError: down", failures[0])
+
+    def test_stale_file_warns_loudly(self):
+        self.write(60)
+        log = []
+        with mock.patch.object(R, "_get", side_effect=OSError("down")):
+            R.refresh_fifa(scan=2, log=log)
+        self.assertTrue(any(l.startswith("WARNING:") and "60 days old" in l for l in log), log)
+
+    def test_file_under_45_days_does_not_warn(self):
+        self.write(30)
+        log = []
+        with mock.patch.object(R, "_get", side_effect=OSError("down")):
+            R.refresh_fifa(scan=2, log=log)
+        self.assertFalse(any(l.startswith("WARNING:") for l in log), log)
 
     def test_no_file_and_no_release(self):
         log = []

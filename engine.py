@@ -9,7 +9,25 @@ Everything here is deterministic and inspectable: no black boxes, every number a
 row shows on the dashboard is produced by a function in this file.
 """
 import json, os, re
+from datetime import date, datetime
 from math import exp, factorial, sqrt
+
+try:
+    from zoneinfo import ZoneInfo as _ZoneInfo          # Python 3.9+
+except ImportError:                                      # the local Python 3.7 Mac
+    _ZoneInfo = None
+
+
+def uk_today(now=None):
+    """Today's date in the UK, the day the site is anchored on (25 Oct 2026,
+    bug 22 of claude/full-review-2026-10-25.md: date.today() on the CI runner
+    is UTC, so the 00:10Z build in summer anchored on yesterday's UK date).
+    Matches daylist.py and groupings.py. Without zoneinfo, falls back to the
+    local date."""
+    if _ZoneInfo is None:
+        return date.today()
+    now = now or datetime.now(_ZoneInfo("UTC"))
+    return now.astimezone(_ZoneInfo("Europe/London")).date()
 
 # ---------------------------------------------------------------------------
 # League strength coefficients.
@@ -457,6 +475,122 @@ def _af_u21_doc():
 
 AF_U21 = register_u21(_af_u21_doc())
 
+# API-Football's own idea of each wider league's current season (25 Oct 2026,
+# bug 5 of claude/full-review-2026-10-25.md). af-leagues.json was written once
+# and 23 of its seasons had rolled: the finished season was fetched, nothing
+# was flagged, the league just left the board. sources.af_refresh_seasons asks
+# /leagues for seasons[].current (as af_refresh_cups does) and keeps the answer
+# in current/af-seasons.json, which the deploy commits; apply_af_seasons sets
+# each league's season and prev from it. The strings in af-leagues.json are
+# the fallback when the API has not answered yet.
+AF_SEASONS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-seasons.json")
+AF_SEASON_CODES = set()      # codes whose season the API sets (AF_EXTRA and the AF_NEW top flights)
+
+
+def season_label(year, split):
+    return _season_label(int(year), split)
+
+
+def season_prev(label, n=2):
+    """The n seasons before a season string, in the same style."""
+    y = int(label.split("-")[0])
+    split = "-" in label
+    return [season_label(y - k, split) for k in range(1, n + 1)]
+
+
+def apply_af_seasons(doc):
+    """Set season and prev on every league the document names, from the
+    API's current season. Returns {code: (old season, new season)} for the
+    ones that changed."""
+    changed = {}
+    for code, e in ((doc or {}).get("seasons") or {}).items():
+        m = LEAGUES.get(code)
+        if not m or m.get("cup") or m.get("u21") or not e.get("current"):
+            continue
+        split = e.get("split")
+        if split is None:
+            split = "-" in str(m.get("season", ""))
+        new = season_label(e["current"], split)
+        AF_SEASON_CODES.add(code)
+        if new != m.get("season"):
+            changed[code] = (m.get("season"), new)
+        m["season"], m["prev"], m["seasonSource"] = new, season_prev(new), "api"
+    return changed
+
+
+def _af_seasons_doc():
+    try:
+        with open(AF_SEASONS_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+AF_SEASONS = _af_seasons_doc()
+apply_af_seasons(AF_SEASONS)
+
+# The season every competition is playing, derived from today's date
+# (25 Oct 2026, bug 6 of claude/full-review-2026-10-25.md: 90 hand-written
+# season strings, and the calendar-year leagues would have priced on last
+# year's ratings from 1 Jan 2027 without a word). Split-year leagues roll on
+# 1 July ("2026-27"); calendar-year leagues on 1 January ("2026"). The strings
+# in LEAGUES now only say which kind a league is (a "season" with a hyphen is
+# split-year, without one calendar-year, none at all is split-year like the
+# global default); "calendar": True/False says it outright. Overrides, in
+# order: a season the API set (seasonSource "api", apply_af_seasons), then
+# "seasonFixed": True to keep a hand-written string as it is.
+SPLIT_ROLL_MONTH = 7
+
+
+def season_kind(code):
+    """'split' or 'calendar'."""
+    m = LEAGUES.get(code) or {}
+    if "calendar" in m:
+        return "calendar" if m["calendar"] else "split"
+    s = str(m.get("season") or "")
+    if re.fullmatch(r"\d{4}", s):
+        return "calendar"
+    return "split"
+
+
+def current_season(code, today=None):
+    """The season string competition `code` is playing on `today`."""
+    today = today or date.today()
+    m = LEAGUES.get(code) or {}
+    if m.get("season") and (m.get("seasonSource") == "api" or m.get("seasonFixed")):
+        return m["season"]
+    if season_kind(code) == "calendar":
+        return str(today.year)
+    y = today.year if today.month >= SPLIT_ROLL_MONTH else today.year - 1
+    return _season_label(y, True)
+
+
+def prev_seasons(code, today=None):
+    """The two seasons before the current one, in the same style."""
+    return season_prev(current_season(code, today))
+
+
+def roll_seasons(today=None):
+    """Set season and prev on every league from today's date, honouring the
+    overrides above. Cups and internationals carry no season of their own
+    (the build gives them the global one). Returns {code: (old, new)}."""
+    changed = {}
+    for code, m in LEAGUES.items():
+        if m.get("cup") or m.get("international") or m.get("u21") or m.get("ratingsOnly"):
+            continue
+        if "season" not in m and "calendar" not in m:
+            continue                      # split-year on the global default
+        new = current_season(code, today)
+        if new != m.get("season"):
+            changed[code] = (m.get("season"), new)
+        m["season"] = new
+        if m.get("seasonSource") != "api" and not m.get("seasonFixed"):
+            m["prev"] = season_prev(new)
+    return changed
+
+
+SEASON_ROLLED = roll_seasons()
+
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly
@@ -483,7 +617,7 @@ SHRINK_ON_TRANSFER = 10.0  # extra pull applied when a team changes division
 BLEND_K = 6.0              # current-season matches needed before new data outweighs the prior
 FORM_MAX = 0.05            # hard cap on how much last-5 form may move expected goals
 RHO = -0.06                # Dixon-Coles low-score correlation term
-MAX_GOALS = 10
+MAX_GOALS = 15   # was 10 until 25 Oct 2026: a 10x10 grid left up to 31% of the Poisson mass off it in lopsided ties (bug 21)
 
 # Temperature. Raw Poisson output from season-aggregate ratings is measurably
 # over-confident: in backtesting, matches priced at 90% came in around 77%.

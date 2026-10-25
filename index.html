@@ -809,6 +809,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .rrow[aria-expanded="true"],.xrow[aria-expanded="true"]{background:#f3ead6}
 .rrow[data-rx]:focus-visible,.xrow[data-rx]:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
 .mark.no{color:var(--away)}
+.mark.read{color:var(--mute)}
 .rrow.miss .club{color:var(--ink-2);font-weight:500}
 .rrow.miss .bar{opacity:.55}
 
@@ -1423,8 +1424,9 @@ const metaCells = [
 (() => {
   const o = R && R.overall, strong = R && (R.tiers || []).find(t => t.name === "Strong"), L = R && R.list;
   $("#fbLede").innerHTML = `<h2>Football</h2><p>${o && o.n >= 5
-    ? `Graded on <b>${o.n.toLocaleString("en-GB")}</b> games, every one published before kick-off: read right
-      <b>${pct(o.accuracy)}%</b> of the time, against ${pct(o.homeRate)}% for always backing the home side.${strong && strong.n
+    ? `Graded on <b>${o.n.toLocaleString("en-GB")}</b> games, every one published before kick-off: the pick landed
+      <b>${pct(o.accuracy)}%</b> of the time, against ${pct(o.homeRate)}% for always backing the home side${o.readRate != null
+        ? ` (<span class="thin">${pct(o.readRate)}% counting a predicted draw scoreline on a level game as a read</span>)` : ""}.${strong && strong.n
         ? ` Strong calls (70% or more) landed <b>${pct(strong.hit)}%</b> (${strong.n.toLocaleString("en-GB")} games).` : ""}
       Picks whose level landed 80% or more in testing go on the Daily List${L && L.n ? `; so far <b>${pct(L.accuracy)}%</b> of them came in (${L.n} games)` : ""}.`
     : "The record starts with the first graded games."}</p>`;
@@ -2294,7 +2296,7 @@ function renderList(){
     host.insertAdjacentHTML("beforeend", `
       <div class="list-past"><h3>Recent list results</h3><ul>${rows.slice(0, 30).map(g => `
         <li><span class="d">${fmtDay(g.d).split(",")[0]}</span>
-          <span class="${g.ok ? "ok" : "no"}">${g.ok ? "✓" : "✗"}</span>
+          <span class="${fbWon(g) ? "ok" : "no"}">${fbWon(g) ? "✓" : "✗"}</span>
           <span>${side(g)} to beat ${g.pick === "h" ? g.away : g.home} · ${pct(g.confidence)}%</span>
           <span class="sc">${g.result[0]}–${g.result[1]}</span></li>`).join("")}</ul></div>`);
   }
@@ -2478,7 +2480,8 @@ function resultDetailFootball(g, d){
   const L = lname(g.league) || {name:g.league, country:""};
   const vs = g.home + " v " + g.away;
   const side = (name, f) => `<div><h3>${name}</h3>${formLines(f)}</div>`;
-  const read = g.ok ? (g.drawRead ? "Right: the predicted scoreline was a draw and it finished level." : "Right: the top pick landed.")
+  const read = fbWon(g) ? "Right: the top pick landed."
+                    : g.drawRead ? "Wrong on the pick: the model backed a winner and it finished level, though its predicted scoreline was a draw (counted as a read, not a win)."
                     : g.actual === "d" ? "Wrong: the model backed a winner and it finished level." : "Wrong: the other side won.";
   return `<div class="detail rdetail">${gLinks([["Match report", `${vs} ${d} match report`], ["Highlights", `${vs} highlights`],
       ["Head to head", `${vs} head to head`], [`${L.name} table`, `${L.name} ${L.country} table`]])}
@@ -2511,13 +2514,17 @@ document.addEventListener("keydown", e => {
 });
 const rxAttr = html => ` data-rx="${resKey(html)}" role="button" tabindex="0" aria-expanded="false"`;
 
-const mark = ok => `<div class="mark ${ok?"ok":"no"}" aria-label="${ok?"correct":"wrong"}">${ok?"✓":"✗"}</div>`;
+const mark = (ok, read) => read && !ok
+  ? `<div class="mark read" aria-label="draw read, pick lost" title="The pick lost, but the predicted scoreline was a draw and it finished level: a read, not a win">≈</div>`
+  : `<div class="mark ${ok?"ok":"no"}" aria-label="${ok?"correct":"wrong"}">${ok?"✓":"✗"}</div>`;
+// A football row's strict result (the pick landed). Older record rows carry only "ok".
+const fbWon = g => g.won != null ? g.won : !!(g.ok && !g.drawRead);
 const OUTCOME = {h:"home win", d:"draw", a:"away win"};
 
 function resultRow(g, i){
   const L = lname(g.league) || {short:g.league, iso:"", country:""};
   const h = pct(g.p[0]), d = pct(g.p[1]), a = 100-h-d;
-  return `<div class="rrow${i%2?" alt":""}${g.celtic?" celtic":""}${g.ok?"":" miss"}"${rxAttr(resultDetailFootball(g, resState.day))}>
+  return `<div class="rrow${i%2?" alt":""}${g.celtic?" celtic":""}${fbWon(g)?"":" miss"}"${rxAttr(resultDetailFootball(g, resState.day))}>
     <div class="lg">${L.short}</div>
     <div class="side"><div class="club">${flag(L.iso,L.country)}<span>${g.home}</span></div></div>
     ${probBar(h, d, a, 15)}
@@ -2525,7 +2532,7 @@ function resultRow(g, i){
     <div class="sc act" title="final score">${g.result[0]}–${g.result[1]}</div>
     <div class="side away"><div class="club">${flag(L.iso,L.country)}<span>${g.away}</span></div></div>
     <div class="conf">${pct(g.confidence)}<span class="tier t${g.k}">${g.tier}</span>${g.celtic?`<span class="flagged" title="Celtic's Law: flagged before kick-off and dropped one tier">flagged</span>`:""}</div>
-    ${mark(g.ok)}
+    ${mark(fbWon(g), g.drawRead)}
   </div>`;
 }
 
@@ -2540,11 +2547,12 @@ function ladderTable(){
       <td>${l ? l.n : "—"}</td>
       <td>${l ? pct(l.hit)+"%" : "—"}</td>
       <td class="thin">${l ? (l.hit>=l.expected?"+":"")+Math.round((l.hit-l.expected)*100)+" pts" : "—"}</td>
+      <td class="thin">${l && l.readHit != null ? pct(l.readHit)+"%" : "—"}</td>
     </tr>`;
   }).join("");
   return `<table>
     <tr><th>Tier</th><th>Confidence</th><th>Backtest</th>
-        <th>Live picks</th><th>Live hit</th><th style="text-align:right">vs quoted</th></tr>
+        <th>Live picks</th><th>Pick landed</th><th style="text-align:right">vs quoted</th><th class="thin" title="Counting a predicted draw scoreline on a level game as a read">Reads</th></tr>
     ${rows}</table>`;
 }
 
@@ -2552,11 +2560,12 @@ function bandTable(){
   const b = (R && R.bands) || [];
   if(!b.length) return "";
   return `<table>
-    <tr><th>Quoted confidence</th><th>Fixtures</th><th>Average quote</th><th>Actually landed</th><th style="text-align:right">Error</th></tr>
+    <tr><th>Quoted confidence</th><th>Fixtures</th><th>Average quote</th><th>Pick landed</th><th style="text-align:right">Error</th><th class="thin" title="Counting a predicted draw scoreline on a level game as a read">Reads</th></tr>
     ${b.map(x=>`<tr>
       <td class="thin" style="font-family:var(--f-num);font-size:13px">${pct(x.from)}% – ${pct(x.to)}%</td>
       <td>${x.n}</td><td>${pct(x.expected)}%</td><td>${pct(x.hit)}%</td>
       <td>${x.hit>=x.expected?"+":""}${Math.round((x.hit-x.expected)*100)} pts</td>
+      <td class="thin">${x.readHit != null ? pct(x.readHit)+"%" : "—"}</td>
     </tr>`).join("")}</table>`;
 }
 
@@ -2975,7 +2984,7 @@ function listReviewDays(){
   (R_DAYS || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g),
     sport: "Football", comp: (lg(g.league) || {}).name || g.league, home: g.home, away: g.away,
     pick: side(g, g.pick), conf: g.confidence, tier: g.tier,
-    res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: g.ok ? "won" : "lost"})));
+    res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: fbWon(g) ? "won" : "lost"})));
   ((TT && TT.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g),
     sport: "Tennis", comp: [g.tour, g.tournament, g.round].filter(Boolean).join(" · "), home: g.playerA, away: g.playerB,
     pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: g.note || "",
@@ -3152,10 +3161,10 @@ function renderResults(){
 
     <div class="scoreline">
       <div class="${day.accuracy >= day.homeRate ? "good":"bad"}">
-        <span>Read right</span><b>${day.correct} / ${day.n}</b>
-        <small>${pct(day.accuracy)}% · ${pct(day.homeRate)}% if you always backed home</small></div>
+        <span>Pick landed</span><b>${day.correct} / ${day.n}</b>
+        <small>${pct(day.accuracy)}% · ${pct(day.homeRate)}% if you always backed home${day.readRate != null && day.reads !== day.correct ? ` · ${day.reads} reads (${pct(day.readRate)}%) counting draw scorelines` : ""}</small></div>
       <div><span>Drawn out</span><b>${day.drawnOut}</b>
-        <small>picked a winner, got a draw${day.drawReads ? ` · ${day.drawReads} more read as a draw, counted right` : ""}</small></div>
+        <small>picked a winner, got a draw${day.drawReads ? ` · ${day.drawReads} of them had a draw scoreline predicted (a read, not a win)` : ""}</small></div>
       <div><span>Exact scorelines</span><b>${day.exactScores}</b>
         <small>of ${day.n}</small></div>
       <div><span>Log loss</span><b>${day.logLoss.toFixed(3)}</b>
@@ -3199,10 +3208,10 @@ function renderResults(){
     flagged row is dropped one tier before it is labelled.` : ""}</p>
     <p>${R && R.overall ? `Across every graded fixture so far, the model almost never picks a
     draw: <em>${R.overall.picks.d}</em> draw picks against <em>${R.overall.actuals.d}</em> matches
-    that actually finished level. A game counts as right when the top pick landed, or when the
-    predicted scoreline was a draw and it finished level${R.overall.drawReads != null ? ` (<em>${R.overall.drawReads}</em> so far)` : ""};
-    the quoted side of every comparison adds the draw chance for those games, so it stays a fair test.
-    The other <em>${R.overall.drawnOut}</em> drawn-out fixtures are the single largest category of miss,
+    that actually finished level. A game counts as right only when the top pick landed. A predicted
+    draw scoreline on a game that finished level is shown separately as a <b>read</b>${R.overall.drawReads != null ? ` (<em>${R.overall.drawReads}</em> so far` : ""}${R.overall.readRate != null ? `; ${pct(R.overall.readRate)}% read right against ${pct(R.overall.accuracy)}% landed)` : (R.overall.drawReads != null ? ")" : "")};
+    it never counts toward the headline, the tiers or the bands, because you cannot back it.
+    The <em>${R.overall.drawnOut}</em> drawn-out fixtures are the single largest category of miss,
     and no amount of confidence in a favourite protects you from one.` : ""}</p></div>`;
 
   $("#dayseg").addEventListener("click", e=>{

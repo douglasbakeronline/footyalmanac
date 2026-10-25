@@ -72,16 +72,58 @@ def _get(url, timeout=20):
 # FIFA
 # ---------------------------------------------------------------------------
 
-def _fifa_release(i):
+FIFA_SEED = 15175          # the release on file when the scan was first written (20 Jul 2026)
+FIFA_LATEST_URL = "https://inside.fifa.com/api/ranking-overview?locale=en"   # dateless: the current release
+FIFA_STALE_DAYS = 45
+
+
+def _fifa_release(i, errors=None):
+    """One release by id, or None. The exception, if any, is appended to
+    `errors` as (id, "Type: message") so the caller can log it."""
     try:
         rows = _get(FIFA_URL.format(i)).get("rankings") or []
-    except Exception:
+    except Exception as e:
+        if errors is not None:
+            errors.append((i, f"{type(e).__name__}: {e}"))
         return None
     if not rows:
         return None
     return {"id": i, "date": rows[0]["lastUpdateDate"][:10],
             "teams": {r["rankingItem"]["name"]: [r["rankingItem"]["rank"], r["rankingItem"]["totalPoints"]]
                       for r in rows}}
+
+
+def _release_ids(obj):
+    """Every release id ("id15175", or a dateId / id field holding one)
+    anywhere in a decoded FIFA response. The overview's exact shape is not
+    pinned, so the id is taken wherever it appears."""
+    out = set()
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if k in ("dateId", "id") and isinstance(v, (str, int)):
+                m = re.fullmatch(r"(?:id)?(\d{4,6})", str(v))
+                if m:
+                    out.add(int(m.group(1)))
+            out |= _release_ids(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            out |= _release_ids(v)
+    elif isinstance(obj, str):
+        m = re.fullmatch(r"id(\d{4,6})", obj)
+        if m:
+            out.add(int(m.group(1)))
+    return out
+
+
+def _fifa_latest_id(errors=None):
+    """The latest release id FIFA's dateless overview names, or None."""
+    try:
+        ids = _release_ids(_get(FIFA_LATEST_URL))
+    except Exception as e:
+        if errors is not None:
+            errors.append(("latest", f"{type(e).__name__}: {e}"))
+        return None
+    return max(ids) if ids else None
 
 
 def load_fifa():
@@ -91,24 +133,51 @@ def load_fifa():
         return None
 
 
+def fifa_age_days(cur):
+    return (date.today() - date.fromisoformat(cur["date"])).days if cur else None
+
+
+def _stale_warning(cur, log):
+    if log is None or not cur:
+        return
+    age = fifa_age_days(cur)
+    if age > FIFA_STALE_DAYS:
+        log.append(f"WARNING: FIFA ranking on file is {age} days old ({cur['date']}, id {cur['id']}); "
+                   f"internationals are being scored on a stale ranking")
+
+
 def refresh_fifa(scan=160, log=None):
-    """Look for a newer release than the one on file. FIFA publishes roughly
-    monthly in season, with ids that step irregularly, so the next ids are
-    scanned. Only runs when the file is over three weeks old."""
+    """Look for a newer release than the one on file. FIFA's dateless overview
+    names the current release id; that id is fetched first, then the ids after
+    max(seed, file id) are scanned because ids step irregularly. Only runs when
+    the file is over three weeks old. The first fetch failure is logged with
+    its type and message, and a file over FIFA_STALE_DAYS old raises a line
+    starting WARNING: in the build log whether or not the scan finds anything."""
     cur = load_fifa()
-    if cur and (date.today() - date.fromisoformat(cur["date"])).days < 21:
+    if cur and fifa_age_days(cur) < 21:
         return cur
-    start = (cur["id"] + 1) if cur else 15175
+    start = max(FIFA_SEED, cur["id"] if cur else 0) + 1
+    errors = []
+    latest = _fifa_latest_id(errors)
+    ids = list(range(start, start + scan))
+    if latest and latest >= start:
+        ids = [latest] + [i for i in ids if i != latest]
     with cf.ThreadPoolExecutor(8) as ex:
-        found = [r for r in ex.map(_fifa_release, range(start, start + scan)) if r]
+        found = [r for r in ex.map(lambda i: _fifa_release(i, errors), ids) if r]
     if found:
         new = max(found, key=lambda r: r["id"])
         json.dump(new, open(FIFA_FILE, "w"), ensure_ascii=False, separators=(",", ":"))
         if log is not None:
             log.append(f"FIFA ranking: new release {new['date']} (id {new['id']})")
+        _stale_warning(new, log)
         return new
     if log is not None:
-        log.append(f"FIFA ranking: no newer release than {cur['date'] if cur else 'none'}")
+        log.append(f"FIFA ranking: no newer release than {cur['date'] if cur else 'none'} "
+                   f"(scanned ids {ids[0]}-{ids[-1]}, latest per overview: {latest})")
+        if errors:
+            which, msg = errors[0]
+            log.append(f"FIFA ranking: first fetch failure (id {which}) {msg}")
+    _stale_warning(cur, log)
     return cur
 
 

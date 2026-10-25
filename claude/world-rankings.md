@@ -23,7 +23,12 @@ The live site's international ratings are refitted by hand every few weeks.
 `rankings.py`:
 - FIFA from FIFA's own API (`inside.fifa.com/api/ranking-overview?dateId=idN`).
   Release ids step irregularly; `fifa-rankings.json` holds the latest and
-  `refresh_fifa` scans the next 160 ids when the file is over 21 days old.
+  `refresh_fifa` (when the file is over 21 days old) asks the dateless
+  overview for the current id, then scans the 160 ids after
+  max(`FIFA_SEED`, file id). Until 25 Oct 2026 it scanned from the seed id
+  only, which was also the id on file, so it never passed 20 Jul 2026 and
+  swallowed every fetch error; the first failure is now logged and a file
+  over 45 days old prints a `WARNING:` line in the build log.
   CI commits the file. History for the test: Dato-Futbol's archive (to Sep
   2024) plus the 13 releases since (Oct 2024 - Jul 2026).
 - `FIFA_NAMES` maps the site's spellings to FIFA's (19 entries). Non-FIFA
