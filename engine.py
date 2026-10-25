@@ -457,6 +457,60 @@ def _af_u21_doc():
 
 AF_U21 = register_u21(_af_u21_doc())
 
+# API-Football's own idea of each wider league's current season (25 Oct 2026,
+# bug 5 of claude/full-review-2026-10-25.md). af-leagues.json was written once
+# and 23 of its seasons had rolled: the finished season was fetched, nothing
+# was flagged, the league just left the board. sources.af_refresh_seasons asks
+# /leagues for seasons[].current (as af_refresh_cups does) and keeps the answer
+# in current/af-seasons.json, which the deploy commits; apply_af_seasons sets
+# each league's season and prev from it. The strings in af-leagues.json are
+# the fallback when the API has not answered yet.
+AF_SEASONS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "current", "af-seasons.json")
+AF_SEASON_CODES = set()      # codes whose season the API sets (AF_EXTRA and the AF_NEW top flights)
+
+
+def season_label(year, split):
+    return _season_label(int(year), split)
+
+
+def season_prev(label, n=2):
+    """The n seasons before a season string, in the same style."""
+    y = int(label.split("-")[0])
+    split = "-" in label
+    return [season_label(y - k, split) for k in range(1, n + 1)]
+
+
+def apply_af_seasons(doc):
+    """Set season and prev on every league the document names, from the
+    API's current season. Returns {code: (old season, new season)} for the
+    ones that changed."""
+    changed = {}
+    for code, e in ((doc or {}).get("seasons") or {}).items():
+        m = LEAGUES.get(code)
+        if not m or m.get("cup") or m.get("u21") or not e.get("current"):
+            continue
+        split = e.get("split")
+        if split is None:
+            split = "-" in str(m.get("season", ""))
+        new = season_label(e["current"], split)
+        AF_SEASON_CODES.add(code)
+        if new != m.get("season"):
+            changed[code] = (m.get("season"), new)
+        m["season"], m["prev"], m["seasonSource"] = new, season_prev(new), "api"
+    return changed
+
+
+def _af_seasons_doc():
+    try:
+        with open(AF_SEASONS_FILE) as f:
+            return json.load(f)
+    except Exception:
+        return {}
+
+
+AF_SEASONS = _af_seasons_doc()
+apply_af_seasons(AF_SEASONS)
+
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight
 # split of roughly 45% home / 26% draw / 29% away. Lower divisions run slightly

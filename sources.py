@@ -817,6 +817,65 @@ def af_refresh_cups(path=None, max_age_days=3, log=None):
     return new
 
 
+def af_season_codes():
+    """The leagues whose season API-Football decides: the discovery-replay
+    set and the hand-set top flights (not cups, not Premier League 2)."""
+    return sorted(set(AF_EXTRA) | set(AF_NEW))
+
+
+def af_refresh_seasons(path=None, max_age_days=3, log=None):
+    """Ask /leagues (one call, at most every three days) which season each
+    API-Football league is playing now and keep it in current/af-seasons.json.
+    Until 25 Oct 2026 the seasons in af-leagues.json were static, 23 had
+    rolled, and each of those leagues quietly fetched a finished season and
+    left the board (bug 5, claude/full-review-2026-10-25.md). A league the
+    API lists with no current season is logged as a WARNING and keeps its
+    configured season, so a finished one is never fetched silently (rule 6).
+    Returns the document, or the one on file."""
+    path = path or _E.AF_SEASONS_FILE
+    try:
+        with open(path) as f:
+            doc = json.load(f)
+    except Exception:
+        doc = {}
+    fresh = doc.get("checked") and (time.time() - doc["checked"]) < max_age_days * 86400
+    if fresh or not os.environ.get("API_FOOTBALL_KEY"):
+        return doc
+    resp = _af_get("/leagues?type=league")
+    if not resp:
+        return doc
+    by_id = {}
+    for item in resp:
+        lg = item.get("league") or {}
+        if lg.get("id"):
+            by_id[int(lg["id"])] = item.get("seasons") or []
+    seasons = dict(doc.get("seasons") or {})
+    for code in af_season_codes():
+        lid = AF.get(code)
+        if lid not in by_id:
+            if log is not None:
+                log.append(f"WARNING: {code} (AF id {lid}) not in /leagues; season {_E.LEAGUES[code].get('season')} kept")
+            continue
+        cur = next((x for x in by_id[lid] if x.get("current")), None)
+        if not cur or not cur.get("year"):
+            if log is not None:
+                log.append(f"WARNING: {code} no current season")
+            seasons.pop(code, None)
+            continue
+        start, end = (cur.get("start") or "")[:4], (cur.get("end") or "")[:4]
+        split = (start != end) if (start and end) else None
+        seasons[code] = {"current": int(cur["year"]), "split": split,
+                         "years": sorted({x.get("year") for x in by_id[lid] if x.get("year")})}
+    doc = {"note": "API-Football's current season per wider league (sources.af_refresh_seasons); written by the build.",
+           "checked": int(time.time()), "seasons": seasons}
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump(doc, f, ensure_ascii=False, indent=0)
+    if log is not None:
+        log.append(f"{len(seasons)} API-Football league seasons on file")
+    return doc
+
+
 # --- Academy (U21) sides: Premier League 2 (6 Oct 2026) ----------------------
 #
 # EFL Trophy group games pit every Category One academy's U21 side against
@@ -1114,14 +1173,33 @@ def af_rows(code, season):
         year = int(season.split("-")[0])
         current = season == _L.get(code, {}).get("season", season)
         pool = af_season_pool(season) if current else None
+        if current and pool is None and (code in AF_EXTRA or code in AF_NEW):
+            # The configured season is over by the calendar. Before fetching
+            # it as finished, look in the shared pool (already built for every
+            # wider league still playing, so no extra calls) for the season
+            # the API is playing now (bug 5: 23 static seasons in
+            # af-leagues.json had rolled and each league quietly left the board).
+            pool = af_season_pool(_E.season_label(date.today().year, "-" in season))
+            if pool is not None and not any((f.get("league") or {}).get("season", 0) > year
+                                            for f in pool.get(AF[code], [])):
+                pool = None
         if pool is not None:
             # A season still being played: read from the shared date pool,
             # matches of this league and this season only.
-            win = af_season_window(season)
+            win = af_season_window(season) or af_season_window(_E.season_label(date.today().year, "-" in season))
             lo, hi = win[0].isoformat(), win[1].isoformat()
-            src = [f for f in pool.get(AF[code], [])
-                   if (f.get("league") or {}).get("season") == year
-                   and lo <= ((f.get("fixture") or {}).get("date") or "")[:10] <= hi]
+            mine = [f for f in pool.get(AF[code], [])
+                    if lo <= ((f.get("fixture") or {}).get("date") or "")[:10] <= hi]
+            src = [f for f in mine if (f.get("league") or {}).get("season") == year]
+            if not src and mine:
+                # The configured season has nothing in the window but the API
+                # is already playing a newer one: use it, and say so, rather
+                # than fetch a finished season and drop the league (bug 5).
+                newer = max((f.get("league") or {}).get("season") or 0 for f in mine)
+                if isinstance(newer, int) and newer > year:
+                    src = [f for f in mine if (f.get("league") or {}).get("season") == newer]
+                    print(f"  {code}: configured season {season} has no fixtures; "
+                          f"API-Football is playing {newer}, using that", file=sys.stderr)
         else:
             # Finished: one call, then on disk for good.
             src = _af_season(code, year, False)

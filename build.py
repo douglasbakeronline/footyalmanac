@@ -682,6 +682,13 @@ def main():
     # Premier League 2, for U21 sides' ratings (6 Oct 2026): one call a week.
     u21_doc = S.af_refresh_u21(log=cup_log)
     CODES.extend(c for c in S.register_u21(u21_doc) if c not in CODES)
+    # The wider leagues' seasons come from the API, not af-leagues.json
+    # (25 Oct 2026, bug 5): one /leagues call every three days.
+    season_log = []
+    for c, (old, new) in sorted(E.apply_af_seasons(S.af_refresh_seasons(log=season_log)).items()):
+        season_log.append(f"{c}: season {old} -> {new} (API-Football current)")
+    for line in season_log:
+        print(line if line.startswith("WARNING:") else f"  seasons: {line}", file=sys.stderr)
     for line in cup_log:
         print(f"  cups: {line}", file=sys.stderr)
 
