@@ -201,11 +201,20 @@ def live_results(pending, log=None):
     return out
 
 
+def won(r):
+    """The strict test: the top pick landed. This is what the headline
+    accuracy, the tier hit rates and the band tables use (25 Oct 2026, bug 3
+    of claude/full-review-2026-10-25.md: 4,658 rows carried a level likely
+    score, and their "ok" rate was 71.6% while their pick won 44.8%)."""
+    return r["pick"] == r["actual"]
+
+
 def correct(r):
     """A reading is right when the top pick landed, or when the predicted
     scoreline was a draw and the game was drawn (Douglas, 6 Oct 2026: a 1-1
-    call on a game that ends level is a correct reading)."""
-    return r["pick"] == r["actual"] or (r["actual"] == "d" and score_draw(r))
+    call on a game that ends level is a correct reading). Reported as the
+    separately labelled "reads" figure; never the headline."""
+    return won(r) or (r["actual"] == "d" and score_draw(r))
 
 
 def score_draw(r):
@@ -216,10 +225,14 @@ def score_draw(r):
 def expected(r):
     """The chance of `correct(r)` on the model's own numbers: the top pick,
     plus the draw when the predicted scoreline is a draw. Keeps the quoted
-    side of every quoted-vs-landed comparison on the same footing as the
-    landed side."""
+    side of the reads comparison on the same footing as its landed side.
+    The strict comparison quotes `confidence` itself."""
     extra = r["p"][1] if score_draw(r) and r["pick"] != "d" else 0.0
     return r["confidence"] + extra
+
+
+def rate(k, n):
+    return round(k / n, 4) if n else None
 
 
 def bands5(rows, lo=0.50, step=0.05):
@@ -336,18 +349,25 @@ def summarise(rows):
         return None
     n = len(rows)
     idx = {"h": 0, "d": 1, "a": 2}
-    hit = sum(1 for r in rows if correct(r))
+    # "correct" / "accuracy" are strict since 25 Oct 2026: the top pick landed.
+    # The draw-read figure, which until then was the headline, is "reads" /
+    # "readRate" (with "quotedRead" as its own quoted side).
+    hit = sum(1 for r in rows if won(r))
+    reads = sum(1 for r in rows if correct(r))
     ll = -sum(log(max(r["p"][idx[r["actual"]]], EPS)) for r in rows) / n
     home = sum(1 for r in rows if r["actual"] == "h") / n
     exact = sum(1 for r in rows if r["score"] == r["result"])
     # Where the misses actually come from. The model almost never picks a draw,
     # so a draw is a guaranteed loss on the top pick, and counting them is the
     # difference between "we got it wrong" and knowing why.
-    drawn = sum(1 for r in rows if r["actual"] == "d" and not correct(r))
+    drawn = sum(1 for r in rows if r["actual"] == "d" and not won(r))
     draw_reads = sum(1 for r in rows if r["actual"] == "d" and r["pick"] != "d" and score_draw(r))
     picks = {k: sum(1 for r in rows if r["pick"] == k) for k in "hda"}
     actual = {k: sum(1 for r in rows if r["actual"] == k) for k in "hda"}
-    return {"n": n, "correct": hit, "accuracy": round(hit / n, 4),
+    return {"n": n, "correct": hit, "accuracy": rate(hit, n), "won": hit,
+            "reads": reads, "readRate": rate(reads, n),
+            "quoted": round(sum(r["confidence"] for r in rows) / n, 4),
+            "quotedRead": round(sum(expected(r) for r in rows) / n, 4),
             "logLoss": round(ll, 4), "homeRate": round(home, 4),
             "exactScores": exact, "exactRate": round(exact / n, 4),
             "drawnOut": drawn, "drawReads": draw_reads, "picks": picks, "actuals": actual}
@@ -365,12 +385,16 @@ def tier_table(rows):
         g = [r for r in rows if tier_of(r["confidence"], r["celtic"], r["unrated"])[2] == name]
         if not g:
             continue
+        w, rd = sum(1 for r in g if won(r)), sum(1 for r in g if correct(r))
         out.append({
             "name": name, "k": k, "min": lo, "n": len(g),
-            "correct": sum(1 for r in g if correct(r)),
-            "hit": round(sum(1 for r in g if correct(r)) / len(g), 4),
-            "expected": round(sum(expected(r) for r in g) / len(g), 4),
-            "drawnOut": sum(1 for r in g if r["actual"] == "d" and not correct(r)),
+            # strict (the top pick landed) since 25 Oct 2026; the draw reads
+            # are the separate "reads" / "readHit" / "expectedRead"
+            "correct": w, "hit": rate(w, len(g)),
+            "expected": round(sum(r["confidence"] for r in g) / len(g), 4),
+            "reads": rd, "readHit": rate(rd, len(g)),
+            "expectedRead": round(sum(expected(r) for r in g) / len(g), 4),
+            "drawnOut": sum(1 for r in g if r["actual"] == "d" and not won(r)),
         })
     return out
 
@@ -460,10 +484,14 @@ def main():
     for lo, hi in [(0.0, 0.40), (0.40, 0.50), (0.50, 0.60), (0.60, 0.70), (0.70, 1.01)]:
         g = [r for r in rows if lo <= r["confidence"] < hi]
         if g:
+            w, rd = sum(1 for r in g if won(r)), sum(1 for r in g if correct(r))
             bands.append({
                 "from": lo, "to": min(hi, 1.0), "n": len(g),
-                "hit": round(sum(1 for r in g if correct(r)) / len(g), 4),
-                "expected": round(sum(expected(r) for r in g) / len(g), 4),
+                # strict since 25 Oct 2026; reads kept apart
+                "hit": rate(w, len(g)), "won": w,
+                "expected": round(sum(r["confidence"] for r in g) / len(g), 4),
+                "reads": rd, "readHit": rate(rd, len(g)),
+                "expectedRead": round(sum(expected(r) for r in g) / len(g), 4),
             })
 
     per_league = {}
@@ -502,7 +530,7 @@ def main():
                 "actual": r["actual"], "confidence": r["confidence"],
                 "celtic": r["celtic"], "tier": name, "k": k,
                 "predScore": list(r["score"]), "result": list(r["result"]),
-                "list": r["list"], "reserve": r["reserve"], "ok": correct(r),
+                "list": r["list"], "reserve": r["reserve"], "ok": correct(r), "won": won(r),
                 "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
                 "formH": team_form(fidx, r["league"], r["home"], r["date"]),
                 "formA": team_form(fidx, r["league"], r["away"], r["date"])}
@@ -564,7 +592,7 @@ def main():
                     "actual": r["actual"], "confidence": r["confidence"],
                     "celtic": r["celtic"], "predScore": list(r["score"]),
                     "result": list(r["result"]),
-                    "ok": correct(r)} for r in recent],
+                    "ok": correct(r), "won": won(r)} for r in recent],
     }
     json.dump(payload, open(os.path.join(HERE, "record.json"), "w"),
               separators=(",", ":"))
@@ -574,16 +602,17 @@ def main():
         json.dump({"generated": payload["generated"], "graded": [
             {**r, "p": list(r["p"]), "score": list(r["score"]), "result": list(r["result"]),
              "tier": tier_of(r["confidence"], r["celtic"], r["unrated"])[2],
-             "ok": correct(r), "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
+             "ok": correct(r), "won": won(r),
+             "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
              "expected": round(expected(r), 4)}
             for r in sorted(rows, key=lambda r: (r["date"], r["league"], r["home"]))]},
             f, separators=(",", ":"), ensure_ascii=False)
 
     o = payload["overall"]
     if o:
-        print(f"graded {o['n']} fixtures: {o['accuracy']:.1%} correct "
-              f"(home baseline {o['homeRate']:.1%}), log loss {o['logLoss']}, "
-              f"{o['exactScores']} exact scorelines", file=sys.stderr)
+        print(f"graded {o['n']} fixtures: {o['accuracy']:.1%} picked the winner "
+              f"(home baseline {o['homeRate']:.1%}; {o['readRate']:.1%} counting draw reads), "
+              f"log loss {o['logLoss']}, {o['exactScores']} exact scorelines", file=sys.stderr)
         if payload["celtic"] and payload["settled"]:
             print(f"  settled {payload['settled']['accuracy']:.1%} vs "
                   f"flagged {payload['celtic']['accuracy']:.1%}", file=sys.stderr)
