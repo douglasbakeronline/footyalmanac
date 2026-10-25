@@ -78,6 +78,27 @@ class Build(unittest.TestCase):
         again = G.build_card(moved, DATE, EARLY + timedelta(hours=2), prev=gs, log=log)
         self.assertTrue(any(e["name"] == g0["name"] for e in log))
 
+    def test_price_outage_keeps_the_last_price_for_an_unlocked_group(self):
+        # 25 Oct 2026 (review bug 8): the price source fails on the next build,
+        # every leg comes back as an estimate; the group holds on its last price, flagged stale
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Daytime")
+        outage = []
+        for l in board():
+            l = dict(l)
+            if l["event"] in {x["event"] for x in g0["legs"]}:
+                for k in ("fair", "margin", "best", "bestBook"): l.pop(k, None)
+                l.update(odds=round(1 / (l["pModel"] * G.MARGIN), 2), est=True); l["p"] = l["pTested"]; G.honest(l)
+            outage.append(l)
+        log = []
+        again = G.build_card(outage, DATE, EARLY + timedelta(hours=1), prev=gs, log=log)
+        g1 = next((g for g in again if g["window"] == "Daytime" and g["name"] == g0["name"]), None)
+        self.assertIsNotNone(g1)
+        self.assertEqual(g1["status"], "holding")
+        self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
+        self.assertTrue(all(l.get("stale") for l in g1["legs"]))
+        self.assertFalse(any(e["name"] == g0["name"] and e["rank"] == "Daytime" for e in log))
+
     def test_late_group_after_lock(self):
         gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
         self.assertTrue(gs)
@@ -94,7 +115,7 @@ class Build(unittest.TestCase):
 class Archive(unittest.TestCase):
     def test_only_locked_groups_archived_once(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[])
+        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[], archived=[])
         with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d):
             self.assertEqual(G.archive_locked({"date": DATE, "groups": gs}, "t0"), 0)
             n = G.archive_locked({"date": DATE, "groups": locked}, "t1")
@@ -102,6 +123,38 @@ class Archive(unittest.TestCase):
             self.assertEqual(G.archive_locked({"date": DATE, "groups": locked}, "t2"), 0)
             a = json.load(open(os.path.join(d, f"{DATE}.json")))
         self.assertEqual(len(a["groups"]), len(locked))
+
+    def test_archive_is_the_source_of_truth_for_locked_slots(self):
+        """25 Oct 2026 (review bug 9): the published groupings.json lags (prev is
+        empty), but the day's archive holds the locked groups. They are reused
+        as archived, no late group is built for their slots, and the archive
+        never gets a second group for one slot."""
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        locked = G.build_card(board(), DATE, AFTER_LOCK, prev=gs, log=[], archived=[])
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d):
+            G.archive_locked({"date": DATE, "groups": locked}, "t1")
+            again = G.build_card(board(), DATE, AFTER_LOCK + timedelta(hours=1), prev=None, log=[])
+            self.assertEqual({G.card_slot(g) for g in again}, {G.card_slot(g) for g in locked})
+            for g in again:
+                src = next(x for x in locked if G.card_slot(x) == G.card_slot(g))
+                self.assertEqual(G.gid(g), G.gid(src))
+                self.assertFalse(g.get("late"))
+                self.assertEqual(g["status"], "locked")
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": again}, "t2"), 0)
+            # a late group with different picks for an archived slot is refused too
+            other = dict(locked[0], legs=[dict(l, event="z v z", pick="z") for l in locked[0]["legs"]], late=True)
+            self.assertEqual(G.archive_locked({"date": DATE, "groups": [other]}, "t3"), 0)
+            a = json.load(open(os.path.join(d, f"{DATE}.json")))
+        self.assertEqual(len(a["groups"]), len(locked))
+
+    def test_archived_slot_beats_a_different_published_group(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Daytime")
+        other = dict(g0, legs=[dict(l, event="z v z", pick="z") for l in g0["legs"]], locked=True)
+        again = G.build_card(board(), DATE, AFTER_LOCK, prev=[other], log=[], archived=[dict(g0, locked=True)])
+        g1 = next(g for g in again if G.card_slot(g) == G.card_slot(g0))
+        self.assertEqual(G.gid(g1), G.gid(g0))
+        self.assertEqual(sum(1 for g in again if G.card_slot(g) == G.card_slot(g0)), 1)
 
 
 if __name__ == "__main__":

@@ -48,6 +48,82 @@ class ApiSports(unittest.TestCase):
         self.assertEqual(rep["apiSports"], "no key")
 
 
+class UkBestPrice(unittest.TestCase):
+    """25 Oct 2026 (review bug 2): the best price and its bookmaker come from
+    UK-licensed books only; a better price elsewhere does not count."""
+
+    def test_api_sports_best_is_uk_only(self):
+        item = {"bookmakers": [
+            {"name": "1xBet", "bets": [{"name": "Home/Away", "values": [{"value": "Home", "odd": "1.60"}, {"value": "Away", "odd": "2.50"}]}]},
+            {"name": "Bet365", "bets": [{"name": "Home/Away", "values": [{"value": "Home", "odd": "1.40"}, {"value": "Away", "odd": "3.00"}]}]},
+            {"name": "Unibet", "bets": [{"name": "Home/Away", "values": [{"value": "Home", "odd": "1.44"}, {"value": "Away", "odd": "2.85"}]}]}]}
+        avg, best, book, n, _ = G._as_side(item, True)
+        self.assertEqual((avg, best, book, n), (1.48, 1.44, "Unibet", 3))
+
+    def test_api_sports_no_uk_book_means_no_best_book(self):
+        item = {"bookmakers": [
+            {"name": "1xBet", "bets": [{"name": "Home/Away", "values": [{"value": "Home", "odd": "1.60"}, {"value": "Away", "odd": "2.50"}]}]}]}
+        avg, best, book, n, _ = G._as_side(item, True)
+        self.assertEqual((avg, best, book), (1.60, 1.60, None))
+
+    def test_football_single_fixture_fallback_is_uk_only(self):
+        import sources as S
+        l = {"sport": "football", "event": "Alpha v Beta", "home": "Alpha", "away": "Beta", "side": "h", "pick": "Alpha",
+             "date": "2026-10-26", "when": "2026-10-26T15:00:00Z", "pModel": 0.7, "p": 0.7}
+        fx = [{"fixture": {"id": 5, "date": "2026-10-26T15:00:00+00:00"}, "teams": {"home": {"name": "Alpha"}, "away": {"name": "Beta"}}}]
+        items = [{"fixture": {"id": 5}, "bookmakers": [
+            {"name": "Betano", "bets": [{"id": 1, "values": [{"value": "Home", "odd": "1.80"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "5.0"}]}]},
+            {"name": "Bet365", "bets": [{"id": 1, "values": [{"value": "Home", "odd": "1.50"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "6.0"}]}]},
+            {"name": "Coral", "bets": [{"id": 1, "values": [{"value": "Home", "odd": "1.55"}, {"value": "Draw", "odd": "3.9"}, {"value": "Away", "odd": "5.5"}]}]}]}]
+        import odds as O
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}), \
+             mock.patch.object(S, "AF_CACHE_DIR", d), mock.patch.object(S, "_af_day", lambda day: fx), \
+             mock.patch.object(O, "af_prices", lambda dates: {}), \
+             mock.patch.object(G, "_odds_for", lambda fid, key, cd: (items, 1)):
+            rep = {}; G.price_football([l], {"2026-10-26"}, rep)
+        self.assertEqual((l["best"], l["bestBook"], l["books"]), (1.55, "Coral", 3))
+        self.assertAlmostEqual(l["odds"], 1.62, places=2)
+
+
+class FixtureOddsCache(unittest.TestCase):
+    """25 Oct 2026 (review bug 8): one fixture's prices go through
+    sources._af_get, and an empty quota answer is never cached as "no prices"."""
+
+    def setUp(self):
+        import sources as S
+        self.S = S
+        S._AF_CACHE.clear(); S._AF_SPENT[0] = False
+
+    def tearDown(self):
+        self.S._AF_CACHE.clear(); self.S._AF_SPENT[0] = False
+
+    def test_a_real_answer_is_cached_and_served(self):
+        S = self.S
+        items = [{"fixture": {"id": 9}, "bookmakers": []}]
+        def fake(path):
+            S._AF_CACHE[path] = items; S.AF_USAGE["calls"] += 1; return items
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "_af_get", fake):
+            self.assertEqual(G._odds_for(9, "k", d), (items, 1))
+            self.assertTrue(os.path.exists(os.path.join(d, "odds-9.json")))
+            S._AF_CACHE.clear()
+            self.assertEqual(G._odds_for(9, "k", d), (items, 0))      # from disk, no call
+
+    def test_a_quota_refusal_is_not_cached(self):
+        S = self.S
+        def spent(path):
+            S._AF_SPENT[0] = True; return []      # what _af_get does on the daily-limit error
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "_af_get", spent):
+            self.assertEqual(G._odds_for(9, "k", d), ([], 0))
+            self.assertFalse(os.path.exists(os.path.join(d, "odds-9.json")))
+
+    def test_once_spent_no_more_calls(self):
+        S = self.S
+        S._AF_SPENT[0] = True
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}), \
+             mock.patch.object(S.urllib.request, "urlopen", side_effect=AssertionError("must not call")):
+            self.assertEqual(G._odds_for(9, "k", d), ([], 0))
+
+
 class PinnWire(unittest.TestCase):
     def test_prices_tennis_from_pinnacle(self):
         t = {"sport": "tennis", "pick": "Jannik Sinner", "players": ["Jannik Sinner", "Casper Ruud"],

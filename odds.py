@@ -279,23 +279,47 @@ AF_ODDS_TTL_NEAR = 90 * 60       # today and tomorrow: prices move
 AF_ODDS_TTL_FAR = 4 * 3600       # further out: they barely do
 AF_ODDS_MAX_PAGES = 150          # a date's ceiling: 1,500 priced fixtures
 AF_ODDS_SIDE = {"Home": 0, "Draw": 1, "Away": 2}
+AF_ODDS_VERSION = 2              # 2: max / maxBook over UK-licensed books only (25 Oct 2026)
 
 
 def _af_odds_path(d):
     return os.path.join(S.AF_CACHE_DIR, f"odds-date-{d.isoformat()}.json.gz")
 
 
+# 25 Oct 2026 (review bug 2): the best price used to be the maximum over every
+# bookmaker API-Football carries, so the Card named 1xBet, Betano and Dafabet,
+# which a UK punter cannot use, and one stale book set the maximum unchallenged.
+# "Best" is now the best among UK-licensed books only. Matched on API-Football's
+# bookmaker names, case-insensitively and ignoring spaces, so "Sky Bet",
+# "SkyBet" and "888Sport" all match. Average stays over every bookmaker.
+UK_BOOKS = ("Bet365", "William Hill", "Betfair", "Paddy Power", "Betway", "Unibet", "Ladbrokes", "Coral",
+            "Betfred", "Sky Bet", "BetVictor", "888sport")
+_UK_KEYS = {b.replace(" ", "").lower() for b in UK_BOOKS}
+
+
+def uk_book(name):
+    """Whether a bookmaker name (as API-Football or another source spells it) is on UK_BOOKS."""
+    if not name:
+        return False
+    k = str(name).replace(" ", "").replace("-", "").replace(".", "").lower()
+    return k in _UK_KEYS
+
+
 def af_parse_odds(items):
-    """{fixture id: {"avg": [h, d, a], "max": [h, d, a], "books": n}} from
-    /odds response items, Match Winner (bet 1) only, every bookmaker."""
+    """{fixture id: {"avg": [h, d, a], "max": [h, d, a], "maxBook": [..],
+    "books": n}} from /odds response items, Match Winner (bet 1) only. The
+    average is over every bookmaker; max and maxBook are the best price among
+    UK-licensed books (UK_BOOKS). When none priced a side, max falls back to
+    the average and maxBook is None."""
     out = {}
     for item in items or []:
         fid = (item.get("fixture") or {}).get("id")
         if not fid:
             continue
         sides, books = ([], [], []), set()
-        top = [(0.0, None), (0.0, None), (0.0, None)]   # best price per side and who offers it
+        top = [(0.0, None), (0.0, None), (0.0, None)]   # best UK price per side and who offers it
         for b in item.get("bookmakers") or []:
+            uk = uk_book(b.get("name"))
             for bet in b.get("bets") or []:
                 if bet.get("id") != 1:
                     continue
@@ -307,11 +331,12 @@ def af_parse_odds(items):
                         continue
                     if i is not None and o > 1.0:
                         sides[i].append(o); books.add(b.get("name") or b.get("id"))
-                        if o > top[i][0]: top[i] = (o, b.get("name"))
+                        if uk and o > top[i][0]: top[i] = (o, b.get("name"))
         if all(sides):
-            out[str(fid)] = {"avg": [round(sum(x) / len(x), 3) for x in sides],
-                             "max": [max(x) for x in sides], "books": len(books),
-                             # 25 Oct 2026: which bookmaker has the best price, for the Odds tab
+            avg = [round(sum(x) / len(x), 3) for x in sides]
+            out[str(fid)] = {"avg": avg,
+                             "max": [t[0] if t[1] else a for t, a in zip(top, avg)], "books": len(books),
+                             # 25 Oct 2026: which UK bookmaker has the best price, for the Bets tab
                              "maxBook": [t[1] for t in top]}
     return out
 
@@ -326,7 +351,8 @@ def af_odds_day(d, log=None, now=None):
             doc = json.load(fh)
         stale = doc.get("rows") or {}
         near = (d - datetime.fromtimestamp(now, timezone.utc).date()).days <= 1
-        if now - doc.get("fetched", 0) < (AF_ODDS_TTL_NEAR if near else AF_ODDS_TTL_FAR):
+        # A copy parsed before the UK-only best price (AF_ODDS_VERSION) is re-read.
+        if doc.get("v") == AF_ODDS_VERSION and now - doc.get("fetched", 0) < (AF_ODDS_TTL_NEAR if near else AF_ODDS_TTL_FAR):
             return stale
     except (OSError, ValueError):
         pass
@@ -348,7 +374,7 @@ def af_odds_day(d, log=None, now=None):
         return stale or {}
     os.makedirs(S.AF_CACHE_DIR, exist_ok=True)
     with gzip.open(path, "wt", encoding="utf-8") as fh:
-        json.dump({"fetched": now, "rows": rows}, fh)
+        json.dump({"fetched": now, "v": AF_ODDS_VERSION, "rows": rows}, fh)
     if log is not None:
         log.append(f"API-Football odds {d}: {len(rows)} fixtures priced, {calls} calls")
     return rows

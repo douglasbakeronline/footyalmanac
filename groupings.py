@@ -371,7 +371,15 @@ ODDS_TTL = 90 * 60     # a fixture's prices are re-read at most every 90 minutes
 
 def _odds_for(fid, key, cache_dir):
     """Match Winner prices for one fixture, cached on disk for ODDS_TTL.
-    Returns (response items, calls made)."""
+    Returns (response items, calls made).
+
+    25 Oct 2026 (review bug 8): this used to call API-Football directly, past
+    sources._af_get's spent marker, so once the day's allowance was gone every
+    fixture cost a call and its empty answer was cached 90 minutes as "no
+    prices". Now the call goes through _af_get (paced, retried, stops for the
+    run once the allowance is spent) and only a genuine answer is cached:
+    _af_get keeps a path in its own cache only on a 200 with no errors, so a
+    quota refusal, a bad reply or a network failure is never written to disk."""
     path = os.path.join(cache_dir, f"odds-{fid}.json")
     try:
         if time.time() - os.path.getmtime(path) < ODDS_TTL:
@@ -379,12 +387,17 @@ def _odds_for(fid, key, cache_dir):
                 return json.load(f), 0
     except (OSError, ValueError):
         pass
-    r = af(f"/odds?fixture={fid}&bet=1", key)
-    items = r.get("response") or []
-    os.makedirs(cache_dir, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(items, f)
-    return items, 1
+    sys.path.insert(0, HERE)
+    import sources as S
+    q = f"/odds?fixture={fid}&bet=1"
+    before = S.AF_USAGE["calls"]
+    items = S._af_get(q) or []
+    calls = S.AF_USAGE["calls"] - before
+    if q in S._AF_CACHE:       # a real answer, empty or not
+        os.makedirs(cache_dir, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(items, f)
+    return items, calls
 
 
 def price_football(L, dates, report):
@@ -406,8 +419,8 @@ def price_football(L, dates, report):
     # 22 Oct 2026: the build now reads every API-Football price by date
     # (odds.af_odds_day, cached); a leg found there costs no call. The
     # one-fixture call stays as the fallback for anything it missed.
+    import odds as O
     try:
-        import odds as O
         bulk = O.af_prices({_date.fromisoformat(d) for d in dates})
     except Exception as e:
         bulk = {}
@@ -440,22 +453,25 @@ def price_football(L, dates, report):
             except Exception as e:
                 report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
-            books = set(); top = {}
+            books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
             for item in items:
                 for b in item.get("bookmakers") or []:
+                    uk = O.uk_book(b.get("name"))
                     for bet in b.get("bets") or []:
                         if bet.get("id") != 1: continue
                         for v in bet.get("values") or []:
                             try:
                                 o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
-                                if o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
+                                if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
                             except (KeyError, ValueError): pass
             books = sorted(books)
             side = prices["Home" if l["side"] == "h" else "Away"]
             if side:
                 avg = [sum(v) / len(v) for v in prices.values() if v]
-                l.update(odds=round(sum(side) / len(side), 2), best=round(max(side), 2), books=len(books),
-                         bestBook=top.get("Home" if l["side"] == "h" else "Away", (0, None))[1],
+                mean = sum(side) / len(side)
+                uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
+                l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
+                         bestBook=uk_top[1],
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
@@ -712,7 +728,11 @@ AS_BETS = ("Home/Away", "Match Winner", "3Way Result", "Moneyline", "Winner")
 
 def _as_side(item, pick_home):
     """(average price for the pick, best price, best book, books, margin) from
-    one /odds item, using the first match-winner bet found per bookmaker."""
+    one /odds item, using the first match-winner bet found per bookmaker. The
+    best price is among UK-licensed books only (odds.UK_BOOKS; API-Sports
+    shares API-Football's bookmaker list); none pricing it leaves best at the
+    average and the book None."""
+    import odds as O
     side, books, margins, top = [], set(), [], (0.0, None)
     for bk in item.get("bookmakers") or []:
         bets = {b.get("name"): b for b in bk.get("bets") or []}
@@ -725,11 +745,12 @@ def _as_side(item, pick_home):
         o = vals.get("Home" if pick_home else "Away")
         if not o or o <= 1: continue
         side.append(o); books.add(bk.get("name"))
-        if o > top[0]: top = (o, bk.get("name"))
+        if O.uk_book(bk.get("name")) and o > top[0]: top = (o, bk.get("name"))
         mg = margin_of(list(vals.values()))
         if mg: margins.append(mg)
     if not side: return None
-    return (round(sum(side) / len(side), 2), round(max(side), 2), top[1], len(books),
+    mean = sum(side) / len(side)
+    return (round(mean, 2), round(top[0] if top[1] else mean, 2), top[1], len(books),
             round(sum(margins) / len(margins), 4) if margins else None)
 
 
@@ -1324,6 +1345,12 @@ def recheck_card(g, L):
         cur = by.get((old["event"], old["pick"]))
         if cur is None:
             why.append(f"{old['pick']}: no longer on the board for this day (moved, postponed, flagged or the model's side changed)"); continue
+        if cur.get("est") and not old.get("est") and old.get("odds"):
+            # 25 Oct 2026 (review bug 8): a price source that failed this build
+            # is not a reason to drop an unlocked Card group. The last confirmed
+            # price stands, flagged stale, until a build can read one again; the
+            # model's side of the check still runs on this build's number.
+            cur = stale_price(cur, old)
         f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
         legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
@@ -1338,18 +1365,43 @@ def recheck_card(g, L):
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2),
             "legs": legs_, "status": "holding"}, []
 
-def build_card(L, date, now, prev=None, log=None):
+def card_slot(g):
+    """A Card group's slot: (window, kind). One group per slot per day."""
+    return (g.get("window"), g.get("name"))
+
+def archived_card(date):
+    """The locked Card groups in groupings-archive/<date>.json, one per slot
+    (the first archived wins). 25 Oct 2026 (review bug 9): a locked group used
+    to survive only through the published groupings.json; if Pages lagged, the
+    next build made a fresh late group and the archive held two for one slot.
+    The archive is now the source of truth for locked slots."""
+    try:
+        with open(os.path.join(ARCHIVE, f"{date}.json")) as f: a = json.load(f)
+    except (OSError, ValueError):
+        return []
+    out, seen = [], set()
+    for g in a.get("groups") or []:
+        if not is_card(g.get("name")) or not g.get("locked") or not g.get("window"): continue
+        if card_slot(g) in seen: continue
+        seen.add(card_slot(g)); out.append(g)
+    return out
+
+def build_card(L, date, now, prev=None, log=None, archived=None):
     """The Card for one UK date: up to two groups in each window. L holds the
-    day's legs (any board date); each is placed by its UK kick-off."""
+    day's legs (any board date); each is placed by its UK kick-off. A slot
+    locked in the day's archive (archived, read from disk when None) is reused
+    as it was archived, never rebuilt or duplicated; the last build's published
+    groups (prev) fill the rest."""
     stamp = iso(now); after = now + timedelta(minutes=20)
     by_win = {w: [] for w, _, _ in CARD_WINDOWS}
     for l in L:
         s = uk_slot(l)
         if s and s[0] == date: by_win[s[1]].append(l)
     groups, used, filled = [], set(), set()
-    for g in prev or []:
+    if archived is None: archived = archived_card(date)
+    for g in list(archived) + list(prev or []):
         if not is_card(g.get("name")) or g.get("window") not in by_win: continue
-        slot = (g["window"], g["name"])
+        slot = card_slot(g)
         if slot in filled: continue
         lock = lock_time(date, g["window"])
         if g.get("locked") or now >= lock:
@@ -1407,10 +1459,21 @@ def archive_locked(day, generated):
     except (OSError, ValueError):
         a = {"date": day["date"], "published": generated, "groups": []}
     have = {gid(g) for g in a.get("groups") or []}
+    # 25 Oct 2026 (review bug 9): one group per (window, kind) slot a day. A
+    # slot already archived is never given a second group, whatever its picks.
+    slots = {card_slot(g) for g in a.get("groups") or [] if is_card(g.get("name")) and g.get("window")}
     n = 0
     for g in locked:
         if gid(g) in have: continue
-        a.setdefault("groups", []).append(dict(g, archivedAt=generated)); have.add(gid(g)); n += 1
+        if is_card(g.get("name")) and g.get("window") and card_slot(g) in slots: continue
+        g = dict(g, archivedAt=generated)
+        if g.get("late"):
+            # A late group is built after its lock, so its published price is
+            # already a post-lock price: it is the price at lock (bug 10).
+            g["legs"] = [dict(l, lockPrice=l.get("lockPrice") or {"odds": l["odds"], "best": l.get("best") or l["odds"],
+                                                                   "book": l.get("bestBook"), "at": generated})
+                         if not l.get("est") else dict(l) for l in g["legs"]]
+        a.setdefault("groups", []).append(g); have.add(gid(g)); slots.add(card_slot(g)); n += 1
     if n:
         with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
     return n
@@ -1448,6 +1511,13 @@ def leg_fault(l, wide=False):
 
 def pct(x): return f"{round(x * 100)}%"
 
+def stale_price(cur, old):
+    """This build's leg (unpriced) carrying the last confirmed price from the
+    published leg, flagged stale, with fair and p recomputed on it."""
+    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
+    cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
+    return honest(cur)
+
 def recheck(g, L):
     """Re-test a published group against this build's legs and prices.
     Returns (the group at today's prices, []) if every rule still holds, else
@@ -1464,9 +1534,7 @@ def recheck(g, L):
             # A price source that failed this build is not a reason to drop a
             # group: the last confirmed price stands, flagged, until a build
             # can read one again. The model's side of the check still runs.
-            cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
-            cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
-            honest(cur)
+            cur = stale_price(cur, old)
         fault = leg_fault(cur, wide=is_wide(g["name"]))
         if fault: why.append(fault); continue
         nl = dict(cur, firstOdds=old.get("firstOdds", old.get("odds")))
@@ -1535,11 +1603,43 @@ def results_index():
         sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
     return fb, tn, sp
 
-def settle(l, idx):
+VOID_AFTER = 72 * 3600   # a football leg with no result this long after kick-off is void (25 Oct 2026)
+
+def dead_fixtures(dates):
+    """{(date, norm home, norm away)} of football fixtures API-Football marks
+    postponed, cancelled, abandoned, awarded or suspended (sources.AF_DEAD) on
+    these UTC dates, read from the cached day files only: grading never
+    spends a call. Empty when the cache has no copy."""
+    import gzip
+    sys.path.insert(0, HERE)
+    import sources as S
+    out = set()
+    for d in dates:
+        path = os.path.join(S.AF_CACHE_DIR, f"day-{d}.json.gz")
+        try:
+            with gzip.open(path, "rt", encoding="utf-8") as fh:
+                rows = json.load(fh).get("rows") or []
+        except (OSError, ValueError):
+            continue
+        for c in rows:
+            f = S._expand(c)
+            if (f["fixture"].get("status") or {}).get("short") in S.AF_DEAD:
+                when = f["fixture"].get("date") or ""
+                h, a = f["teams"]["home"]["name"], f["teams"]["away"]["name"]
+                out.add((when[:10], norm(h), norm(a)))
+                out.add((d, norm(h), norm(a)))
+    return out
+
+def settle(l, idx, dead=None):
     fb, tn, sp = idx
     if l["sport"] == "football":
         r = fb.get((l["date"], norm(l["home"]), norm(l["away"]))) or fb.get((None, norm(l["home"]), norm(l["away"])))
-        if not r: return "pending", None
+        if not r:
+            # 25 Oct 2026: a fixture the source marks postponed, cancelled or
+            # abandoned is void, as a bookmaker settles it, and drops out of
+            # the price. Until then it sat pending for ever (5 legs on 25 Oct).
+            if dead and (l["date"], norm(l["home"]), norm(l["away"])) in dead: return "void", "postponed"
+            return "pending", None
         h, a = r; win = "h" if h > a else "a" if a > h else "d"
         return ("won" if win == l["side"] else "lost"), f"{h}-{a}"
     if l["sport"] == "tennis":
@@ -1604,12 +1704,22 @@ def update_closing(L, now, dates):
         with open(path) as f: a = json.load(f)
         changed = False
         for g in a.get("groups") or []:
+            lock = parse(g.get("lockAt")) if is_card(g.get("name")) else None
             for l in g.get("legs") or []:
                 t = parse(l.get("when"))
                 if t and t <= now: continue
                 cur = by.get((l["event"], l["pick"]))
                 if not cur: continue
                 l.update(lastOdds=cur["odds"], lastBest=cur.get("best") or cur["odds"], lastAt=iso(now))
+                # 25 Oct 2026 (review bug 10): the price at lock. A group is
+                # priced by the last build before its lock, which can be hours
+                # earlier, so the first build after the lock that still finds a
+                # price records it once (lockPrice: average, best UK price and
+                # its book), and the record grades returnedLock on it. A leg no
+                # post-lock build has priced keeps lockPrice null.
+                if lock and now >= lock and not l.get("lockPrice"):
+                    l["lockPrice"] = {"odds": cur["odds"], "best": cur.get("best") or cur["odds"],
+                                      "book": cur.get("bestBook"), "at": iso(now)}
                 changed = True
         if changed:
             with open(path, "w") as f: json.dump(a, f, indent=1, ensure_ascii=False)
@@ -1621,24 +1731,55 @@ def archive(day, generated):
     json.dump({"date": day["date"], "published": generated, "groups": day["groups"]}, open(path, "w"), indent=1, ensure_ascii=False)
     return True
 
-def grade():
+def grade(now=None):
+    now = now or datetime.now(timezone.utc)
     idx = results_index(); days = []
     files = sorted(f for f in os.listdir(ARCHIVE) if f.endswith(".json")) if os.path.isdir(ARCHIVE) else []
-    for f in files[-60:]:
+    files = files[-60:]
+    try:
+        dead = dead_fixtures({f[:-5] for f in files} | {l["date"] for f in files for g in json.load(open(os.path.join(ARCHIVE, f)))["groups"]
+                                                     for l in g["legs"] if l.get("sport") == "football" and l.get("date")})
+    except Exception:
+        dead = set()
+    for f in files:
         a = json.load(open(os.path.join(ARCHIVE, f))); gs = []
         for g in a["groups"]:
             legs = []
             for l in g["legs"]:
-                st, res = settle(l, idx)
+                st, res = settle(l, idx, dead)
+                lp = l.get("lockPrice") or {}
                 legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                              "odds": l["odds"], "best": max(l.get("best") or l["odds"], l["odds"]), "lastOdds": l.get("lastOdds"),
+                             "lockOdds": lp.get("odds"), "lockBest": lp.get("best"), "lockBook": lp.get("book"),
                              "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
+            # 25 Oct 2026: a football leg still without a result VOID_AFTER
+            # after kick-off, while every other leg has settled, was postponed
+            # or abandoned without the source saying so. It is void and drops
+            # out of the price, as a bookmaker settles it, so the group pays on
+            # its remaining legs instead of sitting pending for ever.
+            for l in legs:
+                t = parse(l.get("when"))
+                if l["status"] != "pending" or l["sport"] != "football" or not t: continue
+                others = [x for x in legs if x is not l]
+                if (now - t).total_seconds() >= VOID_AFTER and all(x["status"] != "pending" for x in others):
+                    l["status"], l["result"] = "void", "no result"
             sts = [l["status"] for l in legs]
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
-            paid = math.prod(l["odds"] for l in legs if l["status"] != "void") if status == "won" else 0
-            paid_best = math.prod(l["best"] for l in legs if l["status"] != "void") if status == "won" else 0
+            live = [l for l in legs if l["status"] != "void"]
+            paid = math.prod(l["odds"] for l in live) if status == "won" else 0
+            paid_best = math.prod(l["best"] for l in live) if status == "won" else 0
+            # 25 Oct 2026 (bug 10): the return at the price at lock, only when
+            # every paying leg has one; a group without is left out of that tally.
+            at_lock = all(l["lockOdds"] for l in live) if live else False
+            paid_lock = (math.prod(l["lockOdds"] for l in live) if status == "won" else 0) if at_lock else None
+            # 25 Oct 2026 (review bug 1): wide, late, locked and lockAt were
+            # dropped here, so wider-rule and post-lock groups were tallied as
+            # the full Card. They travel with the graded row and are tallied apart.
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "odds": g["odds"], "p": g["p"], "status": status,
-                       "paid": round(paid, 2), "paidBest": round(paid_best, 2), "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
+                       "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
+                       "paid": round(paid, 2), "paidBest": round(paid_best, 2),
+                       "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
+                       "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
                        "legsPending": sts.count("pending"), "legs": legs})
         days.append({"date": a["date"], "published": a.get("published"), "groups": gs})
     days.sort(key=lambda d: d["date"], reverse=True)
@@ -1657,6 +1798,10 @@ def grade():
                 "legs": len(legs), "legsWon": sum(l["status"] == "won" for l in legs),
                 "returned": round(sum(g["paid"] for g in done), 2), "staked": len(done),
                 "returnedBest": round(sum(g.get("paidBest", g["paid"]) for g in done), 2),
+                # 25 Oct 2026 (bug 10): at the price at lock, over the settled
+                # groups that have one (stakedLock), so it reads against its own stake.
+                "returnedLock": round(sum(g["paidLock"] for g in done if g.get("paidLock") is not None), 2),
+                "stakedLock": sum(1 for g in done if g.get("paidLock") is not None),
                 "expected": round(sum(g["p"] for g in done), 2),
                 # 25 Oct 2026: published price v the last price before kick-off.
                 # Positive = the price shortened after we published (beat the close).
@@ -1677,9 +1822,13 @@ def grade():
            "strict": tally([g for g in allg if g["name"] in LEGS_IN and not is_wide(g["name"])]),
            "wider": tally([g for g in allg if is_wide(g["name"])]),
            "multiplier": tally([g for g in allg if is_mult(g["name"])]),
-           "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide")]),
-           "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide")]),
-           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
+           # The Card record is the full rule, locked on time. Wider-rule groups
+           # (cardWide) and groups added after a window's lock (cardLate, any
+           # rule) are tallied on their own lines and never count toward it.
+           "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
+           "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
+           "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
+           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out

@@ -22,11 +22,33 @@ def item(fid, books):
 class Parse(unittest.TestCase):
 
     def test_average_best_and_books_from_match_winner_only(self):
-        rows = O.af_parse_odds([item(7, [("A", ("1.50", "4.0", "6.0")), ("B", ("1.60", "3.8", "5.5"))])])
+        rows = O.af_parse_odds([item(7, [("Bet365", ("1.50", "4.0", "6.0")), ("William Hill", ("1.60", "3.8", "5.5"))])])
         r = rows["7"]
         self.assertEqual(r["avg"], [1.55, 3.9, 5.75])
         self.assertEqual(r["max"], [1.6, 4.0, 6.0])
+        self.assertEqual(r["maxBook"], ["William Hill", "Bet365", "Bet365"])
         self.assertEqual(r["books"], 2)
+
+    def test_best_price_is_among_uk_licensed_books_only(self):
+        # 25 Oct 2026 (review bug 2): 1xBet's 1.80 is not a price a UK punter can take
+        rows = O.af_parse_odds([item(7, [("1xBet", ("1.80", "4.0", "6.0")), ("Bet365", ("1.50", "4.0", "6.0")),
+                                         ("SkyBet", ("1.55", "3.8", "5.5")), ("Dafabet", ("1.70", "3.9", "5.8"))])])
+        r = rows["7"]
+        self.assertEqual(r["books"], 4)                  # the average still uses every book
+        self.assertEqual(r["max"][0], 1.55)
+        self.assertEqual(r["maxBook"][0], "SkyBet")      # matched regardless of spacing and case
+
+    def test_no_uk_book_falls_back_to_the_average_with_no_book(self):
+        rows = O.af_parse_odds([item(7, [("1xBet", ("1.80", "4.0", "6.0")), ("Betano", ("1.60", "3.8", "5.5"))])])
+        r = rows["7"]
+        self.assertEqual(r["max"], r["avg"])
+        self.assertEqual(r["maxBook"], [None, None, None])
+
+    def test_uk_book_matching(self):
+        for n in ("Bet365", "bet365", "William Hill", "Paddy Power", "PaddyPower", "888Sport", "Sky Bet", "Betfair"):
+            self.assertTrue(O.uk_book(n), n)
+        for n in ("1xBet", "Betano", "Dafabet", "Pinnacle", "Marathonbet", None, ""):
+            self.assertFalse(O.uk_book(n), n)
 
     def test_a_fixture_missing_a_side_is_left_out(self):
         bad = {"fixture": {"id": 8}, "bookmakers": [{"name": "A", "bets": [{"id": 1, "values": [
