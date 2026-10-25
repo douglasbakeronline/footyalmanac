@@ -121,9 +121,9 @@ jobs:
       # window as the build (build.py --days 7); no archive, no floor.
       - name: Check the build is not empty
         run: |
-          latest=$(git ls-tree --name-only HEAD predictions/ | grep -E 'predictions/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json$' | sort | tail -1)
+          latest=$( { git ls-tree --name-only HEAD predictions/ | grep -E 'predictions/[0-9]{4}-[0-9]{2}-[0-9]{2}\.json$' | sort | tail -1; } || true)
           if [ -n "$latest" ]; then
-            prev=$(git show "HEAD:$latest" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))')
+            prev=$( { git show "HEAD:$latest" | python3 -c 'import json,sys; print(len(json.load(sys.stdin)))'; } || echo 0)
           else prev=0; fi
           echo "previous archive: ${latest:-none} (${prev} fixtures)"
           PREV_N="$prev" python3 - <<'PY'
