@@ -25,7 +25,7 @@ def graded(groups, statuses):
         json.dump({"date": "2026-10-26", "groups": groups}, open(os.path.join(d, "2026-10-26.json"), "w"))
         it = iter(statuses)
         with mock.patch.object(G, "results_index", return_value=None), \
-             mock.patch.object(G, "settle", side_effect=lambda l, idx: (next(it), "1-0")):
+             mock.patch.object(G, "settle", side_effect=lambda l, idx, dead=None: (next(it), "1-0")):
             return G.grade()
 
 
@@ -62,6 +62,65 @@ class Tallies(unittest.TestCase):
     def test_nothing_is_lost(self):
         self.assertEqual(self.rec["overall"]["groups"], 4)
         self.assertEqual(len(self.rec["days"][0]["groups"]), 4)
+
+
+class PostponedLegs(unittest.TestCase):
+    """25 Oct 2026: a postponed, cancelled or abandoned football leg is void
+    and drops out of the price; so is one with no result 72 hours after
+    kick-off once every other leg has settled."""
+
+    def idx(self, results):
+        fb = {(d, G.norm(h), G.norm(a)): r for (d, h, a), r in results.items()}
+        return fb, {}, {}
+
+    def test_source_marked_postponed_is_void(self):
+        l = leg("A"); idx = self.idx({("2026-10-26", "B", "X"): (2, 0)})
+        self.assertEqual(G.settle(l, idx), ("pending", None))
+        self.assertEqual(G.settle(l, idx, {("2026-10-26", "a", "x")}), ("void", "postponed"))
+        self.assertEqual(G.settle(leg("B"), idx, {("2026-10-26", "a", "x")}), ("won", "2-0"))
+
+    def test_dead_fixtures_read_from_the_cached_day_file_only(self):
+        import gzip, sources as S
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "AF_CACHE_DIR", d), \
+             mock.patch.object(S, "_af_get", side_effect=AssertionError("no calls while grading")):
+            rows = [S._compact({"league": {"id": 1, "season": 2026}, "fixture": {"id": 5, "date": "2026-10-26T15:00:00+00:00", "status": {"short": "PST"}},
+                                "teams": {"home": {"name": "Alpha FC"}, "away": {"name": "Beta"}}, "score": {"fulltime": {}}}),
+                    S._compact({"league": {"id": 1, "season": 2026}, "fixture": {"id": 6, "date": "2026-10-26T15:00:00+00:00", "status": {"short": "FT"}},
+                                "teams": {"home": {"name": "Gamma"}, "away": {"name": "Delta"}}, "score": {"fulltime": {"home": 1, "away": 0}}})]
+            with gzip.open(os.path.join(d, "day-2026-10-26.json.gz"), "wt", encoding="utf-8") as fh:
+                json.dump({"final": True, "rows": rows}, fh)
+            dead = G.dead_fixtures({"2026-10-26", "2026-10-27"})
+        self.assertIn(("2026-10-26", "alpha", "beta"), dead)
+        self.assertNotIn(("2026-10-26", "gamma", "delta"), dead)
+
+    def grade_at(self, groups, results, now):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d), mock.patch.object(G, "HERE", d):
+            json.dump({"date": "2026-10-26", "groups": groups}, open(os.path.join(d, "2026-10-26.json"), "w"))
+            with mock.patch.object(G, "results_index", return_value=self.idx(results)), \
+                 mock.patch.object(G, "dead_fixtures", return_value=set()):
+                return G.grade(now=now)
+
+    def test_no_result_72_hours_on_is_void_and_the_group_pays_on_the_rest(self):
+        from datetime import datetime, timedelta, timezone
+        g = {"name": "Card 2x", "window": "Daytime", "odds": 3.0, "p": 0.35, "locked": True,
+             "legs": [leg("A", 1.50), leg("B", 1.40), leg("C", 1.43)]}
+        results = {("2026-10-26", "A", "X"): (1, 0), ("2026-10-26", "B", "X"): (3, 1)}
+        ko = datetime(2026, 10, 26, 15, 0, tzinfo=timezone.utc)
+        soon = self.grade_at([g], results, ko + timedelta(hours=20))["days"][0]["groups"][0]
+        self.assertEqual(soon["status"], "pending")
+        later = self.grade_at([g], results, ko + timedelta(hours=73))["days"][0]["groups"][0]
+        self.assertEqual(later["status"], "won")
+        self.assertEqual(later["legs"][2]["status"], "void")
+        self.assertEqual(later["paid"], 2.1)                 # 1.50 x 1.40, C out of the price
+
+    def test_not_voided_while_another_leg_is_still_pending(self):
+        from datetime import datetime, timedelta, timezone
+        g = {"name": "Card 2x", "window": "Daytime", "odds": 3.0, "p": 0.35, "locked": True,
+             "legs": [leg("A", 1.50), leg("B", 1.40), leg("C", 1.43)]}
+        ko = datetime(2026, 10, 26, 15, 0, tzinfo=timezone.utc)
+        r = self.grade_at([g], {("2026-10-26", "A", "X"): (1, 0)}, ko + timedelta(hours=100))["days"][0]["groups"][0]
+        self.assertEqual(r["status"], "pending")
+        self.assertEqual([l["status"] for l in r["legs"]], ["won", "pending", "pending"])
 
 
 if __name__ == "__main__":

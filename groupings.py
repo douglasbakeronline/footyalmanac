@@ -1603,11 +1603,43 @@ def results_index():
         sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
     return fb, tn, sp
 
-def settle(l, idx):
+VOID_AFTER = 72 * 3600   # a football leg with no result this long after kick-off is void (25 Oct 2026)
+
+def dead_fixtures(dates):
+    """{(date, norm home, norm away)} of football fixtures API-Football marks
+    postponed, cancelled, abandoned, awarded or suspended (sources.AF_DEAD) on
+    these UTC dates, read from the cached day files only: grading never
+    spends a call. Empty when the cache has no copy."""
+    import gzip
+    sys.path.insert(0, HERE)
+    import sources as S
+    out = set()
+    for d in dates:
+        path = os.path.join(S.AF_CACHE_DIR, f"day-{d}.json.gz")
+        try:
+            with gzip.open(path, "rt", encoding="utf-8") as fh:
+                rows = json.load(fh).get("rows") or []
+        except (OSError, ValueError):
+            continue
+        for c in rows:
+            f = S._expand(c)
+            if (f["fixture"].get("status") or {}).get("short") in S.AF_DEAD:
+                when = f["fixture"].get("date") or ""
+                h, a = f["teams"]["home"]["name"], f["teams"]["away"]["name"]
+                out.add((when[:10], norm(h), norm(a)))
+                out.add((d, norm(h), norm(a)))
+    return out
+
+def settle(l, idx, dead=None):
     fb, tn, sp = idx
     if l["sport"] == "football":
         r = fb.get((l["date"], norm(l["home"]), norm(l["away"]))) or fb.get((None, norm(l["home"]), norm(l["away"])))
-        if not r: return "pending", None
+        if not r:
+            # 25 Oct 2026: a fixture the source marks postponed, cancelled or
+            # abandoned is void, as a bookmaker settles it, and drops out of
+            # the price. Until then it sat pending for ever (5 legs on 25 Oct).
+            if dead and (l["date"], norm(l["home"]), norm(l["away"])) in dead: return "void", "postponed"
+            return "pending", None
         h, a = r; win = "h" if h > a else "a" if a > h else "d"
         return ("won" if win == l["side"] else "lost"), f"{h}-{a}"
     if l["sport"] == "tennis":
@@ -1699,20 +1731,38 @@ def archive(day, generated):
     json.dump({"date": day["date"], "published": generated, "groups": day["groups"]}, open(path, "w"), indent=1, ensure_ascii=False)
     return True
 
-def grade():
+def grade(now=None):
+    now = now or datetime.now(timezone.utc)
     idx = results_index(); days = []
     files = sorted(f for f in os.listdir(ARCHIVE) if f.endswith(".json")) if os.path.isdir(ARCHIVE) else []
-    for f in files[-60:]:
+    files = files[-60:]
+    try:
+        dead = dead_fixtures({f[:-5] for f in files} | {l["date"] for f in files for g in json.load(open(os.path.join(ARCHIVE, f)))["groups"]
+                                                     for l in g["legs"] if l.get("sport") == "football" and l.get("date")})
+    except Exception:
+        dead = set()
+    for f in files:
         a = json.load(open(os.path.join(ARCHIVE, f))); gs = []
         for g in a["groups"]:
             legs = []
             for l in g["legs"]:
-                st, res = settle(l, idx)
+                st, res = settle(l, idx, dead)
                 lp = l.get("lockPrice") or {}
                 legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                              "odds": l["odds"], "best": max(l.get("best") or l["odds"], l["odds"]), "lastOdds": l.get("lastOdds"),
                              "lockOdds": lp.get("odds"), "lockBest": lp.get("best"), "lockBook": lp.get("book"),
                              "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res})
+            # 25 Oct 2026: a football leg still without a result VOID_AFTER
+            # after kick-off, while every other leg has settled, was postponed
+            # or abandoned without the source saying so. It is void and drops
+            # out of the price, as a bookmaker settles it, so the group pays on
+            # its remaining legs instead of sitting pending for ever.
+            for l in legs:
+                t = parse(l.get("when"))
+                if l["status"] != "pending" or l["sport"] != "football" or not t: continue
+                others = [x for x in legs if x is not l]
+                if (now - t).total_seconds() >= VOID_AFTER and all(x["status"] != "pending" for x in others):
+                    l["status"], l["result"] = "void", "no result"
             sts = [l["status"] for l in legs]
             status = "lost" if "lost" in sts else "won" if all(x in ("won", "void") for x in sts) else "pending"
             live = [l for l in legs if l["status"] != "void"]
