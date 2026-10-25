@@ -9,6 +9,7 @@ Everything here is deterministic and inspectable: no black boxes, every number a
 row shows on the dashboard is produced by a function in this file.
 """
 import json, os, re
+from datetime import date
 from math import exp, factorial, sqrt
 
 # ---------------------------------------------------------------------------
@@ -510,6 +511,68 @@ def _af_seasons_doc():
 
 AF_SEASONS = _af_seasons_doc()
 apply_af_seasons(AF_SEASONS)
+
+# The season every competition is playing, derived from today's date
+# (25 Oct 2026, bug 6 of claude/full-review-2026-10-25.md: 90 hand-written
+# season strings, and the calendar-year leagues would have priced on last
+# year's ratings from 1 Jan 2027 without a word). Split-year leagues roll on
+# 1 July ("2026-27"); calendar-year leagues on 1 January ("2026"). The strings
+# in LEAGUES now only say which kind a league is (a "season" with a hyphen is
+# split-year, without one calendar-year, none at all is split-year like the
+# global default); "calendar": True/False says it outright. Overrides, in
+# order: a season the API set (seasonSource "api", apply_af_seasons), then
+# "seasonFixed": True to keep a hand-written string as it is.
+SPLIT_ROLL_MONTH = 7
+
+
+def season_kind(code):
+    """'split' or 'calendar'."""
+    m = LEAGUES.get(code) or {}
+    if "calendar" in m:
+        return "calendar" if m["calendar"] else "split"
+    s = str(m.get("season") or "")
+    if re.fullmatch(r"\d{4}", s):
+        return "calendar"
+    return "split"
+
+
+def current_season(code, today=None):
+    """The season string competition `code` is playing on `today`."""
+    today = today or date.today()
+    m = LEAGUES.get(code) or {}
+    if m.get("season") and (m.get("seasonSource") == "api" or m.get("seasonFixed")):
+        return m["season"]
+    if season_kind(code) == "calendar":
+        return str(today.year)
+    y = today.year if today.month >= SPLIT_ROLL_MONTH else today.year - 1
+    return _season_label(y, True)
+
+
+def prev_seasons(code, today=None):
+    """The two seasons before the current one, in the same style."""
+    return season_prev(current_season(code, today))
+
+
+def roll_seasons(today=None):
+    """Set season and prev on every league from today's date, honouring the
+    overrides above. Cups and internationals carry no season of their own
+    (the build gives them the global one). Returns {code: (old, new)}."""
+    changed = {}
+    for code, m in LEAGUES.items():
+        if m.get("cup") or m.get("international") or m.get("u21") or m.get("ratingsOnly"):
+            continue
+        if "season" not in m and "calendar" not in m:
+            continue                      # split-year on the global default
+        new = current_season(code, today)
+        if new != m.get("season"):
+            changed[code] = (m.get("season"), new)
+        m["season"] = new
+        if m.get("seasonSource") != "api" and not m.get("seasonFixed"):
+            m["prev"] = season_prev(new)
+    return changed
+
+
+SEASON_ROLLED = roll_seasons()
 
 # Home advantage, expressed as multipliers on expected goals.
 # Ratio HOME_MULT/AWAY_MULT ~ 1.33 reproduces the long-run English top-flight

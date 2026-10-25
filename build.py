@@ -17,8 +17,10 @@ import sources as S
 from bands import band_rate
 import rankings as RK
 
-SEASON = os.environ.get("ALMANAC_SEASON", "2026-27")
-PREV = ["2025-26", "2024-25"]
+# The global split-year season, from today's date (engine.current_season;
+# 25 Oct 2026, bug 6). ALMANAC_SEASON still overrides it for a replay.
+SEASON = os.environ.get("ALMANAC_SEASON") or E.current_season("en.1")
+PREV = E.season_prev(SEASON)
 CODES = [c for c in E.LEAGUES if c not in E.AF_DUPLICATES]
 
 # Manual per-team adjustment on expected goals. 1.0 = no change.

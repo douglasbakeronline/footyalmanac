@@ -69,8 +69,8 @@ def splits(code):
     Per-competition, because Brazil and the Nordics run calendar years.
     """
     m = E.LEAGUES[code]
-    cur = m.get("season", "2026-27")
-    prev = m.get("prev", ["2025-26", "2024-25"])
+    cur = m.get("season") or E.current_season(code)
+    prev = m.get("prev") or E.season_prev(cur)
     return {"fit": (prev[0], prev[1]), "check": (cur, prev[0])}
 
 

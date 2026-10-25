@@ -146,7 +146,7 @@ def load_results(codes, cache=None):
     needed and nothing has to be scraped."""
     res = {}
     for code in codes:
-        season = E.LEAGUES[code].get("season", "2026-27")
+        season = E.LEAGUES[code].get("season") or E.current_season(code)
         rows, ok = S.fetch_fixtures(code, season, cache)
         if not ok:
             continue
