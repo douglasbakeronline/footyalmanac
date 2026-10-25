@@ -78,6 +78,27 @@ class Build(unittest.TestCase):
         again = G.build_card(moved, DATE, EARLY + timedelta(hours=2), prev=gs, log=log)
         self.assertTrue(any(e["name"] == g0["name"] for e in log))
 
+    def test_price_outage_keeps_the_last_price_for_an_unlocked_group(self):
+        # 25 Oct 2026 (review bug 8): the price source fails on the next build,
+        # every leg comes back as an estimate; the group holds on its last price, flagged stale
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["window"] == "Daytime")
+        outage = []
+        for l in board():
+            l = dict(l)
+            if l["event"] in {x["event"] for x in g0["legs"]}:
+                for k in ("fair", "margin", "best", "bestBook"): l.pop(k, None)
+                l.update(odds=round(1 / (l["pModel"] * G.MARGIN), 2), est=True); l["p"] = l["pTested"]; G.honest(l)
+            outage.append(l)
+        log = []
+        again = G.build_card(outage, DATE, EARLY + timedelta(hours=1), prev=gs, log=log)
+        g1 = next((g for g in again if g["window"] == "Daytime" and g["name"] == g0["name"]), None)
+        self.assertIsNotNone(g1)
+        self.assertEqual(g1["status"], "holding")
+        self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
+        self.assertTrue(all(l.get("stale") for l in g1["legs"]))
+        self.assertFalse(any(e["name"] == g0["name"] and e["rank"] == "Daytime" for e in log))
+
     def test_late_group_after_lock(self):
         gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
         self.assertTrue(gs)

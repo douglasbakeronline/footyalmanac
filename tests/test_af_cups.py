@@ -215,17 +215,22 @@ class GroupingsOdds(unittest.TestCase):
         t = date.today().isoformat()
         day = [fx(1, t, "Arsenal", "Chelsea"), fx(1, t, "Leeds", "Hull")]
         day[0]["fixture"]["id"], day[1]["fixture"]["id"] = 11, 12
-        odds = {"response": [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
-            {"value": "Home", "odd": "1.80"}, {"value": "Draw", "odd": "3.5"}, {"value": "Away", "odd": "4.0"}]}]}]}]}
+        odds = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.80"}, {"value": "Draw", "odd": "3.5"}, {"value": "Away", "odd": "4.0"}]}]}]}]
         legs = lambda: [{"sport": "football", "date": t, "when": f"{t}T19:00:00Z", "home": "Arsenal",
                          "away": "Chelsea", "side": "h"}]
+        asked = []
+        def af_get(path):      # what sources._af_get does on a clean answer (25 Oct 2026: _odds_for goes through it)
+            asked.append(path); S._AF_CACHE[path] = odds; S.AF_USAGE["calls"] += 1; return odds
+        import odds as O
         with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "x"}), \
              mock.patch.object(S, "AF_CACHE_DIR", d), mock.patch.object(S, "_af_day", return_value=day), \
-             mock.patch.object(G, "af", return_value=odds) as af:
+             mock.patch.object(O, "af_prices", lambda dates: {}), mock.patch.object(S, "_af_get", af_get):
             L, rep = legs(), {}
             G.price_football(L, {t}, rep)
             self.assertEqual((L[0]["odds"], rep["football"]["calls"]), (1.8, 1))
-            self.assertIn("fixture=11", af.call_args[0][0])
+            self.assertIn("fixture=11", asked[0])
+            S._AF_CACHE.clear()
             L, rep = legs(), {}
             G.price_football(L, {t}, rep)
             self.assertEqual((L[0]["odds"], rep["football"]["calls"]), (1.8, 0))

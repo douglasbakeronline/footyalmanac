@@ -85,6 +85,45 @@ class UkBestPrice(unittest.TestCase):
         self.assertAlmostEqual(l["odds"], 1.62, places=2)
 
 
+class FixtureOddsCache(unittest.TestCase):
+    """25 Oct 2026 (review bug 8): one fixture's prices go through
+    sources._af_get, and an empty quota answer is never cached as "no prices"."""
+
+    def setUp(self):
+        import sources as S
+        self.S = S
+        S._AF_CACHE.clear(); S._AF_SPENT[0] = False
+
+    def tearDown(self):
+        self.S._AF_CACHE.clear(); self.S._AF_SPENT[0] = False
+
+    def test_a_real_answer_is_cached_and_served(self):
+        S = self.S
+        items = [{"fixture": {"id": 9}, "bookmakers": []}]
+        def fake(path):
+            S._AF_CACHE[path] = items; S.AF_USAGE["calls"] += 1; return items
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "_af_get", fake):
+            self.assertEqual(G._odds_for(9, "k", d), (items, 1))
+            self.assertTrue(os.path.exists(os.path.join(d, "odds-9.json")))
+            S._AF_CACHE.clear()
+            self.assertEqual(G._odds_for(9, "k", d), (items, 0))      # from disk, no call
+
+    def test_a_quota_refusal_is_not_cached(self):
+        S = self.S
+        def spent(path):
+            S._AF_SPENT[0] = True; return []      # what _af_get does on the daily-limit error
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "_af_get", spent):
+            self.assertEqual(G._odds_for(9, "k", d), ([], 0))
+            self.assertFalse(os.path.exists(os.path.join(d, "odds-9.json")))
+
+    def test_once_spent_no_more_calls(self):
+        S = self.S
+        S._AF_SPENT[0] = True
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}), \
+             mock.patch.object(S.urllib.request, "urlopen", side_effect=AssertionError("must not call")):
+            self.assertEqual(G._odds_for(9, "k", d), ([], 0))
+
+
 class PinnWire(unittest.TestCase):
     def test_prices_tennis_from_pinnacle(self):
         t = {"sport": "tennis", "pick": "Jannik Sinner", "players": ["Jannik Sinner", "Casper Ruud"],

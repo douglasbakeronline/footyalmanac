@@ -371,7 +371,15 @@ ODDS_TTL = 90 * 60     # a fixture's prices are re-read at most every 90 minutes
 
 def _odds_for(fid, key, cache_dir):
     """Match Winner prices for one fixture, cached on disk for ODDS_TTL.
-    Returns (response items, calls made)."""
+    Returns (response items, calls made).
+
+    25 Oct 2026 (review bug 8): this used to call API-Football directly, past
+    sources._af_get's spent marker, so once the day's allowance was gone every
+    fixture cost a call and its empty answer was cached 90 minutes as "no
+    prices". Now the call goes through _af_get (paced, retried, stops for the
+    run once the allowance is spent) and only a genuine answer is cached:
+    _af_get keeps a path in its own cache only on a 200 with no errors, so a
+    quota refusal, a bad reply or a network failure is never written to disk."""
     path = os.path.join(cache_dir, f"odds-{fid}.json")
     try:
         if time.time() - os.path.getmtime(path) < ODDS_TTL:
@@ -379,12 +387,17 @@ def _odds_for(fid, key, cache_dir):
                 return json.load(f), 0
     except (OSError, ValueError):
         pass
-    r = af(f"/odds?fixture={fid}&bet=1", key)
-    items = r.get("response") or []
-    os.makedirs(cache_dir, exist_ok=True)
-    with open(path, "w") as f:
-        json.dump(items, f)
-    return items, 1
+    sys.path.insert(0, HERE)
+    import sources as S
+    q = f"/odds?fixture={fid}&bet=1"
+    before = S.AF_USAGE["calls"]
+    items = S._af_get(q) or []
+    calls = S.AF_USAGE["calls"] - before
+    if q in S._AF_CACHE:       # a real answer, empty or not
+        os.makedirs(cache_dir, exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(items, f)
+    return items, calls
 
 
 def price_football(L, dates, report):
@@ -1332,6 +1345,12 @@ def recheck_card(g, L):
         cur = by.get((old["event"], old["pick"]))
         if cur is None:
             why.append(f"{old['pick']}: no longer on the board for this day (moved, postponed, flagged or the model's side changed)"); continue
+        if cur.get("est") and not old.get("est") and old.get("odds"):
+            # 25 Oct 2026 (review bug 8): a price source that failed this build
+            # is not a reason to drop an unlocked Card group. The last confirmed
+            # price stands, flagged stale, until a build can read one again; the
+            # model's side of the check still runs on this build's number.
+            cur = stale_price(cur, old)
         f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
         legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
@@ -1456,6 +1475,13 @@ def leg_fault(l, wide=False):
 
 def pct(x): return f"{round(x * 100)}%"
 
+def stale_price(cur, old):
+    """This build's leg (unpriced) carrying the last confirmed price from the
+    published leg, flagged stale, with fair and p recomputed on it."""
+    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
+    cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
+    return honest(cur)
+
 def recheck(g, L):
     """Re-test a published group against this build's legs and prices.
     Returns (the group at today's prices, []) if every rule still holds, else
@@ -1472,9 +1498,7 @@ def recheck(g, L):
             # A price source that failed this build is not a reason to drop a
             # group: the last confirmed price stands, flagged, until a build
             # can read one again. The model's side of the check still runs.
-            cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
-            cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
-            honest(cur)
+            cur = stale_price(cur, old)
         fault = leg_fault(cur, wide=is_wide(g["name"]))
         if fault: why.append(fault); continue
         nl = dict(cur, firstOdds=old.get("firstOdds", old.get("odds")))
