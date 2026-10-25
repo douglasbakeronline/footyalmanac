@@ -59,6 +59,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 
 | File | Covers |
 |---|---|
+| `claude/full-review-2026-10-25.md` | Full review of 25 Oct 2026: live record by tier and sport, 22 bugs with fixes, the betting record, costs, and a dated timeline. Read first when deciding what to work on next. |
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
 | `claude/world-rankings.md` | Which world rankings are in the model, the tests behind them, sources and name mapping. Read before touching `rankings.py`. |
 | `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |

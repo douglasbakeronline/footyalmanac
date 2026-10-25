@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Full review of the platform, 25 Oct (note only, tag pending)
+
+**What changed:** `claude/full-review-2026-10-25.md`, a review of `main` at 88cf380: the live record by tier and sport (football calibrated, away picks under-quoted by 7 points at z=5.1, tennis 70-75% under quote), 22 bugs with file and fix (groupings `grade()` drops `wide`/`late`, non-UK `bestBook`, draw reads in the football headline, stale FIFA file, 23 rolled AF seasons, no refuse-if-empty guard for sports and groupings), the betting record (64 settled groups, -37%, interval -66% to -6%), every running cost (£89-£164/month on the Max path) and a dated timeline of changes. Also added to `CLAUDE.md`'s notes table.
+**Files:** claude/full-review-2026-10-25.md, CLAUDE.md, RELEASES.md.
+**Not changed:** any code, config or record.
+**Roll back:** `git revert` the commit.
+
 ## Douglas's model ideas tested; per-league home advantage learns weekly, 25 Oct (tag pending)
 
 **What changed:** Douglas asked for home advantage, table position, goals for and against and stronger recent form in the model, and for it to learn each week. Tested on the walk-forward replay (fit 5,262 fixtures last season, check 902 this season, paired, live calibration): table position, last-5 goal difference and last-3 points make it worse at every strength; recent goals against the season average add nothing; **home advantage per league** helps (fit −0.0010 log loss, check −0.0007) but misses the p(worse) gate (0.33 against 0.30) on the short current season. So it is built and wired in, and refitted every Monday by `tools/model_ideas.py --fit-home` in `tune.yml`, which writes `home-advantage.json` only when it passes the same gates as the calibration. Today it does not, so **no prediction changes yet**. The other ideas are re-tested weekly, advisory.
