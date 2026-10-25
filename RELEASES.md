@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Douglas's model ideas tested; per-league home advantage learns weekly, 25 Oct (tag pending)
+
+**What changed:** Douglas asked for home advantage, table position, goals for and against and stronger recent form in the model, and for it to learn each week. Tested on the walk-forward replay (fit 5,262 fixtures last season, check 902 this season, paired, live calibration): table position, last-5 goal difference and last-3 points make it worse at every strength; recent goals against the season average add nothing; **home advantage per league** helps (fit −0.0010 log loss, check −0.0007) but misses the p(worse) gate (0.33 against 0.30) on the short current season. So it is built and wired in, and refitted every Monday by `tools/model_ideas.py --fit-home` in `tune.yml`, which writes `home-advantage.json` only when it passes the same gates as the calibration. Today it does not, so **no prediction changes yet**. The other ideas are re-tested weekly, advisory.
+**Files:** engine.py (`LEAGUE_HOME`, `league_home`), build.py (league path), replay.py (`home_s`), tune.py (replay uses the live factor), tools/model_ideas.py, .github/workflows/tune.yml, tests/test_league_home.py, claude/model-ideas-2026-10-25.md, CLAUDE.md, RELEASES.md.
+**Not changed:** every live number (no `home-advantage.json`), the calibration, the Daily List rule.
+**Roll back:** `git revert` the commit; delete `home-advantage.json` if it has been written.
+
 ## The tab bar on Analysis, and the football record on the Football page, 25 Oct (tag pending)
 
 **What changed:** Douglas: "I want all sports tabs to stay where they are when you click into the analysis page" and "the football record removed from the header and held at the top of the football page like the other sports give an overview."

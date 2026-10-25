@@ -75,6 +75,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/brand-identity.md` | Mark, type, colour tokens with contrast ratios, sticky bar, assets. |
 | `claude/the-card-2026-10-25.md` | The Card and the playbook: windows, 2x / 3x kinds, leg rule, lock times, archive of locked groups only, prices for every sport and what would close the gap. Read before touching `build_card` or the front page. |
 | `claude/todays-bets-2026-10-25.md` | The Today's bets front page, the weekend's losing slips and the six rules taken from them, the avoid list and slip checker, no forced groups. Read before touching the front page or `MIN_GROUPS`. |
+| `claude/model-ideas-2026-10-25.md` | Home advantage per league, table position, recent goals, goal difference and last-3 points tested on the replay; the weekly gated home-advantage refit. Read before touching form or home advantage. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
 **The code on `main` is the source of truth.** The notes are snapshots from
@@ -118,7 +119,8 @@ the self-contained build output and is what gets published as the site's
 index. Edit `index.html`, never `dashboard.html`.
 
 Config the model reads: `calibration.json` (auto-refitted weekly when a
-candidate beats the live curve under the gates),
+candidate beats the live curve under the gates), `home-advantage.json`
+(per-league home advantage, same weekly gated refit; absent until it passes),
 `europe.json` (structural, refitted by hand only), `adjustments.json`
 (deliberately empty, see rules).
 
@@ -165,8 +167,10 @@ Open `dashboard.html` straight off disk to check the page.
   commit the archives back
   to `main`, rebuild, publish to Pages.
 - `tune.yml` runs Mondays 04:40 UTC: `tune.py --fit` (auto-applies only if it
-  passes all gates), then `--report` and `eurotest.py --report` as advisory
-  output for a human.
+  passes all gates), `tools/model_ideas.py --fit-home` (per-league home
+  advantage, writes `home-advantage.json` only if it passes the same gates;
+  Douglas's exception to rule 5, 25 Oct 2026), then `tools/model_ideas.py`,
+  `--report` and `eurotest.py --report` as advisory output for a human.
 - `office-agents.yml` runs daily at 06:30 UTC as a sprint (Douglas's
   instruction, 4 Oct 2026: no owner review, every agent productive). Since
   20 Oct 2026 the sprint runs the `SPRINT_SIZE` (5) agents whose best free task
@@ -301,6 +305,7 @@ strength, the ratings already carry it. See `claude/tuning-evidence.md`.
 Football form by stage of season (19 Oct 2026): games 4-6 are the weak spot in both seasons, but no weighting fixes it (faster season, more form, slower season, last season only: none passes both seasons); team news is the untested lever.
 Football team news (19 Oct 2026): API-Football injury and suspension lists, by count, by last season's minutes and as new absences, add nothing that passes cleanly (best: wrong-signed, under the gain bar on the fit season). `tools/team_news_eval.py`; data in `audit-out/team-news/`, never committed.
 Hot form, big clubs, cups (19 Oct 2026): favourites that won their last 3 land under their quote (68.2% v 70.8%), big clubs land as quoted, cup favourites land far under (live 60%+: 56.5% v 69.7%). See `claude/tuning-evidence.md`.
+Douglas's ideas (25 Oct 2026, `tools/model_ideas.py`, `claude/model-ideas-2026-10-25.md`): table position, last-5 goal difference and last-3 points make it worse at any strength; recent goals against the season average add nothing. Home advantage per league helps (fit −0.0010, check −0.0007) but misses p(worse) on the short check season: it is refitted every Monday and switches itself on through `home-advantage.json` when it passes.
 Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
 Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
 zero. The real gap was four months of missing results, now fixed. See

@@ -117,7 +117,8 @@ def lambdas(data, split, params=None, meta=False, features=False):
         test_s, prior_s = splits(code)[split]
         prior, test = data[(code, prior_s)], data[(code, test_s)]
         for (d, h, a, hg, ag), lh, la, info in R.replay_league(
-                prior, test, E.LEAGUES[code]["tier"], params=p):
+                prior, test, E.LEAGUES[code]["tier"],
+                params={**p, "home_s": p.get("home_s") or E.league_home(code)[0]}):
             y = 0 if hg > ag else (1 if hg == ag else 2)
             row = (lh, la, y, code, d, h, a) if meta else (lh, la, y)
             if features:

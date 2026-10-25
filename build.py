@@ -1268,8 +1268,10 @@ def main():
                 if meta.get("afCup"):
                     p = E.cup_temper(p)     # domestic cups: the cup calibration (engine)
             else:
+                lh_s, la_s = E.league_home(code)     # home-advantage.json, 1.0 when absent
                 p = E.match_probabilities(rh["att"], rh["def"], ra["att"], ra["def"],
-                                          mu, tier=meta["tier"], form_h=fh, form_a=fa)
+                                          mu, tier=meta["tier"], form_h=fh, form_a=fa,
+                                          adj_h=lh_s, adj_a=la_s)
 
             if is_intl:
                 # "Evidence" and Celtic's Law both describe things specific to

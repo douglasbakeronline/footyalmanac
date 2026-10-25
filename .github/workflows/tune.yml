@@ -51,6 +51,19 @@ jobs:
       - name: Refit calibration
         run: python3 tune.py --fit
 
+      # 25 Oct 2026, Douglas: "set it up to learn from the results". Each
+      # league's own home advantage, refitted weekly on the last completed
+      # season and written to home-advantage.json ONLY when it also improves
+      # the current season under the same gates as calibration.json.
+      - name: Refit home advantage per league
+        run: python3 tools/model_ideas.py --fit-home
+
+      # Douglas's other ideas (table position, recent goals, recent goal
+      # difference, last-3 points), re-tested every week as the season grows.
+      # Advisory: printed for a human, never applied automatically.
+      - name: Model ideas (advisory)
+        run: python3 tools/model_ideas.py
+
       # The full constant sweep is advisory. It is printed into the job log for
       # a human to read and never applied automatically: a structural constant
       # that moves on its own is a model nobody can explain the next morning.
@@ -99,7 +112,7 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A calibration.json tuning-report.json
+          git add -A calibration.json tuning-report.json home-advantage.json
           git diff --staged --quiet && exit 0
           git commit -m "Weekly retune $(date +%F) [skip ci]"
           # drop checkout's workflow-token header, or it is sent instead of the App token (see deploy.yml)

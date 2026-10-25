@@ -516,6 +516,32 @@ if __import__("os").path.exists(_cal_path):
     except Exception:
         CALIBRATION = None
 
+# home-advantage.json, if present, carries a home advantage for each league
+# on top of its tier's (25 Oct 2026, Douglas: "home teams have an advantage
+# ... set it up to learn from the results"). Each league's own home/away goal
+# ratio in its last completed season, against its tier's default, raised to a
+# strength k. Written by tools/model_ideas.py --fit-home in the weekly retune,
+# like calibration.json, and ONLY when k fitted on the last completed season
+# also improves the current one under the gates. Missing file or league: 1.0.
+LEAGUE_HOME = {}
+_ha_path = __import__("os").path.join(
+    __import__("os").path.dirname(__import__("os").path.abspath(__file__)),
+    "home-advantage.json")
+if __import__("os").path.exists(_ha_path):
+    try:
+        _h = __import__("json").load(open(_ha_path))
+        LEAGUE_HOME = {k: float(v) for k, v in (_h.get("leagues") or {}).items()
+                       if isinstance(v, (int, float)) and 0.8 <= v <= 1.25}
+    except Exception:
+        LEAGUE_HOME = {}
+
+
+def league_home(code):
+    """(home, away) expected-goal factors for one league's own home advantage,
+    (1.0, 1.0) unless home-advantage.json carries the league."""
+    s = LEAGUE_HOME.get(code, 1.0)
+    return s, 1.0 / s
+
 # international.json / international-women.json, if present, carry
 # attack/defence ratings for national teams — fitted by tune_international.py
 # / tune_international_women.py from real match history the same way

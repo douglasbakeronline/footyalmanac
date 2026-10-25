@@ -157,6 +157,7 @@ def replay_league(prior, test, tier, params=None):
     form_cap = p.get("form_cap", E.FORM_MAX)
     form_n = p.get("form_n", 5)
     ha_scale = p.get("ha_scale", 1.0)
+    home_s = p.get("home_s", 1.0)        # engine.league_home, as the live build applies it
 
     ptbl = E.build_table(prior)
     mu = E.league_goal_rate(ptbl)              # the level, as the live build uses
@@ -182,7 +183,8 @@ def replay_league(prior, test, tier, params=None):
             fa = E.form_factor(E.form_points(rows[a], n=form_n), cap=form_cap)
             lh, la = E.expected_goals(rate[h]["att"], rate[h]["def"],
                                       rate[a]["att"], rate[a]["def"], mu, tier=tier,
-                                      form_h=fh, form_a=fa, ha_scale=ha_scale)
+                                      form_h=fh, form_a=fa, ha_scale=ha_scale,
+                                      adj_h=home_s, adj_a=1.0 / home_s)
             info = {"mu": mu, "rows": rows, "prior": {t: prior_rt.get(t) for t in (h, a)},
                     "current": {t: cur.get(t) for t in (h, a)}, "form_n": form_n}
             yield m, lh, la, info
