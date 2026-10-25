@@ -278,6 +278,68 @@ class Summaries(unittest.TestCase):
         self.assertEqual(len(S.head_to_head(self.games, "a", "b")), 2)
 
 
+class NeverPlayed(unittest.TestCase):
+    """MLB and WNBA "if necessary" series games are archived and never
+    played; seven days after the start with no result on file, and the
+    history walked past that point, the pick is void (25 Oct 2026)."""
+
+    def run_grading(self, picks, history, through, today):
+        import json, tempfile
+        from unittest import mock
+        feed = next(f for s, f in S.all_feeds() if f["path"] == "baseball/mlb")
+        with tempfile.TemporaryDirectory() as d:
+            pdir, hdir = os.path.join(d, "p"), os.path.join(d, "h")
+            os.makedirs(pdir); os.makedirs(hdir)
+            json.dump(picks, open(os.path.join(pdir, "2026-10-01.json"), "w"))
+            json.dump({"through": through, "games": history},
+                      open(os.path.join(hdir, feed["path"].replace("/", "_") + ".json"), "w"))
+            with mock.patch.object(S, "PRED_DIR", pdir), mock.patch.object(S, "HIST_DIR", hdir):
+                return S.graded_games(today=today)
+
+    def pick(self, gid, when, **kw):
+        return {"id": gid, "sport": "mlb", "label": "MLB", "feed": "baseball/mlb", "when": when,
+                "home": "Astros", "away": "White Sox", "pick": "Astros", "confidence": 0.6,
+                "tier": "Lean", "list": False, "published": "2026-10-01T06:00Z", **kw}
+
+    def test_absent_from_history_a_week_on_is_void_not_pending(self):
+        picks = [self.pick("1", "2026-10-01T21:00Z"),           # never played
+                 self.pick("2", "2026-10-01T23:00Z"),           # played
+                 self.pick("3", "2026-10-06T21:00Z")]           # recent: still pending
+        hist = [dict(S._game({"id": "2", "date": "2026-10-01T23:00Z", "season": {"type": 2},
+                              "competitions": [{"date": "2026-10-01T23:00Z",
+                                                "status": {"type": {"completed": True, "name": "STATUS_FINAL", "state": "post"}},
+                                                "competitors": [{"homeAway": "home", "score": "3", "team": {"id": "1", "displayName": "Astros"}},
+                                                                {"homeAway": "away", "score": "1", "team": {"id": "2", "displayName": "White Sox"}}]}]},
+                             {"path": "baseball/mlb", "label": "MLB", "pool": "mlb", "skip": (1,)}))]
+        graded, void = self.run_grading(picks, hist, "2026-10-10", date(2026, 10, 11))
+        self.assertEqual([g["id"] for g in graded], ["2"])
+        self.assertTrue(graded[0]["ok"])
+        self.assertEqual([(v["id"], v["reason"], v["void"]) for v in void], [("1", "not played", True)])
+        self.assertIsNone(void[0]["score"])
+
+    def test_not_void_until_a_week_has_passed_and_the_history_is_walked(self):
+        picks = [self.pick("1", "2026-10-01T21:00Z")]
+        # six days on: pending
+        self.assertEqual(self.run_grading(picks, [], "2026-10-06", date(2026, 10, 7)), ([], []))
+        # a week on, but the walk stalled before the due date: still pending
+        self.assertEqual(self.run_grading(picks, [], "2026-10-05", date(2026, 10, 20)), ([], []))
+        # a week on and walked: void
+        _, void = self.run_grading(picks, [], "2026-10-08", date(2026, 10, 8))
+        self.assertEqual(len(void), 1)
+
+    def test_older_rows_without_a_feed_path_are_matched_by_label(self):
+        p = self.pick("1", "2026-10-01T21:00Z")
+        del p["feed"]
+        _, void = self.run_grading([p], [], "2026-10-09", date(2026, 10, 9))
+        self.assertEqual([v["reason"] for v in void], ["not played"])
+
+    def test_tie_carries_its_reason(self):
+        g = {"hn": "H", "an": "A", "hs": 2, "as": 2, "final": True}
+        self.assertIsNone(S.settle({"pick": "H"}, g))
+        self.assertFalse(S.not_played({"id": "x", "when": "2026-10-01T21:00Z", "feed": "baseball/mlb"},
+                                      {"x": g}, {"baseball/mlb": date(2026, 10, 20)}, date(2026, 10, 20)))
+
+
 class Windows(unittest.TestCase):
     """Bug 16 (25 Oct 2026): the check window must stop where the live
     record starts, or the model is judged on games it already called."""

@@ -1548,7 +1548,7 @@ def settle(l, idx):
         if g.get("void"): return "void", "void"
         return ("won" if norm(g.get("winner")) == norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
     g = sp.get(str(l.get("id")))
-    if g and g.get("void"): return "void", "tie"
+    if g and g.get("void"): return "void", g.get("reason") or "tie"
     if not g or not g.get("winner"): return "pending", None
     sc = g.get("score")
     return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), ("-".join(map(str, sc)) if isinstance(sc, list) else sc)

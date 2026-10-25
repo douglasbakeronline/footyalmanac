@@ -134,8 +134,9 @@ def other_sports():
             pick_side="home" if r["pick"] == r["home"] else "away",
             confidence=r["confidence"], tier=r.get("tier", ""), tested_rate=_rate(r.get("accuracy")),
             group=_group(r), result="void" if void else ("won" if r["ok"] else "lost"),
-            winner="" if void else r.get("winner", ""), final_score=f"{sc[0]}-{sc[1]}",
-            verification="published before the start", note="tie: void" if void else ""))
+            winner="" if void else r.get("winner", ""), final_score=f"{sc[0]}-{sc[1]}" if sc[0] != "" else "",
+            verification="published before the start",
+            note=f"{r.get('reason') or 'tie'}: void" if void else ""))
     return out
 
 
