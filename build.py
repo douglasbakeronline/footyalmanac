@@ -112,6 +112,19 @@ def solve_goals(grid, pick, target):
 # show these bands, its own, and may reach the reserve.
 ACCURACY_BANDS_STEP3 = [{"from": 0.45, "hit": 0.5277, "n": 1103, "quoted": 0.5622}, {"from": 0.5, "hit": 0.5664, "n": 768, "quoted": 0.6001}, {"from": 0.55, "hit": 0.6116, "n": 502, "quoted": 0.6409}, {"from": 0.6, "hit": 0.657, "n": 309, "quoted": 0.6834}, {"from": 0.65, "hit": 0.7303, "n": 178, "quoted": 0.7285}, {"from": 0.7, "hit": 0.7905, "n": 105, "quoted": 0.766}, {"from": 0.75, "hit": 0.7857, "n": 56, "quoted": 0.8028}, {"from": 0.8, "hit": 0.88, "n": 25, "quoted": 0.8395}]
 NO_LIST = set(S.AF_BOARD_ONLY)   # replayed and below the bar: board and reserve only
+# A club with no prior season stays flagged under Celtic's Law until it has
+# this many games this season (25 Oct 2026, bug 11). Matches the point at
+# which engine.blend has mostly stopped leaning on the (absent) prior.
+NO_PRIOR_GAMES = 6
+
+
+def no_prior_reason(name, prow, played):
+    """The Celtic's Law reason for a club with no prior season and fewer than
+    NO_PRIOR_GAMES games this season, or None. (A side with nothing played
+    at all is "unrated" and never reaches the board.)"""
+    if prow is not None or not played or played >= NO_PRIOR_GAMES:
+        return None
+    return f"{name} has no prior season on file, rated from {played} game{'' if played == 1 else 's'} this season"
 # New competitions not yet replayed: on their board, off the Daily List and
 # the reserve (the standing rule for a new league).
 NEW_BOARD_ONLY = {"en.faq"} | set(S.AF_NEW)   # AF_NEW: Croatia, Hungary, Serbia, Ukraine, Korea (21 Oct 2026)
@@ -962,6 +975,12 @@ def main():
             # rating is a placeholder, not a judgement. Usually a side promoted
             # from a division this build does not cover.
             "unrated": (prow is None and played == 0),
+            # No prior season but some games played: the rating is this
+            # season's handful of results shrunk toward average, not a
+            # judgement, so the fixture stays flagged under Celtic's Law
+            # until the side has NO_PRIOR_GAMES behind it (25 Oct 2026,
+            # bug 11: one match used to clear the flag).
+            "noPrior": (prow is None and 0 < played < NO_PRIOR_GAMES),
             "carriedFrom": src if carried else None,
             # The division these ratings actually come from — distinct from
             # carriedFrom, which is only set when a promoted side's rating
@@ -1338,6 +1357,8 @@ def main():
                 for side, t in (("home", hb), ("away", ab)):
                     if t["unrated"]:
                         reasons.append(f"{t['name']} has no rating on file")
+                    elif t.get("noPrior"):
+                        reasons.append(no_prior_reason(t["name"], None, t["played"]))
                     elif t["carriedFrom"]:
                         moved = E.LEAGUES[t["carriedFrom"]]
                         # Same tier is a sideways move (English step 3 clubs are
