@@ -1,50 +1,50 @@
 {
- "graded": "2026-10-25T19:32:34Z",
+ "graded": "2026-10-25T22:02:27Z",
  "overall": {
-  "groups": 73,
+  "groups": 75,
   "settled": 64,
   "won": 11,
   "lost": 53,
-  "pending": 9,
-  "legs": 306,
-  "legsWon": 222,
+  "pending": 11,
+  "legs": 307,
+  "legsWon": 223,
   "returned": 40.5,
   "staked": 64,
   "returnedBest": 43.39,
   "expected": 20.78,
   "clv": {
-   "n": 23,
-   "shortened": 12,
-   "drifted": 5,
-   "mean": 0.0057
+   "n": 29,
+   "shortened": 16,
+   "drifted": 6,
+   "mean": 0.0059
   }
  },
  "byBand": {
   "Card 2x": {
-   "groups": 2,
+   "groups": 3,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 2,
-   "legs": 1,
-   "legsWon": 1,
+   "pending": 3,
+   "legs": 2,
+   "legsWon": 2,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
    "expected": 0,
    "clv": {
-    "n": 6,
-    "shortened": 1,
-    "drifted": 0,
-    "mean": 0.0012
+    "n": 9,
+    "shortened": 2,
+    "drifted": 1,
+    "mean": 0.0015
    }
   },
   "Card 3x": {
-   "groups": 2,
+   "groups": 3,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 2,
+   "pending": 3,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -52,10 +52,10 @@
    "returnedBest": 0,
    "expected": 0,
    "clv": {
-    "n": 6,
-    "shortened": 1,
+    "n": 9,
+    "shortened": 4,
     "drifted": 1,
-    "mean": 0.0043
+    "mean": 0.0072
    }
   },
   "Wider Treble": {
@@ -93,7 +93,7 @@
     "n": 2,
     "shortened": 1,
     "drifted": 1,
-    "mean": -0.0476
+    "mean": -0.0508
    }
   },
   "Multiplier": {
@@ -243,7 +243,7 @@
    "n": 6,
    "shortened": 4,
    "drifted": 1,
-   "mean": 0.0083
+   "mean": 0.0072
   }
  },
  "multiplier": {
@@ -266,22 +266,22 @@
   }
  },
  "card": {
-  "groups": 4,
+  "groups": 6,
   "settled": 0,
   "won": 0,
   "lost": 0,
-  "pending": 4,
-  "legs": 1,
-  "legsWon": 1,
+  "pending": 6,
+  "legs": 2,
+  "legsWon": 2,
   "returned": 0,
   "staked": 0,
   "returnedBest": 0,
   "expected": 0,
   "clv": {
-   "n": 12,
-   "shortened": 2,
-   "drifted": 1,
-   "mean": 0.0027
+   "n": 18,
+   "shortened": 6,
+   "drifted": 2,
+   "mean": 0.0044
   }
  },
  "cardWide": {
@@ -305,11 +305,11 @@
  },
  "cardByWindow": {
   "Overnight": {
-   "groups": 0,
+   "groups": 2,
    "settled": 0,
    "won": 0,
    "lost": 0,
-   "pending": 0,
+   "pending": 2,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -317,10 +317,10 @@
    "returnedBest": 0,
    "expected": 0,
    "clv": {
-    "n": 0,
-    "shortened": 0,
-    "drifted": 0,
-    "mean": null
+    "n": 6,
+    "shortened": 4,
+    "drifted": 1,
+    "mean": 0.01
    }
   },
   "Daytime": {
@@ -348,8 +348,8 @@
    "won": 0,
    "lost": 0,
    "pending": 2,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -358,7 +358,7 @@
     "n": 6,
     "shortened": 2,
     "drifted": 1,
-    "mean": 0.0055
+    "mean": 0.0031
    }
   }
  },
@@ -382,6 +382,126 @@
   }
  },
  "days": [
+  {
+   "date": "2026-10-26",
+   "published": "2026-10-25T22:02:05Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Overnight",
+     "window": "Overnight",
+     "odds": 2.66,
+     "p": 0.3389,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Elise Mertens",
+       "event": "Elise Mertens v Moyuka Uchijima",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-26T01:35:00Z",
+       "odds": 1.16,
+       "best": 1.16,
+       "lastOdds": 1.16,
+       "est": false,
+       "p": 0.8309,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Nikola Bartunkova",
+       "event": "Nikola Bartunkova v Aliaksandra Sasnovich",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-26T02:00:00Z",
+       "odds": 1.56,
+       "best": 1.56,
+       "lastOdds": 1.53,
+       "est": false,
+       "p": 0.62,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Daria Snigur",
+       "event": "Anna Bondar v Daria Snigur",
+       "sport": "tennis",
+       "comp": "Guangzhou Open Round 1",
+       "when": "2026-10-26T04:30:00Z",
+       "odds": 1.47,
+       "best": 1.47,
+       "lastOdds": 1.49,
+       "est": false,
+       "p": 0.6579,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 3x",
+     "rank": "Overnight",
+     "window": "Overnight",
+     "odds": 3.12,
+     "p": 0.2736,
+     "status": "pending",
+     "paid": 0,
+     "paidBest": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Alajuelense",
+       "event": "Alajuelense v Pérez Zeledón",
+       "sport": "football",
+       "comp": "Primera División",
+       "when": "2026-10-26T00:00:00Z",
+       "odds": 1.28,
+       "best": 1.33,
+       "lastOdds": 1.27,
+       "est": false,
+       "p": 0.7115,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Sinja Kraus",
+       "event": "Sinja Kraus v Panna Udvardy",
+       "sport": "tennis",
+       "comp": "Guangzhou Open Round 1",
+       "when": "2026-10-26T03:00:00Z",
+       "odds": 1.56,
+       "best": 1.56,
+       "lastOdds": 1.53,
+       "est": false,
+       "p": 0.6203,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Maria Timofeeva",
+       "event": "Teodora Kostovic v Maria Timofeeva",
+       "sport": "tennis",
+       "comp": "Guangzhou Open Round 1",
+       "when": "2026-10-26T03:00:00Z",
+       "odds": 1.56,
+       "best": 1.56,
+       "lastOdds": 1.52,
+       "est": false,
+       "p": 0.62,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-25",
    "published": "2026-10-25T00:23:41Z",
@@ -563,7 +683,7 @@
        "when": "2026-10-25T23:00:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.36,
+       "lastOdds": 1.37,
        "est": false,
        "p": 0.7268,
        "status": "pending",
@@ -865,9 +985,9 @@
      "status": "pending",
      "paid": 0,
      "paidBest": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Houston Texans",
@@ -894,8 +1014,8 @@
        "lastOdds": 1.21,
        "est": false,
        "p": 0.7566,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "Los Angeles Lakers",
@@ -962,7 +1082,7 @@
        "when": "2026-10-25T23:00Z",
        "odds": 1.34,
        "best": 1.34,
-       "lastOdds": 1.35,
+       "lastOdds": 1.37,
        "est": false,
        "p": 0.7173,
        "status": "pending",
