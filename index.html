@@ -1192,6 +1192,20 @@ footer b{color:var(--ink-2)}
   .side.away .club{flex-direction:row}
   .conf{grid-area:conf;align-self:start}
   .detail-grid{grid-template-columns:1fr;gap:18px}
+
+  /* Tap targets (26 Oct 2026): every small control is at least 40px tall on
+     a phone, 44 where the layout has room. Desktop keeps its sizes. Chips
+     were ~26px, segment and day buttons ~29px, "Add to acca" an 11px link. */
+  button.chip,.comp-toggle{min-height:44px;padding:6px 11px}
+  .seg button,.boards button,.dayseg button,#ogDay button,#tbDay button{min-height:44px;padding:6px 12px}
+  .og-add,.og-g{display:inline-flex;align-items:center;min-height:40px;padding:0 4px;margin:0 8px 0 -4px;font-size:12px}
+  .acca-a button{min-height:40px;padding:0 6px}
+  .acca-r .x{min-height:40px;min-width:40px;padding:4px 8px}
+  .og-jump{min-height:44px;padding:8px 14px}
+  .star-btn{flex-basis:44px;width:44px;min-height:44px}
+  .tb-older summary,.og-old summary,.og-chk summary{display:flex;align-items:center;min-height:40px}
+  details.how summary{padding:8px 0}
+  .views.resgrid button{min-height:48px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
