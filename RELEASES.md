@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-26: College football landing below its quotes; no change (tag pending)
+
+**What changed:** a note only (`claude/cfb-all-calls-gap-2026-10-26.md`). No code or model change.
+
+**Evidence:** live 109 of 173 (63%) v 69% quoted (z -1.8). On held-out history, cfb calls at 62%+ landed 78.9% v 75.0% quoted (fit, 615) and 83.2% v 76.2% (check, 863); no cut (experience, neutral site, early or late season) lands under quote. K, home advantage, carry-over and margin were already swept by `sports.py --tune`. A change would be fitting on the record (Rule 1).
+
+**Files:** `claude/cfb-all-calls-gap-2026-10-26.md`, `RELEASES.md`.
+
+**Not changed:** `sports.py`, `sports.json`, probabilities, `LIST_OFF`.
+
+**Roll back:** `git revert` this commit.
+
 ## Isthmian League Premier v its quotes: no test possible, no change, 26 Oct (tag pending)
 
 **What changed:** nothing in the model. Dated note `claude/isthmian-gap-2026-10-26.md`.
