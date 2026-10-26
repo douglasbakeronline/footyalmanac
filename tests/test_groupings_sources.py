@@ -159,5 +159,42 @@ class ApiSportsErrors(unittest.TestCase):
         self.assertEqual(L[0].get("odds"), 1.42)     # the second build asked again and priced it
 
 
+class PricedAt(unittest.TestCase):
+    """26 Oct 2026: every leg says when its price was read (pricedAt), the
+    cache file's time when the price came off disk, so a punter can see how
+    old the number is and the page can mark a stale read."""
+
+    def test_fresh_fetch_is_stamped_now(self):
+        L = [leg()]
+        before = G.iso(datetime.now(timezone.utc))
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}):
+            rep = {}; G.price_api_sports(L, {"2026-10-26"}, rep, cache_dir=d, now=NOW, fetch=as_fetch)
+        self.assertGreaterEqual(L[0]["pricedAt"], before)
+        self.assertRegex(L[0]["pricedAt"], r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$")
+
+    def test_cached_price_keeps_the_cache_time(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "k"}):
+            L = [leg()]
+            rep = {}; G.price_api_sports(L, {"2026-10-26"}, rep, cache_dir=d, now=NOW, fetch=as_fetch)
+            old = int(datetime.now(timezone.utc).timestamp()) - 30 * 60   # inside AS_ODDS_TTL: served from disk
+            for f in os.listdir(d):
+                if f.startswith("apisports2-"): os.utime(os.path.join(d, f), (old, old))
+            L2 = [leg()]
+            rep = {}; G.price_api_sports(L2, {"2026-10-26"}, rep, cache_dir=d, now=NOW, fetch=lambda u: 1 / 0)
+        self.assertEqual(L2[0]["odds"], 1.42)
+        self.assertEqual(L2[0]["pricedAt"], G.iso(datetime.fromtimestamp(old, timezone.utc)))
+
+    def test_estimate_and_stale_price(self):
+        l = {"sport": "rugby", "home": "A", "away": "B", "pick": "A", "event": "A v B", "date": "2026-10-26",
+             "when": "2026-10-26T15:00:00Z", "pModel": 0.7, "p": 0.7}
+        with mock.patch.dict(os.environ, {}, clear=True), \
+             mock.patch.object(G, "price_espn", lambda L, d, r: None), mock.patch.object(G, "price_espn_soccer", lambda L, d, r: None):
+            G.price([l], {"2026-10-26"})
+        self.assertTrue(l["est"]); self.assertIn("pricedAt", l)
+        old = {"odds": 1.5, "best": 1.55, "bestBook": "Coral", "books": 3, "margin": 1.05, "src": "x", "pricedAt": "2026-10-26T05:00:00Z"}
+        cur = G.stale_price(dict(l), old)
+        self.assertEqual((cur["odds"], cur["pricedAt"], cur["stale"]), (1.5, "2026-10-26T05:00:00Z", True))
+
+
 if __name__ == "__main__":
     unittest.main()

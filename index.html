@@ -386,10 +386,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-stake{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:12.5px;color:var(--ink-2)}
 .og-stake input{width:70px;font:600 14px var(--f-num);padding:5px 7px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
 .og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
-/* 24 Oct 2026: each pick carries its full board row, so a card is a full-width
-   block like a Daily List day rather than a narrow tile. */
-#odds .og-grid{grid-template-columns:minmax(0,1fr);gap:18px}
-#odds .og{min-width:0}
+/* 24 Oct 2026: each pick carries its full board row (.og-fx). The #odds
+   full-width rule went with the Odds tab on 26 Oct 2026. */
+.og{min-width:0}
 .og-fx{min-width:0;overflow-x:auto}
 .og-fx:empty{display:none}
 .og-fx{border-top:1px solid var(--rule-soft);background:var(--paper,transparent)}
@@ -464,6 +463,17 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l .o small{display:block;font:500 10.5px var(--f-num);color:var(--mute-ink,var(--mute));white-space:nowrap}
 .og-l .o small.up{color:var(--away)}
 .og-l .o small.dn{color:var(--home)}
+/* 26 Oct 2026: price provenance. "read 06:12" under every bookmaker price;
+   "stale" in red once the read is over two hours old on the viewer's clock.
+   An estimated price sits under a muted "est." label, never beside a
+   bookmaker price with an asterisk. */
+.og-l .o small.read{font-family:var(--f-ui);font-size:10px;letter-spacing:.01em}
+.og-l .o small.read.stale{color:var(--away)}
+.og-l .o small.stale-tag{display:inline-block;font:700 9px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--away);border:1px solid currentColor;padding:0 4px;margin-top:2px}
+.og-l .o.est,.og-rl .o.est{color:var(--mute-ink,var(--mute));font-weight:500}
+.og-l .o.est em,.og-rl .o.est em{display:block;font:700 9.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--mute-ink,var(--mute))}
+.tb-snap{margin-top:10px;font-size:12.5px;color:var(--mute-ink,var(--mute))}
+.tb-snap b{color:var(--away)}
 .og-chk{margin-top:12px;font-size:12px;color:var(--ink-2)}
 .og-chk summary{cursor:pointer;font-weight:600}
 .og-chk ul{margin:6px 0 0;padding:0;list-style:none;border:1px solid var(--rule);background:var(--surface)}
@@ -1240,7 +1250,6 @@ footer b{color:var(--ink-2)}
 <main id="days"></main>
 <section id="today" hidden></section>
 <section id="list" hidden></section>
-<section id="odds" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
 <section id="sport" hidden></section>
@@ -1928,7 +1937,6 @@ function appendFixture(sec, g, i, dayDate, btts){
     render();
     if(!$("#starred").hidden) renderStarred();
     if(!$("#list").hidden) renderList();
-    if(!$("#odds").hidden) renderOdds();
     if(!$("#today").hidden) renderToday();
   });
 
@@ -2662,7 +2670,6 @@ const accLine = a => a ? `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.h
 
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
-  if(!$("#odds").hidden) renderOdds();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
   if(!$("#tennis").hidden) renderTennis();
   if(!$("#list").hidden) renderList();
@@ -3293,6 +3300,24 @@ function ogMove(l){
   if(!f || Math.abs(f - l.odds) < 0.005) return "";
   return `<small class="${l.odds > f ? "up" : "dn"}" title="${l.odds > f ? "Drifted" : "Shortened"} since the group was first shown">was ${(+f).toFixed(2)}</small>`;
 }
+// 26 Oct 2026: when the price was read (pricedAt, groupings.py), UK time,
+// and "stale" once the read is over OG_STALE_H hours old on the viewer's
+// clock. A price with no read time (built before 26 Oct) says so.
+const OG_STALE_H = 2;
+function ogRead(l){
+  if(l.est) return "";
+  const at = l.pricedAt || (l.lockPrice && l.lockPrice.at);
+  if(!at) return `<small class="read" title="This price was read before the site recorded read times">read time unknown</small>`;
+  const t = new Date(at); if(isNaN(t)) return "";
+  const old = Date.now() - t.getTime() > OG_STALE_H * 36e5;
+  return `<small class="read${old ? " stale" : ""}" title="${old ? `Read over ${OG_STALE_H} hours ago: the price will have moved. Check it before placing anything.` : "When this price was read, UK time"}">read ${ogAt(at)}</small>${old ? `<small class="stale-tag">stale</small>` : ""}`;
+}
+// 26 Oct 2026: an estimated price (no bookmaker price found) in its own
+// labelled form, never a bookmaker-looking number with an asterisk.
+function ogPrice(l){
+  if(l.est) return `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>`;
+  return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l)}</span>`;
+}
 // What the re-check dropped on this day, newest first.
 function ogLog(day){
   const log = (day.log || []).slice().reverse();
@@ -3318,9 +3343,9 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${ogSearch(l)}${on ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
-        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}</span>
-      <span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}${ogMove(l)}${ogBest(l)}</span><span class="c">${pct(l.p)}%</span></div>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
+        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}</span>
+      ${ogPrice(l)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? `${ogEsc(g.window)} window` : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
@@ -3328,7 +3353,7 @@ function ogCard(g){
     ${ogStatus(g)}
     <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
     <div>${legs}</div>
-    <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is an estimate" : "s are estimates"} (*): the model's price less a typical bookmaker margin, no bookmaker price found yet.` : "Every price is a bookmaker average."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3350,7 +3375,7 @@ function ogRecord(compact){
     const mark = g => `${g.wide ? " · wider" : ""}${g.late ? " · late" : ""}`;
     const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.window ? g.window + " window" : g.rank === "alternative" ? "Alternative" : "First choice"}${g.wide ? ", wider rule" : ""}${g.late ? ", added after the lock" : ""}">${g.window ? g.window + " " + String(g.name).replace("Card ", "") : g.name}${g.rank === "alternative" ? " alt" : ""}${mark(g)} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
     const groups = d.groups.map(g => `<h5>${g.window ? g.window + " · " : ""}${g.name}${g.rank === "alternative" ? " (alternative)" : ""}${mark(g)} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
-      ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span><span class="o">${l.odds.toFixed(2)}${l.est ? "*" : ""}</span><span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
+      ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span>${l.est ? `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>` : `<span class="o">${l.odds.toFixed(2)}</span>`}<span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
     return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
   }).join("");
   // 25 Oct 2026: on the merged Bets page the scoreboard tiles sit above
@@ -3509,107 +3534,9 @@ function ogFill(host){
   });
 }
 
-function renderOdds(){
-  const host = $("#odds"); if(!host) return;
-  if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Groups</h2></div>
-      <div class="og-days"><label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-      <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
-      <div class="empty" style="margin-top:14px">No groupings in this build yet. They appear after the next daily build.</div>`;
-    accaMount($("#acca"));
-    $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
-    return;
-  }
-  const isMult = g => String(g.name).startsWith("Multiplier");
-  const days = OG.days.filter(d => d.groups.length);
-  if(!OG_DAY || !days.some(d => d.date === OG_DAY)) OG_DAY = (days[0] || OG.days[0]).date;
-  const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
-  const gen = new Date(OG.generated);
-  // 24 Oct 2026: groups that can still be placed first, then the Multipliers,
-  // then anything already underway. Underway cards above the Multipliers hid
-  // them a long scroll down on a phone.
-  const core = day.groups.filter(g => !isMult(g)), mults = day.groups.filter(isMult);
-  const coreLive = core.filter(g => g.status !== "underway"), coreDone = core.filter(g => g.status === "underway");
-  const multLive = mults.filter(g => g.status !== "underway").length;
-  const MR = (OG.rules || {}).mult || {};
-  const multHtml = `<section class="og-mult" id="ogMult" aria-label="Multipliers"><div class="day-head"><h2>Multipliers</h2><div class="count">bigger return, honest chance</div></div>
-      <p class="og-mult-p">Up to ${MR.perDay || 3} a day for a bigger return, from every sport the site covers: three or four picks each, every one rated
-      <b>${pct(MR.fairMin || 0.6)}%+</b> by the bookmakers (the price with their margin taken out), priced
-      ${(MR.odds || [1.3, 1.9]).map(x => x.toFixed(2)).join(" to ")} and paying about ${((OG.kinds || []).find(k => k.target) || {target: 2.8}).target}x or more
-      together. No 1/20 shots: they add almost nothing and still carry the margin. The model vetoes any pick it rates
-      more than ${Math.round((MR.aboveBook || 0.05) * 100)} points above the market. Each pick is likely, but three likely picks
-      all landing is not: these come in about one time in four. Picks like these landed 76% in the archive.</p>
-    ${mults.length ? `<div class="og-grid">${mults.map(ogCard).join("")}</div>` :
-      `<div class="empty" style="margin-top:10px">No multiplier on ${fmtDay(day.date)}: ${day.multLegs ?? 0} pick${(day.multLegs ?? 0) === 1 ? "" : "s"} qualified, not enough to reach a target at the floor.</div>`}</section>`;
-  const R = OG.rules || {}, legMin = pct(R.legMin || 0.75), above = Math.round((R.maxAboveBook || 0.05) * 100);
-  host.innerHTML = `<div class="lede"><h2>Groups built to land</h2>
-      <p>Every group pays <b>at least double your stake</b> (combined odds of ${((OG.rules && OG.rules.minReturn) || 2).toFixed(2)} or more).
-      To pay that, a group needs two picks of about 67% each or three of about 75%, so each one lands a little
-      under half the time, and each card says how often. That is the price of doubling your money, not a weakness
-      of the picks. A <b>Treble</b> is built from the strict picks (75%+ on every read); <b>Wider</b> groups fill each
-      day to three from the strongest picks left, as a Double, Treble or Fourfold, whichever is most likely to land.
-      The strongest picks are priced so short that it takes four of them to reach 2.00. No pick is used twice.</p>
-      <p>Every day gets at least ${(OG.rules && OG.rules.minGroups) || 3} groups. When the safest picks cannot make that many,
-      <b>Wider</b> groups fill the gap from picks one step down (${pct((OG.rules && OG.rules.wideMin) || 0.65)}%+ on every read),
-      or from Daily List picks with no bookmaker price yet. They are marked <b>Higher risk</b> in red, say how
-      often they should land, and are graded on their own line below.</p>
-      <p>Groups are shown for today and the next three days, and every build (six a day) checks each one again
-      against the latest board and prices. A group that still passes keeps its place, so one you have placed
-      does not change under you. One that fails is dropped and replaced where the rules allow, and the reason is
-      listed under that day.</p>
-      <details class="how"><summary>How the groups are picked</summary>
-        <p>A pick qualifies only if all three reads put it at ${legMin}% or better: how often calls at its level
-        landed in testing (over at least ${R.minN || 30} games), the model's own number, and the bookmaker's fair
-        chance (the price with the bookmaker's margin taken out). The model may sit no more than ${above} points above
-        the bookmaker: in October, picks the model rated well above the market landed 70%, against 82% where it
-        agreed. Football picks must also be clean: no Celtic's Law flag, no unrated side, no new competition or
-        thin history. No draws. Football and rugby only.</p>
-        <p>A group's chance is the product of each pick's lowest read. Within those rules the picks with the
-        highest combined chance are chosen, with a slight preference for Daily List picks (78% landed in October
-        against 69% for others), no more than two from one competition.</p>
-        <p>The re-check runs every rule again on every pick in a group: still a clean pick on the same side,
-        still priced, the model and the bookmakers both still at ${legMin}% or better and no more than ${above}
-        points apart, and the group still above its floor. A pick that leaves the board (moved, postponed or
-        flagged) fails it. If a price source is down for one build, the last confirmed price stands and is marked
-        "last price" rather than the group being dropped. "Was" under a price is what it was when the group was
-        first shown. The record below is unchanged: it grades each day's groups as they stood at that day's first
-        build.</p>
-        <p>Until 20 October the tab also built five-pick Steady, Balanced and Stretch groups and a 1.5 to 2.5
-        Banker. Their rules forced longer prices into every group, and 11 of 58 landed. They are retired and stay
-        in the record below.</p>
-        <p>Prices: football from API-Football (the average across bookmakers), NFL, baseball and basketball from
-        ESPN, tennis and rugby from The Odds API (UK bookmakers) where it lists the match. A pick with no bookmaker price is left out of the groups.
-        Prices are a snapshot from the build at ${gen.toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"})}
-        and will have moved: check before placing anything.</p>
-        <p>Bookmaker prices never feed the model or the Daily List. No group lands every time: a Double at 70% still
-        misses about one day in three, and every pick carries the bookmaker's margin. This is the model's read, not
-        betting advice.</p>
-      </details></div>
-    <div class="og-days"><div class="seg" id="ogDay" aria-label="Day">${OG.days.map(d => { const n = d.groups.filter(g => g.status !== "underway" && !isMult(g)).length;
-        return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}" title="${fmtDay(d.date)}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
-      ${multLive ? `<button type="button" class="og-jump" id="ogJump">${multLive} Multiplier${multLive === 1 ? "" : "s"} ↓</button>` : ""}
-      <label class="og-stake">Stake £<input id="ogStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-    ${coreLive.length ? `<div class="og-grid">${coreLive.map(ogCard).join("")}</div>` : coreDone.length ?
-      `<div class="empty" style="margin-top:14px">Every group for ${fmtDay(day.date)} has a pick already underway, so none can be placed as it stands. They are below the Multipliers.</div>` :
-      `<div class="empty" style="margin-top:14px">No group is safe enough on ${fmtDay(day.date)}${day.date > OG.days[0].date ? " yet" : ""}. ${day.safe ?? 0} pick${(day.safe ?? 0) === 1 ? "" : "s"} cleared every test, which is not enough to make one.${day.date > OG.days[0].date ? " Bookmakers open more prices nearer the day, so this can fill in on a later build." : " Sitting a day out is the rule, not a fault."}</div>`}
-    ${multHtml}
-    ${coreDone.length ? `<div class="og-done"><div class="day-head"><h2>Already underway</h2><div class="count">shown as published</div></div>
-      <div class="og-grid">${coreDone.map(ogCard).join("")}</div></div>` : ""}
-    ${ogLog(day)}
-    <p style="font-size:12px;color:var(--mute-ink,var(--mute));margin-top:12px">${day.checked ? `Checked at ${ogAt(day.checked)}, and again on every build. ` : ""}${day.safe != null ? `${day.safe} of ${day.legs} tested picks safe enough to group; ` : ""}${day.priced} of ${day.legs} priced by a bookmaker for this day.</p>
-    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
-    ${ogRecord()}`;
-  accaMount($("#acca"));
-  ogFill(host);
-  host.querySelectorAll(".og-grid .og-add").forEach(btn => btn.onclick = () => {
-    accaAdd(btn.dataset.pick, +btn.dataset.odds);
-  });
-  const jump = $("#ogJump");
-  if(jump) jump.onclick = () => { const m = $("#ogMult"); if(m) m.scrollIntoView({behavior:"smooth", block:"start"}); };
-  $("#ogDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderOdds(); };
-  $("#ogStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ localStorage.setItem("og-stake", String(v)); renderOdds(); } };
-}
-
+/* 26 Oct 2026: the Odds tab's renderOdds() and its #odds section were removed;
+   the Bets view (renderToday) is the one home of the groups. release-2026-10-25
+   carries the old tab if it is ever wanted back. */
 
 /* ---------- Today's bets (25 Oct 2026) ----------
    Douglas, after a losing weekend: "a rebuild that takes in all the learnings
@@ -3746,6 +3673,7 @@ function renderToday(){
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol>
+    <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and is marked <b>stale</b> after ${OG_STALE_H} hours. Check the price before placing anything.</p>
     <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
@@ -3780,8 +3708,7 @@ function renderToday(){
         <li>Checking in mid-game led to cash-outs and new bets on the fly; a locked card placed once removes that.</li>
         <li>Taking the best price was worth about 3p in the pound on the archive, the one edge that needs no prediction.</li>
       </ol></details>
-    <p class="tb-foot">Prices are bookmaker averages from the latest build and will have moved; the best price and its bookmaker
-      are shown where known. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
+    <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ogFill(host);
   accaMount($("#acca"));
   host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
@@ -3800,7 +3727,6 @@ $("#views").addEventListener("click", e=>{
   const starred = v === "starred";
   const tennis = v === "tennis";
   const list = v === "list";
-  const odds = v === "odds";
   const today = v === "today";
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
@@ -3813,12 +3739,10 @@ $("#views").addEventListener("click", e=>{
   $("#starred").hidden = !starred;
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
-  $("#odds").hidden = !odds;
   $("#today").hidden = !today;
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
-  if(odds) renderOdds();
   if(today) renderToday();
   if(starred) renderStarred();
   if(tennis) renderTennis();

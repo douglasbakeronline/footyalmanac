@@ -90,7 +90,8 @@ re-checks each one against this build's board and prices (recheck()):
   underway     a leg has kicked off; kept as published, never re-priced.
 
 Each leg carries firstOdds, its price when the group was first published, so
-the page can show the drift. The record is unchanged: it is still the first
+the page can show the drift, and pricedAt (26 Oct 2026), when its price was
+read: the cache file's time for a price served from disk, else the build's. The record is unchanged: it is still the first
 build of each UK day (archive()), whatever was shown in the days before.
 Prices for games three days out are thinner (fewer bookmakers have opened
 them), so far days fill in as the week goes on.
@@ -248,6 +249,14 @@ def read_js(name):
     return json.loads(t[t.index("=") + 1:].rstrip().rstrip(";"))
 
 def iso(dt): return dt.strftime("%Y-%m-%dT%H:%M:%SZ")
+def read_at(path=None):
+    """When a price was read (26 Oct 2026): the cache file's write time when
+    the price came off disk, else now. Every priced leg carries it as
+    pricedAt, so the page can say "read 06:12" and mark an old read stale."""
+    try:
+        if path: return iso(datetime.fromtimestamp(os.path.getmtime(path), timezone.utc))
+    except OSError: pass
+    return iso(datetime.now(timezone.utc))
 def parse(s):
     if not s: return None
     s = s.replace("Z", "+00:00")
@@ -444,7 +453,7 @@ def price_football(L, dates, report):
                 i = 0 if l["side"] == "h" else 2
                 l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
                          bestBook=(row.get("maxBook") or [None, None, None])[i],
-                         margin=margin_of(row["avg"]),
+                         margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
                          src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
                 matched += 1; continue
             if l.get("multOnly"): continue    # bulk prices only, no call of its own
@@ -471,7 +480,7 @@ def price_football(L, dates, report):
                 mean = sum(side) / len(side)
                 uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
                 l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
-                         bestBook=uk_top[1],
+                         bestBook=uk_top[1], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
@@ -699,6 +708,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 if prices:
                     l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books), bestBook=top[1],
                              margin=round(sum(margins) / len(margins), 4) if margins else None,
+                             pricedAt=read_at(os.path.join(cache_dir, f"oddsapi-{k}.json")),
                              src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
                     rep["matched"] += 1
                 break
@@ -831,6 +841,7 @@ def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
         if not r: continue
         avg, best, book, n, mg = r
         l.update(odds=avg, best=best, bestBook=book, books=n, margin=mg,
+                 pricedAt=read_at(os.path.join(cache_dir, f"apisports2-{host.split('.')[1]}-odds-{gid_}.json")),
                  src="API-Sports, average of " + (f"{n} bookmakers" if n != 1 else (book or "1 bookmaker")))
         rep["matched"] += 1
     with open(led_path, "w") as f: json.dump(led, f)
@@ -893,7 +904,7 @@ def price_pinnwire(L, dates, report, cache_dir=None, fetch=None):
             o = ml.get(side) if side else None
             if not o or o <= 1: break
             l.update(odds=round(float(o), 2), best=round(float(o), 2), bestBook="Pinnacle", books=1,
-                     margin=margin_of([ml.get("home"), ml.get("away"), ml.get("draw")]),
+                     margin=margin_of([ml.get("home"), ml.get("away"), ml.get("draw")]), pricedAt=read_at(path),
                      src="Pinnacle (PinnWire)")
             matched += 1; break
     report["pinnwire"] = {"calls": calls, "events": len(events), "legs": len(want), "matched": matched}
@@ -912,6 +923,8 @@ def price(L, dates):
             # shown at 2.00+ should still pay that much when placed.
             l.update(odds=round(1 / (l["pModel"] * MARGIN), 2), est=True,
                      src="estimate: the model's price less a typical bookmaker margin, no bookmaker price found")
+        # 26 Oct 2026: a price read live this build (ESPN) or estimated now.
+        l.setdefault("pricedAt", read_at())
         honest(l)
     report["priced"] = sum(1 for l in L if not l.get("est")); report["legs"] = len(L)
     return report
@@ -1514,7 +1527,7 @@ def pct(x): return f"{round(x * 100)}%"
 def stale_price(cur, old):
     """This build's leg (unpriced) carrying the last confirmed price from the
     published leg, flagged stale, with fair and p recomputed on it."""
-    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src") if k in old}, est=False, stale=True)
+    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src", "pricedAt") if k in old}, est=False, stale=True)
     cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
     return honest(cur)
 
