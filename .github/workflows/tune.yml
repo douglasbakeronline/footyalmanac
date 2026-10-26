@@ -113,7 +113,12 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A calibration.json tuning-report.json tuning-pending.json home-advantage.json
+          # Only files that exist: home-advantage.json and tuning-pending.json
+          # are written only once something passes, and `git add` of a missing
+          # pathspec exits 128 (Weekly retune #11, 26 Oct 2026).
+          for f in calibration.json tuning-report.json tuning-pending.json home-advantage.json; do
+            [ -e "$f" ] && git add -A "$f"
+          done
           git diff --staged --quiet && exit 0
           git commit -m "Weekly retune $(date +%F) [skip ci]"
           # drop checkout's workflow-token header, or it is sent instead of the App token (see deploy.yml)

@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Weekly retune: add only the files that exist, 26 Oct (tag pending)
+
+**What changed:** Weekly retune #11 failed at "Commit the result" with exit 128: `git add` of a pathspec that does not exist. `home-advantage.json` (added to the step on 25 Oct) and `tuning-pending.json` (25 Oct, two-pass gate) are written only once a refit passes, so on a Monday with nothing to apply neither exists and the add refused. The step now adds each file only if it is on disk. The refit itself ran; only the commit of the advisory report was lost, and it will be written next Monday.
+**Files:** .github/workflows/tune.yml, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Every Card leg keeps its full board row after kick-off, 26 Oct (tag pending)
 
 **What changed:** Douglas saw two legs of an under-way Card 3x with no fixture row under them while the third had one. The row was drawn from the live files (data.js, tennis-data.js, sports-data.js), which carry only games not yet started, with the pinned Daily List as the only fallback; a leg that had started and was not on the list lost its row. `groupings.legs` now freezes the board row each leg was built from into the leg (`fx`, football, tennis and the other sports), it travels into the archive with the group, and the page draws it when the live lookup and the pinned list both miss. Checked under jsdom with legs for games absent from every live file.
