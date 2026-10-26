@@ -37,7 +37,6 @@ Standard library only, like the rest of the project.
 """
 import argparse, json, os, re, sys, unicodedata, urllib.request
 import rankings as RK
-from bands import band_rate
 from datetime import date, datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -190,9 +189,51 @@ ACCURACY_BANDS_ATP_RANKED = [{"from": 0.55, "hit": 0.6938, "n": 921, "quoted": 0
 ACCURACY_BANDS = {"ATP": [{"from": 0.55, "hit": 0.7039, "n": 1111, "quoted": 0.679}, {"from": 0.6, "hit": 0.7244, "n": 849, "quoted": 0.711}, {"from": 0.65, "hit": 0.7749, "n": 613, "quoted": 0.7442}, {"from": 0.7, "hit": 0.8116, "n": 414, "quoted": 0.7782}, {"from": 0.75, "hit": 0.8354, "n": 243, "quoted": 0.817}, {"from": 0.8, "hit": 0.8855, "n": 131, "quoted": 0.8532}, {"from": 0.85, "hit": 0.9483, "n": 58, "quoted": 0.8895}], "WTA": [{"from": 0.55, "hit": 0.7029, "n": 993, "quoted": 0.6784}, {"from": 0.6, "hit": 0.7561, "n": 734, "quoted": 0.7146}, {"from": 0.65, "hit": 0.8093, "n": 540, "quoted": 0.7475}, {"from": 0.7, "hit": 0.832, "n": 369, "quoted": 0.7821}, {"from": 0.75, "hit": 0.8987, "n": 227, "quoted": 0.8177}, {"from": 0.8, "hit": 0.9091, "n": 132, "quoted": 0.8485}, {"from": 0.85, "hit": 0.9464, "n": 56, "quoted": 0.8805}]}
 
 
-def accuracy_for(conf, tour, ranked=False):
-    """Its own band, not every call above it (bands.band_rate, 6 Oct 2026)."""
-    return band_rate(conf, ACCURACY_BANDS_ATP_RANKED if ranked else ACCURACY_BANDS.get(tour.upper(), []))
+# 26 Oct 2026: the archive-walk bands above are no longer quoted on a row.
+# They describe a different model from the one pricing it: the walk knew every
+# surface and priced main draws only, while a live row is priced with ESPN's
+# results as hard court and qualifying rows are priced too. The gap was wide
+# (70-80% picks shown 81-90% tested; live ATP 70-75% landed 68.4% of 38, WTA
+# 63.0% of 54). A row now quotes its tour's live own-band record from
+# tennis-record.json ("liveBands", score_tennis.live_bands) once the band
+# holds LIVE_MIN_N graded picks, marked rateSource "live"; a thinner band
+# shows no rate at all rather than the walk's. The bands stay on file as the
+# evidence behind LIST_MIN. Nothing here is fitted on the record (rule 1): the
+# number is shown, it chooses nothing.
+LIVE_MIN_N = 30
+RECORD_PATH = os.path.join(HERE, "tennis-record.json")
+
+
+def load_live_bands(path=RECORD_PATH):
+    """{tour: [band]} from the record, {} when there is none yet."""
+    try:
+        lb = json.load(open(path)).get("liveBands") or {}
+    except Exception:
+        return {}
+    return lb if isinstance(lb, dict) else {}
+
+
+LIVE_BANDS = load_live_bands()
+
+
+def accuracy_for(conf, tour, ranked=False, min_n=LIVE_MIN_N):
+    """The live own-band record for conf on this tour, in the shape the page
+    reads ({"from", "to", "hit", "n", "cumHit", "cumN", "rateSource"}), or
+    None when the band has under min_n graded picks or there is no record.
+    The ranked ATP layer is off (ATP_RANK_LAYER) and has no live band."""
+    if ranked:
+        return None
+    for b in LIVE_BANDS.get(tour.upper(), []) or []:
+        if b.get("hit") is None or (b.get("n") or 0) < min_n:
+            continue
+        if b["from"] <= conf < (b["to"] if b["to"] < 1.0 else 1.0 + 1e-9):
+            return {"from": b["from"], "to": b["to"], "hit": b["hit"], "n": b["n"],
+                    "cumHit": b["hit"], "cumN": b["n"], "quoted": b.get("quoted"), "rateSource": "live"}
+    return None
+
+
+def rate_source(acc):
+    return acc["rateSource"] if acc else "none"
 
 
 # The list's reserve, as football (build.RESERVE_MIN): below the bar, Firm
@@ -727,7 +768,9 @@ def main():
                 "confidence": round(max(p, 1 - p), 4),
                 "tier": tier_of(max(p, 1 - p)),
                 "rankA": rank_a, "rankB": rank_b, "rankAdjusted": ranked,
+                # the live own-band record, or nothing (never the archive walk)
                 "accuracy": accuracy_for(max(p, 1 - p), tour, ranked),
+                "rateSource": rate_source(accuracy_for(max(p, 1 - p), tour, ranked)),
                 "list": list_eligible(max(p, 1 - p), tour, r["round"],
                                       pool[a]["matches"], pool[b]["matches"], ranked),
                 "reserve": list_reserve(max(p, 1 - p), tour, r["round"],
