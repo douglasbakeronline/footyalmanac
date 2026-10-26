@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Isthmian League Premier v its quotes: no test possible, no change, 26 Oct (tag pending)
+
+**What changed:** nothing in the model. Dated note `claude/isthmian-gap-2026-10-26.md`.
+**Evidence:** the planner's 24 of 45 (z -2.1) counts draw reads as landed against a win-or-draw expectation. Strictly 21 of 45 won v 22.6 expected (mean confidence 50.3%), z -0.49. Away wins 18 v 29% quoted. No en.7i history exists in `history/` and the sandbox has no API-Football key, so no replay could run. Fitting on the 45 live rows would break Rule 1.
+**Files:** claude/isthmian-gap-2026-10-26.md, RELEASES.md.
+**Not changed:** probabilities, bands, board-only status.
+**Roll back:** `git revert` the commit.
+
 ## Other-sports reserve v its quotes: tested, no change, 26 Oct (tag pending)
 
 **What changed:** nothing in the model or the reserve rule. Dated note `claude/sports-reserve-gap-2026-10-26.md`.
