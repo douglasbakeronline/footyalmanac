@@ -384,7 +384,7 @@
      "firstOdds": 1.56,
      "lastOdds": 1.58,
      "lastBest": 1.58,
-     "lastAt": "2026-10-26T08:37:10Z",
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.58,
       "best": 1.58,
@@ -427,9 +427,9 @@
      "edge": -0.0983,
      "basis": "bookmakers",
      "firstOdds": 1.53,
-     "lastOdds": 1.5,
-     "lastBest": 1.54,
-     "lastAt": "2026-10-26T09:00:06Z",
+     "lastOdds": 1.53,
+     "lastBest": 1.53,
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.52,
       "best": 1.52,
@@ -468,9 +468,9 @@
      "edge": -0.2835,
      "basis": "bookmakers",
      "firstOdds": 1.51,
-     "lastOdds": 1.51,
+     "lastOdds": 1.52,
      "lastBest": 1.53,
-     "lastAt": "2026-10-26T09:00:06Z",
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.51,
       "best": 1.53,
@@ -537,9 +537,9 @@
      "edge": -0.3713,
      "basis": "bookmakers",
      "firstOdds": 1.36,
-     "lastOdds": 1.37,
-     "lastBest": 1.4,
-     "lastAt": "2026-10-26T09:00:06Z",
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.37,
       "best": 1.4,
@@ -584,7 +584,7 @@
      "firstOdds": 1.5,
      "lastOdds": 1.42,
      "lastBest": 1.42,
-     "lastAt": "2026-10-26T08:37:10Z",
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.42,
       "best": 1.42,
@@ -618,9 +618,9 @@
      "edge": -0.2087,
      "basis": "bookmakers",
      "firstOdds": 1.34,
-     "lastOdds": 1.29,
-     "lastBest": 1.29,
-     "lastAt": "2026-10-26T09:00:06Z",
+     "lastOdds": 1.31,
+     "lastBest": 1.31,
+     "lastAt": "2026-10-26T11:09:17Z",
      "lockPrice": {
       "odds": 1.29,
       "best": 1.29,
@@ -632,6 +632,421 @@
    "status": "locked",
    "checked": "2026-10-26T04:40:17Z",
    "archivedAt": "2026-10-26T07:40:37Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.27,
+   "p": 0.3718,
+   "implied": 0.4412,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Alex De Minaur v Tomas Machac",
+     "pick": "Alex De Minaur",
+     "tour": "ATP",
+     "tournament": "Erste Bank Open",
+     "players": [
+      "Alex De Minaur",
+      "Tomas Machac"
+     ],
+     "comp": "Erste Bank Open Round 1",
+     "when": "2026-10-26T14:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-26",
+     "id": "185195",
+     "fx": {
+      "id": "185195",
+      "espn": [
+       "Alex de Minaur",
+       "Tomas Machac"
+      ],
+      "tour": "ATP",
+      "date": "2026-10-26",
+      "time": "14:00",
+      "timeTbc": false,
+      "tournament": "Erste Bank Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Alex De Minaur",
+      "playerB": "Tomas Machac",
+      "ratingA": {
+       "elo": 2089,
+       "matches": 485,
+       "surfaceElo": 2001
+      },
+      "ratingB": {
+       "elo": 1920,
+       "matches": 388,
+       "surfaceElo": 1833
+      },
+      "p": {
+       "a": 0.7032,
+       "b": 0.2968
+      },
+      "pick": "Alex De Minaur",
+      "confidence": 0.7032,
+      "tier": "Strong",
+      "rankA": 10,
+      "rankB": 71,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6842,
+       "n": 38,
+       "cumHit": 0.6842,
+       "cumN": 38,
+       "quoted": 0.7244,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7032,
+     "p": 0.6791,
+     "hit": 0.6842,
+     "n": 38,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.43,
+     "best": 1.43,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0298,
+     "pricedAt": "2026-10-26T11:09:23Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6993,
+     "pTested": 0.6842,
+     "fair": 0.6791,
+     "edge": -0.0289,
+     "basis": "bookmakers",
+     "firstOdds": 1.43,
+     "lockPrice": {
+      "odds": 1.43,
+      "best": 1.43,
+      "book": "Pinnacle",
+      "at": "2026-10-26T11:09:17Z"
+     },
+     "lastOdds": 1.43,
+     "lastBest": 1.43,
+     "lastAt": "2026-10-26T11:09:17Z"
+    },
+    {
+     "sport": "tennis",
+     "event": "Gabriela Ce v Fernanda Labrana",
+     "pick": "Gabriela Ce",
+     "tour": "WTA",
+     "tournament": "Curitiba Open",
+     "players": [
+      "Gabriela Ce",
+      "Fernanda Labrana"
+     ],
+     "comp": "Curitiba Open Round 1",
+     "when": "2026-10-26T15:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-26",
+     "id": "185752",
+     "fx": {
+      "id": "185752",
+      "espn": [
+       "Gabriela Ce",
+       "Fernanda Labrana"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-26",
+      "time": "15:30",
+      "timeTbc": false,
+      "tournament": "Curitiba Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Gabriela Ce",
+      "playerB": "Fernanda Labrana",
+      "ratingA": {
+       "elo": 1843,
+       "matches": 385,
+       "surfaceElo": 1515
+      },
+      "ratingB": {
+       "elo": 1753,
+       "matches": 270,
+       "surfaceElo": 1557
+      },
+      "p": {
+       "a": 0.5686,
+       "b": 0.4314
+      },
+      "pick": "Gabriela Ce",
+      "confidence": 0.5686,
+      "tier": "Lean",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5556,
+       "n": 135,
+       "cumHit": 0.5556,
+       "cumN": 135,
+       "quoted": 0.5747,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.5686,
+     "p": 0.7888,
+     "hit": 0.5556,
+     "n": 135,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.21,
+     "best": 1.21,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0477,
+     "pricedAt": "2026-10-26T11:09:23Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8264,
+     "pTested": 0.5556,
+     "fair": 0.7888,
+     "edge": -0.3277,
+     "basis": "bookmakers",
+     "firstOdds": 1.21,
+     "lockPrice": {
+      "odds": 1.21,
+      "best": 1.21,
+      "book": "Pinnacle",
+      "at": "2026-10-26T11:09:17Z"
+     },
+     "lastOdds": 1.21,
+     "lastBest": 1.21,
+     "lastAt": "2026-10-26T11:09:17Z"
+    },
+    {
+     "sport": "football",
+     "event": "Al Ula v Al Orubah",
+     "home": "Al Ula",
+     "away": "Al Orubah",
+     "side": "h",
+     "pick": "Al Ula",
+     "code": "af.308",
+     "comp": "Division 1",
+     "country": "Saudi Arabia",
+     "when": "2026-10-26T16:45:00Z",
+     "date": "2026-10-26",
+     "pModel": 0.6594,
+     "p": 0.694,
+     "fx": {
+      "u21Side": false,
+      "league": "af.308",
+      "leagueName": "Division 1",
+      "short": "DIV",
+      "country": "Saudi Arabia",
+      "iso": "sau",
+      "tier": 2,
+      "order": 552,
+      "round": null,
+      "cup": false,
+      "date": "2026-10-26",
+      "time": "16:45",
+      "kickoff": "2026-10-26T16:45:00Z",
+      "home": {
+       "name": "Al Ula",
+       "att": 1.498,
+       "def": 0.624,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Division 1",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 21,
+        "D": 10,
+        "L": 4,
+        "GF": 74,
+        "GA": 32,
+        "GD": 42,
+        "Pts": 73,
+        "PPG": 2.086
+       },
+       "now": {
+        "P": 7,
+        "W": 6,
+        "D": 1,
+        "L": 0,
+        "GF": 16,
+        "GA": 3,
+        "GD": 13,
+        "Pts": 19,
+        "PPG": 2.714
+       }
+      },
+      "away": {
+       "name": "Al Orubah",
+       "att": 0.906,
+       "def": 0.762,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Division 1",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "DDWDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 20,
+        "D": 6,
+        "L": 9,
+        "GF": 57,
+        "GA": 39,
+        "GD": 18,
+        "Pts": 66,
+        "PPG": 1.886
+       },
+       "now": {
+        "P": 7,
+        "W": 1,
+        "D": 5,
+        "L": 1,
+        "GF": 5,
+        "GA": 5,
+        "GD": 0,
+        "Pts": 8,
+        "PPG": 1.143
+       }
+      },
+      "p": {
+       "h": 0.6594,
+       "d": 0.216,
+       "a": 0.1246
+      },
+      "xg": [
+       2.05,
+       0.72
+      ],
+      "btts": 0.5048,
+      "over25": 0.5217,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6594,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6929,
+        0.1959,
+        0.1112
+       ],
+       "best": [
+        1.33,
+        4.75,
+        8.5
+       ],
+       "avg": [
+        1.31,
+        4.64,
+        8.18
+       ],
+       "ev": [
+        -0.123,
+        0.026,
+        0.0591
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 3,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6793,
+       "n": 2254,
+       "cumHit": 0.7483,
+       "cumN": 5916,
+       "season": "2025, wider leagues"
+      }
+     },
+     "hit": 0.7483,
+     "n": 5916,
+     "list": false,
+     "pDraw": 0.216,
+     "multOnly": false,
+     "odds": 1.31,
+     "best": 1.33,
+     "books": 9,
+     "bestBook": "William Hill",
+     "margin": 1.1,
+     "pricedAt": "2026-10-26T11:08:00Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7634,
+     "pTested": 0.6594,
+     "fair": 0.694,
+     "edge": -0.1362,
+     "basis": "bookmakers",
+     "firstOdds": 1.31,
+     "lockPrice": {
+      "odds": 1.31,
+      "best": 1.33,
+      "book": "William Hill",
+      "at": "2026-10-26T11:09:17Z"
+     },
+     "lastOdds": 1.31,
+     "lastBest": 1.33,
+     "lastAt": "2026-10-26T11:09:17Z"
+    }
+   ],
+   "bestOdds": 2.3,
+   "window": "Daytime",
+   "rank": "Daytime",
+   "first": "2026-10-26T11:09:17Z",
+   "checked": "2026-10-26T11:09:17Z",
+   "lockAt": "2026-10-26T07:00:00Z",
+   "locked": true,
+   "late": true,
+   "status": "late",
+   "archivedAt": "2026-10-26T11:09:17Z"
   }
  ]
 }

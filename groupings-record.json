@@ -1,11 +1,11 @@
 {
- "graded": "2026-10-26T09:00:09Z",
+ "graded": "2026-10-26T11:09:25Z",
  "overall": {
-  "groups": 77,
+  "groups": 78,
   "settled": 73,
   "won": 16,
   "lost": 57,
-  "pending": 4,
+  "pending": 5,
   "legs": 333,
   "legsWon": 244,
   "returned": 52.79,
@@ -15,19 +15,19 @@
   "stakedLock": 1,
   "expected": 23.82,
   "clv": {
-   "n": 35,
-   "shortened": 18,
-   "drifted": 8,
-   "mean": 0.0049
+   "n": 38,
+   "shortened": 17,
+   "drifted": 10,
+   "mean": 0.0036
   }
  },
  "byBand": {
   "Card 2x": {
-   "groups": 4,
+   "groups": 5,
    "settled": 3,
    "won": 1,
    "lost": 2,
-   "pending": 1,
+   "pending": 2,
    "legs": 8,
    "legsWon": 6,
    "returned": 2.19,
@@ -37,10 +37,10 @@
    "stakedLock": 1,
    "expected": 1.13,
    "clv": {
-    "n": 12,
+    "n": 15,
     "shortened": 3,
     "drifted": 3,
-    "mean": 0.0006
+    "mean": -0.0
    }
   },
   "Card 3x": {
@@ -59,9 +59,9 @@
    "expected": 0.57,
    "clv": {
     "n": 12,
-    "shortened": 5,
-    "drifted": 1,
-    "mean": 0.006
+    "shortened": 4,
+    "drifted": 3,
+    "mean": 0.0038
    }
   },
   "Wider Treble": {
@@ -307,9 +307,9 @@
   "expected": 0.34,
   "clv": {
    "n": 12,
-   "shortened": 6,
-   "drifted": 3,
-   "mean": 0.0051
+   "shortened": 5,
+   "drifted": 5,
+   "mean": 0.0022
   }
  },
  "cardWide": {
@@ -334,11 +334,11 @@
   }
  },
  "cardLate": {
-  "groups": 4,
+  "groups": 5,
   "settled": 4,
   "won": 2,
   "lost": 2,
-  "pending": 0,
+  "pending": 1,
   "legs": 12,
   "legsWon": 9,
   "returned": 5.22,
@@ -348,10 +348,10 @@
   "stakedLock": 0,
   "expected": 1.36,
   "clv": {
-   "n": 12,
+   "n": 15,
    "shortened": 2,
    "drifted": 1,
-   "mean": 0.0015
+   "mean": 0.0012
   }
  },
  "cardByWindow": {
@@ -392,9 +392,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 1,
-    "drifted": 0,
-    "mean": 0.0044
+    "shortened": 0,
+    "drifted": 2,
+    "mean": -0.0044
    }
   },
   "Evening": {
@@ -415,7 +415,7 @@
     "n": 3,
     "shortened": 0,
     "drifted": 2,
-    "mean": -0.0048
+    "mean": -0.0074
    }
   }
  },
@@ -630,7 +630,7 @@
        "when": "2026-10-26T12:30:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": 1.5,
+       "lastOdds": 1.53,
        "lockOdds": 1.52,
        "lockBest": 1.52,
        "lockBook": "Pinnacle",
@@ -647,7 +647,7 @@
        "when": "2026-10-26T13:30:00Z",
        "odds": 1.51,
        "best": 1.53,
-       "lastOdds": 1.51,
+       "lastOdds": 1.52,
        "lockOdds": 1.51,
        "lockBest": 1.53,
        "lockBook": "William Hill",
@@ -684,7 +684,7 @@
        "when": "2026-10-26T18:45:00Z",
        "odds": 1.36,
        "best": 1.38,
-       "lastOdds": 1.37,
+       "lastOdds": 1.36,
        "lockOdds": 1.37,
        "lockBest": 1.4,
        "lockBook": "Bet365",
@@ -718,12 +718,83 @@
        "when": "2026-10-26T23:30Z",
        "odds": 1.29,
        "best": 1.29,
-       "lastOdds": 1.29,
+       "lastOdds": 1.31,
        "lockOdds": 1.29,
        "lockBest": 1.29,
        "lockBook": null,
        "est": false,
        "p": 0.7415,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Daytime",
+     "window": "Daytime",
+     "odds": 2.27,
+     "p": 0.3718,
+     "status": "pending",
+     "wide": false,
+     "late": true,
+     "locked": true,
+     "lockAt": "2026-10-26T07:00:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Alex De Minaur",
+       "event": "Alex De Minaur v Tomas Machac",
+       "sport": "tennis",
+       "comp": "Erste Bank Open Round 1",
+       "when": "2026-10-26T14:00:00Z",
+       "odds": 1.43,
+       "best": 1.43,
+       "lastOdds": 1.43,
+       "lockOdds": 1.43,
+       "lockBest": 1.43,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.6791,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Gabriela Ce",
+       "event": "Gabriela Ce v Fernanda Labrana",
+       "sport": "tennis",
+       "comp": "Curitiba Open Round 1",
+       "when": "2026-10-26T15:30:00Z",
+       "odds": 1.21,
+       "best": 1.21,
+       "lastOdds": 1.21,
+       "lockOdds": 1.21,
+       "lockBest": 1.21,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.7888,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Al Ula",
+       "event": "Al Ula v Al Orubah",
+       "sport": "football",
+       "comp": "Division 1",
+       "when": "2026-10-26T16:45:00Z",
+       "odds": 1.31,
+       "best": 1.33,
+       "lastOdds": 1.31,
+       "lockOdds": 1.31,
+       "lockBest": 1.33,
+       "lockBook": "William Hill",
+       "est": false,
+       "p": 0.694,
        "status": "pending",
        "result": null
       }
