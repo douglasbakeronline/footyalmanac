@@ -420,13 +420,17 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-mult-p{font-size:13px;color:var(--ink-2);max-width:72ch;margin-top:10px;line-height:1.5}
 .og-rec details.og-old{margin-top:10px}
 .og-rec details.og-old summary{cursor:pointer;font-size:12px;font-weight:600;color:var(--ink-2)}
-.og-land{font-size:13px;color:var(--ink)}
-.og-land b{font-size:15px}
+/* 26 Oct 2026: the group headline is one row of three labelled figures
+   (Bookmakers / Model / Tested), small type, labels in --mute-ink (4.8:1). */
+.og-k-l{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute-ink,var(--mute));align-self:center}
+.og-fig{display:inline-flex;align-items:baseline;gap:4px;white-space:nowrap}
+.og-fig em{font:600 10.5px var(--f-ui);font-style:normal;letter-spacing:.02em;color:var(--mute-ink,var(--mute))}
+.og-fig b{font:600 14px var(--f-num);letter-spacing:-.02em}
 .og.Banker .og-h{border-top:3px solid var(--yellow)}
 .og.Steady .og-h{border-top:3px solid var(--home)}
 .og.Balanced .og-h{border-top:3px solid var(--draw)}
 .og.Stretch .og-h{border-top:3px solid var(--away)}
-.og-k{display:flex;gap:16px;padding:8px 13px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);flex-wrap:wrap}
+.og-k{display:flex;gap:6px 14px;padding:8px 13px;font-size:12px;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);flex-wrap:wrap;align-items:baseline}
 .og-k b{font-family:var(--f-num);color:var(--ink)}
 .og-l{display:grid;grid-template-columns:44px minmax(0,1fr) 88px 44px;gap:8px;align-items:baseline;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:13px}
 .og-l:first-of-type{border-top:0}
@@ -3333,8 +3337,20 @@ function ogBest(l){
   if(l.est || !l.best || l.best < l.odds + 0.005) return "";
   return `<small class="best" title="Best price across ${l.books || "the"} bookmakers${l.bestBook ? `: ${ogEsc(l.bestBook)}` : ""}">best ${(+l.best).toFixed(2)}${l.bestBook ? ` ${ogEsc(l.bestBook)}` : ""}</small>`;
 }
-const OG_NUM = {2:"two", 3:"three", 4:"four", 5:"five"};
-const ogIn10 = p => `about ${Math.max(1, Math.min(9, Math.round(p * 10)))} in 10`;
+// 26 Oct 2026: a group's headline is three labelled figures, not one number.
+// Bookmakers: the product of each leg's fair chance (price less margin), the
+// figure the Card is built on. Model: the product of the site's own numbers.
+// Tested: the product of each leg's tested rate (how often calls at its level
+// landed on games never tuned on), only when every leg has one. A figure is
+// left out when a leg lacks it (an estimated price has no bookmakers' chance).
+function ogFigures(g){
+  const L = g.legs, prod = k => L.every(l => typeof l[k] === "number") ? L.reduce((a, l) => a * l[k], 1) : null;
+  const book = prod("fair"), model = prod("pModel"), tested = prod("hit");
+  const fig = (label, v, title) => v == null ? "" : `<span class="og-fig" title="${title}"><em>${label}</em><b>${pct(v)}%</b></span>`;
+  return fig("Bookmakers", book, "Every pick lands: the bookmakers' own chance, margin removed, multiplied together. The Card is built on this.")
+    + fig("Model", model, "Every pick lands: the site's own numbers multiplied together, no bookmaker input.")
+    + fig("Tested", tested, "Every pick lands: how often calls at each pick's level landed in testing, multiplied together.");
+}
 function ogCard(g){
   const stake = ogStake();
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
@@ -3351,7 +3367,7 @@ function ogCard(g){
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? `${ogEsc(g.window)} window` : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span>${g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(stake * g.bestOdds).toFixed(2)}</span>` : ""}</div></div>
     ${ogStatus(g)}
-    <div class="og-k"><span class="og-land">Lands ${ogIn10(g.p)}: ${n === 2 ? "both" : `all ${OG_NUM[n] || n}`} come in <b>${pct(g.p)}%</b></span>${mult ? `<span>bookmakers' chance, margin removed</span>` : g.estimates === 0 ? `<span>Bookmakers imply <b>${pct(g.implied)}%</b></span>` : ""}</div>
+    <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
     <div>${legs}</div>
     <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
