@@ -110,3 +110,9 @@ class PlaceholderDay(unittest.TestCase):
         self.assertIn("order of play", G.mult_fault(leg))
         leg["timeEst"] = False
         self.assertIsNone(G.card_fault(leg))
+
+    def test_unconfirmed_day_never_lists_or_reserves(self):
+        import build_tennis as BT
+        src = open(BT.__file__, encoding="utf-8").read()
+        self.assertIn('"list": (not time_placeholder(r["date"], r["time"])', src)
+        self.assertIn('"reserve": (not time_placeholder(r["date"], r["time"])', src)

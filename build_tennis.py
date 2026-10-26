@@ -794,10 +794,15 @@ def main():
                 # the live own-band record, or nothing (never the archive walk)
                 "accuracy": accuracy_for(max(p, 1 - p), tour, ranked),
                 "rateSource": rate_source(accuracy_for(max(p, 1 - p), tour, ranked)),
-                "list": list_eligible(max(p, 1 - p), tour, r["round"],
-                                      pool[a]["matches"], pool[b]["matches"], ranked),
-                "reserve": list_reserve(max(p, 1 - p), tour, r["round"],
-                                        pool[a]["matches"], pool[b]["matches"], ranked),
+                # 26 Oct 2026, Douglas: nothing on the Daily List (or its
+                # reserve) that is not being played that day. A row whose
+                # day is unconfirmed (timeTbc) stays on the tennis board only.
+                "list": (not time_placeholder(r["date"], r["time"])
+                         and list_eligible(max(p, 1 - p), tour, r["round"],
+                                           pool[a]["matches"], pool[b]["matches"], ranked)),
+                "reserve": (not time_placeholder(r["date"], r["time"])
+                            and list_reserve(max(p, 1 - p), tour, r["round"],
+                                             pool[a]["matches"], pool[b]["matches"], ranked)),
             })
         log.append(f"{tour}: {len(rows)} fetched, {dropped} dropped (no rating on file for a side)")
 
