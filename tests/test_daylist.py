@@ -74,3 +74,14 @@ class FullObjects(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class UnconfirmedDay(unittest.TestCase):
+    def test_placeholder_rows_never_pin(self):
+        import daylist as D
+        base = {"date": "2026-10-26", "playerA": "A", "playerB": "B", "pick": "A", "p": {"a": 0.8},
+                "confidence": 0.8, "list": True, "reserve": False, "published": "2026-10-26T00:10:00Z"}
+        self.assertIsNone(D.tennis_item(dict(base, time="04:00")))          # midnight New York, EDT
+        self.assertIsNone(D.tennis_item(dict(base, time="12:30", timeTbc=True)))
+        self.assertIsNotNone(D.tennis_item(dict(base, time="12:30")))
+        self.assertIsNotNone(D.tennis_item(dict(base, time=None)))

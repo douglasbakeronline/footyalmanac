@@ -85,8 +85,24 @@ def football_item(g, leagues):
             "why": g.get("why"), "published": g.get("published")}
 
 
+NY = ZoneInfo("America/New_York")
+
+
+def unconfirmed_day(m):
+    """ESPN's stand-in time, midnight New York: the round's first day, not
+    the match's. 26 Oct 2026, Douglas: nothing on the Daily List that is not
+    being played that day, so such a row never pins, whatever its flags."""
+    if m.get("timeTbc"): return True
+    t = m.get("time")
+    if not t or not m.get("date"): return False
+    start = parse_utc(f"{m['date']}T{t}:00Z")
+    if not start: return False
+    ny = start.astimezone(NY)
+    return ny.hour == 0 and ny.minute == 0
+
+
 def tennis_item(m):
-    if not m.get("date"): return None
+    if not m.get("date") or unconfirmed_day(m): return None
     t = m.get("time")
     start = parse_utc(f"{m['date']}T{t}:00Z") if t else parse_utc(f"{m['date']}T00:00:00Z")
     if not start: return None
