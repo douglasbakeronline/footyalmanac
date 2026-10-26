@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-26T08:37:13Z",
+ "graded": "2026-10-26T08:54:48Z",
  "overall": {
   "groups": 77,
   "settled": 73,
@@ -16,9 +16,9 @@
   "expected": 23.82,
   "clv": {
    "n": 35,
-   "shortened": 17,
+   "shortened": 18,
    "drifted": 8,
-   "mean": 0.0045
+   "mean": 0.0049
   }
  },
  "byBand": {
@@ -59,9 +59,9 @@
    "expected": 0.57,
    "clv": {
     "n": 12,
-    "shortened": 4,
+    "shortened": 5,
     "drifted": 1,
-    "mean": 0.0049
+    "mean": 0.006
    }
   },
   "Wider Treble": {
@@ -307,9 +307,9 @@
   "expected": 0.34,
   "clv": {
    "n": 12,
-   "shortened": 5,
+   "shortened": 6,
    "drifted": 3,
-   "mean": 0.004
+   "mean": 0.0051
   }
  },
  "cardWide": {
@@ -392,9 +392,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 0,
-    "mean": 0.0
+    "mean": 0.0044
    }
   },
   "Evening": {
@@ -630,7 +630,7 @@
        "when": "2026-10-26T12:30:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": 1.52,
+       "lastOdds": 1.5,
        "lockOdds": 1.52,
        "lockBest": 1.52,
        "lockBook": "Pinnacle",
