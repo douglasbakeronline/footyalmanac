@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-26: Warn when unplayed fixtures sit on a stale date (tag pending)
+
+**What changed:** `build.py` now counts unplayed fixtures dated before the build window and prints a `::warning::` line naming up to twelve of them. Nothing is published differently: those fixtures were already dropped, and they still are. The warning makes the drop visible in the CI log.
+
+**Why:** on 26 Oct 2026 the board showed no Sevilla v Osasuna and no PSG v Lyon for tonight. openfootball still held both on 25 Oct with no kick-off time, so the build filtered them out silently. A reschedule the source has not caught up with looked identical to a match that does not exist.
+
+**Not changed:** the Daily List rule (unconfirmed days stay off), the window, the sources. Catching a moved fixture needs a cross-check against ESPN for the same dates, which runs in CI only (the cloud sandbox cannot reach ESPN). That is the next step, not this release.
+
+**Tests:** `nametest.py` clear; `python3 -m unittest discover -s tests` 533 tests OK.
+
+**Files:** `build.py`, `RELEASES.md`. Roll back by reverting this commit.
+
 ## 2026-10-26: College football landing below its quotes; no change (tag pending)
 
 **What changed:** a note only (`claude/cfb-all-calls-gap-2026-10-26.md`). No code or model change.
