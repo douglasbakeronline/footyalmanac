@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Other-sports reserve v its quotes: tested, no change, 26 Oct (tag pending)
+
+**What changed:** nothing in the model or the reserve rule. Dated note `claude/sports-reserve-gap-2026-10-26.md`.
+**Evidence:** reserve 13-26 Oct, 113 settled: 63.7% landed v 71.6% quoted. College football 43 of 68 (63.2% v 73.7%) and NFL 7 of 15 (46.7% v 68.5%) carry it; NBA 16 of 20 and rugby are on quote. On held-out history cfb calls at 60%+ landed 78.1% v 75.5% quoted (check) and 74.3% v 74.9% (fit); NFL windows disagree (69.5% v 71.8% check, 74.0% v 70.8% fit). A live-only exclusion would be fitting on the scoreboard (Rule 1).
+**Files:** claude/sports-reserve-gap-2026-10-26.md, RELEASES.md.
+**Not changed:** reserve floor, list bars, probabilities, grading.
+**Roll back:** `git revert` the commit.
+
 ## Weekly retune: add only the files that exist, 26 Oct (tag pending)
 
 **What changed:** Weekly retune #11 failed at "Commit the result" with exit 128: `git add` of a pathspec that does not exist. `home-advantage.json` (added to the step on 25 Oct) and `tuning-pending.json` (25 Oct, two-pass gate) are written only once a refit passes, so on a Monday with nothing to apply neither exists and the add refused. The step now adds each file only if it is on disk. The refit itself ran; only the commit of the advisory report was lost, and it will be written next Monday.
