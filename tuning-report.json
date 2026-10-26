@@ -95,13 +95,6 @@
     ]
    },
    {
-    "code": "kr.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
     "code": "cn.1",
     "reasons": [
      "no prior season"
@@ -165,34 +158,8 @@
     ]
    },
    {
-    "code": "ukr.1",
-    "reasons": [
-     "prior season 2024-25: 2 of 240 matches dated outside 2024-06-01..2025-07-31 (2026-04-16 to 2026-04-30)",
-     "no test season"
-    ]
-   },
-   {
-    "code": "srb.1",
-    "reasons": [
-     "no test season"
-    ]
-   },
-   {
-    "code": "hrv.1",
-    "reasons": [
-     "no test season"
-    ]
-   },
-   {
     "code": "cyp.1",
     "reasons": [
-     "no test season"
-    ]
-   },
-   {
-    "code": "hun.1",
-    "reasons": [
-     "prior season 2024-25: 1 of 198 matches dated outside 2024-06-01..2025-07-31 (2026-02-05 to 2026-02-05)",
      "no test season"
     ]
    },
@@ -274,7 +241,7 @@
    {
     "code": "wal.1",
     "reasons": [
-     "prior season 2024-25: 75 of 195 matches dated outside 2024-06-01..2025-07-31 (2026-01-01 to 2026-05-18)",
+     "prior season 2024-25: 76 of 196 matches dated outside 2024-06-01..2025-07-31 (2026-01-01 to 2026-05-18)",
      "no test season"
     ]
    },
@@ -674,13 +641,6 @@
     ]
    },
    {
-    "code": "kr.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
     "code": "cn.1",
     "reasons": [
      "no test season"
@@ -768,35 +728,7 @@
     ]
    },
    {
-    "code": "ukr.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "srb.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "hrv.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
     "code": "cyp.1",
-    "reasons": [
-     "no prior season",
-     "no test season"
-    ]
-   },
-   {
-    "code": "hun.1",
     "reasons": [
      "no prior season",
      "no test season"
@@ -1223,18 +1155,18 @@
  },
  "fitSeason": {
   "n": 8449,
-  "shipped": 1.0258,
+  "shipped": 1.0259,
   "fitted": 1.0257
  },
  "checkSeason": {
-  "n": 1956,
-  "shipped": 1.0261,
-  "fitted": 1.0264,
+  "n": 2031,
+  "shipped": 1.026,
+  "fitted": 1.0263,
   "delta": 0.0002,
   "sd": 0.0003,
-  "pWorse": 0.791,
-  "shippedAcc": 0.4877,
-  "fittedAcc": 0.4877
+  "pWorse": 0.779,
+  "shippedAcc": 0.4879,
+  "fittedAcc": 0.4879
  },
  "gates": {
   "enoughData": true,
@@ -1242,5 +1174,7 @@
   "worthIt": false
  },
  "pass": false,
- "generated": "2026-10-19"
+ "generated": "2026-10-26",
+ "consecutivePasses": 0,
+ "applied": false
 }
