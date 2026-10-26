@@ -209,6 +209,55 @@ def tier_table(rows):
     return out
 
 
+# The live own-band record (26 Oct 2026). The archive-walk bands in
+# build_tennis.ACCURACY_BANDS describe a different model from the one pricing
+# a live row (true surfaces, main draw only) and overstated it: 70-80% picks
+# were quoted 81-90% tested while live ATP 70-75% landed 68.4% of 38 and WTA
+# 63.0% of 54. Each tour's graded picks are tallied in 5-point bands from 55%
+# so the build can quote what calls at a row's own level have actually done.
+# Voids and prices published late never reach `rows`, so they are not here.
+LIVE_BAND_FROM, LIVE_BAND_STEP = 0.55, 0.05
+
+
+def live_band_of(conf):
+    """(from, to) of the 5-point band holding conf, or None under 55%."""
+    if conf is None or conf < LIVE_BAND_FROM - 1e-9:
+        return None
+    k = int(conf / LIVE_BAND_STEP + 1e-9)
+    lo = min(round(k * LIVE_BAND_STEP, 2), 0.95)     # a 100% call sits in the top band
+    return lo, round(min(lo + LIVE_BAND_STEP, 1.0), 2)
+
+
+def live_bands(rows):
+    """{tour: [{"from", "to", "n", "correct", "hit", "quoted"}]}, graded rows
+    only, every 5-point band from 55% listed even when empty."""
+    out = {}
+    for tour in ("ATP", "WTA"):
+        bands = []
+        lo = LIVE_BAND_FROM
+        while lo < 1.0 - 1e-9:
+            hi = round(min(lo + LIVE_BAND_STEP, 1.0), 2)
+            g = [r for r in rows if r["tour"] == tour and not r.get("void")
+                 and live_band_of(r["confidence"]) == (round(lo, 2), hi)]
+            n = len(g)
+            hit = sum(1 for r in g if r["ok"])
+            bands.append({"from": round(lo, 2), "to": hi, "n": n, "correct": hit,
+                          "hit": round(hit / n, 4) if n else None,
+                          "quoted": round(sum(r["confidence"] for r in g) / n, 4) if n else None})
+            lo = round(lo + LIVE_BAND_STEP, 2)
+        out[tour] = bands
+    return out
+
+
+def print_live_bands(bands, file=sys.stderr):
+    print("live own-band record (graded picks only):", file=file)
+    for tour, bs in bands.items():
+        for b in bs:
+            if b["n"]:
+                print(f"  {tour} {b['from']:.0%}-{b['to']:.0%}: {b['n']:4d}  quoted {b['quoted']:.1%}  "
+                      f"landed {b['hit']:.1%}", file=file)
+
+
 def main():
     ratings = json.load(open(os.path.join(HERE, "tennis.json")))
     preds, late = load_predictions()
@@ -299,6 +348,9 @@ def main():
         "reserve": summarise([r for r in rows if r.get("reserve")]),
         "reserveTiers": tier_table([r for r in rows if r.get("reserve")]),
         "bands": bands,
+        # per tour, 5-point bands from 55%: what the build quotes as a row's
+        # live rate once a band holds build_tennis.LIVE_MIN_N graded picks
+        "liveBands": live_bands(rows),
         "void": sum(1 for g in graded.values() if g["void"]),
         "days": days,
         "graded": list(graded.values()),
@@ -316,6 +368,7 @@ def main():
               f"(quoted {o['expected']:.1%}), {payload['void']} void, "
               f"{late} archived prices published after the start were not graded",
               file=sys.stderr)
+        print_live_bands(payload["liveBands"])
     else:
         print("tennis: nothing graded yet", file=sys.stderr)
 
