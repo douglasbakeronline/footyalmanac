@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-26T07:40:43Z",
+ "graded": "2026-10-26T08:31:56Z",
  "overall": {
   "groups": 77,
   "settled": 73,
@@ -15,10 +15,10 @@
   "stakedLock": 1,
   "expected": 23.82,
   "clv": {
-   "n": 32,
+   "n": 35,
    "shortened": 17,
-   "drifted": 7,
-   "mean": 0.0052
+   "drifted": 8,
+   "mean": 0.0045
   }
  },
  "byBand": {
@@ -37,10 +37,10 @@
    "stakedLock": 1,
    "expected": 1.13,
    "clv": {
-    "n": 11,
+    "n": 12,
     "shortened": 3,
-    "drifted": 2,
-    "mean": 0.0013
+    "drifted": 3,
+    "mean": 0.0006
    }
   },
   "Card 3x": {
@@ -58,10 +58,10 @@
    "stakedLock": 0,
    "expected": 0.57,
    "clv": {
-    "n": 10,
+    "n": 12,
     "shortened": 4,
     "drifted": 1,
-    "mean": 0.0058
+    "mean": 0.0049
    }
   },
   "Wider Treble": {
@@ -306,10 +306,10 @@
   "stakedLock": 1,
   "expected": 0.34,
   "clv": {
-   "n": 9,
+   "n": 12,
    "shortened": 5,
-   "drifted": 2,
-   "mean": 0.0061
+   "drifted": 3,
+   "mean": 0.004
   }
  },
  "cardWide": {
@@ -391,7 +391,7 @@
    "stakedLock": 0,
    "expected": 0,
    "clv": {
-    "n": 1,
+    "n": 3,
     "shortened": 0,
     "drifted": 0,
     "mean": 0.0
@@ -412,10 +412,10 @@
    "stakedLock": 0,
    "expected": 0,
    "clv": {
-    "n": 2,
+    "n": 3,
     "shortened": 0,
-    "drifted": 1,
-    "mean": -0.0036
+    "drifted": 2,
+    "mean": -0.0048
    }
   }
  },
@@ -600,7 +600,7 @@
      "lockAt": "2026-10-26T07:00:00Z",
      "paid": 0,
      "paidBest": 0,
-     "paidLock": null,
+     "paidLock": 0,
      "legsWon": 0,
      "legsLost": 0,
      "legsPending": 3,
@@ -613,10 +613,10 @@
        "when": "2026-10-26T12:30:00Z",
        "odds": 1.58,
        "best": 1.58,
-       "lastOdds": null,
-       "lockOdds": null,
-       "lockBest": null,
-       "lockBook": null,
+       "lastOdds": 1.58,
+       "lockOdds": 1.58,
+       "lockBest": 1.58,
+       "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6123,
        "status": "pending",
@@ -630,10 +630,10 @@
        "when": "2026-10-26T12:30:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": null,
-       "lockOdds": null,
-       "lockBest": null,
-       "lockBook": null,
+       "lastOdds": 1.52,
+       "lockOdds": 1.52,
+       "lockBest": 1.52,
+       "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6366,
        "status": "pending",
@@ -671,7 +671,7 @@
      "lockAt": "2026-10-26T07:00:00Z",
      "paid": 0,
      "paidBest": 0,
-     "paidLock": null,
+     "paidLock": 0,
      "legsWon": 0,
      "legsLost": 0,
      "legsPending": 3,
@@ -701,10 +701,10 @@
        "when": "2026-10-26T19:00:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": null,
-       "lockOdds": null,
-       "lockBest": null,
-       "lockBook": null,
+       "lastOdds": 1.42,
+       "lockOdds": 1.42,
+       "lockBest": 1.42,
+       "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6859,
        "status": "pending",
