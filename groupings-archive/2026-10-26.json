@@ -582,9 +582,9 @@
      "edge": -0.0351,
      "basis": "bookmakers",
      "firstOdds": 1.5,
-     "lastOdds": 1.42,
-     "lastBest": 1.42,
-     "lastAt": "2026-10-26T11:15:02Z",
+     "lastOdds": 1.43,
+     "lastBest": 1.43,
+     "lastAt": "2026-10-26T13:36:29Z",
      "lockPrice": {
       "odds": 1.42,
       "best": 1.42,
@@ -620,7 +620,7 @@
      "firstOdds": 1.34,
      "lastOdds": 1.31,
      "lastBest": 1.31,
-     "lastAt": "2026-10-26T11:15:02Z",
+     "lastAt": "2026-10-26T13:36:29Z",
      "lockPrice": {
       "odds": 1.29,
       "best": 1.29,
@@ -740,9 +740,9 @@
       "book": "Pinnacle",
       "at": "2026-10-26T11:15:02Z"
      },
-     "lastOdds": 1.43,
-     "lastBest": 1.43,
-     "lastAt": "2026-10-26T11:15:02Z"
+     "lastOdds": 1.44,
+     "lastBest": 1.44,
+     "lastAt": "2026-10-26T13:36:29Z"
     },
     {
      "sport": "tennis",
@@ -837,7 +837,7 @@
      },
      "lastOdds": 1.21,
      "lastBest": 1.21,
-     "lastAt": "2026-10-26T11:15:02Z"
+     "lastAt": "2026-10-26T13:36:29Z"
     },
     {
      "sport": "football",
@@ -1032,9 +1032,9 @@
       "book": "William Hill",
       "at": "2026-10-26T11:15:02Z"
      },
-     "lastOdds": 1.31,
-     "lastBest": 1.33,
-     "lastAt": "2026-10-26T11:15:02Z"
+     "lastOdds": 1.32,
+     "lastBest": 1.38,
+     "lastAt": "2026-10-26T13:36:29Z"
     }
    ],
    "bestOdds": 2.3,

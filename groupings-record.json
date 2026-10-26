@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-26T11:15:05Z",
+ "graded": "2026-10-26T13:36:44Z",
  "overall": {
   "groups": 78,
   "settled": 73,
@@ -17,8 +17,8 @@
   "clv": {
    "n": 38,
    "shortened": 17,
-   "drifted": 10,
-   "mean": 0.0036
+   "drifted": 12,
+   "mean": 0.003
   }
  },
  "byBand": {
@@ -39,8 +39,8 @@
    "clv": {
     "n": 15,
     "shortened": 3,
-    "drifted": 3,
-    "mean": -0.0
+    "drifted": 5,
+    "mean": -0.0014
    }
   },
   "Card 3x": {
@@ -309,7 +309,7 @@
    "n": 12,
    "shortened": 5,
    "drifted": 5,
-   "mean": 0.0022
+   "mean": 0.0016
   }
  },
  "cardWide": {
@@ -350,8 +350,8 @@
   "clv": {
    "n": 15,
    "shortened": 2,
-   "drifted": 1,
-   "mean": 0.0012
+   "drifted": 3,
+   "mean": 0.0003
   }
  },
  "cardByWindow": {
@@ -415,7 +415,7 @@
     "n": 3,
     "shortened": 0,
     "drifted": 2,
-    "mean": -0.0074
+    "mean": -0.0098
    }
   }
  },
@@ -701,7 +701,7 @@
        "when": "2026-10-26T19:00:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": 1.42,
+       "lastOdds": 1.43,
        "lockOdds": 1.42,
        "lockBest": 1.42,
        "lockBook": "Pinnacle",
@@ -755,7 +755,7 @@
        "when": "2026-10-26T14:00:00Z",
        "odds": 1.43,
        "best": 1.43,
-       "lastOdds": 1.43,
+       "lastOdds": 1.44,
        "lockOdds": 1.43,
        "lockBest": 1.43,
        "lockBook": "Pinnacle",
@@ -789,7 +789,7 @@
        "when": "2026-10-26T16:45:00Z",
        "odds": 1.31,
        "best": 1.33,
-       "lastOdds": 1.31,
+       "lastOdds": 1.32,
        "lockOdds": 1.31,
        "lockBest": 1.33,
        "lockBook": "William Hill",
