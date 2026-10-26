@@ -1,0 +1,782 @@
+{
+ "date": "2026-10-27",
+ "published": "2026-10-26T21:26:50Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Overnight",
+   "rank": "Overnight",
+   "first": "2026-10-26T08:54:44Z",
+   "lockAt": "2026-10-26T21:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 2.25,
+   "p": 0.4007,
+   "implied": 0.4438,
+   "bestOdds": 2.25,
+   "legs": [
+    {
+     "sport": "nba",
+     "event": "Oklahoma City Thunder v Phoenix Suns",
+     "home": "Oklahoma City Thunder",
+     "away": "Phoenix Suns",
+     "pick": "Oklahoma City Thunder",
+     "comp": "NBA",
+     "when": "2026-10-27T00:00Z",
+     "date": "2026-10-27",
+     "id": "401909873",
+     "pModel": 0.7619,
+     "p": 0.7333,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909873",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-10-27T00:00Z",
+      "home": "Oklahoma City Thunder",
+      "away": "Phoenix Suns",
+      "neutral": false,
+      "pHome": 0.7619,
+      "pick": "Oklahoma City Thunder",
+      "confidence": 0.7619,
+      "tier": "Strong",
+      "eloH": 1663,
+      "eloA": 1496,
+      "gamesH": 298,
+      "gamesA": 258,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "108-101",
+        "opp": "LA Clippers",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "96-84",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "116-104",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-10-21"
+       },
+       {
+        "r": "L",
+        "score": "103-111",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-05-31"
+       },
+       {
+        "r": "L",
+        "score": "91-118",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-05-29"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "131-122",
+        "opp": "Golden State Warriors",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "83-124",
+        "opp": "Portland Trail Blazers",
+        "home": false,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "122-131",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-04-28"
+       },
+       {
+        "r": "L",
+        "score": "109-121",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-04-25"
+       },
+       {
+        "r": "L",
+        "score": "107-120",
+        "opp": "Oklahoma City Thunder",
+        "home": false,
+        "date": "2026-04-23"
+       }
+      ],
+      "recordH": {
+       "w": 3,
+       "l": 0,
+       "d": 0
+      },
+      "recordA": {
+       "w": 1,
+       "l": 1,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-04-28",
+        "home": "Phoenix Suns",
+        "away": "Oklahoma City Thunder",
+        "score": "122-131"
+       },
+       {
+        "date": "2026-04-25",
+        "home": "Phoenix Suns",
+        "away": "Oklahoma City Thunder",
+        "score": "109-121"
+       },
+       {
+        "date": "2026-04-23",
+        "home": "Oklahoma City Thunder",
+        "away": "Phoenix Suns",
+        "score": "120-107"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.31,
+     "margin": 1.0411,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-26T19:44:23Z",
+     "implied": 0.7634,
+     "pTested": 0.7619,
+     "fair": 0.7333,
+     "edge": -0.0394,
+     "basis": "bookmakers",
+     "firstOdds": 1.25,
+     "lastOdds": 1.31,
+     "lastBest": 1.31,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.31,
+      "best": 1.31,
+      "book": null,
+      "at": "2026-10-26T21:26:50Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Sorana Cirstea v Maya Joint",
+     "pick": "Sorana Cirstea",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Sorana Cirstea",
+      "Maya Joint"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 1",
+     "when": "2026-10-27T01:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185679",
+     "fx": {
+      "id": "185679",
+      "espn": [
+       "Sorana Cirstea",
+       "Maya Joint"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "01:30",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Sorana Cirstea",
+      "playerB": "Maya Joint",
+      "ratingA": {
+       "elo": 2305,
+       "matches": 339,
+       "surfaceElo": 2095
+      },
+      "ratingB": {
+       "elo": 2120,
+       "matches": 241,
+       "surfaceElo": 1962
+      },
+      "p": {
+       "a": 0.7143,
+       "b": 0.2857
+      },
+      "pick": "Sorana Cirstea",
+      "confidence": 0.7143,
+      "tier": "Strong",
+      "rankA": 16,
+      "rankB": 94,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6296,
+       "n": 54,
+       "cumHit": 0.6296,
+       "cumN": 54,
+       "quoted": 0.7235,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7143,
+     "p": 0.6859,
+     "hit": 0.6296,
+     "n": 54,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.41,
+     "best": 1.41,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0339,
+     "pricedAt": "2026-10-26T19:44:22Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7092,
+     "pTested": 0.6296,
+     "fair": 0.6859,
+     "edge": -0.1123,
+     "basis": "bookmakers",
+     "firstOdds": 1.34,
+     "lastOdds": 1.43,
+     "lastBest": 1.43,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.43,
+      "best": 1.43,
+      "book": "Pinnacle",
+      "at": "2026-10-26T21:26:50Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Himeno Sakatsume v Leylah Fernandez",
+     "pick": "Leylah Fernandez",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Himeno Sakatsume",
+      "Leylah Fernandez"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 1",
+     "when": "2026-10-27T06:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185659",
+     "fx": {
+      "id": "185659",
+      "espn": [
+       "Himeno Sakatsume",
+       "Leylah Fernandez"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "06:00",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Himeno Sakatsume",
+      "playerB": "Leylah Fernandez",
+      "ratingA": {
+       "elo": 2044,
+       "matches": 413,
+       "surfaceElo": 1907
+      },
+      "ratingB": {
+       "elo": 2265,
+       "matches": 387,
+       "surfaceElo": 2088
+      },
+      "p": {
+       "a": 0.2443,
+       "b": 0.7557
+      },
+      "pick": "Leylah Fernandez",
+      "confidence": 0.7557,
+      "tier": "Strong",
+      "rankA": 114,
+      "rankB": 23,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8108,
+       "n": 37,
+       "cumHit": 0.8108,
+       "cumN": 37,
+       "quoted": 0.7721,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7557,
+     "p": 0.7967,
+     "hit": 0.8108,
+     "n": 37,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.22,
+     "best": 1.22,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0289,
+     "pricedAt": "2026-10-26T19:44:22Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8197,
+     "pTested": 0.7557,
+     "fair": 0.7967,
+     "edge": -0.078,
+     "basis": "bookmakers",
+     "firstOdds": 1.2,
+     "lastOdds": 1.22,
+     "lastBest": 1.22,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.22,
+      "best": 1.22,
+      "book": "Pinnacle",
+      "at": "2026-10-26T21:26:50Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-26T19:44:15Z",
+   "archivedAt": "2026-10-26T21:26:50Z"
+  },
+  {
+   "name": "Card 3x",
+   "risk": "Pays 3x+",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Overnight",
+   "rank": "Overnight",
+   "first": "2026-10-26T08:54:44Z",
+   "lockAt": "2026-10-26T21:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 3.26,
+   "p": 0.2765,
+   "implied": 0.3064,
+   "bestOdds": 3.26,
+   "legs": [
+    {
+     "sport": "nba",
+     "event": "Houston Rockets v Atlanta Hawks",
+     "home": "Houston Rockets",
+     "away": "Atlanta Hawks",
+     "pick": "Houston Rockets",
+     "comp": "NBA",
+     "when": "2026-10-27T00:30Z",
+     "date": "2026-10-27",
+     "id": "401909874",
+     "pModel": 0.5974,
+     "p": 0.6444,
+     "hit": 0.7076,
+     "n": 1108,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909874",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-10-27T00:30Z",
+      "home": "Houston Rockets",
+      "away": "Atlanta Hawks",
+      "neutral": false,
+      "pHome": 0.5974,
+      "pick": "Houston Rockets",
+      "confidence": 0.5974,
+      "tier": "Lean",
+      "eloH": 1582,
+      "eloA": 1550,
+      "gamesH": 262,
+      "gamesA": 258,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.593,
+       "n": 253,
+       "cumHit": 0.7076,
+       "cumN": 1108
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "121-114",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "114-110",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "128-110",
+        "opp": "Dallas Mavericks",
+        "home": true,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "78-98",
+        "opp": "Los Angeles Lakers",
+        "home": true,
+        "date": "2026-05-02"
+       },
+       {
+        "r": "W",
+        "score": "99-93",
+        "opp": "Los Angeles Lakers",
+        "home": false,
+        "date": "2026-04-30"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "114-121",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "128-81",
+        "opp": "Charlotte Hornets",
+        "home": false,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "132-125",
+        "opp": "Orlando Magic",
+        "home": false,
+        "date": "2026-10-21"
+       },
+       {
+        "r": "L",
+        "score": "89-140",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-04-30"
+       },
+       {
+        "r": "L",
+        "score": "97-126",
+        "opp": "New York Knicks",
+        "home": false,
+        "date": "2026-04-29"
+       }
+      ],
+      "recordH": {
+       "w": 3,
+       "l": 0,
+       "d": 0
+      },
+      "recordA": {
+       "w": 2,
+       "l": 1,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-10-25",
+        "home": "Atlanta Hawks",
+        "away": "Houston Rockets",
+        "score": "114-121"
+       },
+       {
+        "date": "2026-03-21",
+        "home": "Houston Rockets",
+        "away": "Atlanta Hawks",
+        "score": "117-95"
+       },
+       {
+        "date": "2026-01-30",
+        "home": "Atlanta Hawks",
+        "away": "Houston Rockets",
+        "score": "86-104"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.49,
+     "margin": 1.0415,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-26T19:44:23Z",
+     "implied": 0.6711,
+     "pTested": 0.593,
+     "fair": 0.6444,
+     "edge": -0.1164,
+     "basis": "bookmakers",
+     "firstOdds": 1.49,
+     "lastOdds": 1.52,
+     "lastBest": 1.52,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.52,
+      "best": 1.52,
+      "book": null,
+      "at": "2026-10-26T21:26:50Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Nikola Bartunkova v Aliaksandra Sasnovich",
+     "pick": "Nikola Bartunkova",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Nikola Bartunkova",
+      "Aliaksandra Sasnovich"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 1",
+     "when": "2026-10-27T05:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185668",
+     "fx": {
+      "id": "185668",
+      "espn": [
+       "Nikola Bartunkova",
+       "Aliaksandra Sasnovich"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "05:00",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Nikola Bartunkova",
+      "playerB": "Aliaksandra Sasnovich",
+      "ratingA": {
+       "elo": 2275,
+       "matches": 251,
+       "surfaceElo": 2077
+      },
+      "ratingB": {
+       "elo": 2145,
+       "matches": 394,
+       "surfaceElo": 1969
+      },
+      "p": {
+       "a": 0.6621,
+       "b": 0.3379
+      },
+      "pick": "Nikola Bartunkova",
+      "confidence": 0.6621,
+      "tier": "Firm",
+      "rankA": 29,
+      "rankB": 112,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6491,
+       "n": 57,
+       "cumHit": 0.6491,
+       "cumN": 57,
+       "quoted": 0.6752,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6621,
+     "p": 0.6521,
+     "hit": 0.6491,
+     "n": 57,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.49,
+     "best": 1.49,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0292,
+     "pricedAt": "2026-10-26T19:44:22Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6711,
+     "pTested": 0.6491,
+     "fair": 0.6521,
+     "edge": -0.0328,
+     "basis": "bookmakers",
+     "firstOdds": 1.5,
+     "lastOdds": 1.47,
+     "lastBest": 1.47,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.47,
+      "best": 1.47,
+      "book": "Pinnacle",
+      "at": "2026-10-26T21:26:50Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Mia Pohankova v Tereza Valentova",
+     "pick": "Tereza Valentova",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Mia Pohankova",
+      "Tereza Valentova"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 1",
+     "when": "2026-10-27T06:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185661",
+     "fx": {
+      "id": "185661",
+      "espn": [
+       "Mia Pohankova",
+       "Tereza Valentova"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "06:30",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Mia Pohankova",
+      "playerB": "Tereza Valentova",
+      "ratingA": {
+       "elo": 2127,
+       "matches": 65,
+       "surfaceElo": 1944
+      },
+      "ratingB": {
+       "elo": 2208,
+       "matches": 170,
+       "surfaceElo": 2051
+      },
+      "p": {
+       "a": 0.3809,
+       "b": 0.6191
+      },
+      "pick": "Tereza Valentova",
+      "confidence": 0.6191,
+      "tier": "Lean",
+      "rankA": 144,
+      "rankB": 87,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6263,
+       "n": 99,
+       "cumHit": 0.6263,
+       "cumN": 99,
+       "quoted": 0.625,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.6191,
+     "p": 0.6581,
+     "hit": 0.6263,
+     "n": 99,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.47,
+     "best": 1.47,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0338,
+     "pricedAt": "2026-10-26T19:44:22Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6803,
+     "pTested": 0.6191,
+     "fair": 0.6581,
+     "edge": -0.0899,
+     "basis": "bookmakers",
+     "firstOdds": 1.44,
+     "lastOdds": 1.45,
+     "lastBest": 1.45,
+     "lastAt": "2026-10-26T21:26:50Z",
+     "lockPrice": {
+      "odds": 1.45,
+      "best": 1.45,
+      "book": "Pinnacle",
+      "at": "2026-10-26T21:26:50Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-26T19:44:15Z",
+   "archivedAt": "2026-10-26T21:26:50Z"
+  }
+ ]
+}

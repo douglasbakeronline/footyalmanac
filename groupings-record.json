@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-26T19:44:23Z",
+ "graded": "2026-10-26T21:26:58Z",
  "overall": {
-  "groups": 78,
+  "groups": 80,
   "settled": 75,
   "won": 18,
   "lost": 57,
-  "pending": 3,
-  "legs": 339,
-  "legsWon": 250,
+  "pending": 5,
+  "legs": 340,
+  "legsWon": 251,
   "returned": 58.69,
   "staked": 75,
   "returnedBest": 62.55,
@@ -15,21 +15,21 @@
   "stakedLock": 3,
   "expected": 24.42,
   "clv": {
-   "n": 38,
-   "shortened": 18,
-   "drifted": 12,
-   "mean": 0.0033
+   "n": 43,
+   "shortened": 19,
+   "drifted": 14,
+   "mean": 0.0023
   }
  },
  "byBand": {
   "Card 2x": {
-   "groups": 5,
+   "groups": 6,
    "settled": 4,
    "won": 2,
    "lost": 2,
-   "pending": 1,
-   "legs": 11,
-   "legsWon": 9,
+   "pending": 2,
+   "legs": 12,
+   "legsWon": 10,
    "returned": 4.46,
    "staked": 4,
    "returnedBest": 4.72,
@@ -37,18 +37,18 @@
    "stakedLock": 2,
    "expected": 1.5,
    "clv": {
-    "n": 15,
+    "n": 18,
     "shortened": 4,
-    "drifted": 5,
-    "mean": -0.0009
+    "drifted": 6,
+    "mean": -0.0015
    }
   },
   "Card 3x": {
-   "groups": 4,
+   "groups": 5,
    "settled": 3,
    "won": 2,
    "lost": 1,
-   "pending": 1,
+   "pending": 2,
    "legs": 11,
    "legsWon": 9,
    "returned": 6.66,
@@ -58,10 +58,10 @@
    "stakedLock": 1,
    "expected": 0.8,
    "clv": {
-    "n": 12,
-    "shortened": 4,
-    "drifted": 3,
-    "mean": 0.0038
+    "n": 15,
+    "shortened": 6,
+    "drifted": 4,
+    "mean": 0.0035
    }
   },
   "Wider Treble": {
@@ -292,13 +292,13 @@
   }
  },
  "card": {
-  "groups": 4,
+  "groups": 6,
   "settled": 2,
   "won": 1,
   "lost": 1,
-  "pending": 2,
-  "legs": 7,
-  "legsWon": 6,
+  "pending": 4,
+  "legs": 8,
+  "legsWon": 7,
   "returned": 3.63,
   "staked": 2,
   "returnedBest": 3.67,
@@ -306,10 +306,10 @@
   "stakedLock": 2,
   "expected": 0.57,
   "clv": {
-   "n": 12,
-   "shortened": 6,
-   "drifted": 5,
-   "mean": 0.0024
+   "n": 17,
+   "shortened": 7,
+   "drifted": 7,
+   "mean": 0.0002
   }
  },
  "cardWide": {
@@ -356,11 +356,11 @@
  },
  "cardByWindow": {
   "Overnight": {
-   "groups": 2,
+   "groups": 4,
    "settled": 1,
    "won": 0,
    "lost": 1,
-   "pending": 1,
+   "pending": 3,
    "legs": 4,
    "legsWon": 3,
    "returned": 0,
@@ -370,10 +370,10 @@
    "stakedLock": 1,
    "expected": 0.34,
    "clv": {
-    "n": 6,
-    "shortened": 5,
-    "drifted": 1,
-    "mean": 0.0103
+    "n": 11,
+    "shortened": 6,
+    "drifted": 3,
+    "mean": 0.0033
    }
   },
   "Daytime": {
@@ -403,8 +403,8 @@
    "won": 0,
    "lost": 0,
    "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -441,6 +441,154 @@
   }
  },
  "days": [
+  {
+   "date": "2026-10-27",
+   "published": "2026-10-26T21:26:50Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Overnight",
+     "window": "Overnight",
+     "odds": 2.25,
+     "p": 0.4007,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-10-26T21:00:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Oklahoma City Thunder",
+       "event": "Oklahoma City Thunder v Phoenix Suns",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-10-27T00:00Z",
+       "odds": 1.31,
+       "best": 1.31,
+       "lastOdds": 1.31,
+       "lockOdds": 1.31,
+       "lockBest": 1.31,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7333,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Sorana Cirstea",
+       "event": "Sorana Cirstea v Maya Joint",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-27T01:30:00Z",
+       "odds": 1.41,
+       "best": 1.41,
+       "lastOdds": 1.43,
+       "lockOdds": 1.43,
+       "lockBest": 1.43,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.6859,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Leylah Fernandez",
+       "event": "Himeno Sakatsume v Leylah Fernandez",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-27T06:00:00Z",
+       "odds": 1.22,
+       "best": 1.22,
+       "lastOdds": 1.22,
+       "lockOdds": 1.22,
+       "lockBest": 1.22,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.7967,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    },
+    {
+     "name": "Card 3x",
+     "rank": "Overnight",
+     "window": "Overnight",
+     "odds": 3.26,
+     "p": 0.2765,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-10-26T21:00:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Houston Rockets",
+       "event": "Houston Rockets v Atlanta Hawks",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-10-27T00:30Z",
+       "odds": 1.49,
+       "best": 1.49,
+       "lastOdds": 1.52,
+       "lockOdds": 1.52,
+       "lockBest": 1.52,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6444,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Nikola Bartunkova",
+       "event": "Nikola Bartunkova v Aliaksandra Sasnovich",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-27T05:00:00Z",
+       "odds": 1.49,
+       "best": 1.49,
+       "lastOdds": 1.47,
+       "lockOdds": 1.47,
+       "lockBest": 1.47,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.6521,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Tereza Valentova",
+       "event": "Mia Pohankova v Tereza Valentova",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 1",
+       "when": "2026-10-27T06:30:00Z",
+       "odds": 1.47,
+       "best": 1.47,
+       "lastOdds": 1.45,
+       "lockOdds": 1.45,
+       "lockBest": 1.45,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.6581,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-26",
    "published": "2026-10-25T22:02:05Z",
@@ -672,9 +820,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Sport Lisboa e Benfica",
@@ -707,8 +855,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6859,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Learner Tien (USA) bt Luca Van Assche (FRA) 6-3 6-1"
       },
       {
        "pick": "Miami Heat",
