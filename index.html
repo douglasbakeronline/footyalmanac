@@ -3409,8 +3409,15 @@ function ogMove(l){
 // and "stale" once the read is over OG_STALE_H hours old on the viewer's
 // clock. A price with no read time (built before 26 Oct) says so.
 const OG_STALE_H = 2;
-function ogRead(l){
+function ogRead(l, frozen){
   if(l.est) return "";
+  // A locked group never changes and a started leg cannot be placed, so the
+  // read time is the price's provenance, not a warning: never "stale" there.
+  if(frozen){
+    const at = l.pricedAt || (l.lockPrice && l.lockPrice.at);
+    const t = at ? new Date(at) : null;
+    return `<small class="read" title="The price this group was locked with. It does not change after the lock.">${t && !isNaN(t) ? `price at lock · read ${ogAt(at)}` : "price at lock"}</small>`;
+  }
   const at = l.pricedAt || (l.lockPrice && l.lockPrice.at);
   if(!at) return `<small class="read" title="This price was read before the site recorded read times">read time unknown</small>`;
   const t = new Date(at); if(isNaN(t)) return "";
@@ -3419,9 +3426,9 @@ function ogRead(l){
 }
 // 26 Oct 2026: an estimated price (no bookmaker price found) in its own
 // labelled form, never a bookmaker-looking number with an asterisk.
-function ogPrice(l){
+function ogPrice(l, frozen){
   if(l.est) return `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>`;
-  return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l)}</span>`;
+  return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l, frozen)}</span>`;
 }
 // What the re-check dropped on this day, newest first.
 function ogLog(day){
@@ -3462,7 +3469,7 @@ function ogCard(g){
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}</span>
-      ${ogPrice(l)}<span class="c">${pct(l.p)}%</span></div>
+      ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? `${ogEsc(g.window)} window` : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
@@ -3796,7 +3803,7 @@ function renderToday(){
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol>
-    <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and is marked <b>stale</b> after ${OG_STALE_H} hours. Check the price before placing anything.</p>
+    <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and, on a group you can still place, is marked <b>stale</b> after ${OG_STALE_H} hours, meaning it may have moved: check it before placing anything. A locked group keeps the price it was locked with.</p>
     <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>

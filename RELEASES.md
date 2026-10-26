@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## "Stale" only on a group you can still place, 26 Oct (tag pending)
+
+**What changed:** a leg in a locked group, or one that has started, now shows "price at lock · read HH:MM" instead of the red "stale" tag. The lock freezes the price by design, so a read time over two hours old is provenance there, not a warning; "stale" stays on groups that can still be placed, where it means the price may have moved. The snapshot line on the Bets tab says the same. Douglas asked what stale meant on an under-way Card.
+**Files:** index.html, RELEASES.md.
+**Roll back:** `git revert` the commit.
+
 ## Tennis rows with no order of play show TBC and stay off the Card, 26 Oct (tag pending)
 
 **What changed:** Douglas found Monday-morning tennis rows that are really Tuesday's, and ruled that nothing goes on the Daily List or its reserve unless it is being played that day: a tennis row with an unconfirmed day is never `list` or `reserve`, whatever its confidence. Before the order of play is out, ESPN dates a match at midnight New York (04:00 UTC), which the tennis tab showed as 05:00 that morning. The date is the round's first day, not the match's: on the archive, 15-25% of such rows were played the day after, and about half in rounds that run over two days (Antwerp 16 of 28). `build_tennis` now marks those rows `timeTbc`; the tennis tab shows "TBC, day not confirmed" with a title explaining why, sorts them last on their date, and the lede says so; `groupings.card_fault` and `mult_fault` refuse a tennis leg with an estimated time, since it cannot be placed in a window (the order of play is normally out before the 21:00 lock). Also removed the stale lede line about the ATP ranking layer, off since 7 Oct.
