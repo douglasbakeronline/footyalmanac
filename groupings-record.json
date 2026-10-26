@@ -1,24 +1,24 @@
 {
- "graded": "2026-10-26T13:36:44Z",
+ "graded": "2026-10-26T17:45:30Z",
  "overall": {
   "groups": 78,
-  "settled": 73,
-  "won": 16,
+  "settled": 74,
+  "won": 17,
   "lost": 57,
-  "pending": 5,
-  "legs": 333,
-  "legsWon": 244,
-  "returned": 52.79,
-  "staked": 73,
-  "returnedBest": 56.58,
-  "returnedLock": 0,
-  "stakedLock": 1,
-  "expected": 23.82,
+  "pending": 4,
+  "legs": 338,
+  "legsWon": 249,
+  "returned": 56.42,
+  "staked": 74,
+  "returnedBest": 60.25,
+  "returnedLock": 3.63,
+  "stakedLock": 2,
+  "expected": 24.05,
   "clv": {
    "n": 38,
-   "shortened": 17,
+   "shortened": 18,
    "drifted": 12,
-   "mean": 0.003
+   "mean": 0.0033
   }
  },
  "byBand": {
@@ -28,8 +28,8 @@
    "won": 1,
    "lost": 2,
    "pending": 2,
-   "legs": 8,
-   "legsWon": 6,
+   "legs": 10,
+   "legsWon": 8,
    "returned": 2.19,
    "staked": 3,
    "returnedBest": 2.42,
@@ -38,25 +38,25 @@
    "expected": 1.13,
    "clv": {
     "n": 15,
-    "shortened": 3,
+    "shortened": 4,
     "drifted": 5,
-    "mean": -0.0014
+    "mean": -0.0009
    }
   },
   "Card 3x": {
    "groups": 4,
-   "settled": 2,
-   "won": 1,
+   "settled": 3,
+   "won": 2,
    "lost": 1,
-   "pending": 2,
-   "legs": 8,
-   "legsWon": 6,
-   "returned": 3.03,
-   "staked": 2,
-   "returnedBest": 3.28,
-   "returnedLock": 0,
-   "stakedLock": 0,
-   "expected": 0.57,
+   "pending": 1,
+   "legs": 11,
+   "legsWon": 9,
+   "returned": 6.66,
+   "staked": 3,
+   "returnedBest": 6.95,
+   "returnedLock": 3.63,
+   "stakedLock": 1,
+   "expected": 0.8,
    "clv": {
     "n": 12,
     "shortened": 4,
@@ -293,23 +293,23 @@
  },
  "card": {
   "groups": 4,
-  "settled": 1,
-  "won": 0,
+  "settled": 2,
+  "won": 1,
   "lost": 1,
-  "pending": 3,
-  "legs": 4,
-  "legsWon": 3,
-  "returned": 0,
-  "staked": 1,
-  "returnedBest": 0,
-  "returnedLock": 0,
-  "stakedLock": 1,
-  "expected": 0.34,
+  "pending": 2,
+  "legs": 7,
+  "legsWon": 6,
+  "returned": 3.63,
+  "staked": 2,
+  "returnedBest": 3.67,
+  "returnedLock": 3.63,
+  "stakedLock": 2,
+  "expected": 0.57,
   "clv": {
    "n": 12,
-   "shortened": 5,
+   "shortened": 6,
    "drifted": 5,
-   "mean": 0.0016
+   "mean": 0.0024
   }
  },
  "cardWide": {
@@ -339,8 +339,8 @@
   "won": 2,
   "lost": 2,
   "pending": 1,
-  "legs": 12,
-  "legsWon": 9,
+  "legs": 14,
+  "legsWon": 11,
   "returned": 5.22,
   "staked": 4,
   "returnedBest": 5.7,
@@ -378,18 +378,18 @@
   },
   "Daytime": {
    "groups": 1,
-   "settled": 0,
-   "won": 0,
+   "settled": 1,
+   "won": 1,
    "lost": 0,
-   "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
-   "returned": 0,
-   "staked": 0,
-   "returnedBest": 0,
-   "returnedLock": 0,
-   "stakedLock": 0,
-   "expected": 0,
+   "pending": 0,
+   "legs": 3,
+   "legsWon": 3,
+   "returned": 3.63,
+   "staked": 1,
+   "returnedBest": 3.67,
+   "returnedLock": 3.63,
+   "stakedLock": 1,
+   "expected": 0.23,
    "clv": {
     "n": 3,
     "shortened": 0,
@@ -413,9 +413,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 2,
-    "mean": -0.0098
+    "mean": -0.0068
    }
   }
  },
@@ -593,17 +593,17 @@
      "window": "Daytime",
      "odds": 3.63,
      "p": 0.2344,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-26T07:00:00Z",
-     "paid": 0,
-     "paidBest": 0,
-     "paidLock": 0,
-     "legsWon": 0,
+     "paid": 3.63,
+     "paidBest": 3.67,
+     "paidLock": 3.63,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Matteo Berrettini",
@@ -619,8 +619,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6123,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Matteo Berrettini (ITA) bt Tomas Martin Etcheverry (ARG) 6-3 6-4"
       },
       {
        "pick": "Valentin Vacherot",
@@ -636,8 +636,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6366,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Valentin Vacherot (MON) bt Mariano Navone (ARG) 6-3 7-6 (7-4)"
       },
       {
        "pick": "Navbahor",
@@ -653,8 +653,8 @@
        "lockBook": "William Hill",
        "est": false,
        "p": 0.6014,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-2"
       }
      ]
     },
@@ -684,7 +684,7 @@
        "when": "2026-10-26T18:45:00Z",
        "odds": 1.36,
        "best": 1.38,
-       "lastOdds": 1.36,
+       "lastOdds": 1.31,
        "lockOdds": 1.37,
        "lockBest": 1.4,
        "lockBook": "Bet365",
@@ -718,7 +718,7 @@
        "when": "2026-10-26T23:30Z",
        "odds": 1.29,
        "best": 1.29,
-       "lastOdds": 1.31,
+       "lastOdds": 1.35,
        "lockOdds": 1.29,
        "lockBest": 1.29,
        "lockBook": null,
@@ -743,9 +743,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -761,8 +761,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6791,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(5) Alex de Minaur (AUS) bt Tomas Machac (CZE) 1-6 6-4 6-3"
       },
       {
        "pick": "Gabriela Ce",
@@ -778,8 +778,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.7888,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Gabriela Ce (BRA) bt Fernanda Labrana (CHI) 6-4 6-0"
       },
       {
        "pick": "Al Ula",
