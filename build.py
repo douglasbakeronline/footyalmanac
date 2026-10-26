@@ -1245,6 +1245,11 @@ def main():
         print(f"::warning::cup replay failed ({type(e).__name__}: {e}); cups stay off the list", file=sys.stderr)
 
     dropped_unrated = 0
+    # Unplayed fixtures dated before this build's window. openfootball keeps a
+    # postponed match on its old date, so these are the games most likely to be
+    # on tonight's card while the page shows nothing for them (26 Oct 2026:
+    # Sevilla v Osasuna and PSG v Lyon sat on 25 Oct with no kick-off time).
+    stale_unplayed = []
     for code, rows in fixtures.items():
         meta = E.LEAGUES[code]
         mu = league_mu.get(code, 1.35)
@@ -1253,6 +1258,8 @@ def main():
                 continue
             d = date.fromisoformat(r["date"])
             if not (start <= d <= end):
+                if d < start:
+                    stale_unplayed.append((code, r["date"], r.get("home"), r.get("away")))
                 continue
             # In a cup, a side keeps its own division's rating and the two are
             # converted into a shared frame. Rating it "in the cup" would be
@@ -1486,6 +1493,11 @@ def main():
     if dropped_unrated:
         print(f"  {dropped_unrated} fixture(s) dropped: no rating on file for a side "
               f"(unrated is now a publish gate, not just a display flag)", file=sys.stderr)
+    if stale_unplayed:
+        print(f"::warning::{len(stale_unplayed)} unplayed fixture(s) dated before {start} "
+              f"are not on the board; the source may hold a postponed date: "
+              + "; ".join(f"{c} {d} {h} v {a}" for c, d, h, a in stale_unplayed[:12]),
+              file=sys.stderr)
 
     # Backstop against the same fixture arriving from two competitions or two
     # sources. Keyed on the teams and the date, so a genuine two-legged tie on
