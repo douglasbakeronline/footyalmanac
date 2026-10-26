@@ -2127,7 +2127,7 @@ function runSlip(){
     <tr class="v-${l.verdict.toLowerCase()}">
       <td><b>${l.pick}</b><small>${l.name}</small><small class="slip-when">${[l.where, slipWhen(l.when)].filter(Boolean).join(" · ")}</small></td>
       <td class="n">${pct(l.p)}%<small>${fairOdds(l.p)}</small></td>
-      <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? "tested at " + bandLabel(l.acc) : ""}</small></td>
+      <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? (accLive(l.acc) ? "live at " : "tested at ") + bandLabel(l.acc) : ""}</small></td>
       <td><span class="verdict">${l.verdict}</span>${l.warn.length ? `<small>${l.warn.map(w => w[0].toUpperCase() + w.slice(1)).join(". ")}.</small>`
         : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}</td>
     </tr>`).join("");
@@ -2748,9 +2748,19 @@ function tennisResults(){
 // A pick's tested rate is its own band ("60-65%"), not every call above it
 // (bands.py, 6 Oct 2026). An older file without "to" reads as before.
 const bandLabel = a => a.to ? `${pct(a.from)}–${pct(a.to)}%` : `${pct(a.from)}% or more`;
-const accChip = a => a ? `<span class="acc" title="Calls at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>` : "";
-const accLine = a => a ? `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.hit)}%</em> of the time across
-  <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.` : "";
+// A tennis row's rate is its tour's live own-band record (rateSource "live",
+// build_tennis.accuracy_for, 26 Oct 2026): what the published picks at this
+// level have actually done, not a backtest. A tennis row with no live band
+// large enough carries no accuracy at all, so no chip is drawn.
+const accLive = a => a && a.rateSource === "live";
+const accChip = a => !a ? "" : accLive(a)
+  ? `<span class="acc" title="Published picks at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} graded so far">${pct(a.hit)}% live</span>`
+  : `<span class="acc" title="Calls at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>`;
+const accLine = a => !a ? "" : accLive(a)
+  ? `Published picks at <em>${bandLabel(a)}</em> have landed <em>${pct(a.hit)}%</em> of
+  <em>${a.n}</em> graded so far: the live record, not a backtest.`
+  : `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.hit)}%</em> of the time across
+  <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.`;
 
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
