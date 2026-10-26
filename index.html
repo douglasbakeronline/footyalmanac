@@ -750,13 +750,22 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px}
 .views .hq-link:hover{text-decoration:underline}
 .views .hq-link:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
-@media (max-width:700px){ #views .hq-link{flex:1 1 30%;border-bottom:1px solid #3a342e} }
-/* nine boards: three to a row on a phone rather than nine slivers */
 #views{flex-wrap:wrap;position:sticky;top:0;z-index:40;box-shadow:0 6px 14px -10px rgba(16,14,12,.55)}
-/* On a phone the nav is three rows tall; pinned, it would eat a third of
-   the screen. There it scrolls away, and so do the football filters. */
-@media (max-width:860px){ #views{position:static;box-shadow:none} .controls{position:static} }
-@media (max-width:700px){ #views button{flex:1 1 30%;border-bottom:1px solid #3a342e} }
+/* Phones (26 Oct 2026): thirteen boards used to wrap into five rows and the
+   bar was unpinned so it did not eat the screen, which left no way to change
+   board without scrolling back up. Now one compact row that scrolls
+   sideways, pinned at the top, Daily List, Bets and Starred first. The
+   football filters still scroll away. */
+@media (max-width:860px){
+  #views{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;scrollbar-width:none}
+  #views::-webkit-scrollbar{display:none}
+  #views button,#views .hq-link{flex:0 0 auto;font-size:13px;letter-spacing:.06em;padding:0 13px;min-height:44px;
+    white-space:nowrap;scroll-snap-align:start;border-bottom:0}
+  #views button:last-of-type{border-right:1px solid #3a342e}
+  #views .hq-link:last-child{border-right:0}
+  .controls{position:static}
+}
 .views button[aria-pressed="true"]{
   background:var(--yellow);color:#100e0c;
 }
@@ -1205,6 +1214,7 @@ footer b{color:var(--ink-2)}
 <nav class="views" id="views" aria-label="Boards">
   <button data-view="list" aria-pressed="true">Daily List</button>
   <button data-view="today" aria-pressed="false">Bets</button>
+  <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
   <button data-view="sport:nfl" aria-pressed="false">NFL</button>
@@ -1214,7 +1224,6 @@ footer b{color:var(--ink-2)}
   <button data-view="sport:cfb" aria-pressed="false">College football</button>
   <button data-view="sport:ncaab" aria-pressed="false">College basketball</button>
   <button data-view="sport:nrl" aria-pressed="false">Rugby league</button>
-  <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="results" aria-pressed="false">How it went</button>
   <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
   <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
@@ -3809,6 +3818,8 @@ $("#views").addEventListener("click", e=>{
   const v = b.dataset.view;
   $("#views").querySelectorAll("button").forEach(x=>
     x.setAttribute("aria-pressed", x.dataset.view===v));
+  // on a phone the bar scrolls sideways: keep the open board in view
+  try { if(window.matchMedia("(max-width:860px)").matches && b.scrollIntoView) b.scrollIntoView({block:"nearest", inline:"center"}); } catch(err) {}
   const fixtures = v === "fixtures";
   const starred = v === "starred";
   const tennis = v === "tennis";
