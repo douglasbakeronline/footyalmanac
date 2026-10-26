@@ -485,8 +485,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-chk li:first-child{border-top:0}
 .og-chk li .w{font:12px var(--f-num);color:var(--mute-ink,var(--mute));margin-right:6px}
 .og-chk li small{display:block;color:var(--mute-ink,var(--mute))}
-.og-g{display:inline-block;margin-top:3px;font-size:11px;font-weight:600;color:var(--home);text-decoration:underline;text-underline-offset:2px}
-.og-g:hover{color:var(--away)}
+/* 26 Oct 2026: the Google search is Douglas's and stays, but as the
+   secondary action: muted, after "Add to acca", no underline until hover. */
+.og-g{display:inline-block;margin-top:3px;font-size:11px;font-weight:500;color:var(--mute-ink,var(--mute));text-decoration:none}
+.og-g:hover,.og-g:focus-visible{color:var(--home);text-decoration:underline;text-underline-offset:2px}
 /* accumulator calculator: Douglas, 20 Oct 2026. Type any prices (1/7, 2/11,
    evens, 1.14), or add a group leg, and see the combined price and return.
    A calculator only: nothing here feeds a model or the groups. */
@@ -515,7 +517,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .acca-t b{display:block;font:600 22px var(--f-num);letter-spacing:-.03em;margin:2px 0;line-height:1.1}
 .acca-t small{display:block;font-size:11.5px;color:var(--ink-2)}
 .acca-n{padding:8px 13px 10px;font-size:11px;color:var(--mute);border-top:1px solid var(--rule-soft)}
-.og-l .og-g{margin-right:12px}
+.og-l .og-add{margin-right:12px}
 .og-add{display:inline-block;margin:3px 0 0;border:0;background:none;padding:0;cursor:pointer;font:600 11px var(--f-ui);color:var(--home);text-decoration:underline;text-underline-offset:2px}
 .og-add:hover{color:var(--away)}
 .og-add[disabled]{color:var(--mute);text-decoration:none;cursor:default}
