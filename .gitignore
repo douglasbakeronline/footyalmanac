@@ -1,6 +1,8 @@
 # Local build outputs. build.py regenerates these; CI never commits them.
 data.js
 data.json
+# The full football record for the page, rebuilt from record.json by build.py (26 Oct 2026)
+record-data.js
 # The Odds tab, rebuilt by groupings.py on every deploy
 groupings.json
 groupings-data.js

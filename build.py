@@ -255,6 +255,60 @@ def list_reserve(g):
     return True
 
 
+def load_json_or_none(path):
+    """A bot-written file that is missing or half-written must not stop a
+    build: the page has an empty state for every one of them."""
+    if not os.path.exists(path):
+        return None
+    try:
+        with open(path) as f:
+            return json.load(f)
+    except Exception:
+        return None
+
+
+# What the page needs from the records before first paint (26 Oct 2026): the
+# football lede, the tier ladder, the list record in the stat strip, the
+# "Recent list results" under the Daily List and which sport tabs to show.
+# A few KB. Everything per fixture stays in record-data.js, loaded when a
+# reader opens "How it went".
+SUMMARY_KEYS = ("generated", "graded", "overall", "settled", "celtic", "tiers",
+                "ladder", "list", "reserve", "reserveTiers", "bands", "range")
+LIST_RECENT = 30
+LIST_RECENT_KEYS = ("league", "home", "away", "pick", "actual", "confidence", "tier",
+                    "k", "result", "ok", "won", "drawRead")
+
+
+def record_summary(record, sports=None, tennis=None):
+    """The inlined slice of record.json (plus the list records of the sports
+    and tennis files) that index.html reads on first paint."""
+    if not record and not sports and not tennis:
+        return None
+    out = {}
+    if record:
+        for k in SUMMARY_KEYS:
+            if k in record:
+                out[k] = record[k]
+        recent = []
+        for day in record.get("listDays") or []:
+            for g in day.get("games") or []:
+                row = {k: g[k] for k in LIST_RECENT_KEYS if k in g}
+                row["d"] = day.get("date")
+                recent.append(row)
+                if len(recent) >= LIST_RECENT:
+                    break
+            if len(recent) >= LIST_RECENT:
+                break
+        out["listRecent"] = recent
+    if sports:
+        out["sports"] = {"list": sports.get("list"),
+                         "bySport": {k: ({"n": v.get("n"), "correct": v.get("correct")} if isinstance(v, dict) else v)
+                                     for k, v in (sports.get("bySport") or {}).items()}}
+    if tennis:
+        out["tennis"] = {"list": tennis.get("list")}
+    return out
+
+
 def archive_predictions(path, flat, now=None):
     """Merge this build's predictions into the day's archive file.
 
@@ -1572,29 +1626,34 @@ def main():
         json.dump(payload, f, separators=(",", ":"))
     # Emit a JS shim so index.html opens straight off the filesystem; a bare
     # fetch() of data.json is blocked by CORS on file:// URLs.
-    # The live record, if score.py has run. Inlined the same way as the fixture
-    # data so the dashboard stays a single self-contained file.
-    rec_path = os.path.join(here, "record.json")
-    record = None
-    if os.path.exists(rec_path):
-        try:
-            record = json.load(open(rec_path))
-        except Exception:
-            record = None
+    # The live record, if score.py has run. Until 26 Oct 2026 the whole of
+    # record.json (3.7 MB, every graded fixture) was inlined into the page and
+    # read before first paint, though only "How it went" needs it. Now the
+    # page carries a few KB of summary (record_summary) and the full record
+    # goes to record-data.js, which the page loads the first time a view asks.
+    record = load_json_or_none(os.path.join(here, "record.json"))
+    summary = record_summary(record,
+                             load_json_or_none(os.path.join(here, "sports-record.json")),
+                             load_json_or_none(os.path.join(here, "tennis-record.json")))
 
     blob = json.dumps(payload, separators=(",", ":"))
+    sum_blob = json.dumps(summary, separators=(",", ":")) if summary else "null"
     rec_blob = json.dumps(record, separators=(",", ":")) if record else "null"
     with open(os.path.join(here, "data.js"), "w") as f:
-        f.write("window.__FIXTURE_DATA__=" + blob + ";window.__RECORD__=" + rec_blob + ";")
+        f.write("window.__FIXTURE_DATA__=" + blob + ";window.__RECORD_SUMMARY__=" + sum_blob + ";")
+    with open(os.path.join(here, "record-data.js"), "w") as f:
+        f.write("window.__RECORD__=" + rec_blob + ";")
 
     # And emit a fully self-contained single file. Two files is one file too
     # many the moment anyone emails it, drops it in a preview pane, or opens it
-    # somewhere the sibling script cannot be fetched.
+    # somewhere the sibling script cannot be fetched. (The record is the one
+    # exception since 26 Oct 2026: it is fetched on demand like the sports and
+    # tennis files, so the page is a few KB of summary, not megabytes.)
     tpl_path = os.path.join(here, "index.html")
     if os.path.exists(tpl_path):
         tpl = open(tpl_path).read()
         inline = ('<script>window.__FIXTURE_DATA__=' + blob.replace("</", "<\\/")
-                  + ';window.__RECORD__=' + rec_blob.replace("</", "<\\/") + ';</script>')
+                  + ';window.__RECORD_SUMMARY__=' + sum_blob.replace("</", "<\\/") + ';</script>')
         html = tpl.replace('<script src="data.js"></script>', inline)
         with open(os.path.join(here, "dashboard.html"), "w") as f:
             f.write(html)

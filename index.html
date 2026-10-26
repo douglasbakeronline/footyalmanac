@@ -1272,11 +1272,13 @@ footer b{color:var(--ink-2)}
 
 <script src="data.js"></script>
 <script src="tennis-data.js"></script>
-<script src="tennis-record.js"></script>
 <script src="sports-data.js"></script>
-<script src="sports-record.js"></script>
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
+<!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
+     several MB raw) are loaded by loadRecords() the first time "How it went"
+     opens, not here (26 Oct 2026). First paint needs only the summary that
+     build.py inlines as window.__RECORD_SUMMARY__. -->
 <script>
 (function(){
 "use strict";
@@ -1418,11 +1420,56 @@ const rangeText = upcoming.length
 
 const total = upcoming.reduce((a,d)=>a+d.count,0);
 const live  = upcoming.reduce((a,d)=>a+d.games.filter(g=>g.evidence!=="carryover").length,0);
-const R = window.__RECORD__;
+/* ---------- the records, loaded when asked for ----------
+   build.py inlines window.__RECORD_SUMMARY__: the football record's overall,
+   tiers, ladder, bands and list figures, the last 30 list results, and the
+   list records of the sports and tennis files. That is all first paint needs.
+   The full records (record-data.js, tennis-record.js, sports-record.js, every
+   graded fixture, several MB) are fetched by loadRecords() the first time
+   "How it went" opens; the globals R, TT, SR and R_DAYS are then re-pointed
+   at them, so every reader below sees the full file (26 Oct 2026). A page
+   built with the record inlined (an old data.js) still works: window.__RECORD__
+   wins when it is there. */
+const RS = window.__RECORD_SUMMARY__ || null;
+let R = window.__RECORD__ || RS;
+const RECORD_FILES = [["record-data.js", "__RECORD__"], ["tennis-record.js", "__TENNIS_RECORD__"],
+                      ["sports-record.js", "__SPORTS_RECORD__"]];
+let recordsState = "idle";            // idle, loading, ready
+const recordsWaiting = [];
+function adoptRecords(){
+  R = window.__RECORD__ || R;
+  TT = window.__TENNIS_RECORD__ || TT;
+  SR = window.__SPORTS_RECORD__ || SR;
+  R_DAYS = (R && R.days) || [];
+  if(R_DAYS.length && !resState.day) resState.day = R_DAYS[0].date;
+}
+function loadRecords(then){
+  if(recordsState === "ready"){ if(then) then(); return; }
+  if(then) recordsWaiting.push(then);
+  if(recordsState === "loading") return;
+  recordsState = "loading";
+  let left = 0;
+  const done = () => {
+    if(--left > 0) return;
+    adoptRecords();
+    recordsState = "ready";
+    recordsWaiting.splice(0).forEach(f => f());
+  };
+  RECORD_FILES.forEach(([src, key]) => {
+    if(window[key]) return;             // already on the page
+    left++;
+    const s = document.createElement("script");
+    s.src = src; s.async = true;
+    s.onload = done;
+    s.onerror = done;                   // a missing file keeps its board's empty state
+    document.head.appendChild(s);
+  });
+  if(!left){ left = 1; done(); }
+}
 // The strip covers the whole site, not football alone: this week's window,
 // how many picks the Daily List has, how much was priced, and the two live
-// records. Read straight off the window globals, because the sports and
-// tennis consts further down do not exist yet at this point in the script.
+// records. Read off the summary, because the sports and tennis consts further
+// down do not exist yet at this point in the script.
 const _SD = window.__SPORTS_DATA__, _TD = window.__TENNIS_DATA__;
 const _sportGames = _SD && _SD.sports ? Object.values(_SD.sports).flatMap(sp => sp.games || []) : [];
 const _tennis = _TD && _TD.matches ? _TD.matches : [];
@@ -1430,8 +1477,9 @@ const listCount = upcoming.reduce((a,d) => a + d.games.filter(g => g.list).lengt
   + _sportGames.filter(g => g.list).length + _tennis.filter(m => m.list).length;
 const sportsOn = 1 + (_tennis.length ? 1 : 0) + (_SD && _SD.sports ? Object.values(_SD.sports).filter(sp => (sp.games||[]).length).length : 0);
 const pricedAll = total + _sportGames.length + _tennis.length;
-const _recs = [R && R.list, window.__TENNIS_RECORD__ && window.__TENNIS_RECORD__.list,
-  window.__SPORTS_RECORD__ && window.__SPORTS_RECORD__.list].filter(Boolean);
+const _recs = [R && R.list,
+  window.__TENNIS_RECORD__ ? window.__TENNIS_RECORD__.list : RS && RS.tennis && RS.tennis.list,
+  window.__SPORTS_RECORD__ ? window.__SPORTS_RECORD__.list : RS && RS.sports && RS.sports.list].filter(Boolean);
 const _ln = _recs.reduce((a,r) => a + r.n, 0), _lc = _recs.reduce((a,r) => a + r.correct, 0);
 const metaCells = [
   ["This week", rangeText, ""],
@@ -1605,7 +1653,7 @@ $("#sort").addEventListener("click", e=>{
    own backtested hit rates across 5,281 fixtures in 2025/26, so the label is a
    measurement rather than a description. Celtic's Law drops a fixture one band,
    because flagged fixtures measurably underperform their quoted confidence. */
-const TIERS = (window.__RECORD__ && window.__RECORD__.ladder) || [
+const TIERS = (R && R.ladder) || [
   {min:0.70, k:3, name:"Strong",  was:"79%"},
   {min:0.62, k:2, name:"Firm",    was:"66%"},
   {min:0.55, k:1, name:"Lean",    was:"61%"},
@@ -2164,7 +2212,7 @@ function renderList(){
   const host = $("#list");
   if(!host) return;
   const L = D.list || {min:0.75};
-  const R = window.__RECORD__ || {};
+  const Rx = R || {};
   const pc = x => Math.round(x*100) + "%";
 
   // Each sport's threshold, as its own testing set it.
@@ -2180,7 +2228,7 @@ function renderList(){
     sp.published && sp.listMin && !sp.listOff ? thresholds.push(`${sp.name === "NFL" ? "NFL" : sp.name.toLowerCase()} ${pc(sp.listMin)}`) : absent.push(sp.name));
 
   // One live record for the list, across every sport that has graded picks.
-  const recs = [R.list, window.__TENNIS_RECORD__ && window.__TENNIS_RECORD__.list, SR && SR.list].filter(Boolean);
+  const recs = [Rx.list, TT ? TT.list : RS && RS.tennis && RS.tennis.list, SR ? SR.list : RS && RS.sports && RS.sports.list].filter(Boolean);
   const liveN = recs.reduce((a,r) => a + r.n, 0), liveC = recs.reduce((a,r) => a + r.correct, 0);
 
   // counted up front so the headline can say how many
@@ -2309,9 +2357,10 @@ function renderList(){
     host.appendChild(e);
   }
 
-  const past = R.listDays || [];
-  if(past.length){
-    const rows = past.flatMap(d => d.games.map(g => ({d:d.date, ...g})));
+  // The last 30 list results: from the full record when it is loaded, else
+  // the summary's copy (build.py record_summary, the same rows in the same order).
+  const rows = Rx.listDays ? Rx.listDays.flatMap(d => d.games.map(g => ({d:d.date, ...g}))) : (Rx.listRecent || []);
+  if(rows.length){
     const side = g => g.pick === "h" ? g.home : g.away;
     host.insertAdjacentHTML("beforeend", `
       <div class="list-past"><h3>Recent list results</h3><ul>${rows.slice(0, 30).map(g => `
@@ -2486,7 +2535,7 @@ function render(){
    the fixture board uses, so a reader can see whether "Lean" has meant anything
    on this season's fixtures rather than only in a backtest. */
 const resState = { day: null, tday: null, sday: null, lday: null, sport: "list", resOpen: false };
-const R_DAYS = (R && R.days) || [];
+let R_DAYS = (R && R.days) || [];
 if(R_DAYS.length) resState.day = R_DAYS[0].date;
 
 // Every graded row opens a detail panel, like the boards' rows (6 Oct 2026):
@@ -2594,7 +2643,7 @@ function bandTable(){
    but only prices published before the match started; walkovers are void,
    retirements count. Each row reads as the prediction beside the result:
    who the model backed, who actually won, and the score. */
-const TT = window.__TENNIS_RECORD__ || null;
+let TT = window.__TENNIS_RECORD__ || null;
 const TK = {"Strong":3, "Firm":2, "Lean":1, "No read":0};
 const tScore = note => (note || "").replace(/^.*\([A-Z]{3}\)\s*/, "");
 
@@ -2868,7 +2917,7 @@ function tennisAsGame(m){
    and only publishes a sport whose model beat backing the home side on a
    season it never saw. Same row shape as tennis: two sides, no draw. */
 const SD = window.__SPORTS_DATA__ || null;
-const SR = window.__SPORTS_RECORD__ || null;
+let SR = window.__SPORTS_RECORD__ || null;
 const SPORT_K = {"Strong":3, "Firm":2, "Lean":1, "No read":0};
 // The UK calendar day and time of an instant (UK_TZ above), not the device's.
 const ukDayFmt = new Intl.DateTimeFormat("en-CA", {year:"numeric", month:"2-digit", day:"2-digit", timeZone: UK_TZ});
@@ -3100,6 +3149,13 @@ function resGrid(){
 function renderResults(){
   RES_ROWS.length = 0;
   const host = $("#results");
+  // The full records come in on demand (loadRecords, 26 Oct 2026). Until
+  // they are here the board shows a short placeholder, then draws itself.
+  if(recordsState !== "ready"){
+    host.innerHTML = `<div class="empty" aria-live="polite">Loading the record…</div>`;
+    loadRecords(renderResults);
+    return;
+  }
   // Two records, not one: a graded football fixture and a graded tennis
   // match are tracked completely separately (score.py, score_tennis.py), so
   // "How it went" is two boards sharing a tab.
@@ -3776,6 +3832,7 @@ $("#views").addEventListener("click", e=>{
   if(today) renderToday();
   if(starred) renderStarred();
   if(tennis) renderTennis();
+  if(v === "results") renderResults();   // fetches the records the first time
   window.scrollTo({top:0});
 });
 
@@ -3796,13 +3853,15 @@ $("#footer").innerHTML = `
 
 render();
 updateReadbar();
-renderResults();
+// "How it went" draws itself when first opened (renderResults in the view
+// switch), so the records are not fetched for a reader who never opens it.
 // The Daily List is the front page; the full board is one tap away.
 // A sport tab with nothing this week and nothing graded stays out of the way
 // (off-season), so nine sports do not crowd the bar (6 Oct 2026).
 document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
   const k = b.dataset.view.slice(6), sp = SD && SD.sports && SD.sports[k];
-  const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
+  const bs = SR ? SR.bySport : RS && RS.sports && RS.sports.bySport;
+  const graded = bs && bs[k] && bs[k].n;
   if(!sp || (!(sp.games || []).length && !graded)) b.hidden = true;
 });
 // 25 Oct 2026, Douglas: the Daily List opens first, Bets (the Card, the

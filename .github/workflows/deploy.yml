@@ -417,6 +417,7 @@ jobs:
         run: |
           mkdir -p _site
           cp dashboard.html _site/index.html   # the self-contained build
+          cp record-data.js _site/record-data.js   # the football record, fetched when "How it went" opens (26 Oct 2026)
           cp data.json _site/data.json         # handy if you want the raw numbers
           cp README.md _site/README.md
           cp record.json _site/record.json
