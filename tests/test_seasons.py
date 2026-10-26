@@ -27,6 +27,10 @@ class Derivation(unittest.TestCase):
     def test_calendar_year_rolls_on_1_january(self):
         for code in ("us.1", "br.1", "nor.1", "jp.1", "kr.1"):
             self.assertEqual(E.season_kind(code), "calendar", code)
+            if E.LEAGUES[code].get("seasonSource") == "api":
+                # current/af-seasons.json (bot-written) pins this league to the
+                # API's current season; derivation is not what decides it.
+                continue
             self.assertEqual(E.current_season(code, date(2026, 12, 31)), "2026", code)
             self.assertEqual(E.current_season(code, date(2027, 1, 1)), "2027", code)
 
