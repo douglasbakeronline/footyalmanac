@@ -22,7 +22,7 @@ testing on games never tuned on (`sports.list_threshold`), plus football's
 blind-spot exclusions and no draws, no tennis qualifying rounds, and a
 ranked international must clear its bar before the FIFA ranking too. Raised
 from 75% on 29 Sep 2026 at Douglas's request (`claude/ranking-review.md`). Every
-row shows its tested rate. See `claude/multi-sport.md`. It is the
+row shows its tested rate (tennis: the live own-band rate once a band has 30 graded picks, else no chip, 26 Oct 2026). See `claude/multi-sport.md`. It is the
 model's own independent read, with no bookmaker input, by Douglas's decision.
 The full board sits one tap behind it.
 
@@ -60,6 +60,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | File | Covers |
 |---|---|
 | `claude/full-review-2026-10-25.md` | Full review of 25 Oct 2026: live record by tier and sport, 22 bugs with fixes, the betting record, costs, and a dated timeline. Read first when deciding what to work on next. |
+| `claude/home-away-tilt-2026-10-26.md` | The away under-quote on the live record, the `ha_scale` sweep through the gates (failed on gain and p(worse)), why AF_EXTRA cannot be gated on the replay, what would settle it. Read before touching home advantage or `HOME_MULT`. |
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
 | `claude/world-rankings.md` | Which world rankings are in the model, the tests behind them, sources and name mapping. Read before touching `rankings.py`. |
 | `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |
@@ -92,7 +93,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
   (`tests/test_seasons.py` fails CI on a rollover miss); `uk_today()` is the
   build's anchor day; `apply_af_seasons` reads `current/af-seasons.json`.
 - `sources.py` openfootball + ESPN + football-data.co.uk (`FDX`) + API-Football (`AF`, paid, key `API_FOOTBALL_KEY` in secrets and the cloud env) fetchers, `match_team`, `LIVE_NAMES`, `ESPN_SLUGS`, `topup_current`.
-- `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`.
+- `build.py` fetch, rate, price, write `data.js` / `data.json` / `dashboard.html`, archive `predictions/<date>.json`. Since 26 Oct 2026 the page inlines fixtures plus `__RECORD_SUMMARY__` only; the full football record is `record-data.js`, loaded with `sports-record.js` and `tennis-record.js` when "How it went" opens (`loadRecords` in `index.html`).
 - `score.py` grades every archived prediction, writes `record.json`. Has its own copy of the tier ladder. Each row is `verified`, `verified-by-date` or `legacy-unverified` (graded), or `late` / `timing-unverifiable` (not graded, counted apart); see `claude/evaluation-audit.md`.
 - `backtest.py` walk-forward backtest.
 - `tune.py` constant sweep and calibration refit, behind gates, both measured against the live configuration (`live_baseline()`). `--snapshot FILE` runs either on a frozen snapshot and writes nothing.
@@ -115,7 +116,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `sports.py` NFL, MLB, NBA, rugby: Elo per sport keyed by ESPN team id, `--tune` (by hand, writes `sports.json`), `--daily` (CI). Separate from football and tennis.
 - `ranktest.py` out-of-time check of the FIFA adjustment (2022-24). Advisory only.
 - `rankings.py` FIFA and ATP/WTA world rankings: fetch, and the tested adjustments (FIFA for men's internationals, ATP for men's tennis; WTA shown only).
-- `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js`. Only prices published before the match started count.
+- `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js` (with `liveBands`, which `build_tennis.accuracy_for` quotes). Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
 
 Front end: `index.html` is the template (loads `data.js`). `dashboard.html` is
@@ -303,7 +304,7 @@ These were each learned the hard way. Do not break them without asking.
 
 ## Tested and rejected, don't reopen without new evidence
 
-Separate home/away ratings (+0.0124 log loss), rest days (no effect), ten free
+Separate home/away ratings (+0.0124 log loss), a global home/away tilt `ha_scale` 0.80-0.98 (26 Oct 2026: better on both seasons but under the gain bar, p(worse) 0.36+, `claude/home-away-tilt-2026-10-26.md`), rest days (no effect), ten free
 per-band temperatures (overfit), heavier recent-form weighting, tuning on the
 live record. Form re-tested 29 Sep 2026 at Douglas's request, calibrated, both
 seasons: a form-led model (form cap 0.30-0.50, or current season taking over
