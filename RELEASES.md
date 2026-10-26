@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Every Card leg keeps its full board row after kick-off, 26 Oct (tag pending)
+
+**What changed:** Douglas saw two legs of an under-way Card 3x with no fixture row under them while the third had one. The row was drawn from the live files (data.js, tennis-data.js, sports-data.js), which carry only games not yet started, with the pinned Daily List as the only fallback; a leg that had started and was not on the list lost its row. `groupings.legs` now freezes the board row each leg was built from into the leg (`fx`, football, tennis and the other sports), it travels into the archive with the group, and the page draws it when the live lookup and the pinned list both miss. Checked under jsdom with legs for games absent from every live file.
+**Files:** groupings.py, index.html, tests/test_groupings_record.py, RELEASES.md.
+**Roll back:** `git revert` the commit; archives written meanwhile keep an unused `fx` field.
+
 ## "Stale" only on a group you can still place, 26 Oct (tag pending)
 
 **What changed:** a leg in a locked group, or one that has started, now shows "price at lock · read HH:MM" instead of the red "stale" tag. The lock freezes the price by design, so a read time over two hours old is provenance there, not a warning; "stale" stays on groups that can still be placed, where it means the price may have moved. The snapshot line on the Bets tab says the same. Douglas asked what stale meant on an under-way Card.

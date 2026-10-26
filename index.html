@@ -3459,6 +3459,10 @@ function ogFigures(g){
     + fig("Model", model, "Every pick lands: the site's own numbers multiplied together, no bookmaker input.")
     + fig("Tested", tested, "Every pick lands: how often calls at each pick's level landed in testing, multiplied together.");
 }
+// 26 Oct 2026: each leg carries the row the board showed when the group was
+// built (l.fx, frozen by groupings.legs), so the full row still draws after
+// the game has started and left the live files. Filled by fillFx below.
+const OG_FX = [];
 function ogCard(g){
   const stake = ogStake();
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
@@ -3470,7 +3474,7 @@ function ogCard(g){
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
-      <div class="og-fx" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
+      <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? `${ogEsc(g.window)} window` : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>£${stake % 1 ? stake.toFixed(2) : stake} returns £${(stake * g.odds).toFixed(2)}</span>${g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(stake * g.bestOdds).toFixed(2)}</span>` : ""}</div></div>
@@ -3653,7 +3657,12 @@ function ogFill(host){
       }
       const pin = DL && [...(DL.list || []), ...(DL.reserve || [])]
         .find(p => p.sport === sport && nm(p.home) === nm(home) && nm(p.away) === nm(away));
-      if(pin) putPinned(ph, {...pin, when: pin.start}, i, date);
+      if(pin){ putPinned(ph, {...pin, when: pin.start}, i, date); return; }
+      const fx = OG_FX[+ph.dataset.fx];
+      if(fx){
+        if(sport === "football") appendFixture(ph, fx, i, date || fx.date, false);
+        else ph.appendChild(sportRow(sport === "tennis" ? tennisAsGame(fx) : fx, i, true));
+      }
     } catch(e) { ph.innerHTML = ""; }
   });
 }

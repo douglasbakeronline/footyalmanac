@@ -324,6 +324,10 @@ def legs(dates):
             out.append({"sport": "football", "event": f"{h} v {a}", "home": h, "away": a, "side": side,
                         "pick": h if side == "h" else a, "code": g.get("league"), "comp": g.get("leagueName"), "country": g.get("country"),
                         "when": g.get("kickoff"), "date": day["date"], "pModel": round(p[side], 4), "p": round(pl, 4),
+                        # 26 Oct 2026: the row as the board showed it, frozen with the leg,
+                        # so the group still carries its full fixture row after kick-off
+                        # when the live files no longer list the game (Douglas).
+                        "fx": g,
                         "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
                         "pDraw": round(p.get("d", 0), 4), "multOnly": pl < WIDE_MIN})
     # 24 Oct 2026, Douglas: "Multipliers should be across all sports". Every
@@ -348,7 +352,7 @@ def legs(dates):
         if pl is None or (m.get("confidence") or 0) < MULT_MODEL_MIN: continue
         out.append({"sport": "tennis", "event": f"{m['playerA']} v {m['playerB']}", "pick": m["pick"], "tour": m.get("tour"), "tournament": m.get("tournament"),
                     "players": [m.get("playerA"), m.get("playerB")],
-                    "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "timeEst": time_est, "date": d, "id": m.get("id"),
+                    "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "timeEst": time_est, "date": d, "id": m.get("id"), "fx": m,
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
                     "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
                     # 25 Oct 2026, Douglas: tennis back on the Card. It stays off the
@@ -368,7 +372,7 @@ def legs(dates):
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
                         "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
-                        "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN, "listOff": bool(sp.get("listOff"))})
+                        "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN, "listOff": bool(sp.get("listOff")), "fx": g})
     return out
 
 # ---------- prices ----------

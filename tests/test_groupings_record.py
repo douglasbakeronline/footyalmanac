@@ -125,3 +125,12 @@ class PostponedLegs(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FrozenRows(unittest.TestCase):
+    def test_legs_carry_their_board_row(self):
+        import groupings as G
+        src = open(G.__file__, encoding="utf-8").read()
+        # football, tennis and the other sports each freeze the row they were built from
+        self.assertEqual(src.count('"fx": g'), 2)
+        self.assertEqual(src.count('"fx": m'), 1)
