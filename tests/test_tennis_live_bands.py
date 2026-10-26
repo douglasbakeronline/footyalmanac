@@ -93,3 +93,20 @@ class Stamping(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class PlaceholderDay(unittest.TestCase):
+    def test_midnight_new_york_is_a_placeholder(self):
+        import build_tennis as BT
+        self.assertTrue(BT.time_placeholder("2026-10-26", "04:00"))   # EDT
+        self.assertTrue(BT.time_placeholder("2026-12-01", "05:00"))   # EST
+        self.assertFalse(BT.time_placeholder("2026-10-26", "12:30"))
+        self.assertFalse(BT.time_placeholder("2026-10-26", None))
+
+    def test_card_refuses_a_leg_with_no_order_of_play(self):
+        import groupings as G
+        leg = {"pick": "A", "odds": 1.5, "fair": 0.7, "pModel": 0.7, "timeEst": True}
+        self.assertIn("order of play", G.card_fault(leg))
+        self.assertIn("order of play", G.mult_fault(leg))
+        leg["timeEst"] = False
+        self.assertIsNone(G.card_fault(leg))

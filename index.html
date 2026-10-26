@@ -2455,9 +2455,10 @@ function renderTennis(){
     return;
   }
   host.innerHTML = `<div class="lede"><h2>Tennis</h2><p>ATP and WTA, priced from each player's
-    Elo rating on the surface, pulled toward a coin flip by the amount testing found honest. Men's
-    matches are re-scored with the ATP world ranking, which made them measurably more accurate.
-    Under each number is how often calls at that level landed in testing.</p></div>`;
+    Elo rating on the surface, pulled toward a coin flip by the amount testing found honest.
+    Under a number is how often published calls at that level have landed, once a band has
+    30 of them. A match showing TBC has no order of play yet: ESPN files the round under its first
+    day, and the match may be played the day after.</p></div>`;
   const byDay = {};
   TD.matches.forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
 
@@ -2904,7 +2905,7 @@ function sportRow(g, i, showSport, host){
   btn.setAttribute("aria-expanded", state.open === id ? "true" : "false");
   btn.innerHTML = `
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
-    <div class="ko"><time datetime="${g.when}">${localTime(g.when)}</time>
+    <div class="ko">${g.timeTbc ? `<time datetime="${g.when.slice(0,10)}" title="No order of play yet: the round starts this day and the match may be played the day after">TBC <small class="ko-local">day not confirmed</small></time>` : `<time datetime="${g.when}">${localTime(g.when)}</time>`}
       <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
         <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span></div></div>
     <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
@@ -2928,8 +2929,11 @@ function sportRow(g, i, showSport, host){
 
 /* tennis in the shared shape */
 function tennisAsGame(m){
-  const when = m.time ? `${m.date}T${m.time}:00Z` : `${m.date}T12:00:00Z`;
-  return {sport:"tennis", id:"t|" + m.date + "|" + m.playerA + "|" + m.playerB,
+  // A stand-in time (ESPN's midnight New York, m.timeTbc) says nothing about
+  // the hour and only that the round starts on m.date: the match may be a day
+  // later. It is kept on its date at noon so it sorts last, and shown as TBC.
+  const when = m.time && !m.timeTbc ? `${m.date}T${m.time}:00Z` : `${m.date}T12:00:00Z`;
+  return {sport:"tennis", id:"t|" + m.date + "|" + m.playerA + "|" + m.playerB, timeTbc:!!m.timeTbc,
     label:`${m.tour} · ${m.tournament || ""}${m.round ? " · " + m.round : ""}`,
     chip:m.tour, sub:`${m.tournament || "Tour event"}${m.round ? " · " + m.round : ""} · ${m.surface}`,
     when, home:m.playerA, away:m.playerB, neutral:false, pHome:m.p.a, pick:m.pick,

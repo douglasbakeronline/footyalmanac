@@ -1020,6 +1020,9 @@ def mult_fault(l):
     # football, tennis) is kept out of the Multipliers too. North Carolina, a
     # college football leg, lost Douglas a five-fold on 24 Oct.
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
+    # 26 Oct 2026: a tennis match with no order of play may be a day later
+    # than ESPN's stand-in date (15-25% were), so it cannot sit in a window.
+    if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
     if not MULT_ODDS[0] <= l["odds"] <= MULT_ODDS[1]:
         return f"{l['pick']}: price {l['odds']:.2f}, outside {MULT_ODDS[0]:.2f} to {MULT_ODDS[1]:.2f}"
@@ -1312,6 +1315,7 @@ def card_fault(l, wide=False):
     """Why a leg cannot go on the Card, in plain words, or None."""
     lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
+    if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
     if not lo_hi[0] <= l["odds"] <= lo_hi[1]:
         return f"{l['pick']}: price {l['odds']:.2f}, outside {lo_hi[0]:.2f} to {lo_hi[1]:.2f}"

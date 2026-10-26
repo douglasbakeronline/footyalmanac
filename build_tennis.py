@@ -38,6 +38,22 @@ Standard library only, like the rest of the project.
 import argparse, json, os, re, sys, unicodedata, urllib.request
 import rankings as RK
 from datetime import date, datetime, timedelta, timezone
+try:
+    from zoneinfo import ZoneInfo
+except ImportError:  # the local Python 3.7 Mac
+    ZoneInfo = None
+
+
+def time_placeholder(d, t):
+    """True when ESPN's time is its stand-in, exactly midnight in New York,
+    meaning the order of play is not out and the day itself is unconfirmed."""
+    if not d or not t or ZoneInfo is None: return False
+    try:
+        utc = datetime.strptime(f"{d}T{t}", "%Y-%m-%dT%H:%M").replace(tzinfo=timezone.utc)
+    except ValueError:
+        return False
+    ny = utc.astimezone(ZoneInfo("America/New_York"))
+    return ny.hour == 0 and ny.minute == 0
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # Every priced match, archived so score_tennis.py can grade it once played.
@@ -750,6 +766,13 @@ def main():
             matches.append({
                 "id": r["id"], "espn": [r["p0"], r["p1"]],
                 "tour": tour.upper(), "date": r["date"], "time": r["time"],
+                # 26 Oct 2026: before the order of play is out ESPN dates a
+                # match at midnight New York. The date is the round's first
+                # day, not the match's: 15-25% of such rows (half in a round
+                # that runs over two days) were played the day after. The
+                # page shows "TBC" and the day as unconfirmed; the Card
+                # refuses the leg until a real time exists (groupings).
+                "timeTbc": time_placeholder(r["date"], r["time"]),
                 "tournament": r["tournament"], "round": r["round"], "surface": r["surface"],
                 "playerA": a, "playerB": b,
                 # The evidence behind the number, same principle as football's
