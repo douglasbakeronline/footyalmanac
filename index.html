@@ -3642,11 +3642,17 @@ function tbRecord(){
   // 25 Oct 2026: returnedLock is the return at the price recorded at the window's lock (the price a punter placing at 07:00 could take)
   const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}${x.stakedLock ? `, ${(x.returnedLock - x.stakedLock >= 0 ? "+" : "")}${(x.returnedLock - x.stakedLock).toFixed(2)} per ${x.stakedLock} at the price at lock` : ""}` : "none settled yet";
   const w = n => { const t = bw[n] || {}; return `<div><span>${n}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${roi(t)}</small></div>`; };
+  // 26 Oct 2026: the Card record is strict, won against lost: a group is won
+  // only when every pick won. A draw read (a football pick whose game
+  // finished level with a draw scoreline predicted) is a loss here, as it is
+  // for a bettor; the "ok" figure the football record carries never reaches
+  // this tab. The late tile sits beside it and is never in it.
+  const wl = x => x && x.settled ? `${x.won} won · ${x.lost} lost` : "–";
   return `<div class="tb-proof">
-    <div><span>Card groups won</span><b>${k.settled ? `${k.won} / ${k.settled}` : "–"}</b><small>${k.settled ? `expected ${k.expected.toFixed(1)} · ${roi(k)}` : "the card starts 26 October; graded as each window settles"}</small></div>
+    <div><span>Card record</span><b>${wl(k)}</b><small>${k.settled ? `of ${k.settled} settled${k.pending ? `, ${k.pending} to settle` : ""} · expected ${k.expected.toFixed(1)} won · ${roi(k)}` : `${k.pending ? `${k.pending} to settle; ` : ""}a group is won only when every pick wins; a draw is a loss`}</small></div>
+    ${(() => { const x = R.cardLate || {}; return `<div><span>Late groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "added after the window locked; " : "none yet; a group built after its window locked would be "}not in the Card record</small></div>`; })()}
+    ${(() => { const x = R.cardWide || {}; return `<div><span>Wider-rule groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : ""}graded apart from the full rule</small></div>`; })()}
     ${w("Overnight")}${w("Daytime")}${w("Evening")}
-    ${(() => { const x = R.cardWide || {}; return `<div><span>Wider-rule groups</span><b>${x.settled ? `${x.won} / ${x.settled}` : "–"}</b><small>${x.settled ? roi(x) : "graded apart from the full rule"}</small></div>`; })()}
-    ${(() => { const x = R.cardLate || {}; return x.groups ? `<div><span>Late groups</span><b>${x.settled ? `${x.won} / ${x.settled}` : "–"}</b><small>${x.settled ? roi(x) : "added after the window locked"}; not counted in the Card record</small></div>` : ""; })()}
     <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "the early sign of a real edge"}</small></div>
     <div><span>Model v bookmakers</span><b>Not yet</b><small>on 909 archived picks the bookmakers priced better; only the best price has paid</small></div>
   </div>`;
