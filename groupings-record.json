@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-27T10:38:00Z",
+ "graded": "2026-10-27T12:40:56Z",
  "overall": {
   "groups": 84,
   "settled": 79,
@@ -16,9 +16,9 @@
   "expected": 25.72,
   "clv": {
    "n": 55,
-   "shortened": 22,
-   "drifted": 15,
-   "mean": 0.0013
+   "shortened": 21,
+   "drifted": 19,
+   "mean": 0.0008
   }
  },
  "byBand": {
@@ -39,8 +39,8 @@
    "clv": {
     "n": 24,
     "shortened": 5,
-    "drifted": 6,
-    "mean": -0.0017
+    "drifted": 9,
+    "mean": -0.0029
    }
   },
   "Card 3x": {
@@ -59,8 +59,8 @@
    "expected": 1.35,
    "clv": {
     "n": 21,
-    "shortened": 8,
-    "drifted": 5,
+    "shortened": 7,
+    "drifted": 6,
     "mean": 0.0019
    }
   },
@@ -307,9 +307,9 @@
   "expected": 1.87,
   "clv": {
    "n": 26,
-   "shortened": 10,
-   "drifted": 8,
-   "mean": -0.001
+   "shortened": 9,
+   "drifted": 10,
+   "mean": -0.0012
   }
  },
  "cardWide": {
@@ -350,8 +350,8 @@
   "clv": {
    "n": 18,
    "shortened": 2,
-   "drifted": 3,
-   "mean": 0.0002
+   "drifted": 5,
+   "mean": -0.0011
   }
  },
  "cardByWindow": {
@@ -393,8 +393,8 @@
    "clv": {
     "n": 9,
     "shortened": 1,
-    "drifted": 4,
-    "mean": -0.0047
+    "drifted": 5,
+    "mean": -0.0038
    }
   },
   "Evening": {
@@ -413,9 +413,9 @@
    "expected": 0.35,
    "clv": {
     "n": 6,
-    "shortened": 4,
-    "drifted": 2,
-    "mean": -0.0022
+    "shortened": 3,
+    "drifted": 3,
+    "mean": -0.0044
    }
   }
  },
@@ -613,7 +613,7 @@
        "when": "2026-10-27T13:00:00Z",
        "odds": 1.31,
        "best": 1.31,
-       "lastOdds": 1.34,
+       "lastOdds": 1.33,
        "lockOdds": 1.34,
        "lockBest": 1.34,
        "lockBook": "Pinnacle",
@@ -647,7 +647,7 @@
        "when": "2026-10-27T14:00:00Z",
        "odds": 1.51,
        "best": 1.51,
-       "lastOdds": 1.51,
+       "lastOdds": 1.53,
        "lockOdds": 1.51,
        "lockBest": 1.51,
        "lockBook": "Pinnacle",
@@ -684,7 +684,7 @@
        "when": "2026-10-27T14:30:00Z",
        "odds": 1.5,
        "best": 1.5,
-       "lastOdds": 1.49,
+       "lastOdds": 1.48,
        "lockOdds": 1.49,
        "lockBest": 1.49,
        "lockBook": "Pinnacle",
@@ -718,7 +718,7 @@
        "when": "2026-10-27T16:00:00Z",
        "odds": 1.47,
        "best": 1.47,
-       "lastOdds": 1.49,
+       "lastOdds": 1.48,
        "lockOdds": 1.49,
        "lockBest": 1.49,
        "lockBook": "Pinnacle",
@@ -755,7 +755,7 @@
        "when": "2026-10-27T17:00:00Z",
        "odds": 1.19,
        "best": 1.19,
-       "lastOdds": 1.19,
+       "lastOdds": 1.21,
        "lockOdds": 1.19,
        "lockBest": 1.19,
        "lockBook": "Pinnacle",
@@ -772,7 +772,7 @@
        "when": "2026-10-27T19:30:00Z",
        "odds": 1.53,
        "best": 1.53,
-       "lastOdds": 1.53,
+       "lastOdds": 1.54,
        "lockOdds": 1.53,
        "lockBest": 1.53,
        "lockBook": "Pinnacle",
@@ -826,7 +826,7 @@
        "when": "2026-10-27T19:00:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": 1.51,
+       "lastOdds": 1.53,
        "lockOdds": 1.51,
        "lockBest": 1.51,
        "lockBook": "Pinnacle",
