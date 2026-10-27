@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-27 Tests for build_tennis.py's pricing core and ESPN parser (tag pending)
+
+**What changed:** nothing a reader sees. 16 new tests in `tests/test_build_tennis_core.py` for the parts of `build_tennis.py` that had none: `price_match` (symmetry, 400 points = 10:1, surface fallback and blend), `dampen`, `tier_of` boundaries, `_matches_from_event` (completed, scheduled, doubles and malformed skipped, short dates), `is_walkover`, `is_retirement`, `pred_key`.
+
+**Evidence:** no bug found. Suite 549 tests OK, `nametest.py` clear.
+
+**Files:** `tests/test_build_tennis_core.py`, `RELEASES.md`.
+
+**Not changed:** any production code or model number.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-27 Tennis surface: source check, nothing to ship (tag pending)
 
 **What changed:** nothing a reader sees. A dated note only.
