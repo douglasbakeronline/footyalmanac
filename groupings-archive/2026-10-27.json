@@ -777,6 +777,1639 @@
    "status": "locked",
    "checked": "2026-10-26T19:44:15Z",
    "archivedAt": "2026-10-26T21:26:50Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Daytime",
+   "rank": "Daytime",
+   "first": "2026-10-26T17:45:16Z",
+   "lockAt": "2026-10-27T07:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 2.35,
+   "p": 0.3609,
+   "implied": 0.4249,
+   "bestOdds": 2.35,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Rafael Jodar v Alejandro Tabilo",
+     "pick": "Rafael Jodar",
+     "tour": "ATP",
+     "tournament": "Swiss Indoors Basel",
+     "players": [
+      "Rafael Jodar",
+      "Alejandro Tabilo"
+     ],
+     "comp": "Swiss Indoors Basel Round 1",
+     "when": "2026-10-27T13:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185132",
+     "fx": {
+      "id": "185132",
+      "espn": [
+       "Rafael Jodar",
+       "Alejandro Tabilo"
+      ],
+      "tour": "ATP",
+      "date": "2026-10-27",
+      "time": "13:00",
+      "timeTbc": false,
+      "tournament": "Swiss Indoors Basel",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Rafael Jodar",
+      "playerB": "Alejandro Tabilo",
+      "ratingA": {
+       "elo": 2138,
+       "matches": 128,
+       "surfaceElo": 1973
+      },
+      "ratingB": {
+       "elo": 1928,
+       "matches": 465,
+       "surfaceElo": 1780
+      },
+      "p": {
+       "a": 0.7381,
+       "b": 0.2619
+      },
+      "pick": "Rafael Jodar",
+      "confidence": 0.7381,
+      "tier": "Strong",
+      "rankA": 11,
+      "rankB": 30,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6923,
+       "n": 39,
+       "cumHit": 0.6923,
+       "cumN": 39,
+       "quoted": 0.7238,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7381,
+     "p": 0.7419,
+     "hit": 0.6923,
+     "n": 39,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.31,
+     "best": 1.31,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.029,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7634,
+     "pTested": 0.6923,
+     "fair": 0.7419,
+     "edge": -0.0931,
+     "basis": "bookmakers",
+     "firstOdds": 1.3,
+     "lastOdds": 1.34,
+     "lastBest": 1.34,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.34,
+      "best": 1.34,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "Muras United v Abdish-Ata",
+     "home": "Muras United",
+     "away": "Abdish-Ata",
+     "side": "h",
+     "pick": "Muras United",
+     "code": "af.569",
+     "comp": "Premier League",
+     "country": "Kyrgyzstan",
+     "when": "2026-10-27T13:00:00Z",
+     "date": "2026-10-27",
+     "pModel": 0.7996,
+     "p": 0.7555,
+     "fx": {
+      "u21Side": false,
+      "league": "af.569",
+      "leagueName": "Premier League",
+      "short": "PRE",
+      "country": "Kyrgyzstan",
+      "iso": "",
+      "tier": 2,
+      "order": 524,
+      "round": null,
+      "cup": false,
+      "date": "2026-10-27",
+      "time": "13:00",
+      "kickoff": "2026-10-27T13:00:00Z",
+      "home": {
+       "name": "Muras United",
+       "att": 1.352,
+       "def": 0.673,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premier League",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WDLWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 26,
+        "W": 19,
+        "D": 3,
+        "L": 4,
+        "GF": 59,
+        "GA": 24,
+        "GD": 35,
+        "Pts": 60,
+        "PPG": 2.308
+       },
+       "now": {
+        "P": 26,
+        "W": 15,
+        "D": 8,
+        "L": 3,
+        "GF": 53,
+        "GA": 24,
+        "GD": 29,
+        "Pts": 53,
+        "PPG": 2.038
+       }
+      },
+      "away": {
+       "name": "Abdish-Ata",
+       "att": 0.706,
+       "def": 1.162,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premier League",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 26,
+        "W": 17,
+        "D": 3,
+        "L": 6,
+        "GF": 47,
+        "GA": 29,
+        "GD": 18,
+        "Pts": 54,
+        "PPG": 2.077
+       },
+       "now": {
+        "P": 26,
+        "W": 3,
+        "D": 6,
+        "L": 17,
+        "GF": 20,
+        "GA": 50,
+        "GD": -30,
+        "Pts": 15,
+        "PPG": 0.577
+       }
+      },
+      "p": {
+       "h": 0.7996,
+       "d": 0.1435,
+       "a": 0.0568
+      },
+      "xg": [
+       2.58,
+       0.54
+      ],
+      "btts": 0.48,
+      "over25": 0.5536,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7996,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7555,
+        0.162,
+        0.0825
+       ],
+       "best": [
+        1.19,
+        5.55,
+        10.9
+       ],
+       "avg": [
+        1.19,
+        5.55,
+        10.9
+       ],
+       "ev": [
+        -0.0485,
+        -0.2036,
+        -0.3809
+       ],
+       "src": "API-Football",
+       "books": 1
+      },
+      "rank": 1,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      }
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "pDraw": 0.1435,
+     "multOnly": false,
+     "odds": 1.19,
+     "best": 1.19,
+     "books": 1,
+     "bestBook": null,
+     "margin": 1.1123,
+     "pricedAt": "2026-10-27T04:56:48Z",
+     "src": "API-Football, average of 1 bookmaker",
+     "implied": 0.8403,
+     "pTested": 0.7832,
+     "fair": 0.7555,
+     "edge": -0.101,
+     "basis": "bookmakers",
+     "firstOdds": 1.19,
+     "lastOdds": 1.19,
+     "lastBest": 1.19,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.19,
+      "best": 1.19,
+      "book": null,
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Botic Van De Zandschulp v Alex Michelsen",
+     "pick": "Alex Michelsen",
+     "tour": "ATP",
+     "tournament": "Swiss Indoors Basel",
+     "players": [
+      "Botic Van De Zandschulp",
+      "Alex Michelsen"
+     ],
+     "comp": "Swiss Indoors Basel Round 1",
+     "when": "2026-10-27T14:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185144",
+     "fx": {
+      "id": "185144",
+      "espn": [
+       "Botic Van De Zandschulp",
+       "Alex Michelsen"
+      ],
+      "tour": "ATP",
+      "date": "2026-10-27",
+      "time": "14:00",
+      "timeTbc": false,
+      "tournament": "Swiss Indoors Basel",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Botic Van De Zandschulp",
+      "playerB": "Alex Michelsen",
+      "ratingA": {
+       "elo": 1935,
+       "matches": 442,
+       "surfaceElo": 1835
+      },
+      "ratingB": {
+       "elo": 1977,
+       "matches": 260,
+       "surfaceElo": 1906
+      },
+      "p": {
+       "a": 0.4351,
+       "b": 0.5649
+      },
+      "pick": "Alex Michelsen",
+      "confidence": 0.5649,
+      "tier": "Lean",
+      "rankA": 37,
+      "rankB": 34,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5205,
+       "n": 73,
+       "cumHit": 0.5205,
+       "cumN": 73,
+       "quoted": 0.5736,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.5649,
+     "p": 0.6439,
+     "hit": 0.5205,
+     "n": 73,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.51,
+     "best": 1.51,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0286,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6623,
+     "pTested": 0.5205,
+     "fair": 0.6439,
+     "edge": -0.214,
+     "basis": "bookmakers",
+     "firstOdds": 1.51,
+     "lastOdds": 1.51,
+     "lastBest": 1.51,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.51,
+      "best": 1.51,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-27T04:58:12Z",
+   "archivedAt": "2026-10-27T10:37:23Z"
+  },
+  {
+   "name": "Card 3x",
+   "risk": "Pays 3x+",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Daytime",
+   "rank": "Daytime",
+   "first": "2026-10-26T23:19:06Z",
+   "lockAt": "2026-10-27T07:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 3.31,
+   "p": 0.2675,
+   "implied": 0.3024,
+   "bestOdds": 3.31,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Martyna Kubka v Mia Ristic",
+     "pick": "Martyna Kubka",
+     "tour": "WTA",
+     "tournament": "Valle D'Aosta Ladies Open",
+     "players": [
+      "Martyna Kubka",
+      "Mia Ristic"
+     ],
+     "comp": "Valle D'Aosta Ladies Open Round 1",
+     "when": "2026-10-27T14:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185839",
+     "fx": {
+      "id": "185839",
+      "espn": [
+       "Martyna Kubka",
+       "Mia Ristic"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "14:30",
+      "timeTbc": false,
+      "tournament": "Valle D'Aosta Ladies Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Martyna Kubka",
+      "playerB": "Mia Ristic",
+      "ratingA": {
+       "elo": 2005,
+       "matches": 344,
+       "surfaceElo": 1867
+      },
+      "ratingB": {
+       "elo": 1959,
+       "matches": 260,
+       "surfaceElo": 1726
+      },
+      "p": {
+       "a": 0.6011,
+       "b": 0.3989
+      },
+      "pick": "Martyna Kubka",
+      "confidence": 0.6011,
+      "tier": "Lean",
+      "rankA": 148,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6176,
+       "n": 102,
+       "cumHit": 0.6176,
+       "cumN": 102,
+       "quoted": 0.6247,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.6011,
+     "p": 0.6363,
+     "hit": 0.6176,
+     "n": 102,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.5,
+     "best": 1.5,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0477,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6667,
+     "pTested": 0.6011,
+     "fair": 0.6363,
+     "edge": -0.0984,
+     "basis": "bookmakers",
+     "firstOdds": 1.5,
+     "lastOdds": 1.49,
+     "lastBest": 1.49,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.49,
+      "best": 1.49,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Francisco Cerundolo v Cameron Norrie",
+     "pick": "Francisco Cerundolo",
+     "tour": "ATP",
+     "tournament": "Erste Bank Open",
+     "players": [
+      "Francisco Cerundolo",
+      "Cameron Norrie"
+     ],
+     "comp": "Erste Bank Open Round 1",
+     "when": "2026-10-27T15:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185186",
+     "fx": {
+      "id": "185186",
+      "espn": [
+       "Francisco Cerundolo",
+       "Cameron Norrie"
+      ],
+      "tour": "ATP",
+      "date": "2026-10-27",
+      "time": "15:30",
+      "timeTbc": false,
+      "tournament": "Erste Bank Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Francisco Cerundolo",
+      "playerB": "Cameron Norrie",
+      "ratingA": {
+       "elo": 2013,
+       "matches": 448,
+       "surfaceElo": 1911
+      },
+      "ratingB": {
+       "elo": 1926,
+       "matches": 461,
+       "surfaceElo": 1823
+      },
+      "p": {
+       "a": 0.6107,
+       "b": 0.3893
+      },
+      "pick": "Francisco Cerundolo",
+      "confidence": 0.6107,
+      "tier": "Lean",
+      "rankA": 19,
+      "rankB": 41,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.5873,
+       "n": 63,
+       "cumHit": 0.5873,
+       "cumN": 63,
+       "quoted": 0.6246,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.6107,
+     "p": 0.6479,
+     "hit": 0.5873,
+     "n": 63,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.5,
+     "best": 1.5,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.029,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6667,
+     "pTested": 0.5873,
+     "fair": 0.6479,
+     "edge": -0.119,
+     "basis": "bookmakers",
+     "firstOdds": 1.5,
+     "lastOdds": 1.5,
+     "lastBest": 1.5,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.5,
+      "best": 1.5,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Dalma Galfi v Anna Blinkova",
+     "pick": "Anna Blinkova",
+     "tour": "WTA",
+     "tournament": "Valle D'Aosta Ladies Open",
+     "players": [
+      "Dalma Galfi",
+      "Anna Blinkova"
+     ],
+     "comp": "Valle D'Aosta Ladies Open Round 1",
+     "when": "2026-10-27T16:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185832",
+     "fx": {
+      "id": "185832",
+      "espn": [
+       "Dalma Galfi",
+       "Anna Blinkova"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "16:00",
+      "timeTbc": false,
+      "tournament": "Valle D'Aosta Ladies Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Dalma Galfi",
+      "playerB": "Anna Blinkova",
+      "ratingA": {
+       "elo": 2030,
+       "matches": 429,
+       "surfaceElo": 1803
+      },
+      "ratingB": {
+       "elo": 2111,
+       "matches": 446,
+       "surfaceElo": 1937
+      },
+      "p": {
+       "a": 0.3709,
+       "b": 0.6291
+      },
+      "pick": "Anna Blinkova",
+      "confidence": 0.6291,
+      "tier": "Firm",
+      "rankA": null,
+      "rankB": 73,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6176,
+       "n": 102,
+       "cumHit": 0.6176,
+       "cumN": 102,
+       "quoted": 0.6247,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6291,
+     "p": 0.6489,
+     "hit": 0.6176,
+     "n": 102,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.47,
+     "best": 1.47,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0484,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6803,
+     "pTested": 0.6176,
+     "fair": 0.6489,
+     "edge": -0.0921,
+     "basis": "bookmakers",
+     "firstOdds": 1.47,
+     "lastOdds": 1.49,
+     "lastBest": 1.49,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.49,
+      "best": 1.49,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-27T04:58:12Z",
+   "archivedAt": "2026-10-27T10:37:23Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.13,
+   "p": 0.4093,
+   "implied": 0.4694,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Sofia Johnson v Fiona Ferro",
+     "pick": "Fiona Ferro",
+     "tour": "WTA",
+     "tournament": "Queretaro Open",
+     "players": [
+      "Sofia Johnson",
+      "Fiona Ferro"
+     ],
+     "comp": "Queretaro Open Round 1",
+     "when": "2026-10-27T17:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185791",
+     "fx": {
+      "id": "185791",
+      "espn": [
+       "Sofia Johnson",
+       "Fiona Ferro"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "17:00",
+      "timeTbc": false,
+      "tournament": "Queretaro Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Sofia Johnson",
+      "playerB": "Fiona Ferro",
+      "ratingA": {
+       "elo": 1825,
+       "matches": 48,
+       "surfaceElo": 1620
+      },
+      "ratingB": {
+       "elo": 2075,
+       "matches": 318,
+       "surfaceElo": 1896
+      },
+      "p": {
+       "a": 0.2004,
+       "b": 0.7996
+      },
+      "pick": "Fiona Ferro",
+      "confidence": 0.7996,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": 99,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.825,
+       "n": 40,
+       "cumHit": 0.825,
+       "cumN": 40,
+       "quoted": 0.7726,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7996,
+     "p": 0.8025,
+     "hit": 0.825,
+     "n": 40,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.19,
+     "best": 1.19,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0471,
+     "pricedAt": "2026-10-27T10:37:58Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8403,
+     "pTested": 0.7996,
+     "fair": 0.8025,
+     "edge": -0.0485,
+     "basis": "bookmakers",
+     "firstOdds": 1.19,
+     "lockPrice": {
+      "odds": 1.19,
+      "best": 1.19,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     },
+     "lastOdds": 1.19,
+     "lastBest": 1.19,
+     "lastAt": "2026-10-27T10:37:23Z"
+    },
+    {
+     "sport": "tennis",
+     "event": "Laura Pigossi v Maria Lourdes Carle",
+     "pick": "Maria Lourdes Carle",
+     "tour": "WTA",
+     "tournament": "Curitiba Open",
+     "players": [
+      "Laura Pigossi",
+      "Maria Lourdes Carle"
+     ],
+     "comp": "Curitiba Open Round 1",
+     "when": "2026-10-27T19:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185764",
+     "fx": {
+      "id": "185764",
+      "espn": [
+       "Laura Pigossi",
+       "Maria Lourdes Carle"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-27",
+      "time": "19:30",
+      "timeTbc": false,
+      "tournament": "Curitiba Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Laura Pigossi",
+      "playerB": "Maria Lourdes Carle",
+      "ratingA": {
+       "elo": 1864,
+       "matches": 456,
+       "surfaceElo": 1659
+      },
+      "ratingB": {
+       "elo": 1926,
+       "matches": 489,
+       "surfaceElo": 1776
+      },
+      "p": {
+       "a": 0.3944,
+       "b": 0.6056
+      },
+      "pick": "Maria Lourdes Carle",
+      "confidence": 0.6056,
+      "tier": "Lean",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6176,
+       "n": 102,
+       "cumHit": 0.6176,
+       "cumN": 102,
+       "quoted": 0.6247,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.6056,
+     "p": 0.6237,
+     "hit": 0.6176,
+     "n": 102,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.53,
+     "best": 1.53,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.048,
+     "pricedAt": "2026-10-27T10:37:58Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6536,
+     "pTested": 0.6056,
+     "fair": 0.6237,
+     "edge": -0.0734,
+     "basis": "bookmakers",
+     "firstOdds": 1.53,
+     "lockPrice": {
+      "odds": 1.53,
+      "best": 1.53,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     },
+     "lastOdds": 1.53,
+     "lastBest": 1.53,
+     "lastAt": "2026-10-27T10:37:23Z"
+    },
+    {
+     "sport": "nba",
+     "event": "Boston Celtics v Brooklyn Nets",
+     "home": "Boston Celtics",
+     "away": "Brooklyn Nets",
+     "pick": "Boston Celtics",
+     "comp": "NBA",
+     "when": "2026-10-27T23:30Z",
+     "date": "2026-10-27",
+     "id": "401909877",
+     "pModel": 0.82,
+     "p": 0.8177,
+     "hit": 0.8667,
+     "n": 165,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909877",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-10-27T23:30Z",
+      "home": "Boston Celtics",
+      "away": "Brooklyn Nets",
+      "neutral": false,
+      "pHome": 0.82,
+      "pick": "Boston Celtics",
+      "confidence": 0.82,
+      "tier": "Strong",
+      "eloH": 1579,
+      "eloA": 1350,
+      "gamesH": 286,
+      "gamesA": 249,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.854,
+       "n": 89,
+       "cumHit": 0.8667,
+       "cumN": 165
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "134-99",
+        "opp": "Chicago Bulls",
+        "home": true,
+        "date": "2026-10-26"
+       },
+       {
+        "r": "W",
+        "score": "107-103",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "L",
+        "score": "113-121",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-10-20"
+       },
+       {
+        "r": "L",
+        "score": "100-109",
+        "opp": "Philadelphia 76ers",
+        "home": true,
+        "date": "2026-05-02"
+       },
+       {
+        "r": "L",
+        "score": "93-106",
+        "opp": "Philadelphia 76ers",
+        "home": false,
+        "date": "2026-05-01"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "109-136",
+        "opp": "Indiana Pacers",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "121-125",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "L",
+        "score": "103-110",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-10-21"
+       },
+       {
+        "r": "L",
+        "score": "101-136",
+        "opp": "Toronto Raptors",
+        "home": false,
+        "date": "2026-04-12"
+       },
+       {
+        "r": "L",
+        "score": "108-125",
+        "opp": "Milwaukee Bucks",
+        "home": false,
+        "date": "2026-04-11"
+       }
+      ],
+      "recordH": {
+       "w": 2,
+       "l": 1,
+       "d": 0
+      },
+      "recordA": {
+       "w": 0,
+       "l": 3,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-02-28",
+        "home": "Boston Celtics",
+        "away": "Brooklyn Nets",
+        "score": "148-111"
+       },
+       {
+        "date": "2026-01-24",
+        "home": "Brooklyn Nets",
+        "away": "Boston Celtics",
+        "score": "126-130"
+       },
+       {
+        "date": "2025-11-22",
+        "home": "Boston Celtics",
+        "away": "Brooklyn Nets",
+        "score": "105-113"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.17,
+     "margin": 1.0452,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-10-27T10:37:59Z",
+     "implied": 0.8547,
+     "pTested": 0.82,
+     "fair": 0.8177,
+     "edge": -0.0433,
+     "basis": "bookmakers",
+     "firstOdds": 1.17,
+     "lockPrice": {
+      "odds": 1.17,
+      "best": 1.17,
+      "book": null,
+      "at": "2026-10-27T10:37:23Z"
+     },
+     "lastOdds": 1.17,
+     "lastBest": 1.17,
+     "lastAt": "2026-10-27T10:37:23Z"
+    }
+   ],
+   "bestOdds": 2.13,
+   "window": "Evening",
+   "rank": "Evening",
+   "first": "2026-10-27T10:37:23Z",
+   "checked": "2026-10-27T10:37:23Z",
+   "lockAt": "2026-10-27T07:00:00Z",
+   "locked": true,
+   "late": true,
+   "status": "late",
+   "archivedAt": "2026-10-27T10:37:23Z"
+  },
+  {
+   "name": "Card 3x",
+   "risk": "Pays 3x+",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Evening",
+   "rank": "Evening",
+   "first": "2026-10-26T21:26:50Z",
+   "lockAt": "2026-10-27T07:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 3.12,
+   "p": 0.2767,
+   "implied": 0.3209,
+   "bestOdds": 3.18,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Grigor Dimitrov v Flavio Cobolli",
+     "pick": "Flavio Cobolli",
+     "tour": "ATP",
+     "tournament": "Erste Bank Open",
+     "players": [
+      "Grigor Dimitrov",
+      "Flavio Cobolli"
+     ],
+     "comp": "Erste Bank Open Round 1",
+     "when": "2026-10-27T19:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-27",
+     "id": "185180",
+     "fx": {
+      "id": "185180",
+      "espn": [
+       "Grigor Dimitrov",
+       "Flavio Cobolli"
+      ],
+      "tour": "ATP",
+      "date": "2026-10-27",
+      "time": "19:00",
+      "timeTbc": false,
+      "tournament": "Erste Bank Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Grigor Dimitrov",
+      "playerB": "Flavio Cobolli",
+      "ratingA": {
+       "elo": 1919,
+       "matches": 346,
+       "surfaceElo": 1888
+      },
+      "ratingB": {
+       "elo": 2015,
+       "matches": 421,
+       "surfaceElo": 1844
+      },
+      "p": {
+       "a": 0.4309,
+       "b": 0.5691
+      },
+      "pick": "Flavio Cobolli",
+      "confidence": 0.5691,
+      "tier": "Lean",
+      "rankA": 124,
+      "rankB": 6,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5205,
+       "n": 73,
+       "cumHit": 0.5205,
+       "cumN": 73,
+       "quoted": 0.5736,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": false
+     },
+     "pModel": 0.5691,
+     "p": 0.64,
+     "hit": 0.5205,
+     "n": 73,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.52,
+     "best": 1.52,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0279,
+     "pricedAt": "2026-10-27T04:58:42Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.6579,
+     "pTested": 0.5205,
+     "fair": 0.64,
+     "edge": -0.2088,
+     "basis": "bookmakers",
+     "firstOdds": 1.53,
+     "lastOdds": 1.51,
+     "lastBest": 1.51,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.51,
+      "best": 1.51,
+      "book": "Pinnacle",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "AS Roma v Cagliari Calcio",
+     "home": "AS Roma",
+     "away": "Cagliari Calcio",
+     "side": "h",
+     "pick": "AS Roma",
+     "code": "it.1",
+     "comp": "Serie A",
+     "country": "Italy",
+     "when": "2026-10-27T19:45:00Z",
+     "date": "2026-10-27",
+     "pModel": 0.6209,
+     "p": 0.7114,
+     "fx": {
+      "u21Side": false,
+      "league": "it.1",
+      "leagueName": "Serie A",
+      "short": "SEA",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 1,
+      "order": 10,
+      "round": "Matchday 9",
+      "cup": false,
+      "date": "2026-10-27",
+      "time": "20:45",
+      "kickoff": "2026-10-27T19:45:00Z",
+      "home": {
+       "name": "AS Roma",
+       "att": 1.373,
+       "def": 0.69,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 23,
+        "D": 4,
+        "L": 11,
+        "GF": 59,
+        "GA": 31,
+        "GD": 28,
+        "Pts": 73,
+        "PPG": 1.921
+       },
+       "now": {
+        "P": 5,
+        "W": 4,
+        "D": 1,
+        "L": 0,
+        "GF": 14,
+        "GA": 3,
+        "GD": 11,
+        "Pts": 13,
+        "PPG": 2.6
+       }
+      },
+      "away": {
+       "name": "Cagliari Calcio",
+       "att": 0.856,
+       "def": 0.891,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WLWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 11,
+        "D": 10,
+        "L": 17,
+        "GF": 40,
+        "GA": 53,
+        "GD": -13,
+        "Pts": 43,
+        "PPG": 1.132
+       },
+       "now": {
+        "P": 5,
+        "W": 4,
+        "D": 0,
+        "L": 1,
+        "GF": 5,
+        "GA": 2,
+        "GD": 3,
+        "Pts": 12,
+        "PPG": 2.4
+       }
+      },
+      "p": {
+       "h": 0.6209,
+       "d": 0.2449,
+       "a": 0.1342
+      },
+      "xg": [
+       1.78,
+       0.64
+      ],
+      "btts": 0.4837,
+      "over25": 0.4865,
+      "score": [
+       1,
+       0
+      ],
+      "confidence": 0.6209,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7119,
+        0.1862,
+        0.1019
+       ],
+       "best": [
+        1.35,
+        5.25,
+        10.0
+       ],
+       "avg": [
+        1.34,
+        5.12,
+        9.36
+       ],
+       "ev": [
+        -0.1618,
+        0.2857,
+        0.342
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 20,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2449,
+     "multOnly": true,
+     "odds": 1.34,
+     "best": 1.35,
+     "books": 10,
+     "bestBook": "William Hill",
+     "margin": 1.049,
+     "pricedAt": "2026-10-27T04:56:48Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7463,
+     "pTested": 0.6209,
+     "fair": 0.7114,
+     "edge": -0.168,
+     "basis": "bookmakers",
+     "firstOdds": 1.34,
+     "lastOdds": 1.33,
+     "lastBest": 1.33,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.33,
+      "best": 1.33,
+      "book": "William Hill",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "Luton Town v Doncaster Rovers",
+     "home": "Luton Town",
+     "away": "Doncaster Rovers",
+     "side": "h",
+     "pick": "Luton Town",
+     "code": "en.3",
+     "comp": "League One",
+     "country": "England",
+     "when": "2026-10-27T19:45:00Z",
+     "date": "2026-10-27",
+     "pModel": 0.5721,
+     "p": 0.6077,
+     "fx": {
+      "u21Side": false,
+      "league": "en.3",
+      "leagueName": "League One",
+      "short": "LG1",
+      "country": "England",
+      "iso": "eng",
+      "tier": 3,
+      "order": 3,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-10-27",
+      "time": "19:45",
+      "kickoff": "2026-10-27T19:45:00Z",
+      "home": {
+       "name": "Luton Town",
+       "att": 1.202,
+       "def": 1.053,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "League One",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "LWLWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 29,
+        "W": 16,
+        "D": 4,
+        "L": 9,
+        "GF": 39,
+        "GA": 29,
+        "GD": 10,
+        "Pts": 52,
+        "PPG": 1.793
+       },
+       "now": {
+        "P": 11,
+        "W": 5,
+        "D": 2,
+        "L": 4,
+        "GF": 21,
+        "GA": 19,
+        "GD": 2,
+        "Pts": 17,
+        "PPG": 1.545
+       }
+      },
+      "away": {
+       "name": "Doncaster Rovers",
+       "att": 0.803,
+       "def": 1.037,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "League One",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "WWLLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 30,
+        "W": 8,
+        "D": 5,
+        "L": 17,
+        "GF": 26,
+        "GA": 50,
+        "GD": -24,
+        "Pts": 29,
+        "PPG": 0.967
+       },
+       "now": {
+        "P": 11,
+        "W": 3,
+        "D": 3,
+        "L": 5,
+        "GF": 12,
+        "GA": 13,
+        "GD": -1,
+        "Pts": 12,
+        "PPG": 1.091
+       }
+      },
+      "p": {
+       "h": 0.5721,
+       "d": 0.2419,
+       "a": 0.186
+      },
+      "xg": [
+       1.9,
+       0.93
+      ],
+      "btts": 0.5325,
+      "over25": 0.5276,
+      "score": [
+       1,
+       1
+      ],
+      "confidence": 0.5721,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6093,
+        0.2138,
+        0.177
+       ],
+       "best": [
+        1.55,
+        4.5,
+        5.5
+       ],
+       "avg": [
+        1.53,
+        4.35,
+        5.25
+       ],
+       "ev": [
+        -0.1132,
+        0.0886,
+        0.023
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 40,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5352,
+       "n": 99,
+       "cumHit": 0.6714,
+       "cumN": 280,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.6714,
+     "n": 280,
+     "list": false,
+     "pDraw": 0.2419,
+     "multOnly": true,
+     "odds": 1.53,
+     "best": 1.55,
+     "books": 10,
+     "bestBook": "William Hill",
+     "margin": 1.0756,
+     "pricedAt": "2026-10-27T04:56:48Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6536,
+     "pTested": 0.5352,
+     "fair": 0.6077,
+     "edge": -0.1811,
+     "basis": "bookmakers",
+     "firstOdds": 1.52,
+     "lastOdds": 1.52,
+     "lastBest": 1.53,
+     "lastAt": "2026-10-27T10:37:23Z",
+     "lockPrice": {
+      "odds": 1.52,
+      "best": 1.53,
+      "book": "Betfair",
+      "at": "2026-10-27T10:37:23Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-27T04:58:12Z",
+   "archivedAt": "2026-10-27T10:37:23Z"
   }
  ]
 }
