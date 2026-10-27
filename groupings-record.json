@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-27T21:12:46Z",
+ "graded": "2026-10-27T23:05:29Z",
  "overall": {
   "groups": 85,
   "settled": 81,
   "won": 20,
   "lost": 61,
   "pending": 4,
-  "legs": 357,
-  "legsWon": 262,
+  "legs": 359,
+  "legsWon": 264,
   "returned": 64.16,
   "staked": 81,
   "returnedBest": 68.14,
@@ -17,8 +17,8 @@
   "clv": {
    "n": 58,
    "shortened": 23,
-   "drifted": 20,
-   "mean": 0.0017
+   "drifted": 21,
+   "mean": 0.0014
   }
  },
  "byBand": {
@@ -28,8 +28,8 @@
    "won": 3,
    "lost": 4,
    "pending": 2,
-   "legs": 22,
-   "legsWon": 17,
+   "legs": 23,
+   "legsWon": 18,
    "returned": 6.81,
    "staked": 7,
    "returnedBest": 7.07,
@@ -39,8 +39,8 @@
    "clv": {
     "n": 27,
     "shortened": 6,
-    "drifted": 11,
-    "mean": -0.0031
+    "drifted": 12,
+    "mean": -0.0037
    }
   },
   "Card 3x": {
@@ -49,8 +49,8 @@
    "won": 3,
    "lost": 3,
    "pending": 1,
-   "legs": 18,
-   "legsWon": 13,
+   "legs": 19,
+   "legsWon": 14,
    "returned": 9.78,
    "staked": 6,
    "returnedBest": 10.19,
@@ -297,8 +297,8 @@
   "won": 3,
   "lost": 5,
   "pending": 2,
-  "legs": 24,
-  "legsWon": 17,
+  "legs": 25,
+  "legsWon": 18,
   "returned": 9.1,
   "staked": 8,
   "returnedBest": 9.26,
@@ -308,8 +308,8 @@
   "clv": {
    "n": 29,
    "shortened": 10,
-   "drifted": 11,
-   "mean": 0.0005
+   "drifted": 12,
+   "mean": 0.0
   }
  },
  "cardWide": {
@@ -339,8 +339,8 @@
   "won": 3,
   "lost": 2,
   "pending": 1,
-  "legs": 16,
-  "legsWon": 13,
+  "legs": 17,
+  "legsWon": 14,
   "returned": 7.49,
   "staked": 5,
   "returnedBest": 8.0,
@@ -372,8 +372,8 @@
    "clv": {
     "n": 14,
     "shortened": 5,
-    "drifted": 4,
-    "mean": 0.0006
+    "drifted": 5,
+    "mean": -0.0005
    }
   },
   "Daytime": {
@@ -403,8 +403,8 @@
    "won": 0,
    "lost": 1,
    "pending": 1,
-   "legs": 3,
-   "legsWon": 2,
+   "legs": 4,
+   "legsWon": 3,
    "returned": 0,
    "staked": 1,
    "returnedBest": 0,
@@ -505,7 +505,7 @@
        "when": "2026-10-28T08:00:00Z",
        "odds": 1.36,
        "best": 1.36,
-       "lastOdds": 1.36,
+       "lastOdds": 1.38,
        "lockOdds": 1.36,
        "lockBest": 1.36,
        "lockBook": "Pinnacle",
@@ -820,9 +820,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Fiona Ferro",
@@ -855,8 +855,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6237,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Maria Lourdes Carle (ARG) bt Laura Pigossi (BRA) 7-5 6-0"
       },
       {
        "pick": "Boston Celtics",
@@ -891,9 +891,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Flavio Cobolli",
@@ -909,8 +909,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.64,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(4) Flavio Cobolli (ITA) bt Grigor Dimitrov (BUL) 6-4 3-6 6-3"
       },
       {
        "pick": "AS Roma",
