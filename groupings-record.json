@@ -1,41 +1,41 @@
 {
- "graded": "2026-10-27T01:34:05Z",
+ "graded": "2026-10-27T04:58:44Z",
  "overall": {
   "groups": 80,
-  "settled": 76,
+  "settled": 78,
   "won": 19,
-  "lost": 57,
-  "pending": 4,
-  "legs": 342,
-  "legsWon": 253,
+  "lost": 59,
+  "pending": 2,
+  "legs": 346,
+  "legsWon": 255,
   "returned": 61.81,
-  "staked": 76,
+  "staked": 78,
   "returnedBest": 65.79,
   "returnedLock": 8.85,
-  "stakedLock": 4,
-  "expected": 24.7,
+  "stakedLock": 6,
+  "expected": 25.45,
   "clv": {
    "n": 43,
-   "shortened": 20,
+   "shortened": 18,
    "drifted": 13,
-   "mean": 0.0023
+   "mean": 0.0018
   }
  },
  "byBand": {
   "Card 2x": {
    "groups": 6,
-   "settled": 4,
+   "settled": 6,
    "won": 2,
-   "lost": 2,
-   "pending": 2,
-   "legs": 13,
-   "legsWon": 11,
+   "lost": 4,
+   "pending": 0,
+   "legs": 16,
+   "legsWon": 12,
    "returned": 4.46,
-   "staked": 4,
+   "staked": 6,
    "returnedBest": 4.72,
    "returnedLock": 2.27,
-   "stakedLock": 2,
-   "expected": 1.5,
+   "stakedLock": 4,
+   "expected": 2.25,
    "clv": {
     "n": 18,
     "shortened": 5,
@@ -49,8 +49,8 @@
    "won": 3,
    "lost": 1,
    "pending": 1,
-   "legs": 12,
-   "legsWon": 10,
+   "legs": 13,
+   "legsWon": 11,
    "returned": 9.78,
    "staked": 4,
    "returnedBest": 10.19,
@@ -59,9 +59,9 @@
    "expected": 1.08,
    "clv": {
     "n": 15,
-    "shortened": 6,
+    "shortened": 4,
     "drifted": 4,
-    "mean": 0.0031
+    "mean": 0.0017
    }
   },
   "Wider Treble": {
@@ -293,23 +293,23 @@
  },
  "card": {
   "groups": 6,
-  "settled": 3,
+  "settled": 5,
   "won": 2,
-  "lost": 1,
-  "pending": 3,
-  "legs": 10,
-  "legsWon": 9,
+  "lost": 3,
+  "pending": 1,
+  "legs": 14,
+  "legsWon": 11,
   "returned": 6.75,
-  "staked": 3,
+  "staked": 5,
   "returnedBest": 6.91,
   "returnedLock": 6.58,
-  "stakedLock": 3,
-  "expected": 0.85,
+  "stakedLock": 5,
+  "expected": 1.6,
   "clv": {
    "n": 17,
-   "shortened": 8,
+   "shortened": 6,
    "drifted": 6,
-   "mean": 0.0002
+   "mean": -0.001
   }
  },
  "cardWide": {
@@ -357,23 +357,23 @@
  "cardByWindow": {
   "Overnight": {
    "groups": 4,
-   "settled": 2,
+   "settled": 3,
    "won": 1,
-   "lost": 1,
-   "pending": 2,
-   "legs": 5,
-   "legsWon": 4,
+   "lost": 2,
+   "pending": 1,
+   "legs": 8,
+   "legsWon": 6,
    "returned": 3.12,
-   "staked": 2,
+   "staked": 3,
    "returnedBest": 3.24,
    "returnedLock": 2.95,
-   "stakedLock": 2,
-   "expected": 0.61,
+   "stakedLock": 3,
+   "expected": 1.01,
    "clv": {
     "n": 11,
-    "shortened": 7,
+    "shortened": 5,
     "drifted": 2,
-    "mean": 0.0046
+    "mean": 0.0027
    }
   },
   "Daytime": {
@@ -399,18 +399,18 @@
   },
   "Evening": {
    "groups": 1,
-   "settled": 0,
+   "settled": 1,
    "won": 0,
-   "lost": 0,
-   "pending": 1,
-   "legs": 2,
+   "lost": 1,
+   "pending": 0,
+   "legs": 3,
    "legsWon": 2,
    "returned": 0,
-   "staked": 0,
+   "staked": 1,
    "returnedBest": 0,
    "returnedLock": 0,
-   "stakedLock": 0,
-   "expected": 0,
+   "stakedLock": 1,
+   "expected": 0.35,
    "clv": {
     "n": 3,
     "shortened": 1,
@@ -451,7 +451,7 @@
      "window": "Overnight",
      "odds": 2.25,
      "p": 0.4007,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -459,9 +459,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 1,
+     "legsLost": 1,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Oklahoma City Thunder",
@@ -477,8 +477,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7333,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "125-114"
       },
       {
        "pick": "Sorana Cirstea",
@@ -494,8 +494,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6859,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Maya Joint (AUS) bt (6) Sorana Cirstea (ROM) 6-3 7-6 (7-4)"
       },
       {
        "pick": "Leylah Fernandez",
@@ -530,9 +530,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Houston Rockets",
@@ -548,8 +548,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6444,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "120-110"
       },
       {
        "pick": "Nikola Bartunkova",
@@ -559,7 +559,7 @@
        "when": "2026-10-27T05:00:00Z",
        "odds": 1.49,
        "best": 1.49,
-       "lastOdds": 1.47,
+       "lastOdds": 1.49,
        "lockOdds": 1.47,
        "lockBest": 1.47,
        "lockBook": "Pinnacle",
@@ -576,7 +576,7 @@
        "when": "2026-10-27T06:30:00Z",
        "odds": 1.47,
        "best": 1.47,
-       "lastOdds": 1.46,
+       "lastOdds": 1.47,
        "lockOdds": 1.45,
        "lockBest": 1.45,
        "lockBook": "Pinnacle",
@@ -812,7 +812,7 @@
      "window": "Evening",
      "odds": 2.47,
      "p": 0.3505,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -821,8 +821,8 @@
      "paidBest": 0,
      "paidLock": 0,
      "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 1,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Sport Lisboa e Benfica",
@@ -872,8 +872,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7415,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "109-113"
       }
      ]
     },
