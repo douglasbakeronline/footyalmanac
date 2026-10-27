@@ -1,62 +1,62 @@
 {
- "graded": "2026-10-27T17:04:14Z",
+ "graded": "2026-10-27T21:12:46Z",
  "overall": {
-  "groups": 84,
-  "settled": 79,
-  "won": 19,
-  "lost": 60,
-  "pending": 5,
-  "legs": 354,
-  "legsWon": 260,
-  "returned": 61.81,
-  "staked": 79,
-  "returnedBest": 65.79,
-  "returnedLock": 8.85,
-  "stakedLock": 7,
-  "expected": 25.72,
+  "groups": 85,
+  "settled": 81,
+  "won": 20,
+  "lost": 61,
+  "pending": 4,
+  "legs": 357,
+  "legsWon": 262,
+  "returned": 64.16,
+  "staked": 81,
+  "returnedBest": 68.14,
+  "returnedLock": 11.26,
+  "stakedLock": 9,
+  "expected": 26.35,
   "clv": {
-   "n": 55,
-   "shortened": 22,
-   "drifted": 18,
-   "mean": 0.002
+   "n": 58,
+   "shortened": 23,
+   "drifted": 20,
+   "mean": 0.0017
   }
  },
  "byBand": {
   "Card 2x": {
-   "groups": 8,
-   "settled": 6,
-   "won": 2,
+   "groups": 9,
+   "settled": 7,
+   "won": 3,
    "lost": 4,
    "pending": 2,
-   "legs": 20,
-   "legsWon": 15,
-   "returned": 4.46,
-   "staked": 6,
-   "returnedBest": 4.72,
-   "returnedLock": 2.27,
-   "stakedLock": 4,
-   "expected": 2.25,
+   "legs": 22,
+   "legsWon": 17,
+   "returned": 6.81,
+   "staked": 7,
+   "returnedBest": 7.07,
+   "returnedLock": 4.68,
+   "stakedLock": 5,
+   "expected": 2.61,
    "clv": {
-    "n": 24,
-    "shortened": 5,
-    "drifted": 9,
-    "mean": -0.0029
+    "n": 27,
+    "shortened": 6,
+    "drifted": 11,
+    "mean": -0.0031
    }
   },
   "Card 3x": {
    "groups": 7,
-   "settled": 5,
+   "settled": 6,
    "won": 3,
-   "lost": 2,
-   "pending": 2,
-   "legs": 17,
+   "lost": 3,
+   "pending": 1,
+   "legs": 18,
    "legsWon": 13,
    "returned": 9.78,
-   "staked": 5,
+   "staked": 6,
    "returnedBest": 10.19,
    "returnedLock": 6.58,
-   "stakedLock": 3,
-   "expected": 1.35,
+   "stakedLock": 4,
+   "expected": 1.62,
    "clv": {
     "n": 21,
     "shortened": 8,
@@ -292,24 +292,24 @@
   }
  },
  "card": {
-  "groups": 9,
-  "settled": 6,
-  "won": 2,
-  "lost": 4,
-  "pending": 3,
-  "legs": 22,
-  "legsWon": 16,
-  "returned": 6.75,
-  "staked": 6,
-  "returnedBest": 6.91,
-  "returnedLock": 6.58,
-  "stakedLock": 6,
-  "expected": 1.87,
+  "groups": 10,
+  "settled": 8,
+  "won": 3,
+  "lost": 5,
+  "pending": 2,
+  "legs": 24,
+  "legsWon": 17,
+  "returned": 9.1,
+  "staked": 8,
+  "returnedBest": 9.26,
+  "returnedLock": 8.99,
+  "stakedLock": 8,
+  "expected": 2.5,
   "clv": {
-   "n": 26,
+   "n": 29,
    "shortened": 10,
-   "drifted": 9,
-   "mean": 0.0014
+   "drifted": 11,
+   "mean": 0.0005
   }
  },
  "cardWide": {
@@ -339,8 +339,8 @@
   "won": 3,
   "lost": 2,
   "pending": 1,
-  "legs": 15,
-  "legsWon": 12,
+  "legs": 16,
+  "legsWon": 13,
   "returned": 7.49,
   "staked": 5,
   "returnedBest": 8.0,
@@ -349,18 +349,18 @@
   "expected": 1.73,
   "clv": {
    "n": 18,
-   "shortened": 2,
+   "shortened": 3,
    "drifted": 5,
-   "mean": -0.0011
+   "mean": -0.0006
   }
  },
  "cardByWindow": {
   "Overnight": {
-   "groups": 4,
+   "groups": 5,
    "settled": 4,
    "won": 1,
    "lost": 3,
-   "pending": 0,
+   "pending": 1,
    "legs": 12,
    "legsWon": 7,
    "returned": 3.12,
@@ -370,26 +370,26 @@
    "stakedLock": 4,
    "expected": 1.29,
    "clv": {
-    "n": 11,
+    "n": 14,
     "shortened": 5,
-    "drifted": 2,
-    "mean": 0.0027
+    "drifted": 4,
+    "mean": 0.0006
    }
   },
   "Daytime": {
    "groups": 3,
-   "settled": 1,
-   "won": 1,
-   "lost": 0,
-   "pending": 2,
-   "legs": 7,
-   "legsWon": 7,
-   "returned": 3.63,
-   "staked": 1,
-   "returnedBest": 3.67,
-   "returnedLock": 3.63,
-   "stakedLock": 1,
-   "expected": 0.23,
+   "settled": 3,
+   "won": 2,
+   "lost": 1,
+   "pending": 0,
+   "legs": 9,
+   "legsWon": 8,
+   "returned": 5.98,
+   "staked": 3,
+   "returnedBest": 6.02,
+   "returnedLock": 6.04,
+   "stakedLock": 3,
+   "expected": 0.86,
    "clv": {
     "n": 9,
     "shortened": 1,
@@ -441,6 +441,83 @@
   }
  },
  "days": [
+  {
+   "date": "2026-10-28",
+   "published": "2026-10-27T21:12:09Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Overnight",
+     "window": "Overnight",
+     "odds": 2.44,
+     "p": 0.3775,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-10-27T21:00:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": 0,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Ekaterina Alexandrova",
+       "event": "Ekaterina Alexandrova v Kamilla Rakhimova",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 2",
+       "when": "2026-10-28T01:30:00Z",
+       "odds": 1.33,
+       "best": 1.33,
+       "lastOdds": 1.34,
+       "lockOdds": 1.34,
+       "lockBest": 1.34,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.7302,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Paula Badosa",
+       "event": "Sinja Kraus v Paula Badosa",
+       "sport": "tennis",
+       "comp": "Guangzhou Open Round 2",
+       "when": "2026-10-28T06:30:00Z",
+       "odds": 1.35,
+       "best": 1.35,
+       "lastOdds": 1.37,
+       "lockOdds": 1.37,
+       "lockBest": 1.37,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.72,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Alexandra Eala",
+       "event": "Talia Gibson v Alexandra Eala",
+       "sport": "tennis",
+       "comp": "Toray Pan Pacific Open Tennis Round 2",
+       "when": "2026-10-28T08:00:00Z",
+       "odds": 1.36,
+       "best": 1.36,
+       "lastOdds": 1.36,
+       "lockOdds": 1.36,
+       "lockBest": 1.36,
+       "lockBook": "Pinnacle",
+       "est": false,
+       "p": 0.7181,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-27",
    "published": "2026-10-26T21:26:50Z",
@@ -593,17 +670,17 @@
      "window": "Daytime",
      "odds": 2.35,
      "p": 0.3609,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-27T07:00:00Z",
-     "paid": 0,
-     "paidBest": 0,
-     "paidLock": 0,
-     "legsWon": 2,
+     "paid": 2.35,
+     "paidBest": 2.35,
+     "paidLock": 2.41,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Rafael Jodar",
@@ -653,8 +730,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6439,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Alex Michelsen (USA) bt Botic Van De Zandschulp (NED) 5-7 6-3 6-3"
       }
      ]
     },
@@ -664,7 +741,7 @@
      "window": "Daytime",
      "odds": 3.31,
      "p": 0.2675,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -673,8 +750,8 @@
      "paidBest": 0,
      "paidLock": 0,
      "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 1,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Martyna Kubka",
@@ -707,8 +784,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6479,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Cameron Norrie (GBR) bt Francisco Cerundolo (ARG) 6-4 6-1"
       },
       {
        "pick": "Anna Blinkova",
@@ -743,9 +820,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Fiona Ferro",
@@ -761,8 +838,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.8025,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(3) Fiona Ferro (FRA) bt Sofia Johnson (GBR) 7-5 1-6 6-3"
       },
       {
        "pick": "Maria Lourdes Carle",
@@ -789,7 +866,7 @@
        "when": "2026-10-27T23:30Z",
        "odds": 1.17,
        "best": 1.17,
-       "lastOdds": 1.17,
+       "lastOdds": 1.16,
        "lockOdds": 1.17,
        "lockBest": 1.17,
        "lockBook": null,

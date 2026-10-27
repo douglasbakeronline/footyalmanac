@@ -1,0 +1,319 @@
+{
+ "date": "2026-10-28",
+ "published": "2026-10-27T21:12:09Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 1,
+   "wide": false,
+   "window": "Overnight",
+   "rank": "Overnight",
+   "first": "2026-10-27T10:37:23Z",
+   "lockAt": "2026-10-27T21:00:00Z",
+   "locked": true,
+   "late": false,
+   "odds": 2.44,
+   "p": 0.3775,
+   "implied": 0.4095,
+   "bestOdds": 2.44,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Ekaterina Alexandrova v Kamilla Rakhimova",
+     "pick": "Ekaterina Alexandrova",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Ekaterina Alexandrova",
+      "Kamilla Rakhimova"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 2",
+     "when": "2026-10-28T01:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-28",
+     "id": "185680",
+     "fx": {
+      "id": "185680",
+      "espn": [
+       "Ekaterina Alexandrova",
+       "Kamilla Rakhimova"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-28",
+      "time": "01:30",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Ekaterina Alexandrova",
+      "playerB": "Kamilla Rakhimova",
+      "ratingA": {
+       "elo": 2240,
+       "matches": 428,
+       "surfaceElo": 2057
+      },
+      "ratingB": {
+       "elo": 2119,
+       "matches": 458,
+       "surfaceElo": 1949
+      },
+      "p": {
+       "a": 0.6542,
+       "b": 0.3458
+      },
+      "pick": "Ekaterina Alexandrova",
+      "confidence": 0.6542,
+      "tier": "Firm",
+      "rankA": 33,
+      "rankB": 66,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6508,
+       "n": 63,
+       "cumHit": 0.6508,
+       "cumN": 63,
+       "quoted": 0.6748,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6542,
+     "p": 0.7302,
+     "hit": 0.6508,
+     "n": 63,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.33,
+     "best": 1.33,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0297,
+     "pricedAt": "2026-10-27T17:04:11Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7519,
+     "pTested": 0.6508,
+     "fair": 0.7302,
+     "edge": -0.1344,
+     "basis": "bookmakers",
+     "firstOdds": 1.31,
+     "lastOdds": 1.34,
+     "lastBest": 1.34,
+     "lastAt": "2026-10-27T21:12:09Z",
+     "lockPrice": {
+      "odds": 1.34,
+      "best": 1.34,
+      "book": "Pinnacle",
+      "at": "2026-10-27T21:12:09Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Sinja Kraus v Paula Badosa",
+     "pick": "Paula Badosa",
+     "tour": "WTA",
+     "tournament": "Guangzhou Open",
+     "players": [
+      "Sinja Kraus",
+      "Paula Badosa"
+     ],
+     "comp": "Guangzhou Open Round 2",
+     "when": "2026-10-28T06:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-28",
+     "id": "185710",
+     "fx": {
+      "id": "185710",
+      "espn": [
+       "Sinja Kraus",
+       "Paula Badosa"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-28",
+      "time": "06:30",
+      "timeTbc": false,
+      "tournament": "Guangzhou Open",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Sinja Kraus",
+      "playerB": "Paula Badosa",
+      "ratingA": {
+       "elo": 2146,
+       "matches": 481,
+       "surfaceElo": 1936
+      },
+      "ratingB": {
+       "elo": 2227,
+       "matches": 392,
+       "surfaceElo": 2048
+      },
+      "p": {
+       "a": 0.3799,
+       "b": 0.6201
+      },
+      "pick": "Paula Badosa",
+      "confidence": 0.6201,
+      "tier": "Firm",
+      "rankA": 77,
+      "rankB": 61,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6095,
+       "n": 105,
+       "cumHit": 0.6095,
+       "cumN": 105,
+       "quoted": 0.6246,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6201,
+     "p": 0.72,
+     "hit": 0.6095,
+     "n": 105,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.35,
+     "best": 1.35,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0287,
+     "pricedAt": "2026-10-27T17:04:11Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7407,
+     "pTested": 0.6095,
+     "fair": 0.72,
+     "edge": -0.1772,
+     "basis": "bookmakers",
+     "firstOdds": 1.33,
+     "lastOdds": 1.37,
+     "lastBest": 1.37,
+     "lastAt": "2026-10-27T21:12:09Z",
+     "lockPrice": {
+      "odds": 1.37,
+      "best": 1.37,
+      "book": "Pinnacle",
+      "at": "2026-10-27T21:12:09Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Talia Gibson v Alexandra Eala",
+     "pick": "Alexandra Eala",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Talia Gibson",
+      "Alexandra Eala"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Round 2",
+     "when": "2026-10-28T08:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-28",
+     "id": "185667",
+     "fx": {
+      "id": "185667",
+      "espn": [
+       "Talia Gibson",
+       "Alexandra Eala"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-28",
+      "time": "08:00",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Talia Gibson",
+      "playerB": "Alexandra Eala",
+      "ratingA": {
+       "elo": 2124,
+       "matches": 354,
+       "surfaceElo": 1989
+      },
+      "ratingB": {
+       "elo": 2286,
+       "matches": 372,
+       "surfaceElo": 2089
+      },
+      "p": {
+       "a": 0.3145,
+       "b": 0.6855
+      },
+      "pick": "Alexandra Eala",
+      "confidence": 0.6855,
+      "tier": "Firm",
+      "rankA": 38,
+      "rankB": 19,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6508,
+       "n": 63,
+       "cumHit": 0.6508,
+       "cumN": 63,
+       "quoted": 0.6748,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6855,
+     "p": 0.7181,
+     "hit": 0.6508,
+     "n": 63,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": true,
+     "odds": 1.36,
+     "best": 1.36,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.024,
+     "pricedAt": "2026-10-27T17:04:11Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7353,
+     "pTested": 0.6508,
+     "fair": 0.7181,
+     "edge": -0.1149,
+     "basis": "bookmakers",
+     "firstOdds": 1.36,
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-10-27T21:12:09Z",
+     "lockPrice": {
+      "odds": 1.36,
+      "best": 1.36,
+      "book": "Pinnacle",
+      "at": "2026-10-27T21:12:09Z"
+     }
+    }
+   ],
+   "status": "locked",
+   "checked": "2026-10-27T17:03:34Z",
+   "archivedAt": "2026-10-27T21:12:09Z"
+  }
+ ]
+}
