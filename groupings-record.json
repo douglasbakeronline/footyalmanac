@@ -1,13 +1,13 @@
 {
- "graded": "2026-10-27T12:40:56Z",
+ "graded": "2026-10-27T17:04:14Z",
  "overall": {
   "groups": 84,
   "settled": 79,
   "won": 19,
   "lost": 60,
   "pending": 5,
-  "legs": 350,
-  "legsWon": 256,
+  "legs": 354,
+  "legsWon": 260,
   "returned": 61.81,
   "staked": 79,
   "returnedBest": 65.79,
@@ -16,9 +16,9 @@
   "expected": 25.72,
   "clv": {
    "n": 55,
-   "shortened": 21,
-   "drifted": 19,
-   "mean": 0.0008
+   "shortened": 22,
+   "drifted": 18,
+   "mean": 0.002
   }
  },
  "byBand": {
@@ -28,8 +28,8 @@
    "won": 2,
    "lost": 4,
    "pending": 2,
-   "legs": 18,
-   "legsWon": 13,
+   "legs": 20,
+   "legsWon": 15,
    "returned": 4.46,
    "staked": 6,
    "returnedBest": 4.72,
@@ -49,8 +49,8 @@
    "won": 3,
    "lost": 2,
    "pending": 2,
-   "legs": 15,
-   "legsWon": 11,
+   "legs": 17,
+   "legsWon": 13,
    "returned": 9.78,
    "staked": 5,
    "returnedBest": 10.19,
@@ -59,9 +59,9 @@
    "expected": 1.35,
    "clv": {
     "n": 21,
-    "shortened": 7,
-    "drifted": 6,
-    "mean": 0.0019
+    "shortened": 8,
+    "drifted": 5,
+    "mean": 0.0052
    }
   },
   "Wider Treble": {
@@ -297,8 +297,8 @@
   "won": 2,
   "lost": 4,
   "pending": 3,
-  "legs": 18,
-  "legsWon": 12,
+  "legs": 22,
+  "legsWon": 16,
   "returned": 6.75,
   "staked": 6,
   "returnedBest": 6.91,
@@ -307,9 +307,9 @@
   "expected": 1.87,
   "clv": {
    "n": 26,
-   "shortened": 9,
-   "drifted": 10,
-   "mean": -0.0012
+   "shortened": 10,
+   "drifted": 9,
+   "mean": 0.0014
   }
  },
  "cardWide": {
@@ -382,8 +382,8 @@
    "won": 1,
    "lost": 0,
    "pending": 2,
-   "legs": 3,
-   "legsWon": 3,
+   "legs": 7,
+   "legsWon": 7,
    "returned": 3.63,
    "staked": 1,
    "returnedBest": 3.67,
@@ -413,9 +413,9 @@
    "expected": 0.35,
    "clv": {
     "n": 6,
-    "shortened": 3,
-    "drifted": 3,
-    "mean": -0.0044
+    "shortened": 4,
+    "drifted": 2,
+    "mean": 0.007
    }
   }
  },
@@ -601,9 +601,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Rafael Jodar",
@@ -619,8 +619,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.7419,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(3) Rafael Jodar (ESP) bt Alejandro Tabilo (CHI) 6-4 6-2"
       },
       {
        "pick": "Muras United",
@@ -636,8 +636,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7555,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Alex Michelsen",
@@ -672,9 +672,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Martyna Kubka",
@@ -690,8 +690,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6363,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "Martyna Kubka (POL) bt Mia Ristic (SER) 6-3 7-6 (7-4)"
       },
       {
        "pick": "Francisco Cerundolo",
@@ -724,8 +724,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6489,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(1) Anna Blinkova (FRA) bt Dalma Galfi (HUN) 6-3 6-2"
       }
      ]
     },
@@ -826,7 +826,7 @@
        "when": "2026-10-27T19:00:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": 1.53,
+       "lastOdds": 1.5,
        "lockOdds": 1.51,
        "lockBest": 1.51,
        "lockBook": "Pinnacle",
@@ -843,7 +843,7 @@
        "when": "2026-10-27T19:45:00Z",
        "odds": 1.34,
        "best": 1.35,
-       "lastOdds": 1.33,
+       "lastOdds": 1.32,
        "lockOdds": 1.33,
        "lockBest": 1.33,
        "lockBook": "William Hill",
@@ -860,7 +860,7 @@
        "when": "2026-10-27T19:45:00Z",
        "odds": 1.53,
        "best": 1.55,
-       "lastOdds": 1.52,
+       "lastOdds": 1.46,
        "lockOdds": 1.52,
        "lockBest": 1.53,
        "lockBook": "Betfair",
