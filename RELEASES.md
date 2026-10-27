@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-27 Tennis surface: source check, nothing to ship (tag pending)
+
+**What changed:** nothing a reader sees. A dated note only.
+
+**Evidence:** the tournament-name map was already rejected on 13 Oct (WTA +0.0024 log loss worse, p(worse) 0.88, n=2,686; ATP +0.0031, 0.95, n=1,523), so it was not rerun. ESPN's event, grouping and competition JSON carry no surface (only city and court name); Sackmann's 2026 WTA file is a 404; tennis-data.co.uk answers 403 from the sandbox. No automatable source. The rest of the 2026 calendar is hard court, so a map would change no price before April 2027.
+
+**Files:** `claude/tennis-surface-source-2026-10-27.md`, `RELEASES.md`.
+
+**Not changed:** `build_tennis.py`, `tennis.json`, any model number, the Daily List rule.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-26: Warn when unplayed fixtures sit on a stale date (tag pending)
 
 **What changed:** `build.py` now counts unplayed fixtures dated before the build window and prints a `::warning::` line naming up to twelve of them. Nothing is published differently: those fixtures were already dropped, and they still are. The warning makes the drop visible in the CI log.
