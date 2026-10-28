@@ -20,11 +20,12 @@ class WordOrder(unittest.TestCase):
         self.assertFalse(B.ATP_RANK_LAYER)
         self.assertEqual(B.LIST_MIN["ATP"], 0.75)
 
-    def test_tennis_off_the_list(self):
-        # 15 Oct 2026: no tennis call makes the Daily List; 62%+ is reserve
-        self.assertFalse(B.list_eligible(0.95, "WTA", "Round 1", 50, 50))
-        self.assertFalse(B.list_eligible(0.95, "ATP", "Round 1", 50, 50, ranked=True))
-        self.assertTrue(B.list_reserve(0.95, "WTA", "Round 1", 50, 50))
+    def test_tennis_back_on_the_list(self):
+        # 28 Oct 2026: both tours on at 75%; below it, 62%+ is reserve
+        self.assertTrue(B.list_eligible(0.95, "WTA", "Round 1", 50, 50))
+        self.assertTrue(B.list_eligible(0.95, "ATP", "Round 1", 50, 50, ranked=True))
+        self.assertFalse(B.list_eligible(0.74, "WTA", "Round 1", 50, 50))
+        self.assertFalse(B.list_reserve(0.95, "WTA", "Round 1", 50, 50))
         self.assertTrue(B.list_reserve(0.63, "ATP", "Round 1", 50, 50))
         self.assertFalse(B.list_reserve(0.95, "ATP", "Qualifying", 50, 50))
 

@@ -1629,6 +1629,10 @@ def main():
              "list": g["list"], "reserve": g["reserve"], "why": g.get("why"),
              # archived so the prices a reader saw can be graded later
              "market": g.get("market"), "value": g.get("value"),
+             # the tested rate shown on the row, so daylist.py can order a
+             # pinned pick as the page did (28 Oct 2026: a started football
+             # pick sorted last for want of it)
+             "accuracy": g.get("accuracy"),
              "kickoff": g.get("kickoff")}
             for d in days for g in d["games"]]
     archive_predictions(os.path.join(pred_dir, f"{start.isoformat()}.json"), flat)

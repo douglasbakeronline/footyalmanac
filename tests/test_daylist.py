@@ -85,3 +85,38 @@ class UnconfirmedDay(unittest.TestCase):
         self.assertIsNone(D.tennis_item(dict(base, time="12:30", timeTbc=True)))
         self.assertIsNotNone(D.tennis_item(dict(base, time="12:30")))
         self.assertIsNotNone(D.tennis_item(dict(base, time=None)))
+
+
+class Order(unittest.TestCase):
+    """28 Oct 2026: strongest first means confidence first, tested rate second,
+    and a started football pick keeps its place (its archive row carried no
+    tested rate, so it sorted last under the old key)."""
+    def test_confidence_before_tested_rate(self):
+        a = {"sport": "rugby", "confidence": 0.81, "accuracy": {"cumHit": 0.91, "hit": 0.91, "n": 76}}
+        b = {"sport": "football", "confidence": 0.90, "accuracy": {"cumHit": 0.84, "hit": 0.84, "n": 131}}
+        self.assertEqual(sorted([a, b], key=DL.strength), [b, a])
+
+    def test_started_football_pick_keeps_its_place(self):
+        g = {"league": "en.1", "date": "2026-10-05", "home": "H", "away": "A", "p": {"h": 0.9, "d": 0.07, "a": 0.03},
+             "confidence": 0.9, "celtic": False, "unrated": False, "list": True, "reserve": False,
+             "kickoff": "2026-10-05T14:00:00Z", "published": "2026-10-05T05:00:00Z"}
+        it = DL.football_item(g, {"en.1": {"country": "England", "name": "Premier League"}})
+        self.assertIsNotNone(it["accuracy"])          # recomputed for an old archive row
+        self.assertGreater(it["accuracy"]["cumHit"], 0.8)
+        t = tennis("2026-10-05T04:00:00Z", conf=0.81)
+        tt = DL.tennis_item(t)
+        self.assertEqual([x["sport"] for x in sorted([tt, it], key=DL.strength)], ["football", "tennis"])
+
+    def test_archived_rate_is_kept(self):
+        g = {"league": "en.1", "date": "2026-10-05", "home": "H", "away": "A", "p": {"h": 0.9, "d": 0.07, "a": 0.03},
+             "confidence": 0.9, "accuracy": {"hit": 0.5, "n": 40}, "list": True, "kickoff": "2026-10-05T14:00:00Z"}
+        self.assertEqual(DL.football_item(g, {})["accuracy"], {"hit": 0.5, "n": 40})
+
+    def test_group_a_takes_only_85_and_better(self):
+        lst = [{"confidence": c} for c in (0.93, 0.88, 0.86, 0.84, 0.82, 0.81, 0.80, 0.80)]
+        a, b = DL.groups(lst)
+        self.assertEqual([i["confidence"] for i in a], [0.93, 0.88, 0.86])
+        self.assertEqual([i["confidence"] for i in b], [0.84, 0.82, 0.81, 0.80, 0.80])
+        a, b = DL.groups([{"confidence": 0.9}] * 7)
+        self.assertEqual((len(a), len(b)), (5, 2))
+        self.assertEqual(DL.groups([{"confidence": 0.8}]), ([], [{"confidence": 0.8}]))

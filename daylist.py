@@ -63,6 +63,21 @@ def _leagues():
         return {}
 
 
+def _accuracy(g, leagues):
+    """The row's tested rate. Archives before 28 Oct 2026 carry none for
+    football (build.py did not write it), so a started pick lost its place
+    in the Strongest order; recompute it as the build does."""
+    if g.get("accuracy") is not None or not g.get("league"):
+        return g.get("accuracy")
+    try:
+        sys.path.insert(0, HERE)
+        import build as B
+        return B.accuracy_for(g.get("confidence") or 0, (leagues.get(g["league"]) or {}).get("international"),
+                              False, g["league"])
+    except Exception:
+        return None
+
+
 def football_item(g, leagues):
     ko = parse_utc(g.get("kickoff"))
     if ko:
@@ -81,7 +96,7 @@ def football_item(g, leagues):
             "pick": {"h": g["home"], "a": g["away"], "d": "Draw"}[side],
             "confidence": g.get("confidence"), "p": p,
             "tier": _football_tier(g.get("confidence") or 0, g.get("celtic"), g.get("unrated")),
-            "accuracy": g.get("accuracy"), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
+            "accuracy": _accuracy(g, leagues), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "why": g.get("why"), "published": g.get("published")}
 
 
@@ -324,6 +339,30 @@ def coverage(day, archives, here=HERE, now=None):
     return {"sports": out, "gaps": gaps}
 
 
+def tested(it):
+    a = it.get("accuracy") or {}
+    return a.get("cumHit") or a.get("hit") or 0
+
+
+def strength(it):
+    """Strongest first: confidence, then the tested rate. The same key as
+    index.html's byStrength. Until 28 Oct 2026 the tested rate came first,
+    which ranked band tables from different families (core leagues, wider
+    leagues, each sport) against each other and was not monotone on the live
+    record (claude/daily-list-order-review-2026-10-28.md); confidence was."""
+    return (-(it.get("confidence") or 0), -tested(it))
+
+
+GROUP_A_MIN = 0.85   # Group A: the strongest five at this level or better, no padding (index.html GROUP_A_MIN)
+
+
+def groups(lst):
+    """Group A and Group B of a day's list in strongest order: A is up to five
+    picks at GROUP_A_MIN or better, B the next five."""
+    n_a = min(5, sum(1 for i in lst if (i.get("confidence") or 0) >= GROUP_A_MIN))
+    return lst[:n_a], lst[n_a:n_a + 5]
+
+
 def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
@@ -333,14 +372,13 @@ def build(now=None, here=HERE, fetch=True):
     attach_results(items, _load(os.path.join(here, "record.json"), {}),
                    _load(os.path.join(here, "tennis-record.json"), {}),
                    _load(os.path.join(here, "sports-record.json"), {}))
-    strength = lambda it: (-((it.get("accuracy") or {}).get("cumHit") or (it.get("accuracy") or {}).get("hit") or 0), -(it.get("confidence") or 0))
     items.sort(key=strength)
     for it in items: it.pop("published", None)
     lst, res = [i for i in items if i["list"]], [i for i in items if i["reserve"]]
     count = lambda xs, s: sum(1 for i in xs if i["status"] == s)
     summary = {k: {"n": len(xs), "won": count(xs, "won"), "lost": count(xs, "lost"), "void": count(xs, "void"),
                    "started": count(xs, "started"), "upcoming": count(xs, "upcoming")}
-               for k, xs in (("list", lst), ("reserve", res))}
+               for k, xs in (("list", lst), ("reserve", res), *zip(("groupA", "groupB"), groups(lst)))}
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res}
 
