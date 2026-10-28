@@ -228,3 +228,27 @@ not be re-read, and a guessed fix would break Rule 6):
    suggestion: fold case in the archive key and the within-build backstop in
    `build.py`. It changes the archive and scoreboard, so it is left for
    Douglas; the cause (which source emitted upper case) is unknown.
+
+## 28 October 2026: fixture audit, one home/away flip in Ukraine
+
+Audit of `predictions/2026-10-28.json` (2,116 rows, dated 28 Oct to 3 Nov).
+`nametest.py` passes ("duplicate feeds: 1 skipped", the known `AF_DUPLICATES`
+case). Clean: no exact or accent/case-folded duplicates, no unrated rows, no
+kick-off whose UTC day differs from the row date (BST ended 25 Oct, so UK
+date = UTC date), no club at two kick-offs at the same instant. 19 rows have
+no kick-off and are dated by day (e.g. es.1 Racing Santander v Real Madrid,
+1 Nov). Clubs appearing twice on one date are all different teams sharing a
+name across men's, women's and neighbouring leagues (Nantes, Eibar, Altay,
+Manchester United, Arsenal, Sandviken) at different times, not duplicates.
+
+One real finding, not fixed: **a reversed duplicate in af.334 (Ukraine)**.
+Chernihiv v Yarud Mariupol' (published 28 Oct 01:22 UTC, home 30.8%) and
+Yarud Mariupol' v Chernihiv (published 11:23 UTC, home 54.4%), both 1 Nov
+09:00 UTC. The source flipped home and away between builds; the archive keys
+on home, away and league, so both stayed. Only one is right. Neither is on
+the Daily List (both `below`), so no list pick is affected. This is the
+reversed-fixture cousin of the 18 Oct case-variant split. Suggested fix, left
+for Douglas because it changes archive keys and the scoreboard: in
+`archive_predictions`, treat a same-league, same-date, same-kick-off pair with
+swapped teams as one fixture and keep the latest. No matcher or `LIVE_NAMES`
+change was needed.
