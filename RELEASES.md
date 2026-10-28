@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-28 Football legs priced by similarity and across UTC midnight (tag pending)
+
+**What changed:** `groupings.price_football` matched a leg to an API-Football fixture only on the leg's own date and with the strict `same()` name test, so a respelt club ("Man Utd" v "Manchester United", "PSG") or a kick-off just after UK midnight (the day before in UTC) left the leg unpriced, and since 19 Oct an unpriced leg is never grouped. It now reads fixtures for the day either side too and, for legs the strict test misses, falls back to `odds.match_af` (name similarity, kick-off within 90 minutes, ambiguous or reused fixtures dropped). New helper `match_football_legs`. Prices still only veto and weigh legs; nothing feeds a model.
+**Evidence:** four new tests in `tests/test_groupings.py` (strict match kept, similarity fallback, previous-UTC-day fixture, wrong time or teams still unmatched). Full suite 555 tests pass; nametest.py passes. The before/after count on today's pool could not be measured: this run has no `API_FOOTBALL_KEY` and no `.afcache`, so the gain is untested on live data. Next build's `groupings.json` report (`football.matched` v `legs`) is the measure.
+**Files:** groupings.py, tests/test_groupings.py, RELEASES.md.
+**Not changed:** the bulk price fetch (still the leg dates only; a leg found on a neighbouring day costs one cached per-fixture call, unless `multOnly`), the non-football sources, any model, rule or threshold.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-28 football-data.co.uk outage keeps the last good copy (tag pending)
 
 **What changed:** football-data.co.uk is the only source for Poland, Switzerland, Romania, Finland and Ireland (history and fixtures). After its retries failed, `_fdx_text` returned an empty string with no warning of its own, so those five leagues lost all data for the run. A clean download is now kept in `.afcache/fdx-*` (CI already persists that folder); on an outage the last good copy is used with a stderr warning giving its age, or a warning that no copy exists. An outage is still never remembered as an empty answer, and a 404 still means "absent".

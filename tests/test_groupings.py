@@ -106,6 +106,27 @@ class EspnSoccerPrices(unittest.TestCase):
         l = self.fb(odds=1.5); self.run_price([l], self.board("Arsenal", "Leeds United")); self.assertEqual(l["odds"], 1.5)
         u = self.fb(code="zz.9"); self.assertEqual(self.run_price([u], self.board("Arsenal", "Leeds United"))["legs"], 0)
 
+class FootballLegMatching(unittest.TestCase):
+    def leg(self, home, away, when="2026-10-10T11:30:00Z", date="2026-10-10"):
+        return {"sport": "football", "home": home, "away": away, "when": when, "date": date, "side": "h"}
+    def pool(self, *rows):
+        return {i: (h, a, G.parse(t)) for i, (h, a, t) in enumerate(rows, 1)}
+    def test_strict_match_still_works(self):
+        l = self.leg("Arsenal", "Leeds United")
+        self.assertEqual(G.match_football_legs([l], self.pool(("Arsenal", "Leeds United", "2026-10-10T11:30:00+00:00"))), {id(l): 1})
+    def test_similarity_fallback_prices_a_respelt_club(self):
+        l = self.leg("Man Utd", "Sp Gijon")
+        got = G.match_football_legs([l], self.pool(("Manchester United", "Sporting Gijon", "2026-10-10T11:30:00+00:00")))
+        self.assertEqual(got, {id(l): 1})
+    def test_day_before_in_utc_is_found(self):
+        l = self.leg("Arsenal", "Leeds United", when="2026-10-11T00:15:00+01:00", date="2026-10-11")
+        got = G.match_football_legs([l], self.pool(("Arsenal", "Leeds United", "2026-10-10T23:15:00+00:00")))
+        self.assertEqual(list(got.values()), [1])
+    def test_wrong_time_or_teams_not_matched(self):
+        p = self.pool(("Arsenal", "Leeds United", "2026-10-10T16:00:00+00:00"))
+        self.assertEqual(G.match_football_legs([self.leg("Arsenal", "Leeds United")], p), {})
+        self.assertEqual(G.match_football_legs([self.leg("Chelsea", "Fulham", when="2026-10-10T16:00:00Z")], p), {})
+
 if __name__ == "__main__":
     unittest.main()
 
