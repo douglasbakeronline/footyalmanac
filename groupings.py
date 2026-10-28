@@ -413,6 +413,28 @@ def _odds_for(fid, key, cache_dir):
     return items, calls
 
 
+def match_football_legs(legs, pool):
+    """{id(leg): fixture id}. pool = {fid: (home, away, kick-off)}. First the
+    strict name test (same) on the kick-off window; a leg that misses goes to
+    odds.match_af (name similarity, a day either side, ambiguity dropped)."""
+    import odds as O
+    out = {}
+    for l in legs:
+        t = parse(l["when"])
+        fid = next((fid for fid, (h, a, ft) in pool.items()
+                    if not (t and ft and abs((t - ft).total_seconds()) > 5400)
+                    and same(h, l["home"]) and same(a, l["away"])), None)
+        if fid is not None: out[id(l)] = fid
+    rest = [l for l in legs if id(l) not in out]
+    if rest:
+        index = [(str(fid), ft, h, a) for fid, (h, a, ft) in pool.items() if ft]
+        taken = {str(v) for v in out.values()}
+        index = [i for i in index if i[0] not in taken]
+        games = [(id(l), parse(l["when"]), l["date"], l["home"], l["away"]) for l in rest]
+        for k, fid in O.match_af(games, index).items():
+            out[k] = int(fid) if fid.isdigit() else fid
+    return out
+
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
 
@@ -438,56 +460,57 @@ def price_football(L, dates, report):
     except Exception as e:
         bulk = {}
         report.setdefault("errors", []).append(f"bulk odds: {type(e).__name__}")
-    for d in sorted(dates):
+    # 28 Oct 2026: fixtures are read for the day either side too (a late UK
+    # kick-off is the day before in UTC) and a leg the strict name test misses
+    # gets odds.match_af's similarity match, which drops ambiguous pairs.
+    pool = {}
+    for d in sorted({(_date.fromisoformat(x) + timedelta(days=o)).isoformat() for x in dates for o in (-1, 0, 1)}):
         try:
-            fx = S._af_day(_date.fromisoformat(d))
+            for f in S._af_day(_date.fromisoformat(d)):
+                pool[f["fixture"]["id"]] = (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
         except Exception as e:
-            report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}"); continue
-        teams = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
-                 for f in fx}
-        for l in fb:
-            if l["date"] != d or l.get("odds"): continue
-            t = parse(l["when"])
-            fid = next((fid for fid, (h, a, ft) in teams.items()
-                        if not (t and ft and abs((t - ft).total_seconds()) > 5400)
-                        and same(h, l["home"]) and same(a, l["away"])), None)
-            if fid is None: continue
-            row = bulk.get(str(fid))
-            if row:
-                i = 0 if l["side"] == "h" else 2
-                l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
-                         bestBook=(row.get("maxBook") or [None, None, None])[i],
-                         margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
-                         src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
-                matched += 1; continue
-            if l.get("multOnly"): continue    # bulk prices only, no call of its own
-            try:
-                items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
-            except Exception as e:
-                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
-            prices = {"Home": [], "Away": [], "Draw": []}
-            books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
-            for item in items:
-                for b in item.get("bookmakers") or []:
-                    uk = O.uk_book(b.get("name"))
-                    for bet in b.get("bets") or []:
-                        if bet.get("id") != 1: continue
-                        for v in bet.get("values") or []:
-                            try:
-                                o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
-                                if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
-                            except (KeyError, ValueError): pass
-            books = sorted(books)
-            side = prices["Home" if l["side"] == "h" else "Away"]
-            if side:
-                avg = [sum(v) / len(v) for v in prices.values() if v]
-                mean = sum(side) / len(side)
-                uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
-                l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
-                         bestBook=uk_top[1], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
-                         margin=margin_of(avg) if len(avg) == 3 else None,
-                         src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
-                matched += 1
+            report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}")
+    found = match_football_legs([l for l in fb if not l.get("odds")], pool)
+    for l in fb:
+        if l.get("odds") or id(l) not in found: continue
+        d = l["date"]
+        fid = found[id(l)]
+        row = bulk.get(str(fid))
+        if row:
+            i = 0 if l["side"] == "h" else 2
+            l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
+                     bestBook=(row.get("maxBook") or [None, None, None])[i],
+                     margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
+                     src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
+            matched += 1; continue
+        if l.get("multOnly"): continue    # bulk prices only, no call of its own
+        try:
+            items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
+        except Exception as e:
+            report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
+        prices = {"Home": [], "Away": [], "Draw": []}
+        books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
+        for item in items:
+            for b in item.get("bookmakers") or []:
+                uk = O.uk_book(b.get("name"))
+                for bet in b.get("bets") or []:
+                    if bet.get("id") != 1: continue
+                    for v in bet.get("values") or []:
+                        try:
+                            o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
+                            if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
+                        except (KeyError, ValueError): pass
+        books = sorted(books)
+        side = prices["Home" if l["side"] == "h" else "Away"]
+        if side:
+            avg = [sum(v) / len(v) for v in prices.values() if v]
+            mean = sum(side) / len(side)
+            uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
+            l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
+                     bestBook=uk_top[1], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
+                     margin=margin_of(avg) if len(avg) == 3 else None,
+                     src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
+            matched += 1
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
 
 def american(x):
