@@ -19,6 +19,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** matcher, LIVE_NAMES, archive keys (a fix alters the scoreboard; Douglas's call).
 **Roll back:** `git revert` the merge commit.
 
+## 2026-10-28 Free-source check for uncovered leagues: none feasible (tag pending)
+
+**What changed:** notes only. `claude/data-expansion-plan.md` records the re-check of German 3. Liga, Liga Portugal 2, UAE and Poland 2.
+**Evidence:** openfootball 2025-26 `de.3.json` and `pt.2.json` are 404; `at.2.json` exists but has no 2026-27 fixtures and Austria 2 is already on the board via API-Football (`af.219`); football-data.co.uk `new/` unchanged.
+**Files:** claude/data-expansion-plan.md, RELEASES.md.
+**Not changed:** any code, model number or Daily List rule.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-27 Tests for build_tennis.py's pricing core and ESPN parser (tag pending)
 
 **What changed:** nothing a reader sees. 16 new tests in `tests/test_build_tennis_core.py` for the parts of `build_tennis.py` that had none: `price_match` (symmetry, 400 points = 10:1, surface fallback and blend), `dampen`, `tier_of` boundaries, `_matches_from_event` (completed, scheduled, doubles and malformed skipped, short dates), `is_walkover`, `is_retirement`, `pred_key`.
