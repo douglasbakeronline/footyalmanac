@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-28 football-data.co.uk outage keeps the last good copy (tag pending)
+
+**What changed:** football-data.co.uk is the only source for Poland, Switzerland, Romania, Finland and Ireland (history and fixtures). After its retries failed, `_fdx_text` returned an empty string with no warning of its own, so those five leagues lost all data for the run. A clean download is now kept in `.afcache/fdx-*` (CI already persists that folder); on an outage the last good copy is used with a stderr warning giving its age, or a warning that no copy exists. An outage is still never remembered as an empty answer, and a 404 still means "absent".
+**Evidence:** three new tests with a fake failing source (`tests/test_source_failures.py`): fallback to the copy with the warning, no copy gives the warning and "", and the existing not-cached-as-empty test. Full suite 551 tests pass; nametest.py passes. No model, rating or ranking code touched.
+**Files:** sources.py, tests/test_source_failures.py, RELEASES.md.
+**Not changed:** retry counts, ESPN and API-Football handling (already retried or cached), any model number.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-28 Data audit: reversed fixture in Ukraine noted (tag pending)
 
 **What changed:** notes only. Audit of the 28 Oct archive found no duplicates, wrong dates or doubtful name matches, and one home/away flip (Chernihiv v Yarud Mariupol', af.334, 1 Nov).

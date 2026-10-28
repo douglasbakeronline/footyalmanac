@@ -59,6 +59,35 @@ class SourceFailureTests(unittest.TestCase):
                 sources._open("http://x", 5)
         self.assertIn("source failed after 3 tries", err.getvalue())
 
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        p = mock.patch.object(sources, "AF_CACHE_DIR", self.tmp.name)
+        p.start()
+        self.addCleanup(p.stop)
+        for k in ("POL.csv", "GOOD.csv"):
+            sources._FDX_CACHE.pop(k, None)
+
+    def test_fdx_outage_uses_last_good_copy_loudly(self):
+        up = Flaky(b"Date,Home\nx,y\n")
+        with mock.patch.object(sources.urllib.request, "urlopen", up):
+            self.assertEqual(sources._fdx_text("GOOD.csv"), "Date,Home\nx,y\n")
+        sources._FDX_CACHE.pop("GOOD.csv")          # a new build
+        down = Flaky(*[OSError("down")] * 3)
+        with mock.patch.object(sources.urllib.request, "urlopen", down), \
+                mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sources._fdx_text("GOOD.csv"), "Date,Home\nx,y\n")
+        self.assertIn("last good copy", err.getvalue())
+        self.assertNotIn("GOOD.csv", sources._FDX_CACHE)
+
+    def test_fdx_outage_without_copy_warns(self):
+        down = Flaky(*[OSError("down")] * 3)
+        with mock.patch.object(sources.urllib.request, "urlopen", down), \
+                mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sources._fdx_text("GOOD.csv"), "")
+        self.assertIn("no earlier copy", err.getvalue())
+
     def test_fdx_outage_not_cached_as_empty(self):
         down = Flaky(*[OSError("down")] * 3)
         with mock.patch.object(sources.urllib.request, "urlopen", down), \

@@ -469,8 +469,27 @@ FDX = {  # code: (file, country, league) as the files name them
 _FDX_CACHE, _FDX_LOCK = {}, threading.Lock()
 
 
+def _fdx_keep_path(path):
+    return os.path.join(AF_CACHE_DIR, "fdx-" + re.sub(r"[^a-zA-Z0-9._-]", "_", path.strip("/")))
+
+
+def _fdx_last_good(path):
+    """The last copy of a football-data.co.uk file that downloaded cleanly, or ""."""
+    try:
+        with open(_fdx_keep_path(path), encoding="utf-8") as fh:
+            return fh.read()
+    except OSError:
+        return ""
+
+
 def _fdx_text(path, cache_dir=None):
-    """One file, fetched once per build however many seasons ask for it."""
+    """One file, fetched once per build however many seasons ask for it.
+
+    These files are the only source for Poland, Switzerland, Romania, Finland
+    and Ireland, so an outage used to leave five leagues with no history and
+    no fixtures, silently. A good download is now kept in .afcache (which CI
+    persists); when every retry fails the last good copy is used, with a
+    warning, and is not remembered as the answer so a later call tries again."""
     with _FDX_LOCK:
         if path in _FDX_CACHE:
             return _FDX_CACHE[path]
@@ -479,13 +498,34 @@ def _fdx_text(path, cache_dir=None):
         text = _open(req, 40).decode("utf-8-sig", "replace")
     except urllib.error.HTTPError as e:
         if not 400 <= e.code < 500:
-            return ""                     # outage after retries: not remembered as empty
+            return _fdx_fallback(path)    # outage after retries: not remembered as empty
         text = ""                         # file genuinely absent
     except Exception:
-        return ""                         # outage after retries: not remembered as empty
+        return _fdx_fallback(path)        # outage after retries: not remembered as empty
+    if text:
+        try:
+            os.makedirs(AF_CACHE_DIR, exist_ok=True)
+            tmp = f"{_fdx_keep_path(path)}.{os.getpid()}.{threading.get_ident()}.tmp"
+            with open(tmp, "w", encoding="utf-8") as fh:
+                fh.write(text)
+            os.replace(tmp, _fdx_keep_path(path))
+        except OSError:
+            pass                          # a failed cache write never fails the build
     with _FDX_LOCK:
         _FDX_CACHE[path] = text
     return text
+
+
+def _fdx_fallback(path):
+    old = _fdx_last_good(path)
+    if old:
+        age = (time.time() - os.path.getmtime(_fdx_keep_path(path))) / 86400
+        print(f"WARNING: football-data.co.uk {path} unreachable: using the last good copy "
+              f"({age:.1f} days old)", file=sys.stderr)
+    else:
+        print(f"WARNING: football-data.co.uk {path} unreachable and no earlier copy: "
+              f"its leagues have no data this run", file=sys.stderr)
+    return old
 
 
 def _fdx_date(s):
