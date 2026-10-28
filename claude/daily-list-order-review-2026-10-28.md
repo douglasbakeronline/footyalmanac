@@ -93,6 +93,23 @@ and 90%+ 18/20. Confidence is the only key that climbs; nothing in the
 model's own numbers gives 100% at the top, and the bookmaker signal that would
 help (`claude/daily-list.md`) is ruled out by Douglas's decision.
 
+## Group A at 85%+, replayed on the list as it now stands
+
+List picks plus tennis at 75%+, college football out, 29 Sep to 27 Oct, top
+five by confidence each day:
+
+| Group A bar | days | picks landed | full-five days | all five landed | mean size |
+|---|---|---|---|---|---|
+| 80% (every list pick) | 27 | 89/107 (83%) | 15 | 8 | 4.0 |
+| 85% | 26 | 53/59 (90%) | 4 | 3 | 2.3 |
+| 88% | 19 | 30/32 (94%) | 0 | 0 | 1.7 |
+| 90% | 15 | 15/16 (94%) | 0 | 0 | 1.1 |
+
+By band on the same picks: 75-80% 70/87, 80-85% 69/84, 85-90% 40/45, 90%+
+15/16. Douglas chose accuracy over size (28 Oct): Group A takes only picks at
+85% or better, up to five, and is short or empty when the day has fewer.
+Group B is the next five in order.
+
 ## What shipped (28 Oct 2026)
 
 1. `build.py` writes `accuracy` into every football archive row;
@@ -101,10 +118,11 @@ help (`claude/daily-list.md`) is ruled out by Douglas's decision.
    tennis pick.
 2. `daylist.strength` and `index.html` `byStrength`: confidence first, tested
    rate second. One key, documented in both places.
-3. Group labels on the list in strongest order: Group A (1-5), Group B (6-10),
-   The rest, each with a "landed" tally once the pinned rows have results;
-   `daylist.json` summary carries `groupA` / `groupB`. The list only; the
-   reserve is unchanged.
+3. Group labels on the list in strongest order: Group A (up to five at
+   `GROUP_A_MIN` 85% or better, no padding), Group B (the next five), The
+   rest, each with a "landed" tally once the pinned rows have results;
+   `daylist.groups` and `daylist.json` summary carry `groupA` / `groupB`.
+   The list only; the reserve is unchanged.
 4. Tennis back on the list, both tours, `build_tennis.LIST_ON`.
 5. `tools/list_order_replay.py` reproduces the tables above.
 

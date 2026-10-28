@@ -18,8 +18,9 @@ games, say plainly when a call is weak, and never inflate a number to look good.
 The front page is the **Daily List**; **Bets**, the second tab (`renderToday` in `index.html`, the `today` view: Today's bets and the Odds tab merged on 25 Oct 2026, Douglas's decision), holds **the Card** (`groupings.build_card`: per UK window Overnight / Daytime / Evening, a Card 2x and a Card 3x of 3-4 bookmaker-priced 60%+ picks from different fixtures, locked 21:00 the night before or 07:00 on the day and never changed after; a window the full rule leaves empty gets a marked wider-rule group, 3-5 picks at 1.08-2.10 and 55%+, graded apart as `cardWide`; tennis matches ESPN dates at midnight New York take their tournament's usual first start, `tennis_starts`), the playbook, the picks to leave out (`groupings.avoid_list`), a slip checker, the re-check log, the accumulator calculator, the scoreboard by window and the day-by-day group history (`ogRecord(true)`). There is no Odds tab, and no Baseball or WNBA tab (too few games; their picks still reach the Daily List). See `claude/the-card-2026-10-25.md` and `claude/todays-bets-2026-10-25.md`. The Double / Treble / Wider / Multiplier kinds are no longer built; their record stays. The **Daily List** is the most likely results across every
 sport, one ranking per day, confidence first and tested rate second
 (28 Oct 2026; was tested rate first, see
-`claude/daily-list-order-review-2026-10-28.md`), with Group A (1-5) and
-Group B (6-10) labels in that order. One rule for
+`claude/daily-list-order-review-2026-10-28.md`), with Group A (the strongest five at
+85%+, `GROUP_A_MIN`, never padded) and Group B (the next five) labels in that
+order. One rule for
 all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
 blind-spot exclusions and no draws, no tennis qualifying rounds, and a

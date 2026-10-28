@@ -111,3 +111,12 @@ class Order(unittest.TestCase):
         g = {"league": "en.1", "date": "2026-10-05", "home": "H", "away": "A", "p": {"h": 0.9, "d": 0.07, "a": 0.03},
              "confidence": 0.9, "accuracy": {"hit": 0.5, "n": 40}, "list": True, "kickoff": "2026-10-05T14:00:00Z"}
         self.assertEqual(DL.football_item(g, {})["accuracy"], {"hit": 0.5, "n": 40})
+
+    def test_group_a_takes_only_85_and_better(self):
+        lst = [{"confidence": c} for c in (0.93, 0.88, 0.86, 0.84, 0.82, 0.81, 0.80, 0.80)]
+        a, b = DL.groups(lst)
+        self.assertEqual([i["confidence"] for i in a], [0.93, 0.88, 0.86])
+        self.assertEqual([i["confidence"] for i in b], [0.84, 0.82, 0.81, 0.80, 0.80])
+        a, b = DL.groups([{"confidence": 0.9}] * 7)
+        self.assertEqual((len(a), len(b)), (5, 2))
+        self.assertEqual(DL.groups([{"confidence": 0.8}]), ([], [{"confidence": 0.8}]))

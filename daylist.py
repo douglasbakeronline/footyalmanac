@@ -353,6 +353,16 @@ def strength(it):
     return (-(it.get("confidence") or 0), -tested(it))
 
 
+GROUP_A_MIN = 0.85   # Group A: the strongest five at this level or better, no padding (index.html GROUP_A_MIN)
+
+
+def groups(lst):
+    """Group A and Group B of a day's list in strongest order: A is up to five
+    picks at GROUP_A_MIN or better, B the next five."""
+    n_a = min(5, sum(1 for i in lst if (i.get("confidence") or 0) >= GROUP_A_MIN))
+    return lst[:n_a], lst[n_a:n_a + 5]
+
+
 def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
@@ -368,7 +378,7 @@ def build(now=None, here=HERE, fetch=True):
     count = lambda xs, s: sum(1 for i in xs if i["status"] == s)
     summary = {k: {"n": len(xs), "won": count(xs, "won"), "lost": count(xs, "lost"), "void": count(xs, "void"),
                    "started": count(xs, "started"), "upcoming": count(xs, "upcoming")}
-               for k, xs in (("list", lst), ("reserve", res), ("groupA", lst[:5]), ("groupB", lst[5:10]))}
+               for k, xs in (("list", lst), ("reserve", res), *zip(("groupA", "groupB"), groups(lst)))}
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res}
 

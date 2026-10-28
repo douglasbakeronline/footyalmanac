@@ -2228,6 +2228,7 @@ function renderStarred(){
 // The Daily List's order (Douglas, 1 Oct 2026): strongest first by default,
 // or by kick-off to plan the day. Remembered on this device only.
 const LIST_RES_OPEN = {};   // reserve fold per day, once the reader has opened or closed it
+const GROUP_A_MIN = 0.85;   // Group A takes only picks at this level or better (daylist.GROUP_A_MIN is the same)
 let LIST_ORDER = (() => { try { return localStorage.getItem("listOrder") === "time" ? "time" : "strength"; }
                           catch(e){ return "strength"; } })();
 document.addEventListener("click", e => {
@@ -2371,11 +2372,20 @@ function renderList(){
       return d.length ? `${w} of ${d.length} landed` : ""; };
     const label = (title, range, xs) => { const el = document.createElement("div"); el.className = "lgrp";
       const t = grpTally(xs); el.innerHTML = `<b>${title}</b> ${range}${t ? ` <span class="n">${t}</span>` : ""}`; return el; };
-    const grouped = LIST_ORDER !== "time" && items.length > 5;
+    // Group A is the day's strongest five at GROUP_A_MIN or better, and no
+    // more: on the record since 29 Sep, list picks at 85%+ landed 55 of 61
+    // (90%) against 83% for 80-85%, so a short Group A beats a padded one
+    // (Douglas, 28 Oct 2026: the top of the list near perfect). Group B is
+    // the next five in order; The rest follows.
+    const grouped = LIST_ORDER !== "time" && items.length > 0;
+    const nA = Math.min(5, items.filter(it => (it.g.confidence || 0) >= GROUP_A_MIN).length);
+    const nB = Math.min(items.length, nA + 5);
     items.forEach((it, i) => {
-      if(grouped && i === 0) sec.appendChild(label("Group A", "picks 1 to 5", items.slice(0, 5)));
-      if(grouped && i === 5) sec.appendChild(label("Group B", "picks 6 to 10", items.slice(5, 10)));
-      if(grouped && i === 10) sec.appendChild(label("The rest", `picks 11 to ${items.length}`, items.slice(10)));
+      if(grouped && i === 0) sec.appendChild(nA
+        ? label("Group A", `${nA} pick${nA === 1 ? "" : "s"} at ${pct(GROUP_A_MIN)}% or better`, items.slice(0, nA))
+        : label("Group A", `none today: nothing at ${pct(GROUP_A_MIN)}% or better`, []));
+      if(grouped && i === nA) sec.appendChild(label("Group B", `the next ${nB - nA}`, items.slice(nA, nB)));
+      if(grouped && i === nB && nB < items.length) sec.appendChild(label("The rest", `picks ${nB + 1} to ${items.length}`, items.slice(nB)));
       put(it, i);
     });
     if(extra.length){
