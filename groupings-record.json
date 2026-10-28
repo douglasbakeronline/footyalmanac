@@ -1,24 +1,24 @@
 {
- "graded": "2026-10-27T23:05:29Z",
+ "graded": "2026-10-28T01:23:54Z",
  "overall": {
   "groups": 85,
-  "settled": 81,
-  "won": 20,
+  "settled": 82,
+  "won": 21,
   "lost": 61,
-  "pending": 4,
-  "legs": 359,
-  "legsWon": 264,
-  "returned": 64.16,
-  "staked": 81,
-  "returnedBest": 68.14,
-  "returnedLock": 11.26,
-  "stakedLock": 9,
-  "expected": 26.35,
+  "pending": 3,
+  "legs": 361,
+  "legsWon": 266,
+  "returned": 67.28,
+  "staked": 82,
+  "returnedBest": 71.32,
+  "returnedLock": 14.31,
+  "stakedLock": 10,
+  "expected": 26.63,
   "clv": {
    "n": 58,
    "shortened": 23,
-   "drifted": 21,
-   "mean": 0.0014
+   "drifted": 20,
+   "mean": 0.0011
   }
  },
  "byBand": {
@@ -39,24 +39,24 @@
    "clv": {
     "n": 27,
     "shortened": 6,
-    "drifted": 12,
-    "mean": -0.0037
+    "drifted": 11,
+    "mean": -0.0044
    }
   },
   "Card 3x": {
    "groups": 7,
-   "settled": 6,
-   "won": 3,
+   "settled": 7,
+   "won": 4,
    "lost": 3,
-   "pending": 1,
-   "legs": 19,
-   "legsWon": 14,
-   "returned": 9.78,
-   "staked": 6,
-   "returnedBest": 10.19,
-   "returnedLock": 6.58,
-   "stakedLock": 4,
-   "expected": 1.62,
+   "pending": 0,
+   "legs": 21,
+   "legsWon": 16,
+   "returned": 12.9,
+   "staked": 7,
+   "returnedBest": 13.37,
+   "returnedLock": 9.63,
+   "stakedLock": 5,
+   "expected": 1.9,
    "clv": {
     "n": 21,
     "shortened": 8,
@@ -293,23 +293,23 @@
  },
  "card": {
   "groups": 10,
-  "settled": 8,
-  "won": 3,
+  "settled": 9,
+  "won": 4,
   "lost": 5,
-  "pending": 2,
-  "legs": 25,
-  "legsWon": 18,
-  "returned": 9.1,
-  "staked": 8,
-  "returnedBest": 9.26,
-  "returnedLock": 8.99,
-  "stakedLock": 8,
-  "expected": 2.5,
+  "pending": 1,
+  "legs": 27,
+  "legsWon": 20,
+  "returned": 12.22,
+  "staked": 9,
+  "returnedBest": 12.44,
+  "returnedLock": 12.04,
+  "stakedLock": 9,
+  "expected": 2.78,
   "clv": {
    "n": 29,
    "shortened": 10,
-   "drifted": 12,
-   "mean": 0.0
+   "drifted": 11,
+   "mean": -0.0007
   }
  },
  "cardWide": {
@@ -372,8 +372,8 @@
    "clv": {
     "n": 14,
     "shortened": 5,
-    "drifted": 5,
-    "mean": -0.0005
+    "drifted": 4,
+    "mean": -0.0019
    }
   },
   "Daytime": {
@@ -399,18 +399,18 @@
   },
   "Evening": {
    "groups": 2,
-   "settled": 1,
-   "won": 0,
+   "settled": 2,
+   "won": 1,
    "lost": 1,
-   "pending": 1,
-   "legs": 4,
-   "legsWon": 3,
-   "returned": 0,
-   "staked": 1,
-   "returnedBest": 0,
-   "returnedLock": 0,
-   "stakedLock": 1,
-   "expected": 0.35,
+   "pending": 0,
+   "legs": 6,
+   "legsWon": 5,
+   "returned": 3.12,
+   "staked": 2,
+   "returnedBest": 3.18,
+   "returnedLock": 3.05,
+   "stakedLock": 2,
+   "expected": 0.63,
    "clv": {
     "n": 6,
     "shortened": 4,
@@ -471,7 +471,7 @@
        "when": "2026-10-28T01:30:00Z",
        "odds": 1.33,
        "best": 1.33,
-       "lastOdds": 1.34,
+       "lastOdds": 1.33,
        "lockOdds": 1.34,
        "lockBest": 1.34,
        "lockBook": "Pinnacle",
@@ -488,7 +488,7 @@
        "when": "2026-10-28T06:30:00Z",
        "odds": 1.35,
        "best": 1.35,
-       "lastOdds": 1.37,
+       "lastOdds": 1.41,
        "lockOdds": 1.37,
        "lockBest": 1.37,
        "lockBook": "Pinnacle",
@@ -883,17 +883,17 @@
      "window": "Evening",
      "odds": 3.12,
      "p": 0.2767,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-27T07:00:00Z",
-     "paid": 0,
-     "paidBest": 0,
-     "paidLock": 0,
-     "legsWon": 1,
+     "paid": 3.12,
+     "paidBest": 3.18,
+     "paidLock": 3.05,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Flavio Cobolli",
@@ -926,8 +926,8 @@
        "lockBook": "William Hill",
        "est": false,
        "p": 0.7114,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-2"
       },
       {
        "pick": "Luton Town",
@@ -943,8 +943,8 @@
        "lockBook": "Betfair",
        "est": false,
        "p": 0.6077,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       }
      ]
     }
