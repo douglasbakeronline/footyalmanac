@@ -16,7 +16,10 @@ The point of the site is honest confidence: surface the genuinely predictable
 games, say plainly when a call is weak, and never inflate a number to look good.
 
 The front page is the **Daily List**; **Bets**, the second tab (`renderToday` in `index.html`, the `today` view: Today's bets and the Odds tab merged on 25 Oct 2026, Douglas's decision), holds **the Card** (`groupings.build_card`: per UK window Overnight / Daytime / Evening, a Card 2x and a Card 3x of 3-4 bookmaker-priced 60%+ picks from different fixtures, locked 21:00 the night before or 07:00 on the day and never changed after; a window the full rule leaves empty gets a marked wider-rule group, 3-5 picks at 1.08-2.10 and 55%+, graded apart as `cardWide`; tennis matches ESPN dates at midnight New York take their tournament's usual first start, `tennis_starts`), the playbook, the picks to leave out (`groupings.avoid_list`), a slip checker, the re-check log, the accumulator calculator, the scoreboard by window and the day-by-day group history (`ogRecord(true)`). There is no Odds tab, and no Baseball or WNBA tab (too few games; their picks still reach the Daily List). See `claude/the-card-2026-10-25.md` and `claude/todays-bets-2026-10-25.md`. The Double / Treble / Wider / Multiplier kinds are no longer built; their record stays. The **Daily List** is the most likely results across every
-sport, one ranking per day, strongest tested hit rate first. One rule for
+sport, one ranking per day, confidence first and tested rate second
+(28 Oct 2026; was tested rate first, see
+`claude/daily-list-order-review-2026-10-28.md`), with Group A (1-5) and
+Group B (6-10) labels in that order. One rule for
 all sports: a pick qualifies only if calls at its level landed ≥80% in
 testing on games never tuned on (`sports.list_threshold`), plus football's
 blind-spot exclusions and no draws, no tennis qualifying rounds, and a
@@ -61,6 +64,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 |---|---|
 | `claude/full-review-2026-10-25.md` | Full review of 25 Oct 2026: live record by tier and sport, 22 bugs with fixes, the betting record, costs, and a dated timeline. Read first when deciding what to work on next. |
 | `claude/home-away-tilt-2026-10-26.md` | The away under-quote on the live record, the `ha_scale` sweep through the gates (failed on gain and p(worse)), why AF_EXTRA cannot be gated on the replay, what would settle it. Read before touching home advantage or `HOME_MULT`. |
+| `claude/daily-list-order-review-2026-10-28.md` | Why the list is ordered by confidence (the tested-rate order was not monotone and sank started football picks), the two-groups-of-five evidence, why tennis is back on and college football stays off, the rule for taking a sport off. Read before touching the list order or `LIST_ON` / `LIST_OFF`. |
 | `claude/daily-list.md` | The Daily List rule and its evidence, what does and doesn't predict a pick landing (`predictability.py`), the ESPN slug audit, the US Eastern/UTC day bug. Read before touching the list, `LIST_MIN`, or ESPN fetching. |
 | `claude/world-rankings.md` | Which world rankings are in the model, the tests behind them, sources and name mapping. Read before touching `rankings.py`. |
 | `claude/ranking-review.md` | Burundi v Algeria: the FIFA adjustment re-checked on 2022-24, why ranked internationals need 65%, the goals line fix, the open question on big lifts. |
@@ -350,7 +354,7 @@ zero. The real gap was four months of missing results, now fixed. See
   pipeline as `reserve` and graded as its own group (`record.json` /
   `tennis-record.json` / `sports-record.json` "reserve"). "How it went" has
   the same fold under each list day.
-- College football is off the Daily List (`sports.LIST_OFF`, 19 Oct 2026), as tennis is (`build_tennis.LIST_ON`, 15 Oct), on their live record; their Firm+ picks go to the reserve. The tennis model re-tested sound on 1,096 Sep-Oct matches; both return when their live record holds.
+- College football is off the Daily List (`sports.LIST_OFF`, 19 Oct 2026: 80%+ landed 74% v 86% quoted, z -2.1); its Firm+ picks go to the reserve. Tennis was off from 15 Oct and back on from 28 Oct (`build_tennis.LIST_ON`): the removal rested on a 1.1 standard-error shortfall, and 75%+ landed 139 of 163 (85%) over the whole record. Rule for taking a sport off: under quote by two standard errors or more on 50+ picks at the bar. Review tennis at 300 graded list picks.
 - The Starred tab's **Run** button (`runSlip` in `index.html`) gives the
   chance all starred picks land, fair odds, and a Strong / Reserve / Wary
   verdict per leg. Site numbers only, never bookmaker prices.

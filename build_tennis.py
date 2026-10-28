@@ -194,7 +194,14 @@ LIST_MIN = {"ATP": 0.75, "WTA": 0.75, "ATP_RANKED": 0.75}
 # overstate live tennis, so no bar can be vouched for. Calls from 62% stay in
 # the reserve, graded on their own. LIST_MIN is kept for when a tour is
 # reopened on new evidence.
-LIST_ON = {"ATP": False, "WTA": False}
+# 28 Oct 2026, Douglas: back on, both tours. The 15 Oct shortfall was 1.1
+# standard errors (39 of 51 v 42.1), and at the bar itself the picks were on
+# quote: 75%+ before 15 Oct landed 61 of 75 (81%, quoted 83%, z -0.3); since,
+# in the reserve, 78 of 88 (89%: ATP 26 of 28, WTA 52 of 60). Whole record
+# 139 of 163 (85%), above the 80% rule. Review at 300 graded list picks. The
+# rule for taking a sport off (claude/daily-list-order-review-2026-10-28.md):
+# under quote by two standard errors or more on 50+ picks at the bar.
+LIST_ON = {"ATP": True, "WTA": True}
 LIST_MIN_MATCHES = 10
 LIST_BACKTEST = {"ATP": {"2025": [0.8297, 499], "2026": [0.8354, 243]},
                  "WTA": {"2025": [0.8482, 415], "2026": [0.8987, 227]}}

@@ -3,6 +3,22 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-28 Daily List: confidence order, two groups of five, tennis back on (tag pending)
+
+**What changed:**
+- **Order.** The Daily List and the pinned day list sort by confidence first, tested rate second (`index.html` `byStrength`, `daylist.strength`). Before, the tested rate came first, which ranked band tables from different families against each other (a 97% Brighton under an 80% Kyrgyz pick) and was not monotone on the live record, where confidence was.
+- **Bug fixed.** A started football pick sorted last in Strongest order: `build.py` never archived `accuracy` for football (the other sports did), so `daylist.py` gave every pinned football row strength 0. The archive row now carries it and `daylist._accuracy` recomputes it for older archives.
+- **Groups.** In strongest order each day's list is labelled Group A (picks 1 to 5), Group B (6 to 10) and The rest, with a "landed" tally per group once results are in; `daylist.json` summary gains `groupA` / `groupB`.
+- **Tennis back on the list**, both tours at 75% (`build_tennis.LIST_ON`), Douglas's decision on the evidence below.
+
+**Evidence:** `claude/daily-list-order-review-2026-10-28.md`, reproduced by `tools/list_order_replay.py`. 218 settled list picks since 29 Sep: landed by confidence 82 / 86 / 86 / 100% up the bands, by tested rate 88 / 75 / 85 / 83 / 77%. Top 10 on the 7 days with 10+ picks: confidence 57 of 70, tested rate 55 of 70 (within noise; nothing beats confidence). Tennis: the 15 Oct removal rested on 39 of 51 v 42.1 expected (1.1 standard errors); at the bar, 75%+ landed 61 of 75 before and 78 of 88 since in the reserve, 139 of 163 (85%) overall. College football stays off (80%+ 26 of 35, 74% v 86%, z -2.1). New tests in `tests/test_daylist.py`; tennis tests updated; 554 tests pass; `nametest.py` clear. Page checked in headless Chromium at 1280px and 400px with a simulated 19-pick day (no football data in the cloud sandbox).
+
+**Files:** `index.html`, `daylist.py`, `build.py`, `build_tennis.py`, `tools/list_order_replay.py`, `tests/test_daylist.py`, `tests/test_tennis_names.py`, `tests/test_tennis_live_bands.py`, `claude/daily-list-order-review-2026-10-28.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the 80% rule and every bar, any model number, the reserve rule, college football (`sports.LIST_OFF`), grading. The groups have no record of their own yet.
+
+**Roll back:** `git revert` the merge commit. To take tennis off alone, set `LIST_ON` back to False.
+
 ## 2026-10-28 football-data.co.uk outage keeps the last good copy (tag pending)
 
 **What changed:** football-data.co.uk is the only source for Poland, Switzerland, Romania, Finland and Ireland (history and fixtures). After its retries failed, `_fdx_text` returned an empty string with no warning of its own, so those five leagues lost all data for the run. A clean download is now kept in `.afcache/fdx-*` (CI already persists that folder); on an outage the last good copy is used with a stderr warning giving its age, or a warning that no copy exists. An outage is still never remembered as an empty answer, and a 404 still means "absent".

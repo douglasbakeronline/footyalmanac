@@ -80,8 +80,9 @@ class Stamping(unittest.TestCase):
     def test_no_rate_cannot_qualify_a_row(self):
         # the list and reserve rules read confidence and the round, never the
         # rate; a None rate leaves them where they were
-        with mock.patch.object(B, "LIVE_BANDS", {}):
-            self.assertFalse(B.list_eligible(0.9, "ATP", "Final", 20, 20))     # LIST_ON is off
+        with mock.patch.object(B, "LIST_ON", {"ATP": False, "WTA": False}), \
+                mock.patch.object(B, "LIVE_BANDS", {}):
+            self.assertFalse(B.list_eligible(0.9, "ATP", "Final", 20, 20))     # tour off
             self.assertTrue(B.list_reserve(0.9, "ATP", "Final", 20, 20))
             self.assertFalse(B.list_reserve(0.6, "ATP", "Final", 20, 20))
         with mock.patch.object(B, "LIST_ON", {"ATP": True, "WTA": False}), \

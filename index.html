@@ -879,6 +879,12 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   .views.resgrid button:nth-last-child(-n+6){border-bottom:0}
 }
 /* the reserve under the Daily List review, folded away until asked for (8 Oct 2026) */
+/* The Daily List's top ten, in two groups of five (Douglas, 28 Oct 2026):
+   a thin label before picks 1, 6 and 11 so the two groups are one glance
+   away. Strongest order only; by kick-off the groups have no meaning. */
+.lgrp{display:flex;align-items:baseline;gap:10px;padding:10px 12px 4px;font:700 10.5px var(--f-ui);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--mute-ink,var(--mute))}
+.lgrp b{color:var(--ink)} .lgrp .n{font:600 11px var(--f-num);letter-spacing:0;text-transform:none;color:var(--mute-ink,var(--mute))}
 .resv{margin-top:18px;border-top:1px solid var(--ink)}
 .resv>summary{list-style:none;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
   gap:2px 10px;padding:12px 40px 10px 12px;min-height:44px;font-family:var(--f-ui);font-size:13px;
@@ -2329,7 +2335,10 @@ function renderList(){
     [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
     pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
   }
-  const strength = it => [(it.g.accuracy && (it.g.accuracy.cumHit || it.g.accuracy.hit)) || 0, it.g.confidence];
+  // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
+  // ranked band tables from different families against each other). Same key
+  // as daylist.strength.
+  const strength = it => [it.g.confidence || 0, (it.g.accuracy && (it.g.accuracy.cumHit || it.g.accuracy.hit)) || 0];
   const byStrength = (a,b) => { const x = strength(a), y = strength(b); return y[0]-x[0] || y[1]-x[1]; };
   // Kick-off order keeps the bar: picks that clear it still come before the
   // reserve, each group in time order; the same picks are shown whichever
@@ -2355,7 +2364,20 @@ function renderList(){
       ? appendFixture(sec, it.g, i, date, false)
       : it.kind === "pinned" ? putPinned(sec, it.g, i, date)
       : sec.appendChild(sportRow(it.g, i, true));
-    items.forEach(put);
+    // Group labels in strongest order: 1-5, 6-10, then the rest. A tally per
+    // group once results are in, from the pinned rows.
+    const grpTally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result && !it.g.result.void);
+      const w = d.filter(it => it.g.status === "won").length;
+      return d.length ? `${w} of ${d.length} landed` : ""; };
+    const label = (title, range, xs) => { const el = document.createElement("div"); el.className = "lgrp";
+      const t = grpTally(xs); el.innerHTML = `<b>${title}</b> ${range}${t ? ` <span class="n">${t}</span>` : ""}`; return el; };
+    const grouped = LIST_ORDER !== "time" && items.length > 5;
+    items.forEach((it, i) => {
+      if(grouped && i === 0) sec.appendChild(label("Group A", "picks 1 to 5", items.slice(0, 5)));
+      if(grouped && i === 5) sec.appendChild(label("Group B", "picks 6 to 10", items.slice(5, 10)));
+      if(grouped && i === 10) sec.appendChild(label("The rest", `picks 11 to ${items.length}`, items.slice(10)));
+      put(it, i);
+    });
     if(extra.length){
       const fold = document.createElement("details");
       fold.className = "resv";
