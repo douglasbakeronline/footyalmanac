@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-28 Data audit: reversed fixture in Ukraine noted (tag pending)
+
+**What changed:** notes only. Audit of the 28 Oct archive found no duplicates, wrong dates or doubtful name matches, and one home/away flip (Chernihiv v Yarud Mariupol', af.334, 1 Nov).
+**Evidence:** 2,116 rows checked; nametest.py passes; the flipped pair is `below`, not on the Daily List.
+**Files:** claude/data-integrity.md, RELEASES.md.
+**Not changed:** matcher, LIVE_NAMES, archive keys (a fix alters the scoreboard; Douglas's call).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-27 Tests for build_tennis.py's pricing core and ESPN parser (tag pending)
 
 **What changed:** nothing a reader sees. 16 new tests in `tests/test_build_tennis_core.py` for the parts of `build_tennis.py` that had none: `price_match` (symmetry, 400 points = 10:1, surface fallback and blend), `dampen`, `tier_of` boundaries, `_matches_from_event` (completed, scheduled, doubles and malformed skipped, short dates), `is_walkover`, `is_retirement`, `pred_key`.
