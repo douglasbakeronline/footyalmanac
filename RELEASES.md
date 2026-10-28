@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-28 Opponent-adjusted ratings tested and rejected (tag pending)
+
+**What changed:** notes and an advisory harness only. Strength-of-schedule adjusted attack and defence ratings were replayed against the live model; no model number changed.
+**Evidence:** paired, bootstrapped, 2025/26 fit (6,474) and 2026/27 check (1,523), live curve and refitted curve. Fit season: best -0.0001, full adjustment +0.0001 (gate 0.0005, p(worse) 0.31-0.66). Check season -0.0003 to -0.0009. Fails the gain gate on the fit season, so rule 3 rejects it. Table in `claude/sos-ratings-2026-10-28.md`.
+**Files:** claude/sos-ratings-2026-10-28.md, tools/sos_eval.py, RELEASES.md.
+**Not changed:** engine.py, calibration, every constant.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-28 football-data.co.uk outage keeps the last good copy (tag pending)
 
 **What changed:** football-data.co.uk is the only source for Poland, Switzerland, Romania, Finland and Ireland (history and fixtures). After its retries failed, `_fdx_text` returned an empty string with no warning of its own, so those five leagues lost all data for the run. A clean download is now kept in `.afcache/fdx-*` (CI already persists that folder); on an outage the last good copy is used with a stderr warning giving its age, or a warning that no copy exists. An outage is still never remembered as an empty answer, and a 404 still means "absent".
