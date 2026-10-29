@@ -22,6 +22,9 @@ review so no variant is picked because it happened to look good):
   under10  the model at least 10 points under the market
   four3x   Card 3x groups of four picks, 2x unchanged
   wider    wider API-Football leagues admitted, under the market (CARD_CORE_ONLY False)
+  under5to10  the model 5 to 10 points under the market, not more (29 Oct 2026 evening:
+           10+ under lost on the live archive and both football-data seasons)
+  short    prices 1.15 to 1.35 only (the one band positive on both seasons)
 Each is built with build_card's own pieces (best_card, card_fault, the kinds,
 the cap, the stake weights) with one constant patched, so the replay and the
 live card cannot drift apart. `--since YYYY-MM-DD` limits the days.
@@ -69,6 +72,8 @@ VARIANTS = {
     "under10": {"CARD_UNDER_MARKET": 0.10},
     "four3x": {"CARD_LEGS_3X": (4,)},
     "wider": {"CARD_CORE_ONLY": False},
+    "under5to10": {"MAX_UNDER": 0.10},
+    "short": {"CARD_ODDS": (1.15, 1.35)},
 }
 
 
@@ -77,8 +82,11 @@ def build(day_legs, date, variant):
     patch = VARIANTS[variant]
     saved = {k: getattr(G, k) for k in patch if hasattr(G, k)}
     legs_3x = patch.get("CARD_LEGS_3X")
+    if patch.get("MAX_UNDER"):
+        # a cap on how far under the market the model may sit: legs beyond it are dropped before the build
+        day_legs = [l for l in day_legs if l.get("sport") != "football" or (l["p"] - l["fair"]) > -patch["MAX_UNDER"]]
     for k, v in patch.items():
-        if k != "CARD_LEGS_3X": setattr(G, k, v)
+        if k not in ("CARD_LEGS_3X", "MAX_UNDER"): setattr(G, k, v)
     try:
         after = G.lock_time(date, "Day"); groups, used = [], set()
         for seq in (1, 2, 3):
