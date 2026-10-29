@@ -1,43 +1,43 @@
 {
- "graded": "2026-10-29T21:44:23Z",
+ "graded": "2026-10-29T23:33:48Z",
  "overall": {
   "groups": 93,
-  "settled": 90,
+  "settled": 91,
   "won": 23,
-  "z": -1.45,
-  "lost": 67,
-  "pending": 3,
-  "legs": 382,
+  "z": -1.54,
+  "lost": 68,
+  "pending": 2,
+  "legs": 383,
   "legsWon": 275,
   "returned": 71.0,
-  "staked": 90,
+  "staked": 91,
   "returnedBest": 75.15,
   "returnedLock": 16.44,
-  "stakedLock": 16,
-  "expected": 29.34,
+  "stakedLock": 17,
+  "expected": 29.75,
   "clv": {
    "n": 81,
-   "shortened": 33,
+   "shortened": 32,
    "drifted": 28,
-   "mean": -0.0028
+   "mean": -0.003
   }
  },
  "byBand": {
   "Card 2x": {
    "groups": 13,
-   "settled": 11,
+   "settled": 12,
    "won": 4,
-   "z": -0.07,
-   "lost": 7,
-   "pending": 2,
-   "legs": 33,
+   "z": -0.31,
+   "lost": 8,
+   "pending": 1,
+   "legs": 34,
    "legsWon": 23,
    "returned": 8.94,
-   "staked": 11,
+   "staked": 12,
    "returnedBest": 9.2,
    "returnedLock": 6.81,
-   "stakedLock": 9,
-   "expected": 4.12,
+   "stakedLock": 10,
+   "expected": 4.53,
    "clv": {
     "n": 39,
     "shortened": 11,
@@ -62,9 +62,9 @@
    "expected": 2.73,
    "clv": {
     "n": 32,
-    "shortened": 13,
+    "shortened": 12,
     "drifted": 8,
-    "mean": -0.0008
+    "mean": -0.0013
    }
   },
   "Wider Treble": {
@@ -321,9 +321,9 @@
   "expected": 4.71,
   "clv": {
    "n": 49,
-   "shortened": 19,
+   "shortened": 18,
    "drifted": 18,
-   "mean": -0.0059
+   "mean": -0.0062
   }
  },
  "cardWide": {
@@ -350,19 +350,19 @@
  },
  "cardLate": {
   "groups": 7,
-  "settled": 6,
+  "settled": 7,
   "won": 4,
-  "z": 1.6,
-  "lost": 2,
-  "pending": 1,
-  "legs": 18,
+  "z": 1.15,
+  "lost": 3,
+  "pending": 0,
+  "legs": 19,
   "legsWon": 15,
   "returned": 9.62,
-  "staked": 6,
+  "staked": 7,
   "returnedBest": 10.13,
   "returnedLock": 4.4,
-  "stakedLock": 2,
-  "expected": 2.14,
+  "stakedLock": 3,
+  "expected": 2.55,
   "clv": {
    "n": 21,
    "shortened": 4,
@@ -410,9 +410,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 1,
+    "shortened": 0,
     "drifted": 0,
-    "mean": 0.0053
+    "mean": 0.0
    }
   }
  },
@@ -434,9 +434,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 1,
+    "shortened": 0,
     "drifted": 0,
-    "mean": 0.0053
+    "mean": 0.0
    }
   },
   "Daytime": {
@@ -687,7 +687,7 @@
      "rule": 4,
      "odds": 2.07,
      "p": 0.4111,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": true,
      "locked": true,
@@ -696,8 +696,8 @@
      "paidBest": 0,
      "paidLock": 0,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Polona Hercog",
@@ -713,8 +713,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.8093,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Valeriya Strakhova (UKR) bt Polona Hercog (SLO) 2-6 6-2 6-2"
       },
       {
        "pick": "Melgar",
@@ -831,7 +831,7 @@
        "when": "2026-10-30T05:30:00Z",
        "odds": 1.28,
        "best": 1.28,
-       "lastOdds": 1.26,
+       "lastOdds": 1.28,
        "lockOdds": 1.28,
        "lockBest": 1.28,
        "lockBook": "Pinnacle",
