@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Championship total-goals scale tested and rejected (tag pending)
+
+**What changed:** nothing a reader sees. A dated note and a reproducible tool record that scaling the Championship's expected goals (x0.90 to x1.10) does not help.
+
+**Evidence:** paired bootstrap on 2023-24 to 2026-27 replays. Best fit-season (2025-26) gain 0.0001 against the 0.0005 gate, p(worse) 0.47; the sign flips between seasons (2023-24 wants more goals, 2024-25 and 2026-27 fewer). 2026-27 has 95 fixtures against the 250 gate.
+
+**Files:** `claude/championship-goals-scale-2026-10-29.md`, `tools/championship_goals_scale.py`.
+
+**Not changed:** `engine.py`, calibration, any model number.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-10-29 The Card: core leagues only again, after the two-rule replay (tag pending)
 
 **What changed:** `CARD_CORE_ONLY` back to True, Douglas's decision at 11:59 after both rules were replayed on October with the live Card machinery: core only +5.5 units on 15 staked (10 groups, 5 won); wider in +0.5 on 32 (21 groups, 8 won); the extra groups lost 5 units, nearly all Card 3x built from wider picks (2 of 10). `CARD_MAX_GROUPS` stays at 6. Page copy updated.
