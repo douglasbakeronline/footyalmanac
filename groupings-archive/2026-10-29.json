@@ -933,6 +933,506 @@
    "status": "locked",
    "checked": "2026-10-28T17:46:02Z",
    "archivedAt": "2026-10-28T21:34:40Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.07,
+   "p": 0.4111,
+   "implied": 0.4835,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 4,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Valeriya Strakhova v Polona Hercog",
+     "pick": "Polona Hercog",
+     "tour": "WTA",
+     "tournament": "Queretaro Open",
+     "players": [
+      "Valeriya Strakhova",
+      "Polona Hercog"
+     ],
+     "comp": "Queretaro Open Round 2",
+     "when": "2026-10-29T20:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-29",
+     "id": "185796",
+     "fx": {
+      "id": "185796",
+      "espn": [
+       "Valeriya Strakhova",
+       "Polona Hercog"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-29",
+      "time": "20:00",
+      "timeTbc": false,
+      "tournament": "Queretaro Open",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Valeriya Strakhova",
+      "playerB": "Polona Hercog",
+      "ratingA": {
+       "elo": 1748,
+       "matches": 438,
+       "surfaceElo": 1546
+      },
+      "ratingB": {
+       "elo": 1982,
+       "matches": 272,
+       "surfaceElo": 1691
+      },
+      "p": {
+       "a": 0.2459,
+       "b": 0.7541
+      },
+      "pick": "Polona Hercog",
+      "confidence": 0.7541,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8511,
+       "n": 47,
+       "cumHit": 0.8511,
+       "cumN": 47,
+       "quoted": 0.7735,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7541,
+     "p": 0.8093,
+     "hit": 0.8511,
+     "n": 47,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.18,
+     "best": 1.18,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0472,
+     "pricedAt": "2026-10-29T09:22:47Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8475,
+     "pTested": 0.7541,
+     "fair": 0.8093,
+     "edge": -0.1102,
+     "basis": "bookmakers",
+     "firstOdds": 1.18,
+     "lockPrice": {
+      "odds": 1.18,
+      "best": 1.18,
+      "book": "Pinnacle",
+      "at": "2026-10-29T09:21:32Z"
+     },
+     "lastOdds": 1.18,
+     "lastBest": 1.18,
+     "lastAt": "2026-10-29T09:21:32Z"
+    },
+    {
+     "sport": "football",
+     "event": "Melgar v Comerciantes Unidos",
+     "home": "Melgar",
+     "away": "Comerciantes Unidos",
+     "side": "h",
+     "pick": "Melgar",
+     "code": "pe.1",
+     "comp": "Liga 1",
+     "country": "Peru",
+     "when": "2026-10-30T00:30:00Z",
+     "date": "2026-10-30",
+     "pModel": 0.6044,
+     "p": 0.7306,
+     "fx": {
+      "u21Side": false,
+      "league": "pe.1",
+      "leagueName": "Liga 1",
+      "short": "PER",
+      "country": "Peru",
+      "iso": "per",
+      "tier": 1,
+      "order": 88,
+      "round": "clausura",
+      "cup": false,
+      "date": "2026-10-30",
+      "time": "00:30",
+      "kickoff": "2026-10-30T00:30:00Z",
+      "home": {
+       "name": "Melgar",
+       "att": 1.209,
+       "def": 0.829,
+       "played": 30,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Liga 1",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 35,
+        "W": 14,
+        "D": 14,
+        "L": 7,
+        "GF": 52,
+        "GA": 37,
+        "GD": 15,
+        "Pts": 56,
+        "PPG": 1.6
+       },
+       "now": {
+        "P": 30,
+        "W": 15,
+        "D": 8,
+        "L": 7,
+        "GF": 53,
+        "GA": 34,
+        "GD": 19,
+        "Pts": 53,
+        "PPG": 1.767
+       }
+      },
+      "away": {
+       "name": "Comerciantes Unidos",
+       "att": 0.945,
+       "def": 1.057,
+       "played": 30,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Liga 1",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLDLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 34,
+        "W": 8,
+        "D": 10,
+        "L": 16,
+        "GF": 34,
+        "GA": 52,
+        "GD": -18,
+        "Pts": 34,
+        "PPG": 1.0
+       },
+       "now": {
+        "P": 30,
+        "W": 8,
+        "D": 10,
+        "L": 12,
+        "GF": 41,
+        "GA": 44,
+        "GD": -3,
+        "Pts": 34,
+        "PPG": 1.133
+       }
+      },
+      "p": {
+       "h": 0.6044,
+       "d": 0.2315,
+       "a": 0.1641
+      },
+      "xg": [
+       1.98,
+       0.88
+      ],
+      "btts": 0.5271,
+      "over25": 0.5298,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6044,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7328,
+        0.1698,
+        0.0973
+       ],
+       "best": [
+        1.3,
+        5.5,
+        10.0
+       ],
+       "avg": [
+        1.27,
+        5.46,
+        9.53
+       ],
+       "ev": [
+        -0.2143,
+        0.2732,
+        0.641
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 29,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2315,
+     "multOnly": true,
+     "odds": 1.27,
+     "best": 1.3,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.29,
+      "Bet365": 1.3,
+      "Betfair": 1.22,
+      "BetVictor": 1.25
+     },
+     "margin": 1.0778,
+     "pricedAt": "2026-10-29T09:19:46Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7874,
+     "pTested": 0.6044,
+     "fair": 0.7306,
+     "edge": -0.2324,
+     "basis": "bookmakers",
+     "firstOdds": 1.27,
+     "lockPrice": {
+      "odds": 1.27,
+      "best": 1.3,
+      "book": "Bet365",
+      "at": "2026-10-29T09:21:32Z"
+     },
+     "lastOdds": 1.27,
+     "lastBest": 1.3,
+     "lastAt": "2026-10-29T09:21:32Z"
+    },
+    {
+     "sport": "nba",
+     "event": "Portland Trail Blazers v Memphis Grizzlies",
+     "home": "Portland Trail Blazers",
+     "away": "Memphis Grizzlies",
+     "pick": "Portland Trail Blazers",
+     "comp": "NBA",
+     "when": "2026-10-30T02:00Z",
+     "date": "2026-10-30",
+     "id": "401909895",
+     "pModel": 0.7238,
+     "p": 0.6953,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909895",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-10-30T02:00Z",
+      "home": "Portland Trail Blazers",
+      "away": "Memphis Grizzlies",
+      "neutral": false,
+      "pHome": 0.7238,
+      "pick": "Portland Trail Blazers",
+      "confidence": 0.7238,
+      "tier": "Strong",
+      "eloH": 1562,
+      "eloA": 1429,
+      "gamesH": 255,
+      "gamesA": 256,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "136-129",
+        "opp": "Los Angeles Lakers",
+        "home": false,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "W",
+        "score": "128-120",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "124-83",
+        "opp": "Phoenix Suns",
+        "home": true,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "95-114",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-04-29"
+       },
+       {
+        "r": "L",
+        "score": "93-114",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-04-26"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "110-105",
+        "opp": "Utah Jazz",
+        "home": false,
+        "date": "2026-10-27"
+       },
+       {
+        "r": "W",
+        "score": "123-112",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-10-26"
+       },
+       {
+        "r": "W",
+        "score": "111-108",
+        "opp": "Golden State Warriors",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "123-103",
+        "opp": "Utah Jazz",
+        "home": true,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "101-132",
+        "opp": "Houston Rockets",
+        "home": false,
+        "date": "2026-04-13"
+       }
+      ],
+      "recordH": {
+       "w": 3,
+       "l": 0,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 0,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-05",
+        "home": "Memphis Grizzlies",
+        "away": "Portland Trail Blazers",
+        "score": "114-122"
+       },
+       {
+        "date": "2026-02-08",
+        "home": "Portland Trail Blazers",
+        "away": "Memphis Grizzlies",
+        "score": "122-115"
+       },
+       {
+        "date": "2026-02-07",
+        "home": "Portland Trail Blazers",
+        "away": "Memphis Grizzlies",
+        "score": "135-115"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.38,
+     "margin": 1.0421,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-29T09:22:48Z",
+     "implied": 0.7246,
+     "pTested": 0.7238,
+     "fair": 0.6953,
+     "edge": -0.0405,
+     "basis": "bookmakers",
+     "firstOdds": 1.38,
+     "lockPrice": {
+      "odds": 1.38,
+      "best": 1.38,
+      "book": null,
+      "at": "2026-10-29T09:21:32Z"
+     },
+     "lastOdds": 1.38,
+     "lastBest": 1.38,
+     "lastAt": "2026-10-29T09:21:32Z"
+    }
+   ],
+   "bestOdds": 2.12,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-10-29T09:21:32Z",
+   "checked": "2026-10-29T09:21:32Z",
+   "lockAt": "2026-10-29T07:00:00Z",
+   "locked": true,
+   "late": true,
+   "status": "late",
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "archivedAt": "2026-10-29T09:21:32Z"
   }
  ]
 }
