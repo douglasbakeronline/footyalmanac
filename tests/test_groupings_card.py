@@ -334,13 +334,15 @@ class BenchAndBook(unittest.TestCase):
 class CoreLeagues(unittest.TestCase):
     """29 Oct 2026: football legs on the Card come from the core leagues only."""
 
-    def test_cup_legs_are_out_wider_leagues_in(self):
-        # 29 Oct 2026 10:05: wider leagues allowed (under the market), cups and internationals out
-        self.assertIsNone(G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+    def test_core_only_again_wider_and_cups_out(self):
+        # 29 Oct 2026 11:59: core only (the wider rule was tried and reversed on the replay)
+        self.assertTrue(G.CARD_CORE_ONLY)
+        self.assertIn("leagues the Card takes", G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
         self.assertIn("leagues the Card takes", G.card_fault(dict(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
         self.assertIn("leagues the Card takes", G.card_fault(dict(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="wc.q.uefa", comp="WCQ")))
-        with mock.patch.object(G, "CARD_CORE_ONLY", True):
-            self.assertIn("leagues the Card takes", G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+        with mock.patch.object(G, "CARD_CORE_ONLY", False):   # the switch still admits wider leagues, cups never
+            self.assertIsNone(G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+            self.assertIn("leagues the Card takes", G.card_fault(dict(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
         self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
         self.assertTrue(G.core_league("de.2")); self.assertFalse(G.core_league("eu.cl")); self.assertFalse(G.core_league(None))
 

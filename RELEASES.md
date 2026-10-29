@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 The Card: core leagues only again, after the two-rule replay (tag pending)
+
+**What changed:** `CARD_CORE_ONLY` back to True, Douglas's decision at 11:59 after both rules were replayed on October with the live Card machinery: core only +5.5 units on 15 staked (10 groups, 5 won); wider in +0.5 on 32 (21 groups, 8 won); the extra groups lost 5 units, nearly all Card 3x built from wider picks (2 of 10). `CARD_MAX_GROUPS` stays at 6. Page copy updated.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, seventh pass. **Files:** `groupings.py`, `index.html`, `RELEASES.md`, `CLAUDE.md`. **Roll back:** set `CARD_CORE_ONLY = False`.
+
 ## 2026-10-29 The Card: wider leagues in under the market rule, core first, six groups a day (tag pending)
 
 **What changed:** Douglas, 10:05: "I want what will build the biggest return on a monthly basis". With a positive edge on every leg the monthly return is the number of qualifying groups times their edge, so the card now takes every pick with evidence behind it: `CARD_CORE_ONLY` False, football from any league but a cup or an international (`card_league`), all still under the market rule; core-league picks are chosen first at an equal chance (`CARD_CORE_NUDGE` 0.02, selection only, the quoted chance unchanged); up to six groups a day (`CARD_MAX_GROUPS`).
