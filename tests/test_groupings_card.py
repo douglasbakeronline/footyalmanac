@@ -11,8 +11,13 @@ DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 
 def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
+    # 29 Oct 2026: a football leg needs the model at least 5 points under the
+    # bookmakers' chance (CARD_UNDER_MARKET); the board's 0.66 at 1.40 (fair 0.69)
+    # is read as 0.62 so the standard board still qualifies
+    if sport == "football" and model == 0.66: model = 0.62
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
-         "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE}
+         "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
+         "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
     return G.honest(l)
 
 
@@ -31,20 +36,25 @@ AFTER_LOCK = datetime(2026, 11, 7, 8, 0, tzinfo=timezone.utc)
 
 class Windows(unittest.TestCase):
     def test_slots_and_lock_times(self):
-        self.assertEqual(G.uk_slot({"when": f"{DATE}T00:30:00Z"}), (DATE, "Overnight"))
-        self.assertEqual(G.uk_slot({"when": f"{DATE}T15:00:00Z"}), (DATE, "Daytime"))
-        self.assertEqual(G.uk_slot({"when": f"{DATE}T19:45:00Z"}), (DATE, "Evening"))
-        self.assertEqual(G.lock_time(DATE, "Overnight"), datetime(2026, 11, 6, 21, 0, tzinfo=timezone.utc))
-        self.assertEqual(G.lock_time(DATE, "Daytime"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))
+        # 29 Oct 2026: one window, 07:00 UK to 07:00 UK the next day
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T00:30:00Z"}), ("2026-11-06", "Day"))   # early hours: the day before
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T06:59:00Z"}), ("2026-11-06", "Day"))
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T07:00:00Z"}), (DATE, "Day"))
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T15:00:00Z"}), (DATE, "Day"))
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T23:45:00Z"}), (DATE, "Day"))
+        self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))
+        self.assertEqual(G.window_end(DATE, "Day"), datetime(2026, 11, 8, 7, 0, tzinfo=timezone.utc))
         # in summer time the same UK hours are an hour earlier in UTC
-        self.assertEqual(G.lock_time("2026-07-04", "Evening"), datetime(2026, 7, 4, 6, 0, tzinfo=timezone.utc))
+        self.assertEqual(G.lock_time("2026-07-04", "Day"), datetime(2026, 7, 4, 6, 0, tzinfo=timezone.utc))
+        # the pre-29 Oct windows still resolve for the record
+        self.assertEqual(G.lock_time(DATE, "Overnight"), datetime(2026, 11, 6, 21, 0, tzinfo=timezone.utc))
 
 
 class Build(unittest.TestCase):
     def test_groups_per_window_at_target_returns(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
         self.assertTrue(gs)
-        self.assertEqual({g["window"] for g in gs}, {"Daytime", "Evening"})
+        self.assertEqual({g["window"] for g in gs}, {"Day"})
         seen = [l["event"] for g in gs for l in g["legs"]]
         self.assertEqual(len(seen), len(set(seen)))                  # no fixture twice
         for g in gs:
@@ -56,20 +66,20 @@ class Build(unittest.TestCase):
 
     def test_locked_group_never_changes(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        g0 = next(g for g in gs if g["window"] == "Daytime")
+        g0 = next(g for g in gs if g["name"] == "Card 2x")
         moved = [dict(l) for l in board()]
-        for l in moved:          # every daytime price collapses: unlocked, it would be dropped
+        for l in moved:          # every price in the group collapses: unlocked, it would be dropped
             if l["event"] in {x["event"] for x in g0["legs"]}:
                 l.update(odds=1.05); G.honest(l)
         again = G.build_card(moved, DATE, AFTER_LOCK, prev=gs, log=[])
-        g1 = next(g for g in again if g["window"] == "Daytime" and g["name"] == g0["name"])
+        g1 = next(g for g in again if g["name"] == g0["name"])
         self.assertTrue(g1["locked"])
         self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
         self.assertEqual(g1["status"], "locked")
 
     def test_unlocked_group_is_rebuilt_when_a_leg_fails(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        g0 = next(g for g in gs if g["window"] == "Evening")
+        g0 = next(g for g in gs if g["name"] == "Card 3x")
         moved = [dict(l) for l in board()]
         for l in moved:
             if l["event"] == g0["legs"][0]["event"]:
@@ -82,7 +92,7 @@ class Build(unittest.TestCase):
         # 25 Oct 2026 (review bug 8): the price source fails on the next build,
         # every leg comes back as an estimate; the group holds on its last price, flagged stale
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        g0 = next(g for g in gs if g["window"] == "Daytime")
+        g0 = next(g for g in gs if g["name"] == "Card 2x")
         outage = []
         for l in board():
             l = dict(l)
@@ -92,12 +102,12 @@ class Build(unittest.TestCase):
             outage.append(l)
         log = []
         again = G.build_card(outage, DATE, EARLY + timedelta(hours=1), prev=gs, log=log)
-        g1 = next((g for g in again if g["window"] == "Daytime" and g["name"] == g0["name"]), None)
+        g1 = next((g for g in again if g["name"] == g0["name"]), None)
         self.assertIsNotNone(g1)
         self.assertEqual(g1["status"], "holding")
         self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
         self.assertTrue(all(l.get("stale") for l in g1["legs"]))
-        self.assertFalse(any(e["name"] == g0["name"] and e["rank"] == "Daytime" for e in log))
+        self.assertFalse(any(e["name"] == g0["name"] for e in log))
 
     def test_late_group_after_lock(self):
         gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
@@ -149,7 +159,7 @@ class Archive(unittest.TestCase):
 
     def test_archived_slot_beats_a_different_published_group(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
-        g0 = next(g for g in gs if g["window"] == "Daytime")
+        g0 = gs[0]
         other = dict(g0, legs=[dict(l, event="z v z", pick="z") for l in g0["legs"]], locked=True)
         again = G.build_card(board(), DATE, AFTER_LOCK, prev=[other], log=[], archived=[dict(g0, locked=True)])
         g1 = next(g for g in again if G.card_slot(g) == G.card_slot(g0))
@@ -173,6 +183,8 @@ class TennisOnTheCard(unittest.TestCase):
         self.assertTrue(t)
         self.assertFalse(t[0]["listOff"])
         l = G.honest(dict(t[0], odds=1.40, margin=1.04, est=False))
+        self.assertIn("75%", G.card_fault(l))      # 29 Oct 2026: 72% is under the tennis floor
+        l = G.honest(dict(t[0], odds=1.25, margin=1.04, est=False, pModel=0.78))
         self.assertIsNone(G.card_fault(l))
         self.assertFalse(G.safe_leg(l))          # still never in the old strict groups
 
@@ -196,7 +208,7 @@ class WiderRule(unittest.TestCase):
         for l in L[2:]: self.assertIsNotNone(G.card_fault(l)); self.assertIsNone(G.card_fault(l, wide=True))
         gs = G.build_card(L, DATE, EARLY, log=[])
         self.assertTrue(gs)
-        self.assertTrue(all(g["wide"] and g["window"] == "Daytime" for g in gs))
+        self.assertTrue(all(g["wide"] and g["window"] == "Day" for g in gs))
         self.assertEqual(gs[0]["risk"], "Wider rule")
 
     def test_full_rule_window_gets_no_wide_group(self):
@@ -206,7 +218,7 @@ class WiderRule(unittest.TestCase):
     def test_wide_group_gives_way_to_a_full_rule_group(self):
         first = G.build_card(self.weak_daytime(), DATE, EARLY, log=[])
         again = G.build_card(board(), DATE, EARLY + timedelta(hours=1), prev=first, log=[])
-        self.assertTrue(any(g["window"] == "Daytime" for g in again))
+        self.assertTrue(any(g["window"] == "Day" for g in again))
         self.assertFalse(any(g.get("wide") for g in again))
 
     def test_locked_wide_group_stays(self):
@@ -239,4 +251,129 @@ class TennisTimes(unittest.TestCase):
             L = G.legs({DATE})
         self.assertEqual(L[0]["when"], f"{DATE}T09:30:00Z")
         self.assertTrue(L[0]["timeEst"])
-        self.assertEqual(G.uk_slot(L[0])[1], "Daytime")
+        self.assertEqual(G.uk_slot(L[0]), (DATE, "Day"))
+
+
+class SportRule(unittest.TestCase):
+    """29 Oct 2026 review: NFL and college football legs are off the Card; a
+    tennis leg needs the model and its tested rate both at 75%+."""
+
+    def test_nfl_and_cfb_are_off_the_card(self):
+        for s in ("nfl", "cfb"):
+            self.assertIn("off the Card", G.card_fault(leg(0, 1.40, 0.80, f"{DATE}T20:00:00Z", sport=s)))
+
+    def test_tennis_needs_75_on_model_and_tested_rate(self):
+        t = dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
+        self.assertIn("75%", G.card_fault(t))
+        t = dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.70)
+        self.assertIn("75%", G.card_fault(t))
+        t = dict(leg(3, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
+        self.assertIsNone(G.card_fault(t))
+
+    def test_football_and_nba_unchanged(self):
+        self.assertIsNone(G.card_fault(leg(4, 1.40, 0.66, f"{DATE}T12:00:00Z")))
+        self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
+
+    def test_old_rule_groups_rebuild(self):
+        self.assertEqual(G.CARD_RULE, 4)
+        g = {"name": "Card 2x", "rule": 1, "legs": []}
+        self.assertEqual(G.recheck_card(g, [])[0], None)
+
+
+class BenchAndBook(unittest.TestCase):
+    """29 Oct 2026, Douglas: William Hill prices on every pick, substitutes on
+    every group, so a pick that isn't offered is swapped, never merged."""
+
+    def test_bench_keeps_the_group_in_range_and_unused(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        used = {l["event"] for g in gs for l in g["legs"]}
+        self.assertTrue(any(g["bench"] for g in gs))    # the 3x here sits on its 3.00 floor, so it may have none
+        for g in gs:
+            b = g["bench"]
+            self.assertLessEqual(len(b), G.CARD_BENCH)
+            self.assertFalse({l["event"] for l in b} & used)
+            lo, hi = G.CARD_RANGE[g["name"]]
+            for sub in b:
+                for i in range(len(g["legs"])):
+                    legs_ = [x for j, x in enumerate(g["legs"]) if j != i] + [sub]
+                    o = G.math.prod(x["odds"] for x in legs_)
+                    self.assertTrue(lo <= o <= hi)
+                    self.assertGreaterEqual(G.math.prod(x["p"] for x in legs_), G.MIN_CHANCE[g["name"]])
+
+    def test_locked_group_keeps_its_bench(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = next(g for g in gs if g["bench"]); bench0 = [l["pick"] for l in g0["bench"]]
+        again = G.build_card(board()[:6], DATE, AFTER_LOCK, prev=gs, log=[])
+        g1 = next(g for g in again if g["name"] == g0["name"])
+        self.assertEqual([l["pick"] for l in g1["bench"]], bench0)
+
+    def test_price_at_the_book(self):
+        L = board()
+        for l in L: l["bookOdds"] = {"William Hill": round(l["odds"] + 0.02, 2), "Bet365": l["odds"]}
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        g = gs[0]
+        self.assertEqual(g["book"], "William Hill")
+        self.assertAlmostEqual(g["bookOdds"], round(G.math.prod(l["odds"] + 0.02 for l in g["legs"]), 2), places=1)
+        self.assertTrue(all(G.book_price(l) for l in g["legs"]))
+        # a pick Hill doesn't price still qualifies; the group then has no price at the book
+        L2 = board()
+        L2[0]["bookOdds"] = {"Bet365": L2[0]["odds"]}
+        gs2 = G.build_card(L2, DATE, EARLY, log=[])
+        self.assertTrue(gs2)
+        for g in gs2:
+            if any(l["event"] == L2[0]["event"] for l in g["legs"]): self.assertIsNone(g["bookOdds"])
+
+    def test_record_keeps_old_windows(self):
+        self.assertEqual([w for w, _, _ in G.CARD_WINDOWS], ["Day"])
+
+
+class CoreLeagues(unittest.TestCase):
+    """29 Oct 2026: football legs on the Card come from the core leagues only."""
+
+    def test_wider_league_and_cup_legs_are_out(self):
+        self.assertIn("core leagues", G.card_fault(dict(leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+        self.assertIn("core leagues", G.card_fault(dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
+        self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
+        self.assertTrue(G.core_league("de.2")); self.assertFalse(G.core_league("eu.cl")); self.assertFalse(G.core_league(None))
+
+    def test_record_carries_the_floor(self):
+        import json, tempfile
+        # three settled groups at p 0.3, none won: z = -0.9/sqrt(0.63)
+        self.assertIsNotNone(G.CARD_FLOOR_Z)
+
+
+class MoreGroups(unittest.TestCase):
+    """29 Oct 2026: up to CARD_MAX_GROUPS a day, 2x, 3x, then a second of each
+    from the fixtures left, every group from different fixtures."""
+
+    def test_second_pair_from_the_leftover_fixtures(self):
+        L = board() + [leg(20 + i, round(1.32 + 0.03 * i, 2), 0.66, f"{DATE}T{14 + i // 2:02d}:{(i % 2) * 30:02d}:00Z") for i in range(8)]
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        self.assertLessEqual(len(gs), G.CARD_MAX_GROUPS)
+        self.assertGreater(len(gs), 2)
+        seen = [l["event"] for g in gs for l in g["legs"]]
+        self.assertEqual(len(seen), len(set(seen)))
+        self.assertEqual(len({G.card_slot(g) for g in gs}), len(gs))
+        self.assertTrue(any(g["seq"] == 2 for g in gs))
+        for g in gs:
+            self.assertEqual(g["stake"], G.CARD_STAKE[g["name"]])
+            self.assertGreaterEqual(g["odds"], G.CARD_RANGE[g["name"]][0])
+
+    def test_second_group_locks_and_holds_like_the_first(self):
+        L = board() + [leg(20 + i, round(1.32 + 0.03 * i, 2), 0.66, f"{DATE}T{14 + i // 2:02d}:{(i % 2) * 30:02d}:00Z") for i in range(8)]
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        again = G.build_card(L, DATE, AFTER_LOCK, prev=gs, log=[])
+        self.assertEqual({G.card_slot(g) for g in again}, {G.card_slot(g) for g in gs})
+        self.assertTrue(all(g["locked"] for g in again))
+
+
+class UnderMarket(unittest.TestCase):
+    """29 Oct 2026 backtest: a football leg needs the model at least 5 points
+    under the bookmakers' chance. Full rule only; the wider rule is graded apart."""
+
+    def test_model_level_with_the_market_is_out(self):
+        l = leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z")          # fair about 0.69
+        self.assertIn("under the", G.card_fault(l))
+        self.assertIsNone(G.card_fault(l, wide=True))
+        self.assertIsNone(G.card_fault(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z")))
+        self.assertIsNone(G.card_fault(dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.8)))   # football only

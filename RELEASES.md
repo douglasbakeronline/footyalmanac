@@ -3,6 +3,21 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 The Card: NFL and college football off, tennis legs to 75% (tag pending)
+
+**What changed:**
+- **NFL and college football legs are off the Card** (`groupings.CARD_SPORTS_OFF`, `card_fault`). College football was already kept off through `listOff`; NFL was not.
+- **A tennis leg needs the model and its tested rate both at 75% or more** (`groupings.CARD_SPORT_MIN`). Football, rugby and the NBA are unchanged at the 60% bookmaker floor.
+- `CARD_RULE` is 2, so any unlocked Card group rebuilds under the new rule on the next build; locked groups stand as published. The Bets page states the rule, and the avoid list marks a tennis pick under the floor as caution and an NFL pick at 70%+ as avoid.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`. 379 settled legs, 4 to 29 Oct: football landed 75.8% against 75.3% quoted (n=223) and on quote in every UK time window; tennis 64.8% v 78.0% (n=91), college football 70.4% v 85.4% (n=27), NFL 60.0% v 73.0% (n=20). On the Card itself tennis legs landed 19 of 32. Time of day makes no difference (overnight 71.4%, daytime 72.0%, evening 72.8%; z -0.16): the Overnight window's 1 of 6 is 13 tennis legs landing 6. The Daily List's top N by confidence over the same days landed 291 of 379 (76.8%) against the legs' 274 (72.3%), with equal mean quoted chance. Four new tests in `tests/test_groupings_card.py`; 560 tests pass; `nametest.py` clear.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `claude/betting-groups-review-2026-10-29.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model number, the Daily List (tennis stays on it at 75%), the windows and lock times, the 60% bookmaker floor for the other sports, the retired kinds' rules, grading.
+
+**Roll back:** `git revert` the merge commit, or set `CARD_SPORTS_OFF = set()` and `CARD_SPORT_MIN = {}` and bump `CARD_RULE`.
+
 ## 2026-10-28 Daily List: confidence order, two groups of five, tennis back on (tag pending)
 
 **What changed:**
