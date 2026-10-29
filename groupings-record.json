@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-29T09:40:36Z",
+ "graded": "2026-10-29T10:02:13Z",
  "overall": {
   "groups": 92,
   "settled": 90,
@@ -7,7 +7,7 @@
   "z": -1.45,
   "lost": 67,
   "pending": 2,
-  "legs": 380,
+  "legs": 381,
   "legsWon": 274,
   "returned": 71.0,
   "staked": 90,
@@ -52,7 +52,7 @@
    "z": 0.9,
    "lost": 6,
    "pending": 0,
-   "legs": 30,
+   "legs": 31,
    "legsWon": 19,
    "returned": 12.9,
    "staked": 10,
@@ -311,7 +311,7 @@
   "z": -0.4,
   "lost": 11,
   "pending": 1,
-  "legs": 45,
+  "legs": 46,
   "legsWon": 27,
   "returned": 12.22,
   "staked": 15,
@@ -378,7 +378,7 @@
    "z": -0.4,
    "lost": 11,
    "pending": 1,
-   "legs": 45,
+   "legs": 46,
    "legsWon": 27,
    "returned": 12.22,
    "staked": 15,
@@ -490,7 +490,7 @@
    "z": -0.85,
    "lost": 5,
    "pending": 1,
-   "legs": 17,
+   "legs": 18,
    "legsWon": 9,
    "returned": 3.12,
    "staked": 6,
@@ -623,8 +623,8 @@
      "paidBest": 0,
      "paidLock": 0,
      "legsWon": 0,
-     "legsLost": 2,
-     "legsPending": 1,
+     "legsLost": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Kimberly Birrell",
@@ -674,8 +674,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.6454,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "Xinran Sun (CHN) bt (7) Maria Timofeeva (UZB) 6-3 4-6 7-6 (7-3)"
       }
      ]
     },
