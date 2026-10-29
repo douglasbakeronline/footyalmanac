@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Goals-market value backtest (tag pending)
+
+**What changed:** `tools/goals_value.py`: the model's over-2.5 number (the same Dixon-Coles grid as the match-winner numbers, shrunk as the site publishes it) against football-data.co.uk's over/under 2.5 prices on the fit season (2025-26) and the check season (2026-27 to date), walked forward with `tune.lambdas` and matched with `odds.match`. Reports log loss model v market, calibration by band, and the value picks (model above the best price by 5%+) by hit rate, ROI and closing-line value with a bootstrap, per season; `valueGate` passes only when CLV is positive on both. `tune.yml` runs it after the weekly report (advisory, `continue-on-error`) and commits `goals-value.json`. Douglas's request after the Card review: is the goals market priced more softly than match winner?
+
+**Files:** `tools/goals_value.py`, `.github/workflows/tune.yml`, `CLAUDE.md`, `RELEASES.md`. Workflow path: owner's merge. **Not changed:** anything on the site; nothing flags value from this yet. **Roll back:** remove the step.
+
 ## 2026-10-29 Placed marker, flagged replacement pushes, pre-registered replay variants (tag pending)
 
 **What changed:** a **Mark as placed** button on each open Card group (per browser): the page then shows "Placed" on that version, or, if a pick failed the rule and the slot shows a different group, which version was placed and that the record grades the published one. Replacement pushes carry a `REPLACEMENT:` title and the warning tag. `tools/card_replay.py` rebuilt around the live `build_card` pieces with pre-registered variants (`under8`, `under10`, `four3x`, `wider`) and `--since`, for the 15 and 30 Nov reviews; on October all are within noise of the live rule. One test added; 576 pass.

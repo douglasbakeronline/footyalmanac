@@ -112,6 +112,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `tests/` regression tests (stdlib `unittest`): `python3 -m unittest discover -s tests -v`. Run before any push that touches the model, replay, archive or grading.
 - `tools/midband_calibration.py` landed v quoted by band and segment on the graded record, strict win test. Advisory.
 - `tools/card_replay.py` the Card rebuilt on the priced archive under several leg rules (29 Oct 2026). Advisory.
+- `tools/goals_value.py` value backtest on the goals market (over/under 2.5 v football-data.co.uk prices, fit and check seasons, log loss, calibration by band, value picks' hit, ROI and closing-line value); run by `tune.yml`, writes `goals-value.json`. Advisory (29 Oct 2026).
 - `tools/market_check.py` model against market on the archive (log loss, landing by the model's lead over the market, draw share, the Multiplier price range). Advisory.
 - `predictability.py` tests signals beyond the model's confidence (did the pick land?). Advisory only, changes nothing.
 - `eurotest.py` cross-competition harness for league strength, writes `europe.json`.
