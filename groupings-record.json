@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-29T20:07:53Z",
+ "graded": "2026-10-29T21:44:23Z",
  "overall": {
   "groups": 93,
   "settled": 90,
@@ -7,8 +7,8 @@
   "z": -1.45,
   "lost": 67,
   "pending": 3,
-  "legs": 381,
-  "legsWon": 274,
+  "legs": 382,
+  "legsWon": 275,
   "returned": 71.0,
   "staked": 90,
   "returnedBest": 75.15,
@@ -17,9 +17,9 @@
   "expected": 29.34,
   "clv": {
    "n": 81,
-   "shortened": 31,
-   "drifted": 29,
-   "mean": -0.0033
+   "shortened": 33,
+   "drifted": 28,
+   "mean": -0.0028
   }
  },
  "byBand": {
@@ -40,9 +40,9 @@
    "expected": 4.12,
    "clv": {
     "n": 39,
-    "shortened": 10,
-    "drifted": 17,
-    "mean": -0.0077
+    "shortened": 11,
+    "drifted": 16,
+    "mean": -0.0071
    }
   },
   "Card 3x": {
@@ -52,8 +52,8 @@
    "z": 0.9,
    "lost": 6,
    "pending": 1,
-   "legs": 31,
-   "legsWon": 19,
+   "legs": 32,
+   "legsWon": 20,
    "returned": 12.9,
    "staked": 10,
    "returnedBest": 13.37,
@@ -62,9 +62,9 @@
    "expected": 2.73,
    "clv": {
     "n": 32,
-    "shortened": 12,
+    "shortened": 13,
     "drifted": 8,
-    "mean": -0.0013
+    "mean": -0.0008
    }
   },
   "Wider Treble": {
@@ -311,8 +311,8 @@
   "z": -0.4,
   "lost": 11,
   "pending": 2,
-  "legs": 46,
-  "legsWon": 27,
+  "legs": 47,
+  "legsWon": 28,
   "returned": 12.22,
   "staked": 15,
   "returnedBest": 12.44,
@@ -321,9 +321,9 @@
   "expected": 4.71,
   "clv": {
    "n": 49,
-   "shortened": 18,
+   "shortened": 19,
    "drifted": 18,
-   "mean": -0.0062
+   "mean": -0.0059
   }
  },
  "cardWide": {
@@ -365,9 +365,9 @@
   "expected": 2.14,
   "clv": {
    "n": 21,
-   "shortened": 3,
-   "drifted": 7,
-   "mean": -0.0026
+   "shortened": 4,
+   "drifted": 6,
+   "mean": -0.0016
   }
  },
  "cardByRule": {
@@ -400,8 +400,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -410,9 +410,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 0,
-    "mean": 0.0
+    "mean": 0.0053
    }
   }
  },
@@ -424,8 +424,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -434,9 +434,9 @@
    "expected": 0,
    "clv": {
     "n": 3,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 0,
-    "mean": 0.0
+    "mean": 0.0053
    }
   },
   "Daytime": {
@@ -724,7 +724,7 @@
        "when": "2026-10-30T00:30:00Z",
        "odds": 1.27,
        "best": 1.3,
-       "lastOdds": 1.32,
+       "lastOdds": 1.34,
        "lockOdds": 1.27,
        "lockBest": 1.3,
        "lockBook": "Bet365",
@@ -741,7 +741,7 @@
        "when": "2026-10-30T02:00Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.39,
+       "lastOdds": 1.34,
        "lockOdds": 1.38,
        "lockBest": 1.38,
        "lockBook": null,
@@ -768,9 +768,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Hammarby IF",
@@ -803,8 +803,8 @@
        "lockBook": "Pinnacle",
        "est": false,
        "p": 0.7515,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "(8) Nadia Podoroska (ARG) bt Miriam Bulgaru (ROM) 6-1 6-1"
       },
       {
        "pick": "New Orleans Pelicans",
@@ -831,7 +831,7 @@
        "when": "2026-10-30T05:30:00Z",
        "odds": 1.28,
        "best": 1.28,
-       "lastOdds": 1.28,
+       "lastOdds": 1.26,
        "lockOdds": 1.28,
        "lockBest": 1.28,
        "lockBook": "Pinnacle",
