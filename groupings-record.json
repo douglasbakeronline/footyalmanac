@@ -1,41 +1,41 @@
 {
- "graded": "2026-10-28T23:28:21Z",
+ "graded": "2026-10-29T01:52:29Z",
  "overall": {
   "groups": 91,
-  "settled": 87,
+  "settled": 89,
   "won": 23,
-  "lost": 64,
-  "pending": 4,
-  "legs": 373,
-  "legsWon": 271,
+  "lost": 66,
+  "pending": 2,
+  "legs": 378,
+  "legsWon": 274,
   "returned": 71.0,
-  "staked": 87,
+  "staked": 89,
   "returnedBest": 75.15,
   "returnedLock": 16.44,
-  "stakedLock": 13,
-  "expected": 28.39,
+  "stakedLock": 15,
+  "expected": 29.04,
   "clv": {
    "n": 75,
    "shortened": 31,
    "drifted": 27,
-   "mean": -0.0023
+   "mean": -0.0026
   }
  },
  "byBand": {
   "Card 2x": {
    "groups": 12,
-   "settled": 10,
+   "settled": 11,
    "won": 4,
-   "lost": 6,
-   "pending": 2,
-   "legs": 30,
-   "legsWon": 21,
+   "lost": 7,
+   "pending": 1,
+   "legs": 33,
+   "legsWon": 23,
    "returned": 8.94,
-   "staked": 10,
+   "staked": 11,
    "returnedBest": 9.2,
    "returnedLock": 6.81,
-   "stakedLock": 8,
-   "expected": 3.71,
+   "stakedLock": 9,
+   "expected": 4.12,
    "clv": {
     "n": 36,
     "shortened": 10,
@@ -45,23 +45,23 @@
   },
   "Card 3x": {
    "groups": 10,
-   "settled": 8,
+   "settled": 9,
    "won": 4,
-   "lost": 4,
-   "pending": 2,
-   "legs": 26,
-   "legsWon": 18,
+   "lost": 5,
+   "pending": 1,
+   "legs": 28,
+   "legsWon": 19,
    "returned": 12.9,
-   "staked": 8,
+   "staked": 9,
    "returnedBest": 13.37,
    "returnedLock": 9.63,
-   "stakedLock": 5,
-   "expected": 2.18,
+   "stakedLock": 6,
+   "expected": 2.42,
    "clv": {
     "n": 29,
     "shortened": 12,
     "drifted": 8,
-    "mean": 0.0003
+    "mean": -0.0004
    }
   },
   "Wider Treble": {
@@ -293,23 +293,23 @@
  },
  "card": {
   "groups": 16,
-  "settled": 12,
+  "settled": 14,
   "won": 4,
-  "lost": 8,
-  "pending": 4,
-  "legs": 38,
-  "legsWon": 24,
+  "lost": 10,
+  "pending": 2,
+  "legs": 43,
+  "legsWon": 27,
   "returned": 12.22,
-  "staked": 12,
+  "staked": 14,
   "returnedBest": 12.44,
   "returnedLock": 12.04,
-  "stakedLock": 11,
-  "expected": 3.76,
+  "stakedLock": 13,
+  "expected": 4.4,
   "clv": {
    "n": 46,
    "shortened": 18,
    "drifted": 18,
-   "mean": -0.0055
+   "mean": -0.006
   }
  },
  "cardWide": {
@@ -373,7 +373,7 @@
     "n": 20,
     "shortened": 9,
     "drifted": 6,
-    "mean": -0.0014
+    "mean": -0.0024
    }
   },
   "Daytime": {
@@ -399,18 +399,18 @@
   },
   "Evening": {
    "groups": 4,
-   "settled": 2,
+   "settled": 4,
    "won": 1,
-   "lost": 1,
-   "pending": 2,
-   "legs": 7,
-   "legsWon": 6,
+   "lost": 3,
+   "pending": 0,
+   "legs": 12,
+   "legsWon": 9,
    "returned": 3.12,
-   "staked": 2,
+   "staked": 4,
    "returnedBest": 3.18,
    "returnedLock": 3.05,
-   "stakedLock": 2,
-   "expected": 0.63,
+   "stakedLock": 4,
+   "expected": 1.27,
    "clv": {
     "n": 12,
     "shortened": 7,
@@ -576,7 +576,7 @@
        "when": "2026-10-29T06:30:00Z",
        "odds": 1.5,
        "best": 1.5,
-       "lastOdds": 1.52,
+       "lastOdds": 1.55,
        "lockOdds": 1.5,
        "lockBest": 1.5,
        "lockBook": "Pinnacle",
@@ -829,7 +829,7 @@
      "window": "Evening",
      "odds": 2.14,
      "p": 0.401,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -837,9 +837,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Celtic",
@@ -855,8 +855,8 @@
        "lockBook": "William Hill",
        "est": false,
        "p": 0.7421,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       },
       {
        "pick": "Detroit Pistons",
@@ -872,8 +872,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.705,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "97-89"
       },
       {
        "pick": "Cleveland Cavaliers",
@@ -889,8 +889,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7664,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "121-111"
       }
      ]
     },
@@ -900,7 +900,7 @@
      "window": "Evening",
      "odds": 3.28,
      "p": 0.245,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -908,9 +908,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Forest Green",
@@ -943,8 +943,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.633,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       },
       {
        "pick": "Inter Miami",
@@ -960,8 +960,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6402,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       }
      ]
     }
