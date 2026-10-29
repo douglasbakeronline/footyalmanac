@@ -24,7 +24,8 @@ class Notify(unittest.TestCase):
             N.main()
         self.assertEqual(len(sent), 1)
         title, body = sent[0]
-        self.assertTrue(title.startswith("Card 2x · Fri 30 Oct · 2.18"))
+        self.assertTrue(title.startswith("Card 2x, Fri 30 Oct, 2.18"))
+        self.assertTrue(title.isascii())
         self.assertIn("Melgar  1.29 William Hill", body)
         self.assertIn("Lens  1.30 Bet365", body)         # no Hill price: best and who
         self.assertIn("open until Fri 19:00", body)

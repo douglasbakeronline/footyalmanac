@@ -37,7 +37,8 @@ def when(s):
 def message(g, date):
     book = g.get("book") or "William Hill"
     d = when(date + "T12:00:00Z")
-    title = f"{g['name']} · {d.strftime('%a %d %b') if d else date} · {g['odds']:.2f}" + (
+    # ASCII only in the title: it travels as an HTTP header, which drops non-Latin bytes
+    title = f"{g['name']}, {d.strftime('%a %d %b') if d else date}, {g['odds']:.2f}" + (
         f" ({g['bookOdds']:.2f} at {book})" if g.get("bookOdds") else f" ({g['bestOdds']:.2f} best)" if g.get("bestOdds") else "")
     lines = []
     for l in g["legs"]:
@@ -53,7 +54,7 @@ def message(g, date):
     return title, "\n".join(lines)
 
 
-def send(topic, title, body, tags="ticket"):
+def send(topic, title, body, tags="soccer"):
     req = urllib.request.Request(f"{NTFY}/{topic}", data=body.encode("utf-8"), method="POST",
                                  headers={"Title": title, "Tags": tags, "Priority": "high"})
     with urllib.request.urlopen(req, timeout=20) as r:
