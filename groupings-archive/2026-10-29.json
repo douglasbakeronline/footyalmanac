@@ -1043,7 +1043,7 @@
      },
      "lastOdds": 1.18,
      "lastBest": 1.18,
-     "lastAt": "2026-10-29T16:19:23Z"
+     "lastAt": "2026-10-29T17:40:52Z"
     },
     {
      "sport": "football",
@@ -1246,7 +1246,7 @@
      },
      "lastOdds": 1.31,
      "lastBest": 1.38,
-     "lastAt": "2026-10-29T16:19:23Z"
+     "lastAt": "2026-10-29T17:40:52Z"
     },
     {
      "sport": "nba",
@@ -1416,7 +1416,7 @@
      },
      "lastOdds": 1.34,
      "lastBest": 1.34,
-     "lastAt": "2026-10-29T16:19:23Z"
+     "lastAt": "2026-10-29T17:40:52Z"
     }
    ],
    "bestOdds": 2.12,
@@ -1433,6 +1433,593 @@
    "book": "William Hill",
    "stake": 2,
    "archivedAt": "2026-10-29T09:21:32Z"
+  },
+  {
+   "name": "Card 3x",
+   "risk": "Pays 3x+",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "odds": 3.35,
+   "p": 0.2465,
+   "implied": 0.2988,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 4,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Hammarby IF v IK Sirius",
+     "home": "Hammarby IF",
+     "away": "IK Sirius",
+     "side": "h",
+     "pick": "Hammarby IF",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-10-29T17:30:00Z",
+     "date": "2026-10-29",
+     "pModel": 0.5845,
+     "p": 0.6404,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-10-29",
+      "time": "17:30",
+      "kickoff": "2026-10-29T17:30:00Z",
+      "home": {
+       "name": "Hammarby IF",
+       "att": 1.353,
+       "def": 0.638,
+       "played": 25,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWLWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 16,
+        "D": 6,
+        "L": 8,
+        "GF": 48,
+        "GA": 25,
+        "GD": 23,
+        "Pts": 54,
+        "PPG": 1.8
+       },
+       "now": {
+        "P": 25,
+        "W": 15,
+        "D": 4,
+        "L": 6,
+        "GF": 52,
+        "GA": 21,
+        "GD": 31,
+        "Pts": 49,
+        "PPG": 1.96
+       }
+      },
+      "away": {
+       "name": "IK Sirius",
+       "att": 1.38,
+       "def": 0.943,
+       "played": 25,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWWDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 12,
+        "D": 5,
+        "L": 13,
+        "GF": 47,
+        "GA": 46,
+        "GD": 1,
+        "Pts": 41,
+        "PPG": 1.367
+       },
+       "now": {
+        "P": 25,
+        "W": 17,
+        "D": 4,
+        "L": 4,
+        "GF": 56,
+        "GA": 32,
+        "GD": 24,
+        "Pts": 55,
+        "PPG": 2.2
+       }
+      },
+      "p": {
+       "h": 0.5845,
+       "d": 0.2232,
+       "a": 0.1923
+      },
+      "xg": [
+       2.15,
+       1.1
+      ],
+      "btts": 0.5614,
+      "over25": 0.5639,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.5845,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6386,
+        0.2055,
+        0.1559
+       ],
+       "best": [
+        1.45,
+        4.5,
+        6.5
+       ],
+       "avg": [
+        1.45,
+        4.52,
+        5.96
+       ],
+       "ev": [
+        -0.1525,
+        0.0044,
+        0.2499
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 11,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5352,
+       "n": 99,
+       "cumHit": 0.6714,
+       "cumN": 280,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.6714,
+     "n": 280,
+     "list": false,
+     "pDraw": 0.2232,
+     "multOnly": true,
+     "odds": 1.45,
+     "best": 1.45,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.45,
+      "Betfair": 1.44,
+      "BetVictor": 1.44
+     },
+     "margin": 1.0769,
+     "pricedAt": "2026-10-29T16:18:13Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6897,
+     "pTested": 0.5352,
+     "fair": 0.6404,
+     "edge": -0.224,
+     "basis": "bookmakers",
+     "firstOdds": 1.45
+    },
+    {
+     "sport": "tennis",
+     "event": "Miriam Bianca Bulgaru v Nadia Podoroska",
+     "pick": "Nadia Podoroska",
+     "tour": "WTA",
+     "tournament": "Queretaro Open",
+     "players": [
+      "Miriam Bianca Bulgaru",
+      "Nadia Podoroska"
+     ],
+     "comp": "Queretaro Open Round 2",
+     "when": "2026-10-29T20:00:00Z",
+     "timeEst": false,
+     "date": "2026-10-29",
+     "id": "185801",
+     "fx": {
+      "id": "185801",
+      "espn": [
+       "Miriam Bulgaru",
+       "Nadia Podoroska"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-29",
+      "time": "20:00",
+      "timeTbc": false,
+      "tournament": "Queretaro Open",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Miriam Bianca Bulgaru",
+      "playerB": "Nadia Podoroska",
+      "ratingA": {
+       "elo": 1876,
+       "matches": 429,
+       "surfaceElo": 1626
+      },
+      "ratingB": {
+       "elo": 2055,
+       "matches": 340,
+       "surfaceElo": 1902
+      },
+      "p": {
+       "a": 0.2454,
+       "b": 0.7546
+      },
+      "pick": "Nadia Podoroska",
+      "confidence": 0.7546,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8333,
+       "n": 48,
+       "cumHit": 0.8333,
+       "cumN": 48,
+       "quoted": 0.7738,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7546,
+     "p": 0.7515,
+     "hit": 0.8333,
+     "n": 48,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.27,
+     "best": 1.27,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0478,
+     "pricedAt": "2026-10-29T16:20:03Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7874,
+     "pTested": 0.7546,
+     "fair": 0.7515,
+     "edge": -0.0456,
+     "basis": "bookmakers",
+     "firstOdds": 1.27,
+     "lastOdds": 1.27,
+     "lastBest": 1.27,
+     "lastAt": "2026-10-29T17:40:52Z",
+     "lockPrice": {
+      "odds": 1.27,
+      "best": 1.27,
+      "book": "Pinnacle",
+      "at": "2026-10-29T17:40:52Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "New Orleans Pelicans v Sacramento Kings",
+     "home": "New Orleans Pelicans",
+     "away": "Sacramento Kings",
+     "pick": "New Orleans Pelicans",
+     "comp": "NBA",
+     "when": "2026-10-30T00:00Z",
+     "date": "2026-10-30",
+     "id": "401909894",
+     "pModel": 0.6118,
+     "p": 0.675,
+     "hit": 0.7415,
+     "n": 855,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909894",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-10-30T00:00Z",
+      "home": "New Orleans Pelicans",
+      "away": "Sacramento Kings",
+      "neutral": false,
+      "pHome": 0.6118,
+      "pick": "New Orleans Pelicans",
+      "confidence": 0.6118,
+      "tier": "Lean",
+      "eloH": 1418,
+      "eloA": 1375,
+      "gamesH": 256,
+      "gamesA": 253,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6496,
+       "n": 197,
+       "cumHit": 0.7415,
+       "cumN": 855
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "91-104",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "L",
+        "score": "135-141",
+        "opp": "Denver Nuggets",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "119-120",
+        "opp": "Utah Jazz",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "L",
+        "score": "120-123",
+        "opp": "Indiana Pacers",
+        "home": true,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "126-132",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-04-13"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "103-130",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "L",
+        "score": "112-123",
+        "opp": "Memphis Grizzlies",
+        "home": true,
+        "date": "2026-10-26"
+       },
+       {
+        "r": "L",
+        "score": "120-128",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "L",
+        "score": "96-121",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-10-22"
+       },
+       {
+        "r": "L",
+        "score": "110-122",
+        "opp": "Portland Trail Blazers",
+        "home": false,
+        "date": "2026-04-13"
+       }
+      ],
+      "recordH": {
+       "w": 0,
+       "l": 4,
+       "d": 0
+      },
+      "recordA": {
+       "w": 0,
+       "l": 4,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-04-04",
+        "home": "Sacramento Kings",
+        "away": "New Orleans Pelicans",
+        "score": "117-113"
+       },
+       {
+        "date": "2026-03-06",
+        "home": "Sacramento Kings",
+        "away": "New Orleans Pelicans",
+        "score": "123-133"
+       },
+       {
+        "date": "2026-02-10",
+        "home": "New Orleans Pelicans",
+        "away": "Sacramento Kings",
+        "score": "120-94"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.42,
+     "margin": 1.0432,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-29T16:20:04Z",
+     "implied": 0.7042,
+     "pTested": 0.6118,
+     "fair": 0.675,
+     "edge": -0.1312,
+     "basis": "bookmakers",
+     "firstOdds": 1.42,
+     "lastOdds": 1.42,
+     "lastBest": 1.42,
+     "lastAt": "2026-10-29T17:40:52Z",
+     "lockPrice": {
+      "odds": 1.42,
+      "best": 1.42,
+      "book": null,
+      "at": "2026-10-29T17:40:52Z"
+     }
+    },
+    {
+     "sport": "tennis",
+     "event": "Leylah Fernandez v Elena Rybakina",
+     "pick": "Elena Rybakina",
+     "tour": "WTA",
+     "tournament": "Toray Pan Pacific Open Tennis",
+     "players": [
+      "Leylah Fernandez",
+      "Elena Rybakina"
+     ],
+     "comp": "Toray Pan Pacific Open Tennis Quarterfinal",
+     "when": "2026-10-30T05:30:00Z",
+     "timeEst": false,
+     "date": "2026-10-30",
+     "id": "185683",
+     "fx": {
+      "id": "185683",
+      "espn": [
+       "Leylah Fernandez",
+       "Elena Rybakina"
+      ],
+      "tour": "WTA",
+      "date": "2026-10-30",
+      "time": "05:30",
+      "timeTbc": false,
+      "tournament": "Toray Pan Pacific Open Tennis",
+      "round": "Quarterfinal",
+      "surface": "Hard",
+      "playerA": "Leylah Fernandez",
+      "playerB": "Elena Rybakina",
+      "ratingA": {
+       "elo": 2281,
+       "matches": 389,
+       "surfaceElo": 2105
+      },
+      "ratingB": {
+       "elo": 2518,
+       "matches": 496,
+       "surfaceElo": 2331
+      },
+      "p": {
+       "a": 0.2213,
+       "b": 0.7787
+      },
+      "pick": "Elena Rybakina",
+      "confidence": 0.7787,
+      "tier": "Strong",
+      "rankA": 23,
+      "rankB": 1,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8333,
+       "n": 48,
+       "cumHit": 0.8333,
+       "cumN": 48,
+       "quoted": 0.7738,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7787,
+     "p": 0.7589,
+     "hit": 0.8333,
+     "n": 48,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.28,
+     "best": 1.28,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0294,
+     "pricedAt": "2026-10-29T16:20:03Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7812,
+     "pTested": 0.7787,
+     "fair": 0.7589,
+     "edge": -0.0286,
+     "basis": "bookmakers",
+     "firstOdds": 1.28,
+     "lastOdds": 1.28,
+     "lastBest": 1.28,
+     "lastAt": "2026-10-29T17:40:52Z",
+     "lockPrice": {
+      "odds": 1.28,
+      "best": 1.28,
+      "book": "Pinnacle",
+      "at": "2026-10-29T17:40:52Z"
+     }
+    }
+   ],
+   "bestOdds": 3.35,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-10-29T16:19:23Z",
+   "checked": "2026-10-29T16:19:23Z",
+   "lockAt": "2026-10-29T17:30:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 1,
+   "archivedAt": "2026-10-29T17:40:52Z"
   }
  ]
 }
