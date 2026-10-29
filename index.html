@@ -3426,10 +3426,10 @@ function ogStatus(g){
   // window a day, 07:00 to 07:00, locked at 07:00.
   if(String(g.name).startsWith("Card")){
     const lk = ogAt(g.lockAt);
-    const say = s === "locked" ? `locked at ${lk}: place it and leave it`
-      : s === "late" ? `added after the card locked, from games not yet started; locked as it is`
+    const say = s === "locked" ? `frozen at its first kick-off (${lk}): the version in the record`
+      : s === "late" ? `added after the window locked, from games not yet started; locked as it is`
       : s === "underway" ? `under way: leave it, the result shows here once every pick has finished`
-      : `can still change until it locks at ${lk}; place it after that`;
+      : `open until its first kick-off at ${lk}. Place it any time before then; it only changes if a pick fails the rule, and the reason is logged below`;
     return `<div class="og-st"><b class="${s}">${OG_STATUS[s] || s}</b><span>${say}</span></div>`;
   }
   const say = s === "holding" ? `first shown ${first}${checked ? ` · re-checked ${checked}` : ""}`
@@ -3861,23 +3861,23 @@ function renderToday(){
     const when = lk ? `${locked ? "Locked" : "Locks"} ${ogAt(w.lockAt)}` : "";
     if(w.legacy && !gs.length) return "";
     return `<section class="tb-win"><h3 class="tb-h">${w.name === "Day" ? "The card" : w.name} <span class="tb-hours">${hh(w.from)}–${hh(w.to)}${w.to > 24 ? " next day" : ""}</span>
-        <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : `${when}${locked ? " · placed? leave it" : " · place it once it locks"}`}</small></h3>
+        <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : lk ? `${when}${locked ? " · placed? leave it" : " · place it once it locks"}` : "each group is open until its first kick-off; place any time before"}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
-            : "No group yet: too few bookmaker-priced picks so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify."}</div>`}</section>`;
+            : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2>
       <p>The card for the day: up to four groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model at least 5 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive). The card locks at 07:00 and never changes after.
+      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model at least 5 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers 55%+), marked and graded apart.</p></div>
     <ol class="tb-play">
-      <li><b>Place once.</b> After the card locks at 07:00. A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
+      <li><b>Place once.</b> Any time before a group's first kick-off. A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
       <li><b>Stake flat.</b> Two units on each 2x, one on each 3x, every day the same; the stake box below is one unit. Up to four groups a day, each from different fixtures.</li>
-      <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here the next morning.</li>
+      <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here once every pick has finished.</li>
       <li><b>Only the card.</b> Anything else goes through the checker below first. Avoid means out.</li>
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>

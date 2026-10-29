@@ -1345,14 +1345,23 @@ CARD_FLOOR_Z, CARD_FLOOR_N = -2.0, 50
 # and range. Staking: CARD_STAKE units on each kind, shown on the page
 # (two on a 2x, one on a 3x: most of the return for half the swing).
 CARD_MAX_GROUPS = 4
-# 29 Oct 2026, the day the windows changed. Douglas: "I want today's card to be
-# the new formatting and improved chance of success". The one-window card for
-# this date is built from the merge onwards and locks at the time below (UK)
-# instead of 07:00, so it is a proper locked card and not a late one; the
-# groups locked under the old windows that morning are left out of the page
-# for this date (they stay in the archive and the record as they were). A
-# one-day exception; delete after it has passed.
-CARD_TRANSITION = {"2026-10-29": "12:00"}
+# 29 Oct 2026, Douglas: "remove all locks ... worldwide games over a 24 hour
+# period ... the ability to place at any time and for the days ahead". There
+# is no clock lock any more. A group is open until its first kick-off: every
+# build re-checks it (recheck_card: it holds unless a pick fails the rule,
+# so it does not reshuffle under someone who has placed it) and rebuilds its
+# bench; at the first build after its first kick-off it is frozen as last
+# published and archived. The record's honesty is unchanged: what is graded
+# is what was published before the first game started. Cards are built for
+# today and the next DAYS_AHEAD days. The old-window groups of this morning
+# are left off the page for this date (archive and record unchanged).
+CARD_TRANSITION = {"2026-10-29"}
+
+def first_kick(g):
+    """A group's lock: its first kick-off, as a UTC datetime, or None."""
+    ts = [parse(l.get("when")) for l in g.get("legs") or []]
+    ts = [t for t in ts if t]
+    return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
@@ -1379,9 +1388,6 @@ def lock_time(date, window):
     d = datetime.fromisoformat(date).date()
     if window == "Overnight":      # the pre-29 Oct 2026 windows, kept for the record
         loc = datetime(d.year, d.month, d.day, 21, 0, tzinfo=UK) - timedelta(days=1)
-    elif window == "Day" and date in CARD_TRANSITION:
-        hh, mm = CARD_TRANSITION[date].split(":")
-        loc = datetime(d.year, d.month, d.day, int(hh), int(mm), tzinfo=UK)
     else:
         loc = datetime(d.year, d.month, d.day, 7, 0, tzinfo=UK)
     return loc.astimezone(timezone.utc)
@@ -1578,9 +1584,9 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                 g = dict(g); g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
                 groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot)
             continue
-        lock = lock_time(date, g["window"])
+        lock = first_kick(g) or lock_time(date, g["window"])
         if g.get("locked") or now >= lock:
-            g = dict(g, locked=True, lockAt=iso(lock))
+            g = dict(g, locked=True, lockAt=g.get("lockAt") or iso(lock))
             g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
             groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot); continue
         if g.get("wide"): continue    # rebuilt below: a full-rule group takes its place when one can be made
@@ -1590,33 +1596,32 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                 log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
                             "picks": [l["pick"] for l in g["legs"]], "why": why})
             continue
-        ng["checked"] = stamp; ng["bench"] = []; groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
+        ng["checked"] = stamp; ng["bench"] = []; ng["lockAt"] = iso(first_kick(ng) or lock)
+        groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
     replaced = {e["rank"] + "|" + e["name"] for e in (log or []) if e["at"] == stamp}
     seqs = max(1, -(-CARD_MAX_GROUPS // len(CARD_KINDS)))
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w): continue
-        lock = lock_time(date, w)
         for seq in range(1, seqs + 1):
             for name, _, _, _ in CARD_KINDS:
                 if (w, name, seq) in filled: continue
                 if sum(1 for g in groups if g.get("window") == w and not g.get("wide")) >= CARD_MAX_GROUPS: break
                 g = best_card(by_win[w], used, after, name)
                 if not g: continue
-                late = now >= lock
-                g.update(window=w, rank=w, seq=seq, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
-                         status="late" if late else ("replacement" if f"{w}|{name}" in replaced else "new"))
+                # 29 Oct 2026: no clock lock; the group freezes at its first kick-off
+                lock = first_kick(g) or lock_time(date, w)
+                g.update(window=w, rank=w, seq=seq, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False,
+                         status="replacement" if f"{w}|{name}" in replaced else "new")
                 for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
                 used |= {l["event"] for l in g["legs"]}; filled.add((w, name, seq)); groups.append(g)
     # The wider rule, only for a window the full rule left empty.
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
-        lock = lock_time(date, w)
         for name, _, _, _ in CARD_KINDS:
             g = best_card(by_win[w], used, after, name, wide=True)
             if not g: continue
-            late = now >= lock
-            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
-                     status="late" if late else "new")
+            lock = first_kick(g) or lock_time(date, w)
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new")
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
             used |= {l["event"] for l in g["legs"]}; filled.add((w, name, 1)); groups.append(g)
     # 29 Oct 2026: the bench and the price at CARD_BOOK. A locked group keeps
@@ -1636,7 +1641,7 @@ LEGACY_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)] 
 def card_windows(date, groups=None):
     """The day's windows for the page: the current ones, plus any legacy
     window a locked group on this day still sits in (29 Oct 2026)."""
-    out = [{"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w))} for w, a, b in CARD_WINDOWS]
+    out = [{"name": w, "from": a, "to": b, "lockAt": None} for w, a, b in CARD_WINDOWS]   # no clock lock (29 Oct 2026)
     have = {w["name"] for w in out}
     for w, a, b in LEGACY_WINDOWS:
         if w not in have and any(is_card(g.get("name")) and g.get("window") == w for g in groups or []):
