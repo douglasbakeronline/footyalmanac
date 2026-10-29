@@ -11,6 +11,10 @@ DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 
 def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
+    # 29 Oct 2026: a football leg needs the model at least 5 points under the
+    # bookmakers' chance (CARD_UNDER_MARKET); the board's 0.66 at 1.40 (fair 0.69)
+    # is read as 0.62 so the standard board still qualifies
+    if sport == "football" and model == 0.66: model = 0.62
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
          "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
          "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
@@ -329,7 +333,7 @@ class CoreLeagues(unittest.TestCase):
     def test_wider_league_and_cup_legs_are_out(self):
         self.assertIn("core leagues", G.card_fault(dict(leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
         self.assertIn("core leagues", G.card_fault(dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
-        self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
+        self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
         self.assertTrue(G.core_league("de.2")); self.assertFalse(G.core_league("eu.cl")); self.assertFalse(G.core_league(None))
 
     def test_record_carries_the_floor(self):
@@ -361,3 +365,15 @@ class MoreGroups(unittest.TestCase):
         again = G.build_card(L, DATE, AFTER_LOCK, prev=gs, log=[])
         self.assertEqual({G.card_slot(g) for g in again}, {G.card_slot(g) for g in gs})
         self.assertTrue(all(g["locked"] for g in again))
+
+
+class UnderMarket(unittest.TestCase):
+    """29 Oct 2026 backtest: a football leg needs the model at least 5 points
+    under the bookmakers' chance. Full rule only; the wider rule is graded apart."""
+
+    def test_model_level_with_the_market_is_out(self):
+        l = leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z")          # fair about 0.69
+        self.assertIn("under the", G.card_fault(l))
+        self.assertIsNone(G.card_fault(l, wide=True))
+        self.assertIsNone(G.card_fault(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z")))
+        self.assertIsNone(G.card_fault(dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.8)))   # football only

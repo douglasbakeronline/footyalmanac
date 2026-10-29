@@ -1316,6 +1316,19 @@ CARD_SPORT_MIN = {"tennis": 0.75}
 # leagues only: engine.LEAGUES without the API-Football wider set, cups and
 # internationals. Reviewed with the floor below.
 CARD_CORE_ONLY = True
+# 29 Oct 2026, backtest at Douglas's request (claude/betting-groups-review-
+# 2026-10-29.md, fifth pass): the one cut that lands above quote in every
+# slice of the priced archive is the model sitting at least CARD_UNDER_MARKET
+# under the bookmakers' chance: core legs 81.9% v 67.6% quoted (n=72, +2.6
+# se), core outside the one hot week 78.7% v 68.2% (n=47), wider leagues
+# 76.8% v 66.8% (n=56). Legs where the model is not under the market land at
+# or below their quote everywhere (68% v 69%, 57% v 67%, 58% v 67%). The
+# likely reason is the favourite-longshot bias: the market under-prices
+# short favourites, and the model under-sells them too, so a leg both agree
+# is strong at 1.35-1.90 is the one worth taking. Checked by the per-rule
+# record; the core-only rule above rests on a weaker comparison (wider
+# leagues were barely priced before 22 Oct) and is kept as the cautious side.
+CARD_UNDER_MARKET = 0.05
 # The floor (29 Oct 2026, Douglas: "the minimum performance of the groups bets
 # over time"). A run of three good days is not a floor; the quote is. The
 # record carries, for the Card, how far landed sits from expected in standard
@@ -1399,6 +1412,10 @@ def card_fault(l, wide=False):
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card on its live record"
     if CARD_CORE_ONLY and l.get("sport") == "football" and not core_league(l.get("code")):
         return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the core leagues (wider leagues and cups landed under quote on the Card rule)"
+    if CARD_UNDER_MARKET and not wide and l.get("sport") == "football" and l.get("fair") is not None and not l.get("est") \
+            and l["pModel"] - l["fair"] > -CARD_UNDER_MARKET:
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) is not at least {round(CARD_UNDER_MARKET * 100)} points under the "
+                f"bookmakers ({pct(l['fair'])}); only picks the market rates clearly above the model landed above quote")
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin):
         return (f"{l['pick']}: a {l['sport']} pick needs the model and its tested rate both at {pct(smin)}+ "
@@ -2055,7 +2072,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
-                              "coreOnly": CARD_CORE_ONLY, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "coreOnly": CARD_CORE_ONLY, "underMarket": CARD_UNDER_MARKET, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),

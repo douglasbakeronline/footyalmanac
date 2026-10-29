@@ -267,3 +267,59 @@ How to tweak it from here, the method:
 5. Weekly, Monday: the floor line, legs landed v quoted by league family,
    the closing-line tally. Monthly: the replay and this note. Change
    nothing mid-week.
+
+## Fifth pass: the backtest of the three leg signals
+
+Douglas: "Is there a way to improve on 1.15 per 1" and "yes back test".
+Same priced archive, the 113 core legs that cleared the live rule, with
+every cut also read outside the one hot week (ISO week 43, 19 to 25 Oct,
+which holds 41 of the 113 and 35 wins).
+
+| Cut | n | Landed | Quoted | se | Per unit |
+|---|---|---|---|---|---|
+| Core, all | 113 | 78.8% | 67.5% | +2.6 | +9% |
+| Core, excluding week 43 | 72 | 75.0% | 68.6% | +1.2 | +2% |
+| Model 5+ under the market | 72 | 81.9% | 67.6% | +2.6 | +12% |
+| ...excluding week 43 | 47 | 78.7% | 68.2% | +1.5 | +7% |
+| Model not 5+ under, excl. week 43 | 25 | 68.0% | 69.3% | -0.1 | -7% |
+| Wider leagues, model 5+ under | 56 | 76.8% | 66.8% | +1.6 | +4% |
+| Wider leagues, not under | 24 | 58.3% | 67.1% | -0.9 | -21% |
+| Home picks | 86 | 79.1% | 67.5% | +2.3 | +10% |
+| Away picks | 27 | 77.8% | 67.4% | +1.2 | +8% |
+| Price 1.15-1.35 | 40 | 77.5% | 73.9% | +0.5 | -3% |
+| Price 1.35-1.55 | 67 | 79.1% | 64.3% | +2.5 | +14% |
+| Price 1.35+, September only | 12 | 58.3% | 64.0% | -0.4 | -17% |
+
+Read plainly:
+- **Home v away: no difference.** Both over quote by the same amount. The
+  away under-quote in the model record does not survive against the market.
+- **Draw share and price are the same cut** (short favourites have low draw
+  share) and that cut is the hot week: price 1.35+ was under quote in
+  September and 28 of 32 in week 43. Not a rule.
+- **The core-only rule shipped this morning rests on a weaker comparison
+  than I said.** Wider leagues were barely priced before 22 Oct, so "core v
+  wider" is mostly "before v during the hot week". Outside that week core
+  legs are +6 points, 1.2 se: on quote, a little above. It stays as the
+  cautious side (cup favourites under-land on the full record) and the
+  per-rule line will test it.
+- **The model at least 5 points under the bookmakers' chance is the one cut
+  that lands above quote in every slice**: core, core outside the hot week,
+  wider leagues. Legs where the model is not under land at or below quote
+  everywhere. The likely mechanism is the favourite-longshot bias: the
+  market under-prices short favourites and the model under-sells them too,
+  so a leg both rate highly at 1.35-1.90 is the one worth taking.
+
+Shipped: `CARD_UNDER_MARKET` 0.05, football legs, full rule only (the wider
+rule is graded apart and stays as the fallback). Pool after it, from the
+days since bulk pricing began: 11 core legs on a Saturday, 11 on a Sunday,
+0 to 3 midweek. So the Card fills on weekends and is often one group or
+none midweek; that is the rule working, not a fault. The group-level replay
+is 13 to 24 groups under any variant and says nothing either way (core
+rule outside week 43: 6 of 14, +4%; under rule: 2 of 7). Legs decide.
+
+What 1.15 becomes: at the under-market legs' +12% a unit (or +7% outside
+the hot week), a three-leg group returns about 1.4 (1.2) and the four-group
+day about 1.3 (1.15). Same caveat as before: it is 72 legs and the per-rule
+record is the test. The rest of the answer to "improve on 1.15" is in the
+fourth pass: price (in), longer groups once 300 legs say the edge holds,
+and the exchange or acca boosts, which need no model at all.
