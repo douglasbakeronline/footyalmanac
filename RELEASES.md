@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## Championship total-goals scale tested and rejected (tag pending)
+
+**What changed:** nothing a reader sees. A dated note and a reproducible tool record that scaling the Championship's expected goals (x0.90 to x1.10) does not help.
+
+**Evidence:** paired bootstrap on 2023-24 to 2026-27 replays. Best fit-season (2025-26) gain 0.0001 against the 0.0005 gate, p(worse) 0.47; the sign flips between seasons (2023-24 wants more goals, 2024-25 and 2026-27 fewer). 2026-27 has 95 fixtures against the 250 gate.
+
+**Files:** `claude/championship-goals-scale-2026-10-29.md`, `tools/championship_goals_scale.py`.
+
+**Not changed:** `engine.py`, calibration, any model number.
+
+**Roll back:** `git revert` the merge commit.
+
 ## release-2026-11-05 (pending tag): site analytics
 
 Cloudflare Web Analytics on the page (Douglas's Cloudflare account; the beacon tag in `index.html`'s head). Visitors, page views, countries, devices and referrers, live and historical, with no cookies and no consent banner. `spa: true` counts each tab change as a view, since the tabs write their name to the URL hash. Nothing else on the site changes. Files: `index.html`. Roll back: revert the commit.
