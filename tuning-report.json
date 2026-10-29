@@ -8,9 +8,9 @@
  },
  "candidate": {
   "kind": "curve",
-  "a": 1.17,
-  "b": -0.25,
-  "describe": "T = 1.17 + -0.25 x (confidence - 0.45)"
+  "a": 1.085,
+  "b": -0.2,
+  "describe": "T = 1.085 + -0.2 x (confidence - 0.45)"
  },
  "excluded": {
   "fit": [
@@ -1150,27 +1150,27 @@
   ]
  },
  "fitted": {
-  "a": 1.17,
-  "b": -0.25
+  "a": 1.085,
+  "b": -0.2
  },
  "fitSeason": {
   "n": 8449,
-  "shipped": 1.0259,
-  "fitted": 1.0257
+  "shipped": 1.0227,
+  "fitted": 1.0226
  },
  "checkSeason": {
   "n": 2102,
-  "shipped": 1.0248,
-  "fitted": 1.025,
-  "delta": 0.0003,
+  "shipped": 1.024,
+  "fitted": 1.0237,
+  "delta": -0.0003,
   "sd": 0.0003,
-  "pWorse": 0.791,
-  "shippedAcc": 0.4891,
-  "fittedAcc": 0.4891
+  "pWorse": 0.093,
+  "shippedAcc": 0.481,
+  "fittedAcc": 0.481
  },
  "gates": {
   "enoughData": true,
-  "notWorse": false,
+  "notWorse": true,
   "worthIt": false
  },
  "pass": false,

@@ -1,0 +1,384 @@
+{
+ "generated": "2026-10-29T20:14:05+00:00",
+ "source": "football-data.co.uk",
+ "rule": {
+  "fairMin": 0.6,
+  "odds": [
+   1.15,
+   1.9
+  ],
+  "underMarket": 0.05
+ },
+ "seasons": {
+  "fit": {
+   "season": "2025-26",
+   "pricedMatches": 7274,
+   "matched": 4709,
+   "candidates": 852,
+   "cuts": {
+    "all60": {
+     "n": 852,
+     "landed": 0.7312,
+     "quoted": 0.6828,
+     "gap": 0.0484,
+     "se": 0.0159,
+     "roi": -0.0027,
+     "pRoiNotPositive": 0.559,
+     "roiBest": 0.0238,
+     "pRoiBestNotPositive": 0.142,
+     "clvBets": 852,
+     "clv": -0.036,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 339,
+       "landed": 0.799,
+       "quoted": 0.744,
+       "roi": 0.0012
+      },
+      "1.35-1.55": {
+       "n": 466,
+       "landed": 0.702,
+       "quoted": 0.646,
+       "roi": 0.0114
+      },
+      "1.55-1.75": {
+       "n": 47,
+       "landed": 0.532,
+       "quoted": 0.605,
+       "roi": -0.1698
+      }
+     }
+    },
+    "under5": {
+     "n": 417,
+     "landed": 0.7266,
+     "quoted": 0.6796,
+     "gap": 0.0471,
+     "se": 0.0229,
+     "roi": -0.0025,
+     "pRoiNotPositive": 0.533,
+     "roiBest": 0.0244,
+     "pRoiBestNotPositive": 0.213,
+     "clvBets": 417,
+     "clv": -0.0341,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 155,
+       "landed": 0.8,
+       "quoted": 0.741,
+       "roi": 0.0068
+      },
+      "1.35-1.55": {
+       "n": 236,
+       "landed": 0.695,
+       "quoted": 0.648,
+       "roi": 0.0023
+      },
+      "1.55-1.75": {
+       "n": 26,
+       "landed": 0.577,
+       "quoted": 0.605,
+       "roi": -0.1008
+      }
+     }
+    },
+    "near": {
+     "n": 348,
+     "landed": 0.7443,
+     "quoted": 0.6848,
+     "gap": 0.0594,
+     "se": 0.0249,
+     "roi": 0.0105,
+     "pRoiNotPositive": 0.356,
+     "roiBest": 0.0366,
+     "pRoiBestNotPositive": 0.132,
+     "clvBets": 348,
+     "clv": -0.0377,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 144,
+       "landed": 0.819,
+       "quoted": 0.747,
+       "roi": 0.0215
+      },
+      "1.35-1.55": {
+       "n": 186,
+       "landed": 0.71,
+       "quoted": 0.645,
+       "roi": 0.0242
+      },
+      "1.55-1.75": {
+       "n": 18,
+       "landed": 0.5,
+       "quoted": 0.606,
+       "roi": -0.2178
+      }
+     }
+    },
+    "above5": {
+     "n": 87,
+     "landed": 0.7011,
+     "quoted": 0.6905,
+     "gap": 0.0107,
+     "se": 0.0496,
+     "roi": -0.0568,
+     "pRoiNotPositive": 0.805,
+     "roiBest": -0.0303,
+     "pRoiBestNotPositive": 0.679,
+     "clvBets": 87,
+     "clv": -0.0382,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 40,
+       "landed": 0.725,
+       "quoted": 0.745,
+       "roi": -0.0938
+      },
+      "1.35-1.55": {
+       "n": 44,
+       "landed": 0.705,
+       "quoted": 0.647,
+       "roi": 0.0057
+      },
+      "1.55-1.75": {
+       "n": 3,
+       "landed": 0.333,
+       "quoted": 0.604,
+       "roi": -0.48
+      }
+     }
+    },
+    "under8": {
+     "n": 299,
+     "landed": 0.7023,
+     "quoted": 0.683,
+     "gap": 0.0193,
+     "se": 0.0269,
+     "roi": -0.0414,
+     "pRoiNotPositive": 0.858,
+     "roiBest": -0.0158,
+     "pRoiBestNotPositive": 0.636,
+     "clvBets": 299,
+     "clv": -0.0342,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 118,
+       "landed": 0.771,
+       "quoted": 0.741,
+       "roi": -0.0304
+      },
+      "1.35-1.55": {
+       "n": 163,
+       "landed": 0.669,
+       "quoted": 0.649,
+       "roi": -0.0391
+      },
+      "1.55-1.75": {
+       "n": 18,
+       "landed": 0.556,
+       "quoted": 0.604,
+       "roi": -0.1339
+      }
+     }
+    }
+   },
+   "trebles": {
+    "n": 55,
+    "won": 26,
+    "landed": 0.473,
+    "expected": 0.351,
+    "roi": 0.0955,
+    "pRoiNotPositive": 0.274,
+    "z": 1.9
+   }
+  },
+  "check": {
+   "season": "2026-27",
+   "pricedMatches": 1911,
+   "matched": 760,
+   "candidates": 152,
+   "cuts": {
+    "all60": {
+     "n": 152,
+     "landed": 0.7237,
+     "quoted": 0.6928,
+     "gap": 0.0309,
+     "se": 0.0374,
+     "roi": -0.0324,
+     "pRoiNotPositive": 0.743,
+     "roiBest": -0.0058,
+     "pRoiBestNotPositive": 0.555,
+     "clvBets": 152,
+     "clv": -0.0337,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 70,
+       "landed": 0.843,
+       "quoted": 0.752,
+       "roi": 0.049
+      },
+      "1.35-1.55": {
+       "n": 77,
+       "landed": 0.623,
+       "quoted": 0.645,
+       "roi": -0.1043
+      },
+      "1.55-1.75": {
+       "n": 5,
+       "landed": 0.6,
+       "quoted": 0.603,
+       "roi": -0.064
+      }
+     }
+    },
+    "under5": {
+     "n": 110,
+     "landed": 0.7,
+     "quoted": 0.6931,
+     "gap": 0.0069,
+     "se": 0.044,
+     "roi": -0.0697,
+     "pRoiNotPositive": 0.871,
+     "roiBest": -0.0445,
+     "pRoiBestNotPositive": 0.767,
+     "clvBets": 110,
+     "clv": -0.0334,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 51,
+       "landed": 0.863,
+       "quoted": 0.75,
+       "roi": 0.0775
+      },
+      "1.35-1.55": {
+       "n": 56,
+       "landed": 0.571,
+       "quoted": 0.646,
+       "roi": -0.182
+      },
+      "1.55-1.75": {
+       "n": 3,
+       "landed": 0.333,
+       "quoted": 0.603,
+       "roi": -0.4767
+      }
+     }
+    },
+    "near": {
+     "n": 38,
+     "landed": 0.7632,
+     "quoted": 0.691,
+     "gap": 0.0722,
+     "se": 0.075,
+     "roi": 0.0376,
+     "pRoiNotPositive": 0.343,
+     "roiBest": 0.0666,
+     "pRoiBestNotPositive": 0.254,
+     "clvBets": 38,
+     "clv": -0.036,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 16,
+       "landed": 0.75,
+       "quoted": 0.763,
+       "roi": -0.0838
+      },
+      "1.35-1.55": {
+       "n": 20,
+       "landed": 0.75,
+       "quoted": 0.642,
+       "roi": 0.083
+      },
+      "1.55-1.75": {
+       "n": 2,
+       "landed": 1.0,
+       "quoted": 0.602,
+       "roi": 0.555
+      }
+     }
+    },
+    "above5": {
+     "n": 4,
+     "landed": 1.0,
+     "quoted": 0.7034,
+     "gap": 0.2966,
+     "se": 0.2284,
+     "roi": 0.33,
+     "pRoiNotPositive": 0.0,
+     "roiBest": 0.37,
+     "pRoiBestNotPositive": 0.0,
+     "clvBets": 4,
+     "clv": -0.0218,
+     "pClvNotPositive": 0.798,
+     "bands": {
+      "1.15-1.35": {
+       "n": 3,
+       "landed": 1.0,
+       "quoted": 0.732,
+       "roi": 0.2733
+      },
+      "1.35-1.55": {
+       "n": 1,
+       "landed": 1.0,
+       "quoted": 0.619,
+       "roi": 0.5
+      }
+     }
+    },
+    "under8": {
+     "n": 101,
+     "landed": 0.6931,
+     "quoted": 0.6938,
+     "gap": -0.0008,
+     "se": 0.0459,
+     "roi": -0.0789,
+     "pRoiNotPositive": 0.887,
+     "roiBest": -0.0539,
+     "pRoiBestNotPositive": 0.787,
+     "clvBets": 101,
+     "clv": -0.0344,
+     "pClvNotPositive": 1.0,
+     "bands": {
+      "1.15-1.35": {
+       "n": 46,
+       "landed": 0.848,
+       "quoted": 0.752,
+       "roi": 0.0554
+      },
+      "1.35-1.55": {
+       "n": 52,
+       "landed": 0.577,
+       "quoted": 0.648,
+       "roi": -0.1748
+      },
+      "1.55-1.75": {
+       "n": 3,
+       "landed": 0.333,
+       "quoted": 0.603,
+       "roi": -0.4767
+      }
+     }
+    }
+   },
+   "trebles": {
+    "n": 11,
+    "won": 4,
+    "landed": 0.364,
+    "expected": 0.383,
+    "roi": -0.243,
+    "pRoiNotPositive": 0.823,
+    "z": -0.13
+   }
+  }
+ },
+ "verdict": "The under-market cut does not hold on both seasons; read the per-season figures.",
+ "log": []
+}
