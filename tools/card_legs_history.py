@@ -61,7 +61,8 @@ def legs(pairs):
         if f < G.CARD_FAIR_MIN or not (lo <= price <= hi): continue
         bp = O.best(r)[pick]
         clv = (bp * O.fair(r["close"])[pick] - 1) if r.get("close") else None
-        out.append({"date": r["date"], "code": r["code"], "model": mp[pick], "fair": f, "price": price, "best": bp,
+        out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "side": "h" if pick == 0 else "a",
+                    "time": r.get("time"), "model": mp[pick], "fair": f, "price": price, "best": bp, "margin": sum(1 / o for o in r["avg"]),
                     "won": r["result"] == pick, "clv": clv, "core": not r["code"].startswith("af.")})
     return out
 
@@ -110,6 +111,57 @@ def trebles(L):
             "z": round((w - exp) / math.sqrt(sum(g["p"] * (1 - g["p"]) for g in out)), 2) if n else None}
 
 
+def card_season(L):
+    """The whole Card, as groupings.build_card builds it today, over a season
+    of football-data legs: one window a day, Card 2x and 3x then a second of
+    each, CARD_STAKE units, graded strictly. Returns the summary and the
+    day-by-day running profit in units."""
+    sys.path.insert(0, os.path.join(HERE, "tools"))
+    import card_replay as CR
+    by = defaultdict(list)
+    for l in L:
+        when = f"{l['date']}T{l['time'] or '15:00'}:00Z"
+        leg = {"sport": "football", "event": f"{l['home']} v {l['away']}", "pick": l["home"] if l["side"] == "h" else l["away"],
+               "comp": l["code"], "code": l["code"], "when": when, "date": l["date"], "odds": round(l["price"], 2), "best": round(l["best"], 2),
+               "margin": round(l["margin"], 4), "est": False, "pModel": round(l["model"], 4), "p": round(l["model"], 4),
+               "hit": 0.8, "n": 100, "won": l["won"], "core": l["core"]}
+        G.honest(leg)
+        slot = G.uk_slot(leg)
+        if slot: by[slot[0]].append(leg)
+    days, run, series, months = {}, 0.0, [], defaultdict(lambda: [0, 0, 0.0, 0.0])
+    for d in sorted(by):
+        gs = CR.build(by[d], d, "live")
+        if not gs: continue
+        days[d] = gs
+        pnl = sum(g["stake"] * (g["odds"] - 1) if g["won"] else -g["stake"] for g in gs)
+        run += pnl; series.append([d, round(run, 2)])
+        m = months[d[:7]]; m[0] += len(gs); m[1] += sum(g["won"] for g in gs); m[2] += sum(g["stake"] for g in gs); m[3] += pnl
+    gs = [g for d in days.values() for g in d]
+    if not gs: return {"groups": 0}
+    n, w = len(gs), sum(g["won"] for g in gs); exp = sum(g["p"] for g in gs)
+    st_ = sum(g["stake"] for g in gs); ret = sum(g["stake"] * g["odds"] for g in gs if g["won"]); best = sum(g["stake"] * g["bestOdds"] for g in gs if g["won"])
+    kinds = {}
+    for name, _, _, _ in G.CARD_KINDS:
+        k = [g for g in gs if g["name"] == name]
+        if k:
+            ks = sum(g["stake"] for g in k); kr = sum(g["stake"] * g["odds"] for g in k if g["won"])
+            kinds[name] = {"n": len(k), "won": sum(g["won"] for g in k), "expected": round(sum(g["p"] for g in k) / len(k), 3), "return": round(kr / ks, 3)}
+    # bootstrap over days for the return per unit
+    import random
+    random.seed(7); keys = list(days); vals = []
+    for _ in range(2000):
+        pick = [days[random.choice(keys)] for _ in keys]
+        s_ = sum(g["stake"] for d in pick for g in d); r_ = sum(g["stake"] * g["odds"] for d in pick for g in d if g["won"])
+        vals.append(r_ / s_ if s_ else 1)
+    vals.sort()
+    return {"days": len(days), "groups": n, "won": w, "expected": round(exp, 2), "landed": round(w / n, 3), "expectedRate": round(exp / n, 3),
+            "z": round((w - exp) / math.sqrt(sum(g["p"] * (1 - g["p"]) for g in gs)), 2),
+            "units": st_, "returned": round(ret, 2), "return": round(ret / st_, 3), "returnBest": round(best / st_, 3),
+            "return90": [round(vals[100], 3), round(vals[1899], 3)], "pLoss": round(sum(v < 1 for v in vals) / len(vals), 3),
+            "kinds": kinds, "months": {m: {"groups": v[0], "won": v[1], "units": v[2], "pnl": round(v[3], 2)} for m, v in sorted(months.items())},
+            "series": series}
+
+
 def main():
     out_path = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else os.path.join(HERE, "card-legs-history.json")
     log = []
@@ -134,12 +186,16 @@ def main():
         for name, f in CUTS.items():
             res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
         res["trebles"] = trebles([l for l in L if CUTS["under5"](l["model"], l["fair"])])
+        res["card"] = card_season(L)
+        res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
         report["seasons"][split] = res
         print(f"{split} {season}: {len(prices)} priced, {len(joined)} matched, {len(L)} candidate legs")
         for name, c in res["cuts"].items():
             if c.get("n"): print(f"  {name:8s} n {c['n']:5d} landed {c['landed']*100:5.1f} quoted {c['quoted']*100:5.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+5.1f}% (p {c['pRoiNotPositive']}) best {c['roiBest']*100:+5.1f}% clv {c['clv']}")
         t = res["trebles"]
         if t.get("n"): print(f"  trebles n {t['n']} won {t['won']} landed {t['landed']*100:.0f}% expected {t['expected']*100:.0f}% roi {t['roi']*100:+.0f}% z {t['z']}")
+        c = res["card"]
+        if c.get("groups"): print(f"  card: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
     holds = lambda c: c.get("n", 0) >= O.MIN_BETS and c.get("gap", 0) > 0 and c.get("roi", 0) > 0
     report["verdict"] = ("The under-market cut lands above its quote and returns a profit on both seasons." if holds(u_fit) and holds(u_chk) else
