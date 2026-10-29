@@ -457,6 +457,7 @@ def price_football(L, dates, report):
                 i = 0 if l["side"] == "h" else 2
                 l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
                          bestBook=(row.get("maxBook") or [None, None, None])[i],
+                         bookOdds=(row.get("ukBooks") or [{}, {}, {}])[i],
                          margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
                          src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
                 matched += 1; continue
@@ -467,6 +468,7 @@ def price_football(L, dates, report):
                 report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
             books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
+            uk_px = {"Home": {}, "Away": {}, "Draw": {}}   # 29 Oct 2026: every UK book's price, by side
             for item in items:
                 for b in item.get("bookmakers") or []:
                     uk = O.uk_book(b.get("name"))
@@ -476,6 +478,7 @@ def price_football(L, dates, report):
                             try:
                                 o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
                                 if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
+                                if uk: uk_px[v["value"]][O.uk_name(b.get("name"))] = round(o, 2)
                             except (KeyError, ValueError): pass
             books = sorted(books)
             side = prices["Home" if l["side"] == "h" else "Away"]
@@ -484,7 +487,7 @@ def price_football(L, dates, report):
                 mean = sum(side) / len(side)
                 uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
                 l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
-                         bestBook=uk_top[1], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
+                         bestBook=uk_top[1], bookOdds=uk_px["Home" if l["side"] == "h" else "Away"], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
@@ -619,6 +622,7 @@ def _odds_keys(l, active):
 
 
 def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
+    import odds as _O
     """UK bookmaker match odds from The Odds API for legs nothing else priced.
 
     Only with ODDS_API_KEY. The /sports list is free; each sport key's odds
@@ -697,7 +701,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 if not (any(same(h, x) for x in names if x) and any(same(a, x) for x in names if x)): continue
                 ct = parse(ev.get("commence_time"))
                 if t and ct and abs((t - ct).total_seconds()) > 6 * 3600: continue
-                prices, books, margins, top = [], set(), [], (0, None)
+                prices, books, margins, top, uk_px = [], set(), [], (0, None), {}
                 for b in ev.get("bookmakers") or []:
                     for m in b.get("markets") or []:
                         if m.get("key") != "h2h": continue
@@ -708,9 +712,11 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                                 try:
                                     pr = float(o["price"]); prices.append(pr); books.add(b.get("title") or b.get("key"))
                                     if pr > top[0]: top = (pr, b.get("title") or b.get("key"))
+                                    if _O.uk_book(b.get("title")): uk_px[_O.uk_name(b.get("title"))] = round(pr, 2)
                                 except (KeyError, ValueError): pass
                 if prices:
                     l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books), bestBook=top[1],
+                             bookOdds=uk_px,
                              margin=round(sum(margins) / len(margins), 4) if margins else None,
                              pricedAt=read_at(os.path.join(cache_dir, f"oddsapi-{k}.json")),
                              src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
@@ -1265,7 +1271,26 @@ def build_day(L, after, prev=None, now=None, log=None, min_groups=0):
 # price or a leg: it is the bet to place and leave. A window that had no
 # group by its lock may still get one later from games not yet started,
 # marked late. Only locked groups are archived and graded.
-CARD_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]
+# 29 Oct 2026, Douglas (claude/betting-groups-review-2026-10-29.md): the three
+# windows made no difference to accuracy (71 / 72 / 73% landed) and cost depth,
+# each slot drawing on a third of the pool and the thin windows getting the
+# weaker legs or nothing; a missing fixture then meant merging two groups by
+# hand. One window now: the betting day runs 07:00 UK to 07:00 UK the next
+# morning, locks at 07:00, is placed once. Late-night US and Asian games sit at
+# the end of the slip. Days before 29 Oct keep their old windows in the record.
+# (name, from hour, to hour); a to-hour past 24 runs into the next day.
+CARD_WINDOWS = [("Day", 7, 31)]
+# Which bookmaker the Card is written for (29 Oct 2026, Douglas: William Hill).
+# A preference, not a filter: a pick without a Hill price stays if it clears
+# the rule, shown with who does price it. Every pick carries its UK prices by
+# bookmaker (bookOdds) where the source lists them, and a group's bookOdds is
+# the combined Hill price when every pick has one.
+CARD_BOOK = "William Hill"
+# Substitutes (29 Oct 2026, Douglas: "sometimes a fixture isn't available so
+# I have to merge two groups"). Each group carries up to CARD_BENCH qualifying
+# picks not in any group that day, any one of which can replace any pick in
+# the group and keep it inside its price range and above its chance floor.
+CARD_BENCH = 3
 CARD_KINDS = [("Card 2x", 2.0, 3.0, 0.30), ("Card 3x", 3.0, 4.6, 0.18)]
 CARD_LEGS = (3, 4)
 CARD_ODDS = (1.15, 1.90)
@@ -1282,7 +1307,7 @@ CARD_POOL = 24
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
 CARD_SPORTS_OFF = {"nfl", "cfb"}
 CARD_SPORT_MIN = {"tennis": 0.75}
-CARD_RULE = 2     # bumped so unlocked groups rebuild under the new rule
+CARD_RULE = 3     # 2: sport rule; 3: one window, bookOdds, bench (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1295,13 +1320,17 @@ def uk_slot(l):
     t = parse(l.get("when"))
     if not t: return None
     u = t.astimezone(UK)
-    w = next(n for n, a, b in CARD_WINDOWS if a <= u.hour < b)
-    return u.date().isoformat(), w
+    for n, a, b in CARD_WINDOWS:
+        if a <= u.hour < b: return u.date().isoformat(), n
+        # a window that runs past midnight: the early hours belong to the day before
+        if b > 24 and u.hour < b - 24:
+            return (u.date() - timedelta(days=1)).isoformat(), n
+    return None
 
 def lock_time(date, window):
     """When a window's groups freeze, as a UTC datetime."""
     d = datetime.fromisoformat(date).date()
-    if window == "Overnight":
+    if window == "Overnight":      # the pre-29 Oct 2026 windows, kept for the record
         loc = datetime(d.year, d.month, d.day, 21, 0, tzinfo=UK) - timedelta(days=1)
     else:
         loc = datetime(d.year, d.month, d.day, 7, 0, tzinfo=UK)
@@ -1309,7 +1338,7 @@ def lock_time(date, window):
 
 def window_end(date, window):
     d = datetime.fromisoformat(date).date()
-    end = dict((n, b) for n, _, b in CARD_WINDOWS)[window]
+    end = dict((n, b) for n, _, b in CARD_WINDOWS).get(window, 24)
     base = datetime(d.year, d.month, d.day, tzinfo=UK) + timedelta(hours=end)
     return base.astimezone(timezone.utc)
 
@@ -1402,6 +1431,38 @@ def recheck_card(g, L):
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2),
             "legs": legs_, "status": "holding"}, []
 
+def book_price(l):
+    """The pick's price at CARD_BOOK, or None when that book does not price it."""
+    return (l.get("bookOdds") or {}).get(CARD_BOOK)
+
+def at_book(g):
+    """The group's combined price at CARD_BOOK when every pick has one, else None."""
+    px = [book_price(l) for l in g["legs"]]
+    return round(math.prod(px), 2) if px and all(px) else None
+
+def bench_for(g, L, used, after, wide=False):
+    """Up to CARD_BENCH substitutes for a Card group: qualifying picks from
+    fixtures not used in any group that day, any one of which can stand in
+    for any pick in the group and keep the group inside its price range and
+    above its chance floor. Best chance first. Frozen with the group at lock."""
+    lo, hi = CARD_RANGE[g["name"]]
+    floor = MIN_CHANCE[g["name"]]
+    events = {l["event"] for l in g["legs"]}
+    out = []
+    for c in sorted((as_mult(l) for l in L if l["event"] not in used and l["event"] not in events
+                     and card_fault(l, wide) is None and (parse(l["when"]) or after) >= after),
+                    key=lambda l: -l["p"]):
+        ok = True
+        for i, old in enumerate(g["legs"]):
+            legs_ = [x for j, x in enumerate(g["legs"]) if j != i] + [c]
+            o = mult_combo(legs_, lo, hi)
+            if o is None or math.prod(x["p"] for x in legs_) < floor: ok = False; break
+        if not ok: continue
+        out.append({k: c.get(k) for k in ("pick", "event", "sport", "comp", "when", "date", "odds", "best", "bestBook",
+                                           "bookOdds", "p", "pModel", "fair", "hit", "src", "pricedAt", "id", "home", "away", "players")})
+        if len(out) >= CARD_BENCH: break
+    return out
+
 def card_slot(g):
     """A Card group's slot: (window, kind). One group per slot per day."""
     return (g.get("window"), g.get("name"))
@@ -1452,7 +1513,7 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                 log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
                             "picks": [l["pick"] for l in g["legs"]], "why": why})
             continue
-        ng["checked"] = stamp; groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
+        ng["checked"] = stamp; ng["bench"] = []; groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
     replaced = {e["rank"] + "|" + e["name"] for e in (log or []) if e["at"] == stamp}
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w): continue
@@ -1478,6 +1539,14 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                      status="late" if late else "new")
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
             used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
+    # 29 Oct 2026: the bench and the price at CARD_BOOK. A locked group keeps
+    # the bench it locked with; an open group's bench is rebuilt each build
+    # from the picks no group uses, so it never names a pick on the card.
+    for g in groups:
+        if not g.get("locked"):
+            g["bench"] = bench_for(g, by_win.get(g.get("window")) or [], used, after, bool(g.get("wide")))
+        g["bookOdds"] = at_book(g)
+        g["book"] = CARD_BOOK
     order = {w: i for i, (w, _, _) in enumerate(CARD_WINDOWS)}
     return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), g["name"]))
 
@@ -1551,7 +1620,7 @@ def pct(x): return f"{round(x * 100)}%"
 def stale_price(cur, old):
     """This build's leg (unpriced) carrying the last confirmed price from the
     published leg, flagged stale, with fair and p recomputed on it."""
-    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src", "pricedAt") if k in old}, est=False, stale=True)
+    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src", "pricedAt", "bookOdds") if k in old}, est=False, stale=True)
     cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
     return honest(cur)
 
@@ -1871,7 +1940,8 @@ def grade(now=None):
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
            "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
-           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("window") == w]) for w, _, _ in CARD_WINDOWS},
+           "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("window") == w])
+                            for w in [w for w, _, _ in CARD_WINDOWS] + sorted({g["window"] for g in allg if is_card(g["name"]) and g.get("window")} - {w for w, _, _ in CARD_WINDOWS})},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
@@ -1932,7 +2002,7 @@ def main():
                      "wideEstMin": WIDE_EST_MIN,
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
-                     "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
+                     "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),

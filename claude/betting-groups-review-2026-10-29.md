@@ -149,3 +149,34 @@ sign the earlier lock costs anything.
 
 Tests: `tests/test_groupings_card.py` `SportRule`. Review the Card again at
 ~300 locked legs (mid-December), as the 25 Oct review set out.
+
+## Second change the same morning: one window, William Hill prices, a bench
+
+Douglas: "sometimes a fixture isn't always available so I have to merge two
+groups", and "I could change bookies" (he places with William Hill).
+
+- **One window** (`CARD_WINDOWS = [("Day", 7, 31)]`): the betting day runs
+  07:00 UK to 07:00 UK the next morning, locks at 07:00, is placed once.
+  `uk_slot` puts a kick-off before 07:00 on the day before. Six slots a day
+  each drawing on a third of the pool became two drawing on all of it; the
+  windows had made no difference to accuracy. Days to 28 Oct keep their
+  windows in the record (`cardByWindow` lists every window seen; the page
+  labels them "to 28 Oct").
+- **Prices by bookmaker** (`bookOdds`): every UK book's price on the pick,
+  from API-Football (bulk day prices carry `ukBooks`, `AF_ODDS_VERSION` 3,
+  so cached days are re-read once) and The Odds API. ESPN (DraftKings) and
+  Pinnacle legs carry none. `CARD_BOOK = "William Hill"` is a preference,
+  not a filter: a pick shows its Hill price, or "not at William Hill" and
+  who does price it; a group shows its combined Hill price (`bookOdds`)
+  when every pick has one. Nothing is refused for lacking a Hill price.
+- **The bench** (`bench_for`, `CARD_BENCH` 3): each group carries up to
+  three qualifying picks from fixtures no group uses that day, any one of
+  which can replace any pick in the group and keep it inside its price range
+  and above its chance floor. Rebuilt each build until the lock, frozen with
+  the group after. The page folds them under each group: swap one in, don't
+  merge two groups. A group sitting on the bottom of its price range may
+  have no substitute that keeps it there, so a bench can be empty.
+- `CARD_RULE` 3. Not changed: the leg rule, lock time, grading, any model
+  number. Not checked in a browser (no Chromium in the cloud session); the
+  page's scripts parse, and the record regrades offline with the old windows
+  intact. Check the Bets tab at phone width after merge.

@@ -279,7 +279,7 @@ AF_ODDS_TTL_NEAR = 90 * 60       # today and tomorrow: prices move
 AF_ODDS_TTL_FAR = 4 * 3600       # further out: they barely do
 AF_ODDS_MAX_PAGES = 150          # a date's ceiling: 1,500 priced fixtures
 AF_ODDS_SIDE = {"Home": 0, "Draw": 1, "Away": 2}
-AF_ODDS_VERSION = 2              # 2: max / maxBook over UK-licensed books only (25 Oct 2026)
+AF_ODDS_VERSION = 3              # 2: max / maxBook over UK-licensed books only (25 Oct 2026); 3: ukBooks per side (29 Oct 2026)
 
 
 def _af_odds_path(d):
@@ -295,6 +295,12 @@ def _af_odds_path(d):
 UK_BOOKS = ("Bet365", "William Hill", "Betfair", "Paddy Power", "Betway", "Unibet", "Ladbrokes", "Coral",
             "Betfred", "Sky Bet", "BetVictor", "888sport")
 _UK_KEYS = {b.replace(" ", "").lower() for b in UK_BOOKS}
+
+
+def uk_name(name):
+    """The UK_BOOKS spelling of a bookmaker name, or the name as given."""
+    k = str(name or "").replace(" ", "").replace("-", "").replace(".", "").lower()
+    return next((b for b in UK_BOOKS if b.replace(" ", "").lower() == k), name)
 
 
 def uk_book(name):
@@ -318,6 +324,7 @@ def af_parse_odds(items):
             continue
         sides, books = ([], [], []), set()
         top = [(0.0, None), (0.0, None), (0.0, None)]   # best UK price per side and who offers it
+        uk_px = [{}, {}, {}]                              # 29 Oct 2026: each UK book's price per side
         for b in item.get("bookmakers") or []:
             uk = uk_book(b.get("name"))
             for bet in b.get("bets") or []:
@@ -332,12 +339,13 @@ def af_parse_odds(items):
                     if i is not None and o > 1.0:
                         sides[i].append(o); books.add(b.get("name") or b.get("id"))
                         if uk and o > top[i][0]: top[i] = (o, b.get("name"))
+                        if uk: uk_px[i][uk_name(b.get("name"))] = round(o, 2)
         if all(sides):
             avg = [round(sum(x) / len(x), 3) for x in sides]
             out[str(fid)] = {"avg": avg,
                              "max": [t[0] if t[1] else a for t, a in zip(top, avg)], "books": len(books),
                              # 25 Oct 2026: which UK bookmaker has the best price, for the Bets tab
-                             "maxBook": [t[1] for t in top]}
+                             "maxBook": [t[1] for t in top], "ukBooks": uk_px}
     return out
 
 
