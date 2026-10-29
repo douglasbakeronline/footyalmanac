@@ -377,3 +377,23 @@ class UnderMarket(unittest.TestCase):
         self.assertIsNone(G.card_fault(l, wide=True))
         self.assertIsNone(G.card_fault(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z")))
         self.assertIsNone(G.card_fault(dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.8)))   # football only
+
+
+class LegacyWindows(unittest.TestCase):
+    """29 Oct 2026: a group locked under the old three windows on the day they
+    changed stays on the page as locked; nothing is rebuilt in that window."""
+
+    def test_locked_overnight_group_is_kept_not_rebuilt(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        old = dict(gs[0], window="Overnight", rank="Overnight", locked=True, lockAt=G.iso(G.lock_time(DATE, "Overnight")))
+        again = G.build_card(board(), DATE, AFTER_LOCK, prev=[old], log=[])
+        kept = [g for g in again if g["window"] == "Overnight"]
+        self.assertEqual(len(kept), 1)
+        self.assertTrue(kept[0]["locked"])
+        self.assertEqual({l["event"] for l in kept[0]["legs"]}, {l["event"] for l in old["legs"]})
+        wins = G.card_windows(DATE, again)
+        self.assertEqual([w["name"] for w in wins], ["Day", "Overnight"])
+        self.assertTrue(wins[1]["legacy"])
+        # an unlocked old-window group is dropped, not rebuilt
+        gone = G.build_card(board(), DATE, EARLY, prev=[dict(old, locked=False)], log=[])
+        self.assertFalse(any(g["window"] == "Overnight" for g in gone))
