@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Groups landed against stated chance, by band, no rule change (tag pending)
+
+**What changed:** nothing for readers. New advisory `tools/groups_calibration.py` and a dated section in `claude/odds-groupings.md`.
+**Evidence:** 90 settled groups, 23 won, 29.3 expected. Bands 20-50% on quote (31: 8 v 8.2; 33: 9 v 11.6; 14: 6 v 6.0); 5-leg retired kinds 10 v 18.3 (z -2.4); 3-leg groups 12 v 9.7; Card 2x/3x 8 v 6.8. Legs: football 169 of 223 (168.0 expected), tennis 59 of 93 (72.4), college football 19 of 27 (23.1). The shortfall is in kinds and sports already retired or gated.
+**Files:** `tools/groups_calibration.py`, `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any rule, any model number.
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-29 Daily List bar replay, no change (tag pending)
 
 **What changed:** nothing for readers. Replay of the league bar written up in `claude/daily-list.md`.

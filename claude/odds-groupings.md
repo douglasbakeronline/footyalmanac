@@ -234,3 +234,46 @@ bookmakers' fair chance, the model is a veto. Built after the other groups
 from the legs they leave, re-checked every build, graded as "multiplier".
 Evidence and design: `claude/multipliers-2026-10-24.md`; the archive check
 is `tools/market_check.py`.
+
+
+## Groups landed against stated chance, by band (29 Oct 2026, Jade)
+
+Backtest asked for: replay the group rules on past days. The Daily List rebuild
+per day, the Card machinery on the priced archive and the leg rule variants are
+already done (`claude/betting-groups-review-2026-10-29.md`, `tools/card_replay.py`);
+the "65% / 30 tested-rate bar" is out of date (`MIN_HIT` is 0.75 since 21 Oct).
+What was missing was the plain table of groups won against their stated
+chance, by band. `tools/groups_calibration.py` (advisory, reads
+`groupings-record.json`, matches its 90 settled / 23 won) gives it. z is
+(won - expected) / sqrt(sum p(1-p)).
+
+| Cut | n | Won | Expected | z |
+|---|---|---|---|---|
+| Group chance 20-30% | 31 | 8 | 8.2 | -0.1 |
+| 30-40% | 33 | 9 | 11.6 | -0.9 |
+| 40-50% | 14 | 6 | 6.0 | 0.0 |
+| 50-60% | 4 | 0 | 2.2 | -2.2 |
+| Under 20% | 8 | 0 | 1.4 | -1.3 |
+| 3 legs | 29 | 12 | 9.7 | +0.9 |
+| 4 legs | 4 | 1 | 1.4 | -0.4 |
+| 5 legs (retired kinds) | 57 | 10 | 18.3 | -2.4 |
+| Card 2x / 3x | 21 | 8 | 6.8 | +0.4 |
+| Legs, football | 223 | 169 | 168.0 | +0.2 |
+| Legs, tennis | 93 | 59 | 72.4 | -3.5 |
+| Legs, college football | 27 | 19 | 23.1 | -2.3 |
+| Legs, 85%+ stated | 76 | 59 | 67.8 | -2.9 |
+
+Read plainly:
+- Every band from 20% to 50% is on its quote. The only shortfall by length is
+  the five-leg kinds (Steady, Stretch), retired on 25 Oct; three-leg groups,
+  what the Card builds, are slightly above quote on 29.
+- By sport the shortfall is tennis (z -3.5) and college football, as the
+  29 Oct review found. The 85%+ leg bands under-land because tennis and
+  college football fill them (stated chance is min of tested rate, model and
+  market, and those sports quote high and land low). Football legs: 169 of
+  223 against 168.0 expected.
+- Nothing here points to a rule change that raises the hit rate at the same
+  odds: the leg rules that matter (tennis 75% floor, NFL / cfb off the Card,
+  model 5+ under the market, core leagues) are already live, and the sample
+  of Card groups (21 settled) is far too small to test another. Not shipped:
+  any change to `groupings.py`. Next look at ~300 locked Card legs.
