@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Placed marker, flagged replacement pushes, pre-registered replay variants (tag pending)
+
+**What changed:** a **Mark as placed** button on each open Card group (per browser): the page then shows "Placed" on that version, or, if a pick failed the rule and the slot shows a different group, which version was placed and that the record grades the published one. Replacement pushes carry a `REPLACEMENT:` title and the warning tag. `tools/card_replay.py` rebuilt around the live `build_card` pieces with pre-registered variants (`under8`, `under10`, `four3x`, `wider`) and `--since`, for the 15 and 30 Nov reviews; on October all are within noise of the live rule. One test added; 576 pass.
+
+**Files:** `index.html`, `notify.py`, `tools/card_replay.py`, `tests/test_notify.py`, `claude/betting-groups-review-2026-10-29.md`, `RELEASES.md`.
+
+**Not changed:** the leg rule, floors, stakes, grading. **Roll back:** `git revert` the merge commit.
+
 ## 2026-10-29 A push to the phone when the build makes a Card group (tag pending)
 
 **What changed:** `notify.py`, run by `deploy.yml` straight after `groupings.py`. Each Card group whose status is new or replacement and whose `first` stamp is this build's gets one push through ntfy (free, iOS and Android apps): title "Card 2x · Fri 30 Oct · 2.18 (2.24 at William Hill)", a line a pick with kick-off and the William Hill price (or the best price and who has it), the units to stake, when the group freezes (its first kick-off) and how many substitutes it carries. The topic is the only secret (`NTFY_TOPIC`); unset, nothing is sent. Two tests; 575 pass.

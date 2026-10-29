@@ -38,3 +38,17 @@ class Notify(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class Replacement(unittest.TestCase):
+    def test_replacement_is_flagged_in_title_and_tag(self):
+        og = {"generated": "T1", "days": [{"date": "2026-10-30", "groups": [dict(group("replacement", "T1"))]}]}
+        sent = []
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(N, "HERE", d), \
+             mock.patch.dict(os.environ, {"NTFY_TOPIC": "t"}), mock.patch.object(N, "send", lambda topic, title, body, tags="x": sent.append((title, body, tags))):
+            json.dump(og, open(os.path.join(d, "groupings.json"), "w"))
+            N.main()
+        title, body, tags = sent[0]
+        self.assertTrue(title.startswith("REPLACEMENT: Card 2x"))
+        self.assertEqual(tags, "warning")
+        self.assertIn("your bet stands", body)
