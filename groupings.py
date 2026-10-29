@@ -1345,6 +1345,14 @@ CARD_FLOOR_Z, CARD_FLOOR_N = -2.0, 50
 # and range. Staking: CARD_STAKE units on each kind, shown on the page
 # (two on a 2x, one on a 3x: most of the return for half the swing).
 CARD_MAX_GROUPS = 4
+# 29 Oct 2026, the day the windows changed. Douglas: "I want today's card to be
+# the new formatting and improved chance of success". The one-window card for
+# this date is built from the merge onwards and locks at the time below (UK)
+# instead of 07:00, so it is a proper locked card and not a late one; the
+# groups locked under the old windows that morning are left out of the page
+# for this date (they stay in the archive and the record as they were). A
+# one-day exception; delete after it has passed.
+CARD_TRANSITION = {"2026-10-29": "12:00"}
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
@@ -1371,6 +1379,9 @@ def lock_time(date, window):
     d = datetime.fromisoformat(date).date()
     if window == "Overnight":      # the pre-29 Oct 2026 windows, kept for the record
         loc = datetime(d.year, d.month, d.day, 21, 0, tzinfo=UK) - timedelta(days=1)
+    elif window == "Day" and date in CARD_TRANSITION:
+        hh, mm = CARD_TRANSITION[date].split(":")
+        loc = datetime(d.year, d.month, d.day, int(hh), int(mm), tzinfo=UK)
     else:
         loc = datetime(d.year, d.month, d.day, 7, 0, tzinfo=UK)
     return loc.astimezone(timezone.utc)
@@ -1559,10 +1570,11 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
         if slot in filled: continue
         if g.get("window") not in by_win:
             # 29 Oct 2026: a group locked under the three-window card (Overnight,
-            # Daytime, Evening) on the day the windows changed. It was placed, so
-            # it stays on the page as it was locked until it settles; nothing is
-            # rebuilt in a window that no longer exists.
-            if g.get("locked"):
+            # Daytime, Evening) on the day the windows changed. It stays on the
+            # page as it was locked until it settles; nothing is rebuilt in a
+            # window that no longer exists. On the transition date itself the
+            # new card replaces them on the page (CARD_TRANSITION).
+            if g.get("locked") and date not in CARD_TRANSITION:
                 g = dict(g); g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
                 groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot)
             continue

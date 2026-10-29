@@ -397,3 +397,16 @@ class LegacyWindows(unittest.TestCase):
         # an unlocked old-window group is dropped, not rebuilt
         gone = G.build_card(board(), DATE, EARLY, prev=[dict(old, locked=False)], log=[])
         self.assertFalse(any(g["window"] == "Overnight" for g in gone))
+
+
+class Transition(unittest.TestCase):
+    def test_transition_day_locks_later_and_drops_old_windows(self):
+        with mock.patch.dict(G.CARD_TRANSITION, {DATE: "12:00"}):
+            self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 12, 0, tzinfo=timezone.utc))
+            gs = G.build_card(board(), DATE, datetime(2026, 11, 7, 9, 30, tzinfo=timezone.utc), log=[])
+            self.assertTrue(gs and not any(g["late"] or g["locked"] for g in gs))
+            old = dict(gs[0], window="Overnight", rank="Overnight", locked=True)
+            again = G.build_card(board(), DATE, datetime(2026, 11, 7, 12, 5, tzinfo=timezone.utc), prev=[old] + gs, log=[])
+            self.assertFalse(any(g["window"] == "Overnight" for g in again))
+            self.assertTrue(all(g["locked"] and not g["late"] for g in again))
+        self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))

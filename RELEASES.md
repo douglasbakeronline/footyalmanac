@@ -3,6 +3,12 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Today's card built under the new rules, locking 12:00 (tag pending)
+
+**What changed:** a one-day exception (`groupings.CARD_TRANSITION`): for 29 Oct 2026 the one-window card locks at 12:00 UK instead of 07:00, so a card built after the morning's merge is a proper locked card under rule 4 rather than a late one, and the groups locked under the old windows that morning are left off the page for this date (they stay in the archive and the record as they were). Douglas's request: "I want today's card to be the new formatting and improved chance of success". Delete the entry from `CARD_TRANSITION` once the date has passed. One new test; 570 pass.
+
+**Files:** `groupings.py`, `tests/test_groupings_card.py`, `RELEASES.md`. **Roll back:** empty `CARD_TRANSITION`.
+
 ## 2026-10-29 The Card: groups locked under the old windows stay on the page (tag pending)
 
 **What changed:** on the day the three windows became one, groups already locked as Overnight, Daytime or Evening (placed bets) were dropped from the day by `build_card` because their window no longer existed. A locked group in a legacy window is now kept as locked or under way until it settles, never rebuilt; `card_windows` lists a legacy window only while such a group sits in it, and the page heads it "locked under the old three-window card". An unlocked group in an old window is dropped, not rebuilt. One new test; 569 pass.
