@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 A push to the phone when the build makes a Card group (tag pending)
+
+**What changed:** `notify.py`, run by `deploy.yml` straight after `groupings.py`. Each Card group whose status is new or replacement and whose `first` stamp is this build's gets one push through ntfy (free, iOS and Android apps): title "Card 2x · Fri 30 Oct · 2.18 (2.24 at William Hill)", a line a pick with kick-off and the William Hill price (or the best price and who has it), the units to stake, when the group freezes (its first kick-off) and how many substitutes it carries. The topic is the only secret (`NTFY_TOPIC`); unset, nothing is sent. Two tests; 575 pass.
+
+**Setup (owner):** install the ntfy app, subscribe to a private topic (a long random name), add it as the repository secret `NTFY_TOPIC`. Workflow path, so this merge needs Douglas's approval.
+
+**Files:** `notify.py`, `tests/test_notify.py`, `.github/workflows/deploy.yml`, `RELEASES.md`, `CLAUDE.md`. **Roll back:** remove the step from `deploy.yml`, or delete the secret.
+
 ## 2026-10-29 The Card: core leagues only again, after the two-rule replay (tag pending)
 
 **What changed:** `CARD_CORE_ONLY` back to True, Douglas's decision at 11:59 after both rules were replayed on October with the live Card machinery: core only +5.5 units on 15 staked (10 groups, 5 won); wider in +0.5 on 32 (21 groups, 8 won); the extra groups lost 5 units, nearly all Card 3x built from wider picks (2 of 10). `CARD_MAX_GROUPS` stays at 6. Page copy updated.
