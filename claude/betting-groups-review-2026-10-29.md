@@ -227,7 +227,7 @@ Shipped from this:
   in standard errors. `CARD_FLOOR_Z` -2 on `CARD_FLOOR_N` 50+ settled groups
   is the retire signal, the Daily List's test for a sport. The Bets scoreboard
   shows "On quote / Under quote / Under the floor" with the z. On the record
-  to 29 Oct the Card is z -0.3 on 15 groups: on quote.
+  to 29 Oct the Card is z -0.4 on 15 groups: on quote.
 - Not shipped: any claim of a minimum return. The honest minimum is "lands
   as quoted", monitored; profit above that is what the core-league rule and
   the best price are for, and it is judged on 100+ locked groups, not a week.
