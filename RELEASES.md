@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 The Card: wider leagues in under the market rule, core first, six groups a day (tag pending)
+
+**What changed:** Douglas, 10:05: "I want what will build the biggest return on a monthly basis". With a positive edge on every leg the monthly return is the number of qualifying groups times their edge, so the card now takes every pick with evidence behind it: `CARD_CORE_ONLY` False, football from any league but a cup or an international (`card_league`), all still under the market rule; core-league picks are chosen first at an equal chance (`CARD_CORE_NUDGE` 0.02, selection only, the quoted chance unchanged); up to six groups a day (`CARD_MAX_GROUPS`).
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, fifth pass: wider-league picks under the market landed 76.8% v 66.8% quoted (n=56, +4% a unit) against core 81.9% v 67.6% (+12%); wider picks not under the market 58.3% v 67.1% and stay out. Midweek pool roughly doubles (5 to 8 picks against 0 to 3). Two tests changed or added; 573 pass; `nametest.py` clear.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `RELEASES.md`, `CLAUDE.md`. **Roll back:** set `CARD_CORE_ONLY = True` and `CARD_MAX_GROUPS = 4`.
+
 ## 2026-10-29 The Card: no clock lock; a group is open until its first kick-off (tag pending)
 
 **What changed:** Douglas, 29 Oct 2026: "remove all locks ... worldwide games over a 24 hour period ... the ability to place at any time and for the days ahead". The 07:00 lock is gone. A group (today or any of the next three days) is open until its first kick-off: every build re-checks it and it holds unless a pick fails the rule (the reason logged), its bench is rebuilt, and at the first build after its first kick-off it is frozen as last published and archived (`groupings.first_kick`, `build_card`; `lockAt` is the group's first kick-off). No group is "late" any more. The record's honesty is unchanged: what is graded is what was published before the first game started. The Bets page copy says so; the one-day 12:00 lock of the previous entry is superseded, and today's old-window groups stay off the page for today (`CARD_TRANSITION`, now a date set).
