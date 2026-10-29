@@ -336,3 +336,28 @@ class CoreLeagues(unittest.TestCase):
         import json, tempfile
         # three settled groups at p 0.3, none won: z = -0.9/sqrt(0.63)
         self.assertIsNotNone(G.CARD_FLOOR_Z)
+
+
+class MoreGroups(unittest.TestCase):
+    """29 Oct 2026: up to CARD_MAX_GROUPS a day, 2x, 3x, then a second of each
+    from the fixtures left, every group from different fixtures."""
+
+    def test_second_pair_from_the_leftover_fixtures(self):
+        L = board() + [leg(20 + i, round(1.32 + 0.03 * i, 2), 0.66, f"{DATE}T{14 + i // 2:02d}:{(i % 2) * 30:02d}:00Z") for i in range(8)]
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        self.assertLessEqual(len(gs), G.CARD_MAX_GROUPS)
+        self.assertGreater(len(gs), 2)
+        seen = [l["event"] for g in gs for l in g["legs"]]
+        self.assertEqual(len(seen), len(set(seen)))
+        self.assertEqual(len({G.card_slot(g) for g in gs}), len(gs))
+        self.assertTrue(any(g["seq"] == 2 for g in gs))
+        for g in gs:
+            self.assertEqual(g["stake"], G.CARD_STAKE[g["name"]])
+            self.assertGreaterEqual(g["odds"], G.CARD_RANGE[g["name"]][0])
+
+    def test_second_group_locks_and_holds_like_the_first(self):
+        L = board() + [leg(20 + i, round(1.32 + 0.03 * i, 2), 0.66, f"{DATE}T{14 + i // 2:02d}:{(i % 2) * 30:02d}:00Z") for i in range(8)]
+        gs = G.build_card(L, DATE, EARLY, log=[])
+        again = G.build_card(L, DATE, AFTER_LOCK, prev=gs, log=[])
+        self.assertEqual({G.card_slot(g) for g in again}, {G.card_slot(g) for g in gs})
+        self.assertTrue(all(g["locked"] for g in again))

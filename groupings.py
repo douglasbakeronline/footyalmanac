@@ -1323,6 +1323,16 @@ CARD_CORE_ONLY = True
 # groups is the signal to retire the rule, the same test the Daily List
 # applies to a sport. The page says which side of the line the Card is on.
 CARD_FLOOR_Z, CARD_FLOOR_N = -2.0, 50
+# 29 Oct 2026, Douglas, "how to best serve groups each day to maximise a
+# return": more groups, not longer ones. With a per-leg edge, a second 2x and
+# 3x from the picks the first pair left over carry the same expected return
+# per unit over more independent shots, so a week is smoother. Up to
+# CARD_MAX_GROUPS a day, each from fixtures no other group uses, built in
+# order 2x, 3x, 2x, 3x (seq 1, 1, 2, 2); a seq-2 group clears the same floor
+# and range. Staking: CARD_STAKE units on each kind, shown on the page
+# (two on a 2x, one on a 3x: most of the return for half the swing).
+CARD_MAX_GROUPS = 4
+CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
@@ -1493,8 +1503,8 @@ def bench_for(g, L, used, after, wide=False):
     return out
 
 def card_slot(g):
-    """A Card group's slot: (window, kind). One group per slot per day."""
-    return (g.get("window"), g.get("name"))
+    """A Card group's slot: (window, kind, seq). One group per slot per day."""
+    return (g.get("window"), g.get("name"), int(g.get("seq") or 1))
 
 def archived_card(date):
     """The locked Card groups in groupings-archive/<date>.json, one per slot
@@ -1544,18 +1554,21 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
             continue
         ng["checked"] = stamp; ng["bench"] = []; groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
     replaced = {e["rank"] + "|" + e["name"] for e in (log or []) if e["at"] == stamp}
+    seqs = max(1, -(-CARD_MAX_GROUPS // len(CARD_KINDS)))
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w): continue
         lock = lock_time(date, w)
-        for name, _, _, _ in CARD_KINDS:
-            if (w, name) in filled: continue
-            g = best_card(by_win[w], used, after, name)
-            if not g: continue
-            late = now >= lock
-            g.update(window=w, rank=w, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
-                     status="late" if late else ("replacement" if f"{w}|{name}" in replaced else "new"))
-            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
-            used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
+        for seq in range(1, seqs + 1):
+            for name, _, _, _ in CARD_KINDS:
+                if (w, name, seq) in filled: continue
+                if sum(1 for g in groups if g.get("window") == w and not g.get("wide")) >= CARD_MAX_GROUPS: break
+                g = best_card(by_win[w], used, after, name)
+                if not g: continue
+                late = now >= lock
+                g.update(window=w, rank=w, seq=seq, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
+                         status="late" if late else ("replacement" if f"{w}|{name}" in replaced else "new"))
+                for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+                used |= {l["event"] for l in g["legs"]}; filled.add((w, name, seq)); groups.append(g)
     # The wider rule, only for a window the full rule left empty.
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
@@ -1564,10 +1577,10 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
             g = best_card(by_win[w], used, after, name, wide=True)
             if not g: continue
             late = now >= lock
-            g.update(window=w, rank=w, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=late, late=late,
                      status="late" if late else "new")
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
-            used |= {l["event"] for l in g["legs"]}; filled.add((w, name)); groups.append(g)
+            used |= {l["event"] for l in g["legs"]}; filled.add((w, name, 1)); groups.append(g)
     # 29 Oct 2026: the bench and the price at CARD_BOOK. A locked group keeps
     # the bench it locked with; an open group's bench is rebuilt each build
     # from the picks no group uses, so it never names a pick on the card.
@@ -1577,7 +1590,8 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
         g["bookOdds"] = at_book(g)
         g["book"] = CARD_BOOK
     order = {w: i for i, (w, _, _) in enumerate(CARD_WINDOWS)}
-    return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), g["name"]))
+    for g in groups: g["stake"] = CARD_STAKE.get(g["name"], 1)
+    return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), int(g.get("seq") or 1), g["name"]))
 
 def card_windows(date):
     return [{"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w))} for w, a, b in CARD_WINDOWS]
@@ -1916,7 +1930,8 @@ def grade(now=None):
             # 25 Oct 2026 (review bug 1): wide, late, locked and lockAt were
             # dropped here, so wider-rule and post-lock groups were tallied as
             # the full Card. They travel with the graded row and are tallied apart.
-            gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "odds": g["odds"], "p": g["p"], "status": status,
+            gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "seq": g.get("seq"), "rule": g.get("rule"),
+                       "odds": g["odds"], "p": g["p"], "status": status,
                        "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2),
                        "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
@@ -1973,6 +1988,10 @@ def grade(now=None):
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
            "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
+           # 29 Oct 2026: each Card rule version on its own line, so a change to the
+           # rule is judged against the rules before it rather than blended in.
+           "cardByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == r])
+                          for r in sorted({g.get("rule") for g in allg if is_card(g["name"]) and g.get("rule") is not None})},
            "cardByWindow": {w: tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("window") == w])
                             for w in [w for w, _, _ in CARD_WINDOWS] + sorted({g["window"] for g in allg if is_card(g["name"]) and g.get("window")} - {w for w, _, _ in CARD_WINDOWS})},
            "firstChoice": tally([g for g in allg if g["rank"] == "main"]), "days": days}
@@ -2037,6 +2056,7 @@ def main():
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "coreOnly": CARD_CORE_ONLY, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),

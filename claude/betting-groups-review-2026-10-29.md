@@ -231,3 +231,39 @@ Shipped from this:
 - Not shipped: any claim of a minimum return. The honest minimum is "lands
   as quoted", monitored; profit above that is what the core-league rule and
   the best price are for, and it is judged on 100+ locked groups, not a week.
+
+## Fourth pass: more groups, not longer ones, and how to keep learning
+
+Douglas: "how can we best serve groups each day to maximise a return", then
+"will follow your suggestion", and "what's the best way to learn how to
+reshape and tweak this as time moves forwards".
+
+Shipped:
+- Up to `CARD_MAX_GROUPS` (4) a day: 2x, 3x, then a second 2x and 3x from
+  the fixtures the first pair left (`seq` 1 and 2, in `card_slot`), each
+  clearing the same floor and range, no fixture in two groups. With a
+  per-leg edge the same expected return per unit is spread over more
+  independent shots, so a week is smoother.
+- `CARD_STAKE`: two units on each 2x, one on each 3x, shown on each group
+  and in the playbook. At the same edge the 2x lands about 40% and the 3x
+  about 25%; weighting the 2x keeps most of the return for half the swing.
+- `cardByRule` in the record: each `CARD_RULE` version on its own line (won
+  of settled, return, z), on the Bets scoreboard. A change to the rule is
+  judged against the rules before it rather than blended into one record.
+
+How to tweak it from here, the method:
+1. Change one thing at a time and bump `CARD_RULE`, so the record splits.
+   The floor line and the per-rule lines are the readout.
+2. Judge legs before groups: legs landed against legs quoted is the number
+   with enough volume to move; groups are that number cubed plus luck. A
+   rule needs 100+ legs under it before it says anything, 300 before it
+   says much.
+3. Rerun `tools/card_replay.py` before any change to the leg rule and put
+   its figures in the note; it reads the whole priced archive, which grows
+   by about 300 rows a week. Add a rule variant to it rather than guessing.
+4. Never fit on the record (rule 1). The replay is the archive read as a
+   scoreboard; the constants that pick legs (`CARD_FAIR_MIN`,
+   `MULT_ABOVE_BOOK`, `CARD_ODDS`) move only by hand, with the figures.
+5. Weekly, Monday: the floor line, legs landed v quoted by league family,
+   the closing-line tally. Monthly: the replay and this note. Change
+   nothing mid-week.
