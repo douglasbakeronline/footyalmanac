@@ -445,6 +445,12 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l .m .og-bk{display:inline-block;margin-top:3px;font:600 11px var(--f-num);color:var(--home);letter-spacing:.01em}
 .og-l .m .og-bk em{font:600 10.5px var(--f-ui);font-style:normal;color:var(--mute);margin-right:5px}
 .og-l .m .og-bk.miss{color:var(--draw-ink,#7a5c12);font:600 10.5px var(--f-ui)}
+.og-placed{display:flex;flex-direction:column;gap:2px;padding:8px 13px;border-top:1px solid var(--rule-soft);font-size:12.5px;line-height:1.4}
+.og-placed b{font-weight:700}.og-placed span{color:var(--mute-ink,#6e6355)}
+.og-placed.on b{color:var(--home)}.og-placed.changed{background:#fbf3e4}.og-placed.changed b{color:var(--draw-ink,#7a5c12)}
+.og-pl{padding:8px 13px;border-top:1px solid var(--rule-soft)}
+.og-placed-btn{font:600 12.5px var(--f-ui);padding:8px 12px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer;min-height:40px}
+.og-placed-btn.on{background:var(--home);color:#fff;border-color:var(--home)}
 .og-bench{border-top:1px solid var(--rule-soft);font-size:13px}
 .og-bench summary{padding:8px 13px;cursor:pointer;font-weight:600;color:var(--ink-2)}
 .og-bench p{margin:0;padding:0 13px 6px;font-size:11.5px;color:var(--mute);line-height:1.4}
@@ -3480,6 +3486,27 @@ function ogBook(l){
   const others = Object.keys(bo).filter(k => k !== B);
   return `<span class="og-bk miss" title="${ogEsc(B)} had no price for this pick at the last read">not at ${ogEsc(B)}${others.length ? ` · ${others.slice(0, 2).map(ogEsc).join(", ")}${others.length > 2 ? ` +${others.length - 2}` : ""}` : l.bestBook ? ` · ${ogEsc(l.bestBook)}` : ""}</span>`;
 }
+// 29 Oct 2026, Douglas: a "placed" marker. With no lock, a group can still be
+// replaced before its first kick-off; pinning the version placed keeps the
+// page and the slip from disagreeing. Per browser (localStorage), never sent
+// anywhere: the record grades the published version regardless.
+const OG_PLACED_KEY = "og-placed";
+function ogPlacedAll(){ try { return JSON.parse(localStorage.getItem(OG_PLACED_KEY) || "{}"); } catch(e){ return {}; } }
+function ogSlotKey(g, date){ return `${date}|${g.window || ""}|${g.name}|${g.seq || 1}`; }
+function ogGid(g){ return g.legs.map(l => `${l.event}>${l.pick}`).sort().join("|"); }
+function ogPlaced(g, date){ return ogPlacedAll()[ogSlotKey(g, date)] || null; }
+function ogTogglePlaced(g, date){
+  const all = ogPlacedAll(), k = ogSlotKey(g, date);
+  if(all[k]) delete all[k];
+  else all[k] = {gid: ogGid(g), odds: g.odds, picks: g.legs.map(l => l.pick), at: new Date().toISOString()};
+  try { localStorage.setItem(OG_PLACED_KEY, JSON.stringify(all)); } catch(e){}
+  renderToday();
+}
+function ogPlacedNote(g, date){
+  const p = ogPlaced(g, date); if(!p) return "";
+  if(p.gid === ogGid(g)) return `<div class="og-placed on"><b>Placed</b><span>${ogAt(p.at)}${g.status === "underway" || g.locked ? "" : " · still open; if a pick fails the rule the card will show a different group here and say so"}</span></div>`;
+  return `<div class="og-placed changed"><b>You placed a different version of this group</b><span>${p.picks.map(ogEsc).join(", ")} at ${(+p.odds).toFixed(2)}, ${ogAt(p.at)}. Your bet stands as placed; the record grades the version shown. The re-check log below says what changed.</span></div>`;
+}
 // The substitutes: any one can replace any pick in the group and keep it in range.
 function ogBench(g){
   const b = g.bench || []; if(!b.length || g.status === "underway") return "";
@@ -3540,9 +3567,9 @@ function ogCard(g){
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>${card && g.stake > 1 ? `${g.stake} units: ` : ""}£${(stake * (card ? g.stake || 1 : 1)) % 1 ? (stake * (card ? g.stake || 1 : 1)).toFixed(2) : stake * (card ? g.stake || 1 : 1)} returns £${(stake * (card ? g.stake || 1 : 1) * g.odds).toFixed(2)}</span>${(() => { const u = stake * (card ? g.stake || 1 : 1);
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
-    ${ogStatus(g)}
+    ${ogStatus(g)}${card ? ogPlacedNote(g, OG_DAY) : ""}
     <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
-    <div>${legs}</div>${card ? ogBench(g) : ""}
+    <div>${legs}</div>${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
     <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
@@ -3923,6 +3950,8 @@ function renderToday(){
   ogFill(host);
   accaMount($("#acca"));
   host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
+  host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {
+    const g = day.groups.find(x => ogSlotKey(x, day.date) === btn.dataset.slot); if(g) ogTogglePlaced(g, day.date); });
   $("#tbDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderToday(); };
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
   $("#tbSlip").oninput = e => { TB_TEXT = e.target.value; try { localStorage.setItem("tb-slip", TB_TEXT); } catch(err) {} $("#tbOut").innerHTML = tbCheckHtml(); };

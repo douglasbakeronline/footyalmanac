@@ -358,3 +358,23 @@ Decision (Douglas): `CARD_CORE_ONLY` back to True. The wider pool stays out
 of the card until it has a record line of its own; `CARD_MAX_GROUPS` stays
 at 6 so a full weekend is not capped. Twenty-one groups is far too few to
 settle it; the direction and the mechanism point the same way.
+
+## Eighth pass: the month ahead
+
+Shipped (29 Oct, afternoon):
+- A **placed** marker on each open Card group (`index.html`, `og-placed`,
+  per browser in localStorage). Pinning the version placed; when the card
+  later shows a different group in that slot, the page says which version
+  was placed and that the record grades the published one.
+- Replacement pushes carry a `REPLACEMENT:` title and the warning tag.
+- `tools/card_replay.py` rebuilt on the live machinery (`best_card`,
+  `card_fault`, the kinds, the cap, the stakes) with pre-registered variants
+  for the 30 Nov review: `under8`, `under10` (a deeper veto), `four3x`
+  (four-pick 3x), `wider` (wider leagues under the market). `--since` limits
+  the days. On October all four are within noise of the live rule (paired
+  p(worse) 0.42 to 0.90; four3x +0.08 units a day, the only one not behind).
+
+Not changed, by design: the leg rule, the 60% floor, the 5-point veto, the
+2x/3x split, the stake weights. Review 15 and 30 Nov: rerun the replay,
+read the variants against the live rule on the archive and the November
+record, change one thing at a time.

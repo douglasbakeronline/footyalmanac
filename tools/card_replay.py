@@ -15,14 +15,16 @@ built exactly as groupings.build_card builds it today (best_card, card_fault,
 mult_combo, the 2x and 3x kinds, three or four picks, no fixture twice) and
 graded strictly: a group is won only when every pick won.
 
-Rules compared:
-  market   the live rule: bookmakers 60%+, model within 5 points, chance =
-           the bookmakers' fair number, best combined chance first
-  model    confidence first: the same vetoes, but ranked and quoted on the
-           model's number
-  core     model, restricted to the core leagues (not the 227 wider
-           API-Football leagues, not cups) and the model at 65%+
-  core70   core, model at 70%+
+Variants compared (29 Oct 2026 afternoon, pre-registered for the 30 Nov
+review so no variant is picked because it happened to look good):
+  live     the Card exactly as groupings.py builds it today
+  under8   the model at least 8 points under the market (live: 5)
+  under10  the model at least 10 points under the market
+  four3x   Card 3x groups of four picks, 2x unchanged
+  wider    wider API-Football leagues admitted, under the market (CARD_CORE_ONLY False)
+Each is built with build_card's own pieces (best_card, card_fault, the kinds,
+the cap, the stake weights) with one constant patched, so the replay and the
+live card cannot drift apart. `--since YYYY-MM-DD` limits the days.
 
 Rule 1 holds: nothing is fitted here, it is the scoreboard read. The archive
 has prices from 11 Sep 2026, so this is seven weeks and the intervals are
@@ -61,46 +63,40 @@ def legs_of(rows):
     return by
 
 
-def build(day_legs, date, rule):
-    """One day's Card under a rule: best_card unchanged, the candidate set and
-    the leg's quoted chance decided by the rule."""
-    L = []
-    for l in day_legs:
-        l = dict(l)
-        if rule in ("core", "core70") and not l["core"]: continue
-        if rule == "core" and l["pModel"] < 0.65: continue
-        if rule == "core70" and l["pModel"] < 0.70: continue
-        L.append(l)
-    after = G.lock_time(date, "Day")
-    if rule == "market":
-        pick = lambda L_, used, name: G.best_card(L_, used, after, name)
-    else:
-        # the same vetoes (card_fault), the model's number as the chance
-        def pick(L_, used, name):
-            lo, hi = G.CARD_RANGE[name]
-            cands = [dict(l, p=l["pModel"], basis="model") for l in L_
-                     if l["event"] not in used and G.card_fault(l) is None and (G.parse(l["when"]) or after) >= after]
-            cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:G.CARD_POOL]
-            best = None
-            for k in G.CARD_LEGS:
-                for c in __import__("itertools").combinations(cands, k):
-                    o = G.mult_combo(c, lo, hi)
-                    if o is None: continue
-                    pr = math.prod(l["p"] for l in c)
-                    if pr < G.MIN_CHANCE[name]: continue
-                    if best is None or pr > best[0]: best = (pr, o, c)
-            if not best: return None
-            pr, o, c = best
-            return {"name": name, "odds": round(o, 2), "p": round(pr, 4), "legs": list(c)}
-    groups, used = [], set()
-    for name, _, _, _ in G.CARD_KINDS:
-        g = pick(L, used, name)
-        if not g: continue
-        used |= {l["event"] for l in g["legs"]}
-        g["won"] = all(l["won"] for l in g["legs"])
-        g["bestOdds"] = round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in g["legs"]), 2)
-        groups.append(g)
-    return groups
+VARIANTS = {
+    "live": {},
+    "under8": {"CARD_UNDER_MARKET": 0.08},
+    "under10": {"CARD_UNDER_MARKET": 0.10},
+    "four3x": {"CARD_LEGS_3X": (4,)},
+    "wider": {"CARD_CORE_ONLY": False},
+}
+
+
+def build(day_legs, date, variant):
+    """One day's Card under a variant, with the live machinery."""
+    patch = VARIANTS[variant]
+    saved = {k: getattr(G, k) for k in patch if hasattr(G, k)}
+    legs_3x = patch.get("CARD_LEGS_3X")
+    for k, v in patch.items():
+        if k != "CARD_LEGS_3X": setattr(G, k, v)
+    try:
+        after = G.lock_time(date, "Day"); groups, used = [], set()
+        for seq in (1, 2, 3):
+            for name, _, _, _ in G.CARD_KINDS:
+                if len(groups) >= G.CARD_MAX_GROUPS: break
+                if legs_3x and name == "Card 3x":
+                    old_legs = G.CARD_LEGS; G.CARD_LEGS = legs_3x
+                    try: g = G.best_card(day_legs, used, after, name)
+                    finally: G.CARD_LEGS = old_legs
+                else:
+                    g = G.best_card(day_legs, used, after, name)
+                if not g: continue
+                used |= {l["event"] for l in g["legs"]}
+                g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = seq
+                groups.append(g)
+        return groups
+    finally:
+        for k, v in saved.items(): setattr(G, k, v)
 
 
 def summarise(days, label):
@@ -109,49 +105,50 @@ def summarise(days, label):
         print(f"{label:<8} no groups"); return
     n, w = len(gs), sum(g["won"] for g in gs)
     exp = sum(g["p"] for g in gs)
-    ret = sum(g["odds"] for g in gs if g["won"]); best = sum(g["bestOdds"] for g in gs if g["won"])
+    st = sum(g["stake"] for g in gs); ret = sum(g["stake"] * g["odds"] for g in gs if g["won"])
+    best = sum(g["stake"] * g["bestOdds"] for g in gs if g["won"])
     legs = [l for g in gs for l in g["legs"]]
-    lw = sum(l["won"] for l in legs); lq = sum(l["p"] for l in legs)
-    # bootstrap the return per unit by day
+    lw = sum(l["won"] for l in legs); lq = sum(l["fair"] for l in legs)
     keys = list(days); vals = []
     for _ in range(4000):
         pick = [days[random.choice(keys)] for _ in keys]
-        st = sum(len(d) for d in pick); rt = sum(g["odds"] for d in pick for g in d if g["won"])
-        vals.append(rt / st - 1 if st else 0)
+        s_ = sum(g["stake"] for d in pick for g in d); r_ = sum(g["stake"] * g["odds"] for d in pick for g in d if g["won"])
+        vals.append(r_ / s_ - 1 if s_ else 0)
     vals.sort()
     print(f"{label:<8} days {len(days):>2}  groups {n:>3}  won {w:>3} ({w/n*100:4.0f}%)  expected {exp/n*100:4.0f}%  "
-          f"return {ret:6.2f}/{n} ({(ret/n-1)*100:+5.0f}%, 90% {vals[200]*100:+.0f} to {vals[3799]*100:+.0f})  best {(best/n-1)*100:+5.0f}%  "
+          f"units {st:>3}  return {(ret/st-1)*100:+5.0f}% (90% {vals[200]*100:+.0f} to {vals[3799]*100:+.0f})  best {(best/st-1)*100:+5.0f}%  "
           f"legs {lw}/{len(legs)} landed {lw/len(legs)*100:4.1f}% v quoted {lq/len(legs)*100:4.1f}%")
     for name, _, _, _ in G.CARD_KINDS:
         k = [g for g in gs if g["name"] == name]
         if k:
-            kw = sum(g["won"] for g in k); kr = sum(g["odds"] for g in k if g["won"])
-            print(f"         {name}: {kw}/{len(k)} won, expected {sum(g['p'] for g in k)/len(k)*100:.0f}%, return {(kr/len(k)-1)*100:+.0f}%")
+            kw = sum(g["won"] for g in k); ks = sum(g["stake"] for g in k); kr = sum(g["stake"] * g["odds"] for g in k if g["won"])
+            print(f"         {name}: {kw}/{len(k)} won, expected {sum(g['p'] for g in k)/len(k)*100:.0f}%, return {(kr/ks-1)*100:+.0f}%")
     return gs
 
 
 def main():
+    since = sys.argv[sys.argv.index("--since") + 1] if "--since" in sys.argv else None
     rows = M.rows()
     by = legs_of(rows)
-    dates = sorted(by)
-    print(f"{len(rows)} priced archive rows, {sum(len(v) for v in by.values())} clean win-pick legs over {len(dates)} days, {dates[0]} to {dates[-1]}")
+    dates = [d for d in sorted(by) if not since or d >= since]
+    print(f"{len(rows)} priced archive rows, {sum(len(by[d]) for d in dates)} clean win-pick legs over {len(dates)} days, {dates[0]} to {dates[-1]}")
     out = {}
-    for rule in ("market", "model", "core", "core70"):
-        days = {d: build(by[d], d, rule) for d in dates}
+    for v in VARIANTS:
+        days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
-        out[rule] = (days, summarise(days, rule))
-    # paired by day: model rules against the market rule
-    for rule in ("model", "core", "core70"):
-        a, b = out["market"][0], out[rule][0]
-        common = sorted(set(a) & set(b))
-        diffs = []
-        for d in common:
-            ra = sum(g["odds"] for g in a[d] if g["won"]) - len(a[d])
-            rb = sum(g["odds"] for g in b[d] if g["won"]) - len(b[d])
+        out[v] = days
+        summarise(days, v)
+    for v in VARIANTS:
+        if v == "live": continue
+        a, b = out["live"], out[v]
+        alld = sorted(set(a) | set(b)); diffs = []
+        for d in alld:
+            ra = sum(g["stake"] * g["odds"] for g in a.get(d, []) if g["won"]) - sum(g["stake"] for g in a.get(d, []))
+            rb = sum(g["stake"] * g["odds"] for g in b.get(d, []) if g["won"]) - sum(g["stake"] for g in b.get(d, []))
             diffs.append(rb - ra)
         if not diffs: continue
         bs = sorted(sum(random.choice(diffs) for _ in diffs) / len(diffs) for _ in range(4000))
-        print(f"paired {rule} - market on {len(common)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
+        print(f"paired {v} - live on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
               f"90% {bs[200]:+.2f} to {bs[3799]:+.2f}, p(worse) {sum(x < 0 for x in bs)/len(bs):.2f}")
 
 

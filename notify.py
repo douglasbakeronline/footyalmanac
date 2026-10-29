@@ -50,7 +50,11 @@ def message(g, date):
     units = g.get("stake") or 1
     lines.append(f"{units} unit{'s' if units != 1 else ''} · open until {first.strftime('%a %H:%M') if first else 'first kick-off'}"
                  + (f" · {len(g['bench'])} substitute{'s' if len(g['bench']) != 1 else ''}" if g.get("bench") else ""))
-    if g.get("status") == "replacement": lines.append("Replaces a group that failed its re-check.")
+    if g.get("status") == "replacement":
+        # 29 Oct 2026: a replacement is flagged in the title and tagged apart,
+        # so a group placed from the earlier push is noticed
+        title = "REPLACEMENT: " + title
+        lines.append("Replaces a group that failed its re-check. If you placed the earlier version, your bet stands; the record grades this one.")
     return title, "\n".join(lines)
 
 
@@ -77,7 +81,7 @@ def main():
             if g.get("status") not in ("new", "replacement") or g.get("first") != stamp: continue
             title, body = message(g, day["date"])
             try:
-                send(topic, title, body); sent += 1
+                send(topic, title, body, "warning" if g.get("status") == "replacement" else "soccer"); sent += 1
             except Exception as e:
                 print(f"notify: send failed ({type(e).__name__})")
     print(f"notify: {sent} sent")
