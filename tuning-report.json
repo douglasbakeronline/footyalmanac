@@ -1159,14 +1159,14 @@
   "fitted": 1.0257
  },
  "checkSeason": {
-  "n": 2031,
-  "shipped": 1.026,
-  "fitted": 1.0263,
-  "delta": 0.0002,
+  "n": 2102,
+  "shipped": 1.0248,
+  "fitted": 1.025,
+  "delta": 0.0003,
   "sd": 0.0003,
-  "pWorse": 0.779,
-  "shippedAcc": 0.4879,
-  "fittedAcc": 0.4879
+  "pWorse": 0.791,
+  "shippedAcc": 0.4891,
+  "fittedAcc": 0.4891
  },
  "gates": {
   "enoughData": true,
@@ -1174,7 +1174,7 @@
   "worthIt": false
  },
  "pass": false,
- "generated": "2026-10-26",
+ "generated": "2026-10-29",
  "consecutivePasses": 0,
  "applied": false
 }

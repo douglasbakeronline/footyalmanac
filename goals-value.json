@@ -1,0 +1,153 @@
+{
+ "generated": "2026-10-29T16:00:42+00:00",
+ "market": "over/under 2.5",
+ "source": "football-data.co.uk",
+ "edge": 0.05,
+ "seasons": {
+  "fit": {
+   "n": 4709,
+   "logLossModel": 0.6863,
+   "logLossMarket": 0.6789,
+   "bands": {
+    "0-40": {
+     "n": 0,
+     "landed": null,
+     "model": null,
+     "market": null
+    },
+    "40-45": {
+     "n": 233,
+     "landed": 0.489,
+     "model": 0.438,
+     "market": 0.422
+    },
+    "45-50": {
+     "n": 1533,
+     "landed": 0.462,
+     "model": 0.479,
+     "market": 0.462
+    },
+    "50-55": {
+     "n": 1947,
+     "landed": 0.541,
+     "model": 0.523,
+     "market": 0.522
+    },
+    "55-60": {
+     "n": 869,
+     "landed": 0.593,
+     "model": 0.57,
+     "market": 0.598
+    },
+    "60-65": {
+     "n": 121,
+     "landed": 0.702,
+     "model": 0.616,
+     "market": 0.69
+    },
+    "65-101": {
+     "n": 6,
+     "landed": 1.0,
+     "model": 0.661,
+     "market": 0.783
+    }
+   },
+   "bets": 2314,
+   "hit": 0.399,
+   "quoted": 0.406,
+   "roi": -0.0458,
+   "pRoiNotPositive": 0.965,
+   "clvBets": 2314,
+   "clv": -0.0324,
+   "pClvNotPositive": 1.0,
+   "bySide": {
+    "over": {
+     "bets": 1130,
+     "won": 490,
+     "roi": -0.0175
+    },
+    "under": {
+     "bets": 1184,
+     "won": 434,
+     "roi": -0.0727
+    }
+   },
+   "season": "2025-26",
+   "pricedMatches": 7274
+  },
+  "check": {
+   "n": 760,
+   "logLossModel": 0.6746,
+   "logLossMarket": 0.6545,
+   "bands": {
+    "0-40": {
+     "n": 0,
+     "landed": null,
+     "model": null,
+     "market": null
+    },
+    "40-45": {
+     "n": 20,
+     "landed": 0.4,
+     "model": 0.434,
+     "market": 0.429
+    },
+    "45-50": {
+     "n": 189,
+     "landed": 0.513,
+     "model": 0.481,
+     "market": 0.499
+    },
+    "50-55": {
+     "n": 355,
+     "landed": 0.592,
+     "model": 0.525,
+     "market": 0.545
+    },
+    "55-60": {
+     "n": 181,
+     "landed": 0.718,
+     "model": 0.567,
+     "market": 0.623
+    },
+    "60-65": {
+     "n": 14,
+     "landed": 0.857,
+     "model": 0.616,
+     "market": 0.739
+    },
+    "65-101": {
+     "n": 1,
+     "landed": 1.0,
+     "model": 0.655,
+     "market": 0.773
+    }
+   },
+   "bets": 408,
+   "hit": 0.328,
+   "quoted": 0.388,
+   "roi": -0.19,
+   "pRoiNotPositive": 0.999,
+   "clvBets": 408,
+   "clv": -0.0391,
+   "pClvNotPositive": 1.0,
+   "bySide": {
+    "over": {
+     "bets": 92,
+     "won": 40,
+     "roi": -0.0303
+    },
+    "under": {
+     "bets": 316,
+     "won": 94,
+     "roi": -0.2364
+    }
+   },
+   "season": "2026-27",
+   "pricedMatches": 1911
+  }
+ },
+ "valueGate": false,
+ "verdict": "No proven value on the goals market: the picks do not beat the closing price on both seasons.",
+ "log": []
+}
