@@ -1315,7 +1315,17 @@ CARD_SPORT_MIN = {"tennis": 0.75}
 # under quote (56.5% v 69.7%), football legs on the Card come from the core
 # leagues only: engine.LEAGUES without the API-Football wider set, cups and
 # internationals. Reviewed with the floor below.
-CARD_CORE_ONLY = True
+# 29 Oct 2026, 10:05, Douglas: "I want what will build the biggest return on a
+# monthly basis". With a positive edge on every leg, the monthly return is the
+# number of qualifying groups times their edge, so the card takes every pick
+# with evidence behind it rather than only the strongest: core-league picks
+# (+12% a unit on the archive) and wider-league picks that clear the
+# under-market rule (+4% a unit, n=56), cups and internationals still out.
+# Core picks get a small nudge in selection (CARD_CORE_NUDGE) so a core and a
+# wider pick at the same chance go core first. CARD_CORE_ONLY True would keep
+# the wider leagues off again.
+CARD_CORE_ONLY = False
+CARD_CORE_NUDGE = 0.02
 # 29 Oct 2026, backtest at Douglas's request (claude/betting-groups-review-
 # 2026-10-29.md, fifth pass): the one cut that lands above quote in every
 # slice of the priced archive is the model sitting at least CARD_UNDER_MARKET
@@ -1344,7 +1354,7 @@ CARD_FLOOR_Z, CARD_FLOOR_N = -2.0, 50
 # order 2x, 3x, 2x, 3x (seq 1, 1, 2, 2); a seq-2 group clears the same floor
 # and range. Staking: CARD_STAKE units on each kind, shown on the page
 # (two on a 2x, one on a 3x: most of the return for half the swing).
-CARD_MAX_GROUPS = 4
+CARD_MAX_GROUPS = 6     # 4 until 10:05 on 29 Oct 2026; more groups at a positive edge is more return
 # 29 Oct 2026, Douglas: "remove all locks ... worldwide games over a 24 hour
 # period ... the ability to place at any time and for the days ahead". There
 # is no clock lock any more. A group is open until its first kick-off: every
@@ -1422,13 +1432,25 @@ def core_league(code):
         return False
     return bool(m) and not m.get("cup") and not m.get("international")
 
+def card_league(code):
+    """A league the Card may take football from: a core league, or a wider
+    API-Football league that is not a cup (29 Oct 2026). Cups and
+    internationals are out either way."""
+    if core_league(code): return True
+    if not code or not str(code).startswith("af."): return False
+    try:
+        import sources as S_
+        return code not in S_.AF_CUPS and code not in getattr(S_, "AF_NEW", set())
+    except Exception:
+        return False
+
 def card_fault(l, wide=False):
     """Why a leg cannot go on the Card, in plain words, or None."""
     lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card on its live record"
-    if CARD_CORE_ONLY and l.get("sport") == "football" and not core_league(l.get("code")):
-        return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the core leagues (wider leagues and cups landed under quote on the Card rule)"
+    if l.get("sport") == "football" and not (core_league(l.get("code")) if CARD_CORE_ONLY else card_league(l.get("code"))):
+        return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the leagues the Card takes (cups and internationals landed under quote)"
     if CARD_UNDER_MARKET and not wide and l.get("sport") == "football" and l.get("fair") is not None and not l.get("est") \
             and l["pModel"] - l["fair"] > -CARD_UNDER_MARKET:
         return (f"{l['pick']}: the model ({pct(l['pModel'])}) is not at least {round(CARD_UNDER_MARKET * 100)} points under the "
@@ -1457,6 +1479,9 @@ def best_card(L, used, after, name, wide=False):
     cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l, wide) is None
              and (parse(l["when"]) or after) >= after]
     cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
+    # 29 Oct 2026: core-league picks first at an equal chance (the nudge is for
+    # choosing only; the quoted chance is still the bookmakers')
+    nudge = lambda l: l["p"] + (CARD_CORE_NUDGE if l.get("sport") == "football" and core_league(l.get("code")) else 0)
     top = None
     for k in (CARD_WIDE_LEGS if wide else CARD_LEGS):
         for c in itertools.combinations(cands, k):
@@ -1464,9 +1489,10 @@ def best_card(L, used, after, name, wide=False):
             if o is None: continue
             p = math.prod(l["p"] for l in c)
             if p < MIN_CHANCE[name]: continue
-            if not top or p > top[0] or (p == top[0] and o > top[2]): top = (p, c, o)
+            score = math.prod(nudge(l) for l in c)
+            if not top or score > top[0] or (score == top[0] and o > top[3]): top = (score, p, c, o)
     if not top: return None
-    p, c, o = top
+    _, p, c, o = top
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
     return {"name": name, "risk": "Wider rule" if wide else RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
@@ -2107,7 +2133,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
-                              "coreOnly": CARD_CORE_ONLY, "underMarket": CARD_UNDER_MARKET, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),

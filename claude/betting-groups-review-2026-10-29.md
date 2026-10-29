@@ -323,3 +323,16 @@ day about 1.3 (1.15). Same caveat as before: it is 72 legs and the per-rule
 record is the test. The rest of the answer to "improve on 1.15" is in the
 fourth pass: price (in), longer groups once 300 legs say the edge holds,
 and the exchange or acca boosts, which need no model at all.
+
+## Sixth pass: no clock lock, wider leagues in, six groups
+
+- Locks removed at Douglas's request ("worldwide games over a 24 hour
+  period ... place at any time and for the days ahead"): a group is open
+  until its first kick-off, re-checked each build (holds unless a pick fails
+  the rule), frozen as last published at the first build after kick-off.
+  The record still grades only what was published before the first game.
+- "Biggest return on a monthly basis": the card takes wider-league picks
+  that clear the under-market rule (+4% a unit, n=56) beside the core ones
+  (+12%), cups and internationals out, core first at an equal chance, up
+  to six groups a day. More groups at a positive edge is more return; the
+  per-rule record line is the check that the wider legs hold up live.

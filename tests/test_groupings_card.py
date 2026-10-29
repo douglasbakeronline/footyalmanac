@@ -334,9 +334,13 @@ class BenchAndBook(unittest.TestCase):
 class CoreLeagues(unittest.TestCase):
     """29 Oct 2026: football legs on the Card come from the core leagues only."""
 
-    def test_wider_league_and_cup_legs_are_out(self):
-        self.assertIn("core leagues", G.card_fault(dict(leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
-        self.assertIn("core leagues", G.card_fault(dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
+    def test_cup_legs_are_out_wider_leagues_in(self):
+        # 29 Oct 2026 10:05: wider leagues allowed (under the market), cups and internationals out
+        self.assertIsNone(G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+        self.assertIn("leagues the Card takes", G.card_fault(dict(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
+        self.assertIn("leagues the Card takes", G.card_fault(dict(leg(1, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="wc.q.uefa", comp="WCQ")))
+        with mock.patch.object(G, "CARD_CORE_ONLY", True):
+            self.assertIn("leagues the Card takes", G.card_fault(dict(leg(0, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
         self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.62, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
         self.assertTrue(G.core_league("de.2")); self.assertFalse(G.core_league("eu.cl")); self.assertFalse(G.core_league(None))
 
@@ -432,3 +436,13 @@ class NoClockLock(unittest.TestCase):
             old = dict(gs[0], window="Overnight", rank="Overnight", locked=True)
             again = G.build_card(board(), DATE, EARLY + timedelta(hours=1), prev=[old] + gs, log=[])
             self.assertFalse(any(g["window"] == "Overnight" for g in again))
+
+
+class CoreNudge(unittest.TestCase):
+    def test_core_pick_beats_an_equal_wider_pick(self):
+        L = [leg(i, 1.40, 0.62, f"{DATE}T12:{i * 5:02d}:00Z") for i in range(4)]
+        L[0]["code"] = "af.240"      # one wider-league pick at the same chance as three core ones
+        g = G.best_card(L, set(), EARLY, "Card 2x")
+        self.assertIsNotNone(g)
+        self.assertNotIn("p0", [l["pick"] for l in g["legs"]])
+        self.assertAlmostEqual(g["p"], G.math.prod(l["p"] for l in g["legs"]), places=4)   # quoted chance has no nudge
