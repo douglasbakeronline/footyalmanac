@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Calibration by band and sport, rerun (tag pending)
+
+**What changed:** nothing in the model or the page. A dated note, `claude/calibration-rerun-2026-10-29.md`, from re-running `calibration_bands.py` (football walk-forward replay and each sport's own replay, bootstrap 90% intervals; `record.json` not read).
+
+**Evidence:** football 55-80% inside noise on the fit season (1,504+ calls); check season 60-70% under-confident +7.9 [+1.3,+14.2] on 136 calls but the fit season disagrees (+0.6), so Rule 3 blocks a refit; 85%+ still over-confident (68.3% v 88.8%, 41 pooled, 2 out of sample). Sports: ice hockey over-confident at 55-70% on the check window (-6.1 [-8.8,-3.4] at 55%+, fit window fine), baseball -5.0 [-8.2,-1.6] at 62%+ again, college basketball -4.6 at 60-70%; NBA, rugby union and league calibrated.
+
+**Files:** `claude/calibration-rerun-2026-10-29.md`, `RELEASES.md`. **Not changed:** `calibration.json`, `sports.json`, any constant. **Roll back:** `git revert` this commit.
+
 ## 2026-10-29 The Card: core leagues only again, after the two-rule replay (tag pending)
 
 **What changed:** `CARD_CORE_ONLY` back to True, Douglas's decision at 11:59 after both rules were replayed on October with the live Card machinery: core only +5.5 units on 15 staked (10 groups, 5 won); wider in +0.5 on 32 (21 groups, 8 won); the extra groups lost 5 units, nearly all Card 3x built from wider picks (2 of 10). `CARD_MAX_GROUPS` stays at 6. Page copy updated.
