@@ -3,6 +3,40 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 The Card: groups locked under the old windows stay on the page (tag pending)
+
+**What changed:** on the day the three windows became one, groups already locked as Overnight, Daytime or Evening (placed bets) were dropped from the day by `build_card` because their window no longer existed. A locked group in a legacy window is now kept as locked or under way until it settles, never rebuilt; `card_windows` lists a legacy window only while such a group sits in it, and the page heads it "locked under the old three-window card". An unlocked group in an old window is dropped, not rebuilt. One new test; 569 pass.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `RELEASES.md`.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-10-29 The Card: a football pick needs the model 5+ points under the bookmakers (#99, tag pending)
+
+**What changed:** `groupings.CARD_UNDER_MARKET` 0.05: a football leg on the Card (full rule only) needs the model's chance at least 5 points under the bookmakers' fair chance. The Bets page states it.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, fifth pass. On the priced archive the model-under-market legs landed 81.9% v 67.6% quoted (n=72, +2.6 se), 78.7% v 68.2% outside the one hot week (n=47), and 76.8% v 66.8% in the wider leagues (n=56); legs not under the market land at or below quote in every slice. Home/away, draw share and price band were tested and rejected (the price cut is the hot week). The same note corrects the core-only evidence: outside the hot week core legs are on quote, +6 points at 1.2 se.
+
+**Not changed:** the wider-rule fallback, the 60% floor, the lock, grading, any model number. **Roll back:** set `CARD_UNDER_MARKET = 0`.
+
+## 2026-10-29 The Card: up to four groups a day, stake weights, a record line per rule (#99, tag pending)
+
+**What changed:** up to four groups a day (`CARD_MAX_GROUPS`): 2x, 3x, then a second 2x and 3x from the fixtures left, each clearing the same floor and range; `seq` joins `card_slot`, so each locks, holds and archives on its own. Stake weights (`CARD_STAKE`): two units on each 2x, one on each 3x, shown on each group and in the playbook. A record line per `CARD_RULE` version (`cardByRule`), with z, on the Bets scoreboard.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, fourth pass. **Roll back:** set `CARD_MAX_GROUPS = 2`.
+
+## 2026-10-29 The Card: core leagues only, and the floor (#99, tag pending)
+
+**What changed:** football picks on the Card come from `engine.LEAGUES` without the API-Football wider set, cups and internationals (`CARD_CORE_ONLY`, `core_league`). Every tally in `groupings-record.json` carries `z`, won against expected in standard errors; the Bets scoreboard shows the Card as On quote, Under quote or Under the floor (`CARD_FLOOR_Z` -2 on `CARD_FLOOR_N` 50+ settled groups, the retire signal). `tools/card_replay.py` (advisory): the Card rebuilt on the priced archive under several leg rules.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, third and fifth passes (the core-only comparison is confounded by when wider leagues were first priced; kept as the cautious side). **Roll back:** set `CARD_CORE_ONLY = False`.
+
+## 2026-10-29 The Card: one window a day, William Hill prices, substitutes (#99, tag pending)
+
+**What changed:** the card is built once a day from every game kicking off between 07:00 UK and 07:00 the next morning, locks at 07:00 and is placed once (`CARD_WINDOWS`, `uk_slot`, `window_end`); the three windows made no difference to accuracy (71 / 72 / 73% landed) and left each slot drawing on a third of the pool. Days to 28 Oct keep their windows in the record. Every pick carries each UK bookmaker's price (`bookOdds`, from API-Football's per-book odds and The Odds API; `odds.af_parse_odds` adds `ukBooks`, cache version 3); the card is written for William Hill (`CARD_BOOK`), a preference, nothing refused for it. Each group carries up to three substitutes (`bench_for`, `CARD_BENCH`) that keep it in range, frozen at lock.
+
+**Evidence:** `claude/betting-groups-review-2026-10-29.md`, time windows and second-change sections. **Roll back:** restore `CARD_WINDOWS` to the three windows and bump `CARD_RULE`.
+
 ## 2026-10-29 The Card: NFL and college football off, tennis legs to 75% (tag pending)
 
 **What changed:**
