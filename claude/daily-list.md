@@ -206,3 +206,13 @@ exactly (n=344/189/140/94/60/39 at 70/75/77.5/80/82.5/85%; 77.6/79.4/81.4/81.9/
 es.1 2/2, nl.1 1/2, fin.1 1/2, de.1 1/1; none near the 30 a per-league bar
 needs. Verdict: 80% stays, no per-league bars. Reopen at 100 calls at 80% on
 2026/27, as set on 12 Oct; reruns before then add nothing.
+
+## Replay of the league bar rerun, 29 Oct 2026 (Nina): no change
+
+`tools/list_bar_replay.py` rerun unchanged. 2025/26 reproduces the earlier table
+(n=344/189/140/94/60/39 at 70/75/77.5/80/82.5/85%; hit 77.6/79.4/81.4/81.9/80.0/
+69.2%; only 85% differs from 80%, -12.5 points, interval -21.3 to -4.4).
+2026/27 check season: still 11 calls at 80% (81.8%), 20 at 75% (80.0%), 55 at
+70% (78.2%); all intervals span zero. Per league at 80%: pt.1 4/4, es.1 2/2,
+nl.1 1/2, fin.1 1/2, de.1 1/1. The 100-call reopen condition is not met.
+Verdict: 80% stays, no per-league bars.

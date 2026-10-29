@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 Daily List bar replay, no change (tag pending)
+
+**What changed:** nothing for readers. Replay of the league bar written up in `claude/daily-list.md`.
+**Evidence:** 2025/26: n=344/189/140/94/60/39 at 70/75/77.5/80/82.5/85%, hit 77.6/79.4/81.4/81.9/80.0/69.2%; only 85% differs from 80% (-12.5, -21.3 to -4.4). 2026/27: 11 calls at 80% (81.8%), 20 at 75% (80.0%); intervals span zero. No league has 30 calls at 80%.
+**Files:** `claude/daily-list.md`, `RELEASES.md`.
+**Not changed:** `LIST_MIN`, any model number, per-league bars.
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-29 Calibration by band and sport, rerun (tag pending)
 
 **What changed:** nothing in the model or the page. A dated note, `claude/calibration-rerun-2026-10-29.md`, from re-running `calibration_bands.py` (football walk-forward replay and each sport's own replay, bootstrap 90% intervals; `record.json` not read).
