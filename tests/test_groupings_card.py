@@ -173,6 +173,8 @@ class TennisOnTheCard(unittest.TestCase):
         self.assertTrue(t)
         self.assertFalse(t[0]["listOff"])
         l = G.honest(dict(t[0], odds=1.40, margin=1.04, est=False))
+        self.assertIn("75%", G.card_fault(l))      # 29 Oct 2026: 72% is under the tennis floor
+        l = G.honest(dict(t[0], odds=1.25, margin=1.04, est=False, pModel=0.78))
         self.assertIsNone(G.card_fault(l))
         self.assertFalse(G.safe_leg(l))          # still never in the old strict groups
 
@@ -240,3 +242,29 @@ class TennisTimes(unittest.TestCase):
         self.assertEqual(L[0]["when"], f"{DATE}T09:30:00Z")
         self.assertTrue(L[0]["timeEst"])
         self.assertEqual(G.uk_slot(L[0])[1], "Daytime")
+
+
+class SportRule(unittest.TestCase):
+    """29 Oct 2026 review: NFL and college football legs are off the Card; a
+    tennis leg needs the model and its tested rate both at 75%+."""
+
+    def test_nfl_and_cfb_are_off_the_card(self):
+        for s in ("nfl", "cfb"):
+            self.assertIn("off the Card", G.card_fault(leg(0, 1.40, 0.80, f"{DATE}T20:00:00Z", sport=s)))
+
+    def test_tennis_needs_75_on_model_and_tested_rate(self):
+        t = dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
+        self.assertIn("75%", G.card_fault(t))
+        t = dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.70)
+        self.assertIn("75%", G.card_fault(t))
+        t = dict(leg(3, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
+        self.assertIsNone(G.card_fault(t))
+
+    def test_football_and_nba_unchanged(self):
+        self.assertIsNone(G.card_fault(leg(4, 1.40, 0.66, f"{DATE}T12:00:00Z")))
+        self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
+
+    def test_old_rule_groups_rebuild(self):
+        self.assertEqual(G.CARD_RULE, 2)
+        g = {"name": "Card 2x", "rule": 1, "legs": []}
+        self.assertEqual(G.recheck_card(g, [])[0], None)

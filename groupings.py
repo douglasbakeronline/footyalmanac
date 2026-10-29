@@ -1271,7 +1271,18 @@ CARD_LEGS = (3, 4)
 CARD_ODDS = (1.15, 1.90)
 CARD_FAIR_MIN = 0.60
 CARD_POOL = 24
-CARD_RULE = 1
+# 29 Oct 2026 (claude/betting-groups-review-2026-10-29.md): 379 settled legs,
+# football landed as quoted (75.8% v 75.3%, n=223) in every time window; the
+# whole shortfall was tennis (64.8% v 78.0%, n=91), college football (70.4%
+# v 85.4%, n=27) and NFL (60.0% v 73.0%, n=20). On the Card itself tennis
+# legs landed 19 of 32 (59%). So NFL and college football legs are off the
+# Card (CARD_SPORTS_OFF), and a tennis leg needs the model and its tested
+# rate both at CARD_SPORT_MIN or more: the 60-75% band is where tennis has
+# not been tested live in volume. Football, rugby and the NBA are unchanged.
+# Time of day was checked and makes no difference (z -0.16 overnight v rest).
+CARD_SPORTS_OFF = {"nfl", "cfb"}
+CARD_SPORT_MIN = {"tennis": 0.75}
+CARD_RULE = 2     # bumped so unlocked groups rebuild under the new rule
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1319,6 +1330,11 @@ def card_fault(l, wide=False):
     """Why a leg cannot go on the Card, in plain words, or None."""
     lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
+    if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card on its live record"
+    smin = CARD_SPORT_MIN.get(l.get("sport"))
+    if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin):
+        return (f"{l['pick']}: a {l['sport']} pick needs the model and its tested rate both at {pct(smin)}+ "
+                f"(model {pct(l['pModel'])}, tested {pct(l.get('hit') or 0)})")
     if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
     if l.get("est") or l.get("fair") is None: return f"{l['pick']}: no bookmaker price"
     if not lo_hi[0] <= l["odds"] <= lo_hi[1]:
@@ -1698,9 +1714,15 @@ def avoid_list(dl, limit=12):
             out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "gap",
                         "level": "caution" if l["pModel"] >= 0.70 else "avoid", "score": gap})
-        elif l.get("listOff") and l["pModel"] >= 0.70:
+        elif (l.get("listOff") or l.get("sport") in CARD_SPORTS_OFF) and l["pModel"] >= 0.70:
             out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "off", "level": "avoid", "score": 0.05})
+        elif l.get("sport") in CARD_SPORT_MIN and l["pModel"] >= 0.70 and \
+                (l["pModel"] < CARD_SPORT_MIN[l["sport"]] or (l.get("hit") or 0) < CARD_SPORT_MIN[l["sport"]]):
+            # 29 Oct 2026: a tennis pick under the Card's 75% floor on the model
+            # or its tested rate; such legs landed 59% on the Card (n=32)
+            out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
+                        "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "thin", "level": "caution", "score": 0.04})
     return sorted(out, key=lambda x: (x["level"] != "avoid", -x["score"]))[:limit]
 
 def check_pool(L):
@@ -1911,6 +1933,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
+                              "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
                               "windows": [list(w) for w in CARD_WINDOWS]}},

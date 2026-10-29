@@ -3835,7 +3835,8 @@ function renderToday(){
   host.innerHTML = `<div class="lede"><h2>Bets</h2>
       <p>The card for the day: two groups in each time window, one paying <b>2x or more</b> and one <b>3x or more</b>,
       three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
-      with the model in agreement, any sport still on the Daily List. Each window's groups lock and never change after.
+      with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
+      live record, and a tennis pick needs the model and its tested rate both at 75%+ (29 Oct 2026). Each window's groups lock and never change after.
       A window the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers 55%+), marked and graded apart.</p></div>
     <ol class="tb-play">
       <li><b>Place once.</b> Overnight by 21:00 the night before; Daytime and Evening once they lock at 07:00.</li>
@@ -3856,7 +3857,8 @@ function renderToday(){
     ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>
         <span class="tb-m"><b>${ogEsc(a.pick)}</b><small>${ogEsc(a.event)} · ${ogEsc(a.comp || OG_SPORT[a.sport] || a.sport)}${a.when ? " · " + ogTime(a) : ""}</small>
         <small class="tb-why">${a.kind === "gap" ? `Model ${pct(a.model)}%, bookmakers ${pct(a.fair)}%: ${Math.round((a.model - a.fair) * 100)} points apart${a.level === "caution" ? ". At this strength the archive is too thin to call it; trust the bookmakers' number." : ", the pattern that lost most."}`
-          : `Model ${pct(a.model)}%, but its sport is off the Daily List on its live record.`}</small></span>
+          : a.kind === "thin" ? `Model ${pct(a.model)}%: tennis picks under the card's 75% floor on the model or their tested rate landed 59% on the card.`
+          : `Model ${pct(a.model)}%, but its sport is off the ${a.sport === "nfl" || a.sport === "cfb" ? "card" : "Daily List"} on its live record.`}</small></span>
         <span class="tb-p">${a.odds.toFixed(2)}</span></div>`).join("")}</div>`
       : `<div class="empty tb-empty">No flagged picks among the priced games on ${fmtDay(day.date)}.</div>`}
 
