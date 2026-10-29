@@ -336,3 +336,25 @@ and the exchange or acca boosts, which need no model at all.
   (+12%), cups and internationals out, core first at an equal chance, up
   to six groups a day. More groups at a positive edge is more return; the
   per-rule record line is the check that the wider legs hold up live.
+
+## Seventh pass: the two rules replayed on October
+
+Douglas: "lets run two tests over the archive data following the two sets
+of rule". The live `build_card` machinery (under-market, six groups, core
+nudge, 2/1 stakes) on the priced archive from 1 Oct; prices for every
+fixture exist only from 22 Oct, so this is really one week and a half.
+
+| | Days | Groups | Won | Staked | Profit | Legs landed v quoted |
+|---|---|---|---|---|---|---|
+| Core only | 5 | 10 | 5 | 15 | +5.5 (+36%) | 25/30 (83%) v 67% |
+| Wider in | 7 | 21 | 8 | 32 | +0.5 (+2%) | 51/64 (80%) v 68% |
+
+The eleven extra groups under the wider rule: 3 won, 8 lost, -5 units,
+almost all of it the Card 3x (wider 3x groups 2 of 10). The wider picks
+themselves landed 26 of 34 (76%) against 67% quoted, above their price,
+but at a smaller per-leg edge the compounding in a treble is what loses.
+
+Decision (Douglas): `CARD_CORE_ONLY` back to True. The wider pool stays out
+of the card until it has a record line of its own; `CARD_MAX_GROUPS` stays
+at 6 so a full weekend is not capped. Twenty-one groups is far too few to
+settle it; the direction and the mechanism point the same way.

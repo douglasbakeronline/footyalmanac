@@ -1324,7 +1324,15 @@ CARD_SPORT_MIN = {"tennis": 0.75}
 # Core picks get a small nudge in selection (CARD_CORE_NUDGE) so a core and a
 # wider pick at the same chance go core first. CARD_CORE_ONLY True would keep
 # the wider leagues off again.
-CARD_CORE_ONLY = False
+# 29 Oct 2026, 11:59, Douglas, after the replay of both rules on October
+# (claude/betting-groups-review-2026-10-29.md, seventh pass): core only
+# +5.5 units on 15 staked, wider in +0.5 on 32; the eleven extra groups lost
+# 5 units, almost all of it Card 3x groups built from wider picks (2 of 10).
+# The wider picks landed above quote as legs (26 of 34) but at a smaller edge
+# the compounding in a treble loses. Core only again; the wider pool stays
+# out until it has a record line of its own. CARD_MAX_GROUPS stays at 6 so
+# a full weekend is not capped.
+CARD_CORE_ONLY = True
 CARD_CORE_NUDGE = 0.02
 # 29 Oct 2026, backtest at Douglas's request (claude/betting-groups-review-
 # 2026-10-29.md, fifth pass): the one cut that lands above quote in every
