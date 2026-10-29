@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 The Card: no clock lock; a group is open until its first kick-off (tag pending)
+
+**What changed:** Douglas, 29 Oct 2026: "remove all locks ... worldwide games over a 24 hour period ... the ability to place at any time and for the days ahead". The 07:00 lock is gone. A group (today or any of the next three days) is open until its first kick-off: every build re-checks it and it holds unless a pick fails the rule (the reason logged), its bench is rebuilt, and at the first build after its first kick-off it is frozen as last published and archived (`groupings.first_kick`, `build_card`; `lockAt` is the group's first kick-off). No group is "late" any more. The record's honesty is unchanged: what is graded is what was published before the first game started. The Bets page copy says so; the one-day 12:00 lock of the previous entry is superseded, and today's old-window groups stay off the page for today (`CARD_TRANSITION`, now a date set).
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `RELEASES.md`, `CLAUDE.md`. Tests adapted (a group freezes at its first kick-off, not at 07:00); 572 pass; `nametest.py` clear.
+
+**Not changed:** the leg rule, the four-group cap, grading. **Roll back:** `git revert` the merge commit.
+
 ## 2026-10-29 Today's card built under the new rules, locking 12:00 (tag pending)
 
 **What changed:** a one-day exception (`groupings.CARD_TRANSITION`): for 29 Oct 2026 the one-window card locks at 12:00 UK instead of 07:00, so a card built after the morning's merge is a proper locked card under rule 4 rather than a late one, and the groups locked under the old windows that morning are left off the page for this date (they stay in the archive and the record as they were). Douglas's request: "I want today's card to be the new formatting and improved chance of success". Delete the entry from `CARD_TRANSITION` once the date has passed. One new test; 570 pass.

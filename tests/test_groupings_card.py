@@ -31,7 +31,10 @@ def board():
 
 
 EARLY = datetime(2026, 11, 6, 18, 0, tzinfo=timezone.utc)     # the evening before
-AFTER_LOCK = datetime(2026, 11, 7, 8, 0, tzinfo=timezone.utc)
+# 29 Oct 2026: no clock lock; a group freezes at its first kick-off. 16:00 is
+# after every daytime kick-off on the board, so both of the day's first groups
+# are frozen (and under way) by then; the evening legs are still to start.
+AFTER_LOCK = datetime(2026, 11, 7, 16, 0, tzinfo=timezone.utc)
 
 
 class Windows(unittest.TestCase):
@@ -75,7 +78,7 @@ class Build(unittest.TestCase):
         g1 = next(g for g in again if g["name"] == g0["name"])
         self.assertTrue(g1["locked"])
         self.assertEqual([l["odds"] for l in g1["legs"]], [l["odds"] for l in g0["legs"]])
-        self.assertEqual(g1["status"], "locked")
+        self.assertEqual(g1["status"], "underway")
 
     def test_unlocked_group_is_rebuilt_when_a_leg_fails(self):
         gs = G.build_card(board(), DATE, EARLY, log=[])
@@ -109,10 +112,11 @@ class Build(unittest.TestCase):
         self.assertTrue(all(l.get("stale") for l in g1["legs"]))
         self.assertFalse(any(e["name"] == g0["name"] for e in log))
 
-    def test_late_group_after_lock(self):
+    def test_group_built_late_in_the_day_is_open_not_late(self):
+        # 29 Oct 2026: no clock lock, so a group built at 16:00 from the evening legs is simply open
         gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
         self.assertTrue(gs)
-        self.assertTrue(all(g["late"] and g["locked"] for g in gs))
+        self.assertTrue(all(not g["late"] and not g["locked"] for g in gs))
 
     def test_off_list_sports_and_unpriced_legs_are_out(self):
         l = dict(leg(0, 1.40, 0.66, f"{DATE}T12:00:00Z", sport="cfb"), listOff=True)
@@ -149,7 +153,7 @@ class Archive(unittest.TestCase):
                 src = next(x for x in locked if G.card_slot(x) == G.card_slot(g))
                 self.assertEqual(G.gid(g), G.gid(src))
                 self.assertFalse(g.get("late"))
-                self.assertEqual(g["status"], "locked")
+                self.assertIn(g["status"], ("locked", "underway"))
             self.assertEqual(G.archive_locked({"date": DATE, "groups": again}, "t2"), 0)
             # a late group with different picks for an archived slot is refused too
             other = dict(locked[0], legs=[dict(l, event="z v z", pick="z") for l in locked[0]["legs"]], late=True)
@@ -399,14 +403,32 @@ class LegacyWindows(unittest.TestCase):
         self.assertFalse(any(g["window"] == "Overnight" for g in gone))
 
 
-class Transition(unittest.TestCase):
-    def test_transition_day_locks_later_and_drops_old_windows(self):
-        with mock.patch.dict(G.CARD_TRANSITION, {DATE: "12:00"}):
-            self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 12, 0, tzinfo=timezone.utc))
-            gs = G.build_card(board(), DATE, datetime(2026, 11, 7, 9, 30, tzinfo=timezone.utc), log=[])
-            self.assertTrue(gs and not any(g["late"] or g["locked"] for g in gs))
+class NoClockLock(unittest.TestCase):
+    """29 Oct 2026, Douglas: no locks. A group is open until its first
+    kick-off, then frozen as last published."""
+
+    def test_group_opens_then_freezes_at_first_kickoff(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        self.assertTrue(gs)
+        for g in gs:
+            self.assertFalse(g["locked"]); self.assertFalse(g["late"])
+            self.assertEqual(g["lockAt"], G.iso(G.first_kick(g)))
+        g0 = gs[0]; ko = G.first_kick(g0)
+        before = G.build_card(board(), DATE, ko - timedelta(minutes=30), prev=gs, log=[])
+        b0 = next(g for g in before if G.card_slot(g) == G.card_slot(g0))
+        self.assertFalse(b0["locked"]); self.assertEqual(b0["status"], "holding")
+        after = G.build_card(board(), DATE, ko + timedelta(minutes=5), prev=gs, log=[])
+        a0 = next(g for g in after if G.card_slot(g) == G.card_slot(g0))
+        self.assertTrue(a0["locked"]); self.assertEqual(a0["status"], "underway")
+        self.assertEqual([l["event"] for l in a0["legs"]], [l["event"] for l in g0["legs"]])
+
+    def test_late_build_still_makes_an_open_group(self):
+        gs = G.build_card(board(), DATE, AFTER_LOCK, log=[])
+        self.assertTrue(gs and not any(g["late"] or g["locked"] for g in gs))
+
+    def test_transition_day_drops_old_windows(self):
+        with mock.patch.object(G, "CARD_TRANSITION", {DATE}):
+            gs = G.build_card(board(), DATE, EARLY, log=[])
             old = dict(gs[0], window="Overnight", rank="Overnight", locked=True)
-            again = G.build_card(board(), DATE, datetime(2026, 11, 7, 12, 5, tzinfo=timezone.utc), prev=[old] + gs, log=[])
+            again = G.build_card(board(), DATE, EARLY + timedelta(hours=1), prev=[old] + gs, log=[])
             self.assertFalse(any(g["window"] == "Overnight" for g in again))
-            self.assertTrue(all(g["locked"] and not g["late"] for g in again))
-        self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))
