@@ -248,6 +248,8 @@ jobs:
           cp groupings-record.json /tmp/groupings-prev/ 2>/dev/null || true
           cp -r groupings-archive /tmp/groupings-prev/ 2>/dev/null || true
           python3 groupings.py || echo "::warning::groupings failed this run — the Odds tab will show its empty state"
+          # 29 Oct 2026: a push to Douglas's phone for each Card group this build created (notify.py, ntfy)
+          NTFY_TOPIC="${{ secrets.NTFY_TOPIC }}" python3 notify.py || echo "::warning::notify failed this run"
           python3 - <<'PY'
           import json, os, shutil
 

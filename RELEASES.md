@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-29 A push to the phone when the build makes a Card group (tag pending)
+
+**What changed:** `notify.py`, run by `deploy.yml` straight after `groupings.py`. Each Card group whose status is new or replacement and whose `first` stamp is this build's gets one push through ntfy (free, iOS and Android apps): title "Card 2x · Fri 30 Oct · 2.18 (2.24 at William Hill)", a line a pick with kick-off and the William Hill price (or the best price and who has it), the units to stake, when the group freezes (its first kick-off) and how many substitutes it carries. The topic is the only secret (`NTFY_TOPIC`); unset, nothing is sent. Two tests; 575 pass.
+
+**Setup (owner):** install the ntfy app, subscribe to a private topic (a long random name), add it as the repository secret `NTFY_TOPIC`. Workflow path, so this merge needs Douglas's approval.
+
+**Files:** `notify.py`, `tests/test_notify.py`, `.github/workflows/deploy.yml`, `RELEASES.md`, `CLAUDE.md`. **Roll back:** remove the step from `deploy.yml`, or delete the secret.
 ## 2026-10-29 Daily List bar replay, no change (tag pending)
 
 **What changed:** nothing for readers. Replay of the league bar written up in `claude/daily-list.md`.
