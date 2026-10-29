@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-29T14:35:37Z",
+ "graded": "2026-10-29T15:56:49Z",
  "overall": {
   "groups": 92,
   "settled": 90,
@@ -18,8 +18,8 @@
   "clv": {
    "n": 78,
    "shortened": 32,
-   "drifted": 27,
-   "mean": -0.0027
+   "drifted": 28,
+   "mean": -0.0029
   }
  },
  "byBand": {
@@ -41,8 +41,8 @@
    "clv": {
     "n": 39,
     "shortened": 11,
-    "drifted": 15,
-    "mean": -0.0061
+    "drifted": 16,
+    "mean": -0.0065
    }
   },
   "Card 3x": {
@@ -366,8 +366,8 @@
   "clv": {
    "n": 21,
    "shortened": 4,
-   "drifted": 5,
-   "mean": 0.0002
+   "drifted": 6,
+   "mean": -0.0005
   }
  },
  "cardByRule": {
@@ -724,7 +724,7 @@
        "when": "2026-10-30T00:30:00Z",
        "odds": 1.27,
        "best": 1.3,
-       "lastOdds": 1.27,
+       "lastOdds": 1.31,
        "lockOdds": 1.27,
        "lockBest": 1.3,
        "lockBook": "Bet365",
@@ -741,7 +741,7 @@
        "when": "2026-10-30T02:00Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.36,
+       "lastOdds": 1.34,
        "lockOdds": 1.38,
        "lockBest": 1.38,
        "lockBook": null,
