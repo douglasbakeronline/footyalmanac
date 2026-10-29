@@ -12,7 +12,8 @@ DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
-         "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE}
+         "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
+         "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
     return G.honest(l)
 
 
@@ -270,7 +271,7 @@ class SportRule(unittest.TestCase):
         self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
 
     def test_old_rule_groups_rebuild(self):
-        self.assertEqual(G.CARD_RULE, 3)
+        self.assertEqual(G.CARD_RULE, 4)
         g = {"name": "Card 2x", "rule": 1, "legs": []}
         self.assertEqual(G.recheck_card(g, [])[0], None)
 
@@ -320,3 +321,18 @@ class BenchAndBook(unittest.TestCase):
 
     def test_record_keeps_old_windows(self):
         self.assertEqual([w for w, _, _ in G.CARD_WINDOWS], ["Day"])
+
+
+class CoreLeagues(unittest.TestCase):
+    """29 Oct 2026: football legs on the Card come from the core leagues only."""
+
+    def test_wider_league_and_cup_legs_are_out(self):
+        self.assertIn("core leagues", G.card_fault(dict(leg(0, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="af.240", comp="Primera A")))
+        self.assertIn("core leagues", G.card_fault(dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.fa", comp="FA Cup")))
+        self.assertIsNone(G.card_fault(dict(leg(2, 1.40, 0.70, f"{DATE}T12:00:00Z"), code="en.1", comp="Premier League")))
+        self.assertTrue(G.core_league("de.2")); self.assertFalse(G.core_league("eu.cl")); self.assertFalse(G.core_league(None))
+
+    def test_record_carries_the_floor(self):
+        import json, tempfile
+        # three settled groups at p 0.3, none won: z = -0.9/sqrt(0.63)
+        self.assertIsNotNone(G.CARD_FLOOR_Z)

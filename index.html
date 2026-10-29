@@ -3828,6 +3828,10 @@ function tbRecord(){
   const wl = x => x && x.settled ? `${x.won} won · ${x.lost} lost` : "–";
   return `<div class="tb-proof">
     <div><span>Card record</span><b>${wl(k)}</b><small>${k.settled ? `of ${k.settled} settled${k.pending ? `, ${k.pending} to settle` : ""} · expected ${k.expected.toFixed(1)} won · ${roi(k)}` : `${k.pending ? `${k.pending} to settle; ` : ""}a group is won only when every pick wins; a draw is a loss`}</small></div>
+    ${(() => { const C = (OG.rules || {}).card || {}, fz = C.floorZ || -2, fn = C.floorN || 50, z = k.z;
+      // 29 Oct 2026: the floor. Landed against expected in standard errors; under by fz on fn+ settled is the retire signal.
+      const state = z == null ? "–" : z <= fz && k.settled >= fn ? "Under the floor" : z < 0 ? "Under quote" : "On quote";
+      return `<div><span>The floor</span><b>${state}</b><small>${z == null ? "no settled groups yet; " : `landed ${z >= 0 ? "+" : ""}${z.toFixed(1)} standard errors from expected on ${k.settled} groups; `}the rule is retired if it sits ${Math.abs(fz)} under on ${fn}+ groups. A good run is not a floor; the quote is.</small></div>`; })()}
     ${(() => { const x = R.cardLate || {}; return `<div><span>Late groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "added after the window locked; " : "none yet; a group built after its window locked would be "}not in the Card record</small></div>`; })()}
     ${(() => { const x = R.cardWide || {}; return `<div><span>Wider-rule groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : ""}graded apart from the full rule</small></div>`; })()}
     ${Object.keys(bw).map(w).join("")}
@@ -3865,7 +3869,7 @@ function renderToday(){
       <p>The card for the day: two groups, one paying <b>2x or more</b> and one <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, and a tennis pick needs the model and its tested rate both at 75%+ (29 Oct 2026). The card locks at 07:00 and never changes after.
+      live record, a tennis pick needs the model and its tested rate both at 75%+, and football picks come from the core leagues only (29 Oct 2026). The card locks at 07:00 and never changes after.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers 55%+), marked and graded apart.</p></div>
     <ol class="tb-play">

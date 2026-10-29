@@ -180,3 +180,54 @@ groups", and "I could change bookies" (he places with William Hill).
   number. Not checked in a browser (no Chromium in the cloud session); the
   page's scripts parse, and the record regrades offline with the old windows
   intact. Check the Bets tab at phone width after merge.
+
+## Third pass: the floor, and what the replay says
+
+Douglas: "This was a really promising period where profits were scalable
+consistently. I need this to be the minimum performance of the groups bets
+over time." The period is 25 to 27 Oct: 12 of 21 groups, 30.5 units on 21.
+The quoted chance of those same 21 groups was 6.9 wins; 12 is a one-in-fifty
+run, and the next two days went 0 of 6 on the same rules. A good run is not
+a floor; the quote is.
+
+What the Card is worth at quote: a 2x group of three 60% picks lands about
+one time in three and, with the margin in every leg, returns about 85p in
+the pound. On quote means losing slowly. Profit needs picks that land above
+the bookmakers' number.
+
+`tools/card_replay.py` (new, advisory): every archived football prediction
+with a pre-kick-off price (2,014 rows, 11 Sep to 28 Oct, as
+`tools/market_check.py` joins them), the Card built as `build_card` builds
+it under four leg rules, graded strictly.
+
+- Only 193 legs cleared the live rule in seven weeks (the 60% bookmaker
+  floor removes most), making 23 groups on 15 days: 9 won, 32% expected,
+  -2% at the average price, +6% at best, 90% band -46% to +45%. The archive
+  cannot prove a profitable group rule; it can say which legs land.
+- Those 193 legs landed 75.6% against 67.3% quoted, which matches the live
+  Card's football legs (16 of 19). Core leagues 78.8% v 67.5% (n=113,
+  +9% a unit at the average price); wider API-Football leagues 71.2% v 66.9%
+  (n=80, -4% a unit); z 1.2 between them.
+- Model-first selection (model's number as the chance, same vetoes) found
+  fewer groups (11) and the paired difference against the market rule is
+  +0.14 units a day, 90% -1.2 to +1.4: noise. Not shipped.
+- By model band in the core leagues, with no market veto: 60-65% landed 68%
+  (fair 62%, n=50); 65-70% 71% (66%, n=24); 70-75% 76% (72%, n=21). A few
+  points above both numbers, not the 87% the midband note found on the
+  graded (unpriced) record. Wider leagues at 60-70% landed 51% v 61% fair.
+- By the model's lead over the market (model 60%+): model 5+ points under
+  the market landed 85% v 77% fair (n=40); model 10+ over landed 40% v 51%
+  (n=25). The 5-point veto is doing its job.
+
+Shipped from this:
+- `CARD_CORE_ONLY`: football legs on the Card from the core leagues only
+  (`core_league`: `engine.LEAGUES` without `af.*`, cups and internationals).
+  Direction, not proof; the floor below is the check. `CARD_RULE` 4.
+- The floor: every tally in the record carries `z`, landed against expected
+  in standard errors. `CARD_FLOOR_Z` -2 on `CARD_FLOOR_N` 50+ settled groups
+  is the retire signal, the Daily List's test for a sport. The Bets scoreboard
+  shows "On quote / Under quote / Under the floor" with the z. On the record
+  to 29 Oct the Card is z -0.3 on 15 groups: on quote.
+- Not shipped: any claim of a minimum return. The honest minimum is "lands
+  as quoted", monitored; profit above that is what the core-league rule and
+  the best price are for, and it is judged on 100+ locked groups, not a week.

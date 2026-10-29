@@ -1307,7 +1307,23 @@ CARD_POOL = 24
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
 CARD_SPORTS_OFF = {"nfl", "cfb"}
 CARD_SPORT_MIN = {"tennis": 0.75}
-CARD_RULE = 3     # 2: sport rule; 3: one window, bookOdds, bench (29 Oct 2026)
+# 29 Oct 2026, second pass (tools/card_replay.py on the priced archive, 11 Sep
+# to 28 Oct): of the 193 legs that cleared the Card rule, core-league legs
+# landed 78.8% against 67.5% quoted (n=113, +9% a unit at the average price)
+# and wider-league legs 71.2% against 66.9% (n=80, -4% a unit); z 1.2 between
+# them, so a direction, not a proof. With cup favourites long known to land
+# under quote (56.5% v 69.7%), football legs on the Card come from the core
+# leagues only: engine.LEAGUES without the API-Football wider set, cups and
+# internationals. Reviewed with the floor below.
+CARD_CORE_ONLY = True
+# The floor (29 Oct 2026, Douglas: "the minimum performance of the groups bets
+# over time"). A run of three good days is not a floor; the quote is. The
+# record carries, for the Card, how far landed sits from expected in standard
+# errors (z). Under quote by CARD_FLOOR_Z or more on CARD_FLOOR_N+ settled
+# groups is the signal to retire the rule, the same test the Daily List
+# applies to a sport. The page says which side of the line the Card is on.
+CARD_FLOOR_Z, CARD_FLOOR_N = -2.0, 50
+CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1355,11 +1371,24 @@ CARD_WIDE_ODDS = (1.08, 2.10)
 CARD_WIDE_LEGS = (3, 4, 5)
 CARD_WIDE_FAIR_MIN = 0.55
 
+def core_league(code):
+    """A core football league: in engine.LEAGUES, not the API-Football wider
+    set (af.*), not a cup, not an international competition."""
+    if not code or str(code).startswith("af."): return False
+    try:
+        import engine as E
+        m = E.LEAGUES.get(code)
+    except Exception:
+        return False
+    return bool(m) and not m.get("cup") and not m.get("international")
+
 def card_fault(l, wide=False):
     """Why a leg cannot go on the Card, in plain words, or None."""
     lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card on its live record"
+    if CARD_CORE_ONLY and l.get("sport") == "football" and not core_league(l.get("code")):
+        return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the core leagues (wider leagues and cups landed under quote on the Card rule)"
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin):
         return (f"{l['pick']}: a {l['sport']} pick needs the model and its tested rate both at {pct(smin)}+ "
@@ -1905,7 +1934,11 @@ def grade(now=None):
                 k = (l["event"], l["pick"])
                 if k in seen or not l.get("lastOdds") or l.get("est"): continue
                 seen.add(k); clv.append(l["odds"] / l["lastOdds"] - 1)
+        exp = sum(g["p"] for g in done); var = sum(g["p"] * (1 - g["p"]) for g in done)
+        z = round((sum(g["status"] == "won" for g in done) - exp) / math.sqrt(var), 2) if var > 0 else None
         return {"groups": len(groups), "settled": len(done), "won": sum(g["status"] == "won" for g in done),
+                # 29 Oct 2026: landed against expected in standard errors, the floor test
+                "z": z,
                 "lost": sum(g["status"] == "lost" for g in done), "pending": len(groups) - len(done),
                 "legs": len(legs), "legsWon": sum(l["status"] == "won" for l in legs),
                 "returned": round(sum(g["paid"] for g in done), 2), "staked": len(done),
@@ -2003,6 +2036,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
+                              "coreOnly": CARD_CORE_ONLY, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
