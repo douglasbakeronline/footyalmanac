@@ -83,6 +83,12 @@ jobs:
         continue-on-error: true
         run: python3 tools/goals_value.py
 
+      # 29 Oct 2026: the Card's leg rule replayed on past seasons with
+      # football-data.co.uk prices, advisory, written to card-legs-history.json
+      - name: Card leg rule on past seasons
+        continue-on-error: true
+        run: python3 tools/card_legs_history.py
+
       # main is protected: push with the office App token (see deploy.yml)
       - name: Normalise the App key
         env:
@@ -122,7 +128,7 @@ jobs:
           # Only files that exist: home-advantage.json and tuning-pending.json
           # are written only once something passes, and `git add` of a missing
           # pathspec exits 128 (Weekly retune #11, 26 Oct 2026).
-          for f in calibration.json tuning-report.json tuning-pending.json home-advantage.json goals-value.json; do
+          for f in calibration.json tuning-report.json tuning-pending.json home-advantage.json goals-value.json card-legs-history.json; do
             [ -e "$f" ] && git add -A "$f"
           done
           git diff --staged --quiet && exit 0
