@@ -1554,9 +1554,18 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     groups, used, filled = [], set(), set()
     if archived is None: archived = archived_card(date)
     for g in list(archived) + list(prev or []):
-        if not is_card(g.get("name")) or g.get("window") not in by_win: continue
+        if not is_card(g.get("name")): continue
         slot = card_slot(g)
         if slot in filled: continue
+        if g.get("window") not in by_win:
+            # 29 Oct 2026: a group locked under the three-window card (Overnight,
+            # Daytime, Evening) on the day the windows changed. It was placed, so
+            # it stays on the page as it was locked until it settles; nothing is
+            # rebuilt in a window that no longer exists.
+            if g.get("locked"):
+                g = dict(g); g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
+                groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot)
+            continue
         lock = lock_time(date, g["window"])
         if g.get("locked") or now >= lock:
             g = dict(g, locked=True, lockAt=iso(lock))
@@ -1610,8 +1619,17 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     for g in groups: g["stake"] = CARD_STAKE.get(g["name"], 1)
     return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), int(g.get("seq") or 1), g["name"]))
 
-def card_windows(date):
-    return [{"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w))} for w, a, b in CARD_WINDOWS]
+LEGACY_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]   # to 28 Oct 2026
+
+def card_windows(date, groups=None):
+    """The day's windows for the page: the current ones, plus any legacy
+    window a locked group on this day still sits in (29 Oct 2026)."""
+    out = [{"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w))} for w, a, b in CARD_WINDOWS]
+    have = {w["name"] for w in out}
+    for w, a, b in LEGACY_WINDOWS:
+        if w not in have and any(is_card(g.get("name")) and g.get("window") == w for g in groups or []):
+            out.append({"name": w, "from": a, "to": b, "lockAt": iso(lock_time(date, w)), "legacy": True})
+    return out
 
 def archive_locked(day, generated):
     """Add each locked group to the day's archive file once. A group already
@@ -2052,7 +2070,7 @@ def main():
                      "safe": sum(1 for l in core if safe_leg(l)), "multLegs": sum(1 for l in dl if mult_leg(l)),
                      "groups": groups,
                      "checked": iso(now), "log": log[-LOG_KEEP:],
-                     "windows": card_windows(d),
+                     "windows": card_windows(d, groups),
                      "cardLegs": sum(1 for l in L if uk_slot(l) and uk_slot(l)[0] == d and card_fault(l) is None),
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway", "locked", "late")},

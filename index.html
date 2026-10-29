@@ -3859,8 +3859,9 @@ function renderToday(){
     const gs = day.groups.filter(g => isCard(g) && g.window === w.name);
     const lk = w.lockAt ? new Date(w.lockAt) : null, locked = lk && lk.getTime() <= now;
     const when = lk ? `${locked ? "Locked" : "Locks"} ${ogAt(w.lockAt)}` : "";
+    if(w.legacy && !gs.length) return "";
     return `<section class="tb-win"><h3 class="tb-h">${w.name === "Day" ? "The card" : w.name} <span class="tb-hours">${hh(w.from)}–${hh(w.to)}${w.to > 24 ? " next day" : ""}</span>
-        <small>${when}${locked ? " · placed? leave it" : " · place it once it locks"}</small></h3>
+        <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : `${when}${locked ? " · placed? leave it" : " · place it once it locks"}`}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
             : "No group yet: too few bookmaker-priced picks so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify."}</div>`}</section>`;
