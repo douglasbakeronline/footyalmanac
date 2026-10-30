@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-30T02:01:57Z",
+ "graded": "2026-10-30T05:42:36Z",
  "overall": {
   "groups": 93,
   "settled": 92,
@@ -7,8 +7,8 @@
   "z": -1.6,
   "lost": 69,
   "pending": 1,
-  "legs": 387,
-  "legsWon": 278,
+  "legs": 389,
+  "legsWon": 279,
   "returned": 71.0,
   "staked": 92,
   "returnedBest": 75.15,
@@ -30,7 +30,7 @@
    "z": -0.48,
    "lost": 9,
    "pending": 0,
-   "legs": 37,
+   "legs": 38,
    "legsWon": 25,
    "returned": 8.94,
    "staked": 13,
@@ -52,8 +52,8 @@
    "z": 0.9,
    "lost": 6,
    "pending": 1,
-   "legs": 33,
-   "legsWon": 21,
+   "legs": 34,
+   "legsWon": 22,
    "returned": 12.9,
    "staked": 10,
    "returnedBest": 13.37,
@@ -311,8 +311,8 @@
   "z": -0.55,
   "lost": 12,
   "pending": 1,
-  "legs": 51,
-  "legsWon": 31,
+  "legs": 52,
+  "legsWon": 32,
   "returned": 12.22,
   "staked": 16,
   "returnedBest": 12.44,
@@ -355,7 +355,7 @@
   "z": 1.15,
   "lost": 3,
   "pending": 0,
-  "legs": 19,
+  "legs": 20,
   "legsWon": 15,
   "returned": 9.62,
   "staked": 7,
@@ -400,8 +400,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 2,
-   "legsWon": 2,
+   "legs": 3,
+   "legsWon": 3,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -424,8 +424,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 2,
-   "legsWon": 2,
+   "legs": 3,
+   "legsWon": 3,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -696,8 +696,8 @@
      "paidBest": 0,
      "paidLock": 0,
      "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 2,
+     "legsLost": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Polona Hercog",
@@ -747,8 +747,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6953,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "103-124"
       }
      ]
     },
@@ -768,9 +768,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Hammarby IF",
@@ -820,8 +820,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.675,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "132-120"
       },
       {
        "pick": "Elena Rybakina",
