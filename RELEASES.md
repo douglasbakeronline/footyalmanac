@@ -4,6 +4,10 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## release-2026-10-30-2 (pending tag): push-triggered builds spare the API-Football allowance
+
+A build started by a push to `main` now runs with `AF_FRUGAL=1` (deploy.yml) and reuses the day's cached API-Football fixtures and prices up to a day old (`sources.AF_FRUGAL_TTL`, `odds.AF_FRUGAL_TTL`) instead of fetching them again; the six scheduled builds refresh as before. Twenty-five builds on 29-30 Oct 2026, most of them merges and manual dispatches, plus the Pro plan lapsing to the free tier, left the board on its last copy. Files: `odds.py`, `sources.py`, `.github/workflows/deploy.yml`. Roll back: revert the commit.
+
 ## 2026-10-30 Odds API tennis keys: logging already live, cause unconfirmed (tag pending)
 
 **What changed:** a dated note only, `claude/odds-api-tennis-keys-2026-10-30.md`. No code, model or rule changed.

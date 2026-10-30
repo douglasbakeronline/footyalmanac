@@ -789,6 +789,7 @@ def _af_season(code, year, current):
 # cost nothing.
 AF_CUP_BACK, AF_CUP_AHEAD = 12, 8         # results to grade, fixtures to price
 AF_DAY_TTL = 45 * 60
+AF_FRUGAL_TTL = 24 * 3600   # a push-triggered build reuses a day this old (30 Oct 2026)
 _AF_POOL = {}
 _AF_POOL_LOCK = threading.Lock()   # a pool is built once, by one thread; the rest wait for it
 
@@ -1045,7 +1046,9 @@ def _af_day(d):
             with gzip.open(path, "rt", encoding="utf-8") as fh:
                 doc = json.load(fh)
             stale = [_expand(c) for c in doc.get("rows") or []]
-            if doc.get("final") or age < AF_DAY_TTL:
+            # 30 Oct 2026: AF_FRUGAL (a push-triggered build, deploy.yml) keeps a
+            # day's fixtures for a day rather than 45 minutes; see odds.af_odds_day
+            if doc.get("final") or age < (AF_FRUGAL_TTL if os.environ.get("AF_FRUGAL") else AF_DAY_TTL):
                 return stale
         except Exception:
             pass

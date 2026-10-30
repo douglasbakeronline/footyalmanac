@@ -84,6 +84,11 @@ jobs:
       # API-Football (sources.AF), the paid source for step 3; absent means
       # those leagues are logged as missing, never guessed.
       API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+      # 30 Oct 2026: a build started by a push to main reuses the day's cached
+      # API-Football fixtures and prices (up to a day old) instead of fetching
+      # them again; the six scheduled builds refresh them. A merge should not
+      # spend the daily allowance (25 builds on 29-30 Oct did).
+      AF_FRUGAL: ${{ github.event_name == 'push' && '1' || '' }}
     steps:
       - uses: actions/checkout@v4
 
