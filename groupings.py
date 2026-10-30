@@ -1381,6 +1381,7 @@ def first_kick(g):
     ts = [t for t in ts if t]
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
+CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
 CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
@@ -1529,8 +1530,12 @@ def recheck_card(g, L):
         legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
     if why: return None, why
     lo, hi = CARD_RANGE[g["name"]]
-    o = mult_combo(legs_, lo, hi); p = math.prod(l["p"] for l in legs_)
-    if o is None: return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f}"]
+    # 30 Oct 2026: a published group holds through ordinary price drift. The
+    # band is how a group is chosen, not a rule a pick can fail, and a Card 3x
+    # was replaced at 05:40 after its price slipped 3.00 -> 2.86 overnight,
+    # hours after Douglas had placed it. It holds within CARD_DRIFT of the band.
+    o = mult_combo(legs_, lo * (1 - CARD_DRIFT), hi * (1 + CARD_DRIFT)); p = math.prod(l["p"] for l in legs_)
+    if o is None: return None, [f"combined price {math.prod(l['odds'] for l in legs_):.2f}, outside {lo:.2f} to {hi:.2f} by more than {int(CARD_DRIFT * 100)}%"]
     if p < MIN_CHANCE[g["name"]]: return None, [f"combined chance now {pct(p)}, under the {pct(MIN_CHANCE[g['name']])} floor"]
     legs_.sort(key=lambda l: l.get("when") or "9")
     return {**{k: v for k, v in g.items() if k not in ("legs", "odds", "p", "implied", "status", "checked", "bestOdds")},
