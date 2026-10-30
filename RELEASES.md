@@ -3,6 +3,10 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-10-30 (pending tag): a published Card group holds through price drift
+
+The 05:40 build replaced a Card 3x (Bristol Rugby, Houston Rockets, Miami Heat, 3.00) that Douglas had placed overnight, because its combined price had slipped to 2.86, under the 3x band's 3.00 floor. The band is how a group is chosen, not a rule a pick can fail, so the re-check now holds a published group while its combined price stays within `CARD_DRIFT` (10%) of its band; only a larger move, or a pick failing the leg rule, replaces it. `tests/test_groupings_card.py` PriceDrift. Files: `groupings.py`, `tests/test_groupings_card.py`. Roll back: revert the commit.
+
 ## release-2026-10-29 (pending tag): the Card's leg rule replayed on past seasons
 
 `tools/card_legs_history.py` replays the Card's football leg rule (bookmakers' 60%+ at 1.15-1.90, the model 5+ points under the market) over the 2025-26 and 2026-27 walk-forward replays against football-data.co.uk prices: picks, landed v quoted, singles return at average and best price, closing-line value, price bands, and one treble a day. Run weekly by `tune.yml`, written to `card-legs-history.json`. Advisory; the site does not change. Douglas, 29 Oct 2026: "Why can't you grab data from last season and learn that way?"

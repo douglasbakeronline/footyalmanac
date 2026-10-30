@@ -448,3 +448,37 @@ class CoreNudge(unittest.TestCase):
         self.assertIsNotNone(g)
         self.assertNotIn("p0", [l["pick"] for l in g["legs"]])
         self.assertAlmostEqual(g["p"], G.math.prod(l["p"] for l in g["legs"]), places=4)   # quoted chance has no nudge
+
+
+class PriceDrift(unittest.TestCase):
+    """30 Oct 2026: a published group holds through ordinary price drift of
+    its combined price; only a drift beyond CARD_DRIFT replaces it."""
+
+    def _drifted(self, g, factor):
+        legs = [dict(l, odds=round(l["odds"] * factor, 2), best=round((l.get("best") or l["odds"]) * factor, 2)) for l in g["legs"]]
+        return [dict(l) for l in legs]
+
+    def test_small_drift_holds(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = gs[0]; lo, hi = G.CARD_RANGE[g0["name"]]
+        # scale every leg so the combined price lands just under the band's floor
+        f = (lo * 0.96 / g0["odds"]) ** (1 / len(g0["legs"]))
+        L = board()
+        by = {(l["event"], l["pick"]): l for l in L}
+        for l in g0["legs"]:
+            cur = by[(l["event"], l["pick"])]; cur["odds"] = round(cur["odds"] * f, 2); cur["best"] = round((cur.get("best") or cur["odds"]) * f, 2)
+            G.honest(cur)
+        held, why = G.recheck_card(g0, L)
+        self.assertIsNotNone(held, why); self.assertLess(held["odds"], lo)
+
+    def test_large_drift_replaces(self):
+        gs = G.build_card(board(), DATE, EARLY, log=[])
+        g0 = gs[0]; lo, hi = G.CARD_RANGE[g0["name"]]
+        f = (lo * 0.80 / g0["odds"]) ** (1 / len(g0["legs"]))
+        L = board()
+        by = {(l["event"], l["pick"]): l for l in L}
+        for l in g0["legs"]:
+            cur = by[(l["event"], l["pick"])]; cur["odds"] = round(cur["odds"] * f, 2); cur["best"] = round((cur.get("best") or cur["odds"]) * f, 2)
+            G.honest(cur)
+        held, why = G.recheck_card(g0, L)
+        self.assertIsNone(held); self.assertTrue(why)
