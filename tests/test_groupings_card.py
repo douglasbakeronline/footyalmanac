@@ -482,3 +482,27 @@ class PriceDrift(unittest.TestCase):
             G.honest(cur)
         held, why = G.recheck_card(g0, L)
         self.assertIsNone(held); self.assertTrue(why)
+
+
+class PoolArchive(unittest.TestCase):
+    """30 Oct 2026: the whole priced pool is archived per day so any Card
+    rule can be rebuilt on the month's real legs across every sport."""
+
+    def test_first_price_kept_last_price_updated_started_legs_skipped(self):
+        import gzip, json, os, tempfile
+        from datetime import timedelta
+        saved = G.ARCHIVE; G.ARCHIVE = tempfile.mkdtemp()
+        try:
+            now = datetime(2026, 11, 1, 8, 0, tzinfo=timezone.utc)
+            L = [{"sport": "football", "event": "A v B", "pick": "A", "when": "2026-11-01T15:00:00Z", "date": "2026-11-01",
+                  "odds": 1.5, "best": 1.55, "est": False, "pModel": 0.6, "p": 0.62, "fair": 0.62, "hit": 0.8, "n": 100},
+                 {"sport": "tennis", "event": "X v Y", "pick": "Y", "when": "2026-11-01T07:00:00Z", "date": "2026-11-01",
+                  "odds": 1.3, "best": 1.3, "est": False, "pModel": 0.7, "p": 0.72, "fair": 0.72, "hit": 0.8, "n": 100}]
+            self.assertEqual(G.archive_pool(L, now, ["2026-11-01"]), 1)
+            L[0]["odds"] = 1.45
+            self.assertEqual(G.archive_pool(L, now + timedelta(hours=2), ["2026-11-01"]), 0)
+            with gzip.open(os.path.join(G.ARCHIVE, "pool-2026-11-01.json.gz"), "rt") as f: a = json.load(f)
+            self.assertEqual(len(a["legs"]), 1)
+            self.assertEqual(a["legs"][0]["odds"], 1.5); self.assertEqual(a["legs"][0]["lastOdds"], 1.45)
+        finally:
+            G.ARCHIVE = saved
