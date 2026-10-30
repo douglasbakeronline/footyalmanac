@@ -1,43 +1,43 @@
 {
- "graded": "2026-10-29T23:33:48Z",
+ "graded": "2026-10-30T02:01:57Z",
  "overall": {
   "groups": 93,
-  "settled": 91,
+  "settled": 92,
   "won": 23,
-  "z": -1.54,
-  "lost": 68,
-  "pending": 2,
-  "legs": 383,
-  "legsWon": 275,
+  "z": -1.6,
+  "lost": 69,
+  "pending": 1,
+  "legs": 387,
+  "legsWon": 278,
   "returned": 71.0,
-  "staked": 91,
+  "staked": 92,
   "returnedBest": 75.15,
   "returnedLock": 16.44,
-  "stakedLock": 17,
-  "expected": 29.75,
+  "stakedLock": 18,
+  "expected": 30.07,
   "clv": {
    "n": 81,
    "shortened": 32,
-   "drifted": 28,
-   "mean": -0.003
+   "drifted": 29,
+   "mean": -0.0032
   }
  },
  "byBand": {
   "Card 2x": {
    "groups": 13,
-   "settled": 12,
+   "settled": 13,
    "won": 4,
-   "z": -0.31,
-   "lost": 8,
-   "pending": 1,
-   "legs": 34,
-   "legsWon": 23,
+   "z": -0.48,
+   "lost": 9,
+   "pending": 0,
+   "legs": 37,
+   "legsWon": 25,
    "returned": 8.94,
-   "staked": 12,
+   "staked": 13,
    "returnedBest": 9.2,
    "returnedLock": 6.81,
-   "stakedLock": 10,
-   "expected": 4.53,
+   "stakedLock": 11,
+   "expected": 4.84,
    "clv": {
     "n": 39,
     "shortened": 11,
@@ -52,8 +52,8 @@
    "z": 0.9,
    "lost": 6,
    "pending": 1,
-   "legs": 32,
-   "legsWon": 20,
+   "legs": 33,
+   "legsWon": 21,
    "returned": 12.9,
    "staked": 10,
    "returnedBest": 13.37,
@@ -63,8 +63,8 @@
    "clv": {
     "n": 32,
     "shortened": 12,
-    "drifted": 8,
-    "mean": -0.0013
+    "drifted": 9,
+    "mean": -0.0018
    }
   },
   "Wider Treble": {
@@ -306,24 +306,24 @@
  },
  "card": {
   "groups": 17,
-  "settled": 15,
+  "settled": 16,
   "won": 4,
-  "z": -0.4,
-  "lost": 11,
-  "pending": 2,
-  "legs": 47,
-  "legsWon": 28,
+  "z": -0.55,
+  "lost": 12,
+  "pending": 1,
+  "legs": 51,
+  "legsWon": 31,
   "returned": 12.22,
-  "staked": 15,
+  "staked": 16,
   "returnedBest": 12.44,
   "returnedLock": 12.04,
-  "stakedLock": 14,
-  "expected": 4.71,
+  "stakedLock": 15,
+  "expected": 5.02,
   "clv": {
    "n": 49,
    "shortened": 18,
-   "drifted": 18,
-   "mean": -0.0062
+   "drifted": 19,
+   "mean": -0.0065
   }
  },
  "cardWide": {
@@ -373,19 +373,19 @@
  "cardByRule": {
   "1": {
    "groups": 16,
-   "settled": 15,
+   "settled": 16,
    "won": 4,
-   "z": -0.4,
-   "lost": 11,
-   "pending": 1,
-   "legs": 46,
-   "legsWon": 27,
+   "z": -0.55,
+   "lost": 12,
+   "pending": 0,
+   "legs": 49,
+   "legsWon": 29,
    "returned": 12.22,
-   "staked": 15,
+   "staked": 16,
    "returnedBest": 12.44,
    "returnedLock": 12.04,
-   "stakedLock": 14,
-   "expected": 4.71,
+   "stakedLock": 15,
+   "expected": 5.02,
    "clv": {
     "n": 46,
     "shortened": 18,
@@ -400,8 +400,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 1,
-   "legsWon": 1,
+   "legs": 2,
+   "legsWon": 2,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -411,8 +411,8 @@
    "clv": {
     "n": 3,
     "shortened": 0,
-    "drifted": 0,
-    "mean": 0.0
+    "drifted": 1,
+    "mean": -0.0051
    }
   }
  },
@@ -424,8 +424,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 1,
-   "legsWon": 1,
+   "legs": 2,
+   "legsWon": 2,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -435,8 +435,8 @@
    "clv": {
     "n": 3,
     "shortened": 0,
-    "drifted": 0,
-    "mean": 0.0
+    "drifted": 1,
+    "mean": -0.0051
    }
   },
   "Daytime": {
@@ -485,19 +485,19 @@
   },
   "Overnight": {
    "groups": 7,
-   "settled": 6,
+   "settled": 7,
    "won": 1,
-   "z": -0.85,
-   "lost": 5,
-   "pending": 1,
-   "legs": 18,
-   "legsWon": 9,
+   "z": -1.04,
+   "lost": 6,
+   "pending": 0,
+   "legs": 21,
+   "legsWon": 11,
    "returned": 3.12,
-   "staked": 6,
+   "staked": 7,
    "returnedBest": 3.24,
    "returnedLock": 2.95,
-   "stakedLock": 6,
-   "expected": 1.97,
+   "stakedLock": 7,
+   "expected": 2.29,
    "clv": {
     "n": 20,
     "shortened": 9,
@@ -541,7 +541,7 @@
      "rule": 1,
      "odds": 2.53,
      "p": 0.3166,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -549,9 +549,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": 0,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Cienciano del Cusco",
@@ -567,8 +567,8 @@
        "lockBook": "William Hill",
        "est": false,
        "p": 0.7227,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       },
       {
        "pick": "Minnesota United",
@@ -584,8 +584,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6561,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       },
       {
        "pick": "América",
@@ -601,8 +601,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6678,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       }
      ]
     },
@@ -768,9 +768,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Hammarby IF",
@@ -786,8 +786,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6404,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Nadia Podoroska",
@@ -831,7 +831,7 @@
        "when": "2026-10-30T05:30:00Z",
        "odds": 1.28,
        "best": 1.28,
-       "lastOdds": 1.28,
+       "lastOdds": 1.3,
        "lockOdds": 1.28,
        "lockBest": 1.28,
        "lockBook": "Pinnacle",
