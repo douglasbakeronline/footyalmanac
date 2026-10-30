@@ -103,7 +103,7 @@ the groups landed 11 of 58 (19%). They stay in the record under their names.
 
 Standard library only.
 """
-import itertools, json, math, os, re, sys, time, unicodedata, urllib.request
+import gzip, itertools, json, math, os, re, sys, time, unicodedata, urllib.request
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from zoneinfo import ZoneInfo
@@ -1935,6 +1935,46 @@ def check_pool(L):
              "f": l.get("fair"), "m": l["pModel"], "x": 1 if l.get("listOff") else 0}
             for l in L if not l.get("est") and l.get("fair") is not None]
 
+POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
+             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge")
+
+
+def archive_pool(L, now, dates):
+    """The whole priced leg pool, every sport, kept per day in
+    groupings-archive/pool-<date>.json.gz (30 Oct 2026, Douglas: "will we be
+    able to test other models and how they would have performed"). Each leg
+    (event, pick) is written once with the price and numbers it first carried,
+    plus lastOdds / lastBest / lastAt from every later build before it starts,
+    so any Card rule, four-leg groups included, can be rebuilt on the month's
+    real pool across every sport, not football alone. Nothing first written is
+    changed; only the last-price fields move."""
+    os.makedirs(ARCHIVE, exist_ok=True)
+    stamp = iso(now); n_new = 0
+    for d in dates:
+        legs = [l for l in L if l.get("date") == d and l.get("odds")]
+        if not legs: continue
+        path = os.path.join(ARCHIVE, f"pool-{d}.json.gz")
+        try:
+            with gzip.open(path, "rt", encoding="utf-8") as f: a = json.load(f)
+        except (OSError, ValueError):
+            a = {"date": d, "legs": []}
+        have = {(l["event"], l["pick"]): l for l in a["legs"]}
+        for l in legs:
+            k = (l["event"], l["pick"])
+            started = (parse(l.get("when") or "") or now) <= now
+            if k in have:
+                old = have[k]
+                if not started and not l.get("est"):
+                    old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
+                continue
+            if started: continue       # never add a leg after its start: the price would prove nothing
+            row = {kk: l.get(kk) for kk in POOL_KEYS if kk in l}
+            row["firstAt"] = stamp
+            a["legs"].append(row); have[k] = row; n_new += 1
+        with gzip.open(path, "wt", encoding="utf-8") as f: json.dump(a, f, separators=(",", ":"), ensure_ascii=False)
+    return n_new
+
+
 def update_closing(L, now, dates):
     """Closing prices for the record (25 Oct 2026, Douglas: "I need the model
     to beat the bookies' odds"). On every build, each archived leg that has not
@@ -2159,6 +2199,7 @@ def main():
     json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
     # 25 Oct 2026: the record is the locked Card, archived as each window locks.
     for d in days: archive_locked(d, out["generated"])
+    archive_pool(L, now, dates)
     update_closing(L, now, [(today + timedelta(days=i)).isoformat() for i in (-1, 0, 1)])
     record = grade()
     write_page(dict(out, check=check_pool(L)), record)

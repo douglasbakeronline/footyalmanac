@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 ## release-2026-10-30-2 (pending tag): push-triggered builds spare the API-Football allowance
 
 A build started by a push to `main` now runs with `AF_FRUGAL=1` (deploy.yml) and reuses the day's cached API-Football fixtures and prices up to a day old (`sources.AF_FRUGAL_TTL`, `odds.AF_FRUGAL_TTL`) instead of fetching them again; the six scheduled builds refresh as before. Twenty-five builds on 29-30 Oct 2026, most of them merges and manual dispatches, plus the Pro plan lapsing to the free tier, left the board on its last copy. Files: `odds.py`, `sources.py`, `.github/workflows/deploy.yml`. Roll back: revert the commit.
+## release-2026-10-30-4 (pending tag): the whole priced pool archived daily
+
+`groupings.archive_pool` writes every priced leg of every sport, for each day the build prices, to `groupings-archive/pool-<date>.json.gz`: first price and numbers as first published, then last pre-start price on later builds. Douglas, 30 Oct 2026: "will we be able to test other models and how they would have performed, e.g. at minimum of 4 legs". The 30 Nov review rebuilds any Card rule on the month's real pool, every sport, from these files; results join from the graded records. Nothing on the site changes. Files: `groupings.py`, `tests/test_groupings_card.py`. Roll back: revert the commit; the pool files are harmless.
+
+## release-2026-10-30-3 (pending tag): the API-Football "spent" marker expires
+
+Once a build heard the daily allowance was gone it left a marker for the UTC day and no later build that day made a call. On 30 Oct 2026 the Pro plan lapsed and was renewed within the hour, and the board stayed on its last copy all afternoon. The marker is now honoured for `sources.AF_SPENT_TTL` (90 minutes); after that the next build spends one call to find out, and re-marks if the answer is still "spent". Files: `sources.py`. Roll back: revert the commit.
 
 ## 2026-10-30 Odds API tennis keys: logging already live, cause unconfirmed (tag pending)
 

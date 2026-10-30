@@ -647,8 +647,20 @@ def _spent_marker():
     return os.path.join(AF_CACHE_DIR, f"spent-{datetime.now(timezone.utc).date().isoformat()}")
 
 
+AF_SPENT_TTL = 90 * 60   # honour the marker this long, then try one call again (30 Oct 2026)
+
+
 def _af_spent_today():
-    return os.path.exists(_spent_marker())
+    """The marker says the allowance was gone, but it may have been renewed
+    since (30 Oct 2026: the Pro plan lapsed, was renewed within the hour, and
+    every build for the rest of the day still trusted the morning's marker).
+    After AF_SPENT_TTL one call is spent to find out; a 'spent' answer writes
+    the marker afresh."""
+    path = _spent_marker()
+    try:
+        return time.time() - os.path.getmtime(path) < AF_SPENT_TTL
+    except OSError:
+        return False
 
 
 def _af_mark_spent():
