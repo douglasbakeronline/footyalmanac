@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-30 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered (tag pending)
+
+**What changed:** a dated note only, `claude/af-new-leagues-coverage-2026-10-30.md`. No code, model or rule changed.
+**Evidence:** the five top flights have been on the board via `sources.AF_NEW` since 20 Oct and the UAE Pro League via `af.301`; the 30 Oct archive holds fixtures for all six (3-11 each). Extra API allowance per build: 0 (shared date pool). A replay is not possible here: no API key, and `history/` holds none of them. No hit-rate claim is made.
+**Files:** `claude/af-new-leagues-coverage-2026-10-30.md`, `RELEASES.md`.
+**Not changed:** `sources.py`, any model number, the Daily List, `NEW_BOARD_ONLY`.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-30 Tennis legs in groups (22/40 v 28): located, nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-10-30.md`. No code, model or rule changed.
