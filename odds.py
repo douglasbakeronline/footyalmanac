@@ -277,6 +277,7 @@ def fetch_live(log=None):
 
 AF_ODDS_TTL_NEAR = 90 * 60       # today and tomorrow: prices move
 AF_ODDS_TTL_FAR = 4 * 3600       # further out: they barely do
+AF_FRUGAL_TTL = 24 * 3600        # a push-triggered build reuses prices this old (30 Oct 2026)
 AF_ODDS_MAX_PAGES = 150          # a date's ceiling: 1,500 priced fixtures
 AF_ODDS_SIDE = {"Home": 0, "Draw": 1, "Away": 2}
 AF_ODDS_VERSION = 3              # 2: max / maxBook over UK-licensed books only (25 Oct 2026); 3: ukBooks per side (29 Oct 2026)
@@ -360,7 +361,12 @@ def af_odds_day(d, log=None, now=None):
         stale = doc.get("rows") or {}
         near = (d - datetime.fromtimestamp(now, timezone.utc).date()).days <= 1
         # A copy parsed before the UK-only best price (AF_ODDS_VERSION) is re-read.
-        if doc.get("v") == AF_ODDS_VERSION and now - doc.get("fetched", 0) < (AF_ODDS_TTL_NEAR if near else AF_ODDS_TTL_FAR):
+        ttl = AF_ODDS_TTL_NEAR if near else AF_ODDS_TTL_FAR
+        # 30 Oct 2026: a build that a push to main started (AF_FRUGAL, set by
+        # deploy.yml) reuses any price copy from the last day; the scheduled
+        # builds refresh them. A code change should not cost a day's allowance.
+        if os.environ.get("AF_FRUGAL"): ttl = max(ttl, AF_FRUGAL_TTL)
+        if doc.get("v") == AF_ODDS_VERSION and now - doc.get("fetched", 0) < ttl:
             return stale
     except (OSError, ValueError):
         pass

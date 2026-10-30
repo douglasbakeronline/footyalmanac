@@ -4,6 +4,9 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## release-2026-10-30-2 (pending tag): push-triggered builds spare the API-Football allowance
+
+A build started by a push to `main` now runs with `AF_FRUGAL=1` (deploy.yml) and reuses the day's cached API-Football fixtures and prices up to a day old (`sources.AF_FRUGAL_TTL`, `odds.AF_FRUGAL_TTL`) instead of fetching them again; the six scheduled builds refresh as before. Twenty-five builds on 29-30 Oct 2026, most of them merges and manual dispatches, plus the Pro plan lapsing to the free tier, left the board on its last copy. Files: `odds.py`, `sources.py`, `.github/workflows/deploy.yml`. Roll back: revert the commit.
 ## release-2026-10-30-4 (pending tag): the whole priced pool archived daily
 
 `groupings.archive_pool` writes every priced leg of every sport, for each day the build prices, to `groupings-archive/pool-<date>.json.gz`: first price and numbers as first published, then last pre-start price on later builds. Douglas, 30 Oct 2026: "will we be able to test other models and how they would have performed, e.g. at minimum of 4 legs". The 30 Nov review rebuilds any Card rule on the month's real pool, every sport, from these files; results join from the graded records. Nothing on the site changes. Files: `groupings.py`, `tests/test_groupings_card.py`. Roll back: revert the commit; the pool files are harmless.
