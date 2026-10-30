@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+
+## 2026-10-30 Tennis list shortfall (39/51 v 42): located, nothing to ship (tag pending)
+
+**What changed:** a dated note only, `claude/tennis-list-shortfall-2026-10-30.md`. No code, model or rule changed.
+**Evidence:** the planner's 39 of 51 v 42.2 is the 15 Oct fortnight that was already reviewed on 28 Oct. At the 75% bar, 115 of 139 graded main-draw picks landed (82.7%) v 82.3% quoted; 16-30 Oct 59 of 69 (86%) v 82%. The gap is Wuhan (6 of 12, before the 8 Oct ratings fix). The 75-80% band lands 82% v 77%, so a stricter bar would not help; the own-band chip is already live (26 Oct); tennis has no tier-2 leagues.
+**Files:** `claude/tennis-list-shortfall-2026-10-30.md`, `RELEASES.md`.
+**Not changed:** `build_tennis.py`, `LIST_MIN`, `LIST_ON`, any model number.
+**Roll back:** `git revert` the merge commit.
+
 ## release-2026-10-30 (pending tag): a published Card group holds through price drift
 
 The 05:40 build replaced a Card 3x (Bristol Rugby, Houston Rockets, Miami Heat, 3.00) that Douglas had placed overnight, because its combined price had slipped to 2.86, under the 3x band's 3.00 floor. The band is how a group is chosen, not a rule a pick can fail, so the re-check now holds a published group while its combined price stays within `CARD_DRIFT` (10%) of its band; only a larger move, or a pick failing the leg rule, replaces it. `tests/test_groupings_card.py` PriceDrift. Files: `groupings.py`, `tests/test_groupings_card.py`. Roll back: revert the commit.
