@@ -4,6 +4,10 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## release-2026-10-30-3 (pending tag): the API-Football "spent" marker expires
+
+Once a build heard the daily allowance was gone it left a marker for the UTC day and no later build that day made a call. On 30 Oct 2026 the Pro plan lapsed and was renewed within the hour, and the board stayed on its last copy all afternoon. The marker is now honoured for `sources.AF_SPENT_TTL` (90 minutes); after that the next build spends one call to find out, and re-marks if the answer is still "spent". Files: `sources.py`. Roll back: revert the commit.
+
 ## 2026-10-30 Odds API tennis keys: logging already live, cause unconfirmed (tag pending)
 
 **What changed:** a dated note only, `claude/odds-api-tennis-keys-2026-10-30.md`. No code, model or rule changed.
