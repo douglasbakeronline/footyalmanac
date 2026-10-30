@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-30 Odds API tennis keys: logging already live, cause unconfirmed (tag pending)
+
+**What changed:** a dated note only, `claude/odds-api-tennis-keys-2026-10-30.md`. No code, model or rule changed.
+**Evidence:** the requested logging (`tennisKeys`, `noKey`) shipped on 20 Oct (#55). This sandbox has no `ODDS_API_KEY` (the /sports list returns 401) and no archived report holds the key list, so the matcher could not be tested; no fix was guessed.
+**Files:** `claude/odds-api-tennis-keys-2026-10-30.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, matching, ledger caps, any model number.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-30 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered (tag pending)
 
 **What changed:** a dated note only, `claude/af-new-leagues-coverage-2026-10-30.md`. No code, model or rule changed.
