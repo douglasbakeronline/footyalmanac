@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-10-30 Tennis legs in groups (22/40 v 28): located, nothing to ship (tag pending)
+
+**What changed:** a dated note only, `claude/tennis-legs-gap-2026-10-30.md`. No code, model or rule changed.
+**Evidence:** 40 settled tennis legs since 19 Oct landed 22 (55%) v 28.4 quoted. Model under 75%: 15 of 31 (48%); model 75%+: 7 of 9 (78%, on quote). The 75% floor (`CARD_SPORT_MIN`, `CARD_RULE` 2, 29 Oct) already excludes the weak kind. No tennis price history exists to replay a further rule, and every other cut is 40 legs or fewer, so choosing one would fit the live record (Rule 1).
+**Files:** `claude/tennis-legs-gap-2026-10-30.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any model number, the Daily List.
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-30 Tennis list shortfall (39/51 v 42): located, nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-list-shortfall-2026-10-30.md`. No code, model or rule changed.
