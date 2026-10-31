@@ -1305,7 +1305,7 @@ CARD_POOL = 24
 # rate both at CARD_SPORT_MIN or more: the 60-75% band is where tennis has
 # not been tested live in volume. Football, rugby and the NBA are unchanged.
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
-CARD_SPORTS_OFF = {"nfl", "cfb"}
+CARD_SPORTS_OFF = {"nfl", "cfb", "ncaab"}   # ncaab 31 Oct 2026: no live record yet (season starts Nov); back at 50 graded games, Douglas's call
 CARD_SPORT_MIN = {"tennis": 0.75}
 # 29 Oct 2026, second pass (tools/card_replay.py on the priced archive, 11 Sep
 # to 28 Oct): of the 193 legs that cleared the Card rule, core-league legs

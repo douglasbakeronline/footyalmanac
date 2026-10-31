@@ -3,6 +3,10 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-10-31-3 (pending tag): college basketball off the Card
+
+Douglas, after a Sunday Card 2x carried two college basketball picks on the week the season opens: a sport with no live record on the site stays off the Card (`CARD_SPORTS_OFF` gains `ncaab`), as college football does. Its picks still reach the Daily List and the reserve. Back on when it has 50 graded games and lands on quote. Files: `groupings.py`. Roll back: revert the commit.
+
 ## release-2026-10-31-2 (pending tag): the Model card, on paper beside the Card
 
 Douglas, 31 Oct 2026: "the whole point is that our model is meant to pick winners". Every day the build now also makes a **Model 2x** and a **Model 3x** (`groupings.build_model_card`, `MODEL_KINDS`): the model's own picks, chosen the opposite way to the Card. A leg is a core-league pick (or 75%+ tennis) the model rates 60%+ and at or above the bookmakers' chance (`model_fault`), and the group's chance is the model's number (`as_model`), not the market's. Same price band and kinds. Held as first built until first kick-off, frozen and archived like a Card group, graded on its own line (`cardModel`), never staked (stake 0), never pushed, fixtures may overlap the Card's. The Bets tab shows them in an "On paper" section under the card with a scoreboard tile. At the 30 Nov review the two lines are compared; if the model's own picks beat the price, the Card changes. Files: `groupings.py`, `index.html`. Roll back: revert the commit; archived Model groups are harmless.
