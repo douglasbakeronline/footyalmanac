@@ -1347,6 +1347,13 @@ CARD_CORE_NUDGE = 0.02
 # record; the core-only rule above rests on a weaker comparison (wider
 # leagues were barely priced before 22 Oct) and is kept as the cautious side.
 CARD_UNDER_MARKET = 0.05
+# 31 Oct 2026 (Douglas, on Norwich 49% v the market's 61% on that day's Card
+# 3x): a cap on the gap. The model 10+ points under the market lost on every
+# sample (live archive -3.6%, 2025-26 -6.4%, 2026-27 -9.8%; tools/
+# card_legs_history.py, tools/market_check.py): that far under, the model has
+# not rated the side, it is not being cautious about a favourite. 5 to 10
+# under was positive on all three (+9.5%, +6.2%, +5.8%). CARD_RULE 5.
+CARD_UNDER_MAX = 0.10
 # The floor (29 Oct 2026, Douglas: "the minimum performance of the groups bets
 # over time"). A run of three good days is not a floor; the quote is. The
 # record carries, for the Card, how far landed sits from expected in standard
@@ -1382,7 +1389,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 4     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026)
+CARD_RULE = 5     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1464,6 +1471,10 @@ def card_fault(l, wide=False):
             and l["pModel"] - l["fair"] > -CARD_UNDER_MARKET:
         return (f"{l['pick']}: the model ({pct(l['pModel'])}) is not at least {round(CARD_UNDER_MARKET * 100)} points under the "
                 f"bookmakers ({pct(l['fair'])}); only picks the market rates clearly above the model landed above quote")
+    if CARD_UNDER_MAX and not wide and l.get("sport") == "football" and l.get("fair") is not None and not l.get("est") \
+            and l["fair"] - l["pModel"] >= CARD_UNDER_MAX:
+        return (f"{l['pick']}: the model ({pct(l['pModel'])}) is {round((l['fair'] - l['pModel']) * 100)} points under the bookmakers "
+                f"({pct(l['fair'])}), more than {round(CARD_UNDER_MAX * 100)}; that far under, the model has not rated the side (lost on every sample)")
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin):
         return (f"{l['pick']}: a {l['sport']} pick needs the model and its tested rate both at {pct(smin)}+ "
@@ -2186,7 +2197,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
-                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),

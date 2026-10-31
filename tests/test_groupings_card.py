@@ -12,9 +12,10 @@ DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
     # 29 Oct 2026: a football leg needs the model at least 5 points under the
-    # bookmakers' chance (CARD_UNDER_MARKET); the board's 0.66 at 1.40 (fair 0.69)
-    # is read as 0.62 so the standard board still qualifies
-    if sport == "football" and model == 0.66: model = 0.62
+    # bookmakers' chance (CARD_UNDER_MARKET), and since 31 Oct no more than 10
+    # (CARD_UNDER_MAX): the board's standard 0.66 is read as 7 points under the
+    # leg's fair chance so the standard board still qualifies
+    if sport == "football" and model == 0.66: model = round((1 / odds) / margin - 0.07, 4)
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
          "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
          "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
@@ -279,7 +280,7 @@ class SportRule(unittest.TestCase):
         self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
 
     def test_old_rule_groups_rebuild(self):
-        self.assertEqual(G.CARD_RULE, 4)
+        self.assertEqual(G.CARD_RULE, 5)
         g = {"name": "Card 2x", "rule": 1, "legs": []}
         self.assertEqual(G.recheck_card(g, [])[0], None)
 
@@ -467,6 +468,7 @@ class PriceDrift(unittest.TestCase):
         by = {(l["event"], l["pick"]): l for l in L}
         for l in g0["legs"]:
             cur = by[(l["event"], l["pick"])]; cur["odds"] = round(cur["odds"] * f, 2); cur["best"] = round((cur.get("best") or cur["odds"]) * f, 2)
+            cur["p"] = cur["pModel"] = round((1 / cur["odds"]) / cur["margin"] - 0.07, 4)   # the gap, not the band, is under test
             G.honest(cur)
         held, why = G.recheck_card(g0, L)
         self.assertIsNotNone(held, why); self.assertLess(held["odds"], lo)

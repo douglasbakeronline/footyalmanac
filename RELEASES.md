@@ -3,6 +3,10 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-10-31 (pending tag): the Card's gap to the market capped at 10 under (rule 5)
+
+Douglas, on Norwich (model 49%, bookmakers 61%) on the day's Card 3x. A football pick now needs the model between 5 and 10 points under the bookmakers' chance (`CARD_UNDER_MAX` 0.10, with `CARD_UNDER_MARKET` 0.05). Evidence: 10+ under lost on every sample (live archive −3.6%, 2025-26 −6.4%, 2026-27 −9.8%); 5-10 under was positive on all three (+9.5%, +6.2%, +5.8%). That far under, the model has not rated the side. `CARD_RULE` 5, tallied apart in `cardByRule`; groups already frozen stand. `tools/card_replay.py`'s `under5to10` variant is now the live rule, replaced by `uncapped` (rule 4) for the 30 Nov review. Files: `groupings.py`, `tools/card_replay.py`, `tests/test_groupings_card.py`. Roll back: revert the commit.
+
 ## 2026-10-31 Office review and next week's priorities (tag pending)
 
 **What changed:** a dated note only, `claude/office-review-2026-10-31.md`. No code, model or rule changed.
