@@ -1,5 +1,5 @@
 {
- "graded": "2026-10-31T16:29:03Z",
+ "graded": "2026-10-31T20:27:11Z",
  "overall": {
   "groups": 102,
   "settled": 95,
@@ -7,8 +7,8 @@
   "z": -1.56,
   "lost": 71,
   "pending": 7,
-  "legs": 396,
-  "legsWon": 283,
+  "legs": 397,
+  "legsWon": 284,
   "returned": 73.61,
   "staked": 95,
   "returnedBest": 77.76,
@@ -17,8 +17,8 @@
   "expected": 30.98,
   "clv": {
    "n": 97,
-   "shortened": 34,
-   "drifted": 35,
+   "shortened": 35,
+   "drifted": 36,
    "mean": -0.0031
   }
  },
@@ -41,8 +41,8 @@
    "clv": {
     "n": 49,
     "shortened": 13,
-    "drifted": 18,
-    "mean": -0.0056
+    "drifted": 19,
+    "mean": -0.0059
    }
   },
   "Card 3x": {
@@ -62,9 +62,9 @@
    "expected": 2.97,
    "clv": {
     "n": 35,
-    "shortened": 12,
+    "shortened": 13,
     "drifted": 11,
-    "mean": -0.0022
+    "mean": -0.0018
    }
   },
   "Wider Treble": {
@@ -321,8 +321,8 @@
   "expected": 5.93,
   "clv": {
    "n": 62,
-   "shortened": 20,
-   "drifted": 23,
+   "shortened": 21,
+   "drifted": 24,
    "mean": -0.0055
   }
  },
@@ -377,8 +377,8 @@
   "z": null,
   "lost": 0,
   "pending": 2,
-  "legs": 0,
-  "legsWon": 0,
+  "legs": 1,
+  "legsWon": 1,
   "returned": 0,
   "staked": 0,
   "returnedBest": 0,
@@ -454,9 +454,9 @@
    "expected": 0,
    "clv": {
     "n": 5,
-    "shortened": 1,
-    "drifted": 0,
-    "mean": 0.0016
+    "shortened": 2,
+    "drifted": 1,
+    "mean": 0.0011
    }
   }
  },
@@ -478,9 +478,9 @@
    "expected": 0.91,
    "clv": {
     "n": 16,
-    "shortened": 2,
-    "drifted": 5,
-    "mean": -0.0021
+    "shortened": 3,
+    "drifted": 6,
+    "mean": -0.0023
    }
   },
   "Daytime": {
@@ -785,7 +785,7 @@
        "when": "2026-11-01T00:00Z",
        "odds": 1.26,
        "best": 1.26,
-       "lastOdds": 1.26,
+       "lastOdds": 1.28,
        "lockOdds": 1.26,
        "lockBest": 1.26,
        "lockBook": null,
@@ -931,7 +931,7 @@
        "when": "2026-10-31T23:00Z",
        "odds": 1.56,
        "best": 1.56,
-       "lastOdds": 1.56,
+       "lastOdds": 1.54,
        "lockOdds": 1.56,
        "lockBest": 1.56,
        "lockBook": null,
@@ -1031,9 +1031,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Aldershot Town",
@@ -1049,8 +1049,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6201,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Bath Rugby",
