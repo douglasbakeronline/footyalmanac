@@ -234,3 +234,7 @@ bookmakers' fair chance, the model is a veto. Built after the other groups
 from the legs they leave, re-checked every build, graded as "multiplier".
 Evidence and design: `claude/multipliers-2026-10-24.md`; the archive check
 is `tools/market_check.py`.
+
+## Edge over the price, re-tested (31 Oct 2026)
+
+Same answer as 23 Oct on a refreshed pull: legs 2, 4 and 6 points above fair landed -1.8 / -2.1 / -1.5 pts below fair on fit (n 4,188 / 2,539 / 1,510) and -1.9 / -2.1 / -0.6 on check (n 689 / 476 / 323). No cell positive on both seasons. There is no edge; no value-leg rule. See `claude/odds-edge-retest-2026-10-31.md`.
