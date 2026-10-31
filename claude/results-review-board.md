@@ -158,3 +158,47 @@ results. Tests: `tests/test_grading.py`.
 **Not changed, noted:** a "pen." line with no "a.e.t." in the played layout
 keeps its first score (a level game either way). Tennis retirements in the first
 set (for example "4-1 ret") stand as graded, by design (`score_tennis.py`).
+
+## Grading audit, 31 October 2026 (Susie, Results Auditor)
+
+**Sample: 105 graded games checked against ESPN, 0 disagreements.** Football 50
+(random, seed 1, from 630 graded rows dated 24-30 Oct outside the
+API-Football `af.*` leagues; ESPN scoreboard through `sources.fetch_espn`, teams
+paired by `match_team`, the stored `result` against ESPN's 90-minute score),
+sports 30 (random, seed 2, from the 199 NBA / WNBA / NFL / MLB / college football
+games on the last 14 days of `sports-record.json`; ESPN `summary` endpoint,
+home and away score), tennis 25 (random, from 384 graded matches since 20 Oct;
+winner of the same ESPN competition id). A further 10 football draws had no ESPN
+coverage (English steps 6-7, Croatia) and were left unchecked; `af.*` leagues
+have no free second source, so the paid-feed rows are untested here.
+
+**Internal consistency, whole files:** `record-graded.json` 8,239 rows, 0 where
+`actual` disagrees with `result` or `won` with `pick == actual`; tennis 1,145
+graded rows, 0 where `ok` disagrees with `pick == winner`; 220 sports games with
+a score, 0 where `winner` or `ok` disagree with the score. (Football `score` is
+the *predicted* scoreline, `result` the actual: compare `result`.)
+
+**Edge cases, by reading the code:**
+- Football, ESPN: `sources._row` refuses a score when status is cancelled,
+  postponed, abandoned, suspended or forfeit, and after extra time or penalties
+  (the board prices 90 minutes). openfootball: first bracket pair, as above.
+- Sports: `sports._game` uses the same `NOT_PLAYED` list; unplayed games go to
+  `voidNotPlayed` after 7 days (16 now).
+- Tennis: walkovers and cancellations are void (16 voids in the record, 2 shown
+  as "not played by the priced players" substitutions); retirements stand as
+  graded (48 graded, picks landed 43.8%, small n, not a finding). All covered by
+  `tests/test_grading.py`.
+- Verification: no `late` or `timing-unverifiable` football rows currently skipped.
+
+**No grading bug found, no code changed.**
+
+**Observation, not a grading bug:** 1,513 predicted football fixtures older than
+two weeks have no result. 252 are `be.1` rows from the 16-19 Sep builds: the
+openfootball Belgian file then paired every club on a single date (247 rows dated
+2026-09-20) and today still carries result text glued into team names (`KV
+Kortrijk 3-0`). Belgium has been priced through `af.144` since 20 Sep, so
+nothing live is affected and the phantom rows never entered the record. The rest
+are mostly Aug-Sep fixtures from before result persistence (`settled-results.json`,
+6 Oct) and `af.*` / lower-league games with no free results. Not regraded; the
+record is only ever shown on what could be checked. Open question for Douglas:
+drop the stale `be.1` source line so it cannot return as phantom fixtures.

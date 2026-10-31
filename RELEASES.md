@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-31 Results grading audited: no bug found (tag pending)
+
+**What changed:** a dated audit section in `claude/results-review-board.md` only. No code, model or rule changed.
+**Evidence:** 105 graded games checked against ESPN (football 50, sports 30, tennis 25), 0 disagreements; whole-file consistency of football (8,239 rows), tennis (1,145) and sports (220) clean; postponed, abandoned, walkover, retirement and extra-time handling read and already covered by `tests/test_grading.py`.
+**Files:** `claude/results-review-board.md`, `RELEASES.md`.
+**Not changed:** `score.py`, `score_tennis.py`, `sports.py`, any record file.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-31 Leg properties re-scanned: no rule (tag pending)
 
 **What changed:** dated notes only (`claude/leg-property-rescan-2026-10-31.md`, a section in `claude/odds-groupings.md`). No code, model or rule changed.
