@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-31 Leg properties re-scanned: no rule (tag pending)
+
+**What changed:** dated notes only (`claude/leg-property-rescan-2026-10-31.md`, a section in `claude/odds-groupings.md`). No code, model or rule changed.
+**Evidence:** `tools/odds_edge_test.py` + `tools/leg_property_test.py`, fit 2025-26 (310 eligible legs, +9.3 pts v quote), check 2026-27 (42 legs, +8.8). No cut holds on both seasons; the model-not-above-market cap removes about half the fit legs (limit a fifth) and fails on check (+7.9 v +8.8 for all).
+**Files:** `claude/leg-property-rescan-2026-10-31.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, `MAX_ABOVE_BOOK`, any model number.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-31 Edge over the bookmaker price re-tested: none (tag pending)
 
 **What changed:** dated notes only (`claude/odds-edge-retest-2026-10-31.md`, a section in `claude/odds-groupings.md`). No code, model or rule changed.
