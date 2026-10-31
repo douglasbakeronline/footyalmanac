@@ -75,6 +75,18 @@ Once a build heard the daily allowance was gone it left a marker for the UTC day
 **Not changed:** `sources.py`, any model number, the Daily List, `NEW_BOARD_ONLY`.
 **Roll back:** `git revert` this commit.
 
+## 2026-10-30 Own-band List admission re-run, already shipped (tag pending)
+
+**What changed:** nothing in the product. The task (own 5-point band must clear the bar, every sport) was shipped on 20 Oct 2026; today's re-run confirms it and the six affected sports already use it.
+
+**Evidence:** held out, rugby 426 picks at 78.9% -> 232 at 84.1% (dropped 194 at 72.7%, p(worse) 0.002); college basketball 3,792 at 78.9% -> 1,884 at 87.4% (dropped 70.5%, p 0.000); NFL 110 at 71.8% -> 62 at 77.4% (p 0.07). Live bars: NFL, NBA, rugby, CFB 80%; NCAAB, WNBA 85%.
+
+**Files:** `claude/own-band-rerun-2026-10-30.md`, `RELEASES.md`.
+
+**Not changed:** all code, models, bars, tennis, football.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-10-30 Tennis legs in groups (22/40 v 28): located, nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-10-30.md`. No code, model or rule changed.
