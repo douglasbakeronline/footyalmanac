@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-31 Edge over the bookmaker price re-tested: none (tag pending)
+
+**What changed:** dated notes only (`claude/odds-edge-retest-2026-10-31.md`, a section in `claude/odds-groupings.md`). No code, model or rule changed.
+**Evidence:** `tools/odds_edge_test.py`, fit 2025-26 (12,510 legs), check 2026-27 (1,749). Legs 2/4/6 pts above fair landed -1.8/-2.1/-1.5 pts below fair on fit and -1.9/-2.1/-0.6 on check; no positive cell on both seasons, bootstrapped.
+**Files:** `claude/odds-edge-retest-2026-10-31.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, the 5-point cap, any model number.
+**Roll back:** `git revert` this commit.
+
 
 ## release-2026-10-30-2 (pending tag): push-triggered builds spare the API-Football allowance
 
