@@ -1,12 +1,12 @@
 {
- "graded": "2026-10-31T11:00:42Z",
+ "graded": "2026-10-31T13:21:48Z",
  "overall": {
-  "groups": 95,
+  "groups": 96,
   "settled": 95,
   "won": 24,
   "z": -1.56,
   "lost": 71,
-  "pending": 0,
+  "pending": 1,
   "legs": 396,
   "legsWon": 283,
   "returned": 73.61,
@@ -16,9 +16,9 @@
   "stakedLock": 18,
   "expected": 30.98,
   "clv": {
-   "n": 85,
+   "n": 87,
    "shortened": 33,
-   "drifted": 31,
+   "drifted": 32,
    "mean": -0.0031
   }
  },
@@ -46,12 +46,12 @@
    }
   },
   "Card 3x": {
-   "groups": 11,
+   "groups": 12,
    "settled": 11,
    "won": 5,
    "z": 1.38,
    "lost": 6,
-   "pending": 0,
+   "pending": 1,
    "legs": 34,
    "legsWon": 22,
    "returned": 15.51,
@@ -61,10 +61,10 @@
    "stakedLock": 7,
    "expected": 2.97,
    "clv": {
-    "n": 32,
+    "n": 34,
     "shortened": 12,
-    "drifted": 9,
-    "mean": -0.0018
+    "drifted": 10,
+    "mean": -0.0019
    }
   },
   "Wider Treble": {
@@ -305,12 +305,12 @@
   }
  },
  "card": {
-  "groups": 19,
+  "groups": 20,
   "settled": 19,
   "won": 5,
   "z": -0.46,
   "lost": 14,
-  "pending": 0,
+  "pending": 1,
   "legs": 58,
   "legsWon": 36,
   "returned": 14.83,
@@ -320,10 +320,10 @@
   "stakedLock": 15,
   "expected": 5.93,
   "clv": {
-   "n": 53,
+   "n": 55,
    "shortened": 19,
-   "drifted": 21,
-   "mean": -0.0062
+   "drifted": 22,
+   "mean": -0.0061
   }
  },
  "cardWide": {
@@ -394,12 +394,12 @@
    }
   },
   "4": {
-   "groups": 3,
+   "groups": 4,
    "settled": 3,
    "won": 1,
    "z": 0.11,
    "lost": 2,
-   "pending": 0,
+   "pending": 1,
    "legs": 9,
    "legsWon": 7,
    "returned": 2.61,
@@ -409,21 +409,21 @@
    "stakedLock": 0,
    "expected": 0.91,
    "clv": {
-    "n": 7,
+    "n": 9,
     "shortened": 1,
-    "drifted": 3,
-    "mean": -0.0031
+    "drifted": 4,
+    "mean": -0.0032
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 3,
+   "groups": 4,
    "settled": 3,
    "won": 1,
    "z": 0.11,
    "lost": 2,
-   "pending": 0,
+   "pending": 1,
    "legs": 9,
    "legsWon": 7,
    "returned": 2.61,
@@ -433,10 +433,10 @@
    "stakedLock": 0,
    "expected": 0.91,
    "clv": {
-    "n": 7,
+    "n": 9,
     "shortened": 1,
-    "drifted": 3,
-    "mean": -0.0031
+    "drifted": 4,
+    "mean": -0.0032
    }
   },
   "Daytime": {
@@ -529,6 +529,85 @@
   }
  },
  "days": [
+  {
+   "date": "2026-10-31",
+   "published": "2026-10-31T13:20:28Z",
+   "groups": [
+    {
+     "name": "Card 3x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 4,
+     "odds": 3.41,
+     "p": 0.2427,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-10-31T12:30:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Norwich City",
+       "event": "Norwich City v Watford",
+       "sport": "football",
+       "comp": "Championship",
+       "when": "2026-10-31T12:30:00Z",
+       "odds": 1.53,
+       "best": 1.55,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6132,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "AS Roma",
+       "event": "Udinese Calcio v AS Roma",
+       "sport": "football",
+       "comp": "Serie A",
+       "when": "2026-10-31T17:00:00Z",
+       "odds": 1.56,
+       "best": 1.57,
+       "lastOdds": 1.56,
+       "lockOdds": 1.56,
+       "lockBest": 1.57,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.6091,
+       "status": "pending",
+       "result": null
+      },
+      {
+       "pick": "Olympiakos Piraeus",
+       "event": "Kifisia v Olympiakos Piraeus",
+       "sport": "football",
+       "comp": "Super League",
+       "when": "2026-10-31T17:00:00Z",
+       "odds": 1.43,
+       "best": 1.48,
+       "lastOdds": 1.44,
+       "lockOdds": 1.44,
+       "lockBest": 1.48,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.6498,
+       "status": "pending",
+       "result": null
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-10-30",
    "published": "2026-10-30T19:56:41Z",

@@ -1,0 +1,682 @@
+{
+ "date": "2026-10-31",
+ "published": "2026-10-31T13:20:28Z",
+ "groups": [
+  {
+   "name": "Card 3x",
+   "risk": "Pays 3x+",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 4,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-10-29T09:21:32Z",
+   "lockAt": "2026-10-31T12:30:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Portland Trail Blazers",
+     "event": "Utah Jazz v Portland Trail Blazers",
+     "sport": "nba",
+     "comp": "NBA",
+     "when": "2026-10-31T19:00Z",
+     "date": "2026-10-31",
+     "odds": 1.39,
+     "best": null,
+     "bestBook": null,
+     "bookOdds": null,
+     "p": 0.6904,
+     "pModel": 0.6962,
+     "fair": 0.6904,
+     "hit": 0.769,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-31T11:00:41Z",
+     "id": "401909896",
+     "home": "Utah Jazz",
+     "away": "Portland Trail Blazers",
+     "players": null
+    },
+    {
+     "pick": "Atlanta Hawks",
+     "event": "New Orleans Pelicans v Atlanta Hawks",
+     "sport": "nba",
+     "comp": "NBA",
+     "when": "2026-10-31T23:00Z",
+     "date": "2026-10-31",
+     "odds": 1.56,
+     "best": null,
+     "bestBook": null,
+     "bookOdds": null,
+     "p": 0.6158,
+     "pModel": 0.5844,
+     "fair": 0.6158,
+     "hit": 0.7076,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-10-31T11:00:41Z",
+     "id": "401909898",
+     "home": "New Orleans Pelicans",
+     "away": "Atlanta Hawks",
+     "players": null
+    }
+   ],
+   "bookOdds": 3.36,
+   "book": "William Hill",
+   "stake": 1,
+   "odds": 3.41,
+   "p": 0.2427,
+   "implied": 0.293,
+   "bestOdds": 3.6,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Norwich City v Watford",
+     "home": "Norwich City",
+     "away": "Watford",
+     "side": "h",
+     "pick": "Norwich City",
+     "code": "en.2",
+     "comp": "Championship",
+     "country": "England",
+     "when": "2026-10-31T12:30:00Z",
+     "date": "2026-10-31",
+     "pModel": 0.489,
+     "p": 0.6132,
+     "fx": {
+      "u21Side": false,
+      "league": "en.2",
+      "leagueName": "Championship",
+      "short": "CHA",
+      "country": "England",
+      "iso": "eng",
+      "tier": 2,
+      "order": 2,
+      "round": "Matchday 13",
+      "cup": false,
+      "date": "2026-10-31",
+      "time": "12:30",
+      "kickoff": "2026-10-31T12:30:00Z",
+      "home": {
+       "name": "Norwich City",
+       "att": 1.165,
+       "def": 1.151,
+       "played": 8,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Championship",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LWWLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 19,
+        "D": 8,
+        "L": 19,
+        "GF": 63,
+        "GA": 56,
+        "GD": 7,
+        "Pts": 65,
+        "PPG": 1.413
+       },
+       "now": {
+        "P": 8,
+        "W": 3,
+        "D": 0,
+        "L": 5,
+        "GF": 16,
+        "GA": 17,
+        "GD": -1,
+        "Pts": 9,
+        "PPG": 1.125
+       }
+      },
+      "away": {
+       "name": "Watford",
+       "att": 0.805,
+       "def": 0.982,
+       "played": 8,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Championship",
+       "form": {
+        "pts": 3,
+        "max": 15,
+        "seq": "LLWLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 15,
+        "L": 17,
+        "GF": 53,
+        "GA": 65,
+        "GD": -12,
+        "Pts": 57,
+        "PPG": 1.239
+       },
+       "now": {
+        "P": 8,
+        "W": 2,
+        "D": 2,
+        "L": 4,
+        "GF": 7,
+        "GA": 10,
+        "GD": -3,
+        "Pts": 8,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.489,
+       "d": 0.267,
+       "a": 0.2441
+      },
+      "xg": [
+       1.66,
+       1.05
+      ],
+      "btts": 0.5366,
+      "over25": 0.5152,
+      "score": [
+       1,
+       1
+      ],
+      "confidence": 0.489,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6059,
+        0.216,
+        0.1781
+       ],
+       "best": [
+        1.6,
+        4.5,
+        5.75
+       ],
+       "avg": [
+        1.54,
+        4.32,
+        5.24
+       ],
+       "ev": [
+        -0.2176,
+        0.2015,
+        0.4036
+       ]
+      },
+      "rank": 289,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.45,
+       "to": 0.5,
+       "hit": 0.4634,
+       "n": 259,
+       "cumHit": 0.5498,
+       "cumN": 733,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.5498,
+     "n": 733,
+     "list": false,
+     "pDraw": 0.267,
+     "multOnly": true,
+     "odds": 1.53,
+     "est": false,
+     "src": "API-Football, average of 10 bookmakers",
+     "pricedAt": "2026-10-31T05:30:17Z",
+     "implied": 0.6536,
+     "pTested": 0.4634,
+     "edge": -0.291,
+     "best": 1.55,
+     "bestBook": "William Hill",
+     "books": 10,
+     "margin": 1.0658,
+     "bookOdds": {
+      "William Hill": 1.55,
+      "Bet365": 1.53,
+      "Betfair": 1.5,
+      "BetVictor": 1.5
+     },
+     "stale": true,
+     "fair": 0.6132,
+     "basis": "bookmakers",
+     "firstOdds": 1.54
+    },
+    {
+     "sport": "football",
+     "event": "Udinese Calcio v AS Roma",
+     "home": "Udinese Calcio",
+     "away": "AS Roma",
+     "side": "a",
+     "pick": "AS Roma",
+     "code": "it.1",
+     "comp": "Serie A",
+     "country": "Italy",
+     "when": "2026-10-31T17:00:00Z",
+     "date": "2026-10-31",
+     "pModel": 0.5555,
+     "p": 0.6091,
+     "fx": {
+      "u21Side": false,
+      "league": "it.1",
+      "leagueName": "Serie A",
+      "short": "SEA",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 1,
+      "order": 10,
+      "round": "Matchday 10",
+      "cup": false,
+      "date": "2026-10-31",
+      "time": "18:00",
+      "kickoff": "2026-10-31T17:00:00Z",
+      "home": {
+       "name": "Udinese Calcio",
+       "att": 1.014,
+       "def": 1.151,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DWLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 14,
+        "D": 8,
+        "L": 16,
+        "GF": 45,
+        "GA": 48,
+        "GD": -3,
+        "Pts": 50,
+        "PPG": 1.316
+       },
+       "now": {
+        "P": 5,
+        "W": 1,
+        "D": 1,
+        "L": 3,
+        "GF": 8,
+        "GA": 11,
+        "GD": -3,
+        "Pts": 4,
+        "PPG": 0.8
+       }
+      },
+      "away": {
+       "name": "AS Roma",
+       "att": 1.373,
+       "def": 0.69,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 23,
+        "D": 4,
+        "L": 11,
+        "GF": 59,
+        "GA": 31,
+        "GD": 28,
+        "Pts": 73,
+        "PPG": 1.921
+       },
+       "now": {
+        "P": 5,
+        "W": 4,
+        "D": 1,
+        "L": 0,
+        "GF": 14,
+        "GA": 3,
+        "GD": 11,
+        "Pts": 13,
+        "PPG": 2.6
+       }
+      },
+      "p": {
+       "h": 0.1938,
+       "d": 0.2507,
+       "a": 0.5555
+      },
+      "xg": [
+       0.92,
+       1.81
+      ],
+      "btts": 0.5275,
+      "over25": 0.5179,
+      "score": [
+       1,
+       1
+      ],
+      "confidence": 0.5555,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.1695,
+        0.2157,
+        0.6148
+       ],
+       "best": [
+        5.9,
+        4.5,
+        1.57
+       ],
+       "avg": [
+        5.55,
+        4.36,
+        1.53
+       ],
+       "ev": [
+        0.1434,
+        0.1281,
+        -0.1279
+       ]
+      },
+      "rank": 158,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5352,
+       "n": 99,
+       "cumHit": 0.6714,
+       "cumN": 280,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.6714,
+     "n": 280,
+     "list": false,
+     "pDraw": 0.2507,
+     "multOnly": true,
+     "odds": 1.56,
+     "best": 1.57,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.55,
+      "Bet365": 1.57,
+      "Betfair": 1.57,
+      "BetVictor": 1.53
+     },
+     "margin": 1.0524,
+     "pricedAt": "2026-10-31T10:57:25Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.641,
+     "pTested": 0.5352,
+     "fair": 0.6091,
+     "edge": -0.1651,
+     "basis": "bookmakers",
+     "firstOdds": 1.54,
+     "lastOdds": 1.56,
+     "lastBest": 1.57,
+     "lastAt": "2026-10-31T13:20:28Z",
+     "lockPrice": {
+      "odds": 1.56,
+      "best": 1.57,
+      "book": "Bet365",
+      "at": "2026-10-31T13:20:28Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "Kifisia v Olympiakos Piraeus",
+     "home": "Kifisia",
+     "away": "Olympiakos Piraeus",
+     "side": "a",
+     "pick": "Olympiakos Piraeus",
+     "code": "gr.1",
+     "comp": "Super League",
+     "country": "Greece",
+     "when": "2026-10-31T17:00:00Z",
+     "date": "2026-10-31",
+     "pModel": 0.4749,
+     "p": 0.6498,
+     "fx": {
+      "u21Side": false,
+      "league": "gr.1",
+      "leagueName": "Super League",
+      "short": "GRE",
+      "country": "Greece",
+      "iso": "grc",
+      "tier": 1,
+      "order": 19,
+      "round": "Regular Season - 9",
+      "cup": false,
+      "date": "2026-10-31",
+      "time": "19:00",
+      "kickoff": "2026-10-31T17:00:00Z",
+      "home": {
+       "name": "Kifisia",
+       "att": 1.015,
+       "def": 1.105,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Super League",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DLLDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 9,
+        "W": 3,
+        "D": 3,
+        "L": 3,
+        "GF": 16,
+        "GA": 15,
+        "GD": 1,
+        "Pts": 12,
+        "PPG": 1.333
+       },
+       "now": {
+        "P": 5,
+        "W": 1,
+        "D": 2,
+        "L": 2,
+        "GF": 4,
+        "GA": 7,
+        "GD": -3,
+        "Pts": 5,
+        "PPG": 1.0
+       }
+      },
+      "away": {
+       "name": "Olympiakos Piraeus",
+       "att": 1.138,
+       "def": 0.625,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Super League",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWDLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 32,
+        "W": 23,
+        "D": 6,
+        "L": 3,
+        "GF": 58,
+        "GA": 22,
+        "GD": 36,
+        "Pts": 75,
+        "PPG": 2.344
+       },
+       "now": {
+        "P": 5,
+        "W": 3,
+        "D": 1,
+        "L": 1,
+        "GF": 4,
+        "GA": 2,
+        "GD": 2,
+        "Pts": 10,
+        "PPG": 2.0
+       }
+      },
+      "p": {
+       "h": 0.2326,
+       "d": 0.2925,
+       "a": 0.4749
+      },
+      "xg": [
+       0.86,
+       1.42
+      ],
+      "btts": 0.5016,
+      "over25": 0.4716,
+      "score": [
+       0,
+       1
+      ],
+      "confidence": 0.4749,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.135,
+        0.219,
+        0.6461
+       ],
+       "best": [
+        7.5,
+        4.35,
+        1.45
+       ],
+       "avg": [
+        6.75,
+        4.16,
+        1.41
+       ],
+       "ev": [
+        0.7445,
+        0.2724,
+        -0.3114
+       ]
+      },
+      "rank": 324,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.45,
+       "to": 0.5,
+       "hit": 0.4634,
+       "n": 259,
+       "cumHit": 0.5498,
+       "cumN": 733,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.5498,
+     "n": 733,
+     "list": false,
+     "pDraw": 0.2925,
+     "multOnly": true,
+     "odds": 1.43,
+     "est": false,
+     "src": "API-Football, average of 10 bookmakers",
+     "pricedAt": "2026-10-31T05:30:17Z",
+     "implied": 0.6993,
+     "pTested": 0.4634,
+     "edge": -0.3373,
+     "best": 1.48,
+     "bestBook": "Bet365",
+     "books": 10,
+     "margin": 1.0762,
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.48,
+      "Betfair": 1.44,
+      "BetVictor": 1.4
+     },
+     "stale": true,
+     "fair": 0.6498,
+     "basis": "bookmakers",
+     "firstOdds": 1.42,
+     "lastOdds": 1.44,
+     "lastBest": 1.48,
+     "lastAt": "2026-10-31T13:20:28Z",
+     "lockPrice": {
+      "odds": 1.44,
+      "best": 1.48,
+      "book": "Bet365",
+      "at": "2026-10-31T13:20:28Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-10-31T10:58:59Z",
+   "archivedAt": "2026-10-31T13:20:28Z"
+  }
+ ]
+}
