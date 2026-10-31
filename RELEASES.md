@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-10-31 Office review and next week's priorities (tag pending)
+
+**What changed:** a dated note only, `claude/office-review-2026-10-31.md`. No code, model or rule changed.
+**Evidence:** read from `RELEASES.md`, the `claude/` notes and the record summaries: football list 101 of 127 (79.5% v 81.6%), tennis list 53 of 68, sports reserve 108 of 166 v 71.1%, Card on current rules 5 won v 5.9 expected (19 groups).
+**Files:** `claude/office-review-2026-10-31.md`, `RELEASES.md`.
+**Not changed:** any code, model number or record file.
+**Roll back:** `git revert` this commit.
+
 ## 2026-10-31 Results grading audited: no bug found (tag pending)
 
 **What changed:** a dated audit section in `claude/results-review-board.md` only. No code, model or rule changed.
