@@ -1,20 +1,20 @@
 {
- "graded": "2026-10-31T01:40:03Z",
+ "graded": "2026-10-31T05:33:11Z",
  "overall": {
   "groups": 95,
-  "settled": 94,
+  "settled": 95,
   "won": 24,
-  "z": -1.49,
-  "lost": 70,
-  "pending": 1,
-  "legs": 392,
-  "legsWon": 280,
+  "z": -1.56,
+  "lost": 71,
+  "pending": 0,
+  "legs": 396,
+  "legsWon": 283,
   "returned": 73.61,
-  "staked": 94,
+  "staked": 95,
   "returnedBest": 77.76,
   "returnedLock": 16.44,
   "stakedLock": 18,
-  "expected": 30.65,
+  "expected": 30.98,
   "clv": {
    "n": 85,
    "shortened": 33,
@@ -25,19 +25,19 @@
  "byBand": {
   "Card 2x": {
    "groups": 15,
-   "settled": 14,
+   "settled": 15,
    "won": 4,
-   "z": -0.65,
-   "lost": 10,
-   "pending": 1,
-   "legs": 41,
-   "legsWon": 26,
+   "z": -0.81,
+   "lost": 11,
+   "pending": 0,
+   "legs": 45,
+   "legsWon": 29,
    "returned": 8.94,
-   "staked": 14,
+   "staked": 15,
    "returnedBest": 9.2,
    "returnedLock": 6.81,
    "stakedLock": 11,
-   "expected": 5.17,
+   "expected": 5.51,
    "clv": {
     "n": 43,
     "shortened": 12,
@@ -306,19 +306,19 @@
  },
  "card": {
   "groups": 19,
-  "settled": 18,
+  "settled": 19,
   "won": 5,
-  "z": -0.31,
-  "lost": 13,
-  "pending": 1,
-  "legs": 54,
-  "legsWon": 33,
+  "z": -0.46,
+  "lost": 14,
+  "pending": 0,
+  "legs": 58,
+  "legsWon": 36,
   "returned": 14.83,
-  "staked": 18,
+  "staked": 19,
   "returnedBest": 15.05,
   "returnedLock": 12.04,
   "stakedLock": 15,
-  "expected": 5.6,
+  "expected": 5.93,
   "clv": {
    "n": 53,
    "shortened": 19,
@@ -395,19 +395,19 @@
   },
   "4": {
    "groups": 3,
-   "settled": 2,
+   "settled": 3,
    "won": 1,
-   "z": 0.66,
-   "lost": 1,
-   "pending": 1,
-   "legs": 5,
-   "legsWon": 4,
+   "z": 0.11,
+   "lost": 2,
+   "pending": 0,
+   "legs": 9,
+   "legsWon": 7,
    "returned": 2.61,
-   "staked": 2,
+   "staked": 3,
    "returnedBest": 2.61,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0.58,
+   "expected": 0.91,
    "clv": {
     "n": 7,
     "shortened": 1,
@@ -419,19 +419,19 @@
  "cardByWindow": {
   "Day": {
    "groups": 3,
-   "settled": 2,
+   "settled": 3,
    "won": 1,
-   "z": 0.66,
-   "lost": 1,
-   "pending": 1,
-   "legs": 5,
-   "legsWon": 4,
+   "z": 0.11,
+   "lost": 2,
+   "pending": 0,
+   "legs": 9,
+   "legsWon": 7,
    "returned": 2.61,
-   "staked": 2,
+   "staked": 3,
    "returnedBest": 2.61,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0.58,
+   "expected": 0.91,
    "clv": {
     "n": 7,
     "shortened": 1,
@@ -541,7 +541,7 @@
      "rule": 4,
      "odds": 2.62,
      "p": 0.3335,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -549,9 +549,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Paris Saint-Germain",
@@ -584,8 +584,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6572,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "114-121"
       },
       {
        "pick": "Minnesota Timberwolves",
@@ -601,8 +601,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.705,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "127-101"
       }
      ]
     },
@@ -622,9 +622,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Bristol Rugby",
@@ -657,8 +657,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7333,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "94-110"
       },
       {
        "pick": "Miami Heat",
@@ -674,8 +674,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7333,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "145-125"
       }
      ]
     }
