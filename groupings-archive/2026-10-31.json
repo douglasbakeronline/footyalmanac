@@ -1909,7 +1909,7 @@
      "firstOdds": 1.24,
      "lastOdds": 1.28,
      "lastBest": 1.28,
-     "lastAt": "2026-10-31T20:26:55Z",
+     "lastAt": "2026-10-31T22:44:36Z",
      "lockPrice": {
       "odds": 1.26,
       "best": 1.26,
@@ -2304,7 +2304,7 @@
      "firstOdds": 1.29,
      "lastOdds": 1.26,
      "lastBest": 1.26,
-     "lastAt": "2026-10-31T20:26:55Z",
+     "lastAt": "2026-10-31T22:44:36Z",
      "lockPrice": {
       "odds": 1.26,
       "best": 1.26,
@@ -2474,7 +2474,7 @@
      "firstOdds": 1.17,
      "lastOdds": 1.17,
      "lastBest": 1.17,
-     "lastAt": "2026-10-31T20:26:55Z",
+     "lastAt": "2026-10-31T22:44:36Z",
      "lockPrice": {
       "odds": 1.17,
       "best": 1.17,
@@ -3059,9 +3059,9 @@
      "edge": -0.0883,
      "basis": "bookmakers",
      "firstOdds": 1.56,
-     "lastOdds": 1.54,
-     "lastBest": 1.54,
-     "lastAt": "2026-10-31T20:26:55Z",
+     "lastOdds": 1.51,
+     "lastBest": 1.51,
+     "lastAt": "2026-10-31T22:44:36Z",
      "lockPrice": {
       "odds": 1.56,
       "best": 1.56,
