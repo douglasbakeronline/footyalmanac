@@ -3555,6 +3555,7 @@ function ogCard(g){
   const stake = ogStake();
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
   const card = String(g.name).startsWith("Card");
+  const paper = String(g.name).startsWith("Model");
   const mult = g.name.startsWith("Multiplier") || card;
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
@@ -3564,13 +3565,13 @@ function ogCard(g){
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
-  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>${card && g.stake > 1 ? `${g.stake} units: ` : ""}£${(stake * (card ? g.stake || 1 : 1)) % 1 ? (stake * (card ? g.stake || 1 : 1)).toFixed(2) : stake * (card ? g.stake || 1 : 1)} returns £${(stake * (card ? g.stake || 1 : 1) * g.odds).toFixed(2)}</span>${(() => { const u = stake * (card ? g.stake || 1 : 1);
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
     ${ogStatus(g)}${card ? ogPlacedNote(g, OG_DAY) : ""}
     <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
     <div>${legs}</div>${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
-    <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -3862,6 +3863,7 @@ function tbRecord(){
       return `<div><span>The floor</span><b>${state}</b><small>${z == null ? "no settled groups yet; " : `landed ${z >= 0 ? "+" : ""}${z.toFixed(1)} standard errors from expected on ${k.settled} groups; `}the rule is retired if it sits ${Math.abs(fz)} under on ${fn}+ groups. A good run is not a floor; the quote is.</small></div>`; })()}
     ${(() => { const x = R.cardLate || {}; return `<div><span>Late groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "added after the window locked; " : "none yet; a group built after its window locked would be "}not in the Card record</small></div>`; })()}
     ${(() => { const x = R.cardWide || {}; return `<div><span>Wider-rule groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : ""}graded apart from the full rule</small></div>`; })()}
+    ${(() => { const x = R.cardModel || {}; return `<div><span>Model card, on paper</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "" : "none yet; "}the model's own picks, never staked, beside the card from 31 Oct</small></div>`; })()}
     ${Object.keys(bw).map(w).join("")}
     ${Object.entries(R.cardByRule || {}).map(([r, t]) => `<div><span>Card rule ${r}${String(r) === String((OG.rules.card || {}).rule) ? " (current)" : ""}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${t.settled ? `${roi(t)}; z ${t.z >= 0 ? "+" : ""}${t.z}` : "nothing settled yet"}</small></div>`).join("")}
     <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "the early sign of a real edge"}</small></div>
@@ -3878,7 +3880,9 @@ function renderToday(){
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const isCard = g => String(g.name).startsWith("Card");
   const wins = day.windows || [{name:"Day", from:7, to:31}];
-  const other = day.groups.filter(g => !isCard(g) && g.status !== "underway");
+  const isModel = g => String(g.name).startsWith("Model");
+  const model = day.groups.filter(isModel);
+  const other = day.groups.filter(g => !isCard(g) && !isModel(g) && g.status !== "underway");
   const avoid = day.avoid || [];
   const nCard = d => d.groups.filter(g => isCard(g) && g.status !== "underway").length;
   const hh = h => String(h % 24).padStart(2, "0") + ":00";
@@ -3917,6 +3921,10 @@ function renderToday(){
     ${wins.map(winHtml).join("")}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
+    <section class="tb-win tb-model"><h3 class="tb-h">On paper: the model's own picks <small>not a bet; graded beside the card so the two can be compared at the end of the month</small></h3>
+      ${model.length ? `<div class="og-grid">${model.map(ogCard).join("")}</div>`
+        : `<div class="empty tb-empty">No model group on this day: no three picks the model rates 60%+ and at or above the bookmakers' chance, in the leagues the card takes, at 1.15 to 1.90.</div>`}
+      <p class="tb-snap">Each pick here is one the model rates at or above the bookmakers' chance: its own value call, with the group's chance taken from the model, not the market. The card's picks are chosen the other way round. Nothing here is staked; it is a running test of which way is right.</p></section>
 
     <h3 class="tb-h">Leave these out <small>tempting picks that carry the losing patterns</small></h3>
     ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>
