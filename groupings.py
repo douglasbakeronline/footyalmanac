@@ -1394,6 +1394,18 @@ UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
 CARD_RANGE = {n: (lo, hi) for n, lo, hi, _ in CARD_KINDS}
+# 31 Oct 2026, Douglas: "the whole point is that our model is meant to pick
+# winners". The Model card: the model's own picks, built beside the Card on
+# paper every day, never staked or pushed, graded apart (cardModel). Same
+# price band and kinds; a leg is a core-league / 75%+ tennis pick the MODEL
+# rates 60%+ and at or above the bookmakers' chance (the model's own value
+# call), and the group's chance is the model's number, not the market's. If
+# these beat the price over the month, the Card changes.
+MODEL_KINDS = [("Model 2x", 2.0, 3.0, 0.30), ("Model 3x", 3.0, 4.6, 0.18)]
+RISK.update({"Model 2x": "On paper, the model's own picks", "Model 3x": "On paper, the model's own picks"})
+MIN_CHANCE.update({n: f for n, _, _, f in MODEL_KINDS})
+CARD_RANGE.update({n: (lo, hi) for n, lo, hi, _ in MODEL_KINDS})
+def is_model(name): return str(name).startswith("Model")
 
 def is_card(name): return str(name).startswith("Card")
 
@@ -1492,12 +1504,34 @@ def card_fault(l, wide=False):
                 f"points above the bookmakers ({pct(l['fair'])})")
     return None
 
+def model_fault(l):
+    """Why a leg cannot sit on the Model card (31 Oct 2026), or None. The
+    model's own value call: its number at or above the bookmakers'."""
+    if l.get("est") or not l.get("odds"): return f"{l['pick']}: no bookmaker price"
+    if not (CARD_ODDS[0] <= l["odds"] <= CARD_ODDS[1]): return f"{l['pick']}: {l['odds']:.2f} is outside {CARD_ODDS[0]:.2f} to {CARD_ODDS[1]:.2f}"
+    if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card"
+    if l.get("sport") == "football" and not core_league(l.get("code")): return f"{l['pick']}: outside the core leagues"
+    if l.get("sport") == "football" and l.get("why") not in CLEAN_WHY: return f"{l['pick']}: the Daily List excludes it"
+    smin = CARD_SPORT_MIN.get(l.get("sport"))
+    if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
+    if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
+    if l.get("fair") is not None and l["pModel"] < l["fair"]: return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    return None
+
+def as_model(l):
+    """A leg as the Model card carries it: its chance is the model's own."""
+    return dict(l, p=l["pModel"], basis="model")
+
 def best_card(L, used, after, name, wide=False):
     """The CARD_LEGS picks with the highest combined chance (bookmakers'
-    fair) whose combined price falls in the kind's range, or None."""
+    fair; the model's own on a Model kind) whose combined price falls in
+    the kind's range, or None."""
     lo, hi = CARD_RANGE[name]
-    cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l, wide) is None
-             and (parse(l["when"]) or after) >= after]
+    if is_model(name):
+        cands = [as_model(l) for l in L if l["event"] not in used and model_fault(l) is None and (parse(l["when"]) or after) >= after]
+    else:
+        cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l, wide) is None
+                 and (parse(l["when"]) or after) >= after]
     cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
     # 29 Oct 2026: core-league picks first at an equal chance (the nudge is for
     # choosing only; the quoted chance is still the bookmakers')
@@ -1685,6 +1719,41 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     order = {w: i for i, (w, _, _) in enumerate(CARD_WINDOWS)}
     for g in groups: g["stake"] = CARD_STAKE.get(g["name"], 1)
     return sorted(groups, key=lambda g: (order.get(g.get("window"), 9), int(g.get("seq") or 1), g["name"]))
+
+def build_model_card(L, date, now, prev=None, archived=None):
+    """The Model card for one UK date (31 Oct 2026): one Model 2x and one
+    Model 3x, the model's own picks, on paper. A group holds as first built
+    until its first kick-off (no re-check: paper is graded as published),
+    then freezes and is archived like a Card group. Fixtures may overlap the
+    Card's; nothing is staked, nothing is pushed."""
+    stamp = iso(now); after = now + timedelta(minutes=20)
+    w = CARD_WINDOWS[0][0]
+    day_legs = [l for l in L if (uk_slot(l) or (None, None))[0] == date]
+    groups, filled = [], set()
+    if archived is None:
+        try:
+            with open(os.path.join(ARCHIVE, f"{date}.json")) as f: archived = [g for g in json.load(f).get("groups") or [] if is_model(g.get("name"))]
+        except (OSError, ValueError):
+            archived = []
+    for g in list(archived) + [g for g in (prev or []) if is_model(g.get("name"))]:
+        if g["name"] in filled: continue
+        lock = first_kick(g) or lock_time(date, w)
+        g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
+        g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
+        groups.append(g); filled.add(g["name"])
+    if now < window_end(date, w):
+        used = set()
+        for name, _, _, _ in MODEL_KINDS:
+            if name in filled: continue
+            g = best_card(day_legs, used, after, name)
+            if not g: continue
+            lock = first_kick(g) or lock_time(date, w)
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
+                     model=True, rule=CARD_RULE, bench=[], bookOdds=None, book=CARD_BOOK, stake=0)
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            used |= {l["event"] for l in g["legs"]}; filled.add(name); groups.append(g)
+    for g in groups: g["model"] = True; g["stake"] = 0
+    return groups
 
 LEGACY_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]   # to 28 Oct 2026
 
@@ -2130,6 +2199,8 @@ def grade(now=None):
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
            "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
+           # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
+           "cardModel": tally([g for g in allg if is_model(g["name"])]),
            # 29 Oct 2026: each Card rule version on its own line, so a change to the
            # rule is judged against the rules before it rather than blended in.
            "cardByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == r])
@@ -2171,6 +2242,7 @@ def main():
         # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
         # Legs are placed by UK kick-off, so a day takes legs from every board date.
         groups = build_card(L, d, now, prev=pd.get("groups"), log=log)
+        groups += build_model_card(L, d, now, prev=pd.get("groups"))
         live = [g for g in groups if g.get("status") != "underway"]
         core = [l for l in dl if not l.get("multOnly")]   # the counts the page has always shown
         days.append({"date": d, "legs": len(core), "priced": sum(1 for l in core if not l.get("est")),
