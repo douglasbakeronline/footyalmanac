@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1793304242,
+"checked": 1793566696,
 "cups": [
 {
 "code": "afc.707",
@@ -483,7 +483,7 @@
 "id": 66,
 "name": "Coupe de France",
 "country": "France",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.65",

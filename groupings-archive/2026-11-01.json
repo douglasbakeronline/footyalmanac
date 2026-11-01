@@ -472,7 +472,7 @@
      "firstOdds": 1.52,
      "lastOdds": 1.68,
      "lastBest": 1.68,
-     "lastAt": "2026-11-01T17:22:00Z",
+     "lastAt": "2026-11-01T21:02:13Z",
      "lockPrice": {
       "odds": 1.68,
       "best": 1.68,
@@ -1021,9 +1021,9 @@
      "edge": -0.0697,
      "basis": "model",
      "firstOdds": 1.48,
-     "lastOdds": 1.48,
-     "lastBest": 1.48,
-     "lastAt": "2026-11-01T17:22:00Z"
+     "lastOdds": 1.42,
+     "lastBest": 1.42,
+     "lastAt": "2026-11-01T21:02:13Z"
     }
    ],
    "bestOdds": 2.56,
