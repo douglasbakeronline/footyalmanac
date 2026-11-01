@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-01T21:02:43Z",
+ "graded": "2026-11-01T23:00:35Z",
  "overall": {
   "groups": 105,
   "settled": 102,
@@ -19,7 +19,7 @@
    "n": 100,
    "shortened": 37,
    "drifted": 37,
-   "mean": -0.0032
+   "mean": -0.003
   }
  },
  "byBand": {
@@ -42,7 +42,7 @@
     "n": 50,
     "shortened": 13,
     "drifted": 20,
-    "mean": -0.0077
+    "mean": -0.0074
    }
   },
   "Card 3x": {
@@ -323,7 +323,7 @@
    "n": 63,
    "shortened": 21,
    "drifted": 25,
-   "mean": -0.0066
+   "mean": -0.0063
   }
  },
  "cardWide": {
@@ -456,7 +456,7 @@
     "n": 6,
     "shortened": 2,
     "drifted": 2,
-    "mean": -0.0116
+    "mean": -0.0089
    }
   }
  },
@@ -480,7 +480,7 @@
     "n": 17,
     "shortened": 3,
     "drifted": 7,
-    "mean": -0.0066
+    "mean": -0.0056
    }
   },
   "Daytime": {
@@ -639,7 +639,7 @@
        "when": "2026-11-02T02:00Z",
        "odds": 1.52,
        "best": 1.52,
-       "lastOdds": 1.68,
+       "lastOdds": 1.65,
        "lockOdds": 1.68,
        "lockBest": 1.68,
        "lockBook": null,
