@@ -1,20 +1,20 @@
 {
- "graded": "2026-10-31T22:45:01Z",
+ "graded": "2026-11-01T01:15:25Z",
  "overall": {
   "groups": 102,
-  "settled": 95,
-  "won": 24,
-  "z": -1.56,
-  "lost": 71,
-  "pending": 7,
-  "legs": 397,
-  "legsWon": 284,
-  "returned": 73.61,
-  "staked": 95,
-  "returnedBest": 77.76,
+  "settled": 101,
+  "won": 27,
+  "z": -1.37,
+  "lost": 74,
+  "pending": 1,
+  "legs": 413,
+  "legsWon": 296,
+  "returned": 81.25,
+  "staked": 101,
+  "returnedBest": 85.64,
   "returnedLock": 16.44,
   "stakedLock": 18,
-  "expected": 30.98,
+  "expected": 33.34,
   "clv": {
    "n": 97,
    "shortened": 35,
@@ -25,19 +25,19 @@
  "byBand": {
   "Card 2x": {
    "groups": 18,
-   "settled": 15,
-   "won": 4,
-   "z": -0.81,
-   "lost": 11,
-   "pending": 3,
-   "legs": 45,
-   "legsWon": 29,
-   "returned": 8.94,
-   "staked": 15,
-   "returnedBest": 9.2,
+   "settled": 18,
+   "won": 5,
+   "z": -0.85,
+   "lost": 13,
+   "pending": 0,
+   "legs": 51,
+   "legsWon": 32,
+   "returned": 11.13,
+   "staked": 18,
+   "returnedBest": 11.44,
    "returnedLock": 6.81,
    "stakedLock": 11,
-   "expected": 5.51,
+   "expected": 6.73,
    "clv": {
     "n": 49,
     "shortened": 13,
@@ -47,19 +47,19 @@
   },
   "Card 3x": {
    "groups": 13,
-   "settled": 11,
-   "won": 5,
-   "z": 1.38,
+   "settled": 12,
+   "won": 6,
+   "z": 1.82,
    "lost": 6,
-   "pending": 2,
-   "legs": 34,
-   "legsWon": 22,
-   "returned": 15.51,
-   "staked": 11,
-   "returnedBest": 15.98,
+   "pending": 1,
+   "legs": 39,
+   "legsWon": 27,
+   "returned": 18.92,
+   "staked": 12,
+   "returnedBest": 19.58,
    "returnedLock": 9.63,
    "stakedLock": 7,
-   "expected": 2.97,
+   "expected": 3.22,
    "clv": {
     "n": 35,
     "shortened": 13,
@@ -306,19 +306,19 @@
  },
  "card": {
   "groups": 24,
-  "settled": 19,
-  "won": 5,
-  "z": -0.46,
-  "lost": 14,
-  "pending": 5,
-  "legs": 58,
-  "legsWon": 36,
-  "returned": 14.83,
-  "staked": 19,
-  "returnedBest": 15.05,
+  "settled": 23,
+  "won": 7,
+  "z": -0.18,
+  "lost": 16,
+  "pending": 1,
+  "legs": 69,
+  "legsWon": 44,
+  "returned": 20.43,
+  "staked": 23,
+  "returnedBest": 20.89,
   "returnedLock": 12.04,
   "stakedLock": 15,
-  "expected": 5.93,
+  "expected": 7.4,
   "clv": {
    "n": 62,
    "shortened": 21,
@@ -372,19 +372,19 @@
  },
  "cardModel": {
   "groups": 2,
-  "settled": 0,
-  "won": 0,
-  "z": null,
-  "lost": 0,
-  "pending": 2,
-  "legs": 1,
-  "legsWon": 1,
-  "returned": 0,
-  "staked": 0,
-  "returnedBest": 0,
+  "settled": 2,
+  "won": 1,
+  "z": 0.15,
+  "lost": 1,
+  "pending": 0,
+  "legs": 6,
+  "legsWon": 5,
+  "returned": 2.04,
+  "staked": 2,
+  "returnedBest": 2.04,
   "returnedLock": 0,
   "stakedLock": 0,
-  "expected": 0,
+  "expected": 0.9,
   "clv": {
    "n": 3,
    "shortened": 0,
@@ -417,19 +417,19 @@
   },
   "4": {
    "groups": 5,
-   "settled": 3,
-   "won": 1,
-   "z": 0.11,
+   "settled": 5,
+   "won": 3,
+   "z": 1.44,
    "lost": 2,
-   "pending": 2,
-   "legs": 9,
-   "legsWon": 7,
-   "returned": 2.61,
-   "staked": 3,
-   "returnedBest": 2.61,
+   "pending": 0,
+   "legs": 15,
+   "legsWon": 13,
+   "returned": 8.21,
+   "staked": 5,
+   "returnedBest": 8.45,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0.91,
+   "expected": 1.53,
    "clv": {
     "n": 11,
     "shortened": 1,
@@ -439,19 +439,19 @@
   },
   "5": {
    "groups": 3,
-   "settled": 0,
+   "settled": 2,
    "won": 0,
-   "z": null,
-   "lost": 0,
-   "pending": 3,
-   "legs": 0,
-   "legsWon": 0,
+   "z": -1.22,
+   "lost": 2,
+   "pending": 1,
+   "legs": 5,
+   "legsWon": 2,
    "returned": 0,
-   "staked": 0,
+   "staked": 2,
    "returnedBest": 0,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0,
+   "expected": 0.85,
    "clv": {
     "n": 5,
     "shortened": 2,
@@ -463,19 +463,19 @@
  "cardByWindow": {
   "Day": {
    "groups": 8,
-   "settled": 3,
-   "won": 1,
-   "z": 0.11,
-   "lost": 2,
-   "pending": 5,
-   "legs": 9,
-   "legsWon": 7,
-   "returned": 2.61,
-   "staked": 3,
-   "returnedBest": 2.61,
+   "settled": 7,
+   "won": 3,
+   "z": 0.5,
+   "lost": 4,
+   "pending": 1,
+   "legs": 20,
+   "legsWon": 15,
+   "returned": 8.21,
+   "staked": 7,
+   "returnedBest": 8.45,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0.91,
+   "expected": 2.38,
    "clv": {
     "n": 16,
     "shortened": 3,
@@ -585,17 +585,17 @@
      "rule": 4,
      "odds": 3.41,
      "p": 0.2427,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-31T12:30:00Z",
-     "paid": 0,
-     "paidBest": 0,
+     "paid": 3.41,
+     "paidBest": 3.6,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Norwich City",
@@ -611,8 +611,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6132,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       },
       {
        "pick": "AS Roma",
@@ -628,8 +628,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6091,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-5"
       },
       {
        "pick": "Olympiakos Piraeus",
@@ -645,8 +645,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6498,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-3"
       }
      ]
     },
@@ -658,17 +658,17 @@
      "rule": 4,
      "odds": 2.19,
      "p": 0.3746,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-31T13:30:00Z",
-     "paid": 0,
-     "paidBest": 0,
+     "paid": 2.19,
+     "paidBest": 2.24,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Clermont Auvergne",
@@ -684,8 +684,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7107,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "37-30"
       },
       {
        "pick": "Dragons",
@@ -701,8 +701,8 @@
        "lockBook": "Betfair",
        "est": false,
        "p": 0.794,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "35-14"
       },
       {
        "pick": "Columbus Crew",
@@ -718,8 +718,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6638,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-0"
       }
      ]
     },
@@ -731,7 +731,7 @@
      "rule": 5,
      "odds": 2.06,
      "p": 0.4095,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -740,8 +740,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Feyenoord Rotterdam",
@@ -757,8 +757,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8201,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "New York City",
@@ -774,8 +774,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6566,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "1-1"
       },
       {
        "pick": "Memphis Grizzlies",
@@ -804,7 +804,7 @@
      "rule": 5,
      "odds": 1.98,
      "p": 0.4423,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -813,8 +813,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Exeter Chiefs",
@@ -830,8 +830,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7112,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "28-31"
       },
       {
        "pick": "Cleveland Cavaliers",
@@ -885,9 +885,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Wycombe Wanderers",
@@ -903,8 +903,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-0"
       },
       {
        "pick": "Stockport County",
@@ -920,8 +920,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7389,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Atlanta Hawks",
@@ -950,17 +950,17 @@
      "rule": 5,
      "odds": 2.04,
      "p": 0.5737,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-10-31T15:35:00Z",
-     "paid": 0,
-     "paidBest": 0,
+     "paid": 2.04,
+     "paidBest": 2.04,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Bordeaux Begles",
@@ -976,8 +976,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8681,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "19-14"
       },
       {
        "pick": "Northampton Saints",
@@ -993,8 +993,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8082,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "28-14"
       },
       {
        "pick": "FC Porto",
@@ -1010,8 +1010,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8177,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-0"
       }
      ]
     },
@@ -1023,7 +1023,7 @@
      "rule": 5,
      "odds": 3.23,
      "p": 0.3213,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -1031,9 +1031,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Aldershot Town",
@@ -1066,8 +1066,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8351,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "36-28"
       },
       {
        "pick": "Munster",
@@ -1083,8 +1083,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6204,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "3-15"
       }
      ]
     }
