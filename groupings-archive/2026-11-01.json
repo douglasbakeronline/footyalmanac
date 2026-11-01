@@ -1,0 +1,1644 @@
+{
+ "date": "2026-11-01",
+ "published": "2026-11-01T17:22:00Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-01T01:13:52Z",
+   "lockAt": "2026-11-01T13:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.74,
+   "p": 0.3175,
+   "implied": 0.3644,
+   "bestOdds": 2.78,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Carlos Alcaraz v Alex De Minaur",
+     "pick": "Carlos Alcaraz",
+     "tour": "ATP",
+     "tournament": "Erste Bank Open",
+     "players": [
+      "Carlos Alcaraz",
+      "Alex De Minaur"
+     ],
+     "comp": "Erste Bank Open Final",
+     "when": "2026-11-01T13:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-01",
+     "id": "185205",
+     "fx": {
+      "id": "185205",
+      "espn": [
+       "Carlos Alcaraz",
+       "Alex de Minaur"
+      ],
+      "tour": "ATP",
+      "date": "2026-11-01",
+      "time": "13:00",
+      "timeTbc": false,
+      "tournament": "Erste Bank Open",
+      "round": "Final",
+      "surface": "Hard",
+      "playerA": "Carlos Alcaraz",
+      "playerB": "Alex De Minaur",
+      "ratingA": {
+       "elo": 2372,
+       "matches": 447,
+       "surfaceElo": 2212
+      },
+      "ratingB": {
+       "elo": 2124,
+       "matches": 489,
+       "surfaceElo": 2036
+      },
+      "p": {
+       "a": 0.7576,
+       "b": 0.2424
+      },
+      "pick": "Carlos Alcaraz",
+      "confidence": 0.7576,
+      "tier": "Strong",
+      "rankA": 3,
+      "rankB": 10,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8333,
+       "n": 30,
+       "cumHit": 0.8333,
+       "cumN": 30,
+       "quoted": 0.7699,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7576,
+     "p": 0.8006,
+     "hit": 0.8333,
+     "n": 30,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.22,
+     "best": 1.22,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0239,
+     "pricedAt": "2026-11-01T11:54:26Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8197,
+     "pTested": 0.7576,
+     "fair": 0.8006,
+     "edge": -0.0757,
+     "basis": "bookmakers",
+     "firstOdds": 1.22
+    },
+    {
+     "sport": "football",
+     "event": "Sarpsborg FK v Kristiansund BK",
+     "home": "Sarpsborg FK",
+     "away": "Kristiansund BK",
+     "side": "h",
+     "pick": "Sarpsborg FK",
+     "code": "nor.1",
+     "comp": "Eliteserien",
+     "country": "Norway",
+     "when": "2026-11-01T16:00:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.5331,
+     "p": 0.6284,
+     "fx": {
+      "u21Side": false,
+      "league": "nor.1",
+      "leagueName": "Eliteserien",
+      "short": "NOR",
+      "country": "Norway",
+      "iso": "nor",
+      "tier": 1,
+      "order": 40,
+      "round": "2026-eliteserien",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "16:00",
+      "kickoff": "2026-11-01T16:00:00Z",
+      "home": {
+       "name": "Sarpsborg FK",
+       "att": 0.851,
+       "def": 0.948,
+       "played": 24,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eliteserien",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "DLWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 10,
+        "D": 7,
+        "L": 13,
+        "GF": 43,
+        "GA": 55,
+        "GD": -12,
+        "Pts": 37,
+        "PPG": 1.233
+       },
+       "now": {
+        "P": 24,
+        "W": 8,
+        "D": 7,
+        "L": 9,
+        "GF": 30,
+        "GA": 35,
+        "GD": -5,
+        "Pts": 31,
+        "PPG": 1.292
+       }
+      },
+      "away": {
+       "name": "Kristiansund BK",
+       "att": 0.716,
+       "def": 1.145,
+       "played": 24,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eliteserien",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 8,
+        "D": 10,
+        "L": 12,
+        "GF": 32,
+        "GA": 45,
+        "GD": -13,
+        "Pts": 34,
+        "PPG": 1.133
+       },
+       "now": {
+        "P": 24,
+        "W": 5,
+        "D": 6,
+        "L": 13,
+        "GF": 24,
+        "GA": 46,
+        "GD": -22,
+        "Pts": 21,
+        "PPG": 0.875
+       }
+      },
+      "p": {
+       "h": 0.5331,
+       "d": 0.2727,
+       "a": 0.1942
+      },
+      "xg": [
+       1.6,
+       0.81
+      ],
+      "btts": 0.5026,
+      "over25": 0.4842,
+      "score": [
+       1,
+       0
+      ],
+      "confidence": 0.5331,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6289,
+        0.2074,
+        0.1637
+       ],
+       "best": [
+        1.5,
+        4.5,
+        5.8
+       ],
+       "avg": [
+        1.48,
+        4.48,
+        5.68
+       ],
+       "ev": [
+        -0.2004,
+        0.2271,
+        0.1264
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 158,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.5,
+       "to": 0.55,
+       "hit": 0.4896,
+       "n": 194,
+       "cumHit": 0.597,
+       "cumN": 474,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.597,
+     "n": 474,
+     "list": false,
+     "pDraw": 0.2727,
+     "multOnly": true,
+     "odds": 1.48,
+     "best": 1.5,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.5,
+      "Betfair": 1.47,
+      "BetVictor": 1.44
+     },
+     "margin": 1.0752,
+     "pricedAt": "2026-11-01T11:52:23Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6757,
+     "pTested": 0.4896,
+     "fair": 0.6284,
+     "edge": -0.2754,
+     "basis": "bookmakers",
+     "firstOdds": 1.49
+    },
+    {
+     "sport": "nba",
+     "event": "Los Angeles Lakers v Toronto Raptors",
+     "home": "Los Angeles Lakers",
+     "away": "Toronto Raptors",
+     "pick": "Los Angeles Lakers",
+     "comp": "NBA",
+     "when": "2026-11-02T02:00Z",
+     "date": "2026-11-02",
+     "id": "401909906",
+     "pModel": 0.5875,
+     "p": 0.6311,
+     "hit": 0.7076,
+     "n": 1108,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909906",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-02T02:00Z",
+      "home": "Los Angeles Lakers",
+      "away": "Toronto Raptors",
+      "neutral": false,
+      "pHome": 0.5875,
+      "pick": "Los Angeles Lakers",
+      "confidence": 0.5875,
+      "tier": "Lean",
+      "eloH": 1556,
+      "eloA": 1530,
+      "gamesH": 274,
+      "gamesA": 258,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.593,
+       "n": 253,
+       "cumHit": 0.7076,
+       "cumN": 1108
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "95-112",
+        "opp": "Golden State Warriors",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "103-87",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "L",
+        "score": "129-136",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "W",
+        "score": "132-123",
+        "opp": "Utah Jazz",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "125-117",
+        "opp": "LA Clippers",
+        "home": true,
+        "date": "2026-10-24"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "114-121",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-10-30"
+       },
+       {
+        "r": "W",
+        "score": "129-99",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "L",
+        "score": "94-117",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "112-102",
+        "opp": "Washington Wizards",
+        "home": false,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "135-92",
+        "opp": "Chicago Bulls",
+        "home": true,
+        "date": "2026-10-21"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-01-19",
+        "home": "Los Angeles Lakers",
+        "away": "Toronto Raptors",
+        "score": "110-93"
+       },
+       {
+        "date": "2025-12-05",
+        "home": "Toronto Raptors",
+        "away": "Los Angeles Lakers",
+        "score": "120-123"
+       },
+       {
+        "date": "2024-11-11",
+        "home": "Los Angeles Lakers",
+        "away": "Toronto Raptors",
+        "score": "123-103"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.52,
+     "margin": 1.0425,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-11-01T11:54:27Z",
+     "implied": 0.6579,
+     "pTested": 0.5875,
+     "fair": 0.6311,
+     "edge": -0.107,
+     "basis": "bookmakers",
+     "firstOdds": 1.52,
+     "lastOdds": 1.68,
+     "lastBest": 1.68,
+     "lastAt": "2026-11-01T17:22:00Z",
+     "lockPrice": {
+      "odds": 1.68,
+      "best": 1.68,
+      "book": null,
+      "at": "2026-11-01T17:22:00Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-01T11:53:26Z",
+   "archivedAt": "2026-11-01T17:22:00Z"
+  },
+  {
+   "name": "Model 2x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.52,
+   "p": 0.4123,
+   "implied": 0.3969,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Djurgården v Degerfors IF",
+     "home": "Djurgården",
+     "away": "Degerfors IF",
+     "side": "h",
+     "pick": "Djurgården",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-11-01T13:00:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.7514,
+     "p": 0.7514,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "13:00",
+      "kickoff": "2026-11-01T13:00:00Z",
+      "home": {
+       "name": "Djurgården",
+       "att": 1.263,
+       "def": 0.704,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 8,
+        "max": 15,
+        "seq": "LWWDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 16,
+        "D": 5,
+        "L": 9,
+        "GF": 45,
+        "GA": 35,
+        "GD": 10,
+        "Pts": 53,
+        "PPG": 1.767
+       },
+       "now": {
+        "P": 26,
+        "W": 15,
+        "D": 4,
+        "L": 7,
+        "GF": 53,
+        "GA": 24,
+        "GD": 29,
+        "Pts": 49,
+        "PPG": 1.885
+       }
+      },
+      "away": {
+       "name": "Degerfors IF",
+       "att": 0.72,
+       "def": 1.141,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LDLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 7,
+        "W": 3,
+        "D": 1,
+        "L": 3,
+        "GF": 12,
+        "GA": 11,
+        "GD": 1,
+        "Pts": 10,
+        "PPG": 1.429
+       },
+       "now": {
+        "P": 26,
+        "W": 5,
+        "D": 5,
+        "L": 16,
+        "GF": 21,
+        "GA": 44,
+        "GD": -23,
+        "Pts": 20,
+        "PPG": 0.769
+       }
+      },
+      "p": {
+       "h": 0.7514,
+       "d": 0.1711,
+       "a": 0.0775
+      },
+      "xg": [
+       2.37,
+       0.6
+      ],
+      "btts": 0.4888,
+      "over25": 0.5397,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7514,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7244,
+        0.1705,
+        0.1051
+       ],
+       "best": [
+        1.3,
+        5.75,
+        9.5
+       ],
+       "avg": [
+        1.28,
+        5.43,
+        8.81
+       ],
+       "ev": [
+        -0.0232,
+        -0.0162,
+        -0.2638
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 15,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "pDraw": 0.1711,
+     "multOnly": false,
+     "odds": 1.28,
+     "best": 1.3,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.29,
+      "Bet365": 1.3,
+      "Betfair": 1.25,
+      "BetVictor": 1.25
+     },
+     "margin": 1.0793,
+     "pricedAt": "2026-10-31T13:19:20Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7812,
+     "pTested": 0.7298,
+     "fair": 0.7238,
+     "edge": -0.0735,
+     "basis": "model",
+     "firstOdds": 1.28
+    },
+    {
+     "sport": "ncaab",
+     "event": "Villanova Wildcats v Notre Dame Fighting Irish",
+     "home": "Villanova Wildcats",
+     "away": "Notre Dame Fighting Irish",
+     "pick": "Villanova Wildcats",
+     "comp": "NCAA",
+     "when": "2026-11-01T14:30Z",
+     "date": "2026-11-01",
+     "id": "401920982",
+     "pModel": 0.7564,
+     "p": 0.7564,
+     "hit": 0.8425,
+     "n": 2514,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401920982",
+      "sport": "ncaab",
+      "label": "NCAA",
+      "feed": "basketball/mens-college-basketball",
+      "when": "2026-11-01T14:30Z",
+      "home": "Villanova Wildcats",
+      "away": "Notre Dame Fighting Irish",
+      "neutral": true,
+      "pHome": 0.7564,
+      "pick": "Villanova Wildcats",
+      "confidence": 0.7564,
+      "tier": "Strong",
+      "eloH": 1720,
+      "eloA": 1523,
+      "gamesH": 103,
+      "gamesA": 97,
+      "hfa": 0,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7492,
+       "n": 630,
+       "cumHit": 0.8425,
+       "cumN": 2514
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "76-86",
+        "opp": "Utah State Aggies",
+        "home": true,
+        "date": "2026-03-20"
+       },
+       {
+        "r": "L",
+        "score": "64-78",
+        "opp": "Georgetown Hoyas",
+        "home": true,
+        "date": "2026-03-13"
+       },
+       {
+        "r": "W",
+        "score": "91-78",
+        "opp": "Xavier Musketeers",
+        "home": true,
+        "date": "2026-03-07"
+       },
+       {
+        "r": "W",
+        "score": "76-57",
+        "opp": "DePaul Blue Demons",
+        "home": false,
+        "date": "2026-03-05"
+       },
+       {
+        "r": "L",
+        "score": "57-89",
+        "opp": "St. John's Red Storm",
+        "home": false,
+        "date": "2026-03-01"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "69-77",
+        "opp": "Boston College Eagles",
+        "home": false,
+        "date": "2026-03-07"
+       },
+       {
+        "r": "L",
+        "score": "78-86",
+        "opp": "Stanford Cardinal",
+        "home": true,
+        "date": "2026-03-05"
+       },
+       {
+        "r": "W",
+        "score": "96-90",
+        "opp": "NC State Wolfpack",
+        "home": true,
+        "date": "2026-02-28"
+       },
+       {
+        "r": "L",
+        "score": "56-100",
+        "opp": "Duke Blue Devils",
+        "home": true,
+        "date": "2026-02-25"
+       },
+       {
+        "r": "L",
+        "score": "68-73",
+        "opp": "Pittsburgh Panthers",
+        "home": false,
+        "date": "2026-02-21"
+       }
+      ],
+      "recordH": {
+       "w": 24,
+       "l": 9,
+       "d": 0
+      },
+      "recordA": {
+       "w": 13,
+       "l": 18,
+       "d": 0
+      },
+      "h2h": [],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.33,
+     "margin": 1.0417,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-10-31T14:12:11Z",
+     "implied": 0.7519,
+     "pTested": 0.7492,
+     "fair": 0.7218,
+     "edge": -0.04,
+     "basis": "model",
+     "firstOdds": 1.33
+    },
+    {
+     "sport": "football",
+     "event": "Nashville v Red Bull New York",
+     "home": "Nashville",
+     "away": "Red Bull New York",
+     "side": "h",
+     "pick": "Nashville",
+     "code": "us.1",
+     "comp": "Major League Soccer",
+     "country": "USA",
+     "when": "2026-11-01T21:30:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.7254,
+     "p": 0.7254,
+     "fx": {
+      "u21Side": false,
+      "league": "us.1",
+      "leagueName": "Major League Soccer",
+      "short": "MLS",
+      "country": "USA",
+      "iso": "usa",
+      "tier": 1,
+      "order": 80,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "21:30",
+      "kickoff": "2026-11-01T21:30:00Z",
+      "home": {
+       "name": "Nashville",
+       "att": 1.213,
+       "def": 0.575,
+       "played": 32,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WWDWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 37,
+        "W": 17,
+        "D": 6,
+        "L": 14,
+        "GF": 61,
+        "GA": 53,
+        "GD": 8,
+        "Pts": 57,
+        "PPG": 1.541
+       },
+       "now": {
+        "P": 32,
+        "W": 21,
+        "D": 8,
+        "L": 3,
+        "GF": 66,
+        "GA": 23,
+        "GD": 43,
+        "Pts": 71,
+        "PPG": 2.219
+       }
+      },
+      "away": {
+       "name": "Red Bull New York",
+       "att": 0.86,
+       "def": 1.087,
+       "played": 32,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "WLLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 34,
+        "W": 12,
+        "D": 7,
+        "L": 15,
+        "GF": 48,
+        "GA": 47,
+        "GD": 1,
+        "Pts": 43,
+        "PPG": 1.265
+       },
+       "now": {
+        "P": 32,
+        "W": 11,
+        "D": 6,
+        "L": 15,
+        "GF": 43,
+        "GA": 59,
+        "GD": -16,
+        "Pts": 39,
+        "PPG": 1.219
+       }
+      },
+      "p": {
+       "h": 0.7254,
+       "d": 0.1827,
+       "a": 0.0918
+      },
+      "xg": [
+       2.31,
+       0.66
+      ],
+      "btts": 0.4994,
+      "over25": 0.5398,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7254,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6298,
+        0.2016,
+        0.1686
+       ],
+       "best": [
+        1.5,
+        5.0,
+        6.0
+       ],
+       "avg": [
+        1.48,
+        4.62,
+        5.52
+       ],
+       "ev": [
+        0.0881,
+        -0.0865,
+        -0.4492
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 21,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "pDraw": 0.1827,
+     "multOnly": false,
+     "odds": 1.48,
+     "margin": 1.0749,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-10-31T14:12:11Z",
+     "implied": 0.6757,
+     "pTested": 0.718,
+     "fair": 0.6286,
+     "edge": -0.0697,
+     "basis": "model",
+     "firstOdds": 1.48,
+     "lastOdds": 1.48,
+     "lastBest": 1.48,
+     "lastAt": "2026-11-01T17:22:00Z"
+    }
+   ],
+   "bestOdds": 2.56,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-10-31T14:12:04Z",
+   "checked": "2026-10-31T14:12:04Z",
+   "lockAt": "2026-11-01T13:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-01T17:22:00Z"
+  },
+  {
+   "name": "Model 3x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "odds": 3.51,
+   "p": 0.3042,
+   "implied": 0.2845,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "BK Häcken v IFK Göteborg",
+     "home": "BK Häcken",
+     "away": "IFK Göteborg",
+     "side": "h",
+     "pick": "BK Häcken",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-11-01T15:30:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.6397,
+     "p": 0.6397,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "15:30",
+      "kickoff": "2026-11-01T15:30:00Z",
+      "home": {
+       "name": "BK Häcken",
+       "att": 1.211,
+       "def": 0.891,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 12,
+        "D": 6,
+        "L": 12,
+        "GF": 54,
+        "GA": 51,
+        "GD": 3,
+        "Pts": 42,
+        "PPG": 1.4
+       },
+       "now": {
+        "P": 26,
+        "W": 12,
+        "D": 10,
+        "L": 4,
+        "GF": 47,
+        "GA": 30,
+        "GD": 17,
+        "Pts": 46,
+        "PPG": 1.769
+       }
+      },
+      "away": {
+       "name": "IFK Göteborg",
+       "att": 0.946,
+       "def": 1.153,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "WWDDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 10,
+        "L": 13,
+        "GF": 33,
+        "GA": 43,
+        "GD": -10,
+        "Pts": 31,
+        "PPG": 1.033
+       },
+       "now": {
+        "P": 26,
+        "W": 10,
+        "D": 8,
+        "L": 8,
+        "GF": 36,
+        "GA": 45,
+        "GD": -9,
+        "Pts": 38,
+        "PPG": 1.462
+       }
+      },
+      "p": {
+       "h": 0.6397,
+       "d": 0.2018,
+       "a": 0.1585
+      },
+      "xg": [
+       2.36,
+       1.05
+      ],
+      "btts": 0.5607,
+      "over25": 0.5769,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.6397,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5447,
+        0.2272,
+        0.2281
+       ],
+       "best": [
+        1.73,
+        4.2,
+        4.2
+       ],
+       "avg": [
+        1.7,
+        4.08,
+        4.07
+       ],
+       "ev": [
+        0.1067,
+        -0.1524,
+        -0.3343
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 55,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2018,
+     "multOnly": true,
+     "odds": 1.7,
+     "best": 1.73,
+     "books": 10,
+     "bestBook": "Betfair",
+     "bookOdds": {
+      "William Hill": 1.7,
+      "Bet365": 1.7,
+      "Betfair": 1.73,
+      "BetVictor": 1.67
+     },
+     "margin": 1.0781,
+     "pricedAt": "2026-10-31T13:19:20Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.5882,
+     "pTested": 0.6397,
+     "fair": 0.5456,
+     "edge": -0.0725,
+     "basis": "model",
+     "firstOdds": 1.7
+    },
+    {
+     "sport": "football",
+     "event": "IF Elfsborg v Örgryte IS",
+     "home": "IF Elfsborg",
+     "away": "Örgryte IS",
+     "side": "h",
+     "pick": "IF Elfsborg",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-11-01T15:30:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.6888,
+     "p": 0.6888,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "15:30",
+      "kickoff": "2026-11-01T15:30:00Z",
+      "home": {
+       "name": "IF Elfsborg",
+       "att": 1.023,
+       "def": 0.756,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "WWDDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 13,
+        "D": 6,
+        "L": 11,
+        "GF": 52,
+        "GA": 44,
+        "GD": 8,
+        "Pts": 45,
+        "PPG": 1.5
+       },
+       "now": {
+        "P": 26,
+        "W": 11,
+        "D": 10,
+        "L": 5,
+        "GF": 37,
+        "GA": 24,
+        "GD": 13,
+        "Pts": 43,
+        "PPG": 1.654
+       }
+      },
+      "away": {
+       "name": "Örgryte IS",
+       "att": 0.861,
+       "def": 1.351,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": null,
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLWDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": null,
+       "last": null,
+       "now": {
+        "P": 26,
+        "W": 4,
+        "D": 7,
+        "L": 15,
+        "GF": 30,
+        "GA": 56,
+        "GD": -26,
+        "Pts": 19,
+        "PPG": 0.731
+       }
+      },
+      "p": {
+       "h": 0.6888,
+       "d": 0.1947,
+       "a": 0.1164
+      },
+      "xg": [
+       2.28,
+       0.79
+      ],
+      "btts": 0.5208,
+      "over25": 0.5487,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6888,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6815,
+        0.1895,
+        0.129
+       ],
+       "best": [
+        1.36,
+        5.0,
+        8.0
+       ],
+       "avg": [
+        1.36,
+        4.88,
+        7.17
+       ],
+       "ev": [
+        -0.0632,
+        -0.0265,
+        -0.0688
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 33,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1947,
+     "multOnly": false,
+     "odds": 1.36,
+     "best": 1.36,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.36,
+      "Bet365": 1.36,
+      "Betfair": 1.33,
+      "BetVictor": 1.33
+     },
+     "margin": 1.0813,
+     "pricedAt": "2026-10-31T13:19:20Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7353,
+     "pTested": 0.6888,
+     "fair": 0.68,
+     "edge": -0.0752,
+     "basis": "model",
+     "firstOdds": 1.36
+    },
+    {
+     "sport": "football",
+     "event": "Palermo v Vicenza",
+     "home": "Palermo",
+     "away": "Vicenza",
+     "side": "h",
+     "pick": "Palermo",
+     "code": "it.2",
+     "comp": "Serie B",
+     "country": "Italy",
+     "when": "2026-11-01T18:30:00Z",
+     "date": "2026-11-01",
+     "pModel": 0.6904,
+     "p": 0.6904,
+     "fx": {
+      "u21Side": false,
+      "league": "it.2",
+      "leagueName": "Serie B",
+      "short": "SEB",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 2,
+      "order": 11,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-01",
+      "time": "18:30",
+      "kickoff": "2026-11-01T18:30:00Z",
+      "home": {
+       "name": "Palermo",
+       "att": 1.399,
+       "def": 0.864,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie B",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 39,
+        "W": 14,
+        "D": 10,
+        "L": 15,
+        "GF": 52,
+        "GA": 44,
+        "GD": 8,
+        "Pts": 52,
+        "PPG": 1.333
+       },
+       "now": {
+        "P": 9,
+        "W": 7,
+        "D": 2,
+        "L": 0,
+        "GF": 21,
+        "GA": 11,
+        "GD": 10,
+        "Pts": 23,
+        "PPG": 2.556
+       }
+      },
+      "away": {
+       "name": "Vicenza",
+       "att": 0.997,
+       "def": 1.168,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": null,
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLDWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": null,
+       "last": null,
+       "now": {
+        "P": 9,
+        "W": 2,
+        "D": 3,
+        "L": 4,
+        "GF": 12,
+        "GA": 17,
+        "GD": -5,
+        "Pts": 9,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.6904,
+       "d": 0.1851,
+       "a": 0.1246
+      },
+      "xg": [
+       2.47,
+       0.92
+      ],
+      "btts": 0.545,
+      "over25": 0.5747,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6904,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5839,
+        0.2275,
+        0.1886
+       ],
+       "best": [
+        1.62,
+        4.2,
+        5.25
+       ],
+       "avg": [
+        1.57,
+        4.03,
+        4.86
+       ],
+       "ev": [
+        0.1184,
+        -0.2226,
+        -0.3458
+       ]
+      },
+      "rank": 32,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1851,
+     "multOnly": false,
+     "odds": 1.52,
+     "best": 1.53,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.5,
+      "Bet365": 1.53,
+      "Betfair": 1.53,
+      "BetVictor": 1.5
+     },
+     "margin": 1.0743,
+     "pricedAt": "2026-10-31T13:19:20Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6579,
+     "pTested": 0.6904,
+     "fair": 0.6124,
+     "edge": -0.0692,
+     "basis": "model",
+     "firstOdds": 1.52,
+     "lastOdds": 1.5,
+     "lastBest": 1.53,
+     "lastAt": "2026-11-01T17:22:00Z"
+    }
+   ],
+   "bestOdds": 3.6,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-10-31T14:12:04Z",
+   "checked": "2026-10-31T14:12:04Z",
+   "lockAt": "2026-11-01T15:30:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-01T17:22:00Z"
+  }
+ ]
+}
