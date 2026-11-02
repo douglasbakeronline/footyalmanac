@@ -1,20 +1,20 @@
 {
- "graded": "2026-11-01T23:00:35Z",
+ "graded": "2026-11-02T01:38:46Z",
  "overall": {
   "groups": 105,
-  "settled": 102,
-  "won": 27,
-  "z": -1.42,
-  "lost": 75,
-  "pending": 3,
-  "legs": 418,
-  "legsWon": 300,
-  "returned": 81.25,
-  "staked": 102,
-  "returnedBest": 85.64,
+  "settled": 105,
+  "won": 28,
+  "z": -1.41,
+  "lost": 77,
+  "pending": 0,
+  "legs": 425,
+  "legsWon": 305,
+  "returned": 84.76,
+  "staked": 105,
+  "returnedBest": 89.24,
   "returnedLock": 16.44,
   "stakedLock": 18,
-  "expected": 33.62,
+  "expected": 34.65,
   "clv": {
    "n": 100,
    "shortened": 37,
@@ -25,19 +25,19 @@
  "byBand": {
   "Card 2x": {
    "groups": 19,
-   "settled": 18,
+   "settled": 19,
    "won": 5,
-   "z": -0.85,
-   "lost": 13,
-   "pending": 1,
-   "legs": 55,
+   "z": -0.98,
+   "lost": 14,
+   "pending": 0,
+   "legs": 56,
    "legsWon": 36,
    "returned": 11.13,
-   "staked": 18,
+   "staked": 19,
    "returnedBest": 11.44,
    "returnedLock": 6.81,
    "stakedLock": 11,
-   "expected": 6.73,
+   "expected": 7.05,
    "clv": {
     "n": 50,
     "shortened": 13,
@@ -306,19 +306,19 @@
  },
  "card": {
   "groups": 25,
-  "settled": 24,
+  "settled": 25,
   "won": 7,
-  "z": -0.3,
-  "lost": 17,
-  "pending": 1,
-  "legs": 74,
+  "z": -0.43,
+  "lost": 18,
+  "pending": 0,
+  "legs": 75,
   "legsWon": 48,
   "returned": 20.43,
-  "staked": 24,
+  "staked": 25,
   "returnedBest": 20.89,
   "returnedLock": 12.04,
   "stakedLock": 15,
-  "expected": 7.67,
+  "expected": 7.99,
   "clv": {
    "n": 63,
    "shortened": 21,
@@ -372,19 +372,19 @@
  },
  "cardModel": {
   "groups": 4,
-  "settled": 2,
-  "won": 1,
-  "z": 0.15,
-  "lost": 1,
-  "pending": 2,
-  "legs": 6,
-  "legsWon": 5,
-  "returned": 2.04,
-  "staked": 2,
-  "returnedBest": 2.04,
+  "settled": 4,
+  "won": 2,
+  "z": 0.41,
+  "lost": 2,
+  "pending": 0,
+  "legs": 12,
+  "legsWon": 10,
+  "returned": 5.55,
+  "staked": 4,
+  "returnedBest": 5.64,
   "returnedLock": 0,
   "stakedLock": 0,
-  "expected": 0.9,
+  "expected": 1.61,
   "clv": {
    "n": 5,
    "shortened": 2,
@@ -439,19 +439,19 @@
   },
   "5": {
    "groups": 4,
-   "settled": 3,
+   "settled": 4,
    "won": 0,
-   "z": -1.36,
-   "lost": 3,
-   "pending": 1,
-   "legs": 10,
+   "z": -1.52,
+   "lost": 4,
+   "pending": 0,
+   "legs": 11,
    "legsWon": 6,
    "returned": 0,
-   "staked": 3,
+   "staked": 4,
    "returnedBest": 0,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 1.12,
+   "expected": 1.44,
    "clv": {
     "n": 6,
     "shortened": 2,
@@ -463,19 +463,19 @@
  "cardByWindow": {
   "Day": {
    "groups": 9,
-   "settled": 8,
+   "settled": 9,
    "won": 3,
-   "z": 0.26,
-   "lost": 5,
-   "pending": 1,
-   "legs": 25,
+   "z": 0.02,
+   "lost": 6,
+   "pending": 0,
+   "legs": 26,
    "legsWon": 19,
    "returned": 8.21,
-   "staked": 8,
+   "staked": 9,
    "returnedBest": 8.45,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 2.65,
+   "expected": 2.97,
    "clv": {
     "n": 17,
     "shortened": 3,
@@ -585,7 +585,7 @@
      "rule": 5,
      "odds": 2.74,
      "p": 0.3175,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -594,8 +594,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 2,
+     "legsLost": 1,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -628,8 +628,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6284,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-4"
       },
       {
        "pick": "Los Angeles Lakers",
@@ -658,7 +658,7 @@
      "rule": 5,
      "odds": 2.52,
      "p": 0.4123,
-     "status": "pending",
+     "status": "lost",
      "wide": false,
      "late": false,
      "locked": true,
@@ -666,9 +666,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsWon": 2,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Djurgården",
@@ -684,8 +684,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7514,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Villanova Wildcats",
@@ -701,8 +701,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7564,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "72-74"
       },
       {
        "pick": "Nashville",
@@ -718,8 +718,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7254,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       }
      ]
     },
@@ -731,17 +731,17 @@
      "rule": 5,
      "odds": 3.51,
      "p": 0.3042,
-     "status": "pending",
+     "status": "won",
      "wide": false,
      "late": false,
      "locked": true,
      "lockAt": "2026-11-01T15:30:00Z",
-     "paid": 0,
-     "paidBest": 0,
+     "paid": 3.51,
+     "paidBest": 3.6,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "BK Häcken",
@@ -757,8 +757,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6397,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "IF Elfsborg",
@@ -774,8 +774,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6888,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "2-1"
       },
       {
        "pick": "Palermo",
@@ -791,8 +791,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6904,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-1"
       }
      ]
     }
