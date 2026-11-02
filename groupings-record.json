@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-02T21:00:25Z",
+ "graded": "2026-11-02T23:50:58Z",
  "overall": {
   "groups": 109,
   "settled": 105,
@@ -19,7 +19,7 @@
    "n": 108,
    "shortened": 40,
    "drifted": 41,
-   "mean": -0.0
+   "mean": 0.0002
   }
  },
  "byBand": {
@@ -42,7 +42,7 @@
     "n": 54,
     "shortened": 14,
     "drifted": 23,
-    "mean": -0.004
+    "mean": -0.0037
    }
   },
   "Card 3x": {
@@ -63,8 +63,8 @@
    "clv": {
     "n": 37,
     "shortened": 14,
-    "drifted": 11,
-    "mean": 0.0011
+    "drifted": 12,
+    "mean": 0.0009
    }
   },
   "Wider Treble": {
@@ -322,8 +322,8 @@
   "clv": {
    "n": 69,
    "shortened": 23,
-   "drifted": 28,
-   "mean": -0.0024
+   "drifted": 29,
+   "mean": -0.0022
   }
  },
  "cardWide": {
@@ -388,8 +388,8 @@
   "clv": {
    "n": 7,
    "shortened": 3,
-   "drifted": 3,
-   "mean": 0.0145
+   "drifted": 2,
+   "mean": 0.0164
   }
  },
  "cardByRule": {
@@ -455,8 +455,8 @@
    "clv": {
     "n": 12,
     "shortened": 4,
-    "drifted": 5,
-    "mean": 0.0152
+    "drifted": 6,
+    "mean": 0.0161
    }
   }
  },
@@ -479,8 +479,8 @@
    "clv": {
     "n": 23,
     "shortened": 5,
-    "drifted": 10,
-    "mean": 0.0061
+    "drifted": 11,
+    "mean": 0.0066
    }
   },
   "Daytime": {
@@ -639,7 +639,7 @@
        "when": "2026-11-03T01:00Z",
        "odds": 1.46,
        "best": 1.46,
-       "lastOdds": 1.51,
+       "lastOdds": 1.47,
        "lockOdds": 1.51,
        "lockBest": 1.51,
        "lockBook": null,
@@ -712,7 +712,7 @@
        "when": "2026-11-03T01:30Z",
        "odds": 1.51,
        "best": 1.51,
-       "lastOdds": 1.51,
+       "lastOdds": 1.52,
        "lockOdds": 1.51,
        "lockBest": 1.51,
        "lockBook": null,
@@ -768,7 +768,7 @@
        "when": "2026-11-03T00:30Z",
        "odds": 1.51,
        "best": 1.51,
-       "lastOdds": 1.24,
+       "lastOdds": 1.25,
        "lockOdds": 1.24,
        "lockBest": 1.24,
        "lockBook": null,
@@ -858,7 +858,7 @@
        "when": "2026-11-03T03:00Z",
        "odds": 1.49,
        "best": 1.49,
-       "lastOdds": 1.51,
+       "lastOdds": 1.49,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
