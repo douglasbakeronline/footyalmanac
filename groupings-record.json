@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-02T23:50:58Z",
+ "graded": "2026-11-03T01:47:59Z",
  "overall": {
   "groups": 109,
   "settled": 105,
@@ -7,8 +7,8 @@
   "z": -1.41,
   "lost": 77,
   "pending": 4,
-  "legs": 427,
-  "legsWon": 307,
+  "legs": 431,
+  "legsWon": 311,
   "returned": 84.76,
   "staked": 105,
   "returnedBest": 89.24,
@@ -30,8 +30,8 @@
    "z": -0.98,
    "lost": 14,
    "pending": 2,
-   "legs": 58,
-   "legsWon": 38,
+   "legs": 59,
+   "legsWon": 39,
    "returned": 11.13,
    "staked": 19,
    "returnedBest": 11.44,
@@ -52,8 +52,8 @@
    "z": 1.57,
    "lost": 7,
    "pending": 1,
-   "legs": 40,
-   "legsWon": 27,
+   "legs": 41,
+   "legsWon": 28,
    "returned": 18.92,
    "staked": 13,
    "returnedBest": 19.58,
@@ -311,8 +311,8 @@
   "z": -0.43,
   "lost": 18,
   "pending": 3,
-  "legs": 77,
-  "legsWon": 50,
+  "legs": 79,
+  "legsWon": 52,
   "returned": 20.43,
   "staked": 25,
   "returnedBest": 20.89,
@@ -377,8 +377,8 @@
   "z": 0.41,
   "lost": 2,
   "pending": 1,
-  "legs": 12,
-  "legsWon": 10,
+  "legs": 14,
+  "legsWon": 12,
   "returned": 5.55,
   "staked": 4,
   "returnedBest": 5.64,
@@ -444,8 +444,8 @@
    "z": -1.52,
    "lost": 4,
    "pending": 3,
-   "legs": 13,
-   "legsWon": 8,
+   "legs": 15,
+   "legsWon": 10,
    "returned": 0,
    "staked": 4,
    "returnedBest": 0,
@@ -468,8 +468,8 @@
    "z": 0.02,
    "lost": 6,
    "pending": 3,
-   "legs": 28,
-   "legsWon": 21,
+   "legs": 30,
+   "legsWon": 23,
    "returned": 8.21,
    "staked": 9,
    "returnedBest": 8.45,
@@ -593,9 +593,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Sporting Cristal",
@@ -611,8 +611,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7464,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "5-0"
       },
       {
        "pick": "Philadelphia 76ers",
@@ -666,9 +666,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Zenit St Petersburg",
@@ -684,8 +684,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6131,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-3"
       },
       {
        "pick": "Detroit Pistons",
@@ -812,9 +812,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Sport Lisboa e Benfica",
@@ -830,8 +830,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8056,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "1-0"
       },
       {
        "pick": "Florida Gators",
@@ -847,8 +847,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6888,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "77-67"
       },
       {
        "pick": "Arizona Wildcats",
