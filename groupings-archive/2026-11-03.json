@@ -1,0 +1,1125 @@
+{
+ "date": "2026-11-03",
+ "published": "2026-11-03T12:49:54Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-02T23:50:51Z",
+   "lockAt": "2026-11-03T07:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.17,
+   "p": 0.4013,
+   "implied": 0.4615,
+   "bestOdds": 2.18,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Polina Kudermetova v Viktoria Morvayova",
+     "pick": "Polina Kudermetova",
+     "tour": "WTA",
+     "tournament": "Chennai Open",
+     "players": [
+      "Polina Kudermetova",
+      "Viktoria Morvayova"
+     ],
+     "comp": "Chennai Open Round 1",
+     "when": "2026-11-03T07:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-03",
+     "id": "186579",
+     "fx": {
+      "id": "186579",
+      "espn": [
+       "Polina Kudermetova",
+       "Viktoria Morvayova"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-03",
+      "time": "07:00",
+      "timeTbc": false,
+      "tournament": "Chennai Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Polina Kudermetova",
+      "playerB": "Viktoria Morvayova",
+      "ratingA": {
+       "elo": 2111,
+       "matches": 388,
+       "surfaceElo": 1918
+      },
+      "ratingB": {
+       "elo": 1834,
+       "matches": 430,
+       "surfaceElo": 1763
+      },
+      "p": {
+       "a": 0.7844,
+       "b": 0.2156
+      },
+      "pick": "Polina Kudermetova",
+      "confidence": 0.7844,
+      "tier": "Strong",
+      "rankA": 93,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8246,
+       "n": 57,
+       "cumHit": 0.8246,
+       "cumN": 57,
+       "quoted": 0.7731,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7844,
+     "p": 0.8169,
+     "hit": 0.8246,
+     "n": 57,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.19,
+     "best": 1.19,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0287,
+     "pricedAt": "2026-11-03T06:40:56Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8403,
+     "pTested": 0.7844,
+     "fair": 0.8169,
+     "edge": -0.0666,
+     "basis": "bookmakers",
+     "firstOdds": 1.19
+    },
+    {
+     "sport": "tennis",
+     "event": "Paula Badosa v Elena Pridankina",
+     "pick": "Paula Badosa",
+     "tour": "WTA",
+     "tournament": "Prudential Hong Kong Tennis Open",
+     "players": [
+      "Paula Badosa",
+      "Elena Pridankina"
+     ],
+     "comp": "Prudential Hong Kong Tennis Open Round 1",
+     "when": "2026-11-03T12:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-03",
+     "id": "186615",
+     "fx": {
+      "id": "186615",
+      "espn": [
+       "Paula Badosa",
+       "Elena Pridankina"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-03",
+      "time": "12:00",
+      "timeTbc": false,
+      "tournament": "Prudential Hong Kong Tennis Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Paula Badosa",
+      "playerB": "Elena Pridankina",
+      "ratingA": {
+       "elo": 2219,
+       "matches": 394,
+       "surfaceElo": 2041
+      },
+      "ratingB": {
+       "elo": 1996,
+       "matches": 303,
+       "surfaceElo": 1824
+      },
+      "p": {
+       "a": 0.7675,
+       "b": 0.2325
+      },
+      "pick": "Paula Badosa",
+      "confidence": 0.7675,
+      "tier": "Strong",
+      "rankA": 57,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8246,
+       "n": 57,
+       "cumHit": 0.8246,
+       "cumN": 57,
+       "quoted": 0.7731,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7675,
+     "p": 0.7412,
+     "hit": 0.8246,
+     "n": 57,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.31,
+     "best": 1.31,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0299,
+     "pricedAt": "2026-11-03T06:40:56Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7634,
+     "pTested": 0.7675,
+     "fair": 0.7412,
+     "edge": -0.029,
+     "basis": "bookmakers",
+     "firstOdds": 1.31
+    },
+    {
+     "sport": "football",
+     "event": "Alianza Lima v Cienciano del Cusco",
+     "home": "Alianza Lima",
+     "away": "Cienciano del Cusco",
+     "side": "h",
+     "pick": "Alianza Lima",
+     "code": "pe.1",
+     "comp": "Liga 1",
+     "country": "Peru",
+     "when": "2026-11-04T01:00:00Z",
+     "date": "2026-11-04",
+     "pModel": 0.5959,
+     "p": 0.6628,
+     "fx": {
+      "u21Side": false,
+      "league": "pe.1",
+      "leagueName": "Liga 1",
+      "short": "PER",
+      "country": "Peru",
+      "iso": "per",
+      "tier": 1,
+      "order": 88,
+      "round": "clausura",
+      "cup": false,
+      "date": "2026-11-04",
+      "time": "01:00",
+      "kickoff": "2026-11-04T01:00:00Z",
+      "home": {
+       "name": "Alianza Lima",
+       "att": 1.172,
+       "def": 0.607,
+       "played": 31,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Liga 1",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 37,
+        "W": 20,
+        "D": 10,
+        "L": 7,
+        "GF": 57,
+        "GA": 34,
+        "GD": 23,
+        "Pts": 70,
+        "PPG": 1.892
+       },
+       "now": {
+        "P": 31,
+        "W": 19,
+        "D": 8,
+        "L": 4,
+        "GF": 52,
+        "GA": 23,
+        "GD": 29,
+        "Pts": 65,
+        "PPG": 2.097
+       }
+      },
+      "away": {
+       "name": "Cienciano del Cusco",
+       "att": 1.189,
+       "def": 0.993,
+       "played": 31,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Liga 1",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "DWWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 35,
+        "W": 13,
+        "D": 11,
+        "L": 11,
+        "GF": 54,
+        "GA": 46,
+        "GD": 8,
+        "Pts": 50,
+        "PPG": 1.429
+       },
+       "now": {
+        "P": 31,
+        "W": 15,
+        "D": 5,
+        "L": 11,
+        "GF": 53,
+        "GA": 43,
+        "GD": 10,
+        "Pts": 50,
+        "PPG": 1.613
+       }
+      },
+      "p": {
+       "h": 0.5959,
+       "d": 0.2414,
+       "a": 0.1628
+      },
+      "xg": [
+       1.87,
+       0.81
+      ],
+      "btts": 0.5142,
+      "over25": 0.5129,
+      "score": [
+       1,
+       0
+      ],
+      "confidence": 0.5959,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6643,
+        0.2072,
+        0.1285
+       ],
+       "best": [
+        1.4,
+        4.5,
+        7.5
+       ],
+       "avg": [
+        1.39,
+        4.45,
+        7.17
+       ],
+       "ev": [
+        -0.1657,
+        0.0863,
+        0.221
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 12,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.5352,
+       "n": 99,
+       "cumHit": 0.6714,
+       "cumN": 280,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.6714,
+     "n": 280,
+     "list": false,
+     "pDraw": 0.2414,
+     "multOnly": true,
+     "odds": 1.39,
+     "best": 1.4,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.4,
+      "Betfair": 1.36,
+      "BetVictor": 1.36
+     },
+     "margin": 1.0854,
+     "pricedAt": "2026-11-03T06:39:02Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7194,
+     "pTested": 0.5352,
+     "fair": 0.6628,
+     "edge": -0.2561,
+     "basis": "bookmakers",
+     "firstOdds": 1.39,
+     "lastOdds": 1.4,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-03T12:49:54Z",
+     "lockPrice": {
+      "odds": 1.4,
+      "best": 1.4,
+      "book": "William Hill",
+      "at": "2026-11-03T12:49:54Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-03T06:40:04Z",
+   "archivedAt": "2026-11-03T12:49:54Z"
+  },
+  {
+   "name": "Model 3x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "odds": 3.71,
+   "p": 0.2844,
+   "implied": 0.2692,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Paula Badosa v Elena Pridankina",
+     "pick": "Paula Badosa",
+     "tour": "WTA",
+     "tournament": "Prudential Hong Kong Tennis Open",
+     "players": [
+      "Paula Badosa",
+      "Elena Pridankina"
+     ],
+     "comp": "Prudential Hong Kong Tennis Open Round 1",
+     "when": "2026-11-03T12:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-03",
+     "id": "186615",
+     "fx": {
+      "id": "186615",
+      "espn": [
+       "Paula Badosa",
+       "Elena Pridankina"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-03",
+      "time": "12:00",
+      "timeTbc": false,
+      "tournament": "Prudential Hong Kong Tennis Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Paula Badosa",
+      "playerB": "Elena Pridankina",
+      "ratingA": {
+       "elo": 2219,
+       "matches": 394,
+       "surfaceElo": 2041
+      },
+      "ratingB": {
+       "elo": 1996,
+       "matches": 303,
+       "surfaceElo": 1824
+      },
+      "p": {
+       "a": 0.7675,
+       "b": 0.2325
+      },
+      "pick": "Paula Badosa",
+      "confidence": 0.7675,
+      "tier": "Strong",
+      "rankA": 57,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8246,
+       "n": 57,
+       "cumHit": 0.8246,
+       "cumN": 57,
+       "quoted": 0.7731,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7675,
+     "p": 0.7675,
+     "hit": 0.8246,
+     "n": 57,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.31,
+     "best": 1.31,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0299,
+     "pricedAt": "2026-11-02T23:50:55Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7634,
+     "pTested": 0.7675,
+     "fair": 0.7412,
+     "edge": -0.029,
+     "basis": "model",
+     "firstOdds": 1.31
+    },
+    {
+     "sport": "football",
+     "event": "IK Sirius v Halmstads BK",
+     "home": "IK Sirius",
+     "away": "Halmstads BK",
+     "side": "h",
+     "pick": "IK Sirius",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-11-03T18:00:00Z",
+     "date": "2026-11-03",
+     "pModel": 0.7974,
+     "p": 0.7974,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-11-03",
+      "time": "18:00",
+      "kickoff": "2026-11-03T18:00:00Z",
+      "home": {
+       "name": "IK Sirius",
+       "att": 1.358,
+       "def": 0.964,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WWDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 12,
+        "D": 5,
+        "L": 13,
+        "GF": 47,
+        "GA": 46,
+        "GD": 1,
+        "Pts": 41,
+        "PPG": 1.367
+       },
+       "now": {
+        "P": 26,
+        "W": 17,
+        "D": 4,
+        "L": 5,
+        "GF": 56,
+        "GA": 34,
+        "GD": 22,
+        "Pts": 55,
+        "PPG": 2.115
+       }
+      },
+      "away": {
+       "name": "Halmstads BK",
+       "att": 0.602,
+       "def": 1.277,
+       "played": 26,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "WLLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 10,
+        "D": 3,
+        "L": 17,
+        "GF": 32,
+        "GA": 50,
+        "GD": -18,
+        "Pts": 33,
+        "PPG": 1.1
+       },
+       "now": {
+        "P": 26,
+        "W": 4,
+        "D": 5,
+        "L": 17,
+        "GF": 18,
+        "GA": 49,
+        "GD": -31,
+        "Pts": 17,
+        "PPG": 0.654
+       }
+      },
+      "p": {
+       "h": 0.7974,
+       "d": 0.136,
+       "a": 0.0666
+      },
+      "xg": [
+       2.83,
+       0.71
+      ],
+      "btts": 0.5159,
+      "over25": 0.5865,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7974,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.724,
+        0.1619,
+        0.114
+       ],
+       "best": [
+        1.3,
+        6.0,
+        8.5
+       ],
+       "avg": [
+        1.28,
+        5.73,
+        8.13
+       ],
+       "ev": [
+        0.0366,
+        -0.184,
+        -0.4339
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 2,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "pDraw": 0.136,
+     "multOnly": false,
+     "odds": 1.28,
+     "best": 1.3,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.29,
+      "Bet365": 1.3,
+      "Betfair": 1.25,
+      "BetVictor": 1.25
+     },
+     "margin": 1.0782,
+     "pricedAt": "2026-11-02T23:49:35Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7812,
+     "pTested": 0.7298,
+     "fair": 0.7245,
+     "edge": -0.0726,
+     "basis": "model",
+     "firstOdds": 1.28,
+     "lastOdds": 1.29,
+     "lastBest": 1.3,
+     "lastAt": "2026-11-03T12:49:54Z"
+    },
+    {
+     "sport": "football",
+     "event": "Dorking Wanderers v Hampton & Richmond",
+     "home": "Dorking Wanderers",
+     "away": "Hampton & Richmond",
+     "side": "h",
+     "pick": "Dorking Wanderers",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-03T19:45:00Z",
+     "date": "2026-11-03",
+     "pModel": 0.7737,
+     "p": 0.7737,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-03",
+      "time": "19:45",
+      "kickoff": "2026-11-03T19:45:00Z",
+      "home": {
+       "name": "Dorking Wanderers",
+       "att": 1.336,
+       "def": 1.001,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDWDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 48,
+        "W": 24,
+        "D": 10,
+        "L": 14,
+        "GF": 82,
+        "GA": 65,
+        "GD": 17,
+        "Pts": 82,
+        "PPG": 1.708
+       },
+       "now": {
+        "P": 14,
+        "W": 6,
+        "D": 6,
+        "L": 2,
+        "GF": 31,
+        "GA": 21,
+        "GD": 10,
+        "Pts": 24,
+        "PPG": 1.714
+       }
+      },
+      "away": {
+       "name": "Hampton & Richmond",
+       "att": 0.841,
+       "def": 1.361,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 56,
+        "GA": 72,
+        "GD": -16,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 14,
+        "W": 2,
+        "D": 3,
+        "L": 9,
+        "GF": 16,
+        "GA": 33,
+        "GD": -17,
+        "Pts": 9,
+        "PPG": 0.643
+       }
+      },
+      "p": {
+       "h": 0.7737,
+       "d": 0.1365,
+       "a": 0.0898
+      },
+      "xg": [
+       3.1,
+       1.0
+      ],
+      "btts": 0.5663,
+      "over25": 0.6228,
+      "score": [
+       3,
+       1
+      ],
+      "confidence": 0.7737,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6406,
+        0.194,
+        0.1654
+       ],
+       "best": [
+        1.44,
+        5.0,
+        5.75
+       ],
+       "avg": [
+        1.42,
+        4.69,
+        5.5
+       ],
+       "ev": [
+        0.1141,
+        -0.3175,
+        -0.4837
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 5,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "pDraw": 0.1365,
+     "multOnly": false,
+     "odds": 1.42,
+     "best": 1.44,
+     "books": 9,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.42,
+      "Betfair": 1.36,
+      "BetVictor": 1.4
+     },
+     "margin": 1.0994,
+     "pricedAt": "2026-11-02T23:49:35Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7042,
+     "pTested": 0.7298,
+     "fair": 0.6405,
+     "edge": -0.0905,
+     "basis": "model",
+     "firstOdds": 1.42,
+     "lastOdds": 1.42,
+     "lastBest": 1.44,
+     "lastAt": "2026-11-03T12:49:54Z"
+    },
+    {
+     "sport": "football",
+     "event": "Farnborough v Ebbsfleet United",
+     "home": "Farnborough",
+     "away": "Ebbsfleet United",
+     "side": "a",
+     "pick": "Ebbsfleet United",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-03T19:45:00Z",
+     "date": "2026-11-03",
+     "pModel": 0.6006,
+     "p": 0.6006,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-03",
+      "time": "19:45",
+      "kickoff": "2026-11-03T19:45:00Z",
+      "home": {
+       "name": "Farnborough",
+       "att": 0.801,
+       "def": 1.232,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LWLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 72,
+        "GA": 92,
+        "GD": -20,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 14,
+        "W": 5,
+        "D": 2,
+        "L": 7,
+        "GF": 12,
+        "GA": 25,
+        "GD": -13,
+        "Pts": 17,
+        "PPG": 1.214
+       }
+      },
+      "away": {
+       "name": "Ebbsfleet United",
+       "att": 1.308,
+       "def": 0.701,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WDWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 22,
+        "D": 11,
+        "L": 13,
+        "GF": 73,
+        "GA": 54,
+        "GD": 19,
+        "Pts": 77,
+        "PPG": 1.674
+       },
+       "now": {
+        "P": 13,
+        "W": 8,
+        "D": 4,
+        "L": 1,
+        "GF": 29,
+        "GA": 10,
+        "GD": 19,
+        "Pts": 28,
+        "PPG": 2.154
+       }
+      },
+      "p": {
+       "h": 0.1705,
+       "d": 0.2289,
+       "a": 0.6006
+      },
+      "xg": [
+       0.93,
+       2.03
+      ],
+      "btts": 0.5361,
+      "over25": 0.5388,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.6006,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.1993,
+        0.2154,
+        0.5853
+       ],
+       "best": [
+        4.75,
+        4.33,
+        1.6
+       ],
+       "avg": [
+        4.58,
+        4.24,
+        1.56
+       ],
+       "ev": [
+        -0.1901,
+        -0.0089,
+        -0.039
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 11,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2289,
+     "multOnly": true,
+     "odds": 1.56,
+     "best": 1.6,
+     "books": 9,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.6,
+      "Bet365": 1.53,
+      "Betfair": 1.53,
+      "BetVictor": 1.53
+     },
+     "margin": 1.0958,
+     "pricedAt": "2026-11-02T23:49:35Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.641,
+     "pTested": 0.6006,
+     "fair": 0.585,
+     "edge": -0.0874,
+     "basis": "model",
+     "firstOdds": 1.56,
+     "lastOdds": 1.54,
+     "lastBest": 1.6,
+     "lastAt": "2026-11-03T12:49:54Z"
+    }
+   ],
+   "bestOdds": 3.92,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-02T23:50:51Z",
+   "checked": "2026-11-02T23:50:51Z",
+   "lockAt": "2026-11-03T12:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-03T12:49:54Z"
+  }
+ ]
+}
