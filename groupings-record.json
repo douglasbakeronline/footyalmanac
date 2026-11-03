@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-03T18:47:06Z",
+ "graded": "2026-11-03T22:16:23Z",
  "overall": {
   "groups": 112,
   "settled": 111,
@@ -7,8 +7,8 @@
   "z": -1.4,
   "lost": 81,
   "pending": 1,
-  "legs": 441,
-  "legsWon": 317,
+  "legs": 445,
+  "legsWon": 321,
   "returned": 90.68,
   "staked": 111,
   "returnedBest": 95.16,
@@ -18,8 +18,8 @@
   "clv": {
    "n": 112,
    "shortened": 41,
-   "drifted": 44,
-   "mean": 0.0001
+   "drifted": 43,
+   "mean": 0.0002
   }
  },
  "byBand": {
@@ -41,8 +41,8 @@
    "clv": {
     "n": 55,
     "shortened": 14,
-    "drifted": 24,
-    "mean": -0.0038
+    "drifted": 23,
+    "mean": -0.0036
    }
   },
   "Card 3x": {
@@ -322,8 +322,8 @@
   "clv": {
    "n": 70,
    "shortened": 23,
-   "drifted": 30,
-   "mean": -0.0023
+   "drifted": 29,
+   "mean": -0.0022
   }
  },
  "cardWide": {
@@ -377,8 +377,8 @@
   "z": -0.3,
   "lost": 4,
   "pending": 1,
-  "legs": 16,
-  "legsWon": 12,
+  "legs": 20,
+  "legsWon": 16,
   "returned": 5.55,
   "staked": 6,
   "returnedBest": 5.64,
@@ -455,8 +455,8 @@
    "clv": {
     "n": 13,
     "shortened": 4,
-    "drifted": 7,
-    "mean": 0.0143
+    "drifted": 6,
+    "mean": 0.0148
    }
   }
  },
@@ -479,8 +479,8 @@
    "clv": {
     "n": 24,
     "shortened": 5,
-    "drifted": 12,
-    "mean": 0.006
+    "drifted": 11,
+    "mean": 0.0063
    }
   },
   "Daytime": {
@@ -639,7 +639,7 @@
        "when": "2026-11-04T01:00:00Z",
        "odds": 1.39,
        "best": 1.4,
-       "lastOdds": 1.4,
+       "lastOdds": 1.39,
        "lockOdds": 1.4,
        "lockBest": 1.4,
        "lockBook": "William Hill",
@@ -666,9 +666,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Paula Badosa",
@@ -718,8 +718,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7737,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       },
       {
        "pick": "Ebbsfleet United",
@@ -735,8 +735,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6006,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-6"
       }
      ]
     },
@@ -756,9 +756,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "IK Sirius",
@@ -791,8 +791,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7731,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "3-2"
       },
       {
        "pick": "Ebbsfleet United",
@@ -808,8 +808,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "0-6"
       }
      ]
     }
