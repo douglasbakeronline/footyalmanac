@@ -266,7 +266,7 @@
      "firstOdds": 1.17,
      "lastOdds": 1.17,
      "lastBest": 1.17,
-     "lastAt": "2026-11-04T18:59:25Z",
+     "lastAt": "2026-11-04T22:28:55Z",
      "lockPrice": {
       "odds": 1.17,
       "best": 1.17,
@@ -436,7 +436,7 @@
      "firstOdds": 1.52,
      "lastOdds": 1.52,
      "lastBest": 1.52,
-     "lastAt": "2026-11-04T18:59:25Z",
+     "lastAt": "2026-11-04T22:28:55Z",
      "lockPrice": {
       "odds": 1.52,
       "best": 1.52,
@@ -747,7 +747,7 @@
      "firstOdds": 1.31,
      "lastOdds": 1.32,
      "lastBest": 1.35,
-     "lastAt": "2026-11-04T18:59:25Z"
+     "lastAt": "2026-11-04T22:28:55Z"
     },
     {
      "sport": "nba",
@@ -911,7 +911,7 @@
      "firstOdds": 1.72,
      "lastOdds": 1.62,
      "lastBest": 1.62,
-     "lastAt": "2026-11-04T18:59:25Z"
+     "lastAt": "2026-11-04T22:28:55Z"
     }
    ],
    "bestOdds": 2.86,
@@ -1193,9 +1193,9 @@
      "edge": -0.0581,
      "basis": "bookmakers",
      "firstOdds": 1.39,
-     "lastOdds": 1.45,
-     "lastBest": 1.45,
-     "lastAt": "2026-11-04T18:59:25Z",
+     "lastOdds": 1.42,
+     "lastBest": 1.42,
+     "lastAt": "2026-11-04T22:28:55Z",
      "lockPrice": {
       "odds": 1.45,
       "best": 1.45,
@@ -1398,7 +1398,7 @@
      "firstOdds": 1.47,
      "lastOdds": 1.45,
      "lastBest": 1.45,
-     "lastAt": "2026-11-04T18:59:25Z",
+     "lastAt": "2026-11-04T22:28:55Z",
      "lockPrice": {
       "odds": 1.45,
       "best": 1.45,
@@ -1568,7 +1568,7 @@
      "firstOdds": 1.32,
      "lastOdds": 1.36,
      "lastBest": 1.36,
-     "lastAt": "2026-11-04T18:59:25Z",
+     "lastAt": "2026-11-04T22:28:55Z",
      "lockPrice": {
       "odds": 1.36,
       "best": 1.36,

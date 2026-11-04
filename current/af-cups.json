@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1793566696,
+"checked": 1793831174,
 "cups": [
 {
 "code": "afc.707",
@@ -378,7 +378,7 @@
 "id": 714,
 "name": "Cup",
 "country": "Egypt",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.895",
@@ -603,6 +603,13 @@
 "name": "Santosh Trophy",
 "country": "India",
 "season": 2025
+},
+{
+"code": "afc.1250",
+"id": 1250,
+"name": "League Cup Indonesia",
+"country": "Indonesia",
+"season": 2026
 },
 {
 "code": "afc.718",
