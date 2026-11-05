@@ -360,6 +360,7 @@ How to work:
 - Do not run git commit, git push, git tag or open pull requests: leave your changes in the working tree. The workflow verifies and opens the pull request for you.
 - Never edit these paths (the workflow discards changes to them): {", ".join(PROTECTED)}
 - Keep the change small and focused on this one task. No visual or layout changes unless the task needs them.
+- The deliverable is a change that passes the gates (Douglas, 5 Nov 2026: 57 of the first 78 merged agent pull requests were findings only). Investigate as far as you must, then ship the change the evidence supports; a dated note instead of a change is right only when the evidence fails the gates or the task is a report by nature. Say in the report which of the two it is.
 - Verify: python3 nametest.py, and python3 build.py --days 2 --no-topup --no-odds if you touched the football pipeline. Restore bot-written files the build overwrote.
 - Add an entry at the top of RELEASES.md in the existing style, marked "(tag pending)", with What changed / Evidence / Files / Not changed / Roll back. For a significant finding add a dated note in claude/ in the style of the existing ones.
 
