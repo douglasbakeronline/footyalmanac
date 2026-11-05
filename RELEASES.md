@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-11-05 (tag pending): college basketball season-phase calibration
+
+**What changed:** college basketball probabilities in November and December are stretched upward (early-season games land above quote); January-April are shrunk slightly. Daily List bar stays 85%. Other sports unchanged.
+
+**Evidence:** live record 138/160 v 125.5 expected (z +2.4) located the gap; fixed on history only. Elo k/hfa/regress already optimal on a wider grid. Phase curve fitted on 2024-25, checked on 2025-26 (5,814 games): log loss 0.5523 -> 0.5499, gain 0.0024, p(worse) 0.012. 65%+ gap guard 0.013 -> 0.022 (limit +0.01, passed). `claude/ncaab-season-phase-2026-11-05.md`.
+
+**Files:** `sports.py` (`PHASE_MONTHS`, `fit_phase_calibration`, `calibrate(..., when)`), `sports.json` (ncaab only, from `sports.py --tune --only ncaab`), `tests/test_sports_phase_cal.py`, the note.
+
+**Not changed:** Elo constants, list bar, other sports, the Card.
+
+**Roll back:** revert the commit; sports.json returns to the single (null) calibration.
+
 ## release-2026-11-05-3 (pending tag): more from the office, twice a day
 
 **What changed.** Douglas asked for more delivered output from the autonomous
