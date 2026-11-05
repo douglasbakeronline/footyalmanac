@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-05T13:15:08Z",
+ "graded": "2026-11-05T14:51:33Z",
  "overall": {
   "groups": 116,
   "settled": 115,
@@ -17,9 +17,9 @@
   "expected": 38.23,
   "clv": {
    "n": 121,
-   "shortened": 44,
+   "shortened": 45,
    "drifted": 46,
-   "mean": 0.0007
+   "mean": 0.0008
   }
  },
  "byBand": {
@@ -40,9 +40,9 @@
    "expected": 8.66,
    "clv": {
     "n": 59,
-    "shortened": 15,
+    "shortened": 16,
     "drifted": 23,
-    "mean": -0.0025
+    "mean": -0.0024
    }
   },
   "Card 3x": {
@@ -343,9 +343,9 @@
   "expected": 0,
   "clv": {
    "n": 2,
-   "shortened": 1,
+   "shortened": 2,
    "drifted": 0,
-   "mean": 0.0257
+   "mean": 0.0298
   }
  },
  "cardLate": {
@@ -639,7 +639,7 @@
        "when": "2026-11-05T19:00:00Z",
        "odds": 1.23,
        "best": 1.23,
-       "lastOdds": 1.23,
+       "lastOdds": 1.22,
        "lockOdds": 1.23,
        "lockBest": 1.23,
        "lockBook": "Pinnacle",

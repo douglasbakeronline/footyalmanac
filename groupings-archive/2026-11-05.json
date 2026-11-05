@@ -275,9 +275,9 @@
      "edge": -0.0459,
      "basis": "bookmakers",
      "firstOdds": 1.23,
-     "lastOdds": 1.23,
-     "lastBest": 1.23,
-     "lastAt": "2026-11-05T13:14:43Z",
+     "lastOdds": 1.22,
+     "lastBest": 1.22,
+     "lastAt": "2026-11-05T14:51:06Z",
      "lockPrice": {
       "odds": 1.23,
       "best": 1.23,
@@ -447,7 +447,7 @@
      "firstOdds": 1.43,
      "lastOdds": 1.36,
      "lastBest": 1.36,
-     "lastAt": "2026-11-05T13:14:43Z",
+     "lastAt": "2026-11-05T14:51:06Z",
      "lockPrice": {
       "odds": 1.36,
       "best": 1.36,
