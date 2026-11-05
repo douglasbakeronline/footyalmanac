@@ -3,6 +3,10 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-11-05 (pending tag): site analytics
+
+Cloudflare Web Analytics on the page (Douglas's Cloudflare account; the beacon tag in `index.html`'s head). Visitors, page views, countries, devices and referrers, live and historical, with no cookies and no consent banner. `spa: true` counts each tab change as a view, since the tabs write their name to the URL hash. Nothing else on the site changes. Files: `index.html`. Roll back: revert the commit.
+
 ## release-2026-10-31-3 (pending tag): college basketball off the Card
 
 Douglas, after a Sunday Card 2x carried two college basketball picks on the week the season opens: a sport with no live record on the site stays off the Card (`CARD_SPORTS_OFF` gains `ncaab`), as college football does. Its picks still reach the Daily List and the reserve. Back on when it has 50 graded games and lands on quote. Files: `groupings.py`. Roll back: revert the commit.
