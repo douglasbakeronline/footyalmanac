@@ -135,106 +135,100 @@
  "generated": "2026-10-06",
  "mlb": {
   "params": {
-   "k": 8,
+   "k": 4,
    "hfa": 25,
-   "regress": 0.25,
+   "regress": 0.15,
    "mov": 0
   },
   "fittedParams": {
-   "k": 8,
+   "k": 4,
    "hfa": 25,
-   "regress": 0.25,
+   "regress": 0.15,
    "mov": 0
   },
   "usedFitted": true,
-  "games": 8623,
+  "games": 8663,
   "check": {
-   "n": 3643,
-   "logLoss": 0.6855,
-   "accuracy": 0.5504,
+   "n": 3626,
+   "logLoss": 0.6841,
+   "accuracy": 0.5552,
    "homeRate": 0.5273,
-   "vsHome": -0.0056,
-   "pWorseVsHome": 0.02
+   "vsHome": -0.0071,
+   "pWorseVsHome": 0.003
   },
   "publish": true,
   "listMin": null,
   "cal": null,
   "calTested": {
-   "a": -0.0046,
-   "b": 0.8039,
-   "delta": -0.0009,
-   "pWorse": 0.055,
-   "topGapRaw": 0.0307,
-   "topGapCal": 0.0581
+   "a": -0.0435,
+   "b": 1.0714,
+   "delta": 0.0003,
+   "pWorse": 0.779,
+   "topGapRaw": 0.039,
+   "topGapCal": 0.032
   },
   "bandsFit": [
    {
     "from": 0.55,
-    "n": 1456,
-    "hit": 0.5831,
-    "quoted": 0.6119
+    "n": 1274,
+    "hit": 0.5895,
+    "quoted": 0.599
    },
    {
     "from": 0.6,
-    "n": 703,
-    "hit": 0.623,
-    "quoted": 0.6531
+    "n": 485,
+    "hit": 0.6392,
+    "quoted": 0.6419
    },
    {
     "from": 0.65,
-    "n": 293,
-    "hit": 0.6997,
-    "quoted": 0.6986
+    "n": 178,
+    "hit": 0.7247,
+    "quoted": 0.6805
    },
    {
     "from": 0.7,
-    "n": 119,
-    "hit": 0.7731,
-    "quoted": 0.7357
+    "n": 41,
+    "hit": 0.7805,
+    "quoted": 0.7187
    },
    {
     "from": 0.75,
-    "n": 28,
-    "hit": 0.75,
-    "quoted": 0.7788
-   },
-   {
-    "from": 0.8,
-    "n": 5,
-    "hit": 0.8,
-    "quoted": 0.8129
+    "n": 3,
+    "hit": 1.0,
+    "quoted": 0.7533
    }
   ],
   "bandsCheck": [
    {
     "from": 0.55,
-    "n": 2112,
-    "hit": 0.5753,
-    "quoted": 0.603
+    "n": 1943,
+    "hit": 0.5826,
+    "quoted": 0.5957
    },
    {
     "from": 0.6,
-    "n": 907,
-    "hit": 0.602,
-    "quoted": 0.642
+    "n": 703,
+    "hit": 0.6245,
+    "quoted": 0.637
    },
    {
     "from": 0.65,
-    "n": 294,
-    "hit": 0.6531,
-    "quoted": 0.6837
+    "n": 188,
+    "hit": 0.7181,
+    "quoted": 0.6791
    },
    {
     "from": 0.7,
-    "n": 75,
-    "hit": 0.7467,
-    "quoted": 0.7248
+    "n": 36,
+    "hit": 0.8333,
+    "quoted": 0.722
    },
    {
     "from": 0.75,
-    "n": 10,
-    "hit": 0.9,
-    "quoted": 0.7659
+    "n": 3,
+    "hit": 1.0,
+    "quoted": 0.7602
    }
   ],
   "windows": {
@@ -244,7 +238,7 @@
    ],
    "check": [
     "2025-07-01",
-    null
+    "2026-09-27"
    ]
   }
  },
