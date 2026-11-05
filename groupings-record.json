@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-05T02:31:33Z",
+ "graded": "2026-11-05T06:39:36Z",
  "overall": {
   "groups": 115,
   "settled": 115,
@@ -7,8 +7,8 @@
   "z": -1.46,
   "lost": 84,
   "pending": 0,
-  "legs": 451,
-  "legsWon": 324,
+  "legs": 456,
+  "legsWon": 327,
   "returned": 93.58,
   "staked": 115,
   "returnedBest": 98.1,
@@ -30,8 +30,8 @@
    "z": -1.15,
    "lost": 17,
    "pending": 0,
-   "legs": 67,
-   "legsWon": 44,
+   "legs": 69,
+   "legsWon": 46,
    "returned": 13.4,
    "staked": 23,
    "returnedBest": 13.71,
@@ -52,7 +52,7 @@
    "z": 1.76,
    "lost": 8,
    "pending": 0,
-   "legs": 44,
+   "legs": 46,
    "legsWon": 30,
    "returned": 22.57,
    "staked": 15,
@@ -311,8 +311,8 @@
   "z": -0.43,
   "lost": 22,
   "pending": 0,
-  "legs": 90,
-  "legsWon": 59,
+  "legs": 94,
+  "legsWon": 61,
   "returned": 26.35,
   "staked": 31,
   "returnedBest": 26.81,
@@ -377,8 +377,8 @@
   "z": -0.06,
   "lost": 5,
   "pending": 0,
-  "legs": 23,
-  "legsWon": 18,
+  "legs": 24,
+  "legsWon": 19,
   "returned": 8.45,
   "staked": 8,
   "returnedBest": 8.58,
@@ -444,8 +444,8 @@
    "z": -1.04,
    "lost": 8,
    "pending": 0,
-   "legs": 26,
-   "legsWon": 17,
+   "legs": 30,
+   "legsWon": 19,
    "returned": 5.92,
    "staked": 10,
    "returnedBest": 5.92,
@@ -468,8 +468,8 @@
    "z": -0.05,
    "lost": 10,
    "pending": 0,
-   "legs": 41,
-   "legsWon": 30,
+   "legs": 45,
+   "legsWon": 32,
    "returned": 14.13,
    "staked": 15,
    "returnedBest": 14.37,
@@ -593,9 +593,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -628,8 +628,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8227,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "135-105"
       },
       {
        "pick": "Denver Nuggets",
@@ -645,8 +645,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6311,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "128-109"
       }
      ]
     },
@@ -666,9 +666,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -718,8 +718,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6576,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "124-116"
       }
      ]
     },
@@ -740,8 +740,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 3,
+     "legsLost": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Daniil Medvedev",
@@ -774,8 +774,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6904,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "103-107"
       },
       {
        "pick": "Universitario",
@@ -808,8 +808,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7267,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "107-117"
       }
      ]
     }
