@@ -3,6 +3,39 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-11-05-3 (pending tag): more from the office, twice a day
+
+**What changed.** Douglas asked for more delivered output from the autonomous
+agents (5 Nov 2026). Four things: (1) `office-merge.yml` now rebases every open
+`office-agent/*` pull request that is behind `main` onto it and pushes with the
+App token (`agents/rebase_stale.py`), so its checks and evaluation run again and
+the merge gate can judge it fresh; a branch that will not rebase cleanly is left
+with one comment. Before this, one human commit on `main` stranded every open
+agent pull request ("main changed since evaluation"), and six piled up and
+stopped the sprint from 1 to 5 Nov. (2) A second sprint at 18:30 UTC, and the
+daily cap on office pull requests raised from 8 to 14. (3) Every agent brief
+now says the deliverable is a change that passes the gates, a note only when
+the evidence fails them (57 of the first 78 merged agent pull requests were
+findings only). (4) With `release-2026-11-05-2`, a full queue idles the sprint
+instead of failing it.
+
+**Evidence.** Sprint runs 1-5 Nov: every one failed on the matrix JSON or
+opened nothing; #96, #97 and #109 closed as Odds-tab-era and conflicting;
+#106, #121 and #127 rebased by hand and their evaluations re-ran.
+
+**Files.** `.github/workflows/office-merge.yml`, `.github/workflows/office-agents.yml`,
+`agents/rebase_stale.py` (new), `agents/pick_task.py`, `CLAUDE.md`.
+
+**Not changed.** The merge gate itself (still fails closed, still needs owner
+approval on workflow and security paths), `SPRINT_SIZE`, the evaluation layer.
+
+**Roll back.** `git revert` the release commit. The second cron and the rebase
+step go with it; nothing on the site is touched.
+
+## release-2026-11-05-2 (pending tag): the sprint idles, not fails, when the agent queue is full
+
+`agents/pick_task.py --active-agents` printed "N agent pull requests already open; waiting for them to merge" to stdout, which the workflow reads as the JSON agent matrix, so every sprint from 1 to 5 Nov 2026 failed before any agent ran. The message now goes to stderr and the matrix is `[]` (an idle day). The queue itself filled because the merge gate refuses a pull request once a human commit lands on `main` after its evaluation (re-run needed), and nothing re-ran them; three were rebased by hand today (#106, #121, #127) so their evaluations re-run. Files: `agents/pick_task.py`. Roll back: revert the commit.
+
 ## release-2026-11-05 (pending tag): site analytics
 
 Cloudflare Web Analytics on the page (Douglas's Cloudflare account; the beacon tag in `index.html`'s head). Visitors, page views, countries, devices and referrers, live and historical, with no cookies and no consent banner. `spa: true` counts each tab change as a view, since the tabs write their name to the URL hash. Nothing else on the site changes. Files: `index.html`. Roll back: revert the commit.

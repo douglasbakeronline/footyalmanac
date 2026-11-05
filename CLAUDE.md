@@ -186,7 +186,7 @@ Open `dashboard.html` straight off disk to check the page.
   advantage, writes `home-advantage.json` only if it passes the same gates;
   Douglas's exception to rule 5, 25 Oct 2026), then `tools/model_ideas.py`,
   `--report` and `eurotest.py --report` as advisory output for a human.
-- `office-agents.yml` runs daily at 06:30 UTC as a sprint (single cron since 25 Oct 2026; skips when more than 8 office pull requests exist that day) (Douglas's
+- `office-agents.yml` runs two sprints a day, 06:30 and 18:30 UTC (5 Nov 2026; skips when more than 14 office pull requests exist that day, and idles when `MAX_OPEN` agent pull requests are already open) (Douglas's
   instruction, 4 Oct 2026: no owner review, every agent productive). Since
   20 Oct 2026 the sprint runs the `SPRINT_SIZE` (5) agents whose best free task
   ranks highest, one at a time, in this order: owner `office-backlog` issues,
@@ -197,6 +197,8 @@ Open `dashboard.html` straight off disk to check the page.
   Pages, with the README's priority list below the measured gaps. A backlog
   over 48 hours old is ignored and the scoreboard's own picks take over.
   Standing tasks fill any spare places. Each objective still rests 7 days.
+  Every brief says the deliverable is a change that passes the gates, a note
+  only when the evidence fails them (5 Nov 2026).
   The **Groups & Odds Desk** (`pick_task.DESK`: Jade, Oscar, Kofi on value,
   Hannah on leg selection) always gets one more place. `agents/open_pr.sh` (run from a copy made before the agent
   works) runs nametest.py, the unittest suite and (for pipeline code) a fast
@@ -216,8 +218,11 @@ Open `dashboard.html` straight off disk to check the page.
     once the checks and evaluation pass (Douglas, 4 Oct 2026)
 
   The sprint calls it with `--pr N --wait`, which waits for the checks, so
-  each merge lands before the next agent starts. `office-merge.yml` (21:00
-  UTC) catches leftovers. The merge is pinned with `--match-head-commit`.
+  each merge lands before the next agent starts. `office-merge.yml` (09:00,
+  15:00 and 21:00 UTC) first rebases every open `office-agent/*` pull request
+  that is behind `main` and pushes it with the App token so its evaluation
+  re-runs (`agents/rebase_stale.py`, 5 Nov 2026; a conflicting branch is left
+  with a comment), then catches leftovers. The merge is pinned with `--match-head-commit`.
   Tests: `tests/test_merge_gate.py`.
 - `evaluation.yml` runs on every pull request. It uses main's harness
   (`evaluation/predict.py`, `evaluation/score_pair.py`) on the last approved
