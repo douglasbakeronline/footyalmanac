@@ -1,0 +1,476 @@
+{
+ "date": "2026-11-05",
+ "published": "2026-11-05T13:14:43Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Wider rule",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.09,
+   "p": 0.4043,
+   "implied": 0.4786,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": true,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Zongyu Li v Anna Blinkova",
+     "pick": "Anna Blinkova",
+     "tour": "WTA",
+     "tournament": "Angola Ladies Open",
+     "players": [
+      "Zongyu Li",
+      "Anna Blinkova"
+     ],
+     "comp": "Angola Ladies Open Round 2",
+     "when": "2026-11-05T09:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-05",
+     "id": "186683",
+     "fx": {
+      "id": "186683",
+      "espn": [
+       "Li Zongyu",
+       "Anna Blinkova"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-05",
+      "time": "09:00",
+      "timeTbc": false,
+      "tournament": "Angola Ladies Open",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Zongyu Li",
+      "playerB": "Anna Blinkova",
+      "ratingA": {
+       "elo": 1850,
+       "matches": 282,
+       "surfaceElo": 1776
+      },
+      "ratingB": {
+       "elo": 2120,
+       "matches": 451,
+       "surfaceElo": 1945
+      },
+      "p": {
+       "a": 0.2161,
+       "b": 0.7839
+      },
+      "pick": "Anna Blinkova",
+      "confidence": 0.7839,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": 105,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8033,
+       "n": 61,
+       "cumHit": 0.8033,
+       "cumN": 61,
+       "quoted": 0.7727,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7839,
+     "p": 0.8818,
+     "hit": 0.8033,
+     "n": 61,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.08,
+     "best": 1.08,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.05,
+     "pricedAt": "2026-11-05T06:39:33Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.9259,
+     "pTested": 0.7839,
+     "fair": 0.8818,
+     "edge": -0.1534,
+     "basis": "bookmakers",
+     "firstOdds": 1.08
+    },
+    {
+     "sport": "tennis",
+     "event": "Vaishnavi Adkar v Anastasia Zakharova",
+     "pick": "Anastasia Zakharova",
+     "tour": "WTA",
+     "tournament": "Chennai Open",
+     "players": [
+      "Vaishnavi Adkar",
+      "Anastasia Zakharova"
+     ],
+     "comp": "Chennai Open Round 2",
+     "when": "2026-11-05T12:30:00Z",
+     "timeEst": false,
+     "date": "2026-11-05",
+     "id": "186588",
+     "fx": {
+      "id": "186588",
+      "espn": [
+       "Vaishnavi Adkar",
+       "Anastasia Zakharova"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-05",
+      "time": "12:30",
+      "timeTbc": false,
+      "tournament": "Chennai Open",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Vaishnavi Adkar",
+      "playerB": "Anastasia Zakharova",
+      "ratingA": {
+       "elo": 1773,
+       "matches": 149,
+       "surfaceElo": 1763
+      },
+      "ratingB": {
+       "elo": 2070,
+       "matches": 472,
+       "surfaceElo": 1912
+      },
+      "p": {
+       "a": 0.2048,
+       "b": 0.7952
+      },
+      "pick": "Anastasia Zakharova",
+      "confidence": 0.7952,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": 107,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8033,
+       "n": 61,
+       "cumHit": 0.8033,
+       "cumN": 61,
+       "quoted": 0.7727,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7952,
+     "p": 0.8786,
+     "hit": 0.8033,
+     "n": 61,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.1,
+     "best": 1.1,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0347,
+     "pricedAt": "2026-11-05T06:39:33Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.9091,
+     "pTested": 0.7952,
+     "fair": 0.8786,
+     "edge": -0.1253,
+     "basis": "bookmakers",
+     "firstOdds": 1.1
+    },
+    {
+     "sport": "tennis",
+     "event": "Bianca Andreescu v Luisina Giovannini",
+     "pick": "Bianca Andreescu",
+     "tour": "WTA",
+     "tournament": "Reto Win Tennis Cali Open",
+     "players": [
+      "Bianca Andreescu",
+      "Luisina Giovannini"
+     ],
+     "comp": "Reto Win Tennis Cali Open Quarterfinal",
+     "when": "2026-11-05T19:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-05",
+     "id": "186729",
+     "fx": {
+      "id": "186729",
+      "espn": [
+       "Bianca Andreescu",
+       "Luisina Giovannini"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-05",
+      "time": "19:00",
+      "timeTbc": false,
+      "tournament": "Reto Win Tennis Cali Open",
+      "round": "Quarterfinal",
+      "surface": "Hard",
+      "playerA": "Bianca Andreescu",
+      "playerB": "Luisina Giovannini",
+      "ratingA": {
+       "elo": 2185,
+       "matches": 242,
+       "surfaceElo": 2013
+      },
+      "ratingB": {
+       "elo": 2032,
+       "matches": 216,
+       "surfaceElo": 1521
+      },
+      "p": {
+       "a": 0.7971,
+       "b": 0.2029
+      },
+      "pick": "Bianca Andreescu",
+      "confidence": 0.7971,
+      "tier": "Strong",
+      "rankA": 109,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8033,
+       "n": 61,
+       "cumHit": 0.8033,
+       "cumN": 61,
+       "quoted": 0.7727,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.7971,
+     "p": 0.7757,
+     "hit": 0.8033,
+     "n": 61,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.23,
+     "best": 1.23,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "margin": 1.0481,
+     "pricedAt": "2026-11-05T06:39:33Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.813,
+     "pTested": 0.7971,
+     "fair": 0.7757,
+     "edge": -0.0459,
+     "basis": "bookmakers",
+     "firstOdds": 1.23,
+     "lastOdds": 1.23,
+     "lastBest": 1.23,
+     "lastAt": "2026-11-05T13:14:43Z",
+     "lockPrice": {
+      "odds": 1.23,
+      "best": 1.23,
+      "book": "Pinnacle",
+      "at": "2026-11-05T13:14:43Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Golden State Warriors v Miami Heat",
+     "home": "Golden State Warriors",
+     "away": "Miami Heat",
+     "pick": "Golden State Warriors",
+     "comp": "NBA",
+     "when": "2026-11-06T03:00Z",
+     "date": "2026-11-06",
+     "id": "401909937",
+     "pModel": 0.5931,
+     "p": 0.6728,
+     "hit": 0.7076,
+     "n": 1108,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909937",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-06T03:00Z",
+      "home": "Golden State Warriors",
+      "away": "Miami Heat",
+      "neutral": false,
+      "pHome": 0.5931,
+      "pick": "Golden State Warriors",
+      "confidence": 0.5931,
+      "tier": "Lean",
+      "eloH": 1510,
+      "eloA": 1480,
+      "gamesH": 270,
+      "gamesA": 268,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.593,
+       "n": 253,
+       "cumHit": 0.7076,
+       "cumN": 1108
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "116-113",
+        "opp": "Phoenix Suns",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "124-112",
+        "opp": "LA Clippers",
+        "home": true,
+        "date": "2026-11-02"
+       },
+       {
+        "r": "W",
+        "score": "112-95",
+        "opp": "Los Angeles Lakers",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "119-114",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "W",
+        "score": "134-114",
+        "opp": "Denver Nuggets",
+        "home": false,
+        "date": "2026-10-27"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "117-116",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "117-138",
+        "opp": "Los Angeles Lakers",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "145-125",
+        "opp": "Indiana Pacers",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "129-117",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "L",
+        "score": "109-113",
+        "opp": "Dallas Mavericks",
+        "home": true,
+        "date": "2026-10-26"
+       }
+      ],
+      "recordH": {
+       "w": 5,
+       "l": 3,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 5,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-01-20",
+        "home": "Golden State Warriors",
+        "away": "Miami Heat",
+        "score": "135-112"
+       },
+       {
+        "date": "2025-11-20",
+        "home": "Miami Heat",
+        "away": "Golden State Warriors",
+        "score": "110-96"
+       },
+       {
+        "date": "2025-03-25",
+        "home": "Miami Heat",
+        "away": "Golden State Warriors",
+        "score": "112-86"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.43,
+     "margin": 1.0394,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-05T06:39:35Z",
+     "implied": 0.6993,
+     "pTested": 0.593,
+     "fair": 0.6728,
+     "edge": -0.152,
+     "basis": "bookmakers",
+     "firstOdds": 1.43,
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-05T13:14:43Z",
+     "lockPrice": {
+      "odds": 1.36,
+      "best": 1.36,
+      "book": null,
+      "at": "2026-11-05T13:14:43Z"
+     }
+    }
+   ],
+   "bestOdds": 2.09,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-05T06:36:36Z",
+   "checked": "2026-11-05T06:36:36Z",
+   "lockAt": "2026-11-05T09:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "archivedAt": "2026-11-05T13:14:43Z"
+  }
+ ]
+}
