@@ -252,3 +252,40 @@ for Douglas because it changes archive keys and the scoreboard: in
 `archive_predictions`, treat a same-league, same-date, same-kick-off pair with
 swapped teams as one fixture and keep the latest. No matcher or `LIVE_NAMES`
 change was needed.
+
+## 5 November 2026: fixture audit of `predictions/2026-11-05.json`
+
+1,830 rows, dated 5 to 11 Nov. `nametest.py` passes ("duplicate feeds: 1
+skipped", the known `AF_DUPLICATES` case). Clean: 0 unrated rows, 0 rows whose
+kick-off UTC day differs from the row date (UK date = UTC date since BST ended
+25 Oct), no club at two kick-offs at the same instant except the cup case
+below, no accent/case-folded spelling splits (18 folded duplicates, all with
+identical spellings, so the 18 Oct case-variant problem has not recurred).
+19 rows have no kick-off and are dated by day.
+
+Findings, none fixed (each needs an archive-key change, which alters the
+scoreboard and is Douglas's call, as on 18 and 28 Oct):
+
+1. **18 rescheduled fixtures sit twice**, same league, home and away, two
+   different dates (e.g. afc.508 Kaizer Chiefs v Siwelele 6 Nov 17:00 and
+   8 Nov 13:00; af.390 Safa v Tripoli 6 and 7 Nov; five Serbian, four
+   Zimbabwean, three Russian, two Kenyan games). The row published earlier has
+   the old date, the later build moved it, and `archive_predictions` keys on
+   `(league, date, home, away)` so both stay. Not always the earlier build
+   first: Scotland Mabvuku, Simba Bhora and Kariba (af.401) are the other way
+   round (the 22:36 build holds the earlier date). Probabilities are identical
+   in both copies. None carries a list flag.
+2. **Three af.263 (Mexico) pairs appear with home and away swapped** on
+   different dates: Cancun v Piratas (6 Nov) and Piratas v Cancun (9 Nov),
+   Durango v Leones Negros UDG (6 Nov) and the reverse (8 Nov), CA La Paz v
+   Tlaxcala (8 Nov) and the reverse (5 Nov). Likely legitimate two-leg
+   playoff ties, so not duplicates; noted so nobody "fixes" them.
+3. **Badajoz v Tenerife, 10 Nov 19:00 UTC, is in two feeds**: `es.cup` (home
+   46.1%) and `afc.143` (47.1%). Same tie, two competition codes, neither on
+   the list. Cup ties are meant to be rated through `afCup`; the double entry
+   would be graded twice if both stay.
+
+Suggested fix (unchanged from 28 Oct): in `archive_predictions`, collapse a
+same-league, same-teams pair whose earlier-published copy has not started to
+the latest-published copy. Only the future-dated copies matter, so grading of
+played games is untouched. No matcher or `LIVE_NAMES` change was needed.

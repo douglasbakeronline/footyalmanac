@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-05 Fixture audit note (tag pending)
+
+**What changed:** nothing on the site. Audit of the 5 Nov predictions file written up in `claude/data-integrity.md`.
+**Evidence:** 1,830 rows; 0 unrated, 0 wrong-date kick-offs, no spelling splits; 18 rescheduled fixtures stored twice (archive key includes date), 3 Mexican home/away pairs (probably two-leg ties), Badajoz v Tenerife in `es.cup` and `afc.143`. None on the Daily List. `nametest.py` passes.
+**Files:** `claude/data-integrity.md`, `RELEASES.md`.
+**Not changed:** the archive key, matcher and `LIVE_NAMES` (a key change alters the scoreboard; Douglas's call).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-05 Tests for predictability.py (tag pending)
 
 **What changed:** nothing for readers. Added unit tests for the pure maths in `predictability.py`, the module with the most logic and no tests.
