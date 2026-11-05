@@ -3,6 +3,15 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+
+## 2026-11-05 Tests for predictability.py (tag pending)
+
+**What changed:** nothing for readers. Added unit tests for the pure maths in `predictability.py`, the module with the most logic and no tests.
+**Evidence:** 9 new tests (logit/sigmoid clamps, linear solver incl. singular matrix, logistic fit direction, log loss, top-hit, standardise/design, league shift sign and shrinkage) all pass; full suite and nametest pass. No bug exposed.
+**Files:** `tests/test_predictability.py`, `RELEASES.md`.
+**Not changed:** any module code, model, or record.
+**Roll back:** `git revert` the merge commit.
+
 ## release-2026-11-05-3 (pending tag): more from the office, twice a day
 
 **What changed.** Douglas asked for more delivered output from the autonomous
