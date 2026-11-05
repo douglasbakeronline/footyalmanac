@@ -327,7 +327,12 @@ def main():
                 if "\n" in str(v): f.write(f"{k}<<__EOF__\n{v}\n__EOF__\n")
                 else: f.write(f"{k}={v}\n")
     if len(open_prs) >= MAX_OPEN and not a.task and not a.agent:
-        print(f"{len(open_prs)} agent pull requests already open; waiting for them to merge."); emit(skip="1"); return
+        # 5 Nov 2026: in --active-agents mode stdout is the workflow's JSON matrix, so the
+        # message goes to stderr and the list is empty (an idle sprint, not a failed run).
+        # From 1 to 5 Nov the sentence below landed in the matrix and every sprint failed.
+        print(f"{len(open_prs)} agent pull requests already open; waiting for them to merge.", file=sys.stderr)
+        if a.active_agents: print("[]"); return
+        emit(skip="1"); return
     cands = ranked()
     busy = recent | {l["name"][10:] for p in open_prs for l in p.get("labels", []) if l["name"].startswith("objective:")}
     if a.active_agents:

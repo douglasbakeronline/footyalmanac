@@ -3,6 +3,10 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## release-2026-11-05-2 (pending tag): the sprint idles, not fails, when the agent queue is full
+
+`agents/pick_task.py --active-agents` printed "N agent pull requests already open; waiting for them to merge" to stdout, which the workflow reads as the JSON agent matrix, so every sprint from 1 to 5 Nov 2026 failed before any agent ran. The message now goes to stderr and the matrix is `[]` (an idle day). The queue itself filled because the merge gate refuses a pull request once a human commit lands on `main` after its evaluation (re-run needed), and nothing re-ran them; three were rebased by hand today (#106, #121, #127) so their evaluations re-run. Files: `agents/pick_task.py`. Roll back: revert the commit.
+
 ## release-2026-11-05 (pending tag): site analytics
 
 Cloudflare Web Analytics on the page (Douglas's Cloudflare account; the beacon tag in `index.html`'s head). Visitors, page views, countries, devices and referrers, live and historical, with no cookies and no consent banner. `spa: true` counts each tab change as a view, since the tabs write their name to the URL hash. Nothing else on the site changes. Files: `index.html`. Roll back: revert the commit.
