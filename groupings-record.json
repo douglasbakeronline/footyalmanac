@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-05T19:10:28Z",
+ "graded": "2026-11-05T22:37:48Z",
  "overall": {
   "groups": 116,
   "settled": 115,
@@ -17,9 +17,9 @@
   "expected": 38.23,
   "clv": {
    "n": 121,
-   "shortened": 45,
-   "drifted": 46,
-   "mean": 0.0007
+   "shortened": 44,
+   "drifted": 47,
+   "mean": -0.0006
   }
  },
  "byBand": {
@@ -40,9 +40,9 @@
    "expected": 8.66,
    "clv": {
     "n": 59,
-    "shortened": 16,
-    "drifted": 23,
-    "mean": -0.0025
+    "shortened": 15,
+    "drifted": 24,
+    "mean": -0.0052
    }
   },
   "Card 3x": {
@@ -343,9 +343,9 @@
   "expected": 0,
   "clv": {
    "n": 2,
-   "shortened": 2,
-   "drifted": 0,
-   "mean": 0.026
+   "shortened": 1,
+   "drifted": 1,
+   "mean": -0.0545
   }
  },
  "cardLate": {
@@ -656,7 +656,7 @@
        "when": "2026-11-06T03:00Z",
        "odds": 1.43,
        "best": 1.43,
-       "lastOdds": 1.37,
+       "lastOdds": 1.62,
        "lockOdds": 1.36,
        "lockBest": 1.36,
        "lockBook": null,
