@@ -1306,7 +1306,7 @@ CARD_BOOK = "William Hill"
 # the group and keep it inside its price range and above its chance floor.
 CARD_BENCH = 3
 CARD_KINDS = [("Card 2x", 2.0, 3.0, 0.30), ("Card 3x", 3.0, 4.6, 0.18)]
-CARD_LEGS = (3, 4)
+CARD_LEGS = (3, 4, 5)   # 6 Nov 2026: five, because legs with the opposition at 9+ are short (five at 1.25 make a 3x)
 CARD_ODDS = (1.15, 1.90)
 CARD_FAIR_MIN = 0.60
 CARD_POOL = 24
@@ -2082,6 +2082,7 @@ def archive_pool(L, now, dates):
                 old = have[k]
                 if not started and not l.get("est"):
                     old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
+                    if l.get("opp"): old["lastOpp"] = l["opp"]
                 continue
             if started: continue       # never add a leg after its start: the price would prove nothing
             row = {kk: l.get(kk) for kk in POOL_KEYS if kk in l}
@@ -2305,7 +2306,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
-                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),

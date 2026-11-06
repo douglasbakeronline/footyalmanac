@@ -49,7 +49,9 @@ this season. With the Card's under-market rule, 106 legs landed 86.8% v 75.4%
 source now records the opposition's price (and the draw's) on each leg, for
 every sport; a football Card leg needs the opposition priced 9+
 (`CARD_OPP_MIN`, `CARD_RULE` 6); the page shows the opposition's price on
-every Bets leg, substitute and Daily List row that has a bookmaker price.
+every Bets leg, substitute and Daily List row that has a bookmaker price;
+groups may have five picks (`CARD_LEGS`), since legs with the opposition at
+9+ are short.
 Football only for the rule: in two-outcome sports the opposition's price is
 the arithmetic complement of the favourite's. `claude/opposition-price-2026-11-06.md`.
 

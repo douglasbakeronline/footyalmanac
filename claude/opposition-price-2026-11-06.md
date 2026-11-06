@@ -67,6 +67,7 @@ replay does not cover. 106 + 39 legs is enough to act on, not settled.
 ## What it means for the Card
 
 The 9+ legs are short (1.15-1.35), so a Card 2x needs four of them and a
-Card 3x five; `CARD_LEGS` already allows 3-4 and the 3x may be thinner.
-Watch the group count over the first week. If the Card goes empty most days,
+Card 3x five: `CARD_LEGS` is now (3, 4, 5). The pool also keeps each leg's
+last pre-start opposition price (`lastOpp`). Watch the group count over the
+first week. If the Card goes empty most days,
 the choice is between `opp7` and the `short` variant with more legs.
