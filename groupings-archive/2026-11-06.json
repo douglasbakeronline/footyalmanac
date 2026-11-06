@@ -279,9 +279,9 @@
      "edge": -0.084,
      "basis": "bookmakers",
      "firstOdds": 1.38,
-     "lastOdds": 1.54,
-     "lastBest": 1.54,
-     "lastAt": "2026-11-06T21:59:38Z",
+     "lastOdds": 1.62,
+     "lastBest": 1.62,
+     "lastAt": "2026-11-06T23:50:39Z",
      "lockPrice": {
       "odds": 1.39,
       "best": 1.39,
@@ -450,9 +450,9 @@
      "edge": -0.0375,
      "basis": "bookmakers",
      "firstOdds": 1.41,
-     "lastOdds": 1.38,
-     "lastBest": 1.38,
-     "lastAt": "2026-11-06T21:59:38Z",
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-06T23:50:39Z",
      "lockPrice": {
       "odds": 1.36,
       "best": 1.36,
@@ -727,9 +727,9 @@
      "edge": -0.038,
      "basis": "model",
      "firstOdds": 1.61,
-     "lastOdds": 1.58,
-     "lastBest": 1.58,
-     "lastAt": "2026-11-06T21:59:38Z"
+     "lastOdds": 1.56,
+     "lastBest": 1.56,
+     "lastAt": "2026-11-06T23:50:39Z"
     },
     {
      "sport": "nba",
@@ -891,9 +891,9 @@
      "edge": -0.0375,
      "basis": "model",
      "firstOdds": 1.4,
-     "lastOdds": 1.38,
-     "lastBest": 1.38,
-     "lastAt": "2026-11-06T21:59:38Z"
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-06T23:50:39Z"
     }
    ],
    "bestOdds": 3.04,
@@ -1178,9 +1178,9 @@
      "edge": -0.0419,
      "basis": "model",
      "firstOdds": 1.41,
-     "lastOdds": 1.31,
-     "lastBest": 1.31,
-     "lastAt": "2026-11-06T21:59:38Z"
+     "lastOdds": 1.32,
+     "lastBest": 1.32,
+     "lastAt": "2026-11-06T23:50:39Z"
     },
     {
      "sport": "nba",
@@ -1343,9 +1343,9 @@
      "edge": -0.0375,
      "basis": "model",
      "firstOdds": 1.4,
-     "lastOdds": 1.38,
-     "lastBest": 1.38,
-     "lastAt": "2026-11-06T21:59:38Z"
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-06T23:50:39Z"
     }
    ],
    "bestOdds": 2.66,
