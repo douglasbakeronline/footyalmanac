@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 Calibration by band and sport, rerun: nothing to ship (tag pending)
+
+**What changed:** a dated note only, `claude/calibration-rerun-2026-11-06.md`. No code, model or rule changed.
+**Evidence:** football check season (1,557 calls) 55%+ +5.7 points, 60-70% +7.0 [+0.6,+13.2] under quote, fit season on quote, so Rule 3 is not met. Hockey (-8.3 at 60-70%), baseball (-5.0 at 62%+) and college basketball (-4.6 at 60-70%) stay over-stated; 70%+ calls are inside noise. Same as 29 Oct.
+**Files:** `claude/calibration-rerun-2026-11-06.md`, `RELEASES.md`.
+**Not changed:** `calibration.json`, `sports.json`, `calibration_bands.py`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-06 Tennis legs in groups (27/49 v 35): located, nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-06.md`. No code, model or rule changed.
