@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-06T18:37:37Z",
+ "graded": "2026-11-06T22:00:13Z",
  "overall": {
   "groups": 119,
   "settled": 115,
@@ -7,8 +7,8 @@
   "z": -1.46,
   "lost": 84,
   "pending": 4,
-  "legs": 462,
-  "legsWon": 332,
+  "legs": 464,
+  "legsWon": 334,
   "returned": 93.58,
   "staked": 115,
   "returnedBest": 98.1,
@@ -19,7 +19,7 @@
    "n": 125,
    "shortened": 47,
    "drifted": 48,
-   "mean": -0.0006
+   "mean": -0.0004
   }
  },
  "byBand": {
@@ -42,7 +42,7 @@
     "n": 61,
     "shortened": 16,
     "drifted": 25,
-    "mean": -0.0061
+    "mean": -0.0063
    }
   },
   "Card 3x": {
@@ -323,7 +323,7 @@
    "n": 77,
    "shortened": 25,
    "drifted": 32,
-   "mean": -0.0033
+   "mean": -0.0035
   }
  },
  "cardWide": {
@@ -377,8 +377,8 @@
   "z": -0.06,
   "lost": 5,
   "pending": 2,
-  "legs": 25,
-  "legsWon": 20,
+  "legs": 27,
+  "legsWon": 22,
   "returned": 8.45,
   "staked": 8,
   "returnedBest": 8.58,
@@ -389,7 +389,7 @@
    "n": 15,
    "shortened": 8,
    "drifted": 5,
-   "mean": 0.0164
+   "mean": 0.0184
   }
  },
  "cardByRule": {
@@ -478,7 +478,7 @@
     "n": 2,
     "shortened": 1,
     "drifted": 1,
-    "mean": -0.0322
+    "mean": -0.0382
    }
   }
  },
@@ -502,7 +502,7 @@
     "n": 31,
     "shortened": 7,
     "drifted": 14,
-    "mean": 0.0016
+    "mean": 0.0012
    }
   },
   "Daytime": {
@@ -645,7 +645,7 @@
        "when": "2026-11-07T01:00Z",
        "odds": 1.4,
        "best": 1.4,
-       "lastOdds": 1.52,
+       "lastOdds": 1.54,
        "lockOdds": 1.39,
        "lockBest": 1.39,
        "lockBook": null,
@@ -691,9 +691,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -709,8 +709,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7711,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "(2) Carlos Alcaraz (ESP) bt (11) Taylor Fritz (USA) 6-7 (10-12) 7-5 6-3",
        "opp": null
       },
       {
@@ -721,7 +721,7 @@
        "when": "2026-11-07T01:00Z",
        "odds": 1.61,
        "best": 1.61,
-       "lastOdds": 1.59,
+       "lastOdds": 1.58,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -767,9 +767,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -785,8 +785,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7711,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "(2) Carlos Alcaraz (ESP) bt (11) Taylor Fritz (USA) 6-7 (10-12) 7-5 6-3",
        "opp": 3.45
       },
       {
@@ -797,7 +797,7 @@
        "when": "2026-11-07T00:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": 1.34,
+       "lastOdds": 1.31,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
