@@ -185,7 +185,12 @@ ATP_RANK_LAYER = False
 # (ATP, 2025 / 2026, 499 / 243 calls) and 84.8% / 89.9% (WTA, 415 / 227), so
 # 75% passes the 80% rule in both windows on both tours. WTA would pass at
 # 70% too (81.4% / 83.2%), but only just; the list takes 75% on both.
-LIST_MIN = {"ATP": 0.75, "WTA": 0.75, "ATP_RANKED": 0.75}
+# 6 Nov 2026: ATP to 80% (claude/tennis-list-own-band-2026-11-06.md). The 80%
+# rule is about the calls admitted, and the ATP 75-80% band on its own landed
+# 75.5% (2025, 237) and 77.7% (2026, 112), under 80% in both walk-forward windows
+# (tools/tennis_bands.py); ATP at 80%+ landed 89.7% / 88.5%. WTA's own band
+# passes (81.8% / 88.4%), so it stays at 75%.
+LIST_MIN = {"ATP": 0.80, "WTA": 0.75, "ATP_RANKED": 0.80}
 # 15 Oct 2026, at Douglas's request: tennis is off the Daily List. Live List
 # picks won 39 of 51 against 42.1 expected from their quotes: WTA 18 of 27
 # (mean quote 83%, 22.3 expected), ATP 21 of 24 (19.8 expected). A higher bar
