@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 Tennis Daily List: ATP bar to 80% (tag pending)
+
+**What changed:** `build_tennis.LIST_MIN` for ATP (and the ranked key) 75% -> 80%. ATP picks at 75-80% go to the reserve; WTA stays at 75%. No rating or confidence number changed.
+**Evidence:** planner 58 of 78 v 64.3. Live located (read only): Wuhan 5 of 10, Paris Masters 1 of 4, 75-80% band 20 of 30. Rule from history, not the record: ATP own 75-80% band landed 75.5% (237) in 2025 and 77.7% (112) in 2026, under the 80% rule both times; ATP 80%+ 89.7% / 88.5%; WTA's own band passes (81.8% / 88.4%). `claude/tennis-list-own-band-2026-11-06.md`. nametest clear; tests pass.
+**Files:** `build_tennis.py`, `tests/test_tennis_names.py`, `claude/tennis-list-own-band-2026-11-06.md`, `RELEASES.md`.
+**Not changed:** WTA bar, ratings, calibration, list order, any record file.
+**Roll back:** `git revert` the merge commit, or set ATP / ATP_RANKED back to 0.75.
+
 ## 2026-11-06 (tag pending): free-source check for uncovered leagues (docs only)
 
 **What changed:** nothing for readers. Re-probed free sources for the remaining gaps and recorded the result in `claude/data-expansion-plan.md`.

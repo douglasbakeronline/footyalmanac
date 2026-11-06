@@ -18,7 +18,7 @@ class WordOrder(unittest.TestCase):
 
     def test_rank_layer_off(self):
         self.assertFalse(B.ATP_RANK_LAYER)
-        self.assertEqual(B.LIST_MIN["ATP"], 0.75)
+        self.assertEqual(B.LIST_MIN["ATP"], 0.80)
 
     def test_tennis_back_on_the_list(self):
         # 28 Oct 2026: both tours on at 75%; below it, 62%+ is reserve
