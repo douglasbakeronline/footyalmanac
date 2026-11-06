@@ -36,6 +36,35 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-06 (pending tag): the opposition's price on the Card and the list
+
+**What changed.** Douglas, from his own slips: favourites near 1.40 whose
+opposition was priced 10-12 won for him, favourites whose opposition was near
+4 lost. Tested on last season's replay (`tools/card_legs_history.py`, run in
+CI): at the same favourite price, opposition 9+ landed 83.9% v 76.0% quoted
+(n 230, +3.0% at average price, +5.5% at best); opposition 6-9 landed on quote
+and lost 6%; opposition under 6 lost on both seasons. With the Card's
+under-market rule, 9+ legs landed 86.8% v 75.4% (+7.5%) last season and 84.6%
+v 76.5% (+3.7%) this season. So: (1) every price source now captures the
+opposition's price and the draw; (2) a Card football leg needs the opposition
+priced 9 or longer (`CARD_OPP_MIN`, `CARD_RULE` 6); two-way sports are
+untouched because they carry no draw; (3) a Card group may have five picks
+(`CARD_LEGS`), since lopsided legs are short; (4) every Card leg and every
+Daily List row, all sports, shows the pick's and the opposition's price,
+bold when lopsided, display only; (5) the pool archive keeps `opp`, `draw`
+and `lastOpp`, and `card_replay.py` gains `rule5`, `opp7` and `opp12`
+variants for the 30 Nov review. Note: `claude/lopsided-market-2026-11-06.md`.
+
+**Files.** `groupings.py`, `index.html`, `tools/card_legs_history.py`,
+`tools/card_replay.py`, `tests/test_groupings_card.py` (6 new tests),
+`.github/workflows/card-legs-history.yml` (new), `CLAUDE.md`.
+
+**Not changed.** The Daily List's ranking (no bookmaker input), the
+under-market band (5 to 10), the Model card, the wider rule, the record.
+
+**Roll back.** `git revert` the release commit. Groups published under rule 6
+stay in the record under `cardByRule` 6.
+
 ## release-2026-11-05-3 (pending tag): more from the office, twice a day
 
 **What changed.** Douglas asked for more delivered output from the autonomous

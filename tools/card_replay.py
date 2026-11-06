@@ -59,7 +59,8 @@ def legs_of(rows):
         l = {"sport": "football", "event": f"{x['home']} v {x['away']}", "pick": x["home"] if side == "h" else x["away"],
              "comp": x["league"], "code": x["league"], "when": x.get("kickoff") or f"{x['date']}T12:00:00Z", "date": x["date"], "odds": round(avg, 2),
              "best": round(best, 2), "margin": round(margin, 4), "est": False, "pModel": round(p[side], 4), "p": round(p[side], 4),
-             "hit": 0.8, "n": 100, "won": x["actual"] == side, "core": x["league"] in CORE}
+             "hit": 0.8, "n": 100, "won": x["actual"] == side, "core": x["league"] in CORE,
+             "opp": round(mk["avg"][2 - j], 2) if mk["avg"][2 - j] else None, "draw": round(mk["avg"][1], 2) if mk["avg"][1] else None}
         G.honest(l)
         slot = G.uk_slot(l)
         if slot: by[slot[0]].append(l)
@@ -74,6 +75,9 @@ VARIANTS = {
     "wider": {"CARD_CORE_ONLY": False},
     "uncapped": {"CARD_UNDER_MAX": 0},     # rule 4, before the 31 Oct 2026 cap
     "short": {"CARD_ODDS": (1.15, 1.35)},
+    "rule5": {"CARD_OPP_MIN": 0, "CARD_LEGS": (3, 4)},   # the 31 Oct to 6 Nov 2026 rule, before the opposition-price condition
+    "opp7": {"CARD_OPP_MIN": 7.0},
+    "opp12": {"CARD_OPP_MIN": 12.0},
 }
 
 

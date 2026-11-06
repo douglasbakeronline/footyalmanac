@@ -444,6 +444,13 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l .o{font:600 14px var(--f-num);text-align:right}
 .og-l .c{font:12px var(--f-num);text-align:right;color:var(--ink-2)}
 .og-l .o small.best{display:block;font:600 10.5px var(--f-ui);color:var(--home);letter-spacing:.01em;line-height:1.3;margin-top:2px}
+.og-l .o small.opp{display:block;font:500 10.5px var(--f-ui);color:var(--mute);letter-spacing:.01em;line-height:1.3;margin-top:2px;white-space:nowrap}
+.og-l .o small.opp.lop{color:var(--ink);font-weight:600}
+/* 6 Nov 2026: the bookmakers' prices on a Daily List row, pick v opposition,
+   display only (the list takes no bookmaker input). Bold when the market is
+   lopsided: the opposition at 9+ */
+.conf .px{display:block;font-family:var(--f-num);font-size:10.5px;font-weight:500;color:var(--mute);letter-spacing:-.01em;margin-top:3px;white-space:nowrap}
+.conf .px.lop{color:var(--ink);font-weight:700}
 .og-h .od span.best{display:block;margin-top:2px;font-weight:600;color:var(--home)}
 /* 29 Oct 2026: the pick's price at the card's bookmaker, and the substitutes fold */
 .og-l .m .og-bk{display:inline-block;margin-top:3px;font:600 11px var(--f-num);color:var(--home);letter-spacing:.01em}
@@ -2038,7 +2045,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${btts ? "" : pxChip("football", g.home.name, g.away.name, fixturePick(g), dayDate)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
   btn.addEventListener("click", ()=>{
     state.open = state.open===id ? null : id;
     render();
@@ -2804,6 +2811,26 @@ const bandLabel = a => a.to ? `${pct(a.from)}–${pct(a.to)}%` : `${pct(a.from)}
 // level have actually done, not a backtest. A tennis row with no live band
 // large enough carries no accuracy at all, so no chip is drawn.
 const accLive = a => a && a.rateSource === "live";
+// 6 Nov 2026 (Douglas, from his own slips: "1.4 versus 12"): the bookmakers'
+// prices on a list row, the pick's then the opposition's, from the priced
+// pool the Bets page already holds. Display only: nothing ranks by it. A
+// lopsided market (opposition 9+ in a three-way market) is marked, because
+// those favourites landed 84% v 76% quoted on the 2025-26 replay.
+function fixturePick(g){
+  const p = g.p || {}; if(!p.h && !p.a) return null;
+  const side = Math.max(p.h || 0, p.d || 0, p.a || 0);
+  return side === p.d ? null : side === p.h ? g.home.name : g.away.name;
+}
+function pxChip(sport, home, away, pick, date){
+  const pool = (window.__GROUPINGS__ || {}).check || [];
+  if(!pool.length || !pick) return "";
+  const ev = `${home} v ${away}`;
+  const c = pool.find(x => x.s === sport && x.e === ev && x.k === pick && (!date || x.d === date)) ||
+            pool.find(x => x.s === sport && x.e === ev && x.k === pick);
+  if(!c || !c.o || !c.op) return "";
+  const lop = !!c.dr && c.op >= OPP_LOP;
+  return `<span class="px${lop ? " lop" : ""}" title="Bookmakers' average: ${pick} ${(+c.o).toFixed(2)}, the other side ${(+c.op).toFixed(2)}${c.dr ? `, the draw ${(+c.dr).toFixed(2)}` : ""}${lop ? ". A lopsided market: the opposition is a long shot, and favourites like this landed well above their quote" : ""}. Display only; the list takes no bookmaker input.">${(+c.o).toFixed(2)} v ${(+c.op).toFixed(c.op >= 10 ? 1 : 2)}</span>`;
+}
 const accChip = a => !a ? "" : accLive(a)
   ? `<span class="acc" title="Published picks at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} graded so far">${pct(a.hit)}% live</span>`
   : `<span class="acc" title="Calls at ${bandLabel(a)} landed ${pct(a.hit)}% of ${a.n} games the model was never tuned on">${pct(a.hit)}% landed</span>`;
@@ -2964,7 +2991,7 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}</div>`;
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${pxChip(g.sport, g.home, g.away, homePick ? g.home : g.away, g.when && g.when.slice(0, 10))}</div>`;
   btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
   line.appendChild(star); line.appendChild(btn);
   const frag = document.createDocumentFragment();
@@ -3478,8 +3505,17 @@ function ogRead(l, frozen){
 // labelled form, never a bookmaker-looking number with an asterisk.
 function ogPrice(l, frozen){
   if(l.est) return `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>`;
-  return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l, frozen)}</span>`;
+  return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogOpp(l)}${ogBest(l)}${ogRead(l, frozen)}</span>`;
 }
+// 6 Nov 2026 (Douglas): the opposition's price beside the pick's. In a
+// three-way market it says how much of the rest is the draw; favourites
+// whose opposition is 9+ landed 84% v 76% quoted on last season's replay.
+function ogOpp(l){
+  if(l.est || !l.opp) return "";
+  const lop = l.draw && l.opp >= OPP_LOP;
+  return `<small class="opp${lop ? " lop" : ""}" title="The other side is priced ${(+l.opp).toFixed(2)}${l.draw ? `, the draw ${(+l.draw).toFixed(2)}` : ""}${lop ? ". A lopsided market: the opposition is a long shot and the draw is most of the rest" : ""}">v ${(+l.opp).toFixed(2)}${l.draw ? ` · draw ${(+l.draw).toFixed(2)}` : ""}</small>`;
+}
+const OPP_LOP = (window.__GROUPINGS__ && window.__GROUPINGS__.rules && window.__GROUPINGS__.rules.card && window.__GROUPINGS__.rules.card.oppMin) || 9;
 // 29 Oct 2026, Douglas: the card is written for one bookmaker (OG.rules.card.book,
 // William Hill). A pick shows that book's price when it has one; otherwise who
 // does price it, so a missing pick is known before the slip is written.
@@ -3905,9 +3941,9 @@ function renderToday(){
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2>
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
-      kicking off between 07:00 and 07:00 the next morning, three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
+      kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model at least 5 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
+      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay) and <b>the opposition priced ${(C.oppMin || 9).toFixed(0)} or longer</b> (6 Nov 2026: a lopsided market, where the draw is most of what is left; on last season's replay those favourites landed 84% against 76% quoted, and favourites with the opposition under 6 lost). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers 55%+), marked and graded apart.</p></div>
     <ol class="tb-play">

@@ -456,6 +456,7 @@ def price_football(L, dates, report):
             if row:
                 i = 0 if l["side"] == "h" else 2
                 l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
+                         opp=round(row["avg"][2 - i], 2), draw=round(row["avg"][1], 2),
                          bestBook=(row.get("maxBook") or [None, None, None])[i],
                          bookOdds=(row.get("ukBooks") or [{}, {}, {}])[i],
                          margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
@@ -486,7 +487,10 @@ def price_football(L, dates, report):
                 avg = [sum(v) / len(v) for v in prices.values() if v]
                 mean = sum(side) / len(side)
                 uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
+                other = prices["Away" if l["side"] == "h" else "Home"]
                 l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
+                         opp=round(sum(other) / len(other), 2) if other else None,
+                         draw=round(sum(prices["Draw"]) / len(prices["Draw"]), 2) if prices["Draw"] else None,
                          bestBook=uk_top[1], bookOdds=uk_px["Home" if l["side"] == "h" else "Away"], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
@@ -520,6 +524,7 @@ def price_espn(L, dates, report):
                 dec = american((ml.get("close") or ml.get("open") or {}).get("odds") or (o.get(f"{side}TeamOdds") or {}).get("moneyLine"))
                 if dec and dec > 1:
                     l.update(odds=dec, margin=margin_of([espn_ml(o, "home"), espn_ml(o, "away")]),
+                             opp=espn_ml(o, "away" if side == "home" else "home"),
                              src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); n += 1
         out[sport] = {"matched": n, "legs": len(want)}
     report["espn"] = out
@@ -571,6 +576,7 @@ def price_espn_soccer(L, dates, report):
                     if dec and dec > 1:
                         draw = american(((o.get("drawOdds") or {}).get("moneyLine")))
                         l.update(odds=dec, margin=margin_of([espn_ml(o, "home"), espn_ml(o, "away"), draw]) if draw else None,
+                                 opp=espn_ml(o, "away" if l["side"] == "h" else "home"), draw=draw,
                                  src=f"ESPN, {o.get('provider', {}).get('name', 'bookmaker')} moneyline"); matched += 1
     report["espn_soccer"] = {"calls": calls, "matched": matched, "legs": len(want)}
 
@@ -702,12 +708,17 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 ct = parse(ev.get("commence_time"))
                 if t and ct and abs((t - ct).total_seconds()) > 6 * 3600: continue
                 prices, books, margins, top, uk_px = [], set(), [], (0, None), {}
+                opp_px, draw_px = [], []
                 for b in ev.get("bookmakers") or []:
                     for m in b.get("markets") or []:
                         if m.get("key") != "h2h": continue
                         mg = margin_of([o.get("price") for o in m.get("outcomes") or []])
                         if mg: margins.append(mg)
                         for o in m.get("outcomes") or []:
+                            if not same(o.get("name", ""), l["pick"]):
+                                try: (draw_px if o.get("name") == "Draw" else opp_px).append(float(o["price"]))
+                                except (KeyError, ValueError, TypeError): pass
+                                continue
                             if same(o.get("name", ""), l["pick"]):
                                 try:
                                     pr = float(o["price"]); prices.append(pr); books.add(b.get("title") or b.get("key"))
@@ -716,7 +727,8 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                                 except (KeyError, ValueError): pass
                 if prices:
                     l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books), bestBook=top[1],
-                             bookOdds=uk_px,
+                             bookOdds=uk_px, opp=round(sum(opp_px) / len(opp_px), 2) if opp_px else None,
+                             draw=round(sum(draw_px) / len(draw_px), 2) if draw_px else None,
                              margin=round(sum(margins) / len(margins), 4) if margins else None,
                              pricedAt=read_at(os.path.join(cache_dir, f"oddsapi-{k}.json")),
                              src="The Odds API, UK average of " + (f"{len(books)} bookmakers" if len(books) != 1 else next(iter(books))))
@@ -850,7 +862,8 @@ def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
         r = _as_side(items[0], same(l["pick"], l["home"])) if items else None
         if not r: continue
         avg, best, book, n, mg = r
-        l.update(odds=avg, best=best, bestBook=book, books=n, margin=mg,
+        other = _as_side(items[0], not same(l["pick"], l["home"]))
+        l.update(odds=avg, best=best, bestBook=book, books=n, margin=mg, opp=other[0] if other else None,
                  pricedAt=read_at(os.path.join(cache_dir, f"apisports2-{host.split('.')[1]}-odds-{gid_}.json")),
                  src="API-Sports, average of " + (f"{n} bookmakers" if n != 1 else (book or "1 bookmaker")))
         rep["matched"] += 1
@@ -913,7 +926,10 @@ def price_pinnwire(L, dates, report, cache_dir=None, fetch=None):
             side = "home" if same_any(l["pick"], h) else "away" if same_any(l["pick"], a) else None
             o = ml.get(side) if side else None
             if not o or o <= 1: break
+            other = ml.get("away" if side == "home" else "home")
             l.update(odds=round(float(o), 2), best=round(float(o), 2), bestBook="Pinnacle", books=1,
+                     opp=round(float(other), 2) if other and other > 1 else None,
+                     draw=round(float(ml["draw"]), 2) if ml.get("draw") and ml["draw"] > 1 else None,
                      margin=margin_of([ml.get("home"), ml.get("away"), ml.get("draw")]), pricedAt=read_at(path),
                      src="Pinnacle (PinnWire)")
             matched += 1; break
@@ -1292,7 +1308,7 @@ CARD_BOOK = "William Hill"
 # the group and keep it inside its price range and above its chance floor.
 CARD_BENCH = 3
 CARD_KINDS = [("Card 2x", 2.0, 3.0, 0.30), ("Card 3x", 3.0, 4.6, 0.18)]
-CARD_LEGS = (3, 4)
+CARD_LEGS = (3, 4, 5)   # 6 Nov 2026: five, because lopsided legs are short (five at 1.25 make a 3x)
 CARD_ODDS = (1.15, 1.90)
 CARD_FAIR_MIN = 0.60
 CARD_POOL = 24
@@ -1354,6 +1370,19 @@ CARD_UNDER_MARKET = 0.05
 # not rated the side, it is not being cautious about a favourite. 5 to 10
 # under was positive on all three (+9.5%, +6.2%, +5.8%). CARD_RULE 5.
 CARD_UNDER_MAX = 0.10
+# 6 Nov 2026 (Douglas, from his own slips: "I've got this 1.4 versus 12"):
+# the opposition's price. In a three-way market it says how much of the rest
+# of the market is the draw. tools/card_legs_history.py on 2025-26, same
+# favourite band 1.15-1.35: opposition priced 9+ landed 83.9% v 76.0% quoted
+# (n 230, +3.0% at the average price, +5.5% at best); opposition at 6-9
+# landed 71.6% v 70.9% (-6.0%); opposition under 6 lost on both seasons. With
+# the under-market rule: 106 legs 86.8% v 75.4% (+7.5%) last season, 39 legs
+# 84.6% v 76.5% (+3.7%) this season. A Card football leg now needs the
+# opposition priced CARD_OPP_MIN or longer. Two-way markets (tennis, the US
+# sports, rugby) carry no draw, so there the opposition's price is just the
+# mirror of the pick's and the condition is not applied; the price is still
+# captured and shown for every sport. CARD_RULE 6.
+CARD_OPP_MIN = 9.0
 # The floor (29 Oct 2026, Douglas: "the minimum performance of the groups bets
 # over time"). A run of three good days is not a floor; the quote is. The
 # record carries, for the Card, how far landed sits from expected in standard
@@ -1389,7 +1418,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 5     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026)
+CARD_RULE = 6     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026)
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1487,6 +1516,12 @@ def card_fault(l, wide=False):
             and l["fair"] - l["pModel"] >= CARD_UNDER_MAX:
         return (f"{l['pick']}: the model ({pct(l['pModel'])}) is {round((l['fair'] - l['pModel']) * 100)} points under the bookmakers "
                 f"({pct(l['fair'])}), more than {round(CARD_UNDER_MAX * 100)}; that far under, the model has not rated the side (lost on every sample)")
+    if CARD_OPP_MIN and not wide and l.get("sport") == "football" and not l.get("est") and l.get("odds"):
+        if not l.get("opp"):
+            return f"{l['pick']}: no price for the opposition yet"
+        if l["opp"] < CARD_OPP_MIN:
+            return (f"{l['pick']}: the opposition is priced {l['opp']:.2f}, shorter than {CARD_OPP_MIN:.0f}; "
+                    f"the Card takes only favourites whose opposition is a long shot (the draw is most of the rest, and those landed well above quote)")
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin):
         return (f"{l['pick']}: a {l['sport']} pick needs the model and its tested rate both at {pct(smin)}+ "
@@ -1834,7 +1869,7 @@ def pct(x): return f"{round(x * 100)}%"
 def stale_price(cur, old):
     """This build's leg (unpriced) carrying the last confirmed price from the
     published leg, flagged stale, with fair and p recomputed on it."""
-    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src", "pricedAt", "bookOdds") if k in old}, est=False, stale=True)
+    cur = dict(cur, **{k: old[k] for k in ("odds", "best", "bestBook", "books", "margin", "src", "pricedAt", "bookOdds", "opp", "draw") if k in old}, est=False, stale=True)
     cur.pop("fair", None); cur["p"] = cur.get("pTested", cur["p"])
     return honest(cur)
 
@@ -2012,11 +2047,13 @@ def check_pool(L):
     """Every priced pick, compact, for the page's slip checker (25 Oct 2026):
     paste a slip, see each pick's model and bookmaker chance and any flag."""
     return [{"s": l["sport"], "e": l["event"], "k": l["pick"], "d": l["date"], "o": l["odds"],
-             "f": l.get("fair"), "m": l["pModel"], "x": 1 if l.get("listOff") else 0}
+             "f": l.get("fair"), "m": l["pModel"], "x": 1 if l.get("listOff") else 0,
+             "op": l.get("opp"), "dr": l.get("draw")}
             for l in L if not l.get("est") and l.get("fair") is not None]
 
 POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
-             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge")
+             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge",
+             "opp", "draw")
 
 
 def archive_pool(L, now, dates):
@@ -2046,6 +2083,7 @@ def archive_pool(L, now, dates):
                 old = have[k]
                 if not started and not l.get("est"):
                     old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
+                    if l.get("opp"): old["lastOpp"] = l["opp"]
                 continue
             if started: continue       # never add a leg after its start: the price would prove nothing
             row = {kk: l.get(kk) for kk in POOL_KEYS if kk in l}
@@ -2269,7 +2307,7 @@ def main():
                      "mult": {"odds": list(MULT_ODDS), "fairMin": MULT_FAIR_MIN, "modelMin": MULT_MODEL_MIN,
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
-                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
+                              "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),

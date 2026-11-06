@@ -10,7 +10,7 @@ import groupings as G
 DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 
-def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
+def leg(i, odds, model, when, sport="football", comp=None, margin=1.04, opp=None):
     # 29 Oct 2026: a football leg needs the model at least 5 points under the
     # bookmakers' chance (CARD_UNDER_MARKET), and since 31 Oct no more than 10
     # (CARD_UNDER_MAX): the board's standard 0.66 is read as 7 points under the
@@ -19,6 +19,9 @@ def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
          "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
          "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
+    # 6 Nov 2026: a football leg needs the opposition priced CARD_OPP_MIN+
+    # (the standard board is a lopsided market: opposition at 10.0)
+    if sport == "football": l["opp"] = opp if opp is not None else 10.0; l["draw"] = 5.0
     return G.honest(l)
 
 
@@ -280,7 +283,7 @@ class SportRule(unittest.TestCase):
         self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
 
     def test_old_rule_groups_rebuild(self):
-        self.assertEqual(G.CARD_RULE, 5)
+        self.assertEqual(G.CARD_RULE, 6)
         g = {"name": "Card 2x", "rule": 1, "legs": []}
         self.assertEqual(G.recheck_card(g, [])[0], None)
 
@@ -508,3 +511,33 @@ class PoolArchive(unittest.TestCase):
             self.assertEqual(a["legs"][0]["odds"], 1.5); self.assertEqual(a["legs"][0]["lastOdds"], 1.45)
         finally:
             G.ARCHIVE = saved
+
+
+class Lopsided(unittest.TestCase):
+    """6 Nov 2026: the opposition's price. A football leg whose opposition is
+    priced under CARD_OPP_MIN is out; one with no opposition price is out
+    until a build reads one; two-way sports are untouched."""
+    def test_short_opposition_is_out(self):
+        f = G.card_fault(leg(1, 1.40, 0.66, f"{DATE}T12:00:00Z", opp=4.5))
+        self.assertIn("opposition is priced 4.50", f)
+
+    def test_long_opposition_is_in(self):
+        self.assertIsNone(G.card_fault(leg(1, 1.25, 0.66, f"{DATE}T12:00:00Z", opp=11.0)))
+
+    def test_no_opposition_price_is_out(self):
+        l = leg(1, 1.25, 0.66, f"{DATE}T12:00:00Z"); l["opp"] = None
+        self.assertIn("no price for the opposition", G.card_fault(l))
+
+    def test_wide_rule_and_two_way_sports_ignore_it(self):
+        self.assertIsNone(G.card_fault(leg(1, 1.40, 0.66, f"{DATE}T12:00:00Z", opp=4.5), wide=True))
+        self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
+
+    def test_five_short_legs_make_a_3x(self):
+        L = [leg(i, 1.25, 0.66, f"{DATE}T{12 + i:02d}:00:00Z", opp=12.0) for i in range(6)]
+        g = G.best_card(L, set(), G.lock_time(DATE, "Day"), "Card 3x")
+        self.assertIsNotNone(g); self.assertEqual(len(g["legs"]), 5)
+
+    def test_pool_carries_the_opposition_price(self):
+        self.assertIn("opp", G.POOL_KEYS); self.assertIn("draw", G.POOL_KEYS)
+        row = G.check_pool([dict(leg(1, 1.25, 0.66, f"{DATE}T12:00:00Z", opp=11.0), fair=0.78)])[0]
+        self.assertEqual(row["op"], 11.0)

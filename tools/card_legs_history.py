@@ -140,7 +140,7 @@ def trebles(L):
             "z": round((w - exp) / math.sqrt(sum(g["p"] * (1 - g["p"]) for g in out)), 2) if n else None}
 
 
-def card_season(L):
+def card_season(L, variant="live"):
     """The whole Card, as groupings.build_card builds it today, over a season
     of football-data legs: one window a day, Card 2x and 3x then a second of
     each, CARD_STAKE units, graded strictly. Returns the summary and the
@@ -153,13 +153,13 @@ def card_season(L):
         leg = {"sport": "football", "event": f"{l['home']} v {l['away']}", "pick": l["home"] if l["side"] == "h" else l["away"],
                "comp": l["code"], "code": l["code"], "when": when, "date": l["date"], "odds": round(l["price"], 2), "best": round(l["best"], 2),
                "margin": round(l["margin"], 4), "est": False, "pModel": round(l["model"], 4), "p": round(l["model"], 4),
-               "hit": 0.8, "n": 100, "won": l["won"], "core": l["core"]}
+               "hit": 0.8, "n": 100, "won": l["won"], "core": l["core"], "opp": round(l["opp"], 2), "draw": round(l["draw"], 2)}
         G.honest(leg)
         slot = G.uk_slot(leg)
         if slot: by[slot[0]].append(leg)
     days, run, series, months = {}, 0.0, [], defaultdict(lambda: [0, 0, 0.0, 0.0])
     for d in sorted(by):
-        gs = CR.build(by[d], d, "live")
+        gs = CR.build(by[d], d, variant)
         if not gs: continue
         days[d] = gs
         pnl = sum(g["stake"] * (g["odds"] - 1) if g["won"] else -g["stake"] for g in gs)
@@ -196,7 +196,7 @@ def main():
     log = []
     data = tune.load(None)
     report = {"generated": datetime.now(timezone.utc).isoformat(timespec="seconds"), "source": "football-data.co.uk",
-              "rule": {"fairMin": G.CARD_FAIR_MIN, "odds": G.CARD_ODDS, "underMarket": G.CARD_UNDER_MARKET}, "seasons": {}}
+              "rule": {"fairMin": G.CARD_FAIR_MIN, "odds": G.CARD_ODDS, "underMarket": G.CARD_UNDER_MARKET, "underMax": G.CARD_UNDER_MAX, "oppMin": G.CARD_OPP_MIN, "legs": list(G.CARD_LEGS)}, "seasons": {}}
     for split in ("fit", "check"):
         preds = O.model_probs(tune.lambdas(data, split, meta=True))
         prices, season = [], None
@@ -216,6 +216,7 @@ def main():
             res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
         res["trebles"] = trebles([l for l in L if CUTS["under5"](l["model"], l["fair"])])
         res["card"] = card_season(L)
+        res["cardRule5"] = card_season(L, "rule5")   # 6 Nov 2026: the Card as it was before the opposition-price condition
         res["lopsided"] = {"all": lopsided(L), "under5": lopsided([l for l in L if CUTS["under5"](l["model"], l["fair"])])}
         res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
         report["seasons"][split] = res
@@ -228,8 +229,11 @@ def main():
             for band, row in tab.items():
                 for k, v in row.items():
                     print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
+        for label in ("card", "cardRule5"):
+            c = res[label]
+            if c.get("groups"): print(f"  {label}: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
         c = res["card"]
-        if c.get("groups"): print(f"  card: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
+        if False and c.get("groups"): print(f"  card: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
     holds = lambda c: c.get("n", 0) >= O.MIN_BETS and c.get("gap", 0) > 0 and c.get("roi", 0) > 0
     report["verdict"] = ("The under-market cut lands above its quote and returns a profit on both seasons." if holds(u_fit) and holds(u_chk) else
