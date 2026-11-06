@@ -1,9 +1,14 @@
 # The Card's leg rule replayed on past seasons (tools/card_legs_history.py),
-# run by hand on any branch; writes nothing to the repo, the report is an
-# artifact. tune.yml runs the same tool on Mondays and commits its output.
+# run on any pull request that changes the tool, and by hand; writes nothing
+# to the repo, the report is an artifact. tune.yml runs the same tool on
+# Mondays and commits its output.
 name: Card legs history
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - tools/card_legs_history.py
+      - .github/workflows/card-legs-history.yml
 permissions:
   contents: read
 jobs:
