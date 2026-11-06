@@ -216,3 +216,7 @@ needs. Verdict: 80% stays, no per-league bars. Reopen at 100 calls at 80% on
 70% (78.2%); all intervals span zero. Per league at 80%: pt.1 4/4, es.1 2/2,
 nl.1 1/2, fin.1 1/2, de.1 1/1. The 100-call reopen condition is not met.
 Verdict: 80% stays, no per-league bars.
+
+## Replay of the league bar rerun, 6 Nov 2026 (Nina): no change
+
+`tools/list_bar_replay.py` rerun unchanged. Fit season: 6,451 win picks; n=313/168/130/86/56/35 at 70/75/77.5/80/82.5/85%, hit 78.3/81.5/82.3/81.4/78.6/65.7%. Only 85% differs from 80% (-15.4 points, interval -25.8 to -6.8, and a cut, not a gain); 70% is -3.3 (-8.9 to +3.1). Check season: 1,555 win picks; 45/20/13/8/4/2 picks at the same bars, hit 77.8/75.0/84.6/75.0/50.0/50.0%; every interval spans zero. Per league at 80% on the check season: es.1 2/2, nl.1 1/2, pt.1 2/2, de.1 1/1, fin.1 0/1; no league near the 30 calls a per-league bar needs (fit season: pt.1 17/22 is the largest). The 100-call reopen condition (80% on the check season) is not met (8 calls). Verdict: 80% stays, no per-league bars. Fails the gates, so a write-up, not a change.

@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 Daily List bar replay, rerun: no change (tag pending)
+
+**What changed:** a dated note only, appended to `claude/daily-list.md`. No code, model or rule changed.
+**Evidence:** fit season 80%+ 81.4% of 86; 75%+ 81.5% of 168; 85%+ 65.7% of 35 (-15.4 v 80%, interval -25.8 to -6.8). Check season only 8 calls at 80% (75.0%); all intervals span zero. No league has 30 calls at 80%.
+**Files:** `claude/daily-list.md`, `RELEASES.md`.
+**Not changed:** `LIST_MIN`, `sports.list_threshold`, any per-league bar.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-06 Calibration by band and sport, rerun: nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/calibration-rerun-2026-11-06.md`. No code, model or rule changed.
