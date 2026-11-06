@@ -1,0 +1,469 @@
+{
+ "date": "2026-11-06",
+ "published": "2026-11-06T12:59:39Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 6,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-06T01:34:14Z",
+   "lockAt": "2026-11-06T11:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.33,
+   "p": 0.3853,
+   "implied": 0.4287,
+   "bestOdds": 2.33,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Maaya Rajeshwaran Revathi v Robin Montgomery",
+     "pick": "Robin Montgomery",
+     "tour": "WTA",
+     "tournament": "Chennai Open",
+     "players": [
+      "Maaya Rajeshwaran Revathi",
+      "Robin Montgomery"
+     ],
+     "comp": "Chennai Open Quarterfinal",
+     "when": "2026-11-06T11:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-06",
+     "id": "186597",
+     "fx": {
+      "id": "186597",
+      "espn": [
+       "Maaya Rajeshwaran Revathi",
+       "Robin Montgomery"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-06",
+      "time": "11:00",
+      "timeTbc": false,
+      "tournament": "Chennai Open",
+      "round": "Quarterfinal",
+      "surface": "Hard",
+      "playerA": "Maaya Rajeshwaran Revathi",
+      "playerB": "Robin Montgomery",
+      "ratingA": {
+       "elo": 1829,
+       "matches": 27,
+       "surfaceElo": 1750
+      },
+      "ratingB": {
+       "elo": 2131,
+       "matches": 254,
+       "surfaceElo": 1953
+      },
+      "p": {
+       "a": 0.1887,
+       "b": 0.8113
+      },
+      "pick": "Robin Montgomery",
+      "confidence": 0.8113,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.75,
+       "n": 32,
+       "cumHit": 0.75,
+       "cumN": 32,
+       "quoted": 0.8235,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.8113,
+     "p": 0.8169,
+     "hit": 0.75,
+     "n": 32,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.19,
+     "best": 1.19,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 5.39,
+     "draw": null,
+     "margin": 1.0287,
+     "pricedAt": "2026-11-06T07:53:07Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8403,
+     "pTested": 0.75,
+     "fair": 0.8169,
+     "edge": -0.1075,
+     "basis": "bookmakers",
+     "firstOdds": 1.19
+    },
+    {
+     "sport": "nba",
+     "event": "Milwaukee Bucks v Toronto Raptors",
+     "home": "Milwaukee Bucks",
+     "away": "Toronto Raptors",
+     "pick": "Toronto Raptors",
+     "comp": "NBA",
+     "when": "2026-11-07T01:00Z",
+     "date": "2026-11-07",
+     "id": "401909292",
+     "pModel": 0.6543,
+     "p": 0.6861,
+     "hit": 0.769,
+     "n": 658,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909292",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-07T01:00Z",
+      "home": "Milwaukee Bucks",
+      "away": "Toronto Raptors",
+      "neutral": false,
+      "pHome": 0.3457,
+      "pick": "Toronto Raptors",
+      "confidence": 0.6543,
+      "tier": "Firm",
+      "eloH": 1368,
+      "eloA": 1515,
+      "gamesH": 266,
+      "gamesA": 261,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6776,
+       "n": 183,
+       "cumHit": 0.769,
+       "cumN": 658
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "102-109",
+        "opp": "Boston Celtics",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "100-112",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "111-136",
+        "opp": "Cleveland Cavaliers",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "100-132",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "W",
+        "score": "110-102",
+        "opp": "Indiana Pacers",
+        "home": true,
+        "date": "2026-10-27"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "109-128",
+        "opp": "Denver Nuggets",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "125-118",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "125-131",
+        "opp": "Los Angeles Lakers",
+        "home": false,
+        "date": "2026-11-02"
+       },
+       {
+        "r": "L",
+        "score": "114-121",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-10-30"
+       },
+       {
+        "r": "W",
+        "score": "129-99",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-10-28"
+       }
+      ],
+      "recordH": {
+       "w": 1,
+       "l": 7,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 4,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-02-22",
+        "home": "Milwaukee Bucks",
+        "away": "Toronto Raptors",
+        "score": "94-122"
+       },
+       {
+        "date": "2025-12-19",
+        "home": "Milwaukee Bucks",
+        "away": "Toronto Raptors",
+        "score": "105-111"
+       },
+       {
+        "date": "2025-11-05",
+        "home": "Toronto Raptors",
+        "away": "Milwaukee Bucks",
+        "score": "128-100"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.4,
+     "margin": 1.0411,
+     "opp": 3.06,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-06T07:53:10Z",
+     "implied": 0.7143,
+     "pTested": 0.6543,
+     "fair": 0.6861,
+     "edge": -0.084,
+     "basis": "bookmakers",
+     "firstOdds": 1.38,
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-06T12:59:39Z",
+     "lockPrice": {
+      "odds": 1.39,
+      "best": 1.39,
+      "book": null,
+      "at": "2026-11-06T12:59:39Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Dallas Mavericks v Utah Jazz",
+     "home": "Dallas Mavericks",
+     "away": "Utah Jazz",
+     "pick": "Dallas Mavericks",
+     "comp": "NBA",
+     "when": "2026-11-07T01:00Z",
+     "date": "2026-11-07",
+     "id": "401909290",
+     "pModel": 0.7159,
+     "p": 0.6875,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909290",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-07T01:00Z",
+      "home": "Dallas Mavericks",
+      "away": "Utah Jazz",
+      "neutral": false,
+      "pHome": 0.7159,
+      "pick": "Dallas Mavericks",
+      "confidence": 0.7159,
+      "tier": "Strong",
+      "eloH": 1456,
+      "eloA": 1331,
+      "gamesH": 278,
+      "gamesA": 254,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "111-112",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "100-115",
+        "opp": "Sacramento Kings",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "116-111",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "120-96",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "W",
+        "score": "113-109",
+        "opp": "Miami Heat",
+        "home": false,
+        "date": "2026-10-26"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "113-120",
+        "opp": "New Orleans Pelicans",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "97-119",
+        "opp": "San Antonio Spurs",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "90-112",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "L",
+        "score": "111-117",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "L",
+        "score": "105-110",
+        "opp": "Memphis Grizzlies",
+        "home": true,
+        "date": "2026-10-27"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 4,
+       "d": 0
+      },
+      "recordA": {
+       "w": 1,
+       "l": 7,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-01-17",
+        "home": "Dallas Mavericks",
+        "away": "Utah Jazz",
+        "score": "138-120"
+       },
+       {
+        "date": "2026-01-16",
+        "home": "Dallas Mavericks",
+        "away": "Utah Jazz",
+        "score": "144-122"
+       },
+       {
+        "date": "2026-01-09",
+        "home": "Utah Jazz",
+        "away": "Dallas Mavericks",
+        "score": "116-114"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.4,
+     "margin": 1.039,
+     "opp": 3.08,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-06T07:53:10Z",
+     "implied": 0.7143,
+     "pTested": 0.7159,
+     "fair": 0.6875,
+     "edge": -0.0375,
+     "basis": "bookmakers",
+     "firstOdds": 1.41,
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-06T12:59:39Z",
+     "lockPrice": {
+      "odds": 1.36,
+      "best": 1.36,
+      "book": null,
+      "at": "2026-11-06T12:59:39Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-06T07:53:00Z",
+   "archivedAt": "2026-11-06T12:59:39Z"
+  }
+ ]
+}
