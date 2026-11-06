@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 (tag pending): free-source check for uncovered leagues (docs only)
+
+**What changed:** nothing for readers. Re-probed free sources for the remaining gaps and recorded the result in `claude/data-expansion-plan.md`.
+**Evidence:** ESPN scoreboard slugs for 3. Liga, Liga Portugal 2, UAE, Poland 1/2, Sweden 3, Australia 2 and Vietnam return 400; slugs that answer 200 are already covered.
+**Files:** `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** no source, model or league code.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-06 Retry for the NFL/MLB/NBA/rugby and tennis ESPN fetches (tag pending)
 
 **What changed:** `sports._day` and `build_tennis._get_day` tried each ESPN host once and gave up, so one network blip dropped a whole day of games (football's `_espn_day` already retried). Now, when every host fails on something transient (timeout, reset, 5xx, 429), the round repeats once after a 1s pause. A 4xx such as 404 is not retried. `sports._day` still returns None (unreadable, not an empty day) after the last try; tennis still returns [] with the errors logged.
