@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-11-06 Separate attack and defence shrinkage tested and rejected (tag pending)
+
+**What changed:** nothing for readers. A dated note and the test harness.
+**Evidence:** nine attack / defence shrink pairs, 2025/26 fit (6,474) and 2026/27 check (1,557), paired and bootstrapped, live and refitted calibration. None passes the gates on both seasons; best fit-season gain -0.0005 (4 / 8, refit) is +0.0003 on the check. See `claude/att-def-shrink-2026-11-06.md`.
+**Files:** `claude/att-def-shrink-2026-11-06.md`, `tools/att_def_shrink_eval.py`, `RELEASES.md`.
+**Not changed:** `engine.py`, calibration, any model constant.
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-06 Tennis legs in groups (27/49 v 35): located, nothing to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-06.md`. No code, model or rule changed.
