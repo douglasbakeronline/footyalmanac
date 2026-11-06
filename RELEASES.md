@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 Tennis legs in groups (27/49 v 35): located, nothing to ship (tag pending)
+
+**What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-06.md`. No code, model or rule changed.
+**Evidence:** 49 settled tennis legs since 19 Oct landed 27 (55%) v 35.4 quoted. Model under 75%: 16 of 32; 75%+: 11 of 17 (65% v 81%, z about -1.6). Built before the 29 Oct tennis floor: 19 of 34; after: 6 of 10. No tennis price history exists to replay a further rule and every cut is under 50 legs, so choosing one would fit the live record (Rule 1).
+**Files:** `claude/tennis-legs-gap-2026-11-06.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, `CARD_SPORT_MIN`, any model number.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-06 Tennis Daily List: ATP bar to 80% (tag pending)
 
 **What changed:** `build_tennis.LIST_MIN` for ATP (and the ranked key) 75% -> 80%. ATP picks at 75-80% go to the reserve; WTA stays at 75%. No rating or confidence number changed.
