@@ -35,7 +35,7 @@ back before trusting any of it.
 
 Standard library only, like the rest of the project.
 """
-import argparse, json, os, re, sys, unicodedata, urllib.request
+import argparse, json, os, re, sys, time, unicodedata, urllib.error, urllib.request
 import rankings as RK
 from datetime import date, datetime, timedelta, timezone
 try:
@@ -330,15 +330,28 @@ def tier_of(p):
 # fetch — UNVERIFIED, see module docstring
 # ---------------------------------------------------------------------------
 
-def _get_day(tour_slug, day, timeout, errs):
+def _get_day(tour_slug, day, timeout, errs, pause=1.0):
+    """One tour, one date. If every host fails on something transient the round
+    is repeated once after a pause; a 4xx such as 404 is not retried."""
     d = day.strftime("%Y%m%d")
-    for host in ESPN_HOSTS:
-        url = host + ESPN_PATH.format(tour=tour_slug, d=d)
-        try:
-            req = urllib.request.Request(url, headers=ESPN_HEADERS)
-            return json.loads(urllib.request.urlopen(req, timeout=timeout).read()).get("events") or []
-        except Exception as e:
-            errs.append(f"{tour_slug} {d}: {type(e).__name__} {e}")
+    for rnd in range(2):
+        transient = False
+        for host in ESPN_HOSTS:
+            url = host + ESPN_PATH.format(tour=tour_slug, d=d)
+            try:
+                req = urllib.request.Request(url, headers=ESPN_HEADERS)
+                return json.loads(urllib.request.urlopen(req, timeout=timeout).read()).get("events") or []
+            except urllib.error.HTTPError as e:
+                errs.append(f"{tour_slug} {d}: {type(e).__name__} {e}")
+                if e.code >= 500 or e.code == 429:
+                    transient = True
+            except Exception as e:
+                errs.append(f"{tour_slug} {d}: {type(e).__name__} {e}")
+                transient = True
+        if not transient:
+            break
+        if not rnd:
+            time.sleep(pause)
     return []
 
 
