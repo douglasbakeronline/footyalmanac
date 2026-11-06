@@ -1092,7 +1092,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .mkt b{color:var(--ink);font-weight:600}
 .mkt.h{text-align:left}.mkt.d{text-align:center}.mkt.a{text-align:right}
 .mkt .val{background:var(--cover-ink);color:var(--yellow);padding:0 4px;border-radius:2px;font-weight:700}
-.mkt .opp-long{color:var(--red)}.mkt .opp-short{color:var(--mute-ink,#6e6355)}
+.mkt .hda b{font-weight:500;color:var(--mute-ink,#6e6355)}.mkt .hda b.pk{font-weight:700;color:var(--ink)}.mkt .hda b.opp-long{color:var(--red);font-weight:600}
+.mkt .hda i{font-style:normal;margin:0 3px;color:var(--rule)}
 .og-l small .opp{color:var(--ink);font-family:var(--f-num)}
 .mktgrid{width:100%;border-collapse:collapse;font-family:var(--f-num);font-size:12.5px;margin:4px 0 2px}
 .mktgrid th{font-family:var(--f-ui);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
@@ -1843,17 +1844,24 @@ function probBar(h, d, a, min){
 /* 6 Nov 2026, Douglas: the opposition's price beside the pick's. On last
    season's replay, favourites whose opposition was priced 9+ landed 84% v
    76% quoted; under 6, below quote. Shown for every sport, display only. */
-function oppChip(m, i){
-  if(!m || !m.avg || i === 1) return "";
-  const o = m.avg[2 - i]; if(!o) return "";
-  return ` · opp <b class="${o >= 9 ? "opp-long" : o < 6 ? "opp-short" : ""}">${(+o).toFixed(2)}</b>`;
+/* 6 Nov 2026, Douglas: "why can't I see the odds for home and away". The
+   three prices in the order every bookmaker lists them, home / draw / away,
+   the pick in bold, the opposition red when 9+ (the Card's condition). */
+function hdaChip(m, i){
+  if(!m || !m.avg || m.avg.length < 3) return "";
+  const cls = j => j === i ? "pk" : (j === 2 - i && i !== 1 && m.avg[j] >= 9) ? "opp-long" : "";
+  return `<span class="hda" title="Bookmakers' average price for the home win, the draw and the away win">${[0, 1, 2].map(j => `<b class="${cls(j)}">${(+m.avg[j]).toFixed(2)}</b>`).join("<i>/</i>")}</span>`;
 }
 function oppLine(g){
   const pool = (OG && OG.check) || []; if(!pool.length || !g.pick) return "";
   const d = (g.when || "").slice(0, 10);
   const c = pool.find(x => x.k === g.pick && x.d === d && (x.e === `${g.home} v ${g.away}` || x.e === `${g.away} v ${g.home}`));
   if(!c || !c.o) return "";
-  return `<div class="mkt ${g.pick === g.home ? "h" : "a"}" title="Bookmakers' price for the pick, and for the other side. Display only, never used by the model.">Bookies <b>${(+c.o).toFixed(2)}</b>${c.p ? ` · opp <b>${(+c.p).toFixed(2)}</b>` : ""}</div>`;
+  const hp = g.pick === g.home;
+  const px = hp ? [c.o, c.w, c.p] : [c.p, c.w, c.o];
+  const avg = c.w ? px : [px[0], null, px[2]];
+  const parts = avg.map((o, j) => o ? `<b class="${(j === 0) === hp ? "pk" : (o >= 9 ? "opp-long" : "")}">${(+o).toFixed(2)}</b>` : null).filter(Boolean);
+  return `<div class="mkt ${hp ? "h" : "a"}" title="Bookmakers' price for ${g.home}${c.w ? ", the draw" : ""} and ${g.away}. Display only, never used by the model.">Bookies <span class="hda">${parts.join("<i>/</i>")}</span></div>`;
 }
 /* Bookmakers' fair probability and best price for the model's favoured
    outcome. The "value" tag only exists if odds.py's backtest opened the gate. */
@@ -1862,7 +1870,7 @@ function mktLine(g){
   const mp = [g.p.h, g.p.d, g.p.a];
   const i = mp.indexOf(Math.max(...mp));
   const v = g.value ? ` · <b class="val">value +${Math.round(g.value.ev*100)}%</b>` : "";
-  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. ${g.market.src === "API-Football" ? `API-Football, ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build` : "Collected Friday for the weekend and Tuesday for midweek"}, so it may have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${oppChip(g.market, i)}${v}</div>`;
+  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. ${g.market.src === "API-Football" ? `API-Football, ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build` : "Collected Friday for the weekend and Tuesday for midweek"}, so it may have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · ${hdaChip(g.market, i)}${v}</div>`;
 }
 
 function bar(g){

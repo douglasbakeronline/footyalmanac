@@ -36,6 +36,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-06-2 (pending tag): home / draw / away prices on every row
+
+**What changed.** Douglas (6 Nov 2026): "why can't I see the odds for home
+and away". The price chip under each Daily List and board row now lists the
+bookmakers' three prices in the order every bookmaker uses, home / draw /
+away, the pick in bold and the opposition in red when priced 9+ (the Card's
+condition); two-outcome sports show the two. Replaces "best 1.18 · opp 10.89".
+
+**Files.** `index.html` (`hdaChip`, `oppLine`). Checked at 1280 and 400.
+
+**Roll back.** `git revert` the release commit.
+
 ## release-2026-11-06 (pending tag): the opposition's price, Card rule 6
 
 **What changed.** Douglas (6 Nov 2026) noticed his winning hand-picks were
