@@ -36,6 +36,39 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-06 (pending tag): the opposition's price, Card rule 6
+
+**What changed.** Douglas (6 Nov 2026) noticed his winning hand-picks were
+favourites whose opposition was priced 10-12 and his losers favourites whose
+opposition was priced about 4. Tested on last season's replay it holds:
+favourites with the opposition at 9+ landed 84.1% v 76.0% quoted (+3.3% as
+singles, +5.8% at best price), with the opposition at 4-6 they landed 63.7% v
+61.8% (-4.4%); the same split holds within one favourite price band and on
+this season. With the Card's under-market rule, 106 legs landed 86.8% v 75.4%
+(+7.5%) last season and 39 landed 84.6% v 76.5% (+3.7%) this. So: every price
+source now records the opposition's price (and the draw's) on each leg, for
+every sport; a football Card leg needs the opposition priced 9+
+(`CARD_OPP_MIN`, `CARD_RULE` 6); the page shows the opposition's price on
+every Bets leg, substitute and Daily List row that has a bookmaker price;
+groups may have five picks (`CARD_LEGS`), since legs with the opposition at
+9+ are short.
+Football only for the rule: in two-outcome sports the opposition's price is
+the arithmetic complement of the favourite's. `claude/opposition-price-2026-11-06.md`.
+
+**Evidence.** `tools/card_legs_history.py` `lopsided` table, run on PR #143
+(`card-legs-history.yml`, new, runs the replay on any pull request that
+touches the tool).
+
+**Files.** `groupings.py`, `index.html`, `tools/card_replay.py` (variants
+`rule5`, `opp7`), `tools/card_legs_history.py`, `.github/workflows/card-legs-history.yml`,
+`tests/test_groupings_card.py`, `claude/opposition-price-2026-11-06.md`, `CLAUDE.md`.
+
+**Not changed.** The Model card, the wide groups, the Daily List's ranking
+(prices are display only), the pool archive format (two keys added).
+
+**Roll back.** `git revert` the release commit; the Card returns to rule 5 at
+the next build and the record tallies the rule-6 groups apart (`cardByRule`).
+
 ## release-2026-11-05-3 (pending tag): more from the office, twice a day
 
 **What changed.** Douglas asked for more delivered output from the autonomous

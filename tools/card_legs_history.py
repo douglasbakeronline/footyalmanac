@@ -124,7 +124,7 @@ def card_season(L):
         leg = {"sport": "football", "event": f"{l['home']} v {l['away']}", "pick": l["home"] if l["side"] == "h" else l["away"],
                "comp": l["code"], "code": l["code"], "when": when, "date": l["date"], "odds": round(l["price"], 2), "best": round(l["best"], 2),
                "margin": round(l["margin"], 4), "est": False, "pModel": round(l["model"], 4), "p": round(l["model"], 4),
-               "hit": 0.8, "n": 100, "won": l["won"], "core": l["core"]}
+               "hit": 0.8, "n": 100, "won": l["won"], "core": l["core"], "opp": round(l["opp"], 2), "draw": round(l["draw"], 2)}
         G.honest(leg)
         slot = G.uk_slot(leg)
         if slot: by[slot[0]].append(leg)

@@ -10,7 +10,7 @@ import groupings as G
 DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
 
 
-def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
+def leg(i, odds, model, when, sport="football", comp=None, margin=1.04, opp=None):
     # 29 Oct 2026: a football leg needs the model at least 5 points under the
     # bookmakers' chance (CARD_UNDER_MARKET), and since 31 Oct no more than 10
     # (CARD_UNDER_MAX): the board's standard 0.66 is read as 7 points under the
@@ -18,7 +18,8 @@ def leg(i, odds, model, when, sport="football", comp=None, margin=1.04):
     if sport == "football" and model == 0.66: model = round((1 / odds) / margin - 0.07, 4)
     l = {"event": f"e{i} v x", "pick": f"p{i}", "sport": sport, "comp": comp or f"c{i}", "odds": odds,
          "p": model, "pModel": model, "when": when, "est": False, "margin": margin, "date": DATE,
-         "code": "en.1" if sport == "football" else None}     # 29 Oct 2026: a core league
+         "code": "en.1" if sport == "football" else None,     # 29 Oct 2026: a core league
+         "opp": opp if opp is not None else 10.0}             # 6 Nov 2026: the opposition priced 9+ (CARD_OPP_MIN)
     return G.honest(l)
 
 
@@ -280,7 +281,7 @@ class SportRule(unittest.TestCase):
         self.assertIsNone(G.card_fault(leg(5, 1.40, 0.66, f"{DATE}T20:00:00Z", sport="nba")))
 
     def test_old_rule_groups_rebuild(self):
-        self.assertEqual(G.CARD_RULE, 5)
+        self.assertEqual(G.CARD_RULE, 6)
         g = {"name": "Card 2x", "rule": 1, "legs": []}
         self.assertEqual(G.recheck_card(g, [])[0], None)
 
@@ -508,3 +509,24 @@ class PoolArchive(unittest.TestCase):
             self.assertEqual(a["legs"][0]["odds"], 1.5); self.assertEqual(a["legs"][0]["lastOdds"], 1.45)
         finally:
             G.ARCHIVE = saved
+
+
+class OppositionPrice(unittest.TestCase):
+    """6 Nov 2026: a football leg needs the opposition priced CARD_OPP_MIN
+    (9+); unpriced opposition fails too. Other sports are not judged on it."""
+    def test_short_opposition_fails(self):
+        l = leg(1, 1.30, 0.66, f"{DATE}T15:00:00Z", opp=4.5)
+        self.assertIn("opposition is priced 4.50", G.card_fault(l))
+    def test_long_opposition_passes(self):
+        self.assertIsNone(G.card_fault(leg(1, 1.30, 0.66, f"{DATE}T15:00:00Z", opp=11.0)))
+    def test_unpriced_opposition_fails(self):
+        l = leg(1, 1.30, 0.66, f"{DATE}T15:00:00Z"); l["opp"] = None
+        self.assertIn("no bookmaker price for the opposition", G.card_fault(l))
+    def test_tennis_not_judged(self):
+        l = leg(1, 1.25, 0.80, f"{DATE}T15:00:00Z", sport="tennis", opp=4.0); l["hit"] = 0.8
+        self.assertIsNone(G.card_fault(l))
+    def test_wide_not_judged(self):
+        l = leg(1, 1.50, 0.60, f"{DATE}T15:00:00Z", opp=4.0)
+        self.assertIsNone(G.card_fault(l, wide=True))
+    def test_rule_published(self):
+        self.assertEqual(G.CARD_OPP_MIN, {"football": 9.0})

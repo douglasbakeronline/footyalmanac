@@ -1092,6 +1092,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .mkt b{color:var(--ink);font-weight:600}
 .mkt.h{text-align:left}.mkt.d{text-align:center}.mkt.a{text-align:right}
 .mkt .val{background:var(--cover-ink);color:var(--yellow);padding:0 4px;border-radius:2px;font-weight:700}
+.mkt .opp-long{color:var(--red)}.mkt .opp-short{color:var(--mute-ink,#6e6355)}
+.og-l small .opp{color:var(--ink);font-family:var(--f-num)}
 .mktgrid{width:100%;border-collapse:collapse;font-family:var(--f-num);font-size:12.5px;margin:4px 0 2px}
 .mktgrid th{font-family:var(--f-ui);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--mute);font-weight:700;text-align:right;padding:3px 6px}
@@ -1838,6 +1840,21 @@ function probBar(h, d, a, min){
   </div>`;
 }
 
+/* 6 Nov 2026, Douglas: the opposition's price beside the pick's. On last
+   season's replay, favourites whose opposition was priced 9+ landed 84% v
+   76% quoted; under 6, below quote. Shown for every sport, display only. */
+function oppChip(m, i){
+  if(!m || !m.avg || i === 1) return "";
+  const o = m.avg[2 - i]; if(!o) return "";
+  return ` · opp <b class="${o >= 9 ? "opp-long" : o < 6 ? "opp-short" : ""}">${(+o).toFixed(2)}</b>`;
+}
+function oppLine(g){
+  const pool = (OG && OG.check) || []; if(!pool.length || !g.pick) return "";
+  const d = (g.when || "").slice(0, 10);
+  const c = pool.find(x => x.k === g.pick && x.d === d && (x.e === `${g.home} v ${g.away}` || x.e === `${g.away} v ${g.home}`));
+  if(!c || !c.o) return "";
+  return `<div class="mkt ${g.pick === g.home ? "h" : "a"}" title="Bookmakers' price for the pick, and for the other side. Display only, never used by the model.">Bookies <b>${(+c.o).toFixed(2)}</b>${c.p ? ` · opp <b>${(+c.p).toFixed(2)}</b>` : ""}</div>`;
+}
 /* Bookmakers' fair probability and best price for the model's favoured
    outcome. The "value" tag only exists if odds.py's backtest opened the gate. */
 function mktLine(g){
@@ -1845,7 +1862,7 @@ function mktLine(g){
   const mp = [g.p.h, g.p.d, g.p.a];
   const i = mp.indexOf(Math.max(...mp));
   const v = g.value ? ` · <b class="val">value +${Math.round(g.value.ev*100)}%</b>` : "";
-  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. ${g.market.src === "API-Football" ? `API-Football, ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build` : "Collected Friday for the weekend and Tuesday for midweek"}, so it may have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${v}</div>`;
+  return `<div class="mkt ${"hda"[i]}" title="Bookmakers' average with their margin taken out, and the best single price on file, for the outcome the model favours. ${g.market.src === "API-Football" ? `API-Football, ${g.market.books} bookmaker${g.market.books === 1 ? "" : "s"}, refreshed with each build` : "Collected Friday for the weekend and Tuesday for midweek"}, so it may have moved.">Bookies <b>${pct(g.market.p[i])}%</b> · best <b>${g.market.best[i].toFixed(2)}</b>${oppChip(g.market, i)}${v}</div>`;
 }
 
 function bar(g){
@@ -2960,7 +2977,7 @@ function sportRow(g, i, showSport, host){
         <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span></div></div>
     <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
       <div class="stat">${g.statH || ratingStat(g.eloH, g.gamesH, "games")}</div></div>
-    <div class="barcell">${tennisBar(ph, pa)}</div>
+    <div class="barcell">${tennisBar(ph, pa)}${oppLine(g)}</div>
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
@@ -3476,6 +3493,11 @@ function ogRead(l, frozen){
 }
 // 26 Oct 2026: an estimated price (no bookmaker price found) in its own
 // labelled form, never a bookmaker-looking number with an asterisk.
+// 6 Nov 2026: the opposition's price on every leg (the Card needs 9+ in football).
+function ogOpp(l){
+  if(!l.opp) return "";
+  return ` · opp <span class="opp">${(+l.opp).toFixed(2)}</span>${l.draw ? ` · draw <span class="opp">${(+l.draw).toFixed(2)}</span>` : ""}`;
+}
 function ogPrice(l, frozen){
   if(l.est) return `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>`;
   return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l, frozen)}</span>`;
@@ -3519,7 +3541,7 @@ function ogBench(g){
     <p>Any one of these can stand in for any pick above and the group stays inside its price range and above its chance floor. Swap one in, don't merge two groups.</p>
     ${b.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
       return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}</small>${ogBook(l)}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${ogOpp(l)}</small>${ogBook(l)}</span>
       <span class="o">${(+l.odds).toFixed(2)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("")}</details>`;
 }
 // What the re-check dropped on this day, newest first.
@@ -3564,7 +3586,7 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
         return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}${card ? ogBook(l) : ""}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
@@ -3905,9 +3927,9 @@ function renderToday(){
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2>
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
-      kicking off between 07:00 and 07:00 the next morning, three or four picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
+      kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model at least 5 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
+      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay; 31 Oct: 10+ under lost on every sample) and the opposition priced 9 or longer (6 Nov 2026: on last season's replay favourites with the opposition at 9+ landed 84% against 76% quoted, and with the opposition under 6 they landed below quote; the opposition's price is shown on every pick). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers 55%+), marked and graded apart.</p></div>
     <ol class="tb-play">

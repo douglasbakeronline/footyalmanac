@@ -74,6 +74,11 @@ VARIANTS = {
     "wider": {"CARD_CORE_ONLY": False},
     "uncapped": {"CARD_UNDER_MAX": 0},     # rule 4, before the 31 Oct 2026 cap
     "short": {"CARD_ODDS": (1.15, 1.35)},
+    # 6 Nov 2026: live is rule 6 (opposition priced 9+). "rule5" is the Card
+    # as it ran from 31 Oct to 6 Nov, for the 30 Nov comparison; legs archived
+    # before 6 Nov carry no opposition price, so "live" is empty on those days.
+    "rule5": {"CARD_OPP_MIN": {}},
+    "opp7": {"CARD_OPP_MIN": {"football": 7.0}},
 }
 
 
