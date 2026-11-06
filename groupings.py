@@ -413,6 +413,23 @@ def _odds_for(fid, key, cache_dir):
     return items, calls
 
 
+def match_fixture(leg, teams, sim):
+    """API-Football fixture id for a football leg from teams = {fid: (home,
+    away, kick-off)}. First the strict test (both names `same`, kick-off within
+    90 minutes). Failing that, `sim` (odds.name_sim) at 0.6 on both names with
+    the same kick-off window, and only if exactly one fixture qualifies: a
+    missing price costs nothing, a wrong one misleads. Prices only veto legs."""
+    t = parse(leg["when"])
+    near = {fid: v for fid, v in teams.items() if not (t and v[2] and abs((t - v[2]).total_seconds()) > 5400)}
+    hit = [fid for fid, (h, a, _) in near.items() if same(h, leg["home"]) and same(a, leg["away"])]
+    if len(hit) == 1: return hit[0]
+    if hit: return None
+    if not t: return None
+    soft = [fid for fid, (h, a, _) in near.items()
+            if sim(h, leg["home"]) >= 0.6 and sim(a, leg["away"]) >= 0.6]
+    return soft[0] if len(soft) == 1 else None
+
+
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
 
@@ -438,19 +455,25 @@ def price_football(L, dates, report):
     except Exception as e:
         bulk = {}
         report.setdefault("errors", []).append(f"bulk odds: {type(e).__name__}")
+    # 6 Nov 2026: fixtures from the day either side are read too (a late or
+    # early kick-off sits on the neighbouring UTC date), and a leg the strict
+    # name test misses gets a second look through odds.name_sim (match_fixture).
+    pool = {}
     for d in sorted(dates):
-        try:
-            fx = S._af_day(_date.fromisoformat(d))
-        except Exception as e:
-            report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}"); continue
-        teams = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
-                 for f in fx}
+        for off in (-1, 0, 1):
+            dd = _date.fromisoformat(d) + timedelta(days=off)
+            if dd.isoformat() in pool: continue
+            try:
+                fx = S._af_day(dd)
+            except Exception as e:
+                report.setdefault("errors", []).append(f"fixtures {dd}: {type(e).__name__}"); fx = []
+            for f in fx:
+                pool[dd.isoformat(), f["fixture"]["id"]] = (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
+    for d in sorted(dates):
+        teams = {fid: v for (dd, fid), v in pool.items()}
         for l in fb:
             if l["date"] != d or l.get("odds"): continue
-            t = parse(l["when"])
-            fid = next((fid for fid, (h, a, ft) in teams.items()
-                        if not (t and ft and abs((t - ft).total_seconds()) > 5400)
-                        and same(h, l["home"]) and same(a, l["away"])), None)
+            fid = match_fixture(l, teams, O.name_sim)
             if fid is None: continue
             row = bulk.get(str(fid))
             if row:
