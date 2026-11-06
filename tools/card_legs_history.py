@@ -63,7 +63,36 @@ def legs(pairs):
         clv = (bp * O.fair(r["close"])[pick] - 1) if r.get("close") else None
         out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "side": "h" if pick == 0 else "a",
                     "time": r.get("time"), "model": mp[pick], "fair": f, "price": price, "best": bp, "margin": sum(1 / o for o in r["avg"]),
-                    "won": r["result"] == pick, "clv": clv, "core": not r["code"].startswith("af.")})
+                    "won": r["result"] == pick, "clv": clv, "core": not r["code"].startswith("af."),
+                    "opp": r["avg"][2 if pick == 0 else 0], "draw": r["avg"][1]})
+    return out
+
+
+# 6 Nov 2026, Douglas: his own winning picks were favourites at about 1.40
+# whose opposition was priced 10-12, and his losers favourites whose
+# opposition was priced about 4. Same favourite price, a different game: the
+# opposition's price says how much of the rest of the market is the draw. This
+# buckets every candidate leg by the opposition's price, within favourite
+# price bands, and reports landed v quoted and the singles return. Advisory.
+OPP_BANDS = [(1.0, 4.0), (4.0, 6.0), (6.0, 9.0), (9.0, 99.0)]
+
+
+def lopsided(L):
+    out = {}
+    for lo, hi in [(1.15, 1.91)] + BANDS:
+        row = {}
+        for olo, ohi in OPP_BANDS:
+            b = [l for l in L if lo <= l["price"] < hi and olo <= l["opp"] < ohi]
+            if len(b) < 10: continue
+            w = sum(x["won"] for x in b); q = sum(x["fair"] for x in b) / len(b)
+            pnl = [(x["price"] - 1) if x["won"] else -1.0 for x in b]
+            roi, pr = O._boot(pnl)
+            row[f"opp {olo:.0f}-{ohi:.0f}" if ohi < 99 else f"opp {olo:.0f}+"] = {
+                "n": len(b), "landed": round(w / len(b), 3), "quoted": round(q, 3), "gap": round(w / len(b) - q, 3),
+                "se": round(math.sqrt(q * (1 - q) / len(b)), 3), "roi": round(roi, 4), "pRoiNotPositive": round(pr, 3),
+                "roiBest": round(sum((x["best"] - 1) if x["won"] else -1 for x in b) / len(b), 4),
+                "drawPrice": round(sum(x["draw"] for x in b) / len(b), 2)}
+        if row: out[f"{lo:.2f}-{min(hi, 1.90):.2f}"] = row
     return out
 
 
@@ -187,6 +216,7 @@ def main():
             res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
         res["trebles"] = trebles([l for l in L if CUTS["under5"](l["model"], l["fair"])])
         res["card"] = card_season(L)
+        res["lopsided"] = {"all": lopsided(L), "under5": lopsided([l for l in L if CUTS["under5"](l["model"], l["fair"])])}
         res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
         report["seasons"][split] = res
         print(f"{split} {season}: {len(prices)} priced, {len(joined)} matched, {len(L)} candidate legs")
@@ -194,6 +224,10 @@ def main():
             if c.get("n"): print(f"  {name:8s} n {c['n']:5d} landed {c['landed']*100:5.1f} quoted {c['quoted']*100:5.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+5.1f}% (p {c['pRoiNotPositive']}) best {c['roiBest']*100:+5.1f}% clv {c['clv']}")
         t = res["trebles"]
         if t.get("n"): print(f"  trebles n {t['n']} won {t['won']} landed {t['landed']*100:.0f}% expected {t['expected']*100:.0f}% roi {t['roi']*100:+.0f}% z {t['z']}")
+        for cut, tab in res["lopsided"].items():
+            for band, row in tab.items():
+                for k, v in row.items():
+                    print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
         c = res["card"]
         if c.get("groups"): print(f"  card: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
