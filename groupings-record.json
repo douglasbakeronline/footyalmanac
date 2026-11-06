@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-05T22:37:48Z",
+ "graded": "2026-11-06T00:21:22Z",
  "overall": {
   "groups": 116,
   "settled": 115,
@@ -7,8 +7,8 @@
   "z": -1.46,
   "lost": 84,
   "pending": 1,
-  "legs": 458,
-  "legsWon": 329,
+  "legs": 460,
+  "legsWon": 330,
   "returned": 93.58,
   "staked": 115,
   "returnedBest": 98.1,
@@ -52,7 +52,7 @@
    "z": 1.76,
    "lost": 8,
    "pending": 0,
-   "legs": 46,
+   "legs": 47,
    "legsWon": 30,
    "returned": 22.57,
    "staked": 15,
@@ -311,7 +311,7 @@
   "z": -0.43,
   "lost": 22,
   "pending": 0,
-  "legs": 94,
+  "legs": 95,
   "legsWon": 61,
   "returned": 26.35,
   "staked": 31,
@@ -377,8 +377,8 @@
   "z": -0.06,
   "lost": 5,
   "pending": 0,
-  "legs": 24,
-  "legsWon": 19,
+  "legs": 25,
+  "legsWon": 20,
   "returned": 8.45,
   "staked": 8,
   "returnedBest": 8.58,
@@ -444,7 +444,7 @@
    "z": -1.04,
    "lost": 8,
    "pending": 0,
-   "legs": 30,
+   "legs": 31,
    "legsWon": 19,
    "returned": 5.92,
    "staked": 10,
@@ -468,7 +468,7 @@
    "z": -0.05,
    "lost": 10,
    "pending": 0,
-   "legs": 45,
+   "legs": 46,
    "legsWon": 32,
    "returned": 14.13,
    "staked": 15,
@@ -762,9 +762,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Alex De Minaur",
@@ -797,8 +797,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7055,
-       "status": "pending",
-       "result": null
+       "status": "won",
+       "result": "4-1"
       },
       {
        "pick": "Oklahoma City Thunder",
@@ -836,8 +836,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 3,
-     "legsPending": 1,
+     "legsLost": 4,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Daniil Medvedev",
@@ -887,8 +887,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6287,
-       "status": "pending",
-       "result": null
+       "status": "lost",
+       "result": "2-2"
       },
       {
        "pick": "Houston Rockets",
