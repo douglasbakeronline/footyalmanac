@@ -1,0 +1,25 @@
+# The Card's leg rule replayed on past seasons (tools/card_legs_history.py),
+# run by hand on any branch; writes nothing to the repo, the report is an
+# artifact. tune.yml runs the same tool on Mondays and commits its output.
+name: Card legs history
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    env:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 tools/card_legs_history.py --out card-legs-history.json | tee card-legs-history.log
+      - uses: actions/upload-artifact@v4
+        with:
+          name: card-legs-history
+          path: |
+            card-legs-history.json
+            card-legs-history.log
