@@ -106,6 +106,29 @@ class EspnSoccerPrices(unittest.TestCase):
         l = self.fb(odds=1.5); self.run_price([l], self.board("Arsenal", "Leeds United")); self.assertEqual(l["odds"], 1.5)
         u = self.fb(code="zz.9"); self.assertEqual(self.run_price([u], self.board("Arsenal", "Leeds United"))["legs"], 0)
 
+class MatchFixture(unittest.TestCase):
+    """6 Nov 2026: more legs priced through a softer, still unambiguous match."""
+    import odds as O
+    T = G.parse("2026-11-06T19:45:00Z")
+    def leg(self, home, away, when="2026-11-06T19:45:00Z"):
+        return {"home": home, "away": away, "when": when}
+    def test_strict_match_still_wins(self):
+        teams = {1: ("Arsenal", "Leeds United", self.T)}
+        self.assertEqual(G.match_fixture(self.leg("Arsenal", "Leeds United"), teams, self.O.name_sim), 1)
+    def test_soft_match_on_shortened_names(self):
+        teams = {7: ("Pieta Hotspurs FC", "Zurrieq FC", self.T), 8: ("Other Town", "Elsewhere", self.T)}
+        self.assertEqual(G.match_fixture(self.leg("Pietà Hotspurs", "Zurrieq"), teams, self.O.name_sim), 7)
+        teams = {9: ("Hallescher FC", "Luckenwalde", self.T)}
+        self.assertEqual(G.match_fixture(self.leg("Hallescher", "Luckenwalder"), teams, self.O.name_sim), 9)
+    def test_ambiguous_or_wrong_time_is_dropped(self):
+        two = {1: ("Hallescher FC", "Luckenwalde", self.T), 2: ("Hallescher FC II", "Luckenwalde", self.T)}
+        self.assertIsNone(G.match_fixture(self.leg("Hallescher FC", "Luckenwald"), two, self.O.name_sim))
+        late = {1: ("Hallescher FC", "Luckenwalde", G.parse("2026-11-06T14:00:00Z"))}
+        self.assertIsNone(G.match_fixture(self.leg("Hallescher FC", "Luckenwalde"), late, self.O.name_sim))
+    def test_other_teams_not_matched(self):
+        teams = {1: ("Arsenal", "Leeds United", self.T)}
+        self.assertIsNone(G.match_fixture(self.leg("Spurs", "Chelsea"), teams, self.O.name_sim))
+
 if __name__ == "__main__":
     unittest.main()
 

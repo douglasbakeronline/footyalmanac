@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 (tag pending): price more Odds tab legs (fixture matching)
+
+**What changed:** football legs are matched to API-Football fixtures more widely (`groupings.match_fixture`): fixtures on the day either side are read as well (a kick-off near midnight UTC sits on the neighbouring date), and a leg the strict name test misses gets a second look through `odds.name_sim` (0.6 on both names, kick-off within 90 minutes), taken only when exactly one fixture qualifies. Ambiguous matches are dropped. Prices still only veto legs and feed no model.
+**Evidence:** on 6 Nov 2026's pool, 36 of 53 football legs carried only the model's estimate (mostly small leagues). The cloud run has no `API_FOOTBALL_KEY` and no `.afcache`, so the gain in priced legs could not be measured here; CI's next build logs `football: matched` in the groupings report. Four tests in `tests/test_groupings.py` cover strict, soft, ambiguous, wrong-time and unrelated cases.
+**Files:** `groupings.py`, `tests/test_groupings.py`, `RELEASES.md`.
+**Not changed:** the leg rules, any model, the price sources, unpriced legs stay ungrouped.
+**Roll back:** `git revert` the release commit.
+
 ## 2026-11-06 (tag pending): free-source check for uncovered leagues (docs only)
 
 **What changed:** nothing for readers. Re-probed free sources for the remaining gaps and recorded the result in `claude/data-expansion-plan.md`.
