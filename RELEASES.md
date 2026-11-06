@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-06 Retry for the NFL/MLB/NBA/rugby and tennis ESPN fetches (tag pending)
+
+**What changed:** `sports._day` and `build_tennis._get_day` tried each ESPN host once and gave up, so one network blip dropped a whole day of games (football's `_espn_day` already retried). Now, when every host fails on something transient (timeout, reset, 5xx, 429), the round repeats once after a 1s pause. A 4xx such as 404 is not retried. `sports._day` still returns None (unreadable, not an empty day) after the last try; tennis still returns [] with the errors logged.
+**Evidence:** `tests/test_sports_fetch_retry.py` with a fake failing source: blip on every host then success, persistent failure (None, 2 rounds of calls), 404 (one round). Full suite 593 tests OK; `nametest.py` passes.
+**Files:** `sports.py`, `build_tennis.py`, `tests/test_sports_fetch_retry.py`, `RELEASES.md`.
+**Not changed:** football fetching, any model number, ratings, archives. Football-data and API-Football paths already had retries and last-good-copy fallbacks.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-05 Fixture audit note (tag pending)
 
 **What changed:** nothing on the site. Audit of the 5 Nov predictions file written up in `claude/data-integrity.md`.

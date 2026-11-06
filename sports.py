@@ -219,14 +219,30 @@ def tier_of(p):
 # fetch
 # ---------------------------------------------------------------------------
 
-def _day(path, d, errs, q=""):
-    for host in ESPN_HOSTS:
-        url = f"{host}/apis/site/v2/sports/{path}/scoreboard?dates={d:%Y%m%d}&limit=400{q}"
-        try:
-            req = urllib.request.Request(url, headers=ESPN_HEADERS)
-            return json.loads(urllib.request.urlopen(req, timeout=25).read()).get("events") or []
-        except Exception as e:
-            errs.append(f"{path} {d}: {type(e).__name__} {e}")
+def _day(path, d, errs, q="", pause=1.0):
+    """One feed, one date. Each host is tried in turn; when every host fails on
+    something transient (timeout, reset, 5xx, 429) the round is repeated once
+    after a pause, so one blip no longer drops a day of games. A 4xx such as
+    404 is an answer and is not retried. None means the day could not be read
+    (the callers keep what they had), never an empty day."""
+    for rnd in range(2):
+        transient = False
+        for host in ESPN_HOSTS:
+            url = f"{host}/apis/site/v2/sports/{path}/scoreboard?dates={d:%Y%m%d}&limit=400{q}"
+            try:
+                req = urllib.request.Request(url, headers=ESPN_HEADERS)
+                return json.loads(urllib.request.urlopen(req, timeout=25).read()).get("events") or []
+            except urllib.error.HTTPError as e:
+                errs.append(f"{path} {d}: {type(e).__name__} {e}")
+                if e.code >= 500 or e.code == 429:
+                    transient = True
+            except Exception as e:
+                errs.append(f"{path} {d}: {type(e).__name__} {e}")
+                transient = True
+        if not transient:
+            break
+        if not rnd:
+            time.sleep(pause)
     return None
 
 
