@@ -1,5 +1,5 @@
 {
- "generated": "2026-10-31T16:24:45+00:00",
+ "generated": "2026-11-07T17:03:48+00:00",
  "source": "football-data.co.uk",
  "edge": 0.05,
  "pickMin": 0.55,
@@ -18,17 +18,17 @@
    "pricedMatches": 7274
   },
   "check": {
-   "n": 760,
-   "logLossModel": 1.0186,
+   "n": 772,
+   "logLossModel": 1.0187,
    "logLossMarket": 0.9858,
-   "bets": 28,
-   "roi": -0.1911,
-   "pRoiNotPositive": 0.873,
-   "clvBets": 28,
-   "clv": -0.0431,
-   "pClvNotPositive": 0.997,
+   "bets": 29,
+   "roi": -0.219,
+   "pRoiNotPositive": 0.909,
+   "clvBets": 29,
+   "clv": -0.0444,
+   "pClvNotPositive": 0.999,
    "season": "2026-27",
-   "pricedMatches": 1913
+   "pricedMatches": 2115
   }
  },
  "valueGate": false,

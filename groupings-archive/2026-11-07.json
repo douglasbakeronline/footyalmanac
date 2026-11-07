@@ -1,0 +1,1634 @@
+{
+ "date": "2026-11-07",
+ "published": "2026-11-07T17:07:12Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 6,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-07T05:54:28Z",
+   "lockAt": "2026-11-07T13:30:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Golden State Warriors",
+     "event": "Golden State Warriors v Orlando Magic",
+     "sport": "nba",
+     "comp": "NBA",
+     "when": "2026-11-08T01:30Z",
+     "date": "2026-11-08",
+     "odds": 1.39,
+     "best": null,
+     "bestBook": null,
+     "bookOdds": null,
+     "p": 0.6918,
+     "pModel": 0.6291,
+     "fair": 0.6918,
+     "hit": 0.7415,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-07T11:47:27Z",
+     "id": "401909942",
+     "home": "Golden State Warriors",
+     "away": "Orlando Magic",
+     "players": null,
+     "opp": 3.12,
+     "draw": null
+    },
+    {
+     "pick": "San Antonio Spurs",
+     "event": "Portland Trail Blazers v San Antonio Spurs",
+     "sport": "nba",
+     "comp": "NBA",
+     "when": "2026-11-08T03:00Z",
+     "date": "2026-11-08",
+     "odds": 1.46,
+     "best": null,
+     "bestBook": null,
+     "bookOdds": null,
+     "p": 0.6572,
+     "pModel": 0.5773,
+     "fair": 0.6572,
+     "hit": 0.7076,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-07T11:47:27Z",
+     "id": "401909944",
+     "home": "Portland Trail Blazers",
+     "away": "San Antonio Spurs",
+     "players": null,
+     "opp": 2.8,
+     "draw": null
+    }
+   ],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.04,
+   "p": 0.439,
+   "implied": 0.489,
+   "bestOdds": 2.04,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Ben Shelton v Luca Van Assche",
+     "pick": "Ben Shelton",
+     "tour": "ATP",
+     "tournament": "Rolex Paris Masters",
+     "players": [
+      "Ben Shelton",
+      "Luca Van Assche"
+     ],
+     "comp": "Rolex Paris Masters Semifinal",
+     "when": "2026-11-07T13:30:00Z",
+     "timeEst": false,
+     "date": "2026-11-07",
+     "id": "186504",
+     "fx": {
+      "id": "186504",
+      "espn": [
+       "Ben Shelton",
+       "Luca Van Assche"
+      ],
+      "tour": "ATP",
+      "date": "2026-11-07",
+      "time": "13:30",
+      "timeTbc": false,
+      "tournament": "Rolex Paris Masters",
+      "round": "Semifinal",
+      "surface": "Hard",
+      "playerA": "Ben Shelton",
+      "playerB": "Luca Van Assche",
+      "ratingA": {
+       "elo": 2139,
+       "matches": 305,
+       "surfaceElo": 2057
+      },
+      "ratingB": {
+       "elo": 1915,
+       "matches": 353,
+       "surfaceElo": 1843
+      },
+      "p": {
+       "a": 0.7527,
+       "b": 0.2473
+      },
+      "pick": "Ben Shelton",
+      "confidence": 0.7527,
+      "tier": "Strong",
+      "rankA": 4,
+      "rankB": 47,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7941,
+       "n": 34,
+       "cumHit": 0.7941,
+       "cumN": 34,
+       "quoted": 0.7696,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7527,
+     "p": 0.7508,
+     "hit": 0.7941,
+     "n": 34,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.3,
+     "best": 1.3,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 3.89,
+     "draw": null,
+     "margin": 1.0245,
+     "pricedAt": "2026-11-07T11:47:25Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7692,
+     "pTested": 0.7527,
+     "fair": 0.7508,
+     "edge": -0.024,
+     "basis": "bookmakers",
+     "firstOdds": 1.29
+    },
+    {
+     "sport": "football",
+     "event": "AS Roma v US Sassuolo Calcio",
+     "home": "AS Roma",
+     "away": "US Sassuolo Calcio",
+     "side": "h",
+     "pick": "AS Roma",
+     "code": "it.1",
+     "comp": "Serie A",
+     "country": "Italy",
+     "when": "2026-11-07T19:45:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.6471,
+     "p": 0.7363,
+     "fx": {
+      "u21Side": false,
+      "league": "it.1",
+      "leagueName": "Serie A",
+      "short": "SEA",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 1,
+      "order": 10,
+      "round": "Matchday 11",
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "20:45",
+      "kickoff": "2026-11-07T19:45:00Z",
+      "home": {
+       "name": "AS Roma",
+       "att": 1.373,
+       "def": 0.69,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 23,
+        "D": 4,
+        "L": 11,
+        "GF": 59,
+        "GA": 31,
+        "GD": 28,
+        "Pts": 73,
+        "PPG": 1.921
+       },
+       "now": {
+        "P": 5,
+        "W": 4,
+        "D": 1,
+        "L": 0,
+        "GF": 14,
+        "GA": 3,
+        "GD": 11,
+        "Pts": 13,
+        "PPG": 2.6
+       }
+      },
+      "away": {
+       "name": "US Sassuolo Calcio",
+       "att": 1.06,
+       "def": 1.103,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie A",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LWDWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 14,
+        "D": 7,
+        "L": 17,
+        "GF": 46,
+        "GA": 50,
+        "GD": -4,
+        "Pts": 49,
+        "PPG": 1.289
+       },
+       "now": {
+        "P": 5,
+        "W": 2,
+        "D": 1,
+        "L": 2,
+        "GF": 9,
+        "GA": 9,
+        "GD": 0,
+        "Pts": 7,
+        "PPG": 1.4
+       }
+      },
+      "p": {
+       "h": 0.6471,
+       "d": 0.2153,
+       "a": 0.1376
+      },
+      "xg": [
+       2.1,
+       0.81
+      ],
+      "btts": 0.5205,
+      "over25": 0.5348,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6471,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7326,
+        0.1594,
+        0.108
+       ],
+       "best": [
+        1.32,
+        6.25,
+        8.75
+       ],
+       "avg": [
+        1.29,
+        5.93,
+        8.75
+       ],
+       "ev": [
+        -0.1458,
+        0.3456,
+        0.204
+       ]
+      },
+      "rank": 56,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2153,
+     "multOnly": true,
+     "odds": 1.3,
+     "best": 1.3,
+     "books": 10,
+     "opp": 9.08,
+     "draw": 6.03,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.29,
+      "Bet365": 1.3,
+      "Betfair": 1.29,
+      "BetVictor": 1.29
+     },
+     "margin": 1.0447,
+     "pricedAt": "2026-11-07T11:45:33Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7692,
+     "pTested": 0.6471,
+     "fair": 0.7363,
+     "edge": -0.1588,
+     "basis": "bookmakers",
+     "firstOdds": 1.3,
+     "lastOdds": 1.32,
+     "lastBest": 1.33,
+     "lastAt": "2026-11-07T17:07:12Z",
+     "lockPrice": {
+      "odds": 1.32,
+      "best": 1.33,
+      "book": "Bet365",
+      "at": "2026-11-07T17:07:12Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Oklahoma City Thunder v Washington Wizards",
+     "home": "Oklahoma City Thunder",
+     "away": "Washington Wizards",
+     "pick": "Oklahoma City Thunder",
+     "comp": "NBA",
+     "when": "2026-11-08T01:00Z",
+     "date": "2026-11-08",
+     "id": "401909941",
+     "pModel": 0.8432,
+     "p": 0.7942,
+     "hit": 0.8667,
+     "n": 165,
+     "list": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909941",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-08T01:00Z",
+      "home": "Oklahoma City Thunder",
+      "away": "Washington Wizards",
+      "neutral": false,
+      "pHome": 0.8432,
+      "pick": "Oklahoma City Thunder",
+      "confidence": 0.8432,
+      "tier": "Strong",
+      "eloH": 1646,
+      "eloA": 1388,
+      "gamesH": 304,
+      "gamesA": 255,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.854,
+       "n": 89,
+       "cumHit": 0.8667,
+       "cumN": 165
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "128-97",
+        "opp": "Memphis Grizzlies",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "124-116",
+        "opp": "Cleveland Cavaliers",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "117-112",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "98-119",
+        "opp": "Houston Rockets",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "96-120",
+        "opp": "Dallas Mavericks",
+        "home": false,
+        "date": "2026-10-29"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "132-139",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "L",
+        "score": "105-120",
+        "opp": "Atlanta Hawks",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "103-94",
+        "opp": "Orlando Magic",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "95-79",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-10-30"
+       },
+       {
+        "r": "L",
+        "score": "111-121",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-10-28"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 5,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-21",
+        "home": "Washington Wizards",
+        "away": "Oklahoma City Thunder",
+        "score": "111-132"
+       },
+       {
+        "date": "2025-10-31",
+        "home": "Oklahoma City Thunder",
+        "away": "Washington Wizards",
+        "score": "127-108"
+       },
+       {
+        "date": "2025-01-12",
+        "home": "Washington Wizards",
+        "away": "Oklahoma City Thunder",
+        "score": "95-136"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.21,
+     "margin": 1.0406,
+     "opp": 4.67,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-07T11:47:27Z",
+     "implied": 0.8264,
+     "pTested": 0.8432,
+     "fair": 0.7942,
+     "edge": -0.039,
+     "basis": "bookmakers",
+     "firstOdds": 1.21,
+     "lastOdds": 1.17,
+     "lastBest": 1.17,
+     "lastAt": "2026-11-07T17:07:12Z",
+     "lockPrice": {
+      "odds": 1.17,
+      "best": 1.17,
+      "book": null,
+      "at": "2026-11-07T17:07:12Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-07T11:46:39Z",
+   "archivedAt": "2026-11-07T17:07:12Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 6,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 2,
+   "first": "2026-11-07T05:54:28Z",
+   "lockAt": "2026-11-07T15:35:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.17,
+   "p": 0.3878,
+   "implied": 0.4608,
+   "bestOdds": 2.17,
+   "legs": [
+    {
+     "sport": "rugby",
+     "event": "Toulon v Stade Francais Paris",
+     "home": "Toulon",
+     "away": "Stade Francais Paris",
+     "pick": "Toulon",
+     "comp": "Top 14",
+     "when": "2026-11-07T15:35Z",
+     "date": "2026-11-07",
+     "id": "604422",
+     "pModel": 0.5885,
+     "p": 0.7632,
+     "hit": 0.7372,
+     "n": 643,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "604422",
+      "sport": "rugby",
+      "label": "Top 14",
+      "feed": "rugby/270559",
+      "when": "2026-11-07T15:35Z",
+      "home": "Toulon",
+      "away": "Stade Francais Paris",
+      "neutral": false,
+      "pHome": 0.5885,
+      "pick": "Toulon",
+      "confidence": 0.5885,
+      "tier": "Lean",
+      "eloH": 1531,
+      "eloA": 1569,
+      "gamesH": 106,
+      "gamesA": 102,
+      "hfa": 100,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.6698,
+       "n": 106,
+       "cumHit": 0.7372,
+       "cumN": 643
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "25-24",
+        "opp": "Perpignan",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "41-20",
+        "opp": "Pau",
+        "home": true,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "29-15",
+        "opp": "Racing 92",
+        "home": true,
+        "date": "2026-10-10"
+       },
+       {
+        "r": "L",
+        "score": "0-28",
+        "opp": "Montpellier Herault",
+        "home": false,
+        "date": "2026-10-04"
+       },
+       {
+        "r": "W",
+        "score": "28-10",
+        "opp": "Vannes",
+        "home": true,
+        "date": "2026-09-26"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "43-24",
+        "opp": "La Rochelle",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "L",
+        "score": "8-16",
+        "opp": "Castres Olympique",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "30-22",
+        "opp": "Montpellier Herault",
+        "home": true,
+        "date": "2026-10-10"
+       },
+       {
+        "r": "L",
+        "score": "32-35",
+        "opp": "Bayonne",
+        "home": false,
+        "date": "2026-10-03"
+       },
+       {
+        "r": "W",
+        "score": "31-10",
+        "opp": "Lyon",
+        "home": true,
+        "date": "2026-09-26"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 4,
+       "d": 0
+      },
+      "recordA": {
+       "w": 23,
+       "l": 17,
+       "d": 1
+      },
+      "h2h": [
+       {
+        "date": "2026-03-21",
+        "home": "Toulon",
+        "away": "Stade Francais Paris",
+        "score": "27-46"
+       },
+       {
+        "date": "2025-11-23",
+        "home": "Stade Francais Paris",
+        "away": "Toulon",
+        "score": "51-24"
+       },
+       {
+        "date": "2025-02-22",
+        "home": "Toulon",
+        "away": "Stade Francais Paris",
+        "score": "24-6"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.2,
+     "best": 1.2,
+     "bestBook": "Betfair",
+     "books": 4,
+     "margin": 1.0919,
+     "opp": 4.49,
+     "pricedAt": "2026-11-07T11:47:10Z",
+     "src": "API-Sports, average of 4 bookmakers",
+     "implied": 0.8333,
+     "pTested": 0.5885,
+     "fair": 0.7632,
+     "edge": -0.2938,
+     "basis": "bookmakers",
+     "firstOdds": 1.2
+    },
+    {
+     "sport": "nba",
+     "event": "Indiana Pacers v Denver Nuggets",
+     "home": "Indiana Pacers",
+     "away": "Denver Nuggets",
+     "pick": "Denver Nuggets",
+     "comp": "NBA",
+     "when": "2026-11-07T22:00Z",
+     "date": "2026-11-07",
+     "id": "401909938",
+     "pModel": 0.726,
+     "p": 0.7002,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909938",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-07T22:00Z",
+      "home": "Indiana Pacers",
+      "away": "Denver Nuggets",
+      "neutral": true,
+      "pHome": 0.274,
+      "pick": "Denver Nuggets",
+      "confidence": 0.726,
+      "tier": "Strong",
+      "eloH": 1375,
+      "eloA": 1557,
+      "gamesH": 296,
+      "gamesA": 285,
+      "hfa": 0,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "107-103",
+        "opp": "Memphis Grizzlies",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "104-108",
+        "opp": "Atlanta Hawks",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "90-98",
+        "opp": "Brooklyn Nets",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "125-145",
+        "opp": "Miami Heat",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "L",
+        "score": "109-114",
+        "opp": "Philadelphia 76ers",
+        "home": true,
+        "date": "2026-10-28"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "128-109",
+        "opp": "Toronto Raptors",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "110-118",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "127-120",
+        "opp": "Phoenix Suns",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "104-91",
+        "opp": "New Orleans Pelicans",
+        "home": false,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "L",
+        "score": "114-134",
+        "opp": "Golden State Warriors",
+        "home": true,
+        "date": "2026-10-27"
+       }
+      ],
+      "recordH": {
+       "w": 3,
+       "l": 6,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 3,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-12-04",
+        "home": "Indiana Pacers",
+        "away": "Denver Nuggets",
+        "score": "120-135"
+       },
+       {
+        "date": "2025-11-09",
+        "home": "Denver Nuggets",
+        "away": "Indiana Pacers",
+        "score": "117-100"
+       },
+       {
+        "date": "2025-04-07",
+        "home": "Denver Nuggets",
+        "away": "Indiana Pacers",
+        "score": "120-125"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.37,
+     "margin": 1.0424,
+     "opp": 3.2,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-07T11:47:27Z",
+     "implied": 0.7299,
+     "pTested": 0.726,
+     "fair": 0.7002,
+     "edge": -0.0407,
+     "basis": "bookmakers",
+     "firstOdds": 1.37,
+     "lastOdds": 1.33,
+     "lastBest": 1.33,
+     "lastAt": "2026-11-07T17:07:12Z",
+     "lockPrice": {
+      "odds": 1.33,
+      "best": 1.33,
+      "book": null,
+      "at": "2026-11-07T17:07:12Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Phoenix Suns v Houston Rockets",
+     "home": "Phoenix Suns",
+     "away": "Houston Rockets",
+     "pick": "Houston Rockets",
+     "comp": "NBA",
+     "when": "2026-11-08T02:00Z",
+     "date": "2026-11-08",
+     "id": "401909943",
+     "pModel": 0.6354,
+     "p": 0.7256,
+     "hit": 0.7415,
+     "n": 855,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909943",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-08T02:00Z",
+      "home": "Phoenix Suns",
+      "away": "Houston Rockets",
+      "neutral": false,
+      "pHome": 0.3646,
+      "pick": "Houston Rockets",
+      "confidence": 0.6354,
+      "tier": "Firm",
+      "eloH": 1474,
+      "eloA": 1608,
+      "gamesH": 263,
+      "gamesA": 268,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6496,
+       "n": 197,
+       "cumHit": 0.7415,
+       "cumN": 855
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "117-104",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-06"
+       },
+       {
+        "r": "L",
+        "score": "119-132",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "113-116",
+        "opp": "Golden State Warriors",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "120-127",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "L",
+        "score": "114-125",
+        "opp": "Oklahoma City Thunder",
+        "home": false,
+        "date": "2026-10-27"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "107-117",
+        "opp": "Minnesota Timberwolves",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "109-93",
+        "opp": "Boston Celtics",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "119-98",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "111-116",
+        "opp": "Dallas Mavericks",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "132-100",
+        "opp": "Milwaukee Bucks",
+        "home": false,
+        "date": "2026-10-29"
+       }
+      ],
+      "recordH": {
+       "w": 2,
+       "l": 5,
+       "d": 0
+      },
+      "recordA": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-04-08",
+        "home": "Phoenix Suns",
+        "away": "Houston Rockets",
+        "score": "105-119"
+       },
+       {
+        "date": "2026-01-06",
+        "home": "Houston Rockets",
+        "away": "Phoenix Suns",
+        "score": "100-97"
+       },
+       {
+        "date": "2025-12-06",
+        "home": "Houston Rockets",
+        "away": "Phoenix Suns",
+        "score": "117-98"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.32,
+     "margin": 1.0441,
+     "opp": 3.49,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-07T11:47:27Z",
+     "implied": 0.7576,
+     "pTested": 0.6354,
+     "fair": 0.7256,
+     "edge": -0.1613,
+     "basis": "bookmakers",
+     "firstOdds": 1.34,
+     "lastOdds": 1.37,
+     "lastBest": 1.37,
+     "lastAt": "2026-11-07T17:07:12Z",
+     "lockPrice": {
+      "odds": 1.37,
+      "best": 1.37,
+      "book": null,
+      "at": "2026-11-07T17:07:12Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-07T11:46:39Z",
+   "archivedAt": "2026-11-07T17:07:12Z"
+  },
+  {
+   "name": "Model 2x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.51,
+   "p": 0.3924,
+   "implied": 0.3982,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Ebbsfleet United v Chesham United",
+     "home": "Ebbsfleet United",
+     "away": "Chesham United",
+     "side": "h",
+     "pick": "Ebbsfleet United",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-07T15:00:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.8028,
+     "p": 0.8028,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "15:00",
+      "kickoff": "2026-11-07T15:00:00Z",
+      "home": {
+       "name": "Ebbsfleet United",
+       "att": 1.409,
+       "def": 0.67,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "DWWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 22,
+        "D": 11,
+        "L": 13,
+        "GF": 73,
+        "GA": 54,
+        "GD": 19,
+        "Pts": 77,
+        "PPG": 1.674
+       },
+       "now": {
+        "P": 14,
+        "W": 9,
+        "D": 4,
+        "L": 1,
+        "GF": 35,
+        "GA": 10,
+        "GD": 25,
+        "Pts": 31,
+        "PPG": 2.214
+       }
+      },
+      "away": {
+       "name": "Chesham United",
+       "att": 0.992,
+       "def": 1.255,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 21,
+        "D": 9,
+        "L": 16,
+        "GF": 68,
+        "GA": 55,
+        "GD": 13,
+        "Pts": 72,
+        "PPG": 1.565
+       },
+       "now": {
+        "P": 14,
+        "W": 3,
+        "D": 2,
+        "L": 9,
+        "GF": 20,
+        "GA": 32,
+        "GD": -12,
+        "Pts": 11,
+        "PPG": 0.786
+       }
+      },
+      "p": {
+       "h": 0.8028,
+       "d": 0.1289,
+       "a": 0.0683
+      },
+      "xg": [
+       3.0,
+       0.79
+      ],
+      "btts": 0.5325,
+      "over25": 0.6039,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8028,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 10,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8397,
+       "n": 131,
+       "cumHit": 0.8397,
+       "cumN": 131,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.8397,
+     "n": 131,
+     "list": true,
+     "pDraw": 0.1289,
+     "multOnly": false,
+     "odds": 1.32,
+     "best": 1.33,
+     "books": 6,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.33,
+      "Betfair": 1.29,
+      "BetVictor": 1.33
+     },
+     "pricedAt": "2026-11-05T02:27:57Z",
+     "margin": 1.1049,
+     "src": "API-Football, average of 6 bookmakers",
+     "implied": 0.7576,
+     "pTested": 0.8028,
+     "fair": 0.6857,
+     "edge": -0.0949,
+     "basis": "model",
+     "firstOdds": 1.32
+    },
+    {
+     "sport": "football",
+     "event": "Chelmsford City v Farnborough",
+     "home": "Chelmsford City",
+     "away": "Farnborough",
+     "side": "h",
+     "pick": "Chelmsford City",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-07T15:00:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.7074,
+     "p": 0.7074,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "15:00",
+      "kickoff": "2026-11-07T15:00:00Z",
+      "home": {
+       "name": "Chelmsford City",
+       "att": 1.04,
+       "def": 0.809,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WDWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 21,
+        "D": 10,
+        "L": 15,
+        "GF": 73,
+        "GA": 62,
+        "GD": 11,
+        "Pts": 73,
+        "PPG": 1.587
+       },
+       "now": {
+        "P": 14,
+        "W": 4,
+        "D": 9,
+        "L": 1,
+        "GF": 21,
+        "GA": 14,
+        "GD": 7,
+        "Pts": 21,
+        "PPG": 1.5
+       }
+      },
+      "away": {
+       "name": "Farnborough",
+       "att": 0.767,
+       "def": 1.331,
+       "played": 15,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "WLWLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 72,
+        "GA": 92,
+        "GD": -20,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 15,
+        "W": 5,
+        "D": 2,
+        "L": 8,
+        "GF": 12,
+        "GA": 31,
+        "GD": -19,
+        "Pts": 17,
+        "PPG": 1.133
+       }
+      },
+      "p": {
+       "h": 0.7074,
+       "d": 0.186,
+       "a": 0.1065
+      },
+      "xg": [
+       2.35,
+       0.76
+      ],
+      "btts": 0.5182,
+      "over25": 0.5525,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7074,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 32,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "pDraw": 0.186,
+     "multOnly": false,
+     "odds": 1.42,
+     "best": 1.44,
+     "books": 5,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.44,
+      "Betfair": 1.4
+     },
+     "pricedAt": "2026-11-05T02:27:59Z",
+     "margin": 1.1081,
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.7042,
+     "pTested": 0.7074,
+     "fair": 0.6355,
+     "edge": -0.0976,
+     "basis": "model",
+     "firstOdds": 1.42
+    },
+    {
+     "sport": "football",
+     "event": "Saint-Étienne v Stade Laval",
+     "home": "Saint-Étienne",
+     "away": "Stade Laval",
+     "side": "h",
+     "pick": "Saint-Étienne",
+     "code": "fr.2",
+     "comp": "Ligue 2",
+     "country": "France",
+     "when": "2026-11-07T19:00:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.6909,
+     "p": 0.6909,
+     "fx": {
+      "u21Side": false,
+      "league": "fr.2",
+      "leagueName": "Ligue 2",
+      "short": "FR2",
+      "country": "France",
+      "iso": "fra",
+      "tier": 2,
+      "order": 13,
+      "round": "2026-27-ligue-2",
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "19:00",
+      "kickoff": "2026-11-07T19:00:00Z",
+      "home": {
+       "name": "Saint-Étienne",
+       "att": 1.447,
+       "def": 0.916,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Ligue 2",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "DWWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 13,
+        "W": 7,
+        "D": 2,
+        "L": 4,
+        "GF": 28,
+        "GA": 19,
+        "GD": 9,
+        "Pts": 23,
+        "PPG": 1.769
+       },
+       "now": {
+        "P": 11,
+        "W": 8,
+        "D": 1,
+        "L": 2,
+        "GF": 23,
+        "GA": 11,
+        "GD": 12,
+        "Pts": 25,
+        "PPG": 2.273
+       }
+      },
+      "away": {
+       "name": "Stade Laval",
+       "att": 0.891,
+       "def": 1.181,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Ligue 2",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DLDLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 14,
+        "D": 8,
+        "L": 12,
+        "GF": 44,
+        "GA": 38,
+        "GD": 6,
+        "Pts": 50,
+        "PPG": 1.471
+       },
+       "now": {
+        "P": 11,
+        "W": 2,
+        "D": 3,
+        "L": 6,
+        "GF": 14,
+        "GA": 21,
+        "GD": -7,
+        "Pts": 9,
+        "PPG": 0.818
+       }
+      },
+      "p": {
+       "h": 0.6909,
+       "d": 0.1825,
+       "a": 0.1266
+      },
+      "xg": [
+       2.52,
+       0.95
+      ],
+      "btts": 0.5513,
+      "over25": 0.5815,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6909,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 42,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1825,
+     "multOnly": false,
+     "odds": 1.34,
+     "best": 1.36,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.33,
+      "Bet365": 1.36,
+      "Betfair": 1.33,
+      "BetVictor": 1.33
+     },
+     "pricedAt": "2026-11-05T02:28:01Z",
+     "margin": 1.0807,
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7463,
+     "pTested": 0.6909,
+     "fair": 0.6906,
+     "edge": -0.0746,
+     "basis": "model",
+     "firstOdds": 1.34,
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-07T17:07:12Z"
+    }
+   ],
+   "bestOdds": 2.6,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-05T02:27:54Z",
+   "checked": "2026-11-05T02:27:54Z",
+   "lockAt": "2026-11-07T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-07T17:07:12Z"
+  }
+ ]
+}
