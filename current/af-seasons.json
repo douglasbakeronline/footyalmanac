@@ -1,6 +1,6 @@
 {
 "note": "API-Football's current season per wider league (sources.af_refresh_seasons); written by the build.",
-"checked": 1793758693,
+"checked": 1794030627,
 "seasons": {
 "af.100": {
 "current": 2026,
@@ -1098,7 +1098,7 @@
 },
 "af.301": {
 "current": 2026,
-"split": false,
+"split": true,
 "years": [
 2011,
 2012,
