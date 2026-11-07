@@ -59,9 +59,11 @@ class Grading(unittest.TestCase):
         self.assertEqual(ST.start_of({**ph, "id": "0"}, starts), "2026-10-15T04:00:00Z")
         # a real start in history on a different day (rescheduled) is not used
         self.assertEqual(ST.start_of({**ph, "id": "185999"}, starts), "2026-10-15T04:00:00Z")
-        # a scheduled (non-placeholder) time is kept even if history differs
+        # 7 Nov 2026: a scheduled time is also replaced by the start history
+        # recorded (Andreescu v Giovannini, listed 19:00, began 19:25, refused
+        # as late); before then it was kept even if history differed
         sched = {**ph, "time": "09:00"}
-        self.assertEqual(ST.start_of(sched, starts), "2026-10-15T09:00:00Z")
+        self.assertEqual(ST.start_of(sched, starts), "2026-10-15T10:00:00Z")
         # no time at all: the start of the day, as before
         self.assertEqual(ST.start_of({"id": "185363", "date": "2026-10-15"}, starts), "2026-10-15T00:00:00Z")
         # EST placeholder (05:00 UTC) is a placeholder too
