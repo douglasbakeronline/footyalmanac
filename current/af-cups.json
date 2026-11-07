@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1793831174,
+"checked": 1794091998,
 "cups": [
 {
 "code": "afc.707",
@@ -595,7 +595,7 @@
 "id": 814,
 "name": "Reykjavik Cup",
 "country": "Iceland",
-"season": 2026
+"season": 2027
 },
 {
 "code": "afc.325",
@@ -938,7 +938,7 @@
 "id": 503,
 "name": "Copa Perú",
 "country": "Peru",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.108",
