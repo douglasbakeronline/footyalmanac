@@ -533,7 +533,7 @@
      "firstOdds": 1.21,
      "lastOdds": 1.17,
      "lastBest": 1.17,
-     "lastAt": "2026-11-07T17:07:12Z",
+     "lastAt": "2026-11-07T20:43:54Z",
      "lockPrice": {
       "odds": 1.17,
       "best": 1.17,
@@ -900,9 +900,9 @@
      "edge": -0.0407,
      "basis": "bookmakers",
      "firstOdds": 1.37,
-     "lastOdds": 1.33,
-     "lastBest": 1.33,
-     "lastAt": "2026-11-07T17:07:12Z",
+     "lastOdds": 1.31,
+     "lastBest": 1.31,
+     "lastAt": "2026-11-07T20:43:54Z",
      "lockPrice": {
       "odds": 1.33,
       "best": 1.33,
@@ -1073,7 +1073,7 @@
      "firstOdds": 1.34,
      "lastOdds": 1.37,
      "lastBest": 1.37,
-     "lastAt": "2026-11-07T17:07:12Z",
+     "lastAt": "2026-11-07T20:43:54Z",
      "lockPrice": {
       "odds": 1.37,
       "best": 1.37,
@@ -1629,6 +1629,604 @@
    "book": "William Hill",
    "stake": 0,
    "archivedAt": "2026-11-07T17:07:12Z"
+  },
+  {
+   "name": "Model 3x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "odds": 3.18,
+   "p": 0.3054,
+   "implied": 0.3141,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Saint-Étienne v Stade Laval",
+     "home": "Saint-Étienne",
+     "away": "Stade Laval",
+     "side": "h",
+     "pick": "Saint-Étienne",
+     "code": "fr.2",
+     "comp": "Ligue 2",
+     "country": "France",
+     "when": "2026-11-07T19:00:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.6909,
+     "p": 0.6909,
+     "fx": {
+      "u21Side": false,
+      "league": "fr.2",
+      "leagueName": "Ligue 2",
+      "short": "FR2",
+      "country": "France",
+      "iso": "fra",
+      "tier": 2,
+      "order": 13,
+      "round": "2026-27-ligue-2",
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "19:00",
+      "kickoff": "2026-11-07T19:00:00Z",
+      "home": {
+       "name": "Saint-Étienne",
+       "att": 1.447,
+       "def": 0.916,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Ligue 2",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "DWWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 13,
+        "W": 7,
+        "D": 2,
+        "L": 4,
+        "GF": 28,
+        "GA": 19,
+        "GD": 9,
+        "Pts": 23,
+        "PPG": 1.769
+       },
+       "now": {
+        "P": 11,
+        "W": 8,
+        "D": 1,
+        "L": 2,
+        "GF": 23,
+        "GA": 11,
+        "GD": 12,
+        "Pts": 25,
+        "PPG": 2.273
+       }
+      },
+      "away": {
+       "name": "Stade Laval",
+       "att": 0.891,
+       "def": 1.181,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Ligue 2",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DLDLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 14,
+        "D": 8,
+        "L": 12,
+        "GF": 44,
+        "GA": 38,
+        "GD": 6,
+        "Pts": 50,
+        "PPG": 1.471
+       },
+       "now": {
+        "P": 11,
+        "W": 2,
+        "D": 3,
+        "L": 6,
+        "GF": 14,
+        "GA": 21,
+        "GD": -7,
+        "Pts": 9,
+        "PPG": 0.818
+       }
+      },
+      "p": {
+       "h": 0.6909,
+       "d": 0.1825,
+       "a": 0.1266
+      },
+      "xg": [
+       2.52,
+       0.95
+      ],
+      "btts": 0.5513,
+      "over25": 0.5815,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6909,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 41,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1825,
+     "multOnly": false,
+     "odds": 1.34,
+     "best": 1.36,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.33,
+      "Bet365": 1.36,
+      "Betfair": 1.33,
+      "BetVictor": 1.33
+     },
+     "pricedAt": "2026-11-05T00:31:33Z",
+     "margin": 1.0807,
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7463,
+     "pTested": 0.6909,
+     "fair": 0.6906,
+     "edge": -0.0746,
+     "basis": "model",
+     "firstOdds": 1.34
+    },
+    {
+     "sport": "football",
+     "event": "CF Montréal v Vancouver Whitecaps",
+     "home": "CF Montréal",
+     "away": "Vancouver Whitecaps",
+     "side": "a",
+     "pick": "Vancouver Whitecaps",
+     "code": "us.1",
+     "comp": "Major League Soccer",
+     "country": "USA",
+     "when": "2026-11-07T21:00:00Z",
+     "date": "2026-11-07",
+     "pModel": 0.6523,
+     "p": 0.6523,
+     "fx": {
+      "u21Side": false,
+      "league": "us.1",
+      "leagueName": "Major League Soccer",
+      "short": "MLS",
+      "country": "USA",
+      "iso": "usa",
+      "tier": 1,
+      "order": 80,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-07",
+      "time": "21:00",
+      "kickoff": "2026-11-07T21:00:00Z",
+      "home": {
+       "name": "CF Montréal",
+       "att": 0.717,
+       "def": 1.207,
+       "played": 33,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 2,
+        "max": 15,
+        "seq": "LDLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 34,
+        "W": 6,
+        "D": 10,
+        "L": 18,
+        "GF": 34,
+        "GA": 60,
+        "GD": -26,
+        "Pts": 28,
+        "PPG": 0.824
+       },
+       "now": {
+        "P": 33,
+        "W": 6,
+        "D": 8,
+        "L": 19,
+        "GF": 37,
+        "GA": 67,
+        "GD": -30,
+        "Pts": 26,
+        "PPG": 0.788
+       }
+      },
+      "away": {
+       "name": "Vancouver Whitecaps",
+       "att": 1.295,
+       "def": 0.689,
+       "played": 33,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "DWLWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 39,
+        "W": 20,
+        "D": 11,
+        "L": 8,
+        "GF": 76,
+        "GA": 45,
+        "GD": 31,
+        "Pts": 71,
+        "PPG": 1.821
+       },
+       "now": {
+        "P": 33,
+        "W": 18,
+        "D": 7,
+        "L": 8,
+        "GF": 72,
+        "GA": 34,
+        "GD": 38,
+        "Pts": 61,
+        "PPG": 1.848
+       }
+      },
+      "p": {
+       "h": 0.1358,
+       "d": 0.2119,
+       "a": 0.6523
+      },
+      "xg": [
+       0.82,
+       2.14
+      ],
+      "btts": 0.5228,
+      "over25": 0.539,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.6523,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.2164,
+        0.2206,
+        0.563
+       ],
+       "best": [
+        4.33,
+        4.33,
+        1.67
+       ],
+       "avg": [
+        4.29,
+        4.21,
+        1.65
+       ],
+       "ev": [
+        -0.412,
+        -0.0825,
+        0.0893
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 61,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.2119,
+     "multOnly": false,
+     "odds": 1.65,
+     "best": 1.67,
+     "books": 9,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.67,
+      "Bet365": 1.67,
+      "Betfair": 1.67,
+      "BetVictor": 1.62
+     },
+     "margin": 1.0764,
+     "pricedAt": "2026-11-05T00:30:07Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6061,
+     "pTested": 0.6523,
+     "fair": 0.5631,
+     "edge": -0.0709,
+     "basis": "model",
+     "firstOdds": 1.65,
+     "lastOdds": 1.66,
+     "lastBest": 1.65,
+     "lastAt": "2026-11-07T20:43:54Z"
+    },
+    {
+     "sport": "football",
+     "event": "San Diego v Sporting Kansas City",
+     "home": "San Diego",
+     "away": "Sporting Kansas City",
+     "side": "h",
+     "pick": "San Diego",
+     "code": "us.1",
+     "comp": "Major League Soccer",
+     "country": "USA",
+     "when": "2026-11-08T00:00:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.6776,
+     "p": 0.6776,
+     "fx": {
+      "u21Side": false,
+      "league": "us.1",
+      "leagueName": "Major League Soccer",
+      "short": "MLS",
+      "country": "USA",
+      "iso": "usa",
+      "tier": 1,
+      "order": 80,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "00:00",
+      "kickoff": "2026-11-08T00:00:00Z",
+      "home": {
+       "name": "San Diego",
+       "att": 1.08,
+       "def": 1.086,
+       "played": 33,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "DDDLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 39,
+        "W": 22,
+        "D": 7,
+        "L": 10,
+        "GF": 74,
+        "GA": 47,
+        "GD": 27,
+        "Pts": 73,
+        "PPG": 1.872
+       },
+       "now": {
+        "P": 33,
+        "W": 9,
+        "D": 11,
+        "L": 13,
+        "GF": 57,
+        "GA": 62,
+        "GD": -5,
+        "Pts": 38,
+        "PPG": 1.152
+       }
+      },
+      "away": {
+       "name": "Sporting Kansas City",
+       "att": 0.778,
+       "def": 1.43,
+       "played": 33,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 34,
+        "W": 7,
+        "D": 7,
+        "L": 20,
+        "GF": 46,
+        "GA": 70,
+        "GD": -24,
+        "Pts": 28,
+        "PPG": 0.824
+       },
+       "now": {
+        "P": 33,
+        "W": 6,
+        "D": 5,
+        "L": 22,
+        "GF": 39,
+        "GA": 81,
+        "GD": -42,
+        "Pts": 23,
+        "PPG": 0.697
+       }
+      },
+      "p": {
+       "h": 0.6776,
+       "d": 0.1811,
+       "a": 0.1413
+      },
+      "xg": [
+       2.62,
+       1.09
+      ],
+      "btts": 0.5718,
+      "over25": 0.5989,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.6776,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6441,
+        0.185,
+        0.171
+       ],
+       "best": [
+        1.44,
+        5.0,
+        6.0
+       ],
+       "avg": [
+        1.44,
+        5.0,
+        5.41
+       ],
+       "ev": [
+        -0.0243,
+        -0.0945,
+        -0.1522
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 40,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1811,
+     "multOnly": false,
+     "odds": 1.44,
+     "best": 1.44,
+     "books": 9,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.42,
+      "Betfair": 1.44,
+      "BetVictor": 1.4
+     },
+     "margin": 1.0805,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6944,
+     "pTested": 0.6776,
+     "fair": 0.6427,
+     "edge": -0.0745,
+     "basis": "model",
+     "firstOdds": 1.44,
+     "lastOdds": 1.57,
+     "lastBest": 1.57,
+     "lastAt": "2026-11-07T20:43:54Z"
+    }
+   ],
+   "bestOdds": 3.27,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-05T00:31:27Z",
+   "checked": "2026-11-05T00:31:27Z",
+   "lockAt": "2026-11-07T19:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-07T20:43:54Z"
   }
  ]
 }

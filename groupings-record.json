@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-07T17:07:59Z",
+ "graded": "2026-11-07T20:44:07Z",
  "overall": {
-  "groups": 122,
+  "groups": 123,
   "settled": 119,
   "won": 35,
   "z": -0.95,
   "lost": 84,
-  "pending": 3,
+  "pending": 4,
   "legs": 474,
   "legsWon": 344,
   "returned": 103.7,
@@ -16,10 +16,10 @@
   "stakedLock": 18,
   "expected": 39.8,
   "clv": {
-   "n": 130,
+   "n": 132,
    "shortened": 49,
-   "drifted": 51,
-   "mean": -0.0008
+   "drifted": 53,
+   "mean": -0.0013
   }
  },
  "byBand": {
@@ -42,7 +42,7 @@
     "n": 65,
     "shortened": 18,
     "drifted": 27,
-    "mean": -0.0065
+    "mean": -0.0063
    }
   },
   "Card 3x": {
@@ -323,7 +323,7 @@
    "n": 81,
    "shortened": 27,
    "drifted": 34,
-   "mean": -0.0038
+   "mean": -0.0036
   }
  },
  "cardWide": {
@@ -371,12 +371,12 @@
   }
  },
  "cardModel": {
-  "groups": 11,
+  "groups": 12,
   "settled": 10,
   "won": 5,
   "z": 0.75,
   "lost": 5,
-  "pending": 1,
+  "pending": 2,
   "legs": 33,
   "legsWon": 28,
   "returned": 14.15,
@@ -386,10 +386,10 @@
   "stakedLock": 0,
   "expected": 3.86,
   "clv": {
-   "n": 16,
+   "n": 18,
    "shortened": 8,
-   "drifted": 6,
-   "mean": 0.0162
+   "drifted": 8,
+   "mean": 0.0095
   }
  },
  "cardByRule": {
@@ -478,7 +478,7 @@
     "n": 6,
     "shortened": 3,
     "drifted": 3,
-    "mean": -0.0193
+    "mean": -0.0167
    }
   }
  },
@@ -502,7 +502,7 @@
     "n": 35,
     "shortened": 9,
     "drifted": 16,
-    "mean": -0.0
+    "mean": 0.0004
    }
   },
   "Daytime": {
@@ -721,7 +721,7 @@
        "when": "2026-11-07T22:00Z",
        "odds": 1.37,
        "best": 1.37,
-       "lastOdds": 1.33,
+       "lastOdds": 1.31,
        "lockOdds": 1.33,
        "lockBest": 1.33,
        "lockBook": null,
@@ -821,6 +821,82 @@
        "lockBook": null,
        "est": false,
        "p": 0.6909,
+       "status": "pending",
+       "result": null,
+       "opp": null
+      }
+     ]
+    },
+    {
+     "name": "Model 3x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 5,
+     "odds": 3.18,
+     "p": 0.3054,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-07T19:00:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Saint-Étienne",
+       "event": "Saint-Étienne v Stade Laval",
+       "sport": "football",
+       "comp": "Ligue 2",
+       "when": "2026-11-07T19:00:00Z",
+       "odds": 1.34,
+       "best": 1.36,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6909,
+       "status": "pending",
+       "result": null,
+       "opp": null
+      },
+      {
+       "pick": "Vancouver Whitecaps",
+       "event": "CF Montréal v Vancouver Whitecaps",
+       "sport": "football",
+       "comp": "Major League Soccer",
+       "when": "2026-11-07T21:00:00Z",
+       "odds": 1.65,
+       "best": 1.67,
+       "lastOdds": 1.66,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6523,
+       "status": "pending",
+       "result": null,
+       "opp": null
+      },
+      {
+       "pick": "San Diego",
+       "event": "San Diego v Sporting Kansas City",
+       "sport": "football",
+       "comp": "Major League Soccer",
+       "when": "2026-11-08T00:00:00Z",
+       "odds": 1.44,
+       "best": 1.44,
+       "lastOdds": 1.57,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6776,
        "status": "pending",
        "result": null,
        "opp": null
