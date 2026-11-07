@@ -475,7 +475,11 @@ def archive(matches, published, day=None):
         old = []
     merged = {pred_key(m): m for m in old}
     for m in matches:
-        merged[pred_key(m)] = {**m, "published": published}
+        # 7 Nov 2026: the first time this match was published stays on the
+        # row (firstPublished); "published" is the stamp of the price kept.
+        prev = merged.get(pred_key(m)) or {}
+        first = min(x for x in (prev.get("firstPublished"), prev.get("published"), published) if x)
+        merged[pred_key(m)] = {**m, "published": published, "firstPublished": first}
     with open(path, "w") as f:
         json.dump(list(merged.values()), f, separators=(",", ":"))
 

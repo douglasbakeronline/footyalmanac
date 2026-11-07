@@ -72,12 +72,17 @@ def start_of(m, starts):
     Before the order of play is out ESPN dates a match at midnight New York
     (04:00 or 05:00 UTC, groupings.tennis_placeholder), and a price archived
     with that stand-in was held to it: a 09:07 UTC price for a 10:00 match
-    was refused as late (bug 15, 25 Oct 2026). When the archived time is the
-    placeholder and the result in history-tennis/ carries the real start, the
-    price is judged against the real start. Any other archived time is a
-    scheduled start and is kept as it is."""
+    was refused as late (bug 15, 25 Oct 2026). When the result in
+    history-tennis/ carries the start ESPN recorded for the match, the price
+    is judged against that: it is when the match actually began. Until
+    7 Nov 2026 only a placeholder time was replaced, and a scheduled start
+    was kept as it was, so a match that ran late was judged on its listed
+    time: Andreescu v Giovannini (Cali, 5 Nov) was listed 19:00, began
+    19:25, and a build at 19:09 (ESPN still "pre") re-stamped the row, so
+    the pick, published since 00:35, was refused as late and the Card leg
+    sat pending. Without a recorded start the archived time stands."""
     when = kickoff(m)
-    if m.get("time") and G.tennis_placeholder(when):
+    if m.get("time"):
         real = starts.get(str(m.get("id") or ""))
         if real and real[:10] == m["date"]:
             return real

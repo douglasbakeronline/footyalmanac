@@ -68,6 +68,23 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-07 (pending tag): a tennis pick is judged against the match's recorded start
+
+**What changed.** Douglas (7 Nov 2026): "why are these results pending".
+Andreescu v Giovannini (Cali quarter-final, 5 Nov) was listed for 19:00 and
+began 19:25; the 19:09 build saw it still to start and re-stamped the row,
+and the grader, holding the row to its listed time, refused the pick as
+published late although it had been up since 00:35. The Card 2x leg sat
+pending with the result on file. `score_tennis.start_of` now judges every
+price against the start ESPN recorded for the match when there is one (until
+now only a placeholder time was replaced); the archive also keeps each row's
+first publish stamp (`firstPublished`). Two archived picks change from
+unscored to graded, both won; the Card leg settles on the next build.
+
+**Files.** `score_tennis.py`, `build_tennis.py`, `tests/test_tennis_late_start.py`.
+
+**Roll back.** `git revert` the release commit; the two rows return to unscored.
+
 ## release-2026-11-06-2 (pending tag): home / draw / away prices on every row
 
 **What changed.** Douglas (6 Nov 2026): "why can't I see the odds for home
