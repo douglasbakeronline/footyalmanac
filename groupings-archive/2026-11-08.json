@@ -1,0 +1,1727 @@
+{
+ "date": "2026-11-08",
+ "published": "2026-11-08T17:20:14Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 6,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-07T22:57:07Z",
+   "lockAt": "2026-11-08T14:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Spartak Moscow",
+     "event": "Spartak Moscow v Akron Tolyatti",
+     "sport": "football",
+     "comp": "Premier League",
+     "when": "2026-11-08T13:15:00Z",
+     "date": "2026-11-08",
+     "odds": 1.25,
+     "best": 1.25,
+     "bestBook": null,
+     "bookOdds": {},
+     "p": 0.7577,
+     "pModel": 0.7074,
+     "fair": 0.7577,
+     "hit": 0.7347,
+     "src": "API-Football, average of 5 bookmakers",
+     "pricedAt": "2026-11-08T11:58:28Z",
+     "id": null,
+     "home": "Spartak Moscow",
+     "away": "Akron Tolyatti",
+     "players": null,
+     "opp": 10.19,
+     "draw": 6.4
+    }
+   ],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.48,
+   "p": 0.3622,
+   "implied": 0.4027,
+   "bestOdds": 2.48,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Carlos Alcaraz v Ben Shelton",
+     "pick": "Carlos Alcaraz",
+     "tour": "ATP",
+     "tournament": "Rolex Paris Masters",
+     "players": [
+      "Carlos Alcaraz",
+      "Ben Shelton"
+     ],
+     "comp": "Rolex Paris Masters Final",
+     "when": "2026-11-08T14:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-08",
+     "id": "186507",
+     "fx": {
+      "id": "186507",
+      "espn": [
+       "Carlos Alcaraz",
+       "Ben Shelton"
+      ],
+      "tour": "ATP",
+      "date": "2026-11-08",
+      "time": "14:00",
+      "timeTbc": false,
+      "tournament": "Rolex Paris Masters",
+      "round": "Final",
+      "surface": "Hard",
+      "playerA": "Carlos Alcaraz",
+      "playerB": "Ben Shelton",
+      "ratingA": {
+       "elo": 2386,
+       "matches": 451,
+       "surfaceElo": 2229
+      },
+      "ratingB": {
+       "elo": 2144,
+       "matches": 306,
+       "surfaceElo": 2062
+      },
+      "p": {
+       "a": 0.7512,
+       "b": 0.2488
+      },
+      "pick": "Carlos Alcaraz",
+      "confidence": 0.7512,
+      "tier": "Strong",
+      "rankA": 3,
+      "rankB": 4,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.8,
+       "n": 35,
+       "cumHit": 0.8,
+       "cumN": 35,
+       "quoted": 0.7691,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7512,
+     "p": 0.7571,
+     "hit": 0.8,
+     "n": 35,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.29,
+     "best": 1.29,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 4.06,
+     "draw": null,
+     "margin": 1.0239,
+     "pricedAt": "2026-11-08T12:01:21Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7752,
+     "pTested": 0.7512,
+     "fair": 0.7571,
+     "edge": -0.031,
+     "basis": "bookmakers",
+     "firstOdds": 1.25
+    },
+    {
+     "sport": "nba",
+     "event": "Chicago Bulls v Philadelphia 76ers",
+     "home": "Chicago Bulls",
+     "away": "Philadelphia 76ers",
+     "pick": "Philadelphia 76ers",
+     "comp": "NBA",
+     "when": "2026-11-08T20:30Z",
+     "date": "2026-11-08",
+     "id": "401909945",
+     "pModel": 0.7318,
+     "p": 0.7672,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909945",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-08T20:30Z",
+      "home": "Chicago Bulls",
+      "away": "Philadelphia 76ers",
+      "neutral": false,
+      "pHome": 0.2682,
+      "pick": "Philadelphia 76ers",
+      "confidence": 0.7318,
+      "tier": "Strong",
+      "eloH": 1366,
+      "eloA": 1578,
+      "gamesH": 257,
+      "gamesA": 275,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "105-135",
+        "opp": "New York Knicks",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "L",
+        "score": "107-126",
+        "opp": "Philadelphia 76ers",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "L",
+        "score": "111-125",
+        "opp": "Boston Celtics",
+        "home": false,
+        "date": "2026-10-30"
+       },
+       {
+        "r": "L",
+        "score": "127-133",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-10-29"
+       },
+       {
+        "r": "L",
+        "score": "99-134",
+        "opp": "Boston Celtics",
+        "home": false,
+        "date": "2026-10-26"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "95-119",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "112-106",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "126-107",
+        "opp": "Chicago Bulls",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "109-104",
+        "opp": "Charlotte Hornets",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "98-93",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-10-30"
+       }
+      ],
+      "recordH": {
+       "w": 1,
+       "l": 7,
+       "d": 0
+      },
+      "recordA": {
+       "w": 8,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-11-03",
+        "home": "Philadelphia 76ers",
+        "away": "Chicago Bulls",
+        "score": "126-107"
+       },
+       {
+        "date": "2026-03-25",
+        "home": "Philadelphia 76ers",
+        "away": "Chicago Bulls",
+        "score": "157-137"
+       },
+       {
+        "date": "2025-12-27",
+        "home": "Chicago Bulls",
+        "away": "Philadelphia 76ers",
+        "score": "109-102"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.25,
+     "margin": 1.0427,
+     "opp": 4.12,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-11-08T12:01:23Z",
+     "implied": 0.8,
+     "pTested": 0.7318,
+     "fair": 0.7672,
+     "edge": -0.0853,
+     "basis": "bookmakers",
+     "firstOdds": 1.32,
+     "lastOdds": 1.24,
+     "lastBest": 1.24,
+     "lastAt": "2026-11-08T17:20:14Z",
+     "lockPrice": {
+      "odds": 1.24,
+      "best": 1.24,
+      "book": null,
+      "at": "2026-11-08T17:20:14Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Detroit Pistons v Los Angeles Lakers",
+     "home": "Detroit Pistons",
+     "away": "Los Angeles Lakers",
+     "pick": "Detroit Pistons",
+     "comp": "NBA",
+     "when": "2026-11-08T23:00Z",
+     "date": "2026-11-08",
+     "id": "401909946",
+     "pModel": 0.5794,
+     "p": 0.6235,
+     "hit": 0.7076,
+     "n": 1108,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909946",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-08T23:00Z",
+      "home": "Detroit Pistons",
+      "away": "Los Angeles Lakers",
+      "neutral": false,
+      "pHome": 0.5794,
+      "pick": "Detroit Pistons",
+      "confidence": 0.5794,
+      "tier": "Lean",
+      "eloH": 1616,
+      "eloA": 1596,
+      "gamesH": 274,
+      "gamesA": 278,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.55,
+       "to": 0.6,
+       "hit": 0.593,
+       "n": 253,
+       "cumHit": 0.7076,
+       "cumN": 1108
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "106-112",
+        "opp": "Philadelphia 76ers",
+        "home": true,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "124-91",
+        "opp": "Charlotte Hornets",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "110-94",
+        "opp": "Brooklyn Nets",
+        "home": false,
+        "date": "2026-10-30"
+       },
+       {
+        "r": "W",
+        "score": "97-89",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-10-28"
+       },
+       {
+        "r": "L",
+        "score": "97-111",
+        "opp": "New York Knicks",
+        "home": false,
+        "date": "2026-10-28"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "124-118",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "116-103",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-11-05"
+       },
+       {
+        "r": "W",
+        "score": "138-117",
+        "opp": "Miami Heat",
+        "home": true,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "131-125",
+        "opp": "Toronto Raptors",
+        "home": true,
+        "date": "2026-11-02"
+       },
+       {
+        "r": "L",
+        "score": "95-112",
+        "opp": "Golden State Warriors",
+        "home": false,
+        "date": "2026-10-31"
+       }
+      ],
+      "recordH": {
+       "w": 6,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 8,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-23",
+        "home": "Detroit Pistons",
+        "away": "Los Angeles Lakers",
+        "score": "113-110"
+       },
+       {
+        "date": "2025-12-31",
+        "home": "Los Angeles Lakers",
+        "away": "Detroit Pistons",
+        "score": "106-128"
+       },
+       {
+        "date": "2024-12-24",
+        "home": "Los Angeles Lakers",
+        "away": "Detroit Pistons",
+        "score": "114-117"
+       }
+      ],
+      "list": false,
+      "reserve": false
+     },
+     "odds": 1.54,
+     "margin": 1.0415,
+     "opp": 2.55,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-11-08T12:01:23Z",
+     "implied": 0.6494,
+     "pTested": 0.5794,
+     "fair": 0.6235,
+     "edge": -0.1077,
+     "basis": "bookmakers",
+     "firstOdds": 1.6,
+     "lastOdds": 1.52,
+     "lastBest": 1.52,
+     "lastAt": "2026-11-08T17:20:14Z",
+     "lockPrice": {
+      "odds": 1.52,
+      "best": 1.52,
+      "book": null,
+      "at": "2026-11-08T17:20:14Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-08T11:59:35Z",
+   "archivedAt": "2026-11-08T17:20:14Z"
+  },
+  {
+   "name": "Model 2x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "odds": 2.63,
+   "p": 0.4131,
+   "implied": 0.3807,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Heart of Midlothian v Falkirk",
+     "home": "Heart of Midlothian",
+     "away": "Falkirk",
+     "side": "h",
+     "pick": "Heart of Midlothian",
+     "code": "sco.1",
+     "comp": "Premiership",
+     "country": "Scotland",
+     "when": "2026-11-08T15:00:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.7077,
+     "p": 0.7077,
+     "fx": {
+      "u21Side": false,
+      "league": "sco.1",
+      "leagueName": "Premiership",
+      "short": "SPL",
+      "country": "Scotland",
+      "iso": "sct",
+      "tier": 1,
+      "order": 5,
+      "round": "1st Phase - 13",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "15:00",
+      "kickoff": "2026-11-08T15:00:00Z",
+      "home": {
+       "name": "Heart of Midlothian",
+       "att": 1.374,
+       "def": 0.853,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWWLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 38,
+        "W": 15,
+        "D": 7,
+        "L": 16,
+        "GF": 52,
+        "GA": 47,
+        "GD": 5,
+        "Pts": 52,
+        "PPG": 1.368
+       },
+       "now": {
+        "P": 7,
+        "W": 4,
+        "D": 1,
+        "L": 2,
+        "GF": 14,
+        "GA": 8,
+        "GD": 6,
+        "Pts": 13,
+        "PPG": 1.857
+       }
+      },
+      "away": {
+       "name": "Falkirk",
+       "att": 0.888,
+       "def": 1.116,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "LLDWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 11,
+        "W": 4,
+        "D": 3,
+        "L": 4,
+        "GF": 15,
+        "GA": 20,
+        "GD": -5,
+        "Pts": 15,
+        "PPG": 1.364
+       },
+       "now": {
+        "P": 7,
+        "W": 1,
+        "D": 3,
+        "L": 3,
+        "GF": 6,
+        "GA": 9,
+        "GD": -3,
+        "Pts": 6,
+        "PPG": 0.857
+       }
+      },
+      "p": {
+       "h": 0.7077,
+       "d": 0.1731,
+       "a": 0.1192
+      },
+      "xg": [
+       2.63,
+       0.97
+      ],
+      "btts": 0.5551,
+      "over25": 0.5907,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7077,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6195,
+        0.2084,
+        0.1721
+       ],
+       "best": [
+        1.5,
+        4.75,
+        5.5
+       ],
+       "avg": [
+        1.5,
+        4.46,
+        5.4
+       ],
+       "ev": [
+        0.0615,
+        -0.1778,
+        -0.3444
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 24,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "pDraw": 0.1731,
+     "multOnly": false,
+     "odds": 1.5,
+     "best": 1.5,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.5,
+      "Bet365": 1.5,
+      "Betfair": 1.5,
+      "BetVictor": 1.5
+     },
+     "margin": 1.0754,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6667,
+     "pTested": 0.7077,
+     "fair": 0.62,
+     "edge": -0.07,
+     "basis": "model",
+     "firstOdds": 1.5
+    },
+    {
+     "sport": "football",
+     "event": "Celtic v Kilmarnock",
+     "home": "Celtic",
+     "away": "Kilmarnock",
+     "side": "h",
+     "pick": "Celtic",
+     "code": "sco.1",
+     "comp": "Premiership",
+     "country": "Scotland",
+     "when": "2026-11-08T16:00:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.8404,
+     "p": 0.8404,
+     "fx": {
+      "u21Side": false,
+      "league": "sco.1",
+      "leagueName": "Premiership",
+      "short": "SPL",
+      "country": "Scotland",
+      "iso": "sct",
+      "tier": 1,
+      "order": 5,
+      "round": "1st Phase - 13",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "16:00",
+      "kickoff": "2026-11-08T16:00:00Z",
+      "home": {
+       "name": "Celtic",
+       "att": 1.386,
+       "def": 0.642,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 38,
+        "W": 29,
+        "D": 5,
+        "L": 4,
+        "GF": 112,
+        "GA": 26,
+        "GD": 86,
+        "Pts": 92,
+        "PPG": 2.421
+       },
+       "now": {
+        "P": 7,
+        "W": 6,
+        "D": 0,
+        "L": 1,
+        "GF": 14,
+        "GA": 4,
+        "GD": 10,
+        "Pts": 18,
+        "PPG": 2.571
+       }
+      },
+      "away": {
+       "name": "Kilmarnock",
+       "att": 0.829,
+       "def": 1.298,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "LLDWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 38,
+        "W": 12,
+        "D": 8,
+        "L": 18,
+        "GF": 45,
+        "GA": 64,
+        "GD": -19,
+        "Pts": 44,
+        "PPG": 1.158
+       },
+       "now": {
+        "P": 7,
+        "W": 1,
+        "D": 2,
+        "L": 4,
+        "GF": 6,
+        "GA": 15,
+        "GD": -9,
+        "Pts": 5,
+        "PPG": 0.714
+       }
+      },
+      "p": {
+       "h": 0.8404,
+       "d": 0.1102,
+       "a": 0.0494
+      },
+      "xg": [
+       3.12,
+       0.68
+      ],
+      "btts": 0.5131,
+      "over25": 0.6046,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8404,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8054,
+        0.1203,
+        0.0743
+       ],
+       "best": [
+        1.17,
+        8.0,
+        13.0
+       ],
+       "avg": [
+        1.16,
+        7.74,
+        12.53
+       ],
+       "ev": [
+        -0.0167,
+        -0.1184,
+        -0.3578
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 6,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8397,
+       "n": 131,
+       "cumHit": 0.8397,
+       "cumN": 131,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.8397,
+     "n": 131,
+     "list": true,
+     "pDraw": 0.1102,
+     "multOnly": false,
+     "odds": 1.16,
+     "best": 1.17,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.17,
+      "Bet365": 1.14,
+      "Betfair": 1.15,
+      "BetVictor": 1.13
+     },
+     "margin": 1.0741,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.8621,
+     "pTested": 0.8397,
+     "fair": 0.8026,
+     "edge": -0.069,
+     "basis": "model",
+     "firstOdds": 1.16
+    },
+    {
+     "sport": "football",
+     "event": "SC Freiburg v 1. FC Union Berlin",
+     "home": "SC Freiburg",
+     "away": "1. FC Union Berlin",
+     "side": "h",
+     "pick": "SC Freiburg",
+     "code": "de.1",
+     "comp": "Bundesliga",
+     "country": "Germany",
+     "when": "2026-11-08T16:30:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.6946,
+     "p": 0.6946,
+     "fx": {
+      "u21Side": false,
+      "league": "de.1",
+      "leagueName": "Bundesliga",
+      "short": "BUN",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 1,
+      "order": 8,
+      "round": "Matchday 9",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "17:30",
+      "kickoff": "2026-11-08T16:30:00Z",
+      "home": {
+       "name": "SC Freiburg",
+       "att": 1.076,
+       "def": 0.898,
+       "played": 4,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Bundesliga",
+       "form": {
+        "pts": 10,
+        "max": 12,
+        "seq": "WWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 13,
+        "D": 8,
+        "L": 13,
+        "GF": 51,
+        "GA": 57,
+        "GD": -6,
+        "Pts": 47,
+        "PPG": 1.382
+       },
+       "now": {
+        "P": 4,
+        "W": 3,
+        "D": 1,
+        "L": 0,
+        "GF": 12,
+        "GA": 3,
+        "GD": 9,
+        "Pts": 10,
+        "PPG": 2.5
+       }
+      },
+      "away": {
+       "name": "1. FC Union Berlin",
+       "att": 0.798,
+       "def": 1.276,
+       "played": 4,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Bundesliga",
+       "form": {
+        "pts": 1,
+        "max": 12,
+        "seq": "DLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 10,
+        "D": 9,
+        "L": 15,
+        "GF": 44,
+        "GA": 58,
+        "GD": -14,
+        "Pts": 39,
+        "PPG": 1.147
+       },
+       "now": {
+        "P": 4,
+        "W": 0,
+        "D": 1,
+        "L": 3,
+        "GF": 4,
+        "GA": 17,
+        "GD": -13,
+        "Pts": 1,
+        "PPG": 0.25
+       }
+      },
+      "p": {
+       "h": 0.6946,
+       "d": 0.1781,
+       "a": 0.1273
+      },
+      "xg": [
+       2.59,
+       1.0
+      ],
+      "btts": 0.5588,
+      "over25": 0.5904,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6946,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6269,
+        0.2118,
+        0.1613
+       ],
+       "best": [
+        1.53,
+        4.6,
+        6.0
+       ],
+       "avg": [
+        1.51,
+        4.46,
+        5.86
+       ],
+       "ev": [
+        0.0627,
+        -0.1807,
+        -0.2362
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 31,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "pDraw": 0.1781,
+     "multOnly": false,
+     "odds": 1.51,
+     "best": 1.53,
+     "books": 10,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.5,
+      "Bet365": 1.53,
+      "Betfair": 1.5,
+      "BetVictor": 1.45
+     },
+     "margin": 1.0578,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6623,
+     "pTested": 0.6946,
+     "fair": 0.6261,
+     "edge": -0.0546,
+     "basis": "model",
+     "firstOdds": 1.51
+    }
+   ],
+   "bestOdds": 2.69,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-05T00:31:27Z",
+   "checked": "2026-11-05T00:31:27Z",
+   "lockAt": "2026-11-08T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-08T17:20:14Z"
+  },
+  {
+   "name": "Model 3x",
+   "risk": "On paper, the model's own picks",
+   "band": [
+    3.0,
+    4.6
+   ],
+   "minChance": 0.18,
+   "odds": 3.25,
+   "p": 0.3268,
+   "implied": 0.3074,
+   "estimates": 0,
+   "basis": "bookmakers",
+   "rule": 5,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Celtic v Kilmarnock",
+     "home": "Celtic",
+     "away": "Kilmarnock",
+     "side": "h",
+     "pick": "Celtic",
+     "code": "sco.1",
+     "comp": "Premiership",
+     "country": "Scotland",
+     "when": "2026-11-08T16:00:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.8404,
+     "p": 0.8404,
+     "fx": {
+      "u21Side": false,
+      "league": "sco.1",
+      "leagueName": "Premiership",
+      "short": "SPL",
+      "country": "Scotland",
+      "iso": "sct",
+      "tier": 1,
+      "order": 5,
+      "round": "1st Phase - 13",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "16:00",
+      "kickoff": "2026-11-08T16:00:00Z",
+      "home": {
+       "name": "Celtic",
+       "att": 1.386,
+       "def": 0.642,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 38,
+        "W": 29,
+        "D": 5,
+        "L": 4,
+        "GF": 112,
+        "GA": 26,
+        "GD": 86,
+        "Pts": 92,
+        "PPG": 2.421
+       },
+       "now": {
+        "P": 7,
+        "W": 6,
+        "D": 0,
+        "L": 1,
+        "GF": 14,
+        "GA": 4,
+        "GD": 10,
+        "Pts": 18,
+        "PPG": 2.571
+       }
+      },
+      "away": {
+       "name": "Kilmarnock",
+       "att": 0.829,
+       "def": 1.298,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premiership",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "LLDWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 38,
+        "W": 12,
+        "D": 8,
+        "L": 18,
+        "GF": 45,
+        "GA": 64,
+        "GD": -19,
+        "Pts": 44,
+        "PPG": 1.158
+       },
+       "now": {
+        "P": 7,
+        "W": 1,
+        "D": 2,
+        "L": 4,
+        "GF": 6,
+        "GA": 15,
+        "GD": -9,
+        "Pts": 5,
+        "PPG": 0.714
+       }
+      },
+      "p": {
+       "h": 0.8404,
+       "d": 0.1102,
+       "a": 0.0494
+      },
+      "xg": [
+       3.12,
+       0.68
+      ],
+      "btts": 0.5131,
+      "over25": 0.6046,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8404,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8054,
+        0.1203,
+        0.0743
+       ],
+       "best": [
+        1.17,
+        8.0,
+        13.0
+       ],
+       "avg": [
+        1.16,
+        7.74,
+        12.53
+       ],
+       "ev": [
+        -0.0167,
+        -0.1184,
+        -0.3578
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 6,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8397,
+       "n": 131,
+       "cumHit": 0.8397,
+       "cumN": 131,
+       "season": "2025-26"
+      }
+     },
+     "hit": 0.8397,
+     "n": 131,
+     "list": true,
+     "pDraw": 0.1102,
+     "multOnly": false,
+     "odds": 1.16,
+     "best": 1.17,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.17,
+      "Bet365": 1.14,
+      "Betfair": 1.15,
+      "BetVictor": 1.13
+     },
+     "margin": 1.0741,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.8621,
+     "pTested": 0.8397,
+     "fair": 0.8026,
+     "edge": -0.069,
+     "basis": "model",
+     "firstOdds": 1.16
+    },
+    {
+     "sport": "football",
+     "event": "FC Baltika Kaliningrad v Dynamo Makhachkala",
+     "home": "FC Baltika Kaliningrad",
+     "away": "Dynamo Makhachkala",
+     "side": "h",
+     "pick": "FC Baltika Kaliningrad",
+     "code": "ru.1",
+     "comp": "Premier League",
+     "country": "Russia",
+     "when": "2026-11-08T17:45:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.6093,
+     "p": 0.6093,
+     "fx": {
+      "u21Side": false,
+      "league": "ru.1",
+      "leagueName": "Premier League",
+      "short": "RUS",
+      "country": "Russia",
+      "iso": "rus",
+      "tier": 1,
+      "order": 101,
+      "round": "2026-27-russian-premier-league",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "17:45",
+      "kickoff": "2026-11-08T17:45:00Z",
+      "home": {
+       "name": "FC Baltika Kaliningrad",
+       "att": 0.983,
+       "def": 0.769,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premier League",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LDDDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 30,
+        "W": 11,
+        "D": 13,
+        "L": 6,
+        "GF": 38,
+        "GA": 21,
+        "GD": 17,
+        "Pts": 46,
+        "PPG": 1.533
+       },
+       "now": {
+        "P": 13,
+        "W": 4,
+        "D": 5,
+        "L": 4,
+        "GF": 17,
+        "GA": 14,
+        "GD": 3,
+        "Pts": 17,
+        "PPG": 1.308
+       }
+      },
+      "away": {
+       "name": "Dynamo Makhachkala",
+       "att": 0.814,
+       "def": 1.244,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Premier League",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 30,
+        "W": 5,
+        "D": 11,
+        "L": 14,
+        "GF": 19,
+        "GA": 37,
+        "GD": -18,
+        "Pts": 26,
+        "PPG": 0.867
+       },
+       "now": {
+        "P": 13,
+        "W": 4,
+        "D": 1,
+        "L": 8,
+        "GF": 16,
+        "GA": 26,
+        "GD": -10,
+        "Pts": 13,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.6093,
+       "d": 0.2482,
+       "a": 0.1425
+      },
+      "xg": [
+       1.77,
+       0.67
+      ],
+      "btts": 0.4884,
+      "over25": 0.4881,
+      "score": [
+       1,
+       0
+      ],
+      "confidence": 0.6093,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5506,
+        0.2702,
+        0.1792
+       ],
+       "best": [
+        1.71,
+        3.49,
+        5.27
+       ],
+       "avg": [
+        1.71,
+        3.49,
+        5.27
+       ],
+       "ev": [
+        0.0443,
+        -0.1333,
+        -0.2496
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 88,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2482,
+     "multOnly": true,
+     "odds": 1.71,
+     "best": 1.71,
+     "books": 5,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.0597,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.5848,
+     "pTested": 0.6093,
+     "fair": 0.5519,
+     "edge": -0.0563,
+     "basis": "model",
+     "firstOdds": 1.71,
+     "lastOdds": 1.7,
+     "lastBest": 1.7,
+     "lastAt": "2026-11-08T17:20:14Z"
+    },
+    {
+     "sport": "football",
+     "event": "Vitória Guimarães v FC Porto",
+     "home": "Vitória Guimarães",
+     "away": "FC Porto",
+     "side": "a",
+     "pick": "FC Porto",
+     "code": "pt.1",
+     "comp": "Primeira Liga",
+     "country": "Portugal",
+     "when": "2026-11-08T18:00:00Z",
+     "date": "2026-11-08",
+     "pModel": 0.6383,
+     "p": 0.6383,
+     "fx": {
+      "u21Side": false,
+      "league": "pt.1",
+      "leagueName": "Primeira Liga",
+      "short": "PRI",
+      "country": "Portugal",
+      "iso": "prt",
+      "tier": 1,
+      "order": 15,
+      "round": "Matchday 11",
+      "cup": false,
+      "date": "2026-11-08",
+      "time": "18:00",
+      "kickoff": "2026-11-08T18:00:00Z",
+      "home": {
+       "name": "Vitória Guimarães",
+       "att": 0.775,
+       "def": 0.991,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primeira Liga",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "WLDLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 12,
+        "D": 6,
+        "L": 16,
+        "GF": 39,
+        "GA": 51,
+        "GD": -12,
+        "Pts": 42,
+        "PPG": 1.235
+       },
+       "now": {
+        "P": 7,
+        "W": 1,
+        "D": 2,
+        "L": 4,
+        "GF": 5,
+        "GA": 8,
+        "GD": -3,
+        "Pts": 5,
+        "PPG": 0.714
+       }
+      },
+      "away": {
+       "name": "FC Porto",
+       "att": 1.483,
+       "def": 0.534,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primeira Liga",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 28,
+        "D": 4,
+        "L": 2,
+        "GF": 66,
+        "GA": 18,
+        "GD": 48,
+        "Pts": 88,
+        "PPG": 2.588
+       },
+       "now": {
+        "P": 7,
+        "W": 7,
+        "D": 0,
+        "L": 0,
+        "GF": 18,
+        "GA": 3,
+        "GD": 15,
+        "Pts": 21,
+        "PPG": 3.0
+       }
+      },
+      "p": {
+       "h": 0.1248,
+       "d": 0.2369,
+       "a": 0.6383
+      },
+      "xg": [
+       0.63,
+       1.83
+      ],
+      "btts": 0.4821,
+      "over25": 0.4903,
+      "score": [
+       0,
+       1
+      ],
+      "confidence": 0.6383,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.1903,
+        0.2386,
+        0.571
+       ],
+       "best": [
+        5.0,
+        4.0,
+        1.67
+       ],
+       "avg": [
+        4.93,
+        3.93,
+        1.64
+       ],
+       "ev": [
+        -0.376,
+        -0.0524,
+        0.066
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 65,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      }
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "pDraw": 0.2369,
+     "multOnly": true,
+     "odds": 1.64,
+     "best": 1.67,
+     "books": 10,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.67,
+      "Bet365": 1.62,
+      "Betfair": 1.67,
+      "BetVictor": 1.62
+     },
+     "margin": 1.0665,
+     "pricedAt": "2026-11-05T00:30:16Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6098,
+     "pTested": 0.6383,
+     "fair": 0.5718,
+     "edge": -0.0622,
+     "basis": "model",
+     "firstOdds": 1.64,
+     "lastOdds": 1.52,
+     "lastBest": 1.53,
+     "lastAt": "2026-11-08T17:20:14Z"
+    }
+   ],
+   "bestOdds": 3.34,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-05T02:27:54Z",
+   "checked": "2026-11-05T02:27:54Z",
+   "lockAt": "2026-11-08T16:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "model": true,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 0,
+   "archivedAt": "2026-11-08T17:20:14Z"
+  }
+ ]
+}
