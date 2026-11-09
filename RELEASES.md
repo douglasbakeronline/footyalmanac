@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Price timing by sport and on the first real price (tag pending)
+
+**What changed:** issue #156, first slice. `tools/price_timing.py` takes a leg's first price from the row or its `priced` block (so the 38% of pool legs archived before any book priced them count once the block exists) and reports timing and the book table for each sport apart (`bySport`), which the nightly review issue prints; `MIN_BOOK` (10) legs before a book is ranked. `legs()` / `report()` split for testing.
+**Evidence:** on the pool to 9 Nov, 100 Card-rule legs, 91 football: mean move first to last +1.74% (50 drifted, 36 shortened), football +1.88%, NBA 6 legs +0.65%, tennis 3 legs -0.29%; no book has 10 priced tennis or NBA legs, so the book ranking (William Hill -0.04%, Bet365 +0.29% v the average, best 62% / 64%) is a football ranking only. Too few non-football legs to act on `CARD_BOOK` or the push time; the sample grows with `priced`. `tests/test_price_timing.py` (2 tests); suite 614 OK; `nametest.py` clear.
+**Files:** `tools/price_timing.py`, `tools/card_review_post.py`, `tests/test_price_timing.py`, `RELEASES.md`.
+**Not changed:** `CARD_BOOK`, `notify.py`, any rule or record file.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 The Card replay reads the archived pool; the pool keeps the first real price (tag pending)
 
 **What changed:** issue #154, first slice. `groupings.archive_pool` writes a `priced` block, once, onto a leg that was first archived as the model's estimate when a later build before its start carries a real bookmaker price (odds, best, books, margin, fair, opposition and draw price, `at`), plus `lastFair`; `POOL_KEYS` gains `id`, `listOff`, `timeEst`. `tools/card_replay.py` builds every variant from the pool from 30 Oct 2026 (`POOL_FROM`): the row's market or its `priced` block, estimate-only legs left out and counted, results for every sport (`--no-pool`, `--closing`, `--recover` documented in the tool). The nightly review issue prints the source and what was left out; a variant identical to live says so. `tools/card_integrity.py` gains `pool-unpriced`.
