@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The weekly Card replay on past seasons: crash fixed, `--seasons` added (tag pending)
+
+**What changed:** `tools/card_legs_history.py`. (1) The 6 Nov release (#144) shipped `card_season` reading each leg's `opp` and `draw` without the `legs()` line that writes them, so `tune.yml`'s Monday run has died on `KeyError: 'opp'` since (hidden by `continue-on-error`; `card-legs-history.json` is from 2 Nov). The line, the `lopsided` opposition-price table and `card_season(variant)` with `cardRule5` are restored from the `lopsided-test` branch, where PR #143's numbers came from. (2) Issue #153: `--seasons 2022-23,2023-24,2024-25` replays each past season with the season before as its prior (`season_split` stands in for `tune.splits` while it runs) and prices it from football-data's season file; every season reports the cuts, the new `byGap` table (5-8, 8-10, 10+ under; opposition 4-6, 6-9, 9+), `lopsided`, the whole Card and its losing months. Not run here: the sandbox cannot reach openfootball or football-data; `tune.yml` runs the fit and check seasons on Monday 04:40 UTC, and the past seasons need a dispatch of `card-legs-history.yml`, which is on the `lopsided-test` branch only (never landed on `main`; restored in PR #158 for Douglas).
+**Evidence:** `tests/test_card_legs_history.py` (5 tests: the legs carry `opp` / `draw`, `card_season` runs, the tables, `season_split`, `replay_split` with the fetch stubbed and `tune.splits` restored). Suite 619 OK; `nametest.py` clear.
+**Files:** `tools/card_legs_history.py`, `tests/test_card_legs_history.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule, `tune.yml`, `card-legs-history.json` (bot-written, next Monday).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Price timing by sport and on the first real price (tag pending)
 
 **What changed:** issue #156, first slice. `tools/price_timing.py` takes a leg's first price from the row or its `priced` block (so the 38% of pool legs archived before any book priced them count once the block exists) and reports timing and the book table for each sport apart (`bySport`), which the nightly review issue prints; `MIN_BOOK` (10) legs before a book is ranked. `legs()` / `report()` split for testing.
