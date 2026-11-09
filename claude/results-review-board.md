@@ -202,3 +202,20 @@ are mostly Aug-Sep fixtures from before result persistence (`settled-results.jso
 6 Oct) and `af.*` / lower-league games with no free results. Not regraded; the
 record is only ever shown on what could be checked. Open question for Douglas:
 drop the stale `be.1` source line so it cannot return as phantom fixtures.
+
+
+## Grading audit, 9 November 2026 (Susie, Results Auditor)
+
+**Sample:** 11,431 football, 1,395 graded tennis (22 void) and 631 recent sports rows checked for internal consistency (result v `actual`, `won`, pick v highest probability, winner v score, duplicates, price published after kick-off). Independent check against ESPN's scoreboards: 94 football results from nine leagues, 1-9 Nov (93 matched; the one miss was my name matcher, ESPN has Maritimo 0-2 Santa Clara as recorded), and 15 NBA and NFL games (15 of 15). 124 results in all, 8 Nov to 9 Nov for the sports. ESPN is not independent of the sports and tennis feeds, so that part tests the storage and grading, not the source.
+
+**Football:** clean. `actual`, `won`, pick and score agree on every row, no duplicates, none priced after kick-off. Postponed, abandoned and suspended games are not results (`sources._row` `NOT_PLAYED`); extra time and shootouts are graded on the 90-minute score (openfootball's bracket, ESPN `AFTER_90` left ungraded, API-Football `AET`/`PEN` fulltime).
+
+**Other sports:** cancelled, postponed, abandoned, suspended and forfeited games are never final; a game with no final seven days after its start, with history walked past it, is void ("not played"); a tie is void. Clean.
+
+**Tennis:** walkovers and cancellations are void, retirements are graded (the result stands). Both hold. 52 retirements graded, 22 void.
+
+**Two bugs found, both fixed:**
+1. **Tennis wins graded as losses on a spelling.** When ESPN's name was not matched to the rating pool the raw spelling became the winner, and `winner == pick` failed on case or a hyphen. Four Alex de Minaur wins in the China Open (1, 3, 4 and 5 Oct 2026; ESPN "de", pool "De") were graded `ok: False`, so the record understated tennis by four hits (883 of 1,395 shown). The Struff row (hyphen) was a real loss for the pick but carried an unusable winner name. Fix: `score_tennis.resolve_winner` maps the winner to the priced pair by folded name, then by unique surname, and `main` re-resolves existing rows whose winner is neither player, so the next run corrects the record without hand-editing it.
+2. **Sports score shown in the wrong order at neutral sites.** ESPN can swap home and away between the archive and the result; the winner (from the result's own sides) was right but the stored score read home-away the wrong way round: 4 of 631 recent games (Houston, USC, Florida State, Gonzaga rows). `sports.settle` now orients the score to the archived home side by name.
+
+**Not changed:** football grading, any model, the tier ladder. Record files are bot-written and will update on the next daily run. Tests: `tests/test_tennis_winner_spelling.py`, `tests/test_sports_score_order.py`.

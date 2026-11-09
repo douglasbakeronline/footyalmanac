@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Grading audit: tennis winner spelling and sports score order (tag pending)
+
+**What changed:** four tennis wins graded as losses are corrected on the next score run (Alex de Minaur, China Open, 1-5 Oct: ESPN "de", pool "De"), and sports scores at neutral sites now read in the priced home-away order.
+
+**Evidence:** 124 results checked against ESPN (93 of 94 football, 15 of 15 NBA/NFL; the one football miss was a name-match artefact) and every graded file checked for internal consistency. Walkover, cancelled, postponed, abandoned, retired and tied handling confirmed. Tennis record 883 of 1,395 before the fix. Gates: not applicable (grading code, no model number).
+
+**Files:** `score_tennis.py`, `sports.py`, `tests/test_tennis_winner_spelling.py`, `tests/test_sports_score_order.py`, `claude/results-review-board.md`.
+
+**Not changed:** football grading, models, record files by hand.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Leg properties, third look: nothing to replay, no change (tag pending)
 
 **What changed:** nothing a reader sees. A dated note and a section in `claude/odds-groupings.md`; no code or model number changed.

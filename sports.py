@@ -722,7 +722,14 @@ def settle(r, g):
     if g["hs"] == g["as"]:
         return None
     winner = g["hn"] if g["hs"] > g["as"] else g["an"]
-    return {**r, "score": [g["hs"], g["as"]], "winner": winner, "ok": winner == r["pick"]}
+    score = [g["hs"], g["as"]]
+    # At a neutral site ESPN can list the sides the other way round from the
+    # archive; the score is shown home-away as priced, so follow the names
+    # (9 Nov 2026 audit: 4 of 631 recent games showed the loser's points as the
+    # winner's). The winner was always right, it comes from the result's own sides.
+    if g["hn"] == r.get("away") and g["an"] == r.get("home") and g["hn"] != g["an"]:
+        score.reverse()
+    return {**r, "score": score, "winner": winner, "ok": winner == r["pick"]}
 
 
 # An archived game with no final result this long after its start was never
