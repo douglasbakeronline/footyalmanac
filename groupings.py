@@ -2160,6 +2160,35 @@ def archive(day, generated):
     json.dump({"date": day["date"], "published": generated, "groups": day["groups"]}, open(path, "w"), indent=1, ensure_ascii=False)
     return True
 
+def card_legs_by_sport(days):
+    """The Card's settled legs by sport over the full rule (not wide, not
+    late), each pick once a day: landed against the bookmakers' quote in
+    standard errors. 9 Nov 2026 (CLAUDE.md, the delegated decisions): the
+    rule for taking a sport off the Card is the Daily List's, under quote by
+    CARD_FLOOR_Z standard errors or more on CARD_FLOOR_N+ legs; the tally
+    carries that test as `tripwire` so the page and the build sessions read
+    it from the record rather than recount it. A tally of the scoreboard,
+    nothing fitted (Rule 1)."""
+    by = {}
+    for d in days:
+        seen = set()
+        for g in d["groups"]:
+            if not (is_card(g["name"]) and not g.get("wide") and not g.get("late")): continue
+            for l in g["legs"]:
+                k = (l["event"], l["pick"])
+                if l["status"] not in ("won", "lost") or k in seen: continue
+                seen.add(k)
+                t = by.setdefault(l["sport"], {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0})
+                t["legs"] += 1; t["landed"] += l["status"] == "won"
+                t["expected"] += l["p"]; t["var"] += l["p"] * (1 - l["p"])
+    out = {}
+    for sp, t in sorted(by.items(), key=lambda kv: (-kv[1]["legs"], kv[0])):
+        z = round((t["landed"] - t["expected"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None
+        out[sp] = {"legs": t["legs"], "landed": t["landed"], "expected": round(t["expected"], 2),
+                   "rate": round(t["landed"] / t["legs"], 4), "quoted": round(t["expected"] / t["legs"], 4), "z": z,
+                   "tripwire": bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)}
+    return out
+
 def grade(now=None):
     now = now or datetime.now(timezone.utc)
     idx = results_index(); days = []
@@ -2244,6 +2273,9 @@ def grade(now=None):
                         "mean": round(sum(clv) / len(clv), 4) if clv else None}}
     allg = [g for d in days for g in d["groups"]]
     out = {"graded": iso(datetime.now(timezone.utc)), "overall": tally(allg),
+           # 9 Nov 2026: the Card's legs by sport, the test for taking a sport
+           # off the Card (CLAUDE.md, the delegated decisions: tennis first).
+           "cardLegsBySport": card_legs_by_sport(days),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
                       for n in [c[0] for c in CARD_KINDS] + [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
                       if n in [c[0] for c in CARD_KINDS] or any(g["name"] == n for g in allg)},

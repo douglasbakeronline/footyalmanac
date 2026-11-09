@@ -68,6 +68,17 @@ def main():
                       f"- flat 1% a group: median season {pct(fl['median'])}, 10th-90th {pct(fl['p10'])} to {pct(fl['p90'])}, worst drawdown (95%) {fl['p95Drawdown'] * 100:.0f}%",
                       f"- quarter Kelly: median {pct(s['quarterKelly']['median'])}, drawdown (95%) {s['quarterKelly']['p95Drawdown'] * 100:.0f}%; half Kelly: median {pct(s['halfKelly']['median'])}, drawdown (95%) {s['halfKelly']['p95Drawdown'] * 100:.0f}%",
                       f"- a bankroll of about {s['unitsForSeason']} group-stakes keeps a 95%-worst season's drawdown to half", ""]
+    by = load("groupings-record.json").get("cardLegsBySport") or {}
+    if by:
+        # 9 Nov 2026: the Card's legs by sport from the record, with the sport-off
+        # test (CLAUDE.md, the delegated decisions: tennis off the Card at 50
+        # legs two standard errors under quote). The scoreboard read, never a fit.
+        lines += ["## Legs by sport (the Card's full rule, the record)", "", "| sport | legs | landed | quoted | z | tripwire |", "|---|---|---|---|---|---|"]
+        for sp, t in by.items():
+            lines.append(f"| {sp} | {t['legs']} | {t['landed']} ({t['rate'] * 100:.0f}%) | {t['quoted'] * 100:.0f}% | {t['z'] if t['z'] is not None else 'n/a'} | {'**fired**' if t['tripwire'] else 'no'} |")
+        fired = [sp for sp, t in by.items() if t["tripwire"]]
+        lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
+                   else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
     ensure_label("card-review", "c8102e", "The nightly Card review")

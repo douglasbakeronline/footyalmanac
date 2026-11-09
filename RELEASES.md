@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The Card's legs by sport in the record, on the page and in the nightly review (tag pending)
+
+**What changed:** the tennis tripwire from "The Card's return: decisions delegated" (tennis off the Card at 50 legs two standard errors under quote) is now measured by the record rather than by hand. `groupings.card_legs_by_sport` tallies the Card's settled legs by sport over the full rule (not wide, not late), each pick once a day: legs, landed, quoted, `z` and `tripwire` (true at `CARD_FLOOR_N`+ legs with `z` at or under `CARD_FLOOR_Z`), written to `groupings-record.json` as `cardLegsBySport`. The Bets scoreboard shows a tile a sport with the state in words and the legs to go; the nightly Card review issue prints the table and says in bold when a tripwire has fired, which is the next build session's cue to act.
+**Evidence:** `claude/card-legs-by-sport-2026-11-09.md`. Record at 9 Nov, read only: tennis 22 of 40 (55% v 71% quoted, z -2.23, ten legs short of the floor), NBA 24 of 32 (z +0.51), football 22 of 30 (z +0.71), rugby 3 of 5. `tests/test_groupings_record.py` (once a day, full rule only, the tripwire at and one short of the floor), `tests/test_card_review_post.py` (3 tests); suite 626 OK; `nametest.py` clear; the scoreboard rendered at 1280 and 400 wide.
+**Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, `tests/test_groupings_record.py`, `tests/test_card_review_post.py`, `claude/card-legs-by-sport-2026-11-09.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, `CARD_SPORT_MIN`, `CARD_RULE`, any record file (the tally appears at the next grading run).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Card decisions delegated: recorded, and the two open variants replayed as whole Cards (tag pending)
 
 **What changed:** Douglas: "Take all decisions on providing the highest return consistently." `CLAUDE.md` gains "The Card's return: decisions delegated" with the decisions taken on the evidence: Card 3x stays (live 7 of 15 against 4.0 expected; the football-only replay is not the live Card), the 10+ cap stays on probation to the 30 Nov review, tennis stays with a tripwire (off the Card at 50 legs two standard errors under quote; now 25 of 44, z -2.1), opposition 9+ stays, no Reports page. `tools/card_legs_history.py` adds `cardUncapped` and `cardOpp7` (whole-Card replays of the two pre-registered variants on every season) so the review has the football-data side of the gate.
