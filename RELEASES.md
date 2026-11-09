@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Card decisions delegated: recorded, and the two open variants replayed as whole Cards (tag pending)
+
+**What changed:** Douglas: "Take all decisions on providing the highest return consistently." `CLAUDE.md` gains "The Card's return: decisions delegated" with the decisions taken on the evidence: Card 3x stays (live 7 of 15 against 4.0 expected; the football-only replay is not the live Card), the 10+ cap stays on probation to the 30 Nov review, tennis stays with a tripwire (off the Card at 50 legs two standard errors under quote; now 25 of 44, z -2.1), opposition 9+ stays, no Reports page. `tools/card_legs_history.py` adds `cardUncapped` and `cardOpp7` (whole-Card replays of the two pre-registered variants on every season) so the review has the football-data side of the gate.
+**Evidence:** `groupings-record.json` at 9 Nov, read only; `claude/card-seasons-2026-11-09.md`. Suite 621 OK; `nametest.py` clear.
+**Files:** `tools/card_legs_history.py`, `tests/test_card_legs_history.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any `CARD_*` constant or `CARD_RULE`.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 The weekly report (tag pending)
 
 **What changed:** Douglas (9 Nov 2026): "I want a weekly report sent on Sunday morning 8am." `tools/weekly_report.py` reads the record files only and writes `weekly-report.json` and `.md` for the seven days ending `--to` (default yesterday): the Card's full-rule groups by day (won against expected, return at the average and best price at one unit a group, legs by sport landed v quoted, Card 3x count, days with a Card) and since 25 Oct; the Daily List by sport, landed against quoted, reserve apart; the releases in the window; `--extra FILE` merges the session's health, next-week and decision lines. `tools/weekly_report_pdf.mjs` prints it to an A4 PDF in the almanac's colours with Playwright (sandbox only, not CI). A claude.ai scheduled task, "Almanac weekly report", runs Sundays at 07:40 London and sends the PDF by push and email. The first report (2 to 8 Nov) was sent on 9 Nov.
