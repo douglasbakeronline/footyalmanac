@@ -57,6 +57,12 @@ Where the prices come from
                   month, so capped at ODDS_API_DAY credits a UK day and
                   ODDS_API_MONTH a month, each sport's odds cached for
                   ODDS_API_TTL (see price_odds_api)
+  UK books        9 Nov 2026: a leg priced by one non-UK source (DraftKings,
+                  Pinnacle) that could reach a card (books_wanted) then takes
+                  every UK bookmaker's price (bookOdds) from API-Sports (NBA,
+                  rugby) or The Odds API (tennis, rugby), inside the same daily
+                  caps; its average, margin and fair chance stay as they were,
+                  so the Card rule reads the same price (display only)
   otherwise       no bookmaker price: the leg is shown with the model's fair
                   price (1 / p), marked as an estimate, and never used in a
                   group (19 Oct 2026)
@@ -627,7 +633,7 @@ def _odds_keys(l, active):
     return out
 
 
-def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
+def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False):
     import odds as _O
     """UK bookmaker match odds from The Odds API for legs nothing else priced.
 
@@ -644,8 +650,12 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     tmin = CARD_SPORT_MIN.get("tennis", 0)
     want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")
             and (l["sport"] != "tennis" or l.get("list") or (l.get("pModel") or 0) >= tmin)]
+    # 9 Nov 2026: books_only adds every UK book's price (bookOdds) to tennis
+    # and rugby legs priced by Pinnacle alone, nothing else (books_wanted)
+    if books_only: want = [l for l in L if books_wanted(l, {"tennis", "rugby", "nrl"})]
+    rkey = "oddsApiBooks" if books_only else "oddsApi"
     if not key or not want:
-        report["oddsApi"] = "no key" if not key else "no legs"; return
+        report[rkey] = "no key" if not key else "no legs"; return
     fetch = fetch or _odds_get
     now = now or datetime.now(timezone.utc)
     if cache_dir is None:
@@ -674,7 +684,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     if sports is None:
         try: sports, _ = fetch(f"{ODDS_API}?apiKey={key}"); keep("sports", sports)
         except Exception as e:
-            report["oddsApi"] = dict(rep, error=type(e).__name__); return
+            report[rkey] = dict(rep, error=type(e).__name__); return
     active = [s for s in sports if s.get("active")]
     need = {}
     for l in want:
@@ -704,7 +714,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
         else:
             rep["cached"] += 1
         for l in need[k]:
-            if l.get("odds"): continue
+            if l.get("odds") if not books_only else l.get("bookOdds"): continue
             names = l.get("players") or [l.get("home"), l.get("away")]
             t = parse(l.get("when"))
             for ev in events:
@@ -729,6 +739,9 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                                     if pr > top[0]: top = (pr, b.get("title") or b.get("key"))
                                     if _O.uk_book(b.get("title")): uk_px[_O.uk_name(b.get("title"))] = round(pr, 2)
                                 except (KeyError, ValueError): pass
+                if books_only:
+                    if uk_px: l["bookOdds"] = uk_px; rep["matched"] += 1
+                    break
                 if prices:
                     l.update(odds=round(sum(prices) / len(prices), 2), best=round(max(prices), 2), books=len(books), bestBook=top[1],
                              bookOdds=uk_px, opp=round(sum(opp_px) / len(opp_px), 2) if opp_px else None,
@@ -740,7 +753,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
                 break
     with open(led_path, "w") as f: json.dump(led, f)
     rep.update(usedToday=led["days"].get(day, 0), usedMonth=led["used"], left=led.get("left"))
-    report["oddsApi"] = rep
+    report[rkey] = rep
 
 
 # ---------- API-Sports, other sports (25 Oct 2026) ----------
@@ -793,11 +806,49 @@ def _as_side(item, pick_home):
             round(sum(margins) / len(margins), 4) if margins else None)
 
 
-def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
+def _as_uk_books(item, pick_home):
+    """{UK book: price} for the pick from one API-Sports /odds item (9 Nov
+    2026), every UK-licensed book that prices it, as the football legs carry."""
+    import odds as O
+    out = {}
+    for bk in item.get("bookmakers") or []:
+        if not O.uk_book(bk.get("name")): continue
+        bets = {b.get("name"): b for b in bk.get("bets") or []}
+        bet = next((bets[n] for n in AS_BETS if n in bets), None)
+        for v in (bet or {}).get("values") or []:
+            if str(v.get("value")) != ("Home" if pick_home else "Away"): continue
+            try:
+                o = float(v.get("odd"))
+                if o > 1: out[O.uk_name(bk.get("name"))] = round(o, 2)
+            except (TypeError, ValueError): pass
+    return out
+
+
+def books_wanted(l, sports):
+    """9 Nov 2026 (Douglas: "make sure all odds are being displayed across all
+    cards"): a leg priced from one non-UK source (ESPN's DraftKings line for
+    the NBA, Pinnacle for tennis) carries no UK bookmaker's price, so the card
+    could show no William Hill price for most of its picks. Such a leg is sent
+    to a UK source for its books only when it could reach a card: a sport the
+    Card takes, a real price inside the wider Card range, the model 55%+."""
+    lo, hi = min(CARD_ODDS[0], CARD_WIDE_ODDS[0]), max(CARD_ODDS[1], CARD_WIDE_ODDS[1])
+    return (l.get("odds") and not l.get("est") and not l.get("bookOdds") and l["sport"] in sports
+            and l["sport"] not in CARD_SPORTS_OFF and lo <= l["odds"] <= hi
+            and (l.get("pModel") or 0) >= CARD_SPORT_MIN.get(l["sport"], CARD_WIDE_FAIR_MIN))
+
+
+def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False):
+    """Average, best UK price and every UK book's price for legs no earlier
+    source priced. books_only=True (9 Nov 2026) instead adds `bookOdds` alone
+    to legs already priced elsewhere (books_wanted), leaving the price the
+    Card rule reads (odds, margin, fair) as it was."""
     key = os.environ.get("API_FOOTBALL_KEY")
-    want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l["sport"] not in AS_SKIP and l.get("home") and l.get("away")]
+    if books_only:
+        want = [l for l in L if books_wanted(l, set(AS_HOST) - AS_SKIP) and l.get("home") and l.get("away")]
+    else:
+        want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l["sport"] not in AS_SKIP and l.get("home") and l.get("away")]
     if not key or not want:
-        report["apiSports"] = "no key" if not key else "no legs"; return
+        report["apiSportsBooks" if books_only else "apiSports"] = "no key" if not key else "no legs"; return
     stub = fetch is not None
     fetch = fetch or (lambda url: get(url, {"x-apisports-key": key}))
     now = now or datetime.now(timezone.utc)
@@ -866,17 +917,22 @@ def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
         if not game: continue
         gid_ = game.get("id")
         items = call(host, f"/odds?game={gid_}", f"{host.split('.')[1]}-odds-{gid_}", AS_ODDS_TTL) or []
+        if books_only:
+            bo = _as_uk_books(items[0], same(l["pick"], l["home"])) if items else {}
+            if bo: l["bookOdds"] = bo; rep["matched"] += 1
+            continue
         r = _as_side(items[0], same(l["pick"], l["home"])) if items else None
         if not r: continue
         avg, best, book, n, mg = r
         r2 = _as_side(items[0], not same(l["pick"], l["home"]))
         l.update(odds=avg, best=best, bestBook=book, books=n, margin=mg, opp=r2[0] if r2 else None,
+                 bookOdds=_as_uk_books(items[0], same(l["pick"], l["home"])),
                  pricedAt=read_at(os.path.join(cache_dir, f"apisports2-{host.split('.')[1]}-odds-{gid_}.json")),
                  src="API-Sports, average of " + (f"{n} bookmakers" if n != 1 else (book or "1 bookmaker")))
         rep["matched"] += 1
     with open(led_path, "w") as f: json.dump(led, f)
     rep["used"] = led["used"]
-    report["apiSports"] = rep
+    report["apiSportsBooks" if books_only else "apiSports"] = rep
 
 
 # ---------- PinnWire: Pinnacle prices (25 Oct 2026) ----------
@@ -949,6 +1005,10 @@ def price(L, dates):
     price_api_sports(L, dates, report)
     price_pinnwire(L, dates, report)
     price_odds_api(L, dates, report)
+    # 9 Nov 2026: UK bookmakers' prices for legs a non-UK source priced, so
+    # every card shows William Hill and the other UK books (display only).
+    price_api_sports(L, dates, report, books_only=True)
+    price_odds_api(L, dates, report, books_only=True)
     for l in L:
         if not l.get("odds"):
             # 22 Oct 2026: with a typical bookmaker margin (MARGIN), so a group
@@ -1795,7 +1855,9 @@ def build_model_card(L, date, now, prev=None, archived=None):
                      model=True, rule=CARD_RULE, bench=[], bookOdds=None, book=CARD_BOOK, stake=0)
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
             used |= {l["event"] for l in g["legs"]}; filled.add(name); groups.append(g)
-    for g in groups: g["model"] = True; g["stake"] = 0
+    for g in groups:
+        g["model"] = True; g["stake"] = 0
+        g["bookOdds"] = at_book(g); g["book"] = CARD_BOOK   # 9 Nov 2026: the paper card shows William Hill too
     return groups
 
 LEGACY_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]   # to 28 Oct 2026

@@ -456,6 +456,18 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-placed-btn{font:600 12.5px var(--f-ui);padding:8px 12px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);cursor:pointer;min-height:40px}
 .og-placed-btn.on{background:var(--home);color:#fff;border-color:var(--home)}
 .og-bench{border-top:1px solid var(--rule-soft);font-size:13px}
+/* 9 Nov 2026: every UK bookmaker's price for every pick, in a fold under each group */
+.og-books{border-top:1px solid var(--rule-soft);font-size:13px}
+.og-books summary{padding:8px 13px;cursor:pointer;font-weight:600;color:var(--ink-2)}
+.og-books .wrap{overflow-x:auto;padding:0 13px 10px}
+.og-books table{border-collapse:collapse;width:100%;font:500 12px var(--f-num)}
+.og-books th,.og-books td{padding:4px 6px;text-align:right;border-bottom:1px solid var(--rule-soft);white-space:nowrap}
+.og-books th{font:600 10.5px var(--f-ui);color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.og-books th:first-child,.og-books td:first-child{text-align:left;position:sticky;left:0;background:var(--surface)}
+.og-books td.top{color:var(--home);font-weight:700}
+.og-books td.no{color:var(--mute)}
+.og-books tr.sum td{border-bottom:0;font-weight:700}
+.og-books p{margin:6px 0 0;font-size:11.5px;color:var(--mute);line-height:1.4}
 .og-bench summary{padding:8px 13px;cursor:pointer;font-weight:600;color:var(--ink-2)}
 .og-bench p{margin:0;padding:0 13px 6px;font-size:11.5px;color:var(--mute);line-height:1.4}
 .og-bench .og-l{opacity:.92}
@@ -3541,6 +3553,27 @@ function ogPlacedNote(g, date){
   if(p.gid === ogGid(g)) return `<div class="og-placed on"><b>Placed</b><span>${ogAt(p.at)}${g.status === "underway" || g.locked ? "" : " · still open; if a pick fails the rule the card will show a different group here and say so"}</span></div>`;
   return `<div class="og-placed changed"><b>You placed a different version of this group</b><span>${p.picks.map(ogEsc).join(", ")} at ${(+p.odds).toFixed(2)}, ${ogAt(p.at)}. Your bet stands as placed; the record grades the version shown. The re-check log below says what changed.</span></div>`;
 }
+// 9 Nov 2026, Douglas: "make sure all odds are being displayed across all
+// cards". Every pick's price at every UK bookmaker that prices it, the best in
+// each row marked, and the group's combined price at each book that prices
+// every pick. The headline stays the average the Card is built on.
+function ogBooks(g){
+  const L = g.legs || [], B = ((OG && OG.rules && OG.rules.card) || {}).book;
+  const seen = {};
+  L.forEach(l => Object.keys(l.bookOdds || {}).forEach(k => { seen[k] = (seen[k] || 0) + 1; }));
+  const books = Object.keys(seen).sort((a, b) => (b === B) - (a === B) || seen[b] - seen[a] || a.localeCompare(b));
+  const srcs = [];
+  L.forEach(l => { const x = String(l.src || "").replace(/^.*?, /, ""); if(x && !srcs.includes(x)) srcs.push(x); });
+  if(!books.length) return `<details class="og-books"><summary>Prices by bookmaker</summary><div class="wrap"><p>No UK bookmaker's price has been read for these picks yet; each shows the average from its source (${ogEsc(srcs.join(", ") || "none")}).</p></div></details>`;
+  const rows = L.map(l => { const bo = l.bookOdds || {}, top = Math.max(0, ...books.map(k => bo[k] || 0));
+    return `<tr><td>${ogEsc(l.pick)}</td><td>${l.est ? "est. " : ""}${(+l.odds).toFixed(2)}</td>${books.map(k => bo[k] ? `<td class="${bo[k] >= top ? "top" : ""}">${bo[k].toFixed(2)}</td>` : `<td class="no">–</td>`).join("")}</tr>`; }).join("");
+  const comb = k => L.every(l => (l.bookOdds || {})[k]) ? L.reduce((a, l) => a * l.bookOdds[k], 1).toFixed(2) : "–";
+  const missing = L.filter(l => !Object.keys(l.bookOdds || {}).length).map(l => l.pick);
+  return `<details class="og-books"><summary>Prices by bookmaker: ${books.length} UK book${books.length === 1 ? "" : "s"}</summary><div class="wrap">
+    <table><thead><tr><th>Pick</th><th>Average</th>${books.map(k => `<th>${ogEsc(k)}</th>`).join("")}</tr></thead>
+    <tbody>${rows}<tr class="sum"><td>All ${L.length}</td><td>${(+g.odds).toFixed(2)}</td>${books.map(k => `<td>${comb(k)}</td>`).join("")}</tr></tbody></table>
+    <p>The best price for each pick is in blue. A dash: that bookmaker had no price at the last read.${missing.length ? ` No UK bookmaker priced ${missing.map(ogEsc).join(", ")} yet; ${missing.length === 1 ? "its" : "their"} average comes from ${missing.length === 1 ? "its" : "their"} source.` : ""}</p></div></details>`;
+}
 // The substitutes: any one can replace any pick in the group and keep it in range.
 function ogBench(g){
   const b = g.bench || []; if(!b.length || g.status === "underway") return "";
@@ -3595,7 +3628,7 @@ function ogCard(g){
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
-        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}${card ? ogBook(l) : ""}</span>
+        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}${card || paper ? ogBook(l) : ""}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
@@ -3604,7 +3637,7 @@ function ogCard(g){
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
     ${ogStatus(g)}${card ? ogPlacedNote(g, OG_DAY) : ""}
     <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
-    <div>${legs}</div>${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
+    <div>${legs}</div>${card || paper ? ogBooks(g) : ""}${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
     <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' 55%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
