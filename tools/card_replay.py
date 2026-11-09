@@ -213,6 +213,12 @@ VARIANTS = {
     # 9 Nov 2026, pre-registered for the tennis tripwire and the 30 Nov review
     "notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
     "tennis80": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.80)},
+    # 9 Nov 2026 (claude/card-staking-2026-11-09.md), pre-registered for the
+    # 30 Nov review: the same groups at one unit each. Live stakes two on a 2x;
+    # the live 2x has landed under quote and the 3x over, the football-data
+    # seasons the other way round. Same groups, so read `return` (per unit
+    # staked); the units-a-day pairing also carries the smaller turnover.
+    "flatstake": {"CARD_STAKE": {"Card 2x": 1, "Card 3x": 1}},
 }
 
 
