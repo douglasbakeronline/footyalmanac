@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Office review and next week's priorities (tag pending)
+
+**What changed:** nothing a reader sees. A dated note, `claude/office-review-2026-11-09.md`: what shipped since 31 Oct, what was rejected, where accuracy stands, three tasks (Kofi, Hannah, Susie).
+
+**Evidence:** `RELEASES.md`, the `claude/` notes, `groupings-record.json` and `record.json`, read only. Card 11 of 35 groups won v 11.7 expected; tennis Card legs 22 of 40 v 28.3 (z -2.23); football list 80.6% v 81.8% quoted (n 165). Gates: not applicable (report by nature).
+
+**Files:** `claude/office-review-2026-11-09.md`, `RELEASES.md`.
+
+**Not changed:** code, models, rules, record files.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-09 Grading audit: tennis winner spelling and sports score order (tag pending)
 
 **What changed:** four tennis wins graded as losses are corrected on the next score run (Alex de Minaur, China Open, 1-5 Oct: ESPN "de", pool "De"), and sports scores at neutral sites now read in the priced home-away order.
