@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The weekly report (tag pending)
+
+**What changed:** Douglas (9 Nov 2026): "I want a weekly report sent on Sunday morning 8am." `tools/weekly_report.py` reads the record files only and writes `weekly-report.json` and `.md` for the seven days ending `--to` (default yesterday): the Card's full-rule groups by day (won against expected, return at the average and best price at one unit a group, legs by sport landed v quoted, Card 3x count, days with a Card) and since 25 Oct; the Daily List by sport, landed against quoted, reserve apart; the releases in the window; `--extra FILE` merges the session's health, next-week and decision lines. `tools/weekly_report_pdf.mjs` prints it to an A4 PDF in the almanac's colours with Playwright (sandbox only, not CI). A claude.ai scheduled task, "Almanac weekly report", runs Sundays at 07:40 London and sends the PDF by push and email. The first report (2 to 8 Nov) was sent on 9 Nov.
+**Evidence:** `tests/test_weekly_report.py` (stubbed record files: wide and pending groups left out, to-date window, list by sport, release parsing of both heading styles, empty week). Suite 621 OK; `nametest.py` clear.
+**Files:** `tools/weekly_report.py`, `tools/weekly_report_pdf.mjs`, `tests/test_weekly_report.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any record file, the site, any rule.
+**Roll back:** `git revert` the merge commit; pause the scheduled task from the Claude app.
+
 ## 2026-11-09 The Card over five seasons: the note (tag pending)
 
 **What changed:** notes only, `claude/card-seasons-2026-11-09.md` and the raw output `claude/card-seasons-2026-11-09-output.txt`; `CLAUDE.md` "tested and rejected" carries the summary. No code, model or rule changed. Issue #153.
