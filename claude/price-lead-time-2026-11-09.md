@@ -74,3 +74,19 @@ The book ranking still has no sport but football with 10 priced legs (#171
 added UK books to NBA and tennis Card picks from 9 Nov). Re-read the lead
 table and the per-sport books at the 30 Nov review; a push-time proposal
 needs 30+ legs a bucket on more than football.
+
+## Re-read, scheduled desk run (9 Nov 2026, evening)
+
+`tools/price_timing.py` already does the book ranking, by hour, by lead and
+by sport, so no code change. Same 107 Card-rule legs (93 football, 12 NBA,
+2 tennis): Bet365 +0.30% against the average price (78 legs, best on 65%),
+William Hill -0.04% (86 legs, best on 62%), Betfair -0.89% (31%), BetVictor
+-1.73% (10%). Bet365 over William Hill is 0.34 points on price and 3 on
+best-share, with ties counted as best for both: not a clear winner, and
+only football has books (NBA and tennis UK prices start 9 Nov). `CARD_BOOK`
+stays William Hill (a preference, not a filter). Timing: mean move +1.56%
+(52 drifted, 42 shortened, 13 unchanged); by hour of first pricing the 00h
+build (41 legs) +2.18% and the 19h build (51) +1.17%; last price a median
+2.0h before the start. Drift is real but small and football-only; no push
+time change. Gate for a change: 30+ legs a lead bucket on more than
+football, and a paired Bet365 v William Hill gap that holds on 100+ legs.

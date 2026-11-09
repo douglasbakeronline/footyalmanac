@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Card: which book and when (tag pending)
+
+**What changed:** nothing a reader sees. A dated re-read of the book ranking and price timing added to `claude/price-lead-time-2026-11-09.md` (issue #156).
+
+**Evidence:** 107 Card-rule pool legs: Bet365 +0.30% v average (best 65%), William Hill -0.04% (62%), Betfair -0.89%, BetVictor -1.73%. Mean first-to-last move +1.56%, football only. Not a clear book winner or a push-time case.
+
+**Files:** `claude/price-lead-time-2026-11-09.md`, `RELEASES.md`.
+
+**Not changed:** `CARD_BOOK`, `notify.py`, any rule.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-09 When to take the Card's price: the move by lead time, and last prices after the start left out (tag pending)
 
 **What changed:** `tools/price_timing.py` (issue #156) adds the move from first to last price by how far ahead the first price was taken (under 6h to 72h+, overall and by sport) and how close to the start the last price sat, both printed in the nightly Card review. A leg whose last price came after its latest known start is left out and counted (`lastAfterStart`): 48 of 1,394 pool legs to 9 Nov (45 tennis), one of them a Card-rule leg. `groupings.archive_pool` records `whenLast` when a build sees a different start from the one first written, so from 10 Nov a moved start can be told from an in-play price; `when` is never changed.
