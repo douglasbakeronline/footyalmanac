@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Leg properties, third look: nothing to replay, no change (tag pending)
+
+**What changed:** nothing a reader sees. A dated note and a section in `claude/odds-groupings.md`; no code or model number changed.
+
+**Evidence:** the 23 and 31 Oct scans stand (eligible legs land +9.3 pts on 310 fit legs, +8.8 on 42 check; no cut holds on both seasons; model-at-or-below-market removes about half the legs, limit one fifth). The pool archive's tested rate has 45 real-priced football 65%+ legs to 8 Nov against the 250 Rule 3 needs. The leg scan was not rerun (unchanged inputs). Gates: not applicable, no candidate.
+
+**Files:** `claude/leg-property-third-2026-11-09.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `groupings.py`, `MAX_ABOVE_BOOK`, any model.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-09 Weakest other sport: none below the bar, no change (tag pending)
 
 **What changed:** nothing a reader sees. A dated note; no code or model number changed.
