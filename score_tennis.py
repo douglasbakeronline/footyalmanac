@@ -181,6 +181,33 @@ def named_in_note(g):
     return all(_surname(p)[0] in note for p in (g["playerA"], g["playerB"]))
 
 
+def _fold(name):
+    n = unicodedata.normalize("NFKD", name or "").encode("ascii", "ignore").decode().lower()
+    return " ".join(n.replace("-", " ").replace(".", " ").split())
+
+
+def resolve_winner(m, raw, pooled=None):
+    """The winner as one of the two priced players' names.
+
+    `pooled` is the rating-pool name when ESPN's spelling was matched, else
+    None, and the raw ESPN spelling was kept. A spelling that differs only in
+    case or a hyphen ("Alex de Minaur" v "Alex De Minaur", "Jan-Lennard" v
+    "Jan Lennard") then never equalled the pick, and a win was graded as a
+    loss: 4 De Minaur wins in the China Open, 9 Nov 2026 audit. A name that
+    cannot be told apart from the pair is returned as it came."""
+    if pooled in (m.get("playerA"), m.get("playerB")):
+        return pooled
+    want = _fold(raw)
+    for p in (m.get("playerA"), m.get("playerB")):
+        if p and _fold(p) == want:
+            return p
+    sn = _surname(raw)
+    hits = [p for p in (m.get("playerA"), m.get("playerB")) if p and _surname(p) == sn]
+    if len(hits) == 1:
+        return hits[0]
+    return pooled or raw
+
+
 def outcome(m, r):
     """(status, winner as a rating-pool name). status: graded, void or None."""
     note = (r.get("note") or "").lower()
@@ -190,7 +217,7 @@ def outcome(m, r):
         return "void", None
     if not r.get("winner"):
         return None, None
-    return "graded", r["pool"].get(r["winner"]) or r["winner"]
+    return "graded", resolve_winner(m, r["winner"], r["pool"].get(r["winner"]))
 
 
 def summarise(rows):
@@ -278,6 +305,15 @@ def main():
             graded[k] = {"key": k, "result": g.get("result"), "published": g.get("published"), "void": True,
                          "date": g["date"], "tour": g["tour"], "playerA": g["playerA"], "playerB": g["playerB"],
                          "note": g.get("note"), "reason": "not played by the priced players"}
+
+    # Grades whose winner is neither priced player by spelling (case, hyphen)
+    # are re-resolved against the pair: the win was read as a loss.
+    for g in graded.values():
+        if g.get("void") or not g.get("winner") or g["winner"] in (g["playerA"], g["playerB"]):
+            continue
+        w = resolve_winner(g, g["winner"])
+        if w in (g["playerA"], g["playerB"]):
+            g["winner"], g["ok"] = w, w == g["pick"]
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
     cutoff = (date.today() - timedelta(days=LOOKBACK_DAYS)).isoformat()
