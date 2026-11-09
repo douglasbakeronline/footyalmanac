@@ -29,7 +29,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python3 tools/card_legs_history.py --out card-legs-history.json ${{ inputs.seasons && format('--seasons {0}', inputs.seasons) || '' }} | tee card-legs-history.log
+      # REPORT-ONLY BRANCH (9 Nov 2026, #153): the past seasons hard-coded so the pull_request run produces the report; never merge this branch
+      - run: python3 tools/card_legs_history.py --out card-legs-history.json --seasons 2022-23,2023-24,2024-25 | tee card-legs-history.log
         timeout-minutes: 90
       - uses: actions/upload-artifact@v4
         with:
