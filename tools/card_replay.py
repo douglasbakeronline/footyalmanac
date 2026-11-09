@@ -27,6 +27,11 @@ review so no variant is picked because it happened to look good):
   short    prices 1.15 to 1.35 only (the one band positive on both seasons)
   rule5    no opposition-price condition (the Card as it ran 31 Oct to 6 Nov 2026)
   opp7     the opposition priced 7+ rather than 9+
+  notennis tennis off the Card (CARD_SPORTS_OFF), the tripwire's action
+  tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
+           (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
+           40 full-rule legs landed v 71% quoted; registered before the pool
+           holds enough real-priced tennis legs to read them)
 Each is built with build_card's own pieces (best_card, card_fault, the kinds,
 the cap, the stake weights) with one constant patched, so the replay and the
 live card cannot drift apart. `--since YYYY-MM-DD` limits the days.
@@ -205,6 +210,9 @@ VARIANTS = {
     # before 6 Nov carry no opposition price, so "live" is empty on those days.
     "rule5": {"CARD_OPP_MIN": {}},
     "opp7": {"CARD_OPP_MIN": {"football": 7.0}},
+    # 9 Nov 2026, pre-registered for the tennis tripwire and the 30 Nov review
+    "notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
+    "tennis80": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.80)},
 }
 
 
