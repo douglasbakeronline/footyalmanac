@@ -242,3 +242,7 @@ Same answer as 23 Oct on a refreshed pull: legs 2, 4 and 6 points above fair lan
 ## Leg properties re-scanned (31 Oct 2026)
 
 Same result as 23 Oct on the refreshed pull: eligible legs land above quote (fit 310 legs +9.3 pts, check 42 legs +8.8), and no cut by sport, home or away, price, chance band, league or tier keeps a lead on both seasons. Capping model at or below market removes about half the fit legs (limit: a fifth) and its lead does not hold on check. No rule change. See `claude/leg-property-rescan-2026-10-31.md`.
+
+## Edge over the price, third run (9 Nov 2026)
+
+Unchanged data, unchanged answer: legs 2, 4 and 6 points above fair landed -1.8 / -2.1 / -1.5 on fit (n 4,188 / 2,539 / 1,510) and -1.9 / -2.1 / -0.6 on check (n 689 / 476 / 323); the model-below-market control landed +2.3 / +1.0. There is no edge and no value-leg rule. See `claude/odds-edge-retest-2026-11-09.md`.
