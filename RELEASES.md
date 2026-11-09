@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The live Card checked against the pool archive; two tennis variants registered (tag pending)
+
+**What changed:** `tools/card_replay.py` on the pool rebuilt no live Card on any day under rule 6, because 42 of the live Card's 59 legs from 30 Oct to 8 Nov (20 of 23 from 4 Nov, nearly all NBA and tennis) sat in the pool only as the model's estimate. The `priced` block (#159) closes that from 10 Nov; `tools/card_integrity.py` now checks it every night (`card-leg-unreplayable`: any Card leg from `PRICED_FROM` the pool does not hold at a real price, with the coverage printed as "x of y"), so the 30 Nov review compares variants on the Card's real legs. `tools/card_replay.py` adds two pre-registered variants for the tennis leak: `notennis` (tennis off the Card) and `tennis80` (tennis at 80%+).
+**Evidence:** `claude/card-pool-coverage-2026-11-09.md`. `groupings-record.json` and the pool files, read only. Approximate `--recover` read: both tennis variants +0.74 units a day against live, p(worse) 0.22, on 3 groups; nothing to act on. `tests/test_card_replay_coverage.py` (4 tests: coverage findings and count, late US game in the next day's file, days before `since`, variants patch `card_fault` and are restored); suite OK; `nametest.py` clear.
+**Files:** `tools/card_integrity.py`, `tools/card_replay.py`, `tests/test_card_replay_coverage.py`, `claude/card-pool-coverage-2026-11-09.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, any record or archive file, the site.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 The Card's legs by sport in the record, on the page and in the nightly review (tag pending)
 
 **What changed:** the tennis tripwire from "The Card's return: decisions delegated" (tennis off the Card at 50 legs two standard errors under quote) is now measured by the record rather than by hand. `groupings.card_legs_by_sport` tallies the Card's settled legs by sport over the full rule (not wide, not late), each pick once a day: legs, landed, quoted, `z` and `tripwire` (true at `CARD_FLOOR_N`+ legs with `z` at or under `CARD_FLOOR_Z`), written to `groupings-record.json` as `cardLegsBySport`. The Bets scoreboard shows a tile a sport with the state in words and the legs to go; the nightly Card review issue prints the table and says in bold when a tripwire has fired, which is the next build session's cue to act.
