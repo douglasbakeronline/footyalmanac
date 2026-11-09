@@ -29,7 +29,9 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: python3 tools/card_legs_history.py --out card-legs-history.json ${{ inputs.seasons && format('--seasons {0}', inputs.seasons) || '' }} | tee card-legs-history.log
+      # shell: bash gives pipefail; without it `| tee` hid a crash as success (9 Nov 2026)
+      - shell: bash
+        run: python3 tools/card_legs_history.py --out card-legs-history.json ${{ inputs.seasons && format('--seasons {0}', inputs.seasons) || '' }} | tee card-legs-history.log
         timeout-minutes: 90
       - uses: actions/upload-artifact@v4
         with:
