@@ -7,7 +7,16 @@ from unittest import mock
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import groupings as G
 
-DATE = "2026-11-07"          # a Saturday in GMT, so UK time == UTC
+# 9 Nov 2026: a fixed date went into the past and every group read as under
+# way (12 failures). The next Saturday at least a week ahead that falls in
+# GMT (November to March), so UK time == UTC and the lock arithmetic holds.
+def _next_saturday():
+    from datetime import date
+    d = date.today() + timedelta(days=7)
+    if 4 <= d.month <= 10: d = date(d.year, 11, 1)
+    while d.weekday() != 5: d += timedelta(days=1)
+    return d.isoformat()
+DATE = _next_saturday()
 
 
 def leg(i, odds, model, when, sport="football", comp=None, margin=1.04, opp=None):
@@ -32,27 +41,29 @@ def board():
     return out
 
 
-EARLY = datetime(2026, 11, 6, 18, 0, tzinfo=timezone.utc)     # the evening before
+_D = datetime.fromisoformat(DATE).replace(tzinfo=timezone.utc)
+EARLY = _D - timedelta(hours=6)                                 # the evening before, 18:00
 # 29 Oct 2026: no clock lock; a group freezes at its first kick-off. 16:00 is
 # after every daytime kick-off on the board, so both of the day's first groups
 # are frozen (and under way) by then; the evening legs are still to start.
-AFTER_LOCK = datetime(2026, 11, 7, 16, 0, tzinfo=timezone.utc)
+AFTER_LOCK = _D + timedelta(hours=16)
 
 
 class Windows(unittest.TestCase):
     def test_slots_and_lock_times(self):
         # 29 Oct 2026: one window, 07:00 UK to 07:00 UK the next day
-        self.assertEqual(G.uk_slot({"when": f"{DATE}T00:30:00Z"}), ("2026-11-06", "Day"))   # early hours: the day before
-        self.assertEqual(G.uk_slot({"when": f"{DATE}T06:59:00Z"}), ("2026-11-06", "Day"))
+        before = (datetime.fromisoformat(DATE) - timedelta(days=1)).date().isoformat()
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T00:30:00Z"}), (before, "Day"))   # early hours: the day before
+        self.assertEqual(G.uk_slot({"when": f"{DATE}T06:59:00Z"}), (before, "Day"))
         self.assertEqual(G.uk_slot({"when": f"{DATE}T07:00:00Z"}), (DATE, "Day"))
         self.assertEqual(G.uk_slot({"when": f"{DATE}T15:00:00Z"}), (DATE, "Day"))
         self.assertEqual(G.uk_slot({"when": f"{DATE}T23:45:00Z"}), (DATE, "Day"))
-        self.assertEqual(G.lock_time(DATE, "Day"), datetime(2026, 11, 7, 7, 0, tzinfo=timezone.utc))
-        self.assertEqual(G.window_end(DATE, "Day"), datetime(2026, 11, 8, 7, 0, tzinfo=timezone.utc))
+        self.assertEqual(G.lock_time(DATE, "Day"), _D + timedelta(hours=7))
+        self.assertEqual(G.window_end(DATE, "Day"), _D + timedelta(hours=31))
         # in summer time the same UK hours are an hour earlier in UTC
         self.assertEqual(G.lock_time("2026-07-04", "Day"), datetime(2026, 7, 4, 6, 0, tzinfo=timezone.utc))
         # the pre-29 Oct windows still resolve for the record
-        self.assertEqual(G.lock_time(DATE, "Overnight"), datetime(2026, 11, 6, 21, 0, tzinfo=timezone.utc))
+        self.assertEqual(G.lock_time(DATE, "Overnight"), _D - timedelta(hours=3))
 
 
 class Build(unittest.TestCase):

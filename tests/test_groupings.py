@@ -147,7 +147,7 @@ class OddsApiTest(unittest.TestCase):
     def tleg(self, **kw):
         return dict({"sport": "tennis", "tour": "ATP", "tournament": "BNP Paribas Fortis European Open",
                      "players": ["Martin Damm", "Yannick Hanfmann"], "pick": "Yannick Hanfmann",
-                     "when": "2026-10-19T11:30:00Z", "date": "2026-10-19"}, **kw)
+                     "when": "2026-10-19T11:30:00Z", "date": "2026-10-19", "pModel": 0.8}, **kw)   # 9 Nov 2026: priced only at the Card's bar
 
     def run_(self, L, now=None):
         from datetime import datetime, timezone
@@ -207,3 +207,19 @@ class OddsApiTest(unittest.TestCase):
             self.assertEqual(rep["calls"], 1); self.assertEqual(len(rep["skipped"]), 1)
         finally:
             G.ODDS_API_DAY = old
+
+
+class PriceSpend(unittest.TestCase):
+    """9 Nov 2026: a tennis match below the Card's bar and off the Daily List is not priced."""
+    def test_weak_tennis_not_priced(self):
+        import os, tempfile
+        from datetime import datetime, timezone
+        from unittest import mock
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"ODDS_API_KEY": "k"}):
+            calls = []
+            def fetch(url): calls.append(url); return ([], {})
+            L = [{"sport": "tennis", "tour": "ATP", "tournament": "X", "players": ["A", "B"], "pick": "A",
+                  "when": "2026-10-19T11:30:00Z", "date": "2026-10-19", "pModel": 0.6}]
+            r = {}
+            G.price_odds_api(L, {"2026-10-19"}, r, cache_dir=d, fetch=fetch, now=datetime(2026, 10, 19, 9, tzinfo=timezone.utc))
+            self.assertEqual(r["oddsApi"], "no legs"); self.assertEqual(calls, [])

@@ -159,7 +159,10 @@ def card_season(L):
             "units": st_, "returned": round(ret, 2), "return": round(ret / st_, 3), "returnBest": round(best / st_, 3),
             "return90": [round(vals[100], 3), round(vals[1899], 3)], "pLoss": round(sum(v < 1 for v in vals) / len(vals), 3),
             "kinds": kinds, "months": {m: {"groups": v[0], "won": v[1], "units": v[2], "pnl": round(v[3], 2)} for m, v in sorted(months.items())},
-            "series": series}
+            "series": series,
+            # 9 Nov 2026: every group, for tools/staking.py
+            "groupList": [{"date": d, "name": g["name"], "p": round(g["p"], 4), "odds": round(g["odds"], 2), "stake": g["stake"], "won": bool(g["won"])}
+                          for d in sorted(days) for g in days[d]]}
 
 
 def main():

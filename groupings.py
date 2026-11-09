@@ -638,7 +638,12 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     a UK day and ODDS_API_MONTH a month, and never once the API reports fewer
     than ODDS_API_FLOOR left. Prices never feed a model."""
     key = os.environ.get("ODDS_API_KEY")
-    want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")]
+    # 9 Nov 2026 (Douglas: spend the allowance on the right legs): a tennis
+    # match is priced only when it could reach the Card (model at
+    # CARD_SPORT_MIN) or is on the Daily List; the rest never needed a price.
+    tmin = CARD_SPORT_MIN.get("tennis", 0)
+    want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")
+            and (l["sport"] != "tennis" or l.get("list") or (l.get("pModel") or 0) >= tmin)]
     if not key or not want:
         report["oddsApi"] = "no key" if not key else "no legs"; return
     fetch = fetch or _odds_get
@@ -750,6 +755,9 @@ AS_HOST = {"rugby": "v1.rugby.api-sports.io", "nba": "v1.basketball.api-sports.i
            "nhl": "v1.hockey.api-sports.io", "mlb": "v1.baseball.api-sports.io",
            "nfl": "v1.american-football.api-sports.io", "cfb": "v1.american-football.api-sports.io"}
 AS_DAY = 85            # of the free 100 a day per product, leaving room for a probe
+# 9 Nov 2026: college sports are off the Card and share the basketball and
+# American-football allowances with the NBA and NFL; ESPN prices them free.
+AS_SKIP = {"ncaab", "cfb"}
 AS_GAMES_TTL = 4 * 3600
 AS_ODDS_TTL = 90 * 60
 AS_GAP = 6.5           # seconds between calls to one product (free plan: 10 a minute)
@@ -787,7 +795,7 @@ def _as_side(item, pick_home):
 
 def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None):
     key = os.environ.get("API_FOOTBALL_KEY")
-    want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l.get("home") and l.get("away")]
+    want = [l for l in L if not l.get("odds") and l["sport"] in AS_HOST and l["sport"] not in AS_SKIP and l.get("home") and l.get("away")]
     if not key or not want:
         report["apiSports"] = "no key" if not key else "no legs"; return
     stub = fetch is not None
