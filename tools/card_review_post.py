@@ -59,6 +59,15 @@ def main():
             # 9 Nov 2026 (#156): each sport apart; a book ranked on football says nothing about tennis or the NBA
             t = r["timing"]; best = max(r["books"].items(), key=lambda kv: kv[1]["vsAvgPct"]) if r.get("books") else None
             lines.append(f"- {sp}: {t['n']} legs, mean move {t['meanMovePct']:+.2f}% ({t['read']})" + (f"; best book {best[0]} {best[1]['vsAvgPct']:+.2f}% (n {best[1]['n']})" if best else "; no book priced 10+ legs"))
+        # 9 Nov 2026 (#156): the move by how far ahead the first price was taken, for the push time
+        if pt.get("leads"):
+            lines.append("- by first price's lead on the start: " + "; ".join(f"{k} {v['meanMovePct']:+.2f}% (n {v['n']})" for k, v in pt["leads"].items()))
+        ll = pt.get("lastLead") or {}
+        if ll.get("n"):
+            lines.append(f"- last price a median {ll['medianH']}h before the start, {ll['within3h']} of {ll['n']} within 3h")
+        if pt.get("lastAfterStart"):
+            by = ", ".join(f"{k} {v}" for k, v in (pt.get("lastAfterStartBySport") or {}).items())
+            lines.append(f"- left out: {pt['lastAfterStart']} leg(s) whose last price came after the start on file" + (f" ({by})" if by else ""))
         lines.append("")
     for k in ("replay", "live"):
         s = st.get(k) or {}

@@ -2140,7 +2140,7 @@ def archive_pool(L, now, dates):
     plus lastOdds / lastBest / lastAt from every later build before it starts,
     so any Card rule, four-leg groups included, can be rebuilt on the month's
     real pool across every sport, not football alone. Nothing first written is
-    changed; only the last-price fields move.
+    changed; only the last-price fields (and `whenLast`) move.
 
     9 Nov 2026: a leg first written as the model's estimate (no bookmaker had
     priced it yet) takes a `priced` block, once, from the first build that
@@ -2168,6 +2168,12 @@ def archive_pool(L, now, dates):
                     old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
                     if l.get("opp"): old["lastOpp"] = l["opp"]
                     if l.get("fair") is not None: old["lastFair"] = l["fair"]
+                    # 9 Nov 2026 (#156): the start this build judged by, when it
+                    # differs from the one first written (a rescheduled fixture,
+                    # a tennis match placed later in its session), so a replay
+                    # can tell a last price taken after a moved start from one
+                    # taken in play. `when` itself is never changed.
+                    if l.get("when") and l["when"] != old.get("when"): old["whenLast"] = l["when"]
                     if old.get("est") and not old.get("priced"):
                         old["priced"] = {kk: l.get(kk) for kk in PRICED_KEYS if l.get(kk) is not None}
                         old["priced"]["at"] = stamp

@@ -53,8 +53,27 @@ class PriceTiming(unittest.TestCase):
         self.assertEqual(set(PT.book_table(L, min_n=1)), {"William Hill", "Bet365"})
         self.assertIn("14", rep["hours"]); self.assertIn("09", rep["hours"]); self.assertIn("22", rep["hours"])
 
+    def test_leads_and_last_after_start(self):
+        # 9 Nov 2026 (#156): first-price lead buckets; a last price after the start on file is left out
+        L = PT.legs(self.dir)
+        rep = PT.report(L)
+        # football firstAt 18th 09:00, start 21st 15:00 = 78h; H3 priced 19th 14:00 = 49h; tennis 20th 22:00 to 21st 12:00 = 14h
+        self.assertEqual(rep["leads"]["72h+"]["n"], 2); self.assertEqual(rep["leads"]["48-72h"]["n"], 1); self.assertEqual(rep["leads"]["6-24h"]["n"], 2)
+        self.assertEqual(rep["bySport"]["tennis"]["leads"], {"6-24h": {"n": 2, "meanMovePct": 0.76, "drifted": 1, "shortened": 1}})
+        self.assertEqual(rep["lastLead"], {"n": 0}); self.assertEqual(rep["lastAfterStart"], 0)
+        late = dict(fb(8, 1.30, 1.20), lastAt=f"{DAY}T15:30:00Z")          # after its 15:00 start: out
+        moved = dict(fb(9, 1.30, 1.32), lastAt=f"{DAY}T15:30:00Z", whenLast=f"{DAY}T17:30:00Z")   # start moved: in
+        with gzip.open(os.path.join(self.dir, "pool-2026-11-22.json.gz"), "wt") as f: json.dump({"date": "2026-11-22", "legs": [late, moved]}, f)
+        dropped = []
+        L = PT.legs(self.dir, dropped=dropped)
+        self.assertEqual([l["pick"] for l in dropped], ["H8"]); self.assertIn("H9", [l["pick"] for l in L])
+        rep = PT.report(L, dropped)
+        self.assertEqual(rep["lastAfterStart"], 1); self.assertEqual(rep["lastAfterStartBySport"], {"football": 1})
+        self.assertEqual(rep["lastLead"], {"n": 1, "medianH": 2.0, "within3h": 1})
+        self.assertEqual(PT.lead_bucket(5.9), "<6h"); self.assertEqual(PT.lead_bucket(72), "72h+")
+
     def test_empty(self):
-        self.assertEqual(PT.report([]), {"legs": 0})
+        self.assertEqual(PT.report([]), {"legs": 0, "lastAfterStart": 0})
 
 
 if __name__ == "__main__":

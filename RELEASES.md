@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 When to take the Card's price: the move by lead time, and last prices after the start left out (tag pending)
+
+**What changed:** `tools/price_timing.py` (issue #156) adds the move from first to last price by how far ahead the first price was taken (under 6h to 72h+, overall and by sport) and how close to the start the last price sat, both printed in the nightly Card review. A leg whose last price came after its latest known start is left out and counted (`lastAfterStart`): 48 of 1,394 pool legs to 9 Nov (45 tennis), one of them a Card-rule leg. `groupings.archive_pool` records `whenLast` when a build sees a different start from the one first written, so from 10 Nov a moved start can be told from an in-play price; `when` is never changed.
+**Evidence:** `claude/price-lead-time-2026-11-09.md`. Pool to 12 Nov, read only, 107 Card-rule legs: first priced 48h+ out the price drifted about +2.6% to the start (55 legs), inside 48h about +0.5% (52); last price a median 2.0h before the start. Football only in effect; not enough to move the push in `notify.py`. `tests/test_price_timing.py` (lead buckets, the after-start guard, a moved start kept), `tests/test_card_pool_replay.py` (`whenLast` written only on a change); suite OK; `nametest.py` clear.
+**Files:** `groupings.py`, `tools/price_timing.py`, `tools/card_review_post.py`, `tests/test_price_timing.py`, `tests/test_card_pool_replay.py`, `claude/price-lead-time-2026-11-09.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, `CARD_BOOK`, `notify.py`, any record or archive file, the page.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Every UK bookmaker's price on every card (tag pending)
 
 **What changed:** Douglas: "Can you make sure all odds are being displayed across all cards." On 6 to 8 Nov only 1 of 11 Card picks carried a UK bookmaker's prices: NBA picks are priced from ESPN's DraftKings line and tennis from Pinnacle, so the card showed "not at William Hill" on most picks and never a William Hill combined price. Now a pick priced by one non-UK source that could reach a card (`groupings.books_wanted`: a sport the Card takes, a price inside the wider Card range, the model at the sport's bar) also takes every UK book's price from API-Sports (NBA, rugby) or The Odds API (tennis, rugby), inside the same daily call caps. API-Sports' own prices (rugby) now carry the UK books too. Every Card and Model card group has a "Prices by bookmaker" fold: each pick at each UK book, the best in blue, the combined price at each book that prices every pick. Model card picks show the William Hill price, and the Model card's header its William Hill combined price.
