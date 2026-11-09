@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Tennis surface: second source check, nothing to ship (tag pending)
+
+**What changed:** nothing a reader sees. A dated note; no code or model number changed.
+
+**Evidence:** the tournament-name surface map was already rejected (13 Oct: WTA +0.0024 log loss worse, p(worse) 0.88, n=2,686; ATP +0.0031, 0.95, n=1,523), so it was not rerun. Sources re-probed today: Sackmann 2026 WTA and ATP files 404, tennis-data.co.uk 403, ESPN's WTA event JSON has no surface field (venue city only). Gates: not applicable, no candidate exists. Every remaining 2026 event is hard court, so a map would change no price before April 2027.
+
+**Files:** `claude/tennis-surface-recheck-2026-11-09.md`, `RELEASES.md`.
+
+**Not changed:** `build_tennis.py`, `tennis.json`, `surfaceWeight`, the Daily List, any record.
+
+**Roll back:** `git revert` the commit.
+
 ## Southern League Premier Central v its quotes: no test possible, no change, 9 Nov (tag pending)
 
 **What changed:** nothing in the model. Dated note `claude/southern-central-gap-2026-11-09.md`.
