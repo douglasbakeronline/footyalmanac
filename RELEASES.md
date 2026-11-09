@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## Southern League Premier Central v its quotes: no test possible, no change, 9 Nov (tag pending)
+
+**What changed:** nothing in the model. Dated note `claude/southern-central-gap-2026-11-09.md`.
+**Evidence:** the planner's 43 of 74 (z -2.1) counts draw reads as landed. Strictly 33 of 74 won v 39.0 expected, z -1.44. Draws 23.0% v 23.9% quoted; away wins 36.5% v 27.6% quoted (the known away under-quote). No en.7sc history in `history/` and no API-Football key in the sandbox, so no replay could run; fitting on the live rows would break Rule 1.
+**Files:** claude/southern-central-gap-2026-11-09.md, RELEASES.md.
+**Not changed:** probabilities, bands, board-only status.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-09 Card: which book and when (tag pending)
 
 **What changed:** nothing a reader sees. A dated re-read of the book ranking and price timing added to `claude/price-lead-time-2026-11-09.md` (issue #156).
