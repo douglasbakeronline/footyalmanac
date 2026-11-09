@@ -29,6 +29,12 @@ jobs:
     timeout-minutes: 10
     env:
       GH_TOKEN: ${{ github.token }}
+      # 9 Nov 2026: the secrets context is not available in a step's `if`,
+      # so the two step conditions on `secrets.OFFICE_APP_ID` below made the file
+      # invalid and no window has started since 5 Nov 15:17 UTC (#136): every
+      # push to main logged a failed "office-merge.yml" run instead. A
+      # job-level flag is the form office-agents.yml and ceo.yml use.
+      HAS_APP: ${{ secrets.OFFICE_APP_ID != '' && 'yes' || 'no' }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -44,7 +50,7 @@ jobs:
       # evaluation run again. A branch that does not rebase cleanly is left
       # alone with a comment. The gate still decides every merge.
       - name: Normalise the App key
-        if: secrets.OFFICE_APP_ID != ''
+        if: env.HAS_APP == 'yes'
         env:
           RAW: ${{ secrets.OFFICE_APP_KEY }}
         run: |
@@ -61,7 +67,7 @@ jobs:
           PY
       - name: Mint the App token
         id: app
-        if: secrets.OFFICE_APP_ID != ''
+        if: env.HAS_APP == 'yes'
         continue-on-error: true
         uses: actions/create-github-app-token@v1
         with:
