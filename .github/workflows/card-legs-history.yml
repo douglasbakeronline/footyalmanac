@@ -1,0 +1,39 @@
+# The Card's leg rule replayed on past seasons (tools/card_legs_history.py),
+# run on any pull request that changes the tool, and by hand; writes nothing
+# to the repo, the report is an artifact. tune.yml runs the same tool on
+# Mondays and commits its output. Written 6 Nov 2026 on the lopsided-test
+# branch (PR #143's numbers); it never landed on main until 9 Nov 2026. The
+# `seasons` input (9 Nov 2026, issue #153) adds past seasons, each replayed
+# with the season before as its prior: 2022-23,2023-24,2024-25.
+name: Card legs history
+on:
+  workflow_dispatch:
+    inputs:
+      seasons:
+        description: "Past seasons to add, comma-separated (e.g. 2022-23,2023-24,2024-25); empty for the fit and check seasons only"
+        required: false
+        default: ""
+  pull_request:
+    paths:
+      - tools/card_legs_history.py
+      - .github/workflows/card-legs-history.yml
+permissions:
+  contents: read
+jobs:
+  replay:
+    runs-on: ubuntu-latest
+    env:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python3 tools/card_legs_history.py --out card-legs-history.json ${{ inputs.seasons && format('--seasons {0}', inputs.seasons) || '' }} | tee card-legs-history.log
+        timeout-minutes: 90
+      - uses: actions/upload-artifact@v4
+        with:
+          name: card-legs-history
+          path: |
+            card-legs-history.json
+            card-legs-history.log
