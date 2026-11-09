@@ -86,6 +86,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/model-ideas-2026-10-25.md` | Home advantage per league, table position, recent goals, goal difference and last-3 points tested on the replay; the weekly gated home-advantage refit. Read before touching form or home advantage. |
 | `claude/card-seasons-2026-11-09.md` | The Card's leg rule over 2022-23 to 2026-27 on football-data prices: the under-market cut by season, the gap bands (the rule 5 cap not supported), the opposition's price (rule 6 holds in all five), the whole Card under rules 5 and 6, the 2x v the 3x. Read before any Card rule change or the 30 Nov review. |
 | `claude/card-pool-replay-2026-11-09.md` | What the pool archive held and could not hold (38% of legs first written as estimates, no bookmakers' chance kept), the `priced` block, the pool-based `card_replay.py`, the approximate `--recover` read. Read before touching `archive_pool`, `POOL_KEYS` or the Card replay. |
+| `claude/card-legs-by-sport-2026-11-09.md` | The Card's legs by sport in the record (`cardLegsBySport`), the sport-off tripwire measured rather than counted by hand, the read at 9 Nov. Read before acting on the tennis tripwire or touching `CARD_SPORTS_OFF`. |
 | `claude/opposition-price-2026-11-06.md` | The opposition's price as a Card condition: the replay by opposition price band, why football only, the variants for the 30 Nov review. Read before touching `CARD_OPP_MIN` or the price fields on a leg. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
@@ -377,7 +378,12 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   is under the 50-leg rule for taking a sport off. The tripwire: when tennis
   Card legs reach 50 and sit two standard errors or more under quote, the
   next session adds `"tennis"` to `CARD_SPORTS_OFF` (CARD_RULE bump, note,
-  release) without asking.
+  release) without asking. Since 9 Nov 2026 (morning) the record carries the
+  count: `groupings-record.json` `cardLegsBySport.<sport>` (`legs`, `landed`,
+  `quoted`, `z`, `tripwire`), shown on the Bets scoreboard and printed in the
+  nightly Card review issue, which says in bold when a tripwire has fired
+  (`claude/card-legs-by-sport-2026-11-09.md`; full rule only: tennis 22 of 40
+  at 9 Nov).
 - **No Reports page for the weekly PDF.** It adds nothing to the return;
   the Sunday email is the delivery.
 - **Opposition 9+ (rule 6) stays**: the one condition that holds in every

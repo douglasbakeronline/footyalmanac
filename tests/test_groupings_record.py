@@ -134,3 +134,33 @@ class FrozenRows(unittest.TestCase):
         # football, tennis and the other sports each freeze the row they were built from
         self.assertEqual(src.count('"fx": g'), 2)
         self.assertEqual(src.count('"fx": m'), 1)
+
+
+class LegsBySport(unittest.TestCase):
+    """9 Nov 2026: the Card's legs by sport, each pick once a day, over the
+    full rule only, with the sport-off test (CARD_FLOOR_N legs, CARD_FLOOR_Z)."""
+
+    def test_full_rule_legs_once_a_day_by_sport(self):
+        a, b = card("Card 2x", "Day", ["A", "B", "C"]), card("Card 3x", "Day", ["D", "E", "F"], wide=True)
+        a["legs"][0]["sport"] = "tennis"; a["legs"][1]["sport"] = "tennis"
+        c = card("Card 2x", "Day", ["A", "G", "H"], seq=2)   # A again the same day: counted once
+        c["legs"][0]["sport"] = "tennis"
+        rec = graded([a, b, c], ["lost", "won", "won"] + ["won"] * 3 + ["lost", "won", "won"])
+        by = rec["cardLegsBySport"]
+        self.assertEqual(sorted(by), ["football", "tennis"])
+        self.assertEqual((by["tennis"]["legs"], by["tennis"]["landed"]), (2, 1))
+        self.assertEqual((by["football"]["legs"], by["football"]["landed"]), (3, 3))   # C, G, H; the wide group's D, E, F left out
+        self.assertAlmostEqual(by["tennis"]["quoted"], 0.65)
+        self.assertFalse(by["tennis"]["tripwire"])
+
+    def test_tripwire_fires_at_the_floor(self):
+        legs = [dict(leg(f"T{i}"), sport="tennis", p=0.8) for i in range(G.CARD_FLOOR_N)]
+        days = [{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
+                                                    "legs": [dict(l, status="won" if i < 30 else "lost") for i, l in enumerate(legs)]}]}]
+        t = G.card_legs_by_sport(days)["tennis"]
+        self.assertEqual((t["legs"], t["landed"]), (G.CARD_FLOOR_N, 30))
+        self.assertLessEqual(t["z"], G.CARD_FLOOR_Z)
+        self.assertTrue(t["tripwire"])
+        short = G.card_legs_by_sport([{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
+                                                                           "legs": days[0]["groups"][0]["legs"][:G.CARD_FLOOR_N - 1]}]}])["tennis"]
+        self.assertFalse(short["tripwire"])   # one leg short of the floor, however far under
