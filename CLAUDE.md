@@ -347,6 +347,40 @@ Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
 zero. The real gap was four months of missing results, now fixed. See
 `claude/tennis-ratings-gap-2026-10-08.md`.
 
+## The Card's return: decisions delegated (9 Nov 2026)
+
+Douglas, 9 Nov 2026, after the first weekly report: "Take all decisions on
+providing the highest return consistently." So the build sessions decide
+Card questions themselves, on the evidence rules above (replays and the
+pool, never the scoreboard; a rule change needs the pre-registered variant
+to beat live on both football-data seasons and the archive, p(worse) at most
+0.30 on 100+ legs) and record each decision here with its numbers. Taken so
+far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
+`claude/card-seasons-2026-11-09.md`:
+
+- **Card 3x stays.** The football-data replay has it losing on every season
+  under rule 5 (4 of 24), but that replay is football only and the live Card
+  is tennis and NBA: live Card 3x is 7 of 15 won against 4.0 expected (+50%),
+  live Card 2x 9 of 27 against 10.3 (-26%). Not retired; revisit at 50
+  settled 3x groups.
+- **The 10+ under cap (rule 5) is on probation, not changed.** Over 2022-25
+  no gap band is positive on every season; `uncapped` (rule 4) and `opp7` are
+  now replayed as whole Cards on every football-data season
+  (`tools/card_legs_history.py` `cardUncapped`, `cardOpp7`), and the pool
+  side accumulates from 9 Nov. Decide at the 30 Nov review by the gate.
+- **Tennis stays on the Card, with a tripwire.** Tennis legs are the one
+  consistent leak: 25 of 44 landed (57%) against 71% quoted, z -2.1, and the
+  29 Oct 75% floor did not mend it (7 of 14 since). But groups with a tennis
+  leg returned +11% (10 of 24) and groups without -15% (5 of 17), and 44 legs
+  is under the 50-leg rule for taking a sport off. The tripwire: when tennis
+  Card legs reach 50 and sit two standard errors or more under quote, the
+  next session adds `"tennis"` to `CARD_SPORTS_OFF` (CARD_RULE bump, note,
+  release) without asking.
+- **No Reports page for the weekly PDF.** It adds nothing to the return;
+  the Sunday email is the delivery.
+- **Opposition 9+ (rule 6) stays**: the one condition that holds in every
+  season (`claude/card-seasons-2026-11-09.md`).
+
 ## Open items
 
 - Slugs were audited against ESPN on 27 Sep 2026 and 14 leagues backfilled

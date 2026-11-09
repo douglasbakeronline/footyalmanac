@@ -254,6 +254,11 @@ def replay_split(split, splits_fn, log):
     res["trebles"] = trebles(under)
     res["card"] = card_season(L)
     res["cardRule5"] = card_season(L, "rule5")   # 6 Nov 2026: the Card as it was before the opposition-price condition
+    # 9 Nov 2026 (Douglas: "take all decisions on providing the highest return
+    # consistently"): the two open rule questions, replayed as whole Cards on
+    # every season so the 30 Nov review has the football-data side of the gate
+    res["cardUncapped"] = card_season(L, "uncapped")   # rule 4: no 10-under cap
+    res["cardOpp7"] = card_season(L, "opp7")           # the opposition at 7+ rather than 9+
     res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
     res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
     res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
@@ -273,7 +278,7 @@ def show(label, res):
         for band, row in tab.items():
             for k, v in row.items():
                 print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
-    for lab in ("card", "cardRule5"):
+    for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7"):
         c = res[lab]
         if c.get("groups"):
             losing = [m for m, v in c["months"].items() if v["pnl"] < 0]
