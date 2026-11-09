@@ -67,6 +67,17 @@ class PricedBlock(unittest.TestCase):
         row = self.read()["legs"][0]
         self.assertNotIn("priced", row); self.assertNotIn("lastOdds", row); self.assertEqual(row["fair"], real["fair"])
 
+    def test_moved_start_kept_as_when_last(self):
+        # 9 Nov 2026 (#156): a later build with a different start records whenLast; `when` stands
+        real = fb("Leeds v Fulham", "Leeds", "Leeds", "Fulham", 1.60, 0.56)
+        G.archive_pool([real], T0, [DAY])
+        first_when = self.read()["legs"][0]["when"]
+        same = dict(real); G.archive_pool([same], T0 + timedelta(hours=1), [DAY])
+        self.assertNotIn("whenLast", self.read()["legs"][0])
+        moved = dict(real, when=f"{DAY}T19:45:00Z"); G.archive_pool([moved], T0 + timedelta(hours=2), [DAY])
+        row = self.read()["legs"][0]
+        self.assertEqual(row["when"], first_when); self.assertEqual(row["whenLast"], f"{DAY}T19:45:00Z")
+
     def test_pool_keys_carry_id_and_flags(self):
         for k in ("id", "listOff", "timeEst"): self.assertIn(k, G.POOL_KEYS)
         t = {"sport": "tennis", "event": "A v B", "pick": "B", "when": f"{DAY}T12:00:00Z", "date": DAY, "odds": 1.3, "est": False,
