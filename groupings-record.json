@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-09T01:45:57Z",
+ "graded": "2026-11-09T04:52:23Z",
  "overall": {
   "groups": 126,
   "settled": 126,
@@ -20,6 +20,44 @@
    "shortened": 53,
    "drifted": 53,
    "mean": 0.0001
+  }
+ },
+ "cardLegsBySport": {
+  "tennis": {
+   "legs": 40,
+   "landed": 22,
+   "expected": 28.33,
+   "rate": 0.55,
+   "quoted": 0.7083,
+   "z": -2.23,
+   "tripwire": false
+  },
+  "nba": {
+   "legs": 32,
+   "landed": 24,
+   "expected": 22.69,
+   "rate": 0.75,
+   "quoted": 0.7091,
+   "z": 0.51,
+   "tripwire": false
+  },
+  "football": {
+   "legs": 30,
+   "landed": 22,
+   "expected": 20.19,
+   "rate": 0.7333,
+   "quoted": 0.6731,
+   "z": 0.71,
+   "tripwire": false
+  },
+  "rugby": {
+   "legs": 5,
+   "landed": 3,
+   "expected": 3.59,
+   "rate": 0.6,
+   "quoted": 0.7185,
+   "z": -0.59,
+   "tripwire": false
   }
  },
  "byBand": {
