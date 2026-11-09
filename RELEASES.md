@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The Card's bankroll figure corrected; `flatstake` pre-registered (tag pending)
+
+**What changed:** `tools/staking.py`, the nightly review's staking section. The bankroll figure was inverted (`0.5 / p95 drawdown x 100`: 289 units where about 35 was meant), a "season" was the sample's own length, and late groups were in the live sample. Now `bankroll()` draws a month and a season of groups at each source's own rate, at the page's stakes (two units on a 2x, one on a 3x), and gives the 95%-worst drawdown in units, the median profit and a bankroll of twice the drawdown; the review issue prints both lines. `tools/card_replay.py` pre-registers `flatstake` (one unit a group) for the 30 Nov review.
+**Evidence:** `claude/card-staking-2026-11-09.md`. Live record, read only: Card 2x 5 of 22 (8.3 expected, -49% a unit), Card 3x 6 of 13 (3.4 expected, +56%); the football-data seasons have the 2x positive and the 3x negative every season, so `CARD_STAKE` is not changed. A month at the live rate: 123-unit bankroll. `tests/test_staking.py` (7 tests); suite OK; `nametest.py` clear.
+**Files:** `tools/staking.py`, `tools/card_review_post.py`, `tools/card_replay.py`, `tests/test_staking.py`, `claude/card-staking-2026-11-09.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `CARD_STAKE`, `CARD_RULE`, any record file, the page.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 The live Card checked against the pool archive; two tennis variants registered (tag pending)
 
 **What changed:** `tools/card_replay.py` on the pool rebuilt no live Card on any day under rule 6, because 42 of the live Card's 59 legs from 30 Oct to 8 Nov (20 of 23 from 4 Nov, nearly all NBA and tennis) sat in the pool only as the model's estimate. The `priced` block (#159) closes that from 10 Nov; `tools/card_integrity.py` now checks it every night (`card-leg-unreplayable`: any Card leg from `PRICED_FROM` the pool does not hold at a real price, with the coverage printed as "x of y"), so the 30 Nov review compares variants on the Card's real legs. `tools/card_replay.py` adds two pre-registered variants for the tennis leak: `notennis` (tennis off the Card) and `tennis80` (tennis at 80%+).
