@@ -106,7 +106,7 @@ PROTECTED = ["record.json", "record-graded.json", "predictions/", "predictions-s
              "history-sports/", "history-tennis/", "dashboard.html", "adjustments.json", "calibration.json", "home-advantage.json", "tuning-report.json", "tuning-pending.json",
              "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js", ".github/",
              "agents/", "CLAUDE.md", "AGENTS.md"]
-MAX_OPEN = 6
+MAX_OPEN = 12   # 9 Nov 2026 (Douglas: double output): four sprints a day, the merge window rebases and retries stale ones
 COOLDOWN_DAYS = 7
 # The HQ planner (footyalmanac-hq scripts/planner.py) ranks the live gaps between quoted and landed each morning
 # and publishes them here. A backlog older than two days is ignored and the sprint falls back to its own picks.

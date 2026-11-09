@@ -68,6 +68,26 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-09-2 (pending tag): double the office
+
+**What changed.** Douglas (9 Nov 2026): "Please double output. I want agents
+working more." Four sprints a day (00:30, 06:30, 12:30, 18:30 UTC, was two),
+the daily cap on office pull requests 14 to 28, `MAX_OPEN` agent pull
+requests 6 to 12, and four merge windows (03:00, 09:00, 15:00, 21:00 UTC)
+that rebase and retry stale pull requests. Beside the office, a scheduled
+Claude build session now runs four times a day (03:17, 09:17, 15:17, 21:17
+London) on the Card backlog and HQ's backlog, merging its own pull requests
+once the checks pass. HQ's planner serves 24 tasks a day (was 14).
+
+**Files.** `.github/workflows/office-agents.yml`, `.github/workflows/office-merge.yml`,
+`agents/pick_task.py`, `CLAUDE.md`; footyalmanac-hq `scripts/planner.py`.
+
+**Cost.** Roughly double the Anthropic API spend of the office and four
+Claude sessions a day on the account; watch both for a week.
+
+**Roll back.** `git revert` the release commit; the scheduled task is
+paused from the Claude app.
+
 ## release-2026-11-09 (pending tag): the Card gets its own autonomous review
 
 **What changed.** Douglas (9 Nov 2026): "I want to set up an autonomous

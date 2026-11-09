@@ -189,7 +189,7 @@ Open `dashboard.html` straight off disk to check the page.
   advantage, writes `home-advantage.json` only if it passes the same gates;
   Douglas's exception to rule 5, 25 Oct 2026), then `tools/model_ideas.py`,
   `--report` and `eurotest.py --report` as advisory output for a human.
-- `office-agents.yml` runs two sprints a day, 06:30 and 18:30 UTC (5 Nov 2026; skips when more than 14 office pull requests exist that day, and idles when `MAX_OPEN` agent pull requests are already open) (Douglas's
+- `office-agents.yml` runs four sprints a day, 00:30, 06:30, 12:30 and 18:30 UTC (9 Nov 2026, Douglas: "double output"; two from 5 Nov; skips when more than 28 office pull requests exist that day, and idles when `MAX_OPEN` (12) agent pull requests are already open) (Douglas's
   instruction, 4 Oct 2026: no owner review, every agent productive). Since
   20 Oct 2026 the sprint runs the `SPRINT_SIZE` (5) agents whose best free task
   ranks highest, one at a time, in this order: owner `office-backlog` issues,
@@ -222,8 +222,8 @@ Open `dashboard.html` straight off disk to check the page.
     once the checks and evaluation pass (Douglas, 4 Oct 2026)
 
   The sprint calls it with `--pr N --wait`, which waits for the checks, so
-  each merge lands before the next agent starts. `office-merge.yml` (09:00,
-  15:00 and 21:00 UTC) first rebases every open `office-agent/*` pull request
+  each merge lands before the next agent starts. `office-merge.yml` (03:00,
+  09:00, 15:00 and 21:00 UTC) first rebases every open `office-agent/*` pull request
   that is behind `main` and pushes it with the App token so its evaluation
   re-runs (`agents/rebase_stale.py`, 5 Nov 2026; a conflicting branch is left
   with a comment), then catches leftovers. The merge is pinned with `--match-head-commit`.
@@ -244,6 +244,7 @@ Open `dashboard.html` straight off disk to check the page.
   `ceo-<issue>`), and delegates bigger work as `office-backlog` issues with an
   `agent:` label, which the next sprint works first. She cannot change the
   workflow-security paths either.
+- **Scheduled build sessions** (9 Nov 2026): a claude.ai scheduled task, "Almanac Card build sessions", runs four times a day (03:17, 09:17, 15:17, 21:17 London) in a cloud sandbox with this file as its law: health first, then the `office-backlog` issues titled "Card:" and HQ's backlog, ships tested changes on a branch, merges its own pull requests once Tests and Evaluation pass (Douglas's authorisation), leaves `.github/` and `agents/` changes open with `needs-owner`. Managed from the Claude app's scheduled tasks, not from this repo.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.

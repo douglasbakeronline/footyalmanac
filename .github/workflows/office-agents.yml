@@ -19,6 +19,7 @@ on:
     # a day GitHub skips entirely is run by hand from the Actions tab.
     - cron: "30 6 * * *"   # 07:30 BST / 06:30 GMT, after deploy.yml
     - cron: "30 18 * * *"  # 19:30 BST / 18:30 GMT: a second sprint (Douglas, 5 Nov 2026)
+    - cron: "30 0,12 * * *"  # 9 Nov 2026 (Douglas: "double output"): four sprints a day
   workflow_dispatch:
     inputs:
       task:
@@ -61,15 +62,15 @@ jobs:
       - id: p
         run: |
           # Spend guard (25 Oct 2026): a sprint opens at most SPRINT_SIZE + 1
-          # pull requests, so more than 14 office pull requests in one UTC day
+          # pull requests, so more than 28 office pull requests in one UTC day
           # means something is looping (a rerun, a dispatch on top of the
           # schedule). Stand down rather than pay for a ninth.
           n=$(gh api "repos/${{ github.repository }}/pulls?state=all&sort=created&direction=desc&per_page=100" \
                 --jq "[.[] | select(.created_at >= \"$(date -u +%F)T00:00:00Z\" and ((.labels | map(.name) | index(\"office-agent\")) != null or (.head.ref | startswith(\"office-agent/\"))))] | length" || echo 0)
           echo "$n office pull request(s) opened today"
-          # 5 Nov 2026: two sprints a day, so the cap is 2 x (SPRINT_SIZE + 1) + 2
-          if [ "${n:-0}" -gt 14 ]; then
-            echo "::warning::skipping the sprint: $n office pull requests already opened today (limit 14); something is looping"
+          # 9 Nov 2026: four sprints a day, so the cap is 4 x (SPRINT_SIZE + 1) + 4
+          if [ "${n:-0}" -gt 28 ]; then
+            echo "::warning::skipping the sprint: $n office pull requests already opened today (limit 28); something is looping"
             echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0
           fi
           A="${{ inputs.agent }}"; T="${{ inputs.task }}"
