@@ -1,0 +1,52 @@
+# The nightly Card review (9 Nov 2026, Douglas: an autonomous agent that
+# improves the platform, the goal consistent returns on the group
+# accumulators). Reads the committed archives only, fetches nothing, changes
+# no rule. Four advisory tools run and their reports are uploaded; the
+# integrity checker's findings open an office-backlog issue for the engineer
+# so the next sprint fixes them; the review is posted as one issue a night
+# labelled card-review for Douglas and the agents to read.
+name: Card review
+on:
+  schedule:
+    - cron: "40 3 * * *"   # after the 00:10 UTC deploy has committed the day's grading
+  workflow_dispatch:
+permissions:
+  contents: read
+  issues: write
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Integrity checks
+        id: integrity
+        continue-on-error: true
+        run: python3 tools/card_integrity.py --json integrity.json | tee integrity.log
+      - name: Card replay on the archive (every variant)
+        continue-on-error: true
+        run: python3 tools/card_replay.py --since 2026-10-29 --json card-replay.json | tee card-replay.log
+      - name: Price timing and bookmakers
+        continue-on-error: true
+        run: python3 tools/price_timing.py --json price-timing.json > /dev/null
+      - name: Staking
+        continue-on-error: true
+        run: python3 tools/staking.py --json staking.json > /dev/null
+      - uses: actions/upload-artifact@v4
+        with:
+          name: card-review
+          path: |
+            integrity.json
+            integrity.log
+            card-replay.json
+            card-replay.log
+            price-timing.json
+            staking.json
+      - name: Post the review
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          INTEGRITY_FAILED: ${{ steps.integrity.outcome == 'failure' }}
+        run: python3 tools/card_review_post.py

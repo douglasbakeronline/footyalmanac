@@ -25,6 +25,8 @@ review so no variant is picked because it happened to look good):
   uncapped the gap uncapped, as the Card was from 29 to 31 Oct 2026 (10+ under
            lost on the live archive and both football-data seasons; capped 31 Oct)
   short    prices 1.15 to 1.35 only (the one band positive on both seasons)
+  rule5    no opposition-price condition (the Card as it ran 31 Oct to 6 Nov 2026)
+  opp7     the opposition priced 7+ rather than 9+
 Each is built with build_card's own pieces (best_card, card_fault, the kinds,
 the cap, the stake weights) with one constant patched, so the replay and the
 live card cannot drift apart. `--since YYYY-MM-DD` limits the days.
@@ -59,7 +61,10 @@ def legs_of(rows):
         l = {"sport": "football", "event": f"{x['home']} v {x['away']}", "pick": x["home"] if side == "h" else x["away"],
              "comp": x["league"], "code": x["league"], "when": x.get("kickoff") or f"{x['date']}T12:00:00Z", "date": x["date"], "odds": round(avg, 2),
              "best": round(best, 2), "margin": round(margin, 4), "est": False, "pModel": round(p[side], 4), "p": round(p[side], 4),
-             "hit": 0.8, "n": 100, "won": x["actual"] == side, "core": x["league"] in CORE}
+             "hit": 0.8, "n": 100, "won": x["actual"] == side, "core": x["league"] in CORE,
+             # 9 Nov 2026: the opposition's and the draw's average price, so the
+             # live rule (CARD_OPP_MIN, 6 Nov) replays on the archive
+             "opp": round(mk["avg"][2 - j], 2) if mk["avg"][2 - j] else None, "draw": round(mk["avg"][1], 2) if mk["avg"][1] else None}
         G.honest(l)
         slot = G.uk_slot(l)
         if slot: by[slot[0]].append(l)
@@ -142,12 +147,17 @@ def main():
     by = legs_of(rows)
     dates = [d for d in sorted(by) if not since or d >= since]
     print(f"{len(rows)} priced archive rows, {sum(len(by[d]) for d in dates)} clean win-pick legs over {len(dates)} days, {dates[0]} to {dates[-1]}")
-    out = {}
+    out, report = {}, {"days": len(dates), "from": dates[0], "to": dates[-1], "variants": {}}
     for v in VARIANTS:
         days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
         out[v] = days
         summarise(days, v)
+        gs = [g for d in days.values() for g in d]
+        st = sum(g["stake"] for g in gs); rt = sum(g["stake"] * g["odds"] for g in gs if g["won"])
+        report["variants"][v] = {"days": len(days), "groups": len(gs), "won": sum(g["won"] for g in gs),
+                                 "expected": round(sum(g["p"] for g in gs), 2), "units": st,
+                                 "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days)}
     for v in VARIANTS:
         if v == "live": continue
         a, b = out["live"], out[v]
@@ -160,6 +170,10 @@ def main():
         bs = sorted(sum(random.choice(diffs) for _ in diffs) / len(diffs) for _ in range(4000))
         print(f"paired {v} - live on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
               f"90% {bs[200]:+.2f} to {bs[3799]:+.2f}, p(worse) {sum(x < 0 for x in bs)/len(bs):.2f}")
+        report["variants"][v].update(vsLivePerDay=round(sum(diffs) / len(diffs), 3), pWorse=round(sum(x < 0 for x in bs) / len(bs), 3))
+    if "--json" in sys.argv:
+        with open(sys.argv[sys.argv.index("--json") + 1], "w") as f: json.dump(report, f, indent=1)
+    return report
 
 
 if __name__ == "__main__":
