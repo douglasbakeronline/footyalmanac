@@ -135,3 +135,26 @@ Simplest card, one treble a day from the under-market legs: 12/38 (-23%),
 `seasons` input `2022-23,2023-24,2024-25`; about ten minutes in CI. Until it
 lands, a pull request that touches the tool runs the workflow from its own
 branch, which is how #162 produced this.
+
+## Update, 9 Nov 2026 02:00 UTC: the two open variants as whole Cards
+
+Run 42546496524 (`card-legs-history.yml` dispatched on `main` with
+`--seasons`), `cardUncapped` (rule 6 without the 10-under cap) and `cardOpp7`
+(the opposition at 7+ with the cap), Card 2x only in both since no 3x forms:
+
+| season | uncapped: groups, won, return | opp7: groups, won, return |
+|---|---|---|
+| 2022-23 | 6, 1, -65% | 7, 4, +28% |
+| 2023-24 | 12, 8, +45% | 6, 0, -100% |
+| 2024-25 | 4, 3, +63% | 6, 3, +12% |
+| 2025-26 | 6, 4, +50% | 4, 0, -100% |
+| 2026-27 | 4, 2, +7% | none |
+
+Thirty-two groups in five seasons for one, twenty-three for the other: on
+football-data's leagues neither variant makes a Card worth the name, and
+the signs flip season to season. Nothing here moves a rule. What it does say
+is that with the opposition at 9+ the football leg is a rare animal (about
+one a day in these leagues), so the live Card's volume and return come from
+the other sports' legs, and the gate for any football rule change has to be
+met on the pool, where those legs are. Decision stands: no change before
+the 30 Nov review.
