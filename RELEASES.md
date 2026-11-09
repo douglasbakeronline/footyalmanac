@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The Card over five seasons: the note (tag pending)
+
+**What changed:** notes only, `claude/card-seasons-2026-11-09.md` and the raw output `claude/card-seasons-2026-11-09-output.txt`; `CLAUDE.md` "tested and rejected" carries the summary. No code, model or rule changed. Issue #153.
+**Evidence:** `tools/card_legs_history.py --seasons 2022-23,2023-24,2024-25` in CI (run 42543472973 on the report-only PR #162). Under-market legs land 2-5 points above quote every full season but about break-even at the average price; no gap band is positive on every season, so the rule 5 cap (10+ under) is not supported over 2022-25; the opposition at 9+ lands about 5 points above quote in all five seasons (511 legs, 83.8% v 76.2%, +4%) and 4-6 loses in all five; the rule 5 Card over four seasons 93 groups, 37 won v 31 expected, +4.4%, the 2x positive every season and the 3x negative every season; the rule 6 Card on football alone makes one group in five seasons.
+**Files:** `claude/card-seasons-2026-11-09.md`, `claude/card-seasons-2026-11-09-output.txt`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any `CARD_*` constant or `CARD_RULE` (a change needs the archive side too; the pool has it from mid-November).
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 The weekly Card replay on past seasons: crash fixed, `--seasons` added (tag pending)
 
 **What changed:** `tools/card_legs_history.py`. (1) The 6 Nov release (#144) shipped `card_season` reading each leg's `opp` and `draw` without the `legs()` line that writes them, so `tune.yml`'s Monday run has died on `KeyError: 'opp'` since (hidden by `continue-on-error`; `card-legs-history.json` is from 2 Nov). The line, the `lopsided` opposition-price table and `card_season(variant)` with `cardRule5` are restored from the `lopsided-test` branch, where PR #143's numbers came from. (2) Issue #153: `--seasons 2022-23,2023-24,2024-25` replays each past season with the season before as its prior (`season_split` stands in for `tune.splits` while it runs) and prices it from football-data's season file; every season reports the cuts, the new `byGap` table (5-8, 8-10, 10+ under; opposition 4-6, 6-9, 9+), `lopsided`, the whole Card and its losing months. Not run here: the sandbox cannot reach openfootball or football-data; `tune.yml` runs the fit and check seasons on Monday 04:40 UTC, and the past seasons need a dispatch of `card-legs-history.yml`, which is on the `lopsided-test` branch only (never landed on `main`; restored in PR #158 for Douglas).

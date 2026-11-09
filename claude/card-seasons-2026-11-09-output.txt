@@ -1,0 +1,103 @@
+# tools/card_legs_history.py --seasons 2022-23,2023-24,2024-25, run 9 Nov 2026 01:03 UTC
+# GitHub Actions run 42543472973 on the report-only branch of PR #162 (football-data.co.uk prices, openfootball results).
+# The lopsided table is in the run log; the tables below are the cuts, the gap and opposition bands, the trebles and the whole Card.
+
+fit 2025-26: 7274 priced, 4709 matched, 852 candidate legs
+  all60    n   852 landed  73.1 quoted  68.3 (se 1.6) roi  -0.3% (p 0.559) best  +2.4% clv -0.036
+  under5   n   417 landed  72.7 quoted  68.0 (se 2.3) roi  -0.2% (p 0.533) best  +2.4% clv -0.0341
+  near     n   348 landed  74.4 quoted  68.5 (se 2.5) roi  +1.1% (p 0.356) best  +3.7% clv -0.0377
+  above5   n    87 landed  70.1 quoted  69.0 (se 5.0) roi  -5.7% (p 0.805) best  -3.0% clv -0.0382
+  under8   n   299 landed  70.2 quoted  68.3 (se 2.7) roi  -4.1% (p 0.858) best  -1.6% clv -0.0342
+  gap all60  5-8 under  n   118 landed  78.8 quoted  67.1 (se 4.3) roi  +9.6% best +12.6%
+  gap all60  8-10 under n    87 landed  73.6 quoted  67.6 (se 5.0) roi  +1.5% best  +4.2%
+  gap all60  10+ under  n   212 landed  68.9 quoted  68.6 (se 3.2) roi  -6.5% best  -3.9%
+  gap all60  opp 4-6    n   171 landed  63.7 quoted  61.8 (se 3.7) roi  -4.4% best  -1.8%
+  gap all60  opp 6-9    n   449 landed  71.0 quoted  66.8 (se 2.2) roi  -0.6% best  +2.2%
+  gap all60  opp 9+     n   232 landed  84.0 quoted  75.9 (se 2.8) roi  +3.3% best  +5.8%
+  gap under5 5-8 under  n   118 landed  78.8 quoted  67.1 (se 4.3) roi  +9.6% best +12.6%
+  gap under5 8-10 under n    87 landed  73.6 quoted  67.6 (se 5.0) roi  +1.5% best  +4.2%
+  gap under5 10+ under  n   212 landed  68.9 quoted  68.6 (se 3.2) roi  -6.5% best  -3.9%
+  gap under5 opp 4-6    n    77 landed  63.6 quoted  61.7 (se 5.5) roi  -3.9% best  -1.3%
+  gap under5 opp 6-9    n   234 landed  69.2 quoted  66.6 (se 3.1) roi  -2.5% best  +0.2%
+  gap under5 opp 9+     n   106 landed  86.8 quoted  75.4 (se 4.2) roi  +7.5% best +10.1%
+  trebles n 55 won 26 landed 47% expected 35% roi +10% z 1.9
+  cardRule5: 23 days, 25 groups, won 10 (exp 7.95), z 0.89, units 43, return 1.02 (best 1.105), 90% [0.628, 1.41], p(loss) 0.472, kinds {'Card 2x': {'n': 18, 'won': 8, 'expected': 0.345, 'return': 1.044}, 'Card 3x': {'n': 7, 'won': 2, 'expected': 0.249, 'return': 0.896}}, losing months 5 of 9: 2025-12, 2026-01, 2026-02, 2026-04, 2026-05
+check 2026-27: 2115 priced, 772 matched, 153 candidate legs
+  all60    n   153 landed  72.5 quoted  69.3 (se 3.7) roi  -3.0% (p 0.722) best  -0.4% clv -0.034
+  under5   n   110 landed  70.0 quoted  69.3 (se 4.4) roi  -7.0% (p 0.871) best  -4.5% clv -0.0334
+  near     n    39 landed  76.9 quoted  69.2 (se 7.4) roi  +4.4% (p 0.31) best  +7.2% clv -0.037
+  above5   n     4 landed 100.0 quoted  70.3 (se 22.8) roi +33.0% (p 0.0) best +37.0% clv -0.0218
+  under8   n   101 landed  69.3 quoted  69.4 (se 4.6) roi  -7.9% (p 0.887) best  -5.4% clv -0.0344
+  gap all60  8-10 under n    11 landed  81.8 quoted  69.9 (se 13.8) roi  +7.9% best +10.9%
+  gap all60  10+ under  n    90 landed  67.8 quoted  69.3 (se 4.9) roi  -9.8% best  -7.4%
+  gap all60  opp 4-6    n    36 landed  66.7 quoted  62.3 (se 8.1) roi  -1.3% best  +1.4%
+  gap all60  opp 6-9    n    65 landed  69.2 quoted  67.2 (se 5.8) roi  -5.1% best  -2.5%
+  gap all60  opp 9+     n    52 landed  80.8 quoted  76.8 (se 5.9) roi  -1.7% best  +1.1%
+  gap under5 8-10 under n    11 landed  81.8 quoted  69.9 (se 13.8) roi  +7.9% best +10.9%
+  gap under5 10+ under  n    90 landed  67.8 quoted  69.3 (se 4.9) roi  -9.8% best  -7.4%
+  gap under5 opp 4-6    n    22 landed  50.0 quoted  62.0 (se 10.3) roi -25.9% best -23.9%
+  gap under5 opp 6-9    n    49 landed  67.3 quoted  66.9 (se 6.7) roi  -7.0% best  -4.5%
+  gap under5 opp 9+     n    39 landed  84.6 quoted  76.5 (se 6.8) roi  +3.7% best  +6.5%
+  trebles n 11 won 4 landed 36% expected 38% roi -24% z -0.13
+2022-23 2022-23: 7440 priced, 4227 matched, 784 candidate legs
+  all60    n   784 landed  71.4 quoted  69.0 (se 1.7) roi  -1.9% (p 0.789) best  +0.8% clv -0.0154
+  under5   n   320 landed  70.9 quoted  68.4 (se 2.6) roi  -1.0% (p 0.597) best  +1.7% clv -0.0151
+  near     n   390 landed  69.5 quoted  69.3 (se 2.3) roi  -5.2% (p 0.94) best  -2.6% clv -0.0163
+  above5   n    74 landed  83.8 quoted  71.0 (se 5.3) roi +12.0% (p 0.025) best +14.9% clv -0.0117
+  under8   n   196 landed  71.4 quoted  68.8 (se 3.3) roi  -0.9% (p 0.588) best  +1.9% clv -0.0153
+  gap all60  5-8 under  n   124 landed  70.2 quoted  67.7 (se 4.2) roi  -1.2% best  +1.4%
+  gap all60  8-10 under n    56 landed  73.2 quoted  68.9 (se 6.2) roi  +1.7% best  +4.5%
+  gap all60  10+ under  n   140 landed  70.7 quoted  68.8 (se 3.9) roi  -2.0% best  +0.9%
+  gap all60  opp 4-6    n   117 landed  58.1 quoted  61.7 (se 4.5) roi -10.9% best  -8.2%
+  gap all60  opp 6-9    n   400 landed  68.5 quoted  66.3 (se 2.4) roi  -1.8% best  +1.1%
+  gap all60  opp 9+     n   267 landed  81.7 quoted  76.3 (se 2.6) roi  +1.9% best  +4.4%
+  gap under5 5-8 under  n   124 landed  70.2 quoted  67.7 (se 4.2) roi  -1.2% best  +1.4%
+  gap under5 8-10 under n    56 landed  73.2 quoted  68.9 (se 6.2) roi  +1.7% best  +4.5%
+  gap under5 10+ under  n   140 landed  70.7 quoted  68.8 (se 3.9) roi  -2.0% best  +0.9%
+  gap under5 opp 4-6    n    49 landed  61.2 quoted  61.5 (se 7.0) roi  -5.6% best  -2.9%
+  gap under5 opp 6-9    n   178 landed  70.8 quoted  66.4 (se 3.5) roi  +1.5% best  +4.5%
+  gap under5 opp 9+     n    93 landed  76.3 quoted  75.8 (se 4.4) roi  -3.5% best  -1.2%
+  trebles n 38 won 12 landed 32% expected 36% roi -23% z -0.63
+  card: 1 days, 1 groups, won 1 (exp 0.41), z 1.21, units 2, return 2.12 (best 2.31), 90% [2.12, 2.12], p(loss) 0.0, kinds {'Card 2x': {'n': 1, 'won': 1, 'expected': 0.407, 'return': 2.12}}, losing months 0 of 1: 
+  cardRule5: 23 days, 25 groups, won 10 (exp 8.22), z 0.76, units 43, return 1.038 (best 1.123), 90% [0.584, 1.454], p(loss) 0.449, kinds {'Card 2x': {'n': 18, 'won': 8, 'expected': 0.355, 'return': 1.062}, 'Card 3x': {'n': 7, 'won': 2, 'expected': 0.263, 'return': 0.916}}, losing months 3 of 8: 2022-10, 2023-01, 2023-04
+2023-24 2023-24: 7437 priced, 4152 matched, 801 candidate legs
+  all60    n   801 landed  72.2 quoted  69.1 (se 1.6) roi  -0.9% (p 0.642) best  +1.8% clv -0.0112
+  under5   n   483 landed  73.3 quoted  69.1 (se 2.1) roi  +0.6% (p 0.421) best  +3.3% clv -0.0111
+  near     n   287 landed  71.4 quoted  69.0 (se 2.7) roi  -1.6% (p 0.665) best  +1.0% clv -0.0124
+  above5   n    31 landed  61.3 quoted  70.3 (se 8.2) roi -17.8% (p 0.93) best -15.3% clv -0.0033
+  under8   n   378 landed  72.2 quoted  69.2 (se 2.4) roi  -1.0% (p 0.612) best  +1.6% clv -0.0136
+  gap all60  5-8 under  n   105 landed  77.1 quoted  68.9 (se 4.5) roi  +6.1% best  +9.3%
+  gap all60  8-10 under n    88 landed  61.4 quoted  68.7 (se 4.9) roi -15.4% best -13.2%
+  gap all60  10+ under  n   290 landed  75.5 quoted  69.3 (se 2.7) roi  +3.4% best  +6.1%
+  gap all60  opp 4-6    n   146 landed  59.6 quoted  61.8 (se 4.0) roi  -8.9% best  -6.4%
+  gap all60  opp 6-9    n   419 landed  71.1 quoted  67.3 (se 2.3) roi  +0.5% best  +3.4%
+  gap all60  opp 9+     n   236 landed  81.8 quoted  76.9 (se 2.7) roi  +1.5% best  +3.8%
+  gap under5 5-8 under  n   105 landed  77.1 quoted  68.9 (se 4.5) roi  +6.1% best  +9.3%
+  gap under5 8-10 under n    88 landed  61.4 quoted  68.7 (se 4.9) roi -15.4% best -13.2%
+  gap under5 10+ under  n   290 landed  75.5 quoted  69.3 (se 2.7) roi  +3.4% best  +6.1%
+  gap under5 opp 4-6    n    85 landed  64.7 quoted  61.7 (se 5.3) roi  -0.9% best  +1.8%
+  gap under5 opp 6-9    n   251 landed  70.1 quoted  67.2 (se 3.0) roi  -0.9% best  +2.0%
+  gap under5 opp 9+     n   147 landed  83.7 quoted  76.7 (se 3.5) roi  +4.0% best  +6.3%
+  trebles n 65 won 31 landed 48% expected 38% roi +8% z 1.66
+  cardRule5: 19 days, 19 groups, won 8 (exp 6.52), z 0.72, units 34, return 1.158 (best 1.244), 90% [0.669, 1.639], p(loss) 0.307, kinds {'Card 2x': {'n': 15, 'won': 8, 'expected': 0.361, 'return': 1.312}, 'Card 3x': {'n': 4, 'won': 0, 'expected': 0.277, 'return': 0.0}}, losing months 3 of 9: 2023-08, 2023-12, 2024-01
+2024-25 2024-25: 7321 priced, 4942 matched, 998 candidate legs
+  all60    n   998 landed  70.1 quoted  68.8 (se 1.5) roi  -3.9% (p 0.971) best  -1.5% clv -0.0192
+  under5   n   445 landed  73.3 quoted  68.5 (se 2.2) roi  +0.8% (p 0.403) best  +3.3% clv -0.0177
+  near     n   449 landed  68.4 quoted  69.2 (se 2.2) roi  -7.0% (p 0.988) best  -4.7% clv -0.0201
+  above5   n   104 landed  64.4 quoted  68.0 (se 4.6) roi -10.8% (p 0.955) best  -8.6% clv -0.0219
+  under8   n   295 landed  73.9 quoted  68.6 (se 2.7) roi  +1.4% (p 0.34) best  +4.0% clv -0.0172
+  gap all60  5-8 under  n   150 landed  72.0 quoted  68.2 (se 3.8) roi  -0.5% best  +1.9%
+  gap all60  8-10 under n    81 landed  71.6 quoted  69.3 (se 5.1) roi  -3.2% best  -0.7%
+  gap all60  10+ under  n   214 landed  74.8 quoted  68.4 (se 3.2) roi  +3.1% best  +5.8%
+  gap all60  opp 4-6    n   193 landed  59.6 quoted  61.7 (se 3.5) roi  -9.2% best  -6.8%
+  gap all60  opp 6-9    n   502 landed  67.7 quoted  66.9 (se 2.1) roi  -4.5% best  -2.0%
+  gap all60  opp 9+     n   303 landed  80.9 quoted  76.4 (se 2.4) roi  +0.3% best  +2.5%
+  gap under5 5-8 under  n   150 landed  72.0 quoted  68.2 (se 3.8) roi  -0.5% best  +1.9%
+  gap under5 8-10 under n    81 landed  71.6 quoted  69.3 (se 5.1) roi  -3.2% best  -0.7%
+  gap under5 10+ under  n   214 landed  74.8 quoted  68.4 (se 3.2) roi  +3.1% best  +5.8%
+  gap under5 opp 4-6    n    90 landed  60.0 quoted  61.9 (se 5.1) roi  -8.7% best  -6.3%
+  gap under5 opp 6-9    n   229 landed  71.2 quoted  66.7 (se 3.1) roi  +0.9% best  +3.6%
+  gap under5 opp 9+     n   126 landed  86.5 quoted  76.4 (se 3.8) roi  +7.3% best  +9.7%
+  trebles n 66 won 33 landed 50% expected 36% roi +19% z 2.38
+  cardRule5: 23 days, 24 groups, won 9 (exp 8.36), z 0.28, units 42, return 0.984 (best 1.053), 90% [0.573, 1.401], p(loss) 0.535, kinds {'Card 2x': {'n': 18, 'won': 9, 'expected': 0.376, 'return': 1.148}, 'Card 3x': {'n': 6, 'won': 0, 'expected': 0.264, 'return': 0.0}}, losing months 5 of 10: 2024-08, 2024-10, 2024-12, 2025-01, 2025-05
+The under-market cut does not hold on both seasons; read the per-season figures.
