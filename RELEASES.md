@@ -36,6 +36,16 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any `CARD_*` rule, `CARD_RULE`, what the pool first wrote, the live Card, any record file, `.github/`.
 **Roll back:** `git revert` the merge commit; pool rows written meanwhile keep their `priced` block, which nothing else reads.
 
+## 2026-11-09 Office merge window: the workflow file was invalid since 5 Nov; Card legs workflow restored (tag pending)
+
+**Also:** `.github/workflows/card-legs-history.yml` (6 Nov 2026) existed only on the `lopsided-test` branch, so nothing on `main` ran `tools/card_legs_history.py` on a pull request or by hand. Restored, with a `seasons` input for the past-season replay (#153: `2022-23,2023-24,2024-25`), 90-minute step timeout; report as an artifact, nothing written to the repo.
+
+**What changed:** `office-merge.yml` used `if: secrets.OFFICE_APP_ID != ''` on two steps. The `secrets` context is not available in a step's `if`, so GitHub refused the file: no merge window has started since 5 Nov 01:13 UTC (the last scheduled success; #136 landed at 15:17), and every push to `main` since has logged a failed "office-merge.yml" run. The stale-rebase step (#136) and the four windows (#157) never ran. The condition is now a job-level `HAS_APP` flag, the form `office-agents.yml` and `ceo.yml` already use.
+**Evidence:** `gh api .../workflows/office-merge.yml/runs`: 10 scheduled successes to 5 Nov 01:13, then only push failures. YAML parses; the same expression runs in two other workflows.
+**Files:** `.github/workflows/office-merge.yml`, `RELEASES.md`.
+**Not changed:** `agents/merge_gate.py`, `agents/rebase_stale.py`, the schedule.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-06 Daily List bar replay, rerun: no change (tag pending)
 
 **What changed:** a dated note only, appended to `claude/daily-list.md`. No code, model or rule changed.
