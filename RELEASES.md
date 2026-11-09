@@ -68,6 +68,40 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-09 (pending tag): the Card gets its own autonomous review
+
+**What changed.** Douglas (9 Nov 2026): "I want to set up an autonomous
+agent that makes improvements to the almanac platform. The ultimate goal is
+to make consistent returns on group accumulators." Four pieces, all advisory,
+none changes a rule on its own:
+
+1. `card-review.yml`, nightly at 03:40 UTC: `tools/card_integrity.py` (legs
+   pending with a result on file, stale rule numbers, Card legs with no
+   opposition price, missing pool files, a stale record), `tools/card_replay.py`
+   on every pre-registered variant (now with the opposition's price on each
+   archive leg and a JSON report), `tools/price_timing.py` (first v last
+   pre-start price, each UK book against the average, by hour) and
+   `tools/staking.py` (flat, half and quarter Kelly, drawdown, bankroll). One
+   `card-review` issue a night; integrity findings open an `office-backlog`
+   issue for the engineer, which the next sprint works first.
+2. HQ's planner (footyalmanac-hq #47) now leads the backlog with the Card:
+   return at stake, legs by sport, price and the opposition's price, empty
+   days, the move to the closing price, and five standing Card tasks.
+3. Paid prices go to legs that matter: a tennis match is priced only at the
+   Card's bar or on the Daily List; college football and basketball take no
+   API-Sports calls (ESPN prices them free).
+4. `tests/test_groupings_card.py` ran on a fixed "future" date that had
+   passed, failing 12 tests from today; it now rolls to the next Saturday in
+   GMT.
+
+**Files.** `.github/workflows/card-review.yml`, `tools/card_integrity.py`,
+`tools/price_timing.py`, `tools/staking.py`, `tools/card_review_post.py`,
+`tools/card_replay.py`, `tools/card_legs_history.py`, `groupings.py`
+(`AS_SKIP`, the tennis price filter), `tests/`, `CLAUDE.md`.
+
+**Roll back.** `git revert` the release commit; the nightly review stops and
+pricing returns to every pool leg.
+
 ## release-2026-11-07 (pending tag): a tennis pick is judged against the match's recorded start
 
 **What changed.** Douglas (7 Nov 2026): "why are these results pending".
