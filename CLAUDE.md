@@ -246,7 +246,8 @@ Open `dashboard.html` straight off disk to check the page.
   `ceo-<issue>`), and delegates bigger work as `office-backlog` issues with an
   `agent:` label, which the next sprint works first. She cannot change the
   workflow-security paths either.
-- **Scheduled build sessions** (9 Nov 2026): a claude.ai scheduled task, "Almanac Card build sessions", runs four times a day (03:17, 09:17, 15:17, 21:17 London) in a cloud sandbox with this file as its law: health first, then the `office-backlog` issues titled "Card:" and HQ's backlog, ships tested changes on a branch, merges its own pull requests once Tests and Evaluation pass (Douglas's authorisation), leaves `.github/` and `agents/` changes open with `needs-owner`. Managed from the Claude app's scheduled tasks, not from this repo.
+- **Weekly report** (9 Nov 2026, Douglas: "a weekly report sent on Sunday morning 8am"): a claude.ai scheduled task, "Almanac weekly report", runs Sundays at 07:40 London, runs `tools/weekly_report.py` (record files only; `--extra` for the session's health, next-week and decision lines) and `tools/weekly_report_pdf.mjs` (Playwright, sandbox only), and sends the PDF by push and email. Managed from the Claude app, not from this repo.
+- **Scheduled build sessions** (9 Nov 2026): a claude.ai scheduled task, "Almanac Card build sessions", runs six times a day (00:34, 04:34, 08:34, 12:34, 16:34, 20:34 London; four times to 9 Nov) in a cloud sandbox with this file as its law: health first, then the `office-backlog` issues titled "Card:" and HQ's backlog, ships tested changes on a branch, merges its own pull requests once Tests and Evaluation pass (Douglas's authorisation), leaves `.github/` and `agents/` changes open with `needs-owner`. Managed from the Claude app's scheduled tasks, not from this repo.
 - `claude.yml` runs the Claude GitHub agent when the owner or a collaborator
   mentions `@claude` on an issue or pull request. It opens pull requests; it
   never deploys.
