@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Edge over the bookmakers' price, third run: still none (tag pending)
+
+**What changed:** nothing a reader sees. A dated note and a section in `claude/odds-groupings.md`; no code or model number changed.
+
+**Evidence:** `tools/odds_edge_test.py` on football-data.co.uk prices, fit 2025-26 and check 2026-27, bootstrapped. Legs 2 / 4 / 6 points above fair landed -1.8 / -2.1 / -1.5 pts below fair on fit (n 4,188 / 2,539 / 1,510) and -1.9 / -2.1 / -0.6 on check (n 689 / 476 / 323); identical to 31 Oct (the check file has not grown). No positive cell on both seasons; the 65%+ cell has 11 check legs. Gates: failed.
+
+**Files:** `claude/odds-edge-retest-2026-11-09.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `MAX_ABOVE_BOOK`, leg rules, any model.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Tennis surface: second source check, nothing to ship (tag pending)
 
 **What changed:** nothing a reader sees. A dated note; no code or model number changed.
