@@ -34,9 +34,23 @@ live card cannot drift apart. `--since YYYY-MM-DD` limits the days.
 Rule 1 holds: nothing is fitted here, it is the scoreboard read. The archive
 has prices from 11 Sep 2026, so this is seven weeks and the intervals are
 wide; read the direction, not the decimals. Standard library only.
+
+9 Nov 2026 (issue #154): from POOL_FROM (30 Oct 2026) the legs come from the
+archived pool, groupings-archive/pool-<date>.json.gz, the priced legs the
+live Card really chose from, every sport, with the first real bookmaker
+price (the row itself, or its `priced` block when the leg was first archived
+as an estimate), the opposition's price and the result through
+groupings.settle (football by names and date; tennis and US sport by id,
+or by names when the row predates `id` in POOL_KEYS). Legs with no real
+price, or no result yet, are left out. Before POOL_FROM the football-data
+archive rows stand. `--no-pool` replays the archive rows throughout, as
+before; `--closing` prices each pool leg at its last pre-start price instead;
+`--recover` also admits legs archived as estimates before `priced` existed,
+at their last price with the typical margin (approximate, see pool_market).
 """
-import json, math, os, random, sys
+import gzip, json, math, os, random, sys
 from collections import defaultdict
+from datetime import datetime, timedelta
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "tools"))
 import groupings as G, engine as E, sources as S
@@ -45,6 +59,113 @@ import market_check as M
 random.seed(7)
 IDX = {"h": 0, "d": 1, "a": 2}
 CORE = {c for c, m in E.LEAGUES.items() if not c.startswith("af.") and not m.get("cup") and not m.get("international")}
+POOL_FROM = "2026-10-30"     # the first pool file; archive_pool shipped 30 Oct 2026
+POOL_DIR = os.path.join(HERE, "groupings-archive")
+
+
+def pool_market(row, closing=False, recover=False):
+    """The bookmaker numbers a pool row can be replayed on, or None: the row's
+    own when it was priced at first write, else its `priced` block (the first
+    real price, 9 Nov 2026). With closing=True the last pre-start price.
+    recover=True also takes a leg archived as an estimate before `priced`
+    existed (30 Oct to 9 Nov 2026) at its last pre-start price with the
+    typical margin (groupings.MARGIN), as the live pipeline prices a one-sided
+    source: approximate, and a closing price, so labelled `recovered`."""
+    if not row.get("est") and row.get("fair") is not None:
+        mk = {k: row.get(k) for k in G.PRICED_KEYS if row.get(k) is not None}
+    elif row.get("priced") and row["priced"].get("fair") is not None:
+        mk = dict(row["priced"])
+    elif recover and row.get("lastOdds"):
+        mk = {"odds": row["lastOdds"], "best": row.get("lastBest") or row["lastOdds"], "margin": G.MARGIN,
+              "fair": round(1 / row["lastOdds"] / G.MARGIN, 4), "opp": row.get("lastOpp"),
+              "src": "recovered: last pre-start price, typical margin", "recovered": True}
+    else:
+        return None
+    if closing and row.get("lastOdds"):
+        mk.update(odds=row["lastOdds"], best=row.get("lastBest") or row["lastOdds"])
+        if row.get("lastFair") is not None: mk["fair"] = row["lastFair"]
+        if row.get("lastOpp"): mk["opp"] = row["lastOpp"]
+    return mk
+
+
+def name_indexes(idx):
+    """Name-keyed fallbacks for tennis and US-sport results, for pool rows
+    written before `id` joined POOL_KEYS (9 Nov 2026)."""
+    _, tn, sp = idx
+    tnames, snames = {}, {}
+    for g in tn.values():
+        a, b = G.norm(g.get("playerA") or ""), G.norm(g.get("playerB") or "")
+        if a and b: tnames.setdefault(frozenset((a, b)), []).append(g)
+    for g in sp.values():
+        h, a = G.norm(g.get("home") or ""), G.norm(g.get("away") or "")
+        if h and a: snames.setdefault((h, a), []).append(g)
+    return tnames, snames
+
+
+def near(a, b, days=1):
+    try:
+        return abs((datetime.fromisoformat(a[:10]) - datetime.fromisoformat(b[:10])).days) <= days
+    except (TypeError, ValueError):
+        return False
+
+
+def settle_pool(l, idx, names):
+    """(status, result) for a pool leg: groupings.settle first, then the
+    name indexes for tennis and US sport when the row carries no id."""
+    st, res = G.settle(l, idx)
+    if st != "pending" or l["sport"] == "football": return st, res
+    tnames, snames = names
+    if l["sport"] == "tennis":
+        parts = [G.norm(x) for x in str(l.get("event", "")).split(" v ")]
+        if len(parts) != 2: return st, res
+        for g in tnames.get(frozenset(parts), []):
+            if not near(g.get("date") or "", l.get("date") or ""): continue
+            if g.get("void"): return "void", "void"
+            return ("won" if G.norm(g.get("winner")) == G.norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
+        return st, res
+    for g in snames.get((G.norm(l.get("home") or ""), G.norm(l.get("away") or "")), []):
+        if not near(g.get("when") or "", l.get("when") or l.get("date") or ""): continue
+        if g.get("void"): return "void", g.get("reason") or "tie"
+        if not g.get("winner"): continue
+        return ("won" if G.norm(g["winner"]) == G.norm(l["pick"]) else "lost"), g.get("score")
+    return st, res
+
+
+def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None, recover=False):
+    """Pool rows -> settled legs in groupings' shape, by Card day, with a
+    tally of what was left out and why (and, with recover, how many legs
+    were taken at their last price)."""
+    idx = idx or G.results_index(); names = name_indexes(idx)
+    by, skipped, recovered = defaultdict(list), defaultdict(int), 0
+    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
+        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
+        d = fn[5:15]
+        if d < POOL_FROM or (since and d < since) or (until and d > until): continue
+        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
+        for row in a.get("legs") or []:
+            mk = pool_market(row, closing, recover)
+            if mk is None:
+                skipped["estimate only"] += 1; continue
+            if mk.get("recovered"): recovered += 1
+            l = dict(row, **mk, est=False)
+            if l.get("sport") == "football" and not l.get("side"):
+                l["side"] = "h" if l["pick"] == l.get("home") else "a"
+            st, res = settle_pool(l, idx, names)
+            if st not in ("won", "lost"):
+                skipped[st] += 1; continue
+            l["won"] = st == "won"; l["result"] = res
+            l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
+            l.setdefault("hit", l.get("pTested") or l.get("p"))
+            # the bookmakers' chance is the archived one (honest() would refit it
+            # from the first margin, wrong at the closing price); p as honest() sets it
+            l["implied"] = round(1 / l["odds"], 4); l.setdefault("pTested", l["p"])
+            l["p"] = round(min(l["pTested"], l["fair"]), 4); l["edge"] = round(l["p"] * l["odds"] - 1, 4)
+            slot = G.uk_slot(l)
+            if slot: by[slot[0]].append(l)
+            else: skipped["no time"] += 1
+    skipped = dict(skipped)
+    if recovered: skipped["recovered, counted at the last price"] = recovered
+    return by, skipped
 
 
 def legs_of(rows):
@@ -143,11 +264,27 @@ def summarise(days, label):
 
 def main():
     since = sys.argv[sys.argv.index("--since") + 1] if "--since" in sys.argv else None
+    use_pool, closing, recover = "--no-pool" not in sys.argv, "--closing" in sys.argv, "--recover" in sys.argv
     rows = M.rows()
     by = legs_of(rows)
-    dates = [d for d in sorted(by) if not since or d >= since]
+    if use_pool:
+        # 9 Nov 2026: the pool is the source from POOL_FROM; archive rows before
+        by = defaultdict(list, {d: ls for d, ls in by.items() if d < POOL_FROM})
+        pool, skipped = pool_legs(since=since, closing=closing, recover=recover)
+        for d, ls in pool.items(): by[d].extend(ls)
+        sports = defaultdict(int)
+        for d, ls in pool.items():
+            for l in ls: sports[l["sport"]] += 1
+        print(f"pool from {POOL_FROM}: {sum(sports.values())} settled priced legs over {len(pool)} days "
+              f"({', '.join(f'{k} {v}' for k, v in sorted(sports.items(), key=lambda x: -x[1]))}); left out: "
+              f"{', '.join(f'{k} {v}' for k, v in sorted(skipped.items()))}{'; closing prices' if closing else ''}")
+    dates = [d for d in sorted(by) if (not since or d >= since) and by[d]]
+    if not dates:
+        print("no legs"); return {}
     print(f"{len(rows)} priced archive rows, {sum(len(by[d]) for d in dates)} clean win-pick legs over {len(dates)} days, {dates[0]} to {dates[-1]}")
-    out, report = {}, {"days": len(dates), "from": dates[0], "to": dates[-1], "variants": {}}
+    out, report = {}, {"days": len(dates), "from": dates[0], "to": dates[-1], "variants": {},
+                       "source": {"pool": use_pool, "poolFrom": POOL_FROM if use_pool else None, "closing": closing, "recover": recover,
+                                  "poolLegs": dict(sports) if use_pool else None, "poolLeftOut": skipped if use_pool else None}}
     for v in VARIANTS:
         days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
@@ -167,6 +304,9 @@ def main():
             rb = sum(g["stake"] * g["odds"] for g in b.get(d, []) if g["won"]) - sum(g["stake"] for g in b.get(d, []))
             diffs.append(rb - ra)
         if not diffs: continue
+        if not any(diffs):
+            print(f"paired {v} - live on {len(alld)} days: identical to live")
+            report["variants"][v].update(vsLivePerDay=0.0, pWorse=None); continue
         bs = sorted(sum(random.choice(diffs) for _ in diffs) / len(diffs) for _ in range(4000))
         print(f"paired {v} - live on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
               f"90% {bs[200]:+.2f} to {bs[3799]:+.2f}, p(worse) {sum(x < 0 for x in bs)/len(bs):.2f}")

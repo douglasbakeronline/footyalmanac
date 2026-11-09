@@ -14,6 +14,10 @@ Checks:
   no-opposition-price   a Card football leg with a bookmaker price but no
                         opposition price (the rule cannot see it)
   pool-gap              a Card day with no pool archive file
+  pool-unpriced         a pool leg first archived as an estimate from
+                        PRICED_FROM on that later took a real price (lastOdds)
+                        but has no `priced` block (9 Nov 2026: the first real
+                        price the Card rule replays on)
   record-drift          groupings-record.json older than 30 hours
 """
 import gzip, json, os, sys
@@ -23,6 +27,7 @@ sys.path.insert(0, HERE)
 import groupings as G
 
 now = datetime.now(timezone.utc)
+PRICED_FROM = "2026-11-10"   # archive_pool writes `priced` from the 9 Nov 2026 release; rows first written before carry none
 
 
 def load(p, default=None):
@@ -51,8 +56,15 @@ def main():
         findings.append({"check": "record-drift", "generated": gen})
     for i in range(-2, 2):
         day = (now + timedelta(days=i)).date().isoformat()
-        if not os.path.exists(os.path.join(HERE, "groupings-archive", f"pool-{day}.json.gz")):
-            findings.append({"check": "pool-gap", "date": day})
+        path = os.path.join(HERE, "groupings-archive", f"pool-{day}.json.gz")
+        if not os.path.exists(path):
+            findings.append({"check": "pool-gap", "date": day}); continue
+        try:
+            with gzip.open(path, "rt", encoding="utf-8") as fh: legs = json.load(fh).get("legs") or []
+        except (OSError, ValueError):
+            legs = []
+        n = sum(1 for l in legs if l.get("est") and l.get("lastOdds") and not l.get("priced") and (l.get("firstAt") or "") >= PRICED_FROM)
+        if n: findings.append({"check": "pool-unpriced", "date": day, "legs": n})
     for f in findings: print(" ".join(f"{k}={v}" for k, v in f.items()))
     print(f"{len(findings)} finding(s)")
     if "--json" in sys.argv:

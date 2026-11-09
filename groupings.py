@@ -2060,7 +2060,14 @@ def check_pool(L):
 
 POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
              "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge",
-             "opp", "draw")
+             "opp", "draw",
+             # 9 Nov 2026: the result keys (settle needs id for tennis and US
+             # sport) and the two flags card_fault reads, so the pool replays
+             "id", "listOff", "timeEst")
+# 9 Nov 2026: what the first real bookmaker price brings to a leg that was
+# archived as the model's estimate (the pool is written up to three days
+# ahead, before any book has priced the game; 810 of 2,113 legs to 9 Nov).
+PRICED_KEYS = ("odds", "best", "bestBook", "bookOdds", "margin", "src", "pricedAt", "fair", "implied", "p", "edge", "opp", "draw")
 
 
 def archive_pool(L, now, dates):
@@ -2071,7 +2078,14 @@ def archive_pool(L, now, dates):
     plus lastOdds / lastBest / lastAt from every later build before it starts,
     so any Card rule, four-leg groups included, can be rebuilt on the month's
     real pool across every sport, not football alone. Nothing first written is
-    changed; only the last-price fields move."""
+    changed; only the last-price fields move.
+
+    9 Nov 2026: a leg first written as the model's estimate (no bookmaker had
+    priced it yet) takes a `priced` block, once, from the first build that
+    carries a real price before its start: PRICED_KEYS and `at`. Without it
+    the pool held no bookmakers' chance, books or opposition price for 38% of
+    its legs, so the Card rule could not be replayed on them. `lastFair` and
+    `lastOpp` move with the last price."""
     os.makedirs(ARCHIVE, exist_ok=True)
     stamp = iso(now); n_new = 0
     for d in dates:
@@ -2091,6 +2105,10 @@ def archive_pool(L, now, dates):
                 if not started and not l.get("est"):
                     old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
                     if l.get("opp"): old["lastOpp"] = l["opp"]
+                    if l.get("fair") is not None: old["lastFair"] = l["fair"]
+                    if old.get("est") and not old.get("priced"):
+                        old["priced"] = {kk: l.get(kk) for kk in PRICED_KEYS if l.get(kk) is not None}
+                        old["priced"]["at"] = stamp
                 continue
             if started: continue       # never add a leg after its start: the price would prove nothing
             row = {kk: l.get(kk) for kk in POOL_KEYS if kk in l}

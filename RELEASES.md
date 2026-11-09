@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 The Card replay reads the archived pool; the pool keeps the first real price (tag pending)
+
+**What changed:** issue #154, first slice. `groupings.archive_pool` writes a `priced` block, once, onto a leg that was first archived as the model's estimate when a later build before its start carries a real bookmaker price (odds, best, books, margin, fair, opposition and draw price, `at`), plus `lastFair`; `POOL_KEYS` gains `id`, `listOff`, `timeEst`. `tools/card_replay.py` builds every variant from the pool from 30 Oct 2026 (`POOL_FROM`): the row's market or its `priced` block, estimate-only legs left out and counted, results for every sport (`--no-pool`, `--closing`, `--recover` documented in the tool). The nightly review issue prints the source and what was left out; a variant identical to live says so. `tools/card_integrity.py` gains `pool-unpriced`.
+**Evidence:** `claude/card-pool-replay-2026-11-09.md`. Pool to 9 Nov: 2,113 legs, 564 with a real first price, 810 estimate-first with a real last price but no bookmakers' chance or books kept, 16 with a first-write opposition price; the live rule replayed on the pool as it stood made no groups on any day while the Card published 18. 9 new tests on synthetic pool files; suite 611 OK; `nametest.py` clear.
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_review_post.py`, `tools/card_integrity.py`, `tests/test_card_pool_replay.py`, `claude/card-pool-replay-2026-11-09.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any `CARD_*` rule, `CARD_RULE`, what the pool first wrote, the live Card, any record file, `.github/`.
+**Roll back:** `git revert` the merge commit; pool rows written meanwhile keep their `priced` block, which nothing else reads.
+
 ## 2026-11-06 Daily List bar replay, rerun: no change (tag pending)
 
 **What changed:** a dated note only, appended to `claude/daily-list.md`. No code, model or rule changed.

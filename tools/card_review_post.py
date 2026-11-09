@@ -38,6 +38,14 @@ def main():
                   "| variant | groups | won | expected | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|"]
         for v, r in rep["variants"].items():
             lines.append(f"| {v} | {r['groups']} | {r['won']} | {r['expected']} | {pct((r['return'] or 1) - 1) if r['return'] else 'n/a'} | {r['emptyDays']} | {r.get('vsLivePerDay', '')} | {r.get('pWorse', '')} |")
+        src = rep.get("source") or {}
+        if src.get("pool"):
+            # 9 Nov 2026: the legs come from the archived pool from poolFrom
+            legs = ", ".join(f"{k} {v}" for k, v in sorted((src.get("poolLegs") or {}).items(), key=lambda x: -x[1])) or "none"
+            out = ", ".join(f"{k} {v}" for k, v in sorted((src.get("poolLeftOut") or {}).items())) or "none"
+            lines.append(f"Source: the archived pool from {src['poolFrom']} (settled priced legs: {legs}; left out: {out})"
+                         f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
+                         "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines.append("")
         cands = [(v, r) for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30 and r["groups"] >= 30 and (r.get("vsLivePerDay") or 0) > 0]
         if cands:
