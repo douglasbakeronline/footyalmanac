@@ -367,7 +367,9 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   no gap band is positive on every season; `uncapped` (rule 4) and `opp7` are
   now replayed as whole Cards on every football-data season
   (`tools/card_legs_history.py` `cardUncapped`, `cardOpp7`), and the pool
-  side accumulates from 9 Nov. Decide at the 30 Nov review by the gate.
+  side accumulates from 9 Nov. Run on 9 Nov over five seasons: 32 and 23
+  groups in total, signs flipping by season; nothing to act on. Decide at
+  the 30 Nov review by the gate, on the pool.
 - **Tennis stays on the Card, with a tripwire.** Tennis legs are the one
   consistent leak: 25 of 44 landed (57%) against 71% quoted, z -2.1, and the
   29 Oct 75% floor did not mend it (7 of 14 since). But groups with a tennis
