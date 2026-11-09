@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-09 Weakest other sport: none below the bar, no change (tag pending)
+
+**What changed:** nothing a reader sees. A dated note; no code or model number changed.
+
+**Evidence:** hits v expected on the live records: college football 193/291 v 202.7 (z -1.23, already off the list), ATP 327/528 v 335.1 (z -0.73), NFL z -0.54, WTA -0.09; NBA, rugby, MLB, college basketball above quote. None is two standard errors under on 50+ games. ATP's 55-65% bands run under quote (z about -1.3) but a fix needs a history walk-forward, not the live record. Gates: not applicable, no candidate.
+
+**Files:** `claude/weakest-sport-2026-11-09.md`, `RELEASES.md`.
+
+**Not changed:** `build_tennis.py`, `sports.py`, any rating, bar or record.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-09 Edge over the bookmakers' price, third run: still none (tag pending)
 
 **What changed:** nothing a reader sees. A dated note and a section in `claude/odds-groupings.md`; no code or model number changed.
