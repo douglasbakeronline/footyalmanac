@@ -7,6 +7,8 @@ that way?"
 
     python3 tools/card_legs_history.py            fit season (2025-26) and check season (2026-27 to date)
     python3 tools/card_legs_history.py --out FILE
+    python3 tools/card_legs_history.py --seasons 2022-23,2023-24,2024-25   (#153) past seasons too, each
+                                                  with the season before as its prior
 
 The live Card (groupings.build_card) admits a football pick when the
 bookmakers' fair chance is 60%+ at a price of 1.15 to 1.90, the league is a
@@ -63,7 +65,58 @@ def legs(pairs):
         clv = (bp * O.fair(r["close"])[pick] - 1) if r.get("close") else None
         out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "side": "h" if pick == 0 else "a",
                     "time": r.get("time"), "model": mp[pick], "fair": f, "price": price, "best": bp, "margin": sum(1 / o for o in r["avg"]),
-                    "won": r["result"] == pick, "clv": clv, "core": not r["code"].startswith("af.")})
+                    "won": r["result"] == pick, "clv": clv, "core": not r["code"].startswith("af."),
+                    # 6 Nov 2026: the opposition's and the draw's average price, so the
+                    # whole-Card replay runs the live rule (CARD_OPP_MIN). Landed on
+                    # main only on 9 Nov: #144 shipped card_season's use of them
+                    # without this line, and tune.yml's weekly run died on KeyError.
+                    "opp": r["avg"][2 if pick == 0 else 0], "draw": r["avg"][1]})
+    return out
+
+
+# 6 Nov 2026, Douglas: his own winning picks were favourites at about 1.40
+# whose opposition was priced 10-12, and his losers favourites whose
+# opposition was priced about 4. Same favourite price, a different game: the
+# opposition's price says how much of the rest of the market is the draw. This
+# buckets every candidate leg by the opposition's price, within favourite
+# price bands, and reports landed v quoted and the singles return. Advisory.
+# (Run on PR #143; restored to main 9 Nov 2026.)
+OPP_BANDS = [(1.0, 4.0), (4.0, 6.0), (6.0, 9.0), (9.0, 99.0)]
+
+
+def lopsided(L):
+    out = {}
+    for lo, hi in [(1.15, 1.91)] + BANDS:
+        row = {}
+        for olo, ohi in OPP_BANDS:
+            b = [l for l in L if lo <= l["price"] < hi and olo <= l["opp"] < ohi]
+            if len(b) < 10: continue
+            w = sum(x["won"] for x in b); q = sum(x["fair"] for x in b) / len(b)
+            pnl = [(x["price"] - 1) if x["won"] else -1.0 for x in b]
+            roi, pr = O._boot(pnl)
+            row[f"opp {olo:.0f}-{ohi:.0f}" if ohi < 99 else f"opp {olo:.0f}+"] = {
+                "n": len(b), "landed": round(w / len(b), 3), "quoted": round(q, 3), "gap": round(w / len(b) - q, 3),
+                "se": round(math.sqrt(q * (1 - q) / len(b)), 3), "roi": round(roi, 4), "pRoiNotPositive": round(pr, 3),
+                "roiBest": round(sum((x["best"] - 1) if x["won"] else -1 for x in b) / len(b), 4),
+                "drawPrice": round(sum(x["draw"] for x in b) / len(b), 2)}
+        if row: out[f"{lo:.2f}-{min(hi, 1.90):.2f}"] = row
+    return out
+
+
+# 9 Nov 2026 (#153): the gap bands the Card rule is judged on (model under the
+# bookmakers' chance, in points) and the opposition-price bands, for the
+# per-season report.
+GAP_BANDS = [("5-8 under", 0.05, 0.08), ("8-10 under", 0.08, 0.10), ("10+ under", 0.10, 9.0)]
+
+
+def by_gap(L):
+    out = {}
+    for name, lo, hi in GAP_BANDS:
+        b = [l for l in L if lo <= l["fair"] - l["model"] < hi]
+        if len(b) >= 10: out[name] = summary(b)
+    for olo, ohi in OPP_BANDS[1:]:
+        b = [l for l in L if olo <= l["opp"] < ohi]
+        if len(b) >= 10: out[f"opp {olo:.0f}-{ohi:.0f}" if ohi < 99 else f"opp {olo:.0f}+"] = summary(b)
     return out
 
 
@@ -111,7 +164,7 @@ def trebles(L):
             "z": round((w - exp) / math.sqrt(sum(g["p"] * (1 - g["p"]) for g in out)), 2) if n else None}
 
 
-def card_season(L):
+def card_season(L, variant="live"):
     """The whole Card, as groupings.build_card builds it today, over a season
     of football-data legs: one window a day, Card 2x and 3x then a second of
     each, CARD_STAKE units, graded strictly. Returns the summary and the
@@ -130,7 +183,7 @@ def card_season(L):
         if slot: by[slot[0]].append(leg)
     days, run, series, months = {}, 0.0, [], defaultdict(lambda: [0, 0, 0.0, 0.0])
     for d in sorted(by):
-        gs = CR.build(by[d], d, "live")
+        gs = CR.build(by[d], d, variant)
         if not gs: continue
         days[d] = gs
         pnl = sum(g["stake"] * (g["odds"] - 1) if g["won"] else -g["stake"] for g in gs)
@@ -165,40 +218,89 @@ def card_season(L):
                           for d in sorted(days) for g in days[d]]}
 
 
-def main():
-    out_path = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else os.path.join(HERE, "card-legs-history.json")
-    log = []
-    data = tune.load(None)
-    report = {"generated": datetime.now(timezone.utc).isoformat(timespec="seconds"), "source": "football-data.co.uk",
-              "rule": {"fairMin": G.CARD_FAIR_MIN, "odds": G.CARD_ODDS, "underMarket": G.CARD_UNDER_MARKET}, "seasons": {}}
-    for split in ("fit", "check"):
+def season_split(season):
+    """A tune.splits stand-in for one past season: every competition replayed
+    on `season` with the season before as its prior (9 Nov 2026, #153)."""
+    prior = E.season_prev(season)[0]
+    return lambda code: {"season": (season, prior)}
+
+
+def replay_split(split, splits_fn, log):
+    """One season through the replay and football-data: fetch, rate, price,
+    join, and every table of the report. splits_fn stands in for tune.splits
+    while it runs (tune.load, tune.lambdas and replay.coverage all read it)."""
+    saved = tune.splits; tune.splits = splits_fn
+    try:
+        data = tune.load(None)
         preds = O.model_probs(tune.lambdas(data, split, meta=True))
         prices, season = [], None
         for div, code in O.DIVS.items():
             if code not in E.LEAGUES: continue
-            s = tune.splits(code)[split][0]
+            s = splits_fn(code)[split][0]
             if "-" not in s: continue
             season = season or s
             prices += O.parse(O._get(O.HIST_URL.format(yy=O._yy(s), div=div), log=log))
             time.sleep(1.0)
-        prices = [r for r in prices if r["result"] is not None]
-        fixtures = [((c, d, h, a), c, d, h, a) for (c, d, h, a) in preds]
-        joined = O.match(prices, fixtures)
-        L = legs([(preds[k], r) for k, r in joined.items()])
-        res = {"season": season, "pricedMatches": len(prices), "matched": len(joined), "candidates": len(L), "cuts": {}}
-        for name, f in CUTS.items():
-            res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
-        res["trebles"] = trebles([l for l in L if CUTS["under5"](l["model"], l["fair"])])
-        res["card"] = card_season(L)
-        res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
+    finally:
+        tune.splits = saved
+    prices = [r for r in prices if r["result"] is not None]
+    fixtures = [((c, d, h, a), c, d, h, a) for (c, d, h, a) in preds]
+    joined = O.match(prices, fixtures)
+    L = legs([(preds[k], r) for k, r in joined.items()])
+    under = [l for l in L if CUTS["under5"](l["model"], l["fair"])]
+    res = {"season": season, "pricedMatches": len(prices), "matched": len(joined), "candidates": len(L), "cuts": {}}
+    for name, f in CUTS.items():
+        res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
+    res["trebles"] = trebles(under)
+    res["card"] = card_season(L)
+    res["cardRule5"] = card_season(L, "rule5")   # 6 Nov 2026: the Card as it was before the opposition-price condition
+    res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
+    res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
+    res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
+    return res
+
+
+def show(label, res):
+    print(f"{label} {res['season']}: {res['pricedMatches']} priced, {res['matched']} matched, {res['candidates']} candidate legs")
+    for name, c in res["cuts"].items():
+        if c.get("n"): print(f"  {name:8s} n {c['n']:5d} landed {c['landed']*100:5.1f} quoted {c['quoted']*100:5.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+5.1f}% (p {c['pRoiNotPositive']}) best {c['roiBest']*100:+5.1f}% clv {c['clv']}")
+    for cut, tab in res["byGap"].items():
+        for band, c in tab.items():
+            print(f"  gap {cut:6s} {band:10s} n {c['n']:5d} landed {c['landed']*100:5.1f} quoted {c['quoted']*100:5.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+5.1f}% best {c['roiBest']*100:+5.1f}%")
+    t = res["trebles"]
+    if t.get("n"): print(f"  trebles n {t['n']} won {t['won']} landed {t['landed']*100:.0f}% expected {t['expected']*100:.0f}% roi {t['roi']*100:+.0f}% z {t['z']}")
+    for cut, tab in res["lopsided"].items():
+        for band, row in tab.items():
+            for k, v in row.items():
+                print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
+    for lab in ("card", "cardRule5"):
+        c = res[lab]
+        if c.get("groups"):
+            losing = [m for m, v in c["months"].items() if v["pnl"] < 0]
+            print(f"  {lab}: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}, losing months {len(losing)} of {len(c['months'])}: {', '.join(losing)}")
+
+
+def main():
+    out_path = sys.argv[sys.argv.index("--out") + 1] if "--out" in sys.argv else os.path.join(HERE, "card-legs-history.json")
+    # 9 Nov 2026 (#153): past seasons beyond the fit and check seasons, e.g.
+    # --seasons 2022-23,2023-24,2024-25; each is replayed with the season
+    # before as its prior and priced from football-data's season file
+    extra = [x for x in (sys.argv[sys.argv.index("--seasons") + 1] if "--seasons" in sys.argv else "").split(",") if x]
+    log = []
+    report = {"generated": datetime.now(timezone.utc).isoformat(timespec="seconds"), "source": "football-data.co.uk",
+              "rule": {"fairMin": G.CARD_FAIR_MIN, "odds": G.CARD_ODDS, "underMarket": G.CARD_UNDER_MARKET, "underMax": G.CARD_UNDER_MAX,
+                       "oppMin": G.CARD_OPP_MIN, "legs": list(G.CARD_LEGS), "cardRule": G.CARD_RULE}, "seasons": {}}
+    for split in ("fit", "check"):
+        res = replay_split(split, tune.splits, log)
         report["seasons"][split] = res
-        print(f"{split} {season}: {len(prices)} priced, {len(joined)} matched, {len(L)} candidate legs")
-        for name, c in res["cuts"].items():
-            if c.get("n"): print(f"  {name:8s} n {c['n']:5d} landed {c['landed']*100:5.1f} quoted {c['quoted']*100:5.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+5.1f}% (p {c['pRoiNotPositive']}) best {c['roiBest']*100:+5.1f}% clv {c['clv']}")
-        t = res["trebles"]
-        if t.get("n"): print(f"  trebles n {t['n']} won {t['won']} landed {t['landed']*100:.0f}% expected {t['expected']*100:.0f}% roi {t['roi']*100:+.0f}% z {t['z']}")
-        c = res["card"]
-        if c.get("groups"): print(f"  card: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}")
+        show(split, res)
+    for season in extra:
+        try:
+            res = replay_split("season", season_split(season), log)
+        except Exception as e:     # a season with no data on either source is reported, not fatal
+            print(f"{season}: not replayed ({e})"); report["seasons"][season] = {"season": season, "error": str(e)}; continue
+        report["seasons"][season] = res
+        show(season, res)
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
     holds = lambda c: c.get("n", 0) >= O.MIN_BETS and c.get("gap", 0) > 0 and c.get("roi", 0) > 0
     report["verdict"] = ("The under-market cut lands above its quote and returns a profit on both seasons." if holds(u_fit) and holds(u_chk) else
