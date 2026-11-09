@@ -643,7 +643,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None):
     # CARD_SPORT_MIN) or is on the Daily List; the rest never needed a price.
     tmin = CARD_SPORT_MIN.get("tennis", 0)
     want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")
-            and (l["sport"] != "tennis" or l.get("list") or l["pModel"] >= tmin)]
+            and (l["sport"] != "tennis" or l.get("list") or (l.get("pModel") or 0) >= tmin)]
     if not key or not want:
         report["oddsApi"] = "no key" if not key else "no legs"; return
     fetch = fetch or _odds_get
