@@ -37,7 +37,29 @@ def candidates(rep):
     as CLAUDE.md states it; before this the line read 30+ groups."""
     return [(v, r) for v, r in (rep.get("variants") or {}).items()
             if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= GATE_P
-            and (r.get("legs") or 0) >= GATE_LEGS and (r.get("vsLivePerDay") or 0) > 0]
+            and gate_legs(r) >= GATE_LEGS and (r.get("vsLivePerDay") or 0) > 0]
+
+
+def gate_legs(r):
+    """The legs a variant is gated on. An empty-day filler (10 Nov 2026, #155)
+    differs from live only on the days live leaves empty, so its own legs,
+    not live's plus its own, are what the gate counts."""
+    return ((r.get("fill") or {}).get("legs") or 0) if "fill" in r else (r.get("legs") or 0)
+
+
+def fill_lines(rep):
+    """10 Nov 2026 (#155): each empty-day filler on its own days. fillwide is
+    the page's fallback today; a filler is worth its place only if its own
+    groups pay."""
+    rows = [(v, r["fill"], r) for v, r in (rep.get("variants") or {}).items() if "fill" in r]
+    if not rows: return []
+    out = ["Empty-day fillers on the days live left empty (fillwide is the page's fallback today; gated on the filler's own legs):"]
+    for v, f, r in rows:
+        if not f.get("groups"):
+            out.append(f"- {v}: no groups on the empty days"); continue
+        out.append(f"- {v}: {f['days']} days, {f['groups']} groups, {f['won']} won (expected {f['expected']}), {f['legs']} legs, "
+                   f"return {pct((f['return'] or 1) - 1) if f.get('return') else 'n/a'}, v live {r.get('vsLivePerDay', '')} a day, p(worse) {r.get('pWorse', '')}")
+    return out + [""]
 
 
 def funnel_section(today_=None, days=14):
@@ -80,13 +102,14 @@ def main():
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines.append("")
+        lines += fill_lines(rep)
         cands = candidates(rep)
         if cands:
             lines += ["**Candidates beating live on the archive (p(worse) <= 0.30 on 100+ legs):** " + ", ".join(v for v, _ in cands) + ". A rule change still needs the football-data replay to agree on both seasons (tune.yml, Mondays), then CARD_RULE bumped with the numbers.", ""]
         near = [v for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30
                 and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands]
         if near:
-            lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({rep['variants'][v].get('legs', '?')} legs)" for v in near) + ".", ""]
+            lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({gate_legs(rep['variants'][v])} legs)" for v in near) + ".", ""]
     if pt.get("timing"):
         t = pt["timing"]
         lines += [f"## Price timing ({pt['legs']} Card-rule legs)", f"- first price to last pre-start price: drifted {t['drifted']}, shortened {t['shortened']}, unchanged {t['unchanged']}; mean move {t['meanMovePct']:+.2f}% ({t['read']})"]
