@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-10-16 US results graded the same day (tag pending)
+
+**What changed:** finished US games (college basketball above all) are graded by the next build instead of the next day. The results walk in `sports.py` stopped at yesterday; ESPN files a game under its US Eastern day, so anything tipping off at midnight Eastern or later (05:00 UK in winter) sat on "today" and read "Result due" until the following day's walk. On 10 Nov at 08:34 two picks (Texas Southern v College of Biblical Studies, San Francisco v Montana, both 05:00 UK) were finished and ungraded. The walk now reaches today.
+
+**Evidence:** `history-sports/` walked through 9 Nov at the 07:54 build; both games filed under 10 Nov Eastern. Only final games are kept, the next walk rescans `RESCAN` (3) days, and a pick is voided only `NOT_PLAYED_DAYS` (7) after its start, so walking a day still in progress records nothing wrong. `tests/test_sports_walk_today.py`. Suite OK.
+
+**Files:** `sports.py`, `tests/test_sports_walk_today.py`, `RELEASES.md`.
+
+**Not changed:** grading rules, ratings, the record's history.
+
+**Roll back:** `git revert` the merge commit.
+
 ## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
 
 **What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
