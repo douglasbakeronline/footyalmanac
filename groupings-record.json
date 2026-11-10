@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-10T18:59:47Z",
+ "graded": "2026-11-10T20:03:04Z",
  "overall": {
   "groups": 129,
   "settled": 128,
@@ -19,7 +19,7 @@
    "n": 141,
    "shortened": 58,
    "drifted": 53,
-   "mean": 0.001
+   "mean": 0.0012
   }
  },
  "cardLegsBySport": {
@@ -72,10 +72,29 @@
    "won": 0
   },
   "unchecked": {
-   "n": 0,
-   "won": 0
+   "n": 1,
+   "won": 1,
+   "rate": 1.0,
+   "quoted": 0.8511
   },
-  "bySport": {},
+  "bySport": {
+   "tennis": {
+    "atBook": {
+     "n": 0,
+     "won": 0
+    },
+    "notAtBook": {
+     "n": 0,
+     "won": 0
+    },
+    "unchecked": {
+     "n": 1,
+     "won": 1,
+     "rate": 1.0,
+     "quoted": 0.8511
+    }
+   }
+  },
   "picks": {
    "ncaab|georgetown hoyas|delaware state hornets|2026-11-10": 1.0,
    "football|manacor|inter ibiza|2026-11-11": 0,
@@ -150,7 +169,7 @@
     "n": 71,
     "shortened": 24,
     "drifted": 27,
-    "mean": -0.0034
+    "mean": -0.0031
    }
   },
   "Card 3x": {
@@ -431,7 +450,7 @@
    "n": 85,
    "shortened": 31,
    "drifted": 34,
-   "mean": -0.0017
+   "mean": -0.0015
   }
  },
  "cardWide": {
@@ -586,7 +605,7 @@
     "n": 10,
     "shortened": 7,
     "drifted": 3,
-    "mean": 0.0046
+    "mean": 0.0063
    }
   }
  },
@@ -610,7 +629,7 @@
     "n": 39,
     "shortened": 13,
     "drifted": 16,
-    "mean": 0.0041
+    "mean": 0.0045
    }
   },
   "Daytime": {
@@ -753,7 +772,7 @@
        "when": "2026-11-11T02:00Z",
        "odds": 1.28,
        "best": 1.28,
-       "lastOdds": 1.25,
+       "lastOdds": 1.23,
        "lockOdds": 1.25,
        "lockBest": 1.25,
        "lockBook": null,
