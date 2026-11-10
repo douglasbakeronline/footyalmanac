@@ -4,6 +4,35 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-29 Phone layout: no sideways scroll, tap a glance dot to its pick, a Days button (tag pending)
+
+For a reader: the page no longer drifts sideways on a phone after jumping
+around it. Every tab, every day in the Daily List's day strip and every dot on
+Today at a glance was checked at 360, 390 and 412 wide: the page cannot be
+scrolled sideways after any of them. Tapping a dot on Today at a glance now
+goes to that pick on the list and outlines it for a moment. A round "Days"
+button appears bottom right once you are deep in the list and takes you back
+to the day strip.
+
+What was wrong: the Card's price notes (`.og-l .o small`) were set to one
+line by a rule that came after the phone rule meant to wrap them, so on a
+phone they ran past the edge (page 396 wide on a 390 screen). The views grid
+on How it went could also push past the edge with long labels. Fixed with a
+phone rule that wins, `overflow-x: clip` on the page under 860px as a
+backstop, `minmax(0,1fr)` columns, and short chip words where the confidence
+column is narrow ("No Hill", "No UK"). One scroll helper (`scrollClear`) now
+serves the day strip, the glance dots and the Days button, clear of the
+sticky tab bar; a jump of more than four screens goes straight there rather
+than animating.
+
+Files: `index.html` only (row keys `data-pk` on every list row builder,
+`glanceGo`, `scrollClear`, `#toDays`, CSS). Checked in Chrome at 360, 390,
+412 and 1280 wide; suite and `nametest.py` clear.
+
+Not changed: what is listed, its order, any number or record.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-10-28 When to take the Card's prices: a read with evidence, and the return first v last (tag pending)
 
 **What changed:** `tools/price_timing.py` (issue #156) printed "take the price late" or "when published" from the sign of the mean move on any sample, two legs included. A read now needs 50+ legs and a day-resampled bootstrap p of the other sign at most 0.10, else "too few legs to read" or "no clear read". New `settled` block: singles on settled legs at the first price v the last pre-start price, paired, with p(late no better), since a drift only pays on legs that won. Legs not started yet are left out (`notStarted`; the nightly run read the next days' legs as closed). The nightly Card review prints both lines. The Place now panel gets one dated line: placing nearer the start has paid. `notify.py` resolves `briefed.json` from `HERE` at call time, so `tests/test_notify.py` no longer writes the real archive's file.
