@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-10T03:40:47Z",
+ "graded": "2026-11-10T07:56:45Z",
  "overall": {
   "groups": 128,
   "settled": 128,
@@ -7,8 +7,8 @@
   "z": -1.16,
   "lost": 91,
   "pending": 0,
-  "legs": 495,
-  "legsWon": 357,
+  "legs": 497,
+  "legsWon": 359,
   "returned": 108.25,
   "staked": 128,
   "returnedBest": 112.86,
@@ -125,7 +125,8 @@
    "ncaab|byu cougars|montana state bobcats|2026-11-13": -1,
    "ncaab|cal state fullerton titans|lincoln (ca) oaklanders|2026-11-13": -1,
    "ncaab|miami hurricanes|north alabama lions|2026-11-13": -1,
-   "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1
+   "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1,
+   "ncaab|howard bison|stetson hatters|2026-11-13": -1
   }
  },
  "byBand": {
@@ -136,8 +137,8 @@
    "z": -0.79,
    "lost": 20,
    "pending": 0,
-   "legs": 87,
-   "legsWon": 61,
+   "legs": 88,
+   "legsWon": 62,
    "returned": 19.86,
    "staked": 29,
    "returnedBest": 20.17,
@@ -158,8 +159,8 @@
    "z": 1.56,
    "lost": 9,
    "pending": 0,
-   "legs": 49,
-   "legsWon": 30,
+   "legs": 50,
+   "legsWon": 31,
    "returned": 22.57,
    "staked": 16,
    "returnedBest": 23.23,
@@ -439,8 +440,8 @@
   "z": -0.09,
   "lost": 2,
   "pending": 0,
-  "legs": 8,
-  "legsWon": 5,
+  "legs": 10,
+  "legsWon": 7,
   "returned": 2.09,
   "staked": 3,
   "returnedBest": 2.09,
@@ -721,9 +722,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Atlético Madrid",
@@ -775,8 +776,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7509,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "96-122",
        "opp": 3.86
       }
      ]
@@ -797,9 +798,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 2,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Deportivo",
@@ -851,8 +852,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7619,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "138-87",
        "opp": 4.03
       }
      ]

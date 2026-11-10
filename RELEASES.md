@@ -4,7 +4,7 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
-## 2026-11-10-13 Live scores on the Daily List (tag pending)
+## 2026-11-10-17 Live scores on the Daily List (tag pending)
 
 **What changed:** a started Daily List pick in the US sports (college basketball, NBA, NFL, college football, NHL, MLB, WNBA) now shows its live score in the middle of the row, coloured by the pick's position (green ahead, red behind, gold level), with the clock; a finished game shows "Final" with an outline until the next build grades it. The day heading adds a live line: how many picks are ahead, behind and level, and the finished-but-ungraded tally. The page reads ESPN's public scoreboard (the source these sports are rated and graded from) once a minute while it is open and visible, one call per sport and US day, and stops when every watched game is final. Display only and marked unofficial: the record still grades from the build. `daylist.py` now carries each pinned pick's ESPN feed.
 
@@ -13,6 +13,53 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** `index.html`, `daylist.py`, `tests/test_live_scores.py`, `RELEASES.md`.
 
 **Not changed:** grading, the record, the list, football and tennis rows (no ESPN id on file).
+
+**Roll back:** `git revert` the merge commit.
+
+
+## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
+
+**What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
+**Evidence:** reserve 13 Oct to 10 Nov, 379 settled: 242 landed v 256.8 expected (z -1.64). Home picks 203 v 222.0 (z -2.26), away 39 v 34.8; wider-league (`af.*`) picks 161 v 176.7; bands all slightly under, none alone significant; no league has 12 picks. The same leagues' list picks land on quote (93 v 93.6). The wider leagues are not in the replay, so no fit/check test of an exclusion or tilt is possible (Rule 3); a live-only exclusion would fit on the scoreboard (Rule 1).
+**Files:** claude/reserve-football-gap-2026-11-10.md, RELEASES.md.
+**Not changed:** reserve floor (62%), list bars, probabilities, grading.
+**Roll back:** revert the commit.
+
+## 2026-11-10: Card stake line, tested and not built (tag pending)
+
+**What changed:** a note only. The Bets page line (unit size for a stated bankroll) is not built.
+**Evidence:** the replay of the current Card rule holds 0 groups on both football-data seasons (rule 6); the nearest, `cardRule5`, holds 22 groups on one season (bankroll 47 units for a 66-group season, 10 won v 7.0 expected). Too thin to state a bankroll.
+**Files:** `claude/card-stake-line-2026-11-10.md`.
+**Not changed:** `CARD_STAKE`, `CARD_RULE`, any record, the page.
+**Roll back:** `git revert` this commit.
+
+## 2026-11-10-15 Which book to write the Card for: Hill stays (tag pending)
+
+**What changed:** notes only, `claude/card-book-2026-11-10.md`.
+**Evidence:** 111 Card-rule pool legs, 30 Oct to 10 Nov: Bet365 +0.30% v average (best on 65%), William Hill -0.04% (62%), Betfair -0.89%, BetVictor -1.73%. Paired Bet365 v Hill on 77 legs +0.43%, p 0.045 one-sided; best price v Hill +1.09%, under the 2-point line. Under 100 paired legs and a sub-1-point gap: no change.
+**Files:** `claude/card-book-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** `CARD_BOOK`, Card rules, the Bets page.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-10-14 Card over 2022-25: task already answered, index note (tag pending)
+
+**What changed:** notes only, `claude/card-seasons-recheck-2026-11-10.md`, pointing each requested table (legs v quote, singles, gap band, opposition band, Card return, losing months) to its place in `claude/card-seasons-2026-11-09.md`. No rerun: the sandbox cannot fetch football-data.
+**Evidence:** none new; the 9 Nov CI runs 42543472973 and 42546496524 stand. No gate met, no rule changed.
+**Files:** `claude/card-seasons-recheck-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** code, model, Card rules.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-10-13 Edge picks on the Bets tab, with five seasons of accumulators behind them (tag pending)
+
+**What changed:** the Bets tab has an **Edge picks** section under the card: every football fixture with the green Edge flag for the chosen day, its average and best price and the opposition's price, then the Edge double and every Edge pick as one slip, priced at the average and the best price with the bookmakers' chance each lands, and what each did when tested. The test is new: `tools/card_legs_history.py` (`edge_legs`, `edge_accas`) replays the flag's legs as singles, doubles, trebles, four-folds and whole-day slips on every football-data season; `build.edge_tested` hands the latest seasons to the page (`edgeTested`).
+
+**Evidence:** `claude/edge-accas-2026-11-10.md`. Five seasons, 2022-23 to 2026-27 (CI run 42751060085): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price, +5.4% at the best; doubles +0.1% / +4.6%; every Edge pick of the day as one slip 139 of 252, +2.4% / +9.7%, ahead at the best price in four seasons of five; trebles and four-folds +16% / +22% pooled at best but -29% to +99% by season. `tests/test_edge_accas.py`; suite 709 OK; `nametest.py` clear. Checked at 1280 and 400 wide.
+
+**Files:** `tools/card_legs_history.py`, `build.py`, `index.html`, `tests/test_edge_accas.py`, `claude/edge-accas-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card, the flag's rule, the model, any record. Nothing is staked or pushed from the section.
 
 **Roll back:** `git revert` the merge commit.
 

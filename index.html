@@ -998,6 +998,15 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-m small{display:block;font-size:12px;color:var(--mute);line-height:1.4;margin-top:1px}
 .tb-m small.tb-why{color:var(--ink-2)}
 .tb-p{font:600 14px var(--f-num);text-align:right}
+/* 10 Nov 2026: the Edge section of the Bets tab (edgeSection) */
+.tb-edge .tb-h{border-bottom-color:var(--edge)}
+.tb-edge .tb-snap b{color:var(--ink)}
+.tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
+.tb-row.edge .tb-v{color:var(--edge)}
+.tb-pp{font:600 14px var(--f-num);text-align:right;white-space:nowrap}
+.tb-pp small{display:block;font:500 11px var(--f-num);color:var(--mute)}
+.tb-proof.edge>div b{color:var(--ink)}
+.tb-proof.edge>div span{color:var(--edge)}
 .tb-check{margin-top:12px;display:grid;gap:12px}
 .tb-check textarea{width:100%;font:14px var(--f-ui);padding:10px 12px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);resize:vertical;box-sizing:border-box}
 .tb-hint{font-size:13px;color:var(--mute)}
@@ -4205,6 +4214,43 @@ function tbRecord(){
     <div><span>Model v bookmakers</span><b>Not yet</b><small>on 909 archived picks the bookmakers priced better; only the best price has paid</small></div>
   </div>`;
 }
+/* 10 Nov 2026: the green Edge flag's fixtures for the card day, with the
+   double of the two most likely and every flagged pick as one slip, priced
+   at the average and the best price, and what each did on the football-data
+   seasons (D.edgeTested, from tools/card_legs_history.py). Display only. */
+function edgeSection(date){
+  const games = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge)
+    .sort((a, b) => (a.kickoff || "").localeCompare(b.kickoff || ""));
+  const ET = D.edgeTested || {};
+  const seasons = Object.keys(ET).sort();
+  const sign = x => (x >= 0 ? "+" : "") + (Math.round(x * 1000) / 10).toFixed(1) + "%";
+  const tested = k => seasons.map(s => { const r = ET[s][k]; return r && r.n
+      ? `${s}: ${r.won} of ${r.n} won (${Math.round(r.landed * 100)}% v ${Math.round(r.expected * 100)}% expected), ${sign(r.roi)} average price, ${sign(r.roiBest)} best` : ""; })
+    .filter(Boolean).join("; ");
+  const who = g => g.edge.side === "h" ? g.home.name : g.away.name;
+  const vs = g => g.edge.side === "h" ? g.away.name : g.home.name;
+  const rows = games.map(g => `<div class="tb-row edge"><span class="tb-v">Edge</span>
+      <span class="tb-m"><b>${ogEsc(who(g))}</b><small>v ${ogEsc(vs(g))} · ${ogEsc(compName(g))}${g.kickoff ? " · " + new Date(g.kickoff).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"}) : ""}</small>
+        <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small></span>
+      <span class="tb-pp">${g.edge.odds.toFixed(2)}<small>best ${g.edge.best.toFixed(2)}</small></span></div>`).join("");
+  const slip = (label, legs, k) => {
+    if(legs.length < 2) return "";
+    const o = legs.reduce((a, g) => a * g.edge.odds, 1), b = legs.reduce((a, g) => a * g.edge.best, 1);
+    const p = legs.reduce((a, g) => a * g.edge.fair, 1);
+    const t = tested(k);
+    return `<div><span>${label}</span><b>${o.toFixed(2)}</b><small>${legs.length} picks · best ${b.toFixed(2)} · bookmakers ${pct(p)}% it lands${t ? `<br>Tested: ${t}` : ""}</small></div>`;
+  };
+  const byP = games.slice().sort((a, b) => b.edge.fair - a.edge.fair);
+  const singles = tested("1");
+  return `<section class="tb-win tb-edge"><h3 class="tb-h">Edge picks <small>football favourites at 1.15 to 1.90 whose opponent is priced 9 or more; the one price condition that held across five seasons</small></h3>
+    ${games.length ? `<div class="tb-rows">${rows}</div>
+      ${games.length >= 2 ? `<div class="tb-proof edge">${slip("Edge double, the two most likely", byP.slice(0, 2), "2")}${games.length > 2 ? slip(`All ${games.length} as one slip`, byP, "all") : ""}</div>` : ""}
+      <p class="tb-snap"><b>Over five seasons</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
+      ${singles ? `<p class="tb-snap">Latest seasons, singles: ${singles}.${edgeRecordText(" On this site")} Take the best price; at the average one the edge is thin, and a short run can lose.</p>` : `<p class="tb-snap">${edgeRecordText("On this site")} Take the best price; a short run can lose.</p>`}`
+      : `<div class="empty tb-empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
+  </section>`;
+}
+
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
@@ -4254,6 +4300,7 @@ function renderToday(){
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${wins.map(winHtml).join("")}
+    ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
     <section class="tb-win tb-model"><h3 class="tb-h">On paper: the model's own picks <small>not a bet; graded beside the card so the two can be compared at the end of the month</small></h3>

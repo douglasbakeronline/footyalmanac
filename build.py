@@ -279,6 +279,22 @@ LIST_RECENT_KEYS = ("league", "home", "away", "pick", "actual", "confidence", "t
                     "k", "result", "ok", "won", "drawRead")
 
 
+def edge_tested(path=None):
+    """{season label: edgeAccas} from card-legs-history.json, or {}: what the
+    Bets tab's Edge section quotes for singles, doubles and whole-day
+    accumulators of the flag's legs (10 Nov 2026)."""
+    path = path or os.path.join(os.path.dirname(os.path.abspath(__file__)), "card-legs-history.json")
+    try:
+        h = json.load(open(path))
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for split, res in (h.get("seasons") or {}).items():
+        ea = res.get("edgeAccas")
+        if ea: out[res.get("season") or split] = {k: {x: v.get(x) for x in ("n", "won", "landed", "expected", "avgOdds", "roi", "roiBest")} for k, v in ea.items()}
+    return out
+
+
 def record_summary(record, sports=None, tennis=None):
     """The inlined slice of record.json (plus the list records of the sports
     and tennis files) that index.html reads on first paint."""
@@ -1605,6 +1621,9 @@ def main():
                                    "daysMissing": S.af_days_missing(start, end)},
                    "missingFeeds": len(missing)},
         "odds": odds_meta,
+        # 10 Nov 2026: the Edge flag's legs as accumulators on the football-data
+        # seasons (tools/card_legs_history.py edgeAccas), for the Bets tab
+        "edgeTested": edge_tested(),
         "list": {"min": LIST_MIN["league"], "minIntl": LIST_MIN["intl"], "backtest": LIST_BACKTEST},
         "days": days,
         "model": {

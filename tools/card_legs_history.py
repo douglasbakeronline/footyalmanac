@@ -145,6 +145,49 @@ def summary(L):
             "bands": bands}
 
 
+def edge_legs(L):
+    """The green Edge flag's football legs (groupings.edge_flag, 10 Nov 2026):
+    the bookmakers 60%+ at CARD_ODDS (the legs() gate), the opposition priced
+    CARD_OPP_MIN+, the model no more than MULT_ABOVE_BOOK above the market.
+    The replay's leagues are football-data's, the flag's own."""
+    omin = G.CARD_OPP_MIN.get("football") or 9.0
+    return [l for l in L if l["opp"] >= omin and l["model"] - l["fair"] <= G.MULT_ABOVE_BOOK]
+
+
+def edge_accas(L, sizes=(1, 2, 3, 4)):
+    """Edge-flag legs combined (10 Nov 2026, Douglas bets accumulators): for
+    each day with at least k flagged legs, the k most likely by the
+    bookmakers' chance as one accumulator, and every flagged leg of the day
+    as one. Won, expected (product of the bookmakers' chance), return per
+    unit at the average and the best price, with a bootstrap p(return <= 0)."""
+    by = defaultdict(list)
+    for l in edge_legs(L): by[l["date"]].append(l)
+    out = {}
+    for k in list(sizes) + ["all"]:
+        gs = []
+        for d, ls in sorted(by.items()):
+            ls = sorted(ls, key=lambda l: -l["fair"])
+            if k == "all":
+                if len(ls) < 2: continue
+                c = ls
+            else:
+                if len(ls) < k: continue
+                c = ls[:k]
+            gs.append({"date": d, "won": all(l["won"] for l in c), "p": math.prod(l["fair"] for l in c),
+                       "odds": math.prod(l["price"] for l in c), "best": math.prod(l["best"] for l in c), "legs": len(c)})
+        if not gs: out[str(k)] = {"n": 0}; continue
+        n = len(gs); w = sum(g["won"] for g in gs)
+        pnl = [(g["odds"] - 1) if g["won"] else -1.0 for g in gs]; pnlb = [(g["best"] - 1) if g["won"] else -1.0 for g in gs]
+        roi, p = O._boot(pnl); roib, pb = O._boot(pnlb)
+        months = defaultdict(float)
+        for g, x in zip(gs, pnl): months[g["date"][:7]] += x
+        out[str(k)] = {"n": n, "won": w, "landed": round(w / n, 3), "expected": round(sum(g["p"] for g in gs) / n, 3),
+                       "avgOdds": round(sum(g["odds"] for g in gs) / n, 2), "avgLegs": round(sum(g["legs"] for g in gs) / n, 2),
+                       "roi": round(roi, 4), "pRoiNotPositive": round(p, 3), "roiBest": round(roib, 4), "pRoiBestNotPositive": round(pb, 3),
+                       "losingMonths": sum(1 for v in months.values() if v < 0), "months": len(months)}
+    return out
+
+
 def trebles(L):
     """One treble a day from the under-market legs: the three with the highest
     combined fair chance whose combined price is 2.0 to 3.0."""
@@ -274,6 +317,7 @@ def replay_split(split, splits_fn, log):
     res["cardFillOpp7"] = card_season(L, "fillopp7")
     # 10 Nov 2026: the Model card's rule on the same seasons, for the 30 Nov review
     res["cardModel"] = card_season(legs([(preds[k], r) for k, r in joined.items()], model=True), "modelcard")
+    res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
     res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
     res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
@@ -293,6 +337,8 @@ def show(label, res):
         for band, row in tab.items():
             for k, v in row.items():
                 print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
+    for k, a in (res.get("edgeAccas") or {}).items():
+        if a.get("n"): print(f"  edge acca {k:>3}: n {a['n']:4d} won {a['won']:4d} landed {a['landed']*100:5.1f}% v expected {a['expected']*100:5.1f}%  avg odds {a['avgOdds']:.2f} legs {a['avgLegs']}  roi {a['roi']*100:+5.1f}% (p {a['pRoiNotPositive']}) best {a['roiBest']*100:+5.1f}% (p {a['pRoiBestNotPositive']})  losing months {a['losingMonths']} of {a['months']}")
     for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7", "cardModel"):
         c = res[lab]
         if c.get("groups"):
