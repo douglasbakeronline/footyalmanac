@@ -4,7 +4,7 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
-## 2026-11-10-9 The Daily List at William Hill (tag pending)
+## 2026-11-10-10 The Daily List at William Hill (tag pending)
 
 **What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.
 
@@ -13,6 +13,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, `tests/test_list_books.py`, `claude/list-at-hill-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
 
 **Not changed:** the Daily List's admission, order or record; the model; the Card and every `CARD_*` constant; `CARD_RULE`.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-10-9 The Model card's rule replayed beside the Card (tag pending)
+
+**What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers `modelcard`: the Model card's rule (the model's own picks at or above the bookmakers' chance) built on the same legs as the Card, staked as the Card. `tools/card_legs_history.py` replays it on every football-data season (`cardModel`, legs admitted on the model's own 60%+). The nightly review's variant table carries it.
+
+**Evidence:** `claude/card-modelcard-2026-11-10.md`. Pool from 30 Oct with `--recover`: modelcard 12 groups, 7 won, legs 29 of 36 (80.6% v 68.1% quoted), +58%; live 10 groups, 4 won, -7%; paired +1.60 units a day, p(worse) 0.02, on 36 legs, under the 100-leg gate. Football-data (CI on this pull request), 2025-26: 70 groups, 22 won v 25.4 the model expected, -8.2% (best -0.4%), so the two samples disagree and nothing changes. `tests/test_card_modelcard.py`; suite OK; `nametest.py` clear.
+
+**Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_modelcard.py`, `tests/test_card_legs_history.py`, `claude/card-modelcard-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card, the Model card, any constant, any record.
 
 **Roll back:** `git revert` the merge commit.
 

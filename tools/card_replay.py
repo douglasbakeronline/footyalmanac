@@ -33,6 +33,8 @@ review so no variant is picked because it happened to look good):
            group (the fallback the page has used since 25 Oct 2026)
   fillopp7 / fillrule5 / fillshort  live, and on an empty day the Card under
            opp7, rule5 or short instead (10 Nov 2026, issue #155)
+  modelcard the Model card's rule (the model's own picks at or above the
+           bookmakers' chance) on the same legs, staked as the Card (10 Nov 2026)
   tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
            (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
            40 full-rule legs landed v 71% quoted; registered before the pool
@@ -238,6 +240,12 @@ VARIANTS = {
     "fillopp7": {"_FILL": "opp7"},
     "fillrule5": {"_FILL": "rule5"},
     "fillshort": {"_FILL": "short"},
+    # 10 Nov 2026, pre-registered for the 30 Nov review: the Model card (the
+    # model's own picks, rated 60%+ and at or above the bookmakers' chance,
+    # groups chosen on the model's chance, groupings.MODEL_KINDS), built on
+    # the same legs as the Card and staked like it, so the review compares
+    # the two on hundreds of legs rather than the paper record's 14 groups.
+    "modelcard": {"_KINDS": "model"},
 }
 
 
@@ -257,6 +265,17 @@ def build_wide(day_legs, date):
 def build(day_legs, date, variant):
     """One day's Card under a variant, with the live machinery."""
     patch = VARIANTS[variant]
+    if patch.get("_KINDS") == "model":
+        after = G.lock_time(date, "Day"); groups, used = [], set()
+        for (name, _, _, _), card in zip(G.MODEL_KINDS, G.CARD_KINDS):
+            g = G.best_card(day_legs, used, after, name)
+            if not g: continue
+            used |= {l["event"] for l in g["legs"]}
+            # grade and stake as the Card kind it mirrors; its chance is the model's
+            g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(card[0], 1); g["seq"] = 1
+            g["name"] = card[0]; g["model"] = True
+            groups.append(g)
+        return groups
     if "_FILL" in patch:
         groups = build(day_legs, date, "live")
         if groups: return groups
