@@ -1161,6 +1161,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .list-days .ctl-label{display:block;margin-bottom:6px}
 .xrow .conf .bkchip{margin-top:4px}
 .scoreline .book small + small{margin-top:2px}
+.edgecount{font-weight:700}   /* inherits the day band's colour: green on the red band was illegible */
 .why.edgewhy{border:1px solid var(--edge);border-radius:3px;background:var(--edge-soft);padding:10px 12px}   /* 1px: no dark border thicker (standing decision) */
 .pred{font-family:var(--f-num);text-align:center;white-space:nowrap;line-height:1.25}
 .pred b{display:block;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
@@ -1333,6 +1334,7 @@ footer b{color:var(--ink-2)}
     <div class="boards" id="show">
       <button data-show="all" aria-pressed="true">Every fixture</button>
       <button data-show="read" aria-pressed="false">Confident only</button>
+      <button data-show="edge" aria-pressed="false" title="Only fixtures with the green Edge flag: the favourite at 1.15 to 1.90, the other side priced 9 or more">Edge only</button>
     </div>
   </div>
   <div>
@@ -2714,8 +2716,11 @@ function render(){
     const tierOf = g => btts ? bttsTier(g) : tier(g);
     let games = day.games.filter(g=> state.leagues.size===0 || state.leagues.has(g.league));
     if(state.show === "read") games = games.filter(g => tierOf(g).k >= 1);
+    // 10 Nov 2026: the green Edge flag's fixtures alone (groupings.edge_flag)
+    if(state.show === "edge") games = games.filter(g => g.edge);
     if(!games.length) return;
     const nRead = games.filter(g => tierOf(g).k >= 1).length;
+    const nEdge = games.filter(g => g.edge).length;
     const total = games.length;
     // Every fixture is on the page. Only the All view with nothing filtered
     // is shortened, to the most confident rows, until "Show all" is pressed.
@@ -2734,7 +2739,7 @@ function render(){
     sec.innerHTML = `
       <div class="day-head">
         <h2>${fmtDay(day.date)}</h2>
-        <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident</div>
+        <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident${nEdge ? ` · <span class="edgecount">${nEdge} edge</span>` : ""}</div>
       </div>
       <div class="ruler">
         <div>#</div><div>UK time</div><div>Home</div>
@@ -2763,7 +2768,9 @@ function render(){
   });
 
   if(!shown) host.innerHTML = upcoming.length
-    ? (state.show === "read"
+    ? (state.show === "edge"
+        ? `<div class="empty">No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 9 or more, in the leagues tested on price, about five a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.</div>`
+      : state.show === "read"
         ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
         : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`)
     : `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`;

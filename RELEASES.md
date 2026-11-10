@@ -4,7 +4,7 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
-## 2026-11-10-11 The Daily List on a phone: day jump, full names (tag pending)
+## 2026-11-10-12 The Daily List on a phone: day jump, full names (tag pending)
 
 **What changed:** a "Jump to" strip of the week's days, each with its pick count, sits above the Daily List; a tap scrolls to that day just under the tab bar (a week of picks ran to about 40,000px on a phone). Team names wrap on a phone instead of being cut mid-word ("Northern Arizona Lum"); on a desktop a long name in a sport row now ends in an ellipsis instead of losing its first letters ("orthern Arizona Lumberjacks"). The William Hill chip fits the phone's confidence column.
 
@@ -13,6 +13,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** `index.html`, `RELEASES.md`.
 
 **Not changed:** what the list contains or its order; any data file.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-10-11 "Edge only" on the football board (tag pending)
+
+**What changed:** the football board's Show control has a third option, **Edge only**, listing just the fixtures with the green Edge flag, and each day's header counts them ("2 fixtures · 2 confident · 2 edge"). When none are flagged the board says why (rare by design, prices arrive through the week). Display only.
+
+**Evidence:** a filter on the existing flag (`claude/edge-flag-2026-11-10.md`). Checked at 1280 and 400 wide on a preview of the 8 Nov fixtures (Celtic v Kilmarnock, Estrela v Benfica); a green count on the red day band was illegible, so the count takes the band's own colour. Suite OK; `nametest.py` clear.
+
+**Files:** `index.html`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the flag's rule, the default view, the Daily List.
 
 **Roll back:** `git revert` the merge commit.
 
