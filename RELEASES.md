@@ -4,6 +4,28 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-32 Card review: the replay's coverage beside the record, Kelly read plainly (tag pending)
+
+**What changed.** Two lines in the nightly Card review issue, so it cannot
+be misread. The replay table's "live" row read 0 groups and 12 empty days
+over 29 Oct to 9 Nov, as if the Card had made nothing; the record holds 21
+live Card groups over those days. A **Coverage** line now sets the two side
+by side and says why they differ (legs archived only as estimates before
+10 Nov; from 10 Nov every leg carries its first real price), so the table
+is read as rules against each other, not as the Card's own return. And the
+staking section printed "quarter Kelly: median +0.0%, drawdown 0%" when the
+groups land under the bookmakers' chance (live 0.942): Kelly stakes nothing
+then, which read as a safe strategy. It now says so in words.
+
+**Files.** `tools/card_review_post.py` (`coverage_lines`, `kelly_line`),
+`tests/test_card_review_post.py` (four tests).
+
+**Not changed.** No Card rule, no replay, no stake; the record is only
+counted, never fitted.
+
+**Roll back.** `git revert` the merge commit.
+
+
 ## 2026-11-10-31 Days at a glance on How it went (tag pending)
 
 **What changed.** Douglas (10 Nov 2026): "add the Today at a glance section

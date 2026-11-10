@@ -141,6 +141,36 @@ def list_book_section(r):
     return out + [""]
 
 
+def coverage_lines(rep, record):
+    """10 Nov 2026: the live row of the replay beside the live Card the record
+    holds over the same days. Until 10 Nov most live legs were archived only as
+    estimates, so the replay rebuilt none of the live Card (0 groups against 21
+    from 29 Oct to 9 Nov) and its "live" row read as if the Card had made
+    nothing. Full-rule groups only: the wider-rule filler and late groups apart."""
+    live = (rep.get("variants") or {}).get("live")
+    if not live or not rep.get("from") or not rep.get("to"): return []
+    held = sum(1 for d in record.get("days") or [] if rep["from"] <= d.get("date", "") <= rep["to"]
+               for g in d.get("groups") or [] if str(g.get("name", "")).startswith("Card") and not g.get("wide") and not g.get("late"))
+    if not held: return []
+    if live["groups"] >= held:
+        return [f"Coverage: the replay's live row rebuilt {live['groups']} groups; the record holds {held} live Card groups over these days."]
+    return [f"Coverage: the record holds **{held}** live Card groups over these days; the replay rebuilt {live['groups']}. "
+            "The gap is legs archived only as estimates (every leg from 10 Nov carries its first real price), so the replay "
+            "reads the rules against each other on the legs it has, not the live Card's own return."]
+
+
+def kelly_line(s):
+    """Kelly stakes nothing when the sample lands at or under the bookmakers'
+    chance (tools/staking.py `sim`): say so rather than print a 0% return and
+    a 0% drawdown, which read as a safe strategy (10 Nov 2026)."""
+    if (s.get("landedOverExpected") or 0) <= 1:
+        return (f"- Kelly (quarter and half): stakes nothing, the groups landed {s.get('landedOverExpected')} times the bookmakers' "
+                "expectation, so no group shows an edge to size")
+    q, h = s["quarterKelly"], s["halfKelly"]
+    return (f"- quarter Kelly: median {pct(q['median'])}, drawdown (95%) {q['p95Drawdown'] * 100:.0f}%; "
+            f"half Kelly: median {pct(h['median'])}, drawdown (95%) {h['p95Drawdown'] * 100:.0f}%")
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -159,6 +189,7 @@ def main():
             lines.append(f"Source: the archived pool from {src['poolFrom']} (settled priced legs: {legs}; left out: {out})"
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
+        lines += coverage_lines(rep, load("groupings-record.json"))
         lines.append("")
         lines += fill_lines(rep)
         cands = candidates(rep)
@@ -200,7 +231,7 @@ def main():
             fl = s["flat1pct"]
             lines += [f"## Staking, {k} ({s['groups']} groups, landed/expected {s['landedOverExpected']})",
                       f"- flat 1% a group: median season {pct(fl['median'])}, 10th-90th {pct(fl['p10'])} to {pct(fl['p90'])}, worst drawdown (95%) {fl['p95Drawdown'] * 100:.0f}%",
-                      f"- quarter Kelly: median {pct(s['quarterKelly']['median'])}, drawdown (95%) {s['quarterKelly']['p95Drawdown'] * 100:.0f}%; half Kelly: median {pct(s['halfKelly']['median'])}, drawdown (95%) {s['halfKelly']['p95Drawdown'] * 100:.0f}%",
+                      kelly_line(s),
                       ] + [f"- {lab} ({b['groups']} groups at {s.get('groupsPerDay')} a day, the page's stakes): 95%-worst drawdown {b['p95DrawdownUnits']} units, "
                            f"median {b['medianPnlUnits']:+} units on {b['staked']} staked; a bankroll of {b['units']} units keeps that drawdown to half"
                            for lab, b in ((k2, (s.get("bankroll") or {}).get(k2)) for k2 in ("month", "season")) if b] + [""]
