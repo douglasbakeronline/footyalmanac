@@ -4,6 +4,28 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-34 Bets: the week ahead panel removed, one "Coming up" line instead (tag pending)
+
+**What changed.** Douglas (10 Nov 2026): the week ahead "is entirely
+redundant as it's not showing any groups for the days ahead. It also feels
+too cluttered." The seven-day panel on the Bets tab (day cards, sport bars,
+legend, the model doubles and trebles that were never in the plan) is gone.
+In its place, under the plan, one line, **Coming up**, naming each day after
+today that already has a plan bet (how many, tested or on trial) with a link
+into the plan; when no later day has one, nothing shows. Today's bets were
+already in the plan just above it.
+
+**Not changed.** The plan, the Card, Edge picks, the briefings (the model
+treble in the push is built server-side), Today at a glance (`weekPick` and
+`weekDays` stay; the panel's own code and styles are removed).
+
+**Checked.** Bets at 390 and 1280: no panel, no errors, no sideways scroll;
+the line rendered with made-up bets at both widths. 745 tests pass.
+
+**Files.** `index.html`, `CLAUDE.md`.
+
+**Roll back.** `git revert` the release commit.
+
 ## 2026-11-10-33 Phone: the page no longer pans sideways in Safari (tag pending)
 
 **What changed.** Douglas (10 Nov 2026, iPhone, How it went): "still getting
