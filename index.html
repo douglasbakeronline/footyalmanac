@@ -70,6 +70,8 @@
   --yellow-mid:#f8e27a;
   --yellow-soft:#fbf0bf;
   --red:#c8102e;         /* the star band and stat panel */
+  --edge:#1c6b3a;        /* the green edge flag, 10 Nov 2026 */
+  --edge-soft:#dcebdf;
   --grey:#a4a9ad;        /* the jacket */
   --cover-ink:#100e0c;
 
@@ -1133,6 +1135,16 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
   display:block;margin-top:2px;font-family:var(--f-ui);font-size:9.5px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;color:#7a5c12;
 }
+/* 10 Nov 2026: the green edge flag (groupings.edge_flag). A favourite at
+   1.15-1.90 whose opposition is priced 9+, the bookmakers 60%+, the model not
+   above them: the one price condition that held in every season tested. */
+.edgeflag{
+  display:inline-flex;align-items:center;gap:3px;margin-top:3px;padding:1px 5px 1px 4px;border-radius:3px;
+  background:var(--edge);color:#fff;font-family:var(--f-ui);font-size:10px;font-weight:700;letter-spacing:.07em;
+  text-transform:uppercase;line-height:1.5;white-space:nowrap;
+}
+.edgeflag svg{width:9px;height:10px;flex:none}
+.why.edgewhy{border:1px solid var(--edge);border-radius:3px;background:var(--edge-soft);padding:10px 12px}   /* 1px: no dark border thicker (standing decision) */
 .pred{font-family:var(--f-num);text-align:center;white-space:nowrap;line-height:1.25}
 .pred b{display:block;font-size:15px;font-weight:600;color:var(--ink);letter-spacing:-.02em}
 .pred small{display:block;font-size:10.5px;color:var(--mute);letter-spacing:-.02em}
@@ -1875,6 +1887,14 @@ function oppLine(g){
   const parts = avg.map((o, j) => o ? `<b class="${(j === 0) === hp ? "pk" : (o >= 9 ? "opp-long" : "")}">${(+o).toFixed(2)}</b>` : null).filter(Boolean);
   return `<div class="mkt ${hp ? "h" : "a"}" title="Bookmakers' price for ${g.home}${c.w ? ", the draw" : ""} and ${g.away}. Display only, never used by the model.">Bookies <span class="hda">${parts.join("<i>/</i>")}</span></div>`;
 }
+/* 10 Nov 2026: the green edge flag. Computed in the build
+   (groupings.edge_flag) from the prices on the row; display only. */
+const EDGE_SVG = `<svg viewBox="0 0 9 10" aria-hidden="true"><path d="M1 0v10" stroke="currentColor" stroke-width="1.4"/><path d="M1.7 .6h6.6L6.6 3l1.7 2.4H1.7z" fill="currentColor"/></svg>`;
+function edgeFlag(g){
+  if(!g.edge) return "";
+  const who = g.edge.side === "h" ? g.home.name : g.away.name;
+  return `<span class="edgeflag" title="Edge: ${who} at ${g.edge.odds.toFixed(2)} (best ${g.edge.best.toFixed(2)}), the other side priced ${g.edge.opp.toFixed(2)}. Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed about 7 points above the bookmakers' chance over five seasons. Take the best price. Tap the row for more.">${EDGE_SVG}Edge</span>`;
+}
 /* Bookmakers' fair probability and best price for the model's favoured
    outcome. The "value" tag only exists if odds.py's backtest opened the gate. */
 function mktLine(g){
@@ -2004,6 +2024,10 @@ function detail(g){
        </div>`;
 
   const O = D.odds || {};
+  const ew = g.edge ? `<div class="why edgewhy"><b>Green flag: an edge on price.</b>
+      ${g.edge.side === "h" ? g.home.name : g.away.name} at ${g.edge.odds.toFixed(2)} on average (best ${g.edge.best.toFixed(2)}), with ${g.edge.side === "h" ? g.away.name : g.home.name} priced ${g.edge.opp.toFixed(2)}.
+      Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed 83.8% against the bookmakers' 76.2% over five seasons (511 picks), about +4% at the average price and +7% at the best.
+      The edge is small and needs the best price; in a short run it can lose. Shown from the bookmakers' prices, never used by the model.</div>` : "";
   const mk = g.market ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
       <b>Against the bookmakers.</b>
       <div class="tscroll"><table class="mktgrid"><thead><tr><th></th><th>${g.home.name}</th><th>Draw</th><th>${g.away.name}</th></tr></thead>
@@ -2023,6 +2047,7 @@ function detail(g){
   return `<div class="detail">
     ${research}
     ${verdict}
+    ${ew}
     ${mk}
     <div class="detail-grid" style="margin-top:16px">
       ${teamSheet(g.home,"Home")}
@@ -2075,7 +2100,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g)}</div>`;
   btn.addEventListener("click", ()=>{
     state.open = state.open===id ? null : id;
     render();

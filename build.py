@@ -1615,6 +1615,16 @@ def main():
 
     here = os.path.dirname(os.path.abspath(__file__))
 
+    # 10 Nov 2026: the green edge flag (groupings.edge_flag), from the prices
+    # the rows already carry. Display only; archived so it can be graded.
+    try:
+        import groupings as GR
+        for d in days:
+            for g in d["games"]:
+                g["edge"] = GR.edge_flag(g)
+    except Exception as e:
+        print(f"edge flag skipped: {type(e).__name__}: {e}", file=sys.stderr)
+
     # Archive what was predicted, so score.py can grade it once results land.
     # Without this the site can never say how it is actually doing.
     pred_dir = os.path.join(here, "predictions")
@@ -1628,7 +1638,7 @@ def main():
              # fixed at publication, so the list is graded on what it said
              "list": g["list"], "reserve": g["reserve"], "why": g.get("why"),
              # archived so the prices a reader saw can be graded later
-             "market": g.get("market"), "value": g.get("value"),
+             "market": g.get("market"), "value": g.get("value"), "edge": g.get("edge"),
              # the tested rate shown on the row, so daylist.py can order a
              # pinned pick as the page did (28 Oct 2026: a started football
              # pick sorted last for want of it)

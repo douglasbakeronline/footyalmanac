@@ -1615,6 +1615,51 @@ def card_fault(l, wide=False):
                 f"points above the bookmakers ({pct(l['fair'])})")
     return None
 
+# 10 Nov 2026, Douglas: "a green flag on fixtures that meet the optimal edge
+# and opportunity". The one football condition that has held on bookmaker
+# prices in every season tested is the favourite whose opposition is priced
+# 9+ (five seasons, 511 under-market legs 83.8% v 76.2% quoted, +4% at the
+# average price, +7% at the best; 2025-26 all 60%+ favourites at 1.15-1.90
+# with the opposition 9+: 232 legs, 84.1% v 76.0%, +3.3% / +5.8%), and
+# picks the model rates more than 5 points above the market land at the
+# market's rate. So the flag is the Card's football leg without the
+# under-market band (near-market picks did as well, claude/card-seasons-
+# 2026-11-09.md): a football-data league (the ones priced in the replay), clean for the Daily List, the model's pick
+# also the bookmakers' favourite, priced CARD_ODDS, the bookmakers 60%+, the
+# opposition CARD_OPP_MIN+, the model no more than MULT_ABOVE_BOOK above the
+# market. Display only, from prices the page already shows; the model never
+# sees them. Football only: no other sport has a tested price condition.
+# claude/edge-flag-2026-11-10.md. Bump EDGE_RULE when the conditions change.
+EDGE_RULE = 1
+
+def edge_leagues():
+    """The leagues the evidence covers: football-data.co.uk's divisions
+    (odds.DIVS), the 20 the five-season replay priced. Core leagues outside
+    them (women's, the Americas, Russia, Norway) were never tested on price."""
+    import odds as O_
+    return set(O_.DIVS.values())
+
+def edge_flag(g):
+    """The green edge flag for one football fixture as build.py writes it
+    (p as h/d/a, market avg / p as [h, d, a]), or None."""
+    p, mk = g.get("p") or {}, g.get("market") or {}
+    avg, fair = mk.get("avg"), mk.get("p")
+    if not p or not avg or not fair or len(avg) != 3 or not all(avg): return None
+    if g.get("celtic") or g.get("unrated") or g.get("why") not in CLEAN_WHY: return None
+    if g.get("league") not in edge_leagues(): return None
+    side = max(p, key=p.get)
+    if side == "d": return None
+    j = "hda".index(side); o = 2 - j
+    if avg[j] > avg[o]: return None                       # the bookmakers' favourite too
+    if not CARD_ODDS[0] <= avg[j] <= CARD_ODDS[1]: return None
+    if fair[j] < CARD_FAIR_MIN: return None
+    omin = CARD_OPP_MIN.get("football")
+    if not omin or avg[o] < omin: return None
+    if p[side] - fair[j] > MULT_ABOVE_BOOK: return None
+    best = (mk.get("best") or avg)[j]
+    return {"side": side, "odds": round(avg[j], 2), "best": round(max(best, avg[j]), 2), "opp": round(avg[o], 2),
+            "fair": round(fair[j], 4), "model": round(p[side], 4), "rule": EDGE_RULE}
+
 def model_fault(l):
     """Why a leg cannot sit on the Model card (31 Oct 2026), or None. The
     model's own value call: its number at or above the bookmakers'."""

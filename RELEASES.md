@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-6 The green Edge flag on fixtures (tag pending)
+
+**What changed:** a green **Edge** flag on football fixtures that meet the one price condition with evidence behind it, on the Daily List and the full board, with a short evidence panel in the row's detail. A fixture qualifies when it is in one of football-data's 20 tested leagues, clean for the Daily List, the model's pick is also the bookmakers' favourite at 1.15 to 1.90 with the bookmakers 60%+, the opposition is priced 9+, and the model is no more than 5 points above the market (`groupings.edge_flag`, `EDGE_RULE` 1). Display only: the model never sees a price. The flag is archived with each prediction (`edge`) so it can be graded.
+
+**Evidence:** `claude/edge-flag-2026-11-10.md`. Five seasons: 511 legs, 83.8% landed v 76.2% quoted, +4% average price, +7% best; 2025-26: 232 legs, +3.3% / +5.8%; 2026-27 so far 52 legs, -1.7% / +1.1%. On the site's own archive since 11 Sep: 43 flagged fixtures, 27 of 34 graded landed v 25.8 quoted. `tests/test_edge_flag.py` (each condition, the away side, the favourite check, the leagues); suite 688 OK; `nametest.py` clear. Checked at 1280 and 400 wide.
+
+**Files:** `groupings.py`, `build.py`, `index.html`, `tests/test_edge_flag.py`, `claude/edge-flag-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the model, the Daily List's admission or order, the Card, any record. No flag for other sports (no tested price condition).
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-5 Daily List picks as accumulators, measured (tag pending)
 
 **What changed:** nothing a reader sees. `tools/list_accas.py` measures Daily List picks combined into accumulators: the top N of each day on the graded record (landed v quoted) and on the priced pool (return at the average price beside the bookmakers' own expectation). Douglas asked after losing on accumulators of list picks.
