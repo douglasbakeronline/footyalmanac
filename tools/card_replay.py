@@ -29,6 +29,10 @@ review so no variant is picked because it happened to look good):
   opp7     the opposition priced 7+ rather than 9+
   notennis tennis off the Card (CARD_SPORTS_OFF), the tripwire's action
   comp3    three legs from one competition (live: two; 10 Nov 2026)
+  fillwide live, and on a day the full rule leaves empty the page's wider-rule
+           group (the fallback the page has used since 25 Oct 2026)
+  fillopp7 / fillrule5 / fillshort  live, and on an empty day the Card under
+           opp7, rule5 or short instead (10 Nov 2026, issue #155)
   tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
            (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
            40 full-rule legs landed v 71% quoted; registered before the pool
@@ -224,12 +228,42 @@ VARIANTS = {
     # 30 Nov review: three legs from one competition rather than two. On 9 Nov
     # five NBA legs cleared the full rule and no group was built.
     "comp3": {"COMP_MAX": 3},
+    # 10 Nov 2026 (issue #155, claude/card-fillers-2026-11-10.md), pre-
+    # registered for the 30 Nov review: the empty-day fillers. Each is the live
+    # Card, and only on a day the full rule leaves empty, groups built under
+    # the filler (marked `fill`). Paired against live they measure the
+    # filler's own return; "fillwide" is the page's fallback today (the
+    # wider rule, 1.08-2.10 at 55%+, graded apart as cardWide).
+    "fillwide": {"_FILL": "wide"},
+    "fillopp7": {"_FILL": "opp7"},
+    "fillrule5": {"_FILL": "rule5"},
+    "fillshort": {"_FILL": "short"},
 }
+
+
+def build_wide(day_legs, date):
+    """The page's fallback for an empty day (groupings.build_card's wider-rule
+    block): one group of each kind under the wider rule, seq 1."""
+    after = G.lock_time(date, "Day"); groups, used = [], set()
+    for name, _, _, _ in G.CARD_KINDS:
+        g = G.best_card(day_legs, used, after, name, wide=True)
+        if not g: continue
+        used |= {l["event"] for l in g["legs"]}
+        g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1
+        groups.append(g)
+    return groups
 
 
 def build(day_legs, date, variant):
     """One day's Card under a variant, with the live machinery."""
     patch = VARIANTS[variant]
+    if "_FILL" in patch:
+        groups = build(day_legs, date, "live")
+        if groups: return groups
+        fill = patch["_FILL"]
+        groups = build_wide(day_legs, date) if fill == "wide" else build(day_legs, date, fill)
+        for g in groups: g["fill"] = True
+        return groups
     saved = {k: getattr(G, k) for k in patch if hasattr(G, k)}
     legs_3x = patch.get("CARD_LEGS_3X")
     for k, v in patch.items():
@@ -316,6 +350,18 @@ def main():
                                  "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days),
                                  # 10 Nov 2026: the legs, for the decision gate (100+ legs, CLAUDE.md)
                                  "legs": sum(len(g["legs"]) for g in gs), "legsWon": sum(l["won"] for g in gs for l in g["legs"])}
+        fg = [g for g in gs if g.get("fill")]
+        if "_FILL" in VARIANTS[v]:
+            # 10 Nov 2026 (#155): the filler's own groups, on the days live left empty
+            fs = sum(g["stake"] for g in fg); fr = sum(g["stake"] * g["odds"] for g in fg if g["won"])
+            report["variants"][v]["fill"] = {"days": len({g.get("date") or d for d, gl in days.items() for g in gl if g.get("fill")}),
+                                             "groups": len(fg), "won": sum(g["won"] for g in fg), "expected": round(sum(g["p"] for g in fg), 2),
+                                             "units": fs, "return": round(fr / fs, 3) if fs else None,
+                                             "legs": sum(len(g["legs"]) for g in fg), "legsWon": sum(l["won"] for g in fg for l in g["legs"])}
+            f = report["variants"][v]["fill"]
+            if fg: print(f"         filler alone: {f['days']} days, {f['groups']} groups, {f['won']} won (expected {f['expected']}), "
+                         f"units {fs}, return {(f['return'] - 1) * 100:+.0f}%, legs {f['legsWon']}/{f['legs']}")
+            else: print("         filler alone: no groups on the empty days")
     for v in VARIANTS:
         if v == "live": continue
         a, b = out["live"], out[v]

@@ -52,15 +52,20 @@ CUTS = {
 BANDS = [(1.15, 1.35), (1.35, 1.55), (1.55, 1.75), (1.75, 1.91)]
 
 
-def legs(pairs):
-    """(model probs, price row) -> candidate legs passing the price gate."""
+def legs(pairs, wide=False):
+    """(model probs, price row) -> candidate legs passing the price gate.
+    wide=True takes the wider rule's gate too (1.08-2.10 at 55%+, the page's
+    empty-day filler; 10 Nov 2026, #155), for the fillwide Card only."""
     out = []
     lo, hi = G.CARD_ODDS
+    fair_min = G.CARD_FAIR_MIN
+    if wide:
+        lo, hi = min(lo, G.CARD_WIDE_ODDS[0]), max(hi, G.CARD_WIDE_ODDS[1]); fair_min = min(fair_min, G.CARD_WIDE_FAIR_MIN)
     for mp, r in pairs:
         pick = max(range(3), key=lambda i: mp[i])
         if pick == 1: continue
         f = O.fair(r["avg"])[pick]; price = r["avg"][pick]
-        if f < G.CARD_FAIR_MIN or not (lo <= price <= hi): continue
+        if f < fair_min or not (lo <= price <= hi): continue
         bp = O.best(r)[pick]
         clv = (bp * O.fair(r["close"])[pick] - 1) if r.get("close") else None
         out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "side": "h" if pick == 0 else "a",
@@ -247,6 +252,7 @@ def replay_split(split, splits_fn, log):
     fixtures = [((c, d, h, a), c, d, h, a) for (c, d, h, a) in preds]
     joined = O.match(prices, fixtures)
     L = legs([(preds[k], r) for k, r in joined.items()])
+    Lw = legs([(preds[k], r) for k, r in joined.items()], wide=True)
     under = [l for l in L if CUTS["under5"](l["model"], l["fair"])]
     res = {"season": season, "pricedMatches": len(prices), "matched": len(joined), "candidates": len(L), "cuts": {}}
     for name, f in CUTS.items():
@@ -259,6 +265,11 @@ def replay_split(split, splits_fn, log):
     # every season so the 30 Nov review has the football-data side of the gate
     res["cardUncapped"] = card_season(L, "uncapped")   # rule 4: no 10-under cap
     res["cardOpp7"] = card_season(L, "opp7")           # the opposition at 7+ rather than 9+
+    # 10 Nov 2026 (#155): the empty-day fillers, live plus a filler only on a
+    # day the full rule leaves empty; fillwide is the page's fallback today
+    res["cardFillWide"] = card_season(Lw, "fillwide")
+    res["cardFillRule5"] = card_season(L, "fillrule5")
+    res["cardFillOpp7"] = card_season(L, "fillopp7")
     res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
     res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
     res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
@@ -278,7 +289,7 @@ def show(label, res):
         for band, row in tab.items():
             for k, v in row.items():
                 print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
-    for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7"):
+    for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7"):
         c = res[lab]
         if c.get("groups"):
             losing = [m for m, v in c["months"].items() if v["pnl"] < 0]

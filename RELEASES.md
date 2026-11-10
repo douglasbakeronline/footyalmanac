@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-4 The empty-day fillers replayed, the page's own fallback included (tag pending)
+
+**What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers four empty-day fillers for the 30 Nov review (issue #155): `fillwide` (the page's wider-rule fallback, which the replay had never built), `fillopp7`, `fillrule5`, `fillshort`. Each is live exactly, plus groups under the filler only on a day the full rule leaves empty, with the filler's own groups reported apart (`fill`). The nightly Card review prints each filler on its own days and gates a filler on its own legs (`card_review_post.fill_lines`, `gate_legs`). `tools/card_legs_history.py` replays `fillwide`, `fillrule5` and `fillopp7` on every football-data season (first numbers from `tune.yml` on 16 Nov).
+
+**Evidence:** `claude/card-fillers-2026-11-10.md`. Pool 30 Oct to 9 Nov, first real prices: the page's filler built 12 groups on 7 empty days, 2 won against 4.14 expected, -54% (36 legs), paired against live -1.47 units a day, p(worse) 0.95; `fillrule5` 4 groups, 2 won v 1.28, +12% (12 legs); `fillopp7` and `fillshort` built nothing on any empty day. Football-data (CI on this pull request), football only: `fillwide` 2025-26 177 groups, 68 won v 56.0 expected, -0.9% (best +6.6%); 2026-27 35 groups, 12 v 11.4, -11.7%. Under the 100-leg gate on the pool, so no change; the drop-the-filler decision is pre-registered in the note and `CLAUDE.md`. `tests/test_card_fillers.py` (an empty day takes the wider rule, a full day is live unchanged, constants restored, the wider gate only when asked, the gate on the filler's own legs); suite OK; `nametest.py` clear.
+
+**Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tools/card_review_post.py`, `tests/test_card_fillers.py`, `tests/test_card_legs_history.py`, `claude/card-fillers-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the page's filler, any `CARD_*` constant, `CARD_RULE`, any record or archive file, `.github/`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-3 The nightly Card review applies the decision gate on legs (tag pending)
 
 **What changed:** nothing a reader sees. The review's "candidates beating live" line used 30+ groups; the delegated-decisions gate in `CLAUDE.md` is p(worse) at most 0.30 on 100+ legs. `tools/card_replay.py` now writes each variant's legs (`legs`, `legsWon`), the review table shows them, the candidate line uses the legs gate (`card_review_post.candidates`), and variants ahead of live but under 100 legs are listed apart as "watch, do not act".
