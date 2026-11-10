@@ -273,7 +273,7 @@ def load_json_or_none(path):
 # A few KB. Everything per fixture stays in record-data.js, loaded when a
 # reader opens "How it went".
 SUMMARY_KEYS = ("generated", "graded", "overall", "settled", "celtic", "tiers",
-                "ladder", "list", "reserve", "reserveTiers", "bands", "range")
+                "ladder", "list", "reserve", "reserveTiers", "bands", "range", "edge")
 LIST_RECENT = 30
 LIST_RECENT_KEYS = ("league", "home", "away", "pick", "actual", "confidence", "tier",
                     "k", "result", "ok", "won", "drawRead")
