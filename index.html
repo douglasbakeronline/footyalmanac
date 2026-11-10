@@ -1170,6 +1170,35 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .list-days .ctl-label{display:block;margin-bottom:6px}
 .xrow .conf .bkchip{margin-top:4px}
 .scoreline .book small + small{margin-top:2px}
+/* "Is the list honest?" (listHonesty, 10 Nov 2026): two small charts in the
+   paper palette. Ink for the quote, home blue for what landed, the edge green
+   band for chance; a band that misses its quote turns the dot away red. */
+.honest{margin-top:22px;border:1px solid var(--rule);background:var(--surface);padding:16px 18px 14px}
+.honest h3{font-family:var(--f-display);font-size:20px;font-weight:400;letter-spacing:.01em;text-transform:uppercase;margin:0 0 6px}
+.hon-lede{margin:0 0 14px;max-width:72ch;line-height:1.5}
+.hon-grid{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+.hon-grid figure{margin:0;min-width:0}
+.hon-grid figcaption{font-size:13px;line-height:1.45;color:var(--ink-2);margin-bottom:6px;min-height:3.9em}
+.hon-grid svg{display:block;width:100%;max-width:560px;height:auto;overflow:visible}
+.honest .hg{stroke:var(--rule-soft);stroke-width:1}
+.honest .ht{font-family:var(--f-num);font-size:9.5px;fill:var(--mute)}
+.honest .ht.hs{font-size:8.5px}
+.honest .ht.hv{fill:var(--ink);font-weight:600}
+.honest .hci{stroke:var(--home);stroke-width:5;stroke-opacity:.22;stroke-linecap:round}
+.honest .hq{stroke:var(--ink);stroke-width:2}
+.honest .hd{fill:var(--home)}
+.honest .hd.under{fill:var(--away)}
+.honest .hb{fill:var(--edge-soft)}
+.honest .hz{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3}
+.honest .hl{fill:none;stroke:var(--home);stroke-width:2;stroke-linejoin:round}
+.hon-key{display:flex;gap:14px;font-size:12px;color:var(--mute);margin-top:4px}
+.hon-key i{display:inline-block;vertical-align:middle;margin-right:5px}
+.hon-key .kq{width:14px;height:2px;background:var(--ink)}
+.hon-key .kd{width:8px;height:8px;border-radius:50%;background:var(--home)}
+.hon-key .kc{width:5px;height:12px;border-radius:3px;background:var(--home);opacity:.22}
+.hon-foot{margin:10px 0 0;font-size:12px;color:var(--mute)}
+@media (max-width:860px){.hon-grid{grid-template-columns:1fr}.hon-grid figcaption{min-height:0}.honest{padding:14px 12px 12px}
+  .honest .ht{font-size:12.5px}.honest .ht.hs{font-size:11px}}
 .edgecount{font-weight:700}   /* inherits the day band's colour: green on the red band was illegible */
 .why.edgewhy{border:1px solid var(--edge);border-radius:3px;background:var(--edge-soft);padding:10px 12px}   /* 1px: no dark border thicker (standing decision) */
 .pred{font-family:var(--f-num);text-align:center;white-space:nowrap;line-height:1.25}
@@ -3376,6 +3405,80 @@ function bookTile(){
       <small>${pct(a.won / a.n)}% landed${ret ? " · " + ret : ""}</small>
       <small>${off} not offered there since ${since}</small></div>`;
 }
+/* 10 Nov 2026: is the list honest? The site's one claim is that its numbers
+   mean what they say, and a reader could not see it for the list itself. Two
+   charts from the graded picks already on this page (listReviewDays), nothing
+   refitted (Rule 1): quoted against landed by confidence band, each with a 90%
+   range from its own count, and a running total of picks landed minus picks
+   expected across every list day, inside the 90% range chance alone allows. */
+const HON_BANDS = [[.80, .85], [.85, .90], [.90, .95], [.95, 1.0001]];
+function wilson(k, n, z = 1.645){
+  if(!n) return [0, 1];
+  const p = k / n, d = 1 + z*z/n, c = (p + z*z/(2*n)) / d, h = z * Math.sqrt(p*(1-p)/n + z*z/(4*n*n)) / d;
+  return [Math.max(0, c - h), Math.min(1, c + h)];
+}
+function listHonesty(days){
+  const picks = days.slice().reverse().flatMap(d => d.items.filter(x => (x.status === "won" || x.status === "lost") && x.conf)
+    .map(x => ({date: d.date, p: x.conf, won: x.status === "won"})));
+  if(picks.length < 20) return "";
+  const n = picks.length, won = picks.filter(x => x.won).length, exp = picks.reduce((a, x) => a + x.p, 0);
+  const sd = Math.sqrt(picks.reduce((a, x) => a + x.p * (1 - x.p), 0)), z = (won - exp) / sd;
+  const verdict = Math.abs(z) < 1.645 ? "on quote, within what chance alone would give"
+    : z > 0 ? "above quote, more than chance alone would give" : "under quote, fewer than chance alone would give";
+  // chart 1: quoted v landed by band
+  const W = 320, H = 196, L = 40, R = 10, T = 14, B = 36, lo = .70, hi = 1;
+  const y = v => T + (hi - v) / (hi - lo) * (H - T - B);
+  const bands = HON_BANDS.map(([a, b]) => {
+    const xs = picks.filter(x => x.p >= a && x.p < b), k = xs.filter(x => x.won).length;
+    return {a, b, n: xs.length, k, q: xs.length ? xs.reduce((s, x) => s + x.p, 0) / xs.length : (a + Math.min(b, 1)) / 2,
+            ci: wilson(k, xs.length)};
+  });
+  const bw = (W - L - R) / bands.length;
+  const grid = [.7, .8, .9, 1].map(v => `<line x1="${L}" x2="${W - R}" y1="${y(v)}" y2="${y(v)}" class="hg"/>
+    <text x="${L - 6}" y="${y(v) + 3.5}" class="ht" text-anchor="end">${Math.round(v * 100)}%</text>`).join("");
+  const marks = bands.map((b, i) => {
+    const cx = L + bw * (i + .5);
+    const lab = `<text x="${cx}" y="${H - B + 14}" class="ht" text-anchor="middle">${Math.round(b.a * 100)}${b.b > 1 ? "+" : `–${Math.round(b.b * 100)}`}</text>
+      <text x="${cx}" y="${H - B + 26}" class="ht hs" text-anchor="middle">${b.n} pick${b.n === 1 ? "" : "s"}</text>`;
+    if(b.n < 5) return lab;
+    const r = b.k / b.n, off = r < b.ci[0] || b.q > b.ci[1] ? " off" : "";
+    return `${lab}<line x1="${cx}" x2="${cx}" y1="${y(Math.max(lo, b.ci[0]))}" y2="${y(b.ci[1])}" class="hci"/>
+      <line x1="${cx - 13}" x2="${cx + 13}" y1="${y(b.q)}" y2="${y(b.q)}" class="hq"/>
+      <circle cx="${cx}" cy="${y(Math.max(lo, r))}" r="4.5" class="hd${b.q > b.ci[1] ? " under" : ""}"><title>${Math.round(b.a*100)}% band: ${b.k} of ${b.n} landed (${pct(r)}%) against ${pct(b.q)}% quoted; 90% range ${pct(b.ci[0])}–${pct(b.ci[1])}%</title></circle>`;
+  }).join("");
+  const cal = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Quoted against landed by confidence band">${grid}${marks}</svg>`;
+  // chart 2: running landed minus expected
+  const byDay = []; let cw = 0, ce = 0, cv = 0;
+  picks.forEach((x, i) => { cw += x.won; ce += x.p; cv += x.p * (1 - x.p);
+    if(i === n - 1 || picks[i + 1].date !== x.date) byDay.push({date: x.date, d: cw - ce, s: 1.645 * Math.sqrt(cv)}); });
+  const m = Math.max(4, ...byDay.map(v => Math.max(Math.abs(v.d), v.s))) * 1.1;
+  const L2 = 34, xs = i => L2 + (byDay.length < 2 ? 0 : i / (byDay.length - 1)) * (W - L2 - R);
+  const y2 = v => T + (m - v) / (2 * m) * (H - T - B);
+  const band = byDay.map((v, i) => `${xs(i)},${y2(v.s)}`).join(" ") + " " + byDay.slice().reverse().map((v, i) => `${xs(byDay.length - 1 - i)},${y2(-v.s)}`).join(" ");
+  const line = byDay.map((v, i) => `${i ? "L" : "M"}${xs(i).toFixed(1)},${y2(v.d).toFixed(1)}`).join("");
+  const last = byDay[byDay.length - 1], tk = Math.max(1, Math.round(m / 2));
+  const ticks = [-tk, 0, tk].map(v => `<text x="${L2 - 6}" y="${y2(v) + 3.5}" class="ht" text-anchor="end">${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v)}</text>`).join("");
+  const run = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Picks landed minus picks expected, every list day">
+    <polygon points="${band}" class="hb"/>
+    <line x1="${L2}" x2="${W - R}" y1="${y2(0)}" y2="${y2(0)}" class="hz"/>${ticks}
+    <path d="${line}" class="hl"/><circle cx="${xs(byDay.length - 1)}" cy="${y2(last.d)}" r="3.5" class="hd"/>
+    <text x="${L2}" y="${H - B + 14}" class="ht">${fmtShort(byDay[0].date)}</text>
+    <text x="${W - R}" y="${H - B + 14}" class="ht" text-anchor="end">${fmtShort(last.date)}</text>
+    <text x="${W - R}" y="${y2(last.d) + (last.d >= 0 ? -9 : 15)}" class="ht hv" text-anchor="end">${last.d >= 0 ? "+" : "−"}${Math.abs(last.d).toFixed(1)}</text></svg>`;
+  return `<section class="honest" aria-labelledby="hon-h">
+    <h3 id="hon-h">Is the list honest?</h3>
+    <p class="hon-lede"><b>${won} of ${n}</b> settled list picks landed (${pct(won / n)}%) against <b>${pct(exp / n)}%</b> quoted:
+      ${verdict} (${z >= 0 ? "+" : "−"}${Math.abs(z).toFixed(1)} standard errors).</p>
+    <div class="hon-grid">
+      <figure><figcaption><b>Quoted against landed</b>, by the confidence each pick was published at.
+        The bar is quoted; the dot is what landed, with the range chance alone allows for that many picks.</figcaption>${cal}
+        <div class="hon-key"><span><i class="kq"></i>Quoted</span><span><i class="kd"></i>Landed</span><span><i class="kc"></i>90% range</span></div></figure>
+      <figure><figcaption><b>Landed minus expected</b>, running, every list day here. Inside the shaded band is
+        what chance alone gives; a line that leaves it says the numbers were wrong.</figcaption>${run}</figure>
+    </div>
+    <p class="hon-foot">Graded picks only, published before the start; nothing on this chart is fitted to the record.</p>
+  </section>`;
+}
 function listReview(){
   const days = listReviewDays();
   if(!days.length){
@@ -3411,6 +3514,7 @@ function listReview(){
       published before the start are graded; today's list stays as it stood before each game began.</p></div>
     <div class="scoreline" style="margin-top:14px">${tile("Last 7 list days", w7, n7)}${tile("Every list day here", wa, na)}
       ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}${bookTile()}</div>
+    ${listHonesty(days)}
     <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
       <div class="dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
         ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>

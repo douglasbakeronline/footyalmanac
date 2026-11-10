@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-10-18 "Is the list honest?" in How it went (tag pending)
+
+**What changed:** How it went, Daily List, now opens with two charts under the scoreline. **Quoted against landed:** for each confidence band (80-85, 85-90, 90-95, 95+), the average quote as a bar and what landed as a dot, with the 90% range chance alone allows for that many picks; a band whose quote sits above its range turns the dot red. **Landed minus expected:** a running total across every list day, inside the shaded band chance alone allows. A one-line verdict above them ("on quote, within what chance alone would give", in standard errors). Built from the graded picks already on the page; nothing fitted (Rule 1).
+
+**Evidence:** on the record at 10 Nov: 182 of 199 settled list picks landed (91%) against 89% quoted, +1.3 standard errors, on quote; every band's quote inside its range. Checked at 390 and 1280 wide. `tests/test_list_honesty.py` (the Wilson range, the 20-pick guard, the verdict) in node. Suite OK.
+
+**Files:** `index.html`, `tests/test_list_honesty.py`, `RELEASES.md`.
+
+**Not changed:** the record, the list, any number on it.
+
+**Roll back:** `git revert` the merge commit.
+
 ## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
 
 **What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
