@@ -19,10 +19,12 @@ def card(name, window, picks, **flags):
     return g
 
 
-def graded(groups, statuses):
-    """grade() on one archive day with every leg settled as given."""
+def graded(groups, statuses, extra=None):
+    """grade() on one archive day with every leg settled as given; `extra`
+    writes other files into the archive folder first."""
     with tempfile.TemporaryDirectory() as d, mock.patch.object(G, "ARCHIVE", d), mock.patch.object(G, "HERE", d):
         json.dump({"date": "2026-10-26", "groups": groups}, open(os.path.join(d, "2026-10-26.json"), "w"))
+        for name, body in (extra or {}).items(): json.dump(body, open(os.path.join(d, name), "w"))
         it = iter(statuses)
         with mock.patch.object(G, "results_index", return_value=None), \
              mock.patch.object(G, "settle", side_effect=lambda l, idx, dead=None: (next(it), "1-0")):
@@ -40,6 +42,15 @@ class Flags(unittest.TestCase):
         rec = graded([g], ["won", "lost"])
         r = rec["days"][0]["groups"][0]
         self.assertEqual((r["wide"], r["late"], r["locked"], r["lockAt"], r["status"]), (False, False, False, None, "lost"))
+
+
+class NotADay(unittest.TestCase):
+    def test_briefed_file_is_not_read_as_a_day(self):
+        # 10 Nov 2026: notify.py keeps briefed.json in the archive folder; grade() crashed on it (KeyError 'groups')
+        rec = graded([card("Card 2x", "Daytime", ["A", "B", "C"])], ["won"] * 3,
+                     extra={"briefed.json": {"date": "2026-10-26", "slots": ["morning"], "at": "2026-10-26T07:40:00Z"}})
+        self.assertEqual([d["date"] for d in rec["days"]], ["2026-10-26"])
+        self.assertEqual(rec["overall"]["groups"], 1)
 
 
 class Tallies(unittest.TestCase):

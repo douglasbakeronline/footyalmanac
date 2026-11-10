@@ -2090,6 +2090,7 @@ def previous():
 
 # ---------- the record ----------
 ARCHIVE = os.path.join(HERE, "groupings-archive")
+DAY_FILE = re.compile(r"^\d{4}-\d{2}-\d{2}\.json$")
 
 def load(name):
     try: return json.load(open(os.path.join(HERE, name)))
@@ -2464,7 +2465,8 @@ def card_legs_by_sport(days):
 def grade(now=None):
     now = now or datetime.now(timezone.utc)
     idx = results_index(); days = []
-    files = sorted(f for f in os.listdir(ARCHIVE) if f.endswith(".json")) if os.path.isdir(ARCHIVE) else []
+    # day archives only (YYYY-MM-DD.json): briefed.json (notify.py, 10 Nov 2026) shares the folder and has no groups
+    files = sorted(f for f in os.listdir(ARCHIVE) if DAY_FILE.match(f)) if os.path.isdir(ARCHIVE) else []
     files = files[-60:]
     try:
         dead = dead_fixtures({f[:-5] for f in files} | {l["date"] for f in files for g in json.load(open(os.path.join(ARCHIVE, f)))["groups"]

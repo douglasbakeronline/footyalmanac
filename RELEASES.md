@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-27 The groupings record no longer crashes on the briefings file (tag pending)
+
+**What changed:** `groupings.grade()` read every `.json` in `groupings-archive/` as a day of groups. Since #211 `notify.py` keeps `briefed.json` there (the briefing slots sent), which has no `groups`, so the next `groupings.py` run would stop with `KeyError: 'groups'`: no Card on the Bets tab (the workflow's "empty state"), no groups archived or re-checked, no record regrade, from the first scheduled build after 10:53 UTC on 10 Nov. `grade()` now reads day files only (`YYYY-MM-DD.json`, `groupings.DAY_FILE`). No other reader lists that folder that way (the tools read `pool-*.json.gz` or a named day).
+
+**Evidence:** reproduced locally (`python3 groupings.py` on main: `KeyError: 'groups'` in `grade`); `tests/test_groupings_record.py` `NotADay` fails before the fix and passes after; `groupings.grade()` on the real archive runs. Suite OK, nametest clear.
+
+**Files:** `groupings.py`, `tests/test_groupings_record.py`, `RELEASES.md`.
+
+**Not changed:** any Card rule, pick, price, archive or record file; `notify.py`.
+
+**Roll back:** `git revert` the merge commit (the crash comes back while `briefed.json` sits in the archive).
+
 ## 2026-11-10-26 Four briefings a day, at Douglas's betting times (tag pending)
 
 **What changed:** the morning push becomes four, one per slot a UK day, timed to when Douglas places bets ("in the morning around 8am, around lunchtime, early evening and before I go to bed"): **morning** (the new 07:40 build: the day's list, Group A, the model treble, Edge picks, the Card), **lunch** (12:00 build) and **evening** (17:00 build: the day's tally so far, the strongest picks still to start, the treble from those, Edge picks not yet kicked off, open Card groups with Hill prices), and **night** (22:15 build: the same plus the overnight US slate to 08:00). Each slot is sent by the first build at or after its hour, only the latest due slot is sent (a late build never sends a stale one), and slots sent are kept in `groupings-archive/briefed.json`. A slot with nothing to back sends nothing. `deploy.yml` gains a 07:40 UTC run for the morning push (08:40 in summer); every paid source is capped by its own daily ledger, so the extra run cannot overspend.
