@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-10T20:03:04Z",
+ "graded": "2026-11-10T22:13:12Z",
  "overall": {
   "groups": 129,
   "settled": 128,
@@ -17,9 +17,9 @@
   "expected": 43.1,
   "clv": {
    "n": 141,
-   "shortened": 58,
+   "shortened": 57,
    "drifted": 53,
-   "mean": 0.0012
+   "mean": 0.0009
   }
  },
  "cardLegsBySport": {
@@ -101,9 +101,9 @@
    "nba|new york knicks|milwaukee bucks|2026-11-11": 1.07,
    "ncaab|the citadel bulldogs|virginia lynchburg dragons|2026-11-11": -1,
    "ncaab|villanova wildcats|la salle explorers|2026-11-11": 1.01,
-   "ncaab|rhode island rams|maine black bears|2026-11-11": 1.01,
+   "ncaab|rhode island rams|maine black bears|2026-11-11": 1.02,
    "ncaab|nc state wolfpack|presbyterian blue hose|2026-11-11": 0,
-   "ncaab|boston college eagles|maryland eastern shore hawks|2026-11-11": 1.0,
+   "ncaab|boston college eagles|maryland eastern shore hawks|2026-11-11": 0,
    "ncaab|providence friars|bryant bulldogs|2026-11-11": 1.0,
    "ncaab|vanderbilt commodores|memphis tigers|2026-11-11": 0,
    "ncaab|central arkansas bears|ecclesia royals|2026-11-11": -1,
@@ -122,12 +122,12 @@
    "ncaab|western carolina catamounts|virginia lynchburg dragons|2026-11-11": -1,
    "football|ghana|somalia|2026-11-12": 1.07,
    "football|senegal|sudan|2026-11-12": 1.1,
-   "nba|chicago bulls|san antonio spurs|2026-11-12": -1,
+   "nba|chicago bulls|san antonio spurs|2026-11-12": 1.15,
    "ncaab|st. john's red storm|colgate raiders|2026-11-12": -1,
-   "ncaab|michigan wolverines|marquette golden eagles|2026-11-12": -1,
+   "ncaab|michigan wolverines|marquette golden eagles|2026-11-12": 0,
    "ncaab|vcu rams|njit highlanders|2026-11-12": -1,
    "ncaab|houston cougars|jacksonville state gamecocks|2026-11-12": -1,
-   "ncaab|arkansas razorbacks|robert morris colonials|2026-11-12": -1,
+   "ncaab|arkansas razorbacks|robert morris colonials|2026-11-12": 0,
    "ncaab|tulsa golden hurricane|oral roberts golden eagles|2026-11-12": -1,
    "ncaab|southern miss golden eagles|jackson state tigers|2026-11-12": -1,
    "ncaab|ucla bruins|arkansas-pine bluff golden lions|2026-11-12": -1,
@@ -135,7 +135,7 @@
    "ncaab|nebraska cornhuskers|lindenwood lions|2026-11-12": -1,
    "ncaab|uc irvine anteaters|lincoln (ca) oaklanders|2026-11-12": -1,
    "ncaab|oregon ducks|mississippi valley state delta devils|2026-11-12": -1,
-   "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": -1,
+   "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": 0,
    "ncaab|howard bison|stetson hatters|2026-11-12": -1,
    "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
    "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
@@ -167,9 +167,9 @@
    "expected": 11.06,
    "clv": {
     "n": 71,
-    "shortened": 24,
+    "shortened": 23,
     "drifted": 27,
-    "mean": -0.0031
+    "mean": -0.0036
    }
   },
   "Card 3x": {
@@ -448,9 +448,9 @@
   "expected": 11.68,
   "clv": {
    "n": 85,
-   "shortened": 31,
+   "shortened": 30,
    "drifted": 34,
-   "mean": -0.0015
+   "mean": -0.0019
   }
  },
  "cardWide": {
@@ -603,9 +603,9 @@
    "expected": 1.57,
    "clv": {
     "n": 10,
-    "shortened": 7,
+    "shortened": 6,
     "drifted": 3,
-    "mean": 0.0063
+    "mean": 0.0032
    }
   }
  },
@@ -627,9 +627,9 @@
    "expected": 6.66,
    "clv": {
     "n": 39,
-    "shortened": 13,
+    "shortened": 12,
     "drifted": 16,
-    "mean": 0.0045
+    "mean": 0.0038
    }
   },
   "Daytime": {
@@ -772,7 +772,7 @@
        "when": "2026-11-11T02:00Z",
        "odds": 1.28,
        "best": 1.28,
-       "lastOdds": 1.23,
+       "lastOdds": 1.25,
        "lockOdds": 1.25,
        "lockBest": 1.25,
        "lockBook": null,
@@ -790,7 +790,7 @@
        "when": "2026-11-11T03:00Z",
        "odds": 1.44,
        "best": 1.44,
-       "lastOdds": 1.42,
+       "lastOdds": 1.44,
        "lockOdds": 1.42,
        "lockBest": 1.42,
        "lockBook": null,
