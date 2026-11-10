@@ -1032,6 +1032,42 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .sig-later{margin-top:12px}
 .sig-later summary{cursor:pointer;font:600 13px var(--f-ui);color:var(--ink)}
 .sig-f{margin-top:12px;font-size:11.5px;color:var(--mute)}
+/* the plan (10 Nov 2026): three rungs, the habits, today's bets */
+.sig.plan{max-width:none;padding:16px 18px 14px}
+.pl-rungs{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--rule)}
+.pl-r{display:flex;gap:10px;padding:12px 14px;border-right:1px solid var(--rule);background:var(--paper)}
+.pl-r:last-child{border-right:0}
+.pl-r.edge{box-shadow:inset 0 3px 0 var(--edge)}
+.pl-r.card{box-shadow:inset 0 3px 0 var(--gold)}
+.pl-n{font:400 26px/1 var(--f-display);color:var(--mute);min-width:16px}
+.pl-t{display:flex;flex-wrap:wrap;align-items:center;gap:4px 8px}
+.pl-t b{font:700 15px var(--f-ui)}
+.pl-r.edge .sig-v{color:var(--edge)}
+.pl-r.card .sig-v{color:var(--draw-ink,#7a5c12)}
+.pl-s{flex-basis:100%;font:600 12.5px var(--f-num);color:var(--ink)}
+.pl-r p{margin:6px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.pl-r p b{color:var(--ink)}
+.pl-habits{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 18px;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.pl-habits b{color:var(--ink)}
+.pl-today{margin-top:16px;padding-top:12px;border-top:1px solid var(--ink)}
+.pl-today h4{font:700 13px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;margin:0}
+.pl-today .sig-head{margin-top:4px}
+@media (max-width:760px){
+  .pl-rungs{grid-template-columns:minmax(0,1fr)}
+  .pl-r{border-right:0;border-bottom:1px solid var(--rule)}
+  .pl-r:last-child{border-bottom:0}
+  .pl-habits{grid-template-columns:minmax(0,1fr)}
+  .sig.plan{padding:14px 14px 12px}
+}
+.plan .sig-x{display:flex;align-items:center;gap:12px;justify-content:space-between}
+.plan .sig-x .sig-e{margin:6px 0;flex:1;min-width:0}
+.plan .sig-x .sig-copy{flex:none}
+@media (min-width:900px){
+  .pl-bets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));column-gap:28px;align-items:start}
+}
+.tb-part{margin-top:26px}
+.tb-rule{margin:6px 0 4px}
+.tb-model summary{font-weight:600}
 .tb-proof.edge>div b{color:var(--ink)}
 .tb-proof.edge>div span{color:var(--edge)}
 .tb-check{margin-top:12px;display:grid;gap:12px}
@@ -1323,6 +1359,28 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .wk-meter i{display:block;height:100%;background:var(--edge)}
 .wk-day.on .wk-meter{background:#4a4038}
 .wk-day.on .wk-meter i{background:var(--yellow)}
+.wk-dots{display:flex;flex-wrap:wrap;gap:3px;min-height:8px;margin:2px 0 4px}
+.wk-dots i{display:block;width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.wk-dots i.edge{background:var(--edge)}
+.wk-day.on .wk-dots i.edge{background:#7fd6a0}
+.wk-day.on .wk-g{color:var(--yellow)}
+.wk-plan{list-style:none;margin:0;padding:0;border-top:1px solid var(--rule-soft)}
+.wk-plan li{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:4px 10px;align-items:center;padding:8px 0;border-bottom:1px solid var(--rule-soft)}
+.wk-plan li.edge .sig-v{color:var(--edge)}
+.wk-plan li.card .sig-v{color:var(--draw-ink,#7a5c12)}
+.wk-pb b{display:block;font-size:14px}
+.wk-pb small{display:block;font-size:12px;color:var(--mute);overflow-wrap:anywhere}
+.wk-po{font:600 16px var(--f-num);text-align:right;white-space:nowrap}
+.wk-po small{display:block;font:500 11px var(--f-ui);color:var(--mute)}
+.wk-go{margin:8px 0 0;font-size:13px}
+.wk-go a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:2px}
+.wk-model{margin-top:14px;border-top:1px solid var(--rule-soft);padding-top:10px}
+.wk-model summary{cursor:pointer;font:600 13px var(--f-ui)}
+.wk-model summary span{font-weight:500;color:var(--mute);margin-left:6px}
+.wk-model .wk-grps{margin-top:10px}
+.wk-legend i.wk-ld{width:8px;height:8px;border-radius:50%;background:var(--gold)}
+.wk-legend i.wk-ld.edge{background:var(--edge)}
+.wk-lsep{margin-left:6px}
 .wk-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 18px 0;font-size:12px;color:var(--mute)}
 .wk-legend i{display:inline-block;width:10px;height:6px;margin-right:5px;vertical-align:middle}
 .wk-detail{padding:12px 18px 16px}
@@ -4749,10 +4807,24 @@ function sigList(now){
     if(!g.edge || !g.kickoff) return;
     const t = new Date(g.kickoff).getTime(); if(!(t > now)) return;
     const h = g.edge.side === "h", who = h ? g.home.name : g.away.name, vs = h ? g.away.name : g.home.name;
-    out.push({kind: "edge", at: t, title: "Edge single", units: 1, odds: g.edge.best, sub: `${compName(g)}`,
+    out.push({kind: "edge", at: t, title: "Edge single", units: 1, odds: g.edge.best, sub: `${compName(g)}`, fair: g.edge.fair, avg: g.edge.odds,
       legs: [{pick: who, vs, at: t, price: g.edge.best, note: `best ${g.edge.best.toFixed(2)} · average ${g.edge.odds.toFixed(2)}`}],
       why: `Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${vs} priced ${g.edge.opp.toFixed(2)}.`, ev: sigEdgeEvidence()});
   }));
+  // 10 Nov 2026, the plan: on a UK day with two or more open Edge picks, the
+  // double of the two the bookmakers rate most likely (five seasons: 252
+  // doubles, +4.6% at the best price, ahead in four seasons of five).
+  const byDay = {};
+  out.filter(x => x.kind === "edge").forEach(x => (byDay[localDay(new Date(x.at).toISOString())] = byDay[localDay(new Date(x.at).toISOString())] || []).push(x));
+  Object.values(byDay).forEach(xs => {
+    if(xs.length < 2) return;
+    const two = xs.slice().sort((a, b) => b.fair - a.fair).slice(0, 2);
+    out.push({kind: "edge", double: true, at: Math.min(two[0].at, two[1].at), title: "Edge double", units: 1,
+      odds: two[0].odds * two[1].odds, fair: two[0].fair * two[1].fair, sub: `the day's two most likely Edge picks · best ${(two[0].odds * two[1].odds).toFixed(2)}, average ${(two[0].avg * two[1].avg).toFixed(2)}`,
+      legs: two.map(x => x.legs[0]),
+      why: `Bookmakers give it ${pct(two[0].fair * two[1].fair)}% to land.`,
+      ev: "Tested over five seasons: 170 of 252 doubles won, +4.6% at the best price, +0.1% at the average, ahead in four seasons of five. Take the best price."});
+  });
   ((OG && OG.days) || []).forEach(d => d.groups.forEach(g => {
     if(!String(g.name).startsWith("Card") || g.late || g.status === "underway" || g.status === "locked") return;
     const t = sigFirst(g); if(!(t > now)) return;
@@ -4773,31 +4845,71 @@ function sigSlip(s){
   return [`${s.title} · ${s.units} unit${s.units === 1 ? "" : "s"} (£${st % 1 ? st.toFixed(2) : st}) · ${s.book ? s.book + " " : ""}${s.odds.toFixed(2)}`]
     .concat(s.legs.map(l => `${l.pick} to win v ${l.vs} · ${l.price.toFixed(2)} · ${l.tbc ? "time TBC" : l.at ? sigAt(l.at) : ""}`)).join("\n");
 }
+/* 10 Nov 2026, Douglas: "The bets page needs a solid and proven way to bet.
+   There seems to be three different methods. We need one clear direction
+   that uses the best case from each." The plan: one ladder, each rung staked
+   by how much proof it has, and nothing else.
+   - Proven (Edge singles, the Edge double): the one leg with an edge over
+     the bookmakers in four seasons of five (claude/edge-accas-2026-11-10.md).
+   - On trial (the Card): its discipline and group shape, at its own stakes,
+     until the 30 Nov review; replay +4.4%, live under (claude/card-*).
+   - Not in the plan: the week ahead's model trebles (accurate, but each leg
+     carries the margin: claude/list-accas-2026-11-10.md), the wider-rule
+     filler (claude/card-fillers-2026-11-10.md), the Model card (on paper).
+   Display only: no rule, stake or record changes. See claude/the-plan-2026-11-10.md. */
+function planRungs(){
+  const r = (OG && OG.record && OG.record.card) || {}, e = RS && RS.edge && RS.edge.all;
+  const cardRet = r.staked ? sigPct((r.returned - r.staked) / r.staked) : null;
+  return [
+    {kind: "edge", v: "Tested", name: "Edge singles", stake: "1 unit each",
+     what: "Football favourites at 1.15 to 1.90 whose opponent is priced 9 or more, the bookmakers 60%+, the model in agreement.",
+     proof: `Five seasons: 388 of 459 won, <b>+5.4%</b> at the best price, ahead in four seasons of five.${e && e.n ? ` On this site ${e.won} of ${e.n}.` : ""}`},
+    {kind: "edge", v: "Tested", name: "Edge double", stake: "1 unit",
+     what: "On a day with two or more Edge picks, the two the bookmakers rate most likely.",
+     proof: "Five seasons: 170 of 252 won, <b>+4.6%</b> at the best price, ahead in four seasons of five."},
+    {kind: "card", v: "On trial", name: "The Card", stake: "2 units a 2x, 1 a 3x",
+     what: "Three to five priced favourites from different fixtures, built and frozen by the site before the first start.",
+     proof: `Replayed over four seasons <b>+4.4%</b> (+12.5% at the best price); live ${r.settled ? `${r.won} of ${r.settled}${cardRet ? `, ${cardRet}` : ""}` : "nothing settled"}. Kept or cut at the 30 Nov review.`}];
+}
 function signalsPanel(){
   const now = Date.now(), {out, skip} = sigList(now);
-  const soon = out.filter(s => s.at - now <= SIG_HOURS * 36e5), later = out.filter(s => s.at - now > SIG_HOURS * 36e5);
-  const units = soon.reduce((a, s) => a + s.units, 0);
-  const row = (s, i) => { const st = ogStake() * s.units;
+  // proven first, then soonest
+  out.sort((a, b) => (a.kind === "edge" ? 0 : 1) - (b.kind === "edge" ? 0 : 1) || a.at - b.at);
+  const soon = out.filter(s => s.at - now <= SIG_HOURS * 36e5), later = out.filter(s => s.at - now > SIG_HOURS * 36e5).sort((a, b) => a.at - b.at);
+  const units = soon.reduce((a, s) => a + s.units, 0), proven = soon.filter(s => s.kind === "edge").length;
+  const money = u => { const x = ogStake() * u; return "£" + (x % 1 ? x.toFixed(2) : x); };
+  const row = (s, i) => {
     return `<div class="sig-b ${s.kind}">
-      <div class="sig-t"><span class="sig-v">${s.kind === "edge" ? "Tested" : s.kind === "card" ? "On trial" : "Not a signal"}</span>
+      <div class="sig-t"><span class="sig-v">${s.kind === "edge" ? "Tested" : s.kind === "card" ? "On trial" : "Not in the plan"}</span>
         <b>${ogEsc(s.title)}</b><span class="sig-o">${s.odds.toFixed(2)}</span></div>
-      <div class="sig-s">${ogEsc(s.sub)} · stake ${s.units} unit${s.units === 1 ? "" : "s"}, £${st % 1 ? st.toFixed(2) : st} returns £${(st * s.odds).toFixed(2)} · first start ${sigAt(s.at)}</div>
+      <div class="sig-s">${ogEsc(s.sub)} · <b>${s.units} unit${s.units === 1 ? "" : "s"}</b> (${money(s.units)}, returns £${(ogStake() * s.units * s.odds).toFixed(2)}) · place before ${sigAt(s.at)}</div>
       <ul class="sig-l">${s.legs.map(l => `<li><b>${ogEsc(l.pick)}</b><span>v ${ogEsc(l.vs)} · ${l.tbc ? "time TBC" : l.at ? sigAt(l.at) : ""}</span><em>${l.price.toFixed(2)}<small>${l.note}</small></em></li>`).join("")}</ul>
-      <p class="sig-e">${ogEsc(s.why)} ${s.ev}</p>
-      ${s.kind === "wide" ? "" : `<button class="sig-copy" data-i="${i}" type="button">Copy slip</button>`}</div>`; };
+      <div class="sig-x"><p class="sig-e">${ogEsc(s.why)}${s.kind === "wide" ? " " + s.ev : ""}</p>
+      ${s.kind === "wide" ? "" : `<button class="sig-copy" data-i="${i}" type="button">Copy slip</button>`}</div></div>`; };
   const SIG = soon.concat(later); window.__SIG__ = SIG;
   const next = later[0];
   const head = soon.length
-    ? `<b>${soon.length} bet${soon.length === 1 ? "" : "s"} to place</b> in the next ${SIG_HOURS} hours, ${units} unit${units === 1 ? "" : "s"} in all, first at ${sigAt(soon[0].at)}`
-    : `<b>No bet to place</b> in the next ${SIG_HOURS} hours: no group clears the Card's rule and no football fixture carries the Edge flag.${next ? ` Next signal: ${ogEsc(next.title)}, ${sigAt(next.at)}.` : " Nothing signalled in the days built so far."} Sitting out is the rule working.`;
-  return `<section class="sig" aria-label="Place now"><h3 class="sig-h">Place now <small>only bets that pass a rule the site tests, still open, soonest first</small></h3>
+    ? `<b>${soon.length} bet${soon.length === 1 ? "" : "s"}</b> in the next ${SIG_HOURS} hours: ${proven ? `${proven} tested, ` : ""}${soon.length - proven ? `${soon.length - proven} on trial, ` : ""}<b>${units} unit${units === 1 ? "" : "s"}</b> (${money(units)}) in all.`
+    : `<b>No bet</b> in the next ${SIG_HOURS} hours.${next ? ` Next: ${ogEsc(next.title)}, ${sigAt(next.at)}.` : " Nothing in the days built so far."} Sitting out is the plan working.`;
+  const rungs = planRungs().map((r, i) => `<li class="pl-r ${r.kind}"><span class="pl-n">${i + 1}</span>
+      <div><div class="pl-t"><b>${r.name}</b><span class="sig-v">${r.v}</span><span class="pl-s">${r.stake}</span></div>
+      <p>${r.what} ${r.proof}</p></div></li>`).join("");
+  return `<section class="sig plan" id="plan" aria-labelledby="plan-h"><h3 class="sig-h" id="plan-h">The plan <small>one way to bet: three rungs, ordered by how much proof each has, and nothing else</small></h3>
+    <ol class="pl-rungs">${rungs}</ol>
+    <ul class="pl-habits">
+      <li><b>Best price.</b> The edge is thin at the average price; take ${ogEsc(((OG && OG.rules && OG.rules.card) || {}).book || "William Hill")} when it is at or near the best.</li>
+      <li><b>Place once, late.</b> Before the first start, nearer it than not: the last price paid about 2 points more than the first on 104 settled legs.</li>
+      <li><b>Flat stakes, then leave it.</b> No cash out, no topping up, no extra legs.</li>
+      <li><b>Nothing else.</b> Model trebles, wider-rule groups and the Model card are not in the plan: accurate is not the same as profitable at the price.</li>
+    </ul>
+    <div class="pl-today"><h4>Today's bets</h4>
     <p class="sig-head">${head}</p>
-    ${soon.length ? soon.map((s, i) => row(s, i)).join("") : ""}
-    ${later.length ? `<details class="sig-later"${soon.length ? "" : " open"}><summary>Later this week: ${later.length}</summary>${later.map((s, i) => row(s, soon.length + i)).join("")}</details>` : ""}
-    ${skip.length ? `<details class="sig-later"><summary>Not a signal: ${skip.length} wider-rule group${skip.length === 1 ? "" : "s"}</summary>
+    ${soon.length ? `<div class="pl-bets">${soon.map((s, i) => row(s, i)).join("")}</div>` : ""}
+    ${later.length ? `<details class="sig-later"${soon.length ? "" : " open"}><summary>Later this week: ${later.length}</summary><div class="pl-bets">${later.map((s, i) => row(s, soon.length + i)).join("")}</div></details>` : ""}
+    ${skip.length ? `<details class="sig-later"><summary>Not in the plan: ${skip.length} wider-rule group${skip.length === 1 ? "" : "s"}</summary>
       <p class="sig-e">Built on days the full rule leaves empty. On the replay at first real prices (10 Nov) it won 3 of 15 groups against 5.1 expected, -46%; live ${(() => { const w = (OG.record || {}).cardWide || {}; return w.settled ? `${w.won} of ${w.settled}` : "none settled"; })()}. Shown for completeness, not to bet.</p>
-      ${skip.map(s => row(s, -1)).join("")}</details>` : ""}
-    <p class="sig-f">Prices move: each is the last read, so check it at the bookmaker before placing. On 104 settled Card legs (30 Oct to 10 Nov, mostly football) the last price before the start paid about 2 points more than the first, so placing nearer the start has paid. One unit is the stake box below. Not betting advice.</p></section>`;
+      ${skip.map(s => row(s, -1)).join("")}</details>` : ""}</div>
+    <p class="sig-f">One unit is the stake box below (now ${money(1)}). Prices are the last read; check at the bookmaker before placing. Not betting advice.</p></section>`;
 }
 function sigWire(host){
   host.querySelectorAll(".sig-copy").forEach(b => b.onclick = async () => {
@@ -4839,6 +4951,8 @@ function weekPick(it){
 const weekBucket = sp => ["football", "tennis", "ncaab", "nba", "rugby"].includes(sp) ? sp : "us";
 function weekDays(){
   const {byDay} = listCollect();
+  // the plan's bets (Edge singles and doubles, Card groups) by the UK day of their first start
+  const plan = {}; try { sigList(Date.now()).out.forEach(b => { const k = localDay(new Date(b.at).toISOString()); (plan[k] = plan[k] || []).push(b); }); } catch(e){}
   const out = [];
   for(let i = 0; i < 7; i++){
     const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
@@ -4851,7 +4965,8 @@ function weekDays(){
     if(open.length >= 2) groups.push({name:"Model double", legs:open.slice(0, 2), chance:prod(open.slice(0, 2)), hill:hill(open.slice(0, 2))});
     if(open.length === 1) groups.push({name:"Model single", legs:open.slice(0, 1), chance:open[0].conf, hill:hill(open)});
     const mix = {}; picks.forEach(x => { const b = weekBucket(x.sport); mix[b] = (mix[b] || 0) + 1; });
-    out.push({date, i, picks, open, groups, mix});
+    const bets = (plan[date] || []).sort((a, b) => (a.kind === "edge" ? 0 : 1) - (b.kind === "edge" ? 0 : 1) || a.at - b.at);
+    out.push({date, i, picks, open, groups, mix, bets});
   }
   return out;
 }
@@ -4870,24 +4985,26 @@ function weekRecord(){
 function weekAhead(){
   const days = weekDays();
   if(!days.some(d => d.picks.length)) return "";
-  if(!WEEK_DAY || !days.some(d => d.date === WEEK_DAY)) WEEK_DAY = (days.find(d => d.groups.length) || days[0]).date;
+  if(!WEEK_DAY || !days.some(d => d.date === WEEK_DAY)) WEEK_DAY = days[0].date;
   const sel = days.find(d => d.date === WEEK_DAY);
-  const withBet = days.filter(d => d.groups.length).length, total = days.reduce((a, d) => a + d.picks.length, 0);
+  const total = days.reduce((a, d) => a + d.picks.length, 0);
+  const planN = days.reduce((a, d) => a + d.bets.length, 0), planDays = days.filter(d => d.bets.length).length;
   const dname = d => d.i === 0 ? "Today" : d.i === 1 ? "Tomorrow" : new Date(d.date + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short"});
   const dnum = d => new Date(d.date + "T12:00:00").toLocaleDateString("en-GB", {day:"numeric", month:"short"});
   const maxN = Math.max(1, ...days.map(d => d.picks.length));
   const card = d => {
-    const best = d.groups[0];
+    const best = d.groups[0], nb = d.bets.length, nt = d.bets.filter(b => b.kind === "edge").length;
+    const dots = d.bets.map(b => `<i class="${b.kind}"></i>`).join("");
     const bar = d.picks.length ? WEEK_SPORTS.filter(([k]) => d.mix[k]).map(([k, lab, c]) =>
       `<i style="flex:${d.mix[k]};background:${c}" title="${lab}: ${d.mix[k]}"></i>`).join("") : "";
-    return `<button type="button" class="wk-day${d.date === WEEK_DAY ? " on" : ""}${best ? "" : " none"}" data-wkday="${d.date}" aria-pressed="${d.date === WEEK_DAY}">
+    return `<button type="button" class="wk-day${d.date === WEEK_DAY ? " on" : ""}${nb ? "" : " none"}" data-wkday="${d.date}" aria-pressed="${d.date === WEEK_DAY}"
+        aria-label="${dname(d)} ${dnum(d)}: ${nb} plan bet${nb === 1 ? "" : "s"}, ${d.picks.length} list pick${d.picks.length === 1 ? "" : "s"}">
       <span class="wk-dn">${dname(d)}</span><span class="wk-dd">${dnum(d)}</span>
-      <span class="wk-n"><b>${d.picks.length}</b> pick${d.picks.length === 1 ? "" : "s"}</span>
+      <span class="wk-n"><b>${nb}</b> bet${nb === 1 ? "" : "s"}</span>
+      <span class="wk-dots" aria-hidden="true">${dots}</span>
+      <span class="wk-g">${nb ? (nt ? `${nt} tested` : "on trial") : d.i > 3 ? "not built yet" : "no bet"}</span>
+      <span class="wk-ch">${d.picks.length} list pick${d.picks.length === 1 ? "" : "s"}</span>
       <span class="wk-mix" style="width:${Math.max(18, Math.round(d.picks.length / maxN * 100))}%">${bar}</span>
-      ${best ? `<span class="wk-g">${best.name.replace("Model ", "")}</span>
-        <span class="wk-ch"><b>${pct(best.chance)}%</b> to land</span>
-        <span class="wk-meter"><i style="width:${pct(best.chance)}%"></i></span>`
-        : `<span class="wk-g">${d.picks.length ? "All started" : "No pick"}</span><span class="wk-ch">${d.picks.length ? "nothing left to back" : "clears the bar yet"}</span><span class="wk-meter"></span>`}
     </button>`;
   };
   const leg = (x, j) => `<li><span class="wk-i">${j + 1}</span><span class="wk-p"><b>${x.pick}</b> to beat ${x.opp}
@@ -4899,25 +5016,39 @@ function weekAhead(){
   const rec = weekRecord();
   const recLine = rec ? [2, 3].filter(k => rec[k].n).map(k => `${k === 2 ? "double" : "treble"} <b>${rec[k].won} of ${rec[k].n}</b> days (${pct(rec[k].won / rec[k].n)}% v ${pct(rec[k].q / rec[k].n)}% quoted)`).join(", ")
     : "";
-  const legend = WEEK_SPORTS.filter(([k]) => days.some(d => d.mix[k])).map(([, lab, c]) => `<span><i style="background:${c}"></i>${lab}</span>`).join("");
+  const legend = `<span><i class="wk-ld edge"></i>Tested bet</span><span><i class="wk-ld card"></i>On trial</span><span class="wk-lsep">List picks by sport:</span>`
+    + WEEK_SPORTS.filter(([k]) => days.some(d => d.mix[k])).map(([, lab, c]) => `<span><i style="background:${c}"></i>${lab}</span>`).join("");
   return `<section class="week" id="weekAhead" aria-labelledby="wk-h">
     <div class="wk-head"><h3 id="wk-h">The week ahead</h3>
-      <p><b>${total}</b> Daily List picks over the next 7 days; a model bet on <b>${withBet} of 7</b> days.
-      Chosen by the model's confidence alone, same sport allowed, no bookmaker condition.</p></div>
+      <p><b>${planN}</b> plan bet${planN === 1 ? "" : "s"} over the next 7 days on <b>${planDays} of 7</b> days, and <b>${total}</b> Daily List picks.
+      The Card is built three days ahead and Edge picks appear as the bookmakers price the games, so later days fill in through the week.</p></div>
     <div class="wk-strip" role="group" aria-label="Pick a day">${days.map(card).join("")}</div>
     <div class="wk-legend">${legend}</div>
     <div class="wk-detail">
       <h4>${sel.i === 0 ? "Today" : new Date(sel.date + "T12:00:00").toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long"})}
         <small>${sel.picks.length} list pick${sel.picks.length === 1 ? "" : "s"}${sel.picks.length - sel.open.length ? ` · ${sel.picks.length - sel.open.length} already started` : ""}</small></h4>
+      ${sel.bets.length ? `<ul class="wk-plan">${sel.bets.map(b => `<li class="${b.kind}"><span class="sig-v">${b.kind === "edge" ? "Tested" : "On trial"}</span>
+          <span class="wk-pb"><b>${ogEsc(b.title)}</b><small>${b.legs.map(l => ogEsc(l.pick)).join(" · ")}</small></span>
+          <span class="wk-po">${b.odds.toFixed(2)}<small>${b.units} unit${b.units === 1 ? "" : "s"} · ${sigAt(b.at)}</small></span></li>`).join("")}</ul>
+          <p class="wk-go"><a href="#plan" data-plan-go>Details and slips in the plan above</a></p>`
+        : `<p class="wk-empty">${sel.i > 3 ? "The Card is built three days ahead; this day fills in later in the week." : "No plan bet on this day yet: nothing clears the Card's rule or carries the Edge flag. Prices are read again on every build."}</p>`}
+      <details class="wk-model"><summary>Model picks for this day <span>not in the plan</span></summary>
       ${sel.groups.length ? `<div class="wk-grps">${sel.groups.map(grp).join("")}</div>`
-        : `<p class="wk-empty">${sel.picks.length ? "Every list pick on this day has started." : "No pick clears the Daily List bar on this day yet. Later days fill as each sport publishes; nothing is padded to make a bet."}</p>`}
+        : `<p class="wk-empty">${sel.picks.length ? "Every list pick on this day has started." : "No pick clears the Daily List bar on this day yet."}</p>`}
       <p class="wk-note">The double is the day's two strongest picks still to start, the treble the top three, ordered as the Daily List orders them.
         ${recLine ? `On the graded list, the same rule's ${recLine}.` : `<span class="wk-rec" data-wkrec>Track record loading…</span>`}
         Picks published days ahead can change as the model sees new results; the list on the day is the one to back.
-        The model's chance is not the bookmakers': at list prices (around 1.10 a pick) the margin compounds with every leg, so check the price before placing.</p>
+        Why these are not in the plan: the picks are accurate, but at list prices (around 1.10 a pick) the bookmakers' margin compounds with every leg; on real prices three-leg list accumulators returned -32%.</p></details>
     </div>
   </section>`;
 }
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-plan-go]"); if(!a) return;
+  e.preventDefault();
+  const p = document.getElementById("plan"); if(!p) return;
+  p.querySelectorAll(".sig-later").forEach(d => { if(!/wider-rule/.test(d.textContent)) d.open = true; });
+  scrollClear(p.querySelector(".pl-today") || p);
+});
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-wkday]"); if(!b) return;
   WEEK_DAY = b.dataset.wkday;
@@ -4955,7 +5086,8 @@ function renderToday(){
             : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
-  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekAhead()}${signalsPanel()}<div class="lede">
+  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${signalsPanel()}${weekAhead()}
+    <details class="how tb-rule tb-part"><summary>The Card, rung three of the plan: its rule in full</summary><div class="lede">
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
@@ -4969,7 +5101,7 @@ function renderToday(){
       <li><b>Only the card.</b> Anything else goes through the checker below first. Avoid means out.</li>
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
-    </ol>
+    </ol></details>
     <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and, on a group you can still place, is marked <b>stale</b> after ${OG_STALE_H} hours, meaning it may have moved: check it before placing anything. A locked group keeps the price it was locked with.</p>
     <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
@@ -4978,10 +5110,10 @@ function renderToday(){
     ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
-    <section class="tb-win tb-model"><h3 class="tb-h">On paper: the model's own picks <small>not a bet; graded beside the card so the two can be compared at the end of the month</small></h3>
+    <details class="tb-older tb-model"><summary>On paper: the Model card, not in the plan${model.length ? ` (${model.length})` : ""}</summary><section class="tb-win">
       ${model.length ? `<div class="og-grid">${model.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">No model group on this day: no three picks the model rates 60%+ and at or above the bookmakers' chance, in the leagues the card takes, at 1.15 to 1.90.</div>`}
-      <p class="tb-snap">Each pick here is one the model rates at or above the bookmakers' chance: its own value call, with the group's chance taken from the model, not the market. The card's picks are chosen the other way round. Nothing here is staked; it is a running test of which way is right.</p></section>
+      <p class="tb-snap">Each pick here is one the model rates at or above the bookmakers' chance: its own value call, with the group's chance taken from the model, not the market. The card's picks are chosen the other way round. Nothing here is staked; it is a running test of which way is right, settled at the 30 Nov review.</p></section></details>
 
     <h3 class="tb-h">Leave these out <small>tempting picks that carry the losing patterns</small></h3>
     ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>

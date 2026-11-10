@@ -4,6 +4,35 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-30 The plan: one way to bet at the top of Bets (tag pending)
+
+For a reader: the Bets tab opens with **the plan**, one ladder of three rungs
+in order of proof, and nothing else. 1. Edge singles, tested over five
+seasons (388 of 459, +5.4% at the best price, ahead in four seasons of five),
+one unit each. 2. The Edge double, the day's two most likely Edge picks when
+there are two or more (170 of 252, +4.6% at the best price), one unit. 3. The
+Card, on trial at its own stakes (replay +4.4%, live 11 of 35, -12%), until
+the 30 Nov review. Then four habits and today's bets, tested first. The week
+ahead now counts the plan's bets per day; its model trebles are folded away
+as not in the plan, with the reason (accurate, but the margin compounds:
+-32% at three legs on real prices). The Card's long rule and the Model card
+are folded.
+
+Evidence: `claude/edge-accas-2026-11-10.md`, `claude/card-seasons-2026-11-09.md`,
+`claude/list-accas-2026-11-10.md`; the reasoning in
+`claude/the-plan-2026-11-10.md`.
+
+Files: `index.html` (`signalsPanel`, `planRungs`, `sigList` builds the Edge
+double, `weekDays` / `weekAhead`, `renderToday` order, CSS),
+`tests/test_place_now.py`, `claude/the-plan-2026-11-10.md`, `CLAUDE.md`.
+Checked in Chrome at 360, 390, 412 and 1280 wide; suite 741 OK, `nametest.py`
+clear.
+
+Not changed: any rule, stake, `CARD_*` constant, `CARD_RULE`, record or push.
+The Edge double is shown, not archived or graded as a group.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-10 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered, second check (tag pending)
 
 **What changed:** a dated note only, `claude/af-new-leagues-recheck-2026-11-10.md`. No code, model or rule changed.
