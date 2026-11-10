@@ -4,7 +4,7 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
-## 2026-11-10-8 The Daily List at William Hill (tag pending)
+## 2026-11-10-9 The Daily List at William Hill (tag pending)
 
 **What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.
 
@@ -13,6 +13,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, `tests/test_list_books.py`, `claude/list-at-hill-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
 
 **Not changed:** the Daily List's admission, order or record; the model; the Card and every `CARD_*` constant; `CARD_RULE`.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-10-8 The Edge flag's own record, on the page and in the review (tag pending)
+
+**What changed:** the green Edge flag now shows its own record on this site. `score.py` grades every flagged football fixture (`edge_record` in `record.json`): live flags as published from 10 Nov, and earlier fixtures flagged from the prices archived before kick-off. The flag's title and the row's green panel quote it ("27 of 34 landed against 76% quoted, -2.1% at the average price, +0.5% at the best"), and the nightly Card review prints it.
+
+**Evidence:** 34 graded flagged fixtures, 12 Sep to 8 Nov: 79.4% landed v 75.9% quoted. `tests/test_edge_record.py` (live v replayed, a published unflagged row never replayed, the tally, the summary key); suite 696 OK; `nametest.py` clear. Checked at 1280 and 400 wide.
+
+**Files:** `score.py`, `build.py`, `index.html`, `tools/card_review_post.py`, `tests/test_edge_record.py`, `claude/edge-flag-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the flag's rule, the model, the Card, any other record figure.
 
 **Roll back:** `git revert` the merge commit.
 

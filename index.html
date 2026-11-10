@@ -1908,7 +1908,16 @@ const EDGE_SVG = `<svg viewBox="0 0 9 10" aria-hidden="true"><path d="M1 0v10" s
 function edgeFlag(g){
   if(!g.edge) return "";
   const who = g.edge.side === "h" ? g.home.name : g.away.name;
-  return `<span class="edgeflag" title="Edge: ${who} at ${g.edge.odds.toFixed(2)} (best ${g.edge.best.toFixed(2)}), the other side priced ${g.edge.opp.toFixed(2)}. Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed about 7 points above the bookmakers' chance over five seasons. Take the best price. Tap the row for more.">${EDGE_SVG}Edge</span>`;
+  return `<span class="edgeflag" title="Edge: ${who} at ${g.edge.odds.toFixed(2)} (best ${g.edge.best.toFixed(2)}), the other side priced ${g.edge.opp.toFixed(2)}. Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed about 7 points above the bookmakers' chance over five seasons.${edgeRecordText(" On this site")} Take the best price. Tap the row for more.">${EDGE_SVG}Edge</span>`;
+}
+/* The flag's own record on this site (score.edge_record, in the record
+   summary): every flagged fixture graded, live and replayed on the prices
+   archived before kick-off. */
+function edgeRecordText(lead){
+  const e = RS && RS.edge && RS.edge.all;
+  if(!e || !e.n) return "";
+  const sign = x => (x >= 0 ? "+" : "") + Math.round(x * 1000) / 10 + "%";
+  return `${lead}: ${e.won} of ${e.n} landed against ${Math.round(e.quoted * 100)}% quoted by the bookmakers, ${sign(e.return)} at the average price, ${sign(e.returnBest)} at the best.`;
 }
 /* 10 Nov 2026: the Daily List pick at William Hill. Marks come from the build
    (groupings.list_books_page for picks to come, the record's listAtBook.picks
@@ -2073,6 +2082,7 @@ function detail(g){
   const ew = g.edge ? `<div class="why edgewhy"><b>Green flag: an edge on price.</b>
       ${g.edge.side === "h" ? g.home.name : g.away.name} at ${g.edge.odds.toFixed(2)} on average (best ${g.edge.best.toFixed(2)}), with ${g.edge.side === "h" ? g.away.name : g.home.name} priced ${g.edge.opp.toFixed(2)}.
       Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed 83.8% against the bookmakers' 76.2% over five seasons (511 picks), about +4% at the average price and +7% at the best.
+      ${edgeRecordText("Flagged fixtures on this site since " + ((RS && RS.edge && RS.edge.all && RS.edge.all.from) ? fmtShort(RS.edge.all.from) : "September"))}
       The edge is small and needs the best price; in a short run it can lose. Shown from the bookmakers' prices, never used by the model.</div>` : "";
   const mk = g.market ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
       <b>Against the bookmakers.</b>
