@@ -4477,8 +4477,7 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${on || l.est ? "" : (() => { const nm = l.pick, pr = l.odds.toFixed(2), inA = ACCA.some(r => r.name === nm && r.price === pr);
-        return `<button type="button" class="og-add" data-pick="${ogEsc(nm)}" data-odds="${l.odds}"${inA ? " disabled" : ""}>${inA ? "In acca ✓" : "Add to acca +"}</button>`; })()}${ogSearch(l)}${card || paper ? ogBook(l) : ""}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${ogSearch(l)}${card || paper ? ogBook(l) : ""}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
@@ -5084,7 +5083,7 @@ function renderToday(){
       <li><b>Place once.</b> Any time before a group's first kick-off. A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
       <li><b>Stake flat.</b> Two units on each 2x, one on each 3x, every day the same; the stake box below is one unit. Up to six groups a day, each from different fixtures.</li>
       <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here once every pick has finished.</li>
-      <li><b>Only the card.</b> Anything else goes through the checker below first. Avoid means out.</li>
+      <li><b>Only the plan.</b> Nothing outside it.</li>
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol></details>
@@ -5101,23 +5100,8 @@ function renderToday(){
         : `<div class="empty tb-empty">No model group on this day: no three picks the model rates 60%+ and at or above the bookmakers' chance, in the leagues the card takes, at 1.15 to 1.90.</div>`}
       <p class="tb-snap">Each pick here is one the model rates at or above the bookmakers' chance: its own value call, with the group's chance taken from the model, not the market. The card's picks are chosen the other way round. Nothing here is staked; it is a running test of which way is right, settled at the 30 Nov review.</p></section></details>
 
-    <h3 class="tb-h">Leave these out <small>tempting picks that carry the losing patterns</small></h3>
-    ${avoid.length ? `<div class="tb-avoid">${avoid.map(a => `<div class="tb-row ${a.level || "avoid"}"><span class="tb-v">${a.level === "caution" ? "Caution" : "Avoid"}</span>
-        <span class="tb-m"><b>${ogEsc(a.pick)}</b><small>${ogEsc(a.event)} · ${ogEsc(a.comp || OG_SPORT[a.sport] || a.sport)}${a.when ? " · " + ogTime(a) : ""}</small>
-        <small class="tb-why">${a.kind === "gap" ? `Model ${pct(a.model)}%, bookmakers ${pct(a.fair)}%: ${Math.round((a.model - a.fair) * 100)} points apart${a.level === "caution" ? ". At this strength the archive is too thin to call it; trust the bookmakers' number." : ", the pattern that lost most."}`
-          : a.kind === "thin" ? `Model ${pct(a.model)}%: tennis picks under the card's 75% floor on the model or their tested rate landed 59% on the card.`
-          : `Model ${pct(a.model)}%, but its sport is off the ${a.sport === "nfl" || a.sport === "cfb" ? "card" : "Daily List"} on its live record.`}</small></span>
-        <span class="tb-p">${a.odds.toFixed(2)}</span></div>`).join("")}</div>`
-      : `<div class="empty tb-empty">No flagged picks among the priced games on ${fmtDay(day.date)}.</div>`}
-
-    <h3 class="tb-h">Check a slip <small>anything not on the card, before you place it</small></h3>
-    <div class="tb-check"><textarea id="tbSlip" rows="5" placeholder="Astana&#10;Club Brugge&#10;Minnesota Vikings" spellcheck="false" autocomplete="off">${ogEsc(TB_TEXT)}</textarea>
-      <div id="tbOut" aria-live="polite">${tbCheckHtml()}</div></div>
-
+    <!-- 10 Nov 2026, Douglas: Leave these out, Check a slip and the Accumulator removed ("Remove these sections"). -->
     ${ogLog(day)}
-    <h3 class="tb-h">Accumulator <small>check the return on any slip</small></h3>
-    <section class="acca" id="acca" aria-label="Accumulator calculator"></section>
-
     <h3 class="tb-h">Is it working? <small>read on Mondays</small></h3>
     ${tbRecord()}
     ${ogRecord(true)}
@@ -5132,13 +5116,10 @@ function renderToday(){
     <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ogFill(host);
   sigWire(host);
-  accaMount($("#acca"));
-  host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
   host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {
     const g = day.groups.find(x => ogSlotKey(x, day.date) === btn.dataset.slot); if(g) ogTogglePlaced(g, day.date); });
   $("#tbDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderToday(); };
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
-  $("#tbSlip").oninput = e => { TB_TEXT = e.target.value; try { localStorage.setItem("tb-slip", TB_TEXT); } catch(err) {} $("#tbOut").innerHTML = tbCheckHtml(); };
 }
 
 /* ---------- view switching ---------- */
