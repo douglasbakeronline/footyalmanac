@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-3 The nightly Card review applies the decision gate on legs (tag pending)
+
+**What changed:** nothing a reader sees. The review's "candidates beating live" line used 30+ groups; the delegated-decisions gate in `CLAUDE.md` is p(worse) at most 0.30 on 100+ legs. `tools/card_replay.py` now writes each variant's legs (`legs`, `legsWon`), the review table shows them, the candidate line uses the legs gate (`card_review_post.candidates`), and variants ahead of live but under 100 legs are listed apart as "watch, do not act".
+
+**Evidence:** pool replay from 30 Oct (`--recover`), read only: live 10 groups on 31 legs; ahead of live at p(worse) 0.30 or under: `short` (27 legs, p 0.00), `notennis` and `tennis80` (10 legs, about 0.22), `uncapped` (34 legs, 0.24), all far under the gate. `tests/test_card_review_post.py` (the gate is legs not groups; the watch line; the legs column); suite OK; `nametest.py` clear.
+
+**Files:** `tools/card_replay.py`, `tools/card_review_post.py`, `tests/test_card_review_post.py`, `RELEASES.md`.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, any variant's definition, any record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-2 The two-per-competition cap named and `comp3` pre-registered (tag pending)
 
 **What changed:** nothing a reader sees. The limit of two legs from one competition in a Card group or a Multiplier is now `groupings.COMP_MAX` (2, unchanged), so the replay can patch it. `tools/card_replay.py` pre-registers `comp3` (three) for the 30 Nov review, and the Card funnel adds it as a relief row ("three legs a competition").

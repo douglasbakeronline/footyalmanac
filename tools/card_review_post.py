@@ -28,6 +28,18 @@ def ensure_label(name, colour, desc):
 def pct(x): return f"{x * 100:+.1f}%" if x is not None else "n/a"
 
 
+GATE_LEGS, GATE_P = 100, 0.30   # CLAUDE.md, the delegated decisions (9 Nov 2026)
+
+
+def candidates(rep):
+    """Variants that beat live on the archive at the decision gate: p(worse)
+    at most 0.30 on 100+ legs, ahead per day. 10 Nov 2026: the gate is legs,
+    as CLAUDE.md states it; before this the line read 30+ groups."""
+    return [(v, r) for v, r in (rep.get("variants") or {}).items()
+            if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= GATE_P
+            and (r.get("legs") or 0) >= GATE_LEGS and (r.get("vsLivePerDay") or 0) > 0]
+
+
 def funnel_section(today_=None, days=14):
     """10 Nov 2026 (#155): which Card condition keeps groups off the page,
     over the last two weeks of the pool (tools/card_funnel.py). Read here,
@@ -56,9 +68,9 @@ def main():
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
-                  "| variant | groups | won | expected | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|"]
+                  "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]
         for v, r in rep["variants"].items():
-            lines.append(f"| {v} | {r['groups']} | {r['won']} | {r['expected']} | {pct((r['return'] or 1) - 1) if r['return'] else 'n/a'} | {r['emptyDays']} | {r.get('vsLivePerDay', '')} | {r.get('pWorse', '')} |")
+            lines.append(f"| {v} | {r['groups']} | {r['won']} | {r['expected']} | {r.get('legs', '')} | {pct((r['return'] or 1) - 1) if r['return'] else 'n/a'} | {r['emptyDays']} | {r.get('vsLivePerDay', '')} | {r.get('pWorse', '')} |")
         src = rep.get("source") or {}
         if src.get("pool"):
             # 9 Nov 2026: the legs come from the archived pool from poolFrom
@@ -68,9 +80,13 @@ def main():
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines.append("")
-        cands = [(v, r) for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30 and r["groups"] >= 30 and (r.get("vsLivePerDay") or 0) > 0]
+        cands = candidates(rep)
         if cands:
-            lines += ["**Candidates beating live on the archive (p(worse) <= 0.30, 30+ groups):** " + ", ".join(v for v, _ in cands) + ". A rule change still needs the football-data replay to agree on both seasons (tune.yml, Mondays) and a human to merge.", ""]
+            lines += ["**Candidates beating live on the archive (p(worse) <= 0.30 on 100+ legs):** " + ", ".join(v for v, _ in cands) + ". A rule change still needs the football-data replay to agree on both seasons (tune.yml, Mondays), then CARD_RULE bumped with the numbers.", ""]
+        near = [v for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30
+                and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands]
+        if near:
+            lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({rep['variants'][v].get('legs', '?')} legs)" for v in near) + ".", ""]
     if pt.get("timing"):
         t = pt["timing"]
         lines += [f"## Price timing ({pt['legs']} Card-rule legs)", f"- first price to last pre-start price: drifted {t['drifted']}, shortened {t['shortened']}, unchanged {t['unchanged']}; mean move {t['meanMovePct']:+.2f}% ({t['read']})"]

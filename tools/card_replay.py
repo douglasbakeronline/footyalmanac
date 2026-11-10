@@ -313,7 +313,9 @@ def main():
         st = sum(g["stake"] for g in gs); rt = sum(g["stake"] * g["odds"] for g in gs if g["won"])
         report["variants"][v] = {"days": len(days), "groups": len(gs), "won": sum(g["won"] for g in gs),
                                  "expected": round(sum(g["p"] for g in gs), 2), "units": st,
-                                 "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days)}
+                                 "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days),
+                                 # 10 Nov 2026: the legs, for the decision gate (100+ legs, CLAUDE.md)
+                                 "legs": sum(len(g["legs"]) for g in gs), "legsWon": sum(l["won"] for g in gs for l in g["legs"])}
     for v in VARIANTS:
         if v == "live": continue
         a, b = out["live"], out[v]
