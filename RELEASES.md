@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-20 Live scores for tennis (tag pending)
+
+**What changed:** started tennis picks on the Daily List now show the live set score (in the row's player order, "4–6 6–3 2–1"), the set in play and whether the pick leads, from ESPN's ATP and WTA scoreboards, the feed `build_tennis.py` already reads for results. Sets decide the lead; with sets level, the set in play does. A finished game in any sport now shows its score in the pill and "Final, unofficial" beneath, so a three-set score fits.
+
+**Evidence:** Douglas, 08:57: "Why can't I see this now?" Nothing on today's list was in play: the rest of the day is tennis from 12:00 UK and college basketball from 23:00, and live scores covered only US team sports. Checked at 390 and 1280 wide on a mocked ESPN tennis scoreboard (tournament groupings, ESPN's player order reversed on one match, one finished): scores, leads and the tally correct. Not run against live ESPN from the cloud session. `tests/test_live_scores.py` adds the tennis case. Suite OK.
+
+**Files:** `index.html`, `tests/test_live_scores.py`, `RELEASES.md`.
+
+**Not changed:** grading, football rows (no ESPN id on file).
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-19 No ghost pins for games that moved day (tag pending)
 
 **What changed:** today's pinned Daily List no longer keeps a game on a day it was moved away from. ESPN first lists some US games at a stand-in time of midnight Eastern and corrects it later; `daylist.pinned` took the newest copy published before the start *among copies dated today*, so a game moved to tomorrow kept an old copy pinned today, read as started, and showed "Result due". It now takes the newest pre-start copy of each game whatever its day, and pins the game only on that copy's day.
