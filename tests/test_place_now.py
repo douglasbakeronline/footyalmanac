@@ -20,6 +20,7 @@ const ogStake = () => 10;
 const compName = g => g.leagueName;
 const ogDate = l => l.when ? new Date(l.when) : null;
 const RS = null;
+const localDay = iso => new Date(iso).toLocaleDateString("en-CA", {timeZone: "Europe/London"});
 """
 
 
@@ -59,6 +60,25 @@ console.log(JSON.stringify({out: r.out.map(s => [s.kind, s.title, s.units, +s.od
     def test_nothing_open(self):
         r = self.run_js({"days": []}, {"rules": {}, "record": {}, "days": []})
         self.assertEqual(r["out"], []); self.assertEqual(r["skip"], [])
+
+    def test_edge_double_from_the_two_most_likely_of_a_day(self):
+        g = lambda h, when, fair, best: {"kickoff": when, "leagueName": "L", "home": {"name": h}, "away": {"name": "Z"},
+                                         "edge": {"side": "h", "odds": best - 0.05, "best": best, "opp": 10, "fair": fair, "model": fair}}
+        D = {"days": [{"games": [g("A", "2026-11-10T12:00:00Z", 0.70, 1.40), g("B", "2026-11-10T15:00:00Z", 0.80, 1.25),
+                                 g("C", "2026-11-10T17:00:00Z", 0.75, 1.30), g("D", "2026-11-11T15:00:00Z", 0.9, 1.10)]}]}
+        r = self.run_js(D, {"rules": {}, "record": {}, "days": []})
+        doubles = [o for o in r["out"] if o[1] == "Edge double"]
+        self.assertEqual(doubles, [["edge", "Edge double", 1, 1.63]])   # B and C; D is alone on its day
+        self.assertEqual(sum(o[1] == "Edge single" for o in r["out"]), 4)
+
+    def test_the_plan_names_three_rungs_and_leaves_the_rest_out(self):
+        js = STUBS + "const window = {};\nconst D = {days: []}, OG = {rules: {card: {book: 'William Hill'}}, record: {card: {settled: 35, won: 11, staked: 35, returned: 30.72}}, days: []};\n" \
+            + page_functions() + "console.log(JSON.stringify({rungs: planRungs().map(r => [r.name, r.v]), html: signalsPanel()}));"
+        r = json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
+        self.assertEqual(r["rungs"], [["Edge singles", "Tested"], ["Edge double", "Tested"], ["The Card", "On trial"]])
+        self.assertIn("live 11 of 35, -12.2%", r["html"])
+        self.assertIn("No bet", r["html"])
+        self.assertIn("not in the plan", r["html"])
 
 
 if __name__ == "__main__":
