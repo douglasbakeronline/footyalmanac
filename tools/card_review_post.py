@@ -102,6 +102,12 @@ def edge_section(since="2026-11-11"):
                      if x.get("n") else "0 | | ")
     for sp, r in rep.items():
         out.append(f"| {'all sports' if sp == '_all' else sp} | {fmt(r['candidate'])} | {fmt(r['short'])} |")
+    rec = (load("record.json").get("edge") or {})
+    for k, lab in (("all", "every flagged football fixture graded (live and replayed on archived prices)"), ("live", "flagged as published, from 10 Nov")):
+        e = rec.get(k) or {}
+        if e.get("n"):
+            out.append(f"- Football flag, {lab}: {e['won']} of {e['n']} landed v {e['quoted'] * 100:.0f}% quoted, "
+                       f"{e['return'] * 100:+.1f}% at the average price, {e['returnBest'] * 100:+.1f}% at the best")
     return out + ["A sport earns the green flag only when a candidate passes: 100+ legs, landed above the bookmakers, "
                   "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
 

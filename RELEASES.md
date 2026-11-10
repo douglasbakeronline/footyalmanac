@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-8 The Edge flag's own record, on the page and in the review (tag pending)
+
+**What changed:** the green Edge flag now shows its own record on this site. `score.py` grades every flagged football fixture (`edge_record` in `record.json`): live flags as published from 10 Nov, and earlier fixtures flagged from the prices archived before kick-off. The flag's title and the row's green panel quote it ("27 of 34 landed against 76% quoted, -2.1% at the average price, +0.5% at the best"), and the nightly Card review prints it.
+
+**Evidence:** 34 graded flagged fixtures, 12 Sep to 8 Nov: 79.4% landed v 75.9% quoted. `tests/test_edge_record.py` (live v replayed, a published unflagged row never replayed, the tally, the summary key); suite 696 OK; `nametest.py` clear. Checked at 1280 and 400 wide.
+
+**Files:** `score.py`, `build.py`, `index.html`, `tools/card_review_post.py`, `tests/test_edge_record.py`, `claude/edge-flag-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the flag's rule, the model, the Card, any other record figure.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-7 The Edge flag tested on every sport (tag pending)
 
 **What changed:** nothing a reader sees. `tools/edge_sports.py` tests the green Edge flag's conditions on every sport's favourites in the priced pool, by price, gap to the market and the opposition's price, with two candidates (the flag without the opposition condition; the short favourite at 1.15-1.30) and a gate for switching a sport on. The nightly Card review prints every sport's line on legs from 11 Nov, out of sample (`card_review_post.edge_section`, no workflow change).

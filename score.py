@@ -449,6 +449,15 @@ def graded_rows(save=True):
         if save:
             save_settled(settled)
 
+    # 10 Nov 2026: the green Edge flag (groupings.edge_flag). A row archived
+    # with an "edge" key carried the flag as published ("live", from 10 Nov);
+    # earlier rows are flagged from the prices archived with them before
+    # kick-off ("replayed": the rule applied to what the page showed).
+    try:
+        import groupings as GR
+        flag_of = GR.edge_flag
+    except Exception:
+        flag_of = lambda g: None
     rows = []
     for key, g in preds.items():
         if key not in results:
@@ -473,8 +482,36 @@ def graded_rows(save=True):
             "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
             "score": tuple(g.get("score") or (-1, -1)), "result": (hg, ag),
             "published": g.get("published"), "kickoff": g.get("kickoff"),
+            "edge": edge_of(g, flag_of),
         })
     return preds, rows, results
+
+
+def edge_of(g, flag_of):
+    """The Edge flag a row carried (live) or would have carried on its
+    archived prices (replayed), compact, or None."""
+    live = "edge" in g
+    e = g.get("edge") if live else flag_of(g)
+    if not e: return None
+    return {"side": e["side"], "odds": e["odds"], "best": e["best"], "fair": e["fair"], "live": live}
+
+
+def edge_record(rows):
+    """The Edge flag's record: landed against the bookmakers' chance, return
+    per unit at the average and the best archived price, all flagged rows
+    and the live ones alone (10 Nov 2026)."""
+    def tally(rs):
+        if not rs: return {"n": 0}
+        n = len(rs); w = sum(r["actual"] == r["edge"]["side"] for r in rs)
+        q = sum(r["edge"]["fair"] for r in rs)
+        ret = sum(r["edge"]["odds"] for r in rs if r["actual"] == r["edge"]["side"])
+        best = sum(r["edge"]["best"] for r in rs if r["actual"] == r["edge"]["side"])
+        return {"n": n, "won": w, "expected": round(q, 2), "landed": rate(w, n), "quoted": round(q / n, 4),
+                "return": round(ret / n - 1, 4), "returnBest": round(best / n - 1, 4),
+                "from": min(r["date"] for r in rs), "to": max(r["date"] for r in rs)}
+    fl = [r for r in rows if r.get("edge")]
+    return {"all": tally(fl), "live": tally([r for r in fl if r["edge"]["live"]]),
+            "rule": __import__("groupings").EDGE_RULE if fl else None}
 
 
 
@@ -583,6 +620,8 @@ def main():
         "model": model_card(rows),
         "ladder": ladder(),
         "tiers": tier_table(rows),
+        # 10 Nov 2026: the green Edge flag's own record (edge_record)
+        "edge": edge_record(rows),
         # The Daily List on its own. Only fixtures archived with the flag set,
         # which means from the day the list was first published: membership is
         # never worked out afterwards from the numbers, because the list is
