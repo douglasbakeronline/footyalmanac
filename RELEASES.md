@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10: tennis Odds API keys, second look (tag pending)
+
+**What changed:** a note only. No code or page change.
+**Evidence:** the key list is still unavailable (no `ODDS_API_KEY` in the sandbox, no stored report), so no unmatched-but-listed tournament can be shown. The `--probe` logging already exists.
+**Files:** `claude/odds-api-tennis-keys-2026-11-10.md`.
+**Not changed:** `_odds_keys`, pricing, any model.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-10-34 Bets: the week ahead panel removed, one "Coming up" line instead (tag pending)
 
 **What changed.** Douglas (10 Nov 2026): the week ahead "is entirely
