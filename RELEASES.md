@@ -4,6 +4,28 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-33 Phone: the page no longer pans sideways in Safari (tag pending)
+
+**What changed.** Douglas (10 Nov 2026, iPhone, How it went): "still getting
+twitchy horizontal scroll". His screenshot shows the whole page panned about
+8px left. #214 clipped sideways overflow on `html` and `body`; Safari hands
+the root's overflow to the viewport and can still let a touch pan past it.
+The same `overflow-x: clip` now also sits on `.wrap`, the one box every tab
+lives in, which Safari honours as an ordinary element; sticky still works
+(clip makes no scroll container).
+
+**Checked.** In Chromium with the site's real fonts (from npm, as Google
+Fonts is blocked in the sandbox), at 390 and 320 on the Daily List, Bets,
+How it went, Football and Tennis with every fold open: no sideways scroll
+and nothing reaching outside `.wrap`, so the clip hides nothing meant to
+show; the tab bar still sticks. The offending element itself does not
+overflow in Chromium and Safari's engine could not be fetched here, so the
+check that matters is on the phone.
+
+**Files.** `index.html`.
+
+**Roll back.** `git revert` the release commit.
+
 ## 2026-11-10-32 Card review: the replay's coverage beside the record, Kelly read plainly (tag pending)
 
 **What changed.** Two lines in the nightly Card review issue, so it cannot
@@ -24,7 +46,6 @@ then, which read as a safe strategy. It now says so in words.
 counted, never fitted.
 
 **Roll back.** `git revert` the merge commit.
-
 
 ## 2026-11-10-31 Days at a glance on How it went (tag pending)
 

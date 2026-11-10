@@ -1569,9 +1569,16 @@ footer b{color:var(--ink-2)}
 }
 /* and a guard: nothing on a phone may widen the page itself; wide content
    scrolls inside its own box (tables, the week strip, the tab bar). clip
-   keeps position: sticky working, where hidden would not. */
+   keeps position: sticky working, where hidden would not.
+   10 Nov 2026 (Douglas, iPhone: "twitchy horizontal scroll"): Safari can
+   still pan the page sideways when the clip sits only on html and body (the
+   root's overflow is handed to the viewport, and iOS lets a touch pan past
+   it). The same clip on the page's one wrapper (.wrap) is an ordinary box,
+   which Safari honours; nothing on any tab is meant to reach outside it
+   (checked at 390 and 320 on every tab with every fold open). */
 @media (max-width:860px){
   html,body{overflow-x:clip}
+  .wrap{overflow-x:clip;max-width:100%}
   .views.resgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
   .views.resgrid button{min-width:0;overflow-wrap:anywhere;padding-left:6px;padding-right:6px}
 }
