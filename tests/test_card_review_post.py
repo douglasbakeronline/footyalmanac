@@ -35,5 +35,30 @@ class LegsBySport(unittest.TestCase):
         self.assertNotIn("Legs by sport", body)
 
 
+class Gate(unittest.TestCase):
+    def rep(self, **variants):
+        base = {"groups": 40, "won": 18, "expected": 15.0, "return": 1.1, "emptyDays": 2}
+        return {"from": "2026-11-10", "to": "2026-11-30", "days": 21,
+                "variants": {"live": dict(base, legs=130), **{k: dict(base, **v) for k, v in variants.items()}}}
+
+    def test_legs_gate_not_groups(self):
+        r = self.rep(short={"legs": 99, "pWorse": 0.1, "vsLivePerDay": 0.5}, uncapped={"legs": 140, "pWorse": 0.2, "vsLivePerDay": 0.3},
+                     opp7={"legs": 200, "pWorse": 0.4, "vsLivePerDay": 0.3}, rule5={"legs": 200, "pWorse": 0.1, "vsLivePerDay": -0.2})
+        self.assertEqual([v for v, _ in P.candidates(r)], ["uncapped"])
+
+    def test_review_lines(self):
+        r = self.rep(short={"legs": 60, "pWorse": 0.05, "vsLivePerDay": 1.2}, uncapped={"legs": 140, "pWorse": 0.2, "vsLivePerDay": 0.3})
+        files = {"card-replay.json": r}
+        posted = []
+        with mock.patch.object(P, "load", side_effect=lambda p: files.get(p, {})), \
+             mock.patch.object(P, "gh", side_effect=lambda *a: posted.append(a) or {}), \
+             mock.patch.object(P, "funnel_section", return_value=[]), mock.patch("builtins.print"):
+            P.main()
+        body = next(x for a in posted for x in a if isinstance(x, str) and x.startswith("body="))
+        self.assertIn("p(worse) <= 0.30 on 100+ legs):** uncapped", body)
+        self.assertIn("under the 100-leg gate (watch, do not act): short (60 legs)", body)
+        self.assertIn("| short | 40 | 18 | 15.0 | 60 |", body)
+
+
 if __name__ == "__main__":
     unittest.main()
