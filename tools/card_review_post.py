@@ -83,6 +83,29 @@ def funnel_section(today_=None, days=14):
                "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""])
 
 
+def edge_section(since="2026-11-11"):
+    """10 Nov 2026: the green Edge flag tested on every sport
+    (tools/edge_sports.py). The short-favourite candidate was registered on
+    the pool to 10 Nov, so it is judged only on legs from `since`, out of
+    sample. Read here, not in the workflow, so no workflow change."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import card_replay as CR, edge_sports as ES
+        by, _ = CR.pool_legs(since=since)
+        rep = ES.report(ES.favourites(by))
+    except Exception as e:   # advisory: never stop the review over it
+        return ["## Edge flag, every sport", f"Not read: {type(e).__name__}: {e}", ""]
+    out = [f"## Edge flag, every sport (pool from {since}, first real prices, out of sample)", "",
+           "| sport | candidate legs | landed v bookies | best-price return | short 1.15-1.30 legs | landed v bookies | best-price return |",
+           "|---|---|---|---|---|---|---|"]
+    fmt = lambda x: (f"{x['n']} | {x['landed'] * 100:.0f}% v {x['quoted'] * 100:.0f}% | {x['returnBest'] * 100:+.1f}%{' **passes**' if ES.passes(x) else ''}"
+                     if x.get("n") else "0 | | ")
+    for sp, r in rep.items():
+        out.append(f"| {'all sports' if sp == '_all' else sp} | {fmt(r['candidate'])} | {fmt(r['short'])} |")
+    return out + ["A sport earns the green flag only when a candidate passes: 100+ legs, landed above the bookmakers, "
+                  "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -151,6 +174,7 @@ def main():
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
     lines += funnel_section()
+    lines += edge_section()
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
     ensure_label("card-review", "c8102e", "The nightly Card review")
