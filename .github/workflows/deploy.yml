@@ -4,7 +4,7 @@ name: Rebuild and publish
 # when you have edited adjustments.json and want it live now.
 on:
   schedule:
-    # Six runs a day, timed to when results land rather than evenly spaced,
+    # Seven runs a day (six until 10 Nov 2026), timed to when results land rather than evenly spaced,
     # so the Daily List shows wins and losses within a couple of hours of a
     # game ending (Douglas, 7 Oct 2026). There is no in-play feed: a started
     # game shows as pending until the next run after its result is published.
@@ -17,6 +17,8 @@ on:
     #   00:10   01:10   00:10   just after API-Football's daily allowance resets
     #   05:15   06:15   05:15   the day's slate, after late South American games
     #                           (Brazil is UTC-3: a 20:00 local game runs past 23:00 UTC)
+    #   07:40   08:40   07:40   the morning briefing push (notify.py, 10 Nov 2026,
+    #                           Douglas bets around 8am, lunch, early evening, bedtime)
     #   12:00   13:00   12:00   Asian and Australian games, early European games
     #   17:00   18:00   17:00   UK 15:00 kick-offs and the afternoon tennis
     #   19:30   20:30   19:30   UK 17:30 kick-offs
@@ -27,6 +29,7 @@ on:
     # 7,500 daily allowance. AI credits are not used by this workflow.
     - cron: "10 0 * * *"
     - cron: "15 5 * * *"
+    - cron: "40 7 * * *"
     - cron: "0 12 * * *"
     - cron: "0 17 * * *"
     - cron: "30 19 * * *"

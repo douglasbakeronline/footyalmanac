@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-26 Four briefings a day, at Douglas's betting times (tag pending)
+
+**What changed:** the morning push becomes four, one per slot a UK day, timed to when Douglas places bets ("in the morning around 8am, around lunchtime, early evening and before I go to bed"): **morning** (the new 07:40 build: the day's list, Group A, the model treble, Edge picks, the Card), **lunch** (12:00 build) and **evening** (17:00 build: the day's tally so far, the strongest picks still to start, the treble from those, Edge picks not yet kicked off, open Card groups with Hill prices), and **night** (22:15 build: the same plus the overnight US slate to 08:00). Each slot is sent by the first build at or after its hour, only the latest due slot is sent (a late build never sends a stale one), and slots sent are kept in `groupings-archive/briefed.json`. A slot with nothing to back sends nothing. `deploy.yml` gains a 07:40 UTC run for the morning push (08:40 in summer); every paid source is capped by its own daily ledger, so the extra run cannot overspend.
+
+**Evidence:** `tests/test_morning_brief.py` (each slot's content, the tally from the record, the overnight cut-off, latest-slot-only, never twice, a new day starts clean). Suite 734 OK. Not sent from the cloud session; the first real one is the next build after merge.
+
+**Files:** `notify.py`, `.github/workflows/deploy.yml`, `tests/test_morning_brief.py`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card pushes, any pick, price or record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-25 A morning briefing to the phone (tag pending)
 
 **What changed:** once a UK day, the first build at or after 05:00 UK (normally the 05:15 build) sends a push through the same ntfy topic as the Card pushes: "Daily List, Tue 10 Nov: 15 picks", then Group A (the strongest picks at 85%+ with their start times), the model treble or double still to start (the week-ahead rule), the day's Edge picks with prices, and how many Card groups are open. Tapping it opens the site. The day sent is written to `groupings-archive/briefed.json`, which the build already commits, so a late or repeated build never sends it twice; a day with no list pick sends nothing. Display only.
