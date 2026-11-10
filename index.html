@@ -1006,6 +1006,32 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 14px var(--f-num);text-align:right;white-space:nowrap}
 .tb-pp small{display:block;font:500 11px var(--f-num);color:var(--mute)}
+/* 10 Nov 2026: "Place now" at the top of the Bets tab (signalsPanel) */
+.sig{margin:14px 0 6px;max-width:760px;border:1px solid var(--ink);background:var(--surface);padding:14px 16px 12px}
+.sig-h{font-family:var(--f-display);font-weight:400;font-size:22px;letter-spacing:.02em;text-transform:uppercase;line-height:1.1}
+.sig-h small{display:block;font:500 12px var(--f-ui);letter-spacing:0;text-transform:none;color:var(--mute);margin-top:3px}
+.sig-head{margin-top:10px;font-size:15px;line-height:1.45}
+.sig-b{margin-top:12px;padding:12px 0 2px;border-top:1px solid var(--rule)}
+.sig-t{display:flex;align-items:baseline;gap:10px}
+.sig-t b{font-size:17px;flex:1;min-width:0}
+.sig-o{font:700 20px var(--f-num)}
+.sig-v{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;white-space:nowrap}
+.sig-b.edge .sig-v{color:var(--edge)}
+.sig-b.card .sig-v{color:var(--draw-ink,#7a5c12)}
+.sig-b.wide .sig-v{color:var(--away)}
+.sig-s{margin-top:4px;font-size:12.5px;color:var(--mute)}
+.sig-l{list-style:none;margin:8px 0 0;padding:0}
+.sig-l li{display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:10px;padding:6px 0;border-top:1px solid var(--rule-soft)}
+.sig-l li b{font-size:15px}
+.sig-l li span{grid-column:1;font-size:12px;color:var(--mute)}
+.sig-l li em{grid-column:2;grid-row:1/span 2;font:600 16px var(--f-num);font-style:normal;text-align:right;white-space:nowrap}
+.sig-l li em small{display:block;font:500 10.5px var(--f-ui);color:var(--mute)}
+.sig-e{margin-top:6px;font-size:12.5px;line-height:1.45;color:var(--ink-2,var(--ink))}
+.sig-copy{margin:8px 0 6px;font:600 13px var(--f-ui);padding:8px 14px;border:1px solid var(--ink);background:var(--paper);color:var(--ink);cursor:pointer;min-height:40px}
+.sig-copy:hover{background:var(--yellow-soft)}
+.sig-later{margin-top:12px}
+.sig-later summary{cursor:pointer;font:600 13px var(--f-ui);color:var(--ink)}
+.sig-f{margin-top:12px;font-size:11.5px;color:var(--mute)}
 .tb-proof.edge>div b{color:var(--ink)}
 .tb-proof.edge>div span{color:var(--edge)}
 .tb-check{margin-top:12px;display:grid;gap:12px}
@@ -4393,6 +4419,103 @@ function edgeSection(date){
   </section>`;
 }
 
+/* 10 Nov 2026, Douglas ("accurate signalled bets to put on as I'm on the
+   train"): "Place now", the top of the Bets tab. Only bets that pass a rule
+   the site tests, still open (first start in the future), soonest first, each
+   with its William Hill price where Hill has one, the stake in units and
+   pounds, and the evidence behind it in one line, so the honest read is next
+   to the price, and a verdict: "Tested" for Edge singles, the best-tested
+   signal (five football-data seasons, +5.4% at the best price); "On trial"
+   for Card groups, the live rule, not yet shown to beat the price. The wider-rule filler is named as not a signal
+   (its replay is well under expectation, claude/card-fillers-2026-11-10.md).
+   When nothing qualifies it says "no bet" and when the next one is due. A
+   copy button puts the slip on the clipboard. Display only. */
+const SIG_HOURS = 24;
+function sigFirst(g){ const t = (g.legs || []).map(ogDate).filter(Boolean).map(d => d.getTime()); return t.length ? Math.min(...t) : null; }
+function sigPct(x){ return (x >= 0 ? "+" : "") + (Math.round(x * 1000) / 10).toFixed(1) + "%"; }
+function sigAt(ms){
+  const d = new Date(ms), uk = o => d.toLocaleString("en-GB", Object.assign({timeZone: "Europe/London"}, o));
+  const day = uk({year: "numeric", month: "numeric", day: "numeric"}) === new Date().toLocaleString("en-GB", {timeZone: "Europe/London", year: "numeric", month: "numeric", day: "numeric"});
+  return `${day ? "" : uk({weekday: "short"}) + " "}${uk({hour: "2-digit", minute: "2-digit"})}`;
+}
+function sigCardEvidence(){
+  const r = (OG && OG.record && OG.record.card) || {};
+  if(!r.settled) return "The live rule, no settled groups yet.";
+  const ret = r.staked ? (r.returned - r.staked) / r.staked : null;
+  return `On trial. Live: ${r.won} of ${r.settled} groups won against ${(+r.expected).toFixed(1)} expected${ret != null ? `, ${sigPct(ret)} at the average price` : ""}${Math.abs(r.z || 0) < 2 ? ": within chance of break-even, not yet an edge" : ""}.`;
+}
+function sigEdgeEvidence(){
+  const e = RS && RS.edge && RS.edge.all;
+  return `Tested over five seasons: 388 of 459 won, ${"+"}5.4% at the best price, +3.0% at the average.${e && e.n ? ` On this site ${e.won} of ${e.n}, ${sigPct(e.returnBest)} at the best.` : ""} Take the best price.`;
+}
+function sigList(now){
+  const out = [], skip = [];
+  const C = (OG && OG.rules && OG.rules.card) || {}, B = C.book || "William Hill";
+  (D.days || []).forEach(d => (d.games || []).forEach(g => {
+    if(!g.edge || !g.kickoff) return;
+    const t = new Date(g.kickoff).getTime(); if(!(t > now)) return;
+    const h = g.edge.side === "h", who = h ? g.home.name : g.away.name, vs = h ? g.away.name : g.home.name;
+    out.push({kind: "edge", at: t, title: "Edge single", units: 1, odds: g.edge.best, sub: `${compName(g)}`,
+      legs: [{pick: who, vs, at: t, price: g.edge.best, note: `best ${g.edge.best.toFixed(2)} · average ${g.edge.odds.toFixed(2)}`}],
+      why: `Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${vs} priced ${g.edge.opp.toFixed(2)}.`, ev: sigEdgeEvidence()});
+  }));
+  ((OG && OG.days) || []).forEach(d => d.groups.forEach(g => {
+    if(!String(g.name).startsWith("Card") || g.late || g.status === "underway" || g.status === "locked") return;
+    const t = sigFirst(g); if(!(t > now)) return;
+    const all = g.legs.every(l => (l.bookOdds || {})[B]);
+    const hill = all ? g.legs.reduce((a, l) => a * l.bookOdds[B], 1) : null;
+    const row = {kind: g.wide ? "wide" : "card", at: t, title: `${g.name}${g.seq > 1 ? " (second)" : ""}`, units: g.stake || 1,
+      odds: hill || g.odds, book: hill ? B : null, sub: `${g.legs.length} picks · ${hill ? `${B} ${hill.toFixed(2)}` : `average ${g.odds.toFixed(2)}; ${B} does not price every pick`}`,
+      legs: g.legs.map(l => { const p = (l.bookOdds || {})[B];
+        return {pick: l.pick, vs: (l.event || "").split(" v ").find(x => x !== l.pick) || "", at: (ogDate(l) || {getTime: () => null}).getTime(), tbc: l.timeEst,
+          price: p || l.odds, note: p ? B : `not at ${B} · average ${l.odds.toFixed(2)}${l.bestBook ? `, best ${ogEsc(l.bestBook)}` : ""}`}; }),
+      why: `Bookmakers give the group ${pct(g.p)}% to land.`, ev: sigCardEvidence()};
+    (g.wide ? skip : out).push(row);
+  }));
+  return {out: out.sort((a, b) => a.at - b.at), skip: skip.sort((a, b) => a.at - b.at)};
+}
+function sigSlip(s){
+  const st = ogStake() * s.units;
+  return [`${s.title} · ${s.units} unit${s.units === 1 ? "" : "s"} (£${st % 1 ? st.toFixed(2) : st}) · ${s.book ? s.book + " " : ""}${s.odds.toFixed(2)}`]
+    .concat(s.legs.map(l => `${l.pick} to win v ${l.vs} · ${l.price.toFixed(2)} · ${l.tbc ? "time TBC" : l.at ? sigAt(l.at) : ""}`)).join("\n");
+}
+function signalsPanel(){
+  const now = Date.now(), {out, skip} = sigList(now);
+  const soon = out.filter(s => s.at - now <= SIG_HOURS * 36e5), later = out.filter(s => s.at - now > SIG_HOURS * 36e5);
+  const units = soon.reduce((a, s) => a + s.units, 0);
+  const row = (s, i) => { const st = ogStake() * s.units;
+    return `<div class="sig-b ${s.kind}">
+      <div class="sig-t"><span class="sig-v">${s.kind === "edge" ? "Tested" : s.kind === "card" ? "On trial" : "Not a signal"}</span>
+        <b>${ogEsc(s.title)}</b><span class="sig-o">${s.odds.toFixed(2)}</span></div>
+      <div class="sig-s">${ogEsc(s.sub)} · stake ${s.units} unit${s.units === 1 ? "" : "s"}, £${st % 1 ? st.toFixed(2) : st} returns £${(st * s.odds).toFixed(2)} · first start ${sigAt(s.at)}</div>
+      <ul class="sig-l">${s.legs.map(l => `<li><b>${ogEsc(l.pick)}</b><span>v ${ogEsc(l.vs)} · ${l.tbc ? "time TBC" : l.at ? sigAt(l.at) : ""}</span><em>${l.price.toFixed(2)}<small>${l.note}</small></em></li>`).join("")}</ul>
+      <p class="sig-e">${ogEsc(s.why)} ${s.ev}</p>
+      ${s.kind === "wide" ? "" : `<button class="sig-copy" data-i="${i}" type="button">Copy slip</button>`}</div>`; };
+  const SIG = soon.concat(later); window.__SIG__ = SIG;
+  const next = later[0];
+  const head = soon.length
+    ? `<b>${soon.length} bet${soon.length === 1 ? "" : "s"} to place</b> in the next ${SIG_HOURS} hours, ${units} unit${units === 1 ? "" : "s"} in all, first at ${sigAt(soon[0].at)}`
+    : `<b>No bet to place</b> in the next ${SIG_HOURS} hours: no group clears the Card's rule and no football fixture carries the Edge flag.${next ? ` Next signal: ${ogEsc(next.title)}, ${sigAt(next.at)}.` : " Nothing signalled in the days built so far."} Sitting out is the rule working.`;
+  return `<section class="sig" aria-label="Place now"><h3 class="sig-h">Place now <small>only bets that pass a rule the site tests, still open, soonest first</small></h3>
+    <p class="sig-head">${head}</p>
+    ${soon.length ? soon.map((s, i) => row(s, i)).join("") : ""}
+    ${later.length ? `<details class="sig-later"${soon.length ? "" : " open"}><summary>Later this week: ${later.length}</summary>${later.map((s, i) => row(s, soon.length + i)).join("")}</details>` : ""}
+    ${skip.length ? `<details class="sig-later"><summary>Not a signal: ${skip.length} wider-rule group${skip.length === 1 ? "" : "s"}</summary>
+      <p class="sig-e">Built on days the full rule leaves empty. On the replay at first real prices (10 Nov) it won 3 of 15 groups against 5.1 expected, -46%; live ${(() => { const w = (OG.record || {}).cardWide || {}; return w.settled ? `${w.won} of ${w.settled}` : "none settled"; })()}. Shown for completeness, not to bet.</p>
+      ${skip.map(s => row(s, -1)).join("")}</details>` : ""}
+    <p class="sig-f">Prices move: each is the last read, so check it at the bookmaker before placing. One unit is the stake box below. Not betting advice.</p></section>`;
+}
+function sigWire(host){
+  host.querySelectorAll(".sig-copy").forEach(b => b.onclick = async () => {
+    const s = (window.__SIG__ || [])[+b.dataset.i]; if(!s) return;
+    const txt = sigSlip(s);
+    try { await navigator.clipboard.writeText(txt); b.textContent = "Copied"; }
+    catch(e){ const t = document.createElement("textarea"); t.value = txt; document.body.appendChild(t); t.select();
+      try { document.execCommand("copy"); b.textContent = "Copied"; } catch(err){ b.textContent = "Copy failed"; } t.remove(); }
+    setTimeout(() => { b.textContent = "Copy slip"; }, 2000);
+  });
+}
+
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
@@ -4422,7 +4545,7 @@ function renderToday(){
             : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
-  host.innerHTML = `<div class="lede"><h2>Bets</h2>
+  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${signalsPanel()}<div class="lede">
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
@@ -4480,6 +4603,7 @@ function renderToday(){
       </ol></details>
     <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ogFill(host);
+  sigWire(host);
   accaMount($("#acca"));
   host.querySelectorAll(".og-add").forEach(btn => btn.onclick = () => accaAdd(btn.dataset.pick, +btn.dataset.odds));
   host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {
