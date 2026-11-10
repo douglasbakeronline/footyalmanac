@@ -1235,6 +1235,68 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .hon-key .kd{width:8px;height:8px;border-radius:50%;background:var(--home)}
 .hon-key .kc{width:5px;height:12px;border-radius:3px;background:var(--home);opacity:.22}
 .hon-foot{margin:10px 0 0;font-size:12px;color:var(--mute)}
+/* The week ahead (10 Nov 2026): seven day cards in a strip, a bar of the
+   day's picks by sport scaled to the busiest day, the strongest model group's
+   chance as a number and a meter; the chosen day opens below. Paper palette,
+   1px rules only. */
+.week{margin:16px 0 22px;border:1px solid var(--rule);background:var(--surface)}
+.wk-head{padding:16px 18px 10px}
+.wk-head h3{font-family:var(--f-display);font-size:22px;font-weight:400;text-transform:uppercase;letter-spacing:.01em;margin:0 0 4px}
+.wk-head p{margin:0;max-width:78ch;line-height:1.5;color:var(--ink-2)}
+.wk-strip{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.wk-day{all:unset;box-sizing:border-box;display:flex;flex-direction:column;gap:3px;padding:12px 12px 12px;cursor:pointer;
+  border-right:1px solid var(--rule-soft);background:var(--surface);min-width:0}
+.wk-day:last-child{border-right:0}
+.wk-day:hover{background:var(--paper)}
+.wk-day:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.wk-day.on{background:var(--cover-ink);color:var(--paper)}
+.wk-day.on .wk-dd,.wk-day.on .wk-n,.wk-day.on .wk-ch{color:var(--yellow-soft)}
+.wk-day.none{color:var(--mute)}
+.wk-dn{font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase}
+.wk-day.on .wk-dn{color:var(--yellow)}
+.wk-dd{font-family:var(--f-num);font-size:11px;color:var(--mute)}
+.wk-n{font-family:var(--f-num);font-size:11.5px;color:var(--ink-2);margin-top:6px}
+.wk-n b{font-size:20px;font-weight:600;letter-spacing:-.03em;margin-right:3px}
+.wk-mix{display:flex;height:6px;gap:1px;margin:2px 0 8px;min-width:18%}
+.wk-mix i{display:block;height:100%}
+.wk-g{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}
+.wk-ch{font-family:var(--f-num);font-size:11.5px;color:var(--ink-2)}
+.wk-ch b{font-size:17px;font-weight:600;letter-spacing:-.02em}
+.wk-meter{display:block;height:3px;background:var(--rule-soft);margin-top:4px}
+.wk-meter i{display:block;height:100%;background:var(--edge)}
+.wk-day.on .wk-meter{background:#4a4038}
+.wk-day.on .wk-meter i{background:var(--yellow)}
+.wk-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:8px 18px 0;font-size:12px;color:var(--mute)}
+.wk-legend i{display:inline-block;width:10px;height:6px;margin-right:5px;vertical-align:middle}
+.wk-detail{padding:12px 18px 16px}
+.wk-detail h4{font-family:var(--f-ui);font-size:15px;font-weight:700;margin:4px 0 10px}
+.wk-detail h4 small{font-weight:500;color:var(--mute);margin-left:8px;font-size:13px}
+.wk-grps{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.wk-grp{border:1px solid var(--rule-soft);background:var(--paper);padding:10px 12px}
+.wk-gh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-bottom:6px}
+.wk-gh b{font-family:var(--f-ui);font-size:14px;text-transform:uppercase;letter-spacing:.05em}
+.wk-gh span{font-size:13px;color:var(--ink-2)}
+.wk-gh .wk-px{margin-left:auto;font-family:var(--f-num);font-size:12px;color:var(--mute)}
+.wk-gh .wk-px b{font-family:var(--f-num);font-size:13px;color:var(--ink);text-transform:none;letter-spacing:0}
+.wk-grp ol{list-style:none;margin:0;padding:0}
+.wk-grp li{display:grid;grid-template-columns:20px minmax(0,1fr) auto auto;gap:8px;align-items:center;padding:6px 0;border-top:1px solid var(--rule-soft)}
+.wk-i{font-family:var(--f-num);font-size:11px;font-weight:600;background:var(--cover-ink);color:var(--yellow);text-align:center;line-height:18px}
+.wk-p{min-width:0;font-size:14px;line-height:1.3}
+.wk-p small{display:block;font-size:12px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wk-c{font-family:var(--f-num);font-weight:600;font-size:14px}
+.wk-grp .bkchip{margin-top:0}
+.wk-empty{color:var(--ink-2);margin:0 0 8px}
+.wk-note{margin:12px 0 0;font-size:12.5px;line-height:1.5;color:var(--mute);max-width:90ch}
+@media (max-width:860px){
+  .wk-head{padding:14px 12px 8px}
+  .wk-strip{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch}
+  .wk-day{flex:0 0 31%;scroll-snap-align:start;padding:10px 10px 12px}
+  .wk-legend{padding:8px 12px 0}
+  .wk-detail{padding:10px 12px 14px}
+  .wk-grps{grid-template-columns:1fr}
+  .wk-grp li{grid-template-columns:20px minmax(0,1fr) auto}
+  .wk-grp li .bkchip{grid-column:2;justify-self:start}
+}
 @media (max-width:860px){.hon-grid{grid-template-columns:1fr}.hon-grid figcaption{min-height:0}.honest{padding:14px 12px 12px}
   .honest .ht{font-size:12.5px}.honest .ht.hs{font-size:11px}}
 .edgecount{font-weight:700}   /* inherits the day band's colour: green on the red band was illegible */
@@ -2487,6 +2549,40 @@ const itemHill = it => it.kind === "football"
   ? hillPrice("football", it.g.home.name, it.g.away.name)
   : hillPrice(it.g.sport, it.g.home && it.g.home.name || it.g.home, it.g.away && it.g.away.name || it.g.away);
 
+/* Every Daily List pick (and reserve) per UK day, every sport, with today's
+   started picks taken from the pinned list. Shared by the list and the Bets
+   tab's week ahead (10 Nov 2026), so both read the same picks. */
+function listCollect(){
+  const byDay = {}, resDay = {};
+  const add = (bucket, date, item) => (bucket[date] = bucket[date] || []).push(item);
+  const fDay = (g, day) => g.kickoff ? localDay(g.kickoff) : day.date;
+  upcoming.forEach(day => day.games.forEach(g =>
+    g.list ? add(byDay, fDay(g, day), {kind:"football", g, day})
+           : g.reserve && add(resDay, fDay(g, day), {kind:"football", g, day})));
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g =>
+    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
+           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g})));
+  const TDL = window.__TENNIS_DATA__;
+  if(TDL && TDL.matches) TDL.matches.map(tennisAsGame).forEach(g =>
+    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
+           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g}));
+  // Today's list stays put (daylist.py, 5 Oct 2026). The live files only carry
+  // games that have not started, so a day's picks used to vanish at kick-off.
+  // Once a pick starts it comes from the archive, frozen as it was published
+  // before the start, with its result from the record when one has landed.
+  const DL = window.__DAY_LIST__;
+  if(DL && DL.date && DL.date === localDay(new Date().toISOString())){
+    const nowMs = Date.now(), nm = s => String(s || "").toLowerCase();
+    const idOf = it => it.kind === "football"
+      ? `football|${nm(it.g.home.name)}|${nm(it.g.away.name)}` : `${it.g.sport}|${nm(it.g.home)}|${nm(it.g.away)}`;
+    const pins = [...(DL.list || []), ...(DL.reserve || [])]
+      .filter(p => p.status !== "upcoming" || Date.parse(p.start) <= nowMs);
+    const pinIds = new Set(pins.map(p => `${p.sport}|${nm(p.home)}|${nm(p.away)}`));
+    [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
+    pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
+  }
+  return {byDay, resDay};
+}
 function renderList(){
   const host = $("#list");
   if(!host) return;
@@ -2563,33 +2659,7 @@ function renderList(){
   // The fold opens by itself on a thin day (under LIST_TARGET picks), so a
   // day still offers a full slate; on a full day it waits to be asked.
   const LIST_TARGET = 20;
-  const byDay = {}, resDay = {};
-  const add = (bucket, date, item) => (bucket[date] = bucket[date] || []).push(item);
-  const fDay = (g, day) => g.kickoff ? localDay(g.kickoff) : day.date;
-  upcoming.forEach(day => day.games.forEach(g =>
-    g.list ? add(byDay, fDay(g, day), {kind:"football", g, day})
-           : g.reserve && add(resDay, fDay(g, day), {kind:"football", g, day})));
-  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g =>
-    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
-           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g})));
-  if(TDL && TDL.matches) TDL.matches.map(tennisAsGame).forEach(g =>
-    g.list ? add(byDay, localDay(g.when), {kind:"sport", g})
-           : g.reserve && add(resDay, localDay(g.when), {kind:"sport", g}));
-  // Today's list stays put (daylist.py, 5 Oct 2026). The live files only carry
-  // games that have not started, so a day's picks used to vanish at kick-off.
-  // Once a pick starts it comes from the archive, frozen as it was published
-  // before the start, with its result from the record when one has landed.
-  const DL = window.__DAY_LIST__;
-  if(DL && DL.date && DL.date === localDay(new Date().toISOString())){
-    const nowMs = Date.now(), nm = s => String(s || "").toLowerCase();
-    const idOf = it => it.kind === "football"
-      ? `football|${nm(it.g.home.name)}|${nm(it.g.away.name)}` : `${it.g.sport}|${nm(it.g.home)}|${nm(it.g.away)}`;
-    const pins = [...(DL.list || []), ...(DL.reserve || [])]
-      .filter(p => p.status !== "upcoming" || Date.parse(p.start) <= nowMs);
-    const pinIds = new Set(pins.map(p => `${p.sport}|${nm(p.home)}|${nm(p.away)}`));
-    [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
-    pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
-  }
+  const {byDay, resDay} = listCollect();
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
   // as daylist.strength.
@@ -4516,10 +4586,126 @@ function sigWire(host){
   });
 }
 
+/* ---------- the week ahead (10 Nov 2026) ----------
+   Douglas: "a 7 day forecast ... clear insight into what days will have what
+   bets ... rely on the model and its accurate performance." Each day's
+   strongest Daily List picks by the model's own confidence, same sport
+   allowed, no bookmaker condition: the Model double (the top two) and the
+   Model treble (the top three) of picks still to start. The chance shown is
+   the product of the model's numbers, which the list's record says land as
+   quoted (How it went, "Is the list honest?"). The track record of exactly
+   this rule is computed from the graded list (published before the start),
+   so the panel's claim can be checked on the page. Nothing here is staked,
+   pushed or fitted; the Card below is unchanged. */
+let WEEK_DAY = null;
+const WEEK_SPORTS = [["football", "Football", "var(--home)"], ["tennis", "Tennis", "var(--gold)"],
+  ["ncaab", "College basketball", "var(--away)"], ["nba", "NBA", "#c45a2a"], ["us", "Other US", "var(--mute)"], ["rugby", "Rugby", "var(--edge)"]];
+function weekPick(it){
+  const g = it.g, pinned = it.kind === "pinned";
+  if(it.kind === "football"){
+    const side = (g.p.h >= g.p.a) ? "h" : "a";
+    return {sport:"football", label:"Football", pick: side === "h" ? g.home.name : g.away.name, opp: side === "h" ? g.away.name : g.home.name,
+            home:g.home.name, away:g.away.name, conf:g.confidence, when:g.kickoff, comp:compName(g), started:false};
+  }
+  const sp = g.sport, label = sp === "football" ? "Football" : sp === "tennis" ? "Tennis" : (SD && SD.sports && SD.sports[sp] ? SD.sports[sp].name : String(sp).toUpperCase());
+  const st = pinned ? (Date.parse(g.start) <= Date.now() || g.result) : Date.parse(g.when) <= Date.now();
+  return {sport:sp, label, pick:g.pick, opp: g.pick === g.home ? g.away : g.home, home:g.home, away:g.away, conf:g.confidence,
+          when: g.start || g.when, comp: g.comp || g.label || "", started: !!st, status: pinned ? g.status : null};
+}
+const weekBucket = sp => ["football", "tennis", "ncaab", "nba", "rugby"].includes(sp) ? sp : "us";
+function weekDays(){
+  const {byDay} = listCollect();
+  const out = [];
+  for(let i = 0; i < 7; i++){
+    const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
+    const picks = (byDay[date] || []).map(weekPick).filter(x => x.conf).sort((a, b) => b.conf - a.conf);
+    const open = picks.filter(x => !x.started);
+    const prod = xs => xs.reduce((a, x) => a * x.conf, 1);
+    const hill = xs => { const ps = xs.map(x => hillPrice(x.sport, x.home, x.away)); return ps.every(Boolean) ? ps.reduce((a, b) => a * b, 1) : null; };
+    const groups = [];
+    if(open.length >= 3) groups.push({name:"Model treble", legs:open.slice(0, 3), chance:prod(open.slice(0, 3)), hill:hill(open.slice(0, 3))});
+    if(open.length >= 2) groups.push({name:"Model double", legs:open.slice(0, 2), chance:prod(open.slice(0, 2)), hill:hill(open.slice(0, 2))});
+    if(open.length === 1) groups.push({name:"Model single", legs:open.slice(0, 1), chance:open[0].conf, hill:hill(open)});
+    const mix = {}; picks.forEach(x => { const b = weekBucket(x.sport); mix[b] = (mix[b] || 0) + 1; });
+    out.push({date, i, picks, open, groups, mix});
+  }
+  return out;
+}
+// The same rule on the graded list: each past day's strongest settled picks.
+function weekRecord(){
+  if(typeof recordsState === "undefined" || recordsState !== "ready") return null;
+  const today = localDay(new Date().toISOString());
+  const t = {2:{n:0, won:0, q:0}, 3:{n:0, won:0, q:0}};
+  listReviewDays().filter(d => d.date < today).forEach(d => {
+    const xs = d.items.filter(x => (x.status === "won" || x.status === "lost") && x.conf).sort((a, b) => b.conf - a.conf);
+    [2, 3].forEach(k => { if(xs.length < k) return; const top = xs.slice(0, k);
+      t[k].n++; t[k].won += top.every(x => x.status === "won"); t[k].q += top.reduce((a, x) => a * x.conf, 1); });
+  });
+  return t;
+}
+function weekAhead(){
+  const days = weekDays();
+  if(!days.some(d => d.picks.length)) return "";
+  if(!WEEK_DAY || !days.some(d => d.date === WEEK_DAY)) WEEK_DAY = (days.find(d => d.groups.length) || days[0]).date;
+  const sel = days.find(d => d.date === WEEK_DAY);
+  const withBet = days.filter(d => d.groups.length).length, total = days.reduce((a, d) => a + d.picks.length, 0);
+  const dname = d => d.i === 0 ? "Today" : d.i === 1 ? "Tomorrow" : new Date(d.date + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short"});
+  const dnum = d => new Date(d.date + "T12:00:00").toLocaleDateString("en-GB", {day:"numeric", month:"short"});
+  const maxN = Math.max(1, ...days.map(d => d.picks.length));
+  const card = d => {
+    const best = d.groups[0];
+    const bar = d.picks.length ? WEEK_SPORTS.filter(([k]) => d.mix[k]).map(([k, lab, c]) =>
+      `<i style="flex:${d.mix[k]};background:${c}" title="${lab}: ${d.mix[k]}"></i>`).join("") : "";
+    return `<button type="button" class="wk-day${d.date === WEEK_DAY ? " on" : ""}${best ? "" : " none"}" data-wkday="${d.date}" aria-pressed="${d.date === WEEK_DAY}">
+      <span class="wk-dn">${dname(d)}</span><span class="wk-dd">${dnum(d)}</span>
+      <span class="wk-n"><b>${d.picks.length}</b> pick${d.picks.length === 1 ? "" : "s"}</span>
+      <span class="wk-mix" style="width:${Math.max(18, Math.round(d.picks.length / maxN * 100))}%">${bar}</span>
+      ${best ? `<span class="wk-g">${best.name.replace("Model ", "")}</span>
+        <span class="wk-ch"><b>${pct(best.chance)}%</b> to land</span>
+        <span class="wk-meter"><i style="width:${pct(best.chance)}%"></i></span>`
+        : `<span class="wk-g">${d.picks.length ? "All started" : "No pick"}</span><span class="wk-ch">${d.picks.length ? "nothing left to back" : "clears the bar yet"}</span><span class="wk-meter"></span>`}
+    </button>`;
+  };
+  const leg = (x, j) => `<li><span class="wk-i">${j + 1}</span><span class="wk-p"><b>${x.pick}</b> to beat ${x.opp}
+      <small>${x.label}${x.comp ? " · " + x.comp : ""} · ${x.when ? localTime(x.when) : "time TBC"}</small></span>
+      <span class="wk-c">${pct(x.conf)}%</span>${hillChip(x.sport, x.home, x.away)}</li>`;
+  const grp = g => `<div class="wk-grp"><div class="wk-gh"><b>${g.name}</b><span>${pct(g.chance)}% the model says all ${g.legs.length === 1 ? "lands" : g.legs.length + " land"}</span>
+      <span class="wk-px">${g.hill ? `William Hill about <b>${g.hill.toFixed(2)}</b>` : "Prices on the day"}</span></div>
+      <ol>${g.legs.map(leg).join("")}</ol></div>`;
+  const rec = weekRecord();
+  const recLine = rec ? [2, 3].filter(k => rec[k].n).map(k => `${k === 2 ? "double" : "treble"} <b>${rec[k].won} of ${rec[k].n}</b> days (${pct(rec[k].won / rec[k].n)}% v ${pct(rec[k].q / rec[k].n)}% quoted)`).join(", ")
+    : "";
+  const legend = WEEK_SPORTS.filter(([k]) => days.some(d => d.mix[k])).map(([, lab, c]) => `<span><i style="background:${c}"></i>${lab}</span>`).join("");
+  return `<section class="week" id="weekAhead" aria-labelledby="wk-h">
+    <div class="wk-head"><h3 id="wk-h">The week ahead</h3>
+      <p><b>${total}</b> Daily List picks over the next 7 days; a model bet on <b>${withBet} of 7</b> days.
+      Chosen by the model's confidence alone, same sport allowed, no bookmaker condition.</p></div>
+    <div class="wk-strip" role="group" aria-label="Pick a day">${days.map(card).join("")}</div>
+    <div class="wk-legend">${legend}</div>
+    <div class="wk-detail">
+      <h4>${sel.i === 0 ? "Today" : new Date(sel.date + "T12:00:00").toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long"})}
+        <small>${sel.picks.length} list pick${sel.picks.length === 1 ? "" : "s"}${sel.picks.length - sel.open.length ? ` · ${sel.picks.length - sel.open.length} already started` : ""}</small></h4>
+      ${sel.groups.length ? `<div class="wk-grps">${sel.groups.map(grp).join("")}</div>`
+        : `<p class="wk-empty">${sel.picks.length ? "Every list pick on this day has started." : "No pick clears the Daily List bar on this day yet. Later days fill as each sport publishes; nothing is padded to make a bet."}</p>`}
+      <p class="wk-note">The double is the day's two strongest picks still to start, the treble the top three, ordered as the Daily List orders them.
+        ${recLine ? `On the graded list, the same rule's ${recLine}.` : `<span class="wk-rec" data-wkrec>Track record loading…</span>`}
+        Picks published days ahead can change as the model sees new results; the list on the day is the one to back.
+        The model's chance is not the bookmakers': at list prices (around 1.10 a pick) the margin compounds with every leg, so check the price before placing.</p>
+    </div>
+  </section>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-wkday]"); if(!b) return;
+  WEEK_DAY = b.dataset.wkday;
+  const el = document.getElementById("weekAhead"); if(el) el.outerHTML = weekAhead();
+});
 function renderToday(){
   const host = $("#today"); if(!host) return;
+  // the week ahead's track record needs the graded list (loaded on demand)
+  if(typeof recordsState !== "undefined" && recordsState !== "ready")
+    loadRecords(() => { const el = document.getElementById("weekAhead"); if(el) el.outerHTML = weekAhead(); });
   if(!OG || !(OG.days || []).length){
-    host.innerHTML = `<div class="lede"><h2>Bets</h2></div><div class="empty">No card in this build yet. It appears after the next build.</div>`;
+    host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekAhead()}<div class="empty">No card in this build yet. It appears after the next build.</div>`;
     return;
   }
   if(!OG_DAY || !OG.days.some(d => d.date === OG_DAY)) OG_DAY = OG.days[0].date;
@@ -4545,7 +4731,7 @@ function renderToday(){
             : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
-  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${signalsPanel()}<div class="lede">
+  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekAhead()}${signalsPanel()}<div class="lede">
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
