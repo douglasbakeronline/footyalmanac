@@ -4,6 +4,26 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-18 "Is the list honest?" in How it went (tag pending)
+
+**What changed:** How it went, Daily List, now opens with two charts under the scoreline. **Quoted against landed:** for each confidence band (80-85, 85-90, 90-95, 95+), the average quote as a bar and what landed as a dot, with the 90% range chance alone allows for that many picks; a band whose quote sits above its range turns the dot red. **Landed minus expected:** a running total across every list day, inside the shaded band chance alone allows. A one-line verdict above them ("on quote, within what chance alone would give", in standard errors). Built from the graded picks already on the page; nothing fitted (Rule 1).
+
+**Evidence:** on the record at 10 Nov: 182 of 199 settled list picks landed (91%) against 89% quoted, +1.3 standard errors, on quote; every band's quote inside its range. Checked at 390 and 1280 wide. `tests/test_list_honesty.py` (the Wilson range, the 20-pick guard, the verdict) in node. Suite OK.
+
+**Files:** `index.html`, `tests/test_list_honesty.py`, `RELEASES.md`.
+
+**Not changed:** the record, the list, any number on it.
+
+**Roll back:** `git revert` the merge commit.
+
+## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
+
+**What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
+**Evidence:** reserve 13 Oct to 10 Nov, 379 settled: 242 landed v 256.8 expected (z -1.64). Home picks 203 v 222.0 (z -2.26), away 39 v 34.8; wider-league (`af.*`) picks 161 v 176.7; bands all slightly under, none alone significant; no league has 12 picks. The same leagues' list picks land on quote (93 v 93.6). The wider leagues are not in the replay, so no fit/check test of an exclusion or tilt is possible (Rule 3); a live-only exclusion would fit on the scoreboard (Rule 1).
+**Files:** claude/reserve-football-gap-2026-11-10.md, RELEASES.md.
+**Not changed:** reserve floor (62%), list bars, probabilities, grading.
+**Roll back:** revert the commit.
+
 ## 2026-11-10-17 Live scores on the Daily List (tag pending)
 
 **What changed:** a started Daily List pick in the US sports (college basketball, NBA, NFL, college football, NHL, MLB, WNBA) now shows its live score in the middle of the row, coloured by the pick's position (green ahead, red behind, gold level), with the clock; a finished game shows "Final" with an outline until the next build grades it. The day heading adds a live line: how many picks are ahead, behind and level, and the finished-but-ungraded tally. The page reads ESPN's public scoreboard (the source these sports are rated and graded from) once a minute while it is open and visible, one call per sport and US day, and stops when every watched game is final. Display only and marked unofficial: the record still grades from the build. `daylist.py` now carries each pinned pick's ESPN feed.
@@ -28,14 +48,6 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** grading rules, ratings, the record's history.
 
 **Roll back:** `git revert` the merge commit.
-
-## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
-
-**What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
-**Evidence:** reserve 13 Oct to 10 Nov, 379 settled: 242 landed v 256.8 expected (z -1.64). Home picks 203 v 222.0 (z -2.26), away 39 v 34.8; wider-league (`af.*`) picks 161 v 176.7; bands all slightly under, none alone significant; no league has 12 picks. The same leagues' list picks land on quote (93 v 93.6). The wider leagues are not in the replay, so no fit/check test of an exclusion or tilt is possible (Rule 3); a live-only exclusion would fit on the scoreboard (Rule 1).
-**Files:** claude/reserve-football-gap-2026-11-10.md, RELEASES.md.
-**Not changed:** reserve floor (62%), list bars, probabilities, grading.
-**Roll back:** revert the commit.
 
 ## 2026-11-10: Card stake line, tested and not built (tag pending)
 
