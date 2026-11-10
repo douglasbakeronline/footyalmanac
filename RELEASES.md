@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-14 Card over 2022-25: task already answered, index note (tag pending)
+
+**What changed:** notes only, `claude/card-seasons-recheck-2026-11-10.md`, pointing each requested table (legs v quote, singles, gap band, opposition band, Card return, losing months) to its place in `claude/card-seasons-2026-11-09.md`. No rerun: the sandbox cannot fetch football-data.
+**Evidence:** none new; the 9 Nov CI runs 42543472973 and 42546496524 stand. No gate met, no rule changed.
+**Files:** `claude/card-seasons-recheck-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** code, model, Card rules.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-10-13 Edge picks on the Bets tab, with five seasons of accumulators behind them (tag pending)
 
 **What changed:** the Bets tab has an **Edge picks** section under the card: every football fixture with the green Edge flag for the chosen day, its average and best price and the opposition's price, then the Edge double and every Edge pick as one slip, priced at the average and the best price with the bookmakers' chance each lands, and what each did when tested. The test is new: `tools/card_legs_history.py` (`edge_legs`, `edge_accas`) replays the flag's legs as singles, doubles, trebles, four-folds and whole-day slips on every football-data season; `build.edge_tested` hands the latest seasons to the page (`edgeTested`).
