@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-5 Daily List picks as accumulators, measured (tag pending)
+
+**What changed:** nothing a reader sees. `tools/list_accas.py` measures Daily List picks combined into accumulators: the top N of each day on the graded record (landed v quoted) and on the priced pool (return at the average price beside the bookmakers' own expectation). Douglas asked after losing on accumulators of list picks.
+
+**Evidence:** `claude/list-accas-2026-11-10.md`. 458 graded list picks land as quoted (85.8% v 84.9%), and combined they still do (top 5: 48% v 58% on 27 days; top 8: 40% v 40%). The loss is the price: 118 priced list picks, average 1.12, margin 5.3%, singles -0.5%; the bookmakers' own expectation for an accumulator is about -5% a leg, compounding to -41% at ten. `tests/test_list_accas.py`; suite OK (683); `nametest.py` clear.
+
+**Files:** `tools/list_accas.py`, `tests/test_list_accas.py`, `claude/list-accas-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Daily List, the Card, any constant, any record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-4 The empty-day fillers replayed, the page's own fallback included (tag pending)
 
 **What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers four empty-day fillers for the 30 Nov review (issue #155): `fillwide` (the page's wider-rule fallback, which the replay had never built), `fillopp7`, `fillrule5`, `fillshort`. Each is live exactly, plus groups under the filler only on a day the full rule leaves empty, with the filler's own groups reported apart (`fill`). The nightly Card review prints each filler on its own days and gates a filler on its own legs (`card_review_post.fill_lines`, `gate_legs`). `tools/card_legs_history.py` replays `fillwide`, `fillrule5` and `fillopp7` on every football-data season (first numbers from `tune.yml` on 16 Nov).
