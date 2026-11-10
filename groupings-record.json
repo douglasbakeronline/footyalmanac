@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-10T03:23:16Z",
+ "graded": "2026-11-10T03:40:47Z",
  "overall": {
   "groups": 128,
   "settled": 128,
@@ -58,6 +58,74 @@
    "quoted": 0.7185,
    "z": -0.59,
    "tripwire": false
+  }
+ },
+ "listAtBook": {
+  "book": "William Hill",
+  "from": "2026-11-10",
+  "atBook": {
+   "n": 0,
+   "won": 0
+  },
+  "notAtBook": {
+   "n": 0,
+   "won": 0
+  },
+  "unchecked": {
+   "n": 0,
+   "won": 0
+  },
+  "bySport": {},
+  "picks": {
+   "ncaab|georgetown hoyas|delaware state hornets|2026-11-10": 0,
+   "nba|new york knicks|milwaukee bucks|2026-11-11": 1.07,
+   "ncaab|the citadel bulldogs|virginia lynchburg dragons|2026-11-11": -1,
+   "ncaab|villanova wildcats|la salle explorers|2026-11-11": 0,
+   "ncaab|rhode island rams|maine black bears|2026-11-11": 0,
+   "ncaab|nc state wolfpack|presbyterian blue hose|2026-11-11": 0,
+   "ncaab|boston college eagles|maryland eastern shore hawks|2026-11-11": 0,
+   "ncaab|providence friars|bryant bulldogs|2026-11-11": 0,
+   "ncaab|vanderbilt commodores|memphis tigers|2026-11-11": 0,
+   "ncaab|central arkansas bears|ecclesia royals|2026-11-11": -1,
+   "ncaab|iowa state cyclones|southern jaguars|2026-11-11": 0,
+   "ncaab|murray state racers|alcorn state braves|2026-11-11": 0,
+   "ncaab|texas a&m-corpus christi islanders|dallas christian crusaders|2026-11-11": -1,
+   "ncaab|wisconsin badgers|fairfield stags|2026-11-11": 0,
+   "ncaab|ole miss rebels|se louisiana lions|2026-11-11": 0,
+   "ncaab|arizona wildcats|northern arizona lumberjacks|2026-11-11": 0,
+   "ncaab|virginia cavaliers|bucknell bison|2026-11-11": 0,
+   "ncaab|utah state aggies|utah tech trailblazers|2026-11-11": 0,
+   "ncaab|new mexico lobos|little rock trojans|2026-11-11": 0,
+   "ncaab|tcu horned frogs|ul monroe warhawks|2026-11-11": 0,
+   "ncaab|uc davis aggies|incarnate word cardinals|2026-11-11": -1,
+   "ncaab|san diego state aztecs|bethune-cookman wildcats|2026-11-11": -1,
+   "ncaab|western carolina catamounts|virginia lynchburg dragons|2026-11-11": -1,
+   "football|ghana|somalia|2026-11-12": 1.07,
+   "football|senegal|sudan|2026-11-12": 1.1,
+   "nba|chicago bulls|san antonio spurs|2026-11-12": -1,
+   "ncaab|st. john's red storm|colgate raiders|2026-11-12": -1,
+   "ncaab|michigan wolverines|marquette golden eagles|2026-11-12": -1,
+   "ncaab|vcu rams|njit highlanders|2026-11-12": -1,
+   "ncaab|houston cougars|jacksonville state gamecocks|2026-11-12": -1,
+   "ncaab|arkansas razorbacks|robert morris colonials|2026-11-12": -1,
+   "ncaab|tulsa golden hurricane|oral roberts golden eagles|2026-11-12": -1,
+   "ncaab|southern miss golden eagles|jackson state tigers|2026-11-12": -1,
+   "ncaab|ucla bruins|arkansas-pine bluff golden lions|2026-11-12": -1,
+   "ncaab|boise state broncos|oakland golden grizzlies|2026-11-12": -1,
+   "ncaab|nebraska cornhuskers|lindenwood lions|2026-11-12": -1,
+   "ncaab|uc irvine anteaters|lincoln (ca) oaklanders|2026-11-12": -1,
+   "ncaab|oregon ducks|mississippi valley state delta devils|2026-11-12": -1,
+   "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": -1,
+   "ncaab|howard bison|stetson hatters|2026-11-12": -1,
+   "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
+   "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
+   "ncaab|high point panthers|southern utah thunderbirds|2026-11-13": -1,
+   "ncaab|rhode island rams|maryland eastern shore hawks|2026-11-13": -1,
+   "ncaab|bowling green falcons|niagara purple eagles|2026-11-13": -1,
+   "ncaab|byu cougars|montana state bobcats|2026-11-13": -1,
+   "ncaab|cal state fullerton titans|lincoln (ca) oaklanders|2026-11-13": -1,
+   "ncaab|miami hurricanes|north alabama lions|2026-11-13": -1,
+   "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1
   }
  },
  "byBand": {
