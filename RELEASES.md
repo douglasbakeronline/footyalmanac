@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## Football reserve v its quotes: tested, no change, 10 Nov (tag pending)
+
+**What changed:** nothing in the model or the reserve rule. Dated note `claude/reserve-football-gap-2026-11-10.md`.
+**Evidence:** reserve 13 Oct to 10 Nov, 379 settled: 242 landed v 256.8 expected (z -1.64). Home picks 203 v 222.0 (z -2.26), away 39 v 34.8; wider-league (`af.*`) picks 161 v 176.7; bands all slightly under, none alone significant; no league has 12 picks. The same leagues' list picks land on quote (93 v 93.6). The wider leagues are not in the replay, so no fit/check test of an exclusion or tilt is possible (Rule 3); a live-only exclusion would fit on the scoreboard (Rule 1).
+**Files:** claude/reserve-football-gap-2026-11-10.md, RELEASES.md.
+**Not changed:** reserve floor (62%), list bars, probabilities, grading.
+**Roll back:** revert the commit.
+
 ## 2026-11-10: Card stake line, tested and not built (tag pending)
 
 **What changed:** a note only. The Bets page line (unit size for a stated bankroll) is not built.
