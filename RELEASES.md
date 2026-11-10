@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-7 The Edge flag tested on every sport (tag pending)
+
+**What changed:** nothing a reader sees. `tools/edge_sports.py` tests the green Edge flag's conditions on every sport's favourites in the priced pool, by price, gap to the market and the opposition's price, with two candidates (the flag without the opposition condition; the short favourite at 1.15-1.30) and a gate for switching a sport on. The nightly Card review prints every sport's line on legs from 11 Nov, out of sample (`card_review_post.edge_section`, no workflow change).
+
+**Evidence:** `claude/edge-sports-2026-11-10.md`. Pool 30 Oct to 9 Nov, first real prices: no sport passes (100+ legs, landed above the bookmakers, best-price return positive, p(loss) <= 0.30). Football candidate 100 legs, +3.0% at best; tennis 27 legs, -18.1%; NFL 12 legs, +16.2%; college football 44, +4.8%. The short favourite over all sports: 62 legs, 90.3% v 77.0%, +11.0%; with `--recover` 162 legs, +2.0%, chosen on that sample, so tracked out of sample from 11 Nov. `tests/test_edge_sports.py`; suite 693 OK; `nametest.py` clear.
+
+**Files:** `tools/edge_sports.py`, `tools/card_review_post.py`, `tests/test_edge_sports.py`, `claude/edge-sports-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the flag (football only), the page, the model, the Card, any record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-6 The green Edge flag on fixtures (tag pending)
 
 **What changed:** a green **Edge** flag on football fixtures that meet the one price condition with evidence behind it, on the Daily List and the full board, with a short evidence panel in the row's detail. A fixture qualifies when it is in one of football-data's 20 tested leagues, clean for the Daily List, the model's pick is also the bookmakers' favourite at 1.15 to 1.90 with the bookmakers 60%+, the opposition is priced 9+, and the model is no more than 5 points above the market (`groupings.edge_flag`, `EDGE_RULE` 1). Display only: the model never sees a price. The flag is archived with each prediction (`edge`) so it can be graded.
