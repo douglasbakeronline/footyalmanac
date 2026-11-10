@@ -42,7 +42,11 @@ RELIEF = {
     "price-range": {"CARD_ODDS": G.CARD_WIDE_ODDS},
     "fair-floor": {"CARD_FAIR_MIN": G.CARD_WIDE_FAIR_MIN},
     "league": {"CARD_CORE_ONLY": False},
+    # not a leg condition: a group's spread (groupings.COMP_MAX), so it shows
+    # in the days table only (10 Nov 2026)
+    "comp-cap": {"COMP_MAX": 3},
 }
+LEG_RELIEF = [k for k in RELIEF if k != "comp-cap"]
 
 # card_fault's messages, in its own order, to a short key. A message no
 # pattern matches is "other" (tests/test_card_funnel.py covers every branch).
@@ -135,8 +139,8 @@ def funnel(by, unpriced=None):
             else:
                 faults[l["sport"]][k] += 1
                 # the legs this one condition alone keeps off (every other passes)
-                for name, patch in RELIEF.items():
-                    if clears_with(l, patch): sole[l["sport"]][name] += 1
+                for name in LEG_RELIEF:
+                    if clears_with(l, RELIEF[name]): sole[l["sport"]][name] += 1
         for name, patch in [("live", None)] + list(RELIEF.items()):
             b = kinds_built(legs, d, patch)
             row["built"][name] = b
@@ -163,17 +167,18 @@ def report_lines(f):
     out.append("")
     out.append("Legs kept off by one condition alone (every other condition passed):")
     out.append("")
-    out.append("| sport | " + " | ".join(RELIEF) + " |")
-    out.append("|---|" + "---|" * len(RELIEF))
+    out.append("| sport | " + " | ".join(LEG_RELIEF) + " |")
+    out.append("|---|" + "---|" * len(LEG_RELIEF))
     for s in sorted(f["sole"]):
-        out.append(f"| {s} | " + " | ".join(str(f["sole"][s].get(k, 0)) for k in RELIEF) + " |")
+        out.append(f"| {s} | " + " | ".join(str(f["sole"][s].get(k, 0)) for k in LEG_RELIEF) + " |")
     out.append("")
     out.append(f"Days a first group can be built, of {n} (one condition relaxed at a time):")
     out.append("")
     out.append("| rule | Card 2x | Card 3x |")
     out.append("|---|---|---|")
     for name, b in f["relief"].items():
-        out.append(f"| {'live' if name == 'live' else 'no ' + name + ' condition'} | {b['Card 2x']} | {b['Card 3x']} |")
+        lab = "live" if name == "live" else "three legs a competition" if name == "comp-cap" else f"no {name} condition"
+        out.append(f"| {lab} | {b['Card 2x']} | {b['Card 3x']} |")
     return out
 
 

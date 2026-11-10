@@ -79,3 +79,21 @@ college basketball once it has 50 graded games (`CARD_SPORTS_OFF`, Douglas's
 call). `opp7` and `rule5` are pre-registered in `tools/card_replay.py` and the
 30 Nov review gates them on the pool from 10 Nov; this funnel tells that
 review how many groups each would add.
+
+## Addendum, same day: the two-per-competition cap pre-registered
+
+The cap had no test behind it: a spread choice carried from the Odds tab's
+`ok_combo` into `mult_combo`. It is now a named constant,
+`groupings.COMP_MAX` (2, unchanged), and `comp3` (three legs from one
+competition) is pre-registered in `tools/card_replay.py` for the 30 Nov
+review. The funnel shows it as a relief row: 6 to 12 Nov, a 2x on 4 days of 7
+(live 3) and a 3x on 1 (live 0); 31 Oct to 12 Nov, a 2x on 7 days of 13
+(live 6) and a 3x on 3 (live 2). On the pool replay with results
+(`--since 2026-10-30 --recover`, approximate before 10 Nov): 12 groups, 5 won
+v 4.6 expected, -1% at the average price, against live 10 groups, 4 won,
+-7%; paired +0.13 units a day, p(worse) 0.43. Far too few to act on; the
+gate is p(worse) 0.30 or under on 100+ legs and the football-data seasons.
+The NBA's legs within one night are separate games, so the cap guards
+against little correlation there; in one football league on one afternoon
+it may guard against more (a shared weather or fixture-congestion effect),
+which the replay cannot see.
