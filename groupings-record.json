@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-10T17:39:55Z",
+ "graded": "2026-11-10T18:49:04Z",
  "overall": {
-  "groups": 128,
+  "groups": 129,
   "settled": 128,
   "won": 37,
   "z": -1.16,
   "lost": 91,
-  "pending": 0,
+  "pending": 1,
   "legs": 497,
   "legsWon": 359,
   "returned": 108.25,
@@ -16,10 +16,10 @@
   "stakedLock": 18,
   "expected": 43.1,
   "clv": {
-   "n": 139,
-   "shortened": 56,
+   "n": 141,
+   "shortened": 58,
    "drifted": 53,
-   "mean": 0.0008
+   "mean": 0.001
   }
  },
  "cardLegsBySport": {
@@ -132,12 +132,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 29,
+   "groups": 30,
    "settled": 29,
    "won": 9,
    "z": -0.79,
    "lost": 20,
-   "pending": 0,
+   "pending": 1,
    "legs": 88,
    "legsWon": 62,
    "returned": 19.86,
@@ -147,10 +147,10 @@
    "stakedLock": 11,
    "expected": 11.06,
    "clv": {
-    "n": 69,
-    "shortened": 22,
+    "n": 71,
+    "shortened": 24,
     "drifted": 27,
-    "mean": -0.004
+    "mean": -0.0034
    }
   },
   "Card 3x": {
@@ -413,12 +413,12 @@
   }
  },
  "card": {
-  "groups": 35,
+  "groups": 36,
   "settled": 35,
   "won": 11,
   "z": -0.25,
   "lost": 24,
-  "pending": 0,
+  "pending": 1,
   "legs": 107,
   "legsWon": 71,
   "returned": 30.72,
@@ -428,10 +428,10 @@
   "stakedLock": 15,
   "expected": 11.68,
   "clv": {
-   "n": 83,
-   "shortened": 29,
+   "n": 85,
+   "shortened": 31,
    "drifted": 34,
-   "mean": -0.0022
+   "mean": -0.0017
   }
  },
  "cardWide": {
@@ -568,12 +568,12 @@
    }
   },
   "6": {
-   "groups": 4,
+   "groups": 5,
    "settled": 4,
    "won": 2,
    "z": 0.44,
    "lost": 2,
-   "pending": 0,
+   "pending": 1,
    "legs": 12,
    "legsWon": 10,
    "returned": 4.37,
@@ -583,21 +583,21 @@
    "stakedLock": 0,
    "expected": 1.57,
    "clv": {
-    "n": 8,
-    "shortened": 5,
+    "n": 10,
+    "shortened": 7,
     "drifted": 3,
-    "mean": 0.001
+    "mean": 0.0046
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 19,
+   "groups": 20,
    "settled": 19,
    "won": 7,
    "z": 0.17,
    "lost": 12,
-   "pending": 0,
+   "pending": 1,
    "legs": 58,
    "legsWon": 42,
    "returned": 18.5,
@@ -607,10 +607,10 @@
    "stakedLock": 0,
    "expected": 6.66,
    "clv": {
-    "n": 37,
-    "shortened": 11,
+    "n": 39,
+    "shortened": 13,
     "drifted": 16,
-    "mean": 0.0033
+    "mean": 0.0041
    }
   },
   "Daytime": {
@@ -703,6 +703,88 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-10",
+   "published": "2026-11-10T18:48:58Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 6,
+     "odds": 2.27,
+     "p": 0.3909,
+     "status": "pending",
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-10T18:30:00Z",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Laura Samson",
+       "event": "Carolina Alves v Laura Samson",
+       "sport": "tennis",
+       "comp": "DIRECTV Open Presentado por Compesar Round 1",
+       "when": "2026-11-10T18:30:00Z",
+       "odds": 1.23,
+       "best": 1.23,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7792,
+       "status": "pending",
+       "result": null,
+       "opp": 4.34
+      },
+      {
+       "pick": "Miami Heat",
+       "event": "Utah Jazz v Miami Heat",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-11T02:00Z",
+       "odds": 1.28,
+       "best": 1.28,
+       "lastOdds": 1.25,
+       "lockOdds": 1.25,
+       "lockBest": 1.25,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7509,
+       "status": "pending",
+       "result": null,
+       "opp": 3.86
+      },
+      {
+       "pick": "Orlando Magic",
+       "event": "Sacramento Kings v Orlando Magic",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-11T03:00Z",
+       "odds": 1.44,
+       "best": 1.44,
+       "lastOdds": 1.42,
+       "lockOdds": 1.42,
+       "lockBest": 1.42,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6681,
+       "status": "pending",
+       "result": null,
+       "opp": 2.9
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-09",
    "published": "2026-11-09T21:42:41Z",
