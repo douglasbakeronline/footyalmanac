@@ -1479,6 +1479,44 @@ footer b{color:var(--ink-2)}
   #listDays button{min-height:40px;padding:4px 10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* 10 Nov 2026, Douglas: "make sure it doesn't horizontally scroll across on
+   mobile". Phone fixes that must come last to win the cascade. The Card's
+   price notes ("price at lock · read Mon 17:01", "best 1.22 William Hill")
+   were forced onto one line by the base rule above, which sits after the
+   phone block meant to wrap them, so each group pushed the Bets tab 6-25px
+   sideways. */
+@media (max-width:480px){
+  .og-l .o small{white-space:normal;overflow-wrap:anywhere}
+  .og-l .t{overflow-wrap:anywhere}
+}
+/* and a guard: nothing on a phone may widen the page itself; wide content
+   scrolls inside its own box (tables, the week strip, the tab bar). clip
+   keeps position: sticky working, where hidden would not. */
+@media (max-width:860px){
+  html,body{overflow-x:clip}
+  .views.resgrid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .views.resgrid button{min-width:0;overflow-wrap:anywhere;padding-left:6px;padding-right:6px}
+}
+@media (max-width:400px){
+  .conf .acc{font-size:9.5px;letter-spacing:-.03em}
+}
+/* Today at a glance: each dot is a button to its pick (a 22px hit area). */
+.glance .gl-hit{cursor:pointer;outline:none}
+.glance .gl-tap{fill:transparent}
+.glance .gl-hit:hover .gl-d,.glance .gl-hit:focus-visible .gl-d{stroke-width:3}
+.glance .gl-hit:focus-visible .gl-tap{stroke:var(--home);stroke-width:1.5}
+@keyframes rowflash{0%{box-shadow:inset 0 0 0 2px var(--red)}100%{box-shadow:inset 0 0 0 2px transparent}}
+.row-line.jumped .row{animation:rowflash 1.6s ease-out 1}
+@media (prefers-reduced-motion: reduce){.row-line.jumped .row{animation:none;box-shadow:inset 0 0 0 2px var(--red)}}
+/* the floating "Days" button */
+.to-days{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:50;min-height:44px;padding:0 16px;
+  font-family:var(--f-ui);font-size:14px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--cover-ink);color:var(--yellow);border:1px solid var(--cover-ink);border-radius:22px;box-shadow:0 6px 16px -6px rgba(16,14,12,.6);cursor:pointer}
+.to-days[hidden]{display:none}
+.to-days:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
+/* the William Hill chip's short words where the confidence column is 62px */
+.bkchip .sm{display:none}
+@media (max-width:480px){ .conf .bkchip .lg{display:none} .conf .bkchip .sm{display:inline} }
 </style>
 </head>
 <body>
@@ -2136,8 +2174,8 @@ const lbKey = (sport, home, away) => `${sport}|${String(home || "").toLowerCase(
 function bookChip(v, best){
   if(v == null) return "";
   if(v > 0) return `<span class="bkchip" title="${LB_BOOK}'s price for the pick, read before the start. Display only: the list never sees a price.">Hill<b>${(+v).toFixed(2)}</b></span>`;
-  if(v === 0) return `<span class="bkchip off" title="UK bookmakers price this game${best ? ` (best ${best[0]} ${(+best[1]).toFixed(2)})` : ""} but ${LB_BOOK} does not.">Not at Hill</span>`;
-  return `<span class="bkchip none" title="The UK bookmakers' list was read and this game was not on it (or its name did not match). Big college favourites are often not offered in the UK.">No UK price</span>`;
+  if(v === 0) return `<span class="bkchip off" title="UK bookmakers price this game${best ? ` (best ${best[0]} ${(+best[1]).toFixed(2)})` : ""} but ${LB_BOOK} does not."><span class="lg">Not at Hill</span><span class="sm">No Hill</span></span>`;
+  return `<span class="bkchip none" title="The UK bookmakers' list was read and this game was not on it (or its name did not match). Big college favourites are often not offered in the UK."><span class="lg">No UK price</span><span class="sm">No UK</span></span>`;
 }
 function hillChip(sport, home, away){
   const G = window.__GROUPINGS__, m = G && G.listBooks && G.listBooks[lbKey(sport, home, away)];
@@ -2331,6 +2369,7 @@ function appendFixture(sec, g, i, dayDate, btts){
 
   const line = document.createElement("div");
   line.className = "row-line";
+  line.dataset.pk = lbKey("football", g.home.name, g.away.name);   // Today at a glance jumps here
 
   const star = document.createElement("button");
   star.type = "button";
@@ -2593,10 +2632,7 @@ document.addEventListener("click", e => {
 document.addEventListener("click", e => {
   const b = e.target.closest("#listDays button"); if(!b) return;
   const el = document.getElementById("lday-" + b.dataset.jump); if(!el) return;
-  // below the sticky tab bar, which is one row on a phone and two on a desktop
-  const bar = document.getElementById("views"), off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
-  window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - off,
-                   behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  scrollClear(el);   // below the sticky tab bar
 });
 function hillPrice(sport, home, away){
   const G = window.__GROUPINGS__, m = G && G.listBooks && G.listBooks[lbKey(sport, home, away)];
@@ -2678,7 +2714,7 @@ function todayGlance(){
     return `<line x1="${x}" x2="${x}" y1="80" y2="85" class="gl-tk"/><text x="${x}" y="98" text-anchor="middle" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`; }).join("");
   const now = Date.now(), nowX = X(now);
   const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
-  const dots = placed.map(d => `<circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle>`).join("");
+  const dots = placed.map(d => `<g class="gl-hit" data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
   const parts = [won && `<b class="g-won">${won} won</b>`, lost && `<b class="g-lost">${lost} lost</b>`, live && `<b class="g-live">${live} in play</b>`,
                  fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`].filter(Boolean).join(" · ");
   return `<section class="glance" id="glance" aria-label="Today at a glance">
@@ -2690,6 +2726,42 @@ function todayGlance(){
     <div class="gl-key"><span><i class="gl-d won"></i>Won</span><span><i class="gl-d lost"></i>Lost</span><span><i class="gl-d ahead"></i>In play, ahead</span><span><i class="gl-d behind"></i>In play, behind</span><span><i class="gl-d play"></i>In play</span><span><i class="gl-d up"></i>To come</span></div>
   </section>`;
 }
+/* 10 Nov 2026: one way of scrolling to a place on the list, clear of the
+   sticky tab bar (one row on a phone, two on a desktop). */
+function scrollClear(el){
+  const bar = document.getElementById("views"), off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
+  const dy = el.getBoundingClientRect().top - off;
+  // a long way (the Days button from deep in a busy list) goes straight there
+  const still = matchMedia("(prefers-reduced-motion: reduce)").matches || Math.abs(dy) > 4 * window.innerHeight;
+  window.scrollTo({top: dy + window.scrollY, behavior: still ? "auto" : "smooth"});
+}
+// a dot on Today at a glance goes to its pick on the list, which flashes once
+function glanceGo(t){
+  const g = t.closest("#glance [data-pk]"); if(!g) return;
+  const row = [...document.querySelectorAll("#list .row-line")].find(r => r.dataset.pk === g.dataset.pk);
+  if(!row) return;
+  const fold = row.closest("details"); if(fold && !fold.open) fold.open = true;
+  scrollClear(row);
+  row.classList.remove("jumped"); void row.offsetWidth; row.classList.add("jumped");
+  clearTimeout(glanceGo.t); glanceGo.t = setTimeout(() => row.classList.remove("jumped"), 1700);
+}
+document.addEventListener("click", e => glanceGo(e.target));
+document.addEventListener("keydown", e => { if((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest("#glance [data-pk]")){ e.preventDefault(); glanceGo(e.target); } });
+// the floating "Days" button: back to the day strip from deep in a long list
+(() => {
+  const b = document.createElement("button");
+  b.type = "button"; b.id = "toDays"; b.className = "to-days"; b.hidden = true;
+  b.innerHTML = `<span aria-hidden="true">↑</span> Days`;
+  b.setAttribute("aria-label", "Back to the list of days");
+  document.body.appendChild(b);
+  b.addEventListener("click", () => { const s = document.getElementById("listDays") || document.getElementById("list"); if(s) scrollClear(s.closest(".list-days") || s); });
+  let raf = 0;
+  const check = () => { raf = 0;
+    const list = document.getElementById("list"), strip = document.getElementById("listDays");
+    const on = list && !list.hidden && strip && strip.getBoundingClientRect().bottom < -400;
+    b.hidden = !on; };
+  window.addEventListener("scroll", () => { if(!raf) raf = requestAnimationFrame(check); }, {passive: true});
+})();
 function glanceRefresh(){ const el = document.getElementById("glance"); if(el){ const h = todayGlance(); if(h) el.outerHTML = h; } }
 setInterval(() => { if(document.visibilityState === "visible") glanceRefresh(); }, 60e3);
 function renderList(){
@@ -3472,6 +3544,7 @@ function pinnedRow(g, i){
   const detail = pinFinal(g, r);
   const line = document.createElement("div");
   line.className = "row-line";
+  line.dataset.pk = lbKey(g.sport, g.home, g.away);
   line.innerHTML = `<span class="star-btn pin-gap" aria-hidden="true"></span>
     <div class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}">
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
@@ -3504,6 +3577,7 @@ function sportRow(g, i, showSport, host){
   const name = g.sport === "tennis" ? "Tennis" : (SD && SD.sports[g.sport] ? SD.sports[g.sport].name : g.sport);
   const line = document.createElement("div");
   line.className = "row-line";
+  line.dataset.pk = lbKey(g.sport, g.home, g.away);
   const star = document.createElement("button");
   star.type = "button"; star.className = "star-btn";
   star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
