@@ -154,7 +154,7 @@ def pinned(day, archives, now):
     and score_tennis.py skip them.
     """
     leagues = _leagues() if any(k == "football" for k, _ in archives) else {}
-    best = {}
+    best, latest = {}, {}
     for kind, g in archives:
         try:
             it = {"football": lambda: football_item(g, leagues), "tennis": lambda: tennis_item(g),
@@ -163,10 +163,21 @@ def pinned(day, archives, now):
             it = None
         if not it: continue
         start, pub = parse_utc(it["start"]), parse_utc(it.get("published"))
-        if uk_day(start) != day or not pub or pub >= start: continue
+        if not pub or pub >= start: continue
+        # 10 Nov 2026: the newest pre-start copy of each game, whatever its day.
+        # ESPN first lists some US games at a stand-in midnight Eastern and
+        # moves them later (Texas Southern v College of Biblical Studies:
+        # 10 Nov 05:00 UK in the 4-5 Nov builds, 11 Nov 00:00 from 6 Nov), and
+        # the old copy kept a ghost pin on the old day reading "Result due".
+        lp = latest.get(it["key"])
+        if lp is None or pub > parse_utc(lp["published"]):
+            latest[it["key"]] = it
+        if uk_day(start) != day: continue
         prev = best.get(it["key"])
         if prev is None or pub > parse_utc(prev["published"]):
             best[it["key"]] = it
+    # a game whose newest start is on another day is that day's, not this one's
+    best = {k: v for k, v in best.items() if uk_day(parse_utc(latest[k]["start"])) == day}
     out = [it for it in best.values() if it["list"] or it["reserve"]]
     for it in out:
         it["started"] = parse_utc(it["start"]) <= now
