@@ -141,6 +141,8 @@ def sport_item(g):
             "side": "h" if g.get("pick") == g.get("home") else "a", "pick": g.get("pick"),
             "pHome": g.get("pHome"), "confidence": g.get("confidence"), "tier": g.get("tier"),
             "accuracy": g.get("accuracy"), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
+            # 10 Nov 2026: the ESPN feed, so the page can read a started pick's live score
+            "feed": g.get("feed"),
             "published": g.get("published")}
 
 

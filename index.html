@@ -330,6 +330,17 @@ details.how p{margin-top:8px;padding-left:22px}
 .pin-st.lost{background:var(--red);color:#fff;border-color:var(--red)}
 .pin-st.void,.pin-st.due,.pin-st.up{background:transparent;color:var(--ink-2)}
 .pin-st.live{background:var(--yellow);color:var(--cover-ink)}
+/* live scores (10 Nov 2026): the score in the pill, its colour the pick's
+   position; finished-but-ungraded keeps a 1px outline so it never reads as
+   the record's own Won / Lost */
+.pin-st.live-sc{font-family:var(--f-num);font-size:12.5px;letter-spacing:0;text-transform:none;padding:3px 6px}
+.pin-st.live-sc.ahead{background:var(--edge-soft);border-color:var(--edge);color:var(--edge)}
+.pin-st.live-sc.behind{background:var(--away-soft);border-color:var(--away);color:var(--away)}
+.pin-st.live-sc.level{background:var(--yellow-soft);border-color:var(--gold);color:var(--cover-ink)}
+.pin-st.live-sc.fin{background:transparent}
+.day-head .count .livetally{display:block;text-align:right;color:var(--yellow-mid)}
+@media (max-width:860px){.day-head .count .livetally{text-align:left}}
+@media (min-width:861px){.pin-st.live-sc + small .lw{display:none}}
 .row.pinned .pred{min-width:0;overflow:hidden;text-align:center}
 .row.pinned .pred small{display:block;color:var(--ink-2);font-size:12px;margin-top:4px;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2549,7 +2560,7 @@ function renderList(){
     const tl = tally(items), tr = tally(extra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}</div></div>`;
+      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>`;
     const put = (it, i) => it.kind === "football"
       ? appendFixture(sec, it.g, i, date, false)
       : it.kind === "pinned" ? putPinned(sec, it.g, i, date)
@@ -3040,6 +3051,100 @@ function pinStatus(g){
   if(now < t) return ["up", "Not started"];
   return now - t < (PLAY_HOURS[g.sport] || 3) * 36e5 ? ["live", "In play"] : ["due", "Result due"];
 }
+/* ---------- live scores (10 Nov 2026) ----------
+   A started Daily List pick used to read "In play" until a build graded it,
+   hours later: at 3am with thirty college games on, the list said nothing.
+   The page now reads ESPN's public scoreboard (the source the US sports are
+   rated and graded from) for each started pick that ESPN carries, every
+   minute while the page is open, and shows the score, the clock and whether
+   the pick is ahead. Display only and marked unofficial: the record still
+   grades from the build, never from this. Football (API-Football) and tennis
+   are not on it; a failed or blocked fetch leaves the row as it was. */
+const LIVE_FEEDS = {nba:"basketball/nba", ncaab:"basketball/mens-college-basketball", wnba:"basketball/wnba",
+  nfl:"football/nfl", cfb:"football/college-football", nhl:"hockey/nhl", mlb:"baseball/mlb"};
+const LIVE_Q = {"basketball/mens-college-basketball":"&groups=50&limit=500", "football/college-football":"&groups=80&limit=500"};
+const LIVE_EVERY = 60e3;
+const LIVE = {scores:{}, watch:new Map(), timer:null, busy:false, at:0};
+const liveFeed = g => g.feed || (g.full && g.full.feed) || LIVE_FEEDS[g.sport] || null;
+// ESPN files a game under its US Eastern day
+const espnDay = iso => new Intl.DateTimeFormat("en-CA", {timeZone:"America/New_York", year:"numeric", month:"2-digit", day:"2-digit"})
+  .format(new Date(iso)).replace(/-/g, "");
+function parseScoreboard(d){
+  const out = {};
+  ((d && d.events) || []).forEach(ev => {
+    const c = (ev.competitions || [])[0] || {};
+    const st = ((c.status || ev.status || {}).type) || {};
+    const side = {};
+    (c.competitors || []).forEach(t => { side[t.homeAway] = {name:(t.team || {}).displayName || "", score:Number(t.score)}; });
+    if(!side.home || !side.away) return;
+    out[String(ev.id)] = {state:st.state || "pre", done:!!st.completed, detail:st.shortDetail || st.detail || "",
+                          home:side.home, away:side.away};
+  });
+  return out;
+}
+// The pick's position in a live or finished game: ahead / behind / level, and
+// the score in the row's own order (home first), so it reads with the bar.
+function liveRead(g, s){
+  if(!s || s.state === "pre" || isNaN(s.home.score) || isNaN(s.away.score)) return null;
+  const mine = g.side === "a" ? s.away.score : s.home.score, theirs = g.side === "a" ? s.home.score : s.away.score;
+  return {lead: mine > theirs ? "ahead" : mine < theirs ? "behind" : "level", score:`${s.home.score}–${s.away.score}`,
+          final: s.state === "post" || s.done, detail: s.detail};
+}
+function livePaint(el, g){
+  const r = liveRead(g, LIVE.scores[String(g.id)]);
+  if(!r) return;
+  const word = r.final ? (r.lead === "ahead" ? "Won" : r.lead === "behind" ? "Lost" : "Level") : {ahead:"Ahead", behind:"Behind", level:"Level"}[r.lead];
+  // the colour carries ahead / behind; the word is spoken, and shown where the row has room (a phone's full-width line)
+  el.innerHTML = `<span class="pin-st live-sc ${r.lead}${r.final ? " fin" : ""}" aria-label="${r.final ? "Final" : "Live"} ${r.score}, pick ${word.toLowerCase()}" title="Live score from ESPN, read ${LIVE.at ? new Date(LIVE.at).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}) : ""}. Unofficial: the record grades it at the next build.">${r.final ? "Final " : ""}${r.score}</span><small><span class="lw">${word} · </span>${r.final ? "unofficial" : r.detail}</small>`;
+}
+function liveTally(){
+  document.querySelectorAll("[data-livetally]").forEach(t => {
+    const n = {ahead:0, behind:0, level:0, wonF:0, lostF:0};
+    LIVE.watch.forEach(({g, date}) => {
+      if(date !== t.dataset.livetally || !g.list) return;
+      const r = liveRead(g, LIVE.scores[String(g.id)]); if(!r) return;
+      if(r.final) r.lead === "ahead" ? n.wonF++ : r.lead === "behind" ? n.lostF++ : 0; else n[r.lead]++;
+    });
+    const on = n.ahead + n.behind + n.level, fin = n.wonF + n.lostF;
+    t.innerHTML = on || fin ? `<span class="livetally">Live: ${on ? `${n.ahead} ahead, ${n.behind} behind${n.level ? `, ${n.level} level` : ""}` : "none in play"}${fin ? ` · finished, not yet graded: ${n.wonF} won, ${n.lostF} lost` : ""}</span>` : "";
+  });
+}
+// Called by each started-pick row as it is drawn: the row is watched until
+// its pick is graded by a build.
+function liveWatch(el, g, date){
+  if(!el || g.result || !g.id || !liveFeed(g) || Date.parse(g.start) > Date.now()) return;
+  el.dataset.live = g.id;
+  LIVE.watch.set(String(g.id), {g, date, el});
+  livePaint(el, g);
+  liveTally();
+  if(!LIVE.timer) LIVE.timer = setTimeout(liveTick, 50);
+}
+async function liveTick(){
+  LIVE.timer = null;
+  // drop rows a re-render removed
+  LIVE.watch.forEach((w, id) => { if(!w.el.isConnected) LIVE.watch.delete(id); });
+  const open = [...LIVE.watch.values()].filter(w => { const s = LIVE.scores[String(w.g.id)]; return !(s && (s.done || s.state === "post")); });
+  if(!open.length || LIVE.busy) return;
+  if(document.visibilityState === "hidden"){ LIVE.timer = setTimeout(liveTick, LIVE_EVERY); return; }
+  LIVE.busy = true;
+  const want = new Set(open.map(w => `${liveFeed(w.g)}|${espnDay(w.g.start)}`));
+  await Promise.all([...want].map(async k => {
+    const [feed, day] = k.split("|");
+    try {
+      const r = await fetch(`https://site.api.espn.com/apis/site/v2/sports/${feed}/scoreboard?dates=${day}${LIVE_Q[feed] || "&limit=500"}`, {cache:"no-store"});
+      if(r.ok) Object.assign(LIVE.scores, parseScoreboard(await r.json()));
+    } catch(e){ /* blocked or offline: the row keeps its own status */ }
+  }));
+  LIVE.at = Date.now(); LIVE.busy = false;
+  LIVE.watch.forEach(w => { if(w.el.isConnected) livePaint(w.el, w.g); });
+  liveTally();
+  LIVE.timer = setTimeout(liveTick, LIVE_EVERY);
+}
+document.addEventListener("visibilitychange", () => {
+  if(document.visibilityState === "visible" && LIVE.watch.size && Date.now() - LIVE.at > LIVE_EVERY / 2){
+    clearTimeout(LIVE.timer); LIVE.timer = setTimeout(liveTick, 50);
+  }
+});
 // A started pick with its full object (daylist.py carries it) is drawn by the
 // same row code as an upcoming one, so it opens the same detail: team sheets,
 // form and the Google links. Only the middle cell changes, to the status.
@@ -3063,6 +3168,7 @@ function putPinned(sec, g, i, date){
   pred.removeAttribute("aria-hidden");
   pred.classList.add("pin-pred");
   pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final ? `<small>${final}</small>` : ""}${was ? `<small class="was">${was}</small>` : ""}`;
+  liveWatch(pred, g, date);
 }
 // The settled result for the middle cell: "Final 1–0" for football, the
 // score for the other team sports, "Golubic won" for tennis (surname, so it fits).
@@ -3095,6 +3201,7 @@ function pinnedRow(g, i){
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
     <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div></div>`;
+  liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
 // "rating 1947": an Elo strength score built from every result; "· only 15
