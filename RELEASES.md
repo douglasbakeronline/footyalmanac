@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-11 The Daily List on a phone: day jump, full names (tag pending)
+
+**What changed:** a "Jump to" strip of the week's days, each with its pick count, sits above the Daily List; a tap scrolls to that day just under the tab bar (a week of picks ran to about 40,000px on a phone). Team names wrap on a phone instead of being cut mid-word ("Northern Arizona Lum"); on a desktop a long name in a sport row now ends in an ellipsis instead of losing its first letters ("orthern Arizona Lumberjacks"). The William Hill chip fits the phone's confidence column.
+
+**Evidence:** checked at 390 and 1280 wide on the live sports and tennis files: no chip overflows its row, no name clipped without an ellipsis, the jump lands with the day heading visible under the one-row (phone) and two-row (desktop) tab bar. Suite 706 OK.
+
+**Files:** `index.html`, `RELEASES.md`.
+
+**Not changed:** what the list contains or its order; any data file.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-10 The Daily List at William Hill (tag pending)
 
 **What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.

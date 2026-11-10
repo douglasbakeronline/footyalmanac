@@ -1073,7 +1073,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 }
 .club{display:flex;align-items:center;gap:7px}
 .side.away .club{flex-direction:row-reverse}
-.club span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.club span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}   /* min-width: a flex child only ellipsises when it may shrink (10 Nov 2026: sport rows clipped "orthern Arizona") */
 .xg{font-family:var(--f-num);font-size:12.5px;text-align:center;color:var(--ink-2);white-space:nowrap}
 .xg small{display:block;font-size:9px;letter-spacing:.09em;text-transform:uppercase;color:var(--mute);font-family:var(--f-ui);font-weight:600}
 .xg b{font-weight:600;color:var(--ink)}
@@ -1157,6 +1157,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .bkchip.off{color:var(--red);border-color:currentColor}
 .bkchip.none{color:var(--mute);border-style:dashed;font-weight:600}
 .conf .bkchip{display:table;margin-left:auto}
+.list-days{margin:18px 0 4px}
+.list-days .ctl-label{display:block;margin-bottom:6px}
 .xrow .conf .bkchip{margin-top:4px}
 .scoreline .book small + small{margin-top:2px}
 .why.edgewhy{border:1px solid var(--edge);border-radius:3px;background:var(--edge-soft);padding:10px 12px}   /* 1px: no dark border thicker (standing decision) */
@@ -1272,6 +1274,13 @@ footer b{color:var(--ink-2)}
   .tb-older summary,.og-old summary,.og-chk summary{display:flex;align-items:center;min-height:40px}
   details.how summary{padding:8px 0}
   .views.resgrid button{min-height:48px}
+  /* 10 Nov 2026: names wrap rather than clip (an away name inside a flex row
+     lost its ellipsis: "Northern Arizona Lum"), and the William Hill chip
+     fits the 62px confidence column */
+  .row .club,.row .club span{white-space:normal;overflow-wrap:anywhere}
+  .conf .bkchip{font-size:9px;letter-spacing:.02em;padding:0 3px}
+  .conf .bkchip b{margin-left:2px}
+  #listDays button{min-height:40px;padding:4px 10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -2384,6 +2393,14 @@ document.addEventListener("click", e => {
   try { localStorage.setItem("listBook", LIST_BOOK_ONLY ? "hill" : "all"); } catch(e){}
   renderList();
 });
+document.addEventListener("click", e => {
+  const b = e.target.closest("#listDays button"); if(!b) return;
+  const el = document.getElementById("lday-" + b.dataset.jump); if(!el) return;
+  // below the sticky tab bar, which is one row on a phone and two on a desktop
+  const bar = document.getElementById("views"), off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
+  window.scrollTo({top: el.getBoundingClientRect().top + window.scrollY - off,
+                   behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+});
 function hillPrice(sport, home, away){
   const G = window.__GROUPINGS__, m = G && G.listBooks && G.listBooks[lbKey(sport, home, away)];
   return m && m.h ? m.h : null;
@@ -2508,6 +2525,14 @@ function renderList(){
   const byTime = (a,b) => (ko(a) - ko(b)) || byStrength(a,b);
   const shown = xs => LIST_ORDER === "time" ? xs.sort(byTime) : xs;
   const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay)])].sort();
+  // 10 Nov 2026: a week of picks runs to 40,000px on a phone. A strip of the
+  // days with their pick counts jumps straight to a day; nothing is hidden.
+  if(dates.length > 1){
+    const today = localDay(new Date().toISOString());
+    const n = d => (byDay[d] || []).filter(it => !LIST_BOOK_ONLY || itemHill(it)).length;
+    host.insertAdjacentHTML("beforeend", `<div class="list-days"><span class="ctl-label">Jump to</span>
+      <div class="dayseg" id="listDays">${dates.map(d => `<button type="button" data-jump="${d}">${d === today ? "Today" : fmtShort(d)}<i>${n(d)}</i></button>`).join("")}</div></div>`);
+  }
   dates.forEach(date => {
     const allItems = (byDay[date] || []), allExtra = (resDay[date] || []);
     const items = shown((LIST_BOOK_ONLY ? allItems.filter(itemHill) : allItems).sort(byStrength));
@@ -2515,6 +2540,7 @@ function renderList(){
     const offBook = LIST_BOOK_ONLY ? allItems.length - items.length : 0;
     const sec = document.createElement("section");
     sec.className = "day";
+    sec.id = "lday-" + date;
     const tally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result);
       const w = d.filter(it => it.g.status === "won").length, l = d.filter(it => it.g.status === "lost").length;
       return w + l ? `${w} won, ${l} lost` : ""; };
@@ -3055,11 +3081,11 @@ function pinnedRow(g, i){
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time datetime="${g.start}">${g.timed === false ? "" : localTime(g.start)}</time>
       <div class="comp"><span class="tour-chip">${name}</span><span>${g.comp || ""}</span></div></div>
-    <div class="side"><div class="club${g.side === "h" ? " pick" : ""}">${g.home}</div>
+    <div class="side"><div class="club${g.side === "h" ? " pick" : ""}"><span>${g.home}</span></div>
       <div class="stat">Pick: ${g.pick}</div></div>
     <div class="barcell">${barHtml}</div>
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
-    <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}">${g.away}</div>
+    <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
     <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div></div>`;
   return line;
@@ -3101,11 +3127,11 @@ function sportRow(g, i, showSport, host){
     <div class="ko">${g.timeTbc ? `<time datetime="${g.when.slice(0,10)}" title="No order of play yet: the round starts this day and the match may be played the day after">TBC <small class="ko-local">day not confirmed</small></time>` : `<time datetime="${g.when}">${localTime(g.when)}</time>`}
       <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
         <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span></div></div>
-    <div class="side"><div class="club${homePick?" pick":""}">${g.home}</div>
+    <div class="side"><div class="club${homePick?" pick":""}"><span>${g.home}</span></div>
       <div class="stat">${g.statH || ratingStat(g.eloH, g.gamesH, "games")}</div></div>
     <div class="barcell">${tennisBar(ph, pa)}${oppLine(g)}</div>
     <div class="pred" aria-hidden="true"></div>
-    <div class="side away"><div class="club${!homePick?" pick":""}">${g.away}</div>
+    <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
     <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div>`;
   btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
