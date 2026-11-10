@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-10T09:55:23Z",
+ "graded": "2026-11-10T13:14:25Z",
  "overall": {
   "groups": 128,
   "settled": 128,
@@ -77,14 +77,14 @@
   },
   "bySport": {},
   "picks": {
-   "ncaab|georgetown hoyas|delaware state hornets|2026-11-10": 0,
+   "ncaab|georgetown hoyas|delaware state hornets|2026-11-10": 1.0,
    "nba|new york knicks|milwaukee bucks|2026-11-11": 1.07,
    "ncaab|the citadel bulldogs|virginia lynchburg dragons|2026-11-11": -1,
-   "ncaab|villanova wildcats|la salle explorers|2026-11-11": 0,
-   "ncaab|rhode island rams|maine black bears|2026-11-11": 0,
+   "ncaab|villanova wildcats|la salle explorers|2026-11-11": 1.01,
+   "ncaab|rhode island rams|maine black bears|2026-11-11": 1.01,
    "ncaab|nc state wolfpack|presbyterian blue hose|2026-11-11": 0,
-   "ncaab|boston college eagles|maryland eastern shore hawks|2026-11-11": 0,
-   "ncaab|providence friars|bryant bulldogs|2026-11-11": 0,
+   "ncaab|boston college eagles|maryland eastern shore hawks|2026-11-11": 1.0,
+   "ncaab|providence friars|bryant bulldogs|2026-11-11": 1.0,
    "ncaab|vanderbilt commodores|memphis tigers|2026-11-11": 0,
    "ncaab|central arkansas bears|ecclesia royals|2026-11-11": -1,
    "ncaab|iowa state cyclones|southern jaguars|2026-11-11": 0,
