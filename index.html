@@ -1298,6 +1298,26 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .gl-key .won{background:var(--edge);border-color:var(--edge)} .gl-key .lost{background:var(--away);border-color:var(--away)}
 .gl-key .ahead{background:var(--edge-soft);border-color:var(--edge)} .gl-key .behind{background:var(--away-soft);border-color:var(--away)}
 .gl-key .play{background:var(--yellow);border-color:var(--cover-ink)} .gl-key .up{background:var(--surface);border-color:var(--ink)}
+/* Days at a glance (How it went, 10 Nov 2026): a day label column and a line per day */
+.dglance{margin-top:22px}
+.dg-grid{margin-top:8px}
+.dg-axisrow,.dg-row{display:grid;grid-template-columns:96px minmax(0,1fr);column-gap:10px;align-items:stretch}
+.dg-axis{display:block;width:100%;height:auto}
+.dg-row{width:100%;margin:0;padding:0;border:0;border-top:1px solid var(--rule);background:none;text-align:left;cursor:pointer;font:inherit;color:inherit;border-radius:0}
+.dg-row>*{padding:3px 0}
+.dg-row svg{display:block;width:100%;height:auto;overflow:visible}
+.dg-day{display:flex;flex-direction:column;justify-content:center;line-height:1.2;padding-left:6px!important}
+.dg-day b{font-family:var(--f-ui);font-size:13px;font-weight:700;letter-spacing:.02em}
+.dg-day i{font-style:normal;font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
+.dg-day i.g-won{color:var(--edge)} .dg-day i.g-lost{color:var(--away)}
+.dg-day small{font-size:10.5px;color:var(--mute)}
+.dg-more{font-family:var(--f-num);font-size:10.5px;font-weight:700;fill:var(--ink-2)} .dg-more.w{fill:var(--edge)}
+.dg-row:hover,.dg-row:focus-visible{background:rgba(16,14,12,.035)}
+.dg-row[aria-pressed="true"]{background:rgba(16,14,12,.055)}
+.dg-row[aria-pressed="true"] .dg-day{box-shadow:inset 3px 0 0 var(--red)}
+.dg-row:focus-visible{outline:none}
+.dg-row:focus-visible .dg-day{outline:2px solid var(--home);outline-offset:-2px}
+@media (max-width:860px){ .dg-axisrow,.dg-row{grid-template-columns:70px minmax(0,1fr);column-gap:6px} .dg-day b{font-size:12px} }
 @media (max-width:860px){.glance{padding:10px 12px 8px}}
 /* Where to trust the model (trustMap, 10 Nov 2026): a quiet table, tinted
    only where a cell is past chance, so the eye goes to what matters. */
@@ -3837,15 +3857,15 @@ function listReviewDays(){
   (R_DAYS || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g), sk: "football",
     sport: "Football", comp: (lg(g.league) || {}).name || g.league, home: g.home, away: g.away,
     pick: side(g, g.pick), conf: g.confidence, tier: g.tier,
-    res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: fbWon(g) ? "won" : "lost"})));
+    res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: fbWon(g) ? "won" : "lost", t: g.kickoff})));
   ((TT && TT.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g), sk: "tennis",
     sport: "Tennis", comp: [g.tour, g.tournament, g.round].filter(Boolean).join(" · "), home: g.playerA, away: g.playerB,
     pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: g.note || "",
-    status: g.void ? "void" : g.ok ? "won" : "lost"})));
+    status: g.void ? "void" : g.ok ? "won" : "lost", t: g.start})));
   ((SR && SR.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g), sk: g.sport,
     sport: (SD && SD.sports[g.sport] || {name:g.sport}).name, comp: g.label, home: g.home, away: g.away,
     pick: g.pick, conf: g.confidence, tier: g.tier, res: g.winner || "Draw",
-    small: g.score ? `${g.score[0]}–${g.score[1]}` : "", status: g.ok ? "won" : "lost"})));
+    small: g.score ? `${g.score[0]}–${g.score[1]}` : "", status: g.ok ? "won" : "lost", t: g.when})));
   const DLX = window.__DAY_LIST__;
   if(DLX && DLX.date && ((DLX.list || []).length || (DLX.reserve || []).length)){
     // today's pinned list replaces the records' partial copy of the same day
@@ -3858,7 +3878,7 @@ function listReviewDays(){
         small: sc || r.note || (it.status === "started" ? `Started ${koFmt.format(new Date(it.start))}`
           : it.status === "upcoming" ? `Starts ${koFmt.format(new Date(it.start))}` : ""),
         // a game long past its start with no result yet is waiting on the next build, not still going
-        status: it.status, waiting: it.status === "started" && Date.now() - Date.parse(it.start) > 3.5 * 3600e3};
+        status: it.status, waiting: it.status === "started" && Date.now() - Date.parse(it.start) > 3.5 * 3600e3, t: it.start};
     };
     byDate[DLX.date] = [...(DLX.list || []).map(pin("list")), ...(DLX.reserve || []).map(pin("reserve"))];
   }
@@ -4038,6 +4058,7 @@ function listReview(){
       ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}${bookTile()}</div>
     ${listHonesty(days)}
     ${trustMap()}
+    ${daysGlance(days, day.date)}
     <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
       <div class="dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
         ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>
@@ -4046,6 +4067,76 @@ function listReview(){
         : "no pick cleared the bar"}</div></div>
     ${day.items.length ? ruler + day.items.map(row).join("") : ""}
     ${reserve}`;
+}
+
+/* ---------- days at a glance (10 Nov 2026, Douglas: "add the Today at a
+   glance section to the How it went tab, showing for all previous days") ----
+   Every list day on How it went as one line of the clock, the same marks as
+   Today at a glance: each Daily List pick at its start, won, lost, void or
+   still to settle. One shared hour axis, so the days read against each other
+   (when in the day the misses fall). A pick with no start on file is counted
+   beside its day and not drawn. Tap a day to open it below. */
+function daysGlance(days, sel){
+  const ds = days.filter(d => d.items.length);
+  if(!ds.length) return "";
+  const phone = matchMedia("(max-width:860px)").matches;
+  // drawn at about the width it shows at, so the hour labels keep their size
+  const W = phone ? 260 : 1000, M = 10, GAP = phone ? 9 : 12, DY = phone ? 9 : 11;
+  const parse = x => x ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(x) ? x : x + "Z") : NaN;
+  // the axis runs from midnight to midnight, local time, and on to 06:00 the
+  // next morning when any day has a pick that late (US games, late tennis)
+  const rows = ds.map(d => {
+    const t0 = new Date(d.date + "T00:00:00").getTime();
+    const pts = d.items.map(x => ({x, t: parse(x.t)})).map(p => ({...p, h: (p.t - t0) / 36e5}));
+    return {d, pts};
+  });
+  const late = rows.some(r => r.pts.some(p => p.h >= 24));
+  const H0 = 0, H1 = late ? 30 : 24;
+  const X = h => M + Math.min(1, Math.max(0, (h - H0) / (H1 - H0))) * (W - 2 * M);
+  const word = {won:"Won", lost:"Lost", void:"Void", started:"Not yet graded", upcoming:"To come"};
+  const cls = st => ({won:"won", lost:"lost", void:"void"}[st] || "up");
+  const step = phone ? [0, 6, 12, 18, 24].concat(late ? [30] : []) : [0, 3, 6, 9, 12, 15, 18, 21, 24].concat(late ? [27, 30] : []);
+  const axis = `<svg viewBox="0 0 ${W} 18" class="dg-axis" aria-hidden="true">${step.map(h =>
+    `<text x="${X(h)}" y="12" text-anchor="${h === H0 ? "start" : h === H1 ? "end" : "middle"}" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`).join("")}</svg>`;
+  const line = r => {
+    const drawn = r.pts.filter(p => !isNaN(p.t)).sort((a, b) => a.t - b.t), off = r.pts.length - drawn.length;
+    // picks within 12 units of a column's first start share it; a column
+    // shows at most CAP dots, losses and voids first so they are never the
+    // ones hidden, and says how many more there are (15 college basketball
+    // tip-offs at 00:00 on 3 Nov made one day's line 180px tall)
+    const CAP = 6, rank = {lost: 0, void: 1, started: 2, upcoming: 2, won: 3};
+    const cols = [];
+    drawn.forEach(p => { const cx = X(p.h), c = cols[cols.length - 1];
+      if(c && cx - c.x < GAP) c.ps.push(p); else cols.push({x: cx, ps: [p]}); });
+    const placed = [], more = [];
+    cols.forEach(c => {
+      const ps = c.ps.slice().sort((a, b) => (rank[a.x.status] ?? 2) - (rank[b.x.status] ?? 2) || a.t - b.t);
+      ps.slice(0, CAP).forEach((p, k) => placed.push({...p, cx: c.x, k}));
+      const rest = ps.slice(CAP);
+      if(!rest.length) return;
+      // labels closer than a label's width are one label, at the first column
+      const m = more[more.length - 1], allWon = rest.every(p => p.x.status === "won");
+      if(m && c.x - m.x < (phone ? 34 : 44)){ m.n += rest.length; m.allWon = m.allWon && allWon; }
+      else more.push({x: c.x, n: rest.length, allWon});
+    });
+    const depth = Math.max(0, ...placed.map(p => p.k)) + (more.length ? 1 : 0), Hh = 26 + depth * DY, base = Hh - 9;
+    const extra = more.map(m => `<text x="${m.x.toFixed(1)}" y="${base - CAP * DY + 3}" text-anchor="${m.x < 30 ? "start" : "middle"}" class="dg-more${m.allWon ? " w" : ""}">+${m.n}${m.allWon ? " won" : ""}</text>`).join("");
+    const grid = step.map(h => `<line x1="${X(h)}" x2="${X(h)}" y1="${base - 4}" y2="${base + 4}" class="gl-tk"/>`).join("");
+    const dots = placed.map(p => { const x = p.x;
+      return `<circle cx="${p.cx.toFixed(1)}" cy="${base - p.k * DY}" r="${phone ? 4 : 5}" class="gl-d ${cls(x.status)}"><title>${localTime(new Date(p.t).toISOString())} · ${x.pick} to beat ${x.pick === x.home ? x.away : x.home} · ${x.sport} · ${pct(x.conf)}% · ${word[x.status] || x.status}${x.small ? " · " + x.small : ""}</title></circle>`; }).join("");
+    const d = r.d, n = d.won + d.lost, rate = n ? d.won / n : null;
+    return `<button type="button" class="dg-row" data-day="${d.date}" aria-pressed="${d.date === sel}"
+        aria-label="${fmtShort(d.date)}: ${d.won} of ${n} landed${d.open ? `, ${d.open} to settle` : ""}. Open this day.">
+      <span class="dg-day"><b>${fmtShort(d.date)}</b><i class="${rate == null ? "" : rate >= .8 ? "g-won" : "g-lost"}">${n ? `${d.won}/${n}` : "–"}${d.open ? ` +${d.open}` : ""}</i>${off ? `<small>${off} no time</small>` : ""}</span>
+      <svg viewBox="0 0 ${W} ${Hh}" role="img" aria-hidden="true"><line x1="${M}" x2="${W - M}" y1="${base}" y2="${base}" class="gl-ax"/>${grid}${dots}${extra}</svg>
+    </button>`;
+  };
+  const all = ds.reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);
+  return `<section class="glance dglance" aria-label="Days at a glance">
+    <div class="gl-top"><h3>Days at a glance</h3><p>Every Daily List pick at its start, one line a day${late ? ", to 06:00 the next morning" : ""} · <b>${all[0]} of ${all[1]}</b> landed across these days. Tap a day to open it.</p></div>
+    <div class="dg-grid"><div class="dg-axisrow"><span></span>${axis}</div>${rows.map(line).join("")}</div>
+    <div class="gl-key"><span><i class="gl-d won"></i>Won</span><span><i class="gl-d lost"></i>Lost</span><span><i class="gl-d void" style="background:var(--rule);border-color:var(--mute)"></i>Void</span><span><i class="gl-d up"></i>Not yet graded</span><span>Times are your local time</span></div>
+  </section>`;
 }
 
 // The board picker: the Daily List, then every sport, three to a row
@@ -4082,6 +4173,13 @@ function renderResults(){
     $("#ldayseg") && $("#ldayseg").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
       resState.lday = b.dataset.day; renderResults();
+    });
+    // Days at a glance: a day's line opens that day and goes to it
+    const dg = host.querySelector(".dglance");
+    dg && dg.addEventListener("click", e=>{
+      const b = e.target.closest(".dg-row"); if(!b) return;
+      resState.lday = b.dataset.day; renderResults();
+      const h = host.querySelector(".day-head"); if(h) scrollClear(h);
     });
     $("#resSport").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;

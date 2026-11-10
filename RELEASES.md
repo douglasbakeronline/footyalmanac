@@ -4,6 +4,34 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-31 Days at a glance on How it went (tag pending)
+
+**What changed.** Douglas (10 Nov 2026): "add the Today at a glance section
+to the How it went tab, showing for all previous days listed". The Daily
+List board on How it went now opens with **Days at a glance**: every list
+day it holds as one line of the clock, each list pick a dot at its start,
+won green, lost red, void grey, unsettled hollow, on one shared hour axis so
+the days read against each other. A day's tally sits beside its line (green
+at 80%+, red under); tapping a line opens that day's picks below. A column
+shows at most six dots, losses first so they are never the ones hidden, with
+"+n won" for the rest (3 Nov had 15 college basketball tip-offs at 00:00).
+The axis runs to 06:00 the next morning when any day has a pick that late.
+
+**How.** `score.py` writes each football day row's `kickoff` (it was in
+`record-graded.json`, not in the day rows); `score_tennis.py` gives each
+tennis day row the start ESPN recorded (`history-tennis/`, on a copy, so the
+kept graded rows are unchanged); US sports already carried `when`.
+`listReviewDays` passes the start through; `daysGlance` in `index.html` draws
+it. Display only: nothing is graded differently.
+
+**Checked.** 14 days, 240 picks drawn at 1280 and 400 wide, no sideways
+scroll, tap opens the day; the phone drawing is made at its real width so
+the hour labels keep their size. 741 tests pass.
+
+**Files.** `index.html`, `score.py`, `score_tennis.py`.
+
+**Roll back.** `git revert` the release commit.
+
 ## 2026-11-10-30 The plan: one way to bet at the top of Bets (tag pending)
 
 For a reader: the Bets tab opens with **the plan**, one ladder of three rungs
