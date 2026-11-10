@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-24 Today at a glance, on the Daily List (tag pending)
+
+**What changed:** the Daily List opens with **Today at a glance**: today's list picks on one 00:00-24:00 line, each at its start time and coloured by where it stands (won or lost from the record, in play ahead, behind or level from the live scores, finished but not yet graded, to come), a red line at the time now, and a summary: won, lost, in play, to come, and the next start with a countdown. Hover or tap a dot for the pick, time, confidence and state. It redraws on every live read and once a minute. A phone gets its own narrower drawing so the labels stay readable.
+
+**Evidence:** checked at 390 and 1280 wide with mocked live tennis (two in play, one finished) and the day's remaining picks. Suite OK.
+
+**Files:** `index.html`, `RELEASES.md`.
+
+**Not changed:** the list, its order or record; grading.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-23 Where to trust the model, in How it went (tag pending)
 
 **What changed:** How it went, Daily List, adds **Where to trust the model**: every graded pick at 55% or more, every sport, by family (football core / wider / cups and internationals, tennis ATP and WTA, each US sport, rugby) and confidence band (55-65, 65-75, 75-85, 85-95, 95+), landed against quoted with the count. A cell is tinted only past 90% (z 1.645): green above its number, red under; a cell under 10 picks is faint. Above the table, the cells that are clearly off, in words. `trustmap.py` builds the grid from `record-graded.json`, `tennis-record.json` and `sports.graded_games()`; `build.py` adds it to the on-demand `record-data.js` as `trust` (first paint unchanged; `record.json` unchanged).
