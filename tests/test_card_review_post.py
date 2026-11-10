@@ -109,3 +109,26 @@ class OncePerDay(unittest.TestCase):
 
     def test_an_unreadable_listing_still_posts(self):
         self.assertEqual(len(self.run_with(None)), 1)
+
+
+class CoverageAndKelly(unittest.TestCase):
+    def test_coverage_names_the_gap(self):
+        rep = {"from": "2026-10-30", "to": "2026-11-09", "variants": {"live": {"groups": 0}}}
+        rec = {"days": [{"date": "2026-10-31", "groups": [{"name": "Card 2x"}, {"name": "Card 3x"}, {"name": "Card 2x", "wide": True}]},
+                        {"date": "2026-10-20", "groups": [{"name": "Card 2x"}]}, {"date": "2026-11-01", "groups": [{"name": "Double"}]}]}
+        out = P.coverage_lines(rep, rec)
+        self.assertEqual(len(out), 1)
+        self.assertIn("holds **2** live Card groups", out[0])
+        self.assertIn("rebuilt 0", out[0])
+
+    def test_coverage_quiet_without_record(self):
+        self.assertEqual(P.coverage_lines({"from": "a", "to": "b", "variants": {"live": {"groups": 3}}}, {}), [])
+
+    def test_kelly_under_quote_says_no_stake(self):
+        line = P.kelly_line({"landedOverExpected": 0.942, "quarterKelly": {"median": 0, "p95Drawdown": 0}, "halfKelly": {"median": 0, "p95Drawdown": 0}})
+        self.assertIn("stakes nothing", line)
+        self.assertNotIn("0%", line)
+
+    def test_kelly_above_quote_prints_numbers(self):
+        line = P.kelly_line({"landedOverExpected": 1.2, "quarterKelly": {"median": 0.05, "p95Drawdown": 0.1}, "halfKelly": {"median": 0.08, "p95Drawdown": 0.2}})
+        self.assertIn("quarter Kelly: median +5.0%", line)
