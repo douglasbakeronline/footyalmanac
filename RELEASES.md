@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-21 Place now: the signalled bets at the top of the Bets tab (tag pending)
+
+**What changed:** the Bets tab opens on **Place now**, a phone-first box listing only the bets that pass a rule the site tests and are still open, soonest first. Each one shows what to back, the William Hill price (or the best price and the average for an Edge single), the start time, the stake in units and pounds and what it returns, and the evidence in one line with a verdict: **Tested** for Edge singles (five football-data seasons: 388 of 459 won, +5.4% at the best price), **On trial** for Card groups (the live record, 11 of 35 against 11.7 expected at 10 Nov: not yet an edge). A **Copy slip** button puts the bet on the clipboard. When nothing qualifies in the next 24 hours it says **No bet to place**, names the next signal, and lists the wider-rule filler under "Not a signal" (replay 3 of 15 won against 5.1 expected, -46%). Started, locked and late groups are left out.
+
+**Why:** Douglas, 10 Nov: "accurate signalled bets to put on as I'm on the train". The Bets tab carried the Card, the Edge picks, the paper card and the record in one long page; the bets themselves and how much to trust each were far down it.
+
+**Evidence:** checked in Chromium at 1280 and 400 wide on a stub slate (two Edge singles, a Card 2x, a wider-rule group, a Card 2x two days out) and on an empty day; no horizontal scroll, copy works. `tests/test_place_now.py` runs the page's own functions in node: open signals only, soonest first, started / late groups out, the filler never a signal, the slip's stake and Hill prices. Suite OK, `nametest.py` clear. Display only.
+
+**Files:** `index.html`, `tests/test_place_now.py`, `RELEASES.md`, `CLAUDE.md`.
+
+**Not changed:** any rule, the Card, the Edge flag, the record, the Daily List.
+
 ## 2026-11-10-20 Live scores for tennis (tag pending)
 
 **What changed:** started tennis picks on the Daily List now show the live set score (in the row's player order, "4–6 6–3 2–1"), the set in play and whether the pick leads, from ESPN's ATP and WTA scoreboards, the feed `build_tennis.py` already reads for results. Sets decide the lead; with sets level, the set in play does. A finished game in any sport now shows its score in the pill and "Final, unofficial" beneath, so a three-set score fits.
