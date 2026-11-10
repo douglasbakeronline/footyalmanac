@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-15 Which book to write the Card for: Hill stays (tag pending)
+
+**What changed:** notes only, `claude/card-book-2026-11-10.md`.
+**Evidence:** 111 Card-rule pool legs, 30 Oct to 10 Nov: Bet365 +0.30% v average (best on 65%), William Hill -0.04% (62%), Betfair -0.89%, BetVictor -1.73%. Paired Bet365 v Hill on 77 legs +0.43%, p 0.045 one-sided; best price v Hill +1.09%, under the 2-point line. Under 100 paired legs and a sub-1-point gap: no change.
+**Files:** `claude/card-book-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** `CARD_BOOK`, Card rules, the Bets page.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-10-14 Card over 2022-25: task already answered, index note (tag pending)
 
 **What changed:** notes only, `claude/card-seasons-recheck-2026-11-10.md`, pointing each requested table (legs v quote, singles, gap band, opposition band, Card return, losing months) to its place in `claude/card-seasons-2026-11-09.md`. No rerun: the sandbox cannot fetch football-data.
