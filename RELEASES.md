@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10 (tag pending): Card price move by hour first priced (note only)
+
+**What changed:** a note; no code, no page change.
+**Evidence:** 107 Card-rule legs, 30 Oct to 10 Nov: first priced 00:00-06:59 London 54 legs +2.41% first to last (p 0.034); 16:00-20:59 53 legs +1.11% (p 0.011). No other window has first prices. Prices lengthen in both, so no case to push earlier or later; football +2.05% / +1.24%, NBA and tennis too few.
+**Files:** `claude/price-by-first-hour-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** `notify.py` SLOTS, build times, any rule.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-10-29 Phone layout: no sideways scroll, tap a glance dot to its pick, a Days button (tag pending)
 
 For a reader: the page no longer drifts sideways on a phone after jumping
