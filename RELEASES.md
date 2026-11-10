@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10: Card stake line, tested and not built (tag pending)
+
+**What changed:** a note only. The Bets page line (unit size for a stated bankroll) is not built.
+**Evidence:** the replay of the current Card rule holds 0 groups on both football-data seasons (rule 6); the nearest, `cardRule5`, holds 22 groups on one season (bankroll 47 units for a 66-group season, 10 won v 7.0 expected). Too thin to state a bankroll.
+**Files:** `claude/card-stake-line-2026-11-10.md`.
+**Not changed:** `CARD_STAKE`, `CARD_RULE`, any record, the page.
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-10-15 Which book to write the Card for: Hill stays (tag pending)
 
 **What changed:** notes only, `claude/card-book-2026-11-10.md`.
