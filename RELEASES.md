@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-9 The Model card's rule replayed beside the Card (tag pending)
+
+**What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers `modelcard`: the Model card's rule (the model's own picks at or above the bookmakers' chance) built on the same legs as the Card, staked as the Card. `tools/card_legs_history.py` replays it on every football-data season (`cardModel`, legs admitted on the model's own 60%+). The nightly review's variant table carries it.
+
+**Evidence:** `claude/card-modelcard-2026-11-10.md`. Pool from 30 Oct with `--recover`: modelcard 12 groups, 7 won, legs 29 of 36 (80.6% v 68.1% quoted), +58%; live 10 groups, 4 won, -7%; paired +1.60 units a day, p(worse) 0.02, on 36 legs, under the 100-leg gate. The football-data side runs on this pull request. `tests/test_card_modelcard.py`; suite OK; `nametest.py` clear.
+
+**Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_modelcard.py`, `tests/test_card_legs_history.py`, `claude/card-modelcard-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card, the Model card, any constant, any record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-8 The Edge flag's own record, on the page and in the review (tag pending)
 
 **What changed:** the green Edge flag now shows its own record on this site. `score.py` grades every flagged football fixture (`edge_record` in `record.json`): live flags as published from 10 Nov, and earlier fixtures flagged from the prices archived before kick-off. The flag's title and the row's green panel quote it ("27 of 34 landed against 76% quoted, -2.1% at the average price, +0.5% at the best"), and the nightly Card review prints it.
