@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-28 When to take the Card's prices: a read with evidence, and the return first v last (tag pending)
+
+**What changed:** `tools/price_timing.py` (issue #156) printed "take the price late" or "when published" from the sign of the mean move on any sample, two legs included. A read now needs 50+ legs and a day-resampled bootstrap p of the other sign at most 0.10, else "too few legs to read" or "no clear read". New `settled` block: singles on settled legs at the first price v the last pre-start price, paired, with p(late no better), since a drift only pays on legs that won. Legs not started yet are left out (`notStarted`; the nightly run read the next days' legs as closed). The nightly Card review prints both lines. The Place now panel gets one dated line: placing nearer the start has paid. `notify.py` resolves `briefed.json` from `HERE` at call time, so `tests/test_notify.py` no longer writes the real archive's file.
+
+**Evidence:** pool 30 Oct to 10 Nov, 107 legs: mean move +1.76%, p(no drift) 0.003 by day; 104 settled singles -7.21% at the first price, -5.26% at the last, late +1.95 points, p 0.011; football 93 legs carries it, NBA 16 and tennis 3 have no read. Agrees with the football-data replay's CLV -3.4% (`claude/price-timing-read-2026-11-10.md`). Tests: `tests/test_price_timing.py` (the read gate, day resampling, the settled pairing, unstarted legs), `tests/test_card_review_post.py` (the new lines). Place now checked at 1280 and 400 wide. Suite OK, nametest clear.
+
+**Files:** `tools/price_timing.py`, `tools/card_review_post.py`, `index.html`, `notify.py`, `tests/test_price_timing.py`, `tests/test_card_review_post.py`, `claude/price-timing-read-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any Card rule, `CARD_BOOK`, the push or briefing times, any pick, price or record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-27 The groupings record no longer crashes on the briefings file (tag pending)
 
 **What changed:** `groupings.grade()` read every `.json` in `groupings-archive/` as a day of groups. Since #211 `notify.py` keeps `briefed.json` there (the briefing slots sent), which has no `groups`, so the next `groupings.py` run would stop with `KeyError: 'groups'`: no Card on the Bets tab (the workflow's "empty state"), no groups archived or re-checked, no record regrade, from the first scheduled build after 10:53 UTC on 10 Nov. `grade()` now reads day files only (`YYYY-MM-DD.json`, `groupings.DAY_FILE`). No other reader lists that folder that way (the tools read `pool-*.json.gz` or a named day).

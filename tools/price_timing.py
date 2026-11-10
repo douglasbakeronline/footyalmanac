@@ -27,17 +27,27 @@ recorded from 10 Nov.
 The first price is the first real bookmaker price: the row's own, or its
 `priced` block when the leg was archived before any book priced it (9 Nov
 2026, #159); `pricedAt` in that block dates the first price for `hours`.
+The read (10 Nov 2026, #156): "take the price late" or "take the price when
+published" only on MIN_READ (50) legs or more with a bootstrap p of the
+opposite sign at most READ_P (0.10); else "no clear read". Until then the
+sign of the mean was printed as the read on any sample, 2 legs included.
+  settled  the singles return on settled legs at the first price and at the
+           last pre-start price, paired, with p(late worse): the move only
+           matters on legs that won, so this is the test the push time needs.
 Writes price-timing.json with --json FILE. Standard library only.
 """
-import glob, gzip, json, os, sys
+import glob, gzip, json, os, random, sys
 from collections import defaultdict
-from datetime import datetime
+from datetime import datetime, timezone
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "tools"))
 import groupings as G
 import card_replay as CR
 
 MIN_BOOK = 10    # a book needs this many priced legs before it is ranked
+MIN_READ = 50    # legs before the move is read as "take late" or "take when published" (10 Nov 2026)
+READ_P = 0.10    # bootstrap p of the opposite sign at most this for a read
+BOOT = 2000
 LEADS = ((6, "<6h"), (24, "6-24h"), (48, "24-48h"), (72, "48-72h"), (None, "72h+"))
 
 
@@ -57,9 +67,12 @@ def lead_bucket(h):
         if top is None or h < top: return name
 
 
-def legs(pool_dir=os.path.join(HERE, "groupings-archive"), dropped=None):
+def legs(pool_dir=os.path.join(HERE, "groupings-archive"), dropped=None, now=None, pending=None):
     """Card-rule legs with a first and a last real price. `dropped`, a list,
-    collects the legs left out because the last price came after the start."""
+    collects the legs left out because the last price came after the start.
+    With `now` (an aware datetime), a leg not started by then is left out
+    and counted in `pending`: its last price so far is not its last
+    (10 Nov 2026; the nightly run read 11 Nov legs as if closed)."""
     out = []
     for f in sorted(glob.glob(os.path.join(pool_dir, "pool-*.json.gz"))):
         d = json.load(gzip.open(f))
@@ -73,15 +86,77 @@ def legs(pool_dir=os.path.join(HERE, "groupings-archive"), dropped=None):
             if h is not None and h < 0:
                 if dropped is not None: dropped.append(l)
                 continue
+            st = _t(l.get("whenLast") or l.get("when") or "")
+            if now is not None and (st is None or st > now):
+                if pending is not None: pending.append(l)
+                continue
             out.append(l)
     return out
 
 
+def p_not_positive(xs, days=None, reps=BOOT, seed=7):
+    """Bootstrap share of resampled means at or under zero: small says the
+    mean is above zero beyond noise, near 1 says it is below. With `days`
+    (one label per value) whole days are resampled, as legs on one day share
+    a market (13 days and 112 legs at 10 Nov)."""
+    if not xs: return None
+    r = random.Random(seed)
+    if days:
+        by = defaultdict(list)
+        for x, d in zip(xs, days): by[d].append(x)
+        keys = list(by)
+        hits = 0
+        for _ in range(reps):
+            tot = cnt = 0
+            for _ in keys:
+                v = by[r.choice(keys)]; tot += sum(v); cnt += len(v)
+            hits += tot <= 0
+        return round(hits / reps, 3)
+    n = len(xs)
+    return round(sum(sum(r.choice(xs) for _ in range(n)) <= 0 for _ in range(reps)) / reps, 3)
+
+
+def read_of(xs, days=None, late="take the price late", early="take the price when published"):
+    """The read on a list of moves (or late-minus-first returns): a side only
+    on MIN_READ+ values with the opposite sign at bootstrap p <= READ_P."""
+    if len(xs) < MIN_READ: return "too few legs to read", None
+    p = p_not_positive(xs, days)
+    if p <= READ_P: return late, p
+    if 1 - p <= READ_P: return early, p
+    return "no clear read", p
+
+
 def timing(L):
     mv = [l["lastOdds"] / l["odds"] - 1 for l in L]
+    read, p = read_of(mv, [l.get("date") for l in L])
     return {"n": len(L), "drifted": sum(m > 0.005 for m in mv), "shortened": sum(m < -0.005 for m in mv), "unchanged": sum(abs(m) <= 0.005 for m in mv),
-            "meanMovePct": round(sum(mv) / len(mv) * 100, 2),
-            "read": "take the price late" if sum(mv) > 0 else "take the price when published"}
+            "meanMovePct": round(sum(mv) / len(mv) * 100, 2), "pNoDrift": p, "read": read}
+
+
+def settle(L, idx=None):
+    """Card-rule legs with a result (card_replay's settle on each sport's
+    graded history), each marked `won`; void and pending legs are left out."""
+    idx = idx or G.results_index(); names = CR.name_indexes(idx)
+    out = []
+    for l in L:
+        l = dict(l)
+        if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
+        st, _ = CR.settle_pool(l, idx, names)
+        if st in ("won", "lost"): out.append(dict(l, won=st == "won"))
+    return out
+
+
+def settled(S):
+    """Singles at one unit on settled legs: return at the first price v at
+    the last pre-start price, paired by leg (10 Nov 2026, #156)."""
+    if not S: return {"n": 0}
+    d = [(l["lastOdds"] - l["odds"]) if l["won"] else 0.0 for l in S]
+    read, p = read_of(d, [l.get("date") for l in S])
+    n, won = len(S), sum(l["won"] for l in S)
+    return {"n": n, "won": won,
+            "returnFirstPct": round((sum(l["odds"] for l in S if l["won"]) / n - 1) * 100, 2),
+            "returnLastPct": round((sum(l["lastOdds"] for l in S if l["won"]) / n - 1) * 100, 2),
+            "lateGainPct": round(sum(d) / n * 100, 2), "pLateNoBetter": p, "read": read}
 
 
 def book_table(L, min_n=MIN_BOOK):
@@ -110,11 +185,13 @@ def last_lead(L):
     return {"n": len(hs), "medianH": round(hs[len(hs) // 2], 1), "within3h": sum(h <= 3 for h in hs)} if hs else {"n": 0}
 
 
-def report(L, dropped=()):
+def report(L, dropped=(), S=None, pending=()):
     rep = {"legs": len(L), "lastAfterStart": len(dropped)}
+    if pending: rep["notStarted"] = len(pending)
     if dropped: rep["lastAfterStartBySport"] = {s: sum(1 for l in dropped if l.get("sport") == s) for s in sorted({l.get("sport") for l in dropped})}
     if not L: return rep
     rep["timing"] = timing(L)
+    if S is not None: rep["settled"] = settled(S)
     rep["books"] = book_table(L)
     hours = defaultdict(list)
     for l in L:
@@ -130,8 +207,9 @@ def report(L, dropped=()):
 
 
 def main():
-    dropped = []
-    rep = report(legs(dropped=dropped), dropped)
+    dropped, pending = [], []
+    L = legs(dropped=dropped, now=datetime.now(timezone.utc), pending=pending)
+    rep = report(L, dropped, settle(L), pending)
     print(json.dumps(rep, indent=1))
     if "--json" in sys.argv: json.dump(rep, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1)
 

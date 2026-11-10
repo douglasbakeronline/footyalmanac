@@ -171,6 +171,13 @@ def main():
     if pt.get("timing"):
         t = pt["timing"]
         lines += [f"## Price timing ({pt['legs']} Card-rule legs)", f"- first price to last pre-start price: drifted {t['drifted']}, shortened {t['shortened']}, unchanged {t['unchanged']}; mean move {t['meanMovePct']:+.2f}% ({t['read']})"]
+        if t.get("pNoDrift") is not None: lines[-1] += f", day-resampled p(no drift) {t['pNoDrift']:.3f}"
+        se = pt.get("settled") or {}
+        if se.get("n"):
+            # 10 Nov 2026 (#156): the move only pays on legs that won, so the return itself, first v last price, paired
+            lines.append(f"- singles on {se['n']} settled legs ({se['won']} won): {se['returnFirstPct']:+.2f}% at the first price, {se['returnLastPct']:+.2f}% at the last pre-start price, "
+                         f"late {se['lateGainPct']:+.2f} points" + (f", p(late no better) {se['pLateNoBetter']:.3f}" if se.get("pLateNoBetter") is not None else "") + f" ({se['read']})")
+        if pt.get("notStarted"): lines.append(f"- not started yet, left out until their last price is in: {pt['notStarted']} leg(s)")
         for b, r in sorted(pt.get("books", {}).items(), key=lambda kv: -kv[1]["vsAvgPct"]):
             lines.append(f"- {b}: {r['vsAvgPct']:+.2f}% v the average price, best price {r['bestShare'] * 100:.0f}% of the time (n {r['n']})")
         for sp, r in (pt.get("bySport") or {}).items():

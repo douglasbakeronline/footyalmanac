@@ -48,7 +48,7 @@ class PriceTiming(unittest.TestCase):
         self.assertEqual(rep["timing"]["drifted"], 3); self.assertEqual(rep["timing"]["shortened"], 2)
         self.assertEqual(set(rep["bySport"]), {"football", "tennis"})
         self.assertEqual(rep["bySport"]["football"]["timing"]["n"], 3); self.assertEqual(rep["bySport"]["tennis"]["timing"]["n"], 2)
-        self.assertEqual(rep["bySport"]["tennis"]["timing"]["read"], "take the price late")
+        self.assertEqual(rep["bySport"]["tennis"]["timing"]["read"], "too few legs to read")   # 10 Nov 2026: no read under MIN_READ legs
         self.assertEqual(rep["bySport"]["football"]["books"], {})          # under MIN_BOOK legs a book is not ranked
         self.assertEqual(set(PT.book_table(L, min_n=1)), {"William Hill", "Bet365"})
         self.assertIn("14", rep["hours"]); self.assertIn("09", rep["hours"]); self.assertIn("22", rep["hours"])
@@ -71,6 +71,34 @@ class PriceTiming(unittest.TestCase):
         self.assertEqual(rep["lastAfterStart"], 1); self.assertEqual(rep["lastAfterStartBySport"], {"football": 1})
         self.assertEqual(rep["lastLead"], {"n": 1, "medianH": 2.0, "within3h": 1})
         self.assertEqual(PT.lead_bucket(5.9), "<6h"); self.assertEqual(PT.lead_bucket(72), "72h+")
+
+    def test_read_needs_evidence(self):
+        # 10 Nov 2026 (#156): a side is read only on MIN_READ+ values beyond noise
+        self.assertEqual(PT.read_of([0.02] * 10)[0], "too few legs to read")
+        self.assertEqual(PT.read_of([0.02] * 60)[0], "take the price late")
+        self.assertEqual(PT.read_of([-0.02] * 60)[0], "take the price when published")
+        self.assertEqual(PT.read_of([0.05, -0.05] * 30 + [0.001])[0], "no clear read")
+        # resampled by day: one big day cannot carry the read on its own
+        xs = [0.30] * 30 + [-0.01] * 30; days = ["d1"] * 30 + [f"e{i}" for i in range(30)]
+        self.assertEqual(PT.read_of(xs)[0], "take the price late")
+        self.assertGreater(PT.p_not_positive(xs, days), PT.p_not_positive(xs))
+
+    def test_settled_first_v_last(self):
+        S = [dict(fb(1, 1.30, 1.40), won=True), dict(fb(2, 1.50, 1.40), won=True), dict(fb(3, 1.30, 2.00), won=False)]
+        r = PT.settled(S)
+        self.assertEqual((r["n"], r["won"]), (3, 2))
+        self.assertAlmostEqual(r["returnFirstPct"], (2.80 / 3 - 1) * 100, places=2)
+        self.assertAlmostEqual(r["returnLastPct"], (2.80 / 3 - 1) * 100, places=2)   # a loser's drift pays nothing
+        self.assertEqual(r["lateGainPct"], 0.0); self.assertEqual(r["read"], "too few legs to read")
+        self.assertEqual(PT.settled([]), {"n": 0})
+
+    def test_unstarted_legs_wait(self):
+        from datetime import datetime, timezone
+        pending = []
+        L = PT.legs(self.dir, now=datetime(2026, 11, 21, 13, 0, tzinfo=timezone.utc), pending=pending)
+        self.assertEqual(sorted(l["pick"] for l in L), ["Q6", "Q7"])          # tennis 12:00 started, football 15:00 not
+        self.assertEqual(len(pending), 3)
+        self.assertEqual(PT.report(L, pending=pending)["notStarted"], 3)
 
     def test_empty(self):
         self.assertEqual(PT.report([]), {"legs": 0, "lastAfterStart": 0})
