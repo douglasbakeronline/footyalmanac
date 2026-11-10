@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-25 A morning briefing to the phone (tag pending)
+
+**What changed:** once a UK day, the first build at or after 05:00 UK (normally the 05:15 build) sends a push through the same ntfy topic as the Card pushes: "Daily List, Tue 10 Nov: 15 picks", then Group A (the strongest picks at 85%+ with their start times), the model treble or double still to start (the week-ahead rule), the day's Edge picks with prices, and how many Card groups are open. Tapping it opens the site. The day sent is written to `groupings-archive/briefed.json`, which the build already commits, so a late or repeated build never sends it twice; a day with no list pick sends nothing. Display only.
+
+**Evidence:** `tests/test_morning_brief.py` (picks by UK start day across pool dates, list-only, started picks out of the treble, Edge line, the wider filler not counted as a Card group, once a day from 05:00). Not sent from the cloud session (no topic here); the first real one is tomorrow's 05:15 build. Suite OK.
+
+**Files:** `notify.py`, `tests/test_morning_brief.py`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card pushes, the workflow, any pick or record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-24 Today at a glance, on the Daily List (tag pending)
 
 **What changed:** the Daily List opens with **Today at a glance**: today's list picks on one 00:00-24:00 line, each at its start time and coloured by where it stands (won or lost from the record, in play ahead, behind or level from the live scores, finished but not yet graded, to come), a red line at the time now, and a summary: won, lost, in play, to come, and the next start with a countdown. Hover or tap a dot for the pick, time, confidence and state. It redraws on every live read and once a minute. A phone gets its own narrower drawing so the labels stay readable.
