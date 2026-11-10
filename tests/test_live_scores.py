@@ -18,7 +18,7 @@ class PinnedFeed(unittest.TestCase):
 
 def page_functions():
     src = open(os.path.join(HERE, "index.html"), encoding="utf-8").read()
-    start = src.index("function parseScoreboard(d){")
+    start = src.index("function parseTennis(ev, out){")
     end = src.index("function livePaint(el, g){")
     return src[start:end]
 
@@ -47,6 +47,21 @@ console.log(JSON.stringify({{s, reads: picks.map(g => liveRead(g, s[String(g.id)
         self.assertEqual(r["s"]["1"]["home"], {"name": "Home U", "score": 40})
         lead = [x and [x["lead"], x["final"], x["score"]] for x in r["reads"]]
         self.assertEqual(lead, [["ahead", False, "40–30"], ["behind", False, "40–30"], ["ahead", True, "60–70"], None, None])
+
+    def test_tennis_sets_in_row_order_and_who_leads(self):
+        def comp(cid, a, b, state, win=False, flip=False):
+            cs = [{"athlete": {"displayName": "Ana Home"}, "linescores": [{"value": v} for v in a], "winner": win},
+                  {"athlete": {"displayName": "Bea Away"}, "linescores": [{"value": v} for v in b], "winner": False}]
+            return {"id": cid, "status": {"type": {"state": state, "completed": state == "post", "shortDetail": "x"}},
+                    "competitors": cs[::-1] if flip else cs}
+        payload = {"events": [{"id": "t", "groupings": [{"competitions": [
+            comp("1", [6, 3], [4, 5], "in"), comp("2", [4, 6, 2], [6, 3, 1], "in", flip=True),
+            comp("3", [6, 6], [2, 3], "post", win=True), comp("4", [], [], "pre")]}]}]}
+        g = lambda i, side: {"id": i, "side": side, "home": "Ana Home", "away": "Bea Away"}
+        r = self.run_js(payload, [g("1", "a"), g("2", "h"), g("3", "h"), g("4", "h")])
+        lead = [x and [x["lead"], x["final"], x["score"]] for x in r["reads"]]
+        self.assertEqual(lead, [["behind", False, "6–4 3–5"], ["ahead", False, "4–6 6–3 2–1"],
+                                ["ahead", True, "6–2 6–3"], None])
 
     def test_ignores_malformed_events(self):
         r = self.run_js({"events": [{"id": 9, "competitions": [{"competitors": []}]}]}, [{"id": 9, "side": "h"}])

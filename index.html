@@ -338,6 +338,7 @@ details.how p{margin-top:8px;padding-left:22px}
 .pin-st.live-sc.behind{background:var(--away-soft);border-color:var(--away);color:var(--away)}
 .pin-st.live-sc.level{background:var(--yellow-soft);border-color:var(--gold);color:var(--cover-ink)}
 .pin-st.live-sc.fin{background:transparent}
+.pin-st.live-sc.sets{font-size:11.5px;padding:3px 5px}
 .day-head .count .livetally{display:block;text-align:right;color:var(--yellow-mid)}
 @media (max-width:860px){.day-head .count .livetally{text-align:left}}
 @media (min-width:861px){.pin-st.live-sc + small .lw{display:none}}
@@ -3103,13 +3104,29 @@ const LIVE_FEEDS = {nba:"basketball/nba", ncaab:"basketball/mens-college-basketb
 const LIVE_Q = {"basketball/mens-college-basketball":"&groups=50&limit=500", "football/college-football":"&groups=80&limit=500"};
 const LIVE_EVERY = 60e3;
 const LIVE = {scores:{}, watch:new Map(), timer:null, busy:false, at:0};
-const liveFeed = g => g.feed || (g.full && g.full.feed) || LIVE_FEEDS[g.sport] || null;
+// 10 Nov 2026: tennis too, from ESPN's tour scoreboards (build_tennis reads the
+// same feed for results), keyed by the match id the tennis pipeline archives
+const tennisTour = g => String(g.chip || (g.full && g.full.tour) || g.tour || "").toLowerCase();
+const liveFeed = g => g.sport === "tennis" ? (["atp", "wta"].includes(tennisTour(g)) ? `tennis/${tennisTour(g)}` : null)
+  : g.feed || (g.full && g.full.feed) || LIVE_FEEDS[g.sport] || null;
 // ESPN files a game under its US Eastern day
 const espnDay = iso => new Intl.DateTimeFormat("en-CA", {timeZone:"America/New_York", year:"numeric", month:"2-digit", day:"2-digit"})
   .format(new Date(iso)).replace(/-/g, "");
+// A tennis "event" is a whole tournament: its matches sit in
+// groupings[].competitions[], each competitor an athlete with set scores.
+function parseTennis(ev, out){
+  (ev.groupings || []).forEach(gr => (gr.competitions || []).forEach(c => {
+    const st = ((c.status || {}).type) || {};
+    const ps = (c.competitors || []).map(t => ({name:(t.athlete || {}).displayName || "", winner:!!t.winner,
+      sets:(t.linescores || []).map(l => Number(l.value)).filter(v => !isNaN(v))}));
+    if(ps.length !== 2 || !ps[0].name || !ps[1].name) return;
+    out[String(c.id)] = {tennis:true, state:st.state || "pre", done:!!st.completed, detail:st.shortDetail || st.detail || "", players:ps};
+  }));
+}
 function parseScoreboard(d){
   const out = {};
   ((d && d.events) || []).forEach(ev => {
+    if(ev.groupings) return parseTennis(ev, out);
     const c = (ev.competitions || [])[0] || {};
     const st = ((c.status || ev.status || {}).type) || {};
     const side = {};
@@ -3122,7 +3139,28 @@ function parseScoreboard(d){
 }
 // The pick's position in a live or finished game: ahead / behind / level, and
 // the score in the row's own order (home first), so it reads with the bar.
+const nm = s => String(s || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+function tennisRead(g, s){
+  if(s.state === "pre") return null;
+  // the row's own order: home is playerA; ESPN's order is matched by name
+  let [a, b] = s.players;
+  if(nm(b.name) === nm(g.home) || nm(a.name) === nm(g.away)) [a, b] = [b, a];
+  const n = Math.min(a.sets.length, b.sets.length);
+  if(!n) return null;
+  const final = s.state === "post" || s.done, done = final ? n : n - 1;   // the last set is still going in play
+  let sa = 0, sb = 0;
+  for(let i = 0; i < done; i++){ if(a.sets[i] > b.sets[i]) sa++; else if(b.sets[i] > a.sets[i]) sb++; }
+  if(final && (a.winner || b.winner)){ sa = a.winner ? Math.max(sa, sb + 1) : sa; sb = b.winner ? Math.max(sb, sa + 1) : sb; }
+  const [mine, theirs] = g.side === "a" ? [sb, sa] : [sa, sb];
+  let lead = mine > theirs ? "ahead" : mine < theirs ? "behind" : "level";
+  if(lead === "level" && !final){   // sets level: the set in play decides
+    const ga = a.sets[n - 1], gb = b.sets[n - 1], [m2, t2] = g.side === "a" ? [gb, ga] : [ga, gb];
+    lead = m2 > t2 ? "ahead" : m2 < t2 ? "behind" : "level";
+  }
+  return {lead, final, detail: s.detail, score: Array.from({length:n}, (_, i) => `${a.sets[i]}–${b.sets[i]}`).join(" ")};
+}
 function liveRead(g, s){
+  if(s && s.tennis) return tennisRead(g, s);
   if(!s || s.state === "pre" || isNaN(s.home.score) || isNaN(s.away.score)) return null;
   const mine = g.side === "a" ? s.away.score : s.home.score, theirs = g.side === "a" ? s.home.score : s.away.score;
   return {lead: mine > theirs ? "ahead" : mine < theirs ? "behind" : "level", score:`${s.home.score}–${s.away.score}`,
@@ -3133,7 +3171,7 @@ function livePaint(el, g){
   if(!r) return;
   const word = r.final ? (r.lead === "ahead" ? "Won" : r.lead === "behind" ? "Lost" : "Level") : {ahead:"Ahead", behind:"Behind", level:"Level"}[r.lead];
   // the colour carries ahead / behind; the word is spoken, and shown where the row has room (a phone's full-width line)
-  el.innerHTML = `<span class="pin-st live-sc ${r.lead}${r.final ? " fin" : ""}" aria-label="${r.final ? "Final" : "Live"} ${r.score}, pick ${word.toLowerCase()}" title="Live score from ESPN, read ${LIVE.at ? new Date(LIVE.at).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}) : ""}. Unofficial: the record grades it at the next build.">${r.final ? "Final " : ""}${r.score}</span><small><span class="lw">${word} · </span>${r.final ? "unofficial" : r.detail}</small>`;
+  el.innerHTML = `<span class="pin-st live-sc ${r.lead}${r.final ? " fin" : ""}${g.sport === "tennis" ? " sets" : ""}" aria-label="${r.final ? "Final" : "Live"} ${r.score}, pick ${word.toLowerCase()}" title="Live score from ESPN, read ${LIVE.at ? new Date(LIVE.at).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit"}) : ""}. Unofficial: the record grades it at the next build.">${r.score}</span><small><span class="lw">${word} · </span>${r.final ? "Final, unofficial" : r.detail}</small>`;
 }
 function liveTally(){
   document.querySelectorAll("[data-livetally]").forEach(t => {
@@ -3165,7 +3203,7 @@ async function liveTick(){
   if(!open.length || LIVE.busy) return;
   if(document.visibilityState === "hidden"){ LIVE.timer = setTimeout(liveTick, LIVE_EVERY); return; }
   LIVE.busy = true;
-  const want = new Set(open.map(w => `${liveFeed(w.g)}|${espnDay(w.g.start)}`));
+  const want = new Set(open.map(w => `${liveFeed(w.g)}|${w.g.sport === "tennis" ? w.g.start.slice(0, 10).replace(/-/g, "") : espnDay(w.g.start)}`));
   await Promise.all([...want].map(async k => {
     const [feed, day] = k.split("|");
     try {
