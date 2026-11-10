@@ -1683,6 +1683,16 @@ def main():
 
     blob = json.dumps(payload, separators=(",", ":"))
     sum_blob = json.dumps(summary, separators=(",", ":")) if summary else "null"
+    # 10 Nov 2026: where to trust the model, every sport by confidence band
+    # (trustmap.py), shown in How it went, so it rides in the on-demand
+    # record file rather than first paint. A tally of the record, never a fit;
+    # record.json itself is not changed.
+    if record:
+        try:
+            import trustmap
+            record = dict(record, trust=trustmap.grid())
+        except Exception as e:
+            print(f"trust map skipped: {type(e).__name__}: {e}", file=sys.stderr)
     rec_blob = json.dumps(record, separators=(",", ":")) if record else "null"
     with open(os.path.join(here, "data.js"), "w") as f:
         f.write("window.__FIXTURE_DATA__=" + blob + ";window.__RECORD_SUMMARY__=" + sum_blob + ";")

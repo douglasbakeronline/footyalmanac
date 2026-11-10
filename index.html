@@ -1235,6 +1235,35 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .hon-key .kd{width:8px;height:8px;border-radius:50%;background:var(--home)}
 .hon-key .kc{width:5px;height:12px;border-radius:3px;background:var(--home);opacity:.22}
 .hon-foot{margin:10px 0 0;font-size:12px;color:var(--mute)}
+/* Where to trust the model (trustMap, 10 Nov 2026): a quiet table, tinted
+   only where a cell is past chance, so the eye goes to what matters. */
+.trust{margin-top:22px;border:1px solid var(--rule);background:var(--surface);padding:16px 18px 14px}
+.trust h3{font-family:var(--f-display);font-size:20px;font-weight:400;letter-spacing:.01em;text-transform:uppercase;margin:0 0 6px}
+.tr-lede{margin:0 0 14px;max-width:90ch;line-height:1.55;color:var(--ink-2)}
+.tr-up{color:var(--edge);font-weight:700}
+.tr-down{color:var(--away);font-weight:700}
+.tr-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tr{border-collapse:collapse;width:100%;min-width:640px;font-size:13px}
+.tr th,.tr td{border-bottom:1px solid var(--rule-soft);padding:7px 8px;text-align:right;white-space:nowrap}
+.tr thead th{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--mute);border-bottom:1px solid var(--rule)}
+.tr th[scope=row],.tr thead th:first-child{text-align:left;font-family:var(--f-ui);font-weight:600;font-size:13.5px;color:var(--ink);
+  position:sticky;left:0;background:var(--surface);z-index:1}
+.tr thead th:first-child{font-size:11px;color:var(--mute);font-weight:700}
+.tr td b{font-family:var(--f-num);font-size:14px;font-weight:600;letter-spacing:-.02em}
+.tr td small{display:block;font-family:var(--f-num);font-size:10.5px;color:var(--mute)}
+.tr td.all{border-left:1px solid var(--rule)}
+.tr td.up{background:var(--edge-soft)}
+.tr td.up b{color:var(--edge)}
+.tr td.down{background:var(--away-soft)}
+.tr td.down b{color:var(--away)}
+.tr td.few{color:var(--rule)}
+.tr td.few b,.tr td.few small{color:#b3a68e}
+.tr-key{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:12px;color:var(--mute)}
+.tr-key i{display:inline-block;width:12px;height:10px;margin-right:5px;vertical-align:middle;border:1px solid var(--rule-soft)}
+.tr-key .k-up{background:var(--edge-soft)} .tr-key .k-dn{background:var(--away-soft)} .tr-key .k-0{background:var(--surface)} .tr-key .k-few{background:var(--surface);opacity:.5}
+.tr-how{flex-basis:100%}
+@media (max-width:860px){.trust{padding:14px 12px 12px}.tr th,.tr td{padding:6px 6px}
+  .tr{min-width:560px}.tr th[scope=row]{white-space:normal;width:104px;min-width:104px;font-size:12.5px;line-height:1.25}}
 /* The week ahead (10 Nov 2026): seven day cards in a strip, a bar of the
    day's picks by sport scaled to the busiest day, the strongest model group's
    chance as a number and a meter; the chosen day opens below. Paper palette,
@@ -3720,6 +3749,44 @@ function listHonesty(days){
     <p class="hon-foot">Graded picks only, published before the start; nothing on this chart is fitted to the record.</p>
   </section>`;
 }
+/* 10 Nov 2026: where to trust the model. Every graded pick at 55%+, every
+   sport, by family and confidence band (trustmap.py, carried in the
+   on-demand record as `trust`): how often it landed against what the model
+   said. A cell is called above or under quote only past 90% (z 1.645); a
+   cell with too few picks is shown faint. A tally of the record, never a fit. */
+const TRUST_NAMES = {"football":"Football, core leagues", "football-wider":"Football, wider leagues", "football-cups":"Football, cups & internationals",
+  "tennis-atp":"Tennis, ATP", "tennis-wta":"Tennis, WTA", ncaab:"College basketball", cfb:"College football", nba:"NBA", nfl:"NFL",
+  rugby:"Rugby union", nrl:"Rugby league", nhl:"Ice hockey", mlb:"Baseball", wnba:"WNBA"};
+function trustMap(){
+  const T = R && R.trust; if(!T || !(T.families || []).length) return "";
+  const Z = T.z || 1.645, MIN = T.minShow || 10;
+  const bl = ([lo, hi]) => hi >= 1 ? `${Math.round(lo * 100)}+` : `${Math.round(lo * 100)}–${Math.round(hi * 100)}`;
+  const name = k => TRUST_NAMES[k] || k;
+  const cls = c => !c || c.n < MIN ? "few" : c.z >= Z ? "up" : c.z <= -Z ? "down" : "";
+  const cell = (c, all) => {
+    if(!c) return `<td class="few">–</td>`;
+    const t = `${c.won} of ${c.n} landed (${pct(c.won / c.n)}%) against ${pct(c.quoted)}% quoted${c.z != null ? `, ${c.z >= 0 ? "+" : "−"}${Math.abs(c.z).toFixed(1)} standard errors` : ""}`;
+    return `<td class="${cls(c)}${all ? " all" : ""}" title="${t}"><b>${pct(c.won / c.n)}%</b><small>v ${pct(c.quoted)} · ${c.n}</small></td>`;
+  };
+  const fams = T.families.filter(f => f.cells.all && f.cells.all.n >= 5);
+  const notable = fams.flatMap(f => Object.entries(f.cells).filter(([b, c]) => b !== "all" && c.n >= 30 && Math.abs(c.z || 0) >= Z)
+    .map(([b, c]) => ({f, b, c}))).sort((a, b) => b.c.z - a.c.z);
+  const say = x => `<b>${name(x.f.key)}</b> at ${T.bands[+x.b][1] >= 1 ? Math.round(T.bands[+x.b][0] * 100) + "%+" : bl(T.bands[+x.b]) + "%"} (${pct(x.c.won / x.c.n)}% v ${pct(x.c.quoted)}%, ${x.c.n} picks)`;
+  const up = notable.filter(x => x.c.z > 0).slice(0, 3), down = notable.filter(x => x.c.z < 0).reverse().slice(0, 3);
+  return `<section class="trust" aria-labelledby="tr-h">
+    <h3 id="tr-h">Where to trust the model</h3>
+    <p class="tr-lede">Every graded pick at 55% or more, every sport, since each sport's record began: how often it landed against the number the model gave.
+      ${up.length ? `<br><span class="tr-up">Landing above its number:</span> ${up.map(say).join("; ")}.` : ""}
+      ${down.length ? `<br><span class="tr-down">Landing under its number:</span> ${down.map(say).join("; ")}.` : ""}
+      ${!up.length && !down.length ? "No sport and band is clearly off its number yet." : ""}</p>
+    <div class="tr-wrap"><table class="tr">
+      <thead><tr><th scope="col">Model's confidence</th>${T.bands.map(b => `<th scope="col">${b[1] >= 1 ? `${Math.round(b[0] * 100)}%+` : `${bl(b)}%`}</th>`).join("")}<th scope="col">All</th></tr></thead>
+      <tbody>${fams.map(f => `<tr><th scope="row">${name(f.key)}</th>${T.bands.map((_, i) => cell(f.cells[String(i)])).join("")}${cell(f.cells.all, true)}</tr>`).join("")}</tbody>
+    </table></div>
+    <div class="tr-key"><span><i class="k-up"></i>Above its number</span><span><i class="k-dn"></i>Under its number</span><span><i class="k-0"></i>Within chance</span><span><i class="k-few"></i>Fewer than ${MIN} picks</span>
+      <span class="tr-how">Each cell: landed, then quoted and the number of picks.</span></div>
+  </section>`;
+}
 function listReview(){
   const days = listReviewDays();
   if(!days.length){
@@ -3756,6 +3823,7 @@ function listReview(){
     <div class="scoreline" style="margin-top:14px">${tile("Last 7 list days", w7, n7)}${tile("Every list day here", wa, na)}
       ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}${bookTile()}</div>
     ${listHonesty(days)}
+    ${trustMap()}
     <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
       <div class="dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
         ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>

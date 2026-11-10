@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-23 Where to trust the model, in How it went (tag pending)
+
+**What changed:** How it went, Daily List, adds **Where to trust the model**: every graded pick at 55% or more, every sport, by family (football core / wider / cups and internationals, tennis ATP and WTA, each US sport, rugby) and confidence band (55-65, 65-75, 75-85, 85-95, 95+), landed against quoted with the count. A cell is tinted only past 90% (z 1.645): green above its number, red under; a cell under 10 picks is faint. Above the table, the cells that are clearly off, in words. `trustmap.py` builds the grid from `record-graded.json`, `tennis-record.json` and `sports.graded_games()`; `build.py` adds it to the on-demand `record-data.js` as `trust` (first paint unchanged; `record.json` unchanged).
+
+**Evidence:** on the record at 10 Nov: above its number, football core leagues at 55-65% (65% v 59%, 539 picks) and 65-75% (78% v 69%, 187), college basketball at 55-65% (73% v 61%, 51); under, football cups and internationals at 65-75% (56% v 69%, 59) and college football at 85-95% (78% v 89%, 32), both already known (`claude/tuning-evidence.md`, `sports.LIST_OFF`). Checked at 390 and 1280 wide. `tests/test_trustmap.py`. Suite 728 OK.
+
+**Files:** `trustmap.py`, `build.py`, `index.html`, `tests/test_trustmap.py`, `claude/trust-map-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, list rule or record figure.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-22 The week ahead, on top of Bets (tag pending)
 
 **What changed:** the Bets tab opens with **The week ahead**: seven day cards (today to next Monday), each with its Daily List pick count, a bar of the picks by sport scaled to the busiest day, and the strongest model bet with its chance and a meter. Tap a day for its **Model treble** (the three strongest list picks still to start) and **Model double** (the top two): each leg with confidence, kick-off and its William Hill chip, the group's combined chance, and William Hill's combined price when every leg has one. Same sport allowed, no bookmaker condition (Douglas: "rely on the model and its accurate performance"). Under it, the same rule's record on the graded list, so the claim is checked on the page. Display only: not staked, pushed or archived; the Card below is unchanged. `listCollect` is now shared by the Daily List and this panel.
