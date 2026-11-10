@@ -368,8 +368,12 @@ def main():
     by_date = defaultdict(list)
     for r in rows:
         by_date[r["date"]].append(r)
+    # 10 Nov 2026: each day's match carries the start ESPN recorded
+    # (history-tennis/), for "Days at a glance" on How it went; a copy, so
+    # the graded rows kept in tennis-record.json stay as they were.
+    starts = history_starts()
     days = [{"date": d, **summarise(by_date[d]), "tiers": tier_table(by_date[d]),
-             "games": sorted(by_date[d], key=lambda r: -r["confidence"])}
+             "games": [dict(g, start=starts.get(str(g["key"]))) for g in sorted(by_date[d], key=lambda r: -r["confidence"])]}
             for d in sorted(by_date, reverse=True)[:REVIEW_DAYS]]
 
     bands = []
