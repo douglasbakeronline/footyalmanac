@@ -9,6 +9,9 @@ name: Card review
 on:
   schedule:
     - cron: "40 3 * * *"   # after the 00:10 UTC deploy has committed the day's grading
+    # 10 Nov 2026: a backup. GitHub dropped the 03:40 run on 10 Nov; this one
+    # posts only when the day has no review yet (card_review_post.already_posted).
+    - cron: "25 9 * * *"
   workflow_dispatch:
 permissions:
   contents: read
