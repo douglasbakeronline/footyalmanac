@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10 What keeps groups off the Card: the funnel in the nightly review (tag pending)
+
+**What changed:** nothing a reader sees. `tools/card_funnel.py` (issue #155) reads the pool at each leg's first real price and, per Card day, gives each leg's first failing condition by sport (the live `card_fault`), the legs kept off by one condition alone, and whether a first Card 2x and 3x can be built live and with one condition relaxed at a time. The nightly Card review prints it from 6 Nov (`card_review_post.funnel_section`, no workflow change).
+
+**Evidence:** `claude/card-funnel-2026-11-10.md`. Pool 6 to 12 Nov, legs before 10 Nov at their last price, 651 priced legs over 7 days: it reproduces the live Card (a 2x on 6, 7, 8 Nov, none on 9 Nov, no 3x). No football leg cleared the full rule (262 outside the core leagues, 96 under-market, 26 opposition). A 3x comes back only by relaxing the tennis 75% floor (3 days of 7) or the opposition rule (2 days), the two conditions with evidence behind them (tennis legs z -2.23; opposition 9+ holds in all five seasons), so no change. 9 Nov had five clear NBA legs and no group: two legs per competition (`mult_combo`). `tests/test_card_funnel.py` (every `card_fault` branch keyed, first real price, one condition relaxed, constants restored); suite 669 OK; `nametest.py` clear.
+
+**Files:** `tools/card_funnel.py`, `tools/card_review_post.py`, `tests/test_card_funnel.py`, `claude/card-funnel-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, the page, any record or archive file, `.github/`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-09 Office review and next week's priorities (tag pending)
 
 **What changed:** nothing a reader sees. A dated note, `claude/office-review-2026-11-09.md`: what shipped since 31 Oct, what was rejected, where accuracy stands, three tasks (Kofi, Hannah, Susie).

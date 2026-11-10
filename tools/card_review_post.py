@@ -28,6 +28,27 @@ def ensure_label(name, colour, desc):
 def pct(x): return f"{x * 100:+.1f}%" if x is not None else "n/a"
 
 
+def funnel_section(today_=None, days=14):
+    """10 Nov 2026 (#155): which Card condition keeps groups off the page,
+    over the last two weeks of the pool (tools/card_funnel.py). Read here,
+    not in the workflow, so the section needs no workflow change. Legs
+    archived before 10 Nov are read at their last price (`--recover`)."""
+    try:
+        from datetime import date, timedelta
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import card_funnel as CF
+        t = date.fromisoformat(today_ or today)
+        since = max("2026-11-06", (t - timedelta(days=days)).isoformat())   # rule 6 from 6 Nov 2026
+        by, unpriced = CF.pool_days(since, None, recover=True)   # to the last pool file: days not yet played read too
+        fn = CF.funnel(by, unpriced)
+    except Exception as e:   # advisory: never stop the review over it
+        return [f"## Card funnel", f"Not read: {type(e).__name__}: {e}", ""]
+    return ([f"## Card funnel from {since} (the pool to its last file, each leg's first condition failed)", ""]
+            + CF.report_lines(fn)
+            + ["A volume read: a condition that costs groups is not a reason to drop it unless the replay says the extra groups pay "
+               "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""])
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -90,6 +111,7 @@ def main():
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
+    lines += funnel_section()
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
     ensure_label("card-review", "c8102e", "The nightly Card review")
