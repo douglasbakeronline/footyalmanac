@@ -25,6 +25,16 @@ def ensure_label(name, colour, desc):
         gh("-X", "POST", f"repos/{REPO}/labels", "-f", f"name={name}", "-f", f"color={colour}", "-f", f"description={desc}")
 
 
+def already_posted(title):
+    """10 Nov 2026: the 03:40 UTC schedule did not fire on 10 Nov (GitHub drops
+    scheduled runs under load) and the review was dispatched by hand at 08:40.
+    A second, later schedule makes a missed night post itself, so a run whose
+    day already has its review posts nothing: one issue a night, as before.
+    Looks at the last few card-review issues by title, open or closed."""
+    got = gh(f"repos/{REPO}/issues?labels=card-review&state=all&per_page=10")
+    return isinstance(got, list) and any((i or {}).get("title") == title for i in got)
+
+
 def pct(x): return f"{x * 100:+.1f}%" if x is not None else "n/a"
 
 
@@ -203,6 +213,10 @@ def main():
     lines += edge_section()
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
+    if already_posted(f"Card review {today}") and os.environ.get("FORCE_POST") != "1":
+        print(f"Card review {today} is already posted; nothing posted this run (FORCE_POST=1 posts anyway).")
+        print(body)
+        return
     ensure_label("card-review", "c8102e", "The nightly Card review")
     ensure_label("office-backlog", "0e8a16", "A task for the office sprint")
     gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title=Card review {today}", "-f", f"body={body}", "-f", "labels[]=card-review")

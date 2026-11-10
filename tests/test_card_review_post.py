@@ -62,3 +62,32 @@ class Gate(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OncePerDay(unittest.TestCase):
+    """10 Nov 2026: a missed 03:40 run is caught by a later schedule, so a
+    day that already has its review posts nothing more."""
+    def run_with(self, issues, force=None):
+        posted = []
+        def fake(*a):
+            if a and isinstance(a[0], str) and a[0].startswith(f"repos/{P.REPO}/issues?"):
+                return issues
+            posted.append(a); return {}
+        env = {"FORCE_POST": force} if force else {}
+        with mock.patch.object(P, "load", side_effect=lambda p: {}), \
+             mock.patch.object(P, "gh", side_effect=fake), \
+             mock.patch.dict(os.environ, env), mock.patch("builtins.print"):
+            P.main()
+        return [a for a in posted if a and a[0] == "-X" and a[2].endswith("/issues")]
+
+    def test_posts_when_today_is_missing(self):
+        self.assertEqual(len(self.run_with([{"title": "Card review 2000-01-01"}])), 1)
+
+    def test_skips_when_today_is_posted(self):
+        self.assertEqual(self.run_with([{"title": f"Card review {P.today}"}]), [])
+
+    def test_force_posts_anyway(self):
+        self.assertEqual(len(self.run_with([{"title": f"Card review {P.today}"}], force="1")), 1)
+
+    def test_an_unreadable_listing_still_posts(self):
+        self.assertEqual(len(self.run_with(None)), 1)
