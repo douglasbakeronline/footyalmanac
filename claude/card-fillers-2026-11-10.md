@@ -32,9 +32,8 @@ with 20 legs of its own is not a 100-leg result because live had 300.
 The football-data side (`tools/card_legs_history.py`) replays `fillwide`
 (on legs taken through the wider price gate, `legs(wide=True)`, for that
 Card only), `fillrule5` and `fillopp7` on every season, as `cardFillWide`,
-`cardFillRule5` and `cardFillOpp7`. It needs football-data.co.uk, so its first
-numbers come from `tune.yml` on Monday 16 Nov (or a hand run of the
-`card-legs-history.yml` workflow once it lands).
+`cardFillRule5` and `cardFillOpp7`. It needs football-data.co.uk, so it ran
+in CI on this pull request (`card-legs-history.yml`, run 42739245947).
 
 ## The read, the pool from 30 Oct to 9 Nov
 
@@ -61,12 +60,33 @@ review's window from 29 Oct: fillwide 13 groups, 2 won v 4.46 expected,
 -59%, p(worse) 0.98. The live record agrees in direction on a tiny sample:
 `cardWide` 1 of 2 settled.
 
+## The read, football-data seasons (football only)
+
+Under rule 6 the football-only full rule builds almost nothing (one group in
+five seasons), so on these seasons the fillers are close to the whole Card.
+
+| season | filler | days | groups | won | expected | z | return (best price) |
+|---|---|---|---|---|---|---|---|
+| fit 2025-26 | fillwide | 106 | 177 | 68 | 55.97 | +1.97 | -0.9% (+6.6%) |
+| fit 2025-26 | fillrule5 | 23 | 25 | 10 | 7.95 | +0.89 | +2.0% (+10.5%) |
+| fit 2025-26 | fillopp7 | 4 | 4 | 0 | 1.39 | -1.46 | -100% |
+| check 2026-27 | fillwide | 20 | 35 | 12 | 11.42 | +0.21 | -11.7% (-4.5%) |
+
+On football alone the wider rule's groups land at or above their quote but
+do not beat the price at the average book: the margin on three to five
+near-market legs eats what the favourite-longshot bias gives back. Its 3x
+loses on both seasons (fit -7.5%, check -60.9%); its 2x is about level
+(+2.8%, +9.1%). `fillrule5` is the same groups as `cardRule5` on these
+seasons, since live is empty on every day it builds.
+
 ## What it means for the return
 
 The page's filler has landed under its own quote on every read so far: its
 picks are near the market (no under-market cut) and its opposition is
 often short, the two conditions the five-season replay found carry the edge.
-That is what the evidence would predict. But 36 legs is a third of the gate,
+That is what the evidence would predict, and football-data agrees on the
+sign at the average price on both seasons (-0.9%, -11.7%). But 36 pool legs
+is a third of the gate, and the fit season's groups landed above quote,
 so per the delegated-decision rule (100+ legs, p(worse) at most 0.30, both
 samples agreeing) nothing changes today.
 
