@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-10 The Daily List at William Hill (tag pending)
+
+**What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.
+
+**Evidence:** `claude/list-at-hill-2026-11-10.md`. List picks 1-13 Nov in the pool archive: 172 college basketball, none with a UK price read; across every sport 3 of 228 had a William Hill price. `tests/test_list_books.py` (7 tests); suite 700 OK; `nametest.py` clear. Checked at 400 and 1280 wide on the live sports and tennis files with sample marks. No build fetch from the cloud session (no ESPN or API access): the first real marks arrive with the next deploy build.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, `tests/test_list_books.py`, `claude/list-at-hill-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Daily List's admission, order or record; the model; the Card and every `CARD_*` constant; `CARD_RULE`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-9 The Model card's rule replayed beside the Card (tag pending)
 
 **What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers `modelcard`: the Model card's rule (the model's own picks at or above the bookmakers' chance) built on the same legs as the Card, staked as the Card. `tools/card_legs_history.py` replays it on every football-data season (`cardModel`, legs admitted on the model's own 60%+). The nightly review's variant table carries it.
