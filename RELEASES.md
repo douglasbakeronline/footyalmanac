@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-8 The Daily List at William Hill (tag pending)
+
+**What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.
+
+**Evidence:** `claude/list-at-hill-2026-11-10.md`. List picks 1-13 Nov in the pool archive: 172 college basketball, none with a UK price read; across every sport 3 of 228 had a William Hill price. `tests/test_list_books.py` (7 tests); suite 696 OK; `nametest.py` clear. Checked at 400 and 1280 wide on the live sports and tennis files with sample marks. No build fetch from the cloud session (no ESPN or API access): the first real marks arrive with the next deploy build.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, `tests/test_list_books.py`, `claude/list-at-hill-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Daily List's admission, order or record; the model; the Card and every `CARD_*` constant; `CARD_RULE`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-7 The Edge flag tested on every sport (tag pending)
 
 **What changed:** nothing a reader sees. `tools/edge_sports.py` tests the green Edge flag's conditions on every sport's favourites in the priced pool, by price, gap to the market and the opposition's price, with two candidates (the flag without the opposition condition; the short favourite at 1.15-1.30) and a gate for switching a sport on. The nightly Card review prints every sport's line on legs from 11 Nov, out of sample (`card_review_post.edge_section`, no workflow change).

@@ -594,6 +594,25 @@ ODDS_API_FLOOR = 20    # stop when the API says fewer than this are left
 ODDS_API_TTL = 4 * 3600   # a sport's odds are re-read at most every 4 hours
 ODDS_RUGBY = {"Premiership": ("premiership",), "URC": ("united rugby", "urc"), "Top 14": ("top 14",),
               "Test match": ("international", "test", "autumn nations", "rugby championship", "six nations")}
+# 10 Nov 2026 (Douglas: "I search for a lot of those games and they are not on
+# William Hill"). Daily List picks are mostly 1.01-1.15 favourites that no
+# card rule wants priced, and college basketball (most of the list on a busy
+# night) comes only from ESPN, whose DraftKings line carries no UK book and is
+# missing for big mismatches. So every list pick is sent to The Odds API's UK
+# region for its books alone (`price_odds_api(list_books=True)`), display only:
+# the list never sees a price (standing decision) and nothing about the leg's
+# own price, fair chance or the Card changes. One credit prices a whole sport's
+# slate, so the US sports cost a few credits a day, and the list pass only
+# spends while the day's ledger is under LIST_BOOK_DAY, leaving the rest of
+# ODDS_API_DAY to the Card's own passes on later builds.
+LIST_BOOK_KEYS = {"nba": "basketball_nba", "ncaab": "basketball_ncaab", "wnba": "basketball_wnba",
+                  "nfl": "americanfootball_nfl", "cfb": "americanfootball_ncaaf",
+                  "nhl": "icehockey_nhl", "mlb": "baseball_mlb"}
+LIST_BOOK_SPORTS = {"tennis", "rugby", "nrl"} | set(LIST_BOOK_KEYS)
+LIST_BOOK_DAY = 9          # of ODDS_API_DAY (15): the list pass stops here
+LIST_BOOK_TTL = 8 * 3600   # a US slate is re-read for the list at most every 8 hours
+LIST_BOOK_FROM = "2026-11-10"   # the at-the-book record starts with the pass
+LIST_BOOK_DAYS = 21        # days of per-pick marks kept for the page
 ODDS_STOP = {"atp", "wta", "open", "tennis", "the", "de", "di", "cup", "tournament", "international", "championships"}
 
 
@@ -624,6 +643,8 @@ def _odds_keys(l, active):
                 out.append(k)
         elif l["sport"] == "nrl":
             if k == "rugbyleague_nrl": out.append(k)
+        elif l["sport"] in LIST_BOOK_KEYS:
+            if k == LIST_BOOK_KEYS[l["sport"]]: out.append(k)
     # 21 Oct 2026: five URC and Top 14 legs (81-91%) went unpriced because no
     # key's title named their competition. When none does, try every active
     # union key: the event is still matched on both team names and kick-off,
@@ -633,7 +654,16 @@ def _odds_keys(l, active):
     return out
 
 
-def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False):
+def list_books_wanted(l):
+    """A Daily List pick with no UK bookmaker's price yet, in a sport The Odds
+    API's UK region carries (10 Nov 2026). Priced or estimated alike: a 98%
+    favourite is usually an estimate because the US line skips it, and that is
+    exactly the pick whose UK availability is in question."""
+    return bool(l.get("list") and not l.get("bookOdds") and l.get("sport") in LIST_BOOK_SPORTS
+                and (l.get("players") or (l.get("home") and l.get("away"))))
+
+
+def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False, list_books=False):
     import odds as _O
     """UK bookmaker match odds from The Odds API for legs nothing else priced.
 
@@ -653,7 +683,10 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
     # 9 Nov 2026: books_only adds every UK book's price (bookOdds) to tennis
     # and rugby legs priced by Pinnacle alone, nothing else (books_wanted)
     if books_only: want = [l for l in L if books_wanted(l, {"tennis", "rugby", "nrl"})]
-    rkey = "oddsApiBooks" if books_only else "oddsApi"
+    # 10 Nov 2026: list_books adds bookOdds (display only) to Daily List picks
+    if list_books: books_only = True; want = [l for l in L if list_books_wanted(l)]
+    day_cap, ttl = (LIST_BOOK_DAY, LIST_BOOK_TTL) if list_books else (ODDS_API_DAY, ODDS_API_TTL)
+    rkey = "oddsApiList" if list_books else "oddsApiBooks" if books_only else "oddsApi"
     if not key or not want:
         report[rkey] = "no key" if not key else "no legs"; return
     fetch = fetch or _odds_get
@@ -699,11 +732,11 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
     # Keys the groups built to land need come first; Multiplier-only legs
     # (multOnly, 24 Oct 2026) ride on the same keys and spend what is left.
     for k in sorted(need, key=lambda k: (-sum(1 for l in need[k] if not l.get("multOnly")), -len(need[k]))):
-        events = cached(k, ODDS_API_TTL)
+        events = cached(k, ttl)
         if events is None:
             spent = led["days"].get(day, 0)
             left = led.get("left")
-            if spent >= ODDS_API_DAY or led["used"] >= ODDS_API_MONTH or (left is not None and left < ODDS_API_FLOOR):
+            if spent >= day_cap or led["used"] >= ODDS_API_MONTH or (left is not None and left < ODDS_API_FLOOR):
                 rep["skipped"].append(k); continue
             try: events, left = fetch(f"{ODDS_API}/{k}/odds?apiKey={key}&regions=uk&markets=h2h&oddsFormat=decimal")
             except Exception as e:
@@ -714,6 +747,9 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
         else:
             rep["cached"] += 1
         for l in need[k]:
+            # 10 Nov 2026: this UK slate was read for the leg, so a leg it does
+            # not list was not found at a UK book (as against never looked up)
+            l["ukChecked"] = True
             if l.get("odds") if not books_only else l.get("bookOdds"): continue
             names = l.get("players") or [l.get("home"), l.get("away")]
             t = parse(l.get("when"))
@@ -1009,6 +1045,9 @@ def price(L, dates):
     # every card shows William Hill and the other UK books (display only).
     price_api_sports(L, dates, report, books_only=True)
     price_odds_api(L, dates, report, books_only=True)
+    # 10 Nov 2026: UK prices for the Daily List picks, display only (Douglas
+    # bets the list at William Hill and many picks are not on it)
+    price_odds_api(L, dates, report, list_books=True)
     for l in L:
         if not l.get("odds"):
             # 22 Oct 2026: with a typical bookmaker margin (MARGIN), so a group
@@ -2178,7 +2217,9 @@ POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "
              "opp", "draw",
              # 9 Nov 2026: the result keys (settle needs id for tennis and US
              # sport) and the two flags card_fault reads, so the pool replays
-             "id", "listOff", "timeEst")
+             "id", "listOff", "timeEst",
+             # 10 Nov 2026: a UK slate was read for the leg (list books)
+             "ukChecked")
 # 9 Nov 2026: what the first real bookmaker price brings to a leg that was
 # archived as the model's estimate (the pool is written up to three days
 # ahead, before any book has priced the game; 810 of 2,113 legs to 9 Nov).
@@ -2217,6 +2258,11 @@ def archive_pool(L, now, dates):
             started = (parse(l.get("when") or "") or now) <= now
             if k in have:
                 old = have[k]
+                if not started:
+                    # 10 Nov 2026: UK books read on a later build (the list pass
+                    # reaches estimates too), for the list's at-the-book record
+                    if l.get("bookOdds"): old["lastBooks"] = l["bookOdds"]
+                    if l.get("ukChecked"): old["lastChecked"] = True
                 if not started and not l.get("est"):
                     old["lastOdds"], old["lastBest"], old["lastAt"] = l["odds"], l.get("best") or l["odds"], stamp
                     if l.get("opp"): old["lastOpp"] = l["opp"]
@@ -2280,6 +2326,111 @@ def archive(day, generated):
     if os.path.exists(path) or not day["groups"]: return False
     json.dump({"date": day["date"], "published": generated, "groups": day["groups"]}, open(path, "w"), indent=1, ensure_ascii=False)
     return True
+
+# ---------- the Daily List at the bookmaker (10 Nov 2026) ----------
+# Douglas places with William Hill and found many list picks are not on it
+# (a 98% college basketball favourite is rarely offered). The page marks each
+# list pick with its William Hill price, "not at William Hill" when UK books
+# price it and Hill does not, or "no UK price found" when a UK slate was read
+# and did not list the game; and the record keeps the list's tally for the
+# picks that could actually be backed there. Display and tally only: the list
+# never sees a price, and nothing here is fitted (Rule 1).
+
+def _lb_key(sport, home, away):
+    return f"{sport}|{str(home or '').lower()}|{str(away or '').lower()}"
+
+def _lb_sides(l):
+    """(home, away) of a leg or pool row: tennis legs carry `players`, pool
+    rows only the event."""
+    if l.get("players"): return l["players"][0], l["players"][1]
+    if l.get("home") and l.get("away"): return l["home"], l["away"]
+    parts = str(l.get("event") or "").split(" v ")
+    return (parts[0], parts[1]) if len(parts) == 2 else (None, None)
+
+def _lb_books(row):
+    """The UK books last read for a pool row or leg, and whether a UK slate
+    was read for it at all."""
+    books = row.get("lastBooks") or row.get("bookOdds") or (row.get("priced") or {}).get("bookOdds") or {}
+    checked = bool(books or row.get("ukChecked") or row.get("lastChecked"))
+    return books, checked
+
+def _lb_mark(row):
+    """{h: Hill price or None, b: UK books, x: [best UK book, price], c: read}."""
+    books, checked = _lb_books(row)
+    top = max(books.items(), key=lambda kv: kv[1]) if books else None
+    return {"h": books.get(CARD_BOOK), "b": len(books), "x": [top[0], top[1]] if top else None, "c": checked}
+
+def list_books_page(L, dates, now=None):
+    """{sport|home|away: mark} for every Daily List pick still to start (this
+    build's legs) and today's and yesterday's started ones (the pool archive),
+    for the page's chip on each list row."""
+    now = now or datetime.now(timezone.utc)
+    out = {}
+    today = now.astimezone(ZoneInfo("Europe/London")).date()
+    for d in sorted({(today + timedelta(days=i)).isoformat() for i in (-1, 0)} | set(dates)):
+        try:
+            with gzip.open(os.path.join(ARCHIVE, f"pool-{d}.json.gz"), "rt", encoding="utf-8") as f:
+                rows = json.load(f).get("legs") or []
+        except (OSError, ValueError):
+            rows = []
+        for r in rows:
+            if r.get("list"): out[_lb_key(r.get("sport"), *_lb_sides(r))] = _lb_mark(r)
+    for l in L:
+        if l.get("list"): out[_lb_key(l["sport"], *_lb_sides(l))] = _lb_mark(l)
+    return out
+
+def list_at_book(idx, now=None, pool_dir=None):
+    """The Daily List's settled picks from LIST_BOOK_FROM, split by whether
+    CARD_BOOK priced them before the start: landed, quoted (the model's
+    chance) and, at the book, the return on a flat stake at its price. The
+    last LIST_BOOK_DAYS days keep a mark per pick for the page (the price; 0
+    when UK books price it and this one does not; -1 when a UK slate was read
+    and did not list it; absent when none was read)."""
+    now = now or datetime.now(timezone.utc)
+    pool_dir = pool_dir or ARCHIVE
+    keep_from = (now.date() - timedelta(days=LIST_BOOK_DAYS)).isoformat()
+    blank = lambda: {"n": 0, "won": 0, "quoted": 0.0, "staked": 0, "returned": 0.0}
+    groups = {"atBook": blank(), "notAtBook": blank(), "unchecked": blank()}
+    by_sport, picks = {}, {}
+    files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
+        if os.path.isdir(pool_dir) else []
+    for fn in files:
+        d = fn[5:15]
+        if d < LIST_BOOK_FROM: continue
+        try:
+            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f:
+                rows = json.load(f).get("legs") or []
+        except (OSError, ValueError):
+            continue
+        for r in rows:
+            if not r.get("list"): continue
+            books, checked = _lb_books(r)
+            hill = books.get(CARD_BOOK)
+            home, away = _lb_sides(r)
+            if d >= keep_from and checked:
+                # the price; 0: UK books price it, not this one; -1: no UK book listed it
+                picks[f"{_lb_key(r.get('sport'), home, away)}|{d}"] = hill or (0 if books else -1)
+            leg = dict(r)
+            if leg.get("sport") == "football" and not leg.get("side"):
+                leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
+            try: st, _ = settle(leg, idx)
+            except (KeyError, TypeError): continue
+            if st not in ("won", "lost"): continue
+            g = "atBook" if hill else "notAtBook" if checked else "unchecked"
+            for t in (groups[g], by_sport.setdefault(r.get("sport"), {k: blank() for k in groups})[g]):
+                t["n"] += 1; t["won"] += st == "won"; t["quoted"] += r.get("pModel") or 0
+                if hill:
+                    t["staked"] += 1; t["returned"] += hill if st == "won" else 0
+    def done(t):
+        out = {"n": t["n"], "won": t["won"]}
+        if t["n"]:
+            out["rate"] = round(t["won"] / t["n"], 4); out["quoted"] = round(t["quoted"] / t["n"], 4)
+        if t["staked"]:
+            out["returned"] = round(t["returned"], 2); out["ret"] = round(t["returned"] / t["staked"] - 1, 4)
+        return out
+    return {"book": CARD_BOOK, "from": LIST_BOOK_FROM, **{k: done(v) for k, v in groups.items()},
+            "bySport": {sp: {k: done(v) for k, v in t.items()} for sp, t in sorted(by_sport.items())},
+            "picks": picks}
 
 def card_legs_by_sport(days):
     """The Card's settled legs by sport over the full rule (not wide, not
@@ -2397,6 +2548,8 @@ def grade(now=None):
            # 9 Nov 2026: the Card's legs by sport, the test for taking a sport
            # off the Card (CLAUDE.md, the delegated decisions: tennis first).
            "cardLegsBySport": card_legs_by_sport(days),
+           # 10 Nov 2026: the Daily List at William Hill (list_at_book)
+           "listAtBook": list_at_book(idx),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
                       for n in [c[0] for c in CARD_KINDS] + [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
                       if n in [c[0] for c in CARD_KINDS] or any(g["name"] == n for g in allg)},
@@ -2491,7 +2644,9 @@ def main():
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
                               "windows": [list(w) for w in CARD_WINDOWS]}},
-           "sources": report, "days": days}
+           "sources": report, "days": days,
+           # 10 Nov 2026: each list pick's William Hill mark, for the page
+           "listBooks": list_books_page(L, dates, now)}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})

@@ -106,6 +106,25 @@ def edge_section(since="2026-11-11"):
                   "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
 
 
+def list_book_section(r):
+    """10 Nov 2026: the Daily List at the book Douglas places with
+    (groupings.list_at_book): settled picks it priced, landed and the return
+    at its price, and how many it did not offer. A tally, never a fit."""
+    if not r: return []
+    a, off, none = r.get("atBook") or {}, r.get("notAtBook") or {}, r.get("unchecked") or {}
+    out = [f"## The Daily List at {r['book']} (since {r['from']})", "",
+           "| | picks | landed | quoted | return at its price |", "|---|---|---|---|---|"]
+    def row(lab, t):
+        if not t.get("n"): return f"| {lab} | 0 | | | |"
+        return (f"| {lab} | {t['n']} | {t['won']} ({t['rate'] * 100:.0f}%) | {t['quoted'] * 100:.0f}% | "
+                f"{pct(t['ret']) if t.get('ret') is not None else ''} |")
+    out += [row(f"priced at {r['book']}", a), row("UK books, not this one", off), row("no UK price read", none)]
+    for sp, t in (r.get("bySport") or {}).items():
+        tot = sum((t.get(k) or {}).get("n", 0) for k in ("atBook", "notAtBook", "unchecked"))
+        if tot: out.append(f"| {sp} | {tot} settled | {(t.get('atBook') or {}).get('n', 0)} at {r['book']} | | |")
+    return out + [""]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -173,6 +192,7 @@ def main():
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
+    lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
