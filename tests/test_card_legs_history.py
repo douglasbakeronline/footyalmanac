@@ -67,7 +67,7 @@ class Seasons(unittest.TestCase):
         self.assertEqual(seen["splits"], {"season": ("2023-24", "2022-23")})
         self.assertEqual(res["season"], "2023-24"); self.assertEqual(res["candidates"], 1)
         self.assertEqual(res["legs"][0]["opp"], 11.0)
-        for k in ("cuts", "trebles", "card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7", "lopsided", "byGap"): self.assertIn(k, res)
+        for k in ("cuts", "trebles", "card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7", "cardModel", "lopsided", "byGap"): self.assertIn(k, res)
 
 
 if __name__ == "__main__":

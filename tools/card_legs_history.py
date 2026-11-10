@@ -52,7 +52,7 @@ CUTS = {
 BANDS = [(1.15, 1.35), (1.35, 1.55), (1.55, 1.75), (1.75, 1.91)]
 
 
-def legs(pairs, wide=False):
+def legs(pairs, wide=False, model=False):
     """(model probs, price row) -> candidate legs passing the price gate.
     wide=True takes the wider rule's gate too (1.08-2.10 at 55%+, the page's
     empty-day filler; 10 Nov 2026, #155), for the fillwide Card only."""
@@ -65,7 +65,9 @@ def legs(pairs, wide=False):
         pick = max(range(3), key=lambda i: mp[i])
         if pick == 1: continue
         f = O.fair(r["avg"])[pick]; price = r["avg"][pick]
-        if f < fair_min or not (lo <= price <= hi): continue
+        # model=True (10 Nov 2026): the Model card's gate, the model's own
+        # chance at CARD_FAIR_MIN+ whatever the bookmakers say
+        if (mp[pick] < G.CARD_FAIR_MIN if model else f < fair_min) or not (lo <= price <= hi): continue
         bp = O.best(r)[pick]
         clv = (bp * O.fair(r["close"])[pick] - 1) if r.get("close") else None
         out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "side": "h" if pick == 0 else "a",
@@ -270,6 +272,8 @@ def replay_split(split, splits_fn, log):
     res["cardFillWide"] = card_season(Lw, "fillwide")
     res["cardFillRule5"] = card_season(L, "fillrule5")
     res["cardFillOpp7"] = card_season(L, "fillopp7")
+    # 10 Nov 2026: the Model card's rule on the same seasons, for the 30 Nov review
+    res["cardModel"] = card_season(legs([(preds[k], r) for k, r in joined.items()], model=True), "modelcard")
     res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
     res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
     res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
@@ -289,7 +293,7 @@ def show(label, res):
         for band, row in tab.items():
             for k, v in row.items():
                 print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
-    for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7"):
+    for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7", "cardModel"):
         c = res[lab]
         if c.get("groups"):
             losing = [m for m, v in c["months"].items() if v["pnl"] < 0]
