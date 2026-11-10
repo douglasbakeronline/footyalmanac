@@ -17,6 +17,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Roll back:** `git revert` the merge commit.
 
 
+## 2026-11-10-18 The nightly Card review posts once a day, so a missed night can be caught (tag pending)
+
+**What changed:** `tools/card_review_post.py` now checks the last ten `card-review` issues before posting and posts nothing when "Card review <today>" is already there (open or closed). `FORCE_POST=1` posts anyway. An unreadable listing still posts, so the guard can only ever cost a duplicate, never a missing review.
+
+**Why:** the 03:40 UTC schedule did not fire on 10 Nov (GitHub drops scheduled runs under load; the 9 Nov run itself started at 12:07). The review was dispatched by hand at 08:40 (#200, 0 integrity findings). The guard lets `card-review.yml` carry a second, later schedule without posting twice; that workflow change is a separate pull request left for Douglas (`.github/`, needs-owner).
+
+**Evidence:** `tests/test_card_review_post.py` `OncePerDay` (posts when today is missing, skips when posted, `FORCE_POST`, unreadable listing). Suite OK, `nametest.py` clear.
+
+**Files:** `tools/card_review_post.py`, `tests/test_card_review_post.py`, `RELEASES.md`.
+
+**Not changed:** the review's content, any Card rule, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-16 US results graded the same day (tag pending)
 
 **What changed:** finished US games (college basketball above all) are graded by the next build instead of the next day. The results walk in `sports.py` stopped at yesterday; ESPN files a game under its US Eastern day, so anything tipping off at midnight Eastern or later (05:00 UK in winter) sat on "today" and read "Result due" until the following day's walk. On 10 Nov at 08:34 two picks (Texas Southern v College of Biblical Studies, San Francisco v Montana, both 05:00 UK) were finished and ungraded. The walk now reaches today.
