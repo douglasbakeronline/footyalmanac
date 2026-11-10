@@ -60,6 +60,24 @@ class Gate(unittest.TestCase):
         self.assertIn("| short | 40 | 18 | 15.0 | 60 |", body)
 
 
+class PriceTimingLines(unittest.TestCase):
+    def test_settled_and_not_started(self):
+        # 10 Nov 2026 (#156): the singles return first v last, the day-resampled p, unstarted legs counted
+        pt = {"legs": 107, "lastAfterStart": 0, "notStarted": 5,
+              "timing": {"n": 107, "drifted": 52, "shortened": 41, "unchanged": 14, "meanMovePct": 1.76, "pNoDrift": 0.003, "read": "take the price late"},
+              "settled": {"n": 104, "won": 69, "returnFirstPct": -7.21, "returnLastPct": -5.26, "lateGainPct": 1.95, "pLateNoBetter": 0.011, "read": "take the price late"}}
+        files = {"price-timing.json": pt}
+        posted = []
+        with mock.patch.object(P, "load", side_effect=lambda p: files.get(p, {})), \
+             mock.patch.object(P, "gh", side_effect=lambda *a: posted.append(a) or {}), \
+             mock.patch.object(P, "funnel_section", return_value=[]), mock.patch("builtins.print"):
+            P.main()
+        body = next(x for a in posted for x in a if isinstance(x, str) and x.startswith("body="))
+        self.assertIn("(take the price late), day-resampled p(no drift) 0.003", body)
+        self.assertIn("singles on 104 settled legs (69 won): -7.21% at the first price, -5.26% at the last pre-start price, late +1.95 points, p(late no better) 0.011", body)
+        self.assertIn("not started yet, left out until their last price is in: 5 leg(s)", body)
+
+
 if __name__ == "__main__":
     unittest.main()
 

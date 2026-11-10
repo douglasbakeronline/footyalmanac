@@ -4723,7 +4723,7 @@ function signalsPanel(){
     ${skip.length ? `<details class="sig-later"><summary>Not a signal: ${skip.length} wider-rule group${skip.length === 1 ? "" : "s"}</summary>
       <p class="sig-e">Built on days the full rule leaves empty. On the replay at first real prices (10 Nov) it won 3 of 15 groups against 5.1 expected, -46%; live ${(() => { const w = (OG.record || {}).cardWide || {}; return w.settled ? `${w.won} of ${w.settled}` : "none settled"; })()}. Shown for completeness, not to bet.</p>
       ${skip.map(s => row(s, -1)).join("")}</details>` : ""}
-    <p class="sig-f">Prices move: each is the last read, so check it at the bookmaker before placing. One unit is the stake box below. Not betting advice.</p></section>`;
+    <p class="sig-f">Prices move: each is the last read, so check it at the bookmaker before placing. On 104 settled Card legs (30 Oct to 10 Nov, mostly football) the last price before the start paid about 2 points more than the first, so placing nearer the start has paid. One unit is the stake box below. Not betting advice.</p></section>`;
 }
 function sigWire(host){
   host.querySelectorAll(".sig-copy").forEach(b => b.onclick = async () => {

@@ -120,8 +120,15 @@ def _tally(picks, idx):
     return won, lost
 
 
-def due_slot(now, path=BRIEF_FILE):
+def brief_file():
+    """Read at call time from HERE, so a test that points HERE at a temporary
+    folder never writes the real archive's briefed.json (10 Nov 2026)."""
+    return os.path.join(HERE, "groupings-archive", "briefed.json")
+
+
+def due_slot(now, path=None):
     """The latest slot whose hour has passed today and has not been sent."""
+    path = path or brief_file()
     uk = now.astimezone(UK)
     due = [name for name, h in SLOTS if uk.hour >= h]
     if not due: return None
@@ -133,7 +140,8 @@ def due_slot(now, path=BRIEF_FILE):
     return None if due[-1] in sent else due[-1]
 
 
-def mark_sent(now, slot, path=BRIEF_FILE):
+def mark_sent(now, slot, path=None):
+    path = path or brief_file()
     uk = now.astimezone(UK); day = uk.date().isoformat()
     try:
         with open(path) as f: st = json.load(f)
