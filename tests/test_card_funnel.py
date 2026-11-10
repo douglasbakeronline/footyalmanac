@@ -82,6 +82,25 @@ class Pool(unittest.TestCase):
         self.assertIn("| no opposition condition | 1 | 0 |", lines)
         self.assertIn("| live | 0 | 0 |", lines)
 
+    def test_three_from_one_competition_only_under_the_relief(self):
+        # 9 Nov 2026: five clear NBA legs, all "NBA", built no group
+        legs = [dict(nba(i), comp="NBA") for i in range(1, 6)]
+        self.write(legs)
+        by, _ = CF.pool_days(pool_dir=self.dir)
+        f = CF.funnel(by)
+        self.assertEqual(f["clear"], {"nba": 5})
+        self.assertEqual(f["relief"]["live"]["Card 2x"], 0)
+        self.assertEqual(f["relief"]["comp-cap"]["Card 2x"], 1)
+        self.assertEqual(G.COMP_MAX, 2)
+        self.assertIn("| three legs a competition | 1 |", "\n".join(CF.report_lines(f)))
+
+    def test_comp3_registered_and_the_cap_unchanged(self):
+        import card_replay as R
+        self.assertEqual(R.VARIANTS["comp3"], {"COMP_MAX": 3})
+        three = [dict(nba(i), comp="NBA") for i in range(1, 4)]
+        self.assertIsNone(G.mult_combo(three, 2.0, 3.0))
+        self.assertIsNotNone(G.mult_combo(three[:2] + [dict(nba(3), comp="Other")], 2.0, 3.0))
+
     def test_days_outside_the_range_left_out(self):
         self.write([nba(1, when="2026-11-19T19:00:00Z")])
         by, _ = CF.pool_days(since=DAY, pool_dir=self.dir)

@@ -1134,6 +1134,14 @@ def as_mult(l):
     chance, which has been the better guide at these prices."""
     return dict(l, p=l["fair"], basis="bookmakers")
 
+# At most this many legs from one competition in a Multiplier or a Card group
+# (a spread choice from 21 Oct 2026, never tested). Named 10 Nov 2026 so the
+# replay can patch it: every NBA leg is "NBA", so with five clear NBA legs
+# and nothing else a day builds no Card (9 Nov 2026,
+# claude/card-funnel-2026-11-10.md). `comp3` in tools/card_replay.py is the
+# pre-registered variant for the 30 Nov review. Value unchanged.
+COMP_MAX = 2
+
 def mult_combo(c, lo, hi):
     """Combined price if the legs make a valid Multiplier, else None."""
     o = math.prod(l["odds"] for l in c)
@@ -1141,7 +1149,7 @@ def mult_combo(c, lo, hi):
     if len({l["event"] for l in c}) < len(c): return None
     comps = {}
     for l in c: comps[l.get("comp")] = comps.get(l.get("comp"), 0) + 1
-    if max(comps.values()) > 2: return None
+    if max(comps.values()) > COMP_MAX: return None
     return o
 
 def best_mult(L, used, after, name):

@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-2 The two-per-competition cap named and `comp3` pre-registered (tag pending)
+
+**What changed:** nothing a reader sees. The limit of two legs from one competition in a Card group or a Multiplier is now `groupings.COMP_MAX` (2, unchanged), so the replay can patch it. `tools/card_replay.py` pre-registers `comp3` (three) for the 30 Nov review, and the Card funnel adds it as a relief row ("three legs a competition").
+
+**Evidence:** `claude/card-funnel-2026-11-10.md`, addendum. On 9 Nov five NBA legs cleared the full rule and no group was built. Funnel 6 to 12 Nov: a 2x on 4 days of 7 (live 3), a 3x on 1 (live 0). Pool replay from 30 Oct (approximate before 10 Nov): comp3 12 groups, 5 won v 4.6 expected, -1%; live 10, 4 won, -7%; paired +0.13 units a day, p(worse) 0.43. Too few to change anything. Tests: `tests/test_card_funnel.py` (cap unchanged, comp3 registered, the relief builds the 9 Nov case); suite OK; `nametest.py` clear.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_funnel.py`, `tests/test_card_funnel.py`, `claude/card-funnel-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the cap's value, any `CARD_*` constant, `CARD_RULE`, the Odds tab's `ok_combo`, the page, any record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10 What keeps groups off the Card: the funnel in the nightly review (tag pending)
 
 **What changed:** nothing a reader sees. `tools/card_funnel.py` (issue #155) reads the pool at each leg's first real price and, per Card day, gives each leg's first failing condition by sport (the live `card_fault`), the legs kept off by one condition alone, and whether a first Card 2x and 3x can be built live and with one condition relaxed at a time. The nightly Card review prints it from 6 Nov (`card_review_post.funnel_section`, no workflow change).

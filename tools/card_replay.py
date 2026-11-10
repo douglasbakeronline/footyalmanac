@@ -28,6 +28,7 @@ review so no variant is picked because it happened to look good):
   rule5    no opposition-price condition (the Card as it ran 31 Oct to 6 Nov 2026)
   opp7     the opposition priced 7+ rather than 9+
   notennis tennis off the Card (CARD_SPORTS_OFF), the tripwire's action
+  comp3    three legs from one competition (live: two; 10 Nov 2026)
   tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
            (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
            40 full-rule legs landed v 71% quoted; registered before the pool
@@ -219,6 +220,10 @@ VARIANTS = {
     # seasons the other way round. Same groups, so read `return` (per unit
     # staked); the units-a-day pairing also carries the smaller turnover.
     "flatstake": {"CARD_STAKE": {"Card 2x": 1, "Card 3x": 1}},
+    # 10 Nov 2026 (claude/card-funnel-2026-11-10.md), pre-registered for the
+    # 30 Nov review: three legs from one competition rather than two. On 9 Nov
+    # five NBA legs cleared the full rule and no group was built.
+    "comp3": {"COMP_MAX": 3},
 }
 
 
