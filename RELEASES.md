@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-11 "Edge only" on the football board (tag pending)
+
+**What changed:** the football board's Show control has a third option, **Edge only**, listing just the fixtures with the green Edge flag, and each day's header counts them ("2 fixtures · 2 confident · 2 edge"). When none are flagged the board says why (rare by design, prices arrive through the week). Display only.
+
+**Evidence:** a filter on the existing flag (`claude/edge-flag-2026-11-10.md`). Checked at 1280 and 400 wide on a preview of the 8 Nov fixtures (Celtic v Kilmarnock, Estrela v Benfica); a green count on the red day band was illegible, so the count takes the band's own colour. Suite OK; `nametest.py` clear.
+
+**Files:** `index.html`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the flag's rule, the default view, the Daily List.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-10 The Daily List at William Hill (tag pending)
 
 **What changed:** each Daily List pick now says whether William Hill offers it: a chip under the tested rate reading `Hill 1.04`, `Not at Hill` (UK books price it, Hill does not) or `No UK price`. A new "Show: Every pick / At William Hill" control on the Daily List hides the picks Hill does not price. "How it went" adds an "At William Hill" tile (settled list picks Hill priced, landed, return at Hill's price, from 10 Nov) and the chip on each list row; the nightly Card review prints the same table. To fill it, list picks are sent to The Odds API's UK region (`price_odds_api(list_books=True)`), US sports included, one credit a slate, capped at 9 credits a day so the Card keeps its share. Display only: the list never sees a price.
