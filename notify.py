@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Push a note to Douglas's phone when the build makes a new Card group, and
-once a UK day a morning briefing of the Daily List (10 Nov 2026, below).
+four briefings a UK day at his betting times (10 Nov 2026, below).
 29 Oct 2026, Douglas: "no time lock, but I get a push notification once a
 betting group is created".
 
@@ -20,7 +20,7 @@ with its kick-off, price at the card's bookmaker (or best), and the group's
 first kick-off, which is when it freezes.
 """
 import json, os, sys, urllib.request
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -67,17 +67,21 @@ def send(topic, title, body, tags="soccer", priority="high", click=None):
         return r.status
 
 
-# ---------- the morning briefing (10 Nov 2026) ----------
-# Douglas: "develop more". One push a UK day, from the first build at or after
-# BRIEF_HOUR UK: the day's Daily List count, Group A, the model treble (the
-# week-ahead panel's rule), the Edge picks and the Card, with a link to the
-# site. The day already briefed is kept in groupings-archive/briefed.json,
-# which the build commits with the rest of the archive, so a late or repeated
-# build never sends it twice. Display only, like everything here.
+# ---------- the briefings (10 Nov 2026) ----------
+# Douglas: "I'm most likely to want to place a bet in the morning around 8am,
+# around lunchtime, early evening and before I go to bed." One push in each of
+# four slots a UK day, from the first build at or after the slot's hour (the
+# 07:40, 12:00, 17:00 and 22:15 builds): what is still to start, the
+# strongest list picks, the model treble, Edge picks and open Card groups,
+# and from lunch on, how the day's list has gone so far. Only the latest due
+# slot is sent, so a late build never sends a stale one; slots sent are kept
+# in groupings-archive/briefed.json, which the build already commits, so a
+# repeated build never sends twice. Display only, like everything here.
 SITE = "https://douglasbakeronline.github.io/footyalmanac/"
-BRIEF_HOUR = 5
+SLOTS = [("morning", 7), ("lunch", 11), ("evening", 16), ("night", 21)]
 BRIEF_FILE = os.path.join(HERE, "groupings-archive", "briefed.json")
 GROUP_A_MIN = 0.85     # daylist.GROUP_A_MIN
+NIGHT_UNTIL = 8        # the bedtime push covers picks starting before 08:00 UK tomorrow
 
 
 def _hm(s):
@@ -85,56 +89,107 @@ def _hm(s):
     return t.strftime("%H:%M") if t else "--:--"
 
 
-def briefing(og, data, now):
-    """(title, body) for the UK day of `now`, or None when it has no list pick."""
-    day = now.astimezone(UK).date().isoformat()
-    # the pool is filed by board date (UTC for the US sports); a list pick
-    # belongs to the UK day it starts on, as on the Daily List
-    def uk_day(l, filed):
-        t = when(l.get("when") or "")
-        return t.date().isoformat() if t else filed
-    legs = [l for d, ls in (og.get("pool") or {}).items() for l in ls if l.get("list") and uk_day(l, d) == day]
-    seen, picks = set(), []
+def _uk_day(l, filed):
+    t = when(l.get("when") or "")
+    return t.date().isoformat() if t else filed
+
+
+def _list_picks(og, day):
+    """The day's list picks, each once, strongest first. The pool is filed by
+    board date (UTC for the US sports); a pick belongs to the UK day it starts
+    on, as on the Daily List."""
+    seen, out = set(), []
+    legs = [l for d, ls in (og.get("pool") or {}).items() for l in ls if l.get("list") and _uk_day(l, d) == day]
     for l in sorted(legs, key=lambda l: -(l.get("pModel") or 0)):
         k = (l.get("event"), l.get("pick"))
-        if k in seen: continue
-        seen.add(k); picks.append(l)
-    if not picks: return None
-    d = now.astimezone(UK)
-    title = f"Daily List, {d.strftime('%a %d %b')}: {len(picks)} pick{'s' if len(picks) != 1 else ''}"
+        if k not in seen: seen.add(k); out.append(l)
+    return out
+
+
+def _tally(picks, idx):
+    won = lost = 0
+    if idx is None: return None
+    try:
+        import groupings as G
+    except Exception:
+        return None
+    for l in picks:
+        try: st, _ = G.settle(l, idx)
+        except Exception: continue
+        won += st == "won"; lost += st == "lost"
+    return won, lost
+
+
+def due_slot(now, path=BRIEF_FILE):
+    """The latest slot whose hour has passed today and has not been sent."""
+    uk = now.astimezone(UK)
+    due = [name for name, h in SLOTS if uk.hour >= h]
+    if not due: return None
+    try:
+        with open(path) as f: st = json.load(f)
+    except (OSError, ValueError):
+        st = {}
+    sent = (st.get("slots") or []) if st.get("date") == uk.date().isoformat() else []
+    return None if due[-1] in sent else due[-1]
+
+
+def mark_sent(now, slot, path=BRIEF_FILE):
+    uk = now.astimezone(UK); day = uk.date().isoformat()
+    try:
+        with open(path) as f: st = json.load(f)
+    except (OSError, ValueError):
+        st = {}
+    slots = (st.get("slots") or []) if st.get("date") == day else []
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w") as f:
+        json.dump({"date": day, "slots": slots + [slot], "at": now.strftime("%Y-%m-%dT%H:%M:%SZ")}, f)
+
+
+def briefing(og, data, now, slot="morning", idx=None):
+    """(title, body) for one slot, or None when there is nothing to back."""
+    uk = now.astimezone(UK); day = uk.date().isoformat()
+    today = _list_picks(og, day)
+    picks = list(today)
+    if slot == "night":
+        # bedtime: tonight's late games and the overnight US slate
+        tomorrow = (uk + timedelta(days=1)).date().isoformat()
+        cut = datetime.fromisoformat(f"{tomorrow}T{NIGHT_UNTIL:02d}:00").replace(tzinfo=UK)
+        picks += [l for l in _list_picks(og, tomorrow) if (when(l.get("when") or "") or cut) < cut]
+        picks.sort(key=lambda l: -(l.get("pModel") or 0))
+    open_ = [l for l in picks if (when(l.get("when") or "") or now) > now]
+    edge = [g for dd in (data.get("days") or []) for g in dd.get("games") or []
+            if g.get("edge") and (when(g.get("kickoff") or "") or now) > now and _uk_day({"when": g.get("kickoff")}, dd.get("date")) == day]
+    card = [g for dd in og.get("days") or [] if dd.get("date") == day for g in dd.get("groups") or []
+            if str(g.get("name", "")).startswith("Card") and not g.get("wide") and g.get("status") != "underway"]
+    if not open_ and not card and not edge: return None
+    d = uk.strftime('%a %d %b')
+    n = len(open_)
+    title = {"morning": f"Daily List, {d}: {len(today)} pick{'s' if len(today) != 1 else ''}",
+             "lunch": f"Lunchtime, {d}: {n} list pick{'s' if n != 1 else ''} to start",
+             "evening": f"This evening, {d}: {n} list pick{'s' if n != 1 else ''} to start",
+             "night": f"Tonight and overnight: {n} list pick{'s' if n != 1 else ''} before {NIGHT_UNTIL}am"}[slot]
     lines = []
-    a = [l for l in picks if (l.get("pModel") or 0) >= GROUP_A_MIN][:5]
+    if slot != "morning":
+        t = _tally(today, idx)
+        if t and sum(t): lines.append(f"Today so far: {t[0]} won, {t[1]} lost")
+    a = [l for l in open_ if (l.get("pModel") or 0) >= GROUP_A_MIN][:5] or open_[:3]
     if a:
-        lines.append("Group A: " + "; ".join(f"{l['pick']} {round(l['pModel'] * 100)}% {_hm(l.get('when'))}" for l in a))
-    open_ = [l for l in picks if (when(l.get("when") or "") or now) > now][:3]
-    if len(open_) >= 2:
+        lines.append(("Strongest to come: " if slot != "morning" else "Group A: ")
+                     + "; ".join(f"{l['pick']} {round(l['pModel'] * 100)}% {_hm(l.get('when'))}" for l in a))
+    m = open_[:3]
+    if len(m) >= 2:
         ch = 1.0
-        for l in open_: ch *= l.get("pModel") or 0
-        lines.append(f"Model {'treble' if len(open_) == 3 else 'double'} {round(ch * 100)}%: " + ", ".join(l["pick"] for l in open_))
-    edge = [g for dd in (data.get("days") or []) if dd.get("date") == day for g in dd.get("games") or [] if g.get("edge")]
+        for l in m: ch *= l.get("pModel") or 0
+        lines.append(f"Model {'treble' if len(m) == 3 else 'double'} {round(ch * 100)}%: " + ", ".join(l["pick"] for l in m))
     if edge:
         lines.append(f"Edge: {len(edge)} football pick{'s' if len(edge) != 1 else ''} (" + ", ".join(
             (g["home"]["name"] if g["edge"].get("side") == "h" else g["away"]["name"]) + f" {g['edge']['odds']:.2f}" for g in edge[:3]) + ")")
-    card = [g for dd in og.get("days") or [] if dd.get("date") == day for g in dd.get("groups") or []
-            if str(g.get("name", "")).startswith("Card") and not g.get("wide") and g.get("status") != "underway"]
-    lines.append(f"Card: {len(card)} group{'s' if len(card) != 1 else ''} open" if card
-                 else "Card: nothing qualifies yet; prices are read again on every build")
+    if card:
+        hill = [g.get("bookOdds") for g in card if g.get("bookOdds")]
+        lines.append(f"Card: {len(card)} group{'s' if len(card) != 1 else ''} open" + (f", Hill {', '.join(f'{x:.2f}' for x in hill)}" if hill else ""))
+    elif slot == "morning":
+        lines.append("Card: nothing qualifies yet; prices are read again on every build")
     return title, "\n".join(lines)
-
-
-def brief_due(now, path=BRIEF_FILE):
-    if now.astimezone(UK).hour < BRIEF_HOUR: return False
-    try:
-        with open(path) as f: last = json.load(f).get("date")
-    except (OSError, ValueError):
-        last = None
-    return last != now.astimezone(UK).date().isoformat()
-
-
-def mark_briefed(now, path=BRIEF_FILE):
-    os.makedirs(os.path.dirname(path), exist_ok=True)
-    with open(path, "w") as f:
-        json.dump({"date": now.astimezone(UK).date().isoformat(), "at": now.strftime("%Y-%m-%dT%H:%M:%SZ")}, f)
 
 
 def main():
@@ -158,18 +213,28 @@ def main():
                 print(f"notify: send failed ({type(e).__name__})")
     print(f"notify: {sent} sent")
     now = datetime.now(timezone.utc)
-    if brief_due(now):
+    slot = due_slot(now)
+    if slot:
         try:
             with open(os.path.join(HERE, "data.json")) as f: data = json.load(f)
         except (OSError, ValueError):
             data = {}
-        b = briefing(og, data, now)
+        try:
+            import groupings as G
+            idx = G.results_index()
+        except Exception:
+            idx = None
+        b = briefing(og, data, now, slot, idx)
         if b:
             try:
-                send(topic, b[0], b[1], "sunrise", "default", SITE); mark_briefed(now)
-                print("notify: morning briefing sent")
+                send(topic, b[0], b[1], {"morning": "sunrise", "lunch": "sandwich", "evening": "city_sunset", "night": "crescent_moon"}[slot],
+                     "default", SITE)
+                print(f"notify: {slot} briefing sent")
             except Exception as e:
-                print(f"notify: briefing failed ({type(e).__name__})")
+                print(f"notify: {slot} briefing failed ({type(e).__name__})")
+                return 0
+        # sent, or nothing to back: either way this slot is done for the day
+        mark_sent(now, slot)
     return 0
 
 
