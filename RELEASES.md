@@ -8,7 +8,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **What changed:** nothing a reader sees. `tools/card_replay.py` pre-registers `modelcard`: the Model card's rule (the model's own picks at or above the bookmakers' chance) built on the same legs as the Card, staked as the Card. `tools/card_legs_history.py` replays it on every football-data season (`cardModel`, legs admitted on the model's own 60%+). The nightly review's variant table carries it.
 
-**Evidence:** `claude/card-modelcard-2026-11-10.md`. Pool from 30 Oct with `--recover`: modelcard 12 groups, 7 won, legs 29 of 36 (80.6% v 68.1% quoted), +58%; live 10 groups, 4 won, -7%; paired +1.60 units a day, p(worse) 0.02, on 36 legs, under the 100-leg gate. The football-data side runs on this pull request. `tests/test_card_modelcard.py`; suite OK; `nametest.py` clear.
+**Evidence:** `claude/card-modelcard-2026-11-10.md`. Pool from 30 Oct with `--recover`: modelcard 12 groups, 7 won, legs 29 of 36 (80.6% v 68.1% quoted), +58%; live 10 groups, 4 won, -7%; paired +1.60 units a day, p(worse) 0.02, on 36 legs, under the 100-leg gate. Football-data (CI on this pull request), 2025-26: 70 groups, 22 won v 25.4 the model expected, -8.2% (best -0.4%), so the two samples disagree and nothing changes. `tests/test_card_modelcard.py`; suite OK; `nametest.py` clear.
 
 **Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_modelcard.py`, `tests/test_card_legs_history.py`, `claude/card-modelcard-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
 

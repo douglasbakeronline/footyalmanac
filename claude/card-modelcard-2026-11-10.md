@@ -29,9 +29,23 @@ football-data `cardModel` line (run on this pull request by
 `card-legs-history.yml`, then weekly by `tune.yml`) is the other half of the
 gate.
 
+## The read, football-data (CI on #190, football only)
+
+| season | groups | won | expected (the model's chance) | return | best price |
+|---|---|---|---|---|---|
+| fit 2025-26 | 70 | 22 | 25.4 | -8.2% | -0.4% |
+| check 2026-27 | 2 | 1 | 0.7 | +4.3% | +13% |
+
+On a full football season the Model card's rule lost: its groups landed
+under even the model's own chance, its 3x 4 of 31 (-58%), its 2x 18 of 39
+(+11.5%). The live Card's rule 6 builds almost nothing on football alone, so
+the two are not yet comparable there. The pool, mostly tennis and NBA, says
+the opposite. So the two samples disagree, which is exactly what the gate is
+for.
+
 ## Decision
 
-None today. If `modelcard` beats live on the pool at 100+ legs with
+None today: football-data disagrees with the pool. If `modelcard` beats live on the pool at 100+ legs with
 p(worse) at most 0.30 and `cardModel` is not worse than `card` on both
 football-data seasons, the 30 Nov review (or the first session after the
 gate is met) switches the Card to the Model card's rule, with a CARD_RULE
