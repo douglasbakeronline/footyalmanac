@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-19 No ghost pins for games that moved day (tag pending)
+
+**What changed:** today's pinned Daily List no longer keeps a game on a day it was moved away from. ESPN first lists some US games at a stand-in time of midnight Eastern and corrects it later; `daylist.pinned` took the newest copy published before the start *among copies dated today*, so a game moved to tomorrow kept an old copy pinned today, read as started, and showed "Result due". It now takes the newest pre-start copy of each game whatever its day, and pins the game only on that copy's day.
+
+**Evidence:** 10 Nov 08:34, Douglas: "Still seeing result due". Texas Southern v College of Biblical Studies and San Francisco v Montana (reserve) were archived at 10 Nov 05:00 UK in the 4-5 Nov builds and at 11 Nov 00:00 / 03:00 from 6 Nov: not played yet. Rebuilt for 10 Nov: no started-without-result picks; for 11 Nov: both pinned at their real times. `tests/test_daylist_moved_start.py`. Suite OK. (#199, walking results to today, stands: it is a real gap for games filed under the US Eastern day, but it was not this one.)
+
+**Files:** `daylist.py`, `tests/test_daylist_moved_start.py`, `RELEASES.md`.
+
+**Not changed:** grading (`sports.graded_games` already takes the newest pre-start copy), the record, the list rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-18 "Is the list honest?" in How it went (tag pending)
 
 **What changed:** How it went, Daily List, now opens with two charts under the scoreline. **Quoted against landed:** for each confidence band (80-85, 85-90, 90-95, 95+), the average quote as a bar and what landed as a dot, with the 90% range chance alone allows for that many picks; a band whose quote sits above its range turns the dot red. **Landed minus expected:** a running total across every list day, inside the shaded band chance alone allows. A one-line verdict above them ("on quote, within what chance alone would give", in standard errors). Built from the graded picks already on the page; nothing fitted (Rule 1).
