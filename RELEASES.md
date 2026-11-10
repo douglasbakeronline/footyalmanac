@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-13 Edge picks on the Bets tab, with five seasons of accumulators behind them (tag pending)
+
+**What changed:** the Bets tab has an **Edge picks** section under the card: every football fixture with the green Edge flag for the chosen day, its average and best price and the opposition's price, then the Edge double and every Edge pick as one slip, priced at the average and the best price with the bookmakers' chance each lands, and what each did when tested. The test is new: `tools/card_legs_history.py` (`edge_legs`, `edge_accas`) replays the flag's legs as singles, doubles, trebles, four-folds and whole-day slips on every football-data season; `build.edge_tested` hands the latest seasons to the page (`edgeTested`).
+
+**Evidence:** `claude/edge-accas-2026-11-10.md`. Five seasons, 2022-23 to 2026-27 (CI run 42751060085): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price, +5.4% at the best; doubles +0.1% / +4.6%; every Edge pick of the day as one slip 139 of 252, +2.4% / +9.7%, ahead at the best price in four seasons of five; trebles and four-folds +16% / +22% pooled at best but -29% to +99% by season. `tests/test_edge_accas.py`; suite 709 OK; `nametest.py` clear. Checked at 1280 and 400 wide.
+
+**Files:** `tools/card_legs_history.py`, `build.py`, `index.html`, `tests/test_edge_accas.py`, `claude/edge-accas-2026-11-10.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card, the flag's rule, the model, any record. Nothing is staked or pushed from the section.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-10-12 The Daily List on a phone: day jump, full names (tag pending)
 
 **What changed:** a "Jump to" strip of the week's days, each with its pick count, sits above the Daily List; a tap scrolls to that day just under the tab bar (a week of picks ran to about 40,000px on a phone). Team names wrap on a phone instead of being cut mid-word ("Northern Arizona Lum"); on a desktop a long name in a sport row now ends in an ellipsis instead of losing its first letters ("orthern Arizona Lumberjacks"). The William Hill chip fits the phone's confidence column.
