@@ -149,7 +149,7 @@ Pipeline, all Python 3.12, **standard library only, no pip, no requirements.txt*
 - `score_tennis.py` grades archived tennis picks against the winner, writes `tennis-record.json` / `tennis-record.js` (with `liveBands`, which `build_tennis.accuracy_for` quotes). Only prices published before the match started count.
 - `brandassets.py` redraws icon PNGs in Pillow (the one exception to stdlib-only, local use only).
 
-Front end: `index.html` is the template (loads `data.js`). Cloudflare Web Analytics beacon in its head (5 Nov 2026, Douglas's Cloudflare account, `spa: true` so tab changes count as views); the dashboard is at dash.cloudflare.com under Web Analytics. `dashboard.html` is
+Front end: `index.html` is the template (loads `data.js`). Live scores (10 Nov 2026): a started Daily List pick in a US sport polls ESPN's public scoreboard from the browser once a minute (`liveTick`, `parseScoreboard`), display only and marked unofficial; grading never reads it. Cloudflare Web Analytics beacon in its head (5 Nov 2026, Douglas's Cloudflare account, `spa: true` so tab changes count as views); the dashboard is at dash.cloudflare.com under Web Analytics. `dashboard.html` is
 the self-contained build output and is what gets published as the site's
 index. Edit `index.html`, never `dashboard.html`.
 

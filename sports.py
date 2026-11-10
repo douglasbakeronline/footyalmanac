@@ -296,7 +296,14 @@ def load_history(feed):
 def walk_history(feed, until=None, sleep=0.08, log=None):
     """Completed games from HIST_START (or the last walk, less RESCAN days)."""
     games, through = load_history(feed)
-    until = until or (date.today() - timedelta(days=1))
+    # 10 Nov 2026: up to today, not yesterday. ESPN files a game under its US
+    # Eastern day, so a late tip-off (00:00 ET and after, 05:00 UTC in winter)
+    # sits on the day the UK build calls today and was not walked until the
+    # next day: on 10 Nov two picks read "Result due" all day after finishing
+    # overnight. Only final games are kept, the next walk rescans RESCAN days,
+    # and a game is voided only NOT_PLAYED_DAYS after its start, so walking a
+    # day still in progress records nothing wrong.
+    until = until or date.today()
     d = max(HIST_START, through - timedelta(days=RESCAN)) if through else HIST_START
     asked = 0
     while d <= until:

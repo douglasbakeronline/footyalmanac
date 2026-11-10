@@ -4,6 +4,30 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-17 Live scores on the Daily List (tag pending)
+
+**What changed:** a started Daily List pick in the US sports (college basketball, NBA, NFL, college football, NHL, MLB, WNBA) now shows its live score in the middle of the row, coloured by the pick's position (green ahead, red behind, gold level), with the clock; a finished game shows "Final" with an outline until the next build grades it. The day heading adds a live line: how many picks are ahead, behind and level, and the finished-but-ungraded tally. The page reads ESPN's public scoreboard (the source these sports are rated and graded from) once a minute while it is open and visible, one call per sport and US day, and stops when every watched game is final. Display only and marked unofficial: the record still grades from the build. `daylist.py` now carries each pinned pick's ESPN feed.
+
+**Evidence:** checked at 390 and 1280 wide against a mocked ESPN scoreboard in ESPN's shape (two in play, one level, two finished): pills, clock, tally and the US-Eastern date in the request all correct; with ESPN blocked the rows keep "In play" and the page logs no error. Not run against the live ESPN feed from the cloud session (ESPN is blocked here); the first real read is the first open of the deployed page during a game. `tests/test_live_scores.py` (the feed on a pinned item; the page's parser and ahead / behind read run in node on an ESPN-shaped payload). Suite 709 OK.
+
+**Files:** `index.html`, `daylist.py`, `tests/test_live_scores.py`, `RELEASES.md`.
+
+**Not changed:** grading, the record, the list, football and tennis rows (no ESPN id on file).
+
+**Roll back:** `git revert` the merge commit.
+
+
+## 2026-11-10-16 US results graded the same day (tag pending)
+
+**What changed:** finished US games (college basketball above all) are graded by the next build instead of the next day. The results walk in `sports.py` stopped at yesterday; ESPN files a game under its US Eastern day, so anything tipping off at midnight Eastern or later (05:00 UK in winter) sat on "today" and read "Result due" until the following day's walk. On 10 Nov at 08:34 two picks (Texas Southern v College of Biblical Studies, San Francisco v Montana, both 05:00 UK) were finished and ungraded. The walk now reaches today.
+
+**Evidence:** `history-sports/` walked through 9 Nov at the 07:54 build; both games filed under 10 Nov Eastern. Only final games are kept, the next walk rescans `RESCAN` (3) days, and a pick is voided only `NOT_PLAYED_DAYS` (7) after its start, so walking a day still in progress records nothing wrong. `tests/test_sports_walk_today.py`. Suite OK.
+
+**Files:** `sports.py`, `tests/test_sports_walk_today.py`, `RELEASES.md`.
+
+**Not changed:** grading rules, ratings, the record's history.
+
+**Roll back:** `git revert` the merge commit.
 
 ## 2026-11-10-18 "Is the list honest?" in How it went (tag pending)
 
