@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered, second check (tag pending)
+
+**What changed:** a dated note only, `claude/af-new-leagues-recheck-2026-11-10.md`. No code, model or rule changed.
+**Evidence:** every league API-Football carries for the six countries is already in the build (`sources.AF_NEW`, `af.301`, 16 lower divisions in `af-leagues.json`); extra API allowance per build 0; `nametest.py` all clear. The replay needs the API key and prior-season history, neither available here, so the Rule 3 gates could not be run and the leagues stay off the List.
+**Files:** `claude/af-new-leagues-recheck-2026-11-10.md`, `RELEASES.md`.
+**Not changed:** `sources.py`, any model number, the Daily List.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-10-29 Phone layout: no sideways scroll, tap a glance dot to its pick, a Days button (tag pending)
 
 For a reader: the page no longer drifts sideways on a phone after jumping
