@@ -112,6 +112,44 @@ class ListAtBookRecord(unittest.TestCase):
         self.assertEqual(G._lb_key(row["sport"], *G._lb_sides(row)), "tennis|jannik sinner|ben shelton")
 
 
+class ListAtBookWithoutId(unittest.TestCase):
+    """11 Nov 2026 (#235): US-sport pool rows first archived days ahead carried
+    no `id`, so settle left them pending and the tally read 1 settled pick of
+    40. They now settle by names and date, as tools/card_replay.py does."""
+    def test_rows_without_id_settle_by_names(self):
+        d = tempfile.mkdtemp()
+        try:
+            with gzip.open(os.path.join(d, "pool-2026-11-10.json.gz"), "wt", encoding="utf-8") as f:
+                json.dump({"date": "2026-11-10", "legs": [
+                    dict(ncaab(), lastBooks={"William Hill": 1.04}),
+                    dict(ncaab("UCLA Bruins", "North Florida Ospreys"), lastChecked=True)]}, f)
+            sp = {"7": {"home": "Oklahoma Sooners", "away": "Mississippi Valley State Delta Devils",
+                        "when": "2026-11-10T00:30Z", "winner": "Oklahoma Sooners"},
+                  "8": {"home": "UCLA Bruins", "away": "North Florida Ospreys",
+                        "when": "2026-11-10T00:30Z", "winner": "North Florida Ospreys"},
+                  # same pairing a week later: never read for this leg
+                  "9": {"home": "UCLA Bruins", "away": "North Florida Ospreys",
+                        "when": "2026-11-17T00:30Z", "winner": "UCLA Bruins"}}
+            r = G.list_at_book(({}, {}, sp), now=NOW, pool_dir=d)
+            self.assertEqual((r["atBook"]["n"], r["atBook"]["won"], r["atBook"]["returned"]), (1, 1, 1.04))
+            self.assertEqual((r["notAtBook"]["n"], r["notAtBook"]["won"]), (1, 0))
+        finally:
+            shutil.rmtree(d)
+
+    def test_pool_row_takes_a_missing_id_from_a_later_build(self):
+        d = tempfile.mkdtemp(); old = G.ARCHIVE; G.ARCHIVE = d
+        try:
+            l = ncaab(when="2026-11-11T00:30:00Z", date="2026-11-11")
+            G.archive_pool([l], NOW, ["2026-11-11"])
+            G.archive_pool([dict(l, id="401", odds=1.5)], NOW, ["2026-11-11"])
+            with gzip.open(os.path.join(d, "pool-2026-11-11.json.gz"), "rt") as f:
+                row = json.load(f)["legs"][0]
+            self.assertEqual(row["id"], "401")
+            self.assertEqual(row["odds"], 1.02)          # the first price is never changed
+        finally:
+            G.ARCHIVE = old; shutil.rmtree(d)
+
+
 class PoolKeepsLaterBooks(unittest.TestCase):
     def test_last_books_and_checked_on_a_later_build(self):
         d = tempfile.mkdtemp(); old = G.ARCHIVE; G.ARCHIVE = d
