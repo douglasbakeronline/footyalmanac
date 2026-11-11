@@ -1565,7 +1565,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 8     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026)
+CARD_RULE = 9     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1689,6 +1689,18 @@ CARD_WIDE_RULE = 2      # 1: bookmakers 55%+ (25 Oct to 11 Nov 2026); 2: bookmak
 # and the record (cardWide, cardWideByRule) stay; the replay keeps `fillwide`.
 # Set True to bring it back. claude/card-filler-off-2026-11-11.md.
 CARD_FILLER = False
+# 11 Nov 2026, Douglas: "with added human contextual review it does much
+# better. I need the groups to have the same contextual reading ... I want
+# this contextual review now. But also just a better understanding of the
+# numbers ... goals and points." Every pick the Card's rule admits is read
+# by Claude with live web search (context_review.py: team news, rotation,
+# motivation, table, goals, last five); a pick it reads "against", with a
+# source, is kept off the Card and a substitute takes its place. The owner's
+# call, untested: it cannot be replayed on past seasons, so every verdict is
+# archived (`context` on pool and Card legs) and graded forward
+# (cardContext). Set False to stop the veto; the reads still show.
+# claude/context-check-2026-11-11.md.
+CARD_CONTEXT = True
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -1721,7 +1733,13 @@ def card_fault(l, wide=False):
     if CARD_MODEL_RULE and not wide:
         # 11 Nov 2026 (CARD_RULE 7): the model's own picks
         if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
-        return model_fault(l)
+        f = model_fault(l)
+        if f: return f
+        # 11 Nov 2026 (CARD_RULE 9): the context check (context_review.py)
+        cx = l.get("context") or {}
+        if CARD_CONTEXT and cx.get("verdict") == "against":
+            return f"{l['pick']}: the context check reads against it: {cx.get('reason') or 'see the sources'}"
+        return None
     if l.get("sport") == "football" and not (core_league(l.get("code")) if CARD_CORE_ONLY else card_league(l.get("code"))):
         return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the leagues the Card takes (cups and internationals landed under quote)"
     if CARD_UNDER_MARKET and not wide and l.get("sport") == "football" and l.get("fair") is not None and not l.get("est") \
@@ -2387,7 +2405,9 @@ POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "
              # sport) and the two flags card_fault reads, so the pool replays
              "id", "listOff", "timeEst",
              # 10 Nov 2026: a UK slate was read for the leg (list books)
-             "ukChecked")
+             "ukChecked",
+             # 11 Nov 2026: the context check's verdict (context_review.py)
+             "context")
 # 9 Nov 2026: what the first real bookmaker price brings to a leg that was
 # archived as the model's estimate (the pool is written up to three days
 # ahead, before any book has priced the game; 810 of 2,113 legs to 9 Nov).
@@ -2431,6 +2451,9 @@ def archive_pool(L, now, dates):
                 # tennis and US-sport rows settle by id. An identifier, not a
                 # price: nothing first written changes.
                 if l.get("id") and not old.get("id"): old["id"] = l["id"]
+                # 11 Nov 2026: the context check's latest verdict before the start
+                # (a read, not a price; graded forward by context_record)
+                if not started and l.get("context"): old["context"] = l["context"]
                 if not started:
                     # 10 Nov 2026: UK books read on a later build (the list pass
                     # reaches estimates too), for the list's at-the-book record
@@ -2657,6 +2680,45 @@ def card_legs_by_sport(days):
                    "tripwire": bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)}
     return out
 
+def context_record(idx, pool_dir=None):
+    """11 Nov 2026 (CARD_CONTEXT): the context check graded forward. Every
+    pool leg the check read (`context`, archived with the pool), settled, by
+    verdict: landed against the model's own number and the bookmakers'
+    chance. The test the veto has to pass: "against" picks landing under the
+    model's number by more than chance, "clear" ones not. Each pick once a
+    day, the last verdict before the start. A tally, nothing fitted (Rule 1)."""
+    pool_dir = pool_dir or ARCHIVE
+    names = name_indexes(idx); by, seen = {}, set()
+    files = sorted(f for f in os.listdir(pool_dir) if f.startswith("pool-") and f.endswith(".json.gz")) if os.path.isdir(pool_dir) else []
+    for fn in files[-60:]:
+        try:
+            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: rows = json.load(f).get("legs") or []
+        except Exception:
+            continue
+        for row in rows:
+            v = (row.get("context") or {}).get("verdict")
+            k = (row.get("date"), row.get("event"), row.get("pick"))
+            if not v or k in seen: continue
+            l = dict(row)
+            if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
+            st, _ = settle_pool(l, idx, names)
+            if st not in ("won", "lost"): continue
+            seen.add(k)
+            t = by.setdefault(v, {"legs": 0, "landed": 0, "model": 0.0, "var": 0.0, "fair": 0.0, "nFair": 0})
+            pm = row.get("pModel") or 0
+            t["legs"] += 1; t["landed"] += st == "won"; t["model"] += pm; t["var"] += pm * (1 - pm)
+            fr = row.get("fair") if not row.get("est") else (row.get("priced") or {}).get("fair")
+            if fr is not None: t["fair"] += fr; t["nFair"] += 1
+    out = {}
+    for v in ("clear", "caution", "against"):
+        t = by.get(v)
+        if not t: continue
+        out[v] = {"legs": t["legs"], "landed": t["landed"], "rate": round(t["landed"] / t["legs"], 4),
+                  "model": round(t["model"] / t["legs"], 4),
+                  "fair": round(t["fair"] / t["nFair"], 4) if t["nFair"] else None,
+                  "zModel": round((t["landed"] - t["model"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None}
+    return out
+
 def grade(now=None):
     now = now or datetime.now(timezone.utc)
     idx = results_index(); days = []
@@ -2760,6 +2822,8 @@ def grade(now=None):
            "cardLegsBySport": card_legs_by_sport(days),
            # 10 Nov 2026: the Daily List at William Hill (list_at_book)
            "listAtBook": list_at_book(idx),
+           # 11 Nov 2026: the context check by verdict (context_record)
+           "cardContext": context_record(idx),
            "byBand": {n: tally([g for g in allg if g["name"] == n])
                       for n in [c[0] for c in CARD_KINDS] + [b[0] for b in BANDS + WIDE_BANDS] + [m[0] for m in MULT_KINDS] + RETIRED
                       if n in [c[0] for c in CARD_KINDS] or any(g["name"] == n for g in allg)},
@@ -2816,6 +2880,19 @@ def main():
     if probe:
         print(json.dumps(report, indent=1)); return
     prev = previous()
+    # 11 Nov 2026 (CARD_CONTEXT): read every pick the Card's rule admits before
+    # the Card is built, so an "against" pick is never put forward
+    try:
+        import context_review as CX
+        cands = []
+        for l in L:
+            s_ = uk_slot(l)
+            if s_ and s_[0] in dates and card_fault(l) is None:
+                l["ukDate"] = s_[0]; cands.append(l)
+        CX.review(cands, now, report)
+        for l in cands: l.pop("ukDate", None)
+    except Exception as e:
+        report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
     days = []
     for d in dates:
         dl = [l for l in L if l["date"] == d]
@@ -2856,7 +2933,7 @@ def main():
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "wideLegs": list(CARD_WIDE_LEGS),
-                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
+                              "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS), "context": CARD_CONTEXT,
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,
            # 10 Nov 2026: each list pick's William Hill mark, for the page
@@ -2875,6 +2952,10 @@ def main():
     write_page(dict(out, check=check_pool(L)), record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
+    cx = report.get("context") or {}
+    print(f"  context check: {'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
+          f"{cx.get('read', 0)} picks with a verdict, {cx.get('against', 0)} against; "
+          + "; ".join(e for e in report.get("errors", []) if e.startswith("context"))[:600], file=sys.stderr)
     for d in days:
         r = d["review"]
         print(f"  {d['date']}: {r['holding']} holding, {r['replacement']} replaced, {r['new']} new, "

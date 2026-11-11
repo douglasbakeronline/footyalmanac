@@ -1192,6 +1192,16 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .mkt .hda b{font-weight:500;color:var(--mute-ink,#6e6355)}.mkt .hda b.pk{font-weight:700;color:var(--ink)}.mkt .hda b.opp-long{color:var(--red);font-weight:600}
 .mkt .hda i{font-style:normal;margin:0 3px;color:var(--rule)}
 .og-l small .opp{color:var(--ink);font-family:var(--f-num)}
+.og-cx{margin-top:4px;font-size:11.5px;line-height:1.4;color:var(--ink-2)}
+.og-cx summary{cursor:pointer;list-style:none}
+.og-cx summary::-webkit-details-marker{display:none}
+.og-cx .cx-v{display:inline-block;font-weight:700;font-size:10.5px;letter-spacing:.02em;text-transform:uppercase;padding:1px 5px;border:1px solid currentColor;margin-right:3px}
+.og-cx.clear .cx-v{color:var(--edge)}
+.og-cx.caution .cx-v{color:#7a5a12}
+.og-cx.against .cx-v{color:var(--away)}
+.og-cx p{margin:4px 0 0}
+.og-cx .cx-s{color:var(--mute)}
+.og-cx a{color:var(--ink-2)}
 .mktgrid{width:100%;border-collapse:collapse;font-family:var(--f-num);font-size:12.5px;margin:4px 0 2px}
 .mktgrid th{font-family:var(--f-ui);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
   color:var(--mute);font-weight:700;text-align:right;padding:3px 6px}
@@ -4463,6 +4473,16 @@ function ogOpp(l){
   if(!l.opp) return "";
   return ` · opp <span class="opp">${(+l.opp).toFixed(2)}</span>${l.draw ? ` · draw <span class="opp">${(+l.draw).toFixed(2)}</span>` : ""}`;
 }
+// 11 Nov 2026: the context check on each Card pick (context_review.py):
+// a verdict, its one-line reason, the season's numbers and its sources.
+function ogContext(l){
+  const c = l.context; if(!c || !c.verdict) return "";
+  const lab = {clear: "Context clear", caution: "Context: caution", against: "Context against"}[c.verdict] || "Context";
+  const src = (c.sources || []).filter(s => /^https?:/.test(s.url || "")).map(s => `<a href="${ogEsc(s.url)}" target="_blank" rel="noopener">${ogEsc(s.title || s.url.replace(/^https?:\/\/(www\.)?/, "").split("/")[0])}</a>`).join(" · ");
+  return `<details class="og-cx ${ogEsc(c.verdict)}"><summary><span class="cx-v">${lab}</span> ${ogEsc(c.reason || "")}</summary>
+    ${c.news ? `<p><b>News</b> ${ogEsc(c.news)}</p>` : ""}${c.numbers ? `<p><b>Numbers</b> ${ogEsc(c.numbers)}</p>` : ""}
+    ${src ? `<p class="cx-s">${src}</p>` : ""}<p class="cx-s">Read ${ogEsc(ogAt(c.at))} by Claude with web search. Graded apart, untested.</p></details>`;
+}
 function ogPrice(l, frozen){
   if(l.est) return `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>`;
   return `<span class="o">${l.odds.toFixed(2)}${ogMove(l)}${ogBest(l)}${ogRead(l, frozen)}</span>`;
@@ -4572,7 +4592,7 @@ function ogCard(g){
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
     return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${ogSearch(l)}${card || paper ? ogBook(l) : ""}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${ogSearch(l)}${card || paper ? ogBook(l) : ""}${card ? ogContext(l) : ""}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
