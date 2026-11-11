@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): Own-band List admission re-run, note only
+
+**What changed:** a note, no code. The rule was shipped on 20 Oct 2026; the replay re-run reproduces it.
+**Evidence:** held out, rugby 426 at 78.9% -> 232 at 84.1% (dropped 72.7%, p(worse) 0.002); college basketball 3,792 at 78.9% -> 1,884 at 87.4% (dropped 70.5%, p 0.000); NFL 110 at 71.8% -> 62 at 77.4% (p 0.07). `claude/own-band-rerun-2026-11-11.md`.
+**Files:** `claude/own-band-rerun-2026-11-11.md`, `RELEASES.md`.
+**Not changed:** any code or bar.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-11 (tag pending): Card tennis legs, note only
 
 **What changed:** a note, no code. Tennis Card legs are 8 of 15 since 29 Oct (z -2.1), 23 of 41 in all (z -2.13), under the 50-leg tripwire.
