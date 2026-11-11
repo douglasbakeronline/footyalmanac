@@ -60,3 +60,17 @@ Tests: `tests/test_free_prices.py` (shaped replies, no network).
   machine to fetch from; the code is unchanged either way.
 - SportsGameOdds league IDs (`NCAAB`, `NCAAF`) are from its docs; an empty
   reply for a league means the ID needs adjusting.
+
+## First builds with keys (11 Nov 2026, evening)
+
+- SportsGameOdds: 47 games matched ours by name and every one came with no
+  per-book prices on the free plan (`noBooks`). Since #260 its consensus line
+  (`bookOdds`) prices them, labelled "SportsGameOdds consensus": 39 of 128
+  legs priced on the first build; legs priced 163 -> 189 of about 390.
+- Betfair: the login answers GitHub's runners with Betfair's HTML "Forbidden"
+  page, a location block (Betfair does not serve the US). Nothing in code can
+  fix it from CI; it needs a runner in a served country or nothing. Left in
+  place, silent apart from the log line.
+- Matchbook: no key added.
+- The build log prints a line per source (`  prices:`) and, when
+  SportsGameOdds matches nothing, its miss detail (`  sgo miss:`).
