@@ -249,7 +249,7 @@ VARIANTS = {
     # 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7, Douglas:
     # "The model rules"). The rule 6 Card it replaced is kept here, so the 30 Nov
     # review still pairs the two on the same legs.
-    "rule6": {"CARD_MODEL_RULE": False, "CARD_RULE": 6},
+    "rule6": {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x")},
     # 11 Nov 2026 (Douglas: "Just do better on the groups"): the rule 7 Card's
     # group shape and edge, each one change from live, run on the pool and on
     # five football-data seasons (card_legs_history.py cardM7*).
@@ -257,7 +257,8 @@ VARIANTS = {
     "m7edge6": {"CARD_MODEL_EDGE": 0.06},        # 6+ points above
     "m7legs3": {"CARD_LEGS": (3,)},              # three picks a group, never four or five
     "m7short": {"CARD_ODDS": (1.15, 1.50)},      # picks priced 1.15 to 1.50 only
-    "m7only2x": {"CARD_KINDS": [k for k in G.CARD_KINDS if k[0] == "Card 2x"]},   # no 3x
+    "m7only2x": {"CARD_KINDS": [k for k in G.CARD_KINDS if k[0] == "Card 2x"]},   # no 3x (live from CARD_RULE 8)
+    "with3x": {"CARD_BUILD": ("Card 2x", "Card 3x")},   # 11 Nov 2026: the rule 7 Card with its 3x, as before CARD_RULE 8
     "m7notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
 }
 
@@ -266,7 +267,7 @@ def build_wide(day_legs, date):
     """The page's fallback for an empty day (groupings.build_card's wider-rule
     block): one group of each kind under the wider rule, seq 1."""
     after = G.lock_time(date, "Day"); groups, used = [], set()
-    for name, _, _, _ in G.CARD_KINDS:
+    for name, _, _, _ in G.built_kinds():
         g = G.best_card(day_legs, used, after, name, wide=True)
         if not g: continue
         used |= {l["event"] for l in g["legs"]}
@@ -303,7 +304,7 @@ def build(day_legs, date, variant):
     try:
         after = G.lock_time(date, "Day"); groups, used = [], set()
         for seq in (1, 2, 3):
-            for name, _, _, _ in G.CARD_KINDS:
+            for name, _, _, _ in G.built_kinds():
                 if len(groups) >= G.CARD_MAX_GROUPS: break
                 if legs_3x and name == "Card 3x":
                     old_legs = G.CARD_LEGS; G.CARD_LEGS = legs_3x

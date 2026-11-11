@@ -15,7 +15,8 @@ import card_replay as CR
 # cover the rule 6 machinery, which stays as the replay variant `rule6`, so the
 # module runs under rule 6; tests/test_card_model_rule.py covers rule 7.
 from unittest import mock as _mock
-_RULE6 = [_mock.patch.object(G, "CARD_MODEL_RULE", False), _mock.patch.object(G, "CARD_RULE", 6)]
+_RULE6 = [_mock.patch.object(G, "CARD_MODEL_RULE", False), _mock.patch.object(G, "CARD_RULE", 6),
+          _mock.patch.object(G, "CARD_BUILD", ("Card 2x", "Card 3x"))]
 def setUpModule():
     for p in _RULE6: p.start()
 def tearDownModule():

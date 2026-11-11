@@ -73,7 +73,8 @@ class FlatStakeVariant(unittest.TestCase):
             if ev in used: return None
             return {"name": name, "odds": 2.2, "p": 0.4, "legs": [{"event": ev, "won": True}]}
         before = dict(G.CARD_STAKE)
-        with mock.patch.object(G, "best_card", side_effect=fake):
+        # both kinds built, as before CARD_RULE 8 (the 2x alone from 11 Nov 2026)
+        with mock.patch.object(G, "best_card", side_effect=fake), mock.patch.object(G, "CARD_BUILD", ("Card 2x", "Card 3x")):
             live = CR.build([], "2026-11-10", "live")
             flat = CR.build([], "2026-11-10", "flatstake")
         self.assertEqual({g["name"]: g["stake"] for g in live}, {"Card 2x": 2, "Card 3x": 1})
