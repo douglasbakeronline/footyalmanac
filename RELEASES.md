@@ -4,6 +4,17 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-2: the Card's filler takes only 60%+ favourites (tag pending)
+
+**What changed:** the empty-day filler (the wider rule) now takes only picks the bookmakers make 60%+ favourites, like the full rule, not 55%+. Douglas, on Saturday 14 Nov's filler (Luton, Southend, Almere City): "Make sure all picks are more like Almere and less like Luton and Southend." Luton (the bookmakers 56%) is off; Saturday's filler is rebuilt on every build. Wider-rule groups carry `wideRule` (2), tallied apart in `cardWideByRule`; the page's filler lines read the floor from the rules.
+
+**Evidence:** football legs the wider rule admitted, archive and pool, 30 Sep to 14 Nov: bookmakers under 60% -6.3% singles (107 legs), the worst band; 60%+ with the model within 5 points (Almere's shape) +0.9% (82); 60%+ with the model 5-10 under (Southend's shape) +7.4% (55), the best band, so Southend's shape is not refused. Whole filler replayed: -1% after v +0% before, fewer groups. The owner's call with the evidence pointing the same way, not a gate pass. Suite OK, nametest clear, Bets tab checked at 1280 and 400 wide. Note: `claude/card-filler-like-almere-2026-11-11.md`.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_legs_history.py` (docstring), `tests/test_groupings_card.py`, `tests/test_card_fillers.py`, `claude/card-filler-like-almere-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** the full rule, `CARD_RULE`, stakes, past graded groups.
+
+**Roll back:** `git revert` the merge commit (the floor returns to 55%).
 ## 2026-11-11 Card: Douglas's mismatch rule tested against the price (tag pending)
 
 **What changed:** `tools/card_legs_history.py` replays the rule Douglas

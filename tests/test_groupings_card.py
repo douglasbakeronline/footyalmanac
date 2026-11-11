@@ -212,13 +212,14 @@ if __name__ == "__main__":
 
 class WiderRule(unittest.TestCase):
     """25 Oct 2026, Douglas: a window the full rule leaves empty still gets a
-    group, under the wider rule (to 2.10, bookmakers 55%+), marked wide."""
+    group, under the wider rule (to 2.10, bookmakers 60%+ since 11 Nov 2026), marked wide."""
 
     def weak_daytime(self):
-        # fair about 57%: under the full rule's 60%, inside the wider 55%
-        # two full-rule picks and three at about 57%: no full-rule group
+        # 11 Nov 2026: the wider floor is 60% too (CARD_WIDE_RULE 2), so the weak
+        # picks are 62.5% favourites the model agrees with (62%): the full rule
+        # refuses them (not 5 points under the market), the wider rule takes them
         strong = [leg(i, 1.40, 0.70, f"{DATE}T12:{i * 10:02d}:00Z", margin=1.0) for i in range(2)]
-        return strong + [leg(i, 1.75, 0.58, f"{DATE}T13:{i * 10:02d}:00Z", margin=1.0) for i in range(2, 5)]
+        return strong + [leg(i, 1.60, 0.62, f"{DATE}T13:{i * 10:02d}:00Z", margin=1.0) for i in range(2, 5)]
 
     def test_empty_window_gets_a_wide_group(self):
         L = self.weak_daytime()
@@ -242,6 +243,12 @@ class WiderRule(unittest.TestCase):
         first = G.build_card(self.weak_daytime(), DATE, EARLY, log=[])
         again = G.build_card(board(), DATE, AFTER_LOCK, prev=first, log=[])
         self.assertTrue(any(g.get("wide") and g["locked"] for g in again))
+
+    def test_wide_floor_is_60(self):
+        # 11 Nov 2026, Douglas (Luton at the bookmakers' 56%): thin favourites are off the filler
+        thin = leg(1, 1.75, 0.58, f"{DATE}T12:00:00Z", margin=1.0)
+        self.assertIn("under 60%", G.card_fault(thin, wide=True))
+        self.assertEqual(G.CARD_WIDE_FAIR_MIN, 0.60)
 
     def test_wide_price_cap(self):
         self.assertIsNotNone(G.card_fault(leg(1, 2.30, 0.45, f"{DATE}T12:00:00Z", margin=1.0), wide=True))

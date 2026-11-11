@@ -1590,7 +1590,22 @@ def window_end(date, window):
 # (cardWide) so the full rule's record stays clean.
 CARD_WIDE_ODDS = (1.08, 2.10)
 CARD_WIDE_LEGS = (3, 4, 5)
-CARD_WIDE_FAIR_MIN = 0.55
+CARD_WIDE_FAIR_MIN = 0.60   # 0.55 until 11 Nov 2026 (CARD_WIDE_RULE 2)
+# 11 Nov 2026, Douglas, on Saturday 14 Nov's filler (Luton, Southend, Almere
+# City): "I don't fancy Luton or Southend at all ... I really like Almere
+# City. Make sure all picks are more like Almere." Luton was a thin favourite
+# (the bookmakers 56%); Almere a 65% favourite the model agreed with. On the
+# site's archive and pool, football legs the wider rule admitted (30 Sep to
+# 14 Nov): bookmakers under 60% landed 57.9% v 57.3% quoted, singles -6.3%
+# (107 legs); 60%+ with the model within 5 points +0.9% (82); 60%+ with the
+# model 5-10 under +7.4% (55); 10+ under -3.2% (77). So the filler's floor
+# rises to the full rule's 60%. Southend (the bookmakers 66%, the model 59%,
+# 8 under) still qualifies: its band was the best one, so the evidence does
+# not support refusing it. Thin samples; the owner's call with the archive
+# pointing the same way. The full rule is unchanged, so CARD_RULE is not
+# bumped; wider-rule groups carry wideRule, tallied in cardWideByRule.
+# claude/card-filler-like-almere-2026-11-11.md.
+CARD_WIDE_RULE = 2      # 1: bookmakers 55%+ (25 Oct to 11 Nov 2026); 2: bookmakers 60%+
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -1900,7 +1915,8 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
             g = best_card(by_win[w], used, after, name, wide=True)
             if not g: continue
             lock = first_kick(g) or lock_time(date, w)
-            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new")
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
+                     wideRule=CARD_WIDE_RULE)
             for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
             used |= {l["event"] for l in g["legs"]}; filled.add((w, name, 1)); groups.append(g)
     # 29 Oct 2026: the bench and the price at CARD_BOOK. A locked group keeps
@@ -2508,6 +2524,8 @@ def grade(now=None):
             # dropped here, so wider-rule and post-lock groups were tallied as
             # the full Card. They travel with the graded row and are tallied apart.
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "seq": g.get("seq"), "rule": g.get("rule"),
+                       # 11 Nov 2026: the wider rule's own version (groups before it carry none: version 1)
+                       "wideRule": (g.get("wideRule") or 1) if g.get("wide") else None,
                        "odds": g["odds"], "p": g["p"], "status": status,
                        # 11 Nov 2026: the stake the page showed when the group was
                        # published (CARD_STAKE from 29 Oct; one unit before, and for
@@ -2580,6 +2598,9 @@ def grade(now=None):
            # rule) are tallied on their own lines and never count toward it.
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
+           # 11 Nov 2026: the wider rule by version (CARD_WIDE_RULE)
+           "cardWideByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late") and g.get("wideRule") == r])
+                              for r in sorted({g.get("wideRule") for g in allg if is_card(g["name"]) and g.get("wide") and g.get("wideRule")})},
            "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
            # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
            "cardModel": tally([g for g in allg if is_model(g["name"])]),
@@ -2654,7 +2675,7 @@ def main():
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
-                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideLegs": list(CARD_WIDE_LEGS),
+                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,
