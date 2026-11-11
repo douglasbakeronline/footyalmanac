@@ -4,6 +4,17 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11: the Card's record at the page's stakes (tag pending)
+
+**What changed:** the Card's return is now shown at the stakes the page tells people to use (two units a 2x, one a 3x) as well as one unit a group. The Card scoreboard ("Is it working?") adds "at the page's stakes ... per N units" to every tile where the two differ. `planRungs` (unused since #228 removed the plan panel) quotes both too, so a revert of #228 brings the panel back honest. `groupings-record.json` tallies gain `unitsStaked`, `unitsReturned`, `unitsReturnedBest`; each graded group carries its published `stake` (one unit before 29 Oct, when the archive kept none).
+
+**Evidence:** archive to 10 Nov, full rule: 35 groups, 49 units staked, 39.55 back (-19.3%; -18.2% at best prices) against -12.2% flat. The flat figure flattered the Card because the 2x, staked double, is the weaker kind live. `tests/test_groupings_record.py` (Stakes), `tests/test_place_now.py` (PlanCardStakes, in node). Checked in Chromium at 1280 and 400 wide on the real record. Note: `claude/card-record-at-stakes-2026-11-11.md`.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_record.py`, `tests/test_place_now.py`, `claude/card-record-at-stakes-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** `CARD_STAKE`, `CARD_RULE`, any Card rule, replay or past grade; `staked` / `returned` still read one unit a group.
+
+**Roll back:** `git revert` the merge commit; the record drops the units fields at the next build.
 ## 2026-11-11 Bets: the plan panel removed (tag pending)
 
 For a reader: the Bets tab no longer opens with the plan (the three rungs,

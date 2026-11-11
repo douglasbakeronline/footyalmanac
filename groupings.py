@@ -2509,6 +2509,10 @@ def grade(now=None):
             # the full Card. They travel with the graded row and are tallied apart.
             gs.append({"name": g["name"], "rank": g.get("rank", "main"), "window": g.get("window"), "seq": g.get("seq"), "rule": g.get("rule"),
                        "odds": g["odds"], "p": g["p"], "status": status,
+                       # 11 Nov 2026: the stake the page showed when the group was
+                       # published (CARD_STAKE from 29 Oct; one unit before, and for
+                       # every other kind), so the record reads at the page's stakes too.
+                       "stake": g.get("stake") or 1,
                        "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2),
                        "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
@@ -2540,6 +2544,13 @@ def grade(now=None):
                 "returnedLock": round(sum(g["paidLock"] for g in done if g.get("paidLock") is not None), 2),
                 "stakedLock": sum(1 for g in done if g.get("paidLock") is not None),
                 "expected": round(sum(g["p"] for g in done), 2),
+                # 11 Nov 2026: the same groups at the stakes the page showed
+                # (two units on a Card 2x, one on a 3x, CARD_STAKE), so a reader
+                # who staked as told sees their own return; staked/returned stay
+                # one unit a group, the like-for-like line with the replays.
+                "unitsStaked": sum(g.get("stake", 1) for g in done),
+                "unitsReturned": round(sum(g.get("stake", 1) * g["paid"] for g in done), 2),
+                "unitsReturnedBest": round(sum(g.get("stake", 1) * g.get("paidBest", g["paid"]) for g in done), 2),
                 # 25 Oct 2026: published price v the last price before kick-off.
                 # Positive = the price shortened after we published (beat the close).
                 "clv": {"n": len(clv), "shortened": sum(1 for x in clv if x > 0.005),

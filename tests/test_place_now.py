@@ -83,3 +83,24 @@ console.log(JSON.stringify({out: r.out.map(s => [s.kind, s.title, s.units, +s.od
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@unittest.skipUnless(shutil.which("node"), "node not installed")
+class PlanCardStakes(unittest.TestCase):
+    """11 Nov 2026: the Card rung is staked two units a 2x, one a 3x, so its
+    live return is quoted at those stakes as well as at one unit a group."""
+    def proof(self, card):
+        js = STUBS + f"const D = {{days: []}}, OG = {json.dumps({'record': {'card': card}})};\n" + page_functions() + """
+console.log(JSON.stringify(planRungs().find(r => r.kind === "card").proof));
+"""
+        return json.loads(subprocess.run(["node", "-e", js], capture_output=True, text=True, check=True).stdout)
+
+    def test_both_returns_shown(self):
+        p = self.proof({"settled": 35, "won": 11, "staked": 35, "returned": 30.72, "unitsStaked": 49, "unitsReturned": 39.55})
+        self.assertIn("-12.2% at one unit a group", p)
+        self.assertIn("<b>-19.3%</b> at these stakes", p)
+
+    def test_old_record_without_units(self):
+        p = self.proof({"settled": 35, "won": 11, "staked": 35, "returned": 30.72})
+        self.assertIn("-12.2% at one unit a group", p)
+        self.assertNotIn("these stakes", p)

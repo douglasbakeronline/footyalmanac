@@ -4762,8 +4762,10 @@ function tbCheckHtml(){
 function tbRecord(){
   const R = OG && OG.record; if(!R) return "";
   const k = R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
+  // 11 Nov 2026: the same groups at the stakes the page showed (two units a Card 2x, one a 3x); omitted where they are one unit a group anyway
+  const units = x => x && x.unitsStaked && x.unitsStaked !== x.staked ? `; at the page's stakes ${x.unitsReturned >= x.unitsStaked ? "+" : ""}${(x.unitsReturned - x.unitsStaked).toFixed(2)} per ${x.unitsStaked} units` : "";
   // 25 Oct 2026: returnedLock is the return at the price recorded at the window's lock (the price a punter placing at 07:00 could take)
-  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}${x.stakedLock ? `, ${(x.returnedLock - x.stakedLock >= 0 ? "+" : "")}${(x.returnedLock - x.stakedLock).toFixed(2)} per ${x.stakedLock} at the price at lock` : ""}` : "none settled yet";
+  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}${x.stakedLock ? `, ${(x.returnedLock - x.stakedLock >= 0 ? "+" : "")}${(x.returnedLock - x.stakedLock).toFixed(2)} per ${x.stakedLock} at the price at lock` : ""}${units(x)}` : "none settled yet";
   const w = n => { const t = bw[n] || {}; return `<div><span>${n === "Day" ? "One-window card (from 29 Oct)" : n + " (to 28 Oct)"}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${roi(t)}</small></div>`; };
   // 26 Oct 2026: the Card record is strict, won against lost: a group is won
   // only when every pick won. A draw read (a football pick whose game
@@ -4919,6 +4921,8 @@ function sigSlip(s){
 function planRungs(){
   const r = (OG && OG.record && OG.record.card) || {}, e = RS && RS.edge && RS.edge.all;
   const cardRet = r.staked ? sigPct((r.returned - r.staked) / r.staked) : null;
+  // 11 Nov 2026: this rung's stake is two units a 2x, one a 3x, so its live return is quoted at those stakes beside the flat one
+  const cardUnits = r.unitsStaked && r.unitsStaked !== r.staked ? sigPct((r.unitsReturned - r.unitsStaked) / r.unitsStaked) : null;
   return [
     {kind: "edge", v: "Tested", name: "Edge singles", stake: "1 unit each",
      what: "Football favourites at 1.15 to 1.90 whose opponent is priced 9 or more, the bookmakers 60%+, the model in agreement.",
@@ -4928,7 +4932,7 @@ function planRungs(){
      proof: "Five seasons: 170 of 252 won, <b>+4.6%</b> at the best price, ahead in four seasons of five."},
     {kind: "card", v: "On trial", name: "The Card", stake: "2 units a 2x, 1 a 3x",
      what: "Three to five priced favourites from different fixtures, built and frozen by the site before the first start.",
-     proof: `Replayed over four seasons <b>+4.4%</b> (+12.5% at the best price); live ${r.settled ? `${r.won} of ${r.settled}${cardRet ? `, ${cardRet}` : ""}` : "nothing settled"}. Kept or cut at the 30 Nov review.`}];
+     proof: `Replayed over four seasons <b>+4.4%</b> (+12.5% at the best price); live ${r.settled ? `${r.won} of ${r.settled}${cardRet ? `, ${cardRet} at one unit a group${cardUnits ? `, <b>${cardUnits}</b> at these stakes` : ""}` : ""}` : "nothing settled"}. Kept or cut at the 30 Nov review.`}];
 }
 /* 11 Nov 2026, Douglas: "Still showing the plan which I asked to remove"
    (decided 10 Nov evening, claude/plan-decision-2026-11-10.md). The plan panel
