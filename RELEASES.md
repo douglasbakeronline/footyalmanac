@@ -4,6 +4,24 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-10-31 Bets: Leave these out, Check a slip and the Accumulator removed (tag pending)
+
+For a reader: the Bets tab no longer has the "Leave these out" list, the
+slip checker or the accumulator calculator, and Card picks no longer carry
+"Add to acca +". Douglas, 10 Nov 2026: "Remove these sections." With the plan
+at the top saying what to bet and "nothing else", tools for building slips
+outside it pulled the other way. The Card's play list now says "Only the
+plan".
+
+Files: `index.html` only. The avoid list is still built by `groupings.py`
+(nothing reads it on the page now); the checker and calculator functions
+stay in the file unused, so a revert restores them cleanly.
+
+Checked in Chrome at 360, 390, 412 and 1280 wide; suite OK, `nametest.py`
+clear.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-11 Daily List: college basketball only at a William Hill price of 1.05 or more (tag pending)
 
 **What changed.** Douglas (11 Nov 2026): college basketball picks are "almost pointless to have on daily list if I can't bet on them"; "just move to the college basketball tab unless there is a clear 1.05 or above". A college basketball list pick now shows on the Daily List only when William Hill's price, read before the start, is 1.05 or more. The rest stay on the College basketball tab, and each day says how many were left off, with a link to the tab. The masthead and list counts, Today at a glance and Coming up read the same filtered picks.
