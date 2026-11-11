@@ -54,28 +54,28 @@
   "verdict": "caution"
  },
  "Utah Jazz v Orlando Magic|Orlando Magic": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T23:22:16Z",
   "model": "claude-sonnet-5-5",
-  "news": "Magic out: Banchero (ankle), Suggs (knee), Isaac (knee), Penda (hamstring) and Nelson (ankle); Bane (illness) and da Silva (calf) are day-to-day. Jazz out: Jackson Jr. (knee) and Nurkic (foot); Markkanen (wrist) and George (ankle) are day-to-day after missing Tuesday's game, and the Jazz are also on",
-  "numbers": "Orlando is 3-7 (11th in the East, 3-3 away) and allows 114.6 points per game; Utah is 1-10 (15th in the West, 1-5 at home), averages 106.5 points per game and has lost nine straight. Orlando ended a four-game slide at Sacramento on Tuesday behind Franz Wagner's 33 points. The Magic won both meetings last season (120-117 and 128-127 OT), though Utah has won 7 of the last 9 meetings at the Delta Cen",
-  "reads": 1,
-  "reason": "Orlando is without Banchero, Suggs, Isaac and Penda and is on the second night of a back-to-back, but Utah is 1-10 on a nine-game losing streak and also missing Jaren Jackson Jr. and Nurkic, with Markkanen and George listed as day-to-day (iHeart injury report, ESPN preview).",
+  "news": "Orlando is without Banchero, Suggs and Isaac, with da Silva and Cain doubtful; Utah is without Markkanen (fractured hand), Jackson Jr. and Nurkic, with George questionable, and is also on a back-to-back after facing Miami on Nov 10.",
+  "numbers": "Orlando is 3-7 and 11th in the East. They are 3-3 on the road, and their last five are L, L, L, L (OT) and W 107-100 at Sacramento on Nov 10 (CBS Sports, Bang The Book). Utah is 1-10 and 15th in the West, on a 9-game losing streak and a five-game home losing streak, with the market making them 4.5-point underdogs (ESPN, iHeart).",
+  "reads": 2,
+  "reason": "Both sides are badly hurt and Orlando is also on the second night of a back-to-back, but Utah is 1-10 and has lost Markkanen for at least a month, so nothing clearly pushes the Magic below 67% (ESPN, iHeart/Roundtable previews).",
   "sources": [
    {
-    "title": "Magic vs. Jazz Injury Report \u2013 iHeart",
-    "url": "https://957wdae.iheart.com/content/2026-11-11-magic-vs-jazz-injury-report-nov-11/"
+    "title": "Magic vs. Jazz (Nov 11, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909973/magic-jazz"
    },
    {
-    "title": "Magic vs. Jazz (Nov 11, 2026) Pregame - ESPN",
-    "url": "https://www.espn.com/nba/preview?gameId=401909973"
+    "title": "Magic vs. Jazz Predictions, Odds & Stats - iHeart",
+    "url": "https://957wdae.iheart.com/content/2026-11-11-magic-vs-jazz-predictions-odds-stats-nov-11/"
    },
    {
-    "title": "Preview: Utah Jazz End Back-to-Back Against Orlando Magic - NBA.com",
-    "url": "https://www.nba.com/jazz/news/preview-utah-jazz-end-back-to-back-against-orlando-magic"
+    "title": "How to Watch Magic Vs Jazz, Injury Report and More - Roundtable",
+    "url": "https://roundtable.io/sports/nba/magic/news/how-to-watch-magic-vs-jazz-injury-report-and-more"
    },
    {
-    "title": "Utah Jazz vs Orlando Magic Prediction & Betting Tips - Bet-Experts",
-    "url": "https://www.bet-experts.com/picks/basketball/nba/utah-jazz-vs-orlando-magic-prediction-betting-tips-12-11-2026"
+    "title": "Orlando Magic at Utah Jazz: 3 Things to Watch - Orlando Magic Daily",
+    "url": "https://orlandomagicdaily.com/orlando-magic-at-utah-jazz-nov-11-2026-3-things-watch-odds-prediction-01m75xc8v05z"
    }
   ],
   "verdict": "caution"
