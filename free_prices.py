@@ -22,7 +22,7 @@ SportsGameOdds' William Hill is kept apart (`sgoBooks`) until it is shown to
 be the UK book (`SGO_HILL_IS_UK`): its free plan is US-focused and the US
 William Hill is now Caesars. Prices never feed a model. Standard library only.
 """
-import json, os, time, urllib.parse, urllib.request
+import json, os, time, urllib.error, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
 UA = {"User-Agent": "footyalmanac/1.0 (+https://douglasbakeronline.github.io/footyalmanac/)"}
@@ -48,8 +48,15 @@ def _http(url, data=None, headers=None, method=None, timeout=40):
     if data is not None:
         body = data if isinstance(data, bytes) else json.dumps(data).encode()
     req = urllib.request.Request(url, data=body, headers=dict(UA, **(headers or {})), method=method)
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read() or b"null")
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as r:
+            return json.loads(r.read() or b"null")
+    except urllib.error.HTTPError as e:
+        # 11 Nov 2026: Betfair's login answered a bare 403 from the CI runner;
+        # the body says whether that is a location block or the account
+        try: txt = e.read()[:160].decode("utf-8", "replace").replace("\n", " ")
+        except Exception: txt = ""
+        raise RuntimeError(f"HTTP {e.code} {e.reason}: {txt}") from None
 
 def _names(l):
     return l.get("players") or [l.get("home"), l.get("away")]
@@ -290,15 +297,16 @@ def price_sgo(L, dates, report, cache_dir=None, fetch=None, now=None):
                 hn = (th.get("names") or {}).get("long") or (th.get("names") or {}).get("medium")
                 an = (ta.get("names") or {}).get("long") or (ta.get("names") or {}).get("medium")
                 if not _match(l, hn, an, G.parse((ev.get("status") or {}).get("startsAt")), G): continue
+                rep["named"] = rep.get("named", 0) + 1
                 side = "home" if G.same_any(l["pick"], hn) else "away" if G.same_any(l["pick"], an) else None
-                if not side: break
+                if not side: rep["noSide"] = rep.get("noSide", 0) + 1; break
                 odds = ev.get("odds") or {}
                 mine = odds.get(f"points-{side}-game-ml-{side}") or odds.get(f"points-{side}-reg-ml-{side}") or {}
                 opp_side = "away" if side == "home" else "home"
                 theirs = odds.get(f"points-{opp_side}-game-ml-{opp_side}") or odds.get(f"points-{opp_side}-reg-ml-{opp_side}") or {}
                 books = {b: _american(v.get("odds")) for b, v in (mine.get("byBookmaker") or {}).items() if v.get("available", True)}
                 books = {b: o for b, o in books.items() if o and o > 1}
-                if not books: break
+                if not books: rep["noBooks"] = rep.get("noBooks", 0) + 1; rep.setdefault("oddKeys", sorted(odds)[:6]); break
                 others = [o for o in (_american(v.get("odds")) for v in (theirs.get("byBookmaker") or {}).values()) if o and o > 1]
                 avg = sum(books.values()) / len(books)
                 top = max(books.items(), key=lambda kv: kv[1])
@@ -310,4 +318,16 @@ def price_sgo(L, dates, report, cache_dir=None, fetch=None, now=None):
                 rep["matched"] += 1; break
     _keep(led_path, led)
     rep["monthObjects"] = led["objects"]
+    # 11 Nov 2026: the first build with a key matched none of 128 objects; when
+    # nothing matches, the log shows what an event and a leg look like
+    if not rep["matched"]:
+        for lg, legs in by_league.items():
+            evs = _cached(os.path.join(cache_dir, f"sgo-{lg}.json"), 40 * 86400) or []
+            ev = evs[0] if evs else None
+            rep.setdefault("sample", {})[lg] = {
+                "events": len(evs),
+                "eventKeys": sorted(ev)[:12] if isinstance(ev, dict) else type(ev).__name__,
+                "teams": str((ev or {}).get("teams") if isinstance(ev, dict) else "")[:200],
+                "startsAt": str(((ev or {}).get("status") or {}).get("startsAt") if isinstance(ev, dict) else ""),
+                "leg": [_names(legs[0]), legs[0].get("when")]}
     report["sgo"] = rep
