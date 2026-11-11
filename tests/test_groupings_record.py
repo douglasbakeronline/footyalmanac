@@ -175,3 +175,23 @@ class LegsBySport(unittest.TestCase):
         short = G.card_legs_by_sport([{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
                                                                            "legs": days[0]["groups"][0]["legs"][:G.CARD_FLOOR_N - 1]}]}])["tennis"]
         self.assertFalse(short["tripwire"])   # one leg short of the floor, however far under
+
+
+class Stakes(unittest.TestCase):
+    """11 Nov 2026: the record also reads at the stakes the page showed
+    (two units on a Card 2x, one on a 3x); staked/returned stay one a group."""
+    def test_units_follow_the_published_stake(self):
+        a = card("Card 2x", "Day", ["A", "B", "C"], stake=2, odds=2.2)    # won: 2 x 3.38 (three legs at 1.50)
+        b = card("Card 3x", "Day", ["D", "E", "F"], stake=1, odds=3.4)    # lost
+        rec = graded([a, b], ["won"] * 3 + ["lost", "won", "won"])
+        k = rec["card"]
+        self.assertEqual((k["staked"], k["unitsStaked"]), (2, 3))
+        self.assertAlmostEqual(k["returned"], 3.38, places=2)
+        self.assertAlmostEqual(k["unitsReturned"], 6.76, places=2)
+        self.assertEqual(rec["days"][0]["groups"][0]["stake"], 2)
+
+    def test_groups_published_without_a_stake_count_one_unit(self):
+        # before 29 Oct 2026 the archive kept no stake; the page staked one unit a group then
+        rec = graded([card("Card 2x", "Day", ["A", "B", "C"])], ["won"] * 3)
+        k = rec["card"]
+        self.assertEqual((k["unitsStaked"], k["unitsReturned"]), (k["staked"], k["returned"]))
