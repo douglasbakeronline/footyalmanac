@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): why the free price sources priced nothing, shown in the build log
+
+**What changed:** the first build with keys showed SportsGameOdds fetching 128 games and matching none, and Betfair's login refused with a bare HTTP 403. The build log now shows, when SportsGameOdds matches nothing, what one of its games and one of our legs look like (names, start), and how far each got (named, no side, no books); an HTTP error from any free source now carries the reply's first line, so a location block reads as one.
+**Evidence:** deploy run 43105328356 (#250's log line): `sgo: matched 0, legs 128, monthObjects 128`, `betfair: error HTTP Error 403: Forbidden`, `matchbook: no key`.
+**Files:** `free_prices.py`, `tests/test_free_prices.py`.
+**Not changed:** any price, any pick.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-11 (tag pending): tennis at 85% on the Card, "Under 80" on tennis rows, rows keep their place
 
 **What changed:** the Card takes a tennis pick only at 85%+ on the model and its tested rate (was 75%), `CARD_RULE` 10. Every tennis row under 80% shows "Under 80". Opening or starring a row no longer moves the page: the tapped row stays where it was on screen.
