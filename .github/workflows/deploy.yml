@@ -259,6 +259,8 @@ jobs:
           MATCHBOOK_USERNAME: ${{ secrets.MATCHBOOK_USERNAME }}
           MATCHBOOK_PASSWORD: ${{ secrets.MATCHBOOK_PASSWORD }}
           SGO_API_KEY: ${{ secrets.SGO_API_KEY }}
+          # 11 Nov 2026: the context check on the Card's picks (context_review.py)
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
         run: |
           rm -rf /tmp/groupings-prev && mkdir -p /tmp/groupings-prev
           cp groupings-record.json /tmp/groupings-prev/ 2>/dev/null || true

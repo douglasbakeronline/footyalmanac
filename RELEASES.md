@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-12: the context check on every Card pick (tag pending)
+
+**What changed:** before the Card is built, Claude reads every pick the Card's rule admits with live web search (team news, rotation, motivation, the table, goals for and against, last five) and gives it a verdict: clear, caution or against, with a one-line reason and sources. An "against" pick, with a source, is kept off the Card and a substitute takes its place (`CARD_CONTEXT`, `CARD_RULE` 9). Each Card pick shows its verdict, news, numbers and sources on the Bets tab.
+
+**Why:** Douglas: "with added human contextual review it does much better ... I want this contextual review now. But also just a better understanding of the numbers."
+
+**Evidence:** none yet: it cannot be replayed on past seasons. Every verdict is archived with the pool and graded forward (`groupings-record.json` `cardContext`, landed v the model's number by verdict). Review at 30 "against" picks.
+
+**Files:** `context_review.py` (new), `groupings.py` (`CARD_CONTEXT`, `card_fault`, `context_record`, pool `context`), `index.html` (`ogContext`), `.github/workflows/deploy.yml` (the key to the groupings step), `tests/test_context_review.py`, `tests/test_card_model_rule.py`, `claude/context-check-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** the model, the Daily List, the Card's leg rule otherwise.
+
+**Roll back:** `CARD_CONTEXT = False` stops the veto (reads still show); `git revert` the merge commit removes it.
+
 ## 2026-11-11-11: the Card replayed by payout, 1.5x to 3x (tag pending)
 
 **What changed:** advisory only. `tools/card_replay.py` and `tools/card_legs_history.py` replay the Card at four payouts (`pay15`, `pay25`, `pay3`) and Douglas's ladder (3x, 2.5x, 2x, 1.5x a day), on the pool nightly and on football-data weekly.
