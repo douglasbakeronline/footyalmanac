@@ -224,7 +224,12 @@ if __name__ == "__main__":
 
 class WiderRule(unittest.TestCase):
     """25 Oct 2026, Douglas: a window the full rule leaves empty still gets a
-    group, under the wider rule (to 2.10, bookmakers 60%+ since 11 Nov 2026), marked wide."""
+    group, under the wider rule (to 2.10, bookmakers 60%+ since 11 Nov 2026), marked wide.
+    Switched off on 11 Nov 2026 (CARD_FILLER, Douglas: "the groups must win at
+    all costs"); these tests run with the switch on, FillerOff with it off."""
+
+    def setUp(self):
+        p = mock.patch.object(G, "CARD_FILLER", True); p.start(); self.addCleanup(p.stop)
 
     def weak_daytime(self):
         # 11 Nov 2026: the wider floor is 60% too (CARD_WIDE_RULE 2), so the weak
@@ -269,6 +274,37 @@ class WiderRule(unittest.TestCase):
         L = [leg(i, 1.17, 0.85, f"{DATE}T12:{i * 10:02d}:00Z", margin=1.0) for i in range(5)]
         gs = G.build_card(L, DATE, EARLY, log=[])
         self.assertTrue(gs and gs[0]["wide"] and len(gs[0]["legs"]) == 5 and gs[0]["odds"] >= 2.0)
+
+
+class FillerOff(unittest.TestCase):
+    """11 Nov 2026: the filler is off. A day the model's picks leave empty
+    stays empty; an open filler group drops off; a locked one stays to settle."""
+
+    weak = WiderRule.weak_daytime
+
+    def test_switch_is_off(self):
+        self.assertFalse(G.CARD_FILLER)
+
+    def test_empty_window_stays_empty(self):
+        L = self.weak()
+        for l in L[2:]: self.assertIsNone(G.card_fault(l, wide=True))
+        self.assertFalse(any(g.get("wide") for g in G.build_card(L, DATE, EARLY, log=[])))
+
+    def test_open_filler_group_drops_off(self):
+        with mock.patch.object(G, "CARD_FILLER", True):
+            first = G.build_card(self.weak(), DATE, EARLY, log=[])
+        self.assertTrue(any(g.get("wide") for g in first))
+        again = G.build_card(self.weak(), DATE, EARLY + timedelta(hours=1), prev=first, log=[])
+        self.assertFalse(any(g.get("wide") for g in again))
+
+    def test_locked_filler_group_stays(self):
+        with mock.patch.object(G, "CARD_FILLER", True):
+            first = G.build_card(self.weak(), DATE, EARLY, log=[])
+        again = G.build_card(self.weak(), DATE, AFTER_LOCK, prev=first, log=[])
+        self.assertTrue(any(g.get("wide") and g["locked"] for g in again))
+
+    def test_full_rule_still_builds(self):
+        self.assertTrue(any(not g.get("wide") for g in G.build_card(board(), DATE, EARLY, log=[])))
 
 
 class TennisTimes(unittest.TestCase):
