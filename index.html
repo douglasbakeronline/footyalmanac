@@ -1597,7 +1597,7 @@ footer b{color:var(--ink-2)}
     <div class="boards" id="show">
       <button data-show="all" aria-pressed="true">Every fixture</button>
       <button data-show="read" aria-pressed="false">Confident only</button>
-      <button data-show="edge" aria-pressed="false" title="Only fixtures with the green Edge flag: the favourite at 1.15 to 1.90, the other side priced 9 or more">Edge only</button>
+      <button data-show="edge" aria-pressed="false" title="Only fixtures with the green Edge flag: the favourite at 1.15 to 1.90, the other side priced 4/1 (5.0) or more">Edge only</button>
     </div>
   </div>
   <div>
@@ -2182,13 +2182,14 @@ const EDGE_SVG = `<svg viewBox="0 0 9 10" aria-hidden="true"><path d="M1 0v10" s
 function edgeFlag(g){
   if(!g.edge) return "";
   const who = g.edge.side === "h" ? g.home.name : g.away.name;
-  return `<span class="edgeflag" title="Edge: ${who} at ${g.edge.odds.toFixed(2)} (best ${g.edge.best.toFixed(2)}), the other side priced ${g.edge.opp.toFixed(2)}. Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed about 7 points above the bookmakers' chance over five seasons.${edgeRecordText(" On this site")} Take the best price. Tap the row for more.">${EDGE_SVG}Edge</span>`;
+  return `<span class="edgeflag" title="Edge: ${who} at ${g.edge.odds.toFixed(2)} (best ${g.edge.best.toFixed(2)}), the other side priced ${g.edge.opp.toFixed(2)}. Favourites at 1.15 to 1.90 whose opposition is priced 4/1 (5.0) or more; the five-season test was at 9.0+, and picks with the opposition at 5.0 to 9.0 lost on it.${edgeRecordText(" On this site")} Take the best price. Tap the row for more.">${EDGE_SVG}Edge</span>`;
 }
 /* The flag's own record on this site (score.edge_record, in the record
    summary): every flagged fixture graded, live and replayed on the prices
    archived before kick-off. */
 function edgeRecordText(lead){
-  const e = RS && RS.edge && RS.edge.all;
+  const E = RS && RS.edge, cur = E && E.byRule && E.rule != null ? E.byRule[String(E.rule)] : null;
+  const e = cur && cur.n ? cur : E && E.all;
   if(!e || !e.n) return "";
   const sign = x => (x >= 0 ? "+" : "") + Math.round(x * 1000) / 10 + "%";
   return `${lead}: ${e.won} of ${e.n} landed against ${Math.round(e.quoted * 100)}% quoted by the bookmakers, ${sign(e.return)} at the average price, ${sign(e.returnBest)} at the best.`;
@@ -2355,7 +2356,7 @@ function detail(g){
   const O = D.odds || {};
   const ew = g.edge ? `<div class="why edgewhy"><b>Green flag: an edge on price.</b>
       ${g.edge.side === "h" ? g.home.name : g.away.name} at ${g.edge.odds.toFixed(2)} on average (best ${g.edge.best.toFixed(2)}), with ${g.edge.side === "h" ? g.away.name : g.home.name} priced ${g.edge.opp.toFixed(2)}.
-      Favourites at 1.15 to 1.90 whose opposition is priced 9 or more landed 83.8% against the bookmakers' 76.2% over five seasons (511 picks), about +4% at the average price and +7% at the best.
+      The flag takes favourites at 1.15 to 1.90 whose opposition is priced 4/1 (5.0) or more (from 11 Nov 2026; 9.0+ before). At 9.0+ they landed 83.8% against the bookmakers' 76.2% over five seasons (511 picks), about +4% at the average price and +7% at the best; with the opposition at 4.0 to 6.0 they lost in every season, and at 6.0 to 9.0 they were about break-even.
       ${edgeRecordText("Flagged fixtures on this site since " + ((RS && RS.edge && RS.edge.all && RS.edge.all.from) ? fmtShort(RS.edge.all.from) : "September"))}
       The edge is small and needs the best price; in a short run it can lose. Shown from the bookmakers' prices, never used by the model.</div>` : "";
   const mk = g.market ? `<div class="why" style="border-bottom:1px solid var(--rule);padding-bottom:12px;margin-bottom:0">
@@ -3216,7 +3217,7 @@ function render(){
 
   if(!shown) host.innerHTML = upcoming.length
     ? (state.show === "edge"
-        ? `<div class="empty">No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 9 or more, in the leagues tested on price, about five a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.</div>`
+        ? `<div class="empty">No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 4/1 (5.0) or more, in the leagues tested on price, a handful a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.</div>`
       : state.show === "read"
         ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
         : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`)
@@ -4902,10 +4903,11 @@ function edgeSection(date){
   };
   const byP = games.slice().sort((a, b) => b.edge.fair - a.edge.fair);
   const singles = tested("1");
-  return `<section class="tb-win tb-edge"><h3 class="tb-h">Edge picks <small>football favourites at 1.15 to 1.90 whose opponent is priced 9 or more; the one price condition that held across five seasons</small></h3>
+  return `<section class="tb-win tb-edge"><h3 class="tb-h">Edge picks <small>football favourites at 1.15 to 1.90 whose opponent is priced 4/1 (5.0) or more (9.0+ until 10 Nov)</small></h3>
     ${games.length ? `<div class="tb-rows">${rows}</div>
       ${games.length >= 2 ? `<div class="tb-proof edge">${slip("Edge double, the two most likely", byP.slice(0, 2), "2")}${games.length > 2 ? slip(`All ${games.length} as one slip`, byP, "all") : ""}</div>` : ""}
-      <p class="tb-snap"><b>Over five seasons</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
+      <p class="tb-snap"><b>Read this with the floor in mind.</b> The figures below were tested with the opposition at 9.0+. From 11 Nov the flag takes 4/1 (5.0)+, which adds picks from the bands that did worse on the same five seasons (opposition 4.0 to 6.0: lost every season; 6.0 to 9.0: about break-even). The site's own record for the new floor builds from here, by rule, in How it went.</p>
+      <p class="tb-snap"><b>Over five seasons, at 9.0+</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
       ${singles ? `<p class="tb-snap">Latest seasons, singles: ${singles}.${edgeRecordText(" On this site")} Take the best price; at the average one the edge is thin, and a short run can lose.</p>` : `<p class="tb-snap">${edgeRecordText("On this site")} Take the best price; a short run can lose.</p>`}`
       : `<div class="empty tb-empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
   </section>`;

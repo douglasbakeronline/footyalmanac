@@ -17,7 +17,7 @@ def leg(date, fair, won, opp=11.0, model=None, price=None):
 
 class EdgeAccas(unittest.TestCase):
     def test_edge_legs_keep_the_flags_conditions(self):
-        L = [leg("2025-10-04", 0.8, True), leg("2025-10-04", 0.8, True, opp=7.0), leg("2025-10-04", 0.8, True, model=0.9)]
+        L = [leg("2025-10-04", 0.8, True), leg("2025-10-04", 0.8, True, opp=4.5), leg("2025-10-04", 0.8, True, model=0.9)]
         self.assertEqual(len(H.edge_legs(L)), 1)
 
     def test_k_most_likely_per_day(self):

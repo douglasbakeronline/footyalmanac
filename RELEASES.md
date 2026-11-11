@@ -4,6 +4,25 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-3 Edge flag: opposition floor 4/1 (tag pending)
+
+For a reader: a football favourite now carries the green Edge flag when the
+other side is priced 4/1 (5.0) or more, down from 9.0. Douglas's call (10 Nov
+evening, confirmed 11 Nov after seeing the bands). The page says plainly that
+the five-season figures were tested at 9.0+, and that with the opposition at
+4.0 to 6.0 the same favourites lost in every season and at 6.0 to 9.0 broke
+about even. The Edge record is now split by rule.
+
+Files: `groupings.py` (`EDGE_OPP_MIN`, `EDGE_RULE` 2), `score.py`
+(`edge_of` rule, `edge_record` `byRule`), `tools/card_legs_history.py`
+(`edge_legs` at the Edge floor), `index.html` (wording, record line),
+tests, `claude/edge-floor-2026-11-11.md`, `CLAUDE.md`.
+
+Not changed: the Card's opposition floor (`CARD_OPP_MIN` 9.0, rule 6).
+
+Roll back: `git revert` this commit.
+
+
 ## 2026-11-11-3: the Card's filler takes only 60%+ favourites (tag pending)
 
 **What changed:** the empty-day filler (the wider rule) now takes only picks the bookmakers make 60%+ favourites, like the full rule, not 55%+. Douglas, on Saturday 14 Nov's filler (Luton, Southend, Almere City): "Make sure all picks are more like Almere and less like Luton and Southend." Luton (the bookmakers 56%) is off; Saturday's filler is rebuilt on every build. Wider-rule groups carry `wideRule` (2), tallied apart in `cardWideByRule`; the page's filler lines read the floor from the rules.

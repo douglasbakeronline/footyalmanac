@@ -28,7 +28,8 @@ class EdgeFlag(unittest.TestCase):
         self.assertEqual((e["side"], e["opp"]), ("a", 12.3))
 
     def test_each_condition_refuses(self):
-        self.assertIsNone(G.edge_flag(fx(avg=[1.15, 7.7, 8.5])))                     # opposition under 9
+        self.assertIsNone(G.edge_flag(fx(avg=[1.15, 7.7, 4.5])))                     # opposition under 4/1 (5.0, rule 2)
+        self.assertEqual(G.edge_flag(fx(avg=[1.15, 7.7, 8.5]))["rule"], 2)           # 8.5 cleared rule 2, not rule 1
         self.assertIsNone(G.edge_flag(fx(avg=[1.10, 9.0, 21.0])))                    # too short
         self.assertIsNone(G.edge_flag(fx(avg=[1.95, 4.0, 9.5])))                     # too long
         self.assertIsNone(G.edge_flag(fx(fair=[0.58, 0.25, 0.17])))                  # bookmakers under 60%
