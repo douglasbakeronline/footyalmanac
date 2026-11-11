@@ -267,7 +267,8 @@ VARIANTS = {
     # The funnel has "league" the largest single fault on football (224 of
     # 439 pool legs from 6 Nov). Pool only: football-data carries no wider
     # league. Volume is not return; gated like the rest.
-    "m7wide": {"CARD_CORE_ONLY": False},
+    "m7wide": {"CARD_CORE_ONLY": False},   # live from 11 Nov 2026 (CARD_RULE 11)
+    "m7core": {"CARD_CORE_ONLY": True},    # core leagues only, the rule to CARD_RULE 10
     # 11 Nov 2026, Douglas: "Preferably 3x or more. Then 2.5x. Then 2x. Then
     # 1.5x ... I need the groups to win every time. But ultimately this has to
     # be a profitable business." Pre-registered before any result: the rule 8
@@ -284,7 +285,7 @@ VARIANTS = {
 # rebuilt live exactly ("identical to live" in the 11 Nov review) and the
 # fillers built nothing. Each now runs on the rule 6 Card with its one change,
 # as registered, and is paired against both live and rule6.
-RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x")}
+RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True}
 RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80"}
 
 

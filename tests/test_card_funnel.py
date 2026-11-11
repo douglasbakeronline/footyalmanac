@@ -42,7 +42,8 @@ class FaultKeys(unittest.TestCase):
         self.assertIsNone(self.key())
         self.assertEqual(self.key(sport="cfb"), "sport-off")
         self.assertEqual(self.key(listOff=True), "sport-off")
-        self.assertEqual(CF.fault_key(G.card_fault(football(1, code="af.187"))), "league")
+        with _mock.patch.object(G, "CARD_CORE_ONLY", True):   # the league limit (off live from 11 Nov 2026)
+            self.assertEqual(CF.fault_key(G.card_fault(football(1, code="af.187"))), "league")
         self.assertEqual(CF.fault_key(G.card_fault(football(1, model=0.71, fair=0.72))), "under-market")
         self.assertEqual(CF.fault_key(G.card_fault(football(1, model=0.55, fair=0.72))), "under-market")   # 17 under, past the cap
         self.assertEqual(CF.fault_key(G.card_fault(football(1, opp=5.0))), "opposition")

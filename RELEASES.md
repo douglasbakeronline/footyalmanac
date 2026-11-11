@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): the Card takes the wider leagues (CARD_RULE 11)
+
+**What changed:** football picks from the wider leagues (API-Football's, e.g. Bosnia RS) can now go on the Card; cups and internationals stay out, and a core-league pick still comes first at an equal chance.
+**Evidence:** Douglas on Leotar (1.52, model 67% v 59%), kept off only by the league limit: "This should have been on. So relax all rules that would of said otherwise." The replay he was shown leans the other way (wider 28 groups, 15 won, +32% v core only 12 groups, 8 won, +69%); the owner's call. `claude/card-wider-leagues-2026-11-11.md`.
+**Files:** `groupings.py`, `tools/card_replay.py` (`m7core`; rule 6 replays pinned to core), `index.html` (wording), tests, `CLAUDE.md`.
+**Not changed:** the tennis floor, the price range, the 60% model floor, the value demand, cups and internationals.
+**Roll back:** `git revert` the commit, or set `CARD_CORE_ONLY = True`.
+
+
 ## 2026-11-11 (tag pending): SportsGameOdds prices US games from its consensus line
 
 **What changed:** SportsGameOdds now prices the US games nothing else priced. The build log (#259) showed 47 of its games matched ours by name and all 47 came with no per-bookmaker prices on the free plan; each still carries SportsGameOdds' consensus price, which is now used (labelled "SportsGameOdds consensus").
