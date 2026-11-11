@@ -84,6 +84,18 @@ and 1280 wide on the live sports and tennis files with sample marks.
 - The Odds API's free 500 a month is shared with the Card. If the month runs
   short the list pass is what stops first, by design.
 
+## 11 Nov 2026: the tally settled one pick in forty
+
+The 11 Nov review (#235) showed 1 settled list pick since 10 Nov. US-sport
+pool rows for 10 to 12 Nov were first written on 8 Nov, before `id` joined
+`POOL_KEYS`, and `archive_pool` never adds to a first write, so `settle`
+(US sport by id) left them pending. `list_at_book` now settles through
+`groupings.settle_pool` (names and date within a day, moved from
+`tools/card_replay.py`, which the replay already used), and `archive_pool`
+copies a later build's `id` into a row that lacks one. At 11 Nov: 35 settled
+(5 at Hill, all won, +2.0% at Hill's price; 15 not at Hill; 15 unchecked).
+Far too few to read anything into.
+
 ## Not changed
 
 The Daily List's admission, order and record; the model; the Card and every

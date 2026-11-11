@@ -4,6 +4,27 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-11 The list at William Hill counts every settled pick (tag pending)
+
+For a reader: the "Daily List at William Hill" line in How it went and the
+nightly Card review read 1 settled pick since 10 Nov when about 40 had
+finished, because most US-sport pool rows were first archived days ahead,
+before rows carried the game's id, so they never settled. They now settle
+by team names and date, as the Card replay already did, and later builds
+fill the missing id into the pool row. On the archive at 11 Nov the tally
+goes from 1 settled pick to 35: 5 priced at William Hill (5 won, +2.0% at
+Hill's price), 15 priced elsewhere and not at Hill, 15 with no UK price read.
+
+Files: `groupings.py` (`name_indexes` and `settle_pool` moved in from
+`tools/card_replay.py`, `list_at_book` uses them, `archive_pool` fills a
+missing `id`), `tools/card_replay.py` (re-exports them), tests
+(`tests/test_list_books.py`), `claude/list-at-hill-2026-11-10.md`.
+
+Not changed: any model, the Daily List, the Card's rules, any price first
+written to the pool.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-11-5 Free price sources: Betfair, Matchbook, SportsGameOdds (tag pending)
 
 For a reader: once their keys are added, three free feeds fill the games the

@@ -100,47 +100,11 @@ def pool_market(row, closing=False, recover=False):
     return mk
 
 
-def name_indexes(idx):
-    """Name-keyed fallbacks for tennis and US-sport results, for pool rows
-    written before `id` joined POOL_KEYS (9 Nov 2026)."""
-    _, tn, sp = idx
-    tnames, snames = {}, {}
-    for g in tn.values():
-        a, b = G.norm(g.get("playerA") or ""), G.norm(g.get("playerB") or "")
-        if a and b: tnames.setdefault(frozenset((a, b)), []).append(g)
-    for g in sp.values():
-        h, a = G.norm(g.get("home") or ""), G.norm(g.get("away") or "")
-        if h and a: snames.setdefault((h, a), []).append(g)
-    return tnames, snames
-
-
-def near(a, b, days=1):
-    try:
-        return abs((datetime.fromisoformat(a[:10]) - datetime.fromisoformat(b[:10])).days) <= days
-    except (TypeError, ValueError):
-        return False
-
-
-def settle_pool(l, idx, names):
-    """(status, result) for a pool leg: groupings.settle first, then the
-    name indexes for tennis and US sport when the row carries no id."""
-    st, res = G.settle(l, idx)
-    if st != "pending" or l["sport"] == "football": return st, res
-    tnames, snames = names
-    if l["sport"] == "tennis":
-        parts = [G.norm(x) for x in str(l.get("event", "")).split(" v ")]
-        if len(parts) != 2: return st, res
-        for g in tnames.get(frozenset(parts), []):
-            if not near(g.get("date") or "", l.get("date") or ""): continue
-            if g.get("void"): return "void", "void"
-            return ("won" if G.norm(g.get("winner")) == G.norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
-        return st, res
-    for g in snames.get((G.norm(l.get("home") or ""), G.norm(l.get("away") or "")), []):
-        if not near(g.get("when") or "", l.get("when") or l.get("date") or ""): continue
-        if g.get("void"): return "void", g.get("reason") or "tie"
-        if not g.get("winner"): continue
-        return ("won" if G.norm(g["winner"]) == G.norm(l["pick"]) else "lost"), g.get("score")
-    return st, res
+# moved into groupings on 11 Nov 2026 (list_at_book needs the same fallback);
+# kept as names here for tools/price_timing.py and the tests
+name_indexes = G.name_indexes
+near = G._near
+settle_pool = G.settle_pool
 
 
 def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None, recover=False):

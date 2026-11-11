@@ -2240,6 +2240,54 @@ def results_index():
         sp = {str(g.get("id")): g for d in srec.get("days") or [] for g in d.get("games") or []}
     return fb, tn, sp
 
+def name_indexes(idx):
+    """Name-keyed fallbacks for tennis and US-sport results, for pool rows
+    written before `id` joined POOL_KEYS (9 Nov 2026) and for rows first
+    archived days ahead of that (moved here from tools/card_replay.py on
+    11 Nov 2026 so list_at_book settles the same legs the replay does)."""
+    tnames, snames = {}, {}
+    try:
+        _, tn, sp = idx
+        tn, sp = dict(tn), dict(sp)
+    except (TypeError, ValueError):
+        return tnames, snames         # a stand-in index (tests): settle alone decides
+    for g in tn.values():
+        a, b = norm(g.get("playerA") or ""), norm(g.get("playerB") or "")
+        if a and b: tnames.setdefault(frozenset((a, b)), []).append(g)
+    for g in sp.values():
+        h, a = norm(g.get("home") or ""), norm(g.get("away") or "")
+        if h and a: snames.setdefault((h, a), []).append(g)
+    return tnames, snames
+
+
+def _near(a, b, days=1):
+    try:
+        return abs((datetime.fromisoformat(a[:10]) - datetime.fromisoformat(b[:10])).days) <= days
+    except (TypeError, ValueError):
+        return False
+
+
+def settle_pool(l, idx, names):
+    """(status, result) for a pool leg: settle first, then the name indexes
+    for tennis and US sport when the row carries no id."""
+    st, res = settle(l, idx)
+    if st != "pending" or l["sport"] == "football": return st, res
+    tnames, snames = names
+    if l["sport"] == "tennis":
+        parts = [norm(x) for x in str(l.get("event", "")).split(" v ")]
+        if len(parts) != 2: return st, res
+        for g in tnames.get(frozenset(parts), []):
+            if not _near(g.get("date") or "", l.get("date") or ""): continue
+            if g.get("void"): return "void", "void"
+            return ("won" if norm(g.get("winner")) == norm(l["pick"]) else "lost"), g.get("note") or g.get("winner")
+        return st, res
+    for g in snames.get((norm(l.get("home") or ""), norm(l.get("away") or "")), []):
+        if not _near(g.get("when") or "", l.get("when") or l.get("date") or ""): continue
+        if g.get("void"): return "void", g.get("reason") or "tie"
+        if not g.get("winner"): continue
+        return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), g.get("score")
+    return st, res
+
 VOID_AFTER = 72 * 3600   # a football leg with no result this long after kick-off is void (25 Oct 2026)
 
 def dead_fixtures(dates):
@@ -2378,6 +2426,11 @@ def archive_pool(L, now, dates):
             started = (parse(l.get("when") or "") or now) <= now
             if k in have:
                 old = have[k]
+                # 11 Nov 2026: rows first written before `id` joined POOL_KEYS
+                # (legs archived days ahead) take it from a later build, so
+                # tennis and US-sport rows settle by id. An identifier, not a
+                # price: nothing first written changes.
+                if l.get("id") and not old.get("id"): old["id"] = l["id"]
                 if not started:
                     # 10 Nov 2026: UK books read on a later build (the list pass
                     # reaches estimates too), for the list's at-the-book record
@@ -2531,6 +2584,7 @@ def list_at_book(idx, now=None, pool_dir=None):
     blank = lambda: {"n": 0, "won": 0, "quoted": 0.0, "staked": 0, "returned": 0.0}
     groups = {"atBook": blank(), "notAtBook": blank(), "unchecked": blank()}
     by_sport, picks = {}, {}
+    names = name_indexes(idx)
     files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
         if os.path.isdir(pool_dir) else []
     for fn in files:
@@ -2552,7 +2606,10 @@ def list_at_book(idx, now=None, pool_dir=None):
             leg = dict(r)
             if leg.get("sport") == "football" and not leg.get("side"):
                 leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
-            try: st, _ = settle(leg, idx)
+            # 11 Nov 2026: settle_pool, not settle: most US-sport rows were first
+            # archived before `id` joined POOL_KEYS, so settle left them pending
+            # and the tally read 1 settled pick of 40 (#235)
+            try: st, _ = settle_pool(leg, idx, names)
             except (KeyError, TypeError): continue
             if st not in ("won", "lost"): continue
             g = "atBook" if hill else "notAtBook" if checked else "unchecked"
