@@ -250,6 +250,15 @@ VARIANTS = {
     # "The model rules"). The rule 6 Card it replaced is kept here, so the 30 Nov
     # review still pairs the two on the same legs.
     "rule6": {"CARD_MODEL_RULE": False, "CARD_RULE": 6},
+    # 11 Nov 2026 (Douglas: "Just do better on the groups"): the rule 7 Card's
+    # group shape and edge, each one change from live, run on the pool and on
+    # five football-data seasons (card_legs_history.py cardM7*).
+    "m7edge3": {"CARD_MODEL_EDGE": 0.03},        # the model 3+ points above the bookmakers
+    "m7edge6": {"CARD_MODEL_EDGE": 0.06},        # 6+ points above
+    "m7legs3": {"CARD_LEGS": (3,)},              # three picks a group, never four or five
+    "m7short": {"CARD_ODDS": (1.15, 1.50)},      # picks priced 1.15 to 1.50 only
+    "m7only2x": {"CARD_KINDS": [k for k in G.CARD_KINDS if k[0] == "Card 2x"]},   # no 3x
+    "m7notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
 }
 
 

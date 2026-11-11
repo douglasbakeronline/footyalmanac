@@ -453,6 +453,11 @@ def replay_split(split, splits_fn, log):
     res["cardFillOpp7"] = card_season(L, "fillopp7")
     # 10 Nov 2026: the Model card's rule on the same seasons, for the 30 Nov review
     res["cardModel"] = card_season(legs([(preds[k], r) for k, r in joined.items()], model=True), "modelcard")
+    # 11 Nov 2026 (CARD_RULE 7, Douglas: "Just do better on the groups"): the
+    # live Card is now the model's own picks; it and its pre-registered shape
+    # variants on the model's legs, for choosing the group shape
+    Lm = legs([(preds[k], r) for k, r in joined.items()], model=True)
+    res["cardM7"] = {v: card_season(Lm, v) for v in ("live", "m7edge3", "m7edge6", "m7legs3", "m7short", "m7only2x")}
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
     ek = frozenset((l["code"], l["date"], l["home"], l["away"]) for l in edge_legs(L) if l["side"] == "h")

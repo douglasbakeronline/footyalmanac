@@ -1550,6 +1550,9 @@ CARD_RULE = 7     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagu
 # separate paper Model card stops (it would repeat the Card).
 # claude/card-model-rules-2026-11-11.md. False returns to rule 6.
 CARD_MODEL_RULE = True
+# The edge the model must have over the bookmakers' chance on a Card pick
+# under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
+CARD_MODEL_EDGE = 0.0
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1752,7 +1755,8 @@ def model_fault(l):
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
-    if l.get("fair") is not None and l["pModel"] < l["fair"]: return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
+        return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
     return None
 
 def as_model(l):
