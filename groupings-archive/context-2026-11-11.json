@@ -27,28 +27,28 @@
   "verdict": "caution"
  },
  "New York Knicks v Cleveland Cavaliers|New York Knicks": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T21:45:05Z",
   "model": "claude-sonnet-5-5",
-  "news": "Knicks: Josh Hart is out and the team is playing the second night of a back-to-back, though it beat Milwaukee by 32 on Nov 10. Cavaliers: Sam Merrill and Nae'Qwan Tomlin are out, Jaylon Tyson is questionable, and the Cavs had Tuesday off.",
-  "numbers": "Knicks are 6-4 and fourth in the East on a four-game win streak, with a +8.3 scoring margin and about 102-104 points allowed per game. Cavaliers are 5-6 and seventh, 1-4 away, and have lost four of their last five, including 97-109 at home to the Knicks on Nov 7.",
-  "reads": 1,
-  "reason": "The Knicks are on the second night of a back-to-back without Josh Hart (ankle/illness), and the market and other models price them at roughly 60-63% rather than 70% (Dimers 62.5%, AccuScore 60%, moneyline about -168).",
+  "news": "Knicks: Towns questionable and Josh Hart probable (back from illness), with Justin Champagnie out; Cavaliers: Sam Merrill, Nae'Qwan Tomlin and Khalifa Diop out and Jaylon Tyson questionable (ankle, has missed six games).",
+  "numbers": "Knicks 6-4, 4th in the East, 4-2 at home, won 4 straight, scoring 110.6 and conceding 102.3 per game (Fox Sports standings). Cavaliers 5-6, 7th in the East, 1-4 away, lost 2 straight, scoring 116.6 and conceding 115.0; Knicks won 7 of the last 10 head-to-heads per Sportsgambler, and swept Cleveland in last season's playoffs.",
+  "reads": 2,
+  "reason": "Karl-Anthony Towns is questionable (sore left calf) and the Knicks are on the second night of a back-to-back, while the market has them at about -152 to -180 (roughly 60-64%), below the model's 70% (NBA injury report and Yahoo/DraftKings previews).",
   "sources": [
    {
-    "title": "Cavaliers vs. Knicks (Nov 11, 2026) Pregame - ESPN",
-    "url": "https://www.espn.com/nba/preview?gameId=401909967"
+    "title": "Injury Report 11/11/26 (NBA official)",
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_02_00PM.pdf"
    },
    {
-    "title": "Cavaliers vs Knicks Prediction: Wednesday NBA Rematch at MSG - Predictem",
-    "url": "https://www.predictem.com/nba/cavaliers-vs-knicks-prediction-wednesday-nba-rematch-at-msg/"
+    "title": "Final Injury Report for Cavaliers-Knicks - Athlon",
+    "url": "https://athlonsports.com/nba/new-york-knicks/final-injury-report-for-cavaliers-knicks-will-karl-anthony-towns-josh-hart-play"
    },
    {
-    "title": "Cavaliers vs. Knicks prediction, odds, pick for Nov. 11, 2026 - Dimers",
-    "url": "https://www.dimers.com/nba/news/cleveland-cavaliers-vs-new-york-knicks-prediction-11-11-2026-ac"
+    "title": "Cavaliers vs Knicks Prediction, Pick, NBA Odds - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/cavaliers-vs-knicks-prediction-pick-142251839.html"
    },
    {
-    "title": "Cleveland Cavaliers Release Injury Report vs. New York Knicks (Nov. 11) - Heavy",
-    "url": "https://heavy.com/sports/nba/cleveland-cavaliers/injury-report-vs-knicks-november-11/"
+    "title": "Cavaliers vs. Knicks Prediction, Picks & Odds - The Lines",
+    "url": "https://www.thelines.com/nba/picks/cavaliers-vs-knicks-prediction-picks-odds-ny-to-continue-winning-ways/"
    }
   ],
   "verdict": "caution"
