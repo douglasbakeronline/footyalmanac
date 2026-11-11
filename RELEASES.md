@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): SportsGameOdds prices US games from its consensus line
+
+**What changed:** SportsGameOdds now prices the US games nothing else priced. The build log (#259) showed 47 of its games matched ours by name and all 47 came with no per-bookmaker prices on the free plan; each still carries SportsGameOdds' consensus price, which is now used (labelled "SportsGameOdds consensus").
+**Evidence:** deploy log after #259: `named 47, noBooks 47`, odds keys `points-home-game-ml-home` / `points-away-game-ml-away` present. Betfair answers our CI with its HTML "Forbidden" page, a location block: not fixable from GitHub's US runners.
+**Files:** `free_prices.py`, `tests/test_free_prices.py`.
+**Not changed:** any model number or pick; prices are display and Card veto only.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-11 (tag pending): why the free price sources priced nothing, shown in the build log
 
 **What changed:** the first build with keys showed SportsGameOdds fetching 128 games and matching none, and Betfair's login refused with a bare HTTP 403. The build log now shows, when SportsGameOdds matches nothing, what one of its games and one of our legs look like (names, start), and how far each got (named, no side, no books); an HTTP error from any free source now carries the reply's first line, so a location block reads as one.

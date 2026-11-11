@@ -306,8 +306,13 @@ def price_sgo(L, dates, report, cache_dir=None, fetch=None, now=None):
                 theirs = odds.get(f"points-{opp_side}-game-ml-{opp_side}") or odds.get(f"points-{opp_side}-reg-ml-{opp_side}") or {}
                 books = {b: _american(v.get("odds")) for b, v in (mine.get("byBookmaker") or {}).items() if v.get("available", True)}
                 books = {b: o for b, o in books.items() if o and o > 1}
+                # 11 Nov 2026: on the free plan the build's 47 named games came
+                # with no per-book prices; SGO's own consensus (bookOdds) is used
+                cons = _american(mine.get("bookOdds")) if mine.get("bookOddsAvailable", True) else None
+                if not books and cons and cons > 1: books = {"SportsGameOdds consensus": cons}
                 if not books: rep["noBooks"] = rep.get("noBooks", 0) + 1; rep.setdefault("oddKeys", sorted(odds)[:6]); break
                 others = [o for o in (_american(v.get("odds")) for v in (theirs.get("byBookmaker") or {}).values()) if o and o > 1]
+                if not others and _american(theirs.get("bookOdds")): others = [_american(theirs.get("bookOdds"))]
                 avg = sum(books.values()) / len(books)
                 top = max(books.items(), key=lambda kv: kv[1])
                 _fill(l, G, avg, sum(others) / len(others) if others else None, None,
