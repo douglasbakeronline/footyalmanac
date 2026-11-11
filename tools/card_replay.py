@@ -35,7 +35,8 @@ review so no variant is picked because it happened to look good):
            opp7, rule5 or short instead (10 Nov 2026, issue #155)
   modelcard the Model card's rule (the model's own picks at or above the
            bookmakers' chance) on the same legs, staked as the Card (10 Nov 2026)
-  tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
+  tennis75 tennis legs at 75%+, the floor before CARD_RULE 10 (11 Nov 2026)
+  tennis80 tennis legs at 80%+ on model and tested rate (live: 85% since 11 Nov)
            (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
            40 full-rule legs landed v 71% quoted; registered before the pool
            holds enough real-priced tennis legs to read them)
@@ -213,6 +214,8 @@ VARIANTS = {
     # 9 Nov 2026, pre-registered for the tennis tripwire and the 30 Nov review
     "notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
     "tennis80": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.80)},
+    # 11 Nov 2026: live tennis floor raised to 85% (CARD_RULE 10); the old 75%
+    "tennis75": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75)},
     # 9 Nov 2026 (claude/card-staking-2026-11-09.md), pre-registered for the
     # 30 Nov review: the same groups at one unit each. Live stakes two on a 2x;
     # the live 2x has landed under quote and the 3x over, the football-data
