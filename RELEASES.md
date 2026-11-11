@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-15: "Is it working?" made readable (tag pending)
+
+**What changed:** the Bets tab's scoreboard was fourteen tiles of dense text. It is now one headline (groups won and lost, the win rate against expected, the return at the page's stakes), one plain verdict, a table of picks by sport with a status for each (on or above, slightly under, watch, coming off), and a "More numbers" fold holding the rest as a table (each Card rule, each window, late, wider-rule and paper groups, prices that shortened). The verdict now says when the Card is winning as often as expected but still losing money, rather than a green "on quote".
+
+**Why:** Douglas: "This section is far too chaotic."
+
+**Files:** `index.html` (`tbRecord`, CSS). Checked at 400px and desktop with the live record.
+
+**Not changed:** any number; the record (`groupings-record.json`).
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-14: the model's backed picks, with their context verdicts, shown under the Card (tag pending)
 
 **What changed:** the Bets tab lists every pick the Card's rule admits today with its context verdict (news, numbers, sources), open by default when they make no group and folded under the groups when there are spare ones. A pick the check reads "against" shows as kept off. Labelled not a bet. `groupings.card_picks` writes `cardPicks` per day; `cardPicksHtml` in `index.html`.

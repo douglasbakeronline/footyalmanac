@@ -1192,6 +1192,34 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .mkt .hda b{font-weight:500;color:var(--mute-ink,#6e6355)}.mkt .hda b.pk{font-weight:700;color:var(--ink)}.mkt .hda b.opp-long{color:var(--red);font-weight:600}
 .mkt .hda i{font-style:normal;margin:0 3px;color:var(--rule)}
 .og-l small .opp{color:var(--ink);font-family:var(--f-num)}
+.tb-score{border:1px solid var(--rule);background:var(--surface);padding:16px 18px;margin-top:12px}
+.tb-sum{display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+.tb-sum-n{display:flex;flex-direction:column;align-items:flex-start;min-width:56px}
+.tb-sum-n b{font:700 34px/1 var(--f-num)}
+.tb-sum-n span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin-top:4px}
+.tb-sum-t{flex:1 1 220px;font-size:13.5px;line-height:1.45}
+.tb-sum-t p{margin:0 0 4px}
+.tb-verdict{margin:12px 0 0;padding:8px 10px;font-size:13px;line-height:1.45;border-left:3px solid var(--rule);background:var(--paper,transparent)}
+.tb-verdict.ok{border-left-color:var(--edge)}
+.tb-verdict.warn{border-left-color:var(--gold)}
+.tb-verdict.bad{border-left-color:var(--away)}
+.tb-tbl{width:100%;border-collapse:collapse;margin-top:16px;font-size:13px}
+.tb-tbl caption{text-align:left;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);padding-bottom:6px}
+.tb-tbl th,.tb-tbl td{padding:7px 6px;border-top:1px solid var(--rule-soft);text-align:left;vertical-align:baseline}
+.tb-tbl thead th{font-size:11px;font-weight:600;color:var(--mute);border-top:0;padding-top:0}
+.tb-tbl td{font-family:var(--f-num);white-space:nowrap}
+.tb-tbl tbody th{font-weight:600}
+.tb-st{font-family:var(--f-ui);font-size:11.5px;font-weight:600;white-space:normal}
+.tb-st.ok{color:var(--edge)}
+.tb-st.warn{color:#7a5a12}
+.tb-st.bad{color:var(--away)}
+.tb-note{font-size:12px;color:var(--mute);margin:8px 0 0;line-height:1.4}
+.tb-more{margin-top:14px}
+.tb-more>summary{cursor:pointer;font-weight:700;font-size:13px}
+.tb-more .tb-tbl{margin-top:8px}
+.tb-more .tb-tbl td{white-space:normal}
+.tb-more .tb-tbl td:nth-child(2){white-space:nowrap}
+@media (max-width:480px){.tb-score{padding:14px 12px}.tb-tbl th,.tb-tbl td{padding:7px 4px}.tb-sum-n b{font-size:30px}}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
 .tb-picks-n{font-size:12px;color:var(--mute);margin:2px 0 8px}
@@ -4893,42 +4921,52 @@ function tbCheckHtml(){
     <div class="tb-sum">${known.length ? `<b>${known.length === rows.length ? "All" : known.length + " of " + rows.length} together: about ${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>, roughly 1 in ${Math.max(1, Math.round(1 / all))}. ` : ""}${bad ? `Take out the ${bad} marked Avoid or No read first.` : "No pick is flagged."}</div>`;
 }
 function tbRecord(){
+  // 11 Nov 2026, Douglas: "This section is far too chaotic." One headline (the
+  // Card's record and what it has returned at the page's stakes), one verdict,
+  // one table of picks by sport, and everything else in a fold as a plain table.
+  // Same numbers as before (groupings-record.json); nothing is recounted here.
   const R = OG && OG.record; if(!R) return "";
+  const C = (OG.rules || {}).card || {}, fz = Math.abs(C.floorZ || -2), fn = C.floorN || 50;
   const k = R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
-  // 11 Nov 2026: the same groups at the stakes the page showed (two units a Card 2x, one a 3x); omitted where they are one unit a group anyway
-  const units = x => x && x.unitsStaked && x.unitsStaked !== x.staked ? `; at the page's stakes ${x.unitsReturned >= x.unitsStaked ? "+" : ""}${(x.unitsReturned - x.unitsStaked).toFixed(2)} per ${x.unitsStaked} units` : "";
-  // 25 Oct 2026: returnedLock is the return at the price recorded at the window's lock (the price a punter placing at 07:00 could take)
-  const roi = x => x && x.staked ? `${x.returned >= x.staked ? "+" : ""}${(x.returned - x.staked).toFixed(2)} per ${x.staked} staked${x.returnedBest != null ? `, ${(x.returnedBest - x.staked >= 0 ? "+" : "")}${(x.returnedBest - x.staked).toFixed(2)} at best prices` : ""}${x.stakedLock ? `, ${(x.returnedLock - x.stakedLock >= 0 ? "+" : "")}${(x.returnedLock - x.stakedLock).toFixed(2)} per ${x.stakedLock} at the price at lock` : ""}${units(x)}` : "none settled yet";
-  const w = n => { const t = bw[n] || {}; return `<div><span>${n === "Day" ? "One-window card (from 29 Oct)" : n + " (to 28 Oct)"}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${roi(t)}</small></div>`; };
-  // 26 Oct 2026: the Card record is strict, won against lost: a group is won
-  // only when every pick won. A draw read (a football pick whose game
-  // finished level with a draw scoreline predicted) is a loss here, as it is
-  // for a bettor; the "ok" figure the football record carries never reaches
-  // this tab. The late tile sits beside it and is never in it.
-  const wl = x => x && x.settled ? `${x.won} won · ${x.lost} lost` : "–";
-  return `<div class="tb-proof">
-    <div><span>Card record</span><b>${wl(k)}</b><small>${k.settled ? `of ${k.settled} settled${k.pending ? `, ${k.pending} to settle` : ""} · expected ${k.expected.toFixed(1)} won · ${roi(k)}` : `${k.pending ? `${k.pending} to settle; ` : ""}a group is won only when every pick wins; a draw is a loss`}</small></div>
-    ${(() => { const C = (OG.rules || {}).card || {}, fz = C.floorZ || -2, fn = C.floorN || 50, z = k.z;
-      // 29 Oct 2026: the floor. Landed against expected in standard errors; under by fz on fn+ settled is the retire signal.
-      // 11 Nov 2026: z rounds to one place, so -0.04 reads "0.0" and on quote, not "-0.0" and under
-      const zr = z == null ? null : Math.round(z * 10) / 10 || 0;
-      const state = zr == null ? "–" : zr <= fz && k.settled >= fn ? "Under the floor" : zr < 0 ? "Under quote" : "On quote";
-      return `<div><span>The floor</span><b>${state}</b><small>${zr == null ? "no settled groups yet; " : `landed ${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors from expected on ${k.settled} groups; `}the rule is retired if it sits ${Math.abs(fz)} under on ${fn}+ groups. A good run is not a floor; the quote is.</small></div>`; })()}
-    ${Object.entries(R.cardLegsBySport || {}).map(([sp, t]) => { const C = (OG.rules || {}).card || {}, fz = Math.abs(C.floorZ || -2), fn = C.floorN || 50;
-      // 9 Nov 2026: the Card's legs by sport against their quote. The same test the Daily List applies to a sport: two standard errors under on 50+ legs takes it off the Card.
-      const z = t.z == null ? "–" : `${t.z >= 0 ? "+" : ""}${t.z.toFixed(1)}`;
-      const state = t.tripwire ? `${fz} standard errors or more under quote on ${fn}+ legs: the rule takes ${(OG_SPORT[sp] || sp).toLowerCase()} off the card`
-        : t.z != null && t.z <= -fz ? `${fz} standard errors under; a sport comes off the card at ${fn} legs if it is still there (${fn - t.legs} to go)`
-        : t.z != null && t.z < 0 ? "under quote, inside noise" : "on or above quote";
-      return `<div><span>${ogEsc(OG_SPORT[sp] || sp)} legs</span><b>${t.landed} / ${t.legs}</b><small>landed ${pct(t.rate)}% v ${pct(t.quoted)}% quoted, z ${z}; ${state}</small></div>`; }).join("")}
-    ${(() => { const x = R.cardLate || {}; return `<div><span>Late groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "added after the window locked; " : "none yet; a group built after its window locked would be "}not in the Card record</small></div>`; })()}
-    ${(() => { const x = R.cardWide || {}; return `<div><span>Wider-rule groups</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : ""}graded apart from the full rule</small></div>`; })()}
-    ${(() => { const x = R.cardModel || {}; return `<div><span>Model card, on paper</span><b>${wl(x)}</b><small>${x.settled ? roi(x) + "; " : x.groups ? "" : "none yet; "}the model's own picks, never staked, beside the card from 31 Oct${((OG.rules || {}).card || {}).modelRule ? " to 10 Nov; since 11 Nov they are the card" : ""}</small></div>`; })()}
-    ${Object.keys(bw).map(w).join("")}
-    ${Object.entries(R.cardByRule || {}).map(([r, t]) => `<div><span>Card rule ${r}${String(r) === String((OG.rules.card || {}).rule) ? " (current)" : ""}</span><b>${t.settled ? `${t.won} / ${t.settled}` : "–"}</b><small>${t.settled ? `${roi(t)}; z ${t.z >= 0 ? "+" : ""}${t.z}` : "nothing settled yet"}</small></div>`).join("")}
-    <div><span>Beat the closing price</span><b>${c && c.n ? `${c.shortened} / ${c.n}` : "–"}</b><small>${c && c.n ? `picks whose price shortened after we published; ${c.drifted} drifted` : "the early sign of a real edge"}</small></div>
-    <div><span>Model v bookmakers</span><b>Not yet</b><small>on 909 archived picks the bookmakers priced better; only the best price has paid</small></div>
-  </div>`;
+  const sgn = x => (x >= 0 ? "+" : "") + x.toFixed(2);
+  const pc = (r, s_) => s_ ? `${r >= s_ ? "+" : ""}${Math.round((r / s_ - 1) * 100)}%` : "";
+  const units = x => x.unitsStaked ? [x.unitsReturned - x.unitsStaked, x.unitsStaked, x.unitsReturned] : [x.returned - x.staked, x.staked, x.returned];
+  const ret = x => { if(!x || !x.settled) return "–"; const [n, st, rt] = units(x); return `${sgn(n)} on ${st} (${pc(rt, st)})`; };
+  const down = k.settled && units(k)[0] < 0;
+  const zr = k.z == null ? null : Math.round(k.z * 10) / 10 || 0;
+  const verdict = zr == null ? ["", "No settled groups yet."]
+    : zr <= -fz && k.settled >= fn ? ["bad", `Under the floor: ${fz} standard errors under expected on ${k.settled} groups. The rule is retired.`]
+    : zr < 0 ? ["warn", `Winning a little less often than expected (${zr.toFixed(1)} standard errors), inside normal luck. It is retired at ${fz} under on ${fn}+ groups.`]
+    : down ? ["warn", `Winning as often as expected (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), but that is not enough to make money at these prices. The rule changed on 11 Nov; the new one has to do better than this.`]
+    : ["ok", `Winning as often as expected or better (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), and ahead. It is retired only at ${fz} under on ${fn}+ groups.`];
+  const head = k.settled ? `<div class="tb-sum">
+      <div class="tb-sum-n"><b>${k.won}</b><span>won</span></div>
+      <div class="tb-sum-n"><b>${k.lost}</b><span>lost</span></div>
+      <div class="tb-sum-t"><p><b>${Math.round(k.won / k.settled * 100)}% of ${k.settled} groups won</b>, against ${k.expected.toFixed(1)} expected${k.pending ? `; ${k.pending} to settle` : ""}.</p>
+        <p>At the page's stakes: <b>${ret(k)}</b> units staked${k.returnedBest != null ? `; ${pc(k.returnedBest, k.staked)} at the best prices, one unit a group` : ""}.</p></div>
+    </div>
+    <p class="tb-verdict ${verdict[0]}">${verdict[1]}</p>`
+    : `<p class="tb-verdict">No settled groups yet. A group is won only when every pick wins; a draw is a loss.</p>`;
+  const sp = Object.entries(R.cardLegsBySport || {});
+  const sportRows = sp.map(([s_, t]) => {
+    const st = t.tripwire ? ["bad", "Coming off"] : t.z != null && t.z <= -fz ? ["bad", `Watch: ${Math.max(fn - t.legs, 0)} more legs decide`]
+      : t.z != null && t.z < 0 ? ["warn", "Slightly under"] : ["ok", "On or above"];
+    return `<tr><th>${ogEsc(OG_SPORT[s_] || s_)}</th><td>${t.landed} / ${t.legs}</td><td>${pct(t.rate)}%</td><td>${pct(t.quoted)}%</td><td><span class="tb-st ${st[0]}">${st[1]}</span></td></tr>`; }).join("");
+  const sportTbl = sp.length ? `<table class="tb-tbl"><caption>Picks by sport, every group</caption>
+      <thead><tr><th>Sport</th><th>Landed</th><th>Rate</th><th>Expected</th><th></th></tr></thead><tbody>${sportRows}</tbody></table>
+    <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs.</p>` : "";
+  const wl = x => x && x.settled ? `${x.won} of ${x.settled}` : "–";
+  const more = [];
+  Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}`, wl(t), ret(t)]));
+  Object.keys(bw).forEach(n => more.push([n === "Day" ? "One window a day (from 29 Oct)" : `${n} window (to 28 Oct)`, wl(bw[n]), ret(bw[n])]));
+  [["Late groups, not in the record", R.cardLate], ["Wider-rule groups (off since 11 Nov)", R.cardWide], ["Model card on paper (31 Oct to 10 Nov)", R.cardModel]]
+    .forEach(([l, x]) => x && x.settled && more.push([l, wl(x), ret(x)]));
+  if(c && c.n) more.push(["Prices that shortened after we published", `${c.shortened} of ${c.n}`, `${c.drifted} drifted`]);
+  const moreTbl = `<details class="tb-more"><summary>More numbers</summary>
+      <table class="tb-tbl"><thead><tr><th></th><th>Won</th><th>Return</th></tr></thead>
+      <tbody>${more.map(([a_, b_, c_]) => `<tr><th>${a_}</th><td>${b_}</td><td>${c_}</td></tr>`).join("")}</tbody></table>
+      <p class="tb-note">Returns are units won or lost at the stakes the page showed (two units a 2x, one a 3x), with the percentage of what was staked.</p></details>`;
+  return `<div class="tb-score">${head}${sportTbl}${moreTbl}</div>`;
 }
 /* 10 Nov 2026: the green Edge flag's fixtures for the card day, with the
    double of the two most likely and every flagged pick as one slip, priced
