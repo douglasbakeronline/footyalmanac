@@ -1,27 +1,27 @@
 {
  "New Orleans Pelicans v Brooklyn Nets|New Orleans Pelicans": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T22:07:03Z",
   "model": "claude-sonnet-5-5",
-  "news": "Pelicans are without Yves Missi (knee) and Trendon Watford (ankle), and Trey Murphy III is probable with knee management; for the Nets, Nolan Traore is questionable (calf) and Egor Demin is probable (bone bruise).",
-  "numbers": "Pelicans are 4-7 and 5th in the Southwest, at 117.5 points for and 122.4 against per game, 3-3 at home, with a last five of W 135-134 OT at MEM, W 120-113 OT v UTA, L v MIN, L 139-123 at LAC and L 138-87 at GS. Nets are 2-8, at 106.7 for and 115.7 against, 1-5 away, have lost 8 of their last 10 and lost 130-93 at Dallas in their last game.",
-  "reads": 1,
-  "reason": "Pelicans are only 4-7 on a three-game losing streak, including a 138-87 loss at Golden State, and they are without Yves Missi, though Brooklyn (2-8, 1-5 away) is weaker and the spread of NO -4.5 broadly matches the 65% estimate (CBS Sports, Yahoo Sports).",
+  "news": "Pelicans are without Missi (knee), Watford (ankle) and Mathurin (thumb) with Murphy III's status disputed between sources, while Nets guard Mikel Brown Jr. is out (illness), Nolan Traore is questionable (calf) and Egor Demin is probable.",
+  "numbers": "Pelicans are 4-7 (3-3 at home, on a three-game losing streak; last five W 135-134 OT at MEM, W 120-113 OT v UTA, L 115-109 v MIN, L 139-123 at LAC, L 138-87 at GS) and score 117.5 and concede 122.4 points per game (29th defensively). Nets are 2-8 (1-5 away, two straight losses including 130-93 at Dallas) and score 106.7 and concede 115.7; I found only their last two results, not a full last five, ",
+  "reads": 2,
+  "reason": "Pelicans are missing Yves Missi, Trendon Watford and Bennedict Mathurin, and Trey Murphy III's status is disputed (the team's report says doubtful, ESPN says game-time decision, Yahoo says probable), but they are still 4.5-point home favourites against a 2-8 Nets side, so nothing clearly cuts the 65",
   "sources": [
+   {
+    "title": "Pelicans vs. Nets: Injury Report, Game Preview 11/11/2026 - NBA.com",
+    "url": "https://www.nba.com/pelicans/news/pelicans-vs-nets-injury-report-game-preview-11-11-2026"
+   },
+   {
+    "title": "Nets vs. Pelicans (Nov 11, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909972/nets-pelicans"
+   },
    {
     "title": "New Orleans Pelicans News, Scores and Stats 2026-27 - CBS Sports",
     "url": "https://www.cbssports.com/nba/teams/NO/new-orleans-pelicans/"
    },
    {
-    "title": "Nets at Pelicans game preview: How to watch, injuries, lineups - Yahoo Sports",
-    "url": "https://sports.yahoo.com/articles/nets-pelicans-game-preview-watch-141117388.html"
-   },
-   {
-    "title": "NBA injury report: Barnes, Haliburton out Wednesday, November 11 - TalkBasket.net",
-    "url": "https://www.talkbasket.net/227458-nba-injury-report-barnes-haliburton-out-wednesday-november-11"
-   },
-   {
-    "title": "Nets vs Pelicans Prediction - TheRX",
-    "url": "https://www.therx.com/nba/nets-pelicans-nba-picks-november-11-2026/55063/"
+    "title": "Nets, Pelicans Both Looking for Answers After Blowouts - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/nets-pelicans-both-looking-answers-150037351.html"
    }
   ],
   "verdict": "caution"
