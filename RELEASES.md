@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 Daily List: college basketball only at a William Hill price of 1.05 or more (tag pending)
+
+**What changed.** Douglas (11 Nov 2026): college basketball picks are "almost pointless to have on daily list if I can't bet on them"; "just move to the college basketball tab unless there is a clear 1.05 or above". A college basketball list pick now shows on the Daily List only when William Hill's price, read before the start, is 1.05 or more. The rest stay on the College basketball tab, and each day says how many were left off, with a link to the tab. The masthead and list counts, Today at a glance and Coming up read the same filtered picks.
+
+**Evidence.** Of 46 college basketball list picks checked at William Hill on 10-11 Nov (`listAtBook.picks`), 30 had no UK price, 11 were not at Hill and the 5 at Hill paid 1.00-1.01.
+
+**Not changed.** Display only: the model, the list flag, the grading and the record (which still counts these picks as list picks), every other sport. The rule is one entry in `listHillMin` in `index.html`; empty it to undo.
+
+**Checked.** `nametest.py`, the unit tests, a render at 1280 and 400 wide (the left-off line under the day header, the link opens the College basketball tab, no errors). The sandbox build had no football, so the live counts will be higher.
+
+**Files.** `index.html`, `CLAUDE.md`.
+
+**Roll back.** `git revert` the commit.
+
 ## 2026-11-10: tennis Odds API keys, second look (tag pending)
 
 **What changed:** a note only. No code or page change.

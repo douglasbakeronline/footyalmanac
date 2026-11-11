@@ -1240,6 +1240,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .bkchip.off{color:var(--red);border-color:currentColor}
 .bkchip.none{color:var(--mute);border-style:dashed;font-weight:600}
 .conf .bkchip{display:table;margin-left:auto}
+.list-off{margin:2px 0 10px;font-size:13px;color:var(--mute)}
+.list-off button{font:inherit;color:inherit;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
 .list-days{margin:18px 0 4px}
 .list-days .ctl-label{display:block;margin-bottom:6px}
 .xrow .conf .bkchip{margin-top:4px}
@@ -1815,7 +1817,7 @@ const _SD = window.__SPORTS_DATA__, _TD = window.__TENNIS_DATA__;
 const _sportGames = _SD && _SD.sports ? Object.values(_SD.sports).flatMap(sp => sp.games || []) : [];
 const _tennis = _TD && _TD.matches ? _TD.matches : [];
 const listCount = upcoming.reduce((a,d) => a + d.games.filter(g => g.list).length, 0)
-  + _sportGames.filter(g => g.list).length + _tennis.filter(m => m.list).length;
+  + _sportGames.filter(g => g.list && listShown(g)).length + _tennis.filter(m => m.list).length;
 const sportsOn = 1 + (_tennis.length ? 1 : 0) + (_SD && _SD.sports ? Object.values(_SD.sports).filter(sp => (sp.games||[]).length).length : 0);
 const pricedAll = total + _sportGames.length + _tennis.length;
 const _recs = [R && R.list,
@@ -2682,8 +2684,36 @@ function listCollect(){
     [byDay, resDay].forEach(b => { if(b[DL.date]) b[DL.date] = b[DL.date].filter(it => !pinIds.has(idOf(it))); });
     pins.forEach(p => add(p.list ? byDay : resDay, DL.date, {kind:"pinned", g:{...p, when:p.start}}));
   }
-  return {byDay, resDay};
+  // 11 Nov 2026 (Douglas: "move to the college basketball tab unless there is
+  // a clear 1.05 or above"): of 46 college basketball list picks checked at
+  // William Hill on 10-11 Nov, 30 had no UK price, 11 were not at Hill and the
+  // 5 at Hill paid 1.00-1.01. A sport with a listHillMin floor stays on the list only
+  // when Hill's price read before the start is at least its floor; the rest
+  // stay on the sport's own tab. Display only: the pick, its flag and its
+  // grading are unchanged (the record still counts it as a list pick).
+  const offDay = {};
+  const spOf = it => it.kind === "football" ? "football" : it.g.sport;
+  Object.keys(byDay).forEach(d => {
+    const keep = [];
+    byDay[d].forEach(it => { const f = listHillMin(spOf(it));
+      f && !((itemHill(it) || 0) >= f) ? (offDay[d] = offDay[d] || []).push(it) : keep.push(it); });
+    byDay[d] = keep;
+  });
+  return {byDay, resDay, offDay};
 }
+// A function, so the masthead's count (computed earlier in the script) can use it.
+function listHillMin(sport){ return ({ncaab: 1.05})[sport] || 0; }
+function listShown(g){   // a sport game flagged for the list: shown there, or left on its tab
+  const f = listHillMin(g.sport); if(!f) return true;
+  const G = window.__GROUPINGS__, nm = x => String(x && x.name || x || "").toLowerCase();
+  const m = G && G.listBooks && G.listBooks[`${g.sport}|${nm(g.home)}|${nm(g.away)}`];
+  return !!(m && m.h && m.h >= f);
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-goview]"); if(!b) return;
+  const t = document.querySelector(`#views button[data-view="${b.dataset.goview}"]`);
+  if(t){ t.click(); window.scrollTo(0, 0); }
+});
 /* ---------- today at a glance (10 Nov 2026) ----------
    Today's Daily List on one 24-hour line: each pick at its start, coloured by
    where it stands (graded won / lost from the record, in play from the live
@@ -2798,7 +2828,7 @@ function renderList(){
   // counted up front so the headline can say how many
   let _n = 0;
   upcoming.forEach(day => _n += day.games.filter(g => g.list).length);
-  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => _n += (sp.games || []).filter(g => g.list).length);
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => _n += (sp.games || []).filter(g => g.list && listShown(g)).length);
   if(TDL && TDL.matches) _n += TDL.matches.filter(m => m.list).length;
   host.innerHTML = `
     <div class="lede">
@@ -2848,7 +2878,7 @@ function renderList(){
   // The fold opens by itself on a thin day (under LIST_TARGET picks), so a
   // day still offers a full slate; on a full day it waits to be asked.
   const LIST_TARGET = 20;
-  const {byDay, resDay} = listCollect();
+  const {byDay, resDay, offDay} = listCollect();
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
   // as daylist.strength.
@@ -2861,7 +2891,7 @@ function renderList(){
                      return isNaN(t) ? Infinity : t; };            // no time: end of its day
   const byTime = (a,b) => (ko(a) - ko(b)) || byStrength(a,b);
   const shown = xs => LIST_ORDER === "time" ? xs.sort(byTime) : xs;
-  const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay)])].sort();
+  const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay), ...Object.keys(offDay)])].sort();
   // 10 Nov 2026: a week of picks runs to 40,000px on a phone. A strip of the
   // days with their pick counts jumps straight to a day; nothing is hidden.
   host.insertAdjacentHTML("beforeend", todayGlance());
@@ -2876,6 +2906,7 @@ function renderList(){
     const items = shown((LIST_BOOK_ONLY ? allItems.filter(itemHill) : allItems).sort(byStrength));
     const extra = shown((LIST_BOOK_ONLY ? allExtra.filter(itemHill) : allExtra).sort(byStrength));
     const offBook = LIST_BOOK_ONLY ? allItems.length - items.length : 0;
+    const offHill = (offDay[date] || []).length;
     const sec = document.createElement("section");
     sec.className = "day";
     sec.id = "lday-" + date;
@@ -2885,7 +2916,8 @@ function renderList(){
     const tl = tally(items), tr = tally(extra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>`;
+      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
+      <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no William Hill price at ${listHillMin("ncaab").toFixed(2)} or better. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
     const put = (it, i) => it.kind === "football"
       ? appendFixture(sec, it.g, i, date, false)
       : it.kind === "pinned" ? putPinned(sec, it.g, i, date)
