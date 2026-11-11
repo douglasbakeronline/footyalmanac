@@ -4,6 +4,14 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): Card tennis legs, note only
+
+**What changed:** a note, no code. Tennis Card legs are 8 of 15 since 29 Oct (z -2.1), 23 of 41 in all (z -2.13), under the 50-leg tripwire.
+**Evidence:** `claude/tennis-card-legs-2026-11-11.md`. Cuts are 3 to 8 legs a cell and no tennis price history exists to replay a rule; gates cannot be met.
+**Files:** `claude/tennis-card-legs-2026-11-11.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, `CARD_SPORT_MIN`, `CARD_RULE`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-11-16: the context check graded in the nightly Card review (tag pending)
 
 **What changed:** advisory only. The nightly Card review issue gains a "context check" section: every settled pick the check read, by verdict (clear, caution, against), landed against the model's own number and the bookmakers' chance, from `groupings-record.json` `cardContext`. It carries the pre-registered review written into words: at 30 settled "against" picks, if they land at or above the model's number, the review says in bold that the next build session sets `CARD_CONTEXT = False`; otherwise it says the veto stays, or how many are still to come.
