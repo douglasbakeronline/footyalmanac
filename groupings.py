@@ -1684,7 +1684,14 @@ def card_fault(l, wide=False):
 # market. Display only, from prices the page already shows; the model never
 # sees them. Football only: no other sport has a tested price condition.
 # claude/edge-flag-2026-11-10.md. Bump EDGE_RULE when the conditions change.
-EDGE_RULE = 1
+EDGE_RULE = 2
+# 11 Nov 2026, Douglas: "9-1 is too high - reduce", to 4/1 (decimal 5.0),
+# after being shown the five-season bands (claude/card-seasons-2026-11-09.md:
+# under-market legs with the opposition at 4-6 lost in all five seasons, 6-9
+# about break-even, 9+ ahead in four of five). His call; the flag's own record
+# (`edge_record`, by rule) and the weekly replay at this floor are the check.
+# Rule 1 (9+) is the one the five-season numbers on the page describe.
+EDGE_OPP_MIN = 5.0
 
 def edge_leagues():
     """The leagues the evidence covers: football-data.co.uk's divisions
@@ -1707,8 +1714,7 @@ def edge_flag(g):
     if avg[j] > avg[o]: return None                       # the bookmakers' favourite too
     if not CARD_ODDS[0] <= avg[j] <= CARD_ODDS[1]: return None
     if fair[j] < CARD_FAIR_MIN: return None
-    omin = CARD_OPP_MIN.get("football")
-    if not omin or avg[o] < omin: return None
+    if avg[o] < EDGE_OPP_MIN: return None
     if p[side] - fair[j] > MULT_ABOVE_BOOK: return None
     best = (mk.get("best") or avg)[j]
     return {"side": side, "odds": round(avg[j], 2), "best": round(max(best, avg[j]), 2), "opp": round(avg[o], 2),

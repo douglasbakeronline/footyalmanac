@@ -150,7 +150,7 @@ def edge_legs(L):
     the bookmakers 60%+ at CARD_ODDS (the legs() gate), the opposition priced
     CARD_OPP_MIN+, the model no more than MULT_ABOVE_BOOK above the market.
     The replay's leagues are football-data's, the flag's own."""
-    omin = G.CARD_OPP_MIN.get("football") or 9.0
+    omin = getattr(G, "EDGE_OPP_MIN", None) or G.CARD_OPP_MIN.get("football") or 9.0   # the Edge flag's own floor (4/1 from 11 Nov 2026)
     return [l for l in L if l["opp"] >= omin and l["model"] - l["fair"] <= G.MULT_ABOVE_BOOK]
 
 

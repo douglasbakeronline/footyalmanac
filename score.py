@@ -493,7 +493,10 @@ def edge_of(g, flag_of):
     live = "edge" in g
     e = g.get("edge") if live else flag_of(g)
     if not e: return None
-    return {"side": e["side"], "odds": e["odds"], "best": e["best"], "fair": e["fair"], "live": live}
+    # rule: 1 = opposition 9+ (to 10 Nov), 2 = opposition 5.0+ / 4/1 (11 Nov 2026);
+    # a live row before rule 2 carries no rule key and was published under 1
+    return {"side": e["side"], "odds": e["odds"], "best": e["best"], "fair": e["fair"], "live": live,
+            "rule": e.get("rule") or 1, "opp": e.get("opp")}
 
 
 def edge_record(rows):
@@ -510,7 +513,9 @@ def edge_record(rows):
                 "return": round(ret / n - 1, 4), "returnBest": round(best / n - 1, 4),
                 "from": min(r["date"] for r in rs), "to": max(r["date"] for r in rs)}
     fl = [r for r in rows if r.get("edge")]
+    rules = sorted({r["edge"].get("rule") or 1 for r in fl})
     return {"all": tally(fl), "live": tally([r for r in fl if r["edge"]["live"]]),
+            "byRule": {str(k): tally([r for r in fl if (r["edge"].get("rule") or 1) == k]) for k in rules},
             "rule": __import__("groupings").EDGE_RULE if fl else None}
 
 
