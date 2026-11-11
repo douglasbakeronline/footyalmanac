@@ -160,8 +160,14 @@ def edge_accas(L, sizes=(1, 2, 3, 4)):
     bookmakers' chance as one accumulator, and every flagged leg of the day
     as one. Won, expected (product of the bookmakers' chance), return per
     unit at the average and the best price, with a bootstrap p(return <= 0)."""
+    return accas(edge_legs(L), sizes)
+
+
+def accas(legs_, sizes=(1, 2, 3, 4)):
+    """Any set of legs as edge_accas combines the Edge flag's (11 Nov 2026:
+    split out so the mismatch rule, #224, is slipped the same way)."""
     by = defaultdict(list)
-    for l in edge_legs(L): by[l["date"]].append(l)
+    for l in legs_: by[l["date"]].append(l)
     out = {}
     for k in list(sizes) + ["all"]:
         gs = []
@@ -185,6 +191,134 @@ def edge_accas(L, sizes=(1, 2, 3, 4)):
                        "avgOdds": round(sum(g["odds"] for g in gs) / n, 2), "avgLegs": round(sum(g["legs"] for g in gs) / n, 2),
                        "roi": round(roi, 4), "pRoiNotPositive": round(p, 3), "roiBest": round(roib, 4), "pRoiBestNotPositive": round(pb, 3),
                        "losingMonths": sum(1 for v in months.values() if v < 0), "months": len(months)}
+    return out
+
+
+# 11 Nov 2026 (#224), Douglas, after an 8-fold at 8.16 won: "finding teams
+# near the top of the table, on a good run of recent form, who have scored
+# relatively a lot and conceded relatively few in their league, then finding a
+# home fixture where the opponent has the opposite on all those variables."
+# The question is whether these home wins BEAT THEIR PRICE, not whether they
+# win. The rule was fixed on the issue before any result was read; nothing
+# here is tuned. Interpretations of the wording, fixed with the code:
+#   - the table is every league match in football-data's season file played on
+#     an EARLIER date (same-day games never count), 3 / 1 / 0, ranked on
+#     points, goal difference, goals for; the league's size is every team in
+#     the file
+#   - top quarter: position <= size / 4; bottom half: position > size / 2
+#   - "top third" of a per-game rate: fewer than a third of the teams that have
+#     played are strictly better on it (ties share the better place); goals
+#     scored is better when higher, goals conceded when lower
+#   - last-5 points: the side's last five league games before the date
+# Price band 1.15-1.60 on the home side's average price. Advisory.
+MM_PRICE = (1.15, 1.60)
+MM_MIN_GAMES = 6
+MM_GP_BANDS = [("6-10", 6, 10), ("11-20", 11, 20), ("21+", 21, 999)]
+MM_SIZES = (1, 2, 4, 6, 8)
+
+
+def results_rows(text):
+    """Every finished match in a football-data file, priced or not: the table
+    needs them all (odds.parse keeps only the priced ones)."""
+    import csv, io
+    out = []
+    if not text: return out
+    for r in csv.DictReader(io.StringIO(text.lstrip("﻿"))):
+        d = O._date(r.get("Date") or "")
+        h = (r.get("HomeTeam") or r.get("Home") or "").strip(); a = (r.get("AwayTeam") or r.get("Away") or "").strip()
+        try: hg, ag = int(float(r.get("FTHG") or r.get("HG") or "")), int(float(r.get("FTAG") or r.get("AG") or ""))
+        except ValueError: hg = ag = None
+        if d and h and a: out.append({"date": d, "home": h, "away": a, "hg": hg, "ag": ag})
+    return out
+
+
+def _share_rank(vals, team, higher_better):
+    """1 + the number of teams strictly better than `team` on vals."""
+    v = vals[team]
+    return 1 + sum(1 for t, x in vals.items() if (x > v if higher_better else x < v))
+
+
+def table_before(rows, day):
+    """Each team's record from league matches before `day`: played, points,
+    gf, ga, the last five games' points, and its table position."""
+    st = {}
+    teams = {r["home"] for r in rows} | {r["away"] for r in rows}
+    for t in teams: st[t] = {"gp": 0, "pts": 0, "gf": 0, "ga": 0, "seq": []}
+    for r in sorted((r for r in rows if r["date"] < day and r["hg"] is not None), key=lambda r: r["date"]):
+        for t, f, a in ((r["home"], r["hg"], r["ag"]), (r["away"], r["ag"], r["hg"])):
+            p = 3 if f > a else 1 if f == a else 0
+            s = st[t]; s["gp"] += 1; s["pts"] += p; s["gf"] += f; s["ga"] += a; s["seq"].append(p)
+    order = sorted(teams, key=lambda t: (-st[t]["pts"], -(st[t]["gf"] - st[t]["ga"]), -st[t]["gf"], t))
+    for i, t in enumerate(order): st[t]["pos"] = i + 1; st[t]["last5"] = sum(st[t]["seq"][-5:])
+    played = [t for t in teams if st[t]["gp"]]
+    gf = {t: st[t]["gf"] / st[t]["gp"] for t in played}; ga = {t: st[t]["ga"] / st[t]["gp"] for t in played}
+    for t in played:
+        st[t]["gfTop"] = _share_rank(gf, t, True) <= len(played) / 3        # scores a lot
+        st[t]["gfBottom"] = _share_rank(gf, t, False) <= len(played) / 3    # scores little
+        st[t]["gaFew"] = _share_rank(ga, t, False) <= len(played) / 3       # concedes few
+        st[t]["gaMany"] = _share_rank(ga, t, True) <= len(played) / 3       # concedes a lot
+    return st, len(teams)
+
+
+def mismatch_rule(h, a, size):
+    """The pre-registered rule on two table rows (#224)."""
+    if h["gp"] < MM_MIN_GAMES or a["gp"] < MM_MIN_GAMES: return False
+    home = h["pos"] <= size / 4 and h["last5"] >= 10 and h["gfTop"] and h["gaFew"]
+    away = a["pos"] > size / 2 and a["last5"] <= 5 and a["gfBottom"] and a["gaMany"]
+    return home and away
+
+
+def mismatch_legs(texts, edge_keys=frozenset()):
+    """Home-win legs passing the rule, from each division's season file.
+    edge_keys: (code, date, home, away) of the Edge flag's home legs, to say
+    how many of these the flag already catches."""
+    out = []
+    for text in texts:
+        rows = results_rows(text)
+        if not rows: continue
+        cache = {}
+        for r in O.parse(text):
+            if r["result"] is None: continue
+            price = r["avg"][0]
+            if not (MM_PRICE[0] <= price <= MM_PRICE[1]): continue
+            if r["date"] not in cache: cache[r["date"]] = table_before(rows, r["date"])
+            st, size = cache[r["date"]]
+            h, a = st.get(r["home"]), st.get(r["away"])
+            if not h or not a or not mismatch_rule(h, a, size): continue
+            out.append({"date": r["date"], "code": r["code"], "home": r["home"], "away": r["away"], "time": r.get("time"),
+                        "fair": O.fair(r["avg"])[0], "price": price, "best": O.best(r)[0], "won": r["result"] == 0,
+                        "opp": r["avg"][2], "draw": r["avg"][1], "gp": h["gp"], "clv": None,
+                        "edge": (r["code"], r["date"], r["home"], r["away"]) in edge_keys})
+    return out
+
+
+def mismatch_report(M):
+    """Singles, slips and the games-played split for one season's legs (or
+    the pooled legs of several)."""
+    s = summary(M)
+    s.pop("bands", None)
+    res = {"singles": s, "slips": accas(M, MM_SIZES), "edgeCaught": sum(l["edge"] for l in M),
+           "notEdge": summary([l for l in M if not l["edge"]]), "byGamesPlayed": {}}
+    res["notEdge"].pop("bands", None)
+    for name, lo, hi in MM_GP_BANDS:
+        b = [l for l in M if lo <= l["gp"] <= hi]
+        row = summary(b); row.pop("bands", None)
+        row["slips4"] = accas(b, (4,))["4"]
+        res["byGamesPlayed"][name] = row
+    return res
+
+
+def mismatch_verdict(per_season, pooled):
+    """The issue's gate: the singles land above the bookmakers' fair chance in
+    at least 4 of 5 seasons, and pooled p(return <= 0) at the best price is
+    0.30 or less. Applied to all legs and to each games-played band."""
+    def gate(rows, pool):
+        ahead = sum(1 for r in rows if r.get("n") and r["landed"] > r["quoted"])
+        ok = ahead >= 4 and len(rows) >= 5 and pool.get("n", 0) and pool["pRoiBestNotPositive"] <= 0.30
+        return {"seasons": len(rows), "aheadOfPrice": ahead, "pBest": pool.get("pRoiBestNotPositive"), "passes": bool(ok)}
+    out = {"all": gate([r["singles"] for r in per_season], pooled["singles"])}
+    for name, _, _ in MM_GP_BANDS:
+        out[name] = gate([r["byGamesPlayed"][name] for r in per_season], pooled["byGamesPlayed"][name])
     return out
 
 
@@ -283,13 +417,15 @@ def replay_split(split, splits_fn, log):
     try:
         data = tune.load(None)
         preds = O.model_probs(tune.lambdas(data, split, meta=True))
-        prices, season = [], None
+        prices, season, texts = [], None, []
         for div, code in O.DIVS.items():
             if code not in E.LEAGUES: continue
             s = splits_fn(code)[split][0]
             if "-" not in s: continue
             season = season or s
-            prices += O.parse(O._get(O.HIST_URL.format(yy=O._yy(s), div=div), log=log))
+            text = O._get(O.HIST_URL.format(yy=O._yy(s), div=div), log=log)
+            texts.append(text)      # 11 Nov 2026 (#224): the mismatch rule's table
+            prices += O.parse(text)
             time.sleep(1.0)
     finally:
         tune.splits = saved
@@ -318,6 +454,11 @@ def replay_split(split, splits_fn, log):
     # 10 Nov 2026: the Model card's rule on the same seasons, for the 30 Nov review
     res["cardModel"] = card_season(legs([(preds[k], r) for k, r in joined.items()], model=True), "modelcard")
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
+    # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
+    ek = frozenset((l["code"], l["date"], l["home"], l["away"]) for l in edge_legs(L) if l["side"] == "h")
+    M = mismatch_legs(texts, ek)
+    res["mismatch"] = mismatch_report(M)
+    res["mismatch"]["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in M]
     res["lopsided"] = {"all": lopsided(L), "under5": lopsided(under)}
     res["byGap"] = {"all60": by_gap(L), "under5": by_gap(under)}   # 9 Nov 2026 (#153)
     res["legs"] = [{k: (round(v, 4) if isinstance(v, float) else v) for k, v in l.items()} for l in L]
@@ -339,11 +480,28 @@ def show(label, res):
                 print(f"  lopsided {cut:6s} fav {band} {k:9s} n {v['n']:4d} landed {v['landed']*100:5.1f} quoted {v['quoted']*100:5.1f} (se {v['se']*100:.1f}) roi {v['roi']*100:+5.1f}% best {v['roiBest']*100:+5.1f}% draw {v['drawPrice']}")
     for k, a in (res.get("edgeAccas") or {}).items():
         if a.get("n"): print(f"  edge acca {k:>3}: n {a['n']:4d} won {a['won']:4d} landed {a['landed']*100:5.1f}% v expected {a['expected']*100:5.1f}%  avg odds {a['avgOdds']:.2f} legs {a['avgLegs']}  roi {a['roi']*100:+5.1f}% (p {a['pRoiNotPositive']}) best {a['roiBest']*100:+5.1f}% (p {a['pRoiBestNotPositive']})  losing months {a['losingMonths']} of {a['months']}")
+    mm = res.get("mismatch")
+    if mm: show_mismatch(mm)
     for lab in ("card", "cardRule5", "cardUncapped", "cardOpp7", "cardFillWide", "cardFillRule5", "cardFillOpp7", "cardModel"):
         c = res[lab]
         if c.get("groups"):
             losing = [m for m, v in c["months"].items() if v["pnl"] < 0]
             print(f"  {lab}: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), z {c['z']}, units {c['units']}, return {c['return']} (best {c['returnBest']}), 90% {c['return90']}, p(loss) {c['pLoss']}, kinds {c['kinds']}, losing months {len(losing)} of {len(c['months'])}: {', '.join(losing)}")
+
+
+def show_mismatch(mm, label="mismatch"):
+    c = mm["singles"]
+    if not c.get("n"): print(f"  {label}: no legs"); return
+    print(f"  {label} singles n {c['n']} landed {c['landed']*100:.1f} quoted {c['quoted']*100:.1f} (se {c['se']*100:.1f}) roi {c['roi']*100:+.1f}% (p {c['pRoiNotPositive']}) best {c['roiBest']*100:+.1f}% (p {c['pRoiBestNotPositive']}); Edge already flags {mm['edgeCaught']}")
+    ne = mm["notEdge"]
+    if ne.get("n"): print(f"  {label} not Edge n {ne['n']} landed {ne['landed']*100:.1f} quoted {ne['quoted']*100:.1f} roi {ne['roi']*100:+.1f}% best {ne['roiBest']*100:+.1f}%")
+    for k, a in mm["slips"].items():
+        if a.get("n"): print(f"  {label} slip {k:>3}: n {a['n']} won {a['won']} landed {a['landed']*100:.1f}% v {a['expected']*100:.1f}% odds {a['avgOdds']} roi {a['roi']*100:+.1f}% best {a['roiBest']*100:+.1f}% (p {a['pRoiBestNotPositive']}) losing months {a['losingMonths']} of {a['months']}")
+    for b, r in mm["byGamesPlayed"].items():
+        if r.get("n"):
+            s4 = r["slips4"]
+            print(f"  {label} games {b:5s} n {r['n']} landed {r['landed']*100:.1f} quoted {r['quoted']*100:.1f} roi {r['roi']*100:+.1f}% best {r['roiBest']*100:+.1f}% (p {r['pRoiBestNotPositive']})"
+                  + (f"; 4-folds n {s4['n']} won {s4['won']} best {s4['roiBest']*100:+.1f}%" if s4.get("n") else ""))
 
 
 def main():
@@ -367,6 +525,16 @@ def main():
             print(f"{season}: not replayed ({e})"); report["seasons"][season] = {"season": season, "error": str(e)}; continue
         report["seasons"][season] = res
         show(season, res)
+    # 11 Nov 2026 (#224): the mismatch rule pooled over every season replayed,
+    # and the issue's gate (4 of 5 seasons ahead of the price, pooled p <= 0.30)
+    done = [r for r in report["seasons"].values() if r.get("mismatch")]
+    pool = [l for r in done for l in r["mismatch"]["legs"]]
+    for l in pool: l.setdefault("clv", None)
+    pooled = mismatch_report(pool)
+    report["mismatchPooled"] = {"seasons": [r["season"] for r in done], **pooled,
+                                "verdict": mismatch_verdict([r["mismatch"] for r in done], pooled)}
+    show_mismatch(pooled, "mismatch pooled")
+    print("mismatch verdict", json.dumps(report["mismatchPooled"]["verdict"]))
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
     holds = lambda c: c.get("n", 0) >= O.MIN_BETS and c.get("gap", 0) > 0 and c.get("roi", 0) > 0
     report["verdict"] = ("The under-market cut lands above its quote and returns a profit on both seasons." if holds(u_fit) and holds(u_chk) else
