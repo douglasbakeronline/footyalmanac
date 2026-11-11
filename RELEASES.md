@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-13: tidy-up: nine stale pull requests closed, their findings kept (tag pending)
+
+**What changed:** nine pull requests that had clashed with newer code or been overtaken (#67, #68, #106, #121, #127, #137, #142, #148, #215) are closed. What they held of value is kept here:
+- #67's fixture-detail copy re-applied: a call shown as No read only because of its Celtic's Law flag now says so and gives its own landed rate, rather than "close to the 33% you would get from guessing".
+- The findings of #68 (habitual losers), #106 (Championship goals scale), #148 (attack/defence shrinkage) and #215 (prices by hour of first pricing), with their tools, under `claude/` and `tools/`, and listed under "Tested and rejected" in `CLAUDE.md`.
+- #127 (MLB Elo retune) and #137 (college basketball Nov-Dec calibration) passed their gates but clash with today's `sports.json`; each is an `office-backlog` issue to redo and re-test on current code.
+- Not kept: #121 (re-ran a rule already shipped, no new finding) and #142 (looser name matching for prices, yield never measured; superseded by the odds-for-every-game work, and a loose match is worse than a missed one).
+
+**Files:** `index.html`, `claude/tuning-evidence.md`, `claude/att-def-shrink-2026-11-06.md`, `claude/championship-goals-scale-2026-10-29.md`, `claude/price-by-first-hour-2026-11-10.md`, `tools/att_def_shrink_eval.py`, `tools/championship_goals_scale.py`, `CLAUDE.md`.
+
+**Not changed:** any model or rule.
+
+**Roll back:** `git revert` the merge commit; the closed pull requests can be reopened on GitHub.
+
 ## 2026-11-11-12: the context check on every Card pick (tag pending)
 
 **What changed:** before the Card is built, Claude reads every pick the Card's rule admits with live web search (team news, rotation, motivation, the table, goals for and against, last five) and gives it a verdict: clear, caution or against, with a one-line reason and sources. An "against" pick, with a source, is kept off the Card and a substitute takes its place (`CARD_CONTEXT`, `CARD_RULE` 9). Each Card pick shows its verdict, news, numbers and sources on the Bets tab.
