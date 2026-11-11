@@ -4930,6 +4930,10 @@ function planRungs(){
      what: "Three to five priced favourites from different fixtures, built and frozen by the site before the first start.",
      proof: `Replayed over four seasons <b>+4.4%</b> (+12.5% at the best price); live ${r.settled ? `${r.won} of ${r.settled}${cardRet ? `, ${cardRet}` : ""}` : "nothing settled"}. Kept or cut at the 30 Nov review.`}];
 }
+/* 11 Nov 2026, Douglas: "Still showing the plan which I asked to remove"
+   (decided 10 Nov evening, claude/plan-decision-2026-11-10.md). The plan panel
+   is no longer rendered; signalsPanel / planRungs stay unused (a revert
+   brings the panel back) and sigList still feeds "Coming up". */
 function signalsPanel(){
   const now = Date.now(), {out, skip} = sigList(now);
   // proven first, then soonest
@@ -5032,8 +5036,7 @@ function weekNext(){
   const name = d => d.i === 1 ? "Tomorrow" : new Date(d.date + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short"});
   const item = d => { const t = d.bets.filter(b => b.kind === "edge").length, n = d.bets.length;
     return `<span>${name(d)} <b>${n}</b> bet${n === 1 ? "" : "s"}<small>${t ? `${t} tested` : "on trial"}</small></span>`; };
-  return `<section class="wk-next" aria-label="Plan bets coming up"><h3>Coming up</h3>${days.map(item).join("")}
-    <a href="#plan" data-plan-go>In the plan</a></section>`;
+  return `<section class="wk-next" aria-label="Bets coming up"><h3>Coming up</h3>${days.map(item).join("")}</section>`;
 }
 document.addEventListener("click", e => {
   const a = e.target.closest("[data-plan-go]"); if(!a) return;
@@ -5071,8 +5074,8 @@ function renderToday(){
             : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
-  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${signalsPanel()}${weekNext()}
-    <details class="how tb-rule tb-part"><summary>The Card, rung three of the plan: its rule in full</summary><div class="lede">
+  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}
+    <details class="how tb-rule tb-part"><summary>The Card: its rule in full</summary><div class="lede">
       <p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
@@ -5083,7 +5086,7 @@ function renderToday(){
       <li><b>Place once.</b> Any time before a group's first kick-off. A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
       <li><b>Stake flat.</b> Two units on each 2x, one on each 3x, every day the same; the stake box below is one unit. Up to six groups a day, each from different fixtures.</li>
       <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here once every pick has finished.</li>
-      <li><b>Only the plan.</b> Nothing outside it.</li>
+      <li><b>Only the card.</b> And the Edge picks below; nothing else.</li>
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol></details>
@@ -5095,7 +5098,7 @@ function renderToday(){
     ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
-    <details class="tb-older tb-model"><summary>On paper: the Model card, not in the plan${model.length ? ` (${model.length})` : ""}</summary><section class="tb-win">
+    <details class="tb-older tb-model"><summary>On paper: the Model card, not staked${model.length ? ` (${model.length})` : ""}</summary><section class="tb-win">
       ${model.length ? `<div class="og-grid">${model.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">No model group on this day: no three picks the model rates 60%+ and at or above the bookmakers' chance, in the leagues the card takes, at 1.15 to 1.90.</div>`}
       <p class="tb-snap">Each pick here is one the model rates at or above the bookmakers' chance: its own value call, with the group's chance taken from the model, not the market. The card's picks are chosen the other way round. Nothing here is staked; it is a running test of which way is right, settled at the 30 Nov review.</p></section></details>
