@@ -141,6 +141,40 @@ def list_book_section(r):
     return out + [""]
 
 
+CONTEXT_REVIEW_AT = 30   # "against" picks settled before the veto is judged (claude/context-check-2026-11-11.md)
+
+
+def context_section(r):
+    """11 Nov 2026 (CARD_CONTEXT, CARD_RULE 9): the context check graded
+    forward, by verdict, from the record (groupings.context_record). The
+    pre-registered review: at 30 settled "against" picks, if they land at or
+    above the model's own number the veto is not earning its place and the
+    next build session sets CARD_CONTEXT = False (reads still show). A tally
+    of the scoreboard, never a fit (Rule 1)."""
+    if not r: return []
+    out = ["## The context check (since 11 Nov)", "",
+           "| verdict | picks settled | landed | model | bookmakers | z v model |", "|---|---|---|---|---|---|"]
+    for v in ("clear", "caution", "against"):
+        t = r.get(v)
+        if not t: continue
+        fair = f"{t['fair'] * 100:.0f}%" if t.get("fair") is not None else "n/a"
+        out.append(f"| {v} | {t['legs']} | {t['landed']} ({t['rate'] * 100:.0f}%) | {t['model'] * 100:.0f}% | "
+                   f"{fair} | "
+                   f"{t['zModel'] if t.get('zModel') is not None else 'n/a'} |")
+    a = r.get("against") or {}
+    n = a.get("legs", 0)
+    if n >= CONTEXT_REVIEW_AT and a["rate"] >= a["model"]:
+        out.append(f"**Context tripwire fired: {n} \"against\" picks landed {a['rate'] * 100:.0f}%, at or above the model's "
+                   f"{a['model'] * 100:.0f}%. The next build session sets `CARD_CONTEXT = False` (CARD_RULE bump, note, release).**")
+    elif n >= CONTEXT_REVIEW_AT:
+        out.append(f"Reviewed at {n} \"against\" picks: they land under the model's number ({a['rate'] * 100:.0f}% v "
+                   f"{a['model'] * 100:.0f}%), so the veto stays.")
+    else:
+        out.append(f"The veto is judged at {CONTEXT_REVIEW_AT} settled \"against\" picks ({n} so far): if they land at or above "
+                   "the model's number, `CARD_CONTEXT = False`.")
+    return out + [""]
+
+
 def coverage_lines(rep, record):
     """10 Nov 2026: the live row of the replay beside the live Card the record
     holds over the same days. Until 10 Nov most live legs were archived only as
@@ -258,6 +292,7 @@ def main():
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
+    lines += context_section(load("groupings-record.json").get("cardContext"))
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()

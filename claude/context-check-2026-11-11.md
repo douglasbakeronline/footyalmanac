@@ -40,6 +40,9 @@ landed v the model's number (`zModel`) and the bookmakers' chance. The veto
 earns its place if "against" picks land under the model's number and "clear"
 ones do not. Review at 30 "against" picks; if they land at or above the
 model's number, set `CARD_CONTEXT = False` (the reads still show).
+The nightly Card review prints the tally by verdict and says in bold when
+that review has fired (`tools/card_review_post.py` `context_section`,
+11 Nov 2026 evening); the next build session then acts without asking.
 
 ## Limits
 
