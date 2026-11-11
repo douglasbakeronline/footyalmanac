@@ -1532,7 +1532,24 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 6     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026)
+CARD_RULE = 7     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026)
+# 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
+# also - I need wins", and on the choice put to him (make the Model card the
+# Card, stake both, or wait for the 30 Nov review): "The model rules. Then
+# it's about finding a good edge." So from CARD_RULE 7 the Card is built by
+# the Model card's rule (model_fault): a priced core-league or 75%+ tennis /
+# NBA / rugby pick at 1.15-1.90 the model rates 60%+ and at or above the
+# bookmakers' chance, the group's chance the model's own (as_model), staked
+# as before. The evidence at the switch, all under the 30 Nov gate: live on
+# paper the Model card won 6 of 14 groups (+19%), its picks 34 of 42 (81%),
+# against the Card's 11 of 35 (-12% flat, -19% at its stakes); the pool replay
+# 7 of 12 v 4 of 10 (claude/card-modelcard-2026-11-10.md); but football-data
+# 2025-26 -8.2% on 70 groups, where picks the model rates above the market
+# landed at the market's rate. The owner's call, not a gate pass. The rule 6
+# Card is kept as the replay variant `rule6` (tools/card_replay.py), and the
+# separate paper Model card stops (it would repeat the Card).
+# claude/card-model-rules-2026-11-11.md. False returns to rule 6.
+CARD_MODEL_RULE = True
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1635,6 +1652,10 @@ def card_fault(l, wide=False):
     lo_hi, fair_min = (CARD_WIDE_ODDS, CARD_WIDE_FAIR_MIN) if wide else (CARD_ODDS, CARD_FAIR_MIN)
     if l.get("listOff"): return f"{l['pick']}: its sport is off the Daily List on its live record"
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card on its live record"
+    if CARD_MODEL_RULE and not wide:
+        # 11 Nov 2026 (CARD_RULE 7): the model's own picks
+        if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
+        return model_fault(l)
     if l.get("sport") == "football" and not (core_league(l.get("code")) if CARD_CORE_ONLY else card_league(l.get("code"))):
         return f"{l['pick']}: {l.get('comp') or l.get('code')} is outside the leagues the Card takes (cups and internationals landed under quote)"
     if CARD_UNDER_MARKET and not wide and l.get("sport") == "football" and l.get("fair") is not None and not l.get("est") \
@@ -1738,6 +1759,12 @@ def as_model(l):
     """A leg as the Model card carries it: its chance is the model's own."""
     return dict(l, p=l["pModel"], basis="model")
 
+def as_card(l, wide=False):
+    """A leg as the Card carries it: the model's own chance under CARD_RULE 7
+    (CARD_MODEL_RULE), the bookmakers' fair chance before it and for the
+    wider-rule filler, which is still chosen on the bookmakers' numbers."""
+    return as_model(l) if CARD_MODEL_RULE and not wide else as_mult(l)
+
 def best_card(L, used, after, name, wide=False):
     """The CARD_LEGS picks with the highest combined chance (bookmakers'
     fair; the model's own on a Model kind) whose combined price falls in
@@ -1746,7 +1773,7 @@ def best_card(L, used, after, name, wide=False):
     if is_model(name):
         cands = [as_model(l) for l in L if l["event"] not in used and model_fault(l) is None and (parse(l["when"]) or after) >= after]
     else:
-        cands = [as_mult(l) for l in L if l["event"] not in used and card_fault(l, wide) is None
+        cands = [as_card(l, wide) for l in L if l["event"] not in used and card_fault(l, wide) is None
                  and (parse(l["when"]) or after) >= after]
     cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
     # 29 Oct 2026: core-league picks first at an equal chance (the nudge is for
@@ -1766,7 +1793,8 @@ def best_card(L, used, after, name, wide=False):
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
     return {"name": name, "risk": "Wider rule" if wide else RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
-            "estimates": 0, "basis": "bookmakers", "rule": CARD_RULE, "wide": wide, "legs": legs_,
+            "estimates": 0, "basis": "model" if is_model(name) or (CARD_MODEL_RULE and not wide) else "bookmakers",
+            "rule": CARD_RULE, "wide": wide, "legs": legs_,
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
 
 def recheck_card(g, L):
@@ -1788,7 +1816,7 @@ def recheck_card(g, L):
             cur = stale_price(cur, old)
         f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
-        legs_.append(dict(as_mult(cur), firstOdds=old.get("firstOdds", old.get("odds"))))
+        legs_.append(dict(as_card(cur, bool(g.get("wide"))), firstOdds=old.get("firstOdds", old.get("odds"))))
     if why: return None, why
     lo, hi = CARD_RANGE[g["name"]]
     # 30 Oct 2026: a published group holds through ordinary price drift. The
@@ -1822,7 +1850,7 @@ def bench_for(g, L, used, after, wide=False):
     floor = MIN_CHANCE[g["name"]]
     events = {l["event"] for l in g["legs"]}
     out = []
-    for c in sorted((as_mult(l) for l in L if l["event"] not in used and l["event"] not in events
+    for c in sorted((as_card(l, wide) for l in L if l["event"] not in used and l["event"] not in events
                      and card_fault(l, wide) is None and (parse(l["when"]) or after) >= after),
                     key=lambda l: -l["p"]):
         ok = True
@@ -2651,7 +2679,8 @@ def main():
         # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
         # Legs are placed by UK kick-off, so a day takes legs from every board date.
         groups = build_card(L, d, now, prev=pd.get("groups"), log=log)
-        groups += build_model_card(L, d, now, prev=pd.get("groups"))
+        # 11 Nov 2026: under CARD_RULE 7 the Card is the model's own picks, so the paper Model card stops
+        if not CARD_MODEL_RULE: groups += build_model_card(L, d, now, prev=pd.get("groups"))
         live = [g for g in groups if g.get("status") != "underway"]
         core = [l for l in dl if not l.get("multOnly")]   # the counts the page has always shown
         days.append({"date": d, "legs": len(core), "priced": sum(1 for l in core if not l.get("est")),
@@ -2679,7 +2708,7 @@ def main():
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
-                              "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE,
+                              "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),

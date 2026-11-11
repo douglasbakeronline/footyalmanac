@@ -11,6 +11,17 @@ import card_legs_history as H
 import groupings as G
 from test_card_fillers import by_day, row
 
+# 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7). These tests
+# cover the rule 6 machinery, which stays as the replay variant `rule6`, so the
+# module runs under rule 6; tests/test_card_model_rule.py covers rule 7.
+from unittest import mock as _mock
+_RULE6 = [_mock.patch.object(G, "CARD_MODEL_RULE", False), _mock.patch.object(G, "CARD_RULE", 6)]
+def setUpModule():
+    for p in _RULE6: p.start()
+def tearDownModule():
+    for p in _RULE6: p.stop()
+
+
 
 class ModelCard(unittest.TestCase):
     def test_registered(self):

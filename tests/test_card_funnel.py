@@ -7,6 +7,17 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "tools"))
 import groupings as G
 import card_funnel as CF
 
+# 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7). These tests
+# cover the rule 6 machinery, which stays as the replay variant `rule6`, so the
+# module runs under rule 6; tests/test_card_model_rule.py covers rule 7.
+from unittest import mock as _mock
+_RULE6 = [_mock.patch.object(G, "CARD_MODEL_RULE", False), _mock.patch.object(G, "CARD_RULE", 6)]
+def setUpModule():
+    for p in _RULE6: p.start()
+def tearDownModule():
+    for p in _RULE6: p.stop()
+
+
 DAY = "2026-11-20"
 
 
