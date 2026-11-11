@@ -378,7 +378,7 @@ def card_season(L, variant="live"):
     n, w = len(gs), sum(g["won"] for g in gs); exp = sum(g["p"] for g in gs)
     st_ = sum(g["stake"] for g in gs); ret = sum(g["stake"] * g["odds"] for g in gs if g["won"]); best = sum(g["stake"] * g["bestOdds"] for g in gs if g["won"])
     kinds = {}
-    for name, _, _, _ in G.CARD_KINDS:
+    for name in dict.fromkeys(g["name"] for g in gs):   # 11 Nov 2026: payout variants carry their own kinds
         k = [g for g in gs if g["name"] == name]
         if k:
             ks = sum(g["stake"] for g in k); kr = sum(g["stake"] * g["odds"] for g in k if g["won"])
@@ -460,7 +460,9 @@ def replay_split(split, splits_fn, log):
     # live Card is now the model's own picks; it and its pre-registered shape
     # variants on the model's legs, for choosing the group shape
     Lm = legs([(preds[k], r) for k, r in joined.items()], model=True)
-    res["cardM7"] = {v: card_season(Lm, v) for v in ("live", "m7edge3", "m7edge6", "m7legs3", "m7short", "m7only2x")}
+    res["cardM7"] = {v: card_season(Lm, v) for v in ("live", "m7edge3", "m7edge6", "m7legs3", "m7short", "m7only2x",
+                                          # 11 Nov 2026: payout bands (Douglas: 3x, then 2.5x, 2x, 1.5x)
+                                          "pay15", "pay25", "pay3", "ladder")}
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
     ek = frozenset((l["code"], l["date"], l["home"], l["away"]) for l in edge_legs(L) if l["side"] == "h")
