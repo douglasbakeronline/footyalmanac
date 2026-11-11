@@ -1504,7 +1504,16 @@ BOOKS_SPORT_MIN = {"tennis": 0.75}
 # the compounding in a treble loses. Core only again; the wider pool stays
 # out until it has a record line of its own. CARD_MAX_GROUPS stays at 6 so
 # a full weekend is not capped.
-CARD_CORE_ONLY = True
+CARD_CORE_ONLY = False
+# 11 Nov 2026 (CARD_RULE 11), Douglas on Leotar (Bosnia RS, 1.52, model 67%
+# v the bookmakers' 59%), kept off only by the league limit: "This should
+# have been on. So relax all rules that would of said otherwise." Wider
+# leagues (card_league: API-Football leagues; cups, internationals and new
+# leagues still out) now reach the Card; CARD_CORE_NUDGE puts core picks
+# first at an equal chance. The owner's call against the replay: `m7wide`
+# (now live) 28 groups 15 won +32% v core only 12 groups 8 won +69%
+# (--recover, p(worse) 0.44), claude/card-m7wide-2026-11-11.md. `m7core`
+# replays core only beside it.
 CARD_CORE_NUDGE = 0.02
 # 29 Oct 2026, backtest at Douglas's request (claude/betting-groups-review-
 # 2026-10-29.md, fifth pass): the one cut that lands above quote in every
@@ -1575,7 +1584,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 10    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026)
+CARD_RULE = 11    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then

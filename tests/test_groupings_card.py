@@ -401,6 +401,7 @@ class BenchAndBook(unittest.TestCase):
         self.assertEqual([w for w, _, _ in G.CARD_WINDOWS], ["Day"])
 
 
+@mock.patch.object(G, "CARD_CORE_ONLY", True)   # the rule 6 Card's league limit (wider leagues live from 11 Nov 2026)
 class CoreLeagues(unittest.TestCase):
     """29 Oct 2026: football legs on the Card come from the core leagues only."""
 
