@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-11T12:49:22Z",
+ "graded": "2026-11-11T14:35:06Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -169,7 +169,7 @@
    "ncaab|new mexico lobos|little rock trojans|2026-11-11": 0,
    "ncaab|tcu horned frogs|ul monroe warhawks|2026-11-11": 0,
    "ncaab|uc davis aggies|incarnate word cardinals|2026-11-11": 1.1,
-   "ncaab|san diego state aztecs|bethune-cookman wildcats|2026-11-11": 1.03,
+   "ncaab|san diego state aztecs|bethune-cookman wildcats|2026-11-11": 1.02,
    "ncaab|western carolina catamounts|virginia lynchburg dragons|2026-11-11": -1,
    "football|ghana|somalia|2026-11-12": 1.07,
    "football|senegal|sudan|2026-11-12": 1.1,
@@ -231,6 +231,7 @@
    "ncaab|pacific tigers|air force falcons|2026-11-14": -1
   }
  },
+ "cardContext": {},
  "byBand": {
   "Card 2x": {
    "groups": 30,
