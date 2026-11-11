@@ -260,6 +260,11 @@ VARIANTS = {
     "m7only2x": {"CARD_KINDS": [k for k in G.CARD_KINDS if k[0] == "Card 2x"]},   # no 3x (live from CARD_RULE 8)
     "with3x": {"CARD_BUILD": ("Card 2x", "Card 3x")},   # 11 Nov 2026: the rule 7 Card with its 3x, as before CARD_RULE 8
     "m7notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
+    # 11 Nov 2026 (claude/card-funnel-rule7-2026-11-11.md): the funnel under
+    # rule 8 has the value demand the one condition that costs groups (4 to 8
+    # on 6-14 Nov). Pre-registered before any result: the model up to 5 points
+    # under the bookmakers' chance. Volume is not return; gated like the rest.
+    "m7under5": {"CARD_MODEL_EDGE": -0.05},
 }
 
 

@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-6: the Card funnel and integrity check read the live rule (tag pending)
+
+**What changed:** the nightly Card review's funnel (`tools/card_funnel.py`) now reads the Card's live rule (rule 8: the model's own picks, the 2x alone). Before, it matched rule 6's messages, so 217 football legs outside the core leagues showed as "price-range" and 79 legs as "other", it offered reliefs for conditions that no longer exist, and it reported a Card 3x column. It now has rule 7's own fault keys and reliefs, only the kinds the Card builds, and counts every 2x a day can take. `tools/card_integrity.py` raises `no-opposition-price` only on rule 6 groups, so the review does not open backlog issues for a condition the rule no longer reads. New pre-registered replay variant `m7under5` (the model up to 5 points under the bookmakers).
+
+**Evidence:** pool 6-14 Nov: live builds a 2x on 3 days of 9 (4 groups); the value demand is the one condition that costs groups (8 groups without it). Its relief replayed: `m7under5` 14 groups, 6 won, +0%, v live 6 groups, 4 won, +82%; paired p(worse) 0.97 on 42 legs. The value demand stays. Suite OK, nametest clear, integrity 0 findings. Note: `claude/card-funnel-rule7-2026-11-11.md`.
+
+**Files:** `tools/card_funnel.py`, `tools/card_integrity.py`, `tools/card_review_post.py` (comment), `tools/card_replay.py` (`m7under5`), `tests/test_card_funnel_model.py`, `claude/card-funnel-rule7-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, the page, any model.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-5: the Card builds the 2x alone (CARD_RULE 8) (tag pending)
 
 **What changed:** the Card now makes up to three 2x groups a day and no 3x. Douglas: "Just do better on the groups." The Bets tab's rule and staking lines say so. The 3x's record stays.

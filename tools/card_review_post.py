@@ -82,7 +82,7 @@ def funnel_section(today_=None, days=14):
         sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
         import card_funnel as CF
         t = date.fromisoformat(today_ or today)
-        since = max("2026-11-06", (t - timedelta(days=days)).isoformat())   # rule 6 from 6 Nov 2026
+        since = max("2026-11-06", (t - timedelta(days=days)).isoformat())   # every day read under the live rule (rule 8 from 11 Nov 2026)
         by, unpriced = CF.pool_days(since, None, recover=True)   # to the last pool file: days not yet played read too
         fn = CF.funnel(by, unpriced)
     except Exception as e:   # advisory: never stop the review over it
