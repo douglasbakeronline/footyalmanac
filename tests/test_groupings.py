@@ -210,8 +210,10 @@ class OddsApiTest(unittest.TestCase):
 
 
 class PriceSpend(unittest.TestCase):
-    """9 Nov 2026: a tennis match below the Card's bar and off the Daily List is not priced."""
-    def test_weak_tennis_not_priced(self):
+    """9 Nov 2026: a tennis match below the Card's bar and off the Daily List was
+    not priced. 11 Nov 2026 (Douglas: odds for all games): it is now, since a
+    tournament's slate costs one credit however many matches it carries."""
+    def test_weak_tennis_now_priced(self):
         import os, tempfile
         from datetime import datetime, timezone
         from unittest import mock
@@ -222,4 +224,22 @@ class PriceSpend(unittest.TestCase):
                   "when": "2026-10-19T11:30:00Z", "date": "2026-10-19", "pModel": 0.6}]
             r = {}
             G.price_odds_api(L, {"2026-10-19"}, r, cache_dir=d, fetch=fetch, now=datetime(2026, 10, 19, 9, tzinfo=timezone.utc))
-            self.assertEqual(r["oddsApi"], "no legs"); self.assertEqual(calls, [])
+            self.assertNotEqual(r["oddsApi"], "no legs"); self.assertEqual(len(calls), 1)   # the free /sports list only: no key matched "X"
+
+    def test_caps_follow_the_allowance(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 11, 9, tzinfo=timezone.utc)
+        self.assertEqual(G.odds_api_caps({"left": 300}, now), (G.ODDS_API_DAY, G.ODDS_API_MONTH))
+        self.assertEqual(G.odds_api_caps({}, now, list_books=True), (G.LIST_BOOK_DAY, G.ODDS_API_MONTH))
+        day, month = G.odds_api_caps({"left": 20000, "days": {}}, now)        # a paid plan: 20 days left
+        self.assertEqual(day, int((20000 - G.ODDS_API_FLOOR) / 20)); self.assertEqual(month, 20000)
+
+    def test_board_prices_real_prices_only(self):
+        L = [{"sport": "nba", "home": "A", "away": "B", "pick": "A", "odds": 1.4, "best": 1.45, "bestBook": "Bet365",
+              "books": 6, "bookOdds": {"William Hill": 1.42}, "pricedAt": "t"},
+             {"sport": "nba", "home": "C", "away": "D", "pick": "C", "odds": 1.2, "est": True},
+             {"sport": "tennis", "players": ["Ana", "Bea"], "pick": "Bea", "odds": 1.8}]
+        P = G.board_prices(L)
+        self.assertEqual(P["nba|a|b"], {"p": "A", "o": 1.4, "b": 1.45, "bb": "Bet365", "h": 1.42, "n": 6, "t": "t"})
+        self.assertNotIn("nba|c|d", P)
+        self.assertEqual(P["tennis|ana|bea"]["o"], 1.8)

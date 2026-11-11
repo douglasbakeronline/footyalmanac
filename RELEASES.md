@@ -4,6 +4,25 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-4 Odds for every game (tag pending)
+
+For a reader: every game the build can price now shows its price on its row,
+on every tab: William Hill's price when Hill has one, else the bookmakers'
+average (Avg) with the best book in the tooltip. Tennis and the US sports had
+no price on their rows before. Behind it, every tennis match and every US
+game nothing else priced is now asked for (one credit a slate), football legs
+the bulk prices missed get their own call, and the Odds API's daily
+allowance scales with the account when it reports a paid plan. On the 08:51
+build only 152 of 408 legs had a real price (tennis 0 of 17).
+
+Files: `groupings.py` (`odds_api_caps`, `board_prices`, `FB_CALLS_MULT`,
+the tennis and US `want`), `index.html` (`priceChip`), tests,
+`claude/odds-all-games-2026-11-11.md`, `CLAUDE.md`.
+
+Not changed: any model, the Daily List's admission, the Card's rules.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-11-10: the Card's empty-day filler switched off (tag pending)
 
 **What changed:** a day the model's picks leave empty now stays empty. The wider-rule filler (picks chosen on the bookmakers' numbers, 1.08 to 2.10 at 60%+) no longer builds (`groupings.CARD_FILLER` False). An open filler group drops off at the next build; a filler group already locked at its first start stays on the page and settles. The Bets tab's description of the Card says so.

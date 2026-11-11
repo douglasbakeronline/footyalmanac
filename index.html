@@ -1546,6 +1546,7 @@ footer b{color:var(--ink-2)}
 .to-days:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
 /* the William Hill chip's short words where the confidence column is 62px */
 .bkchip .sm{display:none}
+.bkchip.px{color:var(--ink-2)}
 @media (max-width:480px){ .conf .bkchip .lg{display:none} .conf .bkchip .sm{display:inline} }
 </style>
 </head>
@@ -2209,9 +2210,21 @@ function bookChip(v, best){
   return `<span class="bkchip none" title="The UK bookmakers' list was read and this game was not on it (or its name did not match). Big college favourites are often not offered in the UK."><span class="lg">No UK price</span><span class="sm">No UK</span></span>`;
 }
 function hillChip(sport, home, away){
-  const G = window.__GROUPINGS__, m = G && G.listBooks && G.listBooks[lbKey(sport, home, away)];
-  if(!m) return "";
-  return bookChip(m.h ? m.h : m.b ? 0 : m.c ? -1 : null, m.x);
+  const G = window.__GROUPINGS__, k = lbKey(sport, home, away), m = G && G.listBooks && G.listBooks[k];
+  if(m && (m.h || m.b || m.c)) return bookChip(m.h ? m.h : m.b ? 0 : m.c ? -1 : null, m.x);
+  return priceChip(G && G.prices && G.prices[k]);
+}
+/* 11 Nov 2026, Douglas: "We need to get a grip on odds for all games". Every
+   game the build priced from a bookmaker (groupings.board_prices), on every
+   tab: William Hill's price when it has one, else the average with the best
+   book in the tooltip. A game with no entry shows nothing rather than a
+   made-up number. Display only. */
+function priceChip(q){
+  if(!q || !q.o) return "";
+  const who = q.p ? ` for ${ogEsc(q.p)}` : "", at = q.t ? `, read ${ogEsc(String(q.t).replace("T", " ").slice(0, 16))} UTC` : "";
+  const best = q.b && q.bb ? ` Best ${(+q.b).toFixed(2)} at ${ogEsc(q.bb)}.` : q.b ? ` Best ${(+q.b).toFixed(2)}.` : "";
+  if(q.h) return `<span class="bkchip" title="${LB_BOOK}'s price${who}${at}.${best} Display only: the model never sees a price.">Hill<b>${(+q.h).toFixed(2)}</b></span>`;
+  return `<span class="bkchip px" title="Bookmakers' average${who}${q.n ? ` across ${q.n} book${q.n === 1 ? "" : "s"}` : ""}${at}; ${LB_BOOK} not read for this game.${best} Display only.">Avg<b>${(+q.o).toFixed(2)}</b></span>`;
 }
 function hillPast(sport, home, away, date){
   const G = window.__GROUPINGS__, P = G && G.record && G.record.listAtBook && G.record.listAtBook.picks;
