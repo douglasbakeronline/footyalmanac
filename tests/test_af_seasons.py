@@ -98,8 +98,21 @@ class PoolFallback(unittest.TestCase):
              "score": {"fulltime": {"home": None, "away": None}}}
         return S._expand(S._compact(f))
 
+    # 11 Nov 2026 (#238): the league was the first split-season one in a set,
+    # so it changed with the hash seed; a league the API labels ahead of the
+    # calendar (Cameroon, "2027-28") put the fixed 25 Oct row outside its
+    # window and both tests failed now and then. One league, its season pinned.
+    def setUp(self):
+        self.code = sorted(c for c in S.AF_EXTRA if "-" in E.LEAGUES[c]["season"])[0]
+        self.saved = dict(E.LEAGUES[self.code])
+        E.LEAGUES[self.code]["season"] = "2026-27"
+
+    def tearDown(self):
+        E.LEAGUES[self.code].clear()
+        E.LEAGUES[self.code].update(self.saved)
+
     def test_newer_season_in_pool_is_used_and_logged(self):
-        code = next(c for c in S.AF_EXTRA if "-" in E.LEAGUES[c]["season"])
+        code = self.code
         lid = S.AF[code]
         season = E.LEAGUES[code]["season"]
         year = int(season[:4])
@@ -111,7 +124,7 @@ class PoolFallback(unittest.TestCase):
         self.assertIn(f"{code}: configured season {season} has no fixtures", err.getvalue())
 
     def test_configured_season_still_wins_when_present(self):
-        code = next(c for c in S.AF_EXTRA if "-" in E.LEAGUES[c]["season"])
+        code = self.code
         lid = S.AF[code]
         season = E.LEAGUES[code]["season"]
         year = int(season[:4])
@@ -125,7 +138,7 @@ class PoolFallback(unittest.TestCase):
     def test_rolled_static_season_reads_the_pool_not_a_finished_fetch(self):
         # A split season two years back is over by the calendar; the API is
         # playing this year's. The finished-season call must not be made.
-        code = next(c for c in S.AF_EXTRA if "-" in E.LEAGUES[c]["season"])
+        code = self.code
         lid = S.AF[code]
         saved = dict(E.LEAGUES[code])
         try:
@@ -141,6 +154,19 @@ class PoolFallback(unittest.TestCase):
         finally:
             E.LEAGUES[code].clear()
             E.LEAGUES[code].update(saved)
+
+    def test_season_labelled_ahead_of_the_calendar_still_reads(self):
+        """Cameroon's Elite One was set to 2027-28 by the API in November
+        2026; its matches in play are tagged 2027 and must reach the board."""
+        code = self.code
+        lid = S.AF[code]
+        E.LEAGUES[code]["season"] = "2027-28"
+        today = S.date.today()
+        when = (today - S.timedelta(days=3)).isoformat() + "T15:00:00+00:00"
+        pool = {lid: [self.row(lid, 2027, when)]}
+        with mock.patch.object(S, "af_season_pool", return_value=pool):
+            rows = S.af_rows(code, "2027-28")
+        self.assertEqual(len(rows), 1)
 
 
 if __name__ == "__main__":

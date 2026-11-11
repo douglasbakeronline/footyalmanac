@@ -156,6 +156,11 @@ class SeasonPool(unittest.TestCase):
         self.assertEqual(S.af_season_window("2026", t)[0], date(2026, 1, 1))
         self.assertIsNone(S.af_season_window("2024-25", t))
         self.assertIsNone(S.af_season_window("2025", t))
+        # 11 Nov 2026: a season the API labels by its later year reads from a
+        # year earlier, so its matches in play fall inside the window
+        t = date(2026, 11, 11)
+        self.assertEqual(S.af_season_window("2027-28", t), (date(2026, 6, 1), date(2026, 11, 19)))
+        self.assertEqual(S.af_season_window("2027", t), (date(2026, 1, 1), date(2026, 11, 19)))
 
     def test_current_league_reads_pool_only(self):
         code = "en.6n"

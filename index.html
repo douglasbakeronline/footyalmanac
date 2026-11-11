@@ -4857,8 +4857,10 @@ function tbRecord(){
     <div><span>Card record</span><b>${wl(k)}</b><small>${k.settled ? `of ${k.settled} settled${k.pending ? `, ${k.pending} to settle` : ""} · expected ${k.expected.toFixed(1)} won · ${roi(k)}` : `${k.pending ? `${k.pending} to settle; ` : ""}a group is won only when every pick wins; a draw is a loss`}</small></div>
     ${(() => { const C = (OG.rules || {}).card || {}, fz = C.floorZ || -2, fn = C.floorN || 50, z = k.z;
       // 29 Oct 2026: the floor. Landed against expected in standard errors; under by fz on fn+ settled is the retire signal.
-      const state = z == null ? "–" : z <= fz && k.settled >= fn ? "Under the floor" : z < 0 ? "Under quote" : "On quote";
-      return `<div><span>The floor</span><b>${state}</b><small>${z == null ? "no settled groups yet; " : `landed ${z >= 0 ? "+" : ""}${z.toFixed(1)} standard errors from expected on ${k.settled} groups; `}the rule is retired if it sits ${Math.abs(fz)} under on ${fn}+ groups. A good run is not a floor; the quote is.</small></div>`; })()}
+      // 11 Nov 2026: z rounds to one place, so -0.04 reads "0.0" and on quote, not "-0.0" and under
+      const zr = z == null ? null : Math.round(z * 10) / 10 || 0;
+      const state = zr == null ? "–" : zr <= fz && k.settled >= fn ? "Under the floor" : zr < 0 ? "Under quote" : "On quote";
+      return `<div><span>The floor</span><b>${state}</b><small>${zr == null ? "no settled groups yet; " : `landed ${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors from expected on ${k.settled} groups; `}the rule is retired if it sits ${Math.abs(fz)} under on ${fn}+ groups. A good run is not a floor; the quote is.</small></div>`; })()}
     ${Object.entries(R.cardLegsBySport || {}).map(([sp, t]) => { const C = (OG.rules || {}).card || {}, fz = Math.abs(C.floorZ || -2), fn = C.floorN || 50;
       // 9 Nov 2026: the Card's legs by sport against their quote. The same test the Daily List applies to a sport: two standard errors under on 50+ legs takes it off the Card.
       const z = t.z == null ? "–" : `${t.z >= 0 ? "+" : ""}${t.z.toFixed(1)}`;
