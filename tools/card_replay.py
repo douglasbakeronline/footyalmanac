@@ -249,7 +249,7 @@ VARIANTS = {
     # 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7, Douglas:
     # "The model rules"). The rule 6 Card it replaced is kept here, so the 30 Nov
     # review still pairs the two on the same legs.
-    "rule6": {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x")},
+    "rule6": {},     # RULE6 below: the rule 6 Card, base of the family
     # 11 Nov 2026 (Douglas: "Just do better on the groups"): the rule 7 Card's
     # group shape and edge, each one change from live, run on the pool and on
     # five football-data seasons (card_legs_history.py cardM7*).
@@ -267,6 +267,21 @@ VARIANTS = {
     "m7under5": {"CARD_MODEL_EDGE": -0.05},
 }
 
+# 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
+# above "rule6" were pre-registered as one change to the rule 6 Card. Under
+# rule 7/8 the live Card reads none of CARD_UNDER_MARKET, CARD_UNDER_MAX,
+# CARD_OPP_MIN or CARD_CORE_ONLY and builds no 3x, so patched onto live they
+# rebuilt live exactly ("identical to live" in the 11 Nov review) and the
+# fillers built nothing. Each now runs on the rule 6 Card with its one change,
+# as registered, and is paired against both live and rule6.
+RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x")}
+RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80"}
+
+
+def patch_of(variant):
+    """The constants a variant sets: a rule 6 family variant on top of RULE6."""
+    return dict(RULE6, **VARIANTS[variant]) if variant in RULE6_FAMILY else VARIANTS[variant]
+
 
 def build_wide(day_legs, date):
     """The page's fallback for an empty day (groupings.build_card's wider-rule
@@ -283,7 +298,7 @@ def build_wide(day_legs, date):
 
 def build(day_legs, date, variant):
     """One day's Card under a variant, with the live machinery."""
-    patch = VARIANTS[variant]
+    patch = patch_of(variant)
     if patch.get("_KINDS") == "model":
         after = G.lock_time(date, "Day"); groups, used = [], set()
         for (name, _, _, _), card in zip(G.MODEL_KINDS, G.CARD_KINDS):
@@ -400,22 +415,24 @@ def main():
             if fg: print(f"         filler alone: {f['days']} days, {f['groups']} groups, {f['won']} won (expected {f['expected']}), "
                          f"units {fs}, return {(f['return'] - 1) * 100:+.0f}%, legs {f['legsWon']}/{f['legs']}")
             else: print("         filler alone: no groups on the empty days")
-    for v in VARIANTS:
-        if v == "live": continue
-        a, b = out["live"], out[v]
+    pairs = [(v, "live") for v in VARIANTS if v != "live"] + [(v, "rule6") for v in sorted(RULE6_FAMILY - {"rule6"})]
+    for v, base in pairs:
+        a, b = out[base], out[v]
         alld = sorted(set(a) | set(b)); diffs = []
         for d in alld:
             ra = sum(g["stake"] * g["odds"] for g in a.get(d, []) if g["won"]) - sum(g["stake"] for g in a.get(d, []))
             rb = sum(g["stake"] * g["odds"] for g in b.get(d, []) if g["won"]) - sum(g["stake"] for g in b.get(d, []))
             diffs.append(rb - ra)
         if not diffs: continue
+        keys = ("vsLivePerDay", "pWorse") if base == "live" else ("vsRule6PerDay", "pWorseVsRule6")
+        if v in RULE6_FAMILY: report["variants"][v]["base"] = "rule6"
         if not any(diffs):
-            print(f"paired {v} - live on {len(alld)} days: identical to live")
-            report["variants"][v].update(vsLivePerDay=0.0, pWorse=None); continue
+            print(f"paired {v} - {base} on {len(alld)} days: identical to {base}")
+            report["variants"][v].update({keys[0]: 0.0, keys[1]: None}); continue
         bs = sorted(sum(random.choice(diffs) for _ in diffs) / len(diffs) for _ in range(4000))
-        print(f"paired {v} - live on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
+        print(f"paired {v} - {base} on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
               f"90% {bs[200]:+.2f} to {bs[3799]:+.2f}, p(worse) {sum(x < 0 for x in bs)/len(bs):.2f}")
-        report["variants"][v].update(vsLivePerDay=round(sum(diffs) / len(diffs), 3), pWorse=round(sum(x < 0 for x in bs) / len(bs), 3))
+        report["variants"][v].update({keys[0]: round(sum(diffs) / len(diffs), 3), keys[1]: round(sum(x < 0 for x in bs) / len(bs), 3)})
     if "--json" in sys.argv:
         with open(sys.argv[sys.argv.index("--json") + 1], "w") as f: json.dump(report, f, indent=1)
     return report

@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-8: the replay's rule 6 variants run on rule 6 again (tag pending)
+
+**What changed:** `tools/card_replay.py` builds the variants pre-registered for the 30 Nov review on the rule 6 Card they were registered against (`RULE6`, `RULE6_FAMILY`, `patch_of`). Since rule 7 they were patched onto live, which reads none of their constants, so the 11 Nov review showed `under8`, `uncapped`, `rule5`, `opp7` and others "identical to live" and the rule 5 / opp7 / short fillers built nothing; `tools/card_legs_history.py`'s `cardRule5`, `cardUncapped`, `cardOpp7` and fillers go through the same code and would have repeated live on Monday. Family variants are now also paired against `rule6`, and the nightly review prints that line.
+
+**Evidence:** pool, 30 Oct to 14 Nov (`--recover`): live (rule 8) 12 groups, 8 won, +69%; `rule6` 11 groups, +8%, v live -1.35 units a day (p(worse) 0.97); `rule5` v `rule6` +0.95 a day (p 0.05); `fillrule5` v live +0.62 (p 0.00). All under the 100-leg gate. New tests `tests/test_card_replay_rule6_family.py` (fail on the old code); suite OK (771), nametest clear. Note: `claude/card-replay-rule6-family-2026-11-11.md`.
+
+**Files:** `tools/card_replay.py`, `tools/card_review_post.py`, `tools/card_legs_history.py` (comment), `tests/test_card_replay_rule6_family.py`, `claude/card-replay-rule6-family-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, the page, the record, rule 7/8's own variants.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-7: the Card's playbook says place late; the empty paper Model card leaves the Bets tab (tag pending)
 
 **What changed:** the Card's playbook now opens "Place once, late": any time before a group's first start, nearer it than not. That advice lived in the plan, which came off the page on 11 Nov, so the page had been saying only "any time before". The "On paper: the Model card" fold no longer shows on days with no Model card group: since rule 7 the Card is the model's own picks and the paper Model card is not built, so the fold was always empty and still promised a 30 Nov comparison. Its scoreboard tile now reads "31 Oct to 10 Nov; since 11 Nov they are the card". The "Why these rules" line about the model rating picks above the bookmakers says the card followed it until 11 Nov.

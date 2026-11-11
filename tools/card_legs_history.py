@@ -440,6 +440,9 @@ def replay_split(split, splits_fn, log):
         res["cuts"][name] = summary([l for l in L if f(l["model"], l["fair"])])
     res["trebles"] = trebles(under)
     res["card"] = card_season(L)
+    # 11 Nov 2026: "card" is the live rule (8); cardRule5, cardUncapped and
+    # cardOpp7, and the rule5 / opp7 fillers, are built on the rule 6 Card
+    # (card_replay.RULE6_FAMILY): on live they rebuilt live exactly
     res["cardRule5"] = card_season(L, "rule5")   # 6 Nov 2026: the Card as it was before the opposition-price condition
     # 9 Nov 2026 (Douglas: "take all decisions on providing the highest return
     # consistently"): the two open rule questions, replayed as whole Cards on

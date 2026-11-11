@@ -171,6 +171,17 @@ def kelly_line(s):
             f"half Kelly: median {pct(h['median'])}, drawdown (95%) {h['p95Drawdown'] * 100:.0f}%")
 
 
+def rule6_lines(rep):
+    """11 Nov 2026: the variants pre-registered on the rule 6 Card are built on
+    it (card_replay.RULE6_FAMILY) and also paired against `rule6`, their own
+    base: whether the change helps the old rule, apart from rule 6 v live."""
+    fam = [(v, r) for v, r in sorted(rep.get("variants", {}).items()) if r.get("base") == "rule6" and "vsRule6PerDay" in r]
+    if not fam: return []
+    return ["Rule 6 family (each one change to the rule 6 Card, as pre-registered before 11 Nov; v live above, v rule6 here): "
+            + "; ".join(f"{v} {r['vsRule6PerDay']:+.2f} a day" + (f", p(worse) {r['pWorseVsRule6']}" if r.get("pWorseVsRule6") is not None else ", identical")
+                        for v, r in fam) + "."]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -190,6 +201,7 @@ def main():
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines += coverage_lines(rep, load("groupings-record.json"))
+        lines += rule6_lines(rep)
         lines.append("")
         lines += fill_lines(rep)
         cands = candidates(rep)
