@@ -2972,6 +2972,18 @@ def main():
     write_page(dict(out, check=check_pool(L)), record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
+    # 11 Nov 2026: what each price source did this build, so the log answers
+    # "is Betfair / SportsGameOdds working?" without the published JSON
+    def _src(name):
+        r = report.get(name)
+        if isinstance(r, dict):
+            bits = [f"{k} {r[k]}" for k in ("matched", "legs", "calls", "objects", "monthObjects", "usedToday", "dayCap", "left") if r.get(k) is not None]
+            return f"{name}: " + ", ".join(bits) + (f", error {str(r['error'])[:120]}" if r.get("error") else "")
+        return f"{name}: {r}" if r else None
+    srcs = [x for x in (_src(n) for n in ("football", "espn", "espn_soccer", "apiSports", "pinnwire", "oddsApi", "sgo", "betfair", "matchbook", "oddsApiList")) if x]
+    print("  prices: " + " | ".join(srcs), file=sys.stderr)
+    errs = [e for e in report.get("errors", []) if any(k in e for k in ("betfair", "matchbook", "sgo", "price_"))]
+    if errs: print("  price errors: " + "; ".join(errs)[:800], file=sys.stderr)
     cx = report.get("context") or {}
     print(f"  context check: {'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
           f"{cx.get('read', 0)} picks with a verdict, {cx.get('against', 0)} against; "
