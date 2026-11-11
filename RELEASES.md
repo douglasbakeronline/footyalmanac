@@ -1134,6 +1134,18 @@ Roll back: `git revert` this commit.
 **Not changed:** any module code, model, or record.
 **Roll back:** `git revert` the merge commit.
 
+## release-2026-11-11-ncaab (tag pending): college basketball November-December calibration curve
+
+**What changed:** college basketball probabilities in November and December use their own calibration curve (early non-conference games land above quote); January-April a slightly shrunk one. Daily List bar stays 85%. Other sports unchanged.
+
+**Evidence:** fitted on 2024-25, checked on 2025-26 (5,814 games): log loss 0.5523 -> 0.5499, gain 0.0024, p(worse) 0.01; 65%+ gap 0.013 -> 0.022 (limit +0.01, passed). Redo of #137 on current main, identical numbers. `claude/ncaab-season-phase-2026-11-05.md`.
+
+**Files:** `sports.py` (`PHASE_MONTHS`, `fit_phase_calibration`, `calibrate(..., when)`), `sports.json` (ncaab only), `tests/test_sports_phase_cal.py`, the note.
+
+**Not changed:** Elo constants, list bar, other sports, the Card.
+
+**Roll back:** `git revert` the commit; ncaab returns to the single calibration.
+
 ## release-2026-11-09-2 (pending tag): double the office
 
 **What changed.** Douglas (9 Nov 2026): "Please double output. I want agents
