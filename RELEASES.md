@@ -4,7 +4,7 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
-## 2026-11-11-2: the Card's filler takes only 60%+ favourites (tag pending)
+## 2026-11-11-3: the Card's filler takes only 60%+ favourites (tag pending)
 
 **What changed:** the empty-day filler (the wider rule) now takes only picks the bookmakers make 60%+ favourites, like the full rule, not 55%+. Douglas, on Saturday 14 Nov's filler (Luton, Southend, Almere City): "Make sure all picks are more like Almere and less like Luton and Southend." Luton (the bookmakers 56%) is off; Saturday's filler is rebuilt on every build. Wider-rule groups carry `wideRule` (2), tallied apart in `cardWideByRule`; the page's filler lines read the floor from the rules.
 
