@@ -28,7 +28,12 @@ def tennis(i, odds, last, model=0.76):   # 75%+ on model and tested rate, no mor
 
 
 class PriceTiming(unittest.TestCase):
+    # these fixtures are 76% tennis legs, written under the 75% floor; the
+    # floor is 85% from 11 Nov 2026 (CARD_RULE 10), which is not what is tested
+    def tearDown(self): self._floor.stop()
     def setUp(self):
+        from unittest import mock
+        self._floor = mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.75}); self._floor.start()
         self.dir = tempfile.mkdtemp()
         legs = [fb(1, 1.30, 1.35), fb(2, 1.40, 1.36),
                 fb(3, 1.25, 1.30, est=True, priced={"odds": 1.28, "best": 1.30, "bookOdds": {"William Hill": 1.30}, "margin": 1.04,

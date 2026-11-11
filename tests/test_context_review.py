@@ -100,8 +100,8 @@ class Veto(unittest.TestCase):
             l["context"] = {"verdict": "against"}
             self.assertIsNone(G.card_fault(l))
 
-    def test_rule_is_9(self):
-        self.assertEqual(G.CARD_RULE, 9); self.assertTrue(G.CARD_CONTEXT)
+    def test_rule_is_9_or_later(self):
+        self.assertGreaterEqual(G.CARD_RULE, 9); self.assertTrue(G.CARD_CONTEXT)
         self.assertIn("context", G.POOL_KEYS)
 
 

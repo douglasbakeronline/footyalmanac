@@ -2487,8 +2487,10 @@ function appendFixture(sec, g, i, dayDate, btts){
     saveStarred();
     star.textContent = starGlyph(id);
     star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
-    if(!$("#starred").hidden) renderStarred();
-    if(!$("#list").hidden) renderList();
+    holdPlace(star, id, () => {
+      if(!$("#starred").hidden) renderStarred();
+      if(!$("#list").hidden) renderList();
+    });
   });
 
   const btn = document.createElement("button");
@@ -2504,13 +2506,14 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
     <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name)}</div>`;
-  btn.addEventListener("click", ()=>{
+  btn.dataset.oid = id;
+  btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
     state.open = state.open===id ? null : id;
     render();
     if(!$("#starred").hidden) renderStarred();
     if(!$("#list").hidden) renderList();
     if(!$("#today").hidden) renderToday();
-  });
+  }));
 
   line.appendChild(star);
   line.appendChild(btn);
@@ -3508,6 +3511,28 @@ const accLine = a => !a ? "" : accLive(a)
   : `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.hit)}%</em> of the time across
   <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.`;
 
+/* 11 Nov 2026 (Douglas: "whenever I click on a fixture on the daily list it
+   auto scrolls back to the top"): opening a row redraws its board, and the
+   redraw empties the board for a moment, so the browser clamped the scroll
+   near the top. The tapped row is put back where it was on the screen. */
+function holdPlace(btn, id, redraw){
+  const top = btn.getBoundingClientRect().top;
+  redraw();
+  const sel = `[data-oid="${window.CSS && CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"')}"]`;
+  const now = [...document.querySelectorAll(sel)].find(b => b.offsetParent !== null);
+  if(!now) return;
+  const dy = now.getBoundingClientRect().top - top;
+  if(Math.abs(dy) > 1) window.scrollBy({top: dy, left: 0, behavior: "auto"});
+  try { now.focus({preventScroll: true}); } catch(err) {}
+}
+/* 11 Nov 2026 (Douglas, after Casper Ruud lost at 1.22: "Tennis score must
+   go lower"; then "Both"): a tennis pick under 80% says so. Graded tennis at
+   70-80% lands about as quoted (75.6% v 74.5%), so one in four loses: fine as
+   a single read, costly in an accumulator. The Card takes tennis at 85%+. */
+function tennisWary(g){
+  if(!g || g.sport !== "tennis" || !(g.confidence < 0.80)) return "";
+  return `<span class="flagged wary" title="A tennis pick under 80%: about one in four of these loses, so it is a weak accumulator leg. The Card takes tennis only at 85% and over.">Under 80</span>`;
+}
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
@@ -3747,7 +3772,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${tennisWary(g)}</div></div>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
@@ -3779,7 +3804,7 @@ function sportRow(g, i, showSport, host){
     state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
     state.starredGames = state.starredGames || {};
     state.starredGames[id] = g;
-    saveStarred(); rerenderOpen();
+    saveStarred(); holdPlace(star, id, rerenderOpen);
   });
   const btn = document.createElement("button");
   btn.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
@@ -3795,8 +3820,9 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div>`;
-  btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${tennisWary(g)}</div>`;
+  btn.dataset.oid = id;
+  btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);
   const frag = document.createDocumentFragment();
   frag.appendChild(line);
@@ -5273,12 +5299,12 @@ function renderToday(){
       ${C.modelRule ? `<p><b>The model's own picks</b> (from 11 Nov 2026). ${(C.build || []).length === 1 ? `Up to three groups a day from different fixtures, each paying <b>2x or more</b> (the 3x was dropped on 11 Nov: replayed on five football seasons and the last fortnight, it lost in three seasons of four and dragged the card down), from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.` : `Up to six groups a day from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.`} Every pick is one the model rates ${pct(C.fairMin || 0.6)}%+ and at or above the bookmakers' own chance, priced 1.15 to 1.90 by a bookmaker,
-      football from the core leagues, a tennis pick at 75%+ on the model and its tested rate, NFL and college sports off. Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
+      football from the core leagues, a tennis pick at 85%+ on the model and its tested rate (75% until 11 Nov), NFL and college sports off. Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       ${C.filler === false ? `A day the model's picks leave empty stays empty: no group is better than a weak one (the wider-rule filler was switched off on 11 Nov; its groups stay in the record).` : `A day the model's picks leave empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers ${Math.round((C.wideFairMin || 0.6) * 100)}%+), marked and graded apart.`}</p>` : `<p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay; 31 Oct: 10+ under lost on every sample) and the opposition priced 9 or longer (6 Nov 2026: on last season's replay favourites with the opposition at 9+ landed 84% against 76% quoted, and with the opposition under 6 they landed below quote; the opposition's price is shown on every pick). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
+      live record, a tennis pick needs the model and its tested rate both at 85%+ (75% from 29 Oct to 11 Nov 2026), and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay; 31 Oct: 10+ under lost on every sample) and the opposition priced 9 or longer (6 Nov 2026: on last season's replay favourites with the opposition at 9+ landed 84% against 76% quoted, and with the opposition under 6 they landed below quote; the opposition's price is shown on every pick). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+), marked and graded apart.</p>`}</div>
     <ol class="tb-play">

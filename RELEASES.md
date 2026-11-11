@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): tennis at 85% on the Card, "Under 80" on tennis rows, rows keep their place
+
+**What changed:** the Card takes a tennis pick only at 85%+ on the model and its tested rate (was 75%), `CARD_RULE` 10. Every tennis row under 80% shows "Under 80". Opening or starring a row no longer moves the page: the tapped row stays where it was on screen.
+**Evidence:** Douglas, after Casper Ruud lost at 1.22 on a Hill five-fold: "Tennis score must go lower", then "Both". Graded tennis lands on quote or above from 70% (1,422 picks), so the numbers stay; the Card's tennis legs landed 22 of 40 (z -2.2). Browser check at 390 and 1280: row top unchanged after opening, no sideways scroll. `claude/tennis-floor-85-2026-11-11.md`.
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`tennis75`), tests, `claude/tennis-floor-85-2026-11-11.md`, `CLAUDE.md`.
+**Not changed:** any tennis number, the Daily List bar, UK-book pricing for 75-85% tennis (`BOOKS_SPORT_MIN`).
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-11 (tag pending): the Card's league limit read by the replay and the funnel, `m7wide` pre-registered
 
 **What changed:** advisory only. Under rule 7/8 the Card's core-league limit was hard-coded in `groupings.model_fault`, so the funnel could not relax it and named the value demand as the one condition costing groups. `model_fault` now reads `CARD_CORE_ONLY` as `card_fault` does; it stays True, so the live Card is unchanged (replay `live` identical before and after). The funnel gains a "league" relief and `tools/card_replay.py` gains `m7wide` (the rule 8 Card with the wider API-Football leagues, cups and new leagues still out), registered before it was read.

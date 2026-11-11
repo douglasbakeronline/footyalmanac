@@ -200,6 +200,7 @@ if __name__ == "__main__":
     unittest.main()
 
 
+@mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.75})   # written under the 75% floor (85% from 11 Nov 2026)
 class TennisOnTheCard(unittest.TestCase):
     def test_tennis_leg_is_not_listoff(self):
         acc = {"hit": 0.8, "n": 200, "cumHit": 0.8, "cumN": 200}
@@ -334,13 +335,14 @@ class SportRule(unittest.TestCase):
         for s in ("nfl", "cfb"):
             self.assertIn("off the Card", G.card_fault(leg(0, 1.40, 0.80, f"{DATE}T20:00:00Z", sport=s)))
 
-    def test_tennis_needs_75_on_model_and_tested_rate(self):
-        t = dict(leg(1, 1.40, 0.70, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
-        self.assertIn("75%", G.card_fault(t))
-        t = dict(leg(2, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.70)
-        self.assertIn("75%", G.card_fault(t))
-        t = dict(leg(3, 1.30, 0.78, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
-        self.assertIsNone(G.card_fault(t))
+    def test_tennis_needs_85_on_model_and_tested_rate(self):
+        # 11 Nov 2026 (CARD_RULE 10): 85%, up from 75%
+        t = dict(leg(1, 1.40, 0.80, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.90)
+        self.assertIn("85%", G.card_fault(t))
+        t = dict(leg(2, 1.12, 0.88, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)
+        self.assertIn("85%", G.card_fault(t))
+        t = dict(leg(3, 1.12, 0.88, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.88)
+        self.assertNotIn("85%", G.card_fault(t) or "")
 
     def test_football_and_nba_unchanged(self):
         self.assertIsNone(G.card_fault(leg(4, 1.40, 0.66, f"{DATE}T12:00:00Z")))
@@ -445,6 +447,7 @@ class MoreGroups(unittest.TestCase):
         self.assertTrue(all(g["locked"] for g in again))
 
 
+@mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.75})   # written under the 75% floor (85% from 11 Nov 2026)
 class UnderMarket(unittest.TestCase):
     """29 Oct 2026 backtest: a football leg needs the model at least 5 points
     under the bookmakers' chance. Full rule only; the wider rule is graded apart."""
@@ -577,6 +580,7 @@ class PoolArchive(unittest.TestCase):
             G.ARCHIVE = saved
 
 
+@mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.75})   # written under the 75% floor (85% from 11 Nov 2026)
 class OppositionPrice(unittest.TestCase):
     """6 Nov 2026: a football leg needs the opposition priced CARD_OPP_MIN
     (9+); unpriced opposition fails too. Other sports are not judged on it."""

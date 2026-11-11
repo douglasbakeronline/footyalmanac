@@ -27,7 +27,7 @@ class TwoXOnly(unittest.TestCase):
         self.assertTrue(gs)
         self.assertEqual({g["name"] for g in gs}, {"Card 2x"})
         self.assertLessEqual(len(gs), 3)
-        self.assertEqual(G.CARD_RULE, 9)
+        self.assertEqual(G.CARD_RULE, 10)
 
 
 class ModelRule(unittest.TestCase):

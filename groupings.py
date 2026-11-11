@@ -895,7 +895,7 @@ def books_wanted(l, sports):
     lo, hi = min(CARD_ODDS[0], CARD_WIDE_ODDS[0]), max(CARD_ODDS[1], CARD_WIDE_ODDS[1])
     return (l.get("odds") and not l.get("est") and not l.get("bookOdds") and l["sport"] in sports
             and l["sport"] not in CARD_SPORTS_OFF and lo <= l["odds"] <= hi
-            and (l.get("pModel") or 0) >= CARD_SPORT_MIN.get(l["sport"], CARD_WIDE_FAIR_MIN))
+            and (l.get("pModel") or 0) >= BOOKS_SPORT_MIN.get(l["sport"], CARD_WIDE_FAIR_MIN))
 
 
 def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False):
@@ -1468,7 +1468,17 @@ CARD_POOL = 24
 # not been tested live in volume. Football, rugby and the NBA are unchanged.
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
 CARD_SPORTS_OFF = {"nfl", "cfb", "ncaab"}   # ncaab 31 Oct 2026: no live record yet (season starts Nov); back at 50 graded games, Douglas's call
-CARD_SPORT_MIN = {"tennis": 0.75}
+CARD_SPORT_MIN = {"tennis": 0.85}
+# 11 Nov 2026 (CARD_RULE 10, Douglas after Casper Ruud lost at 1.22 on a Hill
+# accumulator: "Tennis score must go lower", then "Both" on the two changes
+# put to him): the tennis floor rises from 75% to 85%. Not a recalibration:
+# graded tennis lands on quote or above at 70%+ (70-80% 75.6% v 74.5%,
+# 80-90% 86.8% v 84.6%, 90%+ 96.7% v 92.8%, 1,422 picks), but on the Card
+# tennis legs landed 22 of 40 (z -2.2), most of them 75-85%. The owner's
+# call, not a gate pass; "tennis80" and "tennis75" replay the lower floors.
+# UK-book pricing keeps the old 75% (BOOKS_SPORT_MIN) so the Hill price still
+# shows on those picks.
+BOOKS_SPORT_MIN = {"tennis": 0.75}
 # 29 Oct 2026, second pass (tools/card_replay.py on the priced archive, 11 Sep
 # to 28 Oct): of the 193 legs that cleared the Card rule, core-league legs
 # landed 78.8% against 67.5% quoted (n=113, +9% a unit at the average price)
@@ -1565,12 +1575,12 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 9     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026)
+CARD_RULE = 10    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
 # it's about finding a good edge." So from CARD_RULE 7 the Card is built by
-# the Model card's rule (model_fault): a priced core-league or 75%+ tennis /
+# the Model card's rule (model_fault): a priced core-league or CARD_SPORT_MIN tennis (85%+ since 11 Nov 2026) /
 # NBA / rugby pick at 1.15-1.90 the model rates 60%+ and at or above the
 # bookmakers' chance, the group's chance the model's own (as_model), staked
 # as before. The evidence at the switch, all under the 30 Nov gate: live on
@@ -1612,7 +1622,7 @@ CARD_RANGE = {n: (lo, hi) for n, lo, hi, _ in CARD_KINDS}
 # 31 Oct 2026, Douglas: "the whole point is that our model is meant to pick
 # winners". The Model card: the model's own picks, built beside the Card on
 # paper every day, never staked or pushed, graded apart (cardModel). Same
-# price band and kinds; a leg is a core-league / 75%+ tennis pick the MODEL
+# price band and kinds; a leg is a core-league / CARD_SPORT_MIN tennis pick the MODEL
 # rates 60%+ and at or above the bookmakers' chance (the model's own value
 # call), and the group's chance is the model's number, not the market's. If
 # these beat the price over the month, the Card changes.
@@ -2389,8 +2399,9 @@ def avoid_list(dl, limit=12):
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "off", "level": "avoid", "score": 0.05})
         elif l.get("sport") in CARD_SPORT_MIN and l["pModel"] >= 0.70 and \
                 (l["pModel"] < CARD_SPORT_MIN[l["sport"]] or (l.get("hit") or 0) < CARD_SPORT_MIN[l["sport"]]):
-            # 29 Oct 2026: a tennis pick under the Card's 75% floor on the model
-            # or its tested rate; such legs landed 59% on the Card (n=32)
+            # a tennis pick under the Card's floor (85% since 11 Nov 2026, 75%
+            # from 29 Oct) on the model or its tested rate; tennis legs landed
+            # 22 of 40 on the Card to 9 Nov
             out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "thin", "level": "caution", "score": 0.04})
     return sorted(out, key=lambda x: (x["level"] != "avoid", -x["score"]))[:limit]
