@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-16: the context check graded in the nightly Card review (tag pending)
+
+**What changed:** advisory only. The nightly Card review issue gains a "context check" section: every settled pick the check read, by verdict (clear, caution, against), landed against the model's own number and the bookmakers' chance, from `groupings-record.json` `cardContext`. It carries the pre-registered review written into words: at 30 settled "against" picks, if they land at or above the model's number, the review says in bold that the next build session sets `CARD_CONTEXT = False`; otherwise it says the veto stays, or how many are still to come.
+
+**Why:** the veto (CARD_RULE 9) went live untested on 11 Nov with a review at 30 "against" picks, but nothing printed its tally, so the review had no trigger. Same shape as the tennis tripwire.
+
+**Files:** `tools/card_review_post.py` (`context_section`, `CONTEXT_REVIEW_AT`), `tests/test_card_review_post.py`, `claude/context-check-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** the Card's rule, the veto, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-15: "Is it working?" made readable (tag pending)
 
 **What changed:** the Bets tab's scoreboard was fourteen tiles of dense text. It is now one headline (groups won and lost, the win rate against expected, the return at the page's stakes), one plain verdict, a table of picks by sport with a status for each (on or above, slightly under, watch, coming off), and a "More numbers" fold holding the rest as a table (each Card rule, each window, late, wider-rule and paper groups, prices that shortened). The verdict now says when the Card is winning as often as expected but still losing money, rather than a green "on quote".

@@ -451,7 +451,9 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   "I want this contextual review now").** `context_review.py` reads each Card
   pick with web search; "against" with a source keeps it off. The owner's
   call, untested; graded forward (`cardContext`). Review at 30 "against"
-  picks: if they land at or above the model's number, `CARD_CONTEXT = False`.
+  picks: if they land at or above the model's number, `CARD_CONTEXT = False`; the nightly Card review prints the tally and
+  says in bold when this has fired (`card_review_post.context_section`), and
+  the next session acts without asking.
 - **No Reports page for the weekly PDF.** It adds nothing to the return;
   the Sunday email is the delivery.
 - **Opposition 9+ (rule 6) stays**: the one condition that holds in every

@@ -132,3 +132,31 @@ class CoverageAndKelly(unittest.TestCase):
     def test_kelly_above_quote_prints_numbers(self):
         line = P.kelly_line({"landedOverExpected": 1.2, "quarterKelly": {"median": 0.05, "p95Drawdown": 0.1}, "halfKelly": {"median": 0.08, "p95Drawdown": 0.2}})
         self.assertIn("quarter Kelly: median +5.0%", line)
+
+
+class ContextCheck(unittest.TestCase):
+    """11 Nov 2026: the context check by verdict, and its pre-registered review
+    at 30 settled "against" picks (claude/context-check-2026-11-11.md)."""
+    def t(self, legs, landed, model, fair=0.7):
+        return {"legs": legs, "landed": landed, "rate": round(landed / legs, 4), "model": model, "fair": fair, "zModel": 0.1}
+
+    def test_table_and_waiting(self):
+        body = post_with({"cardContext": {"clear": self.t(10, 8, 0.72), "against": self.t(4, 2, 0.70, None)}})
+        self.assertIn("## The context check", body)
+        self.assertIn("| clear | 10 | 8 (80%) | 72% | 70% | 0.1 |", body)
+        self.assertIn("| against | 4 | 2 (50%) | 70% | n/a | 0.1 |", body)
+        self.assertIn("(4 so far)", body)
+        self.assertNotIn("tripwire fired", body)
+
+    def test_fires_when_against_lands_at_or_above_model(self):
+        body = post_with({"cardContext": {"against": self.t(30, 22, 0.70)}})
+        self.assertIn("**Context tripwire fired: 30", body)
+        self.assertIn("`CARD_CONTEXT = False`", body)
+
+    def test_stays_when_against_lands_under(self):
+        body = post_with({"cardContext": {"against": self.t(31, 15, 0.70)}})
+        self.assertIn("so the veto stays", body)
+        self.assertNotIn("tripwire fired", body)
+
+    def test_no_section_without_reads(self):
+        self.assertNotIn("context check", post_with({}))
