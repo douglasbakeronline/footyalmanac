@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-11T16:29:00Z",
+ "graded": "2026-11-11T18:58:54Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,12 +67,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 5,
-   "won": 5,
+   "n": 6,
+   "won": 6,
    "rate": 1.0,
-   "quoted": 0.8642,
-   "returned": 5.1,
-   "ret": 0.02
+   "quoted": 0.8525,
+   "returned": 6.27,
+   "ret": 0.045
   },
   "notAtBook": {
    "n": 15,
@@ -87,6 +87,24 @@
    "quoted": 0.9147
   },
   "bySport": {
+   "football": {
+    "atBook": {
+     "n": 1,
+     "won": 1,
+     "rate": 1.0,
+     "quoted": 0.7941,
+     "returned": 1.17,
+     "ret": 0.17
+    },
+    "notAtBook": {
+     "n": 0,
+     "won": 0
+    },
+    "unchecked": {
+     "n": 0,
+     "won": 0
+    }
+   },
    "nba": {
     "atBook": {
      "n": 1,
@@ -168,12 +186,12 @@
    "ncaab|utah state aggies|utah tech trailblazers|2026-11-11": 0,
    "ncaab|new mexico lobos|little rock trojans|2026-11-11": 0,
    "ncaab|tcu horned frogs|ul monroe warhawks|2026-11-11": 0,
-   "ncaab|uc davis aggies|incarnate word cardinals|2026-11-11": 1.1,
+   "ncaab|uc davis aggies|incarnate word cardinals|2026-11-11": 1.11,
    "ncaab|san diego state aztecs|bethune-cookman wildcats|2026-11-11": 1.02,
    "ncaab|western carolina catamounts|virginia lynchburg dragons|2026-11-11": -1,
    "football|ghana|somalia|2026-11-12": 1.07,
    "football|senegal|sudan|2026-11-12": 1.1,
-   "football|new zealand|india|2026-11-12": 1.29,
+   "football|new zealand|india|2026-11-12": 1.25,
    "nba|chicago bulls|san antonio spurs|2026-11-12": 1.07,
    "ncaab|st. john's red storm|colgate raiders|2026-11-12": 1.0,
    "ncaab|michigan wolverines|marquette golden eagles|2026-11-12": 0,
@@ -1333,7 +1351,7 @@
      "paidLock": null,
      "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Celtic",
@@ -1385,8 +1403,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6383,
-       "status": "pending",
-       "result": null,
+       "status": "void",
+       "result": "no result",
        "opp": null
       }
      ]
