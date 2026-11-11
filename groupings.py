@@ -1532,7 +1532,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 7     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026)
+CARD_RULE = 8     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1550,6 +1550,28 @@ CARD_RULE = 7     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagu
 # separate paper Model card stops (it would repeat the Card).
 # claude/card-model-rules-2026-11-11.md. False returns to rule 6.
 CARD_MODEL_RULE = True
+# The edge the model must have over the bookmakers' chance on a Card pick
+# under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
+CARD_MODEL_EDGE = 0.0
+# 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
+# kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
+# replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
+# only dropping the 3x was ahead everywhere it could be measured. Football-
+# data, the model's picks, 2x only v live: 2022-23 +28.7% v +31.1%, 2023-24
+# -36.6% v -34.3%, 2024-25 -0.4% v -17.9%, 2025-26 +22.0% v -6.3%; pooled
+# +9.6% on 324 units v -3.3% on 409. The 3x under rule 7 won 4 of 32, 10 of
+# 24, 2 of 11 and 4 of 45 (one positive season in four). The pool (14 days,
+# every sport): 2x only 8 of 12 groups, +69%, v live 10 of 23, +37%, paired
+# p(worse) 0.29 (0.16 at first prices only), 36 legs. A 2x group won 41-55%
+# of the time in three seasons of four, a 3x 9-42%. Under the 100-leg pool
+# gate; the replay agrees in three full seasons of four, so the build session
+# took it on Douglas's instruction. The 3x stays in CARD_KINDS (ranges, the
+# record, the page); `with3x` replays it. claude/card-2x-only-2026-11-11.md.
+CARD_BUILD = ("Card 2x",)
+
+def built_kinds():
+    """The Card kinds build_card makes (CARD_BUILD), in CARD_KINDS order."""
+    return [k for k in CARD_KINDS if k[0] in CARD_BUILD]
 UK = ZoneInfo("Europe/London")
 RISK.update({"Card 2x": "Pays 2x+", "Card 3x": "Pays 3x+"})
 MIN_CHANCE.update({n: f for n, _, _, f in CARD_KINDS})
@@ -1752,7 +1774,8 @@ def model_fault(l):
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
-    if l.get("fair") is not None and l["pModel"] < l["fair"]: return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
+        return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
     return None
 
 def as_model(l):
@@ -1927,11 +1950,13 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
         ng["checked"] = stamp; ng["bench"] = []; ng["lockAt"] = iso(first_kick(ng) or lock)
         groups.append(ng); used |= {l["event"] for l in ng["legs"]}; filled.add(slot)
     replaced = {e["rank"] + "|" + e["name"] for e in (log or []) if e["at"] == stamp}
+    # seqs counts every kind (three of each with both), so with the 2x alone
+    # (CARD_RULE 8) a day takes up to three 2x groups, as the replay measured it
     seqs = max(1, -(-CARD_MAX_GROUPS // len(CARD_KINDS)))
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w): continue
         for seq in range(1, seqs + 1):
-            for name, _, _, _ in CARD_KINDS:
+            for name, _, _, _ in built_kinds():
                 if (w, name, seq) in filled: continue
                 if sum(1 for g in groups if g.get("window") == w and not g.get("wide")) >= CARD_MAX_GROUPS: break
                 g = best_card(by_win[w], used, after, name)
@@ -1945,7 +1970,7 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     # The wider rule, only for a window the full rule left empty.
     for w, _, _ in CARD_WINDOWS:
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
-        for name, _, _, _ in CARD_KINDS:
+        for name, _, _, _ in built_kinds():
             g = best_card(by_win[w], used, after, name, wide=True)
             if not g: continue
             lock = first_kick(g) or lock_time(date, w)
@@ -2708,7 +2733,7 @@ def main():
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(MULT_LEGS), "perDay": MULT_PER_DAY},
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
-                              "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE,
+                              "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),

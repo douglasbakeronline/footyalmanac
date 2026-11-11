@@ -18,10 +18,22 @@ def leg(i, odds, model, hour=13, sport="football"):
     return G.honest(l)
 
 
+class TwoXOnly(unittest.TestCase):
+    """CARD_RULE 8 (11 Nov 2026): the Card builds the 2x alone, up to three a day."""
+    def test_only_2x_groups(self):
+        L = [leg(i, 1.40, 0.74, hour=10 + i) for i in range(12)]
+        for i, l in enumerate(L): l["comp"] = f"c{i}"
+        gs = G.build_card(L, DAY, NOW, log=[])
+        self.assertTrue(gs)
+        self.assertEqual({g["name"] for g in gs}, {"Card 2x"})
+        self.assertLessEqual(len(gs), 3)
+        self.assertEqual(G.CARD_RULE, 8)
+
+
 class ModelRule(unittest.TestCase):
     def test_live_rule_is_the_models(self):
         self.assertTrue(G.CARD_MODEL_RULE)
-        self.assertEqual(G.CARD_RULE, 7)
+        self.assertGreaterEqual(G.CARD_RULE, 7)
 
     def test_model_at_or_above_the_market_passes(self):
         self.assertIsNone(G.card_fault(leg(1, 1.50, 0.70)))       # bookmakers about 67%, model 70%: opposition 5.0 no longer matters
@@ -33,7 +45,7 @@ class ModelRule(unittest.TestCase):
         self.assertIsNotNone(G.card_fault(leg(1, 1.80, 0.58)))
 
     def test_group_chance_is_the_models(self):
-        L = [leg(i, 1.45, 0.74) for i in range(5)]
+        L = [leg(i, 1.40, 0.74) for i in range(5)]   # three at 1.40 make a 2x (2.74)
         gs = G.build_card(L, DAY, NOW, log=[])
         self.assertTrue(gs)
         g = gs[0]

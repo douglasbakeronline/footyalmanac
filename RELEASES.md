@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-5: the Card builds the 2x alone (CARD_RULE 8) (tag pending)
+
+**What changed:** the Card now makes up to three 2x groups a day and no 3x. Douglas: "Just do better on the groups." The Bets tab's rule and staking lines say so. The 3x's record stays.
+
+**Evidence:** six shapes of the model's-picks Card replayed. Football-data, five seasons, the model's legs: 2x only +9.6% pooled on 324 units v the current Card -3.3% on 409, ahead in 2024-25 (-0.4% v -17.9%) and 2025-26 (+22.0% v -6.3%), level in 2022-23 and 2023-24; the rule 7 3x positive in one season of four. Pool, every sport: 2x only 8 of 12 groups, +69%, v 10 of 23, +37%, p(worse) 0.29 (0.16 at first prices). A bigger edge demand made it worse. Under the 100-leg pool gate: the build session's call on Douglas's instruction. Suite OK, nametest clear, Bets tab checked at 1280 and 400 wide. Note: `claude/card-2x-only-2026-11-11.md`.
+
+**Files:** `groupings.py` (`CARD_BUILD`, `built_kinds`, `CARD_MODEL_EDGE`), `index.html`, `tools/card_replay.py` (m7 variants, `with3x`), `tools/card_legs_history.py` (`cardM7`), tests, `claude/card-2x-only-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** the leg rule, stakes per group, the Daily List, any model.
+
+**Roll back:** `CARD_BUILD = ("Card 2x", "Card 3x")` and `CARD_RULE = 7`, or `git revert` the merge commit.
+
 ## 2026-11-11-4: the Card is the model's own picks (CARD_RULE 7) (tag pending)
 
 **What changed:** the Card now takes the model's own picks: each one the model rates 60%+ and at or above the bookmakers' chance, priced 1.15 to 1.90, with the group's chance the model's number. Douglas: "I want the model to pick higher than the bookmakers ... The model rules." Stakes, kinds, the bench and the filler are unchanged; the separate paper Model card stops (it would repeat the Card). The Bets tab's rule text and each group's footnote say so.
