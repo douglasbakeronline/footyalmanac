@@ -4,6 +4,32 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 Card: Douglas's mismatch rule tested against the price (tag pending)
+
+**What changed:** `tools/card_legs_history.py` replays the rule Douglas
+described after his 8-fold won (#224), exactly as pre-registered on the
+issue: a top-quarter home side, 10+ points from its last five, scoring in
+the league's top third and conceding in its bottom third, against a
+bottom-half side with 5 or fewer from its last five and the opposite goal
+record, both 6+ games played, home win at 1.15-1.60. The table is built from
+football-data's season file, earlier dates only. Per season and pooled:
+singles landed v the bookmakers' fair chance and return at average and best
+price, slips of 2, 4, 6 and 8 legs a day, how many legs the Edge flag already
+catches and how the rest do, and the split by the home side's games played
+(6-10, 11-20, 21+) with the 4-folds. `mismatchPooled.verdict` applies the
+issue's gate (ahead of the price in 4 of 5 seasons, pooled p(loss) at the
+best price 0.30 or less). `edge_accas` now calls a shared `accas`; its output
+is unchanged.
+**Evidence:** CI run 42932321819, 2022-23 to 2026-27: 185 legs, landed
+74.1% v 72.2% quoted, -3.7% at the average price, -1.2% at the best (p(loss)
+0.60), ahead of the price in 3 seasons of 5: it does not beat the price. The
+11-20 games band passes alone (55 legs, +12.0% at best) but 21+ loses (105
+legs, -6.6%), so no flag. `claude/mismatch-rule-2026-11-11.md`.
+**Files:** `tools/card_legs_history.py`, `tests/test_mismatch_rule.py`,
+`claude/mismatch-rule-2026-11-11.md`, `CLAUDE.md`.
+**Not changed:** the Card's rule, the Edge flag, any model, the page.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-11-2 At a glance: swipe through the coming days; true-size labels sideways (tag pending)
 
 For a reader: Today at a glance on the Daily List now holds today and each
