@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-6 Build log: one line per price source (tag pending)
+
+For the owner: each build's log now prints what every price source did
+(matched, calls, allowance, any error), so whether Betfair, Matchbook or
+SportsGameOdds is working can be read straight off the Actions log.
+
+Files: `groupings.py` (the summary print in `main`). Nothing on the page.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-11 (tag pending): Own-band List admission re-run, note only
 
 **What changed:** a note, no code. The rule was shipped on 20 Oct 2026; the replay re-run reproduces it.
