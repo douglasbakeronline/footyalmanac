@@ -168,6 +168,35 @@ def legs_of(rows):
     return by
 
 
+# 11 Nov 2026: payout bands for the payout variants (name, lowest combined
+# price, highest, lowest combined chance, picks a group). The floor chance
+# is the band's fair chance less a margin's worth, as the 2x's 0.30 is.
+PAYOUT_BANDS = {
+    "Card 1.5x": (1.45, 1.99, 0.40, (2, 3)),
+    "Card 2.5x": (2.40, 2.99, 0.24, (3, 4, 5)),
+    "Card 3x": (3.00, 4.60, 0.18, (3, 4, 5)),
+}
+PAYOUTS = {
+    "pay15": ["Card 1.5x"],
+    "pay25": ["Card 2.5x"],
+    "pay3": ["Card 3x"],
+    "ladder": ["Card 3x", "Card 2.5x", "Card 2x", "Card 1.5x"],
+}
+
+
+def payout_patch(kinds):
+    """Constants for a Card built from the given payout bands (in order)."""
+    band = dict(PAYOUT_BANDS, **{"Card 2x": (2.0, 3.0, 0.30, G.CARD_LEGS)})
+    ck = [(n, band[n][0], band[n][1], band[n][2]) for n in kinds]
+    legs = tuple(sorted({k for n in kinds for k in band[n][3]}))
+    p = {"CARD_KINDS": ck, "CARD_BUILD": tuple(kinds), "CARD_LEGS": legs, "_LEGS": {n: tuple(band[n][3]) for n in kinds},
+         "CARD_RANGE": dict(G.CARD_RANGE, **{n: (lo, hi) for n, lo, hi, _ in ck}),
+         "MIN_CHANCE": dict(G.MIN_CHANCE, **{n: f for n, _, _, f in ck}),
+         "CARD_STAKE": dict(G.CARD_STAKE, **{n: 2 for n in kinds})}
+    if len(kinds) > 1: p["_PER_KIND"] = 1     # the ladder: one group a band a day
+    return p
+
+
 VARIANTS = {
     "live": {},
     "under8": {"CARD_UNDER_MARKET": 0.08},
@@ -229,6 +258,13 @@ VARIANTS = {
     # on 6-14 Nov). Pre-registered before any result: the model up to 5 points
     # under the bookmakers' chance. Volume is not return; gated like the rest.
     "m7under5": {"CARD_MODEL_EDGE": -0.05},
+    # 11 Nov 2026, Douglas: "Preferably 3x or more. Then 2.5x. Then 2x. Then
+    # 1.5x ... I need the groups to win every time. But ultimately this has to
+    # be a profitable business." Pre-registered before any result: the rule 8
+    # Card with its 2x swapped for one payout band each (the model's own picks,
+    # its most likely combination in the band, up to three a day, two units a
+    # group like the 2x), and the ladder in his order, one group a band.
+    **{v: payout_patch(kinds) for v, kinds in PAYOUTS.items()},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
@@ -283,14 +319,19 @@ def build(day_legs, date, variant):
         return groups
     saved = {k: getattr(G, k) for k in patch if hasattr(G, k)}
     legs_3x = patch.get("CARD_LEGS_3X")
+    legs_of_kind = patch.get("_LEGS") or {}
     for k, v in patch.items():
-        if k != "CARD_LEGS_3X": setattr(G, k, v)
+        if k != "CARD_LEGS_3X" and not k.startswith("_"): setattr(G, k, v)
     try:
         after = G.lock_time(date, "Day"); groups, used = [], set()
-        for seq in (1, 2, 3):
+        for seq in ((1,) if patch.get("_PER_KIND") else (1, 2, 3)):
             for name, _, _, _ in G.built_kinds():
                 if len(groups) >= G.CARD_MAX_GROUPS: break
-                if legs_3x and name == "Card 3x":
+                if name in legs_of_kind:
+                    old_legs = G.CARD_LEGS; G.CARD_LEGS = legs_of_kind[name]
+                    try: g = G.best_card(day_legs, used, after, name)
+                    finally: G.CARD_LEGS = old_legs
+                elif legs_3x and name == "Card 3x":
                     old_legs = G.CARD_LEGS; G.CARD_LEGS = legs_3x
                     try: g = G.best_card(day_legs, used, after, name)
                     finally: G.CARD_LEGS = old_legs
@@ -324,7 +365,7 @@ def summarise(days, label):
     print(f"{label:<8} days {len(days):>2}  groups {n:>3}  won {w:>3} ({w/n*100:4.0f}%)  expected {exp/n*100:4.0f}%  "
           f"units {st:>3}  return {(ret/st-1)*100:+5.0f}% (90% {vals[200]*100:+.0f} to {vals[3799]*100:+.0f})  best {(best/st-1)*100:+5.0f}%  "
           f"legs {lw}/{len(legs)} landed {lw/len(legs)*100:4.1f}% v quoted {lq/len(legs)*100:4.1f}%")
-    for name, _, _, _ in G.CARD_KINDS:
+    for name in dict.fromkeys(g["name"] for g in gs):
         k = [g for g in gs if g["name"] == name]
         if k:
             kw = sum(g["won"] for g in k); ks = sum(g["stake"] for g in k); kr = sum(g["stake"] * g["odds"] for g in k if g["won"])

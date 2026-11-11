@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-11: the Card replayed by payout, 1.5x to 3x (tag pending)
+
+**What changed:** advisory only. `tools/card_replay.py` and `tools/card_legs_history.py` replay the Card at four payouts (`pay15`, `pay25`, `pay3`) and Douglas's ladder (3x, 2.5x, 2x, 1.5x a day), on the pool nightly and on football-data weekly.
+
+**Evidence:** four full football-data seasons pooled: 2x (live) +10.3%, 1.5x +0.6% (wins 58%, steadiest), 2.5x -2.5%, 3x -7.1%, ladder -0.4%. Pool (14 days): 2x +69%, 1.5x +47% (16 of 19), 3x -19%, ladder -13%. `claude/card-payout-bands-2026-11-11.md`.
+
+**Not changed:** the Card (2x, rule 8), the page.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-11 The list at William Hill counts every settled pick (tag pending)
 
 For a reader: the "Daily List at William Hill" line in How it went and the
