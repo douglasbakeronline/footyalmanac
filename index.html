@@ -1192,6 +1192,10 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .mkt .hda b{font-weight:500;color:var(--mute-ink,#6e6355)}.mkt .hda b.pk{font-weight:700;color:var(--ink)}.mkt .hda b.opp-long{color:var(--red);font-weight:600}
 .mkt .hda i{font-style:normal;margin:0 3px;color:var(--rule)}
 .og-l small .opp{color:var(--ink);font-family:var(--f-num)}
+.tb-picks{margin-top:12px}
+.tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
+.tb-picks-n{font-size:12px;color:var(--mute);margin:2px 0 8px}
+.tb-picks .og-l.cx-off{opacity:.65}
 .og-cx{margin-top:4px;font-size:11.5px;line-height:1.4;color:var(--ink-2)}
 .og-cx summary{cursor:pointer;list-style:none}
 .og-cx summary::-webkit-details-marker{display:none}
@@ -5181,6 +5185,22 @@ document.addEventListener("click", e => {
   p.querySelectorAll(".sig-later").forEach(d => { if(!/wider-rule/.test(d.textContent)) d.open = true; });
   scrollClear(p.querySelector(".pl-today") || p);
 });
+// 11 Nov 2026 (Douglas: "I can't see those"): the picks the Card's rule
+// admits today, each with its context verdict, whether or not they made a
+// group (three NBA picks cannot: two a competition at most). Not a bet.
+function cardPicksHtml(day, gs){
+  const used = new Set(gs.flatMap(g => g.legs.map(l => l.event + "|" + l.pick)));
+  const ps = (day.cardPicks || []).filter(p => !used.has(p.event + "|" + p.pick));
+  if(!ps.length) return "";
+  const B = ((OG.rules || {}).card || {}).book || "William Hill";
+  const rows = ps.map(l => { const hill = (l.bookOdds || {})[B]; const off = (l.context || {}).verdict === "against";
+    return `<div class="og-l${off ? " cx-off" : ""}"><span class="t">${ogTime(l)}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${off ? " · kept off by the context check" : ""}</small>${ogContext(l)}</span>
+      <span class="o">${l.est ? "est. " : ""}${(+l.odds).toFixed(2)}${hill ? `<small class="read">Hill ${(+hill).toFixed(2)}</small>` : ""}</span><span class="c">${pct(l.pModel)}%</span></div>`; }).join("");
+  return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}, with the context check</summary>
+    <p class="tb-picks-n">Each passes the Card's rule on its own (the model 60%+ and at or above the bookmakers, priced 1.15 to 1.90). ${gs.length ? "" : "Not enough for a group: a group needs three or more from different competitions, at most two from one, paying 2x or more. "}Shown for information, not a bet.</p>
+    <div class="og">${rows}</div></details>`;
+}
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
@@ -5207,7 +5227,7 @@ function renderToday(){
         <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : lk ? `${when}${locked ? " · placed? leave it" : " · place it once it locks"}` : "each group is open until its first kick-off; place any time before"}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
-            : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}</section>`;
+            : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}${cardPicksHtml(day, gs)}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}

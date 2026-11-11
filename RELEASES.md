@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-14: the model's backed picks, with their context verdicts, shown under the Card (tag pending)
+
+**What changed:** the Bets tab lists every pick the Card's rule admits today with its context verdict (news, numbers, sources), open by default when they make no group and folded under the groups when there are spare ones. A pick the check reads "against" shows as kept off. Labelled not a bet. `groupings.card_picks` writes `cardPicks` per day; `cardPicksHtml` in `index.html`.
+
+**Why:** Douglas, on 11 Nov's three verdicts (Pelicans, Knicks, Magic): "I can't see those". They made no group (three NBA picks; at most two a competition), and verdicts showed only on a group's picks.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_context_review.py`. Checked at 400px and desktop.
+
+**Not changed:** the Card's rule, groups, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-13: tidy-up: nine stale pull requests closed, their findings kept (tag pending)
 
 **What changed:** nine pull requests that had clashed with newer code or been overtaken (#67, #68, #106, #121, #127, #137, #142, #148, #215) are closed. What they held of value is kept here:
