@@ -2997,6 +2997,11 @@ def main():
         return f"{name}: {r}" if r else None
     srcs = [x for x in (_src(n) for n in ("football", "espn", "espn_soccer", "apiSports", "pinnwire", "oddsApi", "sgo", "betfair", "matchbook", "oddsApiList")) if x]
     print("  prices: " + " | ".join(srcs), file=sys.stderr)
+    # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
+    # how far its legs got and what a game looked like, on its own line
+    sg = report.get("sgo")
+    if isinstance(sg, dict) and not sg.get("matched"):
+        print("  sgo miss: " + json.dumps({k: sg[k] for k in ("named", "noSide", "noBooks", "oddKeys", "sample") if k in sg})[:1500], file=sys.stderr)
     errs = [e for e in report.get("errors", []) if any(k in e for k in ("betfair", "matchbook", "sgo", "price_"))]
     if errs: print("  price errors: " + "; ".join(errs)[:800], file=sys.stderr)
     cx = report.get("context") or {}
