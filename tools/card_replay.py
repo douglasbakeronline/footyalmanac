@@ -258,6 +258,13 @@ VARIANTS = {
     # on 6-14 Nov). Pre-registered before any result: the model up to 5 points
     # under the bookmakers' chance. Volume is not return; gated like the rest.
     "m7under5": {"CARD_MODEL_EDGE": -0.05},
+    # 11 Nov 2026 evening (claude/card-m7wide-2026-11-11.md), pre-registered
+    # before any result: the rule 8 Card with the wider API-Football leagues
+    # admitted (CARD_CORE_ONLY False, card_league: no cups, no new leagues).
+    # The funnel has "league" the largest single fault on football (224 of
+    # 439 pool legs from 6 Nov). Pool only: football-data carries no wider
+    # league. Volume is not return; gated like the rest.
+    "m7wide": {"CARD_CORE_ONLY": False},
     # 11 Nov 2026, Douglas: "Preferably 3x or more. Then 2.5x. Then 2x. Then
     # 1.5x ... I need the groups to win every time. But ultimately this has to
     # be a profitable business." Pre-registered before any result: the rule 8
