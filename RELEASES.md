@@ -4,6 +4,17 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-4: the Card is the model's own picks (CARD_RULE 7) (tag pending)
+
+**What changed:** the Card now takes the model's own picks: each one the model rates 60%+ and at or above the bookmakers' chance, priced 1.15 to 1.90, with the group's chance the model's number. Douglas: "I want the model to pick higher than the bookmakers ... The model rules." Stakes, kinds, the bench and the filler are unchanged; the separate paper Model card stops (it would repeat the Card). The Bets tab's rule text and each group's footnote say so.
+
+**Evidence:** replay on the pool and archive (14 days): the model's picks 23 groups, 10 won, +37%, legs 73.9% v 65.1% quoted; the rule 6 Card 10 groups, 4 won, -7%; paired p(rule 6 worse) 0.93. Live: the paper Model card 6 of 14 (+19%) v the Card 11 of 35 (-12%). Football-data 2025-26 disagrees (-8.2% on 70 groups) and 69 legs is under the 100-leg gate: the owner's call. Suite OK, nametest clear, Bets tab checked at 1280 and 400 wide. Note: `claude/card-model-rules-2026-11-11.md`.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`rule6` variant), `tests/test_card_model_rule.py`, six Card test modules pinned to rule 6, `claude/card-model-rules-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** stakes, the filler, the Daily List, any model.
+
+**Roll back:** `CARD_MODEL_RULE = False` and `CARD_RULE = 6`, or `git revert` the merge commit.
 ## 2026-11-11-3 Edge flag: opposition floor 4/1 (tag pending)
 
 For a reader: a football favourite now carries the green Edge flag when the

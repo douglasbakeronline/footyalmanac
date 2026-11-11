@@ -246,6 +246,10 @@ VARIANTS = {
     # the same legs as the Card and staked like it, so the review compares
     # the two on hundreds of legs rather than the paper record's 14 groups.
     "modelcard": {"_KINDS": "model"},
+    # 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7, Douglas:
+    # "The model rules"). The rule 6 Card it replaced is kept here, so the 30 Nov
+    # review still pairs the two on the same legs.
+    "rule6": {"CARD_MODEL_RULE": False, "CARD_RULE": 6},
 }
 
 

@@ -7,6 +7,17 @@ from unittest import mock
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import groupings as G
 
+# 11 Nov 2026: the Card became the model's own picks (CARD_RULE 7). These tests
+# cover the rule 6 machinery, which stays as the replay variant `rule6`, so the
+# module runs under rule 6; tests/test_card_model_rule.py covers rule 7.
+from unittest import mock as _mock
+_RULE6 = [_mock.patch.object(G, "CARD_MODEL_RULE", False), _mock.patch.object(G, "CARD_RULE", 6)]
+def setUpModule():
+    for p in _RULE6: p.start()
+def tearDownModule():
+    for p in _RULE6: p.stop()
+
+
 # 9 Nov 2026: a fixed date went into the past and every group read as under
 # way (12 failures). The next Saturday at least a week ahead that falls in
 # GMT (November to March), so UK time == UTC and the lock arithmetic holds.
