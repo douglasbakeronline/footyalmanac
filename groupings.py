@@ -1831,7 +1831,11 @@ def model_fault(l):
     if l.get("est") or not l.get("odds"): return f"{l['pick']}: no bookmaker price"
     if not (CARD_ODDS[0] <= l["odds"] <= CARD_ODDS[1]): return f"{l['pick']}: {l['odds']:.2f} is outside {CARD_ODDS[0]:.2f} to {CARD_ODDS[1]:.2f}"
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card"
-    if l.get("sport") == "football" and not core_league(l.get("code")): return f"{l['pick']}: outside the core leagues"
+    # 11 Nov 2026: the league limit reads CARD_CORE_ONLY, as card_fault does,
+    # so the replay and the funnel can relax it (`m7wide`); live is True, so
+    # the Card is unchanged. Wider means card_league: no cups, no new leagues.
+    if l.get("sport") == "football" and not (core_league(l.get("code")) if CARD_CORE_ONLY else card_league(l.get("code"))):
+        return f"{l['pick']}: outside the core leagues"
     if l.get("sport") == "football" and l.get("why") not in CLEAN_WHY: return f"{l['pick']}: the Daily List excludes it"
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"

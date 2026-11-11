@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 (tag pending): the Card's league limit read by the replay and the funnel, `m7wide` pre-registered
+
+**What changed:** advisory only. Under rule 7/8 the Card's core-league limit was hard-coded in `groupings.model_fault`, so the funnel could not relax it and named the value demand as the one condition costing groups. `model_fault` now reads `CARD_CORE_ONLY` as `card_fault` does; it stays True, so the live Card is unchanged (replay `live` identical before and after). The funnel gains a "league" relief and `tools/card_replay.py` gains `m7wide` (the rule 8 Card with the wider API-Football leagues, cups and new leagues still out), registered before it was read.
+
+**Evidence:** funnel, pool 6 to 14 Nov at real prices: 45 football legs kept off by the league limit alone v 14 by the value demand; days with a 2x 3 -> 4, groups 4 -> 9. `m7wide` v live: first real prices 19 groups +19% v 6 +82% (p(worse) 0.60); `--recover` 28 groups +32% v 12 +69% (p 0.44); closing p 0.76. 84 legs, under the 100-leg gate. `claude/card-m7wide-2026-11-11.md`.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_funnel.py`, `tests/test_card_m7wide.py`, `claude/card-m7wide-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** `CARD_CORE_ONLY` (True), `CARD_RULE`, the page, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-6 Build log: one line per price source (tag pending)
 
 For the owner: each build's log now prints what every price source did

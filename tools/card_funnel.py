@@ -57,9 +57,11 @@ RELIEF = {
 }
 
 # 11 Nov 2026 (CARD_RULE 7): model_fault's conditions, one relief each.
-# The league limit is hard-coded in model_fault (core leagues only), so it
-# has a key but no relief.
+# The league limit reads CARD_CORE_ONLY since 11 Nov 2026 evening (it was
+# hard-coded, so it had a key but no relief); its relief admits the wider
+# API-Football leagues, cups and new leagues still out (card_league).
 MODEL_RELIEF = {
+    "league": {"CARD_CORE_ONLY": False},
     "price-range": {"CARD_ODDS": G.CARD_WIDE_ODDS},
     "sport-floor": {"CARD_SPORT_MIN": {}},
     "model-floor": {"CARD_FAIR_MIN": 0.55},
