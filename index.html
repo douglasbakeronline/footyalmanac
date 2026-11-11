@@ -1281,7 +1281,27 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .gl-top p{margin:0;font-size:13.5px;color:var(--ink-2)}
 .gl-top b{font-weight:700;color:var(--ink)}
 .gl-top .g-won{color:var(--edge)} .gl-top .g-lost{color:var(--away)} .gl-top .g-live{color:#8a6a10}
-.glance svg{display:block;width:100%;height:auto;margin-top:6px;overflow:visible}
+.glance svg{display:block;width:100%;max-width:100%;height:auto;margin-top:6px;overflow:visible}
+/* the days track (11 Nov 2026): one panel per day, swipe or tap */
+.gl-track{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;margin-top:6px}
+.gl-track::-webkit-scrollbar{display:none}
+.gl-day{flex:0 0 100%;min-width:0;scroll-snap-align:start;scroll-snap-stop:always}
+.gl-sum{margin:0;font-size:13.5px;color:var(--ink-2);line-height:1.4}
+.gl-sum b{font-weight:700;color:var(--ink)}
+.gl-sum .gl-dn{font-family:var(--f-ui);text-transform:uppercase;letter-spacing:.06em;font-size:12.5px;margin-right:4px}
+.gl-sum .g-won{color:var(--edge)} .gl-sum .g-lost{color:var(--away)} .gl-sum .g-live{color:#8a6a10}
+.gl-top{justify-content:space-between}
+.gl-nav{display:flex;align-items:center;gap:4px;min-width:0;max-width:100%}
+.gl-tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none;min-width:0}
+.gl-tabs::-webkit-scrollbar{display:none}
+.gl-tabs button,.gl-arw{font:600 12px var(--f-ui);background:none;border:1px solid transparent;color:var(--ink-2);padding:4px 7px;min-height:32px;cursor:pointer;white-space:nowrap}
+.gl-tabs button i{font-style:normal;font-family:var(--f-num);font-size:10.5px;color:var(--mute);margin-left:4px}
+.gl-tabs button.on{background:var(--cover-ink);color:var(--yellow);border-color:var(--cover-ink)}
+.gl-tabs button.on i{color:var(--yellow-soft)}
+.gl-arw{font-size:18px;line-height:1;padding:2px 9px;border-color:var(--rule)}
+.gl-arw[disabled]{opacity:.35;cursor:default}
+.gl-tabs button:focus-visible,.gl-arw:focus-visible{outline:2px solid var(--home);outline-offset:1px}
+@media (max-width:560px){ .gl-nav{width:100%} .gl-tabs{flex:1} }
 .gl-ax{stroke:var(--rule);stroke-width:1}
 .gl-tk{stroke:var(--rule);stroke-width:1}
 .gl-tt{font-family:var(--f-num);font-size:11px;fill:var(--mute)}
@@ -2728,19 +2748,31 @@ function glanceState(it){
   if(r) return {t, st: r.final ? (r.lead === "ahead" ? "fwon" : r.lead === "behind" ? "flost" : "play") : r.lead, score: r.score};
   return {t, st: "play"};
 }
-function todayGlance(){
-  const today = localDay(new Date().toISOString());
-  const items = (listCollect().byDay[today] || []);
-  if(!items.length) return "";
-  const day0 = new Date(today + "T00:00:00"), t0 = day0.getTime(), span = 864e5;
+/* 11 Nov 2026, Douglas: "I want to be able to swipe through the next few
+   upcoming days also", and the axis labels were too big on a phone held
+   sideways (the drawing was a fixed 400 units wide scaled up to the screen).
+   Now one panel per day, today and the next days with list picks (up to
+   GL_DAYS), in a swipeable track with prev / next buttons and day dots; each
+   drawing is as wide in units as it is in pixels, so its text is true size at
+   any width or orientation. */
+const GL_DAYS = 7;
+let GL_IDX = 0;
+function glanceWidth(){
+  const el = document.getElementById("glance");
+  const w = el ? el.clientWidth - 32 : (document.documentElement.clientWidth || 400) - 56;
+  return Math.round(Math.min(1600, Math.max(280, w)));
+}
+function glanceDay(date, i, W){
+  const items = (listCollect().byDay[date] || []);
+  const day0 = new Date(date + "T00:00:00"), t0 = day0.getTime(), span = 864e5;
   const pts = items.map(it => ({it, p: weekPick(it), ...glanceState(it)})).filter(x => !isNaN(x.t)).sort((a, b) => a.t - b.t);
+  if(!pts.length) return null;
   const n = k => pts.filter(x => k.includes(x.st)).length;
   const won = n(["won"]), lost = n(["lost"]), live = n(["play", "ahead", "behind", "level"]), fin = n(["fwon", "flost"]), up = n(["up"]);
   const next = pts.find(x => x.st === "up");
-  const until = next ? (() => { const m = Math.max(0, Math.round((next.t - Date.now()) / 6e4)); return m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; })() : "";
-  // dots: x by start, stacked when starts are close
-  // a phone gets its own narrower drawing, so labels stay readable at its size
-  const W = matchMedia("(max-width:860px)").matches ? 400 : 1000, M = 18;
+  const until = next ? (() => { const m = Math.max(0, Math.round((next.t - Date.now()) / 6e4));
+    return m >= 1440 ? "" : m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; })() : "";
+  const M = 18;
   const X = t => M + Math.min(1, Math.max(0, (t - t0) / span)) * (W - 2 * M);
   const stacks = []; const placed = pts.map(x => {
     const cx = X(x.t); let k = 0;
@@ -2748,22 +2780,68 @@ function todayGlance(){
     stacks.push({x: cx, k}); return {...x, cx, cy: 70 - k * 13};
   });
   const top = Math.min(...placed.map(d => d.cy)) - 12, H = 104, y0 = Math.min(0, top);
-  const ticks = (W < 600 ? [0, 6, 12, 18, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24]).map(h => { const x = X(t0 + h * 36e5);
-    return `<line x1="${x}" x2="${x}" y1="80" y2="85" class="gl-tk"/><text x="${x}" y="98" text-anchor="middle" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`; }).join("");
+  const hours = W < 420 ? [0, 6, 12, 18, 24] : W < 700 ? [0, 4, 8, 12, 16, 20, 24] : [0, 3, 6, 9, 12, 15, 18, 21, 24];
+  const ticks = hours.map(h => { const x = X(t0 + h * 36e5);
+    return `<line x1="${x}" x2="${x}" y1="80" y2="85" class="gl-tk"/><text x="${x}" y="98" text-anchor="${h === 0 ? "start" : h === 24 ? "end" : "middle"}" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`; }).join("");
   const now = Date.now(), nowX = X(now);
   const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
   const dots = placed.map(d => `<g class="gl-hit" data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
   const parts = [won && `<b class="g-won">${won} won</b>`, lost && `<b class="g-lost">${lost} lost</b>`, live && `<b class="g-live">${live} in play</b>`,
                  fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`].filter(Boolean).join(" · ");
-  return `<section class="glance" id="glance" aria-label="Today at a glance">
-    <div class="gl-top"><h3>Today at a glance</h3><p>${parts}${next ? ` · next <b>${localTime(new Date(next.t).toISOString())}</b> ${next.p.label}, in ${until}` : ""}</p></div>
-    <svg viewBox="0 ${y0} ${W} ${H - y0}" role="img" aria-label="Today's list picks by start time">
+  const name = i === 0 ? "Today" : i === 1 ? "Tomorrow" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "short"});
+  const short = i === 0 ? "Today" : i === 1 ? "Tmrw" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"});
+  return {date, i, name, short, count: pts.length, html: `<div class="gl-day" data-gld="${date}" role="group" aria-label="${name}, ${pts.length} list pick${pts.length === 1 ? "" : "s"}">
+    <p class="gl-sum"><b class="gl-dn">${name}</b> ${parts}${next ? ` · ${i === 0 ? "next" : "first"} <b>${localTime(new Date(next.t).toISOString())}</b> ${next.p.label}${until ? `, in ${until}` : ""}` : ""}</p>
+    <svg viewBox="0 ${y0} ${W} ${H - y0}" width="${W}" role="img" aria-label="${name}'s list picks by start time">
       <line x1="${M}" x2="${W - M}" y1="80" y2="80" class="gl-ax"/>${ticks}
       ${now >= t0 && now <= t0 + span ? `<line x1="${nowX}" x2="${nowX}" y1="${y0 + 4}" y2="86" class="gl-now"/><text x="${nowX}" y="${y0 + 10}" text-anchor="${nowX > W * .9 ? "end" : "start"}" dx="${nowX > W * .9 ? -4 : 4}" class="gl-nt">now</text>` : ""}
-      ${dots}</svg>
+      ${dots}</svg></div>`};
+}
+function todayGlance(){
+  const W = glanceWidth(), days = [];
+  for(let i = 0; i < GL_DAYS; i++){
+    const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
+    const d = glanceDay(date, i, W); if(d) days.push(d);
+  }
+  if(!days.length) return "";
+  GL_IDX = Math.min(GL_IDX, days.length - 1);
+  const tabs = days.length > 1 ? `<div class="gl-nav">
+      <button type="button" class="gl-arw" data-glstep="-1" aria-label="Previous day"${GL_IDX === 0 ? " disabled" : ""}>‹</button>
+      <div class="gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}"${k === GL_IDX ? ' class="on"' : ""}>${d.short}<i>${d.count}</i></button>`).join("")}</div>
+      <button type="button" class="gl-arw" data-glstep="1" aria-label="Next day"${GL_IDX === days.length - 1 ? " disabled" : ""}>›</button></div>` : "";
+  return `<section class="glance" id="glance" aria-label="The days at a glance">
+    <div class="gl-top"><h3>${days.length > 1 ? "At a glance" : "Today at a glance"}</h3>${tabs}</div>
+    <div class="gl-track" tabindex="-1">${days.map(d => d.html).join("")}</div>
     <div class="gl-key"><span><i class="gl-d won"></i>Won</span><span><i class="gl-d lost"></i>Lost</span><span><i class="gl-d ahead"></i>In play, ahead</span><span><i class="gl-d behind"></i>In play, behind</span><span><i class="gl-d play"></i>In play</span><span><i class="gl-d up"></i>To come</span></div>
   </section>`;
 }
+// keep the day in view after a redraw, the tabs in step with a swipe
+function glanceSync(jump){
+  const el = document.getElementById("glance"); if(!el) return;
+  const tr = el.querySelector(".gl-track"); if(!tr) return;
+  const n = tr.children.length; GL_IDX = Math.max(0, Math.min(n - 1, GL_IDX));
+  if(jump){
+    // the first draw guesses the width; redraw once if it guessed wrong, so text stays true size
+    const sv = tr.querySelector("svg"), w = sv ? +sv.getAttribute("width") : 0;
+    if(w && sv.clientWidth && Math.abs(sv.clientWidth - w) > 24 && !glanceSync.again){ glanceSync.again = true; glanceRefresh(); glanceSync.again = false; return; }
+    tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: "auto"});
+  }
+  el.querySelectorAll("[data-glgo]").forEach(b => { const on = +b.dataset.glgo === GL_IDX; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+  el.querySelectorAll("[data-glstep]").forEach(b => b.disabled = (+b.dataset.glstep < 0 ? GL_IDX === 0 : GL_IDX === n - 1));
+  if(!tr.dataset.wired){ tr.dataset.wired = 1; let raf = 0;
+    tr.addEventListener("scroll", () => { if(raf) return; raf = requestAnimationFrame(() => { raf = 0;
+      const k = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth)); if(k !== GL_IDX){ GL_IDX = k; glanceSync(false); } }); }, {passive: true}); }
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("#glance [data-glgo], #glance [data-glstep]"); if(!b) return;
+  const tr = document.querySelector("#glance .gl-track"); if(!tr) return;
+  GL_IDX = b.dataset.glgo != null ? +b.dataset.glgo : GL_IDX + +b.dataset.glstep;
+  GL_IDX = Math.max(0, Math.min(tr.children.length - 1, GL_IDX));
+  tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
+  glanceSync(false);
+});
+// a turn of the phone or a resize redraws at the new width
+(() => { let t = 0; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { if(typeof glanceRefresh === "function") glanceRefresh(); }, 200); }); })();
 /* 10 Nov 2026: one way of scrolling to a place on the list, clear of the
    sticky tab bar (one row on a phone, two on a desktop). */
 function scrollClear(el){
@@ -2800,7 +2878,7 @@ document.addEventListener("keydown", e => { if((e.key === "Enter" || e.key === "
     b.hidden = !on; };
   window.addEventListener("scroll", () => { if(!raf) raf = requestAnimationFrame(check); }, {passive: true});
 })();
-function glanceRefresh(){ const el = document.getElementById("glance"); if(el){ const h = todayGlance(); if(h) el.outerHTML = h; } }
+function glanceRefresh(){ const el = document.getElementById("glance"); if(el){ const h = todayGlance(); if(h){ el.outerHTML = h; glanceSync(true); } } }
 setInterval(() => { if(document.visibilityState === "visible") glanceRefresh(); }, 60e3);
 function renderList(){
   const host = $("#list");
@@ -2895,6 +2973,7 @@ function renderList(){
   // 10 Nov 2026: a week of picks runs to 40,000px on a phone. A strip of the
   // days with their pick counts jumps straight to a day; nothing is hidden.
   host.insertAdjacentHTML("beforeend", todayGlance());
+  glanceSync(true);
   if(dates.length > 1){
     const today = localDay(new Date().toISOString());
     const n = d => (byDay[d] || []).filter(it => !LIST_BOOK_ONLY || itemHill(it)).length;

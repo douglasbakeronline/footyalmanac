@@ -4,6 +4,25 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-2 At a glance: swipe through the coming days; true-size labels sideways (tag pending)
+
+For a reader: Today at a glance on the Daily List now holds today and each
+coming day with list picks (up to seven), one panel a day: swipe across, tap
+a day tab (with its pick count) or use the arrows. Each day has its own line
+(won, lost, in play, to come, the first or next start) and its own timeline;
+a dot still jumps to its pick. Douglas, 11 Nov: "I want to be able to swipe
+through the next few upcoming days also", and the axis labels were "too big
+... when I turn my phone sideways". The drawing was a fixed 400 units wide,
+stretched to a landscape phone's width; it is now drawn at the width it is
+shown at and redrawn on a turn or resize, so labels stay 11px at any width.
+
+Files: `index.html` (`glanceDay`, `todayGlance`, `glanceSync`, `glanceWidth`,
+CSS). Checked in Chrome at 390 portrait, 844 landscape and 1280; no sideways
+page scroll at 360, 390 or 412; suite OK, `nametest.py` clear.
+
+Roll back: `git revert` this commit.
+
+
 ## 2026-11-11: the Card's record at the page's stakes (tag pending)
 
 **What changed:** the Card's return is now shown at the stakes the page tells people to use (two units a 2x, one a 3x) as well as one unit a group. The Card scoreboard ("Is it working?") adds "at the page's stakes ... per N units" to every tile where the two differ. `planRungs` (unused since #228 removed the plan panel) quotes both too, so a revert of #228 brings the panel back honest. `groupings-record.json` tallies gain `unitsStaked`, `unitsReturned`, `unitsReturnedBest`; each graded group carries its published `stake` (one unit before 29 Oct, when the archive kept none).
