@@ -419,6 +419,8 @@ def _odds_for(fid, key, cache_dir):
     return items, calls
 
 
+FB_CALLS_MULT = 150   # per build, for legs the bulk day prices missed
+
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
 
@@ -468,7 +470,11 @@ def price_football(L, dates, report):
                          margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
                          src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
                 matched += 1; continue
-            if l.get("multOnly"): continue    # bulk prices only, no call of its own
+            # 11 Nov 2026 (Douglas: "odds for all games"): a mid-priced leg the
+            # bulk day prices missed now gets its own call too, up to
+            # FB_CALLS_MULT a build (API-Football Pro: 7,500 a day, about 3,300
+            # left after the build on 11 Nov). Before, it stayed an estimate.
+            if l.get("multOnly") and calls >= FB_CALLS_MULT: continue
             try:
                 items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:
@@ -591,6 +597,22 @@ ODDS_API = "https://api.the-odds-api.com/v4/sports"
 ODDS_API_DAY = 15      # credits a UK day: 15 x 31 = 465, inside the free 500
 ODDS_API_MONTH = 480   # and never past this in a calendar month (UTC)
 ODDS_API_FLOOR = 20    # stop when the API says fewer than this are left
+# 11 Nov 2026, Douglas: "We need to get a grip on odds for all games". The
+# caps above suit the free 500 a month. When the API reports more credits left
+# than the free plan could hold (a paid plan), the day's allowance becomes an
+# even share of what is left over the days left in the month, so an upgrade
+# needs no code change. `odds_api_caps` is the one place that decides.
+ODDS_API_FREE = 500
+def odds_api_caps(led, now, list_books=False):
+    """(day cap, month cap) for this build from the ledger's last `left`."""
+    import calendar
+    left = led.get("left")
+    if left is None or left <= ODDS_API_FREE:
+        return (LIST_BOOK_DAY if list_books else ODDS_API_DAY), ODDS_API_MONTH
+    days_left = calendar.monthrange(now.year, now.month)[1] - now.day + 1
+    share = max(ODDS_API_DAY, int((left - ODDS_API_FLOOR) / max(1, days_left)))
+    used = led.get("days", {}).get(now.astimezone(ZoneInfo("Europe/London")).date().isoformat(), 0)
+    return (share * 3 // 5 if list_books else share), used + left
 ODDS_API_TTL = 4 * 3600   # a sport's odds are re-read at most every 4 hours
 ODDS_RUGBY = {"Premiership": ("premiership",), "URC": ("united rugby", "urc"), "Top 14": ("top 14",),
               "Test match": ("international", "test", "autumn nations", "rugby championship", "six nations")}
@@ -677,15 +699,17 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
     # 9 Nov 2026 (Douglas: spend the allowance on the right legs): a tennis
     # match is priced only when it could reach the Card (model at
     # CARD_SPORT_MIN) or is on the Daily List; the rest never needed a price.
-    tmin = CARD_SPORT_MIN.get("tennis", 0)
-    want = [l for l in L if not l.get("odds") and l["sport"] in ("tennis", "rugby", "nrl")
-            and (l["sport"] != "tennis" or l.get("list") or (l.get("pModel") or 0) >= tmin)]
+    # 11 Nov 2026 (Douglas: "odds for all games"): a sport key's slate costs
+    # one credit however many of its games are wanted, so every unpriced tennis
+    # match and every US game nothing else priced (ESPN skips big mismatches)
+    # is now asked for, Daily List and Card-grade legs first.
+    want = [l for l in L if not l.get("odds") and (l["sport"] in ("tennis", "rugby", "nrl") or l["sport"] in LIST_BOOK_KEYS)]
     # 9 Nov 2026: books_only adds every UK book's price (bookOdds) to tennis
     # and rugby legs priced by Pinnacle alone, nothing else (books_wanted)
     if books_only: want = [l for l in L if books_wanted(l, {"tennis", "rugby", "nrl"})]
     # 10 Nov 2026: list_books adds bookOdds (display only) to Daily List picks
     if list_books: books_only = True; want = [l for l in L if list_books_wanted(l)]
-    day_cap, ttl = (LIST_BOOK_DAY, LIST_BOOK_TTL) if list_books else (ODDS_API_DAY, ODDS_API_TTL)
+    ttl = LIST_BOOK_TTL if list_books else ODDS_API_TTL
     rkey = "oddsApiList" if list_books else "oddsApiBooks" if books_only else "oddsApi"
     if not key or not want:
         report[rkey] = "no key" if not key else "no legs"; return
@@ -700,7 +724,8 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
     try: led = json.load(open(led_path))
     except (OSError, ValueError): led = {}
     day = now.astimezone(ZoneInfo("Europe/London")).date().isoformat(); month = now.strftime("%Y-%m")
-    if led.get("month") != month: led = {"month": month, "used": 0, "days": {}, "left": None}
+    if led.get("month") != month: led = {"month": month, "used": 0, "days": {}, "left": led.get("left") if (led.get("left") or 0) > ODDS_API_FREE else None}
+    day_cap, month_cap = odds_api_caps(led, now, list_books)
     rep = {"calls": 0, "cached": 0, "matched": 0, "legs": len(want), "skipped": []}
 
     def cached(name, ttl):
@@ -731,12 +756,12 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
                           {f"rugby {l.get('comp')}" for l in want if l["sport"] == "rugby" and not _odds_keys(l, active)})
     # Keys the groups built to land need come first; Multiplier-only legs
     # (multOnly, 24 Oct 2026) ride on the same keys and spend what is left.
-    for k in sorted(need, key=lambda k: (-sum(1 for l in need[k] if not l.get("multOnly")), -len(need[k]))):
+    for k in sorted(need, key=lambda k: (-sum(1 for l in need[k] if l.get("list")), -sum(1 for l in need[k] if not l.get("multOnly")), -len(need[k]))):
         events = cached(k, ttl)
         if events is None:
             spent = led["days"].get(day, 0)
             left = led.get("left")
-            if spent >= day_cap or led["used"] >= ODDS_API_MONTH or (left is not None and left < ODDS_API_FLOOR):
+            if spent >= day_cap or led["used"] >= month_cap or (left is not None and left < ODDS_API_FLOOR):
                 rep["skipped"].append(k); continue
             try: events, left = fetch(f"{ODDS_API}/{k}/odds?apiKey={key}&regions=uk&markets=h2h&oddsFormat=decimal")
             except Exception as e:
@@ -788,7 +813,7 @@ def price_odds_api(L, dates, report, cache_dir=None, now=None, fetch=None, books
                     rep["matched"] += 1
                 break
     with open(led_path, "w") as f: json.dump(led, f)
-    rep.update(usedToday=led["days"].get(day, 0), usedMonth=led["used"], left=led.get("left"))
+    rep.update(usedToday=led["days"].get(day, 0), usedMonth=led["used"], left=led.get("left"), dayCap=day_cap)
     report[rkey] = rep
 
 
@@ -1041,6 +1066,14 @@ def price(L, dates):
     price_api_sports(L, dates, report)
     price_pinnwire(L, dates, report)
     price_odds_api(L, dates, report)
+    # 11 Nov 2026 (Douglas: "find as many free sources as you can"): the free
+    # feeds fill what the bookmaker sources left, each silent without its keys
+    # (free_prices.py): SportsGameOdds (US books), then the Betfair and
+    # Matchbook exchanges (nearly every football league and tennis match).
+    import free_prices as FP
+    for fn in (FP.price_sgo, FP.price_betfair, FP.price_matchbook):
+        try: fn(L, dates, report)
+        except Exception as e: report.setdefault("errors", []).append(f"{fn.__name__}: {type(e).__name__}: {str(e)[:120]}")
     # 9 Nov 2026: UK bookmakers' prices for legs a non-UK source priced, so
     # every card shows William Hill and the other UK books (display only).
     price_api_sports(L, dates, report, books_only=True)
@@ -2447,6 +2480,25 @@ def _lb_mark(row):
     top = max(books.items(), key=lambda kv: kv[1]) if books else None
     return {"h": books.get(CARD_BOOK), "b": len(books), "x": [top[0], top[1]] if top else None, "c": checked}
 
+def board_prices(L):
+    """{sport|home|away: price} for every leg this build priced from a
+    bookmaker (11 Nov 2026, Douglas: "We need to get a grip on odds for all
+    games"), so the page can show a price on every row of every sport, not
+    only the Card and the Daily List. Display only. o: the pick's average
+    price; b, bb: the best price and its book; h: William Hill; n: books;
+    p: the pick; t: when it was read. Estimates are left out: a row with no
+    entry says "no price yet", never a made-up number."""
+    out = {}
+    for l in L:
+        if l.get("est") or not l.get("odds"): continue
+        h, a = _lb_sides(l)
+        if not h or not a: continue
+        books = l.get("bookOdds") or {}
+        out[_lb_key(l["sport"], h, a)] = {"p": l.get("pick"), "o": l["odds"], "b": l.get("best"), "bb": l.get("bestBook"),
+                                          "h": books.get(CARD_BOOK), "n": l.get("books") or len(books) or None,
+                                          "t": l.get("pricedAt"), **({"x": l["exchange"]} if l.get("exchange") else {})}
+    return out
+
 def list_books_page(L, dates, now=None):
     """{sport|home|away: mark} for every Daily List pick still to start (this
     build's legs) and today's and yesterday's started ones (the pool archive),
@@ -2751,7 +2803,9 @@ def main():
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,
            # 10 Nov 2026: each list pick's William Hill mark, for the page
-           "listBooks": list_books_page(L, dates, now)}
+           "listBooks": list_books_page(L, dates, now),
+           # 11 Nov 2026: a bookmaker price for every priced game, every sport
+           "prices": board_prices(L)}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})

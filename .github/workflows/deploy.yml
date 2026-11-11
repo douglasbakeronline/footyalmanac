@@ -251,6 +251,14 @@ jobs:
           ODDS_API_KEY: ${{ secrets.ODDS_API_KEY }}
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
           PINNWIRE_KEY: ${{ secrets.PINNWIRE_KEY }}
+          # 11 Nov 2026: the free price sources (free_prices.py); each is
+          # silent until its secrets exist
+          BETFAIR_APP_KEY: ${{ secrets.BETFAIR_APP_KEY }}
+          BETFAIR_USERNAME: ${{ secrets.BETFAIR_USERNAME }}
+          BETFAIR_PASSWORD: ${{ secrets.BETFAIR_PASSWORD }}
+          MATCHBOOK_USERNAME: ${{ secrets.MATCHBOOK_USERNAME }}
+          MATCHBOOK_PASSWORD: ${{ secrets.MATCHBOOK_PASSWORD }}
+          SGO_API_KEY: ${{ secrets.SGO_API_KEY }}
         run: |
           rm -rf /tmp/groupings-prev && mkdir -p /tmp/groupings-prev
           cp groupings-record.json /tmp/groupings-prev/ 2>/dev/null || true
