@@ -2680,6 +2680,22 @@ def card_legs_by_sport(days):
                    "tripwire": bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)}
     return out
 
+def card_picks(L, date, now):
+    """The day's picks that pass the Card's rule before the context check, not
+    yet started, each with its context verdict (an "against" one marked as
+    kept off). For the page only: what the model backs today and what the
+    context check made of it, whether or not they make a group."""
+    out = []
+    for l in L:
+        s_ = uk_slot(l)
+        if not s_ or s_[0] != date: continue
+        if (parse(l.get("when") or "") or now) <= now: continue
+        cx = l.get("context") or {}
+        f = card_fault(l)
+        if f is not None and not (cx.get("verdict") == "against" and "context check" in f): continue
+        out.append({k: l.get(k) for k in ("pick", "event", "sport", "comp", "when", "odds", "pModel", "fair", "bookOdds", "est", "context")})
+    return sorted(out, key=lambda x: x.get("when") or "9")
+
 def context_record(idx, pool_dir=None):
     """11 Nov 2026 (CARD_CONTEXT): the context check graded forward. Every
     pool leg the check read (`context`, archived with the pool), settled, by
@@ -2911,6 +2927,10 @@ def main():
                      "checked": iso(now), "log": log[-LOG_KEEP:],
                      "windows": card_windows(d, groups),
                      "cardLegs": sum(1 for l in L if uk_slot(l) and uk_slot(l)[0] == d and card_fault(l) is None),
+                     # 11 Nov 2026 (Douglas, on the context verdicts: "I can't see those"):
+                     # every pick the Card's rule admits this day, with its context
+                     # verdict, shown when they make no group (or more than the groups use)
+                     "cardPicks": card_picks(L, d, now),
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway", "locked", "late")},
                      "previously": len(pd.get("groups") or []) if pd else None,
