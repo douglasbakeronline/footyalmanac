@@ -1645,6 +1645,17 @@ CARD_WIDE_FAIR_MIN = 0.60   # 0.55 until 11 Nov 2026 (CARD_WIDE_RULE 2)
 # bumped; wider-rule groups carry wideRule, tallied in cardWideByRule.
 # claude/card-filler-like-almere-2026-11-11.md.
 CARD_WIDE_RULE = 2      # 1: bookmakers 55%+ (25 Oct to 11 Nov 2026); 2: bookmakers 60%+
+# 11 Nov 2026, Douglas, after Monday 9 Nov's two wider-rule groups lost (2.01,
+# 3.07): "The groups must win at all costs. The source of truth is my model.
+# But the groups need to surface games that will win." The filler is the one
+# part of the Card chosen on the bookmakers' numbers rather than the model's,
+# and its record is the weakest: live 1 of 3, the pool replay 2 of 12 won v
+# 4.14 expected (-54%), football-data at or under the price. So it is off: a
+# day the model's picks leave empty stays empty. The pre-registered drop
+# (100 pool legs, p(worse) 0.70+) was not reached; the owner's call. The code
+# and the record (cardWide, cardWideByRule) stay; the replay keeps `fillwide`.
+# Set True to bring it back. claude/card-filler-off-2026-11-11.md.
+CARD_FILLER = False
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -1967,8 +1978,8 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                          status="replacement" if f"{w}|{name}" in replaced else "new")
                 for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
                 used |= {l["event"] for l in g["legs"]}; filled.add((w, name, seq)); groups.append(g)
-    # The wider rule, only for a window the full rule left empty.
-    for w, _, _ in CARD_WINDOWS:
+    # The wider rule, only for a window the full rule left empty (CARD_FILLER).
+    for w, _, _ in (CARD_WINDOWS if CARD_FILLER else []):
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
         for name, _, _, _ in built_kinds():
             g = best_card(by_win[w], used, after, name, wide=True)
@@ -2735,7 +2746,7 @@ def main():
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
-                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "wideLegs": list(CARD_WIDE_LEGS),
+                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS),
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,

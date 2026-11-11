@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-10: the Card's empty-day filler switched off (tag pending)
+
+**What changed:** a day the model's picks leave empty now stays empty. The wider-rule filler (picks chosen on the bookmakers' numbers, 1.08 to 2.10 at 60%+) no longer builds (`groupings.CARD_FILLER` False). An open filler group drops off at the next build; a filler group already locked at its first start stays on the page and settles. The Bets tab's description of the Card says so.
+
+**Why:** Douglas, after Monday 9 Nov's two filler groups lost (2.01, 3.07): "The groups must win at all costs. The source of truth is my model. But the groups need to surface games that will win." The filler is the one part of the Card not chosen on the model's own numbers, and its record is the weakest: live 1 of 3; pool replay (`fillwide`) 2 of 12 won against 4.14 expected, -54%; football-data at or under the price on both seasons.
+
+**Evidence and its limits:** the pre-registered drop (100 pool legs, p(worse) 0.70+) was not reached (36 legs); the owner's call, with every sample pointing the same way. Under rule 8 the full rule builds no group on many days (11 Nov: no priced pick passes), so the Card will be empty more often.
+
+**Files:** `groupings.py` (`CARD_FILLER`, `rules.card.filler`), `index.html` (Card description), `tests/test_groupings_card.py` (`WiderRule` runs with the switch on; `FillerOff`), `claude/card-filler-off-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** the full rule (`CARD_RULE` 8), the record (`cardWide`, `cardWideByRule` kept), the replay's `fillwide` variant.
+
+**Roll back:** set `CARD_FILLER = True`, or `git revert` the merge commit.
+
 ## 2026-11-11-9: four API-Football leagues back on the board; an intermittent test made deterministic; the floor tile's "-0.0" (tag pending)
 
 **What changed:** Vietnam's V.League 1 and 2 and Cameroon's Elite One and Two had left the board: the API marks their season in play by its later year ("2027", "2027-28"), so `sources.af_season_window` opened their date window after it closed and no fixture passed. A season whose nominal start is after today now reads from a year earlier; the season-year filter in `af_rows` still keeps only that season's matches. `tests/test_af_seasons.PoolFallback` picked its league from a set, so it changed with the hash seed and failed whenever it drew a Cameroon league (#238, failed once on #237's push run); it now pins one league and season, and a new test covers the ahead-of-calendar season. The Bets scoreboard's floor tile read "Under quote" and "-0.0 standard errors" at z -0.02; it rounds first and reads "On quote, 0.0".
