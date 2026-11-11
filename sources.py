@@ -1182,6 +1182,13 @@ def af_season_window(season, today=None):
         start, end = date(y, 6, 1), date(y + 1, 6, 30)
     if end < today - timedelta(days=AF_CUP_BACK):
         return None
+    if start > today:
+        # 11 Nov 2026: the API marks some leagues' season in play by its later
+        # year (Vietnam's V.League 1 and 2 "2027", Cameroon's Elite One and Two
+        # "2027-28" in November 2026). Read from a year earlier, or the window
+        # opens after it closes and the league silently leaves the board; the
+        # season-year filter in af_rows still keeps only that season's matches.
+        start = date(start.year - 1, start.month, start.day)
     return start, min(end, today + timedelta(days=AF_CUP_AHEAD))
 
 

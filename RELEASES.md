@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-9: four API-Football leagues back on the board; an intermittent test made deterministic; the floor tile's "-0.0" (tag pending)
+
+**What changed:** Vietnam's V.League 1 and 2 and Cameroon's Elite One and Two had left the board: the API marks their season in play by its later year ("2027", "2027-28"), so `sources.af_season_window` opened their date window after it closed and no fixture passed. A season whose nominal start is after today now reads from a year earlier; the season-year filter in `af_rows` still keeps only that season's matches. `tests/test_af_seasons.PoolFallback` picked its league from a set, so it changed with the hash seed and failed whenever it drew a Cameroon league (#238, failed once on #237's push run); it now pins one league and season, and a new test covers the ahead-of-calendar season. The Bets scoreboard's floor tile read "Under quote" and "-0.0 standard errors" at z -0.02; it rounds first and reads "On quote, 0.0".
+
+**Evidence:** none of the four leagues in any `predictions/` file from 29 Oct to 11 Nov; `current/af-seasons.json` gives each `current` 2027. New tests fail on the old code. Suite OK (772), nametest clear, Bets tab checked at 1280 and 400 wide. A cloud sandbox cannot reach API-Football, so the leagues' return is confirmed by the next CI build.
+
+**Files:** `sources.py`, `tests/test_af_seasons.py`, `tests/test_af_cups.py`, `index.html`.
+
+**Not changed:** any model, the Card, the Daily List rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-8: the replay's rule 6 variants run on rule 6 again (tag pending)
 
 **What changed:** `tools/card_replay.py` builds the variants pre-registered for the 30 Nov review on the rule 6 Card they were registered against (`RULE6`, `RULE6_FAMILY`, `patch_of`). Since rule 7 they were patched onto live, which reads none of their constants, so the 11 Nov review showed `under8`, `uncapped`, `rule5`, `opp7` and others "identical to live" and the rule 5 / opp7 / short fillers built nothing; `tools/card_legs_history.py`'s `cardRule5`, `cardUncapped`, `cardOpp7` and fillers go through the same code and would have repeated live on Monday. Family variants are now also paired against `rule6`, and the nightly review prints that line.
