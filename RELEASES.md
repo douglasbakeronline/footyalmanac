@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-7: the Card's playbook says place late; the empty paper Model card leaves the Bets tab (tag pending)
+
+**What changed:** the Card's playbook now opens "Place once, late": any time before a group's first start, nearer it than not. That advice lived in the plan, which came off the page on 11 Nov, so the page had been saying only "any time before". The "On paper: the Model card" fold no longer shows on days with no Model card group: since rule 7 the Card is the model's own picks and the paper Model card is not built, so the fold was always empty and still promised a 30 Nov comparison. Its scoreboard tile now reads "31 Oct to 10 Nov; since 11 Nov they are the card". The "Why these rules" line about the model rating picks above the bookmakers says the card followed it until 11 Nov.
+
+**Evidence:** `claude/price-timing-read-2026-11-10.md`: on 104 settled Card-rule singles the last pre-start price returned +1.95 points over the first (day-resampled p 0.011, mostly football); a group can still be replaced until its first start, so a late slip matches what the record grades. Suite OK (767), nametest clear, Bets tab checked at 1280 and 400 wide (no errors, no sideways scroll).
+
+**Files:** `index.html`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, the push times, the record, any model.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-11-6: the Card funnel and integrity check read the live rule (tag pending)
 
 **What changed:** the nightly Card review's funnel (`tools/card_funnel.py`) now reads the Card's live rule (rule 8: the model's own picks, the 2x alone). Before, it matched rule 6's messages, so 217 football legs outside the core leagues showed as "price-range" and 79 legs as "other", it offered reliefs for conditions that no longer exist, and it reported a Card 3x column. It now has rule 7's own fault keys and reliefs, only the kinds the Card builds, and counts every 2x a day can take. `tools/card_integrity.py` raises `no-opposition-price` only on rule 6 groups, so the review does not open backlog issues for a condition the rule no longer reads. New pre-registered replay variant `m7under5` (the model up to 5 points under the bookmakers).
