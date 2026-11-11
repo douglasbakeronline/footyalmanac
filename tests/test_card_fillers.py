@@ -80,11 +80,15 @@ class Fillers(unittest.TestCase):
 
 class FootballData(unittest.TestCase):
     def test_wide_gate_only_when_asked(self):
-        rows = [((0.60, 0.22, 0.18), row(1, (1.70, 3.8, 5.0)))]   # the bookmakers about 56%: under 60%, over 55%
+        # 11 Nov 2026: the wider floor is 60% like the full rule's (CARD_WIDE_RULE 2),
+        # so the gates differ on price: 1.10 is under the full rule's 1.15, inside 1.08
+        rows = [((0.85, 0.10, 0.05), row(1, (1.10, 9.0, 21.0)))]
         self.assertEqual(H.legs(rows), [])
         wide = H.legs(rows, wide=True)
         self.assertEqual(len(wide), 1)
         self.assertGreaterEqual(wide[0]["fair"], G.CARD_WIDE_FAIR_MIN)
+        thin = [((0.60, 0.22, 0.18), row(1, (1.70, 3.8, 5.0)))]   # the bookmakers about 56%: off both since 11 Nov 2026
+        self.assertEqual(H.legs(thin, wide=True), [])
 
     def test_card_season_fill_variants(self):
         Lw = H.legs(near_market_day(), wide=True)

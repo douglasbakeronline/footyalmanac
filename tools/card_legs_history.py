@@ -54,7 +54,7 @@ BANDS = [(1.15, 1.35), (1.35, 1.55), (1.55, 1.75), (1.75, 1.91)]
 
 def legs(pairs, wide=False, model=False):
     """(model probs, price row) -> candidate legs passing the price gate.
-    wide=True takes the wider rule's gate too (1.08-2.10 at 55%+, the page's
+    wide=True takes the wider rule's gate too (1.08-2.10 at 60%+ since 11 Nov 2026, 55%+ before; the page's
     empty-day filler; 10 Nov 2026, #155), for the fillwide Card only."""
     out = []
     lo, hi = G.CARD_ODDS
