@@ -4,6 +4,25 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11 Bets: the plan panel removed (tag pending)
+
+For a reader: the Bets tab no longer opens with the plan (the three rungs,
+the habits and Today's bets). Douglas, 10 Nov evening: "I don't like this
+bit. Remove", the whole plan (`claude/plan-decision-2026-11-10.md`), and on
+11 Nov: "Still showing the plan which I asked to remove". Bets now opens with
+Coming up, then the Card and the Edge picks. The Card's fold, its play list
+and the Model card fold no longer mention the plan; "Coming up" no longer
+links to it.
+
+Files: `index.html`, `CLAUDE.md`. `signalsPanel` and `planRungs` stay in the
+file unused, so a revert brings the panel back; `sigList` still feeds Coming
+up. The Edge flag's opposition floor is not changed here (see the note).
+
+Checked in Chrome at 360, 390, 412 and 1280 wide; suite OK, `nametest.py`
+clear.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-10-31 Bets: Leave these out, Check a slip and the Accumulator removed (tag pending)
 
 For a reader: the Bets tab no longer has the "Leave these out" list, the
