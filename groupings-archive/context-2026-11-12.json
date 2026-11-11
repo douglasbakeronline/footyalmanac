@@ -1,0 +1,29 @@
+{
+ "Minnesota Timberwolves v Dallas Mavericks|Minnesota Timberwolves": {
+  "at": "2026-11-11T22:15:02Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Minnesota are without Anthony Edwards (knee, out to about Dec 21) and Donte DiVincenzo (Achilles, out to April); Dallas list Lively, de Larrea and Biberovic, plus Morez Johnson Jr. as day-to-day, and Flagg and Irving are playing.",
+  "numbers": "Minnesota are 8-3, fifth in the West, with a 4-1 home record. Their last five are W 115-100 v Utah, W 115-109 at New Orleans, W 117-107 at Houston, W 112-100 v Milwaukee and L 111-121 at San Antonio. Dallas are 7-4 (2-2 away) after home wins over Utah, Brooklyn and Indiana (125-122 on Nov 9, when Cooper Flagg scored 43). I found no points scored or conceded season totals and no recent head-to-head",
+  "reads": 1,
+  "reason": "Anthony Edwards is out with a knee injury until about Dec 21 (ESPN injury report), which the model may not price in, but Minnesota has won four straight without him, so I can't call it clearly below 72%.",
+  "sources": [
+   {
+    "title": "Mavericks vs. Timberwolves (Nov 12, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909978"
+   },
+   {
+    "title": "Dusty May Warns Mavericks About LaMelo Ball, Timberwolves Despite Anthony Edwards Injury - Yardbarker",
+    "url": "https://www.yardbarker.com/nba/articles/dusty_may_warns_mavericks_about_lamelo_ball_timberwolves_despite_anthony_edwards_injury/s1_17810_44548919"
+   },
+   {
+    "title": "Mavericks at Timberwolves Prediction and Odds - OG.com",
+    "url": "https://og.com/learn/mavericks-at-timberwolves-11-12-26-prediction"
+   },
+   {
+    "title": "Wolves Last 5 Games This Season By Game - StatMuse",
+    "url": "https://www.statmuse.com/nba/ask/wolves-last-5-games-this-season-by-game"
+   }
+  ],
+  "verdict": "caution"
+ }
+}
