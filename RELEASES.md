@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-11-5 Free price sources: Betfair, Matchbook, SportsGameOdds (tag pending)
+
+For a reader: once their keys are added, three free feeds fill the games the
+bookmaker feeds leave unpriced: the Betfair and Matchbook exchanges (nearly
+every football league and tennis match; shown as Exch) and SportsGameOdds
+(US sports). Until then nothing changes.
+
+Files: `free_prices.py`, `groupings.py` (`price` order, `board_prices` `x`),
+`index.html` (`priceChip` Exch), `.github/workflows/deploy.yml` (six secrets
+to the groupings step), `tests/test_free_prices.py`,
+`claude/free-prices-2026-11-11.md`, `CLAUDE.md`.
+
+Roll back: `git revert` this commit.
+
 ## 2026-11-11-4 Odds for every game (tag pending)
 
 For a reader: every game the build can price now shows its price on its row,

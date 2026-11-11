@@ -2224,6 +2224,8 @@ function priceChip(q){
   const who = q.p ? ` for ${ogEsc(q.p)}` : "", at = q.t ? `, read ${ogEsc(String(q.t).replace("T", " ").slice(0, 16))} UTC` : "";
   const best = q.b && q.bb ? ` Best ${(+q.b).toFixed(2)} at ${ogEsc(q.bb)}.` : q.b ? ` Best ${(+q.b).toFixed(2)}.` : "";
   if(q.h) return `<span class="bkchip" title="${LB_BOOK}'s price${who}${at}.${best} Display only: the model never sees a price.">Hill<b>${(+q.h).toFixed(2)}</b></span>`;
+  // 11 Nov 2026: a price from an exchange (Betfair, Matchbook), the free sources: best back price, no bookmaker margin
+  if(q.x) return `<span class="bkchip px" title="${q.x === "betfair" ? "Betfair Exchange" : "Matchbook"} best back price${who}${at}: an exchange price, before its commission on winnings, not a bookmaker's. ${LB_BOOK} not read for this game. Display only.">Exch<b>${(+q.o).toFixed(2)}</b></span>`;
   return `<span class="bkchip px" title="Bookmakers' average${who}${q.n ? ` across ${q.n} book${q.n === 1 ? "" : "s"}` : ""}${at}; ${LB_BOOK} not read for this game.${best} Display only.">Avg<b>${(+q.o).toFixed(2)}</b></span>`;
 }
 function hillPast(sport, home, away, date){

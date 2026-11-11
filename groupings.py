@@ -1066,6 +1066,14 @@ def price(L, dates):
     price_api_sports(L, dates, report)
     price_pinnwire(L, dates, report)
     price_odds_api(L, dates, report)
+    # 11 Nov 2026 (Douglas: "find as many free sources as you can"): the free
+    # feeds fill what the bookmaker sources left, each silent without its keys
+    # (free_prices.py): SportsGameOdds (US books), then the Betfair and
+    # Matchbook exchanges (nearly every football league and tennis match).
+    import free_prices as FP
+    for fn in (FP.price_sgo, FP.price_betfair, FP.price_matchbook):
+        try: fn(L, dates, report)
+        except Exception as e: report.setdefault("errors", []).append(f"{fn.__name__}: {type(e).__name__}: {str(e)[:120]}")
     # 9 Nov 2026: UK bookmakers' prices for legs a non-UK source priced, so
     # every card shows William Hill and the other UK books (display only).
     price_api_sports(L, dates, report, books_only=True)
@@ -2488,7 +2496,7 @@ def board_prices(L):
         books = l.get("bookOdds") or {}
         out[_lb_key(l["sport"], h, a)] = {"p": l.get("pick"), "o": l["odds"], "b": l.get("best"), "bb": l.get("bestBook"),
                                           "h": books.get(CARD_BOOK), "n": l.get("books") or len(books) or None,
-                                          "t": l.get("pricedAt")}
+                                          "t": l.get("pricedAt"), **({"x": l["exchange"]} if l.get("exchange") else {})}
     return out
 
 def list_books_page(L, dates, now=None):
