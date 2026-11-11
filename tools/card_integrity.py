@@ -11,8 +11,9 @@ Checks:
                         (Andreescu v Giovannini sat like this for two days)
   stale-rule            a published group whose rule number is not CARD_RULE
                         and whose first start has not passed
-  no-opposition-price   a Card football leg with a bookmaker price but no
-                        opposition price (the rule cannot see it)
+  no-opposition-price   a rule 6 Card football leg with a bookmaker price but
+                        no opposition price (the rule cannot see it; not a
+                        condition from CARD_RULE 7, 11 Nov 2026)
   pool-gap              a Card day with no pool archive file
   pool-unpriced         a pool leg first archived as an estimate from
                         PRICED_FROM on that later took a real price (lastOdds)
@@ -83,6 +84,16 @@ def card_coverage(groups_by_day, pool_dir=None, since=PRICED_FROM):
     return findings, (have, total)
 
 
+def needs_opp(g, day, l):
+    """A Card football leg the rule could not judge without the opposition's
+    price: only rule 6 full-rule groups (from 6 Nov 2026) read it. From
+    CARD_RULE 7 (11 Nov 2026, the model's own picks) and on the wider-rule
+    filler the opposition's price is no condition, so its absence is not a
+    finding (it would open an office-backlog issue for nothing)."""
+    if g.get("wide") or (g.get("rule") or 0) >= 7 or day < "2026-11-06": return False
+    return l.get("sport") == "football" and not l.get("est") and bool(l.get("odds")) and not l.get("opp")
+
+
 def main():
     rec = load("groupings-record.json", {}); findings = []
     idx = G.results_index()
@@ -97,7 +108,7 @@ def main():
                 have = res is not None or st in ("won", "lost", "void")
                 if have or l["sport"] == "tennis":
                     findings.append({"check": "pending-with-result" if have else "pending-24h", "date": d["date"], "group": g["name"], "pick": l["pick"], "event": l.get("event"), "settles": st})
-                if l["sport"] == "football" and not l.get("est") and l.get("odds") and not l.get("opp") and d["date"] >= "2026-11-06":
+                if needs_opp(g, d["date"], l):
                     findings.append({"check": "no-opposition-price", "date": d["date"], "group": g["name"], "pick": l["pick"]})
     gen = rec.get("generated")
     if gen and now - G.parse(gen) > timedelta(hours=30):
