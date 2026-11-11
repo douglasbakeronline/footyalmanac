@@ -20,9 +20,13 @@ catches and how the rest do, and the split by the home side's games played
 issue's gate (ahead of the price in 4 of 5 seasons, pooled p(loss) at the
 best price 0.30 or less). `edge_accas` now calls a shared `accas`; its output
 is unchanged.
-**Evidence:** the numbers come from CI (`card-legs-history.yml` on 2022-23 to
-2026-27); see `claude/mismatch-rule-2026-11-11.md` once written.
-**Files:** `tools/card_legs_history.py`, `tests/test_mismatch_rule.py`.
+**Evidence:** CI run 42932321819, 2022-23 to 2026-27: 185 legs, landed
+74.1% v 72.2% quoted, -3.7% at the average price, -1.2% at the best (p(loss)
+0.60), ahead of the price in 3 seasons of 5: it does not beat the price. The
+11-20 games band passes alone (55 legs, +12.0% at best) but 21+ loses (105
+legs, -6.6%), so no flag. `claude/mismatch-rule-2026-11-11.md`.
+**Files:** `tools/card_legs_history.py`, `tests/test_mismatch_rule.py`,
+`claude/mismatch-rule-2026-11-11.md`, `CLAUDE.md`.
 **Not changed:** the Card's rule, the Edge flag, any model, the page.
 **Roll back:** `git revert` the commit.
 
