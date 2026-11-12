@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12-10: the playbook's "place late" line follows the evidence (tag pending)
+
+**What changed:** the Card's playbook no longer says the last price paid about 2 points more than the first. Its first habit is now written from the price-timing check on every build: "Place once, late" with the gain only while settled Card-rule picks show one (50+ legs, day-resampled p <= 0.10), "Place once, early" if the read turns, and otherwise "Place once, before the first start" (nearer it than not, as a group can change until its first start) with the plain read that the first and last prices paid about the same. Today it reads the last: 174 settled picks to 12 Nov.
+
+**Why:** the line quoted the 10 Nov read (+1.95 points late on 104 legs, p 0.011). On 12 Nov the same test gave -0.25 points on 174 legs, p 0.70, and on the rule 6 legs of the same days, rebuilt, +0.32. The page was telling people to wait for a gain the record no longer shows. `claude/place-late-faded-2026-11-12.md`.
+
+**Tested:** `tests/test_price_timing.py` (`page_read`, `timing_page` returns None on failure); full suite and nametest; Bets tab rendered at 1280 and 400 wide from a scratch build.
+
+**Files:** `tools/price_timing.py` (`page_read`), `groupings.py` (`timing_page`, `timing` in `groupings-data.js`), `index.html` (`placeHabit`), `tests/test_price_timing.py`, `claude/place-late-faded-2026-11-12.md`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, push or briefing time, the nightly review.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-12-9: the nightly Card review shows both sides of the gate (tag pending)
 
 **What changed:** the nightly Card review issue now puts each rule 7 variant's pool read beside its football-data seasons (`cardM7Paired` in `card-legs-history.json`, which tune.yml commits on Mondays), with a gate verdict per variant: passes, or fails and why (pool legs short of 100, pool p(worse), or the football-data season it lost). A variant ahead on the pool but behind live on any football-data season is named as not a candidate. When one passes every side the review says so in bold, so the next build session acts. Variants that built nothing on the replayed days (short, notennis, tennis80 on 12 Nov) leave the "watch" list and are named apart: their +0.44 a day was only live's losses.

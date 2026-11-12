@@ -105,6 +105,19 @@ class PriceTiming(unittest.TestCase):
         self.assertEqual(len(pending), 3)
         self.assertEqual(PT.report(L, pending=pending)["notStarted"], 3)
 
+    def test_page_read(self):
+        # 12 Nov 2026: the compact read the Bets tab's "Place once" habit quotes
+        from datetime import datetime, timezone
+        from unittest import mock
+        now = datetime(2026, 11, 22, 9, 0, tzinfo=timezone.utc)
+        with mock.patch.object(PT, "settle", lambda L, idx=None: [dict(l, won=True) for l in L]):
+            r = PT.page_read(self.dir, now=now)
+            self.assertEqual((r["n"], r["won"], r["read"], r["at"], r["rule"]), (5, 5, "too few legs to read", "2026-11-22", G.CARD_RULE))
+            self.assertEqual(set(r), {"n", "won", "lateGainPct", "p", "read", "lastMedianH", "at", "rule"})
+            self.assertEqual(PT.page_read(tempfile.mkdtemp(), now=now), {"n": 0, "at": "2026-11-22", "rule": G.CARD_RULE})
+        with mock.patch.object(PT, "page_read", side_effect=OSError("no archive")):
+            self.assertIsNone(G.timing_page())                               # the page then makes no price claim
+
     def test_empty(self):
         self.assertEqual(PT.report([]), {"legs": 0, "lastAfterStart": 0})
 
