@@ -38,6 +38,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ARCHIVE = os.path.join(HERE, "groupings-archive")
 API = "https://api.anthropic.com/v1/messages"
 MODEL = os.environ.get("CONTEXT_MODEL", "claude-sonnet-5-5")
+# 12 Nov 2026 (Douglas: Daily List picks at 75%+ too, football first, then the
+# most useful sports, inside the Max plan's monthly API credit, about $100):
+# Sonnet where the news is richest and the judgement matters most, Haiku
+# (about a third of the cost) for the rest; at most DAILY_READS a UK day,
+# read in PRIORITY order (Card picks first, then by sport, then the strongest).
+CHEAP_MODEL = os.environ.get("CONTEXT_CHEAP_MODEL", "claude-haiku-5-5")
+RICH_SPORTS = {"football", "nba"}
+PRIORITY = ("football", "nba", "tennis", "ncaab", "rugby", "nrl", "nfl", "mlb", "nhl", "wnba", "cfb")
+DAILY_READS = int(os.environ.get("CONTEXT_DAILY_READS", "25"))
+LEDGER = "context-ledger.json"
 MAX_REVIEWS = 16        # calls a build
 MAX_SEARCHES = 5        # web searches a pick
 REFRESH_H = 3           # a second read this close to the start (line-ups)
@@ -103,10 +113,35 @@ Answer with ONLY this JSON, no other text:
 TOOLS = tuple(t for t in (os.environ.get("CONTEXT_TOOL"), "web_search_20250305") if t)
 
 
+def model_for(l):
+    return MODEL if l.get("cxCard") or l.get("sport") in RICH_SPORTS else CHEAP_MODEL
+
+
+def priority(l):
+    """Card picks first, then football, NBA, tennis, college basketball, the
+    rest, the strongest first within each, then the earliest start."""
+    sp = l.get("sport")
+    return (0 if l.get("cxCard") else 1, PRIORITY.index(sp) if sp in PRIORITY else len(PRIORITY),
+            -(l.get("pModel") or 0), l.get("when") or "9")
+
+
+def ledger_load():
+    try:
+        with open(os.path.join(ARCHIVE, LEDGER)) as f: return json.load(f)
+    except Exception:
+        return {}
+
+
+def ledger_save(led):
+    os.makedirs(ARCHIVE, exist_ok=True)
+    keep = dict(sorted(led.items())[-14:])
+    with open(os.path.join(ARCHIVE, LEDGER), "w") as f: json.dump(keep, f, indent=1, sort_keys=True)
+
+
 def call(l, key, post=None):
     last = None
     for tool in TOOLS:
-        body = {"model": MODEL, "max_tokens": 1500,
+        body = {"model": model_for(l), "max_tokens": 1500,
                 "tools": [{"type": tool, "name": "web_search", "max_uses": MAX_SEARCHES}],
                 "messages": [{"role": "user", "content": prompt(l)}]}
         if post: return post(body)
@@ -156,15 +191,17 @@ def review(legs, now, report=None, post=None, key=None):
     report = report if report is not None else {}
     key = key or os.environ.get("ANTHROPIC_API_KEY")
     by_date, calls = {}, 0
-    for l in sorted(legs, key=lambda l: l.get("when") or "9"):
+    led = ledger_load(); today = now.astimezone(timezone.utc).date().isoformat()
+    left = max(0, DAILY_READS - led.get(today, 0))
+    for l in sorted(legs, key=priority):
         d = l.get("ukDate") or l.get("date")
         store = by_date.setdefault(d, load(d))
         old = store.get(key_of(l))
-        if (key or post) and calls < MAX_REVIEWS and due(old, l, now):
+        if (key or post) and calls < min(MAX_REVIEWS, left) and due(old, l, now):
             try:
                 v = parse(call(l, key, post)); calls += 1
                 if v:
-                    v["at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ"); v["model"] = MODEL
+                    v["at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ"); v["model"] = model_for(l)
                     v["reads"] = (old or {}).get("reads", 0) + 1
                     store[key_of(l)] = old = v
                 else:
@@ -174,9 +211,11 @@ def review(legs, now, report=None, post=None, key=None):
         if old: l["context"] = old
     for d, store in by_date.items():
         if store: save(d, store)
+    if calls:
+        led[today] = led.get(today, 0) + calls; ledger_save(led)
     report["context"] = {"calls": calls, "read": sum(1 for l in legs if l.get("context")),
                          "against": sum(1 for l in legs if (l.get("context") or {}).get("verdict") == "against"),
-                         "model": MODEL, "on": bool(key or post)}
+                         "today": led.get(today, 0), "dailyCap": DAILY_READS, "on": bool(key or post)}
     return calls
 
 

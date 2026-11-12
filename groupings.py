@@ -1731,6 +1731,7 @@ CARD_SPAN = True
 # (cardContext). Set False to stop the veto; the reads still show.
 # claude/context-check-2026-11-11.md.
 CARD_CONTEXT = True
+CX_LIST_MIN = 0.75   # 12 Nov 2026: Daily List picks at this model chance+ get a context read (display only)
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -2615,6 +2616,16 @@ def _lb_mark(row):
     top = max(books.items(), key=lambda kv: kv[1]) if books else None
     return {"h": books.get(CARD_BOOK), "b": len(books), "x": [top[0], top[1]] if top else None, "c": checked}
 
+def context_page(L):
+    """{sport|home|away: the context verdict} for every leg read (display only;
+    the model's number never moves)."""
+    out = {}
+    for l in L:
+        c = l.get("context")
+        if not c or not c.get("verdict"): continue
+        out[_lb_key(l.get("sport"), *_lb_sides(l))] = {k: c.get(k) for k in ("verdict", "reason", "news", "numbers", "sources", "at")}
+    return out
+
 def board_prices(L):
     """{sport|home|away: price} for every leg this build priced from a
     bookmaker (11 Nov 2026, Douglas: "We need to get a grip on odds for all
@@ -2964,10 +2975,14 @@ def main():
         cands = []
         for l in L:
             s_ = uk_slot(l)
-            if s_ and s_[0] in dates and card_fault(l) is None:
-                l["ukDate"] = s_[0]; cands.append(l)
+            if not s_ or s_[0] not in dates: continue
+            card = card_fault(l) is None
+            # 12 Nov 2026 (Douglas): Daily List picks at 75%+ are read too,
+            # within the daily cap, after the Card's (context_review.priority)
+            if card or (l.get("list") and (l.get("pModel") or 0) >= CX_LIST_MIN):
+                l["ukDate"] = s_[0]; l["cxCard"] = card; cands.append(l)
         CX.review(cands, now, report)
-        for l in cands: l.pop("ukDate", None)
+        for l in cands: l.pop("ukDate", None); l.pop("cxCard", None)
     except Exception as e:
         report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
     days, span_taken = [], set()
@@ -3022,7 +3037,10 @@ def main():
            # 10 Nov 2026: each list pick's William Hill mark, for the page
            "listBooks": list_books_page(L, dates, now),
            # 11 Nov 2026: a bookmaker price for every priced game, every sport
-           "prices": board_prices(L)}
+           "prices": board_prices(L),
+           # 12 Nov 2026: the context check's verdict on every read pick, keyed like
+           # listBooks, for the Daily List, Starred and the slip checker (display only)
+           "contexts": context_page(L)}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})

@@ -1220,6 +1220,11 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .tb-more .tb-tbl td{white-space:normal}
 .tb-more .tb-tbl td:nth-child(2){white-space:nowrap}
 @media (max-width:480px){.tb-score{padding:14px 12px}.tb-tbl th,.tb-tbl td{padding:7px 4px}.tb-sum-n b{font-size:30px}}
+.cxchip{display:inline-block;margin-left:5px;font:700 9.5px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;padding:2px 4px;border:1px solid currentColor;vertical-align:middle}
+.cxchip.clear{color:var(--edge)}
+.cxchip.caution{color:#7a5a12}
+.cxchip.against{color:#fff;background:var(--away);border-color:var(--away)}
+.slip .og-cx{margin-top:6px}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
 .tb-picks-n{font-size:12px;color:var(--mute);margin:2px 0 8px}
@@ -2252,6 +2257,18 @@ function bookChip(v, best){
   if(v === 0) return `<span class="bkchip off" title="UK bookmakers price this game${best ? ` (best ${best[0]} ${(+best[1]).toFixed(2)})` : ""} but ${LB_BOOK} does not."><span class="lg">Not at Hill</span><span class="sm">No Hill</span></span>`;
   return `<span class="bkchip none" title="The UK bookmakers' list was read and this game was not on it (or its name did not match). Big college favourites are often not offered in the UK."><span class="lg">No UK price</span><span class="sm">No UK</span></span>`;
 }
+/* 12 Nov 2026 (Douglas: "I could do with more context and understanding or
+   flags"): the context check's verdict on a pick (groupings.context_page), a
+   small flag beside the price. Display only: the model's number never moves. */
+function cxFor(sport, home, away){
+  const G = window.__GROUPINGS__;
+  return G && G.contexts && G.contexts[lbKey(sport, home, away)] || null;
+}
+function cxChip(sport, home, away){
+  const c = cxFor(sport, home, away); if(!c) return "";
+  const lab = {clear: "Clear", caution: "Caution", against: "Against"}[c.verdict] || "";
+  return lab ? `<span class="cxchip ${ogEsc(c.verdict)}" title="Context check: ${ogEsc(c.reason || "")}">${lab}</span>` : "";
+}
 function hillChip(sport, home, away){
   const G = window.__GROUPINGS__, k = lbKey(sport, home, away), m = G && G.listBooks && G.listBooks[k];
   if(m && (m.h || m.b || m.c)) return bookChip(m.h ? m.h : m.b ? 0 : m.c ? -1 : null, m.x);
@@ -2506,7 +2523,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name)}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name)}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
     state.open = state.open===id ? null : id;
@@ -2548,7 +2565,8 @@ function starredLegs(){
     if(g.celtic) warn.push("Celtic's Law: " + g.celtic.reasons.join("; "));
     if(g.unrated) warn.push("a side has no rating on file");
     legs.push({name: `${g.home.name} v ${g.away.name}`, pick, p: g.p[k], acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn, where: `Football · ${g.leagueName}`, when: g.kickoff});
+      list: g.list, reserve: g.reserve, warn, where: `Football · ${g.leagueName}`, when: g.kickoff,
+      cx: cxFor("football", g.home.name, g.away.name)});
   }));
   const others = [];
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
@@ -2558,7 +2576,7 @@ function starredLegs(){
     const warn = [];
     if(/qualif/i.test(g.label || "")) warn.push("a qualifying round: thin ratings, and not what was tested");
     legs.push({name: `${g.home} v ${g.away}`, pick: g.pick, p: g.confidence, acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn, when: g.when,
+      list: g.list, reserve: g.reserve, warn, when: g.when, cx: cxFor(g.sport, g.home, g.away),
       where: g.sport === "tennis" ? `Tennis · ${g.label}` : `${OG_SPORT[g.sport] || g.sport} · ${g.label}`});
   });
   legs.forEach(l => {
@@ -2622,16 +2640,17 @@ function runSlip(){
       <td class="n">${pct(l.p)}%<small>${fairOdds(l.p)}</small></td>
       <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? (accLive(l.acc) ? "live at " : "tested at ") + bandLabel(l.acc) : ""}</small></td>
       <td><span class="verdict">${l.verdict}</span>${l.warn.length ? `<small>${l.warn.map(w => w[0].toUpperCase() + w.slice(1)).join(". ")}.</small>`
-        : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}</td>
+        : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}${l.cx ? ogContext({context: l.cx}) : ""}</td>
     </tr>`).join("");
   const strong = legs.filter(l => l.verdict === "Strong").length;
   const wary = legs.filter(l => l.verdict === "Wary").length;
+  const cxAgainst = legs.filter(l => l.cx && l.cx.verdict === "against").length;
   return `
     <div class="slip-total">
       <div><span>All ${legs.length} land</span><b>${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>
         <small>about 1 in ${Math.max(1, Math.round(1 / all))} · fair odds ${fairOdds(all)}</small></div>
       <div><span>Loses</span><b>${((1 - all) * 100).toFixed(0)}%</b><small>of the time, on these numbers</small></div>
-      <div><span>Verdicts</span><b>${strong} strong</b><small>${wary} to be wary of</small></div>
+      <div><span>Verdicts</span><b>${strong} strong</b><small>${wary} to be wary of${cxAgainst ? ` · ${cxAgainst} the context check reads against` : ""}</small></div>
     </div>
     <p class="slip-note">${legs.length > 1 ? `Weakest leg: <b>${weakest.pick}</b> at ${pct(weakest.p)}%.
       Without it, the rest land ${(without * 100).toFixed(0)}% of the time. ` : ""}Fair odds are 1 ÷ the site's chance,
@@ -3799,7 +3818,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${tennisWary(g)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}</div></div>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
@@ -3847,7 +3866,7 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${tennisWary(g)}</div>`;
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);

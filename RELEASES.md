@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12-8: the context check reads Daily List picks too (tag pending)
+
+**What changed:** every Daily List pick at 75%+ now gets a context read (team news, rotation, motivation, table, goals, last five) after the Card's picks, football first, then NBA, tennis, college basketball and the rest, within 25 reads a day. Sonnet reads Card picks, football and NBA; Haiku the rest. Each read shows as a Clear / Caution / Against flag beside the price on the Daily List, sport tabs and Starred, and in full in the slip checker. Display only: the model's number never moves, and only Card picks are vetoed.
+
+**Why:** Douglas: "I just feel now I've made a shortlist from the daily games I could do with more context and understanding or flags", within his plan's $100 monthly API credit.
+
+**Cost:** about $2-3 a day at the cap (first reads cost $0.20-0.25 each on Sonnet).
+
+**Files:** `context_review.py` (`priority`, `model_for`, `DAILY_READS`, ledger), `groupings.py` (`CX_LIST_MIN`, `context_page`), `index.html` (`cxChip`, slip checker), `tests/test_context_review.py`, `claude/context-check-2026-11-11.md`, `CLAUDE.md`.
+
+**Roll back:** `CX_LIST_MIN = 1.01` reads Card picks only; `git revert` the merge commit.
+
 ## 2026-11-12-7: damping the FIFA ranking's big lifts tested and rejected (tag pending)
 
 **What changed:** nothing in the model. `tools/fifa_lift_damping.py` tests eleven ways to soften the ranking's big lifts on ranked internationals (fit Oct 2022-Sep 2023, check Oct 2023-Oct 2024); none passes the gates. Note `claude/fifa-lift-damping-2026-11-12.md`, a line in CLAUDE.md's Tested and rejected.
