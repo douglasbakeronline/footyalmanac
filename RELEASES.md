@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12-6: two-day Card groups when a day makes none (tag pending)
+
+**What changed:** a day whose picks make no Card group now tries one group from its own qualifying picks plus the next day's, under the same rule, holding at least one of its own (`groupings.CARD_SPAN`). It is open until its first start, labelled "two days" on the Bets tab, kept in the Card record and apart as `cardSpan`; the next day's Card never reuses its picks.
+
+**Why:** Douglas: "if you can't make a card on 1 day - then look to the next day ahead to combine fixtures to be able to create a card."
+
+**Evidence:** pool replay `span2`: two more days with a group (17 v 15), return +31% v +33%, paired p(worse) 0.49. Owner's call under the 100-leg gate. `claude/card-span-2026-11-12.md`.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`span2`), `tests/test_card_span.py`, `claude/card-span-2026-11-12.md`, `CLAUDE.md`.
+
+**Not changed:** the leg rule, stakes, the 2x shape.
+
+**Roll back:** `CARD_SPAN = False`, or `git revert` the merge commit.
+
 ## 2026-11-12 (tag pending): the value demand's relief refused on five seasons
 
 **What changed:** advisory only. The football-data Card replay now runs `m7under5` (the model up to 5 points under the bookmakers) and `m7core`, and pairs every rule 7 variant against live by day, per season and pooled (`cardM7Paired`, `cardM7Pooled`).
