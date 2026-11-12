@@ -1,4 +1,31 @@
 {
+ "Drina Zvornik v Vele\u017e Nevesinje|Drina Zvornik": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant: I found no injury, suspension or line-up reports for either side, and the date is listed as 14 Nov (not 13 Nov) on several sites, with kick-off times varying by source.",
+  "numbers": "Drina Zvornik: 22 pts from 15 games (6W 4D 5L, GF 28 GA 15) and 6th on Tribuna's table, with a recent 0-1 loss at Leotar and a 0-2 loss at Potkozarje. Their home record is 7 games, 5W 2D 0L, 16-5. Vele\u017e Nevesinje: 12 pts from 15 games (3W 3D 9L, GF 13 GA 38, GD -25), 13th on Tribuna's table, five straight league losses, away 3W 1D 3L (though that same table showed 3W 2D 9L and 11 pts); the 8-0 res",
+  "reads": 1,
+  "reason": "Drina are 3rd\u20136th (22 pts, GD +13/+14, sources differ) and unbeaten at home (5W 2D 0L) against 12th\u201313th Vele\u017e, who have lost five in a row; Drina won 8-0 in the reverse fixture on 2 Sept (footballtransfers.com, sportsport.ba).",
+  "sources": [
+   {
+    "title": "Prva Liga RS 2026/2027 Standings - Football Transfers",
+    "url": "https://www.footballtransfers.com/us/leagues-cups/national/ba/prva-liga-rs"
+   },
+   {
+    "title": "Prva liga RS 2026/27: tabela, raspored i prijenosi",
+    "url": "https://onlinekladionice.ba/gdje-gledati-prva-liga-rs/"
+   },
+   {
+    "title": "Tabele i rezultati za Prva liga Republike Srpske - SportSport.ba",
+    "url": "https://sportsport.ba/tabele-lige/fudbal/bosna-i-hercegovina/prva-liga-republike-srpske/8"
+   },
+   {
+    "title": "FK Vele\u017e Nevesinje - Raspored kola i utakmica - SportSport.ba",
+    "url": "https://sportsport.ba/klub/fk-velez-nevesinje/136"
+   }
+  ],
+  "verdict": "clear"
+ },
  "Karbon Cherkasy v Atlet|Karbon Cherkasy": {
   "at": "2026-11-12T07:05:04Z",
   "model": "claude-sonnet-5-5",
@@ -26,6 +53,33 @@
   ],
   "verdict": "clear"
  },
+ "Morocco v Niger|Morocco": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Morocco are without Saibari, Ounahi, El Kaabi, Rahimi, Igamane, Riad and Amrabat, and El Aynaoui has been replaced in the squad through injury; Niger have left out Adebayor and Wonkoye and are fielding a largely local squad, and no confirmed line-ups were found.",
+  "numbers": "Morocco lead Group A with 6 points from 2 (wins over Gabon and Lesotho) and have won all 6 previous meetings with Niger, conceding once. Niger have 3 points from 2 (2-1 win over Lesotho, 2-0 loss to Gabon), their form across all competitions is D-L-W-L-L, and Morocco's is W-L-W-W-D (Khel Now); I did not find a full goals-for and goals-against table.",
+  "reads": 1,
+  "reason": "Morocco are missing several attackers (Saibari, Ounahi, El Kaabi, Rahimi, Igamane, Riad) and are expected to change the XI and try new options before a second Niger game on 17 November, per Sports Mole and Africasoccer, but Niger are a 111th-ranked side priced 28.00 to win, so I found no concrete re",
+  "sources": [
+   {
+    "title": "Preview: Morocco vs Niger - prediction, team news, lineups - Sports Mole",
+    "url": "https://www.sportsmole.co.uk/football/morocco/africa-cup-of-nations/preview/morocco-vs-niger-prediction-team-news-lineups_608937.html"
+   },
+   {
+    "title": "Morocco make changes for Niger clash as 2027 Africa Cup of Nations qualifiers continue - Africasoccer",
+    "url": "https://africasoccer.com/morocco-make-changes-for-niger-clash-as-2027-africa-cup-of-nations-qualifiers-continue/"
+   },
+   {
+    "title": "Morocco's five tactical experiments for Niger double-header - Africasoccer",
+    "url": "https://africasoccer.com/moroccos-five-tactical-experiments-for-niger-double-header"
+   },
+   {
+    "title": "Strasbourg's Samir El Mourabet replaces crocked Neil El Aynaoui in Morocco squad - Africasoccer",
+    "url": "https://africasoccer.com/strasbourg-midfielder-samir-el-mourabet-replaces-injured-neil-el-aynaoui-in-morocco-squad"
+   }
+  ],
+  "verdict": "caution"
+ },
  "Ospitaletto v Dolomiti Bellunesi|Ospitaletto": {
   "at": "2026-11-12T13:47:46Z",
   "model": "claude-sonnet-5-5",
@@ -52,5 +106,32 @@
    }
   ],
   "verdict": "clear"
+ },
+ "Vasas II v Szegedi VSE|Vasas II": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant found: no injury, suspension or line-up news for either side, and no sign of rotation or anything riding on the game for either team.",
+  "numbers": "Vasas II (MLSZ adatbank, after 15 games): 6th, 21 pts, W5 D6 L4, goals 30-19, last five D D D D V (newest first), and the opening-day 1-1 at Szeged. Szegedi VSE (after 15 games): 15th, 10 pts, W2 D4 L9, goals 21-41, 4 wins' worth of away points only 4 from 7 away games, last five V D W W D (newest first).",
+  "reads": 1,
+  "reason": "Vasas II have drawn their last four league games and have won only 5 of 15, so 77% looks generous against a side that is 15th. Both the MLSZ adatbank and Vasas's own site list this game for 15 Nov 2026 at Vasas's ground, not 13 Nov, so confirm the date.",
+  "sources": [
+   {
+    "title": "NB III. D\u00e9l-Keleti csoport 15. fordul\u00f3 - MLSZ adatbank (Vasas II table and form)",
+    "url": "https://adatbank.mlsz.hu/league/67/0/34054/15.html"
+   },
+   {
+    "title": "NB III. D\u00e9l-Keleti csoport 15. fordul\u00f3 - MLSZ adatbank (Szegedi VSE table and form)",
+    "url": "https://adatbank.mlsz.hu/league/67/0/34054/15.html"
+   },
+   {
+    "title": "NB III, D\u00e9lkeleti csoport, 2026\u20132027 - Nemzeti Sport (fixture list, 1-1 opener)",
+    "url": "https://www.nemzetisport.hu/labdarugo-nb-ii/2026/07/nb-iii-delkeleti-csoport-2026-2027"
+   },
+   {
+    "title": "Vasas FC II \u2013 Meton-FC Dabas 1:1 - FC Dabas",
+    "url": "https://www.fcdabas.hu/2026/11/08/vasas-fc-ii-meton-fc-dabas-11-2/"
+   }
+  ],
+  "verdict": "caution"
  }
 }

@@ -1,4 +1,31 @@
 {
+ "Ghana v Somalia|Ghana": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Kudus, Jordan Ayew, Partey and Salisu return under interim coach Kim Lars Bj\u00f6rkegren, only Alidu Seidu (who has since arrived) and Marvin Senaya were missing from camp, and a projected XI is published with no confirmed injury absences. The return leg is Monday 16 Nov at the same venue, so some rotat",
+  "numbers": "Group C: Ghana are bottom on 0 points after a 0-2 loss to C\u00f4te d'Ivoire and a 2-4 home loss to The Gambia; Somalia are third on goal difference, also on 0 points, after losing 0-2 to C\u00f4te d'Ivoire and 1-2 to The Gambia (3News, YEN, beIN). Somalia's other recent results were 0-0 draws with Mauritius and Oman, and Ghana won both previous meetings 5-0 and 2-0 (3News, MyJoyOnline); I did not find a ve",
+  "reads": 1,
+  "reason": "Ghana have lost both qualifiers, sacked coach Carlos Queiroz and are on an eight-game winless run in AFCON qualifying (ModernGhana), so the 91% model figure deserves scepticism, but Ghana have a near-full-strength squad and Somalia are also pointless.",
+  "sources": [
+   {
+    "title": "2027 AFCON Qualifiers: Ghana vs Somalia - Preview (3News)",
+    "url": "https://3news.com/sports/2027-afcon-qualifiers-ghana-vs-somalia-preview"
+   },
+   {
+    "title": "LIVE: Ghana vs Somalia (beIN Sports)",
+    "url": "https://www.beinsports.com/en-us/soccer/africa-cup-of-nations-qualification/articles/live-ghana-vs-somalia-afcon-2027-qualifiers-2026-11-11"
+   },
+   {
+    "title": "AFCON 2027Q: Black Stars face Somalia with qualification hopes hanging in the balance (MyJoyOnline)",
+    "url": "https://www.myjoyonline.com/afcon-2027q-black-stars-face-somalia-with-qualification-hopes-hanging-in-the-balance/"
+   },
+   {
+    "title": "Ghana host Somalia in crucial qualifier as Bj\u00f6rkegren targets winning start (ModernGhana)",
+    "url": "https://www.modernghana.com/sports/1543890/2027-afcon-qualifiers-ghana-host-somalia-in-cruci.html"
+   }
+  ],
+  "verdict": "caution"
+ },
  "Minnesota Timberwolves v Dallas Mavericks|Minnesota Timberwolves": {
   "at": "2026-11-11T22:15:02Z",
   "model": "claude-sonnet-5-5",
@@ -22,6 +49,33 @@
    {
     "title": "Wolves Last 5 Games This Season By Game - StatMuse",
     "url": "https://www.statmuse.com/nba/ask/wolves-last-5-games-this-season-by-game"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Senegal v Sudan|Senegal": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Senegal are without Mamadou Sarr (injured), Pape Alassane Gu\u00e8ye (reported absent on match day) and Sadio Man\u00e9 (not called up); Sudan named a full squad with no injury issues reported, and no confirmed line-ups were found.",
+  "numbers": "Group J before this game: Senegal have 4 points from 2 games (1-0 away win v Ethiopia, 1-1 draw v Mozambique; 2 goals for, 1 against), and Sudan have 3 points from 2 games (2 goals for, 4 against, including a 4-1 loss at Mozambique). Sportnewsafrica lists Senegal's recent form as W L D W W and Sudan's as L W L. Senegal have won 6 and drawn 2 of 8 meetings with Sudan, including 3-1 at AFCON in Jan ",
+  "reads": 1,
+  "reason": "Senegal have injury and selection absences (Mamadou Sarr and Pape Alassane Gu\u00e8ye out, Man\u00e9 not selected) and have been unconvincing in qualifying, but nothing found clearly drops them below about 91% at home against a side they have never lost to (Betfred Insights, Africasoccer).",
+  "sources": [
+   {
+    "title": "Senegal vs Sudan Prediction, Betting Tips, Team News - Betfred Insights",
+    "url": "https://insights.betfred.com/football/senegal-vs-sudan-prediction-betting-tips-thursday-12-november-2026/"
+   },
+   {
+    "title": "Senegal suffer Pape Alassane Gu\u00e8ye absence for Sudan AFCON qualifier - Africasoccer",
+    "url": "https://africasoccer.com/senegal-suffer-pape-alassane-gueye-absence-for-sudan-afcon-qualifier/"
+   },
+   {
+    "title": "Senegal top Group J with 4 points as Vieira prepares for Sudan without Man\u00e9 or Gana Gueye - Sport News Africa",
+    "url": "https://sportnewsafrica.com/en/news/senegal-top-group-j-with-4-points-as-vieira-prepares-for-sudan-without-mane-or-gana-gueye/"
+   },
+   {
+    "title": "How and Where to Watch Senegal vs Sudan LIVE - beIN SPORTS",
+    "url": "https://www.beinsports.com/en-us/soccer/africa-cup-of-nations-qualification/articles/how-and-where-to-watch-senegal-vs-sudan-live-on-bein-sports-2026-11-11"
    }
   ],
   "verdict": "caution"
