@@ -1708,6 +1708,17 @@ CARD_WIDE_RULE = 2      # 1: bookmakers 55%+ (25 Oct to 11 Nov 2026); 2: bookmak
 # and the record (cardWide, cardWideByRule) stay; the replay keeps `fillwide`.
 # Set True to bring it back. claude/card-filler-off-2026-11-11.md.
 CARD_FILLER = False
+# 12 Nov 2026, Douglas: "if you can't make a card on 1 day - then look to the
+# next day ahead to combine fixtures to be able to create a card." When a
+# day's picks make no group, the build tries one from that day's qualifying
+# picks and the next day's together (at least one from the first day), under
+# the same rule: the model's own picks, 2x, three to five, two a competition
+# at most, the context check. It is the first day's group (archived and
+# graded there), open until its first start like any other, and the next
+# day's picks it takes are not used again on that day's own Card. Marked
+# `span` and tallied apart (`cardSpan`). The owner's call; `span2` replays it.
+# claude/card-span-2026-11-12.md.
+CARD_SPAN = True
 # 11 Nov 2026, Douglas: "with added human contextual review it does much
 # better. I need the groups to have the same contextual reading ... I want
 # this contextual review now. But also just a better understanding of the
@@ -1993,7 +2004,7 @@ def archived_card(date):
         seen.add(card_slot(g)); out.append(g)
     return out
 
-def build_card(L, date, now, prev=None, log=None, archived=None):
+def build_card(L, date, now, prev=None, log=None, archived=None, taken=None):
     """The Card for one UK date: up to two groups in each window. L holds the
     day's legs (any board date); each is placed by its UK kick-off. A slot
     locked in the day's archive (archived, read from disk when None) is reused
@@ -2004,7 +2015,12 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     for l in L:
         s = uk_slot(l)
         if s and s[0] == date: by_win[s[1]].append(l)
-    groups, used, filled = [], set(), set()
+    # 12 Nov 2026 (CARD_SPAN): the next day's picks, for a two-day group, and
+    # the picks a two-day group from the day before already holds
+    nd = (datetime.fromisoformat(date).date() + timedelta(days=1)).isoformat()
+    nxt = [l for l in L if (uk_slot(l) or (None,))[0] == nd]
+    taken = set(taken or ())
+    groups, used, filled = [], set(taken), set()
     if archived is None: archived = archived_card(date)
     for g in list(archived) + list(prev or []):
         if not is_card(g.get("name")): continue
@@ -2026,7 +2042,12 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
             g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
             groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot); continue
         if g.get("wide"): continue    # rebuilt below: a full-rule group takes its place when one can be made
-        ng, why = recheck_card(g, by_win[g["window"]])
+        if not g.get("locked") and {l["event"] for l in g["legs"]} & taken:
+            if log is not None:
+                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
+                            "picks": [l["pick"] for l in g["legs"]], "why": ["a pick is held by the day before's two-day group"]})
+            continue
+        ng, why = recheck_card(g, by_win[g["window"]] + (nxt if g.get("span") else []))
         if ng is None:
             if log is not None:
                 log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
@@ -2052,6 +2073,20 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                          status="replacement" if f"{w}|{name}" in replaced else "new")
                 for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
                 used |= {l["event"] for l in g["legs"]}; filled.add((w, name, seq)); groups.append(g)
+    # 12 Nov 2026 (CARD_SPAN): a window the full rule left empty tries one group
+    # from its own picks and the next day's, holding at least one of its own
+    for w, _, _ in (CARD_WINDOWS if CARD_SPAN else []):
+        if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
+        own = [l for l in by_win[w] if l["event"] not in used]
+        if not own: continue
+        for name, _, _, _ in built_kinds():
+            g = best_card(own + [l for l in nxt if l["event"] not in used], used, after, name)
+            if not g or not any((uk_slot(l) or (None,))[0] == date for l in g["legs"]): continue
+            lock = first_kick(g) or lock_time(date, w)
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False,
+                     status="new", span=[date, nd])
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            used |= {l["event"] for l in g["legs"]}; filled.add((w, name, 1)); groups.append(g)
     # The wider rule, only for a window the full rule left empty (CARD_FILLER).
     for w, _, _ in (CARD_WINDOWS if CARD_FILLER else []):
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
@@ -2881,6 +2916,8 @@ def grade(now=None):
            # rule) are tallied on their own lines and never count toward it.
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
+           # 12 Nov 2026: two-day groups (CARD_SPAN), also in the Card record
+           "cardSpan": tally([g for g in allg if is_card(g["name"]) and g.get("span") and not g.get("late")]),
            # 11 Nov 2026: the wider rule by version (CARD_WIDE_RULE)
            "cardWideByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late") and g.get("wideRule") == r])
                               for r in sorted({g.get("wideRule") for g in allg if is_card(g["name"]) and g.get("wide") and g.get("wideRule")})},
@@ -2933,14 +2970,16 @@ def main():
         for l in cands: l.pop("ukDate", None)
     except Exception as e:
         report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
-    days = []
+    days, span_taken = [], set()
     for d in dates:
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
         log = list(pd.get("log") or [])
         # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
         # Legs are placed by UK kick-off, so a day takes legs from every board date.
-        groups = build_card(L, d, now, prev=pd.get("groups"), log=log)
+        groups = build_card(L, d, now, prev=pd.get("groups"), log=log, taken=span_taken)
+        # 12 Nov 2026 (CARD_SPAN): the next day's picks a two-day group holds
+        span_taken = {l["event"] for g in groups if g.get("span") for l in g["legs"]}
         # 11 Nov 2026: under CARD_RULE 7 the Card is the model's own picks, so the paper Model card stops
         if not CARD_MODEL_RULE: groups += build_model_card(L, d, now, prev=pd.get("groups"))
         live = [g for g in groups if g.get("status") != "underway"]
@@ -2976,7 +3015,7 @@ def main():
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
-                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "wideLegs": list(CARD_WIDE_LEGS),
+                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "span": CARD_SPAN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS), "context": CARD_CONTEXT,
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,

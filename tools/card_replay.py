@@ -282,6 +282,10 @@ VARIANTS = {
     # its most likely combination in the band, up to three a day, two units a
     # group like the 2x), and the ladder in his order, one group a band.
     **{v: payout_patch(kinds) for v, kinds in PAYOUTS.items()},
+    # 12 Nov 2026 (groupings.CARD_SPAN, claude/card-span-2026-11-12.md): live,
+    # and a day live leaves empty borrows the next day's legs (one group, at
+    # least one of the day's own picks); the next day never reuses them
+    "span2": {"_SPAN": True},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
@@ -316,6 +320,28 @@ def build_wide(day_legs, date):
         g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1
         groups.append(g)
     return groups
+
+
+def build_span(by, dates):
+    """12 Nov 2026: live, and each day live leaves empty takes one group from
+    its own legs and the next day's (at least one of its own), the way
+    groupings.build_card does under CARD_SPAN. Days in order; legs a two-day
+    group holds are not used again the next day."""
+    from datetime import date as _date, timedelta as _td
+    out, held = {}, set()
+    for d in dates:
+        own = [l for l in by[d] if l["event"] not in held]
+        gs = build(own, d, "live")
+        if not gs:
+            nd = (_date.fromisoformat(d) + _td(days=1)).isoformat()
+            after = G.lock_time(d, "Day")
+            for name, _, _, _ in G.built_kinds():
+                g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name)
+                if not g or not any(l["event"] in {o["event"] for o in own} for l in g["legs"]): continue
+                g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1; g["span"] = True
+                held |= {l["event"] for l in g["legs"]}; gs = [g]; break
+        out[d] = gs
+    return out
 
 
 def build(day_legs, date, variant):
@@ -419,7 +445,8 @@ def main():
                        "source": {"pool": use_pool, "poolFrom": POOL_FROM if use_pool else None, "closing": closing, "recover": recover,
                                   "poolLegs": dict(sports) if use_pool else None, "poolLeftOut": skipped if use_pool else None}}
     for v in VARIANTS:
-        days = {d: build(by[d], d, v) for d in dates}
+        if VARIANTS[v].get("_SPAN"): days = build_span(by, dates)
+        else: days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
         out[v] = days
         summarise(days, v)
