@@ -145,8 +145,8 @@ def stored_threshold(sp):
 
 
 DEFAULTS = {"k": 20, "hfa": 50, "regress": 0.33, "mov": 1}
-GRID = {"k": (8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
-        "regress": (0.0, 0.25, 0.5), "mov": (0, 1)}
+GRID = {"k": (4, 6, 8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
+        "regress": (0.0, 0.15, 0.25, 0.5), "mov": (0, 1)}
 
 # A feed: an ESPN scoreboard path, the months it plays in, which weekdays to
 # walk for history (rugby is almost all Friday to Sunday; asking for every day
