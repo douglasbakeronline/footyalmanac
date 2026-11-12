@@ -224,6 +224,70 @@ def rule6_lines(rep):
                         for v, r in fam) + "."]
 
 
+def fd_side(hist, v):
+    """One variant's football-data read, season by season (12 Nov 2026): the
+    rule 7 variants are paired by day against live in each replayed season
+    (`card_legs_history.py` `cardM7Paired`, committed by tune.yml on Mondays).
+    Returns [(season, paired)] in file order, or [] when none is on file."""
+    out = []
+    for k, r in ((hist or {}).get("seasons") or {}).items():
+        x = (r.get("cardM7Paired") or {}).get(v) if isinstance(r, dict) else None
+        if x: out.append((r.get("season") or k, x, k))
+    return out
+
+
+def fd_beats(x):
+    """A football-data season the variant beats live on, at the gate's p(worse)."""
+    return (not x.get("identical")) and (x.get("perDay") or 0) > 0 and x.get("pWorse") is not None and x["pWorse"] <= GATE_P
+
+
+def fd_gate_lines(rep, hist):
+    """12 Nov 2026: both sides of the gate in one place. CLAUDE.md's rule
+    needs a variant to beat live on the pool (p(worse) <= 0.30 on 100+ legs)
+    and on both football-data seasons (fit and check). Until now the review
+    showed only the pool, so a pool lead the seasons had already refused
+    (m7under5 on 12 Nov: pool p(worse) 0.014, football-data behind in all
+    five seasons, pooled 0.99) read as a variant to watch. Rule 7 variants
+    only: the rule 6 family is not paired on football-data."""
+    vs = rep.get("variants") or {}
+    rows = [(v, r, fd_side(hist, v)) for v, r in vs.items() if v != "live" and r.get("vsLivePerDay") is not None]
+    rows = [x for x in rows if x[2]]
+    if not rows:
+        return ["Football-data side: no paired season read on file yet (`cardM7Paired` in card-legs-history.json, tune.yml on Mondays).", ""]
+    seasons = [s for s, _, _ in rows[0][2]]
+    out = ["### Both sides of the gate (the rule 7 variants)", "",
+           "| variant | pool v live / day | pool p(worse) | pool legs | " + " | ".join(f"{s} v live / day, p(worse)" for s in seasons) + " | gate |",
+           "|---|---|---|---|" + "---|" * len(seasons) + "---|"]
+    passed = []
+    for v, r, fd in rows:
+        by = {k: x for _, x, k in fd}
+        cells = []
+        for _, x, _ in fd:
+            cells.append("identical" if x.get("identical") else f"{x.get('perDay', 0):+.2f}, {x.get('pWorse')}")
+        pool_ok = (r.get("pWorse") is not None and r["pWorse"] <= GATE_P and gate_legs(r) >= GATE_LEGS and (r.get("vsLivePerDay") or 0) > 0)
+        fd_ok = all(fd_beats(by.get(k) or {}) for k in ("fit", "check")) and "fit" in by and "check" in by
+        if all(x.get("identical") for _, x, _ in fd):
+            verdict = "no football-data read (identical to live there)"
+        elif pool_ok and fd_ok:
+            verdict = "**passes**"; passed.append(v)
+        else:
+            why = []
+            if (r.get("vsLivePerDay") or 0) <= 0: why.append("behind on the pool")
+            elif r.get("pWorse") is None or r["pWorse"] > GATE_P: why.append(f"pool p(worse) {r.get('pWorse')}")
+            elif gate_legs(r) < GATE_LEGS: why.append(f"pool {gate_legs(r)} legs of {GATE_LEGS}")
+            if not fd_ok:
+                bad = [s for s, x, k in fd if k in ("fit", "check") and not fd_beats(x)]
+                why.append("football-data " + (", ".join(bad) if bad else "fit and check not both on file"))
+            verdict = "fails: " + ", ".join(why)
+        out.append(f"| {v} | {r['vsLivePerDay']:+.2f} | {r.get('pWorse') if r.get('pWorse') is not None else 'identical'} | {gate_legs(r)} | " + " | ".join(cells) + f" | {verdict} |")
+    refused = [v for v, r, fd in rows if (r.get("vsLivePerDay") or 0) > 0 and any((not x.get("identical")) and (x.get("perDay") or 0) < 0 for _, x, _ in fd)]
+    if refused:
+        out.append("Ahead on the pool but behind live on football-data in at least one season, so not a candidate however the pool reads: " + ", ".join(refused) + ".")
+    if passed:
+        out.append("**Full gate passed: " + ", ".join(passed) + ". The next build session changes the rule (CARD_RULE bump with these numbers, note, release).**")
+    return out + [""]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -249,10 +313,17 @@ def main():
         cands = candidates(rep)
         if cands:
             lines += ["**Candidates beating live on the archive (p(worse) <= 0.30 on 100+ legs):** " + ", ".join(v for v, _ in cands) + ". A rule change still needs the football-data replay to agree on both seasons (tune.yml, Mondays), then CARD_RULE bumped with the numbers.", ""]
+        # 12 Nov 2026: a variant that built nothing is "ahead" only because live
+        # lost on those days (short, notennis, tennis80 read +0.44 a day on 0
+        # legs); it is named apart, not listed as one to watch
         near = [v for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30
-                and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands]
+                and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands and gate_legs(r) > 0]
+        empty = [v for v, r in rep["variants"].items() if v != "live" and (r.get("vsLivePerDay") or 0) > 0 and not gate_legs(r)]
         if near:
             lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({gate_legs(rep['variants'][v])} legs)" for v in near) + ".", ""]
+        if empty:
+            lines += ["Built nothing on these days, so ahead of live only by live's losses (not a read): " + ", ".join(empty) + ".", ""]
+        lines += fd_gate_lines(rep, load("card-legs-history.json"))
     if pt.get("timing"):
         t = pt["timing"]
         lines += [f"## Price timing ({pt['legs']} Card-rule legs)", f"- first price to last pre-start price: drifted {t['drifted']}, shortened {t['shortened']}, unchanged {t['unchanged']}; mean move {t['meanMovePct']:+.2f}% ({t['read']})"]
