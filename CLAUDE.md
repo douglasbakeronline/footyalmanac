@@ -116,6 +116,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/tennis-floor-85-2026-11-11.md` | Tennis on the Card at 85% (`CARD_RULE` 10), the "Under 80" mark on tennis rows, `holdPlace` keeping a tapped row in place. Read before touching `CARD_SPORT_MIN` or row redraws. |
 | `claude/card-wider-leagues-2026-11-11.md` | The Card admits the wider leagues (`CARD_CORE_ONLY` False, `CARD_RULE` 11) at Douglas's call after Leotar; the replay against it; `m7core`. Read before touching the Card's league limit. |
 | `claude/card-replay-rule6-tennis-2026-11-12.md` | The rule 6 family had inherited the live 85% tennis floor, so `rule6`, `notennis` and `tennis80` replayed alike; `RULE6` pins tennis at 75%. Read before pinning any constant a later `CARD_RULE` changes. |
+| `claude/card-m7legs2-2026-11-12.md` | Two-pick Card 2x groups (`m7legs2`) replayed after the empty 11 and 12 Nov: more groups, worse return (football-data 2025-26 -18% v live +22%); the 3-pick minimum stays. Read before loosening `CARD_LEGS` for volume. |
 | `claude/opposition-price-2026-11-06.md` | The opposition's price as a Card condition: the replay by opposition price band, why football only, the variants for the 30 Nov review. Read before touching `CARD_OPP_MIN` or the price fields on a leg. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
