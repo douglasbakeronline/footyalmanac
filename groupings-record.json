@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-12T07:06:22Z",
+ "graded": "2026-11-12T13:18:42Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -218,7 +218,8 @@
    "ncaab|cal state fullerton titans|lincoln (ca) oaklanders|2026-11-13": -1,
    "ncaab|miami hurricanes|north alabama lions|2026-11-13": -1,
    "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1,
-   "ncaab|howard bison|stetson hatters|2026-11-13": 1.15,
+   "ncaab|howard bison|stetson hatters|2026-11-13": 1.12,
+   "football|laktaši|famos vojkovići|2026-11-14": 0,
    "nba|houston rockets|utah jazz|2026-11-14": -1,
    "ncaab|florida gators|merrimack warriors|2026-11-14": -1,
    "ncaab|illinois fighting illini|sam houston bearkats|2026-11-14": -1,
@@ -639,6 +640,31 @@
    "shortened": 4,
    "drifted": 1,
    "mean": -0.0036
+  }
+ },
+ "cardSpan": {
+  "groups": 0,
+  "settled": 0,
+  "won": 0,
+  "z": null,
+  "lost": 0,
+  "pending": 0,
+  "legs": 0,
+  "legsWon": 0,
+  "returned": 0,
+  "staked": 0,
+  "returnedBest": 0,
+  "returnedLock": 0,
+  "stakedLock": 0,
+  "expected": 0,
+  "unitsStaked": 0,
+  "unitsReturned": 0,
+  "unitsReturnedBest": 0,
+  "clv": {
+   "n": 0,
+   "shortened": 0,
+   "drifted": 0,
+   "mean": null
   }
  },
  "cardWideByRule": {
