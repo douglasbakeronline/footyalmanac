@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): the value demand's relief refused on five seasons
+
+**What changed:** advisory only. The football-data Card replay now runs `m7under5` (the model up to 5 points under the bookmakers) and `m7core`, and pairs every rule 7 variant against live by day, per season and pooled (`cardM7Paired`, `cardM7Pooled`).
+**Why:** the 12 Nov nightly review had `m7under5` well ahead of live on the pool (p(worse) 0.014, 45 legs) a day after it read well behind. It had never been run on football-data.
+**Evidence:** five seasons, 912 legs: behind live in every season, pooled -0.31 units a day, p(worse) 0.99; 304 groups -6.9% (120 won v 120.5 expected) v live 162 groups +9.6%. On the pool it leads only at first real prices (p(worse) 0.10), is level on `--recover` (0.51) and behind at closing (0.63). The value demand stays. `m7core` equals live on football-data (all core leagues), so the wider-leagues rule is read on the pool only. `claude/card-m7under5-seasons-2026-11-12.md`.
+**Files:** `tools/card_legs_history.py`, `tests/test_card_m7_paired.py`, `claude/card-m7under5-seasons-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-12 (tag pending): the Card review counts legs lost to a missing price
 
 **What changed:** advisory only. The Card funnel and the nightly Card review now count the legs with no bookmaker price that pass every other Card condition (`price_gaps`), split into days already started (lost) and days still to come.
