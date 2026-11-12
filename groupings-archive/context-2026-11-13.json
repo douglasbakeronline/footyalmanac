@@ -25,5 +25,32 @@
    }
   ],
   "verdict": "clear"
+ },
+ "Ospitaletto v Dolomiti Bellunesi|Ospitaletto": {
+  "at": "2026-11-12T13:47:46Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant for Ospitaletto, and no confirmed line-ups or injury list for this match were found; Dolomiti have had a long injury list this season (Mignanelli out for weeks with a knee injury, per an earlier preview) and a new manager, Vinicio Espinal.",
+  "numbers": "Ospitaletto: 4th, 22 pts from 13 (6W 4D 3L), goals 19 for and 11 against; recent games were a 1-0 win at Desenzano, losses to Pergolettese and Pro Vercelli, and a 0-0 draw with Trento (I could not find a clean last-five sequence, and no home-only split). Dolomiti Bellunesi: second-bottom on 10 pts, 8 goals for and 14 against after 11 games (the latest figures I found), with a 0-4 loss at home to L",
+  "reads": 1,
+  "reason": "Nothing found argues against the pick: bet365's preview (12 Nov 2026) has Ospitaletto 4th on 22 points and Dolomiti Bellunesi second-bottom on 10 after six straight defeats, under a manager who only arrived in early November.",
+  "sources": [
+   {
+    "title": "Ospitaletto-Dolomiti Bellunesi: orario, probabili formazioni (bet365 News)",
+    "url": "https://news.bet365.it/it-it/article/cp-ospitaletto-dolomiti-bellunesi-orario-probabili-formazioni-e-dove-vederla-in-tv-e-streaming/2026111210065398891"
+   },
+   {
+    "title": "Classifica Serie C Girone A 2026/2027 - I AM CALCIO",
+    "url": "https://novara.iamcalcio.it/classifiche/861/serie-c-girone-a/"
+   },
+   {
+    "title": "Dolomiti Bellunesi Standings, Matches and Scores - Futbol24",
+    "url": "https://www.futbol24.com/team/Italy/Dolomiti-Bellunesi"
+   },
+   {
+    "title": "Dolomiti Bellunesi-Lecco: diretta live e risultato (Calciomagazine)",
+    "url": "https://www.calciomagazine.net/dolomiti-bellunesi-lecco-diretta-risultato-1-novembre-2026-252267.html"
+   }
+  ],
+  "verdict": "clear"
  }
 }
