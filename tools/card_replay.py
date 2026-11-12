@@ -285,7 +285,12 @@ VARIANTS = {
 # rebuilt live exactly ("identical to live" in the 11 Nov review) and the
 # fillers built nothing. Each now runs on the rule 6 Card with its one change,
 # as registered, and is paired against both live and rule6.
-RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True}
+# 12 Nov 2026: the rule 6 Card ran with tennis at 75% (29 Oct to 11 Nov); the
+# live floor went to 85% with CARD_RULE 10, and RULE6 had inherited it, so
+# rule6, notennis and tennis80 replayed identically (no tennis leg reaches 85%
+# on the pool). Pinned to the floor rule 6 ran with, like CARD_CORE_ONLY.
+RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True,
+         "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75)}
 RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80"}
 
 

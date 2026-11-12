@@ -47,6 +47,17 @@ class Rule6Family(unittest.TestCase):
             self.assertEqual(p["CARD_RULE"], 6, v)
         self.assertEqual(CR.patch_of("opp7")["CARD_OPP_MIN"], {"football": 7.0})
 
+    def test_rule6_keeps_its_tennis_floor(self):
+        """12 Nov 2026: rule 6 ran with tennis at 75%; the live 85% (CARD_RULE 10)
+        must not leak into it, or rule6, notennis and tennis80 replay alike."""
+        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.85)
+        self.assertEqual(CR.patch_of("rule6")["CARD_SPORT_MIN"]["tennis"], 0.75)
+        self.assertEqual(CR.patch_of("tennis80")["CARD_SPORT_MIN"]["tennis"], 0.80)
+        self.assertEqual(CR.patch_of("notennis")["CARD_SPORT_MIN"]["tennis"], 0.75)
+        self.assertIn("tennis", CR.patch_of("notennis")["CARD_SPORTS_OFF"])
+        self.assertEqual(CR.patch_of("tennis75")["CARD_SPORT_MIN"]["tennis"], 0.75)
+        self.assertNotIn("CARD_MODEL_RULE", CR.patch_of("tennis75"))
+
     def test_rule7_variants_stay_on_live(self):
         for v in ("live", "m7edge3", "m7under5", "with3x", "comp3", "flatstake", "modelcard"):
             self.assertNotIn("CARD_MODEL_RULE", CR.patch_of(v), v)
