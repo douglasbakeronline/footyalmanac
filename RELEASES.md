@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): the Card review counts legs lost to a missing price
+
+**What changed:** advisory only. The Card funnel and the nightly Card review now count the legs with no bookmaker price that pass every other Card condition (`price_gaps`), split into days already started (lost) and days still to come.
+**Why:** the Card was empty on 11 and 12 Nov, and 943 pool legs from 6 Nov were "estimate only". If those would have cleared, the price feed was the lever.
+**Evidence:** from 10 Nov (every leg keeps its first real price) a missing price cost four legs on started days (Ýokary Liga 2, Eerste Divisie 1, one tennis); none was the leg a group lacked. 57 legs for 13-15 Nov are still unpriced, mostly lower-tier football. Price coverage is not what starves the Card now. `claude/card-price-gaps-2026-11-12.md`.
+**Files:** `tools/card_funnel.py`, `tools/card_review_post.py`, `tests/test_card_funnel_gaps.py`, `claude/card-price-gaps-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, pricing, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-12 (tag pending): two-pick Card groups replayed and refused
 
 **What changed:** advisory only. `m7legs2` pre-registered in the Card replay (the 2x may be two picks as well as three to five), on the pool and the football-data seasons.

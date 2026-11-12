@@ -156,6 +156,74 @@ def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False):
     return by, unpriced
 
 
+def unpriced_ok(row):
+    """12 Nov 2026: True when a leg archived with no real bookmaker price
+    would pass every other Card condition, read with the live function.
+    Under the model's rule (CARD_RULE 7+) the price is tested first, so the
+    leg is read at a stand-in price inside CARD_ODDS with no bookmakers'
+    chance (the value demand cannot be read without one); under rule 6 the
+    price is the last test, so its own fault must be the missing price."""
+    l = dict(row)
+    l.setdefault("pTested", l.get("p")); l.setdefault("hit", l.get("pTested"))
+    if l.get("pModel") is None: return False
+    if model_rule():
+        lo, hi = G.CARD_ODDS
+        l.update(est=False, odds=round((lo + hi) / 2, 2), fair=None)
+        return G.card_fault(l) is None
+    l["est"] = True
+    return fault_key(G.card_fault(l)) is not None and "no bookmaker price" in (G.card_fault(l) or "")
+
+
+def price_gaps(since=None, until=None, today=None, pool_dir=R.POOL_DIR, recover=False):
+    """12 Nov 2026: the legs the Card could not read for want of a price.
+    Every pool leg with no real price (pool_days leaves it out) that passes
+    every other condition (unpriced_ok), by day, sport and competition.
+    `today` (UK) splits days already started from days still to come: a
+    future day's leg may yet be priced, a past day's will not. Volume only:
+    a priced leg must still clear the value demand."""
+    if today is None:
+        import engine
+        today = engine.uk_today().isoformat()
+    seen, rows = set(), []
+    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
+        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
+        d = fn[5:15]
+        if d < R.POOL_FROM or (since and d < since) or (until and d > until): continue
+        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
+        for row in a.get("legs") or []:
+            key = (row.get("event"), row.get("pick"))
+            if key in seen: continue
+            seen.add(key)
+            slot = G.uk_slot(row)
+            if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
+            if R.pool_market(row, recover=recover) is not None or not unpriced_ok(row): continue
+            rows.append({"date": slot[0], "sport": row.get("sport"), "comp": (row.get("comp") or row.get("code") or "?") + (f" [{row['code']}]" if row.get("comp") and row.get("code") else ""),
+                         "pick": row.get("pick"), "pModel": row.get("pModel"), "past": bool(today and slot[0] < today)})
+    by_sport, comps = Counter(), Counter()
+    for r in rows:
+        by_sport[(r["sport"], "past" if r["past"] else "to come")] += 1
+        if r["past"]: comps[(r["sport"], r["comp"])] += 1
+    return {"today": today, "legs": len(rows), "past": sum(r["past"] for r in rows),
+            "bySport": {f"{s}|{w}": n for (s, w), n in sorted(by_sport.items())},
+            "comps": [[s, c, n] for (s, c), n in comps.most_common(8)],
+            "days": dict(sorted(Counter(r["date"] for r in rows if r["past"]).items()))}
+
+
+def gap_lines(g):
+    """Markdown lines for price_gaps(): what missing prices cost the Card."""
+    if not g or not g.get("legs"): return ["No leg was kept off the Card by a missing price alone."]
+    sports = sorted({k.split("|")[0] for k in g["bySport"]})
+    out = [f"Legs with no bookmaker price that pass every other Card condition: **{g['legs']}**, "
+           f"{g['past']} on days already started (lost), {g['legs'] - g['past']} still to come (may yet be priced).", "",
+           "| sport | started | to come |", "|---|---|---|"]
+    for s in sports:
+        out.append(f"| {s} | {g['bySport'].get(s + '|past', 0)} | {g['bySport'].get(s + '|to come', 0)} |")
+    if g["comps"]:
+        out += ["", "Most often unpriced on started days: " + "; ".join(f"{c} ({s}) {n}" for s, c, n in g["comps"]) + "."]
+    out += ["A priced leg must still clear the value demand, so this is the most a fuller price feed could add.", ""]
+    return out
+
+
 def kinds_built(legs, date, patch=None):
     """{kind: groups}: how many groups of each kind the Card builds can be
     made from the day's legs (no fixture shared), in build_card's order (seq
@@ -269,6 +337,9 @@ def main(argv=None):
         print(f"  {d['date']}: {d['priced']:>3} priced, clear {d['clear'] or '-'}; live "
               + ", ".join(f"{k} {v}" for k, v in b.items()))
     print("\n".join(report_lines(f)))
+    g = price_gaps(since, until, recover="--recover" in argv)
+    print("\n" + "\n".join(gap_lines(g)))
+    f["priceGaps"] = g
     if arg("--json"):
         with open(arg("--json"), "w") as fh: json.dump(dict(f, since=since, until=until), fh, indent=1)
     return f
