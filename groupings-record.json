@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-12T02:59:57Z",
+ "graded": "2026-11-12T07:06:22Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,24 +67,24 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 10,
-   "won": 10,
+   "n": 11,
+   "won": 11,
    "rate": 1.0,
-   "quoted": 0.874,
-   "returned": 11.0,
-   "ret": 0.1
+   "quoted": 0.8694,
+   "returned": 12.07,
+   "ret": 0.0973
   },
   "notAtBook": {
-   "n": 18,
-   "won": 18,
-   "rate": 1.0,
-   "quoted": 0.9255
+   "n": 27,
+   "won": 26,
+   "rate": 0.963,
+   "quoted": 0.9233
   },
   "unchecked": {
-   "n": 16,
-   "won": 16,
+   "n": 17,
+   "won": 17,
    "rate": 1.0,
-   "quoted": 0.911
+   "quoted": 0.9141
   },
   "bySport": {
    "football": {
@@ -107,11 +107,11 @@
    },
    "nba": {
     "atBook": {
-     "n": 1,
-     "won": 1,
+     "n": 2,
+     "won": 2,
      "rate": 1.0,
-     "quoted": 0.8458,
-     "returned": 1.07,
+     "quoted": 0.8346,
+     "returned": 2.14,
      "ret": 0.07
     },
     "notAtBook": {
@@ -135,16 +135,16 @@
      "ret": 0.095
     },
     "notAtBook": {
-     "n": 18,
-     "won": 18,
-     "rate": 1.0,
-     "quoted": 0.9255
+     "n": 27,
+     "won": 26,
+     "rate": 0.963,
+     "quoted": 0.9233
     },
     "unchecked": {
-     "n": 13,
-     "won": 13,
+     "n": 14,
+     "won": 14,
      "rate": 1.0,
-     "quoted": 0.9274
+     "quoted": 0.93
     }
    },
    "tennis": {
@@ -208,16 +208,17 @@
    "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": 0,
    "ncaab|howard bison|stetson hatters|2026-11-12": -1,
    "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
+   "football|morocco|niger|2026-11-13": 1.06,
    "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
    "ncaab|towson tigers|loyola maryland greyhounds|2026-11-13": 0,
-   "ncaab|high point panthers|southern utah thunderbirds|2026-11-13": 0,
-   "ncaab|rhode island rams|maryland eastern shore hawks|2026-11-13": 0,
-   "ncaab|bowling green falcons|niagara purple eagles|2026-11-13": 0,
+   "ncaab|high point panthers|southern utah thunderbirds|2026-11-13": 1.01,
+   "ncaab|rhode island rams|maryland eastern shore hawks|2026-11-13": 1.0,
+   "ncaab|bowling green falcons|niagara purple eagles|2026-11-13": 1.04,
    "ncaab|byu cougars|montana state bobcats|2026-11-13": 0,
    "ncaab|cal state fullerton titans|lincoln (ca) oaklanders|2026-11-13": -1,
    "ncaab|miami hurricanes|north alabama lions|2026-11-13": -1,
    "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1,
-   "ncaab|howard bison|stetson hatters|2026-11-13": 0,
+   "ncaab|howard bison|stetson hatters|2026-11-13": 1.15,
    "nba|houston rockets|utah jazz|2026-11-14": -1,
    "ncaab|florida gators|merrimack warriors|2026-11-14": -1,
    "ncaab|illinois fighting illini|sam houston bearkats|2026-11-14": -1,
@@ -264,12 +265,12 @@
  },
  "cardContext": {
   "caution": {
-   "legs": 1,
-   "landed": 0,
-   "rate": 0.0,
-   "model": 0.6671,
-   "fair": 0.6,
-   "zModel": -1.42
+   "legs": 3,
+   "landed": 1,
+   "rate": 0.3333,
+   "model": 0.6597,
+   "fair": 0.6088,
+   "zModel": -1.19
   }
  },
  "byBand": {

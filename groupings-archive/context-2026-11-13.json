@@ -1,0 +1,29 @@
+{
+ "Karbon Cherkasy v Atlet|Karbon Cherkasy": {
+  "at": "2026-11-12T07:05:04Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant. I found no published injury, suspension or line-up news, but the match is on the LNZ training base ground in Heronymivka, and one source lists a 12:30 local kick-off.",
+  "numbers": "Karbon are 1st after 11 games with 6W 4D 1L, 24 goals for and 12 against, 22 pts, and their last five are D W W W W. Atlet are 5th after 11 games with 4W 4D 3L, 19 for and 15 against, 16 pts, and their last five are D W D D L. Their only meeting this season was a 2-2 draw in Kyiv on 13 September.",
+  "reads": 1,
+  "reason": "Leaders Karbon (1st, 22 pts, unbeaten in their last five) host 5th-placed Atlet, who have won once in five, and I found no injury, suspension or rotation news for either side (standings from cherkassy-sport.com).",
+  "sources": [
+   {
+    "title": "\u0414\u0435 \u0456 \u043a\u043e\u043b\u0438 \u0424\u041a \u00ab\u041a\u0430\u0440\u0431\u043e\u043d\u00bb \u043f\u0440\u0438\u0439\u043c\u0430\u0454 \u00ab\u0410\u0442\u043b\u0435\u0442\u00bb \u0443 15 \u0442\u0443\u0440\u0456 \u0447\u0435\u043c\u043f\u0456\u043e\u043d\u0430\u0442\u0443 \u0423\u043a\u0440\u0430\u0457\u043d\u0438 \u0437 \u0444\u0443\u0442\u0431\u043e\u043b\u0443",
+    "url": "https://cherkassy-sport.com/futbol/79661-de-i-koly-fk-karbon-pryimaie-atlet-u-15-turi-chempionatu-ukrainy-z-futbolu.html"
+   },
+   {
+    "title": "FC Metalurh Zaporizhya - Streaming and TV Schedule, Fixtures, Results (Druha Liga table with form)",
+    "url": "https://www.livesoccertv.com/teams/ukraine/metalurh-zaporizhya/"
+   },
+   {
+    "title": "\u0427\u0435\u0440\u043a\u0430\u0441\u044c\u043a\u0438\u0439 \u00ab\u041a\u0430\u0440\u0431\u043e\u043d\u00bb \u043d\u0430 \u0432\u0438\u0457\u0437\u0434\u0456 \u0440\u043e\u0437\u0456\u0439\u0448\u043e\u0432\u0441\u044f \u043c\u0438\u0440\u043e\u043c \u0437 \u043a\u0438\u0457\u0432\u0441\u044c\u043a\u0438\u043c \u0424\u041a \u00ab\u0410\u0442\u043b\u0435\u0442\u0456\u043a\u00bb",
+    "url": "https://cherkassy-sport.com/futbol/78188-cherkaskyi-karbon-na-vyizdi-roziishovsia-myrom-z-kyivskym-fk-atletik.html"
+   },
+   {
+    "title": "\u041a\u0430\u0440\u0431\u043e\u043d \u0427\u0435\u0440\u043a\u0430\u0441\u0441\u044b - \u0410\u0442\u043b\u0435\u0442 \u041a\u0438\u0435\u0432: \u043f\u0440\u043e\u0433\u043d\u043e\u0437\u044b 13 \u043d\u043e\u044f\u0431\u0440\u044f 2026",
+    "url": "https://kushvsporte.ru/event/7065013-karbon-cherkassy-atlet-kiev"
+   }
+  ],
+  "verdict": "clear"
+ }
+}
