@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-11T23:23:38Z",
+ "graded": "2026-11-12T00:41:35Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,12 +67,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 7,
-   "won": 7,
+   "n": 8,
+   "won": 8,
    "rate": 1.0,
-   "quoted": 0.8524,
-   "returned": 7.38,
-   "ret": 0.0543
+   "quoted": 0.8577,
+   "returned": 8.4,
+   "ret": 0.05
   },
   "notAtBook": {
    "n": 15,
@@ -127,12 +127,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 5,
-     "won": 5,
+     "n": 6,
+     "won": 6,
      "rate": 1.0,
-     "quoted": 0.8654,
-     "returned": 5.14,
-     "ret": 0.028
+     "quoted": 0.8703,
+     "returned": 6.16,
+     "ret": 0.0267
     },
     "notAtBook": {
      "n": 15,
@@ -246,7 +246,20 @@
    "ncaab|winthrop eagles|jackson state tigers|2026-11-14": -1,
    "ncaab|gonzaga bulldogs|lsu tigers|2026-11-14": -1,
    "ncaab|navy midshipmen|hampton pirates|2026-11-14": -1,
-   "ncaab|pacific tigers|air force falcons|2026-11-14": -1
+   "ncaab|pacific tigers|air force falcons|2026-11-14": -1,
+   "nfl|tennessee titans|jacksonville jaguars|2026-11-15": 1.15,
+   "nba|minnesota timberwolves|chicago bulls|2026-11-15": -1,
+   "nba|utah jazz|san antonio spurs|2026-11-15": -1,
+   "ncaab|unc wilmington seahawks|louisiana ragin' cajuns|2026-11-15": -1,
+   "ncaab|villanova wildcats|rider broncs|2026-11-15": -1,
+   "ncaab|siena saints|brown bears|2026-11-15": -1,
+   "ncaab|duquesne dukes|binghamton bearcats|2026-11-15": -1,
+   "ncaab|grand canyon lopes|ul monroe warhawks|2026-11-15": -1,
+   "ncaab|seattle u redhawks|idaho state bengals|2026-11-15": -1,
+   "ncaab|iowa state cyclones|niagara purple eagles|2026-11-15": -1,
+   "ncaab|boston college eagles|new hampshire wildcats|2026-11-15": -1,
+   "ncaab|michigan wolverines|william & mary tribe|2026-11-15": -1,
+   "ncaab|ut martin skyhawks|ecclesia royals|2026-11-15": -1
   }
  },
  "cardContext": {},
