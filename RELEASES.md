@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): the rule 6 replay keeps its own tennis floor
+
+**What changed:** advisory only. The Card replay's rule 6 family had inherited the live tennis floor (85% since CARD_RULE 10), so `rule6`, `notennis` and `tennis80` replayed identically and `rule6` built almost nothing. `RULE6` now pins tennis at 75%, the floor rule 6 ran with.
+**Evidence:** pool 30 Oct to 14 Nov, `--recover`: `rule6` 3 groups before, 11 groups 5 won +8% after (matches the 11 Nov morning read); `notennis` v `rule6` +0.23 units a day, p(worse) 0.42, where it read "identical" before. `claude/card-replay-rule6-tennis-2026-11-12.md`.
+**Files:** `tools/card_replay.py`, `tests/test_card_replay_rule6_family.py`, `claude/card-replay-rule6-tennis-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, `tennis75`, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-12 (tag pending): At a glance scrolls back a week
 
 **What changed:** At a glance on the Daily List now holds the last seven days as well as the week ahead. It opens on today; swipe or tap back through each past day's list, every pick at its start time, won or lost, with the day's score on its tab (e.g. "Sun 8 18/21").
