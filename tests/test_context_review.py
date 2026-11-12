@@ -121,3 +121,26 @@ class CardPicks(unittest.TestCase):
         ps = G.card_picks([ok, off, low, done], "2026-11-14", NOW)
         self.assertEqual([p["pick"] for p in ps], ["A", "C"])
         self.assertEqual(ps[1]["context"]["verdict"], "against")
+
+
+class Budget(unittest.TestCase):
+    """12 Nov 2026: Daily List reads within a daily cap, by priority."""
+    def test_priority_card_then_sport_then_strongest(self):
+        a = dict(leg("A"), sport="ncaab", pModel=0.95)
+        b = dict(leg("B"), sport="football", pModel=0.76)
+        c = dict(leg("C"), sport="nba", pModel=0.90, cxCard=True)
+        d = dict(leg("D"), sport="football", pModel=0.88)
+        self.assertEqual([x["pick"] for x in sorted([a, b, c, d], key=CX.priority)], ["C", "D", "B", "A"])
+
+    def test_models_by_sport(self):
+        self.assertEqual(CX.model_for({"sport": "football"}), CX.MODEL)
+        self.assertEqual(CX.model_for({"sport": "nba"}), CX.MODEL)
+        self.assertEqual(CX.model_for({"sport": "tennis"}), CX.CHEAP_MODEL)
+        self.assertEqual(CX.model_for({"sport": "tennis", "cxCard": True}), CX.MODEL)
+
+    def test_daily_cap_holds_across_builds(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(CX, "ARCHIVE", d), mock.patch.object(CX, "DAILY_READS", 3):
+            post = lambda body: reply({"verdict": "clear", "reason": "ok", "sources": SRC})
+            self.assertEqual(CX.review([leg(f"P{i}") for i in range(5)], NOW, {}, post=post), 3)
+            self.assertEqual(CX.review([leg(f"Q{i}") for i in range(5)], NOW + timedelta(hours=1), {}, post=post), 0)
+            self.assertEqual(CX.review([leg(f"R{i}") for i in range(5)], NOW + timedelta(days=1), {}, post=post), 0)  # those picks have started by then
