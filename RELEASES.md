@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): baseball Elo refitted on a wider grid
+
+**What changed:** MLB's Elo settings go from K 8, home advantage 25, carry-over regress 0.25, no margin to K 3, home advantage 15, regress 0.0, margin of victory on, with a refitted calibration (a 0.031, b 0.9188, applied: it narrows the 65%+ gap, 0.033 to 0.012). `sports.py` gains `GRID_SPORT` so baseball's tune searches lower K; other sports keep `GRID`.
+**Why:** the planner showed MLB 27 of 40 live (z +1.5). That is inside noise and the opposite of history: on 3,626 check games MLB landed 60.0% v 64.2% quoted at 60%+. The live record only located the sport; the fit's K sat on the grid's lowest value (8), so the search was clipped.
+**Evidence:** fit 1 Jul 2024 to 1 Jul 2025, check 1 Jul 2025 on (3,626 games, never fitted on). Check log loss 0.6844 v 0.6859 live settings: gain 0.0015, p(worse) 0.09; fit window gain 0.0024, p(worse) 0.02. Against defaults -0.0185, p(worse) 0.00; against backing home -0.0068, p(worse) 0.01. Calibration -0.0007, p(worse) 0.01, honesty guard passed. 60%+ now lands 61.4% v 64.0% quoted (was 60.0% v 64.2%): still over-stated, less so. No Daily List place for baseball (none earned). The new K and regress sit on the grid edge, so a wider search could move them again; not tried (Rule 4).
+**Files:** `sports.py`, `sports.json` (mlb entry only), `claude/mlb-elo-k-2026-11-12.md`, `RELEASES.md`.
+**Not changed:** football, tennis, other sports, list bars, grading.
+**Roll back:** `git revert` this commit; the next hand `--tune` also refits from history.
+
 ## 2026-11-12 (tag pending): two-pick Card groups replayed and refused
 
 **What changed:** advisory only. `m7legs2` pre-registered in the Card replay (the 2x may be two picks as well as three to five), on the pool and the football-data seasons.

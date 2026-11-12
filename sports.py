@@ -147,6 +147,10 @@ def stored_threshold(sp):
 DEFAULTS = {"k": 20, "hfa": 50, "regress": 0.33, "mov": 1}
 GRID = {"k": (8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
         "regress": (0.0, 0.25, 0.5), "mov": (0, 1)}
+# Baseball's fit sat on the grid's lowest K (8) on 12 Nov 2026, so its grid is
+# widened downwards (claude/mlb-elo-k-2026-11-12.md). Other sports keep GRID.
+GRID_SPORT = {"mlb": {"k": (3, 4, 5, 6, 8, 12, 16, 20), "hfa": (0, 15, 25, 50),
+                      "regress": (0.0, 0.1, 0.25, 0.5), "mov": (0, 1)}}
 
 # A feed: an ESPN scoreboard path, the months it plays in, which weekdays to
 # walk for history (rugby is almost all Friday to Sunday; asking for every day
@@ -500,10 +504,11 @@ def tune_sport(sport, verbose=True):
         return losses(replay(games, p)[1], win)
 
     best = None
-    for k in GRID["k"]:
-        for hfa in GRID["hfa"]:
-            for reg in GRID["regress"]:
-                for mov in GRID["mov"]:
+    grid = {**GRID, **GRID_SPORT.get(sport, {})}
+    for k in grid["k"]:
+        for hfa in grid["hfa"]:
+            for reg in grid["regress"]:
+                for mov in grid["mov"]:
                     p = {"k": k, "hfa": hfa, "regress": reg, "mov": mov}
                     ll, _ = score(p, FIT)
                     if ll and (best is None or sum(ll) / len(ll) < best[0]):
