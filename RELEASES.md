@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): two-pick Card groups replayed and refused
+
+**What changed:** advisory only. `m7legs2` pre-registered in the Card replay (the 2x may be two picks as well as three to five), on the pool and the football-data seasons.
+**Why:** the live Card built nothing for 11 or 12 Nov. On 11 Nov five NBA picks cleared the full rule at 1.53-1.64, but any three pay 3.6x+, over the 2x band, and a group needs three.
+**Evidence:** pool 30 Oct to 15 Nov: 17 groups v live 7 at first real prices (p(worse) 0.47), 25 v 16 on `--recover` (+12% v +51%, p(worse) 0.80), -11% v +6% at closing prices. Football-data 2025-26: 114 groups, 43 won v 53.3 expected, -18% v live +22%, 8 losing months of 10. The extra groups are the weak ones. `claude/card-m7legs2-2026-11-12.md`.
+**Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_m7legs2.py`, `claude/card-m7legs2-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card (still 3-5 picks), any CARD_* constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-12 (tag pending): the rule 6 replay keeps its own tennis floor
 
 **What changed:** advisory only. The Card replay's rule 6 family had inherited the live tennis floor (85% since CARD_RULE 10), so `rule6`, `notennis` and `tennis80` replayed identically and `rule6` built almost nothing. `RULE6` now pins tennis at 75%, the floor rule 6 ran with.
