@@ -376,15 +376,38 @@ def groups(lst):
     return lst[:n_a], lst[n_a:n_a + 5]
 
 
+PAST_DAYS = 7         # 12 Nov 2026 (Douglas): At a glance scrolls back a week
+
+
+def past_days(now, here=HERE, records=None, n=PAST_DAYS):
+    """The last n UK days' Daily Lists, oldest first, as they stood before each
+    game started, with each pick's result: what At a glance draws for the days
+    behind today. The same membership and results as today's pin; list picks
+    only, the fields the glance reads."""
+    records = records or tuple(_load(os.path.join(here, f), {}) for f in ("record.json", "tennis-record.json", "sports-record.json"))
+    today = datetime.fromisoformat(uk_day(now)).date()
+    keep = ("sport", "start", "date", "comp", "chip", "home", "away", "pick", "confidence", "tier", "status")
+    out = []
+    for k in range(n, 0, -1):
+        day = (today - timedelta(days=k)).isoformat()
+        try:
+            items = [i for i in pinned(day, read_archives(day, here), now) if i["list"]]
+            attach_results(items, *records)
+        except Exception as e:      # a bad old archive never stops today's list
+            print(f"day list: {day} skipped ({e})", file=sys.stderr); continue
+        items.sort(key=strength)
+        out.append({"date": day, "list": [{f: i.get(f) for f in keep} for i in items]})
+    return out
+
+
 def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
     archives = read_archives(day, here)
     items = pinned(day, archives, now)
     attach_full(items, archives, _load(os.path.join(here, "data.json"), {}), previous_full(day, fetch))
-    attach_results(items, _load(os.path.join(here, "record.json"), {}),
-                   _load(os.path.join(here, "tennis-record.json"), {}),
-                   _load(os.path.join(here, "sports-record.json"), {}))
+    records = tuple(_load(os.path.join(here, f), {}) for f in ("record.json", "tennis-record.json", "sports-record.json"))
+    attach_results(items, *records)
     items.sort(key=strength)
     for it in items: it.pop("published", None)
     lst, res = [i for i in items if i["list"]], [i for i in items if i["reserve"]]
@@ -393,7 +416,8 @@ def build(now=None, here=HERE, fetch=True):
                    "started": count(xs, "started"), "upcoming": count(xs, "upcoming")}
                for k, xs in (("list", lst), ("reserve", res), *zip(("groupA", "groupB"), groups(lst)))}
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
-            "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res}
+            "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
+            "past": past_days(now, here, records)}
 
 
 def main():
