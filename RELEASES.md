@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): MLB Elo retuned on current code (K 4, no regression, margin on)
+
+**What changed:** MLB Elo is now K 4 (was 8), regress 0.0 (was 0.25), margin of victory on (was off), home 25 unchanged, with the fitted two-parameter calibration applied. `sports.GRID` widened (K 4 and 6, regress 0.15) so a later `--tune` can reach them and no longer proposes K 8.
+**Evidence:** `sports.tune_sport("mlb")` on current main, 8,663 games, fit window 2024-07 to 2025-07, check 2025-07 onward (3,626 games, never tuned on). The grid's fit-window winner is K 4 / regress 0 / mov 1, not #127's regress 0.15 (which was not the fit winner; shown below for reference only). Paired against the live K 8 set on the check window: -0.0009 log loss, p(worse) 0.17 (gates: n >= 250, p <= 0.30, gain >= 0.0005: pass). Fit window -0.0018, p 0.03. #127's set on check: -0.0018, p 0.008, but it is not the fit winner. Versus defaults -0.0179, p 0.00; v backing home -0.0062, p 0.01 (PASS). Calibration -0.0011, p 0.03, 65%+ gap 0.026 -> 0.013, applied. Check log loss 0.6839 (was 0.6855). Bands: 65%+ landed 66.7% v 68.0% quoted. The Daily List still has no MLB threshold (backtest earns no place), so no list change.
+**Files:** `sports.py` (GRID), `sports.json` (mlb entry only).
+**Not changed:** other sports, the list bar, the record, football and tennis.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-12 (tag pending): the rule 6 replay keeps its own tennis floor
 
 **What changed:** advisory only. The Card replay's rule 6 family had inherited the live tennis floor (85% since CARD_RULE 10), so `rule6`, `notennis` and `tennis80` replayed identically and `rule6` built almost nothing. `RULE6` now pins tennis at 75%, the floor rule 6 ran with.
