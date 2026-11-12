@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12-9: the nightly Card review shows both sides of the gate (tag pending)
+
+**What changed:** the nightly Card review issue now puts each rule 7 variant's pool read beside its football-data seasons (`cardM7Paired` in `card-legs-history.json`, which tune.yml commits on Mondays), with a gate verdict per variant: passes, or fails and why (pool legs short of 100, pool p(worse), or the football-data season it lost). A variant ahead on the pool but behind live on any football-data season is named as not a candidate. When one passes every side the review says so in bold, so the next build session acts. Variants that built nothing on the replayed days (short, notennis, tennis80 on 12 Nov) leave the "watch" list and are named apart: their +0.44 a day was only live's losses.
+
+**Why:** on 12 Nov the review listed `m7under5` as ahead of live at p(worse) 0.014 while the five football-data seasons had already refused it (behind in all five, pooled p(worse) 0.99, `claude/card-m7under5-seasons-2026-11-12.md`). The gate in CLAUDE.md has three sides; the review showed one, inviting the next session to reopen a settled question.
+
+**Tested:** `tests/test_card_review_post.py` (refused on seasons, identical to live, full pass, a missing season, nothing on file, the empty variant); rendered against a local `card_replay.py --since 2026-10-29` run. Until Monday's tune.yml commits `cardM7Paired`, the section says no paired season read is on file.
+
+**Files:** `tools/card_review_post.py`, `tests/test_card_review_post.py`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, the replay, the gate itself.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-12-8: the context check reads Daily List picks too (tag pending)
 
 **What changed:** every Daily List pick at 75%+ now gets a context read (team news, rotation, motivation, table, goals, last five) after the Card's picks, football first, then NBA, tennis, college basketball and the rest, within 25 reads a day. Sonnet reads Card picks, football and NBA; Haiku the rest. Each read shows as a Clear / Caution / Against flag beside the price on the Daily List, sport tabs and Starred, and in full in the slip checker. Display only: the model's number never moves, and only Card picks are vetoed.
