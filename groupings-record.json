@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-12T01:41:02Z",
+ "graded": "2026-11-12T02:59:57Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,18 +67,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 8,
-   "won": 8,
+   "n": 10,
+   "won": 10,
    "rate": 1.0,
-   "quoted": 0.8577,
-   "returned": 8.4,
-   "ret": 0.05
+   "quoted": 0.874,
+   "returned": 11.0,
+   "ret": 0.1
   },
   "notAtBook": {
-   "n": 16,
-   "won": 16,
+   "n": 18,
+   "won": 18,
    "rate": 1.0,
-   "quoted": 0.9258
+   "quoted": 0.9255
   },
   "unchecked": {
    "n": 16,
@@ -127,18 +127,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 6,
-     "won": 6,
+     "n": 8,
+     "won": 8,
      "rate": 1.0,
-     "quoted": 0.8703,
-     "returned": 6.16,
-     "ret": 0.0267
+     "quoted": 0.8875,
+     "returned": 8.76,
+     "ret": 0.095
     },
     "notAtBook": {
-     "n": 16,
-     "won": 16,
+     "n": 18,
+     "won": 18,
      "rate": 1.0,
-     "quoted": 0.9258
+     "quoted": 0.9255
     },
     "unchecked": {
      "n": 13,
@@ -262,7 +262,16 @@
    "ncaab|ut martin skyhawks|ecclesia royals|2026-11-15": -1
   }
  },
- "cardContext": {},
+ "cardContext": {
+  "caution": {
+   "legs": 1,
+   "landed": 0,
+   "rate": 0.0,
+   "model": 0.6671,
+   "fair": 0.6,
+   "zModel": -1.42
+  }
+ },
  "byBand": {
   "Card 2x": {
    "groups": 30,

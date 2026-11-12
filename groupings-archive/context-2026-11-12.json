@@ -25,5 +25,32 @@
    }
   ],
   "verdict": "caution"
+ },
+ "Washington Wizards v Detroit Pistons|Detroit Pistons": {
+  "at": "2026-11-12T02:58:50Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Detroit are missing Duren (out to about Nov 24) and Joe (out to about Nov 17); Washington's list from ESPN is Coulibaly (listed back Nov 11), Vukcevic, Beekman, Champagnie and Watkins, with Anthony Davis having played at Indiana, and I found no confirmed line-ups for this game.",
+  "numbers": "Detroit were 6-3 (4-1 away) going into their Nov 9 win over Washington, so likely 7-3 now; I did not find a confirmed current record or last-five run for them. Washington are 4-8 after losing five straight (ATL, ATL, OKC, DET, IND), scoring 108.1 ppg before the Indiana game, and have lost three of their last four at home.",
+  "reads": 1,
+  "reason": "Detroit are without All-Star centre Jalen Duren (hamstring, listed out until about Nov 24) and Isaiah Joe, but they still beat this same Wizards side 122-111 on Nov 9 with both missing, and Washington are on a back-to-back after losing 114-101 at Indiana on Nov 11 (ESPN injury report; VAVEL; ESPN re",
+  "sources": [
+   {
+    "title": "Pistons vs. Wizards (Nov 12, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909977/pistons-wizards"
+   },
+   {
+    "title": "Pacers 114-101 Wizards (Nov 11, 2026) Game Recap - ESPN",
+    "url": "https://www.espn.com/nba/recap?gameId=401909966"
+   },
+   {
+    "title": "2026-27 Washington Wizards Roster and Stats - Basketball-Reference",
+    "url": "https://www.basketball-reference.com/teams/WAS/2027.html"
+   },
+   {
+    "title": "Detroit Pistons 122-111 Washington Wizards - VAVEL USA",
+    "url": "https://vavel.com/en-us/nba/2026/11/09/1278718-pistons-vs-wizards-live-score-updates-and-play-by-play-in-nba.html"
+   }
+  ],
+  "verdict": "caution"
  }
 }
