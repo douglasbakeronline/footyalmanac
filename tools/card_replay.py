@@ -269,6 +269,12 @@ VARIANTS = {
     # league. Volume is not return; gated like the rest.
     "m7wide": {"CARD_CORE_ONLY": False},   # live from 11 Nov 2026 (CARD_RULE 11)
     "m7core": {"CARD_CORE_ONLY": True},    # core leagues only, the rule to CARD_RULE 10
+    # 12 Nov 2026 (claude/card-m7legs2-2026-11-12.md), pre-registered before
+    # any result: the rule 11 Card 2x may also be two picks. On 11 Nov five NBA
+    # picks cleared the full rule at 1.53-1.64 and no group was built: three
+    # of them pay 3.6x+, over the 2x band (2.0-3.0), and a group needed three.
+    # Two picks at 1.40-1.73 sit in the band. Volume is not return; gated.
+    "m7legs2": {"CARD_LEGS": (2, 3, 4, 5)},
     # 11 Nov 2026, Douglas: "Preferably 3x or more. Then 2.5x. Then 2x. Then
     # 1.5x ... I need the groups to win every time. But ultimately this has to
     # be a profitable business." Pre-registered before any result: the rule 8
