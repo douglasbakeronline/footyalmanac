@@ -4,6 +4,12 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12-7: damping the FIFA ranking's big lifts tested and rejected (tag pending)
+
+**What changed:** nothing in the model. `tools/fifa_lift_damping.py` tests eleven ways to soften the ranking's big lifts on ranked internationals (fit Oct 2022-Sep 2023, check Oct 2023-Oct 2024); none passes the gates. Note `claude/fifa-lift-damping-2026-11-12.md`, a line in CLAUDE.md's Tested and rejected.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-12-6: two-day Card groups when a day makes none (tag pending)
 
 **What changed:** a day whose picks make no Card group now tries one group from its own qualifying picks plus the next day's, under the same rule, holding at least one of its own (`groupings.CARD_SPAN`). It is open until its first start, labelled "two days" on the Bets tab, kept in the Card record and apart as `cardSpan`; the next day's Card never reuses its picks.

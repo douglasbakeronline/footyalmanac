@@ -392,6 +392,7 @@ Backing sides against habitual losers (22 Oct 2026, from #68): picks against sid
 Separate attack and defence shrinkage (6 Nov 2026, from #148, `tools/att_def_shrink_eval.py`, `claude/att-def-shrink-2026-11-06.md`): nine pairs, none passes both seasons.
 A Championship total-goals scale (29 Oct 2026, from #106, `tools/championship_goals_scale.py`, `claude/championship-goals-scale-2026-10-29.md`): flips sign by season, fails the gates.
 Card prices by hour of first pricing (10 Nov 2026, from #215, `claude/price-by-first-hour-2026-11-10.md`): prices lengthen from first to last in both pricing windows, so no earlier push.
+Damping the FIFA ranking's big lifts (12 Nov 2026, `tools/fifa_lift_damping.py`, `claude/fifa-lift-damping-2026-11-12.md`): 11 shrink/cap variants, fit 2022-23, check 2023-24; none passes (best on fit, cap 15 points, +0.0000 on check). The Wary mark stays the treatment.
 Tennis hot form (8 Oct 2026, after Muchova v Bartunkova): a more responsive
 Elo (K x 1.5) is worse on both tours; a wins-in-this-tournament term fits to
 zero. The real gap was four months of missing results, now fixed. See
