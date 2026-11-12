@@ -1338,6 +1338,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .gl-tabs::-webkit-scrollbar{display:none}
 .gl-tabs button,.gl-arw{font:600 12px var(--f-ui);background:none;border:1px solid transparent;color:var(--ink-2);padding:4px 7px;min-height:32px;cursor:pointer;white-space:nowrap}
 .gl-tabs button i{font-style:normal;font-family:var(--f-num);font-size:10.5px;color:var(--mute);margin-left:4px}
+.gl-tabs button.past{color:var(--mute)}
 .gl-tabs button.on{background:var(--cover-ink);color:var(--yellow);border-color:var(--cover-ink)}
 .gl-tabs button.on i{color:var(--yellow-soft)}
 .gl-arw{font-size:18px;line-height:1;padding:2px 9px;border-color:var(--rule)}
@@ -2831,19 +2832,30 @@ function glanceState(it){
    drawing is as wide in units as it is in pixels, so its text is true size at
    any width or orientation. */
 const GL_DAYS = 7;
-let GL_IDX = 0;
+let GL_IDX = 0, GL_DATE = null;   // GL_DATE: the day in view, kept across redraws
+/* 12 Nov 2026, Douglas: "I want the at a glance visual thing to also scroll
+   back the last 7 days too". The days behind today come from daylist.py's
+   `past` (each list as it stood before its games started, with results); the
+   track opens on today and swipes left into the week behind. */
+function glancePast(){
+  const DL = window.__DAY_LIST__;
+  return (DL && DL.past || []).map(p => ({date: p.date,
+    items: (p.list || []).map(g => ({kind: "pinned", past: true, g: {...g, when: g.start}}))}));
+}
 function glanceWidth(){
   const el = document.getElementById("glance");
   const w = el ? el.clientWidth - 32 : (document.documentElement.clientWidth || 400) - 56;
   return Math.round(Math.min(1600, Math.max(280, w)));
 }
-function glanceDay(date, i, W){
-  const items = (listCollect().byDay[date] || []);
+function glanceDay(date, i, W, given){
+  const items = given || (listCollect().byDay[date] || []);
   const day0 = new Date(date + "T00:00:00"), t0 = day0.getTime(), span = 864e5;
-  const pts = items.map(it => ({it, p: weekPick(it), ...glanceState(it)})).filter(x => !isNaN(x.t)).sort((a, b) => a.t - b.t);
+  // a past day's pick with no result yet reads "result due", never "in play"
+  const pts = items.map(it => { const s = glanceState(it); if(it.past && !["won", "lost", "void"].includes(s.st)) s.st = "due";
+    return {it, p: weekPick(it), ...s}; }).filter(x => !isNaN(x.t)).sort((a, b) => a.t - b.t);
   if(!pts.length) return null;
   const n = k => pts.filter(x => k.includes(x.st)).length;
-  const won = n(["won"]), lost = n(["lost"]), live = n(["play", "ahead", "behind", "level"]), fin = n(["fwon", "flost"]), up = n(["up"]);
+  const won = n(["won"]), lost = n(["lost"]), live = n(["play", "ahead", "behind", "level"]), fin = n(["fwon", "flost"]), up = n(["up"]), due = n(["due"]);
   const next = pts.find(x => x.st === "up");
   const until = next ? (() => { const m = Math.max(0, Math.round((next.t - Date.now()) / 6e4));
     return m >= 1440 ? "" : m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; })() : "";
@@ -2859,13 +2871,15 @@ function glanceDay(date, i, W){
   const ticks = hours.map(h => { const x = X(t0 + h * 36e5);
     return `<line x1="${x}" x2="${x}" y1="80" y2="85" class="gl-tk"/><text x="${x}" y="98" text-anchor="${h === 0 ? "start" : h === 24 ? "end" : "middle"}" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`; }).join("");
   const now = Date.now(), nowX = X(now);
-  const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
-  const dots = placed.map(d => `<g class="gl-hit" data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
+  const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", due:"Result due", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
+  const dots = placed.map(d => `<g class="gl-hit"${i < 0 ? ` aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}"` : ` data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"`}><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st === "due" ? "up" : d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
   const parts = [won && `<b class="g-won">${won} won</b>`, lost && `<b class="g-lost">${lost} lost</b>`, live && `<b class="g-live">${live} in play</b>`,
-                 fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`].filter(Boolean).join(" · ");
-  const name = i === 0 ? "Today" : i === 1 ? "Tomorrow" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "short"});
-  const short = i === 0 ? "Today" : i === 1 ? "Tmrw" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"});
-  return {date, i, name, short, count: pts.length, html: `<div class="gl-day" data-gld="${date}" role="group" aria-label="${name}, ${pts.length} list pick${pts.length === 1 ? "" : "s"}">
+                 fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`, due && `<b>${due} result due</b>`].filter(Boolean).join(" · ");
+  const dd = new Date(date + "T12:00:00");
+  const name = i === 0 ? "Today" : i === 1 ? "Tomorrow" : i === -1 ? "Yesterday" : dd.toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "short"});
+  const short = i === 0 ? "Today" : i === 1 ? "Tmrw" : i === -1 ? "Yday"
+    : i < 0 ? dd.toLocaleDateString("en-GB", {weekday: "short"}) + " " + dd.getDate() : dd.toLocaleDateString("en-GB", {weekday: "short"});
+  return {date, i, name, short, count: pts.length, won, lost, html: `<div class="gl-day${i < 0 ? " gl-past" : ""}" data-gld="${date}" role="group" aria-label="${name}, ${pts.length} list pick${pts.length === 1 ? "" : "s"}">
     <p class="gl-sum"><b class="gl-dn">${name}</b> ${parts}${next ? ` · ${i === 0 ? "next" : "first"} <b>${localTime(new Date(next.t).toISOString())}</b> ${next.p.label}${until ? `, in ${until}` : ""}` : ""}</p>
     <svg viewBox="0 ${y0} ${W} ${H - y0}" width="${W}" role="img" aria-label="${name}'s list picks by start time">
       <line x1="${M}" x2="${W - M}" y1="80" y2="80" class="gl-ax"/>${ticks}
@@ -2873,16 +2887,21 @@ function glanceDay(date, i, W){
       ${dots}</svg></div>`};
 }
 function todayGlance(){
-  const W = glanceWidth(), days = [];
+  const W = glanceWidth(), days = [], today = localDay(new Date().toISOString());
+  const t0 = Date.parse(today + "T12:00:00");
+  glancePast().filter(p => p.date < today).forEach(p => {
+    const d = glanceDay(p.date, Math.round((Date.parse(p.date + "T12:00:00") - t0) / 864e5), W, p.items); if(d) days.push(d); });
   for(let i = 0; i < GL_DAYS; i++){
     const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
     const d = glanceDay(date, i, W); if(d) days.push(d);
   }
   if(!days.length) return "";
-  GL_IDX = Math.min(GL_IDX, days.length - 1);
+  // open on the day last in view, else today (or the first day after it)
+  const at = GL_DATE && days.findIndex(d => d.date === GL_DATE);
+  GL_IDX = at != null && at >= 0 ? at : Math.max(0, days.findIndex(d => d.i >= 0));
   const tabs = days.length > 1 ? `<div class="gl-nav">
       <button type="button" class="gl-arw" data-glstep="-1" aria-label="Previous day"${GL_IDX === 0 ? " disabled" : ""}>‹</button>
-      <div class="gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}"${k === GL_IDX ? ' class="on"' : ""}>${d.short}<i>${d.count}</i></button>`).join("")}</div>
+      <div class="gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}" class="${[k === GL_IDX ? "on" : "", d.i < 0 ? "past" : ""].filter(Boolean).join(" ")}">${d.short}<i>${d.i < 0 && d.won + d.lost ? `${d.won}/${d.won + d.lost}` : d.count}</i></button>`).join("")}</div>
       <button type="button" class="gl-arw" data-glstep="1" aria-label="Next day"${GL_IDX === days.length - 1 ? " disabled" : ""}>›</button></div>` : "";
   return `<section class="glance" id="glance" aria-label="The days at a glance">
     <div class="gl-top"><h3>${days.length > 1 ? "At a glance" : "Today at a glance"}</h3>${tabs}</div>
@@ -2902,6 +2921,14 @@ function glanceSync(jump){
     tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: "auto"});
   }
   el.querySelectorAll("[data-glgo]").forEach(b => { const on = +b.dataset.glgo === GL_IDX; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+  const cur = tr.children[GL_IDX]; if(cur) GL_DATE = cur.dataset.gld;
+  // the day tabs scroll sideways on their own (a fortnight of tabs); keep the
+  // one in view showing without moving the page
+  const tabs = el.querySelector(".gl-tabs"), on = tabs && tabs.querySelector(".on");
+  if(on && tabs.scrollWidth > tabs.clientWidth){
+    const l = on.offsetLeft - tabs.offsetLeft, r = l + on.offsetWidth;
+    if(l < tabs.scrollLeft || r > tabs.scrollLeft + tabs.clientWidth) tabs.scrollLeft = Math.max(0, l - (tabs.clientWidth - on.offsetWidth) / 2);
+  }
   el.querySelectorAll("[data-glstep]").forEach(b => b.disabled = (+b.dataset.glstep < 0 ? GL_IDX === 0 : GL_IDX === n - 1));
   if(!tr.dataset.wired){ tr.dataset.wired = 1; let raf = 0;
     tr.addEventListener("scroll", () => { if(raf) return; raf = requestAnimationFrame(() => { raf = 0;

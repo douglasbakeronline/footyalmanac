@@ -4,6 +4,16 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-12 (tag pending): At a glance scrolls back a week
+
+**What changed:** At a glance on the Daily List now holds the last seven days as well as the week ahead. It opens on today; swipe or tap back through each past day's list, every pick at its start time, won or lost, with the day's score on its tab (e.g. "Sun 8 18/21").
+**How:** `daylist.py` writes `past` into `daylist.js`: each of the last seven UK days' lists as they stood before each game started (the same membership rule as today's pin), with results from the record files. About 36 KB.
+**Files:** `daylist.py`, `index.html` (`glancePast`, `todayGlance`, `glanceDay`, `glanceSync`), `tests/test_daylist.py`.
+**Checked:** browser at 400 and 1280 wide: tabs Thu 5 to Mon 17, opens on Today, the selected tab kept in view, the page does not move, no sideways scroll.
+**Not changed:** the list, the record, How it went.
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-11 (tag pending): the Card takes the wider leagues (CARD_RULE 11)
 
 **What changed:** football picks from the wider leagues (API-Football's, e.g. Bosnia RS) can now go on the Card; cups and internationals stay out, and a core-league pick still comes first at an equal chance.
