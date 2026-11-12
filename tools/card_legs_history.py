@@ -398,8 +398,64 @@ def card_season(L, variant="live"):
             "kinds": kinds, "months": {m: {"groups": v[0], "won": v[1], "units": v[2], "pnl": round(v[3], 2)} for m, v in sorted(months.items())},
             "series": series,
             # 9 Nov 2026: every group, for tools/staking.py
-            "groupList": [{"date": d, "name": g["name"], "p": round(g["p"], 4), "odds": round(g["odds"], 2), "stake": g["stake"], "won": bool(g["won"])}
+            "groupList": [{"date": d, "name": g["name"], "p": round(g["p"], 4), "odds": round(g["odds"], 2), "stake": g["stake"], "won": bool(g["won"]),
+                           "legs": len(g.get("legs") or ())}   # 12 Nov 2026: for the 100-leg gate (m7_paired)
                           for d in sorted(days) for g in days[d]]}
+
+
+def day_pnl(card):
+    """Units won or lost on each day a whole-Card replay built a group."""
+    out = defaultdict(float)
+    for g in card.get("groupList") or ():
+        out[g["date"]] += g["stake"] * (g["odds"] - 1) if g["won"] else -g["stake"]
+    return out
+
+
+def paired(base, cand, seed=7, n=4000):
+    """Paired by day, every day either Card built on (12 Nov 2026): the
+    candidate's units a day over the base's, and the bootstrap share of
+    resamples where the candidate does worse. CLAUDE.md's gate reads this:
+    p(worse) at most 0.30 on 100+ legs, on both football-data seasons and
+    the pool. None when the two Cards are identical."""
+    import random
+    a, b = day_pnl(base), day_pnl(cand)
+    days = sorted(set(a) | set(b))
+    diffs = [b.get(d, 0.0) - a.get(d, 0.0) for d in days]
+    legs = sum(g.get("legs", 0) for g in cand.get("groupList") or ())
+    if not diffs or not any(abs(x) > 1e-9 for x in diffs):
+        return {"days": len(days), "legs": legs, "perDay": 0.0, "pWorse": None, "identical": True}
+    rnd = random.Random(seed)
+    bs = [sum(rnd.choice(diffs) for _ in diffs) / len(diffs) for _ in range(n)]
+    return {"days": len(days), "legs": legs, "perDay": round(sum(diffs) / len(diffs), 3),
+            "pWorse": round(sum(x < 0 for x in bs) / n, 3), "identical": False}
+
+
+def m7_paired(cards):
+    """Every rule 7 variant paired against the rule 7 live Card on one season."""
+    live = cards.get("live") or {}
+    return {v: paired(live, c) for v, c in cards.items() if v != "live"}
+
+
+def m7_pooled(seasons):
+    """The rule 7 variants over every season replayed, days pooled (12 Nov
+    2026): each variant's groups, return and legs, and paired v live."""
+    done = [r for r in seasons if r.get("cardM7")]
+    if not done: return {}
+    names = list(dict.fromkeys(v for r in done for v in r["cardM7"]))
+    merged = {v: {"groupList": [g for r in done for g in (r["cardM7"].get(v) or {}).get("groupList") or ()]} for v in names}
+    out = {}
+    for v, c in merged.items():
+        gs = c["groupList"]; st = sum(g["stake"] for g in gs); rt = sum(g["stake"] * g["odds"] for g in gs if g["won"])
+        row = {"groups": len(gs), "won": sum(g["won"] for g in gs), "expected": round(sum(g["p"] for g in gs), 2),
+               "legs": sum(g.get("legs", 0) for g in gs), "units": st, "return": round(rt / st, 3) if st else None,
+               "seasonsAhead": None}
+        if v != "live":
+            row.update({"vsLive": paired(merged["live"], c)})
+            per = [r.get("cardM7Paired", {}).get(v) or {} for r in done]
+            row["seasonsAhead"] = sum(1 for x in per if (x.get("perDay") or 0) > 0)
+            row["seasons"] = len(per)
+        out[v] = row
+    return out
 
 
 def season_split(season):
@@ -462,7 +518,13 @@ def replay_split(split, splits_fn, log):
     Lm = legs([(preds[k], r) for k, r in joined.items()], model=True)
     res["cardM7"] = {v: card_season(Lm, v) for v in ("live", "m7edge3", "m7edge6", "m7legs3", "m7short", "m7only2x", "m7legs2",
                                           # 11 Nov 2026: payout bands (Douglas: 3x, then 2.5x, 2x, 1.5x)
-                                          "pay15", "pay25", "pay3", "ladder")}
+                                          "pay15", "pay25", "pay3", "ladder",
+                                          # 12 Nov 2026: the value demand's relief and the core-league
+                                          # limit, pre-registered on the pool (card_replay.VARIANTS) and
+                                          # never run on football-data; m7core should equal live here,
+                                          # as football-data's leagues are all core leagues
+                                          "m7under5", "m7core")}
+    res["cardM7Paired"] = m7_paired(res["cardM7"])
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
     ek = frozenset((l["code"], l["date"], l["home"], l["away"]) for l in edge_legs(L) if l["side"] == "h")
@@ -504,6 +566,9 @@ def show(label, res):
             print(f"  cardM7 {v}: {c['days']} days, {c['groups']} groups, won {c['won']} (exp {c['expected']}), units {c['units']}, return {c['return']} (best {c['returnBest']}), p(loss) {c['pLoss']}, kinds {c['kinds']}, losing months {len(losing)} of {len(c['months'])}")
         else:
             print(f"  cardM7 {v}: no groups")
+    for v, x in (res.get("cardM7Paired") or {}).items():
+        print(f"  cardM7 paired {v} - live: " + ("identical" if x["identical"] else
+              f"{x['perDay']:+.2f} units a day on {x['days']} days, p(worse) {x['pWorse']}, {x['legs']} legs"))
 
 
 def show_mismatch(mm, label="mismatch"):
@@ -552,6 +617,13 @@ def main():
                                 "verdict": mismatch_verdict([r["mismatch"] for r in done], pooled)}
     show_mismatch(pooled, "mismatch pooled")
     print("mismatch verdict", json.dumps(report["mismatchPooled"]["verdict"]))
+    # 12 Nov 2026: the rule 7 variants pooled over every season replayed
+    report["cardM7Pooled"] = m7_pooled(list(report["seasons"].values()))
+    for v, x in report["cardM7Pooled"].items():
+        p = x.get("vsLive") or {}
+        print(f"cardM7 pooled {v}: {x['groups']} groups, won {x['won']} (exp {x['expected']}), {x['legs']} legs, return {x['return']}"
+              + ("" if v == "live" else ("; identical to live" if p.get("identical") else
+                 f"; v live {p['perDay']:+.2f} units a day, p(worse) {p['pWorse']}, ahead in {x['seasonsAhead']} of {x['seasons']} seasons")))
     u_fit = report["seasons"]["fit"]["cuts"].get("under5", {}); u_chk = report["seasons"]["check"]["cuts"].get("under5", {})
     holds = lambda c: c.get("n", 0) >= O.MIN_BETS and c.get("gap", 0) > 0 and c.get("roi", 0) > 0
     report["verdict"] = ("The under-market cut lands above its quote and returns a profit on both seasons." if holds(u_fit) and holds(u_chk) else
