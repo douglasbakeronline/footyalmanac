@@ -2945,8 +2945,23 @@ def grade(now=None):
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
 
+def timing_page():
+    """12 Nov 2026: the price-timing read for the playbook's "Place once"
+    habit (tools/price_timing.page_read), from the committed pool archives.
+    Display only; None when it cannot be read, and the page then makes no
+    claim about first v last price."""
+    try:
+        sys.modules.setdefault("groupings", sys.modules[__name__])
+        tools = os.path.join(HERE, "tools")
+        if tools not in sys.path: sys.path.insert(0, tools)
+        import price_timing
+        return price_timing.page_read()
+    except Exception as e:
+        print(f"groupings: price timing read skipped ({type(e).__name__}: {e})", file=sys.stderr)
+        return None
+
 def write_page(out, record):
-    page = dict(out, record=record)
+    page = dict(out, record=record, timing=timing_page())
     with open(os.path.join(HERE, "groupings-data.js"), "w") as f:
         f.write("window.__GROUPINGS__=" + json.dumps(page, separators=(",", ":")).replace("</", "<\\/") + ";")
 

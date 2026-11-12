@@ -185,6 +185,19 @@ def last_lead(L):
     return {"n": len(hs), "medianH": round(hs[len(hs) // 2], 1), "within3h": sum(h <= 3 for h in hs)} if hs else {"n": 0}
 
 
+def page_read(pool_dir=os.path.join(HERE, "groupings-archive"), now=None, idx=None):
+    """The compact read the Bets tab's playbook quotes (12 Nov 2026): the
+    singles return late v first on settled legs under the live rule, so the
+    page's "place late" line follows the evidence instead of a number typed
+    on 10 Nov (+1.95 points on 104 legs, gone by 12 Nov: -0.25 on 174)."""
+    now = now or datetime.now(timezone.utc)
+    L = legs(pool_dir, now=now)
+    s = settled(settle(L, idx))
+    if not s.get("n"): return {"n": 0, "at": now.date().isoformat(), "rule": G.CARD_RULE}
+    return {"n": s["n"], "won": s["won"], "lateGainPct": s["lateGainPct"], "p": s["pLateNoBetter"], "read": s["read"],
+            "lastMedianH": last_lead(L).get("medianH"), "at": now.date().isoformat(), "rule": G.CARD_RULE}
+
+
 def report(L, dropped=(), S=None, pending=()):
     rep = {"legs": len(L), "lastAfterStart": len(dropped)}
     if pending: rep["notStarted"] = len(pending)
