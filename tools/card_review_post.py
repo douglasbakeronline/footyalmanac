@@ -87,10 +87,18 @@ def funnel_section(today_=None, days=14):
         fn = CF.funnel(by, unpriced)
     except Exception as e:   # advisory: never stop the review over it
         return [f"## Card funnel", f"Not read: {type(e).__name__}: {e}", ""]
+    try:
+        # 12 Nov 2026: the legs a missing price alone kept off. From 10 Nov
+        # only, when every leg began carrying its first real price; before
+        # that an estimate in the archive is the archive's gap, not the feed's.
+        gaps = CF.gap_lines(CF.price_gaps(max(since, "2026-11-10"), None, today_ or today))
+    except Exception as e:
+        gaps = [f"Price gaps not read: {type(e).__name__}: {e}", ""]
     return ([f"## Card funnel from {since} (the pool to its last file, each leg's first condition failed)", ""]
             + CF.report_lines(fn)
             + ["A volume read: a condition that costs groups is not a reason to drop it unless the replay says the extra groups pay "
-               "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""])
+               "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""]
+            + ["### Legs kept off by a missing price (from 10 Nov)", ""] + gaps)
 
 
 def edge_section(since="2026-11-11"):
