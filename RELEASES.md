@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-9: free-source check for uncovered leagues, nothing to add (tag pending)
+
+**What changed:** nothing on the page or the model. A dated line in `claude/data-expansion-plan.md` records the re-probe.
+
+**Evidence:** football-data.co.uk `new/` returns the same 16 leagues (all already covered); openfootball 2026-27 `de.3.json`, `pt.2.json` and the 3. Liga file are 404. No free, automatable source exists for the remaining gaps (Rule 10).
+
+**Files:** `claude/data-expansion-plan.md`, this entry.
+
+**Not changed:** `sources.py`, `FDX`, the Daily List rules.
+
+**Roll back:** `git revert` this release's commit.
+
+
 ## 2026-11-13-8: Serie D Girone C, test not run (tag pending)
 
 **What changed:** nothing on the page or the model. A dated note records why the Serie D Girone C accuracy question (30% over 54 games) could not be tested.
