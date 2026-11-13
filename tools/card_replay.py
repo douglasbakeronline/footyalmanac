@@ -336,8 +336,10 @@ def build_span(by, dates):
             nd = (_date.fromisoformat(d) + _td(days=1)).isoformat()
             after = G.lock_time(d, "Day")
             for name, _, _, _ in G.built_kinds():
-                g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name)
-                if not g or not any(l["event"] in {o["event"] for o in own} for l in g["legs"]): continue
+                mine = {o["event"] for o in own}
+                g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name,
+                                need=lambda l: l["event"] in mine)
+                if not g or not any(l["event"] in mine for l in g["legs"]): continue
                 g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1; g["span"] = True
                 held |= {l["event"] for l in g["legs"]}; gs = [g]; break
         out[d] = gs

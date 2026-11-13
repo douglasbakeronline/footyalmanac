@@ -1885,23 +1885,30 @@ def as_card(l, wide=False):
     wider-rule filler, which is still chosen on the bookmakers' numbers."""
     return as_model(l) if CARD_MODEL_RULE and not wide else as_mult(l)
 
-def best_card(L, used, after, name, wide=False):
+def best_card(L, used, after, name, wide=False, need=None):
     """The CARD_LEGS picks with the highest combined chance (bookmakers'
     fair; the model's own on a Model kind) whose combined price falls in
-    the kind's range, or None."""
+    the kind's range, or None. `need` (13 Nov 2026, CARD_SPAN): a leg test
+    that at least one pick of the group must pass, applied inside the
+    search, so a two-day group is the best one holding a pick of its own
+    day rather than the best of both days, then refused when it held none."""
     lo, hi = CARD_RANGE[name]
     if is_model(name):
         cands = [as_model(l) for l in L if l["event"] not in used and model_fault(l) is None and (parse(l["when"]) or after) >= after]
     else:
         cands = [as_card(l, wide) for l in L if l["event"] not in used and card_fault(l, wide) is None
                  and (parse(l["when"]) or after) >= after]
-    cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
+    ranked = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))
+    cands = ranked[:CARD_POOL]
+    if need is not None:   # a needed pick ranked past the pool still competes
+        cands += [l for l in ranked[CARD_POOL:] if need(l)][:CARD_POOL // 4]
     # 29 Oct 2026: core-league picks first at an equal chance (the nudge is for
     # choosing only; the quoted chance is still the bookmakers')
     nudge = lambda l: l["p"] + (CARD_CORE_NUDGE if l.get("sport") == "football" and core_league(l.get("code")) else 0)
     top = None
     for k in (CARD_WIDE_LEGS if wide else CARD_LEGS):
         for c in itertools.combinations(cands, k):
+            if need is not None and not any(need(l) for l in c): continue
             o = mult_combo(c, lo, hi)
             if o is None: continue
             p = math.prod(l["p"] for l in c)
@@ -2081,8 +2088,9 @@ def build_card(L, date, now, prev=None, log=None, archived=None, taken=None):
         own = [l for l in by_win[w] if l["event"] not in used]
         if not own: continue
         for name, _, _, _ in built_kinds():
-            g = best_card(own + [l for l in nxt if l["event"] not in used], used, after, name)
-            if not g or not any((uk_slot(l) or (None,))[0] == date for l in g["legs"]): continue
+            mine = lambda l: (uk_slot(l) or (None,))[0] == date
+            g = best_card(own + [l for l in nxt if l["event"] not in used], used, after, name, need=mine)
+            if not g or not any(mine(l) for l in g["legs"]): continue
             lock = first_kick(g) or lock_time(date, w)
             g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False,
                      status="new", span=[date, nd])
@@ -2766,6 +2774,44 @@ def card_picks(L, date, now):
         out.append({k: l.get(k) for k in ("pick", "event", "sport", "comp", "when", "odds", "pModel", "fair", "bookOdds", "est", "context")})
     return sorted(out, key=lambda x: x.get("when") or "9")
 
+def card_short(L, date, now, used=()):
+    """13 Nov 2026: why a day with no Card group has none, for the page. The
+    day's picks that pass the Card's rule and have not started (the ones
+    best_card could use), and what stopped them making a group of the first
+    kind built: "few" (under CARD_LEGS' minimum), "spread" (enough picks but
+    too many from one competition, COMP_MAX), "long" (every allowed set pays
+    over the band's top, so `best` is the cheapest), "short" (every set under
+    its bottom, `best` the dearest) or "chance" (sets in the band, all under
+    the chance floor). None when a group could be built. Display only: the
+    page said "too few picks" on 13 Nov when three qualified and paid 3.51
+    together, over the 2x band's 3.00."""
+    name = built_kinds()[0][0]
+    lo, hi = CARD_RANGE[name]
+    after = now + timedelta(minutes=20)
+    c = [as_card(l) for l in L if (uk_slot(l) or (None,))[0] == date and l["event"] not in used
+         and card_fault(l) is None and (parse(l.get("when") or "") or after) >= after]
+    seen, cands = set(), []
+    for l in sorted(c, key=lambda l: -l["p"]):
+        if l["event"] in seen: continue
+        seen.add(l["event"]); cands.append(l)
+    out = {"kind": name, "band": [lo, hi], "picks": len(cands), "comps": len({l.get("comp") for l in cands}),
+           "need": min(CARD_LEGS), "best": None, "why": "few"}
+    if len(cands) < min(CARD_LEGS): return out
+    prices, inband = [], False
+    for k in CARD_LEGS:
+        for combo in itertools.combinations(cands[:CARD_POOL], k):
+            if mult_combo(combo, 0, float("inf")) is None: continue
+            o = math.prod(l["odds"] for l in combo); prices.append(o)
+            if lo <= o <= hi:
+                if math.prod(l["p"] for l in combo) >= MIN_CHANCE[name]: return None
+                inband = True
+    if not prices: out["why"] = "spread"
+    elif inband: out["why"] = "chance"
+    elif min(prices) > hi: out.update(why="long", best=round(min(prices), 2))
+    elif max(prices) < lo: out.update(why="short", best=round(max(prices), 2))
+    else: out["why"] = "chance"      # sets on both sides of the band, none inside it
+    return out
+
 def context_record(idx, pool_dir=None):
     """11 Nov 2026 (CARD_CONTEXT): the context check graded forward. Every
     pool leg the check read (`context`, archived with the pool), settled, by
@@ -3007,6 +3053,7 @@ def main():
         log = list(pd.get("log") or [])
         # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
         # Legs are placed by UK kick-off, so a day takes legs from every board date.
+        span_taken_in = set(span_taken)
         groups = build_card(L, d, now, prev=pd.get("groups"), log=log, taken=span_taken)
         # 12 Nov 2026 (CARD_SPAN): the next day's picks a two-day group holds
         span_taken = {l["event"] for g in groups if g.get("span") for l in g["legs"]}
@@ -3024,6 +3071,8 @@ def main():
                      # every pick the Card's rule admits this day, with its context
                      # verdict, shown when they make no group (or more than the groups use)
                      "cardPicks": card_picks(L, d, now),
+                     # 13 Nov 2026: why a day has no group, said plainly on the page
+                     "cardShort": None if any(is_card(g.get("name")) for g in groups) else card_short(L, d, now, used=span_taken_in),
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway", "locked", "late")},
                      "previously": len(pd.get("groups") or []) if pd else None,
