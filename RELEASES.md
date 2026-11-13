@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-4: fixture audit of 13 Nov (tag pending)
+
+**What changed:** nothing for a reader. A dated audit of `predictions/2026-11-13.json` added to `claude/data-integrity.md`.
+
+**Evidence:** 1,153 rows: 0 unrated, 0 date/kick-off mismatches, 0 duplicate keys, no club at two kick-offs at once. 22 swapped-team pairs are two-leg or return fixtures; 2 same-direction pairs are a known reschedule (Unisport Bafang v Canon) and a double friendly (Tahiti v Cook Islands); 6 folded-name splits are different feeds or different clubs, rated as such. `nametest.py` passes.
+
+**Files:** `claude/data-integrity.md`, `RELEASES.md`.
+
+**Not changed:** matcher, `LIVE_NAMES`, archive keys.
+
+**Roll back:** `git revert` the commit.
+
+
 ## 2026-11-13-3: tests for the international rating fit (tag pending)
 
 **What changed:** nothing for a reader. `tune_international.py` (371 lines, the international rating fit) was the largest module with no test at all. 16 tests now pin tournament tiers, row parsing (unplayed and pre-cutoff rows dropped, neutral only on "TRUE"), recency and tier weights, the fit's ordering and its shared-shift fix, `outcome` summing to 1, `score` (unrated skipped, baseline), and the paired bootstrap (deterministic, directional).
