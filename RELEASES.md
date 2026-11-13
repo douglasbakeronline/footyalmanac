@@ -4,6 +4,15 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-11-13 Belgian openfootball file parsed properly (tag pending)
+
+**What changed:** `parse_fixture_txt` now reads a score after the away side separated by one space ("KV Kortrijk 3-0") and drops a "(*)" annotation from club names, so the junk names `KV Kortrijk 3-0` and `Lommel SK (*)` no longer appear. `è` is folded in `_base` and four ESPN spellings are aliased (Racing Genk, Royal Charleroi, Sint-Truidense, Union St.-Gilloise); Standard Liege matches once `è` folds.
+**Evidence:** the 2026-27 Belgian file holds one scored match (Club Brugge 3-0) and rounds 8+ are undated, so the lagging fill can now match all names; check the next build's `lag be.1` line. `tests/test_belgium_parse.py` added; nametest and the suite pass.
+**Files:** `sources.py`, `tests/test_belgium_parse.py`.
+**Not changed:** Czechia (`cze.1` returns 0 from ESPN's slug), no model constants.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13-11: four more lagging leagues matched (tag pending)
 
 **What changed:** the first CI build of release 2026-11-13-10 filled 382 results across eight leagues and held seven back on unmatched ESPN names, as designed. Six aliases (Athletico-PR, Atlético-MG, Red Bull Bragantino, Deportivo, NEC Nijmegen, Erzurum BB) and five accent folds in `sources._base` (ã õ ê ô and the combining dot under a lowered "İ", for Famalicão, Guimarães, Başakşehir) let Brazil, Spain, the Netherlands, Portugal and Turkey fill on the next build.

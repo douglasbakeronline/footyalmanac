@@ -106,7 +106,7 @@ FIXTURE_FILES = {
 }
 
 # Status markers the schedules append to a side: [postponed], [awarded], etc.
-ANNOTATION = re.compile(r"\s*\[[^\]]*\]\s*$")
+ANNOTATION = re.compile(r"\s*(?:\[[^\]]*\]|\(\*+\))\s*$")
 
 SUFFIXES = re.compile(
     r"\s+(FC|AFC|CF|SC|AC|BSC|VfL|VfB|TSG|SV|FSV|SpVgg|BV|SK|CD|UD|RCD|RC|SD|"
@@ -1396,7 +1396,7 @@ _PLAYED = re.compile(
 # it after the away side ("CA Mineiro  v SE Palmeiras  2-2 (1-1)"). Without this
 # the score is silently absorbed into the away team's name and every played
 # match is read as a future fixture.
-_TRAILING = re.compile(r"^(.+?)\s{2,}(\d+)\s*-\s*(\d+)(?:\s*\(\s*\d+\s*-\s*\d+\s*\))?\s*$")
+_TRAILING = re.compile(r"^(.+?)\s+(\d+)\s*-\s*(\d+)(?:\s*\(\s*\d+\s*-\s*\d+\s*\))?\s*$")
 # A tie decided after 90 minutes carries the extra-time or shootout score first
 # and the 90-minute score in the bracket: "0-1 a.e.t. (0-0)", "4-5 pen. 2-2
 # a.e.t. (2-2, 2-1)". The board prices 90 minutes, so that bracket is the result
@@ -1869,7 +1869,7 @@ def _base(n):
                  ("ł", "l"), ("ż", "z"), ("ą", "a"), ("ę", "e"), ("š", "s"), ("ž", "z"),
                  ("č", "c"), ("ș", "s"), ("ț", "t"), ("ă", "a"), ("â", "a"), ("î", "i"),
                  ("å", "a"), ("æ", "ae"), ("ğ", "g"), ("ı", "i"), ("ş", "s"),
-                 ("é", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
+                 ("é", "e"), ("è", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
                  ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n"),
                  # 13 Nov 2026: Portuguese and Turkish letters ESPN writes plain
                  # (Famalicão, Guimarães, İstanbul lowers to i + a combining dot)
@@ -1927,6 +1927,9 @@ def _bare_place(norm):
 # common cases are listed explicitly. Extend this as mismatches show up on the
 # site as "not rated" rows.
 ALIASES = {
+    # 13 Nov 2026: Belgian Pro League, ESPN's spellings
+    "racing genk": "krc genk", "royal charleroi": "sporting charleroi",
+    "sint truidense": "stvv", "union st gilloise": "royale union saint gilloise",
     "man city": "manchester city", "man utd": "manchester united",
     "man united": "manchester united", "spurs": "tottenham hotspur",
     "wolves": "wolverhampton wanderers", "nottm forest": "nottingham forest",
