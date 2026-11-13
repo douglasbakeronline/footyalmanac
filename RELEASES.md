@@ -5,6 +5,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-11: the office sprint skips a task whose pull request lost its labels (tag pending)
+
+**What changed:** `agents/pick_task.py` now also treats an objective as busy when an open pull request's branch is `office-agent/<date>-<key>`, read from the branch name (`branch_objectives`), not only from its `objective:` label.
+
+**Why:** #279 (college basketball) opened at 07:06 on 13 Nov but GitHub failed the label step with a GraphQL error, so it carried no labels. The planner saw `hq-sport-ncaab` as free and the 19:55 sprint gave the sports agent the same task, which failed pushing the same branch (non-fast-forward). Two of the day's four sprints ended failed on this one pull request, and each spent an agent place.
+
+**Tested:** `tests/test_pick_task.py` (`TestBranchObjectives`); full suite and `nametest.py` pass.
+
+**Files:** `agents/pick_task.py`, `tests/test_pick_task.py`, this entry.
+
+**Not changed:** `open_pr.sh`, the merge gate, any Card rule. #279 itself still has no labels; adding `office-agent`, `agent:sports` and `objective:hq-sport-ncaab` by hand clears it today.
 ## 2026-11-15-10: Scale reviewed: football to win with over 2.5 goals, groups from Daily List picks only (tag pending)
 
 **What changed:** Douglas: "we need to find a winning pattern in this scale feature. Review and optimise." Two things moved on the Scale tab. Football's second condition is now **to win with over 2.5 goals**, with the model's own number for the fixture as its chance and the best UK price on file for the bet, named; to win with both teams scoring stays under it with William Hill's price, and the week's table still says whether both scored. And the day's **groups are built from Daily List picks only**, most likely to land first: a double, threefold, fourfold and fivefold as far as those picks go. The reserve never fills a group, the football threefold is gone, and a day with fewer than two Daily List picks still to start has no group.

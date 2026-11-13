@@ -69,5 +69,18 @@ class TestSprintAgents(unittest.TestCase):
         self.assertEqual(got[:2], ["accas", "sports"]); self.assertEqual(len(got), T.SPRINT_SIZE)
 
 
+
+
+class TestBranchObjectives(unittest.TestCase):
+    def test_unlabelled_pr_holds_its_objective(self):
+        prs = [{"headRefName": "office-agent/2026-11-13-hq-sport-ncaab"},
+               {"headRefName": "office-agent/2026-11-11-issue-245"},
+               {"headRefName": "claude/shared-skills"}, {"headRefName": None}]
+        self.assertEqual(T.branch_objectives(prs), {"hq-sport-ncaab", "issue-245"})
+
+    def test_no_prs(self):
+        self.assertEqual(T.branch_objectives([]), set())
+
+
 if __name__ == "__main__":
     unittest.main()
