@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13: the two-day group finds its best group, and an empty day says why (tag pending)
+
+**What changed:** (1) a day with no Card group that borrows the next day's picks (`CARD_SPAN`) now takes the best group that holds one of its own picks; before, it took the best group of both days and gave up if that held none of the first day's. (2) An empty day on the Bets tab now says why: too few picks, too many from one competition, or, as on 13 and 15 Nov, three picks that clear the rule but together pay more than a 2x group can (13 Nov: 3.51, over 3.00). It used to say "too few picks" whatever the reason.
+
+**Why:** the span is Douglas's rule (12 Nov) and was built narrower than he asked; the page gave the wrong reason on the first empty day it was read. `claude/card-empty-day-why-2026-11-13.md`.
+
+**Tested:** `tests/test_card_span.py` (two new tests; the first failed on the old code), `tests/test_card_short.py`; full suite and nametest; the Bets tab rendered at 1280 and 400 wide on the 13 Nov pool.
+
+**Files:** `groupings.py` (`best_card` `need`, the span pass, `card_short`, `cardShort` per day), `tools/card_replay.py` (`build_span`), `index.html` (`cardShortText`), tests, the note, `CLAUDE.md`.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, the band, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-12-10: the playbook's "place late" line follows the evidence (tag pending)
 
 **What changed:** the Card's playbook no longer says the last price paid about 2 points more than the first. Its first habit is now written from the price-timing check on every build: "Place once, late" with the gain only while settled Card-rule picks show one (50+ legs, day-resampled p <= 0.10), "Place once, early" if the read turns, and otherwise "Place once, before the first start" (nearer it than not, as a group can change until its first start) with the plain read that the first and last prices paid about the same. Today it reads the last: 174 settled picks to 12 Nov.

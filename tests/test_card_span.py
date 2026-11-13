@@ -66,6 +66,24 @@ class Span(unittest.TestCase):
         self.assertEqual([l["pick"] for l in again[0]["legs"]], [l["pick"] for l in first[0]["legs"]])
         self.assertEqual(again[0]["status"], "holding")
 
+    def test_best_group_holding_its_own_pick(self):
+        # 13 Nov 2026: the next day's three strongest picks alone make the best
+        # group of the two days; the span must still find the best one that
+        # holds the first day's pick, not give up because the overall best had none.
+        L = [leg(0, D1, 19, odds=1.40, model=0.70)] + [leg(i, D2, 15 + i, odds=1.30, model=0.80) for i in range(1, 5)]
+        for l in L: self.assertIsNone(G.card_fault(l), l["pick"])
+        gs = G.build_card(L, D1.isoformat(), NOW, log=[])
+        self.assertEqual(len(gs), 1)
+        self.assertIn("h0", [l["pick"] for l in gs[0]["legs"]])
+        self.assertTrue(gs[0].get("span"))
+
+    def test_need_kept_past_the_pool_cut(self):
+        L = [G.as_card(l) for l in [leg(0, D1, 19, odds=1.40, model=0.70)] + [leg(i, D2, 12, odds=1.30, model=0.80) for i in range(1, 30)]]
+        after = NOW
+        g = G.best_card(L, set(), after, "Card 2x", need=lambda l: l["pick"] == "h0")
+        self.assertIsNotNone(g)
+        self.assertIn("h0", [l["pick"] for l in g["legs"]])
+
 
 if __name__ == "__main__":
     unittest.main()
