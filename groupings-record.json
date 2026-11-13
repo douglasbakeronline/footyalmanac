@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T13:09:12Z",
+ "graded": "2026-11-13T15:10:37Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -81,10 +81,10 @@
    "quoted": 0.9179
   },
   "unchecked": {
-   "n": 17,
-   "won": 17,
+   "n": 18,
+   "won": 18,
    "rate": 1.0,
-   "quoted": 0.9058
+   "quoted": 0.8981
   },
   "bySport": {
    "football": {
@@ -101,10 +101,10 @@
      "won": 0
     },
     "unchecked": {
-     "n": 1,
-     "won": 1,
+     "n": 2,
+     "won": 2,
      "rate": 1.0,
-     "quoted": 0.8229
+     "quoted": 0.7953
     }
    },
    "nba": {
@@ -270,13 +270,21 @@
   }
  },
  "cardContext": {
+  "clear": {
+   "legs": 1,
+   "landed": 0,
+   "rate": 0.0,
+   "model": 0.6249,
+   "fair": 0.5389,
+   "zModel": -1.29
+  },
   "caution": {
-   "legs": 7,
-   "landed": 5,
-   "rate": 0.7143,
-   "model": 0.7515,
+   "legs": 8,
+   "landed": 6,
+   "rate": 0.75,
+   "model": 0.7536,
    "fair": 0.7054,
-   "zModel": -0.23
+   "zModel": -0.02
   }
  },
  "byBand": {
