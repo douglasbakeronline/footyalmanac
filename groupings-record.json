@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T17:02:47Z",
+ "graded": "2026-11-13T17:12:12Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -7,8 +7,8 @@
   "z": -1.04,
   "lost": 91,
   "pending": 0,
-  "legs": 501,
-  "legsWon": 363,
+  "legs": 502,
+  "legsWon": 364,
   "returned": 110.52,
   "staked": 129,
   "returnedBest": 115.13,
@@ -739,8 +739,8 @@
   "z": 0.39,
   "lost": 8,
   "pending": 0,
-  "legs": 42,
-  "legsWon": 34,
+  "legs": 43,
+  "legsWon": 35,
   "returned": 16.66,
   "staked": 14,
   "returnedBest": 16.88,
@@ -1411,7 +1411,7 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
      "legsPending": 0,
      "legs": [
@@ -1465,8 +1465,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6383,
-       "status": "void",
-       "result": "no result",
+       "status": "won",
+       "result": "1-2",
        "opp": null
       }
      ]
