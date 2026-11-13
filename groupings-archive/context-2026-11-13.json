@@ -215,6 +215,29 @@
   ],
   "verdict": "caution"
  },
+ "UT Martin Skyhawks v Champion Christian Tigers|UT Martin Skyhawks": {
+  "at": "2026-11-13T00:51:51Z",
+  "model": "claude-haiku-5-5",
+  "news": "No team news for either side was found and nothing significant was reported.",
+  "numbers": "UT Martin is 1-2 in 2026-27 after a 82-65 win at Arkansas State, and Champion Christian is 2-1 after a 97-81 home win over Central Baptist. Goals-per-game and last-five data for both sides were not found; UT Martin beat Champion Christian 96-52 in December 2025.",
+  "reads": 1,
+  "reason": "No injury, suspension or line-up news for either side turned up, so there is no sourced reason to move the 95% model figure, but the search also could not confirm the players available, which is why this is caution rather than clear. The UTM athletics preview confirms the game is a Friday 6 p.m. hom",
+  "sources": [
+   {
+    "title": "Skyhawks Make 2026-27 Home Debut Tomorrow Against Champion Christian - UTM Athletics",
+    "url": "https://utmsports.com/news/2026/11/12/mens-basketball-skyhawks-make-2026-27-home-debut-tomorrow-against-champion-christian"
+   },
+   {
+    "title": "Hopkins puts up 21, UT Martin defeats Champion Christian 96-52 - The Washington Post",
+    "url": "https://www.washingtonpost.com/sports/colleges/2025/12/14/champion-christian-ut-martin/3db5f4e0-d957-11f0-b484-4459fa8e79e5_story.html"
+   },
+   {
+    "title": "UT Martin 96-52 Champion Christian (Dec 14, 2025) Final Score - ESPN",
+    "url": "https://www.espn.com/mens-college-basketball/game/_/gameId/401829394/champ-chrstn-ut-martin"
+   }
+  ],
+  "verdict": "caution"
+ },
  "Vasas II v Szegedi VSE|Vasas II": {
   "at": "2026-11-12T14:24:22Z",
   "model": "claude-sonnet-5-5",
