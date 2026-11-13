@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T20:18:56Z",
+ "graded": "2026-11-13T22:28:40Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -241,21 +241,21 @@
    "ncaab|arizona state sun devils|ul monroe warhawks|2026-11-14": 0,
    "ncaab|oregon state beavers|mississippi valley state delta devils|2026-11-14": 0,
    "ncaab|california baptist lancers|arkansas-pine bluff golden lions|2026-11-14": -1,
-   "ncaab|akron zips|tulane green wave|2026-11-14": -1,
+   "ncaab|akron zips|tulane green wave|2026-11-14": 0,
    "ncaab|texas tech red raiders|stonehill skyhawks|2026-11-14": -1,
    "ncaab|north carolina a&t aggies|cheyney (pa) wolves|2026-11-14": -1,
    "ncaab|stephen f. austin lumberjacks|rice owls|2026-11-14": -1,
    "ncaab|south florida bulls|coppin state eagles|2026-11-14": -1,
    "ncaab|south carolina gamecocks|gardner-webb runnin' bulldogs|2026-11-14": -1,
    "ncaab|winthrop eagles|jackson state tigers|2026-11-14": -1,
-   "ncaab|gonzaga bulldogs|lsu tigers|2026-11-14": -1,
+   "ncaab|gonzaga bulldogs|lsu tigers|2026-11-14": 0,
    "ncaab|navy midshipmen|hampton pirates|2026-11-14": -1,
-   "ncaab|pacific tigers|air force falcons|2026-11-14": -1,
+   "ncaab|pacific tigers|air force falcons|2026-11-14": 0,
    "nfl|tennessee titans|jacksonville jaguars|2026-11-15": 1.15,
    "nba|minnesota timberwolves|chicago bulls|2026-11-15": -1,
    "nba|utah jazz|san antonio spurs|2026-11-15": -1,
    "ncaab|unc wilmington seahawks|louisiana ragin' cajuns|2026-11-15": -1,
-   "ncaab|villanova wildcats|rider broncs|2026-11-15": -1,
+   "ncaab|villanova wildcats|rider broncs|2026-11-15": 0,
    "ncaab|siena saints|brown bears|2026-11-15": -1,
    "ncaab|duquesne dukes|binghamton bearcats|2026-11-15": -1,
    "ncaab|grand canyon lopes|ul monroe warhawks|2026-11-15": -1,
@@ -272,12 +272,12 @@
  },
  "cardContext": {
   "clear": {
-   "legs": 1,
-   "landed": 0,
-   "rate": 0.0,
-   "model": 0.6249,
-   "fair": 0.5389,
-   "zModel": -1.29
+   "legs": 2,
+   "landed": 1,
+   "rate": 0.5,
+   "model": 0.6426,
+   "fair": 0.5725,
+   "zModel": -0.42
   },
   "caution": {
    "legs": 8,
