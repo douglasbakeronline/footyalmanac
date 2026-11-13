@@ -34,6 +34,14 @@ sign of the mean was printed as the read on any sample, 2 legs included.
   settled  the singles return on settled legs at the first price and at the
            last pre-start price, paired, with p(late worse): the move only
            matters on legs that won, so this is the test the push time needs.
+  vsBook   each UK book against the Card's own book (CARD_BOOK), paired on
+           the legs both priced (13 Nov 2026, #156): the mean price ratio at
+           the first and at the last pre-start price, day-resampled, the
+           singles return at each book's first price on settled legs, and
+           the best of the UK books against CARD_BOOK (what shopping around
+           adds). `book_table` ranks each book against the average on
+           different legs; this one asks the question CARD_BOOK needs.
+           A side is read only on MIN_READ (50) paired legs at p <= READ_P.
 Writes price-timing.json with --json FILE. Standard library only.
 """
 import glob, gzip, json, os, random, sys
@@ -170,6 +178,74 @@ def book_table(L, min_n=MIN_BOOK):
     return {b: {"n": v["n"], "vsAvgPct": round(v["vsAvgPct"] / v["n"], 2), "bestShare": round(v["best"] / v["n"], 2)} for b, v in books.items() if v["n"] >= min_n}
 
 
+def _pair(L, key, base, other):
+    """(ratio - 1, day) for legs with both books' price under `key`;
+    other=None compares the best UK price with `base`."""
+    out = []
+    for l in L:
+        bo = l.get(key) or {}
+        if not bo.get(base): continue
+        o = max(bo.values()) if other is None else bo.get(other)
+        if other is None and len(bo) < 2: continue
+        if o: out.append((o / bo[base] - 1, l.get("date"), l.get("sport") or "?"))
+    return out
+
+
+def _read_pair(xs, days, other, base):
+    """A side on MIN_READ+ paired values: `other` when the resampled mean is
+    at or under zero at most READ_P of the time, `base` when it is at or
+    over zero at most READ_P of the time (both tails tested, so equal
+    prices read as neither). Returns (read, p) with p as p_not_positive."""
+    if len(xs) < MIN_READ: return "too few legs to read", None
+    p, q = p_not_positive(xs, days), p_not_positive([-x for x in xs], days)
+    if p <= READ_P: return f"{other} pays more", p
+    if q <= READ_P: return f"{base} pays more", p
+    return "no clear read", p
+
+
+def _side(pairs, other, base):
+    if not pairs: return {"n": 0}
+    xs, days = [x for x, _, _ in pairs], [d for _, d, _ in pairs]
+    read, p = _read_pair(xs, days, other, base)
+    m = sum(xs) / len(xs)
+    return {"n": len(xs), "days": len(set(days)), "meanPct": round(m * 100, 2), "aheadShare": round(sum(x > 1e-9 for x in xs) / len(xs), 2),
+            "behindShare": round(sum(x < -1e-9 for x in xs) / len(xs), 2), "p": p, "read": read,
+            "group3Pct": round(((1 + m) ** 3 - 1) * 100, 2)}
+
+
+def book_vs(L, S=None, base=None, min_n=MIN_BOOK):
+    """Each UK book against CARD_BOOK on the legs both priced (13 Nov 2026,
+    #156). `p` is the day-resampled share of means at or under zero: small
+    says the other book pays more, near 1 says CARD_BOOK does. `group3Pct`
+    is the mean ratio compounded over a three-pick group. `settled`: singles
+    at one unit on settled legs at each book's first price, paired."""
+    base = base or G.CARD_BOOK
+    books = sorted({b for l in L for b in (l.get("bookOdds") or {})} - {base})
+    out = {}
+    for b in books + [None]:
+        name = b or "best UK price"
+        first = _pair(L, "bookOdds", base, b)
+        if len(first) < min_n: continue
+        r = {"first": _side(first, name, base), "last": _side(_pair(L, "lastBooks", base, b), name, base)}
+        if S:
+            T = [l for l in S if (l.get("bookOdds") or {}).get(base) and (max((l.get("bookOdds") or {}).values()) if b is None else (l.get("bookOdds") or {}).get(b))]
+            if b is None: T = [l for l in T if len(l["bookOdds"]) > 1]
+            if T:
+                at = (lambda l: max(l["bookOdds"].values())) if b is None else (lambda l: l["bookOdds"][b])
+                d = [(at(l) - l["bookOdds"][base]) if l["won"] else 0.0 for l in T]
+                read, p = _read_pair(d, [l.get("date") for l in T], name, base)
+                n = len(T)
+                r["settled"] = {"n": n, "won": sum(l["won"] for l in T),
+                                "returnBasePct": round((sum(l["bookOdds"][base] for l in T if l["won"]) / n - 1) * 100, 2),
+                                "returnPct": round((sum(at(l) for l in T if l["won"]) / n - 1) * 100, 2),
+                                "gainPct": round(sum(d) / n * 100, 2), "p": p, "read": read}
+        sp = defaultdict(int)
+        for _, _, k in first: sp[k] += 1
+        r["sports"] = dict(sorted(sp.items(), key=lambda kv: -kv[1]))
+        out[name] = r
+    return {"base": base, "books": out}
+
+
 def leads(L):
     b = defaultdict(list)
     for l in L:
@@ -206,6 +282,7 @@ def report(L, dropped=(), S=None, pending=()):
     rep["timing"] = timing(L)
     if S is not None: rep["settled"] = settled(S)
     rep["books"] = book_table(L)
+    rep["vsBook"] = book_vs(L, S)
     hours = defaultdict(list)
     for l in L:
         fa = l.get("firstPriceAt")

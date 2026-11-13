@@ -4,6 +4,22 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-2: the Card's bookmaker read on the same picks (tag pending)
+
+**What changed:** advisory only. The nightly Card review now sets each UK bookmaker against William Hill (the Card's book) on the picks both priced, at the first and the last pre-start price, with the settled singles return at each, and the best UK price against Hill. It says in bold when a book pays more than Hill on both counts, as a question for Douglas.
+
+**Why:** issue #156. The review ranked each book against the average on its own set of legs, which cannot say whether Bet365 beats William Hill on the same pick.
+
+**Evidence:** Card-rule legs in the pool, 30 Oct to 13 Nov: Bet365 +1.06% a pick over Hill on 88 paired football picks over 11 days (ahead on 10 days, p 0.000), about +3% on a three-pick 2x; settled singles -2.25% at Hill v -1.11% at Bet365. Betfair (-0.95%) and BetVictor (-1.27%) are behind Hill. Best UK price pick by pick +1.58%. NBA and tennis too few paired. `claude/card-book-paired-2026-11-13.md`.
+
+**Tested:** `tests/test_book_vs.py` (pairing, both tails, ties read as neither, too few, review lines); full suite and nametest.
+
+**Files:** `tools/price_timing.py`, `tools/card_review_post.py`, `tests/test_book_vs.py`, the note, `CLAUDE.md`.
+
+**Not changed:** `CARD_BOOK` (Douglas's book), any Card rule, the page.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13: the two-day group finds its best group, and an empty day says why (tag pending)
 
 **What changed:** (1) a day with no Card group that borrows the next day's picks (`CARD_SPAN`) now takes the best group that holds one of its own picks; before, it took the best group of both days and gave up if that held none of the first day's. (2) An empty day on the Bets tab now says why: too few picks, too many from one competition, or, as on 13 and 15 Nov, three picks that clear the rule but together pay more than a 2x group can (13 Nov: 3.51, over 3.00). It used to say "too few picks" whatever the reason.

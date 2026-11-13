@@ -288,6 +288,26 @@ def fd_gate_lines(rep, hist):
     return out + [""]
 
 
+def book_vs_lines(vb):
+    """13 Nov 2026 (#156): each UK book against the Card's own book on the
+    picks both priced, paired, and the best UK price against it. A side is
+    read only on 50+ paired picks at day-resampled p <= 0.10. The Card's book
+    is Douglas's account, so a book that pays more is a question for him."""
+    if not vb or not vb.get("books"): return []
+    base, out, ahead = vb["base"], [], []
+    for b, r in sorted(vb["books"].items(), key=lambda kv: (kv[0] == "best UK price", -kv[1]["first"]["meanPct"])):
+        f, se = r["first"], r.get("settled") or {}
+        line = (f"- {b} v {base}, the same picks: {f['meanPct']:+.2f}% a pick at the first price (n {f['n']} over {f.get('days', '?')} days, ahead {f['aheadShare'] * 100:.0f}%, behind {f['behindShare'] * 100:.0f}%"
+                + (f", p {f['p']:.3f}" if f.get("p") is not None else "") + f"; {f['read']}), about {f['group3Pct']:+.1f}% on a three-pick group")
+        if se.get("n"): line += f"; settled singles {se['returnBasePct']:+.2f}% at {base} v {se['returnPct']:+.2f}% (n {se['n']})"
+        if r.get("sports"): line += "; " + ", ".join(f"{k} {v}" for k, v in r["sports"].items())
+        out.append(line)
+        if b != "best UK price" and f["read"].endswith("pays more") and f["read"].startswith(b) and se.get("read", "").startswith(b): ahead.append((b, f))
+    for b, f in ahead:
+        out.append(f"- **{b} pays more than {base} on {f['n']} paired picks (about {f['group3Pct']:+.1f}% a Card 2x). `CARD_BOOK` is Douglas's book, so this is his call, not the session's.**")
+    return out
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
@@ -336,6 +356,7 @@ def main():
         if pt.get("notStarted"): lines.append(f"- not started yet, left out until their last price is in: {pt['notStarted']} leg(s)")
         for b, r in sorted(pt.get("books", {}).items(), key=lambda kv: -kv[1]["vsAvgPct"]):
             lines.append(f"- {b}: {r['vsAvgPct']:+.2f}% v the average price, best price {r['bestShare'] * 100:.0f}% of the time (n {r['n']})")
+        lines += book_vs_lines(pt.get("vsBook"))
         for sp, r in (pt.get("bySport") or {}).items():
             # 9 Nov 2026 (#156): each sport apart; a book ranked on football says nothing about tennis or the NBA
             t = r["timing"]; best = max(r["books"].items(), key=lambda kv: kv[1]["vsAvgPct"]) if r.get("books") else None
