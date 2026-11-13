@@ -26,6 +26,60 @@
   ],
   "verdict": "clear"
  },
+ "Houston Rockets v Utah Jazz|Houston Rockets": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Houston are missing only Steven Adams (soleus) and Clint Capela (ankle). Utah are without Markkanen (hand fracture), Jaren Jackson Jr. (MCL tear), Nurkic and Porzingis (not with team), with Keyonte George questionable, so the injury picture strongly favours Houston, though no confirmed line-up for t",
+  "numbers": "Houston are 9-3 and 3rd in the West (6-1 at home), scoring 115.4 and conceding 106.5 per game; their last five games, newest first, are W W L L W per Land of Basketball. Utah are 1-11 and 15th in the West, scoring 106.6 and conceding 118.1, and have lost all of their last 10. Houston won the last meeting 129-101 on April 3, 2026.",
+  "reads": 1,
+  "reason": "The NBA official injury report dated 11/11/26 lists Houston's only absences as the centres Adams and Capela, plus two-way players on G League assignments. Utah, 1-11 with a -7.7 SRS, is missing Markkanen, Jackson Jr., Porzingis and Nurkic, with George questionable.",
+  "sources": [
+   {
+    "title": "NBA Injury Report 11/11/26 05:00 PM",
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_05_00PM.pdf"
+   },
+   {
+    "title": "2026-27 NBA Standings - Basketball Reference",
+    "url": "https://www.basketball-reference.com/leagues/NBA_2027_standings.html"
+   },
+   {
+    "title": "NBA 2026-27 Regular Season Standings - Land of Basketball",
+    "url": "https://www.landofbasketball.com/yearbyyear/2026_2027_standings.htm"
+   },
+   {
+    "title": "2026-27 NBA Standings: Conference - Fox Sports",
+    "url": "https://www.foxsports.com/nba/standings"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "Indiana Pacers v New York Knicks|New York Knicks": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Haliburton, Ben Sheppard and Johnny Furphy are out for Indiana and Aaron Nesmith (knee) is a game-time decision, while the Knicks have no injury designations and Josh Hart returned on Wednesday.",
+  "numbers": "Knicks 6-5, 5th in the East, 110.3 points for and 103.5 against, 2-2 away, 6-4 in their last 10 and lost their latest game to Cleveland 115-107; Pacers 4-8, 11th in the East, 111.6 for and 114.0 against, 1-4 at home, 3-7 in their last 10 but won their latest game. Recent head-to-head favours New York: they won 136-110 and 101-92 in March 2026, while Indiana won 137-134 in overtime in February 2026",
+  "reads": 1,
+  "reason": "Indiana are 4-8 and without Tyrese Haliburton (hamstring, out at least 10 more days) while the Knicks list no injuries, and the spread is about 6.5 to 7.5 points for New York (Sports Mole preview, ESPN, Bleacher Report).",
+  "sources": [
+   {
+    "title": "Preview: New York Knicks vs. Indiana Pacers: Player props, injury report and prediction (Sports Mole)",
+    "url": "https://www.sportsmole.co.uk/basketball/indiana-pacers/preview/new-york-knicks-vs-indiana-pacers-player-props-injury-report-and-prediction--nba_608975.html"
+   },
+   {
+    "title": "Knicks vs. Pacers (Nov 13, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909296/knicks-pacers"
+   },
+   {
+    "title": "2026-27 NBA Standings: Conference (Fox Sports)",
+    "url": "https://www.foxsports.com/nba/standings"
+   },
+   {
+    "title": "Knicks at Pacers Prediction and Odds (Nov. 13, 2026) - OG.com",
+    "url": "https://og.com/learn/knicks-at-pacers-11-13-26-prediction"
+   }
+  ],
+  "verdict": "clear"
+ },
  "Karbon Cherkasy v Atlet|Karbon Cherkasy": {
   "at": "2026-11-12T07:05:04Z",
   "model": "claude-sonnet-5-5",
@@ -106,6 +160,60 @@
    }
   ],
   "verdict": "clear"
+ },
+ "TCU Horned Frogs v Milwaukee Panthers|TCU Horned Frogs": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-haiku-5-5",
+  "news": "Center Luke Bamgboye is out with a foot injury for an indefinite period, and Robbie Avila is finalising eligibility to join TCU as a transfer.",
+  "numbers": "TCU is 3-0 after a 100-92 double-overtime win over Louisiana-Monroe, with no other 2026-27 results or points-per-game figures found. Milwaukee is 2-2 and first in the Horizon, averaging 79.0 points and allowing 77.8, with a 99-48 win at Indiana State among its results; its full last five was not confirmed.",
+  "reads": 1,
+  "reason": "TCU's starting center Luke Bamgboye is out indefinitely with a foot injury, and the Frogs needed two overtimes to beat Louisiana-Monroe (1-2) on Nov 10, but nothing found makes a home win over Milwaukee clearly less likely than the model's 90%.",
+  "sources": [
+   {
+    "title": "Career day for Micah Robinson helps TCU men's basketball avoid upset loss - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/career-day-micah-robinson-helps-045108026.html"
+   },
+   {
+    "title": "TCU basketball announces crucial Robbie Avila update - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/tcu-basketball-announces-crucial-robbie-211734140.html"
+   },
+   {
+    "title": "TCU Holds on to Beat ULM, 100-92 in Double Overtime - TCU Athletics",
+    "url": "https://gofrogs.com/news/2026/11/11/mens-basketball-tcu-holds-on-to-beat-ulm-100-92-in-double-overtime"
+   },
+   {
+    "title": "Milwaukee Panthers Scores, Stats and Highlights - ESPN",
+    "url": "https://www.espn.com/mens-college-basketball/team/_/id/270/milwaukee-panthers"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Tahiti v Cook Islands|Tahiti": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Tahiti coach Jo\u00ebl Frechet's squad for this game is mostly V\u00e9nus, Tefana and Tohie'a players, with no injury or rotation news found, and Cook Islands boosted their side for the second Rarotonga match with three Australia-based players.",
+  "numbers": "No league table applies. FIFA rankings (7 Oct 2026) are Tahiti 157 and Cook Islands 187. The two Rarotonga friendlies were a 3-1 Tahiti win and a 3-2 Cook Islands win, and Cook Islands had played no internationals since their 2024 World Cup qualifiers. I found no full last-five results for either side.",
+  "reads": 1,
+  "reason": "Tahiti have won 11 of 12 meetings, but Cook Islands won the most recent game 3-2 on 30 September after Tahiti won the first game 3-1, so the ~78% is not a safe margin (Oceania Football, Tahiti Infos).",
+  "sources": [
+   {
+    "title": "Farewells, fresh starts and rivalries headline November international window (Oceania Football)",
+    "url": "https://www.oceaniafootball.com/farewells-fresh-starts-and-rivalries-headline-november-international-window"
+   },
+   {
+    "title": "Football \u2013 Les Toa Aito veulent convaincre (Tahiti Infos)",
+    "url": "https://www.tahiti-infos.com/Football-Les-Toa-Aito-veulent-convaincre_a240032.html"
+   },
+   {
+    "title": "Football \u2013 D\u00e9faite historique des Toa Aito \u00e0 Rarotonga (Tahiti Infos)",
+    "url": "https://www.tahiti-infos.com/Football-Defaite-historique-des-Toa-Aito-a-Rarotonga_a239585.html"
+   },
+   {
+    "title": "Cook Islands Make History with Stunning 3-2 Victory Over Tahiti (Cook Islands Football)",
+    "url": "https://www.cookislandsfootball.com/ook-islands-make-history-with-stunning-3-2-victory-over-tahiti/"
+   }
+  ],
+  "verdict": "caution"
  },
  "Vasas II v Szegedi VSE|Vasas II": {
   "at": "2026-11-12T14:24:22Z",
