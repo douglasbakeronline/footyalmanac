@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T00:53:59Z",
+ "graded": "2026-11-13T02:41:03Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,18 +67,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 14,
-   "won": 14,
+   "n": 18,
+   "won": 18,
    "rate": 1.0,
-   "quoted": 0.8714,
-   "returned": 15.47,
-   "ret": 0.105
+   "quoted": 0.8743,
+   "returned": 19.67,
+   "ret": 0.0928
   },
   "notAtBook": {
-   "n": 28,
-   "won": 27,
-   "rate": 0.9643,
-   "quoted": 0.9217
+   "n": 31,
+   "won": 30,
+   "rate": 0.9677,
+   "quoted": 0.919
   },
   "unchecked": {
    "n": 18,
@@ -129,18 +129,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 8,
-     "won": 8,
+     "n": 12,
+     "won": 12,
      "rate": 1.0,
-     "quoted": 0.8875,
-     "returned": 8.76,
-     "ret": 0.095
+     "quoted": 0.8863,
+     "returned": 12.96,
+     "ret": 0.08
     },
     "notAtBook": {
-     "n": 28,
-     "won": 27,
-     "rate": 0.9643,
-     "quoted": 0.9217
+     "n": 31,
+     "won": 30,
+     "rate": 0.9677,
+     "quoted": 0.919
     },
     "unchecked": {
      "n": 14,
@@ -210,7 +210,7 @@
    "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": 0,
    "ncaab|howard bison|stetson hatters|2026-11-12": -1,
    "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
-   "football|morocco|niger|2026-11-13": 1.06,
+   "football|morocco|niger|2026-11-13": 1.07,
    "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
    "ncaab|towson tigers|loyola maryland greyhounds|2026-11-13": 0,
    "ncaab|high point panthers|southern utah thunderbirds|2026-11-13": 1.0,
