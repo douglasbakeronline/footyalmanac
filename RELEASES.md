@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13 Odds tab price coverage: write-up only (tag pending)
+
+**What changed:** nothing on the site. A dated note on why no price source was added.
+
+**Evidence:** pool 9-13 Nov has 0 unpriced football legs among 86; a missing price cost the Card 4 legs in two days (`claude/card-price-gaps-2026-11-12.md`). No API key in the sandbox, so no before/after.
+
+**Files:** `claude/price-coverage-oscar-2026-11-13.md`, `RELEASES.md`.
+
+**Not changed:** `groupings.py`, any model, any price rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13-9: free-source check for uncovered leagues, nothing to add (tag pending)
 
 **What changed:** nothing on the page or the model. A dated line in `claude/data-expansion-plan.md` records the re-probe.
