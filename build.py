@@ -747,6 +747,79 @@ def dedupe_cups(fixtures):
     return dropped
 
 
+LAG_WINDOW = 21     # days an ESPN result may sit from its scheduled date and still fill it
+
+
+def lagging_codes(fixtures, start, gaps):
+    """Leagues whose primary source holds unplayed fixtures dated before the
+    build window (13 Nov 2026). openfootball's 2026-27 files stopped scoring
+    matches after 20 Sep 2026 for every core league, so from October the
+    current-season tables behind the Premier League, LaLiga, the Bundesliga
+    and twelve more were seven weeks old while the board looked normal.
+    Returns {code: day after the last scored fixture (None if none)}."""
+    out = {}
+    for c, rows in fixtures.items():
+        m = E.LEAGUES.get(c, {})
+        if (c in gaps or m.get("cup") or m.get("international") or c in S.AF or c in S.FDX
+                or not S.ESPN_SLUGS.get(c)):
+            continue
+        if not any(r["hg"] is None and r["date"] < start.isoformat() for r in rows):
+            continue
+        played = [r["date"] for r in rows if r["hg"] is not None]
+        out[c] = (date.fromisoformat(max(played)) + timedelta(days=1)) if played else None
+    return out
+
+
+def fill_lagging(rows, results, before, window=LAG_WINDOW):
+    """Score the primary source's unplayed fixtures from ESPN results.
+
+    rows: one league's fixture rows (openfootball spelling), filled in place.
+    results: ESPN result rows ({date, home, away, hg, ag}) for the same league.
+    A result fills only the unplayed fixture of the same home and away clubs
+    dated before the build window and within `window` days, and never a pair
+    already scored nearby (the primary source wins). All or nothing on names
+    (Rule 6): one ESPN club that does not match, or two that match the same
+    club, fills nothing for the league, and the names come back for the log.
+    Returns (filled, unmatched names, results with no fixture to fill)."""
+    pool = {r["home"] for r in rows} | {r["away"] for r in rows}
+    names = sorted({x[k] for x in results for k in ("home", "away")})
+    mapping = {n: S.match_team(n, pool) for n in names}
+    bad = [n for n, v in mapping.items() if v is None]
+    seen = defaultdict(list)
+    for n, v in mapping.items():
+        if v is not None:
+            seen[v].append(n)
+    bad += [f"{'/'.join(v)} -> {k}" for k, v in seen.items() if len(v) > 1]
+    if bad:
+        return 0, sorted(bad), 0
+    by_pair = defaultdict(list)
+    for r in rows:
+        by_pair[(r["home"], r["away"])].append(r)
+    cut = before.isoformat()
+    filled = unplaced = 0
+    for x in sorted(results, key=lambda x: x["date"]):
+        if x.get("hg") is None or x["date"] >= cut:
+            continue
+        d = date.fromisoformat(x["date"])
+        near = [(abs((date.fromisoformat(r["date"]) - d).days), r)
+                for r in by_pair.get((mapping[x["home"]], mapping[x["away"]]), [])]
+        near = [(gap, r) for gap, r in near if gap <= window]
+        if any(r["hg"] is not None for _, r in near):
+            continue                       # the primary source already has it
+        open_ = sorted(((gap, r["date"], r) for gap, r in near if r["date"] < cut),
+                       key=lambda t: t[:2])
+        if not open_:
+            unplaced += 1
+            continue
+        r = open_[0][2]
+        r["hg"], r["ag"] = x["hg"], x["ag"]
+        if abs((date.fromisoformat(r["date"]) - d).days) > 1:
+            r["date"] = x["date"]          # a moved match is dated when it was played
+        r["filledFrom"] = "espn"
+        filled += 1
+    return filled, [], unplaced
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=4, help="days of fixtures to include")
@@ -855,6 +928,36 @@ def main():
                   f"competitions with results on file", file=sys.stderr)
             for line in issues[:5]:
                 print(f"    topup {line}", file=sys.stderr)
+
+    # Leagues whose primary source has stopped scoring matches (13 Nov 2026):
+    # walk ESPN from the day after its last scored fixture and score the
+    # fixtures it left blank, under its own spelling, so the table never
+    # holds a club twice. Cached in current/ like the top-up above.
+    if not args.no_topup:
+        lag = lagging_codes(fixtures, start, set(gaps))
+        if lag:
+            print(f"  scoring {len(lag)} lagging league(s) from ESPN: {', '.join(sorted(lag))}",
+                  file=sys.stderr)
+            issues = []
+
+            def lag_top(c):
+                s = E.LEAGUES[c].get("season", SEASON)
+                return c, S.topup_current(c, s, until=start - timedelta(days=1),
+                                          log=issues, since=lag[c])
+
+            with cf.ThreadPoolExecutor(max_workers=6) as pool:
+                got = list(pool.map(lag_top, sorted(lag)))
+            for c, (rows, n) in got:
+                filled, bad, unplaced = fill_lagging(fixtures[c], list(rows.values()), start)
+                if bad:
+                    print(f"::warning::{c}: ESPN results not used, club names unmatched: "
+                          + "; ".join(bad[:8]), file=sys.stderr)
+                else:
+                    print(f"    lag {c}: {filled} result(s) filled from ESPN ({n} day(s) asked)"
+                          + (f", {unplaced} with no fixture to fill" if unplaced else ""),
+                          file=sys.stderr)
+            for line in issues[:5]:
+                print(f"    lag {line}", file=sys.stderr)
 
     dedupe_cups(fixtures)
     last_league = team_pool(history, fixtures)
