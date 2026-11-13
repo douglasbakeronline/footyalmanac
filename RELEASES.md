@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-13-13: the office sprint skips a task whose pull request lost its labels (tag pending, needs owner)
+
+**What changed:** `agents/pick_task.py` now also treats an objective as busy when an open pull request's branch is `office-agent/<date>-<key>`, read from the branch name (`branch_objectives`), not only from its `objective:` label.
+
+**Why:** #279 (college basketball) opened at 07:06 on 13 Nov but GitHub failed the label step with a GraphQL error, so it carried no labels. The planner saw `hq-sport-ncaab` as free and the 19:55 sprint gave the sports agent the same task, which failed pushing the same branch (non-fast-forward). Two of the day's four sprints ended failed on this one pull request, and each spent an agent place.
+
+**Tested:** `tests/test_pick_task.py` (`TestBranchObjectives`); full suite and `nametest.py` pass.
+
+**Files:** `agents/pick_task.py`, `tests/test_pick_task.py`, this entry.
+
+**Not changed:** `open_pr.sh`, the merge gate, any Card rule. #279 itself still has no labels; adding `office-agent`, `agent:sports` and `objective:hq-sport-ncaab` by hand clears it today.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13-12: tennis legs in the groups, gap located, no rule to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-13.md`.

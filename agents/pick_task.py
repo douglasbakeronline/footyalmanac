@@ -4,7 +4,7 @@ Reads the same numbers the Footyalmanac HQ office reports on, finds the most
 important objective that is behind, and writes a prompt for the agent that owns
 it. Writes GitHub Actions outputs: skip, key, owner, title, prompt.
 """
-import argparse, json, os, subprocess, sys, urllib.request
+import argparse, json, os, re, subprocess, sys, urllib.request
 from datetime import datetime, timedelta, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -247,6 +247,18 @@ def sprint_agents(cands, busy):
     if desk and not any(ag in DESK for ag in chosen): chosen.append(desk)
     return chosen
 
+BRANCH_RE = re.compile(r"^office-agent/\d{4}-\d{2}-\d{2}-(.+)$")
+
+def branch_objectives(prs):
+    """Objectives held by open office-agent/<date>-<key> branches, read from the branch name, not labels.
+    13 Nov 2026: #279 opened at 07:06 but GitHub failed its label step, so it carried no objective
+    label; the planner saw hq-sport-ncaab as free and the 19:55 sprint failed pushing the same branch."""
+    keys = set()
+    for p in prs:
+        m = BRANCH_RE.match(p.get("headRefName") or "")
+        if m: keys.add(m.group(1))
+    return keys
+
 def claimed_objectives():
     """Objectives held by open issues another AI platform has claimed: office agents leave them alone."""
     held = set()
@@ -318,6 +330,7 @@ def main():
             if l["name"].startswith("objective:") and (p["state"] == "OPEN" or made > cutoff):
                 recent.add(l["name"][10:])
     recent |= claimed_objectives()
+    recent |= branch_objectives(gh(["pr", "list", "--state", "open", "-L", "100", "--json", "headRefName"]))
     if a.platform_tasks:
         platform_tasks([x.strip() for x in a.platform_tasks.split(",") if x.strip()], recent); return
     out = os.environ.get("GITHUB_OUTPUT", "/dev/stdout")
