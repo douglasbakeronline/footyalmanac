@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T02:41:03Z",
+ "graded": "2026-11-13T06:35:13Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -75,10 +75,10 @@
    "ret": 0.0928
   },
   "notAtBook": {
-   "n": 31,
-   "won": 30,
-   "rate": 0.9677,
-   "quoted": 0.919
+   "n": 33,
+   "won": 32,
+   "rate": 0.9697,
+   "quoted": 0.917
   },
   "unchecked": {
    "n": 18,
@@ -137,10 +137,10 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 31,
-     "won": 30,
-     "rate": 0.9677,
-     "quoted": 0.919
+     "n": 33,
+     "won": 32,
+     "rate": 0.9697,
+     "quoted": 0.917
     },
     "unchecked": {
      "n": 14,
@@ -210,7 +210,7 @@
    "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": 0,
    "ncaab|howard bison|stetson hatters|2026-11-12": -1,
    "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
-   "football|morocco|niger|2026-11-13": 1.07,
+   "football|morocco|niger|2026-11-13": 1.08,
    "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
    "ncaab|towson tigers|loyola maryland greyhounds|2026-11-13": 0,
    "ncaab|high point panthers|southern utah thunderbirds|2026-11-13": 1.0,
@@ -218,28 +218,29 @@
    "ncaab|bowling green falcons|niagara purple eagles|2026-11-13": 1.04,
    "ncaab|byu cougars|montana state bobcats|2026-11-13": 0,
    "ncaab|cal state fullerton titans|lincoln (ca) oaklanders|2026-11-13": -1,
-   "ncaab|miami hurricanes|north alabama lions|2026-11-13": 0,
-   "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": -1,
+   "ncaab|miami hurricanes|north alabama lions|2026-11-13": 1.0,
+   "ncaab|rutgers scarlet knights|bryant bulldogs|2026-11-13": 1.01,
    "ncaab|howard bison|stetson hatters|2026-11-13": 1.15,
+   "football|algeria|togo|2026-11-14": 1.2,
    "football|laktaši|famos vojkovići|2026-11-14": 0,
    "nba|houston rockets|utah jazz|2026-11-14": 1.06,
    "ncaab|florida gators|merrimack warriors|2026-11-14": 0,
    "ncaab|illinois fighting illini|sam houston bearkats|2026-11-14": 0,
    "ncaab|tennessee volunteers|tennessee state tigers|2026-11-14": 0,
-   "ncaab|vanderbilt commodores|prairie view a&m panthers|2026-11-14": -1,
-   "ncaab|kentucky wildcats|northern arizona lumberjacks|2026-11-14": 0,
+   "ncaab|vanderbilt commodores|prairie view a&m panthers|2026-11-14": 0,
+   "ncaab|kentucky wildcats|northern arizona lumberjacks|2026-11-14": 1.0,
    "ncaab|ut martin skyhawks|champion christian tigers|2026-11-14": -1,
    "ncaab|purdue boilermakers|ohio bobcats|2026-11-14": 0,
    "ncaab|uconn huskies|ohio state buckeyes|2026-11-14": 0,
-   "ncaab|liberty flames|north carolina central eagles|2026-11-14": -1,
+   "ncaab|liberty flames|north carolina central eagles|2026-11-14": 0,
    "ncaab|duke blue devils|siu edwardsville cougars|2026-11-14": 0,
    "ncaab|arkansas razorbacks|central arkansas bears|2026-11-14": 0,
-   "ncaab|murray state racers|texas southern tigers|2026-11-14": -1,
+   "ncaab|murray state racers|texas southern tigers|2026-11-14": 0,
    "ncaab|houston christian huskies|college of biblical studies ambassadors|2026-11-14": -1,
    "ncaab|tcu horned frogs|milwaukee panthers|2026-11-14": 0,
-   "ncaab|oklahoma sooners|fairleigh dickinson knights|2026-11-14": -1,
+   "ncaab|oklahoma sooners|fairleigh dickinson knights|2026-11-14": 0,
    "ncaab|arizona state sun devils|ul monroe warhawks|2026-11-14": 0,
-   "ncaab|oregon state beavers|mississippi valley state delta devils|2026-11-14": -1,
+   "ncaab|oregon state beavers|mississippi valley state delta devils|2026-11-14": 0,
    "ncaab|california baptist lancers|arkansas-pine bluff golden lions|2026-11-14": -1,
    "ncaab|akron zips|tulane green wave|2026-11-14": -1,
    "ncaab|texas tech red raiders|stonehill skyhawks|2026-11-14": -1,
@@ -272,12 +273,12 @@
  },
  "cardContext": {
   "caution": {
-   "legs": 5,
-   "landed": 3,
-   "rate": 0.6,
-   "model": 0.7587,
-   "fair": 0.7026,
-   "zModel": -0.87
+   "legs": 7,
+   "landed": 5,
+   "rate": 0.7143,
+   "model": 0.7515,
+   "fair": 0.7054,
+   "zModel": -0.23
   }
  },
  "byBand": {
