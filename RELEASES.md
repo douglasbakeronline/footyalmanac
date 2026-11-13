@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-3: tests for the international rating fit (tag pending)
+
+**What changed:** nothing for a reader. `tune_international.py` (371 lines, the international rating fit) was the largest module with no test at all. 16 tests now pin tournament tiers, row parsing (unplayed and pre-cutoff rows dropped, neutral only on "TRUE"), recency and tier weights, the fit's ordering and its shared-shift fix, `outcome` summing to 1, `score` (unrated skipped, baseline), and the paired bootstrap (deterministic, directional).
+
+**Evidence:** all 16 pass against the current code; no bug exposed, so no code changed. Full suite and nametest pass.
+
+**Files:** `tests/test_tune_international.py`, this entry.
+
+**Not changed:** any model, constant or data file.
+
+**Roll back:** `git revert` the merge commit.
+
+
 ## 2026-11-13-2: the Card's bookmaker read on the same picks (tag pending)
 
 **What changed:** advisory only. The nightly Card review now sets each UK bookmaker against William Hill (the Card's book) on the picks both priced, at the first and the last pre-start price, with the settled singles return at each, and the best UK price against Hill. It says in bold when a book pays more than Hill on both counts, as a question for Douglas.
