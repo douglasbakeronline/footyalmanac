@@ -114,32 +114,30 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
     were taken at their last price)."""
     idx = idx or G.results_index(); names = name_indexes(idx)
     by, skipped, recovered = defaultdict(list), defaultdict(int), 0
-    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
-        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
-        d = fn[5:15]
+    # 13 Nov 2026: one row a fixture (G.pool_rows): a fixture moved to another
+    # day was counted twice, once on the day it was not played
+    for d, row in G.pool_rows(pool_dir):
         if d < POOL_FROM or (since and d < since) or (until and d > until): continue
-        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
-        for row in a.get("legs") or []:
-            mk = pool_market(row, closing, recover)
-            if mk is None:
-                skipped["estimate only"] += 1; continue
-            if mk.get("recovered"): recovered += 1
-            l = dict(row, **mk, est=False)
-            if l.get("sport") == "football" and not l.get("side"):
-                l["side"] = "h" if l["pick"] == l.get("home") else "a"
-            st, res = settle_pool(l, idx, names)
-            if st not in ("won", "lost"):
-                skipped[st] += 1; continue
-            l["won"] = st == "won"; l["result"] = res
-            l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
-            l.setdefault("hit", l.get("pTested") or l.get("p"))
-            # the bookmakers' chance is the archived one (honest() would refit it
-            # from the first margin, wrong at the closing price); p as honest() sets it
-            l["implied"] = round(1 / l["odds"], 4); l.setdefault("pTested", l["p"])
-            l["p"] = round(min(l["pTested"], l["fair"]), 4); l["edge"] = round(l["p"] * l["odds"] - 1, 4)
-            slot = G.uk_slot(l)
-            if slot: by[slot[0]].append(l)
-            else: skipped["no time"] += 1
+        mk = pool_market(row, closing, recover)
+        if mk is None:
+            skipped["estimate only"] += 1; continue
+        if mk.get("recovered"): recovered += 1
+        l = dict(row, **mk, est=False)
+        if l.get("sport") == "football" and not l.get("side"):
+            l["side"] = "h" if l["pick"] == l.get("home") else "a"
+        st, res = settle_pool(l, idx, names)
+        if st not in ("won", "lost"):
+            skipped[st] += 1; continue
+        l["won"] = st == "won"; l["result"] = res
+        l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
+        l.setdefault("hit", l.get("pTested") or l.get("p"))
+        # the bookmakers' chance is the archived one (honest() would refit it
+        # from the first margin, wrong at the closing price); p as honest() sets it
+        l["implied"] = round(1 / l["odds"], 4); l.setdefault("pTested", l["p"])
+        l["p"] = round(min(l["pTested"], l["fair"]), 4); l["edge"] = round(l["p"] * l["odds"] - 1, 4)
+        slot = G.uk_slot(l)
+        if slot: by[slot[0]].append(l)
+        else: skipped["no time"] += 1
     skipped = dict(skipped)
     if recovered: skipped["recovered, counted at the last price"] = recovered
     return by, skipped

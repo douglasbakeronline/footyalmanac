@@ -82,23 +82,22 @@ def legs(pool_dir=os.path.join(HERE, "groupings-archive"), dropped=None, now=Non
     and counted in `pending`: its last price so far is not its last
     (10 Nov 2026; the nightly run read 11 Nov legs as if closed)."""
     out = []
-    for f in sorted(glob.glob(os.path.join(pool_dir, "pool-*.json.gz"))):
-        d = json.load(gzip.open(f))
-        for row in d.get("legs", []):
-            mk = CR.pool_market(row)
-            if mk is None or not row.get("lastOdds"): continue
-            l = dict(row, **mk, est=False)
-            if G.card_fault(dict(l)) is not None and G.card_fault(dict(l), wide=True) is not None: continue
-            l["firstPriceAt"] = (row.get("priced") or {}).get("at") or row.get("firstAt") or row.get("pricedAt")
-            h = hours_before(l, l.get("lastAt"))
-            if h is not None and h < 0:
-                if dropped is not None: dropped.append(l)
-                continue
-            st = _t(l.get("whenLast") or l.get("when") or "")
-            if now is not None and (st is None or st > now):
-                if pending is not None: pending.append(l)
-                continue
-            out.append(l)
+    # 13 Nov 2026: one row a fixture (G.pool_rows), not a moved fixture twice
+    for _, row in G.pool_rows(pool_dir):
+        mk = CR.pool_market(row)
+        if mk is None or not row.get("lastOdds"): continue
+        l = dict(row, **mk, est=False)
+        if G.card_fault(dict(l)) is not None and G.card_fault(dict(l), wide=True) is not None: continue
+        l["firstPriceAt"] = (row.get("priced") or {}).get("at") or row.get("firstAt") or row.get("pricedAt")
+        h = hours_before(l, l.get("lastAt"))
+        if h is not None and h < 0:
+            if dropped is not None: dropped.append(l)
+            continue
+        st = _t(l.get("whenLast") or l.get("when") or "")
+        if now is not None and (st is None or st > now):
+            if pending is not None: pending.append(l)
+            continue
+        out.append(l)
     return out
 
 

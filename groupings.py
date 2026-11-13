@@ -2373,6 +2373,57 @@ def settle_pool(l, idx, names):
         return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), g.get("score")
     return st, res
 
+POOL_MOVE_DAYS = 3   # a pool row this close to another of the same pick is one fixture moved (13 Nov 2026)
+
+def _same_fixture(a, b):
+    """True when two pool rows of one (event, pick) are the same fixture: the
+    same id when both carry one, else starts within POOL_MOVE_DAYS."""
+    if a.get("id") and b.get("id"): return str(a["id"]) == str(b["id"])
+    ta, tb = parse(a.get("when") or ""), parse(b.get("when") or "")
+    if ta is None or tb is None: return (a.get("date") or "") == (b.get("date") or "")
+    return abs((ta - tb).total_seconds()) <= POOL_MOVE_DAYS * 86400
+
+def pool_rows(pool_dir=None):
+    """[(file date, row)] over every pool file, one row a fixture (13 Nov 2026).
+    archive_pool keys rows by (event, pick) within a day's file, so a fixture
+    the source moves to another day gets a second row in the new day's file
+    and the old row stays where it was, with its stale start and no later
+    price (68 of 2,650 pool picks at 13 Nov: 38 tennis matches placed a day
+    early, 25 football, Drina Zvornik on 13 and 14 Nov). Both settle against
+    the same result, so the replay counted the leg twice, once on a day it
+    was not played, and the dedup in card_funnel kept the first, stale row.
+    Here a moved fixture keeps the row of its latest placement (the latest
+    `firstAt`, then the later file): the start the builds last judged by,
+    priced before that start. Two rows with different ids, or starts more
+    than POOL_MOVE_DAYS apart, are two fixtures (a rematch). Nothing in the
+    archive is changed."""
+    pool_dir = pool_dir or ARCHIVE
+    files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
+        if os.path.isdir(pool_dir) else []
+    rows, by_key = [], {}
+    for fn in files:
+        try:
+            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f:
+                legs = json.load(f).get("legs") or []
+        except (OSError, ValueError):
+            continue
+        for row in legs:
+            i = len(rows); rows.append((fn[5:15], row))
+            by_key.setdefault((row.get("sport"), row.get("event"), row.get("pick")), []).append(i)
+    drop = set()
+    for idxs in by_key.values():
+        if len(idxs) < 2: continue
+        clusters = []
+        for i in idxs:
+            for c in clusters:
+                if any(_same_fixture(rows[i][1], rows[j][1]) for j in c): c.append(i); break
+            else:
+                clusters.append([i])
+        for c in clusters:
+            keep = max(c, key=lambda j: (rows[j][1].get("firstAt") or "", rows[j][0], j))
+            drop.update(j for j in c if j != keep)
+    return [r for i, r in enumerate(rows) if i not in drop]
+
 VOID_AFTER = 72 * 3600   # a football leg with no result this long after kick-off is void (25 Oct 2026)
 
 def dead_fixtures(dates):
@@ -2686,38 +2737,30 @@ def list_at_book(idx, now=None, pool_dir=None):
     groups = {"atBook": blank(), "notAtBook": blank(), "unchecked": blank()}
     by_sport, picks = {}, {}
     names = name_indexes(idx)
-    files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
-        if os.path.isdir(pool_dir) else []
-    for fn in files:
-        d = fn[5:15]
+    # 13 Nov 2026: one row a fixture (pool_rows), not a moved fixture twice
+    for d, r in pool_rows(pool_dir):
         if d < LIST_BOOK_FROM: continue
-        try:
-            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f:
-                rows = json.load(f).get("legs") or []
-        except (OSError, ValueError):
-            continue
-        for r in rows:
-            if not r.get("list"): continue
-            books, checked = _lb_books(r)
-            hill = books.get(CARD_BOOK)
-            home, away = _lb_sides(r)
-            if d >= keep_from and checked:
-                # the price; 0: UK books price it, not this one; -1: no UK book listed it
-                picks[f"{_lb_key(r.get('sport'), home, away)}|{d}"] = hill or (0 if books else -1)
-            leg = dict(r)
-            if leg.get("sport") == "football" and not leg.get("side"):
-                leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
-            # 11 Nov 2026: settle_pool, not settle: most US-sport rows were first
-            # archived before `id` joined POOL_KEYS, so settle left them pending
-            # and the tally read 1 settled pick of 40 (#235)
-            try: st, _ = settle_pool(leg, idx, names)
-            except (KeyError, TypeError): continue
-            if st not in ("won", "lost"): continue
-            g = "atBook" if hill else "notAtBook" if checked else "unchecked"
-            for t in (groups[g], by_sport.setdefault(r.get("sport"), {k: blank() for k in groups})[g]):
-                t["n"] += 1; t["won"] += st == "won"; t["quoted"] += r.get("pModel") or 0
-                if hill:
-                    t["staked"] += 1; t["returned"] += hill if st == "won" else 0
+        if not r.get("list"): continue
+        books, checked = _lb_books(r)
+        hill = books.get(CARD_BOOK)
+        home, away = _lb_sides(r)
+        if d >= keep_from and checked:
+            # the price; 0: UK books price it, not this one; -1: no UK book listed it
+            picks[f"{_lb_key(r.get('sport'), home, away)}|{d}"] = hill or (0 if books else -1)
+        leg = dict(r)
+        if leg.get("sport") == "football" and not leg.get("side"):
+            leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
+        # 11 Nov 2026: settle_pool, not settle: most US-sport rows were first
+        # archived before `id` joined POOL_KEYS, so settle left them pending
+        # and the tally read 1 settled pick of 40 (#235)
+        try: st, _ = settle_pool(leg, idx, names)
+        except (KeyError, TypeError): continue
+        if st not in ("won", "lost"): continue
+        g = "atBook" if hill else "notAtBook" if checked else "unchecked"
+        for t in (groups[g], by_sport.setdefault(r.get("sport"), {k: blank() for k in groups})[g]):
+            t["n"] += 1; t["won"] += st == "won"; t["quoted"] += r.get("pModel") or 0
+            if hill:
+                t["staked"] += 1; t["returned"] += hill if st == "won" else 0
     def done(t):
         out = {"n": t["n"], "won": t["won"]}
         if t["n"]:
@@ -2821,26 +2864,21 @@ def context_record(idx, pool_dir=None):
     day, the last verdict before the start. A tally, nothing fitted (Rule 1)."""
     pool_dir = pool_dir or ARCHIVE
     names = name_indexes(idx); by, seen = {}, set()
-    files = sorted(f for f in os.listdir(pool_dir) if f.startswith("pool-") and f.endswith(".json.gz")) if os.path.isdir(pool_dir) else []
-    for fn in files[-60:]:
-        try:
-            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: rows = json.load(f).get("legs") or []
-        except Exception:
-            continue
-        for row in rows:
-            v = (row.get("context") or {}).get("verdict")
-            k = (row.get("date"), row.get("event"), row.get("pick"))
-            if not v or k in seen: continue
-            l = dict(row)
-            if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
-            st, _ = settle_pool(l, idx, names)
-            if st not in ("won", "lost"): continue
-            seen.add(k)
-            t = by.setdefault(v, {"legs": 0, "landed": 0, "model": 0.0, "var": 0.0, "fair": 0.0, "nFair": 0})
-            pm = row.get("pModel") or 0
-            t["legs"] += 1; t["landed"] += st == "won"; t["model"] += pm; t["var"] += pm * (1 - pm)
-            fr = row.get("fair") if not row.get("est") else (row.get("priced") or {}).get("fair")
-            if fr is not None: t["fair"] += fr; t["nFair"] += 1
+    # 13 Nov 2026: one row a fixture (pool_rows), the last placement's verdict
+    for _, row in pool_rows(pool_dir):
+        v = (row.get("context") or {}).get("verdict")
+        k = (row.get("date"), row.get("event"), row.get("pick"))
+        if not v or k in seen: continue
+        l = dict(row)
+        if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
+        st, _ = settle_pool(l, idx, names)
+        if st not in ("won", "lost"): continue
+        seen.add(k)
+        t = by.setdefault(v, {"legs": 0, "landed": 0, "model": 0.0, "var": 0.0, "fair": 0.0, "nFair": 0})
+        pm = row.get("pModel") or 0
+        t["legs"] += 1; t["landed"] += st == "won"; t["model"] += pm; t["var"] += pm * (1 - pm)
+        fr = row.get("fair") if not row.get("est") else (row.get("priced") or {}).get("fair")
+        if fr is not None: t["fair"] += fr; t["nFair"] += 1
     out = {}
     for v in ("clear", "caution", "against"):
         t = by.get(v)
