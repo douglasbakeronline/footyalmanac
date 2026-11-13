@@ -413,7 +413,7 @@ def load_current(code, season):
     return rows, (date.fromisoformat(through) if through else None)
 
 
-def topup_current(code, season, until=None, sleep=0.12, log=None):
+def topup_current(code, season, until=None, sleep=0.12, log=None, since=None):
     """Walk this season's completed matches forward and cache the result.
 
     The problem this solves
@@ -428,8 +428,14 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     Fetching the season fresh each morning is three hundred requests per
     competition, so it is walked once and topped up. The cache is committed by
     the workflow, so a normal build asks for three or four days.
+
+    `since` (13 Nov 2026) starts a first walk later than the season's start,
+    for a league whose primary source already holds the early results
+    (build.lagging_results): no point asking ESPN for August again.
     """
     start, _ = season_window(season)
+    if since is not None:
+        start = max(start, since)
     until = until or (date.today() - timedelta(days=1))
     rows, through = load_current(code, season)
     # Re-ask the tail: yesterday's build may have caught a game in progress.
@@ -464,9 +470,11 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     # walked: stop `through` just before the first failure so the next build asks
     # again, instead of losing those results for good. A competition that has
     # never answered (dead slug, no cache yet) is saved as before, or every
-    # build would re-walk the whole season.
+    # build would re-walk the whole season. A lagging league's walk (`since`)
+    # is never marked done on a failure: its primary source still has those
+    # results to come, and marking it would leave the table stale for good.
     mark = until
-    if first_bad is not None and (through is not None or ok_days):
+    if first_bad is not None and (through is not None or ok_days or since is not None):
         mark = first_bad - timedelta(days=1)
         if through is not None:
             mark = max(mark, through)
@@ -1953,6 +1961,10 @@ ALIASES = {
     # "Club Brugge" loses "club" as a generic word and reduces to the bare
     # city, which the matcher rightly refuses (Cercle Brugge is also there).
     "brugge": "brugge kv",
+    # ESPN's Austrian and Greek spellings against openfootball's (13 Nov 2026,
+    # from the lagging-league fill: current/at.1 and gr.1 against the 2026-27 files)
+    "rheindorf altach": "scr altach", "wsg swarovski tirol": "wsg tirol",
+    "aek athens": "aek", "ofi crete": "ofi", "saint johnstone": "st johnstone",
 }
 
 

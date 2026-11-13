@@ -4,6 +4,20 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-10: the core leagues see their October and November results (tag pending)
+
+**What changed:** openfootball's 2026-27 files stopped scoring matches after 20 Sep 2026, and the build took the current season for its fifteen whole-season leagues (Premier League, Championship, LaLiga, Bundesliga, Serie A, Ligue 1, Eredivisie, Primeira Liga, Scottish Premiership, Austria, Greece, Czechia, Brazil, Turkey, Belgium) from those files alone. The build now walks ESPN from the day after each league's last scored fixture and scores the blank fixtures under openfootball's spelling (`build.lagging_codes`, `build.fill_lagging`, `sources.topup_current(since=)`), cached in `current/` like the existing top-up.
+
+**Evidence:** 746 played matches missing on 13 Nov (six rounds of the Premier League; Belgium no current season at all), the CI warning's 789 with football-data's leagues. Since rule 7 the Card's football picks and the Edge flag read these tables. `claude/openfootball-lag-2026-11-13.md`.
+
+**Guards:** a result fills only the blank fixture of the same home and away clubs within 21 days, never one openfootball scored (the primary source wins); one unmatched or doubly matched ESPN club fills nothing for that league and is named in a `::warning::` (Rule 6); a failed lag walk is never marked done. Five aliases from the cached Austrian, Greek and Scottish rows.
+
+**Tested:** `tests/test_lagging_results.py` (12 tests: fill, primary wins, window, moved match, all-or-nothing names, lag selection, failed walk retried, aliases); the cached at.1, gr.1 and sco.1 rows against their 2026-27 files match every club; full suite and `nametest.py` pass; a sandbox build runs the path (ESPN unreachable here, so CI's first build is the real check: look for the `lag <code>: N result(s) filled` lines).
+
+**Not changed:** engine constants, calibration, any Card or list rule, the gap leagues' top-up.
+
+**Roll back:** `git revert` the merge commit; the `current/` caches it adds are harmless and are ignored once the code is gone.
+
 ## 2026-11-13 Odds tab price coverage: write-up only (tag pending)
 
 **What changed:** nothing on the site. A dated note on why no price source was added.
