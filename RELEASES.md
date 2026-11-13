@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-10: opponent-adjusted ratings tested and rejected (tag pending)
+
+**What changed:** nothing on the page or the model. A dated note and the test harness record the rejected idea.
+
+**Evidence:** opponent-adjusted attack/defence (3 iterations, blended with raw at 0.25, 0.5, 1.0), paired bootstrap, calibration live and refitted. Fit 2025/26 (6,474): -0.0001 to -0.0002, under the 0.0005 gain gate at every setting; check 2026/27 (1,584): -0.0002 to -0.0014. Fit-season gain fails, so not shipped.
+
+**Files:** `claude/opp-adjusted-ratings-2026-11-13.md`, `tools/opp_adjust_eval.py`, this entry.
+
+**Not changed:** `engine.py`, `calibration.json`, every constant.
+
+**Roll back:** `git revert` this release's commit.
+
+
 ## 2026-11-13-9: free-source check for uncovered leagues, nothing to add (tag pending)
 
 **What changed:** nothing on the page or the model. A dated line in `claude/data-expansion-plan.md` records the re-probe.
