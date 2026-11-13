@@ -4,6 +4,21 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-7: briefing pushes logged, late ones named (tag pending)
+
+**What changed:** nothing on the page or the Card. Each briefing push (07:00, 11:00, 16:00, 21:00 UK) is now logged with how many minutes after its slot it went, and a slot a late build skipped is logged as skipped (`groupings-archive/briefed.json` `log`, 21 days). The nightly Card review shows the table and names in bold any slot whose median push is over an hour late or that was skipped.
+
+**Why:** the pushes come from deploy.yml's scheduled builds, which GitHub runs late at busy times: the 12 Nov lunch push went at 13:18 UK (2h18 late), the night push at 22:40 (1h40); on 13 Nov the 12:00 UTC build had not started by 12:40, so a deploy was dispatched by hand. Douglas bets at those times, so a late push is a late price. `claude/briefing-lateness-2026-11-13.md`.
+
+**Tested:** `tests/test_briefing_log.py` (lateness in GMT and BST, skipped slots logged once, an old file without a log, trimming, `due_slot` unchanged, the review table); full suite and `nametest.py` pass.
+
+**Files:** `notify.py` (`mark_sent`, `LOG_DAYS`), `tools/card_review_post.py` (`briefing_section`), `tests/test_briefing_log.py`, the note, `CLAUDE.md`.
+
+**Not changed:** when briefings are sent, what they say, the deploy schedule (backup crons are a separate `needs-owner` pull request), any Card rule.
+
+**Roll back:** `git revert` the merge commit; old `briefed.json` files read as before.
+
+
 ## 2026-11-13-6: the pool reads each fixture once (tag pending)
 
 **What changed:** nothing on the Card. The pool archive holds a fixture the source moved to another day twice (the new day's file and the old one, with the stale start), and the replays, the funnel, the price-timing read and the Daily List's at-William-Hill record counted it twice or kept the stale row. They now read the pool through `groupings.pool_rows`, one row a fixture, its latest placement. "How it went"'s at-Hill line drops three double-counted picks.

@@ -183,6 +183,34 @@ def context_section(r):
     return out + [""]
 
 
+BRIEF_LATE = 60    # minutes: a slot whose median push is later than this is named in bold
+
+
+def briefing_section(st, days=14, today_=None):
+    """13 Nov 2026: how late each briefing push went, from
+    groupings-archive/briefed.json "log" (notify.mark_sent). The pushes come
+    from the first build at or after each slot's hour, and GitHub runs
+    scheduled builds late at busy times (12 Nov lunch 2h18 late, night 1h40),
+    so a late slot is a late price for Douglas. Health only."""
+    from datetime import date as _d, timedelta as _td
+    log = [e for e in ((st or {}).get("log") or []) if isinstance(e, dict)]
+    if today_: log = [e for e in log if e.get("date", "") >= (_d.fromisoformat(today_) - _td(days=days)).isoformat()]
+    if not log: return []
+    out = [f"## Briefing pushes (last {days} days, minutes after the slot's hour)", "",
+           "| slot | sent | median | worst | skipped |", "|---|---|---|---|---|"]
+    late = []
+    for name in ("morning", "lunch", "evening", "night"):
+        sent = sorted(e["late"] for e in log if e.get("slot") == name and e.get("late") is not None)
+        skip = sum(1 for e in log if e.get("slot") == name and e.get("skipped"))
+        if not sent and not skip: continue
+        med = sent[len(sent) // 2] if sent else None
+        out.append(f"| {name} | {len(sent)} | {med if med is not None else 'n/a'} | {sent[-1] if sent else 'n/a'} | {skip} |")
+        if (med is not None and med > BRIEF_LATE) or skip: late.append(name)
+    out.append(f"**Late or skipped: {', '.join(late)}. The deploy crons run late; a backup cron (deploy.yml, an owner change) is the fix.**"
+               if late else f"Every slot's median push within {BRIEF_LATE} minutes, none skipped.")
+    return out + [""]
+
+
 def coverage_lines(rep, record):
     """10 Nov 2026: the live row of the replay beside the live Card the record
     holds over the same days. Until 10 Nov most live legs were archived only as
@@ -396,6 +424,7 @@ def main():
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()
+    lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
     if already_posted(f"Card review {today}") and os.environ.get("FORCE_POST") != "1":
