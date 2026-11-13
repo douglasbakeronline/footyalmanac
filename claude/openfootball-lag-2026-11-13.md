@@ -76,3 +76,22 @@ Not tested here: the sandbox cannot reach ESPN, so the fill ran on stubbed
 and cached rows only (`tests/test_lagging_results.py`, and `current/at.1`,
 `gr.1` and `sco.1` against their 2026-27 files: every club matched once the
 aliases were in, nothing double counted). CI is the check.
+
+## The first CI build (deploy run 43468024759, 13 Nov evening)
+
+Filled from ESPN: en.1 50, en.2 85, de.1 45, it.1 60, fr.1 45, sco.1 33,
+gr.1 34, at.1 30 (382 results, each league's blank count to within a
+postponement). The stale-unplayed warning fell from 789 to 407. The guard
+held the rest back, each for named clubs:
+
+- br.1 Athletico-PR, Atlético-MG, Red Bull Bragantino; es.1 Deportivo;
+  nl.1 NEC Nijmegen; pt.1 FC Famalicao, Vitória de Guimaraes; tr.1 Erzurum BB,
+  Istanbul Basaksehir. Fixed in the follow-up release with six aliases and
+  five accent folds in `_base` (ã õ ê ô, and the combining dot that "İ"
+  lowers to); `nametest.py` still finds no club resolving elsewhere.
+- be.1 Racing Genk, Royal Charleroi, Sint-Truidense, Standard Liege, Union
+  St.-Gilloise: not aliased. The Belgian 2026-27 file parses with no scores
+  at all and with junk club names ("KV Kortrijk 3-0", "Lommel SK (*)"), so
+  the parse is the fault, not the spelling. Filed as an issue.
+- cze.1: ESPN returned no results (0 filled, nothing unmatched): its slug
+  answers nothing for the season. Czechia stays on openfootball to 20 Sep.

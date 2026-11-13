@@ -4,6 +4,18 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-11: four more lagging leagues matched (tag pending)
+
+**What changed:** the first CI build of release 2026-11-13-10 filled 382 results across eight leagues and held seven back on unmatched ESPN names, as designed. Six aliases (Athletico-PR, Atlético-MG, Red Bull Bragantino, Deportivo, NEC Nijmegen, Erzurum BB) and five accent folds in `sources._base` (ã õ ê ô and the combining dot under a lowered "İ", for Famalicão, Guimarães, Başakşehir) let Brazil, Spain, the Netherlands, Portugal and Turkey fill on the next build.
+
+**Evidence:** deploy run 43468024759's `lag` lines; the stale-unplayed warning fell from 789 to 407. `claude/openfootball-lag-2026-11-13.md` (CI section).
+
+**Tested:** `nametest.py` all clear (rated pool 1124 clubs, none resolving elsewhere); `tests/test_lagging_results.py` adds the nine pairs; full suite passes.
+
+**Not changed:** Belgium (its 2026-27 file parses with no scores and junk names: a parser fault, filed as an issue), Czechia (ESPN returns nothing), any model constant or Card rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13-10: the core leagues see their October and November results (tag pending)
 
 **What changed:** openfootball's 2026-27 files stopped scoring matches after 20 Sep 2026, and the build took the current season for its fifteen whole-season leagues (Premier League, Championship, LaLiga, Bundesliga, Serie A, Ligue 1, Eredivisie, Primeira Liga, Scottish Premiership, Austria, Greece, Czechia, Brazil, Turkey, Belgium) from those files alone. The build now walks ESPN from the day after each league's last scored fixture and scores the blank fixtures under openfootball's spelling (`build.lagging_codes`, `build.fill_lagging`, `sources.topup_current(since=)`), cached in `current/` like the existing top-up.

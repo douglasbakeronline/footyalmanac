@@ -140,6 +140,16 @@ class Aliases(unittest.TestCase):
         self.assertEqual(S.match_team("St Johnstone", {"Saint Johnstone", "St. Mirren"}), "Saint Johnstone")
         self.assertIsNone(S.match_team("AEK Larnaca", {"AEK", "PAOK"}))
 
+    def test_first_ci_build_misses(self):
+        pairs = [("Athletico-PR", "CA Paranaense"), ("Atlético-MG", "CA Mineiro"),
+                 ("Red Bull Bragantino", "RB Bragantino"), ("Deportivo", "RC Deportivo La Coruña"),
+                 ("NEC Nijmegen", "NEC"), ("FC Famalicao", "FC Famalicão"),
+                 ("Vitória de Guimaraes", "Vitória Guimarães"), ("Erzurum BB", "BB Erzurumspor"),
+                 ("Istanbul Basaksehir", "İstanbul Başakşehir")]
+        pool = {b for _, b in pairs} | {"Deportivo Alavés", "SC Internacional", "Gaziantep FK"}
+        for a, b in pairs:
+            self.assertEqual(S.match_team(a, pool), b, a)
+
 
 if __name__ == "__main__":
     unittest.main()

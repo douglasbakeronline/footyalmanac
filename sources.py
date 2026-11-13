@@ -1870,7 +1870,10 @@ def _base(n):
                  ("č", "c"), ("ș", "s"), ("ț", "t"), ("ă", "a"), ("â", "a"), ("î", "i"),
                  ("å", "a"), ("æ", "ae"), ("ğ", "g"), ("ı", "i"), ("ş", "s"),
                  ("é", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
-                 ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n")):
+                 ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n"),
+                 # 13 Nov 2026: Portuguese and Turkish letters ESPN writes plain
+                 # (Famalicão, Guimarães, İstanbul lowers to i + a combining dot)
+                 ("ã", "a"), ("õ", "o"), ("ê", "e"), ("ô", "o"), ("\u0307", "")):
         n = n.replace(a, b)
     drop = {"fc", "cf", "afc", "sc", "ac", "as", "ss", "us", "cd", "ud", "rc",
             "sd", "ca", "sv", "tsg", "vfl", "vfb", "bv", "sk", "nk", "hnk",
@@ -1965,6 +1968,10 @@ ALIASES = {
     # from the lagging-league fill: current/at.1 and gr.1 against the 2026-27 files)
     "rheindorf altach": "scr altach", "wsg swarovski tirol": "wsg tirol",
     "aek athens": "aek", "ofi crete": "ofi", "saint johnstone": "st johnstone",
+    # the first lagging-league build's unmatched names (13 Nov 2026 CI log)
+    "athletico pr": "paranaense", "atletico mg": "mineiro",
+    "red bull bragantino": "rb bragantino", "deportivo": "deportivo la coruna",
+    "nec nijmegen": "nec", "erzurum bb": "bb erzurumspor",
 }
 
 
