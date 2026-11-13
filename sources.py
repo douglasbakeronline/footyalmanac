@@ -134,15 +134,53 @@ def _open(req, timeout, tries=3, pause=1.5):
     raise err
 
 
+def _raw_keep_path(url):
+    return os.path.join(AF_CACHE_DIR, "raw-" + re.sub(r"[^a-zA-Z0-9._-]", "_", url)[-150:])
+
+
 def _get(url, cache_dir=None, timeout=30):
+    """One download. A good copy is kept in .afcache (which CI persists); when
+    every retry fails on an outage (not a 4xx, which is an answer) the last
+    good copy is used with a warning, so openfootball being down for a build
+    no longer leaves most leagues with no history or fixtures (Rule 9)."""
     if cache_dir:
         os.makedirs(cache_dir, exist_ok=True)
         p = os.path.join(cache_dir, re.sub(r"[^a-zA-Z0-9._-]", "_", url)[-120:])
         if os.path.exists(p):
             return open(p, "rb").read()
-    data = _open(url, timeout)
+    try:
+        data = _open(url, timeout)
+    except urllib.error.HTTPError as e:
+        if 400 <= e.code < 500 and e.code != 429:
+            raise
+        data = _raw_last_good(url, e)
+    except Exception as e:
+        data = _raw_last_good(url, e)
+    else:
+        try:
+            os.makedirs(AF_CACHE_DIR, exist_ok=True)
+            keep = _raw_keep_path(url)
+            tmp = f"{keep}.{os.getpid()}.{threading.get_ident()}.tmp"
+            with open(tmp, "wb") as fh:
+                fh.write(data)
+            os.replace(tmp, keep)
+        except OSError:
+            pass                      # a failed cache write never fails the build
     if cache_dir:
         open(p, "wb").write(data)
+    return data
+
+
+def _raw_last_good(url, err):
+    try:
+        keep = _raw_keep_path(url)
+        with open(keep, "rb") as fh:
+            data = fh.read()
+    except OSError:
+        raise err                     # no earlier copy: the caller's fallback decides
+    age = (time.time() - os.path.getmtime(keep)) / 86400
+    print(f"WARNING: {url} unreachable: using the last good copy ({age:.1f} days old)",
+          file=sys.stderr)
     return data
 
 

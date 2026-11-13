@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-5: openfootball outage keeps the last good copy (tag pending)
+
+**What changed:** nothing for a reader on a normal day. When openfootball (the source for most leagues' history and fixtures) is unreachable after three retries, the build now uses the last good copy of each file, with a warning naming the URL and its age, instead of silently rating those leagues with no data. A 4xx (file not carried) is still an answer and never falls back. With no earlier copy the error is raised as before and the existing fallbacks run.
+
+**Evidence:** `_get` had retries but no fallback, unlike football-data.co.uk (`_fdx_text`), so a single outage meant empty history and fixtures for every openfootball league. Three new tests with a fake failing source in `tests/test_source_failures.py`; full suite and `nametest.py` pass.
+
+**Files:** `sources.py` (`_get`, `_raw_keep_path`, `_raw_last_good`), `tests/test_source_failures.py`, `RELEASES.md`.
+
+**Not changed:** the model, ESPN, football-data and API-Football handling, the stale-fixture check in `build.py`.
+
+**Roll back:** `git revert` this release's commit.
+
+
 ## 2026-11-13-4: fixture audit of 13 Nov (tag pending)
 
 **What changed:** nothing for a reader. A dated audit of `predictions/2026-11-13.json` added to `claude/data-integrity.md`.
