@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-8: Serie D Girone C, test not run (tag pending)
+
+**What changed:** nothing on the page or the model. A dated note records why the Serie D Girone C accuracy question (30% over 54 games) could not be tested.
+
+**Evidence:** no af.428 history in `history/` or `cache/`, no `API_FOOTBALL_KEY` in the unattended run, and the scoreboard is off limits (Rule 1). No fit/check season, so no paired bootstrap and no gate read.
+
+**Files:** `claude/serie-d-girone-c-2026-11-13.md`, this entry.
+
+**Not changed:** `HOME_MULT`, `home-advantage.json`, any draw handling, the model.
+
+**Roll back:** `git revert` this release's commit.
+
+
 ## 2026-11-13-7: briefing pushes logged, late ones named (tag pending)
 
 **What changed:** nothing on the page or the Card. Each briefing push (07:00, 11:00, 16:00, 21:00 UK) is now logged with how many minutes after its slot it went, and a slot a late build skipped is logged as skipped (`groupings-archive/briefed.json` `log`, 21 days). The nightly Card review shows the table and names in bold any slot whose median push is over an hour late or that was skipped.
