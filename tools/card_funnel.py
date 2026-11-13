@@ -132,27 +132,22 @@ def fault_key(msg):
 
 def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False):
     """Card day -> legs at their first real price, settled or not, one per
-    (event, pick). A leg with no real price is counted, not kept."""
-    by, seen, unpriced = defaultdict(list), set(), Counter()
-    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
-        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
-        d = fn[5:15]
+    fixture (G.pool_rows). A leg with no real price is counted, not kept."""
+    by, unpriced = defaultdict(list), Counter()
+    # 13 Nov 2026: G.pool_rows keeps a moved fixture's latest placement; the
+    # (event, pick) dedup here kept the first, stale row and merged rematches
+    for d, row in G.pool_rows(pool_dir):
         if d < R.POOL_FROM or (since and d < since) or (until and d > until): continue
-        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
-        for row in a.get("legs") or []:
-            key = (row.get("event"), row.get("pick"))
-            if key in seen: continue
-            seen.add(key)
-            mk = R.pool_market(row, recover=recover)
-            slot = G.uk_slot(row)
-            if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
-            if mk is None:
-                unpriced[(slot[0], row.get("sport"))] += 1; continue
-            l = dict(row, **mk, est=False)
-            l.setdefault("pTested", l.get("p")); l.setdefault("hit", l.get("pTested"))
-            l["implied"] = round(1 / l["odds"], 4)
-            l["p"] = round(min(l["pTested"], l["fair"]), 4)
-            by[slot[0]].append(l)
+        mk = R.pool_market(row, recover=recover)
+        slot = G.uk_slot(row)
+        if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
+        if mk is None:
+            unpriced[(slot[0], row.get("sport"))] += 1; continue
+        l = dict(row, **mk, est=False)
+        l.setdefault("pTested", l.get("p")); l.setdefault("hit", l.get("pTested"))
+        l["implied"] = round(1 / l["odds"], 4)
+        l["p"] = round(min(l["pTested"], l["fair"]), 4)
+        by[slot[0]].append(l)
     return by, unpriced
 
 
@@ -184,21 +179,14 @@ def price_gaps(since=None, until=None, today=None, pool_dir=R.POOL_DIR, recover=
     if today is None:
         import engine
         today = engine.uk_today().isoformat()
-    seen, rows = set(), []
-    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
-        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
-        d = fn[5:15]
+    rows = []
+    for d, row in G.pool_rows(pool_dir):
         if d < R.POOL_FROM or (since and d < since) or (until and d > until): continue
-        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
-        for row in a.get("legs") or []:
-            key = (row.get("event"), row.get("pick"))
-            if key in seen: continue
-            seen.add(key)
-            slot = G.uk_slot(row)
-            if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
-            if R.pool_market(row, recover=recover) is not None or not unpriced_ok(row): continue
-            rows.append({"date": slot[0], "sport": row.get("sport"), "comp": (row.get("comp") or row.get("code") or "?") + (f" [{row['code']}]" if row.get("comp") and row.get("code") else ""),
-                         "pick": row.get("pick"), "pModel": row.get("pModel"), "past": bool(today and slot[0] < today)})
+        slot = G.uk_slot(row)
+        if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
+        if R.pool_market(row, recover=recover) is not None or not unpriced_ok(row): continue
+        rows.append({"date": slot[0], "sport": row.get("sport"), "comp": (row.get("comp") or row.get("code") or "?") + (f" [{row['code']}]" if row.get("comp") and row.get("code") else ""),
+                     "pick": row.get("pick"), "pModel": row.get("pModel"), "past": bool(today and slot[0] < today)})
     by_sport, comps = Counter(), Counter()
     for r in rows:
         by_sport[(r["sport"], "past" if r["past"] else "to come")] += 1

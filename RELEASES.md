@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+## 2026-11-13-6: the pool reads each fixture once (tag pending)
+
+**What changed:** nothing on the Card. The pool archive holds a fixture the source moved to another day twice (the new day's file and the old one, with the stale start), and the replays, the funnel, the price-timing read and the Daily List's at-William-Hill record counted it twice or kept the stale row. They now read the pool through `groupings.pool_rows`, one row a fixture, its latest placement. "How it went"'s at-Hill line drops three double-counted picks.
+
+**Evidence:** 68 of 2,650 pool picks sat in two or more day files at 13 Nov (38 tennis, 25 football, Drina Zvornik on 13 and 14 Nov). Replay legs 759 to 756 (1,533 to 1,511 with `--recover`), every variant's groups unchanged; funnel legs at a real price 729 to 740 (the stale row was the unpriced one); `listAtBook` at Hill 18/18 to 17/17. `claude/pool-moved-fixtures-2026-11-13.md`. Eight new tests (`tests/test_pool_rows.py`); full suite and `nametest.py` pass.
+
+**Files:** `groupings.py` (`pool_rows`, `_same_fixture`, `POOL_MOVE_DAYS`; `list_at_book`, `context_record`), `tools/card_replay.py`, `tools/card_funnel.py`, `tools/price_timing.py`, `tests/test_pool_rows.py`, `claude/pool-moved-fixtures-2026-11-13.md`, `CLAUDE.md`.
+
+**Not changed:** `archive_pool` and the archive itself, every `CARD_*` constant, the live Card, the model.
+
+**Roll back:** `git revert` this release's commit.
+
+
 ## 2026-11-13-5: openfootball outage keeps the last good copy (tag pending)
 
 **What changed:** nothing for a reader on a normal day. When openfootball (the source for most leagues' history and fixtures) is unreachable after three retries, the build now uses the last good copy of each file, with a warning naming the URL and its age, instead of silently rating those leagues with no data. A 4xx (file not carried) is still an answer and never falls back. With no earlier copy the error is raised as before and the existing fallbacks run.
