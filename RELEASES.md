@@ -4,6 +4,19 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-11-13 College basketball: early-season calibration (tag pending)
+
+**What changed:** college basketball games dated November or December are quoted with a calibration curve (a 0.2921, b 1.0497). The plain Elo under-states favourites early in the season and over-states them from January, so the whole-season check hid it; the live record (82% landed v 77% quoted) is all early season.
+
+**Evidence:** fitted on Nov-Dec 2024, checked on Nov-Dec 2025: -0.0022 log loss, p(worse) 0.20, 2,264 games; 65%+ gap 3.0 points under quote -> 1.3 over. Reverse split -0.0065. Jan-Apr curve not shipped (reverse split fails). `claude/ncaab-early-season-2026-11-13.md`. Suite 855 OK, `nametest.py` clear.
+
+**Files:** `sports.py`, `tests/test_ncaab_early_cal.py`, `claude/ncaab-early-season-2026-11-13.md`.
+
+**Not changed:** Elo k, home advantage, carry-over, `sports.json`, list bars, other sports.
+
+**Roll back:** `git revert` the merge commit, or delete the `SEASON_CAL` entry.
+
 ## 2026-11-13-2: the Card's bookmaker read on the same picks (tag pending)
 
 **What changed:** advisory only. The nightly Card review now sets each UK bookmaker against William Hill (the Card's book) on the picks both priced, at the first and the last pre-start price, with the settled singles return at each, and the best UK price against Hill. It says in bold when a book pays more than Hill on both counts, as a question for Douglas.

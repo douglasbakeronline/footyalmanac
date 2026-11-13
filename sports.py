@@ -429,6 +429,29 @@ def calibrate(p, cal):
     return 1 / (1 + math.exp(-max(min(z, 30), -30)))
 
 
+# Early-season calibration (13 Nov 2026, claude/ncaab-early-season-2026-11-13.md).
+# College basketball's Elo is under-confident in Nov-Dec in both seasons on
+# file (65%+ calls: landed 3.0 points above quote on 2025-26, similar 2024-25)
+# and over-confident Jan-Apr. A two-parameter curve fitted on Nov-Dec 2024
+# (the last completed season's early window) beat the plain Elo on Nov-Dec
+# 2025: -0.0022 log loss, p(worse) 0.20, 2,264 games. It applies to games
+# dated in these months only; sports.json's own `cal` (none for ncaab) still
+# applies to the rest. Refit by hand with the same fit/check split.
+SEASON_CAL = {"ncaab": {"months": (11, 12), "a": 0.2921, "b": 1.0497}}
+
+
+def calibrate_for(sport, when, cal):
+    """The sport's calibration for a game dated `when` (ISO string)."""
+    sc = SEASON_CAL.get(sport)
+    if sc and int(when[5:7]) in sc["months"]:
+        return calibrate_ps(sc)
+    return cal
+
+
+def calibrate_ps(sc):
+    return {"a": sc["a"], "b": sc["b"]}
+
+
 def fit_calibration(preds, win):
     """Newton's method for (a, b) on home-win, warm decided games in a window."""
     xs = [(_logit(ph), 1 if g["hs"] > g["as"] else 0) for g, ph, warm in preds
@@ -679,7 +702,7 @@ def build(start=None):
             if not eh or not ea or eh[2] < MIN_GAMES or ea[2] < MIN_GAMES:
                 continue   # a team without enough history is not priced, as football
             raw, eh, ea = elo.predict(g)
-            ph = calibrate(raw, sp.get("cal"))
+            ph = calibrate(raw, calibrate_for(sport, g["when"], sp.get("cal")))
             conf = max(ph, 1 - ph)
             row = {"id": g["id"], "sport": sport, "label": g["label"], "feed": g["feed"], "when": g["when"],
                    "home": g["hn"], "away": g["an"], "neutral": g["neutral"],
