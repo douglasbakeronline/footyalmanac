@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T07:24:05Z",
+ "graded": "2026-11-13T08:49:29Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,34 +67,34 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 18,
-   "won": 18,
+   "n": 17,
+   "won": 17,
    "rate": 1.0,
-   "quoted": 0.8743,
-   "returned": 19.67,
-   "ret": 0.0928
+   "quoted": 0.8773,
+   "returned": 18.45,
+   "ret": 0.0853
   },
   "notAtBook": {
-   "n": 33,
-   "won": 32,
-   "rate": 0.9697,
-   "quoted": 0.917
+   "n": 32,
+   "won": 31,
+   "rate": 0.9688,
+   "quoted": 0.9179
   },
   "unchecked": {
-   "n": 18,
-   "won": 18,
+   "n": 17,
+   "won": 17,
    "rate": 1.0,
-   "quoted": 0.9091
+   "quoted": 0.9058
   },
   "bySport": {
    "football": {
     "atBook": {
-     "n": 4,
-     "won": 4,
+     "n": 3,
+     "won": 3,
      "rate": 1.0,
-     "quoted": 0.8579,
-     "returned": 4.57,
-     "ret": 0.1425
+     "quoted": 0.8695,
+     "returned": 3.35,
+     "ret": 0.1167
     },
     "notAtBook": {
      "n": 0,
@@ -137,16 +137,16 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 33,
-     "won": 32,
-     "rate": 0.9697,
-     "quoted": 0.917
+     "n": 32,
+     "won": 31,
+     "rate": 0.9688,
+     "quoted": 0.9179
     },
     "unchecked": {
-     "n": 14,
-     "won": 14,
+     "n": 13,
+     "won": 13,
      "rate": 1.0,
-     "quoted": 0.93
+     "quoted": 0.9274
     }
    },
    "tennis": {
@@ -193,7 +193,6 @@
    "ncaab|western carolina catamounts|virginia lynchburg dragons|2026-11-11": -1,
    "football|ghana|somalia|2026-11-12": 1.08,
    "football|senegal|sudan|2026-11-12": 1.1,
-   "football|new zealand|india|2026-11-12": 1.22,
    "nba|chicago bulls|san antonio spurs|2026-11-12": 1.07,
    "ncaab|st. john's red storm|colgate raiders|2026-11-12": 0,
    "ncaab|michigan wolverines|marquette golden eagles|2026-11-12": 1.6,
@@ -208,7 +207,6 @@
    "ncaab|uc irvine anteaters|lincoln (ca) oaklanders|2026-11-12": -1,
    "ncaab|oregon ducks|mississippi valley state delta devils|2026-11-12": 0,
    "ncaab|seattle u redhawks|utsa roadrunners|2026-11-12": 0,
-   "ncaab|howard bison|stetson hatters|2026-11-12": -1,
    "ncaab|george mason patriots|kansas city roos|2026-11-12": -1,
    "football|morocco|niger|2026-11-13": 1.08,
    "ncaab|coastal carolina chanticleers|virginia lynchburg dragons|2026-11-13": -1,
