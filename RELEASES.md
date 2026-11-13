@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-13-12: tennis legs in the groups, gap located, no rule to ship (tag pending)
+
+**What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-13.md`.
+**Evidence:** 71 of 109 distinct settled tennis legs won v 84.4 expected. No attribute (gap to market, round, opposition, rule, model band) isolates it; the bookmakers' implied chances were as high as the model's; legs since the 85% floor (1-13 Nov) are 11 of 14 v 11.2. No tennis price history to replay a rule on, so Rule 3 gates cannot be run.
+**Files:** `claude/tennis-legs-gap-2026-11-13.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORT_MIN`, the tripwire, any model constant.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13 Belgian openfootball file parsed properly (tag pending)
 
 **What changed:** `parse_fixture_txt` now reads a score after the away side separated by one space ("KV Kortrijk 3-0") and drops a "(*)" annotation from club names, so the junk names `KV Kortrijk 3-0` and `Lommel SK (*)` no longer appear. `è` is folded in `_base` and four ESPN spellings are aliased (Racing Genk, Royal Charleroi, Sint-Truidense, Union St.-Gilloise); Standard Liege matches once `è` folds.
