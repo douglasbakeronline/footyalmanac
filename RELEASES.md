@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-13-14: the nightly Card review opens with what the live Card published (tag pending)
+
+**What changed:** the nightly Card review issue now starts with the live Card's own output over the last 14 finished days (`card_review_post.live_days_section`): days with a group, groups, the last day a group was published, the rules they ran under, and in bold a run of three or more empty days. Full-rule Card groups only, not the wider-rule filler or the paper Model card.
+
+**Why:** the Card has published no group since 10 Nov (rule 6's last; rules 7 to 11 went live on 11 Nov), and nothing in the review said so. Its replay tables read rules against each other on the pool, not what the page put up. Over 31 Oct to 13 Nov: 17 Card groups on 9 of 14 days, then 11, 12 and 13 Nov empty. That is the rule as set (empty days stay empty, Douglas 11 Nov), and every volume relief replayed so far failed the gate, so this is a line to read, not a trigger.
+
+**Tested:** `tests/test_review_live_days.py` (empty run, filler and Model card excluded, today not read, missing folder); full suite and `nametest.py` pass.
+
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** any Card rule, the page, the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-13-12: tennis legs in the groups, gap located, no rule to ship (tag pending)
 
 **What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-13.md`.

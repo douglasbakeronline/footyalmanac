@@ -336,11 +336,52 @@ def book_vs_lines(vb):
     return out
 
 
+def live_days_section(archive="groupings-archive", today_=None, days=14):
+    """13 Nov 2026: the live Card's own output, day by day. The Card has built
+    nothing since 10 Nov (rule 6's last group; rules 7 to 11 went live on
+    11 Nov), and nothing in the review said so: the replay tables read rules
+    against each other, not what the page published. Counts the groups in each
+    day archive (the archive holds days that published a group) over the last
+    `days` finished days and the run of empty days to yesterday. A tally of the
+    record, nothing fitted (Rule 1)."""
+    import re as _re
+    from datetime import date as _date, timedelta as _td
+    end = _date.fromisoformat(today_ or today) - _td(days=1)
+    span = [(end - _td(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    got, last = {}, None
+    files = sorted(f for f in os.listdir(archive) if _re.fullmatch(r"\d{4}-\d{2}-\d{2}\.json", f)) if os.path.isdir(archive) else []
+    for f in files:
+        d = f[:-5]
+        if d > end.isoformat(): continue
+        # the full-rule Card only: not the wider-rule filler (`wide`), the paper Model card or retired kinds
+        gs = [g for g in (load(os.path.join(archive, f)).get("groups") or [])
+              if str(g.get("name") or "").startswith("Card ") and not g.get("wide")]
+        if gs:
+            last = d
+            if d in got or d >= span[0]: got[d] = gs
+    run = 0
+    for d in reversed(span):
+        if d in got: break
+        run += 1
+    built = sum(1 for d in span if d in got)
+    lines = [f"## The live Card, {span[0]} to {span[-1]}", "",
+             f"Days with a group: {built} of {len(span)}; groups {sum(len(got.get(d, [])) for d in span)}; "
+             f"last group published for {last or 'no day on file'}."]
+    rules = sorted({g['rule'] for d in span for g in got.get(d, [])})
+    if rules: lines[-1] += " Rules: " + ", ".join(str(r) for r in rules) + "."
+    if run >= 3:
+        lines.append(f"**{run} days running with no Card group (to {span[-1]}).** Empty days stay empty by Douglas's decision "
+                     "(11 Nov, `CARD_FILLER` False); the funnel below names the condition that costs them, and every volume "
+                     "relief replayed so far (m7under5, m7legs2, pay25, with3x) failed the gate.")
+    return lines + [""]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
     f = integ.get("findings", [])
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
+    lines += live_days_section()
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
                   "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]
