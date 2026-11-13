@@ -140,7 +140,16 @@ def due_slot(now, path=None):
     return None if due[-1] in sent else due[-1]
 
 
+LOG_DAYS = 21          # days of send times kept in briefed.json "log"
+
+
 def mark_sent(now, slot, path=None):
+    """Mark a slot done for the day. 13 Nov 2026: also log when it went, in
+    minutes after its hour, and any earlier slot of the day that was never
+    sent (due_slot sends only the latest due one, so a build that comes late
+    enough skips a slot). GitHub runs the deploy crons late at busy times:
+    the 12 Nov lunch push went at 13:18 UK, 2h18 after its slot. The nightly
+    Card review reads the log (tools/card_review_post.briefing_section)."""
     path = path or brief_file()
     uk = now.astimezone(UK); day = uk.date().isoformat()
     try:
@@ -148,9 +157,18 @@ def mark_sent(now, slot, path=None):
     except (OSError, ValueError):
         st = {}
     slots = (st.get("slots") or []) if st.get("date") == day else []
+    at = now.strftime("%Y-%m-%dT%H:%M:%SZ")
+    hour = dict(SLOTS)
+    log = [e for e in (st.get("log") or []) if isinstance(e, dict)
+           and e.get("date", "") >= (uk.date() - timedelta(days=LOG_DAYS)).isoformat()]
+    for name, h in SLOTS:
+        if h >= hour[slot]: break
+        if name not in slots and not any(e.get("date") == day and e.get("slot") == name for e in log):
+            log.append({"date": day, "slot": name, "skipped": True})
+    log.append({"date": day, "slot": slot, "at": at, "late": (uk.hour - hour[slot]) * 60 + uk.minute})
     os.makedirs(os.path.dirname(path), exist_ok=True)
     with open(path, "w") as f:
-        json.dump({"date": day, "slots": slots + [slot], "at": now.strftime("%Y-%m-%dT%H:%M:%SZ")}, f)
+        json.dump({"date": day, "slots": slots + [slot], "at": at, "log": log}, f)
 
 
 def briefing(og, data, now, slot="morning", idx=None):
