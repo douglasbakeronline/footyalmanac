@@ -420,11 +420,24 @@ def _logit(p):
     return math.log(p / (1 - p))
 
 
-def calibrate(p, cal):
+# Sports whose calls land differently early in the season (5 Nov 2026). College
+# basketball, both seasons on file: November-December calls at 70%+ landed
+# 84.5% / 88.5% against 81.4% / 83.2% quoted (early non-conference games are
+# mismatches the ratings under-price), January-April 82.0% / 78.0% against
+# 82.1% / 82.2%. Such a sport carries a second curve for those months.
+# See claude/ncaab-season-phase-2026-11-05.md.
+PHASE_MONTHS = {"ncaab": (11, 12)}
+
+
+def calibrate(p, cal, when=None):
     """Raw Elo probability -> calibrated. cal = {"a", "b"}: logistic in the
-    log-odds, two parameters, as football's temperature line. None = as is."""
+    log-odds, two parameters, as football's temperature line. None = as is.
+    A cal with "early" and "months" uses that curve for games in those months
+    (needs `when`, an ISO date string)."""
     if not cal:
         return p
+    if when and cal.get("early") and int(when[5:7]) in cal.get("months", ()):
+        cal = cal["early"]
     z = cal["a"] + cal["b"] * _logit(p)
     return 1 / (1 + math.exp(-max(min(z, 30), -30)))
 
@@ -451,6 +464,15 @@ def fit_calibration(preds, win):
     return {"a": round(a, 4), "b": round(b, 4)}
 
 
+def fit_phase_calibration(preds, win, months):
+    """The late-season curve as the base ("a", "b") and the early one under
+    "early", each fitted on the window only."""
+    early = [x for x in preds if int(x[0]["when"][5:7]) in months]
+    late = [x for x in preds if int(x[0]["when"][5:7]) not in months]
+    return {**fit_calibration(late, win), "early": fit_calibration(early, win),
+            "months": list(months)}
+
+
 def losses(preds, win, cal=None):
     """Per-game binary log loss on home-win, and pick hits, for warm games
     in a window. Draws are excluded from the loss and count as misses."""
@@ -458,7 +480,7 @@ def losses(preds, win, cal=None):
     for g, ph, warm in preds:
         if not warm or not in_window(g, win):
             continue
-        ph = calibrate(ph, cal)
+        ph = calibrate(ph, cal, g["when"])
         y = 1 if g["hs"] > g["as"] else (0 if g["hs"] < g["as"] else None)
         conf = max(ph, 1 - ph)
         pick_home = ph >= 0.5
@@ -544,6 +566,11 @@ def tune_sport(sport, verbose=True):
     def top_gap(rows):
         g = [r for r in rows if r[0] >= 0.65]
         return abs(sum(r[0] for r in g) / len(g) - sum(r[1] for r in g) / len(g)) if g else 0.0
+    if sport in PHASE_MONTHS:
+        # season-phase curve instead of the single one, same gates
+        cal = fit_phase_calibration(preds, FIT, PHASE_MONTHS[sport])
+        ll_cal, rows_chk_cal = losses(preds, CHECK, cal)
+        m_c, sd_c, pw_c = paired(ll_cal, ll_new) if n else (0, 0, 1)
     gap_raw, gap_cal = top_gap(rows_chk), top_gap(rows_chk_cal)
     use_cal = (n >= MIN_HOLDOUT and pw_c <= MAX_P_WORSE and -m_c >= MIN_GAIN
                and gap_cal <= gap_raw + 0.01)
@@ -569,7 +596,7 @@ def tune_sport(sport, verbose=True):
                                            "accuracy": round(acc, 4), "homeRate": round(hr, 4),
                                            "vsHome": round(m_b, 4), "pWorseVsHome": round(pw_b, 3)},
             "publish": beats_home, "listMin": list_min,
-            "cal": cal if use_cal else None, "calTested": {"a": cal["a"], "b": cal["b"],
+            "cal": cal if use_cal else None, "calTested": {"a": cal["a"], "b": cal["b"], **({"early": cal["early"]} if "early" in cal else {}),
                                                            "delta": round(m_c, 4), "pWorse": round(pw_c, 3),
                                                            "topGapRaw": round(gap_raw, 4), "topGapCal": round(gap_cal, 4)},
             "bandsFit": b_fit, "bandsCheck": b_chk,
@@ -679,7 +706,7 @@ def build(start=None):
             if not eh or not ea or eh[2] < MIN_GAMES or ea[2] < MIN_GAMES:
                 continue   # a team without enough history is not priced, as football
             raw, eh, ea = elo.predict(g)
-            ph = calibrate(raw, sp.get("cal"))
+            ph = calibrate(raw, sp.get("cal"), g["when"])
             conf = max(ph, 1 - ph)
             row = {"id": g["id"], "sport": sport, "label": g["label"], "feed": g["feed"], "when": g["when"],
                    "home": g["hn"], "away": g["an"], "neutral": g["neutral"],
