@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T21:53:05Z",
+ "graded": "2026-11-14T22:21:50Z",
  "overall": {
   "groups": 130,
   "settled": 129,
@@ -78,12 +78,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 25,
+   "n": 26,
    "won": 24,
-   "rate": 0.96,
-   "quoted": 0.882,
+   "rate": 0.9231,
+   "quoted": 0.8812,
    "returned": 25.97,
-   "ret": 0.0388
+   "ret": -0.0012
   },
   "notAtBook": {
    "n": 54,
@@ -140,12 +140,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 16,
+     "n": 17,
      "won": 15,
-     "rate": 0.9375,
-     "quoted": 0.8961,
+     "rate": 0.8824,
+     "quoted": 0.8939,
      "returned": 16.07,
-     "ret": 0.0044
+     "ret": -0.0547
     },
     "notAtBook": {
      "n": 54,
