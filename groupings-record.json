@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T20:47:49Z",
+ "graded": "2026-11-14T21:10:54Z",
  "overall": {
   "groups": 130,
   "settled": 129,
@@ -78,18 +78,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 22,
-   "won": 22,
+   "n": 24,
+   "won": 24,
    "rate": 1.0,
-   "quoted": 0.876,
-   "returned": 24.0,
-   "ret": 0.0909
+   "quoted": 0.8818,
+   "returned": 25.97,
+   "ret": 0.0821
   },
   "notAtBook": {
-   "n": 52,
-   "won": 51,
-   "rate": 0.9808,
-   "quoted": 0.9145
+   "n": 54,
+   "won": 53,
+   "rate": 0.9815,
+   "quoted": 0.914
   },
   "unchecked": {
    "n": 21,
@@ -104,8 +104,8 @@
      "won": 6,
      "rate": 1.0,
      "quoted": 0.863,
-     "returned": 6.73,
-     "ret": 0.1217
+     "returned": 6.7,
+     "ret": 0.1167
     },
     "notAtBook": {
      "n": 0,
@@ -140,18 +140,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 13,
-     "won": 13,
+     "n": 15,
+     "won": 15,
      "rate": 1.0,
-     "quoted": 0.8891,
-     "returned": 14.07,
-     "ret": 0.0823
+     "quoted": 0.8966,
+     "returned": 16.07,
+     "ret": 0.0713
     },
     "notAtBook": {
-     "n": 52,
-     "won": 51,
-     "rate": 0.9808,
-     "quoted": 0.9145
+     "n": 54,
+     "won": 53,
+     "rate": 0.9815,
+     "quoted": 0.914
     },
     "unchecked": {
      "n": 13,
@@ -263,7 +263,7 @@
    "ncaab|navy midshipmen|hampton pirates|2026-11-14": 0,
    "ncaab|pacific tigers|air force falcons|2026-11-14": 0,
    "football|finland|san marino|2026-11-15": 1.05,
-   "football|new zealand|india|2026-11-15": 1.18,
+   "football|new zealand|india|2026-11-15": 1.15,
    "football|diósgyőr ii|nyiregyhaza ii|2026-11-15": 0,
    "football|tatabánya|gyori eto ii|2026-11-15": 0,
    "nfl|tennessee titans|jacksonville jaguars|2026-11-15": 1.15,
@@ -309,12 +309,12 @@
    "zModel": -0.35
   },
   "caution": {
-   "legs": 11,
-   "landed": 9,
-   "rate": 0.8182,
-   "model": 0.8023,
-   "fair": 0.748,
-   "zModel": 0.14
+   "legs": 12,
+   "landed": 10,
+   "rate": 0.8333,
+   "model": 0.7883,
+   "fair": 0.7323,
+   "zModel": 0.4
   }
  },
  "byBand": {
