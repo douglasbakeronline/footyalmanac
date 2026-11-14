@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-13T22:28:40Z",
+ "graded": "2026-11-14T00:32:13Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,18 +67,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 17,
-   "won": 17,
+   "n": 18,
+   "won": 18,
    "rate": 1.0,
-   "quoted": 0.8773,
-   "returned": 18.45,
-   "ret": 0.0853
+   "quoted": 0.8812,
+   "returned": 19.53,
+   "ret": 0.085
   },
   "notAtBook": {
-   "n": 32,
-   "won": 31,
-   "rate": 0.9688,
-   "quoted": 0.9179
+   "n": 33,
+   "won": 32,
+   "rate": 0.9697,
+   "quoted": 0.9183
   },
   "unchecked": {
    "n": 18,
@@ -89,12 +89,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 3,
-     "won": 3,
+     "n": 4,
+     "won": 4,
      "rate": 1.0,
-     "quoted": 0.8695,
-     "returned": 3.35,
-     "ret": 0.1167
+     "quoted": 0.8892,
+     "returned": 4.43,
+     "ret": 0.1075
     },
     "notAtBook": {
      "n": 0,
@@ -137,10 +137,10 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 32,
-     "won": 31,
-     "rate": 0.9688,
-     "quoted": 0.9179
+     "n": 33,
+     "won": 32,
+     "rate": 0.9697,
+     "quoted": 0.9183
     },
     "unchecked": {
      "n": 13,
@@ -267,7 +267,21 @@
    "ncaab|st. john's red storm|syracuse orange|2026-11-16": -1,
    "ncaab|usc trojans|arkansas-pine bluff golden lions|2026-11-16": -1,
    "ncaab|wisconsin badgers|coastal carolina chanticleers|2026-11-16": -1,
-   "ncaab|maryland terrapins|alcorn state braves|2026-11-16": -1
+   "ncaab|maryland terrapins|alcorn state braves|2026-11-16": -1,
+   "ncaab|kentucky wildcats|grambling tigers|2026-11-17": -1,
+   "ncaab|north carolina central eagles|virginia lynchburg dragons|2026-11-17": -1,
+   "ncaab|clemson tigers|the citadel bulldogs|2026-11-17": -1,
+   "ncaab|georgia bulldogs|jacksonville dolphins|2026-11-17": -1,
+   "ncaab|southeast missouri state redhawks|midway eagles|2026-11-17": -1,
+   "ncaab|minnesota golden gophers|western illinois leathernecks|2026-11-17": -1,
+   "ncaab|texas a&m aggies|se louisiana lions|2026-11-17": -1,
+   "ncaab|oregon state beavers|east texas a&m lions|2026-11-17": -1,
+   "ncaab|ucla bruins|long beach state beach|2026-11-17": -1,
+   "ncaab|uc san diego tritons|texas southern tigers|2026-11-17": -1,
+   "ncaab|saint mary's gaels|portland state vikings|2026-11-17": -1,
+   "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": -1,
+   "ncaab|florida gators|notre dame fighting irish|2026-11-17": -1,
+   "ncaab|purdue boilermakers|lipscomb bisons|2026-11-17": -1
   }
  },
  "cardContext": {
@@ -280,12 +294,12 @@
    "zModel": -0.42
   },
   "caution": {
-   "legs": 8,
-   "landed": 6,
-   "rate": 0.75,
-   "model": 0.7536,
-   "fair": 0.7054,
-   "zModel": -0.02
+   "legs": 9,
+   "landed": 7,
+   "rate": 0.7778,
+   "model": 0.7752,
+   "fair": 0.7247,
+   "zModel": 0.02
   }
  },
  "byBand": {

@@ -1,0 +1,137 @@
+{
+ "Atl\u00e9tico Albericia v Barquere\u00f1o|Atl\u00e9tico Albericia": {
+  "at": "2026-11-14T00:28:42Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant found: no injury, suspension or rotation reports and no published line-ups for either side.",
+  "numbers": "The Futbolme table (undated, with a 'Jornada 9' header) shows Albericia 13th with 6 points from 8 games (1W 3D 4L, goals 10-14) and Barquere\u00f1o 18th with 5 points from 8 (1W 2D 5L, goals 6-16). Sofascore instead lists Albericia 11th and Barquere\u00f1o 12th, and I could not find a reliable last five for either side. Footystats gives Albericia 5 wins from 7 head-to-heads, including a 4-2 win away at Barq",
+  "reads": 1,
+  "reason": "I found no team news, no confirmed line-ups and no reliable current-season table for this fixture, and the pages I found conflict on dates and standings (Sofascore has Albericia 11th and Barquere\u00f1o 12th, while Futbolme has them 13th and 18th after 8 games).",
+  "sources": [
+   {
+    "title": "SD Atl\u00e9tico Albericia vs CD Barquere\u00f1o \u2013 Sofascore",
+    "url": "https://www.sofascore.com/football/match/cd-barquereno-sd-atletico-albericia/ntfcstTFc"
+   },
+   {
+    "title": "Atl\u00e9tico Albericia vs Barquere\u00f1o Stats, H2H, xG \u2013 FootyStats",
+    "url": "https://footystats.org/spain/sd-atletico-albericia-vs-cd-barquereno-h2h-stats"
+   },
+   {
+    "title": "Tercera Federaci\u00f3n Grupo 3 Jornada 9 \u2013 Futbolme",
+    "url": "https://futbolme.com/resultados-directo/torneo/tercera-division-rfef-grupo-3/3063/jornada/9"
+   },
+   {
+    "title": "Barquere\u00f1o matches and latest results \u2013 BeSoccer",
+    "url": "https://www.besoccer.com/team/matches/barquereno"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Cleveland Cavaliers v Dallas Mavericks|Cleveland Cavaliers": {
+  "at": "2026-11-14T00:28:42Z",
+  "model": "claude-sonnet-5-5",
+  "news": "ESPN's injury page lists Mobley (toe) as out with a return date of Nov 14 and Sam Merrill (elbow) out until Nov 16, while Dallas are missing Dereck Lively II, Tarik Biberovic and Sergio de Larrea (all est. return Nov 18). I found no confirmed line-ups, and I couldn't confirm Mobley's status for this",
+  "numbers": "Cleveland were 6-6 before the Miami game (<cite index=\"26-11\">coming off a win over the Knicks</cite>, 115-107), with Mitchell at 27.9 ppg per Fox Sports and the team scoring 119.5 and allowing 115.4 per game. Dallas are listed 7-4 (2-2 away) by ESPN or 7-5 by NBA.com, scoring 114.1 and allowing 119.6 per game; their latest result I found was a <cite index=\"12-1\">128-110 loss to the Rockets</cite>",
+  "reads": 1,
+  "reason": "Cleveland is on the second night of a back-to-back after playing at Miami on Friday, and Evan Mobley (sprained toe) was ruled out for that game, so his availability is unconfirmed (<cite index=\"22-4\">Friday's game is the first of a back-to-back for the Cavaliers, who travel to face the Dallas Maveri",
+  "sources": [
+   {
+    "title": "Mavericks vs. Cavaliers (Nov 14, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909981/mavericks-cavaliers&gsessionid=fLp8XLGuPb8QTSzel0Mi4p_mbX5VVhr5Uz8AdM-q6HE6I8p7MfGagA"
+   },
+   {
+    "title": "Cavs at Heat: preview, odds, injury report, TV - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/cavs-heat-preview-odds-injury-100112344.html"
+   },
+   {
+    "title": "Final Injury Report for Cavaliers-Heat - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/final-injury-report-cavaliers-heat-210000695.html"
+   },
+   {
+    "title": "Mavericks vs. Cavaliers - Live Score - FOX Sports",
+    "url": "https://www.foxsports.com/nba/dallas-mavericks-vs-cleveland-cavaliers-nov-14-2026-game-boxscore-106716"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Kagoshima United v Gainare Tottori|Kagoshima United": {
+  "at": "2026-11-14T00:28:42Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Kagoshima GK Sakata was injured early at Sagamihara and DF Yamada was sent off, so he is likely suspended and the back line may change; I found no confirmed line-ups or Tottori injury news.",
+  "numbers": "Kagoshima United are 4th with 31 points from 16 games (9W 4D 3L, 29 GF, 19 GA) and have lost top spot; they have won 3 of their last 15 home/away mixed results since matchday 4 without a win in 4 (the most recent were a 1-1 draw at Yamaguchi and a 0-1 loss at Sagamihara). Gainare Tottori are 17th and seeking a first win in 8 games (I couldn't find their points or goal totals); Kagoshima lead the a",
+  "reads": 1,
+  "reason": "Kagoshima are winless in four and have conceded in 13 straight league games, and their GK Sakata went off injured and DF Yamada was sent off at Sagamihara (KTS/Yahoo, 14 Nov). Tottori are 17th and winless in seven, so this does not clearly push the win chance below 70%.",
+  "sources": [
+   {
+    "title": "\u3010\u9e7f\u5150\u5cf6\u30e6\u30ca\u30a4\u30c6\u30c3\u30c9FC\u3011\u30db\u30fc\u30e0\u30675\u8a66\u5408\u3076\u308a\u52dd\u5229\u306a\u308b\u304b (KTS/Yahoo!\u30cb\u30e5\u30fc\u30b9)",
+    "url": "https://news.yahoo.co.jp/articles/ad261181530abe2335d9efe04c8c70b91488f1f9"
+   },
+   {
+    "title": "\u3010J3\u7b2c17\u7bc0\u306e\u6ce8\u76ee\u30ab\u30fc\u30c9\u3011(Football Channel)",
+    "url": "https://www.footballchannel.jp/2026/11/13/post1057196/"
+   },
+   {
+    "title": "SC\u76f8\u6a21\u539f\u3001\u9e7f\u5150\u5cf6\u3068\u306e\u4e0a\u4f4d\u5bfe\u6c7a\u5236\u30573\u9023\u52dd (Yahoo!\u30cb\u30e5\u30fc\u30b9)",
+    "url": "https://news.yahoo.co.jp/articles/ecde223dbe286c6cfc302cf7778e65c01ce2305d"
+   },
+   {
+    "title": "J\u30ea\u30fc\u30b0 - \u9e7f\u5150\u5cf6\u30e6\u30ca\u30a4\u30c6\u30c3\u30c9FC (\u30b9\u30dd\u30fc\u30c4\u30ca\u30d3)",
+    "url": "https://soccer.yahoo.co.jp/jleague/team/31042"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Kahramanmara\u015f \u0130stiklal Spor v Fethiyespor|Kahramanmara\u015f \u0130stiklal Spor": {
+  "at": "2026-11-14T00:28:42Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Kahramanmara\u015f \u0130stiklal have a new coach, Mehmet Alt\u0131parmak, who won his first two games (marasbugun.com.tr), and sporkolik lists only G\u00f6rkem Bitin as injured; I found no confirmed line-ups or Fethiyespor injury news.",
+  "numbers": "Kahramanmara\u015f \u0130stiklal are 6th on 17 points from 10 games (form L W L W W per aksutvhaber/ydam). Their goal record was 11 for and 11 against after 8 games (Wikipedia, 1 Nov). Fethiyespor are 12th on 8 points from 9 games, form L L D L W, after a 2-1 home win over Adana 01 last week. Their goal record was 6 for and 12 against after 7 games (Wikipedia, 1 Nov). Sporkolik lists their last five as 1 wi",
+  "reads": 1,
+  "reason": "Nothing found argues against the pick: the hosts sit 6th on 17 points against 12th-placed Fethiyespor on 8 (haberler.com), and they won the last two meetings 4-0 and 4-2 (sporkolik.net).",
+  "sources": [
+   {
+    "title": "Fethiyespor yar\u0131n deplasmanda Akeda\u015f Kahramanmara\u015f \u0130stiklal Spor'la kar\u015f\u0131la\u015facak - Haberler",
+    "url": "https://www.haberler.com/spor/fethiyespor-yarin-deplasmanda-akedas-kahramanmaras-20423986-haberi/"
+   },
+   {
+    "title": "Kahramanmara\u015f \u0130stiklalspor - Fethiyespor: \u0130stiklalspor 4-0 galip (Sporkolik)",
+    "url": "https://www.sporkolik.net/kahramanmaras-istiklalspor-fethiyespor-istiklalspor-4-0-galip.html"
+   },
+   {
+    "title": "Kahramanmara\u015f \u0130stiklalspor'da Fethiyespor \u00f6ncesi laktak testi",
+    "url": "https://www.marasbugun.com.tr/kahramanmaras-istiklalspor-fethiyespor-oncesi-laktak-testi"
+   },
+   {
+    "title": "2026\u201327 TFF 2. Lig (Wikipedia)",
+    "url": "https://en.wikipedia.org/wiki/2026%E2%80%9327_TFF_2._Lig"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "VVV-Venlo v FC Eindhoven|VVV-Venlo": {
+  "at": "2026-11-14T00:28:42Z",
+  "model": "claude-sonnet-5-5",
+  "news": "VVV are without Alex Schalk, Philip Heise, Jay de Graef, Gino Schmidt and Nassim Ait Mouhou, and no confirmed line-ups were found; Eindhoven had a 5-3 cup win over Volendam in midweek.",
+  "numbers": "VVV-Venlo are 2nd with 29 points from 14 games (9W 2D 3L, goals 37-22), at home 4W 2D 1L (19-11), and their last five were W D W W D. FC Eindhoven are 20th (last) with 11 points from 14 (3W 2D 9L, goals 18-31), and have lost their last five league games, including 0-3 to Jong Ajax. They are 1W 1D 4L away (7-15), and VVV have not lost any of the last eight meetings, including 1-0 at home in Feb 202",
+  "reads": 1,
+  "reason": "VVV are missing five players, including captain Alex Schalk, but they are second and face bottom side Eindhoven, so this doesn't clearly push the chance below 70% (VVV-Venlo preview via Headliner).",
+  "sources": [
+   {
+    "title": "Dijkhuizen blikt vooruit op FC Eindhoven",
+    "url": "https://noordbrabant.headliner.nl/item/dijkhuizen-blikt-vooruit-op-fc-eindhoven-elke-wedstrijd-is-lastig-in-deze-competitie-vvvvenlo-2198"
+   },
+   {
+    "title": "Stand Eerste Divisie 2026/2027 - Voetbalkrant",
+    "url": "https://www.voetbalkrant.com/nederland/eerste-divisie/stand"
+   },
+   {
+    "title": "Eerste Divisie 2026-27 Table & Standings - Sports Mole",
+    "url": "https://www.sportsmole.co.uk/football/eerste-divisie/table.html"
+   },
+   {
+    "title": "Wedtips VVV-Venlo \u2013 FC Eindhoven - Bet-Experts",
+    "url": "https://www.bet-experts.nl/nieuws/vvv-venlo-fc-eindhoven-voorspelling-wedtips"
+   }
+  ],
+  "verdict": "caution"
+ }
+}
