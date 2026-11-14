@@ -1,0 +1,68 @@
+name: Release tags
+
+# Every release in RELEASES.md gets its tag, automatically (14 Nov 2026,
+# Douglas: "I'm not going to add tags myself so can we find another way?").
+# Cloud sessions cannot push tags and the API proxy refuses tag writes, so
+# releases merged from them sat "(tag pending)". On every push to main this
+# tags each `## YYYY-MM-DD[-N]: title` entry that has no tag yet, on the merge
+# that added it (tools/release_tags.py). An existing tag is never moved.
+# The archive commits carry [skip ci], so they do not run this.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tags
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      # The office App pushes past the main ruleset; the same token is used
+      # here in case tags are covered too. Without it the workflow token tries.
+      - name: Normalise the App key
+        env:
+          RAW: ${{ secrets.OFFICE_APP_KEY }}
+        run: |
+          python3 - <<'PY'
+          import os, re, textwrap
+          raw = os.environ["RAW"].replace("\\n", "\n").replace("\r", "").strip().strip('"')
+          if not raw: raise SystemExit(0)
+          m = re.search(r"-----BEGIN ([A-Z ]+)-----(.*?)-----END \1-----", raw, re.S)
+          kind, body = (m.group(1), m.group(2)) if m else ("RSA PRIVATE KEY", raw)
+          body = re.sub(r"[^A-Za-z0-9+/=]", "", body)
+          pem = f"-----BEGIN {kind}-----\n" + "\n".join(textwrap.wrap(body, 64)) + f"\n-----END {kind}-----"
+          for line in textwrap.wrap(body, 64): print(f"::add-mask::{line}")
+          with open(os.environ["GITHUB_ENV"], "a") as f:
+              f.write("APP_KEY<<__PEM__\n" + pem + "\n__PEM__\n")
+          PY
+      - name: Mint the App token
+        id: app
+        continue-on-error: true
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.OFFICE_APP_ID }}
+          private-key: ${{ env.APP_KEY }}
+
+      - uses: actions/checkout@v4
+        with:
+          # Deep enough for weeks of releases; older untagged entries are
+          # listed as "not in history" and left. The tags are read from the
+          # remote, not fetched (a tag past the depth would pull its history).
+          fetch-depth: 400
+          token: ${{ steps.app.outputs.token || github.token }}
+
+      - name: Tag untagged releases
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          python3 tools/release_tags.py --apply --remote origin
+          new=$(git tag --list 'release-*')
+          if [ -z "$new" ]; then echo "nothing to tag"; exit 0; fi
+          git push origin $(for t in $new; do echo "refs/tags/$t"; done)
