@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T00:57:02Z",
+ "graded": "2026-11-14T02:29:11Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -75,10 +75,10 @@
    "ret": 0.085
   },
   "notAtBook": {
-   "n": 33,
-   "won": 32,
-   "rate": 0.9697,
-   "quoted": 0.9183
+   "n": 42,
+   "won": 41,
+   "rate": 0.9762,
+   "quoted": 0.9159
   },
   "unchecked": {
    "n": 18,
@@ -137,10 +137,10 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 33,
-     "won": 32,
-     "rate": 0.9697,
-     "quoted": 0.9183
+     "n": 42,
+     "won": 41,
+     "rate": 0.9762,
+     "quoted": 0.9159
     },
     "unchecked": {
      "n": 13,
@@ -256,9 +256,9 @@
    "nba|utah jazz|san antonio spurs|2026-11-15": -1,
    "ncaab|unc wilmington seahawks|louisiana ragin' cajuns|2026-11-15": -1,
    "ncaab|villanova wildcats|rider broncs|2026-11-15": 0,
-   "ncaab|siena saints|brown bears|2026-11-15": -1,
+   "ncaab|siena saints|brown bears|2026-11-15": 0,
    "ncaab|duquesne dukes|binghamton bearcats|2026-11-15": -1,
-   "ncaab|grand canyon lopes|ul monroe warhawks|2026-11-15": -1,
+   "ncaab|grand canyon lopes|ul monroe warhawks|2026-11-15": 0,
    "ncaab|seattle u redhawks|idaho state bengals|2026-11-15": -1,
    "ncaab|iowa state cyclones|niagara purple eagles|2026-11-15": -1,
    "ncaab|boston college eagles|new hampshire wildcats|2026-11-15": -1,
@@ -294,12 +294,12 @@
    "zModel": -0.42
   },
   "caution": {
-   "legs": 9,
-   "landed": 7,
-   "rate": 0.7778,
-   "model": 0.7752,
+   "legs": 10,
+   "landed": 8,
+   "rate": 0.8,
+   "model": 0.7904,
    "fair": 0.7247,
-   "zModel": 0.02
+   "zModel": 0.08
   }
  },
  "byBand": {
