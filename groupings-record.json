@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T06:11:34Z",
+ "graded": "2026-11-14T09:03:58Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,12 +67,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 19,
-   "won": 19,
+   "n": 20,
+   "won": 20,
    "rate": 1.0,
-   "quoted": 0.8804,
-   "returned": 20.59,
-   "ret": 0.0837
+   "quoted": 0.8776,
+   "returned": 21.89,
+   "ret": 0.0945
   },
   "notAtBook": {
    "n": 52,
@@ -81,30 +81,30 @@
    "quoted": 0.9145
   },
   "unchecked": {
-   "n": 19,
-   "won": 19,
+   "n": 18,
+   "won": 18,
    "rate": 1.0,
-   "quoted": 0.8932
+   "quoted": 0.8971
   },
   "bySport": {
    "football": {
     "atBook": {
-     "n": 4,
-     "won": 4,
+     "n": 5,
+     "won": 5,
      "rate": 1.0,
-     "quoted": 0.8892,
-     "returned": 4.43,
-     "ret": 0.1075
+     "quoted": 0.876,
+     "returned": 5.73,
+     "ret": 0.146
     },
     "notAtBook": {
      "n": 0,
      "won": 0
     },
     "unchecked": {
-     "n": 3,
-     "won": 3,
+     "n": 2,
+     "won": 2,
      "rate": 1.0,
-     "quoted": 0.7981
+     "quoted": 0.7857
     }
    },
    "nba": {
@@ -241,18 +241,21 @@
    "ncaab|arizona state sun devils|ul monroe warhawks|2026-11-14": 0,
    "ncaab|oregon state beavers|mississippi valley state delta devils|2026-11-14": 0,
    "ncaab|california baptist lancers|arkansas-pine bluff golden lions|2026-11-14": -1,
-   "ncaab|akron zips|tulane green wave|2026-11-14": 0,
-   "ncaab|texas tech red raiders|stonehill skyhawks|2026-11-14": -1,
+   "ncaab|akron zips|tulane green wave|2026-11-14": 1.1,
+   "ncaab|texas tech red raiders|stonehill skyhawks|2026-11-14": 0,
    "ncaab|north carolina a&t aggies|cheyney (pa) wolves|2026-11-14": -1,
-   "ncaab|stephen f. austin lumberjacks|rice owls|2026-11-14": -1,
-   "ncaab|south florida bulls|coppin state eagles|2026-11-14": -1,
-   "ncaab|south carolina gamecocks|gardner-webb runnin' bulldogs|2026-11-14": -1,
-   "ncaab|winthrop eagles|jackson state tigers|2026-11-14": -1,
+   "ncaab|stephen f. austin lumberjacks|rice owls|2026-11-14": 1.15,
+   "ncaab|south florida bulls|coppin state eagles|2026-11-14": 1.0,
+   "ncaab|south carolina gamecocks|gardner-webb runnin' bulldogs|2026-11-14": 1.0,
+   "ncaab|winthrop eagles|jackson state tigers|2026-11-14": 1.29,
    "ncaab|gonzaga bulldogs|lsu tigers|2026-11-14": 0,
-   "ncaab|navy midshipmen|hampton pirates|2026-11-14": -1,
+   "ncaab|navy midshipmen|hampton pirates|2026-11-14": 0,
    "ncaab|pacific tigers|air force falcons|2026-11-14": 0,
+   "football|new zealand|india|2026-11-15": 1.3,
+   "football|diósgyőr ii|nyiregyhaza ii|2026-11-15": 0,
+   "football|tatabánya|gyori eto ii|2026-11-15": 0,
    "nfl|tennessee titans|jacksonville jaguars|2026-11-15": 1.15,
-   "nba|minnesota timberwolves|chicago bulls|2026-11-15": -1,
+   "nba|minnesota timberwolves|chicago bulls|2026-11-15": 1.1,
    "nba|utah jazz|san antonio spurs|2026-11-15": -1,
    "ncaab|unc wilmington seahawks|louisiana ragin' cajuns|2026-11-15": -1,
    "ncaab|villanova wildcats|rider broncs|2026-11-15": 0,
