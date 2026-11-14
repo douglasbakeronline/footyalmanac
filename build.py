@@ -789,6 +789,48 @@ def exhausted_codes(fixtures, start, gaps):
     return sorted(out)
 
 
+# A league table this many results behind is one the model is blind to
+# (14 Nov 2026). openfootball's Czech 2026-27 file stopped scoring after
+# 20 Sep and ESPN's cze.1 slug answers nothing for the season, so every Czech
+# First League fixture since October was priced on form to 20 Sep and nothing
+# on the page said so (one at 86% on 8 Nov). A postponed match leaves one or
+# two such rows a league; a source that has stopped leaves dozens.
+STALE_MIN = 5       # unplayed fixtures dated before the window
+STALE_GRACE = 3     # days: a weekend's results still on their way do not count
+
+
+def stale_leagues(fixtures, start, min_n=STALE_MIN, grace=STALE_GRACE):
+    """Leagues whose table is missing results after the lagging fill
+    (14 Nov 2026): `min_n` or more unplayed fixtures dated more than `grace`
+    days before the build's first day. Cups and internationals have no table
+    to fall behind. Run after fill_lagging, so a league ESPN scored is clear.
+    Returns ({code: (missing, first missing date)}, {code: (n, first)}): the
+    first for openfootball leagues, which are flagged; the second for
+    API-Football and football-data leagues, reported only until their counts
+    have been read on a CI build."""
+    cut = (start - timedelta(days=grace)).isoformat()
+    flag, watch = {}, {}
+    for c, rows in fixtures.items():
+        m = E.LEAGUES.get(c, {})
+        if m.get("cup") or m.get("international"):
+            continue
+        old = sorted(r["date"] for r in rows if r["hg"] is None and r["date"] < cut)
+        if len(old) < min_n:
+            continue
+        (watch if (c in S.AF or c in S.FDX) else flag)[c] = (len(old), old[0])
+    return flag, watch
+
+
+def stale_reason(code, stale):
+    """The Celtic's Law reason for a side rated from a stale table, or None."""
+    if code not in stale:
+        return None
+    n, first = stale[code]
+    m, d = E.LEAGUES[code], date.fromisoformat(first)
+    return (f"the {m['name']} ({m['country']}) table is missing {n} results from "
+            f"{d.day} {d.strftime('%b')} on, as its source has stopped scoring them")
+
+
 def _map_names(rows, results):
     """ESPN club -> the primary source's spelling, all or nothing (Rule 6).
     Returns (mapping, bad): bad names a club that matches nothing or two ESPN
@@ -1042,6 +1084,16 @@ def main():
                           file=sys.stderr)
             for line in issues[:5]:
                 print(f"    lag {line}", file=sys.stderr)
+
+    stale, stale_watch = stale_leagues(fixtures, start)
+    if stale:
+        print("::warning::table missing results, its fixtures flagged (Celtic's Law): "
+              + "; ".join(f"{c} {n} unplayed from {d}" for c, (n, d) in sorted(stale.items())),
+              file=sys.stderr)
+    if stale_watch:
+        print("    stale watch (API-Football / football-data, not flagged): "
+              + "; ".join(f"{c} {n} unplayed from {d}" for c, (n, d) in sorted(stale_watch.items())),
+              file=sys.stderr)
 
     dedupe_cups(fixtures)
     last_league = team_pool(history, fixtures)
@@ -1655,6 +1707,10 @@ def main():
                         reasons.append(
                             f"{t['name']} {'is' if n == 1 else 'are'} missing {n} player{'' if n == 1 else 's'}"
                             + (f", including {', '.join(big)}" if big else ""))
+                for sc in sorted({h_src or code, a_src or code}):
+                    why_stale = stale_reason(sc, stale)
+                    if why_stale:
+                        reasons.append(why_stale)
                 early = min(hb["played"], ab["played"]) < 10
 
             # "Unrated" was a display flag; it's a publish gate now. A

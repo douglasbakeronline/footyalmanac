@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-3: a league table still missing results is flagged (tag pending)
+
+**What changed:** after the lagging fill, a league with five or more unplayed fixtures dated more than three days back (`build.stale_leagues`, `STALE_MIN`, `STALE_GRACE`) has its fixtures flagged under Celtic's Law with the reason (`stale_reason`): today only the Czech First League, "missing 41 results from 9 Oct on". Flagged rows drop a tier and stay off the Daily List, the reserve, the Card's pool and the Edge flag, as every Celtic row does. API-Football and football-data leagues meeting the count are logged as `stale watch`, not flagged.
+
+**Why:** ESPN's cze.1 slug returns nothing this season, so the 13 Nov lagging fill scored no Czech result and every Czech fixture since October has been priced on a table that stops at early October, shown as an ordinary row (one at 86% on 8 Nov). With the wider leagues on the Card since 11 Nov, a Czech favourite could have reached a group on six-week-old ratings.
+
+**Tested:** `tests/test_lagging_results.py` `StaleLeagues` (four cases); full suite and `nametest.py` pass; local build on the cached ESPN rows flags cze.1 alone and the 21-22 Nov Czech rows carry the reason; the row's flag rendered at 1280 and 400 wide.
+
+**Files:** `build.py`, `tests/test_lagging_results.py`, `claude/stale-league-flag-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any probability, the model, calibration, any Card rule. The Czech table itself still needs a second source.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-14-2: the Belgian Pro League back on the board, its table complete (tag pending)
 
 **What changed:** a league whose openfootball file has no fixture dated from today on (`build.exhausted_codes`; today only Belgium) now takes its fixture window from ESPN under openfootball's spelling (`build.fill_window`), and its ESPN results for pairings the file lists only as "datum TBC" are added to its table (`fill_lagging(append=True)`) instead of dropped.
