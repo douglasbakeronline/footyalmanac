@@ -66,6 +66,11 @@ jobs:
           if [ -z "$K1$K2" ]; then echo "::warning::No Claude key, so Elena is off."; echo "skip=1" >> "$GITHUB_OUTPUT"; else echo "skip=0" >> "$GITHUB_OUTPUT"; fi
           T1="$(printf '%s' "$K1" | tr -d '[:space:]')"; T2="$(printf '%s' "$K2" | tr -d '[:space:]')"
           [ -n "$T1" ] && echo "::add-mask::$T1"; [ -n "$T2" ] && echo "::add-mask::$T2"
+          # 14 Nov 2026: the API key hit its $10 monthly cap and the agents stopped.
+          # When the Max-plan token is set, the agents run on it alone, so their
+          # cost comes off the subscription and the API key is left for the
+          # context check. The action uses the API key whenever one is passed.
+          [ -n "$T2" ] && T1=""
           { echo "AGENT_API_KEY=$T1"; echo "AGENT_OAUTH=$T2"; } >> "$GITHUB_ENV"
       - name: Read the brief
         id: brief
