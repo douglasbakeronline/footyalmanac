@@ -97,6 +97,30 @@ class PricedBlock(unittest.TestCase):
         G.archive_pool([G.honest(t)], T0, [DAY])
         self.assertEqual(self.read()["legs"][0]["id"], "m77")
 
+    def test_order_of_play_clears_estimate(self):
+        # 14 Nov 2026: a tennis row first written on the estimated start takes
+        # `timeSet` / `whenSet` once from the first pre-start build with the real
+        # time; `timeEst` as first written stands, pool_time_est reads the pair
+        t = {"sport": "tennis", "event": "A v B", "pick": "B", "when": f"{DAY}T10:00:00Z", "date": DAY, "odds": 1.3, "est": False,
+             "margin": 1.05, "pModel": 0.88, "p": 0.88, "hit": 0.8, "n": 50, "id": "m78", "timeEst": True}
+        G.archive_pool([G.honest(dict(t))], T0, [DAY])
+        row = self.read()["legs"][0]
+        self.assertTrue(G.pool_time_est(row)); self.assertNotIn("timeSet", row)
+        G.archive_pool([G.honest(dict(t, when=f"{DAY}T11:00:00Z"))], T0 + timedelta(hours=1), [DAY])   # a new estimate
+        self.assertNotIn("timeSet", self.read()["legs"][0])
+        G.archive_pool([G.honest(dict(t, when=f"{DAY}T17:05:00Z", timeEst=False))], T0 + timedelta(hours=2), [DAY])
+        row = self.read()["legs"][0]
+        self.assertTrue(row["timeEst"]); self.assertEqual(row["timeSet"], G.iso(T0 + timedelta(hours=2)))
+        self.assertEqual(row["whenSet"], f"{DAY}T17:05:00Z"); self.assertFalse(G.pool_time_est(row))
+        G.archive_pool([G.honest(dict(t, when=f"{DAY}T18:00:00Z", timeEst=False))], T0 + timedelta(hours=3), [DAY])
+        self.assertEqual(self.read()["legs"][0]["whenSet"], f"{DAY}T17:05:00Z")      # stamped once
+        # after the start nothing is stamped
+        late = {**t, "event": "C v D", "pick": "D", "id": "m79"}
+        G.archive_pool([G.honest(dict(late))], T0, [DAY])
+        G.archive_pool([G.honest(dict(late, when=f"{DAY}T09:00:00Z", timeEst=False))], datetime(2026, 11, 21, 12, tzinfo=timezone.utc), [DAY])
+        row = [r for r in self.read()["legs"] if r["pick"] == "D"][0]
+        self.assertNotIn("timeSet", row); self.assertTrue(G.pool_time_est(row))
+
 
 class PoolReplay(unittest.TestCase):
     """card_replay.pool_legs on a synthetic pool file: first real price from

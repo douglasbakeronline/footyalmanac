@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-4: the pool remembers when a tennis order of play arrived (tag pending)
+
+**What changed:** the pool archive now stamps `timeSet` and `whenSet` once on a tennis row first written on an estimated start (`timeEst`), from the first build before the start that has the real time. The Card replay, the funnel and the price-gap count read `groupings.pool_time_est`, so such a leg is no longer refused as "no order of play" for ever.
+
+**Why:** `timeEst` stayed as first written, so the replay and the funnel refused every tennis match archived before its order of play, though the live Card re-reads it and can admit it once timed: 21 pool rows at 14 Nov, all played at a real time hours later (Ruud estimated 10:00, played 17:05). The funnel's tennis "no-time" column was counting them. Forward only: old rows keep their flag; none was within reach of the 85% tennis floor.
+
+**Evidence, tennis legs (HQ's top Card task):** 177 settled tennis pool legs; 60-70% model calls landed 58.8% v 64.6%, bookmakers 60-70% 12 of 27; 70%+ on quote; 85%+ four legs, all won. The shortfall is in the band the Card's floor already keeps off. `claude/pool-order-of-play-2026-11-14.md`.
+
+**Tested:** `tests/test_card_pool_replay.py` `test_order_of_play_clears_estimate` (stamped once, a new estimate does not stamp, nothing after the start, `timeEst` unchanged); full suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_funnel.py`, `tests/test_card_pool_replay.py`, `claude/pool-order-of-play-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any Card rule, the live Card, the model, any archived row.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-14-3: a league table still missing results is flagged (tag pending)
 
 **What changed:** after the lagging fill, a league with five or more unplayed fixtures dated more than three days back (`build.stale_leagues`, `STALE_MIN`, `STALE_GRACE`) has its fixtures flagged under Celtic's Law with the reason (`stale_reason`): today only the Czech First League, "missing 41 results from 9 Oct on". Flagged rows drop a tier and stay off the Daily List, the reserve, the Card's pool and the Edge flag, as every Celtic row does. API-Football and football-data leagues meeting the count are logged as `stale watch`, not flagged.

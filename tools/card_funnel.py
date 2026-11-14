@@ -144,6 +144,8 @@ def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False):
         if mk is None:
             unpriced[(slot[0], row.get("sport"))] += 1; continue
         l = dict(row, **mk, est=False)
+        # 14 Nov 2026: an order of play published before the start clears the estimate
+        l["timeEst"] = G.pool_time_est(row)
         l.setdefault("pTested", l.get("p")); l.setdefault("hit", l.get("pTested"))
         l["implied"] = round(1 / l["odds"], 4)
         l["p"] = round(min(l["pTested"], l["fair"]), 4)
@@ -158,7 +160,7 @@ def unpriced_ok(row):
     leg is read at a stand-in price inside CARD_ODDS with no bookmakers'
     chance (the value demand cannot be read without one); under rule 6 the
     price is the last test, so its own fault must be the missing price."""
-    l = dict(row)
+    l = dict(row, timeEst=G.pool_time_est(row))
     l.setdefault("pTested", l.get("p")); l.setdefault("hit", l.get("pTested"))
     if l.get("pModel") is None: return False
     if model_rule():

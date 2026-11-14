@@ -2373,6 +2373,13 @@ def settle_pool(l, idx, names):
         return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), g.get("score")
     return st, res
 
+def pool_time_est(row):
+    """True while a pool row's start is only an estimate (14 Nov 2026): its
+    first-written `timeEst`, cleared once a later pre-start build had the
+    order of play (`timeSet`, archive_pool). Rows written before 14 Nov carry
+    no `timeSet` and keep their first flag."""
+    return bool(row.get("timeEst")) and not row.get("timeSet")
+
 POOL_MOVE_DAYS = 3   # a pool row this close to another of the same pick is one fixture moved (13 Nov 2026)
 
 def _same_fixture(a, b):
@@ -2573,6 +2580,17 @@ def archive_pool(L, now, dates):
                 # 11 Nov 2026: the context check's latest verdict before the start
                 # (a read, not a price; graded forward by context_record)
                 if not started and l.get("context"): old["context"] = l["context"]
+                # 14 Nov 2026: a tennis match first archived before its order of
+                # play (timeEst, the tournament's usual first start) keeps that
+                # flag as first written, so the replay and the funnel read it as
+                # "no order of play" for good, though a later build before the
+                # start had the real time (21 pool rows to 14 Nov, Ruud and
+                # Andreescu among them). The first such build stamps `timeSet`
+                # and the start it read (`whenSet`); a time, not a price, and
+                # `timeEst` itself is never changed. Read by pool_time_est.
+                if not started and old.get("timeEst") and not l.get("timeEst") and not old.get("timeSet"):
+                    old["timeSet"] = stamp
+                    if l.get("when"): old["whenSet"] = l["when"]
                 if not started:
                     # 10 Nov 2026: UK books read on a later build (the list pass
                     # reaches estimates too), for the list's at-the-book record
