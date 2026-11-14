@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T04:49:34Z",
+ "graded": "2026-11-14T06:11:34Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -75,16 +75,16 @@
    "ret": 0.0837
   },
   "notAtBook": {
-   "n": 51,
-   "won": 50,
-   "rate": 0.9804,
-   "quoted": 0.9156
+   "n": 52,
+   "won": 51,
+   "rate": 0.9808,
+   "quoted": 0.9145
   },
   "unchecked": {
-   "n": 18,
-   "won": 18,
+   "n": 19,
+   "won": 19,
    "rate": 1.0,
-   "quoted": 0.8981
+   "quoted": 0.8932
   },
   "bySport": {
    "football": {
@@ -101,10 +101,10 @@
      "won": 0
     },
     "unchecked": {
-     "n": 2,
-     "won": 2,
+     "n": 3,
+     "won": 3,
      "rate": 1.0,
-     "quoted": 0.7953
+     "quoted": 0.7981
     }
    },
    "nba": {
@@ -137,10 +137,10 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 51,
-     "won": 50,
-     "rate": 0.9804,
-     "quoted": 0.9156
+     "n": 52,
+     "won": 51,
+     "rate": 0.9808,
+     "quoted": 0.9145
     },
     "unchecked": {
      "n": 13,
@@ -286,12 +286,12 @@
  },
  "cardContext": {
   "clear": {
-   "legs": 4,
-   "landed": 2,
-   "rate": 0.5,
-   "model": 0.7358,
+   "legs": 5,
+   "landed": 3,
+   "rate": 0.6,
+   "model": 0.7494,
    "fair": 0.6527,
-   "zModel": -1.1
+   "zModel": -0.79
   },
   "caution": {
    "legs": 11,
