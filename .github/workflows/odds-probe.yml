@@ -24,16 +24,16 @@ jobs:
       - name: Probe
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
-        run: python3 tools/odds_match_probe.py
+        run: python3 tools/markets_probe.py probe/markets-probe.json
       - name: Commit the report to odds-probe-report
         run: |
           git config user.name "footyalmanac-bot"
           git config user.email "actions@users.noreply.github.com"
-          cp probe/match-probe.json /tmp/match-probe.json
+          cp probe/markets-probe.json /tmp/markets-probe.json
           git fetch origin odds-probe-report || true
           git checkout -B odds-probe-report
           git rm -rq --cached . >/dev/null 2>&1 || true
-          mkdir -p probe && cp /tmp/match-probe.json probe/match-probe.json
-          git add -f probe/match-probe.json
+          mkdir -p probe && cp /tmp/markets-probe.json probe/markets-probe.json
+          git add -f probe/markets-probe.json
           git commit -qm "Odds probe report $(date -u +%FT%TZ)"
           git push -f origin odds-probe-report
