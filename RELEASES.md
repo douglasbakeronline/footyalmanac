@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-2: the Belgian Pro League back on the board, its table complete (tag pending)
+
+**What changed:** a league whose openfootball file has no fixture dated from today on (`build.exhausted_codes`; today only Belgium) now takes its fixture window from ESPN under openfootball's spelling (`build.fill_window`), and its ESPN results for pairings the file lists only as "datum TBC" are added to its table (`fill_lagging(append=True)`) instead of dropped.
+
+**Why:** the Belgian 2026-27 file dates rounds 1 to 7 only, so no Belgian Pro League game has been on the board, the Daily List, the Edge flag or the Card since 20 Sep, and 37 of its 99 results to 13 Nov had no fixture to fill. On the cached ESPN rows: 61 filled and 37 dropped before, 98 scored after (61 + 37), every club on 11 games, no pairing twice, every name matched once.
+
+**Tested:** six new cases in `tests/test_lagging_results.py` (only a league with nothing ahead, undated-round result added, a listed pair never added, off by default, all or nothing on names, window fixtures under the primary spelling and never twice); full suite and `nametest.py` pass; a fast build ran (no ESPN here). CI's first build should print `window be.1` and `lag be.1: 98`.
+
+**Files:** `build.py`, `tests/test_lagging_results.py`, `claude/belgium-undated-rounds-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, constants, calibration, any Card rule, the parser's rule that an undated match is not shown.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-14: the context check pauses itself at the API usage limit, and says so (tag pending)
 
 **What changed:** when the Messages API refuses for the key's usage limit, the context check stops for the build, records the time access returns (`pausedUntil` in `groupings-archive/context-ledger.json`), makes one probe call a build until then (a refused call costs nothing), and resumes by itself when the probe gets through or the time passes. The Bets tab's Card section says the check is paused until that date and that no pick is being kept off for news; the nightly Card review says so in bold; the build log says "paused until".

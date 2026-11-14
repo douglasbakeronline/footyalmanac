@@ -151,5 +151,73 @@ class Aliases(unittest.TestCase):
             self.assertEqual(S.match_team(a, pool), b, a)
 
 
+class ExhaustedLeague(unittest.TestCase):
+    """A primary source that dates only its first rounds (Belgium 2026-27:
+    rounds 8 to 34 "datum TBC", dropped by the parser), 14 Nov 2026."""
+    START = date(2026, 11, 14)
+
+    def rows(self):
+        return [fx("2026-08-07", "Club Brugge", "KV Kortrijk", 3, 0),
+                fx("2026-08-08", "KRC Genk", "STVV"),
+                fx("2026-09-20", "STVV", "Club Brugge")]
+
+    def test_only_a_league_with_nothing_ahead(self):
+        fixtures = {"be.1": self.rows(),
+                    "en.1": [fx("2026-09-20", "Liverpool", "Everton", 1, 0),
+                             fx("2026-11-21", "Everton", "Liverpool")]}
+        self.assertEqual(B.exhausted_codes(fixtures, self.START, set()), ["be.1"])
+        self.assertEqual(B.exhausted_codes(fixtures, self.START, {"be.1"}), [])
+
+    def test_undated_round_result_appended(self):
+        rows = self.rows()
+        results = [res("2026-08-08", "Racing Genk", "Sint-Truidense", 2, 2),
+                   # a round the file lists as TBC: no row for this pair at all
+                   res("2026-10-25", "KV Kortrijk", "Racing Genk", 0, 1),
+                   # a listed pair far from its date: not added, the file has it
+                   res("2026-11-08", "Sint-Truidense", "Club Brugge", 1, 3)]
+        n, bad, un = B.fill_lagging(rows, results, self.START, append=True)
+        self.assertEqual((n, bad, un), (2, [], 1))
+        new = [r for r in rows if r["date"] == "2026-10-25"]
+        self.assertEqual(len(new), 1)
+        self.assertEqual((new[0]["home"], new[0]["away"], new[0]["hg"], new[0]["ag"]),
+                         ("KV Kortrijk", "KRC Genk", 0, 1))
+        self.assertEqual(new[0]["filledFrom"], "espn")
+        self.assertIsNone(rows[2]["hg"])
+
+    def test_append_off_by_default(self):
+        rows = self.rows()
+        n, _, un = B.fill_lagging(rows, [res("2026-10-25", "KV Kortrijk", "Racing Genk", 0, 1)],
+                                  self.START)
+        self.assertEqual((n, un, len(rows)), (0, 1, 3))
+
+    def test_append_needs_every_name(self):
+        rows = self.rows()
+        n, bad, _ = B.fill_lagging(rows, [res("2026-10-25", "KV Kortrijk", "Racing Genk", 0, 1),
+                                          res("2026-10-26", "Nowhere United", "STVV", 1, 1)],
+                                   self.START, append=True)
+        self.assertEqual((n, len(rows)), (0, 3))
+        self.assertIn("Nowhere United", bad)
+
+    def test_window_fixtures_added_under_primary_spelling(self):
+        rows = self.rows()
+        espn = [dict(fx("2026-11-21", "Racing Genk", "Club Brugge"), time="17:30", utc=True),
+                # the file already lists this pair within three weeks: not added twice
+                dict(fx("2026-10-04", "Sint-Truidense", "Club Brugge"), utc=True)]
+        added, bad = B.fill_window(rows, espn)
+        self.assertEqual((added, bad), (1, []))
+        new = rows[-1]
+        self.assertEqual((new["home"], new["away"], new["date"], new["time"]),
+                         ("KRC Genk", "Club Brugge", "2026-11-21", "17:30"))
+        self.assertTrue(new["utc"])
+        self.assertEqual(new["filledFrom"], "espn")
+
+    def test_window_needs_every_name(self):
+        rows = self.rows()
+        added, bad = B.fill_window(rows, [fx("2026-11-21", "Racing Genk", "Club Brugge"),
+                                          fx("2026-11-22", "Nowhere United", "STVV")])
+        self.assertEqual((added, len(rows)), (0, 3))
+        self.assertEqual(bad, ["Nowhere United"])
+
+
 if __name__ == "__main__":
     unittest.main()

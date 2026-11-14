@@ -770,17 +770,29 @@ def lagging_codes(fixtures, start, gaps):
     return out
 
 
-def fill_lagging(rows, results, before, window=LAG_WINDOW):
-    """Score the primary source's unplayed fixtures from ESPN results.
+def exhausted_codes(fixtures, start, gaps):
+    """Leagues whose primary source holds no fixture dated on or after the
+    build's first day (14 Nov 2026). openfootball's Belgian 2026-27 file dates
+    rounds 1 to 7 only and lists rounds 8 to 34 as "datum TBC", which the
+    parser drops (an undated match is not shown rather than shown wrong), so
+    from 21 Sep the Belgian Pro League had no fixture on the board, the Daily
+    List or the Card, and its results from round 8 had no fixture to fill.
+    Same eligibility as lagging_codes. Returns a sorted list of codes."""
+    out = []
+    for c, rows in fixtures.items():
+        m = E.LEAGUES.get(c, {})
+        if (c in gaps or m.get("cup") or m.get("international") or c in S.AF or c in S.FDX
+                or m.get("ratingsOnly") or not S.ESPN_SLUGS.get(c)):
+            continue
+        if not any(r["date"] >= start.isoformat() for r in rows):
+            out.append(c)
+    return sorted(out)
 
-    rows: one league's fixture rows (openfootball spelling), filled in place.
-    results: ESPN result rows ({date, home, away, hg, ag}) for the same league.
-    A result fills only the unplayed fixture of the same home and away clubs
-    dated before the build window and within `window` days, and never a pair
-    already scored nearby (the primary source wins). All or nothing on names
-    (Rule 6): one ESPN club that does not match, or two that match the same
-    club, fills nothing for the league, and the names come back for the log.
-    Returns (filled, unmatched names, results with no fixture to fill)."""
+
+def _map_names(rows, results):
+    """ESPN club -> the primary source's spelling, all or nothing (Rule 6).
+    Returns (mapping, bad): bad names a club that matches nothing or two ESPN
+    clubs that match one."""
     pool = {r["home"] for r in rows} | {r["away"] for r in rows}
     names = sorted({x[k] for x in results for k in ("home", "away")})
     mapping = {n: S.match_team(n, pool) for n in names}
@@ -790,8 +802,52 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW):
         if v is not None:
             seen[v].append(n)
     bad += [f"{'/'.join(v)} -> {k}" for k, v in seen.items() if len(v) > 1]
+    return mapping, sorted(bad)
+
+
+def fill_window(rows, espn, window=LAG_WINDOW):
+    """Add ESPN's fixtures in the build window to an exhausted league's rows,
+    under the primary source's spelling (14 Nov 2026, see exhausted_codes).
+    A fixture is added only when the primary source has no row for the same
+    home and away clubs within `window` days, so a dated fixture is never
+    shown twice. All or nothing on names. Returns (added, unmatched names)."""
+    mapping, bad = _map_names(rows, espn)
     if bad:
-        return 0, sorted(bad), 0
+        return 0, bad
+    by_pair = defaultdict(list)
+    for r in rows:
+        by_pair[(r["home"], r["away"])].append(date.fromisoformat(r["date"]))
+    added = 0
+    for x in sorted(espn, key=lambda x: (x["date"], x.get("time") or "")):
+        pair = (mapping[x["home"]], mapping[x["away"]])
+        d = date.fromisoformat(x["date"])
+        if any(abs((y - d).days) <= window for y in by_pair[pair]):
+            continue
+        row = dict(x, home=pair[0], away=pair[1], filledFrom="espn")
+        rows.append(row)
+        by_pair[pair].append(d)
+        added += 1
+    return added, []
+
+
+def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False):
+    """Score the primary source's unplayed fixtures from ESPN results.
+
+    rows: one league's fixture rows (openfootball spelling), filled in place.
+    results: ESPN result rows ({date, home, away, hg, ag}) for the same league.
+    A result fills only the unplayed fixture of the same home and away clubs
+    dated before the build window and within `window` days, and never a pair
+    already scored nearby (the primary source wins). All or nothing on names
+    (Rule 6): one ESPN club that does not match, or two that match the same
+    club, fills nothing for the league, and the names come back for the log.
+    append=True (an exhausted league, 14 Nov 2026): a result for a pair the
+    primary source does not list at all (an undated round) is added as a row
+    of its own instead of being dropped; a pair the source lists anywhere is
+    never added, so a dated fixture cannot be counted twice.
+    Returns (filled, unmatched names, results with no fixture to fill)."""
+    mapping, bad = _map_names(rows, results)
+    if bad:
+        return 0, bad, 0
     by_pair = defaultdict(list)
     for r in rows:
         by_pair[(r["home"], r["away"])].append(r)
@@ -809,6 +865,13 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW):
         open_ = sorted(((gap, r["date"], r) for gap, r in near if r["date"] < cut),
                        key=lambda t: t[:2])
         if not open_:
+            pair = (mapping[x["home"]], mapping[x["away"]])
+            if append and not by_pair.get(pair):
+                row = dict(x, home=pair[0], away=pair[1], filledFrom="espn")
+                rows.append(row)
+                by_pair[pair].append(row)
+                filled += 1
+                continue
             unplaced += 1
             continue
         r = open_[0][2]
@@ -933,6 +996,26 @@ def main():
     # walk ESPN from the day after its last scored fixture and score the
     # fixtures it left blank, under its own spelling, so the table never
     # holds a club twice. Cached in current/ like the top-up above.
+    # Leagues whose primary source has run out of dated fixtures (14 Nov
+    # 2026, Belgium): their window comes from ESPN under the source's own
+    # spelling, and their results with no listed fixture are added below.
+    exhausted = exhausted_codes(fixtures, start, set(gaps))
+    if exhausted:
+        tried = []
+        for c in exhausted:
+            rows, ok = S.fetch_espn(c, start, end, log=tried)
+            if not ok:
+                continue
+            added, bad = fill_window(fixtures[c], rows)
+            if bad:
+                print(f"::warning::{c}: ESPN fixtures not used, club names unmatched: "
+                      + "; ".join(bad[:8]), file=sys.stderr)
+            else:
+                print(f"    window {c}: {added} fixture(s) from ESPN (its own file has "
+                      f"none dated from {start.isoformat()})", file=sys.stderr)
+        for line in tried:
+            print(f"    espn {line}", file=sys.stderr)
+
     if not args.no_topup:
         lag = lagging_codes(fixtures, start, set(gaps))
         if lag:
@@ -948,7 +1031,8 @@ def main():
             with cf.ThreadPoolExecutor(max_workers=6) as pool:
                 got = list(pool.map(lag_top, sorted(lag)))
             for c, (rows, n) in got:
-                filled, bad, unplaced = fill_lagging(fixtures[c], list(rows.values()), start)
+                filled, bad, unplaced = fill_lagging(fixtures[c], list(rows.values()), start,
+                                                     append=c in exhausted)
                 if bad:
                     print(f"::warning::{c}: ESPN results not used, club names unmatched: "
                           + "; ".join(bad[:8]), file=sys.stderr)
