@@ -221,3 +221,38 @@ class ExhaustedLeague(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class StaleLeagues(unittest.TestCase):
+    """A league table still missing results after the lagging fill is flagged
+    (build.stale_leagues, 14 Nov 2026): the Czech First League, scored by
+    openfootball to early October and not at all by ESPN."""
+    START = date(2026, 11, 14)
+
+    def test_many_unplayed_flags_a_few_do_not(self):
+        cz = [fx(f"2026-10-{d:02d}", f"H{d}", f"A{d}") for d in range(9, 14)]
+        es = [fx("2026-10-10", "Rayo", "Athletic"), fx("2026-11-01", "A", "B"),
+              fx("2026-11-21", "B", "A")]
+        flag, watch = B.stale_leagues({"cze.1": cz, "es.1": es}, self.START)
+        self.assertEqual(flag, {"cze.1": (5, "2026-10-09")})
+        self.assertEqual(watch, {})
+
+    def test_grace_days_and_played_rows_ignored(self):
+        rows = [fx("2026-11-12", "A", "B"), fx("2026-11-13", "C", "D"),
+                fx("2026-11-12", "E", "F"), fx("2026-11-13", "G", "H"),
+                fx("2026-10-01", "I", "J", 1, 0), fx("2026-11-01", "K", "L")]
+        self.assertEqual(B.stale_leagues({"cze.1": rows}, self.START), ({}, {}))
+
+    def test_cups_skipped_af_and_fdx_only_watched(self):
+        rows = [fx(f"2026-10-{d:02d}", f"H{d}", f"A{d}") for d in range(1, 8)]
+        cup = next(c for c, m in B.E.LEAGUES.items() if m.get("cup"))
+        af = next(c for c in sorted(S.AF) if not B.E.LEAGUES.get(c, {}).get("cup"))
+        flag, watch = B.stale_leagues({cup: list(rows), af: list(rows)}, self.START)
+        self.assertEqual(flag, {})
+        self.assertEqual(set(watch), {af})
+
+    def test_reason_names_the_league(self):
+        why = B.stale_reason("cze.1", {"cze.1": (41, "2026-10-09")})
+        self.assertIn("First League (Czechia)", why)
+        self.assertIn("41 results from 9 Oct on", why)
+        self.assertIsNone(B.stale_reason("en.1", {"cze.1": (41, "2026-10-09")}))
