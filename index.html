@@ -1228,6 +1228,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
 .tb-picks-n{font-size:12px;color:var(--mute);margin:2px 0 8px}
+.cx-paused{font-size:12px;color:var(--mute);margin:10px 0 0;padding-left:10px;border-left:2px solid var(--rule)}
 .tb-picks .og-l.cx-off{opacity:.65}
 .og-cx{margin-top:4px;font-size:11.5px;line-height:1.4;color:var(--ink-2)}
 .og-cx summary{cursor:pointer;list-style:none}
@@ -5307,9 +5308,22 @@ function cardPicksHtml(day, gs){
     return `<div class="og-l${off ? " cx-off" : ""}"><span class="t">${ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${off ? " · kept off by the context check" : ""}</small>${ogContext(l)}</span>
       <span class="o">${l.est ? "est. " : ""}${(+l.odds).toFixed(2)}${hill ? `<small class="read">Hill ${(+hill).toFixed(2)}</small>` : ""}</span><span class="c">${pct(l.pModel)}%</span></div>`; }).join("");
-  return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}, with the context check</summary>
+  return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}${cxPaused() ? "" : ", with the context check"}</summary>
     <p class="tb-picks-n">Each passes the Card's rule on its own (the model 60%+ and at or above the bookmakers, priced 1.15 to 1.90). ${gs.length ? "" : `Not enough for a group: a group needs three or more, at most two from one competition, together paying ${(((OG.rules || {}).card || {}).build || []).length === 1 ? "2.00 to 3.00" : "2x or more"}. `}Shown for information, not a bet.</p>
     <div class="og">${rows}</div></details>`;
+}
+// 14 Nov 2026: the context check pauses itself when the API key reaches its
+// usage limit (groupings-data.js contextPaused, the time it resumes). The page
+// says so, so no one reads an unread pick as checked.
+function cxPaused(){
+  const t = OG && OG.contextPaused; if(!t) return "";
+  const d = new Date(String(t).replace(/Z$/, ":00Z"));
+  if(isNaN(d) || d.getTime() <= Date.now()) return "";
+  return d.toLocaleDateString("en-GB", {day: "numeric", month: "short", timeZone: "UTC"});
+}
+function cxPausedHtml(){
+  const d = cxPaused(); if(!d) return "";
+  return `<p class="cx-paused">The context check is paused until ${d}: its API allowance is used up for the month. No pick is being read, so none is kept off for news.</p>`;
 }
 // 13 Nov 2026: why a day has no group, from groupings.card_short. On 13 Nov
 // the page said "too few picks" when three qualified and together paid 3.51,
@@ -5367,7 +5381,7 @@ function renderToday(){
         <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : lk ? `${when}${locked ? " · placed? leave it" : " · place it once it locks"}` : "each group is open until its first kick-off; place any time before"}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
-            : cardShortText(day.cardShort)}</div>`}${cardPicksHtml(day, gs)}</section>`;
+            : cardShortText(day.cardShort)}</div>`}${cxPausedHtml()}${cardPicksHtml(day, gs)}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}

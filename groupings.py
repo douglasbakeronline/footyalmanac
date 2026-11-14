@@ -3142,7 +3142,10 @@ def main():
            "prices": board_prices(L),
            # 12 Nov 2026: the context check's verdict on every read pick, keyed like
            # listBooks, for the Daily List, Starred and the slip checker (display only)
-           "contexts": context_page(L)}
+           "contexts": context_page(L),
+           # 14 Nov 2026: when the context check is paused for the API's usage
+           # limit, the time it resumes, so the page says no pick is being read
+           "contextPaused": (report.get("context") or {}).get("paused")}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
@@ -3173,7 +3176,7 @@ def main():
     errs = [e for e in report.get("errors", []) if any(k in e for k in ("betfair", "matchbook", "sgo", "price_"))]
     if errs: print("  price errors: " + "; ".join(errs)[:800], file=sys.stderr)
     cx = report.get("context") or {}
-    print(f"  context check: {'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
+    print(f"  context check: {('paused until ' + cx['paused'] + ' (API usage limit)') if cx.get('paused') else 'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
           f"{cx.get('read', 0)} picks with a verdict, {cx.get('against', 0)} against; "
           + "; ".join(e for e in report.get("errors", []) if e.startswith("context"))[:600], file=sys.stderr)
     for d in days:
