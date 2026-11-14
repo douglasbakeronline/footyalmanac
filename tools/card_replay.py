@@ -123,6 +123,8 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
             skipped["estimate only"] += 1; continue
         if mk.get("recovered"): recovered += 1
         l = dict(row, **mk, est=False)
+        # 14 Nov 2026: an order of play published before the start clears the estimate
+        l["timeEst"] = G.pool_time_est(row)
         if l.get("sport") == "football" and not l.get("side"):
             l["side"] = "h" if l["pick"] == l.get("home") else "a"
         st, res = settle_pool(l, idx, names)
