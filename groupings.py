@@ -110,6 +110,7 @@ the groups landed 11 of 58 (19%). They stay in the record under their names.
 Standard library only.
 """
 import gzip, itertools, json, math, os, re, sys, time, unicodedata, urllib.request
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from zoneinfo import ZoneInfo
@@ -437,6 +438,11 @@ def price_football(L, dates, report):
     import sources as S
     from datetime import date as _date
     calls, matched = 0, 0
+    miss = Counter()      # 14 Nov 2026: why a football leg stayed unpriced
+    miss_comps = defaultdict(Counter)
+    def _miss(l, why):
+        miss[why] += 1
+        miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
     # 22 Oct 2026: the build now reads every API-Football price by date
     # (odds.af_odds_day, cached); a leg found there costs no call. The
     # one-fixture call stays as the fallback for anything it missed.
@@ -459,7 +465,12 @@ def price_football(L, dates, report):
             fid = next((fid for fid, (h, a, ft) in teams.items()
                         if not (t and ft and abs((t - ft).total_seconds()) > 5400)
                         and same(h, l["home"]) and same(a, l["away"])), None)
-            if fid is None: continue
+            if fid is None:
+                # both names found but the kick-offs 90+ minutes apart (a moved
+                # fixture) reads differently from a name API-Football spells
+                # another way or a fixture it does not list at all
+                named = any(same(h, l["home"]) and same(a, l["away"]) for h, a, _ in teams.values())
+                _miss(l, "kickoff" if named else "noFixture"); continue
             row = bulk.get(str(fid))
             if row:
                 i = 0 if l["side"] == "h" else 2
@@ -474,11 +485,13 @@ def price_football(L, dates, report):
             # bulk day prices missed now gets its own call too, up to
             # FB_CALLS_MULT a build (API-Football Pro: 7,500 a day, about 3,300
             # left after the build on 11 Nov). Before, it stayed an estimate.
-            if l.get("multOnly") and calls >= FB_CALLS_MULT: continue
+            if l.get("multOnly") and calls >= FB_CALLS_MULT:
+                _miss(l, "capped"); continue
             try:
                 items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:
-                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
+                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}")
+                _miss(l, "error"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
             books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
             uk_px = {"Home": {}, "Away": {}, "Draw": {}}   # 29 Oct 2026: every UK book's price, by side
@@ -507,7 +520,12 @@ def price_football(L, dates, report):
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
+            else:
+                _miss(l, "noOdds")
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
+    if miss:
+        report["football"]["miss"] = dict(miss)
+        report["football"]["missComps"] = {w: c.most_common(5) for w, c in miss_comps.items()}
 
 def american(x):
     try: x = float(str(x).replace("+", ""))
@@ -3210,6 +3228,14 @@ def main():
         return f"{name}: {r}" if r else None
     srcs = [x for x in (_src(n) for n in ("football", "espn", "espn_soccer", "apiSports", "pinnwire", "oddsApi", "sgo", "betfair", "matchbook", "oddsApiList")) if x]
     print("  prices: " + " | ".join(srcs), file=sys.stderr)
+    # 14 Nov 2026: why football legs stayed unpriced, and where, so a session
+    # can tell a name API-Football spells another way (noFixture) from a game
+    # it lists with no odds (noOdds) without the published JSON
+    fm = report.get("football") if isinstance(report.get("football"), dict) else {}
+    if fm.get("miss"):
+        print("  football unpriced: " + "; ".join(
+            f"{w} {n} (" + ", ".join(f"{c} {k}" for c, k in fm["missComps"].get(w, [])[:3]) + ")"
+            for w, n in sorted(fm["miss"].items(), key=lambda kv: -kv[1])), file=sys.stderr)
     # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
     # how far its legs got and what a game looked like, on its own line
     sg = report.get("sgo")

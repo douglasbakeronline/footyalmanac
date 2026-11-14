@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-6: the build says why a football leg stayed unpriced (tag pending)
+
+**What changed:** `groupings.price_football` counts each football leg it could not price by reason and competition, and the build log prints one line for it ("football unpriced: noOdds 60 (...); noFixture 40 (...)"): `noFixture` (API-Football lists no fixture under those names that day), `kickoff` (both names found, kick-offs 90+ minutes apart: a moved game), `noOdds` (fixture found, no 1X2 price for the side), `capped` (a mid-priced leg over `FB_CALLS_MULT`), `error`. Also in `groupings.json` under the price report (`football.miss`, `football.missComps`).
+
+**Why:** the 17:21 build on 14 Nov priced 122 of 229 football legs, with 5,744 API-Football calls left, and nothing said why the other 107 failed. The funnel counts 36 football legs for 14-17 Nov that pass every Card condition but the price (most in fifth-tier regional leagues: NB III, Tercera RFEF, Oberliga). A `noFixture` count in one league is a spelling to add to `LIVE_NAMES`; `noOdds` is a game no book prices, and no fix exists. Today there is no way to tell them apart without a debug run.
+
+**Tested:** `tests/test_football_unpriced.py` (each reason, by competition; the cap; no `miss` key when all priced); full suite (927) and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** which legs are priced or how, any Card rule, the model, any record row. Diagnostic only.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-14-5: the tennis tripwire judges the picks today's 85% floor takes (tag pending)
 
 **What changed:** the Card's sport-off test (`groupings.card_legs_by_sport`) judges a sport with its own floor (tennis, 85% since `CARD_RULE` 10) on the legs that floor admits (`atFloor`); the every-leg tally stays and is shown as before, with `tripwireAll` beside it. The Bets scoreboard's tennis row reads "Under; judged at 85%+ (0 so far)" instead of "Watch: 9 more legs decide", and the nightly Card review adds the floor's own line.
