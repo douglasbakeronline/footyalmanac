@@ -134,7 +134,9 @@ def ledger_load():
 
 def ledger_save(led):
     os.makedirs(ARCHIVE, exist_ok=True)
-    keep = dict(sorted(led.items())[-14:])
+    days = {k: v for k, v in led.items() if k[:1].isdigit()}
+    keep = dict(sorted(days.items())[-14:])
+    if led.get(PAUSE_KEY): keep[PAUSE_KEY] = led[PAUSE_KEY]
     with open(os.path.join(ARCHIVE, LEDGER), "w") as f: json.dump(keep, f, indent=1, sort_keys=True)
 
 
@@ -152,9 +154,52 @@ def call(l, key, post=None):
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")[:300]
+            if e.code in (400, 402, 403, 429) and _LIMIT.search(msg):
+                raise UsageLimit(msg)
             last = RuntimeError(f"HTTP {e.code} with {tool}: {msg}")
             if e.code != 400: break
     raise last
+
+
+# 14 Nov 2026: the API key reached its monthly usage limit at 00:2x UTC ("You
+# have reached your specified API usage limits. You will regain access on
+# 2026-12-01 at 00:00 UTC."), and every build after kept asking for every due
+# pick, failing each one, with nothing on the page or in the nightly review
+# to say the check had stopped. A usage-limit reply now pauses the check:
+# the time it names (else PAUSE_DEFAULT_H from now) goes in the ledger as
+# PAUSE_KEY, one probe call a build until it passes (failed calls cost
+# nothing, so a raised limit resumes the check on the next build), and the
+# build, the page
+# (groupings-data.js contextPaused) and the Card review say so. Card picks
+# with no verdict are admitted as before (only "against" vetoes).
+PAUSE_KEY = "pausedUntil"
+PAUSE_DEFAULT_H = 24
+_LIMIT = re.compile(r"usage limit|credit balance|billing|quota", re.I)
+_REGAIN = re.compile(r"regain access on (\d{4}-\d{2}-\d{2})(?: at (\d{2}:\d{2}))?", re.I)
+
+
+class UsageLimit(RuntimeError):
+    """The API refused for the account's limit, not for this pick."""
+
+
+def limit_until(msg, now):
+    """The ISO time a usage-limit message says access returns, or None when
+    the message is not a usage limit."""
+    if not _LIMIT.search(msg or ""): return None
+    m = _REGAIN.search(msg)
+    if m:
+        try:
+            t = datetime.strptime(m.group(1) + " " + (m.group(2) or "00:00"), "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+            return t.strftime("%Y-%m-%dT%H:%MZ")
+        except ValueError:
+            pass
+    return (now + timedelta(hours=PAUSE_DEFAULT_H)).strftime("%Y-%m-%dT%H:%MZ")
+
+
+def paused(led, now):
+    """The ledger's pause time if it is still in the future, else None."""
+    t = parse_when(led.get(PAUSE_KEY))
+    return led[PAUSE_KEY] if t and t > now else None
 
 
 def parse(reply):
@@ -193,19 +238,29 @@ def review(legs, now, report=None, post=None, key=None):
     by_date, calls = {}, 0
     led = ledger_load(); today = now.astimezone(timezone.utc).date().isoformat()
     left = max(0, DAILY_READS - led.get(today, 0))
+    stop = paused(led, now)
+    if not stop and led.get(PAUSE_KEY): led.pop(PAUSE_KEY, None); ledger_save(led)
+    probe = bool(stop)      # while paused, one call a build tests whether the limit was raised
     for l in sorted(legs, key=priority):
         d = l.get("ukDate") or l.get("date")
         store = by_date.setdefault(d, load(d))
         old = store.get(key_of(l))
-        if (key or post) and calls < min(MAX_REVIEWS, left) and due(old, l, now):
+        if (key or post) and (not stop or probe) and calls < min(MAX_REVIEWS, left) and due(old, l, now):
             try:
+                probe = False
                 v = parse(call(l, key, post)); calls += 1
+                if stop:                     # the probe got through: the limit was raised
+                    stop = None; led.pop(PAUSE_KEY, None)
                 if v:
                     v["at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ"); v["model"] = model_for(l)
                     v["reads"] = (old or {}).get("reads", 0) + 1
                     store[key_of(l)] = old = v
                 else:
                     report.setdefault("errors", []).append(f"context: unreadable reply for {l.get('pick')}")
+            except UsageLimit as e:
+                stop = led[PAUSE_KEY] = limit_until(str(e), now)
+                ledger_save(led)
+                report.setdefault("errors", []).append(f"context: paused until {stop}, API usage limit: {str(e)[:200]}")
             except Exception as e:
                 report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:300]}")
         if old: l["context"] = old
@@ -215,7 +270,8 @@ def review(legs, now, report=None, post=None, key=None):
         led[today] = led.get(today, 0) + calls; ledger_save(led)
     report["context"] = {"calls": calls, "read": sum(1 for l in legs if l.get("context")),
                          "against": sum(1 for l in legs if (l.get("context") or {}).get("verdict") == "against"),
-                         "today": led.get(today, 0), "dailyCap": DAILY_READS, "on": bool(key or post)}
+                         "today": led.get(today, 0), "dailyCap": DAILY_READS, "on": bool(key or post),
+                         "paused": stop or None}
     return calls
 
 

@@ -78,10 +78,6 @@ class PriceTimingLines(unittest.TestCase):
         self.assertIn("not started yet, left out until their last price is in: 5 leg(s)", body)
 
 
-if __name__ == "__main__":
-    unittest.main()
-
-
 class OncePerDay(unittest.TestCase):
     """10 Nov 2026: a missed 03:40 run is caught by a later schedule, so a
     day that already has its review posts nothing more."""
@@ -212,3 +208,19 @@ class BothSidesOfTheGate(unittest.TestCase):
         self.assertIn("Built nothing on these days, so ahead of live only by live's losses (not a read): short.", body)
         watch = next(l for l in body.splitlines() if l.startswith("Ahead of live but under"))
         self.assertNotIn("short", watch)
+
+
+class ContextPause(unittest.TestCase):
+    """14 Nov 2026: a paused context check is said in bold."""
+    def test_pause_line(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 14, 3, 40, tzinfo=timezone.utc)
+        out = P.context_pause_line({"2026-11-14": 6, "pausedUntil": "2026-12-01T00:00Z"}, now)
+        self.assertTrue(out and out[0].startswith("**The context check is paused until 2026-12-01T00:00Z"))
+        self.assertEqual(P.context_pause_line({"pausedUntil": "2026-11-01T00:00Z"}, now), [])
+        self.assertEqual(P.context_pause_line({"2026-11-14": 6}, now), [])
+        self.assertEqual(P.context_pause_line({}, now), [])
+
+
+if __name__ == "__main__":
+    unittest.main()

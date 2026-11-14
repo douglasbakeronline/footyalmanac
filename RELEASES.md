@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14: the context check pauses itself at the API usage limit, and says so (tag pending)
+
+**What changed:** when the Messages API refuses for the key's usage limit, the context check stops for the build, records the time access returns (`pausedUntil` in `groupings-archive/context-ledger.json`), makes one probe call a build until then (a refused call costs nothing), and resumes by itself when the probe gets through or the time passes. The Bets tab's Card section says the check is paused until that date and that no pick is being kept off for news; the nightly Card review says so in bold; the build log says "paused until".
+
+**Why:** at 00:24 UTC on 14 Nov the key reached its monthly limit ("regain access on 2026-12-01"), after 25 reads on each of 12 and 13 Nov. Every later build would ask again for every due pick and fail, while the page still said "with the context check" over picks nobody had read. No Card rule changes: only an "against" verdict ever vetoed, so unread picks are admitted as before rule 9.
+
+**Tested:** `tests/test_context_review.py` (limit time parsed, one refusal stops the build, the pause holds across builds with one probe each, a probe that gets through resumes it, it clears after the date, the ledger keeps 14 days and the pause), `tests/test_card_review_post.py` (bold pause line); full suite and `nametest.py` pass; the Card section rendered at 1280 and 400 wide.
+
+**Files:** `context_review.py`, `groupings.py`, `index.html`, `tools/card_review_post.py`, both test files, `claude/context-paused-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** `CARD_CONTEXT`, any Card rule, `DAILY_READS`, the record.
+
+**Roll back:** `git revert` the merge commit; then delete `pausedUntil` from `groupings-archive/context-ledger.json` if it is set.
+
 ## 2026-11-13-14: the nightly Card review opens with what the live Card published (tag pending)
 
 **What changed:** the nightly Card review issue now starts with the live Card's own output over the last 14 finished days (`card_review_post.live_days_section`): days with a group, groups, the last day a group was published, the rules they ran under, and in bold a run of three or more empty days. Full-rule Card groups only, not the wider-rule filler or the paper Model card.

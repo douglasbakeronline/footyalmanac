@@ -152,6 +152,20 @@ def list_book_section(r):
 CONTEXT_REVIEW_AT = 30   # "against" picks settled before the veto is judged (claude/context-check-2026-11-11.md)
 
 
+def context_pause_line(ledger, now=None):
+    """14 Nov 2026: the context check pauses itself when the API key reaches
+    its usage limit (context_review.PAUSE_KEY in the ledger). Said in bold,
+    because no Card pick is read while it lasts and nothing vetoes."""
+    from datetime import datetime as _dt, timezone as _tz
+    t = (ledger or {}).get("pausedUntil")
+    if not t: return []
+    try: until = _dt.fromisoformat(str(t).replace("Z", "+00:00"))
+    except ValueError: return []
+    if until <= (now or _dt.now(_tz.utc)): return []
+    return [f"**The context check is paused until {t}: the API key reached its usage limit. No pick is read and nothing "
+            "is vetoed until then; raising the limit in the Anthropic console resumes it on the next build.**", ""]
+
+
 def context_section(r):
     """11 Nov 2026 (CARD_CONTEXT, CARD_RULE 9): the context check graded
     forward, by verdict, from the record (groupings.context_record). The
@@ -461,6 +475,7 @@ def main():
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
+    lines += context_pause_line(load("groupings-archive/context-ledger.json"))
     lines += context_section(load("groupings-record.json").get("cardContext"))
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()

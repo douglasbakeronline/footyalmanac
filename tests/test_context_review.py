@@ -144,3 +144,63 @@ class Budget(unittest.TestCase):
             self.assertEqual(CX.review([leg(f"P{i}") for i in range(5)], NOW, {}, post=post), 3)
             self.assertEqual(CX.review([leg(f"Q{i}") for i in range(5)], NOW + timedelta(hours=1), {}, post=post), 0)
             self.assertEqual(CX.review([leg(f"R{i}") for i in range(5)], NOW + timedelta(days=1), {}, post=post), 0)  # those picks have started by then
+
+
+MSG = ('{"type":"error","error":{"type":"invalid_request_error","message":"You have reached your specified API '
+       'usage limits. You will regain access on 2026-12-01 at 00:00 UTC."}}')
+
+
+class UsageLimitPause(unittest.TestCase):
+    """14 Nov 2026: the API key's monthly limit stops the check until the
+    time the API names, and says so, instead of failing every pick."""
+
+    def test_limit_until_reads_the_time(self):
+        self.assertEqual(CX.limit_until(MSG, NOW), "2026-12-01T00:00Z")
+        self.assertEqual(CX.limit_until("usage limit reached", NOW), "2026-11-15T09:00Z")
+        self.assertIsNone(CX.limit_until("tool web_search_20250305 not supported", NOW))
+
+    def test_http_limit_raises_usage_limit(self):
+        import io, urllib.error
+        err = urllib.error.HTTPError(CX.API, 400, "Bad Request", {}, io.BytesIO(MSG.encode()))
+        with mock.patch("urllib.request.urlopen", side_effect=err) as up:
+            with self.assertRaises(CX.UsageLimit):
+                CX.call(leg(), "k")
+            self.assertEqual(up.call_count, 1)          # no retry with another tool
+
+    def test_pause_stops_calls_and_resumes(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(CX, "ARCHIVE", d):
+            calls = []
+            def limited(body): calls.append(1); raise CX.UsageLimit(MSG)
+            rep = {}
+            self.assertEqual(CX.review([leg(f"P{i}") for i in range(4)], NOW, rep, post=limited), 0)
+            self.assertEqual(len(calls), 1)                              # stopped after the first refusal
+            self.assertEqual(rep["context"]["paused"], "2026-12-01T00:00Z")
+            self.assertTrue(any("paused until" in e for e in rep["errors"]))
+            self.assertEqual(CX.ledger_load()[CX.PAUSE_KEY], "2026-12-01T00:00Z")
+            rep2 = {}
+            self.assertEqual(CX.review([leg(f"Q{i}") for i in range(4)], NOW + timedelta(hours=1), rep2, post=limited), 0)
+            self.assertEqual(len(calls), 2)                              # one probe a build while paused
+            self.assertEqual(rep2["context"]["paused"], "2026-12-01T00:00Z")
+            ok = lambda body: (calls.append(1), reply({"verdict": "clear", "reason": "ok", "sources": SRC}))[1]
+            later = datetime(2026, 12, 1, 9, 0, tzinfo=timezone.utc)
+            rep3 = {}
+            self.assertEqual(CX.review([leg("R", when=later + timedelta(hours=3))], later, rep3, post=ok), 1)
+            self.assertIsNone(rep3["context"]["paused"])
+            self.assertNotIn(CX.PAUSE_KEY, CX.ledger_load())
+
+    def test_ledger_keeps_fourteen_days_and_the_pause(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(CX, "ARCHIVE", d):
+            led = {f"2026-10-{i:02d}": 1 for i in range(1, 21)}; led[CX.PAUSE_KEY] = "2026-12-01T00:00Z"
+            CX.ledger_save(led)
+            got = CX.ledger_load()
+            self.assertEqual(len([k for k in got if k[:1].isdigit()]), 14)
+            self.assertEqual(got[CX.PAUSE_KEY], "2026-12-01T00:00Z")
+
+    def test_probe_resumes_when_the_limit_is_raised(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(CX, "ARCHIVE", d):
+            CX.ledger_save({CX.PAUSE_KEY: "2026-12-01T00:00Z"})
+            ok = lambda body: reply({"verdict": "clear", "reason": "ok", "sources": SRC})
+            rep = {}
+            self.assertEqual(CX.review([leg(f"P{i}") for i in range(3)], NOW, rep, post=ok), 3)
+            self.assertIsNone(rep["context"]["paused"])
+            self.assertNotIn(CX.PAUSE_KEY, CX.ledger_load())
