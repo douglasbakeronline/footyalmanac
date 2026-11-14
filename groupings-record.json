@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T14:33:30Z",
+ "graded": "2026-11-14T16:50:09Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -33,7 +33,18 @@
    "rate": 0.561,
    "quoted": 0.71,
    "z": -2.13,
-   "tripwire": false
+   "tripwire": false,
+   "floor": 0.85,
+   "atFloor": {
+    "legs": 0,
+    "landed": 0,
+    "expected": 0.0,
+    "rate": null,
+    "quoted": null,
+    "z": null,
+    "tripwire": false
+   },
+   "tripwireAll": false
   },
   "nba": {
    "legs": 34,
