@@ -42,6 +42,14 @@ PARAMS = os.path.join(HERE, "sports.json")
 DATA_JS = os.path.join(HERE, "sports-data.js")
 RECORD = os.path.join(HERE, "sports-record.json")
 RECORD_JS = os.path.join(HERE, "sports-record.js")
+# 14 Nov 2026 (Douglas: "are we storing every result against our prediction
+# so we can learn from it?"): every graded and void pick in full, as
+# record-graded.json is for football. sports-record.json keeps 14 days of
+# game rows for the page, so a pick older than that could not be looked at
+# one by one (October's rugby, NFL and college football list picks). Merged,
+# never trimmed: a row stays even if its history file later loses the game.
+GRADED = os.path.join(HERE, "sports-graded.json")
+GRADED_DROP = ("formH", "formA", "recordH", "recordA", "h2h", "eloH", "eloA", "gamesH", "gamesA", "hfa")
 
 ESPN_HOSTS = ["https://site.api.espn.com", "https://site.web.api.espn.com"]
 ESPN_HEADERS = {
@@ -832,9 +840,37 @@ def score():
     json.dump(out, open(RECORD, "w"), separators=(",", ":"))
     with open(RECORD_JS, "w") as f:
         f.write("window.__SPORTS_RECORD__=" + json.dumps(out, separators=(",", ":")) + ";")
+    write_graded(graded, voids, out["generated"])
     o = out["overall"]
     print(f"sports: {o['n'] if o else 0} graded, {void} void ({void - unplayed} tied, "
           f"{unplayed} never played)", file=sys.stderr)
+
+
+def graded_row(r):
+    """A graded or void pick as kept in GRADED: the pick, its price and its
+    result, without the form and rating detail the page shows."""
+    return {k: v for k, v in r.items() if k not in GRADED_DROP}
+
+
+def merge_graded(old, graded, voids):
+    """Every row in `old` kept, each id this run graded replaced by the new
+    grading (a late correction to a score wins). Sorted by start then id."""
+    rows = {str(r.get("id")): r for r in old or [] if r.get("id") is not None}
+    for r in list(graded) + list(voids):
+        if r.get("id") is None: continue
+        rows[str(r["id"])] = graded_row(r)
+    return sorted(rows.values(), key=lambda r: (r.get("when") or "", str(r.get("id"))))
+
+
+def write_graded(graded, voids, generated, path=GRADED):
+    try:
+        with open(path) as f: old = json.load(f).get("graded") or []
+    except Exception:
+        old = []
+    rows = merge_graded(old, graded, voids)
+    with open(path, "w") as f:
+        json.dump({"generated": generated, "graded": rows}, f, separators=(",", ":"), ensure_ascii=False)
+    return rows
 
 
 def history(workers=6):

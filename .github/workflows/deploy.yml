@@ -290,6 +290,14 @@ jobs:
               print(f"today's groupings record: {new_n} groups")
           PY
 
+      # The results ledger (ledger.py, 14 Nov 2026): every prediction of every
+      # sport with its result and its pre-start price, merged and never
+      # trimmed, and the ungraded report (a ::warning:: on Monday's first
+      # build). After groupings.py, whose board prices it keeps. Allowed to
+      # fail: nothing on the page reads it.
+      - name: Write the results ledger
+        run: python3 ledger.py || echo "::warning::ledger failed; keeping the last one"
+
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
       - name: Normalise the App key
@@ -353,6 +361,8 @@ jobs:
           cp -r history-tennis /tmp/archive/ 2>/dev/null || true
           cp -r history-sports predictions-sports /tmp/archive/ 2>/dev/null || true
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
+          # every graded pick of the other sports (sports.py) and the results ledger (ledger.py)
+          cp sports-graded.json results-ledger.json.gz /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -380,6 +390,7 @@ jobs:
             cp -r /tmp/archive/history-sports/. history-sports/ 2>/dev/null || true
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
             cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
+            cp /tmp/archive/sports-graded.json /tmp/archive/results-ledger.json.gz . 2>/dev/null || true
             cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
             mkdir -p groupings-archive
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
@@ -387,6 +398,7 @@ jobs:
             git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
+                       $(ls sports-graded.json results-ledger.json.gz 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"

@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-7: every prediction kept with its result and price (tag pending)
+
+**What changed:** `sports.py` writes `sports-graded.json`, every graded and void pick of the other sports, merged and never trimmed, as `record-graded.json` is for football. New `ledger.py` writes `results-ledger.json.gz`: one row a prediction across every sport, with its result and its pre-start price (the football archive's market block, the pool's first and last real price with William Hill's, and each build's board prices, so a game priced on any build keeps its price after the start). It carries a summary (landed, quoted, and the flat return at the recorded, best and Hill price, by sport, list / reserve / board and band), price coverage by sport, and the ungraded report: picks three or more days past their start with no result, by competition, printed every build and raised as a `::warning::` on the first build of each UK Monday. deploy.yml runs it after `groupings.py` and commits both files with the archive.
+
+**Why:** Douglas, 14 Nov 2026: "are we storing every result against our prediction so we can learn from it?" `sports-record.json` kept 14 days of game rows, so October's rugby, NFL and college football list picks could not be read one by one; about 650 predictions (465 older than two weeks) had fallen out of the record unseen; and no file held a pick's result beside its price, so a band's hit rate could not be read as a return.
+
+**Evidence (first read, 14 Nov):** 15,983 predictions since 20 Aug; 186 ungraded 3-14 days past the start (1 a Daily List pick), 466 past 14 days (Czech First League, LaLiga, Süper Lig, Saudi league and wider leagues the most). Daily List picks with a price: 75-85% 65 priced, landed 86% at an average 1.19, +2.2%; 85%+ 145 priced (124 college basketball), landed 92% at 1.06 (break-even 94%), -2.2%. The 882 football rows from before publish times were recorded (`legacy-unverified`) stay out, by the same rule the record grades by.
+
+**Tested:** `tests/test_ledger.py` (latest pre-start copy, late copies ignored, moved fixture once, rematch and series apart, results, prices by side and before the start, merge never loses a result, the Monday warning, `merge_graded`); full suite (939) and `nametest.py` pass; ledger.py run on the repo's archives as above.
+
+**Files:** `ledger.py`, `sports.py`, `.github/workflows/deploy.yml`, `tests/test_ledger.py`, `claude/results-ledger-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, any grading rule, any record file's contents, the page.
+
+**Roll back:** `git revert` the merge commit; the two new files can stay or be deleted.
+
 ## 2026-11-14-6: the build says why a football leg stayed unpriced (tag pending)
 
 **What changed:** `groupings.price_football` counts each football leg it could not price by reason and competition, and the build log prints one line for it ("football unpriced: noOdds 60 (...); noFixture 40 (...)"): `noFixture` (API-Football lists no fixture under those names that day), `kickoff` (both names found, kick-offs 90+ minutes apart: a moved game), `noOdds` (fixture found, no 1X2 price for the side), `capped` (a mid-priced leg over `FB_CALLS_MULT`), `error`. Also in `groupings.json` under the price report (`football.miss`, `football.missComps`).
