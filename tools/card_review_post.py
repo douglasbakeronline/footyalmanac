@@ -130,6 +130,39 @@ def edge_section(since="2026-11-11"):
                   "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
 
 
+def markets_section(rec):
+    """14 Nov 2026: the football markets beyond the match winner
+    (markets.py, markets-record.json): landed against the model, the return
+    at the best UK price on live priced picks, and each market's gate. A
+    pass is said in bold; nothing here changes the page."""
+    if not rec or not rec.get("markets"):
+        return []
+    lv, rp = rec.get("live") or {}, rec.get("replay") or {}
+    g = rec.get("gate") or {}
+    out = [f"## Football markets ({lv.get('fixtures', 0)} fixtures priced and graded"
+           + (f" from {lv['from']}" if lv.get("from") else "") + f"; {rp.get('fixtures', 0)} replayed without prices)", "",
+           "| market | landed v model (all) | priced picks | landed v bookies | average price | best price | William Hill | value rule | every pick |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    pc = lambda x: f"{x * 100:+.1f}%" if x is not None else ""
+    passed = []
+    for mk, m in rec["markets"].items():
+        a, l, gt = m.get("all") or {}, m.get("live") or {}, m.get("gate") or {}
+        if not a.get("n"): continue
+        def verdict(x):
+            if not x or not x.get("n"): return "no picks yet"
+            if x["verdict"] == "wait": return f"{x['n']} of {x['need']}" + (f", {pc(x.get('retBest'))}" if x.get("retBest") is not None else "")
+            return f"{'**passes**' if x['verdict'] == 'pass' else 'fails'}: {x['n']} picks, {pc(x.get('retBest'))}, p(loss) {x.get('pLoss')}"
+        if (gt.get("value") or {}).get("verdict") == "pass": passed.append(m["name"])
+        out.append(f"| {m['name']} | {a['rate'] * 100:.1f}% v {a['quoted'] * 100:.1f}% (n {a['n']}, z {a.get('z', 0):+.1f}) | {l.get('priced', 0)} | "
+                   + (f"{l['fairRate'] * 100:.0f}% v {l['fair'] * 100:.0f}%" if l.get("fairN") else "") + f" | {pc(l.get('ret'))} | {pc(l.get('retBest'))} | "
+                   + (f"{pc(l.get('retHill'))} (n {l['atHill']})" if l.get("atHill") else "") + f" | {verdict(gt.get('value'))} | {verdict(gt.get('all'))} |")
+    if passed:
+        out.append("**Passed the value gate: " + ", ".join(passed) + ". Ready to be offered on the Bets tab (a release, Douglas's call).**")
+    return out + [f"Value rule: the model {int((g.get('edge') or 0.05) * 100)}+ points above the bookmakers' fair chance. A rule passes at "
+                  f"{g.get('n', 150)}+ settled priced picks that landed above the bookmakers, a positive return at the best UK price and "
+                  f"p(loss) {g.get('pLoss', 0.1)} or less (markets.py, claude/football-markets-2026-11-14.md).", ""]
+
+
 def list_book_section(r):
     """10 Nov 2026: the Daily List at the book Douglas places with
     (groupings.list_at_book): settled picks it priced, landed and the return
@@ -489,6 +522,7 @@ def main():
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()
+    lines += markets_section(load("markets-record.json"))
     lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)

@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-9: ten football markets tracked, priced and graded (tag pending)
+
+**What changed:** new `markets.py` gives every football fixture the model's number for ten markets beyond the match winner (both teams to score, over / under 1.5, 2.5 and 3.5, the pick to win and both score, to win and over 2.5, to win to nil, double chance, draw no bet, the pick's team to score), prices each from API-Football for today and tomorrow (average, best UK book, William Hill, the bookmakers' fair chance), archives them to `predictions-markets/` frozen at kick-off, and grades them into `markets-record.json` with a pre-registered gate per market. The nightly Card review prints the table and says a pass in bold. deploy.yml runs it after the ledger and commits the archive and record; the record is also published on the site. Agents' protected paths now include the four bot-written files added today.
+
+**Why:** Douglas, 14 Nov 2026: "For football fixtures I want to start looking at winner and btts, as well as just btts, goals over 2.5, and any other things you suggest. Let's go hard on setting this up to track on football", and the reviewing must be automated.
+
+**Evidence:** the price feed was probed live first (`tools/markets_probe.py` on `odds-probe-run`): every market is priced, an all-bets sweep costs the same pages as the match-winner sweep (57 on 14 Nov), William Hill prices six of the ten. Calibration on 11,112 graded fixtures replayed from the archive: double chance 75.6% v 75.1%, draw no bet 67.6% v 66.1%, win to nil 26.9% v 27.0%, win and both score 24.1% v 21.5% (on quote from 25% up); the goals markets run low (over / under 2.5 57.8% v 54.3%, over / under 3.5 67.0% v 71.8%). No price history exists for these markets, so no return is claimed. `claude/football-markets-2026-11-14.md`.
+
+**Tested:** `tests/test_markets.py` (grid agrees with the published chances, win and both score plus win to nil equals win, every market settled, API-Football's labels, margin removal, the archive frozen at kick-off, the record, the gate, the review section); the fetch path run against a stubbed feed; full suite and `nametest.py` pass. Not run against the real feed from the sandbox (no key): CI is the check, see the "markets:" lines in the build log.
+
+**Files:** `markets.py`, `tools/card_review_post.py`, `.github/workflows/deploy.yml`, `agents/pick_task.py`, `agents/open_pr.sh`, `tests/test_markets.py`, `claude/football-markets-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, the Daily List, the Card, any existing record, the page. Prices feed nothing. About 400 API-Football calls a day, standing down under 2,000 left.
+
+**Roll back:** `git revert` the merge commit; the archive and record can stay.
+
 ## 2026-11-14-8: every release tagged automatically (tag pending)
 
 **What changed:** new `release-tags.yml` runs on every push to `main` and tags each `RELEASES.md` entry headed `## YYYY-MM-DD[-N]: title` that has no tag, as `release-<id>`, annotated with its title, on the first-parent commit that added the entry (`tools/release_tags.py`). Existing tags are read from the remote and never moved; headers without an id of that shape, or with an id used twice, are skipped and listed.

@@ -298,6 +298,16 @@ jobs:
       - name: Write the results ledger
         run: python3 ledger.py || echo "::warning::ledger failed; keeping the last one"
 
+      # Football markets beyond the match winner (markets.py, 14 Nov 2026):
+      # both teams to score, goals lines, win and both score, win to nil,
+      # double chance, draw no bet. The model's number and the bookmakers'
+      # price for every fixture today and tomorrow, archived to
+      # predictions-markets/ and graded into markets-record.json. One
+      # API-Football sweep a date about every five hours; it stands down when
+      # the day's allowance runs low. Allowed to fail: the page does not read it.
+      - name: Price and grade the football markets
+        run: python3 markets.py || echo "::warning::markets failed; keeping the last record"
+
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
       - name: Normalise the App key
@@ -363,6 +373,9 @@ jobs:
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
           # every graded pick of the other sports (sports.py) and the results ledger (ledger.py)
           cp sports-graded.json results-ledger.json.gz /tmp/archive/ 2>/dev/null || true
+          # the football markets archive and its record (markets.py)
+          cp -r predictions-markets /tmp/archive/ 2>/dev/null || true
+          cp markets-record.json /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -391,6 +404,11 @@ jobs:
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
             cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
             cp /tmp/archive/sports-graded.json /tmp/archive/results-ledger.json.gz . 2>/dev/null || true
+            if [ -d /tmp/archive/predictions-markets ]; then
+              mkdir -p predictions-markets
+              cp -r /tmp/archive/predictions-markets/. predictions-markets/
+            fi
+            cp /tmp/archive/markets-record.json . 2>/dev/null || true
             cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
             mkdir -p groupings-archive
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
@@ -398,7 +416,7 @@ jobs:
             git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
-                       $(ls sports-graded.json results-ledger.json.gz 2>/dev/null) \
+                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
@@ -453,6 +471,7 @@ jobs:
           cp data.json _site/data.json         # handy if you want the raw numbers
           cp README.md _site/README.md
           cp record.json _site/record.json
+          cp markets-record.json _site/markets-record.json 2>/dev/null || true   # the football markets record (markets.py)
           cp analysis.html _site/analysis.html   # Almanac Analysis, reads record.json (6 Oct 2026)
           # The touch icons and the manifest are fetched by the device rather
           # than parsed out of the page, so they need to exist at real URLs or
