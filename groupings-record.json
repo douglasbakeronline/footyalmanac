@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T09:03:58Z",
+ "graded": "2026-11-14T12:14:24Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -289,12 +289,12 @@
  },
  "cardContext": {
   "clear": {
-   "legs": 5,
-   "landed": 3,
-   "rate": 0.6,
-   "model": 0.7494,
-   "fair": 0.6527,
-   "zModel": -0.79
+   "legs": 6,
+   "landed": 4,
+   "rate": 0.6667,
+   "model": 0.7281,
+   "fair": 0.6443,
+   "zModel": -0.35
   },
   "caution": {
    "legs": 11,
