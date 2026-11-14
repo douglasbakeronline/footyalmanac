@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-14T02:29:11Z",
+ "graded": "2026-11-14T04:49:34Z",
  "overall": {
   "groups": 129,
   "settled": 129,
@@ -67,18 +67,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 18,
-   "won": 18,
+   "n": 19,
+   "won": 19,
    "rate": 1.0,
-   "quoted": 0.8812,
-   "returned": 19.53,
-   "ret": 0.085
+   "quoted": 0.8804,
+   "returned": 20.59,
+   "ret": 0.0837
   },
   "notAtBook": {
-   "n": 42,
-   "won": 41,
-   "rate": 0.9762,
-   "quoted": 0.9159
+   "n": 51,
+   "won": 50,
+   "rate": 0.9804,
+   "quoted": 0.9156
   },
   "unchecked": {
    "n": 18,
@@ -109,12 +109,12 @@
    },
    "nba": {
     "atBook": {
-     "n": 2,
-     "won": 2,
+     "n": 3,
+     "won": 3,
      "rate": 1.0,
-     "quoted": 0.8346,
-     "returned": 2.14,
-     "ret": 0.07
+     "quoted": 0.8451,
+     "returned": 3.2,
+     "ret": 0.0667
     },
     "notAtBook": {
      "n": 0,
@@ -137,10 +137,10 @@
      "ret": 0.08
     },
     "notAtBook": {
-     "n": 42,
-     "won": 41,
-     "rate": 0.9762,
-     "quoted": 0.9159
+     "n": 51,
+     "won": 50,
+     "rate": 0.9804,
+     "quoted": 0.9156
     },
     "unchecked": {
      "n": 13,
@@ -286,20 +286,20 @@
  },
  "cardContext": {
   "clear": {
-   "legs": 2,
-   "landed": 1,
+   "legs": 4,
+   "landed": 2,
    "rate": 0.5,
-   "model": 0.6426,
-   "fair": 0.5725,
-   "zModel": -0.42
+   "model": 0.7358,
+   "fair": 0.6527,
+   "zModel": -1.1
   },
   "caution": {
-   "legs": 10,
-   "landed": 8,
-   "rate": 0.8,
-   "model": 0.7904,
-   "fair": 0.7247,
-   "zModel": 0.08
+   "legs": 11,
+   "landed": 9,
+   "rate": 0.8182,
+   "model": 0.8023,
+   "fair": 0.748,
+   "zModel": 0.14
   }
  },
  "byBand": {
