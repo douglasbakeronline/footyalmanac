@@ -2798,8 +2798,29 @@ def card_legs_by_sport(days):
     CARD_FLOOR_Z standard errors or more on CARD_FLOOR_N+ legs; the tally
     carries that test as `tripwire` so the page and the build sessions read
     it from the record rather than recount it. A tally of the scoreboard,
-    nothing fitted (Rule 1)."""
-    by = {}
+    nothing fitted (Rule 1).
+
+    14 Nov 2026: a sport with its own floor (CARD_SPORT_MIN, tennis at 85%
+    since CARD_RULE 10) is judged on the legs today's floor would admit
+    (`atFloor`: the leg's chance at the floor or more), because every one of
+    the 41 tennis legs in the record was priced under 85% (30 of them under
+    rule 1, before even the 75% floor) and none has reached the Card since.
+    The top-level figures stay every leg, shown as before; `tripwire` reads
+    `atFloor` where a floor exists (`tripwireAll` keeps the every-leg test).
+    claude/card-tripwire-at-floor-2026-11-14.md."""
+    def tally():
+        return {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0}
+    def add(t, l):
+        t["legs"] += 1; t["landed"] += l["status"] == "won"
+        t["expected"] += l["p"]; t["var"] += l["p"] * (1 - l["p"])
+    def read(t):
+        z = round((t["landed"] - t["expected"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None
+        out = {"legs": t["legs"], "landed": t["landed"], "expected": round(t["expected"], 2),
+               "rate": round(t["landed"] / t["legs"], 4) if t["legs"] else None,
+               "quoted": round(t["expected"] / t["legs"], 4) if t["legs"] else None, "z": z}
+        out["tripwire"] = bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)
+        return out
+    by, at = {}, {}
     for d in days:
         seen = set()
         for g in d["groups"]:
@@ -2808,15 +2829,18 @@ def card_legs_by_sport(days):
                 k = (l["event"], l["pick"])
                 if l["status"] not in ("won", "lost") or k in seen: continue
                 seen.add(k)
-                t = by.setdefault(l["sport"], {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0})
-                t["legs"] += 1; t["landed"] += l["status"] == "won"
-                t["expected"] += l["p"]; t["var"] += l["p"] * (1 - l["p"])
+                add(by.setdefault(l["sport"], tally()), l)
+                floor = CARD_SPORT_MIN.get(l["sport"])
+                if floor is not None and l["p"] >= floor:
+                    add(at.setdefault(l["sport"], tally()), l)
     out = {}
     for sp, t in sorted(by.items(), key=lambda kv: (-kv[1]["legs"], kv[0])):
-        z = round((t["landed"] - t["expected"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None
-        out[sp] = {"legs": t["legs"], "landed": t["landed"], "expected": round(t["expected"], 2),
-                   "rate": round(t["landed"] / t["legs"], 4), "quoted": round(t["expected"] / t["legs"], 4), "z": z,
-                   "tripwire": bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)}
+        out[sp] = read(t)
+        floor = CARD_SPORT_MIN.get(sp)
+        if floor is not None:
+            a = read(at.get(sp) or tally())
+            out[sp].update({"floor": floor, "atFloor": a, "tripwireAll": out[sp]["tripwire"],
+                            "tripwire": a["tripwire"]})
     return out
 
 def card_picks(L, date, now):

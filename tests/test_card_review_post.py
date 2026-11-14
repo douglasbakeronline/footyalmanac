@@ -30,6 +30,14 @@ class LegsBySport(unittest.TestCase):
         self.assertIn("**Tripwire fired for tennis", body)
         self.assertIn("`CARD_SPORTS_OFF`", body)
 
+    def test_floor_line_for_a_sport_with_its_own_floor(self):
+        t = {"legs": 41, "landed": 23, "rate": 0.561, "quoted": 0.71, "z": -2.13, "tripwire": False, "tripwireAll": False,
+             "floor": 0.85, "atFloor": {"legs": 0, "landed": 0, "rate": None, "quoted": None, "z": None, "tripwire": False}}
+        body = post_with({"cardLegsBySport": {"tennis": t}})
+        self.assertIn("tennis at today's 85% floor (the legs the sport-off test counts): none yet", body)
+        t["atFloor"] = {"legs": 4, "landed": 3, "rate": 0.75, "quoted": 0.88, "z": -0.8, "tripwire": False}
+        self.assertIn("3 of 4 landed (75%) v 88% quoted, z -0.8", post_with({"cardLegsBySport": {"tennis": t}}))
+
     def test_no_section_without_the_tally(self):
         body = post_with({})
         self.assertNotIn("Legs by sport", body)

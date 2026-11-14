@@ -130,6 +130,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/context-paused-2026-11-14.md` | The context check paused by the API key's monthly limit on 14 Nov (back 1 Dec), the self-pause and where it shows, the office sprints failing the same way. Read before touching `context_review.py`'s calls or `DAILY_READS`. |
 | `claude/briefing-lateness-2026-11-13.md` | The briefing pushes against their slots (12 Nov lunch 2h18 late, night 1h40), the send-time log in `briefed.json`, the nightly review's table, the backup crons left for the owner. Read before touching `notify.py` slots or deploy.yml's schedule. |
 | `claude/pool-order-of-play-2026-11-14.md` | The pool's `timeEst` kept as first written, so the replay and funnel refused tennis legs timed later; `timeSet` / `whenSet` and `pool_time_est` (forward only); the Card's tennis legs by band on the pool (the shortfall sits under 70%, 85%+ four legs). Read before reading the funnel's tennis "no-time" column. |
+| `claude/card-tripwire-at-floor-2026-11-14.md` | The sport-off tripwire reads the legs today's floor admits (`atFloor`): all 41 tennis Card legs to 14 Nov were under 85%, 30 from rule 1. Read before acting on the tennis tripwire. |
 | `claude/opposition-price-2026-11-06.md` | The opposition's price as a Card condition: the replay by opposition price band, why football only, the variants for the 30 Nov review. Read before touching `CARD_OPP_MIN` or the price fields on a leg. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
@@ -443,7 +444,10 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   `quoted`, `z`, `tripwire`), shown on the Bets scoreboard and printed in the
   nightly Card review issue, which says in bold when a tripwire has fired
   (`claude/card-legs-by-sport-2026-11-09.md`; full rule only: tennis 22 of 40
-  at 9 Nov).
+  at 9 Nov). Since 14 Nov 2026 a sport with its own floor (`CARD_SPORT_MIN`,
+  tennis 85%) is judged on the legs that floor admits (`atFloor`; every leg
+  stays shown, `tripwireAll`): all 41 tennis legs to 14 Nov were under 85%,
+  none since (`claude/card-tripwire-at-floor-2026-11-14.md`).
 - **The page's empty-day filler (the wider rule) is on watch.** Replayed for
   the first time on 10 Nov (`claude/card-fillers-2026-11-10.md`): 2 of 12
   groups won against 4.14 expected on the pool at first real prices (-54%,

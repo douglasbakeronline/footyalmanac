@@ -5022,12 +5022,15 @@ function tbRecord(){
     : `<p class="tb-verdict">No settled groups yet. A group is won only when every pick wins; a draw is a loss.</p>`;
   const sp = Object.entries(R.cardLegsBySport || {});
   const sportRows = sp.map(([s_, t]) => {
-    const st = t.tripwire ? ["bad", "Coming off"] : t.z != null && t.z <= -fz ? ["bad", `Watch: ${Math.max(fn - t.legs, 0)} more legs decide`]
+    // 14 Nov 2026: a sport with its own floor (tennis, 85%) is judged on the legs that floor admits (atFloor)
+    const u = t.atFloor || t, at = t.atFloor ? ` at ${pct(t.floor)}%+` : "";
+    const st = t.tripwire ? ["bad", "Coming off"] : u.z != null && u.z <= -fz ? ["bad", `Watch: ${Math.max(fn - u.legs, 0)} more legs${at} decide`]
+      : t.atFloor && t.z != null && t.z < 0 ? ["warn", `Under; judged at ${pct(t.floor)}%+ (${u.legs} so far)`]
       : t.z != null && t.z < 0 ? ["warn", "Slightly under"] : ["ok", "On or above"];
     return `<tr><th>${ogEsc(OG_SPORT[s_] || s_)}</th><td>${t.landed} / ${t.legs}</td><td>${pct(t.rate)}%</td><td>${pct(t.quoted)}%</td><td><span class="tb-st ${st[0]}">${st[1]}</span></td></tr>`; }).join("");
   const sportTbl = sp.length ? `<table class="tb-tbl"><caption>Picks by sport, every group</caption>
       <thead><tr><th>Sport</th><th>Landed</th><th>Rate</th><th>Expected</th><th></th></tr></thead><tbody>${sportRows}</tbody></table>
-    <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs.</p>` : "";
+    <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs${sp.some(([, t]) => t.atFloor) ? "; a sport with its own floor counts only the picks that floor would take today" : ""}.</p>` : "";
   const wl = x => x && x.settled ? `${x.won} of ${x.settled}` : "–";
   const more = [];
   Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}`, wl(t), ret(t)]));
