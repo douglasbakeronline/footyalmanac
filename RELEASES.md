@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-5: the tennis tripwire judges the picks today's 85% floor takes (tag pending)
+
+**What changed:** the Card's sport-off test (`groupings.card_legs_by_sport`) judges a sport with its own floor (tennis, 85% since `CARD_RULE` 10) on the legs that floor admits (`atFloor`); the every-leg tally stays and is shown as before, with `tripwireAll` beside it. The Bets scoreboard's tennis row reads "Under; judged at 85%+ (0 so far)" instead of "Watch: 9 more legs decide", and the nightly Card review adds the floor's own line.
+
+**Why:** all 41 tennis Card legs in the record were priced under 85% (30 under rule 1, before any tennis floor); none has reached the Card since the floor went to 85%. Nine more tennis legs landing as quoted would have taken tennis off the Card on evidence from picks the rule no longer makes.
+
+**Evidence:** `groupings-record.json` at 14 Nov: tennis 23 of 41 (56% v 71%, z -2.13), 0 legs at 85%+; on the pool 85%+ tennis four legs, all won (`claude/pool-order-of-play-2026-11-14.md`). `claude/card-tripwire-at-floor-2026-11-14.md`.
+
+**Tested:** `tests/test_groupings_record.py` `test_floor_sport_judged_on_legs_the_floor_admits` (under-floor legs fire the every-leg test, not the tripwire; sports without a floor unchanged), the floor test moved to 86% legs; `tests/test_card_review_post.py` `test_floor_line_for_a_sport_with_its_own_floor`; full suite and `nametest.py` pass; the scoreboard rendered at 1280 and 400 wide.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, both test files, `claude/card-tripwire-at-floor-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, the live Card, the model, any record row.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-14-4: the pool remembers when a tennis order of play arrived (tag pending)
 
 **What changed:** the pool archive now stamps `timeSet` and `whenSet` once on a tennis row first written on an estimated start (`timeEst`), from the first build before the start that has the real time. The Card replay, the funnel and the price-gap count read `groupings.pool_time_est`, so such a leg is no longer refused as "no order of play" for ever.

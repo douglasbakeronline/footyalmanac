@@ -472,6 +472,15 @@ def main():
         lines += ["## Legs by sport (the Card's full rule, the record)", "", "| sport | legs | landed | quoted | z | tripwire |", "|---|---|---|---|---|---|"]
         for sp, t in by.items():
             lines.append(f"| {sp} | {t['legs']} | {t['landed']} ({t['rate'] * 100:.0f}%) | {t['quoted'] * 100:.0f}% | {t['z'] if t['z'] is not None else 'n/a'} | {'**fired**' if t['tripwire'] else 'no'} |")
+        # 14 Nov 2026: a sport with its own floor (CARD_SPORT_MIN) is judged on
+        # the legs today's floor admits (`atFloor`), the row above is every leg.
+        for sp, t in by.items():
+            a = t.get("atFloor")
+            if a is None: continue
+            got = (f"{a['landed']} of {a['legs']} landed ({a['rate'] * 100:.0f}%) v {a['quoted'] * 100:.0f}% quoted, z {a['z'] if a['z'] is not None else 'n/a'}"
+                   if a["legs"] else "none yet")
+            lines.append(f"- {sp} at today's {t['floor'] * 100:.0f}% floor (the legs the sport-off test counts): {got}; "
+                         f"every leg {'would fire' if t.get('tripwireAll') else 'would not fire'} on its own.")
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
