@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-14-8: every release tagged automatically (tag pending)
+
+**What changed:** new `release-tags.yml` runs on every push to `main` and tags each `RELEASES.md` entry headed `## YYYY-MM-DD[-N]: title` that has no tag, as `release-<id>`, annotated with its title, on the first-parent commit that added the entry (`tools/release_tags.py`). Existing tags are read from the remote and never moved; headers without an id of that shape, or with an id used twice, are skipped and listed.
+
+**Why:** Douglas, 14 Nov 2026: "I'm not going to add tags myself so can we find another way?" Cloud sessions cannot push tags and the API proxy refuses tag writes; only the office's own merges were being tagged (by footyalmanac-hq), so 31 entries from 11 to 14 Nov had no tag.
+
+**Evidence:** a dry run against `main` at `dca98b0` lists 31 tags to create, `release-2026-11-11-3` to `release-2026-11-14-7`, each on its merge. Twelve entries headed `## 2026-11-1x (tag pending): ...` (no suffix) are skipped: their ids are ambiguous.
+
+**Tested:** `tests/test_release_tags.py` (header parsing, skips, the commit that added an entry, an existing tag left alone); full suite and `nametest.py` pass.
+
+**Files:** `.github/workflows/release-tags.yml`, `tools/release_tags.py`, `tests/test_release_tags.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** the site, the model, any record. Workflow path: owner merge.
+
+**Roll back:** `git revert` the merge commit; tags already made can stay.
+
 ## 2026-11-14-7: every prediction kept with its result and price (tag pending)
 
 **What changed:** `sports.py` writes `sports-graded.json`, every graded and void pick of the other sports, merged and never trimmed, as `record-graded.json` is for football. New `ledger.py` writes `results-ledger.json.gz`: one row a prediction across every sport, with its result and its pre-start price (the football archive's market block, the pool's first and last real price with William Hill's, and each build's board prices, so a game priced on any build keeps its price after the start). It carries a summary (landed, quoted, and the flat return at the recorded, best and Hill price, by sport, list / reserve / board and band), price coverage by sport, and the ungraded report: picks three or more days past their start with no result, by competition, printed every build and raised as a `::warning::` on the first build of each UK Monday. deploy.yml runs it after `groupings.py` and commits both files with the archive.

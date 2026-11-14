@@ -38,7 +38,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | Where | How work lands |
 |---|---|
 | Local session with Douglas (terminal / VS Code) | Straight to `main` via the release process below. Douglas has given standing authorisation to push. |
-| claude.ai/code (cloud) | A branch and a pull request, with the would-be `RELEASES.md` entry (mark the tag "pending"). A push to `main` deploys the live site, so merging stays with Douglas unless he says otherwise in that session. Tested 28 Sep 2026: the cloud session can push branches and commits but **not tags** (GitHub drops the connection), and **cannot reach ESPN**, so its builds are partial. A local session adds the tag after merge. |
+| claude.ai/code (cloud) | A branch and a pull request, with the would-be `RELEASES.md` entry (mark the tag "pending"). A push to `main` deploys the live site, so merging stays with Douglas unless he says otherwise in that session. Tested 28 Sep 2026: the cloud session can push branches and commits but **not tags** (GitHub drops the connection), and **cannot reach ESPN**, so its builds are partial. The tag is added automatically after merge (`release-tags.yml`, 14 Nov 2026). |
 | GitHub agent (`@claude` on an issue or PR, `.github/workflows/claude.yml`) | Same as cloud: branch and pull request, never a direct push to `main`. Only the owner and collaborators can trigger it (public repo). Needs the `ANTHROPIC_API_KEY` secret. |
 
 - **Protect what exists.** Before replacing anything, find out why it is the
@@ -325,6 +325,11 @@ and pushed to `main` with a release note, so it can be rolled back.
    evidence, the files, what was not changed, how to roll back.
 3. Commit, then tag `release-YYYY-MM-DD` (annotated, `-2` for a second the
    same day) and `git push --follow-tags`. The push deploys the site.
+   Since 14 Nov 2026 `release-tags.yml` tags every entry whose header reads
+   `## YYYY-MM-DD[-N]: title` on each push to `main` (`tools/release_tags.py`,
+   on the merge that added it, never moving a tag), so a missed or impossible
+   tag (cloud sessions cannot push tags) is made anyway. Give every entry an id
+   of that shape, unique.
 4. Roll back with `git revert`, never `git reset`: the bot's daily archive
    commits sit between releases. Instructions are at the top of `RELEASES.md`.
 
