@@ -424,3 +424,20 @@ class EstimatedPrices(unittest.TestCase):
         self.assertAlmostEqual(out["estRet"], round(scale.est_price("tennis", 0.6) * scale.est_price("nba", 0.5), 2), places=2)
         by["b"] = dict(by["b"], state="lost")
         self.assertEqual(scale.grade_group(g, by), {"state": "lost", "estRet": 0.0})
+
+
+class FootballFromEveryFixture(unittest.TestCase):
+    """Rule 4 (15 Nov 2026): a group's football legs come from every football candidate, not the list alone."""
+
+    def leg(self, key, sport, tier, chance):
+        return {"key": key, "sport": sport, "tier": tier, "chance": chance, "conf": 0.7,
+                "start": "2026-11-16T15:00:00Z", "pick": key, "price": None}
+
+    def test_football_outside_the_picks_can_join_a_group(self):
+        now = datetime(2026, 11, 16, 9, tzinfo=timezone.utc)
+        picks = [self.leg("a", "tennis", "list", 0.6), self.leg("b", "nba", "reserve", 0.9)]
+        cands = picks + [self.leg("f", "football", "else", 0.7), self.leg("g", "nba", "else", 0.95)]
+        out, groups = S.with_group_legs(picks, cands, now)
+        self.assertEqual(groups[0]["legs"], ["f", "a"])          # football from "else" in; reserve and other "else" not
+        self.assertIn("f", [p["key"] for p in out])
+        self.assertNotIn("g", [p["key"] for p in out])

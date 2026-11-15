@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-17: Scale groups take football from every fixture; Starred rows match the Daily List (tag pending)
+
+**What changed:** a Scale group's football legs now come from every football fixture William Hill offers at 55%+, not the Daily List alone (`RULE` 4), ranked by the model's own chance for each. Starred now draws every bookmark exactly as the Daily List does: the same row, chips and marks, in the list's order, with started picks kept and their results shown. Douglas: "scour all football fixtures ... widen the pool" and "They need to look identical."
+**Evidence:** replayed 1 to 14 Nov: more groups (fourfolds 13 v 10, fivefolds 12 v 7), the same wins (2 and 1), so lower estimated returns (fourfolds -41% v +8%). Starred: first row's markup identical to the list's, checked at desktop and 400px.
+**Files:** `scale.py` (`GROUP_ANY_TIER`, `with_group_legs`, `RULE` 4), `index.html` (`renderStarred`, `listPut`, `listByStrength`, `starIdOf`; Scale copy), `tests/test_scale.py`, `claude/scale-pool-and-starred-2026-11-15.md`, CLAUDE.md.
+**Not changed:** any model, the Daily List, other sports' group legs, saved bookmarks.
+**Roll back:** `git revert`; or `GROUP_ANY_TIER = ()` with a `RULE` bump for the Scale half alone.
+
 ## 2026-11-15-16: Scale shows estimated prices where no feed prices the bet (tag pending)
 
 **What changed:** on the Scale tab a pick with no real price now shows an estimate ("≈ 2.13", italic, marked "estimate"), worked as the fair price of its chance less a typical bookmaker margin (football's result-and-goals bets 15%, handicaps and set betting 8%). Groups without a real price on every leg read "Pays about 4.83", and the scoreboard and group lists show the estimated return beside the real one, tallied apart (`estN`, `estRet`). Douglas: "If you're missing data on prices, just give an estimate."
