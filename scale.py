@@ -439,6 +439,35 @@ def grade_group(g, by_key):
     return out
 
 
+def priced_keys(here=HERE):
+    """The ledger's picks a bookmaker feed priced before the start (ledger.py:
+    the football archive's market, the pool, the board prices), as
+    {(sport, id)} and {(sport, home, away, date)}, with the book where it was
+    William Hill. The sign that a game could be bet on (15 Nov 2026, Douglas:
+    "make sure all games were a game / league available to bet on")."""
+    rows = (_load(os.path.join(here, "results-ledger.json.gz"), {}) or {}).get("rows") or []
+    out = {}
+    for r in rows:
+        src = r.get("last") or r.get("first") or {}
+        if not src.get("o"): continue
+        book = BOOK if (r.get("last") or {}).get("h") or (r.get("first") or {}).get("h") else "a bookmaker"
+        if r.get("id"):
+            out[(r["sport"], str(r["id"]))] = book
+        out[(r["sport"], str(r.get("home", "")).lower(), str(r.get("away", "")).lower(), str(r.get("start", ""))[:10])] = book
+    return out
+
+
+def priced_by(p, keys):
+    """The book that priced a Scale pick before its start, or None. Football
+    carries its own answer (the win-and-both-score price, or the proxy for
+    a replayed day); the other sports are looked up in the ledger."""
+    if p.get("sport") == "football":
+        return BOOK if p.get("price") else (BOOK if keys.get(("football", p["home"].lower(), p["away"].lower(), p["start"][:10])) else None)
+    if p.get("id") and (p["sport"], str(p["id"])) in keys:
+        return keys[(p["sport"], str(p["id"]))]
+    return keys.get((p["sport"], p["home"].lower(), p["away"].lower(), p["start"][:10]))
+
+
 def both_scored(p):
     """True / False for a settled football pick (from its score), else None."""
     if p.get("sport") != "football" or not p.get("detail"):
@@ -550,6 +579,7 @@ def build(now=None, here=HERE):
         os.replace(path + ".tmp", path)
 
     res = results(here)
+    pkeys = priced_keys(here)
     files = sorted(fn for fn in os.listdir(adir) if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.json", fn))
     by_sport, by_tier, before, before_tier, kinds, before_kinds, graded_groups, days_out, glance = {}, {}, {}, {}, {}, {}, [], [], []
     for fn in files:
@@ -594,7 +624,8 @@ def build(now=None, here=HERE):
                                      "home": p["home"], "away": p["away"], "side": p.get("side"), "comp": p.get("comp"),
                                      "conf": p.get("conf"), "chance": p.get("chance"),
                                      "state": p["state"] or ("started" if (parse_utc(p["start"]) or now) <= now else "up"),
-                                     "detail": p.get("detail"), "btts": both_scored(p)} for p in entry["picks"]]})
+                                     "detail": p.get("detail"), "btts": both_scored(p),
+                                     "priced": priced_by(p, pkeys)} for p in entry["picks"]]})
     cov = coverage(market_rows, now)
     order = [str(k[0]) for k in KINDS]
     out = {"generated": stamp, "rule": RULE, "book": BOOK, "today": today.isoformat(), "from": LIVE_FROM,

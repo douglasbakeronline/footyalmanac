@@ -5,6 +5,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-5: The week behind shows only games a bookmaker priced; the Analysis page brought up to date
+
+**What changed:** Douglas: "make sure all games were a game / league available to bet on", and "update the analysis page with the latest context of the model".
+- Scale at a glance: each past day's table now takes only picks a bookmaker feed priced before the start (`scale.priced_keys` reads the results ledger; football keeps its own win-and-both-score price or the replay's proxy), marks a game William Hill priced with "Hill", and counts the unpriced picks left off in the day line.
+- Analysis page: the prose now describes the model as it stands on 15 Nov 2026: the cup calibration, the lagging-source fill and stale-league flag, the Daily List order and Group A / B, the wider leagues' 75% bar, the ranked-international rule, the full tested-and-rejected list (form by stage, team news, table position, the home-and-away tilt, FIFA lift damping, the goals scale, tennis hot form, home advantage per league on its weekly gate), the market's edge on the archive, the priced record's reading (short favourites hold their value, model-above-market picks land about half the time), the Bets tab in place of the Odds tab with its four tested-apart lines, the college sports' Away / Neutral marks and list status, tennis's list status and surface, and a dated "updated" line. The live tables are unchanged.
+
+**Evidence:** rendered in headless Chromium, no errors, no overflow; one test added; suite and `nametest.py` pass.
+
+**Files:** `scale.py`, `index.html`, `analysis.html`, `tests/test_scale.py`, `RELEASES.md`.
+
+**Not changed:** any rule, model or record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-4: Scale at a glance shows ten a day for the week behind
 
 **What changed:** Douglas: "I want there to be 10 games shown with what the recommendation was of the model, and whether or not that won or lost with the team, and if both teams scored ... in order of strongest ... make sure that it was bettable." The Scale tab's glance now lists each past day (the last seven open, the rest in a fold) as a table of its ten strongest picks: Daily List picks first, then the reserve, then the rest, strongest model number first within each; football only where William Hill prices the bet, as before, so nothing obscure. Each row: sport, the model's pick and opponent, competition, the model's number, Won / Lost / Void / No result with the score, and for football whether both teams scored (for the other sports whether the Scale margin landed). The day line sums it ("7 of 10 won · both scored in 2 of 3 football") and "full list" opens the day. The dot rows stay for today and tomorrow. `scale.py` writes the fields the table needs into the glance (`both_scored` from the score).
