@@ -36,6 +36,24 @@ class TestLiveDays(unittest.TestCase):
         self.assertIn("Days with a group: 0 of 3", out)
         self.assertIn("no day on file", out)
 
+    def test_two_day_groups_and_the_model_card_record(self):
+        # 15 Nov 2026: span groups named; rules 7+ read on their own from the record
+        rec = {"cardByRule": {"6": {"groups": 5, "settled": 5, "won": 3, "expected": 1.97, "unitsStaked": 10, "unitsReturned": 13.28},
+                              "11": {"groups": 2, "settled": 1, "won": 1, "expected": 0.42, "unitsStaked": 2, "unitsReturned": 4.72}}}
+        with tempfile.TemporaryDirectory() as t:
+            day("2026-11-13", [{"name": "Card 2x", "rule": 11, "span": ["2026-11-13", "2026-11-14"]}], t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-15", days=3, record=rec))
+        self.assertIn("Two-day groups (`CARD_SPAN`): 1.", out)
+        self.assertIn("The model's-picks Card (rules 11, from 11 Nov): 2 group(s), 1 settled, 1 won v 0.42 expected, +136.0% at the page's stakes.", out)
+
+    def test_model_card_record_none_settled(self):
+        rec = {"cardByRule": {"11": {"groups": 1, "settled": 0, "won": 0, "expected": 0, "unitsStaked": 0, "unitsReturned": 0}}}
+        out = "\n".join(C.live_days_section("/nonexistent", today_="2026-11-15", days=3, record=rec))
+        self.assertIn("1 group(s), 0 settled, 0 won v 0.00 expected; none settled yet.", out)
+        self.assertNotIn("Two-day", out)
+        out = "\n".join(C.live_days_section("/nonexistent", today_="2026-11-15", days=3, record={}))
+        self.assertNotIn("model's-picks", out)
+
 
 if __name__ == "__main__":
     unittest.main()

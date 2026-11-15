@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15: two-day Card groups counted in the record; the review reads the model's-picks Card on its own (tag pending)
+
+**What changed:** `groupings.grade` now carries a group's `span` (and `basis`) onto its graded row. It dropped them, so `groupings-record.json` `cardSpan` tallied 0 groups with the first two-day group on file (14 Nov: VVV-Venlo, Pistoiese, Philadelphia 76ers, 2.36). The nightly Card review's live section now counts two-day groups in its window and adds one line for the Card as it is built today: the groups under `CARD_RULE` 7 and later (the model's own picks, from 11 Nov) with settled, won v expected and the return at the page's stakes, read from `cardByRule`.
+
+**Why:** the review's live line mixed rules 4 to 11, so whether the model's-picks Card is landing could not be read without opening the record; and the two-day groups (`CARD_SPAN`, 12 Nov) are the owner's call to be reviewed on their own tally, which read zero.
+
+**Evidence:** `grade()` on the current archive: `cardSpan` 1 group (pending) after the fix, 0 before; the Card record unchanged at 37 groups. The live section on today's files: "Days with a group: 9 of 14; groups 13; last group published for 2026-11-14. Rules: 5, 6, 11. Two-day groups (`CARD_SPAN`): 1." and "The model's-picks Card (rules 11, from 11 Nov): 1 group(s), 0 settled ... none settled yet."
+
+**Tested:** `tests/test_groupings_record.py` `Span` (fails on the old code), `tests/test_review_live_days.py` two new cases; full suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_review_post.py`, both tests, this entry.
+
+**Not changed:** any Card rule, the Card record's own tallies, the page.
+
+**Roll back:** `git revert` the merge commit; the next build regrades the record.
+
 ## 2026-11-14-9: ten football markets tracked, priced and graded (tag pending)
 
 **What changed:** new `markets.py` gives every football fixture the model's number for ten markets beyond the match winner (both teams to score, over / under 1.5, 2.5 and 3.5, the pick to win and both score, to win and over 2.5, to win to nil, double chance, draw no bet, the pick's team to score), prices each from API-Football for today and tomorrow (average, best UK book, William Hill, the bookmakers' fair chance), archives them to `predictions-markets/` frozen at kick-off, and grades them into `markets-record.json` with a pre-registered gate per market. The nightly Card review prints the table and says a pass in bold. deploy.yml runs it after the ledger and commits the archive and record; the record is also published on the site. Agents' protected paths now include the four bot-written files added today.
