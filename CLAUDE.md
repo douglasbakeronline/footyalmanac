@@ -139,6 +139,7 @@ in all of them; `AGENTS.md` has the same guardrails for any other agent.
 | `claude/football-markets-2026-11-14.md` | Football markets beyond the match winner (`markets.py`): the ten markets and how each number is read from the scoreline grid, API-Football's bet ids and labels (probed live), the archive, `markets-record.json`, the pre-registered gate, the first calibration read on 11,112 fixtures (goals run low; double chance, draw no bet and win to nil on quote). Read before touching `markets.py`, adding a market or offering one for betting. |
 | `claude/scale-2026-11-15.md` | The Scale tab (`scale.py`, `renderScale`): Daily List winners with a second condition (football: and both teams score, only where William Hill prices it; tennis: in straight sets), the archive, the day's threefold / fourfold / fivefold, grading, live v before the tab, the volume and value caveats, the margin bets still to add. Read before touching `scale.py`, the Scale tab or adding a sport to it. |
 | `claude/scale-tiers-2026-11-15.md` | Scale rule 2: the three tiers (Daily List, reserve, everything else at 55%+ topping the day up to ten), the margin bets proposed from the record (NBA by 10+, NFL by 7+, rugby by 8+), the band rate, the groups and the football threefold, football by tier, the rematch grading bug, the replay of the days before the tab and what keeps it unbiased (first read: list tier 90% won, 62% landed; threefold 4 of 14). Read before changing `FLOOR`, `TARGET`, a margin or the group kinds, or quoting the replay. |
+| `claude/card-m7opp-2026-11-15.md` | Rule 6's opposition condition was dropped with the switch to the model's picks (`model_fault` never read it); `CARD_MODEL_OPP_MIN` (empty live) and the pre-registered `m7opp9` / `m7opp5`; first pool read (5.0 ahead on 33 legs, p(worse) 0.07; 9+ builds almost nothing). Read before touching the opposition condition under rule 7+. |
 | `claude/opposition-price-2026-11-06.md` | The opposition's price as a Card condition: the replay by opposition price band, why football only, the variants for the 30 Nov review. Read before touching `CARD_OPP_MIN` or the price fields on a leg. |
 | `claude/multipliers-2026-10-24.md` | The Multipliers, the market beating the model on the archive (0.979 v 1.013 log loss), why there is no draw filter, the cup confidence fix. Read before touching the Multipliers or proposing market input to the Daily List. |
 
@@ -516,7 +517,11 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
 - **No Reports page for the weekly PDF.** It adds nothing to the return;
   the Sunday email is the delivery.
 - **Opposition 9+ (rule 6) stays**: the one condition that holds in every
-  season (`claude/card-seasons-2026-11-09.md`).
+  season (`claude/card-seasons-2026-11-09.md`). Under rule 7+ it is not read
+  (`model_fault`); `CARD_MODEL_OPP_MIN` carries it for the pre-registered
+  `m7opp9` / `m7opp5` (15 Nov 2026): if either passes the gate on the
+  football-data seasons and the pool, the next session sets it live with a
+  `CARD_RULE` bump, without asking (`claude/card-m7opp-2026-11-15.md`).
 
 ## Open items
 

@@ -286,6 +286,13 @@ VARIANTS = {
     # and a day live leaves empty borrows the next day's legs (one group, at
     # least one of the day's own picks); the next day never reuses them
     "span2": {"_SPAN": True},
+    # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md), pre-registered before any
+    # result: the rule 11 Card with rule 6's opposition condition on its
+    # football picks (groupings.CARD_MODEL_OPP_MIN). 9+ is rule 6's floor, the
+    # one condition that held in all five football-data seasons; 5.0 (4/1) is
+    # the Edge flag's floor since 11 Nov. Gated like the rest.
+    "m7opp9": {"CARD_MODEL_OPP_MIN": {"football": 9.0}},
+    "m7opp5": {"CARD_MODEL_OPP_MIN": {"football": 5.0}},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
