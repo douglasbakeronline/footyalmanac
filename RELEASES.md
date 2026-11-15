@@ -5,6 +5,16 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-8: m7opp5 read on five seasons: ahead in all five, waiting on the pool (tag pending)
+
+**What changed:** the note only. `m7opp5` (the model's picks, football opposition priced 5.0+) on the five football-data seasons: ahead of live in every one, +0.10 to +0.16 units a day; pooled 150 groups, 73 won v 62.8 expected, +17.5% v live +9.6%, p(worse) 0.014 on 450 legs. The pool is ahead too (p 0.07) but on 33 legs, under the 100-leg gate, so the live rule is unchanged. `m7opp9` builds 9 groups in five seasons.
+
+**Files:** `claude/card-m7opp-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any rule or code.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-7: The opposition's price on the model's picks, replayed (tag pending)
 
 **What changed:** nothing on the page or the live Card. Rule 6's opposition condition (the other side priced 9+), the one Card condition that held in all five football-data seasons, was not carried over when the Card became the model's own picks on 11 Nov: `model_fault` never read it, and the first rule 11 group took VVV-Venlo with the opposition at 4.83 (lost). `groupings.CARD_MODEL_OPP_MIN` (empty, so live is unchanged) now lets the replay put it back, and two variants are pre-registered: `m7opp9` (9+) and `m7opp5` (5.0, the Edge flag's floor), on the pool nightly and on the five football-data seasons (`cardM7`).
