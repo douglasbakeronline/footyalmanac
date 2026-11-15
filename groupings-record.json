@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T12:29:42Z",
+ "graded": "2026-11-15T12:34:56Z",
  "overall": {
   "groups": 131,
   "settled": 130,
@@ -22,7 +22,7 @@
    "n": 144,
    "shortened": 57,
    "drifted": 54,
-   "mean": 0.0001
+   "mean": 0.0002
   }
  },
  "cardLegsBySport": {
@@ -276,9 +276,9 @@
    "ncaab|siena saints|brown bears|2026-11-15": 0,
    "ncaab|duquesne dukes|binghamton bearcats|2026-11-15": -1,
    "ncaab|grand canyon lopes|ul monroe warhawks|2026-11-15": 0,
-   "ncaab|seattle u redhawks|idaho state bengals|2026-11-15": -1,
+   "ncaab|seattle u redhawks|idaho state bengals|2026-11-15": 0,
    "ncaab|iowa state cyclones|niagara purple eagles|2026-11-15": 0,
-   "ncaab|boston college eagles|new hampshire wildcats|2026-11-15": 0,
+   "ncaab|boston college eagles|new hampshire wildcats|2026-11-15": 1.01,
    "ncaab|michigan wolverines|william & mary tribe|2026-11-15": 1.0,
    "ncaab|ut martin skyhawks|ecclesia royals|2026-11-15": -1,
    "ncaab|st. john's red storm|syracuse orange|2026-11-16": 0,
@@ -358,7 +358,7 @@
     "n": 74,
     "shortened": 23,
     "drifted": 28,
-    "mean": -0.005
+    "mean": -0.0048
    }
   },
   "Card 3x": {
@@ -675,7 +675,7 @@
    "n": 88,
    "shortened": 30,
    "drifted": 35,
-   "mean": -0.0031
+   "mean": -0.003
   }
  },
  "cardWide": {
@@ -725,7 +725,7 @@
    "n": 2,
    "shortened": 0,
    "drifted": 1,
-   "mean": -0.0576
+   "mean": -0.0511
   }
  },
  "cardWideByRule": {
@@ -928,7 +928,7 @@
     "n": 3,
     "shortened": 0,
     "drifted": 1,
-    "mean": -0.0384
+    "mean": -0.0341
    }
   }
  },
@@ -955,7 +955,7 @@
     "n": 42,
     "shortened": 12,
     "drifted": 17,
-    "mean": 0.0007
+    "mean": 0.0011
    }
   },
   "Daytime": {
@@ -1221,7 +1221,7 @@
        "when": "2026-11-15T18:00Z",
        "odds": 1.23,
        "best": 1.23,
-       "lastOdds": 1.39,
+       "lastOdds": 1.37,
        "lockOdds": 1.32,
        "lockBest": 1.32,
        "lockBook": "SportsGameOdds consensus",
