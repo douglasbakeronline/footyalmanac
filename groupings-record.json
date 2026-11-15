@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T18:05:03Z",
+ "graded": "2026-11-15T20:49:52Z",
  "overall": {
   "groups": 133,
   "settled": 132,
@@ -7,8 +7,8 @@
   "z": -1.27,
   "lost": 94,
   "pending": 1,
-  "legs": 508,
-  "legsWon": 367,
+  "legs": 510,
+  "legsWon": 369,
   "returned": 110.52,
   "staked": 132,
   "returnedBest": 115.13,
@@ -22,7 +22,7 @@
    "n": 147,
    "shortened": 59,
    "drifted": 55,
-   "mean": 0.0005
+   "mean": 0.0004
   }
  },
  "cardLegsBySport": {
@@ -56,12 +56,12 @@
    "tripwire": false
   },
   "nba": {
-   "legs": 34,
-   "landed": 26,
-   "expected": 24.11,
-   "rate": 0.7647,
-   "quoted": 0.7092,
-   "z": 0.72,
+   "legs": 36,
+   "landed": 28,
+   "expected": 25.67,
+   "rate": 0.7778,
+   "quoted": 0.7131,
+   "z": 0.87,
    "tripwire": false
   },
   "rugby": {
@@ -78,18 +78,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 29,
-   "won": 25,
-   "rate": 0.8621,
-   "quoted": 0.8801,
-   "returned": 27.19,
-   "ret": -0.0624
+   "n": 30,
+   "won": 26,
+   "rate": 0.8667,
+   "quoted": 0.8793,
+   "returned": 28.2,
+   "ret": -0.06
   },
   "notAtBook": {
-   "n": 62,
-   "won": 61,
-   "rate": 0.9839,
-   "quoted": 0.9079
+   "n": 63,
+   "won": 62,
+   "rate": 0.9841,
+   "quoted": 0.9089
   },
   "unchecked": {
    "n": 26,
@@ -142,18 +142,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 18,
-     "won": 15,
-     "rate": 0.8333,
-     "quoted": 0.8939,
-     "returned": 16.07,
-     "ret": -0.1072
+     "n": 19,
+     "won": 16,
+     "rate": 0.8421,
+     "quoted": 0.892,
+     "returned": 17.08,
+     "ret": -0.1011
     },
     "notAtBook": {
-     "n": 59,
-     "won": 58,
-     "rate": 0.9831,
-     "quoted": 0.9134
+     "n": 60,
+     "won": 59,
+     "rate": 0.9833,
+     "quoted": 0.9144
     },
     "unchecked": {
      "n": 13,
@@ -271,7 +271,7 @@
    "football|tatabánya|gyori eto ii|2026-11-15": 0,
    "nfl|tennessee titans|jacksonville jaguars|2026-11-15": 1.15,
    "nba|minnesota timberwolves|chicago bulls|2026-11-15": 1.1,
-   "nba|utah jazz|san antonio spurs|2026-11-15": 1.06,
+   "nba|utah jazz|san antonio spurs|2026-11-15": 1.07,
    "ncaab|unc wilmington seahawks|louisiana ragin' cajuns|2026-11-15": -1,
    "ncaab|villanova wildcats|rider broncs|2026-11-15": 0,
    "ncaab|siena saints|brown bears|2026-11-15": 0,
@@ -344,8 +344,8 @@
    "z": -0.98,
    "lost": 23,
    "pending": 1,
-   "legs": 97,
-   "legsWon": 68,
+   "legs": 99,
+   "legsWon": 70,
    "returned": 22.13,
    "staked": 33,
    "returnedBest": 22.44,
@@ -359,7 +359,7 @@
     "n": 77,
     "shortened": 25,
     "drifted": 29,
-    "mean": -0.0041
+    "mean": -0.0043
    }
   },
   "Card 3x": {
@@ -661,8 +661,8 @@
   "z": -0.46,
   "lost": 27,
   "pending": 1,
-  "legs": 116,
-  "legsWon": 77,
+  "legs": 118,
+  "legsWon": 79,
   "returned": 32.99,
   "staked": 39,
   "returnedBest": 33.45,
@@ -676,7 +676,7 @@
    "n": 91,
    "shortened": 32,
    "drifted": 36,
-   "mean": -0.0024
+   "mean": -0.0025
   }
  },
  "cardWide": {
@@ -711,8 +711,8 @@
   "z": -0.86,
   "lost": 1,
   "pending": 0,
-  "legs": 1,
-  "legsWon": 0,
+  "legs": 2,
+  "legsWon": 1,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -914,8 +914,8 @@
    "z": -1.5,
    "lost": 3,
    "pending": 1,
-   "legs": 6,
-   "legsWon": 3,
+   "legs": 8,
+   "legsWon": 5,
    "returned": 0,
    "staked": 3,
    "returnedBest": 0,
@@ -929,7 +929,7 @@
     "n": 6,
     "shortened": 2,
     "drifted": 2,
-    "mean": -0.0097
+    "mean": -0.0122
    }
   }
  },
@@ -941,8 +941,8 @@
    "z": -0.14,
    "lost": 15,
    "pending": 1,
-   "legs": 67,
-   "legsWon": 48,
+   "legs": 69,
+   "legsWon": 50,
    "returned": 20.77,
    "staked": 23,
    "returnedBest": 21.01,
@@ -956,7 +956,7 @@
     "n": 45,
     "shortened": 14,
     "drifted": 18,
-    "mean": 0.002
+    "mean": 0.0016
    }
   },
   "Daytime": {
@@ -1165,9 +1165,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Pistoiese",
@@ -1219,8 +1219,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7804,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "131-124",
        "opp": 3.21
       }
      ]
@@ -1293,7 +1293,7 @@
        "when": "2026-11-16T00:00Z",
        "odds": 1.26,
        "best": 1.26,
-       "lastOdds": 1.29,
+       "lastOdds": 1.31,
        "lockOdds": 1.28,
        "lockBest": 1.28,
        "lockBook": null,
@@ -1334,9 +1334,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "VVV-Venlo",
@@ -1388,8 +1388,8 @@
        "lockBook": "SportsGameOdds consensus",
        "est": false,
        "p": 0.7804,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "131-124",
        "opp": 4.31
       }
      ]
