@@ -14,22 +14,28 @@ everything else, and list it from strongest to weakest ... NFL, basketball,
 you're going to need to propose something based on the data ... I need every
 day to have at least 5 games, to add into some sort of scale accumulator."
 
+Then, the same morning: "we need to find a winning pattern in this scale
+feature. Review and optimise." (rule 3, claude/scale-strong-legs-2026-11-15.md)
+
 So a Scale pick is the model's pick to win plus one more thing that must
 happen (SPORTS):
 
-  football   the pick wins AND both teams score. Only fixtures William Hill
-             prices for that bet (markets.py's archive: `wbtts` with `h`).
-             The chance is the model's own win-and-both-score number.
+  football   the pick wins AND the game has over 2.5 goals (FOOTBALL_MARKET;
+             to win and both score until rule 3, and still shown beside it
+             with William Hill's price). Only fixtures William Hill prices
+             for win-and-both-score in markets.py's archive, the sign that
+             it offers the game this way.
   tennis     the pick wins in straight sets.
   nba        the pick wins by 10 or more (Hill's handicap -9.5).
   nfl        the pick wins by 7 or more (handicap -6.5).
   rugby      the pick wins by 8 or more (handicap -7.5).
 
-For every sport but football the chance shown is the record's own rate for
-picks at that confidence (`band_rate`: a tally, never a fit, Rule 1) and
-there is no price feed for the bet yet, so those picks are tracked and never
-priced. College basketball and college football are left out: UK books
-rarely price them.
+Football's chance is the model's own number for the fixture (markets.py),
+with the best UK price on the feed for the bet, named. For every other sport
+the chance is the record's own rate for picks at that confidence
+(`band_rate`: a tally, never a fit, Rule 1) and there is no price feed yet,
+so those picks are tracked and never priced. College basketball and college
+football are left out: UK books rarely price them.
 
 Three tiers, shown in that order (TIERS):
 
@@ -41,12 +47,12 @@ Three tiers, shown in that order (TIERS):
 Within a tier the order is the chance the Scale bet lands. Each UK day's
 picks are archived in scale-archive/<day>.json as they stood before their
 starts (a pick is replaced until it starts, never after), with the day's
-groups (KINDS): a threefold, fourfold and fivefold from the top of that
-order, and a football threefold (every leg priced at William Hill), each
-frozen once its first leg starts. Everything is graded from the records
+groups (KINDS): a double, threefold, fourfold and fivefold of Daily List
+picks only (GROUP_TIERS), most likely to land first, each frozen once its
+first leg starts. A day without two such picks has no group. Everything is graded from the records
 score.py, score_tennis.py and sports.py write. A group is won when every leg
 landed its Scale bet; a void leg (a retirement) is settled on the rest. A
-group's return is only counted when every leg had a William Hill price.
+group's return is only counted when every leg had a price.
 
 The days before the tab (LIVE_FROM) are replayed once under the current rule
 (`replay_day`), from what was archived before each start and results dated
@@ -66,7 +72,9 @@ from datetime import date, datetime, timedelta, timezone
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 ARCHIVE = "scale-archive"
-RULE = 2                    # the pick and group rule; bump on any change (1: Daily List picks only, football and tennis)
+RULE = 3                    # the pick and group rule; bump on any change (1: Daily List picks only, football and tennis;
+                            # 2: three tiers, the margin sports, groups from the top of the tier order, football to win
+                            # and both score; 3: groups from Daily List picks only, football to win and over 2.5 goals)
 LIVE_FROM = "2026-11-15"    # the tab's first day; earlier days are filled once from the pre-start archives and tallied apart
 BOOK = "William Hill"
 DAYS_AHEAD = 2              # UK days built: today and tomorrow
@@ -74,17 +82,34 @@ GLANCE_DAYS = 14            # days shown on the tab's glance strip
 FLOOR = 0.55                # the model's confidence in the winner: nothing under it is a Scale pick
 TARGET = 10                 # games a day: the "else" tier tops the day up to this many, never past it
 BAND_MIN = 30               # a confidence band's own rate needs this many graded picks; else a wider band
+GROUP_TIERS = ("list",)     # a group's legs: Daily List picks only. 15 Nov 2026, on the whole record: their Scale bet
+                            # landed 207 of 320 times (65%) across the five sports against 524 of 1,098 (48%) for the
+                            # reserve, so a reserve leg is a coin toss inside an accumulator (claude/scale-strong-legs-2026-11-15.md)
+# Football's second condition. "wo25" since rule 3: on 2,645 graded picks at 55%+ the pick won with over 2.5 goals
+# 41% of the time at 55-62% confidence rising to 77% at 85%+, while winning with both teams scoring stayed at
+# 28-38% whatever the winner's strength, and William Hill's price for that bet keeps about 16% a leg against
+# 6-7% on its other markets. "wbtts" (rules 1 and 2) and "wtn" are kept so a past pick grades by its own bet.
+FOOTBALL_MARKET = "wo25"
+FOOTBALL = {
+    "wo25": {"bet": "And over 2.5 goals", "long": "Win and over 2.5 goals", "find": "result and over 2.5 goals",
+             "landed": lambda mine, theirs: mine > theirs and mine + theirs >= 3},
+    "wbtts": {"bet": "And both teams score", "long": "Win and both teams score", "find": "result and both teams to score",
+              "landed": lambda mine, theirs: mine > theirs and theirs > 0},
+    "wtn": {"bet": "To nil", "long": "Win to nil", "find": "win to nil",
+            "landed": lambda mine, theirs: mine > theirs and theirs == 0},
+}
 TIERS = ("list", "reserve", "else")
 SPORTS = {
-    "football": {"name": "Football", "bet": "And both teams score", "long": "Win and both teams score"},
+    "football": {"name": "Football", "bet": FOOTBALL[FOOTBALL_MARKET]["bet"], "long": FOOTBALL[FOOTBALL_MARKET]["long"],
+                 "find": FOOTBALL[FOOTBALL_MARKET]["find"]},
     "tennis": {"name": "Tennis", "bet": "In straight sets", "long": "Win in straight sets", "find": "set betting 2-0"},
     "nba": {"name": "NBA", "bet": "By 10 or more", "long": "Win by 10 or more", "margin": 10, "find": "handicap -9.5"},
     "nfl": {"name": "NFL", "bet": "By 7 or more", "long": "Win by 7 or more", "margin": 7, "find": "handicap -6.5"},
     "rugby": {"name": "Rugby", "bet": "By 8 or more", "long": "Win by 8 or more", "margin": 8, "find": "handicap -7.5"},
 }
 # (id, legs, name, sport or None for any): built in this order from the picks still to start
-KINDS = ((3, 3, "Scale threefold", None), (4, 4, "Scale fourfold", None), (5, 5, "Scale fivefold", None),
-         ("f3", 3, "Football threefold", "football"))
+KINDS = ((2, 2, "Scale double", None), (3, 3, "Scale threefold", None), (4, 4, "Scale fourfold", None),
+         (5, 5, "Scale fivefold", None))
 FINE = (0.55, 0.62, 0.70, 0.75, 0.80, 0.85, 0.90, 1.01)
 WIDE = ((0.55, 0.70, 0.80, 1.01), (0.55, 0.70, 1.01), (0.55, 1.01))
 
@@ -134,10 +159,19 @@ def margin_of(row):
     return (h - a) if row.get("pick") == row.get("home") else (a - h)
 
 
-def samples(trec, sgraded):
-    """{sport: [(confidence, won, landed the Scale bet, date)]} over every
-    graded pick at FLOOR+, for the sports whose chance is a tally of the record."""
-    out = {s: [] for s in SPORTS if s != "football"}
+def samples(trec, sgraded, fgraded=None, market=None):
+    """{sport: [(confidence, won, landed the Scale bet, date, tier)]} over
+    every graded pick at FLOOR+: the tally a pick's chance is read from.
+    Football is every rated pick in record-graded.json, by `market`."""
+    out = {s: [] for s in SPORTS}
+    landed = FOOTBALL[market or FOOTBALL_MARKET]["landed"]
+    for g in (fgraded or {}).get("graded") or []:
+        c = g.get("confidence") or 0
+        if c < FLOOR or g.get("unrated") or g.get("pick") not in ("h", "a") or not g.get("result"):
+            continue
+        hg, ag = g["result"]
+        mine, theirs = (hg, ag) if g["pick"] == "h" else (ag, hg)
+        out["football"].append((c, mine > theirs, bool(landed(mine, theirs)), g.get("date") or "", tier_of(g)))
     for g in (trec or {}).get("graded") or []:
         c = g.get("confidence") or 0
         if c < FLOOR or g.get("void") or g.get("retired"):
@@ -145,14 +179,14 @@ def samples(trec, sgraded):
         ss = straight_sets(g) if g.get("ok") else False
         if ss is None:
             continue
-        out["tennis"].append((c, bool(g.get("ok")), bool(ss), g.get("date") or ""))
+        out["tennis"].append((c, bool(g.get("ok")), bool(ss), g.get("date") or "", tier_of(g)))
     for g in (sgraded or {}).get("graded") or []:
         cfg = SPORTS.get(g.get("sport")) or {}
         c = g.get("confidence") or 0
         if not cfg.get("margin") or c < FLOOR or g.get("void") or not g.get("score"):
             continue
         m = margin_of(g)
-        out[g["sport"]].append((c, m > 0, m >= cfg["margin"], str(g.get("when") or "")[:10]))
+        out[g["sport"]].append((c, m > 0, m >= cfg["margin"], str(g.get("when") or "")[:10], tier_of(g)))
     return out
 
 
@@ -226,43 +260,56 @@ def day_picks(day, now, here, market_rows, sample, proxy=None):
                 "comp": i.get("comp"), "home": i["home"], "away": i["away"], "pick": i["pick"],
                 "side": i.get("side"), "conf": conf, "bet": cfg["bet"]}
         if i["sport"] == "football":
-            base.update(league=i.get("league"), date=i.get("date"), comp=league_name(i.get("league")))
+            base.update(league=i.get("league"), date=i.get("date"), comp=league_name(i.get("league")), market=FOOTBALL_MARKET)
             if proxy is None:
                 row = market_rows.get((i.get("league"), i.get("date"), i["home"], i["away"]))
                 w = ((row or {}).get("m") or {}).get("wbtts") or {}
                 if not w.get("h") or not w.get("p") or w.get("s") != i.get("side"):
-                    w = None
+                    w = None                # BOOK does not price the fixture's win-and-both-score: not a game it offers this way
+                mine = ((row or {}).get("m") or {}).get(FOOTBALL_MARKET) or {}
+                if mine.get("s") != i.get("side"):
+                    mine = {}
             else:
                 w = proxy_football(i, rows.get((i["key"], i.get("published"))), proxy)
-            if not w:
+                mine = {"p": (w or {}).get("q")}
+            if not w or not mine.get("p"):
                 if tier == "list":
                     off.append({k: base[k] for k in ("key", "start", "comp", "pick")})
                 continue
-            base.update(chance=w["p"], basis="model", price=w.get("h"), book=BOOK,
-                        best=w.get("b"), bestBook=w.get("bb"), fair=w.get("f"))
+            # the chance is the model's own number for this fixture (it knows the expected goals; a tally by
+            # confidence alone put a 77% away favourite in a low-scoring qualifier at 61% when the model said 46%);
+            # the price is BOOK's when it prices the bet, else the best UK price on the feed, named
+            price = mine.get("h") or mine.get("b")
+            base.update(chance=mine["p"], basis="model", price=price,
+                        book=(BOOK if mine.get("h") else mine.get("bb")) if price else None,
+                        fair=mine.get("f"), find=cfg.get("find"),
+                        # the bet rules 1 and 2 made, kept beside it: the model's number and BOOK's price
+                        alt={"bet": FOOTBALL["wbtts"]["bet"], "chance": w.get("p"), "price": w.get("h")})
         else:
             ch, k, n = band_rate(conf, sample.get(i["sport"]) or [])
             if ch is None:
                 continue
             base.update(id=i.get("id"), date=i.get("date"), chance=ch, basis=f"{k} of {n} picks like it",
-                        price=None, find=cfg.get("find"))
+                        price=None, book=None, find=cfg.get("find"))
         picks.append(base)
     return picks, off
 
 
 def proxy_football(i, g, proxy):
-    """The win-and-both-score number for an archived football pick on a day
-    before the price archive, or None when BOOK is not known to price it."""
+    """The model's numbers for an archived football pick on a day before the
+    price archive: `q` for its Scale bet (FOOTBALL_MARKET) and `p` for win
+    and both score (kept beside the pick as its `alt`), worked from the
+    archived expected goals. None when BOOK is not known to price the fixture."""
     import markets as M
     if not g or not g.get("xg") or not g.get("p") or g.get("unrated"):
         return None
     if i.get("league") not in proxy["leagues"] and (i.get("date"), i["home"], i["away"]) not in proxy["fixtures"]:
         return None
     side, nums = M.numbers(g["xg"][0], g["xg"][1], g["p"], g.get("btts"), g.get("over25"))
-    w = nums.get("wbtts") or {}
-    if side != i.get("side") or w.get("s") != side or not w.get("p"):
+    w, mine = nums.get("wbtts") or {}, nums.get(FOOTBALL_MARKET) or {}
+    if side != i.get("side") or w.get("s") != side or not w.get("p") or mine.get("s") != side or not mine.get("p"):
         return None
-    return {"p": w["p"]}
+    return {"p": w["p"], "q": mine["p"]}
 
 
 def book_fixtures():
@@ -316,17 +363,17 @@ def choose(cands, old, now):
 
 
 def build_groups(picks, now):
-    """The day's groups from the picks still to start, in the page's order:
-    the top three, four and five of any sport, and the top three football
-    picks (the one group priced on every leg)."""
-    cand = sorted([p for p in picks if parse_utc(p["start"]) > now and p.get("chance")], key=rank)
+    """The day's groups from the Daily List picks still to start (GROUP_TIERS),
+    most likely to land first: a double, threefold, fourfold and fivefold,
+    each as far as those picks go. A day with fewer than two has no group;
+    the reserve and the rest never fill one."""
+    cand = sorted([p for p in picks if parse_utc(p["start"]) > now and p.get("chance") and (p.get("tier") or "list") in GROUP_TIERS],
+                  key=lambda p: (-p["chance"], p["start"], p["key"]))
     out = []
     for kind, k, name, sport in KINDS:
         legs = [p for p in cand if sport in (None, p["sport"])][:k]
         if len(legs) < k:
             continue
-        if sport and any(g["legs"] == [p["key"] for p in legs] for g in out):
-            continue                # the football threefold is the threefold already
         ch = win = 1.0
         for p in legs:
             ch *= p["chance"]; win *= (p.get("conf") or 0)
@@ -347,7 +394,8 @@ def merge_day(old, picks, off, groups, now, stamp):
     copies archived before its start (daylist.pinned, markets.live_rows), so
     a missed build loses nothing (`choose` never passes a started "else"
     pick). A group is replaced until its first leg starts, and is never built
-    from a leg that has started."""
+    from a leg that has started; one frozen under an earlier rule is kept only
+    when all its legs have started."""
     started = lambda s: (parse_utc(s) or now) <= now
     old = old or {}
     keep = [p for p in old.get("picks") or [] if started(p["start"])]
@@ -357,11 +405,17 @@ def merge_day(old, picks, off, groups, now, stamp):
     off_keep = [p for p in old.get("off") or [] if started(p["start"]) and p["key"] not in have]
     okeys = {p["key"] for p in off_keep} | have
     new_off = off_keep + [p for p in off if p["key"] not in okeys]
-    frozen = {g["kind"]: g for g in old.get("groups") or [] if started(g["first"])}
+    # A frozen group stands as published. One frozen under an earlier rule stands only if every leg has
+    # started: a leg still to start is replaced by this rule's pick (rule 3 changed football's bet), and the
+    # group would then show, and grade by, a bet it was never built from.
+    old_rule = old.get("rule") or 1
+    begun = {p["key"] for p in keep}
+    frozen = {g["kind"]: g for g in old.get("groups") or [] if started(g["first"])
+              and ((g.get("rule") or old_rule) >= RULE or all(k in begun for k in g["legs"]))}
     new_groups = list(frozen.values())
     for g in groups:
         if g["kind"] not in frozen and all(k in have for k in g["legs"]):
-            new_groups.append(dict(g, published=stamp))
+            new_groups.append(dict(g, published=stamp, rule=RULE))
     order = [k[0] for k in KINDS]
     return {"date": old.get("date"), "rule": RULE, "picks": sorted(new_picks, key=lambda p: (p["start"], p["key"])),
             "off": sorted(new_off, key=lambda p: (p["start"], p["key"])),
@@ -396,7 +450,8 @@ def settle(p, res):
         hg, ag = g["result"]
         won = hg > ag if p.get("side") == "h" else ag > hg
         mine, theirs = (hg, ag) if p.get("side") == "h" else (ag, hg)       # the pick's score first, as the row reads
-        return ("scale" if won and hg and ag else "won" if won else "lost"), f"{mine}-{theirs}"
+        landed = FOOTBALL[p.get("market") or "wbtts"]["landed"]             # a pick archived before rule 3 was win and both score
+        return ("scale" if landed(mine, theirs) else "won" if won else "lost"), f"{mine}-{theirs}"
     if p["sport"] == "tennis":
         g = tn.get(str(p.get("id"))) or tn2.get((p.get("date"), p["home"], p["away"]))
         if not g: return None, None
@@ -528,17 +583,27 @@ def replay(here, covered, since):
         if tier == "else" and ((g.get("confidence") or 0) < FLOOR or g.get("unrated")):
             continue
         hg, ag = g["result"]
-        won = hg > ag if g["pick"] == "h" else ag > hg
-        _add(by[tier], {"state": "scale" if won and hg and ag else "won" if won else "lost"})
+        mine, theirs = (hg, ag) if g["pick"] == "h" else (ag, hg)
+        _add(by[tier], {"state": "scale" if FOOTBALL[FOOTBALL_MARKET]["landed"](mine, theirs) else "won" if mine > theirs else "lost"})
     return {t: _done(v) for t, v in by.items()}
+
+
+def _tot(rows):
+    return {"n": len(rows), "won": sum(1 for x in rows if x[1]), "scale": sum(1 for x in rows if x[2])}
 
 
 def basis(sample):
     """What the tallied chances rest on: per sport, every graded pick at
     FLOOR+ and those at 75%+ (won, landed the Scale bet)."""
-    def tot(rows):
-        return {"n": len(rows), "won": sum(1 for x in rows if x[1]), "scale": sum(1 for x in rows if x[2])}
-    return {s: {"all": tot(rows), "strong": tot([x for x in rows if x[0] >= 0.75])} for s, rows in sample.items()}
+    return {s: {"all": _tot(rows), "strong": _tot([x for x in rows if x[0] >= 0.75])} for s, rows in sample.items()}
+
+
+def basis_tier(sample):
+    """The whole record by tier, every Scale sport together: how often a
+    Daily List pick, a reserve pick and the rest landed the Scale bet. The
+    reason groups take Daily List picks only."""
+    rows = [x for v in sample.values() for x in v]
+    return {t: _tot([x for x in rows if len(x) > 4 and x[4] == t]) for t in TIERS}
 
 
 def build(now=None, here=HERE):
@@ -546,7 +611,8 @@ def build(now=None, here=HERE):
     now = now or datetime.now(timezone.utc)
     stamp = now.strftime("%Y-%m-%dT%H:%M:%SZ")
     market_rows = {(r["league"], r["date"], r["home"], r["away"]): r for r in M.live_rows(here)}
-    sample = samples(_load(os.path.join(here, "tennis-record.json"), {}), _load(os.path.join(here, "sports-graded.json"), {}))
+    sample = samples(_load(os.path.join(here, "tennis-record.json"), {}), _load(os.path.join(here, "sports-graded.json"), {}),
+                     _load(os.path.join(here, "record-graded.json"), {}))
     adir = os.path.join(here, ARCHIVE)
     os.makedirs(adir, exist_ok=True)
     today = date.fromisoformat(uk_day(now))
@@ -620,7 +686,7 @@ def build(now=None, here=HERE):
                            # what the page needs to show the top ten as a table (15 Nov 2026, Douglas: "10 games
                            # shown with what the recommendation was ... whether or not that won or lost ... and if
                            # both teams scored")
-                           "dots": [{"k": p["key"], "sport": p["sport"], "tier": p["tier"], "pick": p["pick"], "start": p["start"],
+                           "dots": [{"k": p["key"], "sport": p["sport"], "tier": p["tier"], "market": p.get("market"), "pick": p["pick"], "start": p["start"],
                                      "home": p["home"], "away": p["away"], "side": p.get("side"), "comp": p.get("comp"),
                                      "conf": p.get("conf"), "chance": p.get("chance"),
                                      "state": p["state"] or ("started" if (parse_utc(p["start"]) or now) <= now else "up"),
@@ -642,7 +708,8 @@ def build(now=None, here=HERE):
                       "byTier": {t: _done(before_tier[t]) for t in TIERS if t in before_tier},
                       "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"]}
                                  for k, t in sorted(before_kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)}},
-           "replay": {"football": replay(here, {c["league"] for c in cov}, LIVE_FROM), "basis": basis(sample)},
+           "replay": {"football": replay(here, {c["league"] for c in cov}, LIVE_FROM), "basis": basis(sample),
+                      "byTier": basis_tier(sample)},
            "leagues": cov}
     with open(os.path.join(here, "scale.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, separators=(",", ":"), ensure_ascii=False)

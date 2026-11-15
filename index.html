@@ -1483,6 +1483,7 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-p .sc-nb{display:block;margin:0;font-size:12px}
 .sc-p .sc-none{font-size:14px;color:var(--ink);margin:0}
 .sc-p .sc-none small{margin-left:0}
+.sc-b > small.sc-alt{color:var(--ink-2);margin-top:2px}
 .sc-tag{display:inline-block;font:700 11.5px var(--f-ui);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--cover-ink);color:var(--ink);white-space:nowrap}
 .sc-tag.short,.sc-tag.lost{background:var(--away);border-color:var(--away);color:#fff}
 .sc-tag.scale{background:var(--edge);border-color:var(--edge);color:#fff}
@@ -5720,16 +5721,19 @@ const SC_TIER_SHORT = {list:"Daily List", reserve:"Reserve", else:"Everything el
 const scCfg = s => (SCALE && SCALE.sports && SCALE.sports[s]) || {name: s, bet: "", long: ""};
 const scLow = s => String(s || "").charAt(0).toLowerCase() + String(s || "").slice(1);
 const scMinus = s => String(s || "").replace(/-(\d)/g, "−$1");
-function scWord(sport, state){
-  if(state === "scale") return sport === "football" ? "Won and both scored" : "Won " + scLow(scCfg(sport).bet);
-  if(state === "won") return sport === "football" ? "Won to nil" : sport === "tennis" ? "Won, dropped a set" : "Won by less";
+// football's bet is on the pick (market): to win and over 2.5 goals since rule 3, to win and both score before
+const SC_FB = {wo25: ["Won with over 2.5 goals", "Won, under 2.5 goals"], wbtts: ["Won and both scored", "Won to nil"], wtn: ["Won to nil", "Won, conceded"]};
+function scWord(sport, state, market){
+  const fb = SC_FB[market] || SC_FB.wbtts;
+  if(state === "scale") return sport === "football" ? fb[0] : "Won " + scLow(scCfg(sport).bet);
+  if(state === "won") return sport === "football" ? fb[1] : sport === "tennis" ? "Won, dropped a set" : "Won by less";
   return {lost:"Pick lost", void:"Void", up:"To play", started:"Under way"}[state] || "To play";
 }
 const scState = p => p.state || (new Date(p.start).getTime() <= Date.now() ? "started" : "up");
 function scTag(p){
   const st = scState(p), det = p.detail ? `<small>${scE(p.detail)}</small>` : "";
   if(st === "scale") return `<span class="sc-tag scale">Scale landed</span>${det}`;
-  if(st === "won") return `<span class="sc-tag won">${scE(scWord(p.sport, "won").replace("Won, d", "D"))}</span>${det}`;
+  if(st === "won") return `<span class="sc-tag won">${scE(scWord(p.sport, "won", p.market).replace("Won, d", "D").replace("Won, u", "U"))}</span>${det}`;
   if(st === "lost") return `<span class="sc-tag lost">Lost</span>${det}`;
   if(st === "void") return `<span class="sc-tag void">Void</span>`;
   if(st === "started") return SCALE && p.start.slice(0, 10) < SCALE.today ? `<span class="sc-tag void">No result</span>` : `<span class="sc-tag started">Under way</span>`;
@@ -5739,14 +5743,15 @@ function scTag(p){
 function scRow(p){
   const opp = p.side === "h" ? p.away : p.home;
   const needs = p.chance ? (1 / p.chance).toFixed(2) : null;
+  const alt = p.alt && p.alt.chance ? `<small class="sc-alt">${scE(scLow(p.alt.bet))}: ${scPct(p.alt.chance)}${p.alt.price ? ` · ${scE(SCALE.book)} ${p.alt.price.toFixed(2)}` : ""}</small>` : "";
   const price = p.price
-    ? `<b>${p.price.toFixed(2)}</b>${needs ? `<small>needs ${needs}</small>` : ""}${p.best && p.best > p.price ? `<small class="sc-nb">best ${p.best.toFixed(2)} ${scE(p.bestBook || "")}</small>` : ""}`
+    ? `<b>${p.price.toFixed(2)}</b><small>${scE(p.book || SCALE.book)}</small>${needs ? `<small class="sc-nb">needs ${needs}</small>` : ""}${p.best && p.best > p.price ? `<small class="sc-nb">best ${p.best.toFixed(2)} ${scE(p.bestBook || "")}</small>` : ""}`
     : `<p class="sc-none" title="No price feed for this bet yet: this is the line to look for at ${scE(SCALE.book)}">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : "No price on file"}${needs ? `<small class="sc-nb">needs ${needs} · no feed yet</small>` : ""}</p>`;
   return `<div class="sc-row">
     <div class="sc-t">${p.timed === false ? "–" : scTime(p.start)}</div>
     <div class="sc-m"><small>${scE(p.sport === "football" || p.sport === "tennis" ? scCfg(p.sport).name + " · " : "")}${scE(p.comp || "")}</small><b>${scE(p.pick)}</b> <span>v ${scE(opp)}</span></div>
     <div class="sc-w"><div class="sc-bar"><i><u style="width:${Math.round((p.conf || 0) * 100)}%"></u></i><em>${scPct(p.conf || 0)}</em></div></div>
-    <div class="sc-b"><span>${scE(p.bet)}</span><div class="sc-bar g"><i><u style="width:${Math.round((p.chance || 0) * 100)}%"></u></i><em>${scPct(p.chance || 0)}</em></div><small>${p.basis === "model" ? "the model's number" : scE(p.basis || "")}</small></div>
+    <div class="sc-b"><span>${scE(p.bet)}</span><div class="sc-bar g"><i><u style="width:${Math.round((p.chance || 0) * 100)}%"></u></i><em>${scPct(p.chance || 0)}</em></div><small>${p.basis === "model" ? "the model's number" : scE(p.basis || "")}</small>${alt}</div>
     <div class="sc-p">${price}</div>
     <div class="sc-x">${scTag(p)}</div>
   </div>`;
@@ -5763,8 +5768,8 @@ function scCard(g, byKey){
     : g.state === "lost" ? `<span class="sc-tag lost">Lost</span>`
     : g.state === "void" ? `<span class="sc-tag void">Void</span>`
     : g.price && needs && g.price < needs ? `<span class="sc-tag short">Price too short</span>` : "";
-  return `<article class="sc-card${g.kind === "f3" ? " fb" : ""}"><h4>${scE(g.name)}<small>${done ? "" : "from " + scTime(g.first)}</small></h4>
-    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l)))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : ""}</small></li>`).join("")}</ol>
+  return `<article class="sc-card"><h4>${scE(g.name)}<small>${done ? "" : "from " + scTime(g.first)}</small></h4>
+    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l), l.market))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : ""}</small></li>`).join("")}</ol>
     <div class="sc-cf"><b>${head}</b><p>${line}</p>${tag}</div></article>`;
 }
 function renderScale(){
@@ -5788,7 +5793,7 @@ function renderScale(){
   // the glance: one line a day, newest first; a column a tier, a dot a pick
   const gl = (S.glance || []).slice().reverse();
   const dot = (x, old) => { const nores = old && x.state === "started";
-    const t = `${x.pick}: ${nores ? "No result on file" : scWord(x.sport, x.state)}${x.detail ? " · " + x.detail : ""}`;
+    const t = `${x.pick}: ${nores ? "No result on file" : scWord(x.sport, x.state, x.market)}${x.detail ? " · " + x.detail : ""}`;
     return `<span class="sc-dot ${nores ? "void" : x.state}" role="img" aria-label="${scE(t)}" title="${scE(t)}"></span>`; };
   const grow = g => {
     const live = g.dots.filter(x => ["scale","won","lost"].includes(x.state)), sc = live.filter(x => x.state === "scale").length;
@@ -5810,7 +5815,9 @@ function renderScale(){
   const wrow = (x, i) => { const st = x.state, opp = x.side === "h" ? x.away : x.home, det = x.sport === "tennis" ? tennisScore(x.detail) : x.detail;
     const res = st === "scale" || st === "won" ? "won" : st === "lost" ? "lost" : "void";
     const word = st === "scale" || st === "won" ? "Won" : st === "lost" ? "Lost" : st === "void" ? "Void" : "No result";
-    const bt = x.sport === "football" ? (x.btts === true ? ["yes", "Both scored"] : x.btts === false ? ["no", "Not both"] : ["na", ""])
+    const both = x.btts === true ? "both scored" : x.btts === false ? "not both" : "";
+    const bt = x.sport === "football" && x.market === "wo25" ? (st === "scale" ? ["yes", "Over 2.5" + (both ? " · " + both : "")] : st === "won" || st === "lost" ? ["no", (st === "won" ? "Under 2.5" : "Lost") + (both ? " · " + both : "")] : ["na", ""])
+             : x.sport === "football" ? (x.btts === true ? ["yes", "Both scored"] : x.btts === false ? ["no", "Not both"] : ["na", ""])
              : st === "scale" ? ["yes", scE(scCfg(x.sport).bet)] : st === "won" ? ["no", scE(scWord(x.sport, "won").replace("Won, d", "D"))] : ["na", ""];
     return `<div class="sc-wrow"><span class="i">${i + 1}</span><span class="sp">${SPORT_SHORT[x.sport] || scE(x.sport)}</span>
       <span class="pk"><b>${scE(x.pick)}</b><small>v ${scE(opp)} · ${scE(String(x.comp || "").split(" · ").pop())}${x.priced === S.book ? " · Hill" : ""}</small></span>
@@ -5848,16 +5855,19 @@ function renderScale(){
     return ps.length ? `<div class="sc-tier ${t}"><b>${SC_TIER[t]}</b><span>${ps.length} · ${tierNote[t]}</span></div>${ps.map(scRow).join("")}` : ""; };
   const list = `<section class="sc-sec">
     <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3>${tabs}</div>
-    ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>${scE(S.book)}</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
+    ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
       : `<div class="sc-empty"><b>No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
     ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for win and both score (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
-    <p class="sc-foot">Within a tier the order is the chance the Scale bet lands. Football's chance is the model's own number; every other sport's is how often picks at that confidence have landed the bet in the site's record. "Needs" is the price that breaks even at the chance shown.</p>
+    <p class="sc-foot">Within a tier the order is the chance the Scale bet lands. Football's chance is the model's own number for the fixture and its price the best UK price on file for that bet, named; every other sport's chance is how often picks at that confidence have landed the bet in the site's record, with no price on file yet. "Needs" is the price that breaks even at the chance shown. Under each football bet is the one it replaced, to win with both teams scoring, with ${scE(S.book)}'s price.</p>
   </section>`;
   // the day's groups
-  const open = day.picks.filter(p => scState(p) === "up").length;
-  const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>from the top of the list; the football threefold is priced on every leg</small></h3>
+  const open = day.picks.filter(p => scState(p) === "up" && (p.tier || "list") === "list").length;
+  const byT = (S.replay && S.replay.byTier) || {}, tr = t => byT[t] && byT[t].n ? `${byT[t].scale.toLocaleString("en-GB")} of ${byT[t].n.toLocaleString("en-GB")} (${scOf(byT[t].scale, byT[t].n)})` : "";
+  const why = tr("list") && tr("reserve") ? `<p class="sc-foot">Why Daily List picks only: across every sport on this tab their Scale bet has landed ${tr("list")} times in the site's record, the reserve's ${tr("reserve")}. Three legs at the first rate land together about one time in four; three at the second, about one in nine.</p>` : "";
+  const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>Daily List picks only, the most likely to land first</small></h3>
     ${day.groups.length ? `<div class="sc-groups">${day.groups.map(g => scCard(g, byKey)).join("")}</div>`
-      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs three Scale picks still to start; ${open === 0 ? "there are none" : open === 1 ? "there is one" : "there are two"}.`}</div>`}
+      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs two Daily List picks still to start; ${open === 0 ? "there are none" : "there is one"}. The reserve never fills one.`}</div>`}
+    ${why}
   </section>`;
   // where the book prices the football bet
   const lg = S.leagues || [];
@@ -5875,7 +5885,7 @@ function renderScale(){
   const tallyRows = SC_TIERS.map(t => srow("Football, " + scLow(SC_TIER[t]), scCfg("football").long, rf[t], "every graded pick before " + since + " in leagues " + S.book + " prices now")).join("")
     + Object.keys(rb).map(s => srow(scCfg(s).name, scCfg(s).long, rb[s].all, "every graded pick at " + floor + " or better: the tally behind the chance")
       + srow(scCfg(s).name, scCfg(s).long, rb[s].strong, "of those, picks at 75% or better")).join("");
-  const thead = `<thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at ${scE(S.book)}</th></tr></thead>`;
+  const thead = `<thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at the price shown</th></tr></thead>`;
   const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
   const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
   const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
@@ -5890,7 +5900,7 @@ function renderScale(){
       <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started, by tier and by sport. The rows under them are the replay of the days before the tab: the same rule, chosen from what was published before each start, results added afterwards. They say how often the bet landed, never that it paid: there are no prices behind them.</p>
       ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
-      <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with both teams scoring, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the bet.</p></div>${tiles}</div>
+      <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with over 2.5 goals, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the fixture's result-and-goals bets. Groups take Daily List picks only.</p></div>${tiles}</div>
     ${glance}${list}${groups}${leagues}${board}`;
   const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
   const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
