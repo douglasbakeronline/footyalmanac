@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-19: the FIFA ranking also read from FIFA's public ranking page (tag pending)
+
+**What changed:** the build after 2026-11-15-18 (deploy run 43716339474) showed the dateless overview's `rankings` holds no parsable rows, so FIFA's API answers nothing after 20 Jul 2026 in any form tried. `rankings.refresh_fifa` now also reads the public men's ranking page (`FIFA_PAGE_URL`, `/fifa-rankings/world-ranking/men`): every `dateId=id` it links to is asked of the API first, and the longest `rankingItem` list in its embedded JSON (`__NEXT_DATA__` or any JSON script) is a release, under the same checks (newer than the file, 80%+ of its teams, the same top 20). Each build logs what the page held (size, ids, rows, `__NEXT_DATA__`), and the overview line now says "an empty rankings list" where that is what came back.
+**Evidence:** run 43716339474's "FIFA ranking:" lines. `tests/test_rankings.py` +2 (a page's embedded rows taken and its id asked first; a bare page described); every refresh test has the page patched so no test reaches the network; suite OK; `nametest.py` clear. Read on the merge's CI build.
+**Files:** `rankings.py`, `tests/test_rankings.py`, `claude/world-rankings.md`, `RELEASES.md`.
+**Not changed:** the FIFA adjustment's weights, the Daily List's bars, the Card, any record.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-15-18: Scale groups take football from every fixture; Starred rows match the Daily List (tag pending)
 
 **What changed:** a Scale group's football legs now come from every football fixture William Hill offers at 55%+, not the Daily List alone (`RULE` 4), ranked by the model's own chance for each. Starred now draws every bookmark exactly as the Daily List does: the same row, chips and marks, in the list's order, with started picks kept and their results shown. Douglas: "scour all football fixtures ... widen the pool" and "They need to look identical."

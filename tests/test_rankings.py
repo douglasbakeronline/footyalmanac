@@ -110,6 +110,10 @@ class Refresh(unittest.TestCase):
         p = mock.patch.object(R, "FIFA_FILE", self.path)
         p.start()
         self.addCleanup(p.stop)
+        # The ranking page is never fetched in a test unless a test says so.
+        q = mock.patch.object(R, "_get_text", side_effect=OSError("page down"))
+        q.start()
+        self.addCleanup(q.stop)
 
     def write(self, days_old, id_=100):
         d = (date.today() - timedelta(days=days_old)).isoformat()
@@ -293,6 +297,31 @@ class Refresh(unittest.TestCase):
         with mock.patch.object(R, "_get", fake):
             self.assertEqual(R.refresh_fifa(scan=2, log=log), cur)
         self.assertTrue(any("refused the overview" in l for l in log), log)
+
+    def test_ranking_page_embedded_json_is_the_release(self):
+        cur = self.write_men()
+        names = [f"M{k}" for k in range(40)]
+        blob = json.dumps({"props": {"pageProps": {"pageData": {"ranking": self.rows(names, "2026-10-22")["rankings"]}}}})
+        html = (f'<a href="?dateId=id15400">Oct</a><script id="__NEXT_DATA__" type="application/json">{blob}</script>')
+        calls = []
+        def fake(url, timeout=20):
+            calls.append(url)
+            return {"rankings": []}
+        log = []
+        with mock.patch.object(R, "_get", fake), mock.patch.object(R, "_get_text", return_value=html):
+            new = R.refresh_fifa(scan=2, log=log)
+        self.assertEqual(new["date"], "2026-10-22")
+        self.assertTrue(any("from the ranking page" in l for l in log), log)
+        self.assertTrue(any("dateId=id15400" in u for u in calls))     # the page's id is asked first
+
+    def test_page_without_rows_is_described(self):
+        self.write_men()
+        log = []
+        with mock.patch.object(R, "_get", lambda url, timeout=20: {"rankings": []}), \
+                mock.patch.object(R, "_get_text", return_value="<html>nothing</html>"):
+            R.refresh_fifa(scan=2, log=log)
+        self.assertTrue(any("page 20 chars" in l and "no ranking rows" in l for l in log), log)
+        self.assertTrue(any("an empty rankings list" in l for l in log), log)
 
     def test_same_list(self):
         cur = {"teams": {f"M{k}": [k + 1, 1] for k in range(30)}}

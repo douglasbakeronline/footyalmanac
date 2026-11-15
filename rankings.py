@@ -174,11 +174,70 @@ def _fifa_latest(errors=None, notes=None):
             rel = r
         if not found and notes is not None:
             keys = sorted(doc)[:12] if isinstance(doc, dict) else type(doc).__name__
-            what = f"{len(r['teams'])} teams dated {r['date']}" if r else "no parsable rows"
+            what = (f"{len(r['teams'])} teams dated {r['date']}" if r else
+                    "an empty rankings list" if rows == [] else "no parsable rows")
             notes.append(f"FIFA ranking: overview {url.split('?', 1)[1]} named no release id "
                          f"(keys: {keys}; {what})")
         ids |= found
     return (max(ids) if ids else None), rel
+
+
+FIFA_PAGE_URL = "https://inside.fifa.com/fifa-rankings/world-ranking/men"
+
+
+def _get_text(url, timeout=20):
+    h = dict(UA, Accept="text/html,application/xhtml+xml")
+    return urllib.request.urlopen(urllib.request.Request(url, headers=h), timeout=timeout).read().decode("utf-8", "replace")
+
+
+def _ranking_rows(obj):
+    """Every list of FIFA "rankingItem" rows anywhere in a decoded document."""
+    out = []
+    if isinstance(obj, list):
+        if obj and all(isinstance(x, dict) and "rankingItem" in x for x in obj):
+            out.append(obj)
+        else:
+            for v in obj:
+                out += _ranking_rows(v)
+    elif isinstance(obj, dict):
+        for v in obj.values():
+            out += _ranking_rows(v)
+    return out
+
+
+def _fifa_page(errors=None, notes=None):
+    """(release ids, release) read from FIFA's public men's ranking page
+    (15 Nov 2026: its API answers no release after 20 Jul 2026). The ids are
+    every "dateId=idNNNNN" the page links to; the release is the longest
+    rankingItem list in its embedded JSON (Next.js __NEXT_DATA__ or any
+    application/json script), or None. What was found goes to `notes`."""
+    try:
+        html = _get_text(FIFA_PAGE_URL)
+    except Exception as e:
+        if errors is not None:
+            errors.append(("page", f"{type(e).__name__}: {e}"))
+        return set(), None
+    ids = {int(m) for m in re.findall(r"dateId=id(\d{4,6})", html)}
+    lists = []
+    for blob in re.findall(r'<script[^>]*type="application/json"[^>]*>(.*?)</script>', html, re.S):
+        try:
+            lists += _ranking_rows(json.loads(blob))
+        except ValueError:
+            continue
+    rel = None
+    for rows in sorted(lists, key=len, reverse=True):
+        try:
+            rel = _parse_release(None, rows)
+            break
+        except (KeyError, TypeError, IndexError):
+            continue
+    if notes is not None:
+        notes.append(f"FIFA ranking: page {len(html)} chars, {len(ids)} release id(s)"
+                     + (f" up to {max(ids)}" if ids else "")
+                     + (f", {len(rel['teams'])} teams dated {rel['date']}" if rel else
+                        f", {len(lists)} ranking list(s), none parsable" if lists else ", no ranking rows")
+                     + (", __NEXT_DATA__" if "__NEXT_DATA__" in html else ""))
+    return ids, rel
 
 
 def _fifa_latest_id(errors=None, notes=None):
@@ -219,9 +278,14 @@ def refresh_fifa(scan=160, log=None):
     start = max(FIFA_SEED, cur["id"] if cur else 0) + 1
     errors, notes = [], []
     latest, overview = _fifa_latest(errors, notes)
+    page_ids, page_rel = _fifa_page(errors, notes)
+    if page_rel and (overview is None or page_rel["date"] > overview["date"]):
+        page_rel["from"] = "the ranking page"
+        overview = page_rel
     ids = list(range(start, start + scan))
-    if latest and latest >= start:
-        ids = [latest] + [i for i in ids if i != latest]
+    front = sorted({i for i in page_ids | {latest or 0} if i >= start}, reverse=True)
+    if front:
+        ids = front + [i for i in ids if i not in front]
     with cf.ThreadPoolExecutor(8) as ex:
         found = [r for r in ex.map(lambda i: _fifa_release(i, errors), ids) if r]
     need = FIFA_MIN_SHARE * len(cur["teams"]) if cur and cur.get("teams") else 0
@@ -241,7 +305,7 @@ def refresh_fifa(scan=160, log=None):
             # No id to scan from: keep the file's (or the seed), so the next
             # scan starts where it did and the overview is read again.
             overview["id"] = max(FIFA_SEED, cur["id"] if cur else 0)
-            overview["from"] = "overview"
+            overview.setdefault("from", "the dateless overview")
             found = [overview]
     if short and log is not None:
         log.append("FIFA ranking: refused " + ", ".join(f"id {r['id']} ({len(r['teams'])} teams)" for r in short[:5])
@@ -251,7 +315,7 @@ def refresh_fifa(scan=160, log=None):
         json.dump(new, open(FIFA_FILE, "w"), ensure_ascii=False, separators=(",", ":"))
         if log is not None:
             log.append(f"FIFA ranking: new release {new['date']} (id {new['id']}"
-                       + (", from the dateless overview" if new.get("from") else "") + ")")
+                       + (f", from {new['from']}" if new.get("from") else "") + ")")
         _stale_warning(new, log)
         return new
     if log is not None:
