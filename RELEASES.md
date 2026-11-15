@@ -13,7 +13,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Evidence:** `claude/scale-strong-legs-2026-11-15.md`. Groups replayed over 5 Oct to 14 Nov (41 days, chosen from what was published before each start): doubles 13 of 31, threefolds 7 of 24, fourfolds 6 of 21, fivefolds 5 of 18; the old rule's threefolds 13 of 41 and fivefolds 5 of 41. Forty-one days cannot separate the two at the threefold; the case rests on the per-pick tables. **None of this shows the bets pay**: four of the five have no price on file. A Daily List threefold landing three times in ten needs 3.4.
 
-**Tested:** `tests/test_scale.py` (40 cases: the football sample by market and tier, groups from Daily List picks only, a pick grading by its own bet); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build.
+**Tested:** `tests/test_scale.py` (41 cases: the football sample by market and tier, groups from Daily List picks only, a pick grading by its own bet, an old rule's frozen group); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build.
 
 **Files:** `scale.py` (`RULE` 3, `FOOTBALL_MARKET`, `GROUP_TIERS`), `index.html`, `tests/test_scale.py`, `claude/scale-strong-legs-2026-11-15.md`, `CLAUDE.md`, this entry.
 
