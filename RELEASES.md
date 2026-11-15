@@ -13,6 +13,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any model, the Daily List, other sports' group legs, saved bookmarks.
 **Roll back:** `git revert`; or `GROUP_ANY_TIER = ()` with a `RULE` bump for the Scale half alone.
 
+## 2026-11-15-18: the FIFA ranking taken from the dateless overview (tag pending)
+
+**What changed:** the first build after 2026-11-15-17 (deploy run 43715171219) logged what FIFA's dateless overview returns, with and without `rankingType`: `keys: ['rankings']`, the current release's rows and no release id, while no id from 15176 to 15335 answers. So the id scan could never find it. `rankings.refresh_fifa` now parses the overview's own rows as a release and takes it when it is dated after the file, holds 80%+ of the teams on file and reads as the same ranking (`_same_list`: 80%+ of the file's top 20 inside its top 30, so a women's or futsal list is refused); the file keeps its id so the scan starts where it did. The log says "new release ... from the dateless overview", or why it was refused, with the rows' team count and date.
+**Evidence:** run 43715171219's "FIFA ranking:" lines (above). `tests/test_rankings.py` +4 (overview rows taken, older rows ignored, another ranking refused, `_same_list`); suite OK; `nametest.py` clear. Confirmed on the merge's own CI build, not in the sandbox (inside.fifa.com is blocked there).
+**Files:** `rankings.py`, `tests/test_rankings.py`, `claude/world-rankings.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the FIFA adjustment's weights, the Daily List's bars, the Card, any record.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-15-17: the FIFA ranking refresh asks the API the way FIFA's site now does (tag pending)
 
 **What changed:** the build has scored internationals on the 20 Jul 2026 FIFA ranking for 118 days: every build since August logged "no newer release than 2026-07-20 (scanned ids 15176-15335, latest per overview: None)" with no fetch failure, while FIFA kept publishing (an October 2026 release is on inside.fifa.com, whose ranking pages moved to `/fifa-rankings/world-ranking/`). FIFA's API URLs now carry `rankingType=football` (a public `id15136` URL has it). `rankings.refresh_fifa` asks with it first and without it second, for the release ids and for the dateless overview; an overview that names no id logs its top-level keys, so the next build log shows FIFA's shape if this is not the cause; and a release with under 80% of the teams on file (`FIFA_MIN_SHARE`, about 211 sides) is refused, so a futsal or women's list under the same id scheme can never replace the men's ranking.
