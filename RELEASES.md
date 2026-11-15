@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-ncaab-elo: college basketball Elo settings re-tested, no change (tag pending)
+
+**What changed:** nothing in the model. A dated note, `claude/ncaab-elo-settings-2026-11-15.md`, records the tests.
+
+**Evidence:** hfa 125-200 (K 24 and 32) all worse on the check season (0.5517-0.5587 v 0.5499, p(worse) 1.00); K 24 +0.0004. A neutral-court calibration curve (home-only base curves) gained 0.00055 log loss, p(worse) 0.15 on 5,814 check games, but widened the 65%+ quoted-landed gap from 0.0218 to 0.0232, which fails `tune_sport`'s guard; the neutral curve alone gained 0.00015. The replay shows college basketball quoted over its landed rate, so the live +4 point surplus is not something the history can fit.
+
+**Files:** `claude/ncaab-elo-settings-2026-11-15.md`, `RELEASES.md`.
+
+**Not changed:** `sports.py`, `sports.json`, any bar or list rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-span-held: the Card no longer stakes a two-day group's picks twice (tag pending)
 
 **What changed:** a Card group built just after midnight now leaves out the picks the day before's two-day group already holds. The nightly Card review flags any fixture in two Card groups.
