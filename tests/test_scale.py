@@ -65,6 +65,23 @@ class Rates(unittest.TestCase):
         self.assertEqual(S.band_rate(0.93, t), (0.6, 30, 50))       # 90%+ holds 10: widened to 80%+
         self.assertEqual(S.band_rate(0.60, t), (0.6, 30, 50))       # nothing near it: every pick at the floor or better
 
+    def test_football_sample_is_by_the_market_and_carries_the_tier(self):
+        fg = {"graded": [
+            {"confidence": 0.8, "pick": "h", "result": [3, 1], "date": "2026-10-01", "list": True},     # won, over 2.5, both scored
+            {"confidence": 0.8, "pick": "a", "result": [0, 2], "date": "2026-10-02", "reserve": True},  # won to nil, under 2.5
+            {"confidence": 0.8, "pick": "h", "result": [1, 1], "date": "2026-10-03"},                   # not won
+            {"confidence": 0.8, "pick": "h", "result": [4, 0], "date": "2026-10-03", "unrated": True},  # out
+            {"confidence": 0.5, "pick": "h", "result": [4, 0], "date": "2026-10-03"},                   # under the floor
+            {"confidence": 0.8, "pick": "d", "result": [1, 1], "date": "2026-10-03"},                   # a draw pick
+        ]}
+        f = S.samples({}, {}, fg)["football"]
+        self.assertEqual([x[1:3] for x in f], [(True, True), (True, False), (False, False)])
+        self.assertEqual([x[4] for x in f], ["list", "reserve", "else"])
+        self.assertEqual([x[2] for x in S.samples({}, {}, fg, market="wbtts")["football"]], [True, False, False])
+        self.assertEqual([x[2] for x in S.samples({}, {}, fg, market="wtn")["football"]], [False, True, False])
+        t = S.basis_tier(S.samples({}, {}, fg))
+        self.assertEqual((t["list"]["n"], t["list"]["scale"], t["reserve"]["scale"], t["else"]["n"]), (1, 1, 0, 1))
+
     def test_no_record_no_chance(self):
         self.assertEqual(S.band_rate(0.9, [])[0], None)
 
@@ -93,7 +110,8 @@ class Replay(unittest.TestCase):
             return {"key": key, "sport": sport, "start": start, "timed": True, "date": "2026-11-10", "comp": sport.upper(),
                     "home": "H" + key, "away": "A" + key, "side": "h", "pick": "H" + key, "confidence": conf, "tier": "Strong",
                     "list": tier == "list", "reserve": tier == "reserve", "id": key, "published": "2026-11-10T08:00:00Z"}
-        self.items = [item("n1", "nba", 0.85, "list"), item("n2", "nba", 0.70, "reserve")] + \
+        self.items = [item("n1", "nba", 0.85, "list"), item("n2", "nba", 0.70, "reserve"), item("n3", "nba", 0.86, "list"),
+                      item("n4", "nba", 0.87, "list")] + \
                      [item(f"e{i}", "nba", 0.56 + i / 100, "else") for i in range(12)]
         D.read_archives = lambda day, here: []
         D.pinned = lambda day, archives, now, every=False: [dict(i) for i in self.items]
@@ -105,7 +123,7 @@ class Replay(unittest.TestCase):
         # before the day: 40 picks, 10 landed. On and after it: 40 picks, all landed.
         early = [(0.8, True, i < 10, "2026-11-01") for i in range(40)]
         late = [(0.8, True, True, "2026-11-10") for i in range(40)]
-        return {"nba": early + late}
+        return {"nba": early + late}       # (confidence, won, landed, date): the tier is not read here
 
     def test_the_chance_has_not_seen_the_days_own_results(self):
         d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
@@ -117,16 +135,17 @@ class Replay(unittest.TestCase):
         d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
         tiers = [p["tier"] for p in sorted(d["picks"], key=S.rank)]
         self.assertEqual(len(d["picks"]), S.TARGET)
-        self.assertEqual(tiers[:2], ["list", "reserve"]); self.assertEqual(tiers.count("else"), 8)
-        self.assertEqual([g["kind"] for g in d["groups"]], [3, 4, 5])        # built as before the first start
-        self.assertEqual(d["groups"][0]["legs"][:2], ["n1", "n2"])
+        self.assertEqual(tiers[:4], ["list", "list", "list", "reserve"]); self.assertEqual(tiers.count("else"), 6)
+        self.assertEqual([g["kind"] for g in d["groups"]], [2, 3])           # built as before the first start, list picks only
+        self.assertEqual(sorted(d["groups"][1]["legs"]), ["n1", "n3", "n4"])
 
     def test_football_needs_the_book_and_takes_the_models_number(self):
         i = {"key": "f|eng.1|2026-11-10|A|B", "league": "eng.1", "date": "2026-11-10", "home": "A", "away": "B", "side": "h"}
         g = {"xg": [2.0, 1.0], "p": {"h": 0.62, "d": 0.2, "a": 0.18}}
         self.assertIsNone(S.proxy_football(i, g, {"leagues": set(), "fixtures": set()}))
         w = S.proxy_football(i, g, {"leagues": {"eng.1"}, "fixtures": set()})
-        self.assertTrue(0 < w["p"] < 0.62)
+        self.assertTrue(0 < w["p"] < 0.62)                  # win and both score, kept beside the pick
+        self.assertTrue(w["p"] < w["q"] < 0.62)             # win and over 2.5: the Scale bet
         self.assertEqual(S.proxy_football(i, g, {"leagues": set(), "fixtures": {("2026-11-10", "A", "B")}}), w)
         self.assertIsNone(S.proxy_football(i, dict(g, unrated=True), {"leagues": {"eng.1"}, "fixtures": set()}))
         self.assertIsNone(S.proxy_football(i, None, {"leagues": {"eng.1"}, "fixtures": set()}))
@@ -173,31 +192,34 @@ class Groups(unittest.TestCase):
 
     def test_nested_from_the_most_likely_and_never_a_started_leg(self):
         gs = S.build_groups(self.picks(), NOW)
-        self.assertEqual([g["kind"] for g in gs], [3, 4])           # four still to start: no fivefold; all football, so no second threefold
-        self.assertEqual(gs[0]["legs"], ["b", "c", "a"])
-        self.assertEqual(gs[1]["legs"], ["b", "c", "a", "d"])
-        self.assertAlmostEqual(gs[0]["chance"], 0.042, places=4)
-        self.assertEqual(gs[0]["price"], round(2.4 * 2.6 * 3.0, 2))
-        self.assertEqual(gs[0]["first"], "2026-11-15T15:00:00Z")
+        self.assertEqual([g["kind"] for g in gs], [2, 3, 4])        # four still to start: no fivefold
+        self.assertEqual(gs[0]["legs"], ["b", "c"])
+        self.assertEqual(gs[1]["legs"], ["b", "c", "a"])
+        self.assertEqual(gs[2]["legs"], ["b", "c", "a", "d"])
+        self.assertAlmostEqual(gs[1]["chance"], 0.042, places=4)
+        self.assertEqual(gs[1]["price"], round(2.4 * 2.6 * 3.0, 2))
+        self.assertEqual(gs[1]["first"], "2026-11-15T15:00:00Z")
 
-    def test_two_picks_make_no_group(self):
-        self.assertEqual(S.build_groups(self.picks()[:2], NOW), [])
+    def test_one_pick_makes_no_group(self):
+        self.assertEqual(S.build_groups(self.picks()[:1], NOW), [])
 
-    def test_a_list_pick_comes_before_a_likelier_reserve_pick(self):
-        ps = self.picks()[:3] + [pick("r", "2026-11-15T19:00:00Z", 0.9, None, sport="nba", tier="reserve")]
+    def test_only_daily_list_picks_are_legs_however_likely_the_rest(self):
+        ps = self.picks()[:2] + [pick("r", "2026-11-15T19:00:00Z", 0.9, None, sport="nba", tier="reserve"),
+                                 pick("x", "2026-11-15T19:00:00Z", 0.95, None, sport="tennis", tier="else")]
         gs = S.build_groups(ps, NOW)
-        self.assertEqual(gs[0]["legs"], ["b", "c", "a"])
-        self.assertEqual(gs[1]["legs"], ["b", "c", "a", "r"])
-        self.assertIsNone(gs[1]["price"])                           # one leg unpriced: no price for the group
+        self.assertEqual([g["kind"] for g in gs], [2])
+        self.assertEqual(gs[0]["legs"], ["b", "a"])
 
-    def test_the_football_threefold_is_priced_and_only_built_when_it_differs(self):
-        ps = [pick("t", "2026-11-15T19:00:00Z", 0.66, None, sport="tennis")] + self.picks()[:4]
+    def test_a_group_with_an_unpriced_leg_has_no_price(self):
+        ps = [pick("t", "2026-11-15T19:00:00Z", 0.66, None, sport="tennis")] + self.picks()[:2]
         gs = {g["kind"]: g for g in S.build_groups(ps, NOW)}
-        self.assertEqual(gs[3]["legs"], ["t", "b", "c"])
+        self.assertEqual(gs[3]["legs"], ["t", "b", "a"])
         self.assertIsNone(gs[3]["price"])
-        self.assertEqual(gs["f3"]["legs"], ["b", "c", "a"])
-        self.assertEqual(gs["f3"]["price"], round(2.4 * 2.6 * 3.0, 2))
-        self.assertEqual(gs["f3"]["name"], "Football threefold")
+
+    def test_a_pick_archived_before_tiers_counts_as_a_list_pick(self):
+        ps = self.picks()[:2]
+        for p in ps: del p["tier"]
+        self.assertEqual([g["kind"] for g in S.build_groups(ps, NOW)], [2])
 
 
 class MergeDay(unittest.TestCase):
@@ -220,10 +242,20 @@ class MergeDay(unittest.TestCase):
         ps = [pick(k, "2026-11-15T15:00:00Z", 0.3, 3.0) for k in "abcd"] + [pick("e", "2026-11-15T09:00:00Z", 0.6, 1.6)]
         new3 = dict(frozen, legs=["a", "b", "c"], first="2026-11-15T15:00:00Z")
         new4 = dict(opened, price=70.0)
-        m = S.merge_day({"picks": ps, "groups": [frozen, opened]}, ps, [], [new3, new4], NOW, "t")
+        m = S.merge_day({"rule": S.RULE, "picks": ps, "groups": [frozen, opened]}, ps, [], [new3, new4], NOW, "t")
         by = {g["kind"]: g for g in m["groups"]}
         self.assertEqual(by[3]["legs"], ["e", "a", "b"])
         self.assertEqual(by[4]["price"], 70.0)
+
+    def test_a_group_frozen_under_an_earlier_rule_stands_only_if_every_leg_has_started(self):
+        ps = [pick("e", "2026-11-15T09:00:00Z", 0.6, 1.6), pick("f", "2026-11-15T10:00:00Z", 0.6, 1.6),
+              pick("a", "2026-11-15T15:00:00Z", 0.3, 3.0)]
+        done = {"kind": 2, "name": "Scale double", "legs": ["e", "f"], "first": "2026-11-15T09:00:00Z", "chance": 0.36, "price": 2.56}
+        half = {"kind": "f3", "name": "Football threefold", "legs": ["e", "f", "a"], "first": "2026-11-15T09:00:00Z", "chance": 0.1, "price": 7.7}
+        m = S.merge_day({"rule": S.RULE - 1, "picks": ps, "groups": [done, half]}, ps, [], [], NOW, "t")
+        self.assertEqual([g["kind"] for g in m["groups"]], [2])                 # "a" is still to start and is this rule's pick now
+        m = S.merge_day({"rule": S.RULE, "picks": ps, "groups": [done, half]}, ps, [], [], NOW, "t")
+        self.assertEqual(sorted(str(g["kind"]) for g in m["groups"]), ["2", "f3"])   # frozen under this rule: stands
 
     def test_left_off_never_lists_a_pick_that_is_on(self):
         off = [{"key": "a", "start": "2026-11-15T15:00:00Z", "comp": "X", "pick": "Ha"}, {"key": "z", "start": "2026-11-15T15:00:00Z", "comp": "X", "pick": "Hz"}]
@@ -245,6 +277,14 @@ class Grading(unittest.TestCase):
             self.assertEqual(S.settle(p, res(0, 1)), ("lost", "0-1"))
             self.assertEqual(S.settle(dict(p, side="a"), res(1, 3)), ("scale", "3-1"))      # the pick's score first
             self.assertEqual(S.settle(p, ({}, {}, {})), (None, None))
+            # rule 3: the pick's own market decides; one archived before it is still win and both score
+            o = dict(p, market="wo25")
+            self.assertEqual(S.settle(o, res(2, 1)), ("scale", "2-1"))
+            self.assertEqual(S.settle(o, res(3, 0)), ("scale", "3-0"))
+            self.assertEqual(S.settle(o, res(2, 0)), ("won", "2-0"))
+            self.assertEqual(S.settle(o, res(1, 2)), ("lost", "1-2"))
+            self.assertEqual(S.settle(dict(p, market="wtn"), res(2, 0))[0], "scale")
+            self.assertEqual(S.settle(dict(p, market="wtn"), res(2, 1))[0], "won")
         finally:
             M._result_for = orig
 

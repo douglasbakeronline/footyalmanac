@@ -5,6 +5,21 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-10: Scale reviewed: football to win with over 2.5 goals, groups from Daily List picks only (tag pending)
+
+**What changed:** Douglas: "we need to find a winning pattern in this scale feature. Review and optimise." Two things moved on the Scale tab. Football's second condition is now **to win with over 2.5 goals**, with the model's own number for the fixture as its chance and the best UK price on file for the bet, named; to win with both teams scoring stays under it with William Hill's price, and the week's table still says whether both scored. And the day's **groups are built from Daily List picks only**, most likely to land first: a double, threefold, fourfold and fivefold as far as those picks go. The reserve never fills a group, the football threefold is gone, and a day with fewer than two Daily List picks still to start has no group.
+
+**Why:** the review of every graded pick at 55%+. Football: winning with both teams scoring lands 28-38% whatever the winner's strength (2,645 picks), while winning with over 2.5 goals rises from 41% at 55-62% confidence to 77% at 85%+; and William Hill's price for win and both score keeps about 16% a leg (price times fair chance 0.843 on 69 fixtures, against 0.93-0.94 on its other markets), so three legs return 60% of fair before a ball is kicked. Tiers: across the five sports a Daily List pick's Scale bet landed 216 of 344 times (63%), a reserve pick's 526 of 1,107 (48%), the rest 44%, so a reserve leg is the leg that loses an accumulator.
+
+**Evidence:** `claude/scale-strong-legs-2026-11-15.md`. Groups replayed over 5 Oct to 14 Nov (41 days, chosen from what was published before each start): doubles 13 of 31, threefolds 7 of 24, fourfolds 6 of 21, fivefolds 5 of 18; the old rule's threefolds 13 of 41 and fivefolds 5 of 41. Forty-one days cannot separate the two at the threefold; the case rests on the per-pick tables. **None of this shows the bets pay**: four of the five have no price on file. A Daily List threefold landing three times in ten needs 3.4.
+
+**Tested:** `tests/test_scale.py` (40 cases: the football sample by market and tier, groups from Daily List picks only, a pick grading by its own bet); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build.
+
+**Files:** `scale.py` (`RULE` 3, `FOOTBALL_MARKET`, `GROUP_TIERS`), `index.html`, `tests/test_scale.py`, `claude/scale-strong-legs-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any model, the Daily List, the tiers and their order, the ten-a-day top-up, the other sports' bets, the Card, the slip. Picks and groups already archived keep their own bet and grade by it.
+
+**Roll back:** `git revert` the merge commit; or `FOOTBALL_MARKET = "wbtts"` / `GROUP_TIERS = TIERS` with a `RULE` bump for either half alone.
 ## 2026-11-15-9: The replays' check season runs past 20 Sep (tag pending)
 
 **What changed:** `tune.load`, the loader behind `tune.py`, `backtest.py`, `replay.py`, `tools/card_legs_history.py`, `tools/goals_value.py` and `tools/model_ideas.py`, now scores the check season's unscored openfootball fixtures from the ESPN results the daily build commits in `current/` (`tune.fill_current`), by the live build's own rule (`build.fill_lagging`: its own pair within 21 days, never over the source, all or nothing on names). openfootball stopped scoring after 20 Sep, the build was fixed on 13 Nov, but every replay still ended its 2026-27 season there: the Card's football-data check season had 7 candidate legs in October, so no rule 7 variant's check-season side could be read, and the Monday calibration and home-advantage refits confirmed on August and September only.
