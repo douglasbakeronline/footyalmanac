@@ -1,0 +1,49 @@
+# The briefing watchdog (15 Nov 2026). GitHub drops or delays the deploy
+# crons at busy times: the 07:40 UTC run did not appear once from 10 to
+# 15 Nov and the morning push went 123 and 138 minutes late on 14 and 15 Nov
+# (claude/briefing-watch-2026-11-15.md). Around each briefing slot
+# (notify.SLOTS, 07:00 / 11:00 / 16:00 / 21:00 UK) this checks every 20
+# minutes and dispatches a deploy only when the slot is due, unsent in
+# groupings-archive/briefed.json, 10+ minutes past its hour, no deploy is
+# queued or running, and it has not already dispatched two for that slot
+# (tools/briefing_watch.py). A run that does nothing takes a few seconds.
+#
+# Hours are UTC and cover both GMT and BST (UK = UTC+1 in summer):
+#   06-08 morning, 10-12 lunch, 15-17 evening, 20-22 night.
+# tests/test_briefing_watch.py fails if a slot falls outside these windows.
+name: Briefing watch
+on:
+  schedule:
+    - cron: "5,25,45 6-8 * * *"
+    - cron: "5,25,45 10-12 * * *"
+    - cron: "5,25,45 15-17 * * *"
+    - cron: "5,25,45 20-22 * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write        # to dispatch deploy.yml (a GITHUB_TOKEN dispatch does start a run)
+concurrency:
+  group: briefing-watch
+  cancel-in-progress: false
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          sparse-checkout: |
+            notify.py
+            tools/briefing_watch.py
+            groupings-archive/briefed.json
+            .github/workflows/briefing-watch.yml
+          sparse-checkout-cone-mode: false
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Dispatch a deploy if a briefing is overdue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: python3 tools/briefing_watch.py
