@@ -308,6 +308,15 @@ jobs:
       - name: Price and grade the football markets
         run: python3 markets.py || echo "::warning::markets failed; keeping the last record"
 
+      # Scale (scale.py, 15 Nov 2026): Daily List winners with a second
+      # condition added (football: and both teams score, only where William
+      # Hill prices it, read from markets.py's archive; tennis: in straight
+      # sets). Archives each day's picks and groups to scale-archive/, grades
+      # them from the records and writes scale.js for the Scale tab. Fetches
+      # nothing. Allowed to fail: the tab then shows its empty state.
+      - name: Build and grade the Scale list
+        run: python3 scale.py || echo "::warning::scale failed; the Scale tab keeps its empty state"
+
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
       - name: Normalise the App key
@@ -376,6 +385,8 @@ jobs:
           # the football markets archive and its record (markets.py)
           cp -r predictions-markets /tmp/archive/ 2>/dev/null || true
           cp markets-record.json /tmp/archive/ 2>/dev/null || true
+          # the Scale list's picks and groups as published (scale.py)
+          cp -r scale-archive /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -409,6 +420,10 @@ jobs:
               cp -r /tmp/archive/predictions-markets/. predictions-markets/
             fi
             cp /tmp/archive/markets-record.json . 2>/dev/null || true
+            if [ -d /tmp/archive/scale-archive ]; then
+              mkdir -p scale-archive
+              cp -r /tmp/archive/scale-archive/. scale-archive/
+            fi
             cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
             mkdir -p groupings-archive
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
@@ -416,7 +431,7 @@ jobs:
             git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
-                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json 2>/dev/null) \
+                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json scale-archive 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
@@ -490,6 +505,8 @@ jobs:
             echo "::warning::no daylist this run — started picks will not show on today's list"
           cp groupings-data.js groupings.json _site/ 2>/dev/null || \
             echo "::warning::no groupings this run — the Odds tab will show its empty state"
+          cp scale.js scale.json _site/ 2>/dev/null || \
+            echo "::warning::no scale files this run — the Scale tab will show its empty state"
 
       - uses: actions/upload-pages-artifact@v3
         with:

@@ -106,7 +106,7 @@ PROTECTED = ["record.json", "record-graded.json", "predictions/", "predictions-s
              "history-sports/", "history-tennis/", "dashboard.html", "adjustments.json", "calibration.json", "home-advantage.json", "tuning-report.json", "tuning-pending.json",
              "sports-record.json", "sports-record.js", "tennis-record.json", "tennis-record.js",
              # 14 Nov 2026: the graded files and archives added that day (sports.py, ledger.py, markets.py)
-             "sports-graded.json", "results-ledger.json.gz", "predictions-markets/", "markets-record.json", ".github/",
+             "sports-graded.json", "results-ledger.json.gz", "predictions-markets/", "markets-record.json", "scale-archive/", ".github/",
              "agents/", "CLAUDE.md", "AGENTS.md"]
 MAX_OPEN = 12   # 9 Nov 2026 (Douglas: double output): four sprints a day, the merge window rebases and retries stale ones
 COOLDOWN_DAYS = 7

@@ -1369,6 +1369,131 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .gl-key .won{background:var(--edge);border-color:var(--edge)} .gl-key .lost{background:var(--away);border-color:var(--away)}
 .gl-key .ahead{background:var(--edge-soft);border-color:var(--edge)} .gl-key .behind{background:var(--away-soft);border-color:var(--away)}
 .gl-key .play{background:var(--yellow);border-color:var(--cover-ink)} .gl-key .up{background:var(--surface);border-color:var(--ink)}
+/* Scale (15 Nov 2026): Daily List winners with a second condition added.
+   Sits between the Daily List (a ranked list, the glance dots) and Bets
+   (group cards, a scoreboard). claude/scale-2026-11-15.md */
+.sc-head{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px 40px;align-items:flex-end;justify-content:space-between}
+.sc-head .lede{margin-top:0;flex:999 1 420px;min-width:0}
+.sc-head h2{display:flex;align-items:center;gap:12px}
+.sc-trial{background:var(--yellow);color:var(--cover-ink);border:1px solid var(--cover-ink);font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px}
+.sc-tiles{flex:1 1 380px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--cover-ink);background:var(--red);color:#fff}
+.sc-tiles div{padding:8px 12px;border-left:1px solid rgba(255,255,255,.35);min-width:0}
+.sc-tiles div:first-child{border-left:0}
+.sc-tiles span{display:block;font:600 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase}
+.sc-tiles b{display:block;font-family:var(--f-display);font-weight:400;font-size:32px;line-height:1.1}
+.sc-tiles small{display:block;font-family:var(--f-num);font-size:11.5px}
+.sc-glance{margin-top:20px;border:1px solid var(--rule);background:var(--surface);padding:12px 16px 10px}
+.sc-gtop{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px}
+.sc-gtop h3,.sc-h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.01em;margin:0}
+.sc-gtop h3{font-size:18px}
+.sc-key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ink-2)}
+.sc-key span{display:inline-flex;align-items:center;gap:5px}
+.sc-dot{display:inline-block;flex:0 0 auto;width:16px;height:16px;border-radius:50%;box-sizing:border-box;border:2px solid var(--edge);background:var(--edge)}
+.sc-key .sc-dot{width:12px;height:12px}
+.sc-dot.won{background:var(--edge-soft);border-width:3px}
+.sc-dot.lost{background:var(--away);border-color:var(--away)}
+.sc-dot.up{background:var(--surface);border:1.5px solid var(--ink)}
+.sc-dot.started{background:var(--yellow);border:1.5px solid var(--cover-ink)}
+.sc-dot.void{background:var(--rule-soft);border:1.5px solid var(--mute)}
+.sc-dot.off{width:8px;height:8px;border:0;background:var(--rule)}
+.sc-key .sc-dot.off{width:8px;height:8px}
+.sc-grow{display:flex;align-items:center;gap:14px;padding:6px 0;border-top:1px solid var(--rule-soft)}
+.sc-grows{margin-top:10px}
+.sc-grow.before .sc-gd{color:var(--mute)}
+.sc-gd{flex:0 0 92px;font:600 13px var(--f-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.sc-dots{flex:1 1 auto;min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sc-gs{flex:0 0 auto;font-family:var(--f-num);font-size:12px;color:var(--ink-2);text-align:right}
+.sc-gnote{margin:8px 0 0;font-size:13px;color:var(--mute)}
+.sc-sec{margin-top:30px}
+.sc-sech{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px;border-bottom:1px solid var(--cover-ink);padding-bottom:6px}
+.sc-h3{font-size:22px}
+.sc-h3 small{font:600 14px var(--f-ui);letter-spacing:.04em;color:var(--ink-2);text-transform:none;margin-left:6px}
+.sc-days{display:flex;gap:6px}
+.sc-days button{min-height:32px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:600 13px var(--f-ui);padding:4px 10px;cursor:pointer}
+.sc-days button[aria-pressed="true"]{border-color:var(--cover-ink);background:var(--cover-ink);color:var(--yellow)}
+.sc-days button:focus-visible{outline:2px solid var(--home);outline-offset:1px}
+.sc-cols,.sc-row{display:grid;grid-template-columns:52px minmax(0,1.5fr) minmax(0,.8fr) minmax(0,1.25fr) 132px 142px;gap:16px;align-items:center}
+.sc-cols{padding:8px 0 6px;font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sc-row{padding:9px 0;border-top:1px solid var(--rule)}
+.sc-cols + .sc-row{border-top-color:var(--rule-soft)}
+.sc-t{font-family:var(--f-num);font-size:13px;color:var(--ink-2)}
+.sc-m{min-width:0}
+.sc-m small{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.sc-m span{color:var(--ink-2)}
+.sc-m b{font-size:16px}
+.sc-bar{display:flex;align-items:center;gap:8px}
+.sc-bar i{flex:1 1 auto;height:8px;background:var(--rule-soft);display:block}
+.sc-bar i u{display:block;height:8px;background:var(--ink)}
+.sc-bar em{flex:0 0 38px;font:600 14px var(--f-num);font-style:normal;text-align:right}
+.sc-bar.g i u{background:var(--edge)} .sc-bar.g em{color:var(--edge)}
+.sc-b{min-width:0}
+.sc-b > span{display:block;font-size:14px}
+.sc-b > small{display:block;font-size:12px;color:var(--mute)}
+.sc-p b{font:600 15px var(--f-num)}
+.sc-p small{font-size:12px;color:var(--mute);margin-left:4px}
+.sc-p .sc-nb{display:block;margin:0;font-size:12px}
+.sc-p .sc-none{font-size:13px;color:var(--mute);margin:0}
+.sc-tag{display:inline-block;font:700 11.5px var(--f-ui);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--cover-ink);color:var(--ink);white-space:nowrap}
+.sc-tag.short,.sc-tag.lost{background:var(--away);border-color:var(--away);color:#fff}
+.sc-tag.scale{background:var(--edge);border-color:var(--edge);color:#fff}
+.sc-tag.won{background:var(--edge-soft);border-color:var(--edge);color:var(--edge)}
+.sc-tag.void{border-color:var(--rule);color:var(--mute)}
+.sc-tag.started{background:var(--yellow)}
+.sc-x small{display:block;margin-top:3px;font-family:var(--f-num);font-size:11.5px;color:var(--mute)}
+.sc-foot{margin:10px 0 0;font-size:13px;color:var(--mute);max-width:100ch}
+.sc-off{margin-top:8px;font-size:13px;color:var(--ink-2)}
+.sc-off summary{cursor:pointer;color:var(--ink-2)}
+.sc-off ul{margin:6px 0 0;padding-left:18px;columns:2 260px;color:var(--mute)}
+.sc-groups{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px}
+.sc-card{flex:1 1 280px;min-width:0;border:1px solid var(--cover-ink);background:var(--surface);display:flex;flex-direction:column}
+.sc-card h4{margin:0;background:var(--cover-ink);color:var(--yellow);padding:6px 12px;font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.sc-card h4 small{font:600 12px var(--f-ui);letter-spacing:.06em;color:#fff;align-self:center}
+.sc-card ol{list-style:none;margin:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
+.sc-card li{font-size:15px}
+.sc-card li span{color:var(--ink-2)}
+.sc-card li small{font-family:var(--f-num);font-size:12.5px;color:var(--mute);white-space:nowrap}
+.sc-card li .sc-dot{width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.sc-cf{margin:12px;padding-top:10px;border-top:1px solid var(--rule)}
+.sc-cf b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.1}
+.sc-cf p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.sc-cf .sc-tag{margin-top:6px}
+.sc-empty{margin-top:14px;border:1px solid var(--rule);background:var(--surface);padding:12px 14px;font-size:14px;color:var(--ink-2);max-width:92ch}
+.sc-empty b{display:block;font-family:var(--f-display);font-weight:400;font-size:20px;text-transform:uppercase;color:var(--ink)}
+.sc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sc-chips span{border:1px solid var(--rule);background:var(--surface);font-size:13px;padding:2px 8px}
+.sc-chips span i{font-style:normal;font-family:var(--f-num);font-size:11.5px;color:var(--mute);margin-left:5px}
+.sc-board{display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:14px}
+.sc-tablewrap{flex:2 1 560px;min-width:0}
+.sc-table{width:100%;min-width:560px;border-collapse:collapse;border-top:1px solid var(--cover-ink)}
+.sc-table th{font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rule)}
+.sc-table td{padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);font-size:14px;vertical-align:baseline}
+.sc-table td.n{font-family:var(--f-num);font-size:13px;white-space:nowrap}
+.sc-table td.s{font-family:var(--f-num);font-weight:600;color:var(--edge);white-space:nowrap}
+.sc-table td small{display:block;font-size:12px;color:var(--mute)}
+.sc-table tr.sub td{color:var(--ink-2)}
+.sc-side{flex:1 1 280px;min-width:0;border:1px solid var(--rule);background:var(--surface);padding:12px 14px}
+.sc-side h4{margin:0;font:600 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sc-side b.big{display:block;margin-top:8px;font-family:var(--f-display);font-weight:400;font-size:22px;text-transform:uppercase}
+.sc-side p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+.sc-side ul{list-style:none;margin:8px 0 0;padding:0;font-size:13.5px}
+.sc-side li{padding:5px 0;border-top:1px solid var(--rule-soft);display:flex;gap:8px;justify-content:space-between}
+.sc-side li span{min-width:0;color:var(--ink-2)}
+.sc-side li em{font-style:normal;font-family:var(--f-num);font-size:12.5px;white-space:nowrap}
+.sc-side li em.w{color:var(--edge);font-weight:600} .sc-side li em.l{color:var(--away)}
+@media (max-width:760px){
+  .sc-cols{display:none}
+  .sc-row{grid-template-columns:48px minmax(0,1fr) auto;gap:6px 10px;align-items:start;padding:11px 0}
+  .sc-row .sc-m{grid-column:2 / 4}
+  .sc-row .sc-w{grid-column:2 / 4}
+  .sc-row .sc-b{grid-column:2 / 4}
+  .sc-row .sc-p{grid-column:2}
+  .sc-row .sc-x{grid-column:3;text-align:right}
+  .sc-w::before{content:"Winner";display:block;font:600 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .sc-gd{flex-basis:76px;font-size:12px}
+  .sc-gs{display:none}
+  .sc-tiles b{font-size:26px}
+  .sc-tiles span{font-size:10.5px;letter-spacing:.05em}
+}
 /* Days at a glance (How it went, 10 Nov 2026): a day label column and a line per day */
 .dglance{margin-top:22px}
 .dg-grid{margin-top:8px}
@@ -1617,6 +1742,7 @@ footer b{color:var(--ink-2)}
 <nav class="views" id="views" aria-label="Boards">
   <button data-view="list" aria-pressed="true">Daily List</button>
   <button data-view="today" aria-pressed="false">Bets</button>
+  <button data-view="scale" aria-pressed="false">Scale</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
@@ -1674,6 +1800,7 @@ footer b{color:var(--ink-2)}
 
 <main id="days"></main>
 <section id="today" hidden></section>
+<section id="scale" hidden></section>
 <section id="list" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
@@ -1688,6 +1815,7 @@ footer b{color:var(--ink-2)}
 <script src="sports-data.js"></script>
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
+<script src="scale.js"></script>
 <!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
      several MB raw) are loaded by loadRecords() the first time "How it went"
      opens, not here (26 Oct 2026). First paint needs only the summary that
@@ -5444,6 +5572,153 @@ function renderToday(){
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
 }
 
+/* ---------- Scale (15 Nov 2026, Douglas: "scaling the odds and even
+   reducing the stake"): Daily List winners with a second condition added,
+   from scale.py (scale.js). Football only where William Hill prices win and
+   both score; tennis in straight sets, tracked without a price. Display
+   only. claude/scale-2026-11-15.md ---------- */
+const SCALE = window.__SCALE__ || null;
+let SC_DAY = null;
+const scE = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const scTime = s => new Date(s).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"});
+const scDate = (d, long) => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", long ? {weekday:"long", day:"numeric", month:"long", timeZone:"UTC"} : {weekday:"short", day:"numeric", month:"short", timeZone:"UTC"});
+const scPct = x => Math.round(x * 100) + "%";
+const scOf = (k, n) => n ? `${scPct(k / n)}` : "–";
+const scRet = t => t && t.priced ? `${t.ret >= 0 ? "+" : "−"}${Math.abs(t.ret * 100).toFixed(1)}% <small>${t.priced} priced</small>` : "–";
+const SC_SPORT = {football:"Football", tennis:"Tennis"};
+const SC_BET = {football:"Win and both teams score", tennis:"Win in straight sets"};
+function scWord(sport, state){
+  if(state === "scale") return sport === "tennis" ? "Won in straight sets" : "Won and both scored";
+  if(state === "won") return sport === "tennis" ? "Won, dropped a set" : "Won to nil";
+  return {lost:"Pick lost", void:"Void", up:"To play", started:"Under way"}[state] || "To play";
+}
+const scState = p => p.state || (new Date(p.start).getTime() <= Date.now() ? "started" : "up");
+function scTag(p){
+  const st = scState(p);
+  if(st === "scale") return `<span class="sc-tag scale">Scale landed</span>${p.detail ? `<small>${scE(p.detail)}</small>` : ""}`;
+  if(st === "won") return `<span class="sc-tag won">${p.sport === "tennis" ? "Dropped a set" : "Won to nil"}</span>${p.detail ? `<small>${scE(p.detail)}</small>` : ""}`;
+  if(st === "lost") return `<span class="sc-tag lost">Lost</span>${p.detail ? `<small>${scE(p.detail)}</small>` : ""}`;
+  if(st === "void") return `<span class="sc-tag void">Void</span>`;
+  if(st === "started") return `<span class="sc-tag started">Under way</span>`;
+  if(p.price && p.chance && p.price < 1 / p.chance) return `<span class="sc-tag short" title="William Hill's price is under the price this chance needs to break even">Price too short</span>`;
+  return "";
+}
+function scRow(p){
+  const opp = p.side ? (p.side === "h" ? p.away : p.home) : (p.pick === p.home ? p.away : p.home);
+  const needs = p.chance ? (1 / p.chance).toFixed(2) : null;
+  const price = p.price
+    ? `<b>${p.price.toFixed(2)}</b>${needs ? `<small>needs ${needs}</small>` : ""}${p.best && p.best > p.price ? `<small class="sc-nb">best ${p.best.toFixed(2)} ${scE(p.bestBook || "")}</small>` : ""}`
+    : `<p class="sc-none">No price feed yet${needs ? ` · needs ${needs}` : ""}</p>`;
+  return `<div class="sc-row">
+    <div class="sc-t">${p.timed === false ? "–" : scTime(p.start)}</div>
+    <div class="sc-m"><small>${scE(SC_SPORT[p.sport] || p.sport)} · ${scE(p.comp || "")}</small><b>${scE(p.pick)}</b> <span>v ${scE(opp)}</span></div>
+    <div class="sc-w"><div class="sc-bar"><i><u style="width:${Math.round((p.conf || 0) * 100)}%"></u></i><em>${scPct(p.conf || 0)}</em></div></div>
+    <div class="sc-b"><span>${scE(p.bet)}</span><div class="sc-bar g"><i><u style="width:${Math.round((p.chance || 0) * 100)}%"></u></i><em>${scPct(p.chance || 0)}</em></div><small>${p.basis === "model" ? "the model's number" : scE(p.basis || "")}</small></div>
+    <div class="sc-p">${price}</div>
+    <div class="sc-x">${scTag(p)}</div>
+  </div>`;
+}
+function scCard(g, byKey){
+  const legs = g.legs.map(k => byKey[k]).filter(Boolean);
+  const needs = g.chance ? 1 / g.chance : null, inN = needs ? Math.max(2, Math.round(needs)) : null;
+  const done = g.state === "won" || g.state === "lost" || g.state === "void";
+  const head = g.price ? `Pays ${g.price.toFixed(2)}` : `Lands 1 in ${inN}`;
+  const line = g.price
+    ? `Lands about 1 in ${inN}, so it needs ${needs.toFixed(1)}. Winners alone: ${scPct(g.winners)}.`
+    : `Needs ${needs.toFixed(1)} to break even. Winners alone: ${scPct(g.winners)}. No William Hill price yet for ${legs.some(l => l.sport === "tennis") ? "straight sets" : "every leg"}.`;
+  const tag = g.state === "won" ? `<span class="sc-tag scale">Won${g.ret ? ` · returned ${g.ret.toFixed(2)}` : ""}</span>`
+    : g.state === "lost" ? `<span class="sc-tag lost">Lost</span>`
+    : g.state === "void" ? `<span class="sc-tag void">Void</span>`
+    : g.price && needs && g.price < needs ? `<span class="sc-tag short">Price too short</span>` : "";
+  return `<article class="sc-card"><h4>${scE(g.name)}<small>${done ? "" : "from " + scTime(g.first)}</small></h4>
+    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l)))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${l.sport === "tennis" ? "in straight sets" : "and both score"}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : ""}</small></li>`).join("")}</ol>
+    <div class="sc-cf"><b>${head}</b><p>${line}</p>${tag}</div></article>`;
+}
+function renderScale(){
+  const host = $("#scale"); if(!host) return;
+  const S = SCALE;
+  if(!S){
+    host.innerHTML = `<div class="lede"><h2>Scale</h2></div><div class="empty">No Scale list in this build yet. It appears after the next build.</div>`;
+    return;
+  }
+  const days = S.days || [];
+  if(!SC_DAY || !days.some(d => d.date === SC_DAY)) SC_DAY = (days.find(d => d.date === S.today) || days[0] || {}).date;
+  const day = days.find(d => d.date === SC_DAY) || {date: S.today, picks: [], off: [], groups: []};
+  const bs = (S.record && S.record.bySport) || {};
+  const tot = Object.values(bs).reduce((a, t) => ({n: a.n + t.n, won: a.won + t.won, scale: a.scale + t.scale}), {n:0, won:0, scale:0});
+  const since = scDate(S.from);
+  const tiles = `<div class="sc-tiles" role="group" aria-label="The Scale record since ${scE(since)}">
+    <div><span>Scale picks graded</span><b>${tot.n}</b><small>since ${scE(since)}</small></div>
+    <div><span>Winner landed</span><b>${scOf(tot.won, tot.n)}</b><small>${tot.won} of ${tot.n}</small></div>
+    <div><span>Scale landed</span><b>${scOf(tot.scale, tot.n)}</b><small>${tot.scale} of ${tot.n}</small></div></div>`;
+  // the glance: one line a day, newest first; a dot a pick
+  const gl = (S.glance || []).slice().reverse();
+  const dot = (g, x) => { const w = scWord(x.sport, x.state); const t = `${x.pick}: ${w}${x.detail ? " · " + x.detail : ""}`;
+    return `<span class="sc-dot ${x.state}" role="img" aria-label="${scE(t)}" title="${scE(t)}"></span>`; };
+  const grow = g => {
+    const live = g.dots.filter(x => ["scale","won","lost"].includes(x.state)), sc = live.filter(x => x.state === "scale").length;
+    const open = g.dots.filter(x => x.state === "up" || x.state === "started").length;
+    const sum = !g.dots.length ? (g.off ? "none priced" : "no picks") : live.length ? `${sc} of ${live.length} Scale${open ? ` · ${open} to play` : ""}` : open ? `${open} to play` : "void";
+    const offs = g.off ? Array.from({length: Math.min(g.off, 10)}, () => `<span class="sc-dot off"></span>`).join("") + (g.off > 10 ? `<small class="sc-t">+${g.off - 10}</small>` : "") : "";
+    return `<div class="sc-grow${g.replay ? " before" : ""}"><div class="sc-gd">${scE(scDate(g.date))}</div>
+      <div class="sc-dots">${g.dots.map(x => dot(g, x)).join("")}${offs ? `<span role="img" aria-label="${g.off} football picks not priced at ${scE(S.book)}" title="${g.off} football picks not priced at ${scE(S.book)}" style="display:inline-flex;gap:4px;align-items:center">${offs}</span>` : ""}</div>
+      <div class="sc-gs">${sum}</div></div>`; };
+  const bf = S.before || {}, bft = Object.values(bf).reduce((a, t) => ({n: a.n + t.n, won: a.won + t.won, scale: a.scale + t.scale}), {n:0, won:0, scale:0});
+  const glance = `<section class="sc-glance" aria-label="Scale at a glance">
+    <div class="sc-gtop"><h3>Scale at a glance</h3>
+      <div class="sc-key"><span><i class="sc-dot"></i>Won and landed the Scale</span><span><i class="sc-dot won"></i>Won, Scale missed</span><span><i class="sc-dot lost"></i>Pick lost</span><span><i class="sc-dot up"></i>To play</span><span><i class="sc-dot void"></i>Void</span><span><i class="sc-dot off"></i>Not priced at ${scE(S.book)}</span></div></div>
+    <div class="sc-grows">${gl.map(grow).join("") || `<div class="sc-grow"><div class="sc-dots">Nothing yet.</div></div>`}</div>
+    ${bft.n ? `<p class="sc-gnote">Days before ${scE(since)} are the Daily List's tennis picks as published at the time, marked against straight sets after the fact: ${bft.won} of ${bft.n} won, ${bft.scale} in straight sets. They are kept apart from the record above.</p>` : ""}
+  </section>`;
+  // the day's list
+  const byKey = {}; day.picks.forEach(p => byKey[p.key] = p);
+  const tabs = days.length > 1 ? `<div class="sc-days" id="scDays">${days.map(d => `<button type="button" data-d="${d.date}" aria-pressed="${d.date === day.date}">${d.date === S.today ? "Today" : scE(scDate(d.date))} · ${d.picks.length}</button>`).join("")}</div>` : "";
+  const off = day.off || [];
+  const offComps = [...new Set(off.map(o => o.comp))];
+  const list = `<section class="sc-sec">
+    <div class="sc-sech"><h3 class="sc-h3">${scE(scDate(day.date, true))}<small>the Scale list</small></h3>${tabs}</div>
+    ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>${scE(S.book)}</div><div></div></div>${day.picks.map(scRow).join("")}`
+      : `<div class="sc-empty"><b>No Scale picks ${day.date === S.today ? "today" : "this day"}</b>${off.length ? `${off.length} football pick${off.length === 1 ? " is" : "s are"} on the Daily List, none in a league ${scE(S.book)} prices for win and both score.` : "Nothing on the Daily List qualifies yet."}</div>`}
+    ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for this bet (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
+    <p class="sc-foot">Every pick is a Daily List pick at the list's own bar; the Scale bet is added on top and never lowers it. "Needs" is the price that breaks even at the chance shown.</p>
+  </section>`;
+  // the day's groups
+  const open = day.picks.filter(p => scState(p) === "up").length;
+  const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>threefold, fourfold and fivefold of the picks most likely to land</small></h3>
+    ${day.groups.length ? `<div class="sc-groups">${day.groups.map(g => scCard(g, byKey)).join("")}</div>`
+      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>A group needs three Scale picks still to start; ${open === 0 ? "there are none" : open === 1 ? "there is one" : "there are two"}. Nothing is padded to make one.</div>`}
+  </section>`;
+  // where the book prices the football bet
+  const lg = S.leagues || [];
+  const chip = l => `<span>${scE(l.name)}<i>${l.n}</i></span>`;
+  const leagues = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Where ${scE(S.book)} prices win and both score<small>${lg.length} leagues in the last 14 days</small></h3>
+    <div class="sc-chips">${lg.slice(0, 12).map(chip).join("") || "<span>No prices on file yet</span>"}</div>
+    ${lg.length > 12 ? `<details class="sc-off"><summary>${lg.length - 12} more leagues</summary><div class="sc-chips">${lg.slice(12).map(chip).join("")}</div></details>` : ""}
+    <p class="sc-foot">Read from the price feed on every build, so the list follows what ${scE(S.book)} offers. The number is the fixtures priced. A league with no price never reaches the Scale list.</p></section>`;
+  // the scoreboard
+  const rp = S.replay || {}, rf = rp.football, tp = rp.tennis && rp.tennis.pool;
+  const srow = (name, bet, t, sub) => t && (t.n || t.void) ? `<tr${sub ? ' class="sub"' : ""}><td>${sub ? "" : "<b>"}${scE(name)}${sub ? "" : "</b>"}${sub ? `<small>${scE(sub)}</small>` : ""}</td><td>${scE(bet)}</td><td class="n">${t.n}</td><td class="n">${t.won} <small>${scOf(t.won, t.n)}</small></td><td class="s">${t.scale} <small>${scOf(t.scale, t.n)}</small></td><td class="n">${scRet(t)}</td></tr>` : "";
+  const liveRows = Object.keys(bs).map(s => srow(SC_SPORT[s] || s, SC_BET[s] || "", bs[s])).join("");
+  const beforeRows = Object.keys(bf).map(s => srow(SC_SPORT[s] || s, SC_BET[s] || "", bf[s], "Daily List picks before " + since + ", as published")).join("")
+    + (rf && rf.n ? srow("Football", SC_BET.football, rf, "Daily List picks before " + since + " in leagues " + S.book + " prices now") : "")
+    + (tp && tp.n ? srow("Tennis", SC_BET.tennis, {n: tp.n, won: tp.won, scale: tp.straight}, "every graded pick at 75%+, the rate behind a tennis pick's chance") : "");
+  const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
+  const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
+  const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
+    ${gn ? `<ul>${Object.keys(gk).map(k => `<li><span>${k === "3" ? "Threefold" : k === "4" ? "Fourfold" : "Fivefold"}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : ""}</em></li>`).join("")}</ul>
+      <ul>${rec.slice(0, 8).map(r => `<li><span>${scE(scDate(r.date))} · ${scE(r.name.replace("Scale ", ""))}</span><em class="${r.state === "won" ? "w" : "l"}">${r.state === "won" ? "Won" + (r.ret ? " " + r.ret.toFixed(2) : "") : "Lost"}</em></li>`).join("")}</ul>`
+      : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}</div>`;
+  const board = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scoreboard<small>how often the winner and the Scale bet landed</small></h3>
+    <div class="sc-board"><div class="sc-tablewrap"><div style="overflow-x:auto"><table class="sc-table">
+      <thead><tr><th>Sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at ${scE(S.book)}</th></tr></thead>
+      <tbody>${liveRows || `<tr><td colspan="6">Nothing graded since ${scE(since)} yet.</td></tr>`}${beforeRows}</tbody></table></div>
+      <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started. The rows under them are results only, counted after the fact, and say how often the bet lands, never that it pays: there are no prices behind them.</p></div>${side}</div></section>`;
+  host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
+      <p>Daily List winners with a second condition added to scale the price: <b>football</b> to win with both teams scoring, <b>tennis</b> to win in straight sets. Smaller groups and smaller stakes than a long winners' accumulator. Football is shown only where ${scE(S.book)} prices the bet.</p></div>${tiles}</div>
+    ${glance}${list}${groups}${leagues}${board}`;
+  const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
+}
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -5469,10 +5744,12 @@ $("#views").addEventListener("click", e=>{
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
   $("#today").hidden = !today;
+  $("#scale").hidden = v !== "scale";
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
   if(today) renderToday();
+  if(v === "scale") renderScale();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time
