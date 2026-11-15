@@ -1413,6 +1413,31 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-ghead .sc-dots{font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding-top:0;padding-bottom:4px}
 .sc-offs{display:inline-flex;gap:4px;align-items:center}
 .sc-offs small{font-family:var(--f-num);font-size:11px;color:var(--mute)}
+/* The week behind, as a table (15 Nov 2026, Douglas): each past day's ten
+   strongest Scale picks with the pick, the result and whether both scored. */
+.sc-week{margin-top:12px}
+.sc-wday{border-top:1px solid var(--rule)}
+.sc-wday > summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:9px 0 7px;font:600 13px var(--f-ui)}
+.sc-wday > summary::-webkit-details-marker{display:none}
+.sc-wday > summary .d{font-family:var(--f-display);font-weight:400;font-size:16px;letter-spacing:.03em;text-transform:uppercase}
+.sc-wday > summary .r{font:500 12px var(--f-ui);color:var(--mute)}
+.sc-wday > summary .s{font:600 12px var(--f-num);color:var(--ink-2);margin-left:auto}
+.sc-wday > summary .open{font:500 12px var(--f-ui);color:var(--home);text-decoration:underline;text-underline-offset:2px}
+.sc-wrow{display:grid;grid-template-columns:22px 60px minmax(0,1fr) 44px 110px 92px;gap:0 10px;align-items:baseline;padding:5px 0;border-top:1px solid var(--rule-soft);font-size:13px}
+.sc-wrow.h{font:600 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-top:0;padding-bottom:2px}
+.sc-wrow .i{font:600 11px var(--f-num);color:var(--mute)}
+.sc-wrow .sp{font:700 10px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pk b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pk small{display:block;font-size:11.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pc{font:600 13px var(--f-num);text-align:right}
+.sc-wrow .re{font:600 12px var(--f-ui)} .sc-wrow .re small{font:500 11px var(--f-num);color:var(--mute);margin-left:4px}
+.sc-wrow .re.won,.sc-wrow .bt.yes{color:var(--home)} .sc-wrow .re.lost,.sc-wrow .bt.no{color:var(--away)} .sc-wrow .re.void,.sc-wrow .bt.na{color:var(--mute)}
+.sc-wrow .bt{font:600 12px var(--f-ui)}
+@media (max-width:700px){
+  .sc-wrow{grid-template-columns:18px minmax(0,1fr) 40px 86px;gap:0 8px}
+  .sc-wrow .sp{display:none} .sc-wrow .bt{grid-column:2 / -1;padding-left:0;font-weight:500;font-size:11.5px}
+  .sc-wrow.h .bt{display:none}
+}
 .sc-tier{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:14px;padding:5px 10px;background:var(--cover-ink);color:var(--yellow)}
 .sc-cols + .sc-tier{margin-top:0}
 .sc-tier b{font-family:var(--f-display);font-weight:400;font-size:15px;letter-spacing:.05em;text-transform:uppercase}
@@ -5776,11 +5801,39 @@ function renderScale(){
   const bfo = S.before || {}, bf = bfo.bySport || {}, bfT = bfo.byTier || {}, bfG = bfo.groups || {}, bft = sum3(bf);
   const tl = t => bfT[t] && bfT[t].n ? `${{list:"Daily List picks", reserve:"the reserve", else:"everything else"}[t]} ${bfT[t].scale} of ${bfT[t].n} (${scOf(bfT[t].scale, bfT[t].n)}, ${scOf(bfT[t].won, bfT[t].n)} won)` : "";
   const gkeys = Object.keys(bfG).filter(k => bfG[k].n);
+  // 15 Nov 2026, Douglas: "10 games shown with what the recommendation was of the model, and whether or
+  // not that won or lost with the team, and if both teams scored ... in order of strongest ... bettable".
+  // Each past day's ten strongest picks (the tab's order: tier, then the chance the bet lands; football only
+  // where the book prices it, so nothing obscure), as a table. The dot rows stay for today and tomorrow.
+  const SPORT_SHORT = {football:"Football", tennis:"Tennis", nba:"NBA", nfl:"NFL", rugby:"Rugby", ncaab:"College", cfb:"College"};
+  const tennisScore = d => { const m = String(d || "").match(/\b\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?(?:\s+\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?)*(?:\s+ret\.?)?/); return m ? m[0] : d; };
+  const wrow = (x, i) => { const st = x.state, opp = x.side === "h" ? x.away : x.home, det = x.sport === "tennis" ? tennisScore(x.detail) : x.detail;
+    const res = st === "scale" || st === "won" ? "won" : st === "lost" ? "lost" : "void";
+    const word = st === "scale" || st === "won" ? "Won" : st === "lost" ? "Lost" : st === "void" ? "Void" : "No result";
+    const bt = x.sport === "football" ? (x.btts === true ? ["yes", "Both scored"] : x.btts === false ? ["no", "Not both"] : ["na", ""])
+             : st === "scale" ? ["yes", scE(scCfg(x.sport).bet)] : st === "won" ? ["no", scE(scWord(x.sport, "won").replace("Won, d", "D"))] : ["na", ""];
+    return `<div class="sc-wrow"><span class="i">${i + 1}</span><span class="sp">${SPORT_SHORT[x.sport] || scE(x.sport)}</span>
+      <span class="pk"><b>${scE(x.pick)}</b><small>v ${scE(opp)} · ${scE(String(x.comp || "").split(" · ").pop())}</small></span>
+      <span class="pc">${scPct(x.conf || 0)}</span><span class="re ${res}">${word}${det && st !== "up" ? `<small>${scE(det)}</small>` : ""}</span><span class="bt ${bt[0]}">${bt[1]}</span></div>`; };
+  const TIER_N = {list: 0, reserve: 1, else: 2};
+  const wday = (g, openIt) => { const top = g.dots.slice().sort((a, b) => (TIER_N[a.tier || "list"] - TIER_N[b.tier || "list"]) || ((b.conf || 0) - (a.conf || 0))).slice(0, target);
+    const done = top.filter(x => ["scale", "won", "lost"].includes(x.state)), won = done.filter(x => x.state !== "lost").length;
+    const fb = done.filter(x => x.sport === "football"), bt = fb.filter(x => x.btts === true).length;
+    const sum = done.length ? `${won} of ${done.length} won${fb.length ? ` · both scored in ${bt} of ${fb.length} football` : ""}` : "no results";
+    return `<details class="sc-wday"${openIt ? " open" : ""}><summary><span class="d">${scE(scDate(g.date))}</span><span class="r">${g.replay ? "replayed, " : ""}${Math.min(g.dots.length, target)} of ${g.dots.length} picks</span><span class="s">${sum}</span><span class="open sc-gbtn" data-d="${g.date}" role="button" tabindex="0">full list</span></summary>
+      ${top.length ? `<div class="sc-wrow h"><span class="i"></span><span class="sp">Sport</span><span class="pk">The model's pick</span><span class="pc">Model</span><span class="re">Result</span><span class="bt">Both scored / Scale</span></div>${top.map(wrow).join("")}` : `<div class="sc-empty">No picks on this day.</div>`}
+    </details>`; };
+  const past = gl.filter(g => g.date < S.today), week = past.slice(0, 7), older = past.slice(7);
   const glance = `<section class="sc-glance" aria-label="Scale at a glance">
     <div class="sc-gtop"><h3>Scale at a glance</h3>
       <div class="sc-key"><span><i class="sc-dot"></i>Won and landed the Scale</span><span><i class="sc-dot won"></i>Won, Scale missed</span><span><i class="sc-dot lost"></i>Pick lost</span><span><i class="sc-dot up"></i>To play</span><span><i class="sc-dot void"></i>Void</span><span><i class="sc-dot off"></i>Not priced at ${scE(S.book)}</span></div></div>
     <div class="sc-grows"><div class="sc-grow sc-ghead"><div class="sc-gd"></div>${SC_TIERS.map(t => `<div class="sc-dots">${SC_TIER_SHORT[t]}</div>`).join("")}<div class="sc-gs"></div></div>
-      ${gl.map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
+      ${gl.filter(g => g.date >= S.today).map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
+    <div class="sc-week">
+      <p class="sc-gnote" style="margin:12px 0 4px"><b>The week behind, ten a day.</b> Each day's ten strongest picks, Daily List picks first, then the reserve, then the rest, strongest model number first within each, football only where ${scE(S.book)} prices it. The model's pick, its number, the result, and for football whether both teams scored; for the other sports whether the Scale margin landed. Tap "full list" for every pick of the day.</p>
+      ${week.map((g, i) => wday(g, i < 3)).join("") || `<div class="sc-empty">Nothing yet.</div>`}
+      ${older.length ? `<details class="sc-off"><summary>${older.length} more day${older.length === 1 ? "" : "s"}</summary>${older.map(g => wday(g, false)).join("")}</details>` : ""}
+    </div>
     ${bft.n ? `<p class="sc-gnote"><b>Days before ${scE(since)} are a replay</b>: today's rule run on what was published before each start, results added afterwards. Scale landed: ${SC_TIERS.map(tl).filter(Boolean).join("; ")}.${gkeys.length ? ` Groups won: ${gkeys.map(k => `${scLow(String(bfG[k].name).replace("Scale ", ""))} ${bfG[k].won} of ${bfG[k].n}`).join(", ")}.` : ""} No prices are on file for those days, so this says how often it landed, not what it paid. Tap a day to see its picks.</p>` : ""}
   </section>`;
   // the day's list, a line a tier
@@ -5841,7 +5894,7 @@ function renderScale(){
   const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
   const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
     const h = $("#scList"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };
-  host.querySelectorAll(".sc-gbtn").forEach(el => { el.onclick = () => openDay(el);
+  host.querySelectorAll(".sc-gbtn").forEach(el => { el.onclick = e => { e.preventDefault(); e.stopPropagation(); openDay(el); };
     el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openDay(el); } }; });
 }
 

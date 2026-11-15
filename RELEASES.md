@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-4: Scale at a glance shows ten a day for the week behind
+
+**What changed:** Douglas: "I want there to be 10 games shown with what the recommendation was of the model, and whether or not that won or lost with the team, and if both teams scored ... in order of strongest ... make sure that it was bettable." The Scale tab's glance now lists each past day (the last seven open, the rest in a fold) as a table of its ten strongest picks: Daily List picks first, then the reserve, then the rest, strongest model number first within each; football only where William Hill prices the bet, as before, so nothing obscure. Each row: sport, the model's pick and opponent, competition, the model's number, Won / Lost / Void / No result with the score, and for football whether both teams scored (for the other sports whether the Scale margin landed). The day line sums it ("7 of 10 won · both scored in 2 of 3 football") and "full list" opens the day. The dot rows stay for today and tomorrow. `scale.py` writes the fields the table needs into the glance (`both_scored` from the score).
+
+**Evidence:** rendered in headless Chromium at 1280px and 400px, no horizontal overflow; two tests in `tests/test_scale.py`; suite and `nametest.py` pass.
+
+**Files:** `scale.py`, `index.html`, `tests/test_scale.py`, `RELEASES.md`.
+
+**Not changed:** the Scale rule, tiers, groups or grading; the archive.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-4: Scale in three tiers, five sports and ten games a day (tag pending)
 
 **What changed:** the Scale tab now lists ten or more games a day in three tiers, each with its own line on the glance and the list: **Daily List picks**, **Daily List reserve**, and **everything else** the model picks at 55% or better, added strongest first only until the day has ten games. Three sports join football and tennis, each with a margin for its second condition: the NBA to win by 10 or more, the NFL by 7 or more, rugby by 8 or more. Within a tier the order is the chance the Scale bet lands. Each day has a threefold, fourfold and fivefold from the top of that order, and a football threefold priced on every leg at William Hill. An unpriced pick names the line to look for at William Hill (handicap -9.5, set betting 2-0) and the price its chance needs. Also fixed: a fixture replayed within days (New Zealand v India, 12 and 15 Nov) was graded with the earlier game's score before it kicked off.

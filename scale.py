@@ -439,6 +439,14 @@ def grade_group(g, by_key):
     return out
 
 
+def both_scored(p):
+    """True / False for a settled football pick (from its score), else None."""
+    if p.get("sport") != "football" or not p.get("detail"):
+        return None
+    m = re.fullmatch(r"(\d+)-(\d+)", str(p["detail"]).strip())
+    return bool(m and int(m.group(1)) > 0 and int(m.group(2)) > 0) if m else None
+
+
 def _tally():
     return {"n": 0, "won": 0, "scale": 0, "lost": 0, "void": 0, "priced": 0, "returned": 0.0}
 
@@ -578,9 +586,15 @@ def build(now=None, here=HERE):
             days_out.append(dict(entry, replay=bool(d.get("replay")), past=day < today.isoformat()))
         if in_glance:
             glance.append({"date": day, "off": len(entry["off"]), "replay": bool(d.get("replay")),
+                           # every pick of the day in the tab's order (tier, then the chance the bet lands), with
+                           # what the page needs to show the top ten as a table (15 Nov 2026, Douglas: "10 games
+                           # shown with what the recommendation was ... whether or not that won or lost ... and if
+                           # both teams scored")
                            "dots": [{"k": p["key"], "sport": p["sport"], "tier": p["tier"], "pick": p["pick"], "start": p["start"],
+                                     "home": p["home"], "away": p["away"], "side": p.get("side"), "comp": p.get("comp"),
+                                     "conf": p.get("conf"), "chance": p.get("chance"),
                                      "state": p["state"] or ("started" if (parse_utc(p["start"]) or now) <= now else "up"),
-                                     "detail": p.get("detail")} for p in entry["picks"]]})
+                                     "detail": p.get("detail"), "btts": both_scored(p)} for p in entry["picks"]]})
     cov = coverage(market_rows, now)
     order = [str(k[0]) for k in KINDS]
     out = {"generated": stamp, "rule": RULE, "book": BOOK, "today": today.isoformat(), "from": LIVE_FROM,
