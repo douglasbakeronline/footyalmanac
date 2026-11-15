@@ -4,7 +4,7 @@ name: Rebuild and publish
 # when you have edited adjustments.json and want it live now.
 on:
   schedule:
-    # Seven runs a day (six until 10 Nov 2026), timed to when results land rather than evenly spaced,
+    # Ten runs a day (seven until 13 Nov 2026, six until 10 Nov), timed to when results land rather than evenly spaced,
     # so the Daily List shows wins and losses within a couple of hours of a
     # game ending (Douglas, 7 Oct 2026). There is no in-play feed: a started
     # game shows as pending until the next run after its result is published.
@@ -34,6 +34,15 @@ on:
     - cron: "0 17 * * *"
     - cron: "30 19 * * *"
     - cron: "15 22 * * *"
+    # 13 Nov 2026: backups for the lunch, evening and night briefings
+    # (notify.py SLOTS 11:00, 16:00, 21:00 UK). GitHub runs scheduled
+    # workflows late at busy times: the 12 Nov lunch push went 2h18 late and
+    # the night push 1h40 (claude/briefing-lateness-2026-11-13.md), so each
+    # slot gets a second, earlier queue time, off the hour. A briefing is
+    # sent once a day per slot whichever build is first (briefed.json).
+    - cron: "7 11 * * *"
+    - cron: "7 16 * * *"
+    - cron: "7 21 * * *"
   workflow_dispatch:
   push:
     branches: [main]
