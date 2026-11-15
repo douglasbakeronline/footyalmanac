@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-16: Scale shows estimated prices where no feed prices the bet (tag pending)
+
+**What changed:** on the Scale tab a pick with no real price now shows an estimate ("≈ 2.13", italic, marked "estimate"), worked as the fair price of its chance less a typical bookmaker margin (football's result-and-goals bets 15%, handicaps and set betting 8%). Groups without a real price on every leg read "Pays about 4.83", and the scoreboard and group lists show the estimated return beside the real one, tallied apart (`estN`, `estRet`). Douglas: "If you're missing data on prices, just give an estimate."
+**Evidence:** William Hill kept about 16% a leg on win and both score over 69 priced fixtures (`claude/scale-strong-legs-2026-11-15.md`). First estimated read of the replay (1 to 14 Nov): doubles 7 of 14 -15%, threefolds 3 of 12 -29%, fourfolds 2 of 10 +8%, fivefolds 1 of 7 -60%.
+**Files:** `scale.py` (`EST_MARGIN`, `est_price`, `price_or_est`, groups' `est`, `estRet`), `index.html` (`scRow`, `scCard`, `scRet`, `.sc-est`), `tests/test_scale.py`, `claude/scale-estimated-prices-2026-11-15.md`, CLAUDE.md (also: standing authorisation for sessions to merge their own pull requests, `.github/` and `agents/` included, and to tidy stale ones).
+**Not changed:** any pick, chance, tier or group rule (`RULE` 3), the real-price record, any model.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-15-15: baseball Elo refitted on a wider grid (tag pending)
 
 **What changed:** MLB's Elo settings go from K 8, home advantage 25, carry-over regress 0.25, no margin to K 3, home advantage 15, regress 0.0, margin of victory on, with a refitted calibration (a 0.031, b 0.9188, applied: it narrows the 65%+ gap, 0.033 to 0.012). `sports.py` gains `GRID_SPORT` so baseball's tune searches lower K; other sports keep `GRID`.
