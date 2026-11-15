@@ -5813,14 +5813,15 @@ function renderScale(){
     const bt = x.sport === "football" ? (x.btts === true ? ["yes", "Both scored"] : x.btts === false ? ["no", "Not both"] : ["na", ""])
              : st === "scale" ? ["yes", scE(scCfg(x.sport).bet)] : st === "won" ? ["no", scE(scWord(x.sport, "won").replace("Won, d", "D"))] : ["na", ""];
     return `<div class="sc-wrow"><span class="i">${i + 1}</span><span class="sp">${SPORT_SHORT[x.sport] || scE(x.sport)}</span>
-      <span class="pk"><b>${scE(x.pick)}</b><small>v ${scE(opp)} · ${scE(String(x.comp || "").split(" · ").pop())}</small></span>
+      <span class="pk"><b>${scE(x.pick)}</b><small>v ${scE(opp)} · ${scE(String(x.comp || "").split(" · ").pop())}${x.priced === S.book ? " · Hill" : ""}</small></span>
       <span class="pc">${scPct(x.conf || 0)}</span><span class="re ${res}">${word}${det && st !== "up" ? `<small>${scE(det)}</small>` : ""}</span><span class="bt ${bt[0]}">${bt[1]}</span></div>`; };
   const TIER_N = {list: 0, reserve: 1, else: 2};
-  const wday = (g, openIt) => { const top = g.dots.slice().sort((a, b) => (TIER_N[a.tier || "list"] - TIER_N[b.tier || "list"]) || ((b.conf || 0) - (a.conf || 0))).slice(0, target);
+  const wday = (g, openIt) => { const bettable = g.dots.filter(x => x.priced), unpriced = g.dots.length - bettable.length;
+    const top = bettable.slice().sort((a, b) => (TIER_N[a.tier || "list"] - TIER_N[b.tier || "list"]) || ((b.conf || 0) - (a.conf || 0))).slice(0, target);
     const done = top.filter(x => ["scale", "won", "lost"].includes(x.state)), won = done.filter(x => x.state !== "lost").length;
     const fb = done.filter(x => x.sport === "football"), bt = fb.filter(x => x.btts === true).length;
     const sum = done.length ? `${won} of ${done.length} won${fb.length ? ` · both scored in ${bt} of ${fb.length} football` : ""}` : "no results";
-    return `<details class="sc-wday"${openIt ? " open" : ""}><summary><span class="d">${scE(scDate(g.date))}</span><span class="r">${g.replay ? "replayed, " : ""}${Math.min(g.dots.length, target)} of ${g.dots.length} picks</span><span class="s">${sum}</span><span class="open sc-gbtn" data-d="${g.date}" role="button" tabindex="0">full list</span></summary>
+    return `<details class="sc-wday"${openIt ? " open" : ""}><summary><span class="d">${scE(scDate(g.date))}</span><span class="r">${g.replay ? "replayed, " : ""}${top.length} of ${bettable.length} bettable${unpriced ? `, ${unpriced} with no bookmaker price left off` : ""}</span><span class="s">${sum}</span><span class="open sc-gbtn" data-d="${g.date}" role="button" tabindex="0">full list</span></summary>
       ${top.length ? `<div class="sc-wrow h"><span class="i"></span><span class="sp">Sport</span><span class="pk">The model's pick</span><span class="pc">Model</span><span class="re">Result</span><span class="bt">Both scored / Scale</span></div>${top.map(wrow).join("")}` : `<div class="sc-empty">No picks on this day.</div>`}
     </details>`; };
   const past = gl.filter(g => g.date < S.today), week = past.slice(0, 7), older = past.slice(7);
@@ -5830,7 +5831,7 @@ function renderScale(){
     <div class="sc-grows"><div class="sc-grow sc-ghead"><div class="sc-gd"></div>${SC_TIERS.map(t => `<div class="sc-dots">${SC_TIER_SHORT[t]}</div>`).join("")}<div class="sc-gs"></div></div>
       ${gl.filter(g => g.date >= S.today).map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
     <div class="sc-week">
-      <p class="sc-gnote" style="margin:12px 0 4px"><b>The week behind, ten a day.</b> Each day's ten strongest picks, Daily List picks first, then the reserve, then the rest, strongest model number first within each, football only where ${scE(S.book)} prices it. The model's pick, its number, the result, and for football whether both teams scored; for the other sports whether the Scale margin landed. Tap "full list" for every pick of the day.</p>
+      <p class="sc-gnote" style="margin:12px 0 4px"><b>The week behind, ten a day.</b> Each day's ten strongest picks, Daily List picks first, then the reserve, then the rest, strongest model number first within each, and only games a bookmaker feed priced before the start (football where ${scE(S.book)} priced the bet; "Hill" marks a game ${scE(S.book)} priced); anything unpriced is left off and counted. The model's pick, its number, the result, and for football whether both teams scored; for the other sports whether the Scale margin landed. Tap "full list" for every pick of the day.</p>
       ${week.map((g, i) => wday(g, i < 3)).join("") || `<div class="sc-empty">Nothing yet.</div>`}
       ${older.length ? `<details class="sc-off"><summary>${older.length} more day${older.length === 1 ? "" : "s"}</summary>${older.map(g => wday(g, false)).join("")}</details>` : ""}
     </div>

@@ -347,3 +347,12 @@ class WeekTable(unittest.TestCase):
         block = src[src.index('"dots": ['):]
         for k in ('"home"', '"away"', '"side"', '"comp"', '"conf"', '"btts"'):
             self.assertIn(k, block[:900])
+
+    def test_priced_by(self):
+        import scale as S
+        keys = {("nba", "401"): "William Hill", ("tennis", "ana", "bea", "2026-11-14"): "a bookmaker"}
+        self.assertEqual(S.priced_by({"sport": "nba", "id": "401", "home": "x", "away": "y", "start": "2026-11-14T00:00:00Z"}, keys), "William Hill")
+        self.assertEqual(S.priced_by({"sport": "tennis", "home": "Ana", "away": "Bea", "start": "2026-11-14T10:00:00Z"}, keys), "a bookmaker")
+        self.assertIsNone(S.priced_by({"sport": "nfl", "id": "9", "home": "x", "away": "y", "start": "2026-11-14T00:00:00Z"}, keys))
+        self.assertEqual(S.priced_by({"sport": "football", "price": 1.9, "home": "A", "away": "B", "start": "2026-11-14T15:00:00Z"}, {}), "William Hill")
+        self.assertIsNone(S.priced_by({"sport": "football", "home": "A", "away": "B", "start": "2026-11-14T15:00:00Z"}, {}))
