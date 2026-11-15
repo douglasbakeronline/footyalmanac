@@ -3,7 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-15-22: FIFA ranking read from the endpoint FIFA's page uses, 7 Oct 2026 release (tag pending)
 
+**What changed:** the FIFA ranking on file moves from 20 Jul to FIFA's 7 Oct 2026 release (211 teams). FIFA's page loads its ranking from `/api/live-world-ranking/get-rankings?mode=schedule&gender=1&rankingType=football&scheduleId=FRS_Male_Football_YYYYMMDD`, with schedule ids listed with their publication dates in the page's embedded `dates` JSON. The numeric `dateId` overview API answers nothing after 20 Jul. `rankings._fifa_schedule` reads the newest schedule id from the page and takes that release under the existing checks (`FIFA_MIN_SHARE`, `_same_list`); six spellings the new endpoint changes (Brunei, Hong Kong, Macau, St Kitts and Nevis, St Lucia, St Vincent) are mapped back to the file's (`FIFA_SCHEDULE_NAMES`). Internationals on the Daily List are adjusted on the new points.
+**Evidence:** run from the cloud sandbox (inside.fifa.com answered): the page named `FRS_Male_Football_20260720` as published 2026-10-07, the endpoint returned 211 rows led by Spain 2011.57 (previous points 1995.88 = the file's 20 Jul figure), and the overview API with `FRS_...` or any later id returned `{"rankings": []}`. `refresh_fifa` wrote the new file; the 211 teams match the old file except the six spellings above. New tests in `tests/test_rankings.py`.
+**Files:** `rankings.py`, `fifa-rankings.json`, `tests/test_rankings.py`, `claude/world-rankings.md`, this entry.
+**Not changed:** the FIFA adjustment weights (`FIFA_W`), the stale warning, the numeric scan (kept as a fallback). The file's `id` stays 15175 (the schedule ids have no number).
+**Roll back:** `git revert` this release; the file returns to 20 Jul.
 
 
 ## 2026-11-15-21: fewer Claude API calls: two office sprints a day, context reads for the Card only (tag pending)
