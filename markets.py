@@ -451,7 +451,13 @@ def _result_for(r, res, days=3):
     d0 = date.fromisoformat(r["date"])
     best = None
     for d, g in cands:
-        gap = abs((date.fromisoformat(d) - d0).days)
+        off = (date.fromisoformat(d) - d0).days
+        # 15 Nov 2026: a result two or more days before the fixture's own date is an
+        # earlier meeting of the same sides, not this game (New Zealand v India,
+        # 12 and 15 Nov: the second was graded 5-0 before it kicked off). A moved
+        # fixture's newest archived copy carries its new date (live_rows).
+        if off < -1: continue
+        gap = abs(off)
         if gap <= days and (best is None or gap < best[0]): best = (gap, g)
     return best[1] if best else None
 

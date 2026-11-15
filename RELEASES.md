@@ -5,6 +5,23 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-4: Scale in three tiers, five sports and ten games a day (tag pending)
+
+**What changed:** the Scale tab now lists ten or more games a day in three tiers, each with its own line on the glance and the list: **Daily List picks**, **Daily List reserve**, and **everything else** the model picks at 55% or better, added strongest first only until the day has ten games. Three sports join football and tennis, each with a margin for its second condition: the NBA to win by 10 or more, the NFL by 7 or more, rugby by 8 or more. Within a tier the order is the chance the Scale bet lands. Each day has a threefold, fourfold and fivefold from the top of that order, and a football threefold priced on every leg at William Hill. An unpriced pick names the line to look for at William Hill (handicap -9.5, set betting 2-0) and the price its chance needs. Also fixed: a fixture replayed within days (New Zealand v India, 12 and 15 Nov) was graded with the earlier game's score before it kicked off.
+
+**Why:** Douglas, on the first live day (two football picks, no group): "at least 10 games per day ... tiers with lines on that infographic that say daily list pick, daily list reserve pick, everything else ... NFL, basketball, you're going to need to propose something based on the data ... every day to have at least 5 games, to add into some sort of scale accumulator."
+
+**Evidence:** the margins come from every graded pick in `sports-graded.json`. At 75%+: the NBA by 10+ 20 of 31 (65%), the NFL by 7+ 11 of 17 (65%), rugby by 8+ 23 of 35 (66%), tennis in straight sets 160 of 243 (66%). At 55%+: 43%, 43%, 58%, 48%. Football by tier in leagues Hill prices: list 43 picks, 81% won, 33% with both scoring; reserve 86, 65%, 33%; everything else 300, 60%, 26%. Under the new rule 15 Nov has 19 picks (6 list, 13 reserve) and four groups, 16 Nov has 10 (1, 7 and 2 from everything else). None of the margin or straight-sets bets has a price on file: the tab says how often they land, not that they pay.
+
+**The days before the tab, replayed:** at Douglas's request ("retrospectively add picks ... follow the same rules ... add in the results afterwards, so it's not biased") the glance now shows 1 to 14 Nov rebuilt under the same rule: picks, tiers and order taken only from what was published before each start, the tallied chances from results dated before the day, results attached afterwards. 288 graded picks: Daily List tier 72, 90% won, 62% landed the Scale; reserve 215, 71% and 42%. Groups won: threefold 4 of 14, fourfold 4 of 14, fivefold 3 of 14, football threefold 0 of 5. The last seven days: list 26 of 26 won, 14 landed; threefold 1 of 7, fivefold 0 of 7. Football "at William Hill" is a proxy for those days and nothing in them has a price, so they say how often it landed, not what it paid. They are tallied apart from the record; a tap on any day of the glance opens its picks.
+
+**Tested:** `tests/test_scale.py` (36 cases: the margin sample, the band rate, the top-up, tier order, the football threefold, margin grading, the earlier-meeting guard, the replay's chances not seeing the day's results); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build (no page errors, no sideways scroll).
+
+**Files:** `scale.py` (`RULE` 2), `daylist.py` (`pinned(every=True)`), `markets.py` (`_result_for`), `index.html`, `tests/test_scale.py`, `claude/scale-tiers-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any model, the Daily List, the reserve's rule, the Card. College basketball and college football stay off Scale (UK books rarely price them).
+
+**Roll back:** `git revert` the merge commit; `scale-archive/` can stay.
 ## 2026-11-15-3: The slip, built for return
 
 **What changed:** the Bets tab has **The slip** (`slip.py`, `slipSection`), one accumulator a UK day of 3 to 5 legs paying 3x to 6x, chosen for expected return: each leg's chance is the landed rate its sport and price band have shown on the results ledger (50+ graded picks, else the pooled band), legs from bands returning worse than -2% a leg, legs the model prices more than 5 points above the market, and away college picks are refused, and the slip is offered only when its expected return covers the stake. It shows the expected return in pence per pound, the tested basis of every leg, why an empty day is empty, and a table of landed-against-the-price by sport and band. Archived to `slip-archive/` (frozen at the first leg's start), graded from the ledger, tallied against a pre-registered gate (100 slips, positive, p(loss) <= 0.10) with a walk-forward replay over the ledger's past days beside it.

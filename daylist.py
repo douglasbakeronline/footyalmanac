@@ -146,8 +146,9 @@ def sport_item(g):
             "published": g.get("published")}
 
 
-def pinned(day, archives, now):
+def pinned(day, archives, now, every=False):
     """The day's list and reserve: per game, the latest price published before its start.
+    `every` (scale.py, 15 Nov 2026) keeps the games on neither as well.
 
     archives: iterable of (kind, entry). Prices with no `published` are legacy
     and cannot be shown to predate the start, so they are skipped, as score.py
@@ -178,7 +179,7 @@ def pinned(day, archives, now):
             best[it["key"]] = it
     # a game whose newest start is on another day is that day's, not this one's
     best = {k: v for k, v in best.items() if uk_day(parse_utc(latest[k]["start"])) == day}
-    out = [it for it in best.values() if it["list"] or it["reserve"]]
+    out = [it for it in best.values() if every or it["list"] or it["reserve"]]
     for it in out:
         it["started"] = parse_utc(it["start"]) <= now
     return out

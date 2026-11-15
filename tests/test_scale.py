@@ -11,8 +11,8 @@ NOW = datetime(2026, 11, 15, 12, 0, tzinfo=timezone.utc)
 
 
 def pick(key, start, chance, price=None, sport="football", conf=0.8, **kw):
-    p = {"key": key, "sport": sport, "start": start, "home": "H" + key, "away": "A" + key, "pick": "H" + key,
-         "side": "h", "conf": conf, "chance": chance, "price": price, "bet": S.BETS[sport]}
+    p = {"key": key, "sport": sport, "tier": "list", "start": start, "home": "H" + key, "away": "A" + key, "pick": "H" + key,
+         "side": "h", "conf": conf, "chance": chance, "price": price, "bet": S.SPORTS[sport]["bet"]}
     p.update(kw)
     return p
 
@@ -42,8 +42,8 @@ class StraightSets(unittest.TestCase):
         self.assertIs(S.straight_sets({"ok": True, "note": "(12) A (USA) bt (3) B (GBR) 6-4 6-4"}), True)
 
 
-class TennisRates(unittest.TestCase):
-    def rec(self):
+class Rates(unittest.TestCase):
+    def trec(self):
         g = []
         for i in range(40):      # 80-85%: 40 picks, 30 won, 20 in straight sets
             ok = i < 30
@@ -51,22 +51,118 @@ class TennisRates(unittest.TestCase):
         for i in range(10):      # 90%+: too few for its own band
             g.append({"confidence": 0.93, "ok": True, "note": "A bt B 6-1 6-1"})
         g.append({"confidence": 0.82, "ok": True, "retired": True, "note": "A bt B 6-3 1-0"})
-        g.append({"confidence": 0.70, "ok": True, "note": "A bt B 6-3 6-3"})
+        g.append({"confidence": 0.50, "ok": True, "note": "A bt B 6-3 6-3"})
         return {"graded": g}
 
-    def test_bands_and_pool(self):
-        bands, pool = S.tennis_rates(self.rec())
-        b = [x for x in bands if x["from"] == 0.80][0]
-        self.assertEqual((b["n"], b["won"], b["straight"]), (40, 30, 20))
-        self.assertEqual((pool["n"], pool["straight"]), (50, 30))      # the retirement and the 70% pick are out
+    def test_tennis_sample_leaves_out_retirements_and_picks_under_the_floor(self):
+        t = S.samples(self.trec(), {})["tennis"]
+        self.assertEqual(len(t), 50)
+        self.assertEqual(sum(1 for x in t if x[2]), 30)
 
-    def test_chance_is_the_band_rate_or_the_pool_when_the_band_is_thin(self):
-        rates = S.tennis_rates(self.rec())
-        self.assertEqual(S.tennis_chance(0.82, rates), (0.5, 20, 40))
-        self.assertEqual(S.tennis_chance(0.93, rates), (0.6, 30, 50))
+    def test_chance_is_the_narrowest_band_with_enough_picks(self):
+        t = S.samples(self.trec(), {})["tennis"]
+        self.assertEqual(S.band_rate(0.82, t), (0.5, 20, 40))       # its own band holds 40
+        self.assertEqual(S.band_rate(0.93, t), (0.6, 30, 50))       # 90%+ holds 10: widened to 80%+
+        self.assertEqual(S.band_rate(0.60, t), (0.6, 30, 50))       # nothing near it: every pick at the floor or better
 
     def test_no_record_no_chance(self):
-        self.assertEqual(S.tennis_chance(0.9, S.tennis_rates({}))[0], None)
+        self.assertEqual(S.band_rate(0.9, [])[0], None)
+
+    def test_margin_sample(self):
+        sg = {"graded": [
+            {"sport": "nba", "confidence": 0.8, "home": "A", "away": "B", "pick": "A", "score": [110, 100]},      # by 10: landed
+            {"sport": "nba", "confidence": 0.8, "home": "A", "away": "B", "pick": "B", "score": [100, 109]},      # by 9: won only
+            {"sport": "nba", "confidence": 0.8, "home": "A", "away": "B", "pick": "A", "score": [90, 100]},       # lost
+            {"sport": "nba", "confidence": 0.8, "home": "A", "away": "B", "pick": "A", "score": [1, 0], "void": True},
+            {"sport": "nfl", "confidence": 0.7, "home": "A", "away": "B", "pick": "A", "score": [27, 20]},        # by 7: landed
+            {"sport": "ncaab", "confidence": 0.9, "home": "A", "away": "B", "pick": "A", "score": [90, 60]},      # not a Scale sport
+        ]}
+        s = S.samples({}, sg)
+        self.assertEqual([x[:3] for x in s["nba"]], [(0.8, True, True), (0.8, True, False), (0.8, False, False)])
+        self.assertEqual([x[:3] for x in s["nfl"]], [(0.7, True, True)])
+        self.assertNotIn("ncaab", s)
+
+
+class Replay(unittest.TestCase):
+    """A day before the tab is rebuilt from what was archived before each
+    start, with chances that have not seen the day's own results."""
+    def setUp(self):
+        import daylist as D
+        self.D, self.orig = D, (D.read_archives, D.pinned)
+        def item(key, sport, conf, tier, start="2026-11-10T20:00:00Z"):
+            return {"key": key, "sport": sport, "start": start, "timed": True, "date": "2026-11-10", "comp": sport.upper(),
+                    "home": "H" + key, "away": "A" + key, "side": "h", "pick": "H" + key, "confidence": conf, "tier": "Strong",
+                    "list": tier == "list", "reserve": tier == "reserve", "id": key, "published": "2026-11-10T08:00:00Z"}
+        self.items = [item("n1", "nba", 0.85, "list"), item("n2", "nba", 0.70, "reserve")] + \
+                     [item(f"e{i}", "nba", 0.56 + i / 100, "else") for i in range(12)]
+        D.read_archives = lambda day, here: []
+        D.pinned = lambda day, archives, now, every=False: [dict(i) for i in self.items]
+
+    def tearDown(self):
+        self.D.read_archives, self.D.pinned = self.orig
+
+    def sample(self):
+        # before the day: 40 picks, 10 landed. On and after it: 40 picks, all landed.
+        early = [(0.8, True, i < 10, "2026-11-01") for i in range(40)]
+        late = [(0.8, True, True, "2026-11-10") for i in range(40)]
+        return {"nba": early + late}
+
+    def test_the_chance_has_not_seen_the_days_own_results(self):
+        d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
+        self.assertTrue(d["replay"]); self.assertEqual(d["rule"], S.RULE)
+        self.assertEqual({p["chance"] for p in d["picks"]}, {0.25})          # 10 of 40, never 50 of 80
+        self.assertTrue(all(p["basis"] == "10 of 40 picks like it" for p in d["picks"]))
+
+    def test_same_tiers_top_up_and_groups_as_the_live_rule(self):
+        d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
+        tiers = [p["tier"] for p in sorted(d["picks"], key=S.rank)]
+        self.assertEqual(len(d["picks"]), S.TARGET)
+        self.assertEqual(tiers[:2], ["list", "reserve"]); self.assertEqual(tiers.count("else"), 8)
+        self.assertEqual([g["kind"] for g in d["groups"]], [3, 4, 5])        # built as before the first start
+        self.assertEqual(d["groups"][0]["legs"][:2], ["n1", "n2"])
+
+    def test_football_needs_the_book_and_takes_the_models_number(self):
+        i = {"key": "f|eng.1|2026-11-10|A|B", "league": "eng.1", "date": "2026-11-10", "home": "A", "away": "B", "side": "h"}
+        g = {"xg": [2.0, 1.0], "p": {"h": 0.62, "d": 0.2, "a": 0.18}}
+        self.assertIsNone(S.proxy_football(i, g, {"leagues": set(), "fixtures": set()}))
+        w = S.proxy_football(i, g, {"leagues": {"eng.1"}, "fixtures": set()})
+        self.assertTrue(0 < w["p"] < 0.62)
+        self.assertEqual(S.proxy_football(i, g, {"leagues": set(), "fixtures": {("2026-11-10", "A", "B")}}), w)
+        self.assertIsNone(S.proxy_football(i, dict(g, unrated=True), {"leagues": {"eng.1"}, "fixtures": set()}))
+        self.assertIsNone(S.proxy_football(i, None, {"leagues": {"eng.1"}, "fixtures": set()}))
+
+
+class Choose(unittest.TestCase):
+    def cands(self, n_list, n_res, n_else):
+        out = []
+        for t, n in (("list", n_list), ("reserve", n_res), ("else", n_else)):
+            for i in range(n):
+                out.append(pick(f"{t}{i}", "2026-11-15T18:00:00Z", 0.5 - i / 100, tier=t))
+        return out
+
+    def test_everything_else_only_tops_the_day_up_to_the_target(self):
+        got = S.choose(self.cands(2, 3, 12), {}, NOW)
+        self.assertEqual(len(got), S.TARGET)
+        self.assertEqual([p["key"] for p in got if p["tier"] == "else"], ["else0", "else1", "else2", "else3", "else4"])
+
+    def test_a_full_day_takes_nothing_from_everything_else(self):
+        got = S.choose(self.cands(6, 9, 12), {}, NOW)
+        self.assertEqual(len(got), 15)
+        self.assertFalse([p for p in got if p["tier"] == "else"])
+
+    def test_a_started_else_game_is_never_added_and_one_on_file_counts(self):
+        c = self.cands(2, 3, 4)
+        c.append(pick("late", "2026-11-15T09:00:00Z", 0.9, tier="else"))            # started, not on file: stays out
+        held = pick("held", "2026-11-15T08:00:00Z", 0.4, tier="else")               # started, on file: counts to the ten
+        got = S.choose(c, {"picks": [held]}, NOW)
+        keys = [p["key"] for p in got]
+        self.assertNotIn("late", keys)
+        self.assertEqual(len([p for p in got if p["tier"] == "else"]), 4)           # 2 + 3 + held + 4 = 10
+
+    def test_order_is_tier_then_the_scale_chance(self):
+        ps = [pick("e", "2026-11-15T18:00:00Z", 0.9, tier="else"), pick("r", "2026-11-15T18:00:00Z", 0.2, tier="reserve"),
+              pick("l1", "2026-11-15T18:00:00Z", 0.3), pick("l2", "2026-11-15T18:00:00Z", 0.6)]
+        self.assertEqual([p["key"] for p in sorted(ps, key=S.rank)], ["l2", "l1", "r", "e"])
 
 
 class Groups(unittest.TestCase):
@@ -77,7 +173,7 @@ class Groups(unittest.TestCase):
 
     def test_nested_from_the_most_likely_and_never_a_started_leg(self):
         gs = S.build_groups(self.picks(), NOW)
-        self.assertEqual([g["kind"] for g in gs], [3, 4])           # four still to start: no fivefold
+        self.assertEqual([g["kind"] for g in gs], [3, 4])           # four still to start: no fivefold; all football, so no second threefold
         self.assertEqual(gs[0]["legs"], ["b", "c", "a"])
         self.assertEqual(gs[1]["legs"], ["b", "c", "a", "d"])
         self.assertAlmostEqual(gs[0]["chance"], 0.042, places=4)
@@ -87,11 +183,21 @@ class Groups(unittest.TestCase):
     def test_two_picks_make_no_group(self):
         self.assertEqual(S.build_groups(self.picks()[:2], NOW), [])
 
-    def test_a_group_with_an_unpriced_leg_has_no_price(self):
-        ps = self.picks()[:3] + [pick("t", "2026-11-15T19:00:00Z", 0.66, None, sport="tennis")]
+    def test_a_list_pick_comes_before_a_likelier_reserve_pick(self):
+        ps = self.picks()[:3] + [pick("r", "2026-11-15T19:00:00Z", 0.9, None, sport="nba", tier="reserve")]
         gs = S.build_groups(ps, NOW)
-        self.assertEqual(gs[0]["legs"][0], "t")
-        self.assertIsNone(gs[0]["price"])
+        self.assertEqual(gs[0]["legs"], ["b", "c", "a"])
+        self.assertEqual(gs[1]["legs"], ["b", "c", "a", "r"])
+        self.assertIsNone(gs[1]["price"])                           # one leg unpriced: no price for the group
+
+    def test_the_football_threefold_is_priced_and_only_built_when_it_differs(self):
+        ps = [pick("t", "2026-11-15T19:00:00Z", 0.66, None, sport="tennis")] + self.picks()[:4]
+        gs = {g["kind"]: g for g in S.build_groups(ps, NOW)}
+        self.assertEqual(gs[3]["legs"], ["t", "b", "c"])
+        self.assertIsNone(gs[3]["price"])
+        self.assertEqual(gs["f3"]["legs"], ["b", "c", "a"])
+        self.assertEqual(gs["f3"]["price"], round(2.4 * 2.6 * 3.0, 2))
+        self.assertEqual(gs["f3"]["name"], "Football threefold")
 
 
 class MergeDay(unittest.TestCase):
@@ -137,19 +243,42 @@ class Grading(unittest.TestCase):
             self.assertEqual(S.settle(p, res(2, 0)), ("won", "2-0"))
             self.assertEqual(S.settle(p, res(1, 1)), ("lost", "1-1"))
             self.assertEqual(S.settle(p, res(0, 1)), ("lost", "0-1"))
-            self.assertEqual(S.settle(dict(p, side="a"), res(1, 3)), ("scale", "1-3"))
+            self.assertEqual(S.settle(dict(p, side="a"), res(1, 3)), ("scale", "3-1"))      # the pick's score first
             self.assertEqual(S.settle(p, ({}, {}, {})), (None, None))
         finally:
             M._result_for = orig
 
     def test_tennis_states(self):
         p = pick("t", "2026-11-14T15:00:00Z", 0.66, None, sport="tennis", id="77", date="2026-11-14")
-        st = lambda g: S.settle(p, ({}, {"77": g}, {}))[0]
+        st = lambda g: S.settle(p, ({}, {"77": g}, {}, {}))[0]
         self.assertEqual(st({"ok": True, "note": "A bt B 6-3 6-3"}), "scale")
         self.assertEqual(st({"ok": True, "note": "A bt B 6-3 3-6 6-3"}), "won")
         self.assertEqual(st({"ok": False, "note": "B bt A 6-3 6-3"}), "lost")
         self.assertEqual(st({"ok": True, "retired": True, "note": "A bt B 6-3 1-0"}), "void")
         self.assertEqual(st({"void": True}), "void")
+
+    def test_margin_states(self):
+        p = pick("n", "2026-11-14T23:00:00Z", 0.5, None, sport="nba", id="9")
+        st = lambda g: S.settle(p, ({}, {}, {}, {("nba", "9"): g} if g else {}))
+        row = lambda h, a, **kw: dict({"sport": "nba", "id": "9", "home": "Hn", "away": "An", "pick": "Hn", "score": [h, a]}, **kw)
+        self.assertEqual(st(row(112, 102)), ("scale", "112-102"))
+        self.assertEqual(st(row(111, 102)), ("won", "111-102"))
+        self.assertEqual(st(row(100, 102)), ("lost", "100-102"))
+        self.assertEqual(st(row(1, 0, void=True))[0], "void")
+        self.assertEqual(st(None), (None, None))
+        nfl = pick("f", "2026-11-14T23:00:00Z", 0.5, None, sport="nfl", id="9", side="a", pick="Af")
+        self.assertEqual(S.settle(nfl, ({}, {}, {}, {("nfl", "9"): {"home": "Hf", "away": "Af", "pick": "Af", "score": [20, 27]}})), ("scale", "27-20"))
+        self.assertEqual(S.settle(nfl, ({}, {}, {}, {("nfl", "9"): {"home": "Hf", "away": "Af", "pick": "Af", "score": [20, 26]}}))[0], "won")
+
+    def test_a_result_from_an_earlier_meeting_is_not_this_game(self):
+        # New Zealand v India, 12 and 15 Nov 2026: the second was graded 5-0 before it kicked off
+        import markets as M
+        res = {("friendly", "New Zealand", "India"): [("2026-11-12", {"result": [5, 0]})]}
+        row = {"league": "friendly", "home": "New Zealand", "away": "India", "date": "2026-11-15"}
+        self.assertIsNone(M._result_for(row, res))
+        self.assertEqual(M._result_for(dict(row, date="2026-11-13"), res)["result"], [5, 0])     # a day's slip still matches
+        res[("friendly", "New Zealand", "India")].append(("2026-11-15", {"result": [1, 1]}))
+        self.assertEqual(M._result_for(row, res)["result"], [1, 1])
 
     def group(self, states, prices=(3.0, 2.0, 2.5)):
         legs = {k: {"state": s, "price": pr} for k, s, pr in zip("abc", states, prices)}
