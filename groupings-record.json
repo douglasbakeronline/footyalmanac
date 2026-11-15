@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T00:46:24Z",
+ "graded": "2026-11-15T01:52:45Z",
  "overall": {
   "groups": 130,
   "settled": 130,
@@ -22,7 +22,7 @@
    "n": 143,
    "shortened": 57,
    "drifted": 54,
-   "mean": 0.0004
+   "mean": 0.0001
   }
  },
  "cardLegsBySport": {
@@ -355,7 +355,7 @@
     "n": 73,
     "shortened": 23,
     "drifted": 28,
-    "mean": -0.0044
+    "mean": -0.0051
    }
   },
   "Card 3x": {
@@ -672,7 +672,7 @@
    "n": 87,
    "shortened": 30,
    "drifted": 35,
-   "mean": -0.0026
+   "mean": -0.0032
   }
  },
  "cardWide": {
@@ -722,7 +722,7 @@
    "n": 2,
    "shortened": 0,
    "drifted": 1,
-   "mean": -0.0341
+   "mean": -0.0607
   }
  },
  "cardWideByRule": {
@@ -925,7 +925,7 @@
     "n": 2,
     "shortened": 0,
     "drifted": 1,
-    "mean": -0.0341
+    "mean": -0.0607
    }
   }
  },
@@ -952,7 +952,7 @@
     "n": 41,
     "shortened": 12,
     "drifted": 17,
-    "mean": 0.0019
+    "mean": 0.0006
    }
   },
   "Daytime": {
@@ -1132,7 +1132,7 @@
        "when": "2026-11-15T18:00Z",
        "odds": 1.23,
        "best": 1.23,
-       "lastOdds": 1.32,
+       "lastOdds": 1.4,
        "lockOdds": 1.32,
        "lockBest": 1.32,
        "lockBook": "SportsGameOdds consensus",
