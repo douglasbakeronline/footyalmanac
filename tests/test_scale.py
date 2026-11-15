@@ -330,3 +330,20 @@ class Wiring(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WeekTable(unittest.TestCase):
+    """15 Nov 2026: the glance carries what the week-behind table shows."""
+    def test_both_scored(self):
+        import scale as S
+        self.assertTrue(S.both_scored({"sport": "football", "detail": "2-1"}))
+        self.assertFalse(S.both_scored({"sport": "football", "detail": "3-0"}))
+        self.assertIsNone(S.both_scored({"sport": "football", "detail": None}))
+        self.assertIsNone(S.both_scored({"sport": "nba", "detail": "101-99"}))
+
+    def test_glance_dot_fields(self):
+        import re
+        src = open(os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "scale.py")).read()
+        block = src[src.index('"dots": ['):]
+        for k in ('"home"', '"away"', '"side"', '"comp"', '"conf"', '"btts"'):
+            self.assertIn(k, block[:900])
