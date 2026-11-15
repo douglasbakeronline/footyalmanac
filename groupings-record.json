@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T15:01:42Z",
+ "graded": "2026-11-15T16:47:19Z",
  "overall": {
   "groups": 133,
   "settled": 130,
@@ -20,7 +20,7 @@
   "unitsReturnedBest": 128.37,
   "clv": {
    "n": 147,
-   "shortened": 57,
+   "shortened": 58,
    "drifted": 55,
    "mean": 0.0004
   }
@@ -357,9 +357,9 @@
    "unitsReturnedBest": 35.68,
    "clv": {
     "n": 77,
-    "shortened": 23,
+    "shortened": 24,
     "drifted": 29,
-    "mean": -0.0043
+    "mean": -0.0042
    }
   },
   "Card 3x": {
@@ -674,9 +674,9 @@
   "unitsReturnedBest": 44.6,
   "clv": {
    "n": 91,
-   "shortened": 30,
+   "shortened": 31,
    "drifted": 36,
-   "mean": -0.0026
+   "mean": -0.0025
   }
  },
  "cardWide": {
@@ -726,7 +726,7 @@
    "n": 2,
    "shortened": 0,
    "drifted": 1,
-   "mean": -0.0511
+   "mean": -0.0478
   }
  },
  "cardWideByRule": {
@@ -927,9 +927,9 @@
    "unitsReturnedBest": 0,
    "clv": {
     "n": 6,
-    "shortened": 0,
+    "shortened": 1,
     "drifted": 2,
-    "mean": -0.0128
+    "mean": -0.0116
    }
   }
  },
@@ -954,9 +954,9 @@
    "unitsReturnedBest": 32.16,
    "clv": {
     "n": 45,
-    "shortened": 12,
+    "shortened": 13,
     "drifted": 18,
-    "mean": 0.0016
+    "mean": 0.0017
    }
   },
   "Daytime": {
@@ -1213,7 +1213,7 @@
        "when": "2026-11-15T18:00Z",
        "odds": 1.37,
        "best": 1.37,
-       "lastOdds": 1.37,
+       "lastOdds": 1.36,
        "lockOdds": 1.37,
        "lockBest": 1.37,
        "lockBook": null,
@@ -1382,7 +1382,7 @@
        "when": "2026-11-15T18:00Z",
        "odds": 1.23,
        "best": 1.23,
-       "lastOdds": 1.37,
+       "lastOdds": 1.36,
        "lockOdds": 1.32,
        "lockBest": 1.32,
        "lockBook": "SportsGameOdds consensus",
