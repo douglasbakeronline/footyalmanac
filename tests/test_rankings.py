@@ -195,6 +195,55 @@ class Refresh(unittest.TestCase):
         self.assertIn(base + 500, calls)
         self.assertEqual(json.load(open(self.path))["id"], base + 500)
 
+    def test_release_answered_only_with_ranking_type(self):
+        # 15 Nov 2026: ids after 15175 came back empty on the old URL. A
+        # release answered only on the rankingType=football form is taken.
+        base = R.FIFA_SEED
+        self.write(30, id_=base)
+
+        def fake(url, timeout=20):
+            if "dateId" not in url:
+                return {"x": 1}
+            i = int(url.rsplit("dateId=id", 1)[1])
+            if i == base + 2 and "rankingType=football" in url:
+                return {"rankings": [{"lastUpdateDate": "2026-10-22T00:00:00",
+                                      "rankingItem": {"name": "Spain", "rank": 1, "totalPoints": 1880}}]}
+            return {"rankings": []}
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            new = R.refresh_fifa(scan=4, log=log)
+        self.assertEqual((new["id"], new["date"]), (base + 2, "2026-10-22"))
+
+    def test_overview_without_ids_logs_its_keys(self):
+        self.write(30, id_=R.FIFA_SEED)
+        fake = lambda url, timeout=20: {"rankings": []} if "dateId" in url else {"foo": [], "bar": 1}
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            R.refresh_fifa(scan=2, log=log)
+        self.assertTrue(any("named no release id" in l and "bar" in l for l in log), log)
+
+    def test_release_with_too_few_teams_is_refused(self):
+        # A futsal or women's list under the same ids must not replace the
+        # men's ranking (about 211 sides on file).
+        base = R.FIFA_SEED
+        d = (date.today() - timedelta(days=30)).isoformat()
+        cur = {"id": base, "date": d, "teams": {f"T{k}": [k, 1000] for k in range(10)}}
+        json.dump(cur, open(self.path, "w"))
+
+        def fake(url, timeout=20):
+            if "dateId" not in url:
+                raise OSError("down")
+            i = int(url.rsplit("dateId=id", 1)[1])
+            n = {base + 1: 10, base + 3: 5}.get(i, 0)
+            return {"rankings": [{"lastUpdateDate": f"2026-10-0{i - base}T00:00:00",
+                                  "rankingItem": {"name": f"T{k}", "rank": k, "totalPoints": 1}}
+                                 for k in range(n)]}
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            new = R.refresh_fifa(scan=4, log=log)
+        self.assertEqual(new["id"], base + 1)
+        self.assertTrue(any("refused id" in l and str(base + 3) in l for l in log), log)
+
     def test_release_ids_parsing(self):
         doc = {"dates": [{"dateId": "id15175"}, {"dateId": "id15190"}], "x": {"id": 7}, "s": "id15200"}
         self.assertEqual(R._release_ids(doc), {15175, 15190, 15200})
