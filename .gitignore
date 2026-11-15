@@ -23,3 +23,6 @@ daylist.js
 # The Scale tab's data, rebuilt by scale.py on every deploy (scale-archive/ is what is kept)
 scale.json
 scale.js
+# The slip's data, rebuilt by slip.py on every deploy (slip-archive/ is what is kept)
+slip.json
+slip.js

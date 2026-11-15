@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-3: The slip, built for return
+
+**What changed:** the Bets tab has **The slip** (`slip.py`, `slipSection`), one accumulator a UK day of 3 to 5 legs paying 3x to 6x, chosen for expected return: each leg's chance is the landed rate its sport and price band have shown on the results ledger (50+ graded picks, else the pooled band), legs from bands returning worse than -2% a leg, legs the model prices more than 5 points above the market, and away college picks are refused, and the slip is offered only when its expected return covers the stake. It shows the expected return in pence per pound, the tested basis of every leg, why an empty day is empty, and a table of landed-against-the-price by sport and band. Archived to `slip-archive/` (frozen at the first leg's start), graded from the ledger, tallied against a pre-registered gate (100 slips, positive, p(loss) <= 0.10) with a walk-forward replay over the ledger's past days beside it.
+
+**Evidence:** `claude/the-slip-2026-11-15.md`. On the ledger, picks at 1.00-1.15 return -0.4% a leg, 1.30-1.50 -3.3%, 1.50-1.80 -13.8%; picks the model rates 5+ points above the price land 49-56% and lose 9-14% a leg. Douglas's eleven-fold at 3.0 was the better bet per pound than his five-fold at 6.6. Replay before today: 6 days built, 2 won, +7.3% (not evidence yet). 10 new tests in `tests/test_slip.py`; suite and `nametest.py` pass; Bets tab checked in headless Chromium at 1280px and 400px.
+
+**Files:** `slip.py`, `index.html`, `tests/test_slip.py`, `.github/workflows/deploy.yml` (runs after `scale.py`, archives `slip-archive/`, copies `slip.js`), `.gitignore`, `slip-archive/`, `claude/the-slip-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, the Daily List, the Card, the Edge flag, the Scale tab, the ledger.
+
+**Roll back:** `git revert` the merge commit; the Bets tab loses the section and nothing else moves.
+
 ## 2026-11-15-2: Away and Neutral marks on college picks
 
 **What changed:** every college basketball and college football row at 70%+ whose pick is away from home, or on a neutral court, carries an `Away` or `Neutral` chip (Daily List, reserve, sport tabs, pinned rows), and the reserve's summary line counts them. `sports.wary` writes the mark into the archive; `index.html` `sideWary` draws it from the row. `sports-record.json` gains `bySide` (landed v quoted by side per college sport at 70%+) with a pre-registered tripwire: 100 away picks two standard errors under quote takes that sport's away picks out of the reserve.

@@ -994,6 +994,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-v{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;justify-self:start}
 .tb-row.back .tb-v{color:var(--home)}
 .tb-row.caution .tb-v{color:var(--draw-ink,#7a5c12)}
+.tb-row.slip .tb-v{color:var(--ink)} .tb-row.slip.won .tb-v{color:var(--home)} .tb-row.slip.lost .tb-v{color:var(--away)}
+.tb-bands{width:100%;border-collapse:collapse;font:12px var(--f-num);margin-top:6px}
+.tb-bands th,.tb-bands td{padding:4px 8px;text-align:right;border-top:1px solid var(--rule-soft)} .tb-bands th{font:700 10.5px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute-ink,var(--mute))}
+.tb-bands td:first-child,.tb-bands th:first-child{text-align:left} .tb-bands .neg{color:var(--away)} .tb-bands .pos{color:var(--home)}
 .tb-row.avoid .tb-v,.tb-row.unknown .tb-v{color:var(--away)}
 .tb-m b{display:block;font-size:14px}
 .tb-m small{display:block;font-size:12px;color:var(--mute);line-height:1.4;margin-top:1px}
@@ -1816,6 +1820,7 @@ footer b{color:var(--ink-2)}
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
 <script src="scale.js"></script>
+<script src="slip.js"></script>
 <!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
      several MB raw) are loaded by loadRecords() the first time "How it went"
      opens, not here (26 Oct 2026). First paint needs only the summary that
@@ -5196,6 +5201,55 @@ function tbRecord(){
    double of the two most likely and every flagged pick as one slip, priced
    at the average and the best price, and what each did on the football-data
    seasons (D.edgeTested, from tools/card_legs_history.py). Display only. */
+/* 15 Nov 2026 (Douglas, after a five-fold at 6.6 and an eleven-fold at 3.0:
+   "a better way of reading and automating picks"): the slip, slip.py. The
+   day's 3 to 5 legs paying 3x to 6x, chosen for expected return, each leg's
+   chance the landed rate its sport and price band has shown on the results
+   ledger, legs from losing bands and legs the model prices above the market
+   refused, offered only when the expected return covers the stake. */
+const SLIP = window.__SLIP__ || null;
+function slipSection(date){
+  if(!SLIP) return "";
+  const day = (SLIP.days || []).find(d => d.date === date);
+  const R = SLIP.rule_text || {}, rec = SLIP.record || {}, gate = rec.gate || {}, rp = SLIP.replay || {};
+  const pence = ev => `${Math.round(ev * 100)}p`;
+  const sign = x => (x >= 0 ? "+" : "") + (Math.round(x * 1000) / 10).toFixed(1) + "%";
+  const tm = s => new Date(s).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"});
+  const why = {few: "fewer than three legs clear the leg rule", value: "the best slip the legs allow returns less than the stake on its tested chances",
+               short: "every slip the legs allow pays under 3x: the picks that clear the rule are too short-priced", long: "every slip the legs allow pays over 6x",
+               spread: "no set of legs lands between 3x and 6x"};
+  let body;
+  if(!day) body = `<div class="empty tb-empty">No slip built for ${fmtDay(date)} yet; it is built for today and tomorrow on each build.</div>`;
+  else if(!day.slip){
+    const off = Object.entries(day.off || {}).map(([k, n]) => `${n} ${k}`).join(", ");
+    body = `<div class="empty tb-empty">No slip on ${fmtDay(date)}: ${why[day.why] || day.why || "nothing qualified"}. ${day.candidates || 0} leg${day.candidates === 1 ? "" : "s"} cleared the leg rule${off ? `; left out: ${ogEsc(off)}` : ""}. An empty day stays empty.</div>`;
+  } else {
+    const s = day.slip, st = s.state || "open", started = Date.parse(s.first) <= Date.now();
+    const legs = s.legs.map(l => { const ls = (s.legStates || {})[l.key];
+      return `<div class="tb-row slip ${ls || ""}"><span class="tb-v">${ls === "won" ? "Won" : ls === "lost" ? "Lost" : ls === "void" ? "Void" : ({football: "Football", tennis: "Tennis", ncaab: "College", cfb: "College", nba: "NBA", nfl: "NFL", rugby: "Rugby"}[l.sport] || ogEsc(l.sport))}</span>
+        <span class="tb-m"><b>${ogEsc(l.pick)}</b><small>v ${ogEsc(l.side === "h" ? l.away : l.home)} · ${ogEsc(l.comp || "")} · ${tm(l.start)}${l.list ? " · Daily List" : l.reserve ? " · reserve" : ""}</small>
+          <small class="tb-why">Tested: ${ogEsc(l.basis)} landed (${Math.round(l.chance * 100)}%); model ${Math.round(l.conf * 100)}%; band ${sign(l.bandRet)} a leg at the price</small></span>
+        <span class="tb-pp">${l.price.toFixed(2)}<small>${ogEsc(l.book || "")}</small></span></div>`; }).join("");
+    body = `<div class="tb-rows">${legs}</div>
+      <div class="tb-proof edge"><div><span>${s.legs.length}-fold${st === "won" ? ", won" : st === "lost" ? ", lost" : st === "void" ? ", void" : started ? ", under way" : ""}</span><b>${s.price.toFixed(2)}</b><small>tested chance it lands ${Math.round(s.chance * 100)}% · expected return <b>${pence(s.ev)}</b> in the pound${"ret" in s ? ` · returned ${s.ret.toFixed(2)}` : ""}${started ? "" : " · open until " + tm(s.first)}</small></div></div>`;
+  }
+  const rates = SLIP.rates || {};
+  const bandRows = Object.keys(rates).sort((a, b) => a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)).map(sp =>
+    Object.entries(rates[sp]).filter(([, v]) => v.n >= (R.ratesMinN || 50)).sort().map(([b, v]) =>
+      `<tr><td>${sp === "all" ? "All sports" : ogEsc(SD && SD.sports && SD.sports[sp] ? SD.sports[sp].name : sp)}</td><td>${b}</td><td>${v.n}</td><td>${Math.round(v.rate * 100)}%</td><td>${Math.round(v.implied * 100)}%</td><td class="${v.ret >= 0 ? "pos" : "neg"}">${sign(v.ret)}</td></tr>`).join("")).join("");
+  const record = gate.n ? `On this site: ${rec.won} won of ${gate.n}, ${sign(gate.ret)} at the archived price, p(loss) ${gate.pLoss}; the gate (${gate.need.n} slips, positive, p(loss) at most ${gate.need.pLoss}) ${gate.pass ? "<b>passed</b>" : "not yet met"}.`
+    : "No slip settled on this site yet.";
+  const replay = rp.settled ? ` Walked forward over the ledger before ${SLIP.from}: ${rp.won} of ${rp.settled} won, ${sign(rp.gate.ret)}, p(loss) ${rp.gate.pLoss} (${rp.built} days could be built; the band rates were thin before November).` : "";
+  return `<section class="tb-win tb-slip"><h3 class="tb-h">The slip <small>3 to 5 legs paying 3x to 6x, chosen for return, each leg's chance its tested landed rate</small></h3>
+    ${body}
+    <p class="tb-snap"><b>How it is built.</b> Every priced pick still to start, every sport, at ${Math.round((R.confMin || 0.62) * 100)}%+. A leg's chance is the rate its sport and price band have landed on the results ledger (${R.ratesMinN || 50}+ graded picks, else the pooled band), not the model's number. A leg is refused when its band returns worse than ${sign(R.legRetMin ?? -0.02)} at the price, when the model sits more than ${Math.round((R.aboveMax || 0.05) * 100)} points above the price's own chance (those picks land 49-56% and lose 9-14% a leg), or when it is an away college pick. From what is left, the set of ${(R.legs || [3, 5]).join(" to ")} legs from different fixtures with the highest expected return inside the band, offered only when that return covers the stake. Prices are those read at the last build; check before placing.</p>
+    <p class="tb-snap">${record}${replay} Short prices are not the problem: an accumulator compounds whatever each leg loses to the margin, and the longer bands lose more.</p>
+    <details class="how"><summary>Landed against the price, by sport and band</summary>
+      <table class="tb-bands"><thead><tr><th>Sport</th><th>Price</th><th>Picks</th><th>Landed</th><th>Implied</th><th>Return a leg</th></tr></thead><tbody>${bandRows}</tbody></table>
+      <p class="tb-snap">Graded picks at 62%+ with a pre-start price on the results ledger; return at the price recorded (William Hill's where it had one, else the last average). A tally of what happened, never fitted.</p></details>
+  </section>`;
+}
+
 function edgeSection(date){
   const games = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge)
     .sort((a, b) => (a.kickoff || "").localeCompare(b.kickoff || ""));
@@ -5561,6 +5615,7 @@ function renderToday(){
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${wins.map(winHtml).join("")}
+    ${slipSection(day.date)}
     ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
