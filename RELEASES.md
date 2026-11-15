@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-22: ATP below quote: surface idea not retested, note only (tag pending)
+
+**What changed:** a dated note, `claude/tennis-surface-third-check-2026-11-15.md`. No code or model change.
+
+**Evidence:** the tournament-surface map was rejected on 13 Oct (ATP +0.0031 log loss, p(worse) 0.95, n=1,523), no free surface source exists (27 Oct, 9 Nov), and the live window (autumn indoor hard, tour finals) is all hard court, already the default, so surface cannot explain the 59% v 64% ATP shortfall. Gates: not applicable.
+
+**Files:** `claude/tennis-surface-third-check-2026-11-15.md`, this entry.
+
+**Not changed:** tennis ratings, `build_tennis.py`, the Daily List and Card tennis floors.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-21: fewer Claude API calls: two office sprints a day, context reads for the Card only (tag pending)
 
 **What changed:** Douglas: "my API reach is now finished for Claude ... roll back whatever we've implemented recently that's causing a lot of these calls." The two recent additions that call the Claude API on the shared `ANTHROPIC_API_KEY` are rolled back. The office agents run two sprints a day again (06:30 and 18:30 UTC), not four: the 00:30 and 12:30 sprints added on 9 Nov are gone, and the day's pull request cap falls from 28 to 16. The context check reads the Card's picks only: the Daily List reads added on 12 Nov are off (`groupings.CX_LIST_MIN` None) and the daily cap is 8, down from 25.
