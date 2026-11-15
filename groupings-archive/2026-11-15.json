@@ -645,6 +645,1225 @@
    "status": "underway",
    "checked": "2026-11-15T09:17:22Z",
    "archivedAt": "2026-11-15T12:24:47Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 11,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 2,
+   "first": "2026-11-15T00:44:56Z",
+   "lockAt": "2026-11-15T13:30:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Prato",
+     "event": "Prato v Tau Altopascio",
+     "sport": "football",
+     "comp": "Serie D - Girone E",
+     "when": "2026-11-15T13:30:00Z",
+     "date": "2026-11-15",
+     "odds": 1.52,
+     "best": 1.57,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.57,
+      "BetVictor": 1.45
+     },
+     "p": 0.603,
+     "pModel": 0.603,
+     "fair": 0.5859,
+     "hit": 0.7121,
+     "src": "API-Football, average of 6 bookmakers",
+     "pricedAt": "2026-11-15T06:19:09Z",
+     "id": null,
+     "home": "Prato",
+     "away": "Tau Altopascio",
+     "players": null,
+     "opp": 5.28,
+     "draw": 3.62
+    }
+   ],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.09,
+   "p": 0.4557,
+   "implied": 0.4786,
+   "bestOdds": 2.09,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Pistoiese v Coriano",
+     "home": "Pistoiese",
+     "away": "Coriano",
+     "side": "h",
+     "pick": "Pistoiese",
+     "code": "af.429",
+     "comp": "Serie D - Girone D",
+     "country": "Italy",
+     "when": "2026-11-15T13:30:00Z",
+     "date": "2026-11-15",
+     "pModel": 0.7772,
+     "p": 0.7772,
+     "fx": {
+      "u21Side": false,
+      "league": "af.429",
+      "leagueName": "Serie D - Girone D",
+      "short": "SER",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 2,
+      "order": 509,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-15",
+      "time": "13:30",
+      "kickoff": "2026-11-15T13:30:00Z",
+      "home": {
+       "name": "Pistoiese",
+       "att": 1.495,
+       "def": 0.555,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone D",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWLWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 20,
+        "D": 12,
+        "L": 3,
+        "GF": 62,
+        "GA": 23,
+        "GD": 39,
+        "Pts": 72,
+        "PPG": 2.057
+       },
+       "now": {
+        "P": 11,
+        "W": 9,
+        "D": 1,
+        "L": 1,
+        "GF": 24,
+        "GA": 5,
+        "GD": 19,
+        "Pts": 28,
+        "PPG": 2.545
+       }
+      },
+      "away": {
+       "name": "Coriano",
+       "att": 0.769,
+       "def": 1.076,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone D",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLLDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 7,
+        "D": 10,
+        "L": 18,
+        "GF": 29,
+        "GA": 47,
+        "GD": -18,
+        "Pts": 31,
+        "PPG": 0.886
+       },
+       "now": {
+        "P": 11,
+        "W": 2,
+        "D": 3,
+        "L": 6,
+        "GF": 10,
+        "GA": 15,
+        "GD": -5,
+        "Pts": 9,
+        "PPG": 0.818
+       }
+      },
+      "p": {
+       "h": 0.7772,
+       "d": 0.1673,
+       "a": 0.0555
+      },
+      "xg": [
+       2.24,
+       0.42
+      ],
+      "btts": 0.4481,
+      "over25": 0.5109,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7772,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7326,
+        0.1736,
+        0.0938
+       ],
+       "best": [
+        1.24,
+        5.23,
+        9.68
+       ],
+       "avg": [
+        1.24,
+        5.23,
+        9.68
+       ],
+       "ev": [
+        -0.0363,
+        -0.1245,
+        -0.4626
+       ],
+       "src": "API-Football",
+       "books": 3
+      },
+      "rank": 7,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "pDraw": 0.1673,
+     "multOnly": false,
+     "odds": 1.24,
+     "best": 1.24,
+     "books": 3,
+     "opp": 9.68,
+     "draw": 5.23,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.1008,
+     "pricedAt": "2026-11-15T06:19:09Z",
+     "src": "API-Football, average of 3 bookmakers",
+     "implied": 0.8065,
+     "pTested": 0.7772,
+     "fair": 0.7326,
+     "edge": -0.0916,
+     "basis": "model",
+     "firstOdds": 1.24
+    },
+    {
+     "sport": "football",
+     "event": "Manacor v Alcúdia",
+     "home": "Manacor",
+     "away": "Alcúdia",
+     "side": "h",
+     "pick": "Manacor",
+     "code": "af.449",
+     "comp": "Tercera División RFEF - Group 11",
+     "country": "Spain",
+     "when": "2026-11-15T15:00:00Z",
+     "date": "2026-11-15",
+     "pModel": 0.7514,
+     "p": 0.7514,
+     "fx": {
+      "u21Side": false,
+      "league": "af.449",
+      "leagueName": "Tercera División RFEF - Group 11",
+      "short": "TER",
+      "country": "Spain",
+      "iso": "esp",
+      "tier": 2,
+      "order": 573,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-15",
+      "time": "15:00",
+      "kickoff": "2026-11-15T15:00:00Z",
+      "home": {
+       "name": "Manacor",
+       "att": 1.402,
+       "def": 0.844,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Tercera División RFEF - Group 11",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LDDDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 25,
+        "D": 6,
+        "L": 7,
+        "GF": 76,
+        "GA": 46,
+        "GD": 30,
+        "Pts": 81,
+        "PPG": 2.132
+       },
+       "now": {
+        "P": 10,
+        "W": 6,
+        "D": 3,
+        "L": 1,
+        "GF": 21,
+        "GA": 10,
+        "GD": 11,
+        "Pts": 21,
+        "PPG": 2.1
+       }
+      },
+      "away": {
+       "name": "Alcúdia",
+       "att": 0.913,
+       "def": 1.258,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Tercera División RFEF - Group 11",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "WWLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 11,
+        "D": 5,
+        "L": 18,
+        "GF": 37,
+        "GA": 62,
+        "GD": -25,
+        "Pts": 38,
+        "PPG": 1.118
+       },
+       "now": {
+        "P": 10,
+        "W": 4,
+        "D": 0,
+        "L": 6,
+        "GF": 13,
+        "GA": 18,
+        "GD": -5,
+        "Pts": 12,
+        "PPG": 1.2
+       }
+      },
+      "p": {
+       "h": 0.7514,
+       "d": 0.1531,
+       "a": 0.0955
+      },
+      "xg": [
+       2.81,
+       0.91
+      ],
+      "btts": 0.5488,
+      "over25": 0.599,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7514,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7368,
+        0.1742,
+        0.089
+       ],
+       "best": [
+        1.22,
+        5.25,
+        11.0
+       ],
+       "avg": [
+        1.23,
+        5.19,
+        10.16
+       ],
+       "ev": [
+        -0.0833,
+        -0.1962,
+        0.0505
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 13,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "pDraw": 0.1531,
+     "multOnly": false,
+     "odds": 1.23,
+     "best": 1.22,
+     "books": 7,
+     "opp": 10.16,
+     "draw": 5.19,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.22,
+      "Bet365": 1.22
+     },
+     "margin": 1.1061,
+     "pricedAt": "2026-11-15T06:19:09Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.813,
+     "pTested": 0.7514,
+     "fair": 0.735,
+     "edge": -0.0959,
+     "basis": "model",
+     "firstOdds": 1.23,
+     "lastOdds": 1.23,
+     "lastBest": 1.22,
+     "lastAt": "2026-11-15T13:34:47Z",
+     "lockPrice": {
+      "odds": 1.23,
+      "best": 1.22,
+      "book": "William Hill",
+      "at": "2026-11-15T13:34:47Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Philadelphia 76ers v Indiana Pacers",
+     "home": "Philadelphia 76ers",
+     "away": "Indiana Pacers",
+     "pick": "Philadelphia 76ers",
+     "comp": "NBA",
+     "when": "2026-11-15T18:00Z",
+     "date": "2026-11-15",
+     "id": "401909985",
+     "pModel": 0.7804,
+     "p": 0.7804,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909985",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-15T18:00Z",
+      "home": "Philadelphia 76ers",
+      "away": "Indiana Pacers",
+      "neutral": false,
+      "pHome": 0.7804,
+      "pick": "Philadelphia 76ers",
+      "confidence": 0.7804,
+      "tier": "Strong",
+      "eloH": 1575,
+      "eloA": 1390,
+      "gamesH": 278,
+      "gamesA": 300,
+      "hfa": 25,
+      "wary": null,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "123-112",
+        "opp": "Toronto Raptors",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "L",
+        "score": "101-123",
+        "opp": "Boston Celtics",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "W",
+        "score": "127-121",
+        "opp": "Chicago Bulls",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "95-119",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "112-106",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "106-104",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "114-101",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "122-125",
+        "opp": "Dallas Mavericks",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "102-114",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "107-103",
+        "opp": "Memphis Grizzlies",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "recordH": {
+       "w": 10,
+       "l": 3,
+       "d": 0
+      },
+      "recordA": {
+       "w": 5,
+       "l": 8,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-10-28",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "109-114"
+       },
+       {
+        "date": "2026-04-10",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "94-105"
+       },
+       {
+        "date": "2026-02-25",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "114-135"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.37,
+     "margin": 1.0415,
+     "opp": 3.21,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.36,
+      "Bet365": 1.37,
+      "Betfair": 1.33,
+      "BetVictor": 1.36
+     },
+     "pricedAt": "2026-11-15T13:09:18Z",
+     "implied": 0.7299,
+     "pTested": 0.7668,
+     "fair": 0.7008,
+     "edge": -0.0399,
+     "basis": "model",
+     "firstOdds": 1.32,
+     "lastOdds": 1.37,
+     "lastBest": 1.37,
+     "lastAt": "2026-11-15T13:34:47Z",
+     "lockPrice": {
+      "odds": 1.37,
+      "best": 1.37,
+      "book": null,
+      "at": "2026-11-15T13:34:47Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-15T13:09:10Z",
+   "archivedAt": "2026-11-15T13:34:47Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 11,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 3,
+   "first": "2026-11-15T01:52:35Z",
+   "lockAt": "2026-11-15T13:30:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 3.22,
+   "p": 0.3048,
+   "implied": 0.3104,
+   "bestOdds": 3.26,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Biellese v Asti",
+     "home": "Biellese",
+     "away": "Asti",
+     "side": "h",
+     "pick": "Biellese",
+     "code": "af.426",
+     "comp": "Serie D - Girone A",
+     "country": "Italy",
+     "when": "2026-11-15T13:30:00Z",
+     "date": "2026-11-15",
+     "pModel": 0.6232,
+     "p": 0.6232,
+     "fx": {
+      "u21Side": false,
+      "league": "af.426",
+      "leagueName": "Serie D - Girone A",
+      "short": "SER",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 2,
+      "order": 506,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-15",
+      "time": "13:30",
+      "kickoff": "2026-11-15T13:30:00Z",
+      "home": {
+       "name": "Biellese",
+       "att": 1.35,
+       "def": 0.878,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone A",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LWLWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 16,
+        "D": 9,
+        "L": 10,
+        "GF": 49,
+        "GA": 31,
+        "GD": 18,
+        "Pts": 57,
+        "PPG": 1.629
+       },
+       "now": {
+        "P": 11,
+        "W": 6,
+        "D": 3,
+        "L": 2,
+        "GF": 23,
+        "GA": 13,
+        "GD": 10,
+        "Pts": 21,
+        "PPG": 1.909
+       }
+      },
+      "away": {
+       "name": "Asti",
+       "att": 0.893,
+       "def": 1.027,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone A",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LDLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 9,
+        "D": 11,
+        "L": 15,
+        "GF": 33,
+        "GA": 42,
+        "GD": -9,
+        "Pts": 38,
+        "PPG": 1.086
+       },
+       "now": {
+        "P": 11,
+        "W": 4,
+        "D": 2,
+        "L": 5,
+        "GF": 13,
+        "GA": 15,
+        "GD": -2,
+        "Pts": 14,
+        "PPG": 1.273
+       }
+      },
+      "p": {
+       "h": 0.6232,
+       "d": 0.227,
+       "a": 0.1498
+      },
+      "xg": [
+       2.0,
+       0.82
+      ],
+      "btts": 0.519,
+      "over25": 0.526,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6232,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5725,
+        0.2531,
+        0.1744
+       ],
+       "best": [
+        1.57,
+        3.6,
+        5.0
+       ],
+       "avg": [
+        1.55,
+        3.52,
+        5.11
+       ],
+       "ev": [
+        -0.0216,
+        -0.1828,
+        -0.251
+       ],
+       "src": "API-Football",
+       "books": 6
+      },
+      "rank": 37,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.646,
+       "n": 3240,
+       "cumHit": 0.7121,
+       "cumN": 9156,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7121,
+     "n": 9156,
+     "list": false,
+     "pDraw": 0.227,
+     "multOnly": true,
+     "odds": 1.55,
+     "best": 1.57,
+     "books": 6,
+     "opp": 5.11,
+     "draw": 3.52,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.57,
+      "BetVictor": 1.5
+     },
+     "margin": 1.1233,
+     "pricedAt": "2026-11-15T06:19:09Z",
+     "src": "API-Football, average of 6 bookmakers",
+     "implied": 0.6452,
+     "pTested": 0.6232,
+     "fair": 0.5744,
+     "edge": -0.1097,
+     "basis": "model",
+     "firstOdds": 1.55
+    },
+    {
+     "sport": "nba",
+     "event": "Phoenix Suns v Los Angeles Lakers",
+     "home": "Phoenix Suns",
+     "away": "Los Angeles Lakers",
+     "pick": "Los Angeles Lakers",
+     "comp": "NBA",
+     "when": "2026-11-15T21:00Z",
+     "date": "2026-11-15",
+     "id": "401909986",
+     "pModel": 0.6229,
+     "p": 0.6229,
+     "hit": 0.7415,
+     "n": 855,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909986",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-15T21:00Z",
+      "home": "Phoenix Suns",
+      "away": "Los Angeles Lakers",
+      "neutral": false,
+      "pHome": 0.3771,
+      "pick": "Los Angeles Lakers",
+      "confidence": 0.6229,
+      "tier": "Firm",
+      "eloH": 1502,
+      "eloA": 1626,
+      "gamesH": 267,
+      "gamesA": 281,
+      "hfa": 25,
+      "wary": null,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6496,
+       "n": 197,
+       "cumHit": 0.7415,
+       "cumN": 855
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "101-96",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "W",
+        "score": "133-110",
+        "opp": "LA Clippers",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "L",
+        "score": "96-122",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "W",
+        "score": "102-99",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "117-104",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-06"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "123-112",
+        "opp": "Milwaukee Bucks",
+        "home": false,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "W",
+        "score": "124-114",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "W",
+        "score": "121-116",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "124-118",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "116-103",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "recordH": {
+       "w": 5,
+       "l": 6,
+       "d": 0
+      },
+      "recordA": {
+       "w": 11,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-04-11",
+        "home": "Los Angeles Lakers",
+        "away": "Phoenix Suns",
+        "score": "101-73"
+       },
+       {
+        "date": "2026-02-27",
+        "home": "Phoenix Suns",
+        "away": "Los Angeles Lakers",
+        "score": "113-110"
+       },
+       {
+        "date": "2025-12-24",
+        "home": "Phoenix Suns",
+        "away": "Los Angeles Lakers",
+        "score": "132-108"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.65,
+     "margin": 1.0408,
+     "opp": 2.3,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.67,
+      "Bet365": 1.65,
+      "Betfair": 1.6,
+      "BetVictor": 1.67
+     },
+     "pricedAt": "2026-11-15T13:09:18Z",
+     "implied": 0.6061,
+     "pTested": 0.6229,
+     "fair": 0.5823,
+     "edge": -0.0392,
+     "basis": "model",
+     "firstOdds": 1.57,
+     "lastOdds": 1.62,
+     "lastBest": 1.62,
+     "lastAt": "2026-11-15T13:34:47Z",
+     "lockPrice": {
+      "odds": 1.62,
+      "best": 1.62,
+      "book": null,
+      "at": "2026-11-15T13:34:47Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Washington Wizards v Houston Rockets",
+     "home": "Washington Wizards",
+     "away": "Houston Rockets",
+     "pick": "Houston Rockets",
+     "comp": "NBA",
+     "when": "2026-11-16T00:00Z",
+     "date": "2026-11-16",
+     "id": "401909991",
+     "pModel": 0.7852,
+     "p": 0.7852,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909991",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-16T00:00Z",
+      "home": "Washington Wizards",
+      "away": "Houston Rockets",
+      "neutral": false,
+      "pHome": 0.2148,
+      "pick": "Houston Rockets",
+      "confidence": 0.7852,
+      "tier": "Strong",
+      "eloH": 1357,
+      "eloA": 1620,
+      "gamesH": 259,
+      "gamesA": 272,
+      "hfa": 25,
+      "wary": null,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "140-144",
+        "opp": "Detroit Pistons",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "L",
+        "score": "101-114",
+        "opp": "Indiana Pacers",
+        "home": false,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "111-122",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "75-114",
+        "opp": "Oklahoma City Thunder",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "132-139",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-11-07"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "125-118",
+        "opp": "Utah Jazz",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "115-108",
+        "opp": "Golden State Warriors",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "W",
+        "score": "110-100",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "99-102",
+        "opp": "Phoenix Suns",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "107-117",
+        "opp": "Minnesota Timberwolves",
+        "home": true,
+        "date": "2026-11-05"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 9,
+       "d": 0
+      },
+      "recordA": {
+       "w": 10,
+       "l": 3,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-03",
+        "home": "Washington Wizards",
+        "away": "Houston Rockets",
+        "score": "118-123"
+       },
+       {
+        "date": "2025-11-13",
+        "home": "Houston Rockets",
+        "away": "Washington Wizards",
+        "score": "135-112"
+       },
+       {
+        "date": "2025-01-08",
+        "home": "Washington Wizards",
+        "away": "Houston Rockets",
+        "score": "112-135"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.26,
+     "margin": 1.043,
+     "opp": 4.01,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.22,
+      "Bet365": 1.24,
+      "Betfair": 1.25,
+      "BetVictor": 1.22
+     },
+     "pricedAt": "2026-11-15T13:09:18Z",
+     "implied": 0.7937,
+     "pTested": 0.7668,
+     "fair": 0.761,
+     "edge": -0.0411,
+     "basis": "model",
+     "firstOdds": 1.23,
+     "lastOdds": 1.28,
+     "lastBest": 1.28,
+     "lastAt": "2026-11-15T13:34:47Z",
+     "lockPrice": {
+      "odds": 1.28,
+      "best": 1.28,
+      "book": null,
+      "at": "2026-11-15T13:34:47Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-15T13:09:10Z",
+   "archivedAt": "2026-11-15T13:34:47Z"
   }
  ]
 }

@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-15T13:09:20Z",
+ "graded": "2026-11-15T13:34:56Z",
  "overall": {
-  "groups": 131,
+  "groups": 133,
   "settled": 130,
   "won": 38,
   "z": -1.12,
   "lost": 92,
-  "pending": 1,
+  "pending": 3,
   "legs": 503,
   "legsWon": 364,
   "returned": 110.52,
@@ -19,10 +19,10 @@
   "unitsReturned": 123.71,
   "unitsReturnedBest": 128.37,
   "clv": {
-   "n": 144,
-   "shortened": 57,
+   "n": 147,
+   "shortened": 58,
    "drifted": 54,
-   "mean": 0.0002
+   "mean": 0.0009
   }
  },
  "cardLegsBySport": {
@@ -337,12 +337,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 32,
+   "groups": 34,
    "settled": 31,
    "won": 10,
    "z": -0.69,
    "lost": 21,
-   "pending": 1,
+   "pending": 3,
    "legs": 92,
    "legsWon": 65,
    "returned": 22.13,
@@ -355,10 +355,10 @@
    "unitsReturned": 35.32,
    "unitsReturnedBest": 35.68,
    "clv": {
-    "n": 74,
-    "shortened": 23,
+    "n": 77,
+    "shortened": 24,
     "drifted": 28,
-    "mean": -0.0048
+    "mean": -0.0033
    }
   },
   "Card 3x": {
@@ -654,12 +654,12 @@
   }
  },
  "card": {
-  "groups": 38,
+  "groups": 40,
   "settled": 37,
   "won": 12,
   "z": -0.17,
   "lost": 25,
-  "pending": 1,
+  "pending": 3,
   "legs": 111,
   "legsWon": 74,
   "returned": 32.99,
@@ -672,10 +672,10 @@
   "unitsReturned": 44.09,
   "unitsReturnedBest": 44.6,
   "clv": {
-   "n": 88,
-   "shortened": 30,
+   "n": 91,
+   "shortened": 31,
    "drifted": 35,
-   "mean": -0.003
+   "mean": -0.0017
   }
  },
  "cardWide": {
@@ -907,12 +907,12 @@
    }
   },
   "11": {
-   "groups": 2,
+   "groups": 4,
    "settled": 1,
    "won": 0,
    "z": -0.86,
    "lost": 1,
-   "pending": 1,
+   "pending": 3,
    "legs": 1,
    "legsWon": 0,
    "returned": 0,
@@ -925,21 +925,21 @@
    "unitsReturned": 0,
    "unitsReturnedBest": 0,
    "clv": {
-    "n": 3,
-    "shortened": 0,
+    "n": 6,
+    "shortened": 1,
     "drifted": 1,
-    "mean": -0.0341
+    "mean": 0.0005
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 22,
+   "groups": 24,
    "settled": 21,
    "won": 8,
    "z": 0.24,
    "lost": 13,
-   "pending": 1,
+   "pending": 3,
    "legs": 62,
    "legsWon": 45,
    "returned": 20.77,
@@ -952,10 +952,10 @@
    "unitsReturned": 31.87,
    "unitsReturnedBest": 32.16,
    "clv": {
-    "n": 42,
-    "shortened": 12,
+    "n": 45,
+    "shortened": 13,
     "drifted": 17,
-    "mean": 0.0011
+    "mean": 0.0033
    }
   },
   "Daytime": {
@@ -1141,6 +1141,166 @@
        "status": "pending",
        "result": null,
        "opp": 7.01
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 2,
+     "rule": 11,
+     "wideRule": null,
+     "odds": 2.09,
+     "p": 0.4557,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-15T13:30:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Pistoiese",
+       "event": "Pistoiese v Coriano",
+       "sport": "football",
+       "comp": "Serie D - Girone D",
+       "when": "2026-11-15T13:30:00Z",
+       "odds": 1.24,
+       "best": 1.24,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7772,
+       "status": "pending",
+       "result": null,
+       "opp": 9.68
+      },
+      {
+       "pick": "Manacor",
+       "event": "Manacor v Alcúdia",
+       "sport": "football",
+       "comp": "Tercera División RFEF - Group 11",
+       "when": "2026-11-15T15:00:00Z",
+       "odds": 1.23,
+       "best": 1.23,
+       "lastOdds": 1.23,
+       "lockOdds": 1.23,
+       "lockBest": 1.22,
+       "lockBook": "William Hill",
+       "est": false,
+       "p": 0.7514,
+       "status": "pending",
+       "result": null,
+       "opp": 10.16
+      },
+      {
+       "pick": "Philadelphia 76ers",
+       "event": "Philadelphia 76ers v Indiana Pacers",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-15T18:00Z",
+       "odds": 1.37,
+       "best": 1.37,
+       "lastOdds": 1.37,
+       "lockOdds": 1.37,
+       "lockBest": 1.37,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7804,
+       "status": "pending",
+       "result": null,
+       "opp": 3.21
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 3,
+     "rule": 11,
+     "wideRule": null,
+     "odds": 3.22,
+     "p": 0.3048,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-15T13:30:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Biellese",
+       "event": "Biellese v Asti",
+       "sport": "football",
+       "comp": "Serie D - Girone A",
+       "when": "2026-11-15T13:30:00Z",
+       "odds": 1.55,
+       "best": 1.57,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6232,
+       "status": "pending",
+       "result": null,
+       "opp": 5.11
+      },
+      {
+       "pick": "Los Angeles Lakers",
+       "event": "Phoenix Suns v Los Angeles Lakers",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-15T21:00Z",
+       "odds": 1.65,
+       "best": 1.65,
+       "lastOdds": 1.62,
+       "lockOdds": 1.62,
+       "lockBest": 1.62,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6229,
+       "status": "pending",
+       "result": null,
+       "opp": 2.3
+      },
+      {
+       "pick": "Houston Rockets",
+       "event": "Washington Wizards v Houston Rockets",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-16T00:00Z",
+       "odds": 1.26,
+       "best": 1.26,
+       "lastOdds": 1.28,
+       "lockOdds": 1.28,
+       "lockBest": 1.28,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7852,
+       "status": "pending",
+       "result": null,
+       "opp": 4.01
       }
      ]
     }
