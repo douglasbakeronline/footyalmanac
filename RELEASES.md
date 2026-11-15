@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-briefing-watch: briefings no longer wait for a dropped cron (tag pending)
+
+**What changed:** a watchdog dispatches a deploy when a briefing slot (07:00, 11:00, 16:00, 21:00 UK) is 10+ minutes overdue and no build is running, so the morning, lunch, evening and night pushes arrive near their time.
+
+**Evidence:** GitHub sheds the deploy crons: ten a day, never more than eight runs from 10 to 15 Nov, the 07:40 cron not once in six days; the 13 Nov backups did not mend it. Morning push 123 and 138 minutes late on 14 and 15 Nov; the evening slot still unsent at 16:38 on 15 Nov (the watchdog's dry run would have dispatched). `claude/briefing-watch-2026-11-15.md`.
+
+**Files:** `tools/briefing_watch.py`, `.github/workflows/briefing-watch.yml`, `tests/test_briefing_watch.py`, `claude/briefing-watch-2026-11-15.md`, `CLAUDE.md`.
+
+**Not changed:** `notify.py`, deploy.yml's crons, any Card rule.
+
+**Roll back:** `git revert` the merge commit, or disable "Briefing watch" in Actions.
+
 ## 2026-11-15-daily-list-bar: Daily List bar replayed again, no change (tag pending)
 
 **What changed:** nothing for a reader. A dated replay of the Daily List league bar is added to `claude/daily-list.md`.
