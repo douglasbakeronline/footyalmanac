@@ -31,7 +31,15 @@ from datetime import date, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 FIFA_FILE = os.path.join(HERE, "fifa-rankings.json")
-FIFA_URL = "https://inside.fifa.com/api/ranking-overview?locale=en&dateId=id{}"
+# 15 Nov 2026: no release after id 15175 (20 Jul) was found from August to
+# November, with every fetch answering (no failure logged), while FIFA kept
+# publishing (an October 2026 release is on inside.fifa.com). The site moved
+# to /fifa-rankings/world-ranking/ and its API's URLs now carry
+# rankingType=football (seen on a public id15136 URL); the ids after 15175
+# look to be answered only with it. Each URL is tried with it first and
+# without it second, so the old form still works if it ever answers again.
+FIFA_URL = "https://inside.fifa.com/api/ranking-overview?locale=en&rankingType=football&dateId=id{}"
+FIFA_URLS = (FIFA_URL, "https://inside.fifa.com/api/ranking-overview?locale=en&dateId=id{}")
 UA = {"User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 "
                     "(KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
       "Accept": "application/json"}
@@ -74,18 +82,28 @@ def _get(url, timeout=20):
 
 FIFA_SEED = 15175          # the release on file when the scan was first written (20 Jul 2026)
 FIFA_LATEST_URL = "https://inside.fifa.com/api/ranking-overview?locale=en"   # dateless: the current release
+FIFA_LATEST_URLS = (FIFA_LATEST_URL + "&rankingType=football", FIFA_LATEST_URL)
 FIFA_STALE_DAYS = 45
+# A release must hold at least this share of the teams on file to replace it:
+# the men's ranking holds about 211 sides, so a futsal, beach or women's list
+# answered under the same id scheme is refused rather than written.
+FIFA_MIN_SHARE = 0.8
 
 
 def _fifa_release(i, errors=None):
-    """One release by id, or None. The exception, if any, is appended to
-    `errors` as (id, "Type: message") so the caller can log it."""
-    try:
-        rows = _get(FIFA_URL.format(i)).get("rankings") or []
-    except Exception as e:
-        if errors is not None:
-            errors.append((i, f"{type(e).__name__}: {e}"))
-        return None
+    """One release by id, or None, trying each of FIFA_URLS in turn. The
+    first exception, if any, is appended to `errors` as (id, "Type: message")
+    so the caller can log it."""
+    rows = []
+    for url in FIFA_URLS:
+        try:
+            rows = _get(url.format(i)).get("rankings") or []
+        except Exception as e:
+            if errors is not None:
+                errors.append((i, f"{type(e).__name__}: {e}"))
+            continue
+        if rows:
+            break
     if not rows:
         return None
     return {"id": i, "date": rows[0]["lastUpdateDate"][:10],
@@ -115,14 +133,23 @@ def _release_ids(obj):
     return out
 
 
-def _fifa_latest_id(errors=None):
-    """The latest release id FIFA's dateless overview names, or None."""
-    try:
-        ids = _release_ids(_get(FIFA_LATEST_URL))
-    except Exception as e:
-        if errors is not None:
-            errors.append(("latest", f"{type(e).__name__}: {e}"))
-        return None
+def _fifa_latest_id(errors=None, notes=None):
+    """The latest release id FIFA's dateless overview names, or None. When an
+    overview answers but names no id, its top-level keys go to `notes`, so
+    the build log shows what shape FIFA returned instead."""
+    ids = set()
+    for url in FIFA_LATEST_URLS:
+        try:
+            doc = _get(url)
+        except Exception as e:
+            if errors is not None:
+                errors.append(("latest", f"{type(e).__name__}: {e}"))
+            continue
+        found = _release_ids(doc)
+        if not found and notes is not None:
+            keys = sorted(doc)[:12] if isinstance(doc, dict) else type(doc).__name__
+            notes.append(f"FIFA ranking: overview {url.split('?', 1)[1]} named no release id (keys: {keys})")
+        ids |= found
     return max(ids) if ids else None
 
 
@@ -157,13 +184,19 @@ def refresh_fifa(scan=160, log=None):
     if cur and fifa_age_days(cur) < 21:
         return cur
     start = max(FIFA_SEED, cur["id"] if cur else 0) + 1
-    errors = []
-    latest = _fifa_latest_id(errors)
+    errors, notes = [], []
+    latest = _fifa_latest_id(errors, notes)
     ids = list(range(start, start + scan))
     if latest and latest >= start:
         ids = [latest] + [i for i in ids if i != latest]
     with cf.ThreadPoolExecutor(8) as ex:
         found = [r for r in ex.map(lambda i: _fifa_release(i, errors), ids) if r]
+    need = FIFA_MIN_SHARE * len(cur["teams"]) if cur and cur.get("teams") else 0
+    short = [r for r in found if len(r["teams"]) < need]
+    found = [r for r in found if len(r["teams"]) >= need]
+    if short and log is not None:
+        log.append("FIFA ranking: refused " + ", ".join(f"id {r['id']} ({len(r['teams'])} teams)" for r in short[:5])
+                   + f", under {FIFA_MIN_SHARE:.0%} of the {len(cur['teams'])} on file")
     if found:
         new = max(found, key=lambda r: r["id"])
         json.dump(new, open(FIFA_FILE, "w"), ensure_ascii=False, separators=(",", ":"))
@@ -174,6 +207,7 @@ def refresh_fifa(scan=160, log=None):
     if log is not None:
         log.append(f"FIFA ranking: no newer release than {cur['date'] if cur else 'none'} "
                    f"(scanned ids {ids[0]}-{ids[-1]}, latest per overview: {latest})")
+        log.extend(notes)
         if errors:
             which, msg = errors[0]
             log.append(f"FIFA ranking: first fetch failure (id {which}) {msg}")
