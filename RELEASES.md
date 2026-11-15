@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-23: calibration by band and sport rerun: note only (tag pending)
+
+**What changed:** a dated note, `claude/calibration-rerun-2026-11-15.md`. No code or model change.
+
+**Evidence:** `calibration_bands.py` on history (not `record.json`). Football check season now 2,320 calls: 60-70% span landed +8.6 points over quote [+3.5,+13.5] against +2.1 [-1.3,+5.2] on the fit season, so Rule 3 is not met. Ice hockey (-6.1 at 55-70%) and college basketball (-2.2) run under quote on the check window only; baseball's over-statement eased. Other sports inside noise.
+
+**Files:** `claude/calibration-rerun-2026-11-15.md`, this entry.
+
+**Not changed:** `calibration.json`, `sports.json`, `tune.py`, any model constant.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-22: ATP below quote: surface idea not retested, note only (tag pending)
 
 **What changed:** a dated note, `claude/tennis-surface-third-check-2026-11-15.md`. No code or model change.
