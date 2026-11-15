@@ -1,28 +1,28 @@
 {
- "graded": "2026-11-15T16:47:19Z",
+ "graded": "2026-11-15T18:05:03Z",
  "overall": {
   "groups": 133,
-  "settled": 130,
+  "settled": 132,
   "won": 38,
-  "z": -1.12,
-  "lost": 92,
-  "pending": 3,
-  "legs": 505,
-  "legsWon": 366,
+  "z": -1.27,
+  "lost": 94,
+  "pending": 1,
+  "legs": 508,
+  "legsWon": 367,
   "returned": 110.52,
-  "staked": 130,
+  "staked": 132,
   "returnedBest": 115.13,
   "returnedLock": 16.44,
   "stakedLock": 18,
-  "expected": 43.92,
-  "unitsStaked": 149,
+  "expected": 44.77,
+  "unitsStaked": 153,
   "unitsReturned": 123.71,
   "unitsReturnedBest": 128.37,
   "clv": {
    "n": 147,
-   "shortened": 58,
+   "shortened": 59,
    "drifted": 55,
-   "mean": 0.0004
+   "mean": 0.0005
   }
  },
  "cardLegsBySport": {
@@ -46,6 +46,15 @@
    },
    "tripwireAll": false
   },
+  "football": {
+   "legs": 36,
+   "landed": 25,
+   "expected": 24.48,
+   "rate": 0.6944,
+   "quoted": 0.6801,
+   "z": 0.19,
+   "tripwire": false
+  },
   "nba": {
    "legs": 34,
    "landed": 26,
@@ -53,15 +62,6 @@
    "rate": 0.7647,
    "quoted": 0.7092,
    "z": 0.72,
-   "tripwire": false
-  },
-  "football": {
-   "legs": 33,
-   "landed": 24,
-   "expected": 22.42,
-   "rate": 0.7273,
-   "quoted": 0.6795,
-   "z": 0.59,
    "tripwire": false
   },
   "rugby": {
@@ -92,9 +92,9 @@
    "quoted": 0.9079
   },
   "unchecked": {
-   "n": 25,
-   "won": 24,
-   "rate": 0.96,
+   "n": 26,
+   "won": 25,
+   "rate": 0.9615,
    "quoted": 0.8632
   },
   "bySport": {
@@ -114,10 +114,10 @@
      "quoted": 0.8004
     },
     "unchecked": {
-     "n": 9,
-     "won": 8,
-     "rate": 0.8889,
-     "quoted": 0.7783
+     "n": 10,
+     "won": 9,
+     "rate": 0.9,
+     "quoted": 0.7868
     }
    },
    "nba": {
@@ -339,27 +339,27 @@
  "byBand": {
   "Card 2x": {
    "groups": 34,
-   "settled": 31,
+   "settled": 33,
    "won": 10,
-   "z": -0.69,
-   "lost": 21,
-   "pending": 3,
-   "legs": 94,
-   "legsWon": 67,
+   "z": -0.98,
+   "lost": 23,
+   "pending": 1,
+   "legs": 97,
+   "legsWon": 68,
    "returned": 22.13,
-   "staked": 31,
+   "staked": 33,
    "returnedBest": 22.44,
    "returnedLock": 6.81,
    "stakedLock": 11,
-   "expected": 11.87,
-   "unitsStaked": 50,
+   "expected": 12.73,
+   "unitsStaked": 54,
    "unitsReturned": 35.32,
    "unitsReturnedBest": 35.68,
    "clv": {
     "n": 77,
-    "shortened": 24,
+    "shortened": 25,
     "drifted": 29,
-    "mean": -0.0042
+    "mean": -0.0041
    }
   },
   "Card 3x": {
@@ -656,27 +656,27 @@
  },
  "card": {
   "groups": 40,
-  "settled": 37,
+  "settled": 39,
   "won": 12,
-  "z": -0.17,
-  "lost": 25,
-  "pending": 3,
-  "legs": 113,
-  "legsWon": 76,
+  "z": -0.46,
+  "lost": 27,
+  "pending": 1,
+  "legs": 116,
+  "legsWon": 77,
   "returned": 32.99,
-  "staked": 37,
+  "staked": 39,
   "returnedBest": 33.45,
   "returnedLock": 12.04,
   "stakedLock": 15,
-  "expected": 12.49,
-  "unitsStaked": 53,
+  "expected": 13.35,
+  "unitsStaked": 57,
   "unitsReturned": 44.09,
   "unitsReturnedBest": 44.6,
   "clv": {
    "n": 91,
-   "shortened": 31,
+   "shortened": 32,
    "drifted": 36,
-   "mean": -0.0025
+   "mean": -0.0024
   }
  },
  "cardWide": {
@@ -909,54 +909,54 @@
   },
   "11": {
    "groups": 4,
-   "settled": 1,
+   "settled": 3,
    "won": 0,
-   "z": -0.86,
-   "lost": 1,
-   "pending": 3,
-   "legs": 3,
-   "legsWon": 2,
+   "z": -1.5,
+   "lost": 3,
+   "pending": 1,
+   "legs": 6,
+   "legsWon": 3,
    "returned": 0,
-   "staked": 1,
+   "staked": 3,
    "returnedBest": 0,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 0.42,
-   "unitsStaked": 2,
+   "expected": 1.28,
+   "unitsStaked": 6,
    "unitsReturned": 0,
    "unitsReturnedBest": 0,
    "clv": {
     "n": 6,
-    "shortened": 1,
+    "shortened": 2,
     "drifted": 2,
-    "mean": -0.0116
+    "mean": -0.0097
    }
   }
  },
  "cardByWindow": {
   "Day": {
    "groups": 24,
-   "settled": 21,
+   "settled": 23,
    "won": 8,
-   "z": 0.24,
-   "lost": 13,
-   "pending": 3,
-   "legs": 64,
-   "legsWon": 47,
+   "z": -0.14,
+   "lost": 15,
+   "pending": 1,
+   "legs": 67,
+   "legsWon": 48,
    "returned": 20.77,
-   "staked": 21,
+   "staked": 23,
    "returnedBest": 21.01,
    "returnedLock": 0,
    "stakedLock": 0,
-   "expected": 7.47,
-   "unitsStaked": 37,
+   "expected": 8.33,
+   "unitsStaked": 41,
    "unitsReturned": 31.87,
    "unitsReturnedBest": 32.16,
    "clv": {
     "n": 45,
-    "shortened": 13,
+    "shortened": 14,
     "drifted": 18,
-    "mean": 0.0017
+    "mean": 0.002
    }
   },
   "Daytime": {
@@ -1074,7 +1074,7 @@
      "wideRule": null,
      "odds": 2.28,
      "p": 0.4009,
-     "status": "pending",
+     "status": "lost",
      "stake": 2,
      "wide": false,
      "late": false,
@@ -1086,8 +1086,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 2,
-     "legsLost": 0,
-     "legsPending": 1,
+     "legsLost": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Diósgyőr II",
@@ -1139,8 +1139,8 @@
        "lockBook": "Bet365",
        "est": false,
        "p": 0.6848,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "1-1",
        "opp": 7.01
       }
      ]
@@ -1154,7 +1154,7 @@
      "wideRule": null,
      "odds": 2.09,
      "p": 0.4557,
-     "status": "pending",
+     "status": "lost",
      "stake": 2,
      "wide": false,
      "late": false,
@@ -1166,8 +1166,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Pistoiese",
@@ -1201,8 +1201,8 @@
        "lockBook": "William Hill",
        "est": false,
        "p": 0.7514,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "0-1",
        "opp": 10.16
       },
       {
@@ -1245,9 +1245,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Biellese",
@@ -1263,8 +1263,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6232,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-0",
        "opp": 5.11
       },
       {
@@ -1275,7 +1275,7 @@
        "when": "2026-11-15T21:00Z",
        "odds": 1.65,
        "best": 1.65,
-       "lastOdds": 1.65,
+       "lastOdds": 1.62,
        "lockOdds": 1.62,
        "lockBest": 1.62,
        "lockBook": null,
@@ -1293,7 +1293,7 @@
        "when": "2026-11-16T00:00Z",
        "odds": 1.26,
        "best": 1.26,
-       "lastOdds": 1.28,
+       "lastOdds": 1.29,
        "lockOdds": 1.28,
        "lockBest": 1.28,
        "lockBook": null,
