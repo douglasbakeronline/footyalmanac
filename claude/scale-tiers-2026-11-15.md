@@ -85,6 +85,70 @@ date (a moved fixture's newest archived copy carries its new date). The
 same guard covers `markets.py`'s own record. `tests/test_scale.py`
 `test_a_result_from_an_earlier_meeting_is_not_this_game`.
 
+## The replay of the days before the tab
+
+Douglas, after seeing the tiers: "retrospectively add picks that you may have
+picked into the last 7 days ... in that graphic, just to get some idea of how
+this may or may not have performed. Just follow the same rules ... and then
+add in the results afterwards, so it's not biased."
+
+`replay_day` rebuilds every day before `LIVE_FROM` in the glance window (1 to
+14 Nov at the first run) under the current rule, once, and again only when
+`RULE` changes (a replay file carries `replay: true` and its `rule`). What
+keeps it unbiased:
+
+- **Selection reads only what was archived before each start**
+  (`daylist.pinned(every=True)`): the pick, its confidence and its tier are
+  the latest copy published before the game began.
+- **The tallied chances use only results dated before the day**, so no pick,
+  and no pick's place in the order, has seen its own result.
+- **The top-up and the groups are fixed before results are read**: the day's
+  candidates in the rule's order, everything else cut to bring the day to
+  ten, the groups as they would have stood before the day's first start.
+  Results are attached afterwards by the same `settle` the live days use.
+
+Two things it cannot reproduce:
+
+- **Football at William Hill is a proxy.** The price archive starts on 14
+  Nov, so for these days a fixture counts as priced when the pool holds
+  Hill's match price for it (`book_fixtures`) or its league is one Hill
+  prices the bet in now (`proxy_football`). On the two days with real prices,
+  17 of 19 fixtures with Hill's match price also had Hill's win-and-both-score
+  price. The football chance is the model's number worked from the archived
+  expected goals. No football pick in the replay has a price.
+- **Live, the top-up is decided build by build** as games start; the replay
+  decides it once for the whole day.
+
+The replay is tallied apart (`before`: `bySport`, `byTier`, `groups`) and
+never enters the Scale record. On the page the replayed days are marked on
+the glance, a tap on any day opens its picks and groups, and the scoreboard
+has the replay's rows under the record's.
+
+**First read, 1 to 14 Nov** (288 graded picks, 10 to 41 a day):
+
+| | Picks | Won | Scale landed | Chance shown |
+|---|---|---|---|---|
+| Daily List picks | 72 | 90% | 62% | 55% |
+| Reserve | 215 | 71% | 42% | 40% |
+| Football | 78 | 76% | 37% | 28% |
+| Tennis | 128 | 73% | 51% | 54% |
+| NBA | 57 | 81% | 49% | 43% |
+| NFL | 19 | 79% | 58% | 35% |
+
+Groups won: threefold 4 of 14, fourfold 4 of 14, fivefold 3 of 14, football
+threefold 0 of 5. Every group win but one came in 1 to 7 Nov, when the list
+tier was mostly tennis.
+
+**The last seven days, 8 to 14 Nov** (139 picks): list 26 picks, all 26 won,
+14 landed the Scale (54%); reserve 112, 68% won, 39% landed. Groups:
+threefold 1 of 7, fourfold 1 of 7, fivefold 0 of 7, football threefold 0 of 3.
+
+What it says: the winners are as strong as the list has been; the second
+condition lands about as often as the chance shown (47% against 44%
+overall); a threefold lands a few times a fortnight and a fivefold rarely.
+What it does not say: whether any of it pays. There is no price behind any
+of these days, and fourteen days of groups is a small sample.
+
 ## The first day under the rule
 
 15 Nov: 19 picks (6 list, 13 reserve, none needed from everything else), four

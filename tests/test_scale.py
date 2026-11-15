@@ -78,9 +78,58 @@ class Rates(unittest.TestCase):
             {"sport": "ncaab", "confidence": 0.9, "home": "A", "away": "B", "pick": "A", "score": [90, 60]},      # not a Scale sport
         ]}
         s = S.samples({}, sg)
-        self.assertEqual(s["nba"], [(0.8, True, True), (0.8, True, False), (0.8, False, False)])
-        self.assertEqual(s["nfl"], [(0.7, True, True)])
+        self.assertEqual([x[:3] for x in s["nba"]], [(0.8, True, True), (0.8, True, False), (0.8, False, False)])
+        self.assertEqual([x[:3] for x in s["nfl"]], [(0.7, True, True)])
         self.assertNotIn("ncaab", s)
+
+
+class Replay(unittest.TestCase):
+    """A day before the tab is rebuilt from what was archived before each
+    start, with chances that have not seen the day's own results."""
+    def setUp(self):
+        import daylist as D
+        self.D, self.orig = D, (D.read_archives, D.pinned)
+        def item(key, sport, conf, tier, start="2026-11-10T20:00:00Z"):
+            return {"key": key, "sport": sport, "start": start, "timed": True, "date": "2026-11-10", "comp": sport.upper(),
+                    "home": "H" + key, "away": "A" + key, "side": "h", "pick": "H" + key, "confidence": conf, "tier": "Strong",
+                    "list": tier == "list", "reserve": tier == "reserve", "id": key, "published": "2026-11-10T08:00:00Z"}
+        self.items = [item("n1", "nba", 0.85, "list"), item("n2", "nba", 0.70, "reserve")] + \
+                     [item(f"e{i}", "nba", 0.56 + i / 100, "else") for i in range(12)]
+        D.read_archives = lambda day, here: []
+        D.pinned = lambda day, archives, now, every=False: [dict(i) for i in self.items]
+
+    def tearDown(self):
+        self.D.read_archives, self.D.pinned = self.orig
+
+    def sample(self):
+        # before the day: 40 picks, 10 landed. On and after it: 40 picks, all landed.
+        early = [(0.8, True, i < 10, "2026-11-01") for i in range(40)]
+        late = [(0.8, True, True, "2026-11-10") for i in range(40)]
+        return {"nba": early + late}
+
+    def test_the_chance_has_not_seen_the_days_own_results(self):
+        d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
+        self.assertTrue(d["replay"]); self.assertEqual(d["rule"], S.RULE)
+        self.assertEqual({p["chance"] for p in d["picks"]}, {0.25})          # 10 of 40, never 50 of 80
+        self.assertTrue(all(p["basis"] == "10 of 40 picks like it" for p in d["picks"]))
+
+    def test_same_tiers_top_up_and_groups_as_the_live_rule(self):
+        d = S.replay_day("2026-11-10", ".", self.sample(), {"leagues": set(), "fixtures": set()})
+        tiers = [p["tier"] for p in sorted(d["picks"], key=S.rank)]
+        self.assertEqual(len(d["picks"]), S.TARGET)
+        self.assertEqual(tiers[:2], ["list", "reserve"]); self.assertEqual(tiers.count("else"), 8)
+        self.assertEqual([g["kind"] for g in d["groups"]], [3, 4, 5])        # built as before the first start
+        self.assertEqual(d["groups"][0]["legs"][:2], ["n1", "n2"])
+
+    def test_football_needs_the_book_and_takes_the_models_number(self):
+        i = {"key": "f|eng.1|2026-11-10|A|B", "league": "eng.1", "date": "2026-11-10", "home": "A", "away": "B", "side": "h"}
+        g = {"xg": [2.0, 1.0], "p": {"h": 0.62, "d": 0.2, "a": 0.18}}
+        self.assertIsNone(S.proxy_football(i, g, {"leagues": set(), "fixtures": set()}))
+        w = S.proxy_football(i, g, {"leagues": {"eng.1"}, "fixtures": set()})
+        self.assertTrue(0 < w["p"] < 0.62)
+        self.assertEqual(S.proxy_football(i, g, {"leagues": set(), "fixtures": {("2026-11-10", "A", "B")}}), w)
+        self.assertIsNone(S.proxy_football(i, dict(g, unrated=True), {"leagues": {"eng.1"}, "fixtures": set()}))
+        self.assertIsNone(S.proxy_football(i, None, {"leagues": {"eng.1"}, "fixtures": set()}))
 
 
 class Choose(unittest.TestCase):
@@ -194,7 +243,7 @@ class Grading(unittest.TestCase):
             self.assertEqual(S.settle(p, res(2, 0)), ("won", "2-0"))
             self.assertEqual(S.settle(p, res(1, 1)), ("lost", "1-1"))
             self.assertEqual(S.settle(p, res(0, 1)), ("lost", "0-1"))
-            self.assertEqual(S.settle(dict(p, side="a"), res(1, 3)), ("scale", "1-3"))
+            self.assertEqual(S.settle(dict(p, side="a"), res(1, 3)), ("scale", "3-1"))      # the pick's score first
             self.assertEqual(S.settle(p, ({}, {}, {})), (None, None))
         finally:
             M._result_for = orig
@@ -218,7 +267,7 @@ class Grading(unittest.TestCase):
         self.assertEqual(st(row(1, 0, void=True))[0], "void")
         self.assertEqual(st(None), (None, None))
         nfl = pick("f", "2026-11-14T23:00:00Z", 0.5, None, sport="nfl", id="9", side="a", pick="Af")
-        self.assertEqual(S.settle(nfl, ({}, {}, {}, {("nfl", "9"): {"home": "Hf", "away": "Af", "pick": "Af", "score": [20, 27]}}))[0], "scale")
+        self.assertEqual(S.settle(nfl, ({}, {}, {}, {("nfl", "9"): {"home": "Hf", "away": "Af", "pick": "Af", "score": [20, 27]}})), ("scale", "27-20"))
         self.assertEqual(S.settle(nfl, ({}, {}, {}, {("nfl", "9"): {"home": "Hf", "away": "Af", "pick": "Af", "score": [20, 26]}}))[0], "won")
 
     def test_a_result_from_an_earlier_meeting_is_not_this_game(self):

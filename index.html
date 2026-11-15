@@ -1401,10 +1401,15 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-dot.void{background:var(--rule-soft);border:1.5px solid var(--mute)}
 .sc-dot.off{width:8px;height:8px;border:0;background:var(--rule)}
 .sc-key .sc-dot.off{width:8px;height:8px}
-.sc-grow{display:grid;grid-template-columns:92px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr) 132px;align-items:stretch;border-top:1px solid var(--rule-soft)}
+.sc-grow{display:grid;grid-template-columns:92px minmax(0,1fr) minmax(0,1.5fr) minmax(0,.7fr) 188px;align-items:stretch;border-top:1px solid var(--rule-soft)}
 .sc-grow > div{padding:6px 0}
 .sc-grow .sc-dots{padding-left:10px;padding-right:6px;border-left:1px solid var(--rule)}
 .sc-ghead{border-top:0}
+.sc-gbtn{cursor:pointer}
+.sc-gbtn:hover,.sc-gbtn.on{background:var(--paper)}
+.sc-gbtn:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.sc-gd small{display:block;font:500 10.5px var(--f-ui);letter-spacing:.04em;text-transform:none;color:var(--mute)}
+.sc-gnote b{color:var(--ink-2)}
 .sc-ghead .sc-dots{font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding-top:0;padding-bottom:4px}
 .sc-offs{display:inline-flex;gap:4px;align-items:center}
 .sc-offs small{font-family:var(--f-num);font-size:11px;color:var(--mute)}
@@ -5702,7 +5707,7 @@ function scTag(p){
   if(st === "won") return `<span class="sc-tag won">${scE(scWord(p.sport, "won").replace("Won, d", "D"))}</span>${det}`;
   if(st === "lost") return `<span class="sc-tag lost">Lost</span>${det}`;
   if(st === "void") return `<span class="sc-tag void">Void</span>`;
-  if(st === "started") return `<span class="sc-tag started">Under way</span>`;
+  if(st === "started") return SCALE && p.start.slice(0, 10) < SCALE.today ? `<span class="sc-tag void">No result</span>` : `<span class="sc-tag started">Under way</span>`;
   if(p.price && p.chance && p.price < 1 / p.chance) return `<span class="sc-tag short" title="William Hill's price is under the price this chance needs to break even">Price too short</span>`;
   return "";
 }
@@ -5757,33 +5762,38 @@ function renderScale(){
     <div><span>Scale landed</span><b>${scOf(tot.scale, tot.n)}</b><small>${tot.scale} of ${tot.n}</small></div></div>`;
   // the glance: one line a day, newest first; a column a tier, a dot a pick
   const gl = (S.glance || []).slice().reverse();
-  const dot = x => { const t = `${x.pick}: ${scWord(x.sport, x.state)}${x.detail ? " · " + x.detail : ""}`;
-    return `<span class="sc-dot ${x.state}" role="img" aria-label="${scE(t)}" title="${scE(t)}"></span>`; };
+  const dot = (x, old) => { const nores = old && x.state === "started";
+    const t = `${x.pick}: ${nores ? "No result on file" : scWord(x.sport, x.state)}${x.detail ? " · " + x.detail : ""}`;
+    return `<span class="sc-dot ${nores ? "void" : x.state}" role="img" aria-label="${scE(t)}" title="${scE(t)}"></span>`; };
   const grow = g => {
     const live = g.dots.filter(x => ["scale","won","lost"].includes(x.state)), sc = live.filter(x => x.state === "scale").length;
     const open = g.dots.filter(x => x.state === "up" || x.state === "started").length;
-    const sum = !g.dots.length ? "no picks" : live.length ? `${sc} of ${live.length} Scale${open ? ` · ${open} to play` : ""}` : open ? `${open} to play` : "void";
+    const old = g.date < S.today, tail = open ? ` · ${open} ${old ? "no result" : "to play"}` : "";
+    const sum = !g.dots.length ? "no picks" : live.length ? `${sc} of ${live.length} Scale${tail}` : open ? `${open} ${old ? "no result" : "to play"}` : "void";
     const offs = g.off ? `<span class="sc-offs" role="img" aria-label="${g.off} Daily List football picks not priced at ${scE(S.book)}" title="${g.off} Daily List football picks not priced at ${scE(S.book)}">${Array.from({length: Math.min(g.off, 6)}, () => `<span class="sc-dot off"></span>`).join("")}${g.off > 6 ? `<small>+${g.off - 6}</small>` : ""}</span>` : "";
-    const cell = t => `<div class="sc-dots" data-t="${SC_TIER_SHORT[t]}">${g.dots.filter(x => (x.tier || "list") === t).map(dot).join("")}${t === "list" ? offs : ""}</div>`;
-    return `<div class="sc-grow${g.replay ? " before" : ""}"><div class="sc-gd">${scE(scDate(g.date))}</div>${SC_TIERS.map(cell).join("")}<div class="sc-gs">${sum}</div></div>`; };
-  const bf = S.before || {}, bft = sum3(bf);
+    const cell = t => `<div class="sc-dots" data-t="${SC_TIER_SHORT[t]}">${g.dots.filter(x => (x.tier || "list") === t).map(x => dot(x, old)).join("")}${t === "list" ? offs : ""}</div>`;
+    return `<div class="sc-grow sc-gbtn${g.replay ? " before" : ""}${g.date === day.date ? " on" : ""}" data-d="${g.date}" role="button" tabindex="0" aria-label="${scE(scDate(g.date, true))}: open the day's list"><div class="sc-gd">${scE(scDate(g.date))}${g.replay ? "<small>replayed</small>" : ""}</div>${SC_TIERS.map(cell).join("")}<div class="sc-gs">${sum}</div></div>`; };
+  const bfo = S.before || {}, bf = bfo.bySport || {}, bfT = bfo.byTier || {}, bfG = bfo.groups || {}, bft = sum3(bf);
+  const tl = t => bfT[t] && bfT[t].n ? `${{list:"Daily List picks", reserve:"the reserve", else:"everything else"}[t]} ${bfT[t].scale} of ${bfT[t].n} (${scOf(bfT[t].scale, bfT[t].n)}, ${scOf(bfT[t].won, bfT[t].n)} won)` : "";
+  const gkeys = Object.keys(bfG).filter(k => bfG[k].n);
   const glance = `<section class="sc-glance" aria-label="Scale at a glance">
     <div class="sc-gtop"><h3>Scale at a glance</h3>
       <div class="sc-key"><span><i class="sc-dot"></i>Won and landed the Scale</span><span><i class="sc-dot won"></i>Won, Scale missed</span><span><i class="sc-dot lost"></i>Pick lost</span><span><i class="sc-dot up"></i>To play</span><span><i class="sc-dot void"></i>Void</span><span><i class="sc-dot off"></i>Not priced at ${scE(S.book)}</span></div></div>
     <div class="sc-grows"><div class="sc-grow sc-ghead"><div class="sc-gd"></div>${SC_TIERS.map(t => `<div class="sc-dots">${SC_TIER_SHORT[t]}</div>`).join("")}<div class="sc-gs"></div></div>
       ${gl.map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
-    ${bft.n ? `<p class="sc-gnote">Days before ${scE(since)} are the Daily List's tennis picks as published at the time, marked against straight sets after the fact: ${bft.won} of ${bft.n} won, ${bft.scale} in straight sets. They are kept apart from the record above.</p>` : ""}
+    ${bft.n ? `<p class="sc-gnote"><b>Days before ${scE(since)} are a replay</b>: today's rule run on what was published before each start, results added afterwards. Scale landed: ${SC_TIERS.map(tl).filter(Boolean).join("; ")}.${gkeys.length ? ` Groups won: ${gkeys.map(k => `${scLow(String(bfG[k].name).replace("Scale ", ""))} ${bfG[k].won} of ${bfG[k].n}`).join(", ")}.` : ""} No prices are on file for those days, so this says how often it landed, not what it paid. Tap a day to see its picks.</p>` : ""}
   </section>`;
   // the day's list, a line a tier
   const byKey = {}; day.picks.forEach(p => byKey[p.key] = p);
-  const tabs = days.length > 1 ? `<div class="sc-days" id="scDays">${days.map(d => `<button type="button" data-d="${d.date}" aria-pressed="${d.date === day.date}">${d.date === S.today ? "Today" : scE(scDate(d.date))} · ${d.picks.length}</button>`).join("")}</div>` : "";
+  const tabDays = days.filter(d => !d.past || d.date === day.date);
+  const tabs = tabDays.length > 1 ? `<div class="sc-days" id="scDays">${tabDays.map(d => `<button type="button" data-d="${d.date}" aria-pressed="${d.date === day.date}">${d.date === S.today ? "Today" : scE(scDate(d.date))} · ${d.picks.length}</button>`).join("")}</div>` : "";
   const off = day.off || [];
   const offComps = [...new Set(off.map(o => o.comp))];
   const tierNote = {list: "cleared the list's own bar", reserve: "under the bar, Firm 62% or better", else: `the model's pick at ${floor} or better, added to bring the day to ${target} games`};
   const tierBlock = t => { const ps = day.picks.filter(p => (p.tier || "list") === t);
     return ps.length ? `<div class="sc-tier ${t}"><b>${SC_TIER[t]}</b><span>${ps.length} · ${tierNote[t]}</span></div>${ps.map(scRow).join("")}` : ""; };
   const list = `<section class="sc-sec">
-    <div class="sc-sech"><h3 class="sc-h3">${scE(scDate(day.date, true))}<small>the Scale list, strongest tier first</small></h3>${tabs}</div>
+    <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3>${tabs}</div>
     ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>${scE(S.book)}</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
       : `<div class="sc-empty"><b>No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
     ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for win and both score (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
@@ -5793,7 +5803,7 @@ function renderScale(){
   const open = day.picks.filter(p => scState(p) === "up").length;
   const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>from the top of the list; the football threefold is priced on every leg</small></h3>
     ${day.groups.length ? `<div class="sc-groups">${day.groups.map(g => scCard(g, byKey)).join("")}</div>`
-      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>A group needs three Scale picks still to start; ${open === 0 ? "there are none" : open === 1 ? "there is one" : "there are two"}.</div>`}
+      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs three Scale picks still to start; ${open === 0 ? "there are none" : open === 1 ? "there is one" : "there are two"}.`}</div>`}
   </section>`;
   // where the book prices the football bet
   const lg = S.leagues || [];
@@ -5806,24 +5816,33 @@ function renderScale(){
   const rp = S.replay || {}, rf = rp.football || {}, rb = rp.basis || {};
   const srow = (name, bet, t, sub) => t && (t.n || t.void) ? `<tr${sub ? ' class="sub"' : ""}><td>${sub ? "" : "<b>"}${scE(name)}${sub ? "" : "</b>"}${sub ? `<small>${scE(sub)}</small>` : ""}</td><td>${scE(bet)}</td><td class="n">${t.n}</td><td class="n">${t.won} <small>${scOf(t.won, t.n)}</small></td><td class="s">${t.scale} <small>${scOf(t.scale, t.n)}</small></td><td class="n">${scRet(t)}</td></tr>` : "";
   const liveRows = SC_TIERS.map(t => srow(SC_TIER[t], "every sport", bt[t])).join("") + Object.keys(bs).map(s => srow(scCfg(s).name, scCfg(s).long, bs[s])).join("");
-  const beforeRows = SC_TIERS.map(t => srow("Football, " + scLow(SC_TIER[t]), scCfg("football").long, rf[t], "before " + since + ", in leagues " + S.book + " prices now")).join("")
+  const beforeRows = SC_TIERS.map(t => srow(SC_TIER[t], "every sport", bfT[t], "replayed before " + since)).join("")
+    + Object.keys(bf).map(s => srow(scCfg(s).name, scCfg(s).long, bf[s], "replayed before " + since)).join("");
+  const tallyRows = SC_TIERS.map(t => srow("Football, " + scLow(SC_TIER[t]), scCfg("football").long, rf[t], "every graded pick before " + since + " in leagues " + S.book + " prices now")).join("")
     + Object.keys(rb).map(s => srow(scCfg(s).name, scCfg(s).long, rb[s].all, "every graded pick at " + floor + " or better: the tally behind the chance")
       + srow(scCfg(s).name, scCfg(s).long, rb[s].strong, "of those, picks at 75% or better")).join("");
+  const thead = `<thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at ${scE(S.book)}</th></tr></thead>`;
   const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
   const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
   const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
     ${gn ? `<ul>${Object.keys(gk).filter(k => gk[k].n).map(k => `<li><span>${scE(String(gk[k].name || k).replace("Scale ", ""))}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : ""}</em></li>`).join("")}</ul>
       <ul>${rec.slice(0, 8).map(r => `<li><span>${scE(scDate(r.date))} · ${scE(r.name.replace("Scale ", ""))}</span><em class="${r.state === "won" ? "w" : "l"}">${r.state === "won" ? "Won" + (r.ret ? " " + r.ret.toFixed(2) : "") : "Lost"}</em></li>`).join("")}</ul>`
-      : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}</div>`;
+      : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}
+    ${gkeys.length ? `<h4 style="margin-top:14px">Replayed before ${scE(since)}, no prices</h4><ul>${gkeys.map(k => `<li><span>${scE(String(bfG[k].name).replace("Scale ", ""))}</span><em>${bfG[k].won} of ${bfG[k].n} won</em></li>`).join("")}</ul>` : ""}</div>`;
   const board = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scoreboard<small>how often the winner and the Scale bet landed</small></h3>
     <div class="sc-board"><div class="sc-tablewrap"><div style="overflow-x:auto"><table class="sc-table">
-      <thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at ${scE(S.book)}</th></tr></thead>
+      ${thead}
       <tbody>${liveRows || `<tr><td colspan="6">Nothing graded since ${scE(since)} yet.</td></tr>`}${beforeRows}</tbody></table></div>
-      <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started, by tier and by sport. The rows under them are results only, counted after the fact, and say how often the bet lands, never that it pays: there are no prices behind them.</p></div>${side}</div></section>`;
+      <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started, by tier and by sport. The rows under them are the replay of the days before the tab: the same rule, chosen from what was published before each start, results added afterwards. They say how often the bet landed, never that it paid: there are no prices behind them.</p>
+      ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
       <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with both teams scoring, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the bet.</p></div>${tiles}</div>
     ${glance}${list}${groups}${leagues}${board}`;
   const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
+  const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
+    const h = $("#scList"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };
+  host.querySelectorAll(".sc-gbtn").forEach(el => { el.onclick = () => openDay(el);
+    el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openDay(el); } }; });
 }
 
 /* ---------- view switching ---------- */

@@ -48,6 +48,12 @@ score.py, score_tennis.py and sports.py write. A group is won when every leg
 landed its Scale bet; a void leg (a retirement) is settled on the rest. A
 group's return is only counted when every leg had a William Hill price.
 
+The days before the tab (LIVE_FROM) are replayed once under the current rule
+(`replay_day`), from what was archived before each start and results dated
+before the day, so the glance shows how the rule would have gone without any
+pick having seen its own result. They are tallied apart (`before`), have no
+prices, and are replayed again only when RULE changes.
+
     python3 scale.py        # CI: archive today's and tomorrow's, grade, write scale.json / scale.js
 
 Writes scale.json and scale.js (window.__SCALE__) for the Scale tab. Display
@@ -129,8 +135,8 @@ def margin_of(row):
 
 
 def samples(trec, sgraded):
-    """{sport: [(confidence, won, landed the Scale bet)]} over every graded
-    pick at FLOOR+, for the sports whose chance is a tally of the record."""
+    """{sport: [(confidence, won, landed the Scale bet, date)]} over every
+    graded pick at FLOOR+, for the sports whose chance is a tally of the record."""
     out = {s: [] for s in SPORTS if s != "football"}
     for g in (trec or {}).get("graded") or []:
         c = g.get("confidence") or 0
@@ -139,14 +145,14 @@ def samples(trec, sgraded):
         ss = straight_sets(g) if g.get("ok") else False
         if ss is None:
             continue
-        out["tennis"].append((c, bool(g.get("ok")), bool(ss)))
+        out["tennis"].append((c, bool(g.get("ok")), bool(ss), g.get("date") or ""))
     for g in (sgraded or {}).get("graded") or []:
         cfg = SPORTS.get(g.get("sport")) or {}
         c = g.get("confidence") or 0
         if not cfg.get("margin") or c < FLOOR or g.get("void") or not g.get("score"):
             continue
         m = margin_of(g)
-        out[g["sport"]].append((c, m > 0, m >= cfg["margin"]))
+        out[g["sport"]].append((c, m > 0, m >= cfg["margin"], str(g.get("when") or "")[:10]))
     return out
 
 
@@ -187,14 +193,26 @@ def rank(p):
     return (TIERS.index(p.get("tier") or "list"), -(p.get("chance") or 0), p["start"], p["key"])
 
 
-def day_picks(day, now, here, market_rows, sample):
+def day_picks(day, now, here, market_rows, sample, proxy=None):
     """(candidates, left off) for one UK day: every game the model picks at
     FLOOR+ in a Scale sport, as archived before its start (daylist.pinned),
     with its tier and Scale bet; football only where BOOK prices
     win-and-both-score. `left off` lists the Daily List football picks it
-    does not price. The "else" tier is cut to the day's top-up by `choose`."""
+    does not price. The "else" tier is cut to the day's top-up by `choose`.
+
+    `proxy` is for a day before the price archive (`replay_day`): a football
+    fixture counts as priced at BOOK when the pool holds BOOK's match price
+    for it or its league is one BOOK prices the bet in now, its chance is the
+    model's number worked from the archived expected goals, and it has no
+    price."""
     import daylist as D
-    items = D.pinned(day, D.read_archives(day, here), now, every=True)
+    archives = D.read_archives(day, here)
+    items = D.pinned(day, archives, now, every=True)
+    rows = {}
+    if proxy is not None:
+        for kind, g in archives:
+            if kind == "football" and g.get("league"):
+                rows[(f"f|{g['league']}|{g.get('date')}|{g.get('home')}|{g.get('away')}", g.get("published"))] = g
     picks, off = [], []
     for i in sorted(items, key=lambda i: (i["start"], i["key"])):
         cfg = SPORTS.get(i["sport"])
@@ -208,14 +226,19 @@ def day_picks(day, now, here, market_rows, sample):
                 "comp": i.get("comp"), "home": i["home"], "away": i["away"], "pick": i["pick"],
                 "side": i.get("side"), "conf": conf, "bet": cfg["bet"]}
         if i["sport"] == "football":
-            row = market_rows.get((i.get("league"), i.get("date"), i["home"], i["away"]))
-            w = ((row or {}).get("m") or {}).get("wbtts") or {}
             base.update(league=i.get("league"), date=i.get("date"), comp=league_name(i.get("league")))
-            if not w.get("h") or not w.get("p") or w.get("s") != i.get("side"):
+            if proxy is None:
+                row = market_rows.get((i.get("league"), i.get("date"), i["home"], i["away"]))
+                w = ((row or {}).get("m") or {}).get("wbtts") or {}
+                if not w.get("h") or not w.get("p") or w.get("s") != i.get("side"):
+                    w = None
+            else:
+                w = proxy_football(i, rows.get((i["key"], i.get("published"))), proxy)
+            if not w:
                 if tier == "list":
                     off.append({k: base[k] for k in ("key", "start", "comp", "pick")})
                 continue
-            base.update(chance=w["p"], basis="model", price=w["h"], book=BOOK,
+            base.update(chance=w["p"], basis="model", price=w.get("h"), book=BOOK,
                         best=w.get("b"), bestBook=w.get("bb"), fair=w.get("f"))
         else:
             ch, k, n = band_rate(conf, sample.get(i["sport"]) or [])
@@ -225,6 +248,57 @@ def day_picks(day, now, here, market_rows, sample):
                         price=None, find=cfg.get("find"))
         picks.append(base)
     return picks, off
+
+
+def proxy_football(i, g, proxy):
+    """The win-and-both-score number for an archived football pick on a day
+    before the price archive, or None when BOOK is not known to price it."""
+    import markets as M
+    if not g or not g.get("xg") or not g.get("p") or g.get("unrated"):
+        return None
+    if i.get("league") not in proxy["leagues"] and (i.get("date"), i["home"], i["away"]) not in proxy["fixtures"]:
+        return None
+    side, nums = M.numbers(g["xg"][0], g["xg"][1], g["p"], g.get("btts"), g.get("over25"))
+    w = nums.get("wbtts") or {}
+    if side != i.get("side") or w.get("s") != side or not w.get("p"):
+        return None
+    return {"p": w["p"]}
+
+
+def book_fixtures():
+    """{(date, home, away)} of football fixtures the priced pool holds BOOK's
+    match price for: the fixture-level sign that BOOK offered the game."""
+    out = set()
+    try:
+        import groupings as G
+        for _, x in G.pool_rows():
+            if x.get("sport") != "football": continue
+            for bo in (x.get("bookOdds"), (x.get("priced") or {}).get("bookOdds")):
+                if isinstance(bo, dict) and bo.get(BOOK):
+                    out.add((x.get("date"), x.get("home"), x.get("away")))
+    except Exception as e:
+        print(f"scale: pool not read for the replay ({type(e).__name__}: {e})", file=sys.stderr)
+    return out
+
+
+def replay_day(day, here, sample, proxy):
+    """A day before the tab, rebuilt under the current rule from what was
+    archived before each start and nothing else: the same tiers, order,
+    top-up and groups, as they would have stood before the day's first
+    start. The tallied chances use only results dated before the day, so no
+    pick or its place in the order has seen its own result. Football has no
+    price on file for these days (`proxy`), so nothing here has a return."""
+    far = datetime(2100, 1, 1, tzinfo=timezone.utc)
+    early = datetime(2000, 1, 1, tzinfo=timezone.utc)
+    seen = {s: [x for x in rows if x[3] and x[3] < day] for s, rows in sample.items()}
+    cands, off = day_picks(day, far, here, {}, seen, proxy)
+    top = [p for p in cands if p["tier"] != "else"]
+    rest = sorted([p for p in cands if p["tier"] == "else"], key=rank)
+    picks = top + rest[:max(0, TARGET - len(top))]
+    return {"date": day, "rule": RULE, "replay": True,
+            "picks": sorted(picks, key=lambda p: (p["start"], p["key"])),
+            "off": sorted(off, key=lambda p: (p["start"], p["key"])),
+            "groups": build_groups(picks, early)}
 
 
 def choose(cands, old, now):
@@ -311,7 +385,8 @@ def results(here=HERE):
 
 def settle(p, res):
     """(state, detail) for a pick: "scale" (the winner and the Scale bet),
-    "won" (the winner only), "lost", "void" or None while there is no result."""
+    "won" (the winner only), "lost", "void" or None while there is no result.
+    The score in `detail` is the pick's first."""
     import markets as M
     fb, tn, tn2 = res[:3]
     sp = res[3] if len(res) > 3 else {}
@@ -320,7 +395,8 @@ def settle(p, res):
         if not g: return None, None
         hg, ag = g["result"]
         won = hg > ag if p.get("side") == "h" else ag > hg
-        return ("scale" if won and hg and ag else "won" if won else "lost"), f"{hg}-{ag}"
+        mine, theirs = (hg, ag) if p.get("side") == "h" else (ag, hg)       # the pick's score first, as the row reads
+        return ("scale" if won and hg and ag else "won" if won else "lost"), f"{mine}-{theirs}"
     if p["sport"] == "tennis":
         g = tn.get(str(p.get("id"))) or tn2.get((p.get("date"), p["home"], p["away"]))
         if not g: return None, None
@@ -333,7 +409,9 @@ def settle(p, res):
     if g.get("void") or not g.get("score"): return "void", None
     m = margin_of(g)
     line = (SPORTS.get(p["sport"]) or {}).get("margin") or 1
-    return ("scale" if m >= line else "won" if m > 0 else "lost"), "{}-{}".format(*g["score"])
+    h, a = g["score"]
+    mine, theirs = (h, a) if g.get("pick") == g.get("home") else (a, h)
+    return ("scale" if m >= line else "won" if m > 0 else "lost"), f"{mine}-{theirs}"
 
 
 def grade_group(g, by_key):
@@ -435,31 +513,37 @@ def build(now=None, here=HERE):
     adir = os.path.join(here, ARCHIVE)
     os.makedirs(adir, exist_ok=True)
     today = date.fromisoformat(uk_day(now))
+    proxy = None
     for k in range(-GLANCE_DAYS, DAYS_AHEAD):
         day = (today + timedelta(days=k)).isoformat()
         path = os.path.join(adir, f"{day}.json")
-        if k < 0 and os.path.exists(path):
-            continue                # a past day on file is never rebuilt
+        old = _load(path, {}) or {}
+        if day < LIVE_FROM:
+            # before the tab: replayed once under the current rule, and again only when the rule changes
+            if old and (old.get("rule") or 1) >= RULE:
+                continue
+        elif k < 0 and old:
+            continue                # a past live day on file is never rebuilt
         try:
-            cands, off = day_picks(day, now, here, market_rows, sample)
+            if day < LIVE_FROM:
+                if proxy is None:
+                    proxy = {"leagues": {c["league"] for c in coverage(market_rows, now)}, "fixtures": book_fixtures()}
+                merged = replay_day(day, here, sample, proxy)
+            else:
+                cands, off = day_picks(day, now, here, market_rows, sample)
+                picks = choose(cands, old, now)
+                merged = merge_day(old, picks, off, build_groups(picks, now), now, stamp)
+                merged["date"] = day
         except Exception as e:      # a bad archive never stops the days already on file
             print(f"scale: {day} not built ({type(e).__name__}: {e})", file=sys.stderr)
             continue
-        old = _load(path, {}) or {}
-        if day < LIVE_FROM:         # before the tab: the Daily List's picks only, no price archive to say what was left off
-            cands, off = [p for p in cands if p["tier"] == "list"], []
-        picks = choose(cands, old, now)
-        merged = merge_day(old, picks, off, build_groups(picks, now), now, stamp)
-        merged["date"] = day
-        if day < LIVE_FROM:
-            merged["replay"] = True
         with open(path + ".tmp", "w", encoding="utf-8") as f:
             json.dump(merged, f, separators=(",", ":"), ensure_ascii=False)
         os.replace(path + ".tmp", path)
 
     res = results(here)
     files = sorted(fn for fn in os.listdir(adir) if re.fullmatch(r"\d{4}-\d{2}-\d{2}\.json", fn))
-    by_sport, by_tier, before, kinds, graded_groups, days_out, glance = {}, {}, {}, {}, [], [], []
+    by_sport, by_tier, before, before_tier, kinds, before_kinds, graded_groups, days_out, glance = {}, {}, {}, {}, {}, {}, [], [], []
     for fn in files:
         d = _load(os.path.join(adir, fn), {}) or {}
         day = fn[:-5]
@@ -471,6 +555,7 @@ def build(now=None, here=HERE):
             by_key[p["key"]] = p
             if d.get("replay"):
                 _add(before.setdefault(p["sport"], _tally()), p)
+                _add(before_tier.setdefault(p["tier"], _tally()), p)
             else:
                 _add(by_sport.setdefault(p["sport"], _tally()), p)
                 _add(by_tier.setdefault(p["tier"], _tally()), p)
@@ -478,19 +563,20 @@ def build(now=None, here=HERE):
         for g in d.get("groups") or []:
             gg = dict(g, **grade_group(g, by_key))
             groups.append(gg)
-            t = kinds.setdefault(str(g["kind"]), {"name": g["name"], "n": 0, "won": 0, "void": 0, "priced": 0, "returned": 0.0})
+            t = (before_kinds if d.get("replay") else kinds).setdefault(str(g["kind"]), {"name": g["name"], "n": 0, "won": 0, "void": 0, "priced": 0, "returned": 0.0})
             if gg["state"] in ("won", "lost"):
                 t["n"] += 1; t["won"] += gg["state"] == "won"
                 if "ret" in gg:
                     t["priced"] += 1; t["returned"] += gg["ret"]
-                graded_groups.append({"date": day, "name": g["name"], "kind": g["kind"], "state": gg["state"], "price": g.get("price"),
+                if not d.get("replay"): graded_groups.append({"date": day, "name": g["name"], "kind": g["kind"], "state": gg["state"], "price": g.get("price"),
                                       "ret": gg.get("ret"), "legs": [by_key[k]["pick"] for k in g["legs"] if k in by_key]})
             elif gg["state"] == "void":
                 t["void"] += 1
         entry = {"date": day, "picks": sorted(d.get("picks") or [], key=rank), "off": d.get("off") or [], "groups": groups}
-        if day >= today.isoformat():
-            days_out.append(entry)
-        if (today - timedelta(days=GLANCE_DAYS)).isoformat() <= day <= today.isoformat():
+        in_glance = (today - timedelta(days=GLANCE_DAYS)).isoformat() <= day <= today.isoformat()
+        if day >= today.isoformat() or in_glance:
+            days_out.append(dict(entry, replay=bool(d.get("replay")), past=day < today.isoformat()))
+        if in_glance:
             glance.append({"date": day, "off": len(entry["off"]), "replay": bool(d.get("replay")),
                            "dots": [{"k": p["key"], "sport": p["sport"], "tier": p["tier"], "pick": p["pick"], "start": p["start"],
                                      "state": p["state"] or ("started" if (parse_utc(p["start"]) or now) <= now else "up"),
@@ -507,7 +593,10 @@ def build(now=None, here=HERE):
                                      **({"ret": round(t["returned"] / t["priced"] - 1, 4)} if t["priced"] else {})}
                                  for k, t in sorted(kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)},
                       "recent": graded_groups[-30:][::-1]},
-           "before": {s: _done(t) for s, t in sorted(before.items())},
+           "before": {"bySport": {s: _done(t) for s, t in sorted(before.items())},
+                      "byTier": {t: _done(before_tier[t]) for t in TIERS if t in before_tier},
+                      "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"]}
+                                 for k, t in sorted(before_kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)}},
            "replay": {"football": replay(here, {c["league"] for c in cov}, LIVE_FROM), "basis": basis(sample)},
            "leagues": cov}
     with open(os.path.join(here, "scale.json"), "w", encoding="utf-8") as f:
@@ -520,6 +609,7 @@ def build(now=None, here=HERE):
 def main():
     out = build()
     for d in out["days"]:
+        if d.get("past"): continue
         by = {}
         for p in d["picks"]:
             by[p["tier"]] = by.get(p["tier"], 0) + 1
@@ -527,6 +617,10 @@ def main():
               f"), {len(d['off'])} list football left off, {len(d['groups'])} group(s)")
     r = out["record"]["bySport"]
     print("scale record: " + ("; ".join(f"{s} {t['scale']} of {t['n']} landed the Scale ({t['won']} won)" for s, t in r.items()) or "nothing graded yet"))
+    bt = out["before"]["byTier"]
+    if bt:
+        print("scale replay before the tab: " + "; ".join(f"{t} {v['scale']} of {v['n']} landed ({v['won']} won)" for t, v in bt.items()) +
+              "; groups " + ", ".join(f"{g['name']} {g['won']} of {g['n']}" for g in out["before"]["groups"].values()))
     print(f"scale: {len(out['leagues'])} leagues priced at {BOOK} for win and both score in the last 14 days")
 
 
