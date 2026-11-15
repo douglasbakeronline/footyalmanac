@@ -19,7 +19,8 @@ on:
     # a day GitHub skips entirely is run by hand from the Actions tab.
     - cron: "30 6 * * *"   # 07:30 BST / 06:30 GMT, after deploy.yml
     - cron: "30 18 * * *"  # 19:30 BST / 18:30 GMT: a second sprint (Douglas, 5 Nov 2026)
-    - cron: "30 0,12 * * *"  # 9 Nov 2026 (Douglas: "double output"): four sprints a day
+    # 9 Nov 2026 the 00:30 and 12:30 sprints were added ("double output"); taken off on 15 Nov 2026
+    # (Douglas: the Claude API allowance ran out, roll back what makes the calls): two sprints a day again.
   workflow_dispatch:
     inputs:
       task:
@@ -68,9 +69,9 @@ jobs:
           n=$(gh api "repos/${{ github.repository }}/pulls?state=all&sort=created&direction=desc&per_page=100" \
                 --jq "[.[] | select(.created_at >= \"$(date -u +%F)T00:00:00Z\" and ((.labels | map(.name) | index(\"office-agent\")) != null or (.head.ref | startswith(\"office-agent/\"))))] | length" || echo 0)
           echo "$n office pull request(s) opened today"
-          # 9 Nov 2026: four sprints a day, so the cap is 4 x (SPRINT_SIZE + 1) + 4
-          if [ "${n:-0}" -gt 28 ]; then
-            echo "::warning::skipping the sprint: $n office pull requests already opened today (limit 28); something is looping"
+          # two sprints a day (15 Nov 2026), so the cap is 2 x (SPRINT_SIZE + 1) + 4
+          if [ "${n:-0}" -gt 16 ]; then
+            echo "::warning::skipping the sprint: $n office pull requests already opened today (limit 16); something is looping"
             echo "skip=1" >> "$GITHUB_OUTPUT"; echo 'agents=[""]' >> "$GITHUB_OUTPUT"; exit 0
           fi
           A="${{ inputs.agent }}"; T="${{ inputs.task }}"
