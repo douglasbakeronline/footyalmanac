@@ -3278,8 +3278,9 @@ function renderList(){
       const fold = document.createElement("details");
       fold.className = "resv";
       fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
+      const nWary = extra.filter(it => sideWary(it.g)).length;
       fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.</span><i aria-hidden="true"></i></summary>`;
+        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
       fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
       sec.appendChild(fold);
       const puts = (it, i) => it.kind === "football"
@@ -3708,6 +3709,25 @@ function tennisWary(g){
   if(!g || g.sport !== "tennis" || !(g.confidence < 0.80)) return "";
   return `<span class="flagged wary" title="A tennis pick under 80%: about one in four of these loses, so it is a weak accumulator leg. The Card takes tennis only at 85% and over.">Under 80</span>`;
 }
+/* 15 Nov 2026 (Douglas, after Saturday's reserve): a college pick away from
+   home or on a neutral court says so. The replay (70%+, Aug-Dec, both test
+   seasons) has college basketball home picks landing 88.8% v 83.5% quoted,
+   away 76.0% v 77.3%, neutral 74.9% v 78.3%; live, away college picks have
+   landed under quote (college basketball 11 of 21, college football 36 of 54
+   v 78%). Shown, never hidden; the number on the row is unchanged. Computed
+   from the row so pinned and archived rows carry it too (sports.wary is the
+   same rule). */
+const WARY_SPORTS = new Set(["ncaab", "cfb"]);
+function sideWary(g){
+  if(!g || !WARY_SPORTS.has(g.sport) || !(g.confidence >= 0.70)) return null;
+  if(g.neutral) return {kind: "neutral", label: "Neutral", why: "A college pick on a neutral court: in testing these land under their quote (college basketball 75% v 78%) while home picks land above it."};
+  if(g.pick && g.home && g.pick !== g.home) return {kind: "away", label: "Away", why: "A college pick away from home: in testing these land as quoted while home picks land above it; on the live record they have landed under it (college basketball 11 of 21, college football 36 of 54 at 70%+)."};
+  return null;
+}
+function sideWaryChip(g){
+  const w = sideWary(g);
+  return w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "";
+}
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
@@ -3947,7 +3967,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div></div>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
@@ -3995,7 +4015,7 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}</div>`;
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);
