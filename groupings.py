@@ -2044,6 +2044,23 @@ def archived_card(date):
         seen.add(card_slot(g)); out.append(g)
     return out
 
+def span_held(date, prev=None, archived=None):
+    """The picks a two-day group from the day before already holds on `date`
+    (15 Nov 2026). The build only carries them from a day it builds itself,
+    so on the first build after midnight the day before had left the build's
+    dates and its two-day group's picks were free again: on 15 Nov a second
+    Card 2x was built at 00:44 UTC with Pistoiese and the 76ers, both already
+    held by 14 Nov's two-day group. Read from the day before's archive (locked
+    groups) and its last published groups (prev)."""
+    day = datetime.fromisoformat(date).date()
+    before = (day - timedelta(days=1)).isoformat()
+    if archived is None: archived = archived_card(before)
+    held = set()
+    for g in list(archived) + list(prev or []):
+        if not is_card(g.get("name")) or date not in (g.get("span") or ()): continue
+        held |= {l["event"] for l in g.get("legs") or []}
+    return held
+
 def build_card(L, date, now, prev=None, log=None, archived=None, taken=None):
     """The Card for one UK date: up to two groups in each window. L holds the
     day's legs (any board date); each is placed by its UK kick-off. A slot
@@ -3162,7 +3179,9 @@ def main():
         for l in cands: l.pop("ukDate", None); l.pop("cxCard", None)
     except Exception as e:
         report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
-    days, span_taken = [], set()
+    # 15 Nov 2026: the first day also respects the day before's two-day group
+    yday = (today - timedelta(days=1)).isoformat()
+    days, span_taken = [], span_held(dates[0], prev=(prev.get(yday) or {}).get("groups"))
     for d in dates:
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}

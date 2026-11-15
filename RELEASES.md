@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-span-held: the Card no longer stakes a two-day group's picks twice (tag pending)
+
+**What changed:** a Card group built just after midnight now leaves out the picks the day before's two-day group already holds. The nightly Card review flags any fixture in two Card groups.
+
+**Evidence:** on 15 Nov Pistoiese v Coriano and Philadelphia 76ers v Indiana Pacers were in 14 Nov's two-day Card 2x (2.36) and in a 15 Nov Card 2x (2.09) built at 00:44 UTC. `span_taken` was only carried from a day the same build built, and after midnight the day before is no longer built. `span_held("2026-11-15")` on the live archive returns the three events of 14 Nov's group.
+
+**Files:** `groupings.py` (`span_held`, `main`), `tools/card_integrity.py` (`card-pick-twice`, `picks_twice`), `tests/test_card_span.py`, `tests/test_card_integrity_twice.py`, `claude/card-span-held-2026-11-15.md`, `CLAUDE.md`.
+
+**Not changed:** any Card rule or constant (`CARD_RULE` 11), the record (15 Nov's groups stand as staked).
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-briefing-watch: briefings no longer wait for a dropped cron (tag pending)
 
 **What changed:** a watchdog dispatches a deploy when a briefing slot (07:00, 11:00, 16:00, 21:00 UK) is 10+ minutes overdue and no build is running, so the morning, lunch, evening and night pushes arrive near their time.
