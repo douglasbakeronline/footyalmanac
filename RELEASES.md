@@ -5,6 +5,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-17: the FIFA ranking refresh asks the API the way FIFA's site now does (tag pending)
+
+**What changed:** the build has scored internationals on the 20 Jul 2026 FIFA ranking for 118 days: every build since August logged "no newer release than 2026-07-20 (scanned ids 15176-15335, latest per overview: None)" with no fetch failure, while FIFA kept publishing (an October 2026 release is on inside.fifa.com, whose ranking pages moved to `/fifa-rankings/world-ranking/`). FIFA's API URLs now carry `rankingType=football` (a public `id15136` URL has it). `rankings.refresh_fifa` asks with it first and without it second, for the release ids and for the dateless overview; an overview that names no id logs its top-level keys, so the next build log shows FIFA's shape if this is not the cause; and a release with under 80% of the teams on file (`FIFA_MIN_SHARE`, about 211 sides) is refused, so a futsal or women's list under the same id scheme can never replace the men's ranking.
+**Evidence:** deploy run 43713946490 (15 Nov 12:28 UTC) log lines above. The sandbox cannot reach inside.fifa.com, so the fix is confirmed on the next CI build's "FIFA ranking:" line, not here. `tests/test_rankings.py` +3 (a release answered only with `rankingType`, the overview's keys logged, a short list refused), each failing on the old code; suite OK; `nametest.py` clear.
+**Files:** `rankings.py`, `tests/test_rankings.py`, `claude/world-rankings.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the FIFA adjustment's weights, which internationals reach the Daily List, the Card (internationals are off it), any record. `fifa-rankings.json` is rewritten by the build only.
+**Roll back:** `git revert` the merge; the old URL is still the second one tried, so behaviour only adds.
+
 ## 2026-11-15-16: Scale shows estimated prices where no feed prices the bet (tag pending)
 
 **What changed:** on the Scale tab a pick with no real price now shows an estimate ("≈ 2.13", italic, marked "estimate"), worked as the fair price of its chance less a typical bookmaker margin (football's result-and-goals bets 15%, handicaps and set betting 8%). Groups without a real price on every leg read "Pays about 4.83", and the scoreboard and group lists show the estimated return beside the real one, tallied apart (`estN`, `estRet`). Douglas: "If you're missing data on prices, just give an estimate."

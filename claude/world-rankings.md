@@ -50,3 +50,20 @@ says when a ranking changed the number.
 - World Rugby rankings, if a source becomes reachable.
 - Women's internationals (FIFA women's ranking) untested.
 - Retest the WTA ranking once more 2026 data is in.
+
+
+## 15 Nov 2026: the ranking stuck at 20 Jul
+
+Every build from August to 15 Nov logged "FIFA ranking: no newer release than
+2026-07-20 (scanned ids 15176-15335, latest per overview: None)", with no
+fetch failure, and from 3 Sep the WARNING line (118 days old on 15 Nov). FIFA
+kept publishing (an October 2026 men's release). Its site moved the ranking
+to `/fifa-rankings/world-ranking/` and its API URLs now carry
+`rankingType=football` (seen on a public `id15136` URL). `rankings.py` now asks
+with it first and the old form second (`FIFA_URLS`, `FIFA_LATEST_URLS`), logs
+the overview's top-level keys when it names no id, and refuses a release with
+under 80% of the teams on file (`FIFA_MIN_SHARE`). Not confirmable from a
+cloud sandbox (inside.fifa.com is blocked there): read the next CI build's
+"FIFA ranking:" lines. If they still say "no newer release", the keys line
+says what the overview returns; the next step is widening the scan or reading
+the id from that shape.
