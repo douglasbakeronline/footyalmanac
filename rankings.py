@@ -104,11 +104,27 @@ def _fifa_release(i, errors=None):
             continue
         if rows:
             break
+    return _parse_release(i, rows)
+
+
+def _parse_release(i, rows):
+    """A release from FIFA's "rankings" rows, or None."""
     if not rows:
         return None
     return {"id": i, "date": rows[0]["lastUpdateDate"][:10],
             "teams": {r["rankingItem"]["name"]: [r["rankingItem"]["rank"], r["rankingItem"]["totalPoints"]]
                       for r in rows}}
+
+
+def _same_list(cur, new, top=20, share=0.8):
+    """True when `new` reads as the same ranking as `cur`: at least `share`
+    of cur's top `top` sides sit in new's top `top` + 10. Month to month the
+    men's top 20 barely moves; the women's list shares about half of it."""
+    if not cur or not cur.get("teams"):
+        return True
+    head = [t for t, v in sorted(cur["teams"].items(), key=lambda kv: kv[1][0])[:top]]
+    near = {t for t, v in new["teams"].items() if v[0] <= top + 10}
+    return sum(t in near for t in head) >= share * len(head)
 
 
 def _release_ids(obj):
@@ -133,11 +149,14 @@ def _release_ids(obj):
     return out
 
 
-def _fifa_latest_id(errors=None, notes=None):
-    """The latest release id FIFA's dateless overview names, or None. When an
-    overview answers but names no id, its top-level keys go to `notes`, so
-    the build log shows what shape FIFA returned instead."""
-    ids = set()
+def _fifa_latest(errors=None, notes=None):
+    """(latest release id, release) from FIFA's dateless overview. The id is
+    the largest one it names, or None. Since at least 15 Nov 2026 the
+    overview names no id and answers with the current release's "rankings"
+    rows alone, so those rows are parsed as a release too (its id is None:
+    the caller keeps the file's id as the scan's start). When an overview
+    names no id, its keys and its rows' date go to `notes`."""
+    ids, rel = set(), None
     for url in FIFA_LATEST_URLS:
         try:
             doc = _get(url)
@@ -146,11 +165,25 @@ def _fifa_latest_id(errors=None, notes=None):
                 errors.append(("latest", f"{type(e).__name__}: {e}"))
             continue
         found = _release_ids(doc)
+        rows = doc.get("rankings") if isinstance(doc, dict) else None
+        try:
+            r = _parse_release(None, rows) if isinstance(rows, list) else None
+        except (KeyError, TypeError, IndexError):
+            r = None
+        if r and (rel is None or r["date"] > rel["date"]):
+            rel = r
         if not found and notes is not None:
             keys = sorted(doc)[:12] if isinstance(doc, dict) else type(doc).__name__
-            notes.append(f"FIFA ranking: overview {url.split('?', 1)[1]} named no release id (keys: {keys})")
+            what = f"{len(r['teams'])} teams dated {r['date']}" if r else "no parsable rows"
+            notes.append(f"FIFA ranking: overview {url.split('?', 1)[1]} named no release id "
+                         f"(keys: {keys}; {what})")
         ids |= found
-    return max(ids) if ids else None
+    return (max(ids) if ids else None), rel
+
+
+def _fifa_latest_id(errors=None, notes=None):
+    """The latest release id FIFA's dateless overview names, or None."""
+    return _fifa_latest(errors, notes)[0]
 
 
 def load_fifa():
@@ -185,7 +218,7 @@ def refresh_fifa(scan=160, log=None):
         return cur
     start = max(FIFA_SEED, cur["id"] if cur else 0) + 1
     errors, notes = [], []
-    latest = _fifa_latest_id(errors, notes)
+    latest, overview = _fifa_latest(errors, notes)
     ids = list(range(start, start + scan))
     if latest and latest >= start:
         ids = [latest] + [i for i in ids if i != latest]
@@ -194,6 +227,22 @@ def refresh_fifa(scan=160, log=None):
     need = FIFA_MIN_SHARE * len(cur["teams"]) if cur and cur.get("teams") else 0
     short = [r for r in found if len(r["teams"]) < need]
     found = [r for r in found if len(r["teams"]) >= need]
+    other = [r for r in found if not _same_list(cur, r)]
+    found = [r for r in found if _same_list(cur, r)]
+    if other and log is not None:
+        log.append("FIFA ranking: refused " + ", ".join(f"id {r['id']}" for r in other[:5])
+                   + ": its top 30 does not hold the file's top 20 (another ranking)")
+    if not found and overview and (not cur or overview["date"] > cur["date"]):
+        if len(overview["teams"]) < need or not _same_list(cur, overview):
+            if log is not None:
+                log.append(f"FIFA ranking: refused the overview's release ({len(overview['teams'])} teams, "
+                           f"{overview['date']}): not the men's ranking on file")
+        else:
+            # No id to scan from: keep the file's (or the seed), so the next
+            # scan starts where it did and the overview is read again.
+            overview["id"] = max(FIFA_SEED, cur["id"] if cur else 0)
+            overview["from"] = "overview"
+            found = [overview]
     if short and log is not None:
         log.append("FIFA ranking: refused " + ", ".join(f"id {r['id']} ({len(r['teams'])} teams)" for r in short[:5])
                    + f", under {FIFA_MIN_SHARE:.0%} of the {len(cur['teams'])} on file")
@@ -201,7 +250,8 @@ def refresh_fifa(scan=160, log=None):
         new = max(found, key=lambda r: r["id"])
         json.dump(new, open(FIFA_FILE, "w"), ensure_ascii=False, separators=(",", ":"))
         if log is not None:
-            log.append(f"FIFA ranking: new release {new['date']} (id {new['id']})")
+            log.append(f"FIFA ranking: new release {new['date']} (id {new['id']}"
+                       + (", from the dateless overview" if new.get("from") else "") + ")")
         _stale_warning(new, log)
         return new
     if log is not None:

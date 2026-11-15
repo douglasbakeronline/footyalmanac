@@ -244,6 +244,64 @@ class Refresh(unittest.TestCase):
         self.assertEqual(new["id"], base + 1)
         self.assertTrue(any("refused id" in l and str(base + 3) in l for l in log), log)
 
+    @staticmethod
+    def rows(names, day):
+        return {"rankings": [{"lastUpdateDate": f"{day}T00:00:00",
+                              "rankingItem": {"name": n, "rank": k + 1, "totalPoints": 1900 - k}}
+                             for k, n in enumerate(names)]}
+
+    def write_men(self, days_old=30):
+        d = (date.today() - timedelta(days=days_old)).isoformat()
+        cur = {"id": R.FIFA_SEED, "date": d,
+               "teams": {f"M{k}": [k + 1, 1800 - k] for k in range(40)}}
+        json.dump(cur, open(self.path, "w"))
+        return cur
+
+    def test_overview_rows_without_an_id_are_the_new_release(self):
+        # 15 Nov 2026 CI log: the dateless overview answers {"rankings": [...]}
+        # and names no id, and no id after 15175 answers.
+        cur = self.write_men()
+        names = [f"M{k}" for k in (1, 0, 2, 3, 5, 4)] + [f"M{k}" for k in range(6, 40)]
+        def fake(url, timeout=20):
+            if "dateId" in url:
+                return {"rankings": []}
+            return self.rows(names, "2026-10-22")
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            new = R.refresh_fifa(scan=3, log=log)
+        self.assertEqual(new["date"], "2026-10-22")
+        self.assertEqual(new["id"], R.FIFA_SEED)
+        self.assertEqual(new["teams"]["M1"], [1, 1900])
+        self.assertEqual(json.load(open(self.path))["date"], "2026-10-22")
+        self.assertTrue(any("from the dateless overview" in l for l in log), log)
+
+    def test_overview_rows_older_than_the_file_are_ignored(self):
+        cur = self.write_men(days_old=30)
+        old = (date.today() - timedelta(days=60)).isoformat()
+        fake = lambda url, timeout=20: {"rankings": []} if "dateId" in url else \
+            self.rows([f"M{k}" for k in range(40)], old)
+        with mock.patch.object(R, "_get", fake):
+            self.assertEqual(R.refresh_fifa(scan=2), cur)
+
+    def test_another_ranking_in_the_overview_is_refused(self):
+        # A women's or futsal list: as many sides, a different top 20.
+        cur = self.write_men()
+        names = [f"W{k}" for k in range(25)] + [f"M{k}" for k in range(20, 40)]
+        fake = lambda url, timeout=20: {"rankings": []} if "dateId" in url else \
+            self.rows(names, "2026-10-22")
+        log = []
+        with mock.patch.object(R, "_get", fake):
+            self.assertEqual(R.refresh_fifa(scan=2, log=log), cur)
+        self.assertTrue(any("refused the overview" in l for l in log), log)
+
+    def test_same_list(self):
+        cur = {"teams": {f"M{k}": [k + 1, 1] for k in range(30)}}
+        swapped = {"teams": {f"M{k}": [30 - k, 1] for k in range(30)}}
+        self.assertTrue(R._same_list(cur, cur))
+        self.assertTrue(R._same_list(cur, swapped))          # every top-20 side inside the top 30
+        self.assertFalse(R._same_list(cur, {"teams": {f"W{k}": [k + 1, 1] for k in range(30)}}))
+        self.assertTrue(R._same_list(None, cur))
+
     def test_release_ids_parsing(self):
         doc = {"dates": [{"dateId": "id15175"}, {"dateId": "id15190"}], "x": {"id": 7}, "s": "id15200"}
         self.assertEqual(R._release_ids(doc), {15175, 15190, 15200})

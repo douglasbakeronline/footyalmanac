@@ -67,3 +67,9 @@ cloud sandbox (inside.fifa.com is blocked there): read the next CI build's
 "FIFA ranking:" lines. If they still say "no newer release", the keys line
 says what the overview returns; the next step is widening the scan or reading
 the id from that shape.
+
+Read the same day (deploy run 43715171219): both overview forms answer
+`{"rankings": [...]}` and name no id, and no id 15176-15335 answers, so the
+scan could not find a release by design. The overview's rows are now the
+release (`_fifa_latest`), taken when newer than the file, 80%+ of its teams
+and the same top 20 (`_same_list`); the file keeps its id.
