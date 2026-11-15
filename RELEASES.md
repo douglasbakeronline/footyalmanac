@@ -5,6 +5,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-15-21: fewer Claude API calls: two office sprints a day, context reads for the Card only (tag pending)
+
+**What changed:** Douglas: "my API reach is now finished for Claude ... roll back whatever we've implemented recently that's causing a lot of these calls." The two recent additions that call the Claude API on the shared `ANTHROPIC_API_KEY` are rolled back. The office agents run two sprints a day again (06:30 and 18:30 UTC), not four: the 00:30 and 12:30 sprints added on 9 Nov are gone, and the day's pull request cap falls from 28 to 16. The context check reads the Card's picks only: the Daily List reads added on 12 Nov are off (`groupings.CX_LIST_MIN` None) and the daily cap is 8, down from 25.
+
+**Why:** each office sprint runs up to six Claude Code sessions (Sonnet, up to 50 turns each), so four sprints a day was up to 24 sessions a day; the context check made up to 25 Sonnet and Haiku calls a day with web search. Both drew on the one key, which hit its monthly limit on 14 Nov (`claude/context-paused-2026-11-14.md`); every sprint since has failed on it. Nothing else in the pipeline calls the Claude API. The Scale tab, the markets, the ledger and the slip call none (they use API-Football and the odds feeds, not Claude).
+
+**Files:** `.github/workflows/office-agents.yml`, `groupings.py`, `context_review.py`, `claude/api-allowance-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the Card's context veto (`CARD_CONTEXT`), the claude.ai scheduled sessions and weekly report (they run on the Claude plan, not the API key), `ceo.yml` and `claude.yml` (they run only when Douglas asks).
+
+**Roll back:** `git revert` the merge commit; or restore the cron line, `CX_LIST_MIN = 0.75` and `CONTEXT_DAILY_READS` 25 one at a time.
+
 ## 2026-11-15-20: Scale at a glance shows the last seven days as dots again (tag pending)
 
 **What changed:** Douglas: "on the scale tab, I want you to have the visual infographic for the last 7 days as you did before." The glance's dot rows (a line a day, a column a tier, a dot a pick coloured by result) run again from tomorrow back through the last seven days, each row opening its day's list on a tap. Older days sit in a "more days of dots" fold, and the ten-a-day tables added earlier today (#315) moved into a closed fold under the dots, unchanged.

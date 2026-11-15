@@ -1758,7 +1758,8 @@ CARD_SPAN = True
 # (cardContext). Set False to stop the veto; the reads still show.
 # claude/context-check-2026-11-11.md.
 CARD_CONTEXT = True
-CX_LIST_MIN = 0.75   # 12 Nov 2026: Daily List picks at this model chance+ get a context read (display only)
+CX_LIST_MIN = None   # 12 Nov 2026: Daily List picks at 75%+ got a context read (display only); off since 15 Nov 2026
+                     # (Douglas: the API allowance ran out; roll back what makes the calls): Card picks only. 0.75 restores it.
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -3155,7 +3156,7 @@ def main():
             card = card_fault(l) is None
             # 12 Nov 2026 (Douglas): Daily List picks at 75%+ are read too,
             # within the daily cap, after the Card's (context_review.priority)
-            if card or (l.get("list") and (l.get("pModel") or 0) >= CX_LIST_MIN):
+            if card or (CX_LIST_MIN is not None and l.get("list") and (l.get("pModel") or 0) >= CX_LIST_MIN):
                 l["ukDate"] = s_[0]; l["cxCard"] = card; cands.append(l)
         CX.review(cands, now, report)
         for l in cands: l.pop("ukDate", None); l.pop("cxCard", None)

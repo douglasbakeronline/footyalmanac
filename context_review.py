@@ -46,7 +46,9 @@ MODEL = os.environ.get("CONTEXT_MODEL", "claude-sonnet-5-5")
 CHEAP_MODEL = os.environ.get("CONTEXT_CHEAP_MODEL", "claude-haiku-5-5")
 RICH_SPORTS = {"football", "nba"}
 PRIORITY = ("football", "nba", "tennis", "ncaab", "rugby", "nrl", "nfl", "mlb", "nhl", "wnba", "cfb")
-DAILY_READS = int(os.environ.get("CONTEXT_DAILY_READS", "25"))
+# 15 Nov 2026: 25 -> 8 with the Daily List reads switched off (groupings.CX_LIST_MIN), Douglas: the API
+# allowance ran out, roll back what makes the calls. The Card reads a handful of picks a day.
+DAILY_READS = int(os.environ.get("CONTEXT_DAILY_READS", "8"))
 LEDGER = "context-ledger.json"
 MAX_REVIEWS = 16        # calls a build
 MAX_SEARCHES = 5        # web searches a pick
