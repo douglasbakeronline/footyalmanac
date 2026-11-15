@@ -5818,7 +5818,9 @@ function renderScale(){
   // 15 Nov 2026, Douglas: "10 games shown with what the recommendation was of the model, and whether or
   // not that won or lost with the team, and if both teams scored ... in order of strongest ... bettable".
   // Each past day's ten strongest picks (the tab's order: tier, then the chance the bet lands; football only
-  // where the book prices it, so nothing obscure), as a table. The dot rows stay for today and tomorrow.
+  // where the book prices it, so nothing obscure), as a table, in a fold under the dots. 15 Nov 2026 afternoon,
+  // Douglas: "have the visual infographic for the last 7 days as you did before": the dot rows run from
+  // tomorrow back through the last seven days; older days and the tables sit in folds.
   const SPORT_SHORT = {football:"Football", tennis:"Tennis", nba:"NBA", nfl:"NFL", rugby:"Rugby", ncaab:"College", cfb:"College"};
   const tennisScore = d => { const m = String(d || "").match(/\b\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?(?:\s+\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?)*(?:\s+ret\.?)?/); return m ? m[0] : d; };
   const wrow = (x, i) => { const st = x.state, opp = x.side === "h" ? x.away : x.home, det = x.sport === "tennis" ? tennisScore(x.detail) : x.detail;
@@ -5845,12 +5847,12 @@ function renderScale(){
     <div class="sc-gtop"><h3>Scale at a glance</h3>
       <div class="sc-key"><span><i class="sc-dot"></i>Won and landed the Scale</span><span><i class="sc-dot won"></i>Won, Scale missed</span><span><i class="sc-dot lost"></i>Pick lost</span><span><i class="sc-dot up"></i>To play</span><span><i class="sc-dot void"></i>Void</span><span><i class="sc-dot off"></i>Not priced at ${scE(S.book)}</span></div></div>
     <div class="sc-grows"><div class="sc-grow sc-ghead"><div class="sc-gd"></div>${SC_TIERS.map(t => `<div class="sc-dots">${SC_TIER_SHORT[t]}</div>`).join("")}<div class="sc-gs"></div></div>
-      ${gl.filter(g => g.date >= S.today).map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
-    <div class="sc-week">
+      ${gl.filter(g => g.date >= S.today).concat(week).map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
+    ${older.length ? `<details class="sc-off"><summary>${older.length} more day${older.length === 1 ? "" : "s"} of dots</summary><div class="sc-grows">${older.map(grow).join("")}</div></details>` : ""}
+    <details class="sc-week sc-off"><summary>The week behind as tables, ten a day</summary>
       <p class="sc-gnote" style="margin:12px 0 4px"><b>The week behind, ten a day.</b> Each day's ten strongest picks, Daily List picks first, then the reserve, then the rest, strongest model number first within each, and only games a bookmaker feed priced before the start (football where ${scE(S.book)} priced the bet; "Hill" marks a game ${scE(S.book)} priced); anything unpriced is left off and counted. The model's pick, its number, the result, and for football whether both teams scored; for the other sports whether the Scale margin landed. Tap "full list" for every pick of the day.</p>
-      ${week.map((g, i) => wday(g, i < 3)).join("") || `<div class="sc-empty">Nothing yet.</div>`}
-      ${older.length ? `<details class="sc-off"><summary>${older.length} more day${older.length === 1 ? "" : "s"}</summary>${older.map(g => wday(g, false)).join("")}</details>` : ""}
-    </div>
+      ${week.map(g => wday(g, false)).join("") || `<div class="sc-empty">Nothing yet.</div>`}
+    </details>
     ${bft.n ? `<p class="sc-gnote"><b>Days before ${scE(since)} are a replay</b>: today's rule run on what was published before each start, results added afterwards. Scale landed: ${SC_TIERS.map(tl).filter(Boolean).join("; ")}.${gkeys.length ? ` Groups won: ${gkeys.map(k => `${scLow(String(bfG[k].name).replace("Scale ", ""))} ${bfG[k].won} of ${bfG[k].n}`).join(", ")}.` : ""} No prices are on file for those days, so this says how often it landed, not what it paid. Tap a day to see its picks.</p>` : ""}
   </section>`;
   // the day's list, a line a tier

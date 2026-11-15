@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-20: Scale at a glance shows the last seven days as dots again (tag pending)
+
+**What changed:** Douglas: "on the scale tab, I want you to have the visual infographic for the last 7 days as you did before." The glance's dot rows (a line a day, a column a tier, a dot a pick coloured by result) run again from tomorrow back through the last seven days, each row opening its day's list on a tap. Older days sit in a "more days of dots" fold, and the ten-a-day tables added earlier today (#315) moved into a closed fold under the dots, unchanged.
+
+**Evidence:** checked in Chrome at 1280px and 400px on a local build, no page errors, no sideways scroll; full suite and `nametest.py` pass.
+
+**Files:** `index.html`, this entry.
+
+**Not changed:** `scale.py`, the rule, the archive, grading, the tables' content.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-19: the FIFA ranking also read from FIFA's public ranking page (tag pending)
 
 **What changed:** the build after 2026-11-15-18 (deploy run 43716339474) showed the dateless overview's `rankings` holds no parsable rows, so FIFA's API answers nothing after 20 Jul 2026 in any form tried. `rankings.refresh_fifa` now also reads the public men's ranking page (`FIFA_PAGE_URL`, `/fifa-rankings/world-ranking/men`): every `dateId=id` it links to is asked of the API first, and the longest `rankingItem` list in its embedded JSON (`__NEXT_DATA__` or any JSON script) is a release, under the same checks (newer than the file, 80%+ of its teams, the same top 20). Each build logs what the page held (size, ids, rows, `__NEXT_DATA__`), and the overview line now says "an empty rankings list" where that is what came back.
