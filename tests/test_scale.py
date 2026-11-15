@@ -396,3 +396,31 @@ class WeekTable(unittest.TestCase):
         self.assertIsNone(S.priced_by({"sport": "nfl", "id": "9", "home": "x", "away": "y", "start": "2026-11-14T00:00:00Z"}, keys))
         self.assertEqual(S.priced_by({"sport": "football", "price": 1.9, "home": "A", "away": "B", "start": "2026-11-14T15:00:00Z"}, {}), "William Hill")
         self.assertIsNone(S.priced_by({"sport": "football", "home": "A", "away": "B", "start": "2026-11-14T15:00:00Z"}, {}))
+
+
+class EstimatedPrices(unittest.TestCase):
+    """15 Nov 2026: a pick or group with no price shows an estimate, tallied apart."""
+
+    def test_estimate_is_fair_less_margin(self):
+        import scale
+        self.assertEqual(scale.est_price("tennis", 0.5), round(1 / (0.5 * 1.08), 2))
+        self.assertEqual(scale.est_price("football", 0.4), round(1 / (0.4 * 1.15), 2))
+        self.assertIsNone(scale.est_price("nba", None))
+
+    def test_real_price_wins_over_estimate(self):
+        import scale
+        self.assertEqual(scale.price_or_est({"sport": "tennis", "chance": 0.5, "price": 2.1}), (2.1, False))
+        self.assertEqual(scale.price_or_est({"sport": "tennis", "chance": 0.5})[1], True)
+
+    def test_group_estimate_and_estimated_return(self):
+        import scale
+        legs = [{"key": "a", "sport": "tennis", "chance": 0.6, "state": "scale"},
+                {"key": "b", "sport": "nba", "chance": 0.5, "state": "scale"}]
+        by = {l["key"]: l for l in legs}
+        g = {"legs": ["a", "b"], "price": None}
+        out = scale.grade_group(g, by)
+        self.assertEqual(out["state"], "won")
+        self.assertNotIn("ret", out)
+        self.assertAlmostEqual(out["estRet"], round(scale.est_price("tennis", 0.6) * scale.est_price("nba", 0.5), 2), places=2)
+        by["b"] = dict(by["b"], state="lost")
+        self.assertEqual(scale.grade_group(g, by), {"state": "lost", "estRet": 0.0})

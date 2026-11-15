@@ -1483,6 +1483,7 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-p .sc-nb{display:block;margin:0;font-size:12px}
 .sc-p .sc-none{font-size:14px;color:var(--ink);margin:0}
 .sc-p .sc-none small{margin-left:0}
+.sc-est{color:var(--ink-2);font-style:italic;border-bottom:1px dotted var(--mute)} /* an estimated price, never a real one */
 .sc-b > small.sc-alt{color:var(--ink-2);margin-top:2px}
 .sc-tag{display:inline-block;font:700 11.5px var(--f-ui);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--cover-ink);color:var(--ink);white-space:nowrap}
 .sc-tag.short,.sc-tag.lost{background:var(--away);border-color:var(--away);color:#fff}
@@ -5714,7 +5715,8 @@ const scTime = s => new Date(s).toLocaleTimeString("en-GB", {hour:"2-digit", min
 const scDate = (d, long) => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", long ? {weekday:"long", day:"numeric", month:"long", timeZone:"UTC"} : {weekday:"short", day:"numeric", month:"short", timeZone:"UTC"});
 const scPct = x => Math.round(x * 100) + "%";
 const scOf = (k, n) => n ? `${scPct(k / n)}` : "–";
-const scRet = t => t && t.priced ? `${t.ret >= 0 ? "+" : "−"}${Math.abs(t.ret * 100).toFixed(1)}% <small>${t.priced} priced</small>` : "–";
+const scRet = t => t && t.priced ? `${t.ret >= 0 ? "+" : "−"}${Math.abs(t.ret * 100).toFixed(1)}% <small>${t.priced} priced</small>`
+  : t && t.estN ? `<span class="sc-est">≈ ${t.estRet >= 0 ? "+" : "−"}${Math.abs(t.estRet * 100).toFixed(1)}%</span> <small>${t.estN} at estimated prices</small>` : "–";
 const SC_TIERS = ["list", "reserve", "else"];
 const SC_TIER = {list:"Daily List picks", reserve:"Daily List reserve", else:"Everything else"};
 const SC_TIER_SHORT = {list:"Daily List", reserve:"Reserve", else:"Everything else"};
@@ -5746,6 +5748,8 @@ function scRow(p){
   const alt = p.alt && p.alt.chance ? `<small class="sc-alt">${scE(scLow(p.alt.bet))}: ${scPct(p.alt.chance)}${p.alt.price ? ` · ${scE(SCALE.book)} ${p.alt.price.toFixed(2)}` : ""}</small>` : "";
   const price = p.price
     ? `<b>${p.price.toFixed(2)}</b><small>${scE(p.book || SCALE.book)}</small>${needs ? `<small class="sc-nb">needs ${needs}</small>` : ""}${p.best && p.best > p.price ? `<small class="sc-nb">best ${p.best.toFixed(2)} ${scE(p.bestBook || "")}</small>` : ""}`
+    : p.est
+    ? `<b class="sc-est" title="No price feed for this bet: an estimate from its chance less a typical bookmaker margin. Check the real price at ${scE(SCALE.book)}">≈ ${p.est.toFixed(2)}</b><small>estimate</small><small class="sc-nb">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : ""}${needs ? ` · needs ${needs}` : ""}</small>`
     : `<p class="sc-none" title="No price feed for this bet yet: this is the line to look for at ${scE(SCALE.book)}">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : "No price on file"}${needs ? `<small class="sc-nb">needs ${needs} · no feed yet</small>` : ""}</p>`;
   return `<div class="sc-row">
     <div class="sc-t">${p.timed === false ? "–" : scTime(p.start)}</div>
@@ -5760,16 +5764,18 @@ function scCard(g, byKey){
   const legs = g.legs.map(k => byKey[k]).filter(Boolean);
   const needs = g.chance ? 1 / g.chance : null, inN = needs ? Math.max(2, Math.round(needs)) : null;
   const done = g.state === "won" || g.state === "lost" || g.state === "void";
-  const head = g.price ? `Pays ${g.price.toFixed(2)}` : `Lands 1 in ${inN}`;
+  const head = g.price ? `Pays ${g.price.toFixed(2)}` : g.est ? `Pays about ${g.est.toFixed(2)}` : `Lands 1 in ${inN}`;
   const line = g.price
     ? `Lands about 1 in ${inN}, so it needs ${needs.toFixed(1)}. Winners alone: ${scPct(g.winners)}.`
+    : g.est
+    ? `Lands about 1 in ${inN}. Estimated price: no feed for every leg, so check it at ${scE(SCALE.book)}. Winners alone: ${scPct(g.winners)}.`
     : `Needs ${needs.toFixed(1)} to break even. Winners alone: ${scPct(g.winners)}. Price it at ${scE(SCALE.book)}: no feed yet for every leg.`;
-  const tag = g.state === "won" ? `<span class="sc-tag scale">Won${g.ret ? ` · returned ${g.ret.toFixed(2)}` : ""}</span>`
+  const tag = g.state === "won" ? `<span class="sc-tag scale">Won${g.ret ? ` · returned ${g.ret.toFixed(2)}` : g.estRet ? ` · about ${g.estRet.toFixed(2)}` : ""}</span>`
     : g.state === "lost" ? `<span class="sc-tag lost">Lost</span>`
     : g.state === "void" ? `<span class="sc-tag void">Void</span>`
     : g.price && needs && g.price < needs ? `<span class="sc-tag short">Price too short</span>` : "";
   return `<article class="sc-card"><h4>${scE(g.name)}<small>${done ? "" : "from " + scTime(g.first)}</small></h4>
-    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l), l.market))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : ""}</small></li>`).join("")}</ol>
+    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l), l.market))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : l.est ? " · ≈ " + l.est.toFixed(2) : ""}</small></li>`).join("")}</ol>
     <div class="sc-cf"><b>${head}</b><p>${line}</p>${tag}</div></article>`;
 }
 function renderScale(){
@@ -5889,7 +5895,7 @@ function renderScale(){
   const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
   const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
   const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
-    ${gn ? `<ul>${Object.keys(gk).filter(k => gk[k].n).map(k => `<li><span>${scE(String(gk[k].name || k).replace("Scale ", ""))}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : ""}</em></li>`).join("")}</ul>
+    ${gn ? `<ul>${Object.keys(gk).filter(k => gk[k].n).map(k => `<li><span>${scE(String(gk[k].name || k).replace("Scale ", ""))}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : gk[k].estN ? ` · ≈ ${gk[k].estRet >= 0 ? "+" : "−"}${Math.abs(gk[k].estRet * 100).toFixed(0)}% est.` : ""}</em></li>`).join("")}</ul>
       <ul>${rec.slice(0, 8).map(r => `<li><span>${scE(scDate(r.date))} · ${scE(r.name.replace("Scale ", ""))}</span><em class="${r.state === "won" ? "w" : "l"}">${r.state === "won" ? "Won" + (r.ret ? " " + r.ret.toFixed(2) : "") : "Lost"}</em></li>`).join("")}</ul>`
       : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}
     ${gkeys.length ? `<h4 style="margin-top:14px">Replayed before ${scE(since)}, no prices</h4><ul>${gkeys.map(k => `<li><span>${scE(String(bfG[k].name).replace("Scale ", ""))}</span><em>${bfG[k].won} of ${bfG[k].n} won</em></li>`).join("")}</ul>` : ""}</div>`;

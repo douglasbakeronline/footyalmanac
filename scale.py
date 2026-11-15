@@ -72,7 +72,7 @@ from datetime import date, datetime, timedelta, timezone
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 ARCHIVE = "scale-archive"
-RULE = 3                    # the pick and group rule; bump on any change (1: Daily List picks only, football and tennis;
+RULE = 3                    # the pick and group rule (estimated prices, 15 Nov 2026, are display and record only, no bump); bump on any change (1: Daily List picks only, football and tennis;
                             # 2: three tiers, the margin sports, groups from the top of the tier order, football to win
                             # and both score; 3: groups from Daily List picks only, football to win and over 2.5 goals)
 LIVE_FROM = "2026-11-15"    # the tab's first day; earlier days are filled once from the pre-start archives and tallied apart
@@ -110,6 +110,32 @@ SPORTS = {
 # (id, legs, name, sport or None for any): built in this order from the picks still to start
 KINDS = ((2, 2, "Scale double", None), (3, 3, "Scale threefold", None), (4, 4, "Scale fourfold", None),
          (5, 5, "Scale fivefold", None))
+# Estimated prices (15 Nov 2026, Douglas: "If you're missing data on prices, just give an estimate"). Four of the
+# five Scale bets have no price feed (handicaps, set betting) and many football picks have none either, so a pick
+# without a price shows an estimate: the fair price of its own chance less a typical bookmaker margin on that kind of
+# bet. Football's result-and-goals bets: William Hill kept about 16% a leg on win and both score (69 priced fixtures,
+# claude/scale-strong-legs-2026-11-15.md), so 15%; alternative handicaps and set betting about 8% a selection. An
+# estimate is never a real price: it is marked on the page, never enters `price`, and its return is tallied apart
+# (`estRet`). Because it is built from the chance shown, an estimated return above -margin says only that the bet
+# landed more often than its chance said, not that a bookmaker would have paid it.
+EST_MARGIN = {"football": 0.15, "tennis": 0.08, "nba": 0.08, "nfl": 0.08, "rugby": 0.08}
+
+
+def est_price(sport, chance):
+    """The estimated bookmaker price for a bet with this chance, or None."""
+    if not chance or chance <= 0:
+        return None
+    return max(1.01, round(1.0 / (chance * (1.0 + EST_MARGIN.get(sport, 0.10))), 2))
+
+
+def price_or_est(p):
+    """A pick's real price, else its estimate; and whether it is an estimate."""
+    if p.get("price"):
+        return p["price"], False
+    e = est_price(p.get("sport"), p.get("chance"))
+    return e, e is not None
+
+
 FINE = (0.55, 0.62, 0.70, 0.75, 0.80, 0.85, 0.90, 1.01)
 WIDE = ((0.55, 0.70, 0.80, 1.01), (0.55, 0.70, 1.01), (0.55, 1.01))
 
@@ -382,8 +408,16 @@ def build_groups(picks, now):
             price = 1.0
             for p in legs: price *= p["price"]
             price = round(price, 2)
+        est = None
+        if price is None:
+            est = 1.0
+            for p in legs:
+                e, _ = price_or_est(p)
+                est = est * e if e and est else None
+            est = round(est, 2) if est else None
         out.append({"kind": kind, "name": name, "legs": [p["key"] for p in legs], "chance": round(ch, 4),
-                    "winners": round(win, 4), "price": price, "first": min(p["start"] for p in legs)})
+                    "winners": round(win, 4), "price": price, "first": min(p["start"] for p in legs),
+                    **({"est": est} if est else {})})
     return out
 
 
@@ -480,6 +514,7 @@ def grade_group(g, by_key):
     if any(s in ("won", "lost") for s in states):
         out = {"state": "lost"}
         if g.get("price"): out["ret"] = 0.0
+        elif all(price_or_est(l)[0] for l in legs): out["estRet"] = 0.0
         return out
     if any(s is None for s in states):
         return {"state": "pending"}
@@ -491,6 +526,12 @@ def grade_group(g, by_key):
         ret = 1.0
         for l in stand: ret *= l["price"]
         out["ret"] = round(ret, 2)
+    else:
+        ret = 1.0
+        for l in stand:
+            e, _ = price_or_est(l)
+            ret = ret * e if e and ret else None
+        if ret: out["estRet"] = round(ret, 2)
     return out
 
 
@@ -532,7 +573,7 @@ def both_scored(p):
 
 
 def _tally():
-    return {"n": 0, "won": 0, "scale": 0, "lost": 0, "void": 0, "priced": 0, "returned": 0.0}
+    return {"n": 0, "won": 0, "scale": 0, "lost": 0, "void": 0, "priced": 0, "returned": 0.0, "estN": 0, "estReturned": 0.0}
 
 
 def _add(t, p):
@@ -543,12 +584,18 @@ def _add(t, p):
     t["n"] += 1; t["won"] += s in ("won", "scale"); t["scale"] += s == "scale"; t["lost"] += s == "lost"
     if p.get("price"):
         t["priced"] += 1; t["returned"] += p["price"] if s == "scale" else 0.0
+    else:
+        e, _ = price_or_est(p)
+        if e:
+            t["estN"] += 1; t["estReturned"] += e if s == "scale" else 0.0
 
 
 def _done(t):
     out = {k: t[k] for k in ("n", "won", "scale", "lost", "void")}
     if t["priced"]:
         out["priced"] = t["priced"]; out["ret"] = round(t["returned"] / t["priced"] - 1, 4)
+    if t.get("estN"):
+        out["estN"] = t["estN"]; out["estRet"] = round(t["estReturned"] / t["estN"] - 1, 4)
     return out
 
 
@@ -667,16 +714,19 @@ def build(now=None, here=HERE):
         for g in d.get("groups") or []:
             gg = dict(g, **grade_group(g, by_key))
             groups.append(gg)
-            t = (before_kinds if d.get("replay") else kinds).setdefault(str(g["kind"]), {"name": g["name"], "n": 0, "won": 0, "void": 0, "priced": 0, "returned": 0.0})
+            t = (before_kinds if d.get("replay") else kinds).setdefault(str(g["kind"]), {"name": g["name"], "n": 0, "won": 0, "void": 0, "priced": 0, "returned": 0.0, "estN": 0, "estReturned": 0.0})
             if gg["state"] in ("won", "lost"):
                 t["n"] += 1; t["won"] += gg["state"] == "won"
                 if "ret" in gg:
                     t["priced"] += 1; t["returned"] += gg["ret"]
+                if "estRet" in gg:
+                    t["estN"] += 1; t["estReturned"] += gg["estRet"]
                 if not d.get("replay"): graded_groups.append({"date": day, "name": g["name"], "kind": g["kind"], "state": gg["state"], "price": g.get("price"),
-                                      "ret": gg.get("ret"), "legs": [by_key[k]["pick"] for k in g["legs"] if k in by_key]})
+                                      "ret": gg.get("ret"), "est": g.get("est"), "estRet": gg.get("estRet"), "legs": [by_key[k]["pick"] for k in g["legs"] if k in by_key]})
             elif gg["state"] == "void":
                 t["void"] += 1
-        entry = {"date": day, "picks": sorted(d.get("picks") or [], key=rank), "off": d.get("off") or [], "groups": groups}
+        shown = [dict(p, est=price_or_est(p)[0]) if not p.get("price") and price_or_est(p)[0] else p for p in d.get("picks") or []]
+        entry = {"date": day, "picks": sorted(shown, key=rank), "off": d.get("off") or [], "groups": groups}
         in_glance = (today - timedelta(days=GLANCE_DAYS)).isoformat() <= day <= today.isoformat()
         if day >= today.isoformat() or in_glance:
             days_out.append(dict(entry, replay=bool(d.get("replay")), past=day < today.isoformat()))
@@ -701,12 +751,13 @@ def build(now=None, here=HERE):
            "record": {"bySport": {s: _done(t) for s, t in sorted(by_sport.items())},
                       "byTier": {t: _done(by_tier[t]) for t in TIERS if t in by_tier},
                       "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"], "priced": t["priced"],
-                                     **({"ret": round(t["returned"] / t["priced"] - 1, 4)} if t["priced"] else {})}
+                                     **({"ret": round(t["returned"] / t["priced"] - 1, 4)} if t["priced"] else {}),
+                                     **({"estN": t["estN"], "estRet": round(t["estReturned"] / t["estN"] - 1, 4)} if t.get("estN") else {})}
                                  for k, t in sorted(kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)},
                       "recent": graded_groups[-30:][::-1]},
            "before": {"bySport": {s: _done(t) for s, t in sorted(before.items())},
                       "byTier": {t: _done(before_tier[t]) for t in TIERS if t in before_tier},
-                      "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"]}
+                      "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"], **({"estN": t["estN"], "estRet": round(t["estReturned"] / t["estN"] - 1, 4)} if t.get("estN") else {})}
                                  for k, t in sorted(before_kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)}},
            "replay": {"football": replay(here, {c["league"] for c in cov}, LIVE_FROM), "basis": basis(sample),
                       "byTier": basis_tier(sample)},
