@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-9: The replays' check season runs past 20 Sep (tag pending)
+
+**What changed:** `tune.load`, the loader behind `tune.py`, `backtest.py`, `replay.py`, `tools/card_legs_history.py`, `tools/goals_value.py` and `tools/model_ideas.py`, now scores the check season's unscored openfootball fixtures from the ESPN results the daily build commits in `current/` (`tune.fill_current`), by the live build's own rule (`build.fill_lagging`: its own pair within 21 days, never over the source, all or nothing on names). openfootball stopped scoring after 20 Sep, the build was fixed on 13 Nov, but every replay still ended its 2026-27 season there: the Card's football-data check season had 7 candidate legs in October, so no rule 7 variant's check-season side could be read, and the Monday calibration and home-advantage refits confirmed on August and September only.
+
+**Evidence:** sandbox, 15 Nov: check fixtures 903 to 1,638 (735 filled in 14 leagues, Belgium 98, none refused on names; fit season unchanged at 5,262). `claude/replay-check-season-lag-2026-11-15.md`. 6 tests in `tests/test_tune_fill.py`; suite and `nametest.py` pass. `card-legs-history.yml` runs on this pull request with the fuller 2026-27.
+
+**Files:** `tune.py`, `replay.py` (`--freeze` keeps openfootball rows only), `tools/card_legs_history.py` (docstring), `tests/test_tune_fill.py`, `claude/replay-check-season-lag-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model constant, `calibration.json`, `home-advantage.json`, any Card rule, the live build, the page, the evaluation harness (frozen snapshots).
+
+**Roll back:** `git revert` the merge commit, or `tune.load(cache, fill=False)`.
+
 ## 2026-11-15-8: m7opp5 read on five seasons: ahead in all five, waiting on the pool (tag pending)
 
 **What changed:** the note only. `m7opp5` (the model's picks, football opposition priced 5.0+) on the five football-data seasons: ahead of live in every one, +0.10 to +0.16 units a day; pooled 150 groups, 73 won v 62.8 expected, +17.5% v live +9.6%, p(worse) 0.014 on 450 legs. The pool is ahead too (p 0.07) but on 33 legs, under the 100-leg gate, so the live rule is unchanged. `m7opp9` builds 9 groups in five seasons.
