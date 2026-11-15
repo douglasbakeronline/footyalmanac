@@ -116,16 +116,86 @@ def splits(code):
     return {"fit": (prev[0], prev[1]), "check": (cur, prev[0])}
 
 
-def load(cache):
-    out = {}
+def load(cache, fill=True, log=None):
+    """Every competition's fit, check and prior seasons. fill=True (15 Nov
+    2026) scores the check season's lagging openfootball fixtures from the
+    committed ESPN cache, as the live build does (`fill_current`); the
+    frozen snapshot (`replay.py --freeze`) passes fill=False so an
+    openfootball season holds openfootball rows only."""
+    out, quiet = {}, log is not None
+    log = [] if log is None else log
     for c in codes():
-        for test, prior in splits(c).values():
+        sp = splits(c)
+        for test, prior in sp.values():
             for s in (test, prior):
                 if (c, s) in out:
                     continue
                 rows, ok = S.fetch_season(c, s, cache)
-                out[(c, s)] = rows if ok else []
+                rows = rows if ok else []
+                if fill and ok and "check" in sp and s == sp["check"][0]:
+                    rows = fill_current(c, s, rows, cache, log=log)
+                out[(c, s)] = rows
+    if log and not quiet:
+        n = sum(int(x.split(": ")[1].split()[0]) for x in log if "filled from" in x)
+        print(f"check season: {n} openfootball result(s) filled from the ESPN cache"
+              f" ({len(log)} league line(s))", file=sys.stderr)
+        for x in log:
+            print(f"  {x}", file=sys.stderr)
     return out
+
+
+def lag_eligible(code):
+    """The leagues the live build scores from ESPN when openfootball lags
+    (`build.lagging_codes`): an ESPN slug, not a cup, an international, an
+    API-Football or a football-data league."""
+    m = E.LEAGUES.get(code, {})
+    return not (m.get("cup") or m.get("international") or code in S.AF or code in S.FDX
+                or not S.ESPN_SLUGS.get(code))
+
+
+def fill_current(code, season, rows, cache=None, today=None, log=None,
+                 fixtures=None, results=None):
+    """The check season's played matches with openfootball's unscored ones
+    filled from the ESPN results the build caches in current/ (15 Nov 2026).
+
+    openfootball's 2026-27 files stopped scoring matches after 20 Sep 2026
+    (claude/openfootball-lag-2026-11-13.md). The live build has filled them
+    from ESPN since 13 Nov, but this loader, shared by tune.py, backtest.py,
+    replay.py, card_legs_history.py and goals_value.py, still read the files
+    alone, so every check season of an openfootball league ended on 20 Sep:
+    735 played matches missing on 15 Nov, Belgium's whole season among them,
+    and the Card's football-data check season was down to 7 candidate legs
+    for October. Same rule as the build (`build.fill_lagging`): a result fills
+    only its own pair's unplayed fixture within 21 days, never a pair the
+    source scored nearby, all or nothing on names. No network: the cache is
+    committed by the daily build. Returns rows plus the filled matches as
+    (date, home, away, hg, ag); rows unchanged when nothing applies."""
+    if not lag_eligible(code):
+        return rows
+    if results is None:
+        cached, _ = S.load_current(code, season)
+        results = list(cached.values())
+    if not results:
+        return rows
+    if fixtures is None:
+        fixtures, ok = S.fetch_fixtures(code, season, cache)
+        if not ok:
+            return rows
+    import build as B
+    today = today or E.uk_today()
+    exhausted = not any(r["date"] >= today.isoformat() for r in fixtures)
+    filled, bad, _ = B.fill_lagging(fixtures, results, today, append=exhausted)
+    if bad:
+        if log is not None:
+            log.append(f"{code} {season}: ESPN results not used, unmatched: {'; '.join(bad[:5])}")
+        return rows
+    have = {(d, h, a) for d, h, a, *_ in rows}
+    extra = [(r["date"], r["home"], r["away"], r["hg"], r["ag"]) for r in fixtures
+             if r.get("filledFrom") == "espn" and r["hg"] is not None
+             and (r["date"], r["home"], r["away"]) not in have]
+    if extra and log is not None:
+        log.append(f"{code} {season}: {len(extra)} result(s) filled from the ESPN cache")
+    return sorted(list(rows) + extra) if extra else rows
 
 
 # ---------------------------------------------------------------------------

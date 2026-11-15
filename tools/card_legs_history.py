@@ -468,7 +468,10 @@ def season_split(season):
 def replay_split(split, splits_fn, log):
     """One season through the replay and football-data: fetch, rate, price,
     join, and every table of the report. splits_fn stands in for tune.splits
-    while it runs (tune.load, tune.lambdas and replay.coverage all read it)."""
+    while it runs (tune.load, tune.lambdas and replay.coverage all read it).
+    Since 15 Nov 2026 tune.load scores the check season's lagging
+    openfootball fixtures from the committed ESPN cache (`tune.fill_current`),
+    so 2026-27 runs past 20 Sep for the core leagues."""
     saved = tune.splits; tune.splits = splits_fn
     try:
         data = tune.load(None)
