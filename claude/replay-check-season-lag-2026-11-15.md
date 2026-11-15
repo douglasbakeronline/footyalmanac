@@ -68,6 +68,16 @@ of the season known), not a model change; nothing was refitted.
   season) are not added here: that is `replay.py --include-current`'s
   advisory question, with its own overlap checks.
 
+## The Card's 2026-27 read with the fill (`card-legs-history.yml` on #320)
+
+Rule 7 live on 2026-27: 3 groups, 2 won (1.1 expected), +57.7% (one group
+before the fill). `m7opp5`: 2 groups, both won, +0.67 units a day v live,
+p(worse) 0.00 on 6 legs; pooled with 2025-26, 41 groups v live's 47, +35%
+v +24%, ahead in 2 of 2 seasons, p(worse) 0.244 on 123 legs. Still a thin
+check season (the fixtures run to the ESPN cache's last day, about 8 Nov),
+but no longer an empty one. No variant changes: `m7opp5` still waits on 100
+pool legs (`claude/card-m7opp-2026-11-15.md`).
+
 ## Not changed
 
 Any model constant, `calibration.json`, `home-advantage.json`, any Card
