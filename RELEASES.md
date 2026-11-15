@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-7: The opposition's price on the model's picks, replayed (tag pending)
+
+**What changed:** nothing on the page or the live Card. Rule 6's opposition condition (the other side priced 9+), the one Card condition that held in all five football-data seasons, was not carried over when the Card became the model's own picks on 11 Nov: `model_fault` never read it, and the first rule 11 group took VVV-Venlo with the opposition at 4.83 (lost). `groupings.CARD_MODEL_OPP_MIN` (empty, so live is unchanged) now lets the replay put it back, and two variants are pre-registered: `m7opp9` (9+) and `m7opp5` (5.0, the Edge flag's floor), on the pool nightly and on the five football-data seasons (`cardM7`).
+
+**Evidence:** first pool and archive read (11 Sep to 14 Nov): live 20 groups, 8 won, -1%; `m7opp5` 11 groups, 6 won, +42%, +0.76 units a day v live, p(worse) 0.07 on 33 legs (gate 100); `m7opp9` one group. The football-data side runs in CI. `claude/card-m7opp-2026-11-15.md`. 5 tests in `tests/test_card_m7opp.py`; suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_m7opp.py`, `claude/card-m7opp-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any live `CARD_*` rule, `CARD_RULE`, the model, the page.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-5: The week behind shows only games a bookmaker priced; the Analysis page brought up to date
 
 **What changed:** Douglas: "make sure all games were a game / league available to bet on", and "update the analysis page with the latest context of the model".

@@ -1623,6 +1623,15 @@ CARD_MODEL_RULE = True
 # The edge the model must have over the bookmakers' chance on a Card pick
 # under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
 CARD_MODEL_EDGE = 0.0
+# 15 Nov 2026 (claude/card-m7opp-2026-11-15.md): the opposition's price as a
+# condition on the model's own picks. Rule 6's opposition 9+ is the one Card
+# condition that held in all five football-data seasons (511 legs, 83.8% v
+# 76.2% quoted), but model_fault never read it, so under rule 7 the Card took
+# VVV-Venlo (opposition 4.83) and the like. Empty: live unchanged. The
+# variants m7opp9 and m7opp5 (tools/card_replay.py, card_legs_history.py
+# cardM7) set it, pre-registered before any result; a live change needs the
+# gate. Football only, as for CARD_OPP_MIN.
+CARD_MODEL_OPP_MIN = {}
 # 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
 # kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
 # replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
@@ -1891,6 +1900,10 @@ def model_fault(l):
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
     if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
         return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    omin = CARD_MODEL_OPP_MIN.get(l.get("sport"))
+    if omin:
+        if not l.get("opp"): return f"{l['pick']}: no bookmaker price for the opposition"
+        if l["opp"] < omin: return f"{l['pick']}: the opposition is priced {l['opp']:.2f}, under {omin:g}"
     return None
 
 def as_model(l):
