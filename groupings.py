@@ -3003,6 +3003,10 @@ def grade(now=None):
                        # every other kind), so the record reads at the page's stakes too.
                        "stake": g.get("stake") or 1,
                        "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
+                       # 15 Nov 2026: the two days of a two-day group (CARD_SPAN) and
+                       # the group's basis travel too. span was dropped here, so
+                       # cardSpan tallied 0 groups with 14 Nov's two-day group on file.
+                       "span": g.get("span"), "basis": g.get("basis"),
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2),
                        "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
                        "legsWon": sts.count("won"), "legsLost": sts.count("lost"),

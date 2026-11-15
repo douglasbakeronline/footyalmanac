@@ -383,7 +383,7 @@ def book_vs_lines(vb):
     return out
 
 
-def live_days_section(archive="groupings-archive", today_=None, days=14):
+def live_days_section(archive="groupings-archive", today_=None, days=14, record=None):
     """13 Nov 2026: the live Card's own output, day by day. The Card has built
     nothing since 10 Nov (rule 6's last group; rules 7 to 11 went live on
     11 Nov), and nothing in the review said so: the replay tables read rules
@@ -416,6 +416,21 @@ def live_days_section(archive="groupings-archive", today_=None, days=14):
              f"last group published for {last or 'no day on file'}."]
     rules = sorted({g['rule'] for d in span for g in got.get(d, [])})
     if rules: lines[-1] += " Rules: " + ", ".join(str(r) for r in rules) + "."
+    # 15 Nov 2026: two-day groups (CARD_SPAN, 12 Nov) named, and the record of
+    # the model's-picks Card (CARD_RULE 7 on, 11 Nov) on its own, so the review
+    # says whether the Card as it is now built is landing, not the mix of rules
+    two = sum(1 for d in span for g in got.get(d, []) if g.get("span"))
+    if two: lines[-1] += f" Two-day groups (`CARD_SPAN`): {two}."
+    rec = load("groupings-record.json") if record is None else record
+    by = {int(k): v for k, v in (rec.get("cardByRule") or {}).items() if str(k).isdigit() and int(k) >= 7}
+    if by:
+        n = sum(v.get("groups", 0) for v in by.values()); done = sum(v.get("settled", 0) for v in by.values())
+        won = sum(v.get("won", 0) for v in by.values()); exp = sum(v.get("expected", 0) for v in by.values())
+        us = sum(v.get("unitsStaked", 0) for v in by.values()); ur = sum(v.get("unitsReturned", 0) for v in by.values())
+        line = (f"The model's-picks Card (rules {', '.join(str(r) for r in sorted(by))}, from 11 Nov): {n} group(s), "
+                f"{done} settled, {won} won v {exp:.2f} expected")
+        line += f", {pct(ur / us - 1)} at the page's stakes." if us else "; none settled yet."
+        lines.append(line)
     if run >= 3:
         lines.append(f"**{run} days running with no Card group (to {span[-1]}).** Empty days stay empty by Douglas's decision "
                      "(11 Nov, `CARD_FILLER` False); the funnel below names the condition that costs them, and every volume "

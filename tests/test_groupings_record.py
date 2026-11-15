@@ -212,3 +212,19 @@ class Stakes(unittest.TestCase):
         rec = graded([card("Card 2x", "Day", ["A", "B", "C"])], ["won"] * 3)
         k = rec["card"]
         self.assertEqual((k["unitsStaked"], k["unitsReturned"]), (k["staked"], k["returned"]))
+
+
+class Span(unittest.TestCase):
+    """15 Nov 2026: a two-day group (CARD_SPAN) keeps its span on the graded
+    row, so cardSpan counts it (it tallied 0 with 14 Nov's group on file)."""
+    def test_two_day_group_is_tallied_as_one(self):
+        a = card("Card 2x", "Day", ["A", "B", "C"], span=["2026-10-26", "2026-10-27"], basis="model")
+        b = card("Card 2x", "Day", ["D", "E", "F"])
+        rec = graded([a, b], ["won"] * 6)
+        self.assertEqual(rec["cardSpan"]["groups"], 1)
+        self.assertEqual(rec["cardSpan"]["won"], 1)
+        self.assertEqual(rec["card"]["groups"], 2)            # still in the Card record
+        rows = rec["days"][0]["groups"]
+        self.assertEqual(rows[0]["span"], ["2026-10-26", "2026-10-27"])
+        self.assertEqual(rows[0]["basis"], "model")
+        self.assertIsNone(rows[1]["span"])
