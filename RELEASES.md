@@ -5,6 +5,22 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-2: the Scale tab: Daily List winners with a second condition added (tag pending)
+
+**What changed:** a new tab, **Scale**, third in the bar after Bets (Douglas, 14 Nov 2026: "scaling the odds and even reducing the stake"). A Scale pick is a Daily List pick at the list's own bar with one more condition: football to win with both teams scoring, shown only where William Hill prices that bet; tennis to win in straight sets. Each UK day gets a threefold, fourfold and fivefold of the picks most likely to land, when there are that many. The tab opens with the record and Scale at a glance, a line of dots a day (won and landed, won only, lost, to play, not priced at Hill), then the day's list with each pick's winner chance, Scale chance, Hill's price and the price it needs, the groups, the leagues Hill prices and a scoreboard. New `scale.py` builds, archives (`scale-archive/`) and grades it on every deploy.
+
+**Why:** Douglas wants bigger prices from smaller groups and smaller stakes than a long winners' accumulator, without lowering the bar on the winner, and wants the tracking visible. His feedback on the mock-up was that several leagues on it are not at William Hill, so the football list is cut to what Hill prices, read from the price feed on every build.
+
+**Evidence:** football Daily List picks in leagues Hill prices, before the tab: 43, 35 won (81%), 14 with both scoring (33%). Tennis picks at 75%+: 243, 213 won (88%), 160 in straight sets (66%). First day (15 Nov): 11 football list picks, 2 priced at Hill, 9 left off, no group; both Hill prices are under what the model's chance needs (2.80 v 3.39, 3.50 v 4.50), and the tab says so. Football alone is about two picks a day, so days without a group will be common until the other sports' margin bets are added.
+
+**Tested:** `tests/test_scale.py` (23 cases: straight sets from a score, the band rate, nested groups, what freezes at a start, grading); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build (no page errors, no sideways scroll).
+
+**Files:** `scale.py`, `index.html`, `tests/test_scale.py`, `.github/workflows/deploy.yml` (run it, archive `scale-archive/`, copy `scale.js` / `scale.json` to the site), `.gitignore`, `agents/pick_task.py`, `agents/open_pr.sh` (protected path), `claude/scale-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any model, the Daily List, the Card, Bets. Prices feed no model; they only decide which football picks the Scale list shows.
+
+**Roll back:** `git revert` the merge commit. `scale-archive/` can stay.
+
 ## 2026-11-15: two-day Card groups counted in the record; the review reads the model's-picks Card on its own (tag pending)
 
 **What changed:** `groupings.grade` now carries a group's `span` (and `basis`) onto its graded row. It dropped them, so `groupings-record.json` `cardSpan` tallied 0 groups with the first two-day group on file (14 Nov: VVV-Venlo, Pistoiese, Philadelphia 76ers, 2.36). The nightly Card review's live section now counts two-day groups in its window and adds one line for the Card as it is built today: the groups under `CARD_RULE` 7 and later (the model's own picks, from 11 Nov) with settled, won v expected and the return at the page's stakes, read from `cardByRule`.
