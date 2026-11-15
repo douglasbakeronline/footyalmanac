@@ -6,6 +6,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-daily-list-bar: Daily List bar replayed again, no change (tag pending)
+
+**What changed:** nothing for a reader. A dated replay of the Daily List league bar is added to `claude/daily-list.md`.
+
+**Evidence:** `tools/list_bar_replay.py`, fit 2025/26 (6,451 win picks): at 70/75/77.5/80/82.5/85% n=313/168/130/86/56/35, hit 78.3/81.5/82.3/81.4/78.6/65.7%; bootstrap against 80%: only 85% differs (-15.4, -25.8 to -6.8). Check 2026/27: 11 calls at 80% (81.8%), 31 at 75% (83.9%); all intervals span zero or rest on too few picks. No league has 30 calls.
+
+**Files:** `claude/daily-list.md`, `RELEASES.md`.
+
+**Not changed:** `LIST_MIN`, `build_tennis.LIST_MIN`, any per-league bar.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-23: calibration by band and sport rerun: note only (tag pending)
 
 **What changed:** a dated note, `claude/calibration-rerun-2026-11-15.md`. No code or model change.
