@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-13: England Championship league-specific calibration curve rejected (tag pending)
+
+**What changed:** nothing for a reader. A dated note and a reproducible tool record a rejected test: an en.2-only calibration curve.
+
+**Evidence:** best of 48 curves on 2025-26 (a 1.3, b -0.6) gains 0.0011 log loss (p(worse) 0.20); confirm 2026-27 only 95 fixtures (gate 250), -0.0026 (p 0.20); 2024-25 +0.0000, 2023-24 -0.0007 (p 0.33). Fails the enoughData gate and is unstable by season.
+
+**Files:** `claude/championship-calibration-2026-11-11.md`, `tools/championship_calibration.py`, `RELEASES.md`.
+
+**Not changed:** no model number, `calibration.json`, engine or page.
+
+**Roll back:** `git revert` the commit; nothing depends on it.
+
 ## 2026-11-15-12: the office agents and Elena run on the Max-plan token when it is set (tag pending)
 
 **What changed:** `office-agents.yml` and `ceo.yml` pass only `CLAUDE_CODE_OAUTH_TOKEN` to the Claude action when that secret is set; the API key is passed only when it is the sole key. Before, both were passed and the action always used the API key.
