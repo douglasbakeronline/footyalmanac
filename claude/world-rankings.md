@@ -73,3 +73,10 @@ Read the same day (deploy run 43715171219): both overview forms answer
 scan could not find a release by design. The overview's rows are now the
 release (`_fifa_latest`), taken when newer than the file, 80%+ of its teams
 and the same top 20 (`_same_list`); the file keeps its id.
+
+Third read (run 43716339474): the overview's `rankings` has no parsable rows
+either, so the API holds nothing after 20 Jul in the forms tried. The build
+now also reads the public page `/fifa-rankings/world-ranking/men` (`_fifa_page`):
+its `dateId=id` links go to the front of the scan and its embedded JSON's
+longest `rankingItem` list is a release under the same checks. Its log line
+("FIFA ranking: page N chars ...") says what the page held if it is not.
