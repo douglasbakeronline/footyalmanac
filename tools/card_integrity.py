@@ -28,6 +28,12 @@ Checks:
                         tools/card_replay.py rebuilt no live Card on any day
                         under rule 6; the 30 Nov review is only as good as
                         this check.
+  card-pick-twice       one fixture in two Card groups the same day, or in a
+                        two-day group and the next day's own group (15 Nov
+                        2026: Pistoiese and the 76ers were in 14 Nov's
+                        two-day group and a 15 Nov group built after
+                        midnight). Read from TWICE_FROM, the day the build
+                        began carrying the day before's two-day picks.
 """
 import gzip, json, os, sys
 from datetime import datetime, timedelta, timezone
@@ -36,6 +42,7 @@ sys.path.insert(0, HERE)
 import groupings as G
 
 now = datetime.now(timezone.utc)
+TWICE_FROM = "2026-11-16"   # groupings.span_held, 15 Nov 2026; 15 Nov's own double is in claude/card-span-held-2026-11-15.md
 PRICED_FROM = "2026-11-10"   # archive_pool writes `priced` from the 9 Nov 2026 release; rows first written before carry none
 
 
@@ -94,6 +101,24 @@ def needs_opp(g, day, l):
     return l.get("sport") == "football" and not l.get("est") and bool(l.get("odds")) and not l.get("opp")
 
 
+def picks_twice(groups_by_day, since=TWICE_FROM):
+    """Fixtures held by two Card groups on one day (a two-day group counts on
+    both its days). Wider-rule and paper groups are not the Card."""
+    held = {}
+    for day, groups in groups_by_day.items():
+        for g in groups or []:
+            if not str(g.get("name", "")).startswith("Card"): continue
+            for d in (g.get("span") or [day]):
+                if d < since: continue
+                for l in g.get("legs") or []:
+                    held.setdefault((d, l.get("event")), []).append((day, g.get("name"), g.get("seq"), g.get("first")))
+    out = []
+    for (d, ev), gs in sorted(held.items()):
+        if len(set(gs)) > 1:
+            out.append({"check": "card-pick-twice", "date": d, "event": ev, "groups": len(set(gs))})
+    return out
+
+
 def main():
     rec = load("groupings-record.json", {}); findings = []
     idx = G.results_index()
@@ -132,6 +157,7 @@ def main():
         if a and day not in by_day: by_day[day] = a.get("groups", [])
     cov, (have, total) = card_coverage(by_day)
     findings += cov
+    findings += picks_twice(by_day)
     if total: print(f"Card legs since {PRICED_FROM} the pool can replay at a real price: {have} of {total}")
     for f in findings: print(" ".join(f"{k}={v}" for k, v in f.items()))
     print(f"{len(findings)} finding(s)")

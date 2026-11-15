@@ -84,6 +84,25 @@ class Span(unittest.TestCase):
         self.assertIsNotNone(g)
         self.assertIn("h0", [l["pick"] for l in g["legs"]])
 
+    def test_day_before_span_held_after_midnight(self):
+        # 15 Nov 2026: the first build of a day no longer builds the day
+        # before, so the day before's two-day group must still hold its picks
+        first = G.build_card(self.L, D1.isoformat(), NOW, log=[])
+        locked = [dict(first[0], locked=True)]
+        held = G.span_held(D2.isoformat(), archived=locked)
+        self.assertEqual(held, {l["event"] for l in first[0]["legs"]})
+        later = NOW + timedelta(hours=17)                     # just after midnight, D2
+        g2 = G.build_card(self.L, D2.isoformat(), later, log=[], taken=held)
+        self.assertFalse({l["event"] for g in g2 for l in g["legs"]} & held)
+
+    def test_span_held_reads_published_and_ignores_other_days(self):
+        first = G.build_card(self.L, D1.isoformat(), NOW, log=[])
+        self.assertEqual(G.span_held(D2.isoformat(), prev=first, archived=[]),
+                         {l["event"] for l in first[0]["legs"]})
+        self.assertEqual(G.span_held((D2 + timedelta(days=1)).isoformat(), prev=first, archived=[]), set())
+        plain = [dict(first[0], span=None)]
+        self.assertEqual(G.span_held(D2.isoformat(), prev=plain, archived=[]), set())
+
 
 if __name__ == "__main__":
     unittest.main()
