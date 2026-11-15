@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-2: Away and Neutral marks on college picks
+
+**What changed:** every college basketball and college football row at 70%+ whose pick is away from home, or on a neutral court, carries an `Away` or `Neutral` chip (Daily List, reserve, sport tabs, pinned rows), and the reserve's summary line counts them. `sports.wary` writes the mark into the archive; `index.html` `sideWary` draws it from the row. `sports-record.json` gains `bySide` (landed v quoted by side per college sport at 70%+) with a pre-registered tripwire: 100 away picks two standard errors under quote takes that sport's away picks out of the reserve.
+
+**Evidence:** `claude/college-side-mark-2026-11-15.md`. Replay (live parameters, 70%+, Aug-Dec, both test seasons): college basketball home picks 88.8% v 83.5% quoted (z +6.5), away 76.0% v 77.3%, neutral 74.9% v 78.3%; college football home 84.5% v 81.0%, away 79.9% v 78.0%. Live: college basketball away 11 of 21, neutral 9 of 16; college football away 36 of 54 (67% v 78%, z -2.0). The carried-rating idea (sides with an early loss) was tested on the same replay and is not a signal. Tests in `tests/test_sports.py`; suite and `nametest.py` pass; page checked in headless Chromium.
+
+**Files:** `sports.py`, `index.html`, `tests/test_sports.py`, `claude/college-side-mark-2026-11-15.md`, `claude/daily-list-losses-2026-11-14.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any probability, bar, list or reserve membership, the order, any constant in `sports.json`.
+
+**Roll back:** `git revert` the merge commit; or `WARY_SPORTS = set()` in `sports.py` and `index.html` to drop the mark alone.
+
 ## 2026-11-15-2: the Scale tab: Daily List winners with a second condition added (tag pending)
 
 **What changed:** a new tab, **Scale**, third in the bar after Bets (Douglas, 14 Nov 2026: "scaling the odds and even reducing the stake"). A Scale pick is a Daily List pick at the list's own bar with one more condition: football to win with both teams scoring, shown only where William Hill prices that bet; tennis to win in straight sets. Each UK day gets a threefold, fourfold and fivefold of the picks most likely to land, when there are that many. The tab opens with the record and Scale at a glance, a line of dots a day (won and landed, won only, lost, to play, not priced at Hill), then the day's list with each pick's winner chance, Scale chance, Hill's price and the price it needs, the groups, the leagues Hill prices and a scoreboard. New `scale.py` builds, archives (`scale-archive/`) and grades it on every deploy.
