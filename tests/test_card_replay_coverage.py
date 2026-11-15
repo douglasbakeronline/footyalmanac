@@ -63,7 +63,8 @@ class TennisVariants(unittest.TestCase):
         self.assertTrue(G.CARD_SPORTS_OFF <= CR.VARIANTS["notennis"]["CARD_SPORTS_OFF"])
         self.assertEqual(CR.VARIANTS["tennis80"]["CARD_SPORT_MIN"]["tennis"], 0.80)
         self.assertNotIn("tennis", G.CARD_SPORTS_OFF)
-        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.75)
+        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.85)
+        self.assertEqual(CR.VARIANTS["tennis75"]["CARD_SPORT_MIN"]["tennis"], 0.75)
 
     def test_patch_reaches_card_fault_and_is_restored(self):
         leg = {"sport": "tennis", "pick": "P", "pModel": 0.78, "hit": 0.78}

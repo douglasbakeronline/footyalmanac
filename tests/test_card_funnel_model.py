@@ -40,7 +40,8 @@ class ModelKeys(unittest.TestCase):
         self.assertEqual(self.key(dict(nba(1), sport="cfb")), "sport-off")
         self.assertEqual(self.key(dict(nba(1), timeEst=True)), "no-time")
         self.assertEqual(self.key(dict(nba(1), est=True)), "no-price")
-        self.assertEqual(self.key(football(1, code="af.187")), "league")      # was read as price-range
+        with mock.patch.object(G, "CARD_CORE_ONLY", True):   # the league limit (off live from 11 Nov 2026)
+            self.assertEqual(self.key(football(1, code="af.187")), "league")      # was read as price-range
         self.assertEqual(self.key(dict(nba(1), odds=2.40)), "price-range")
         self.assertEqual(self.key(dict(nba(1), sport="tennis", pModel=0.70)), "sport-floor")
         self.assertEqual(self.key(dict(nba(1), pModel=0.58, fair=0.50)), "model-floor")

@@ -87,10 +87,18 @@ def funnel_section(today_=None, days=14):
         fn = CF.funnel(by, unpriced)
     except Exception as e:   # advisory: never stop the review over it
         return [f"## Card funnel", f"Not read: {type(e).__name__}: {e}", ""]
+    try:
+        # 12 Nov 2026: the legs a missing price alone kept off. From 10 Nov
+        # only, when every leg began carrying its first real price; before
+        # that an estimate in the archive is the archive's gap, not the feed's.
+        gaps = CF.gap_lines(CF.price_gaps(max(since, "2026-11-10"), None, today_ or today))
+    except Exception as e:
+        gaps = [f"Price gaps not read: {type(e).__name__}: {e}", ""]
     return ([f"## Card funnel from {since} (the pool to its last file, each leg's first condition failed)", ""]
             + CF.report_lines(fn)
             + ["A volume read: a condition that costs groups is not a reason to drop it unless the replay says the extra groups pay "
-               "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""])
+               "(card_replay.py variants, the 30 Nov review). Legs archived before 10 Nov are read at their last price.", ""]
+            + ["### Legs kept off by a missing price (from 10 Nov)", ""] + gaps)
 
 
 def edge_section(since="2026-11-11"):
@@ -122,6 +130,39 @@ def edge_section(since="2026-11-11"):
                   "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
 
 
+def markets_section(rec):
+    """14 Nov 2026: the football markets beyond the match winner
+    (markets.py, markets-record.json): landed against the model, the return
+    at the best UK price on live priced picks, and each market's gate. A
+    pass is said in bold; nothing here changes the page."""
+    if not rec or not rec.get("markets"):
+        return []
+    lv, rp = rec.get("live") or {}, rec.get("replay") or {}
+    g = rec.get("gate") or {}
+    out = [f"## Football markets ({lv.get('fixtures', 0)} fixtures priced and graded"
+           + (f" from {lv['from']}" if lv.get("from") else "") + f"; {rp.get('fixtures', 0)} replayed without prices)", "",
+           "| market | landed v model (all) | priced picks | landed v bookies | average price | best price | William Hill | value rule | every pick |",
+           "|---|---|---|---|---|---|---|---|---|"]
+    pc = lambda x: f"{x * 100:+.1f}%" if x is not None else ""
+    passed = []
+    for mk, m in rec["markets"].items():
+        a, l, gt = m.get("all") or {}, m.get("live") or {}, m.get("gate") or {}
+        if not a.get("n"): continue
+        def verdict(x):
+            if not x or not x.get("n"): return "no picks yet"
+            if x["verdict"] == "wait": return f"{x['n']} of {x['need']}" + (f", {pc(x.get('retBest'))}" if x.get("retBest") is not None else "")
+            return f"{'**passes**' if x['verdict'] == 'pass' else 'fails'}: {x['n']} picks, {pc(x.get('retBest'))}, p(loss) {x.get('pLoss')}"
+        if (gt.get("value") or {}).get("verdict") == "pass": passed.append(m["name"])
+        out.append(f"| {m['name']} | {a['rate'] * 100:.1f}% v {a['quoted'] * 100:.1f}% (n {a['n']}, z {a.get('z', 0):+.1f}) | {l.get('priced', 0)} | "
+                   + (f"{l['fairRate'] * 100:.0f}% v {l['fair'] * 100:.0f}%" if l.get("fairN") else "") + f" | {pc(l.get('ret'))} | {pc(l.get('retBest'))} | "
+                   + (f"{pc(l.get('retHill'))} (n {l['atHill']})" if l.get("atHill") else "") + f" | {verdict(gt.get('value'))} | {verdict(gt.get('all'))} |")
+    if passed:
+        out.append("**Passed the value gate: " + ", ".join(passed) + ". Ready to be offered on the Bets tab (a release, Douglas's call).**")
+    return out + [f"Value rule: the model {int((g.get('edge') or 0.05) * 100)}+ points above the bookmakers' fair chance. A rule passes at "
+                  f"{g.get('n', 150)}+ settled priced picks that landed above the bookmakers, a positive return at the best UK price and "
+                  f"p(loss) {g.get('pLoss', 0.1)} or less (markets.py, claude/football-markets-2026-11-14.md).", ""]
+
+
 def list_book_section(r):
     """10 Nov 2026: the Daily List at the book Douglas places with
     (groupings.list_at_book): settled picks it priced, landed and the return
@@ -142,6 +183,20 @@ def list_book_section(r):
 
 
 CONTEXT_REVIEW_AT = 30   # "against" picks settled before the veto is judged (claude/context-check-2026-11-11.md)
+
+
+def context_pause_line(ledger, now=None):
+    """14 Nov 2026: the context check pauses itself when the API key reaches
+    its usage limit (context_review.PAUSE_KEY in the ledger). Said in bold,
+    because no Card pick is read while it lasts and nothing vetoes."""
+    from datetime import datetime as _dt, timezone as _tz
+    t = (ledger or {}).get("pausedUntil")
+    if not t: return []
+    try: until = _dt.fromisoformat(str(t).replace("Z", "+00:00"))
+    except ValueError: return []
+    if until <= (now or _dt.now(_tz.utc)): return []
+    return [f"**The context check is paused until {t}: the API key reached its usage limit. No pick is read and nothing "
+            "is vetoed until then; raising the limit in the Anthropic console resumes it on the next build.**", ""]
 
 
 def context_section(r):
@@ -172,6 +227,34 @@ def context_section(r):
     else:
         out.append(f"The veto is judged at {CONTEXT_REVIEW_AT} settled \"against\" picks ({n} so far): if they land at or above "
                    "the model's number, `CARD_CONTEXT = False`.")
+    return out + [""]
+
+
+BRIEF_LATE = 60    # minutes: a slot whose median push is later than this is named in bold
+
+
+def briefing_section(st, days=14, today_=None):
+    """13 Nov 2026: how late each briefing push went, from
+    groupings-archive/briefed.json "log" (notify.mark_sent). The pushes come
+    from the first build at or after each slot's hour, and GitHub runs
+    scheduled builds late at busy times (12 Nov lunch 2h18 late, night 1h40),
+    so a late slot is a late price for Douglas. Health only."""
+    from datetime import date as _d, timedelta as _td
+    log = [e for e in ((st or {}).get("log") or []) if isinstance(e, dict)]
+    if today_: log = [e for e in log if e.get("date", "") >= (_d.fromisoformat(today_) - _td(days=days)).isoformat()]
+    if not log: return []
+    out = [f"## Briefing pushes (last {days} days, minutes after the slot's hour)", "",
+           "| slot | sent | median | worst | skipped |", "|---|---|---|---|---|"]
+    late = []
+    for name in ("morning", "lunch", "evening", "night"):
+        sent = sorted(e["late"] for e in log if e.get("slot") == name and e.get("late") is not None)
+        skip = sum(1 for e in log if e.get("slot") == name and e.get("skipped"))
+        if not sent and not skip: continue
+        med = sent[len(sent) // 2] if sent else None
+        out.append(f"| {name} | {len(sent)} | {med if med is not None else 'n/a'} | {sent[-1] if sent else 'n/a'} | {skip} |")
+        if (med is not None and med > BRIEF_LATE) or skip: late.append(name)
+    out.append(f"**Late or skipped: {', '.join(late)}. The deploy crons run late; a backup cron (deploy.yml, an owner change) is the fix.**"
+               if late else f"Every slot's median push within {BRIEF_LATE} minutes, none skipped.")
     return out + [""]
 
 
@@ -216,11 +299,151 @@ def rule6_lines(rep):
                         for v, r in fam) + "."]
 
 
+def fd_side(hist, v):
+    """One variant's football-data read, season by season (12 Nov 2026): the
+    rule 7 variants are paired by day against live in each replayed season
+    (`card_legs_history.py` `cardM7Paired`, committed by tune.yml on Mondays).
+    Returns [(season, paired)] in file order, or [] when none is on file."""
+    out = []
+    for k, r in ((hist or {}).get("seasons") or {}).items():
+        x = (r.get("cardM7Paired") or {}).get(v) if isinstance(r, dict) else None
+        if x: out.append((r.get("season") or k, x, k))
+    return out
+
+
+def fd_beats(x):
+    """A football-data season the variant beats live on, at the gate's p(worse)."""
+    return (not x.get("identical")) and (x.get("perDay") or 0) > 0 and x.get("pWorse") is not None and x["pWorse"] <= GATE_P
+
+
+def fd_gate_lines(rep, hist):
+    """12 Nov 2026: both sides of the gate in one place. CLAUDE.md's rule
+    needs a variant to beat live on the pool (p(worse) <= 0.30 on 100+ legs)
+    and on both football-data seasons (fit and check). Until now the review
+    showed only the pool, so a pool lead the seasons had already refused
+    (m7under5 on 12 Nov: pool p(worse) 0.014, football-data behind in all
+    five seasons, pooled 0.99) read as a variant to watch. Rule 7 variants
+    only: the rule 6 family is not paired on football-data."""
+    vs = rep.get("variants") or {}
+    rows = [(v, r, fd_side(hist, v)) for v, r in vs.items() if v != "live" and r.get("vsLivePerDay") is not None]
+    rows = [x for x in rows if x[2]]
+    if not rows:
+        return ["Football-data side: no paired season read on file yet (`cardM7Paired` in card-legs-history.json, tune.yml on Mondays).", ""]
+    seasons = [s for s, _, _ in rows[0][2]]
+    out = ["### Both sides of the gate (the rule 7 variants)", "",
+           "| variant | pool v live / day | pool p(worse) | pool legs | " + " | ".join(f"{s} v live / day, p(worse)" for s in seasons) + " | gate |",
+           "|---|---|---|---|" + "---|" * len(seasons) + "---|"]
+    passed = []
+    for v, r, fd in rows:
+        by = {k: x for _, x, k in fd}
+        cells = []
+        for _, x, _ in fd:
+            cells.append("identical" if x.get("identical") else f"{x.get('perDay', 0):+.2f}, {x.get('pWorse')}")
+        pool_ok = (r.get("pWorse") is not None and r["pWorse"] <= GATE_P and gate_legs(r) >= GATE_LEGS and (r.get("vsLivePerDay") or 0) > 0)
+        fd_ok = all(fd_beats(by.get(k) or {}) for k in ("fit", "check")) and "fit" in by and "check" in by
+        if all(x.get("identical") for _, x, _ in fd):
+            verdict = "no football-data read (identical to live there)"
+        elif pool_ok and fd_ok:
+            verdict = "**passes**"; passed.append(v)
+        else:
+            why = []
+            if (r.get("vsLivePerDay") or 0) <= 0: why.append("behind on the pool")
+            elif r.get("pWorse") is None or r["pWorse"] > GATE_P: why.append(f"pool p(worse) {r.get('pWorse')}")
+            elif gate_legs(r) < GATE_LEGS: why.append(f"pool {gate_legs(r)} legs of {GATE_LEGS}")
+            if not fd_ok:
+                bad = [s for s, x, k in fd if k in ("fit", "check") and not fd_beats(x)]
+                why.append("football-data " + (", ".join(bad) if bad else "fit and check not both on file"))
+            verdict = "fails: " + ", ".join(why)
+        out.append(f"| {v} | {r['vsLivePerDay']:+.2f} | {r.get('pWorse') if r.get('pWorse') is not None else 'identical'} | {gate_legs(r)} | " + " | ".join(cells) + f" | {verdict} |")
+    refused = [v for v, r, fd in rows if (r.get("vsLivePerDay") or 0) > 0 and any((not x.get("identical")) and (x.get("perDay") or 0) < 0 for _, x, _ in fd)]
+    if refused:
+        out.append("Ahead on the pool but behind live on football-data in at least one season, so not a candidate however the pool reads: " + ", ".join(refused) + ".")
+    if passed:
+        out.append("**Full gate passed: " + ", ".join(passed) + ". The next build session changes the rule (CARD_RULE bump with these numbers, note, release).**")
+    return out + [""]
+
+
+def book_vs_lines(vb):
+    """13 Nov 2026 (#156): each UK book against the Card's own book on the
+    picks both priced, paired, and the best UK price against it. A side is
+    read only on 50+ paired picks at day-resampled p <= 0.10. The Card's book
+    is Douglas's account, so a book that pays more is a question for him."""
+    if not vb or not vb.get("books"): return []
+    base, out, ahead = vb["base"], [], []
+    for b, r in sorted(vb["books"].items(), key=lambda kv: (kv[0] == "best UK price", -kv[1]["first"]["meanPct"])):
+        f, se = r["first"], r.get("settled") or {}
+        line = (f"- {b} v {base}, the same picks: {f['meanPct']:+.2f}% a pick at the first price (n {f['n']} over {f.get('days', '?')} days, ahead {f['aheadShare'] * 100:.0f}%, behind {f['behindShare'] * 100:.0f}%"
+                + (f", p {f['p']:.3f}" if f.get("p") is not None else "") + f"; {f['read']}), about {f['group3Pct']:+.1f}% on a three-pick group")
+        if se.get("n"): line += f"; settled singles {se['returnBasePct']:+.2f}% at {base} v {se['returnPct']:+.2f}% (n {se['n']})"
+        if r.get("sports"): line += "; " + ", ".join(f"{k} {v}" for k, v in r["sports"].items())
+        out.append(line)
+        if b != "best UK price" and f["read"].endswith("pays more") and f["read"].startswith(b) and se.get("read", "").startswith(b): ahead.append((b, f))
+    for b, f in ahead:
+        out.append(f"- **{b} pays more than {base} on {f['n']} paired picks (about {f['group3Pct']:+.1f}% a Card 2x). `CARD_BOOK` is Douglas's book, so this is his call, not the session's.**")
+    return out
+
+
+def live_days_section(archive="groupings-archive", today_=None, days=14, record=None):
+    """13 Nov 2026: the live Card's own output, day by day. The Card has built
+    nothing since 10 Nov (rule 6's last group; rules 7 to 11 went live on
+    11 Nov), and nothing in the review said so: the replay tables read rules
+    against each other, not what the page published. Counts the groups in each
+    day archive (the archive holds days that published a group) over the last
+    `days` finished days and the run of empty days to yesterday. A tally of the
+    record, nothing fitted (Rule 1)."""
+    import re as _re
+    from datetime import date as _date, timedelta as _td
+    end = _date.fromisoformat(today_ or today) - _td(days=1)
+    span = [(end - _td(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+    got, last = {}, None
+    files = sorted(f for f in os.listdir(archive) if _re.fullmatch(r"\d{4}-\d{2}-\d{2}\.json", f)) if os.path.isdir(archive) else []
+    for f in files:
+        d = f[:-5]
+        if d > end.isoformat(): continue
+        # the full-rule Card only: not the wider-rule filler (`wide`), the paper Model card or retired kinds
+        gs = [g for g in (load(os.path.join(archive, f)).get("groups") or [])
+              if str(g.get("name") or "").startswith("Card ") and not g.get("wide")]
+        if gs:
+            last = d
+            if d in got or d >= span[0]: got[d] = gs
+    run = 0
+    for d in reversed(span):
+        if d in got: break
+        run += 1
+    built = sum(1 for d in span if d in got)
+    lines = [f"## The live Card, {span[0]} to {span[-1]}", "",
+             f"Days with a group: {built} of {len(span)}; groups {sum(len(got.get(d, [])) for d in span)}; "
+             f"last group published for {last or 'no day on file'}."]
+    rules = sorted({g['rule'] for d in span for g in got.get(d, [])})
+    if rules: lines[-1] += " Rules: " + ", ".join(str(r) for r in rules) + "."
+    # 15 Nov 2026: two-day groups (CARD_SPAN, 12 Nov) named, and the record of
+    # the model's-picks Card (CARD_RULE 7 on, 11 Nov) on its own, so the review
+    # says whether the Card as it is now built is landing, not the mix of rules
+    two = sum(1 for d in span for g in got.get(d, []) if g.get("span"))
+    if two: lines[-1] += f" Two-day groups (`CARD_SPAN`): {two}."
+    rec = load("groupings-record.json") if record is None else record
+    by = {int(k): v for k, v in (rec.get("cardByRule") or {}).items() if str(k).isdigit() and int(k) >= 7}
+    if by:
+        n = sum(v.get("groups", 0) for v in by.values()); done = sum(v.get("settled", 0) for v in by.values())
+        won = sum(v.get("won", 0) for v in by.values()); exp = sum(v.get("expected", 0) for v in by.values())
+        us = sum(v.get("unitsStaked", 0) for v in by.values()); ur = sum(v.get("unitsReturned", 0) for v in by.values())
+        line = (f"The model's-picks Card (rules {', '.join(str(r) for r in sorted(by))}, from 11 Nov): {n} group(s), "
+                f"{done} settled, {won} won v {exp:.2f} expected")
+        line += f", {pct(ur / us - 1)} at the page's stakes." if us else "; none settled yet."
+        lines.append(line)
+    if run >= 3:
+        lines.append(f"**{run} days running with no Card group (to {span[-1]}).** Empty days stay empty by Douglas's decision "
+                     "(11 Nov, `CARD_FILLER` False); the funnel below names the condition that costs them, and every volume "
+                     "relief replayed so far (m7under5, m7legs2, pay25, with3x) failed the gate.")
+    return lines + [""]
+
+
 def main():
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
     f = integ.get("findings", [])
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
+    lines += live_days_section()
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
                   "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]
@@ -241,10 +464,17 @@ def main():
         cands = candidates(rep)
         if cands:
             lines += ["**Candidates beating live on the archive (p(worse) <= 0.30 on 100+ legs):** " + ", ".join(v for v, _ in cands) + ". A rule change still needs the football-data replay to agree on both seasons (tune.yml, Mondays), then CARD_RULE bumped with the numbers.", ""]
+        # 12 Nov 2026: a variant that built nothing is "ahead" only because live
+        # lost on those days (short, notennis, tennis80 read +0.44 a day on 0
+        # legs); it is named apart, not listed as one to watch
         near = [v for v, r in rep["variants"].items() if v != "live" and r.get("pWorse") is not None and r["pWorse"] <= 0.30
-                and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands]
+                and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands and gate_legs(r) > 0]
+        empty = [v for v, r in rep["variants"].items() if v != "live" and (r.get("vsLivePerDay") or 0) > 0 and not gate_legs(r)]
         if near:
             lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({gate_legs(rep['variants'][v])} legs)" for v in near) + ".", ""]
+        if empty:
+            lines += ["Built nothing on these days, so ahead of live only by live's losses (not a read): " + ", ".join(empty) + ".", ""]
+        lines += fd_gate_lines(rep, load("card-legs-history.json"))
     if pt.get("timing"):
         t = pt["timing"]
         lines += [f"## Price timing ({pt['legs']} Card-rule legs)", f"- first price to last pre-start price: drifted {t['drifted']}, shortened {t['shortened']}, unchanged {t['unchanged']}; mean move {t['meanMovePct']:+.2f}% ({t['read']})"]
@@ -257,6 +487,7 @@ def main():
         if pt.get("notStarted"): lines.append(f"- not started yet, left out until their last price is in: {pt['notStarted']} leg(s)")
         for b, r in sorted(pt.get("books", {}).items(), key=lambda kv: -kv[1]["vsAvgPct"]):
             lines.append(f"- {b}: {r['vsAvgPct']:+.2f}% v the average price, best price {r['bestShare'] * 100:.0f}% of the time (n {r['n']})")
+        lines += book_vs_lines(pt.get("vsBook"))
         for sp, r in (pt.get("bySport") or {}).items():
             # 9 Nov 2026 (#156): each sport apart; a book ranked on football says nothing about tennis or the NBA
             t = r["timing"]; best = max(r["books"].items(), key=lambda kv: kv[1]["vsAvgPct"]) if r.get("books") else None
@@ -289,13 +520,25 @@ def main():
         lines += ["## Legs by sport (the Card's full rule, the record)", "", "| sport | legs | landed | quoted | z | tripwire |", "|---|---|---|---|---|---|"]
         for sp, t in by.items():
             lines.append(f"| {sp} | {t['legs']} | {t['landed']} ({t['rate'] * 100:.0f}%) | {t['quoted'] * 100:.0f}% | {t['z'] if t['z'] is not None else 'n/a'} | {'**fired**' if t['tripwire'] else 'no'} |")
+        # 14 Nov 2026: a sport with its own floor (CARD_SPORT_MIN) is judged on
+        # the legs today's floor admits (`atFloor`), the row above is every leg.
+        for sp, t in by.items():
+            a = t.get("atFloor")
+            if a is None: continue
+            got = (f"{a['landed']} of {a['legs']} landed ({a['rate'] * 100:.0f}%) v {a['quoted'] * 100:.0f}% quoted, z {a['z'] if a['z'] is not None else 'n/a'}"
+                   if a["legs"] else "none yet")
+            lines.append(f"- {sp} at today's {t['floor'] * 100:.0f}% floor (the legs the sport-off test counts): {got}; "
+                         f"every leg {'would fire' if t.get('tripwireAll') else 'would not fire'} on its own.")
         fired = [sp for sp, t in by.items() if t["tripwire"]]
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
+    lines += context_pause_line(load("groupings-archive/context-ledger.json"))
     lines += context_section(load("groupings-record.json").get("cardContext"))
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()
+    lines += markets_section(load("markets-record.json"))
+    lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     body = "\n".join(lines)
     if already_posted(f"Card review {today}") and os.environ.get("FORCE_POST") != "1":

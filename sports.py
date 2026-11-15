@@ -42,6 +42,14 @@ PARAMS = os.path.join(HERE, "sports.json")
 DATA_JS = os.path.join(HERE, "sports-data.js")
 RECORD = os.path.join(HERE, "sports-record.json")
 RECORD_JS = os.path.join(HERE, "sports-record.js")
+# 14 Nov 2026 (Douglas: "are we storing every result against our prediction
+# so we can learn from it?"): every graded and void pick in full, as
+# record-graded.json is for football. sports-record.json keeps 14 days of
+# game rows for the page, so a pick older than that could not be looked at
+# one by one (October's rugby, NFL and college football list picks). Merged,
+# never trimmed: a row stays even if its history file later loses the game.
+GRADED = os.path.join(HERE, "sports-graded.json")
+GRADED_DROP = ("formH", "formA", "recordH", "recordA", "h2h", "eloH", "eloA", "gamesH", "gamesA", "hfa")
 
 ESPN_HOSTS = ["https://site.api.espn.com", "https://site.web.api.espn.com"]
 ESPN_HEADERS = {
@@ -91,6 +99,60 @@ LIST_FLOOR = {"cfb": 0.80}
 # 86.9%; in the Odds groups its legs landed 70.4% against 85.4% quoted.
 # Probabilities are unchanged. Remove a sport here to put it back.
 LIST_OFF = {"cfb"}
+
+
+# A college pick away from home, or on a neutral court, is marked Away or
+# Neutral on its row (15 Nov 2026, Douglas, after Saturday's reserve). The
+# replay, 70%+ picks, Aug-Dec, fit and check seasons: college basketball home
+# picks land 88.8% v 83.5% quoted (z +6.5), away 76.0% v 77.3%, neutral 74.9%
+# v 78.3% (z -1.3); college football home 84.5% v 81.0%, away 79.9% v 78.0%.
+# Live, 70%+: college basketball away 11 of 21 (52% v 79%), neutral 9 of 16;
+# college football away 36 of 54 (67% v 78%, z -2.0), home 94 of 117. So an
+# away or neutral college pick is one to weigh, not one to drop: probabilities
+# are unchanged, nothing is hidden. The record tallies them by side
+# (score(), "bySide"); the pre-registered line is below.
+WARY_SPORTS = {"ncaab", "cfb"}
+WARY_MIN = 0.70
+# Tripwire (pre-registered): when a sport's away picks at WARY_MIN reach
+# WARY_TRIP_N on the live record and sit WARY_TRIP_Z standard errors or more
+# under quote, away picks of that sport leave the reserve (a release, a note).
+WARY_TRIP_N, WARY_TRIP_Z = 100, -2.0
+
+
+def wary(sport, pick_home, neutral):
+    """The side mark for a college pick, or None."""
+    if sport not in WARY_SPORTS:
+        return None
+    if neutral:
+        return {"kind": "neutral", "label": "Neutral",
+                "why": "A college pick on a neutral court: in testing these land under their quote "
+                       "(college basketball 75% v 78%) while home picks land above it."}
+    if not pick_home:
+        return {"kind": "away", "label": "Away",
+                "why": "A college pick away from home: in testing these land as quoted while home picks "
+                       "land above it; on the live record they have landed under it."}
+    return None
+
+
+def by_side(graded):
+    """Landed v quoted by side for the WARY_SPORTS at WARY_MIN+, with the
+    tripwire read. A tally of the record, never a fit."""
+    out = {}
+    for sport in sorted(WARY_SPORTS):
+        rows = [r for r in graded if r["sport"] == sport and r["confidence"] >= WARY_MIN and r.get("ok") is not None]
+        sides = {}
+        for side in ("home", "away", "neutral"):
+            xs = [r for r in rows if (("neutral" if r.get("neutral") else "home" if r["pick"] == r["home"] else "away") == side)]
+            if not xs:
+                sides[side] = None
+                continue
+            n = len(xs); w = sum(bool(r["ok"]) for r in xs); q = sum(r["confidence"] for r in xs) / n
+            z = (w - q * n) / math.sqrt(max(q * (1 - q) * n, 1e-9))
+            sides[side] = {"n": n, "landed": w, "quoted": round(q, 4), "rate": round(w / n, 4), "z": round(z, 2)}
+        a = sides.get("away")
+        out[sport] = {**sides, "tripwire": bool(a and a["n"] >= WARY_TRIP_N and a["z"] <= WARY_TRIP_Z),
+                      "rule": {"min": WARY_MIN, "n": WARY_TRIP_N, "z": WARY_TRIP_Z}}
+    return out
 
 
 def list_bar(sport, found):
@@ -714,6 +776,7 @@ def build(start=None):
                    "confidence": round(conf, 4), "tier": tier_of(conf),
                    "eloH": round(eh[0]), "eloA": round(ea[0]), "gamesH": eh[2], "gamesA": ea[2],
                    "hfa": 0 if g["neutral"] else sp["params"]["hfa"],
+                   "wary": wary(sport, ph >= 0.5, g["neutral"]),
                    "accuracy": accuracy_for(conf, sp.get("bandsCheck")),
                    "formH": form(by_team.get((g["pool"], g["h"]), []), g["h"]),
                    "formA": form(by_team.get((g["pool"], g["a"]), []), g["a"]),
@@ -853,15 +916,44 @@ def score():
            "reserve": summ([r for r in graded if r.get("reserve")]),
            "reserveTiers": {t: summ([r for r in graded if r.get("reserve") and r["tier"] == t])
                             for t in ("Strong", "Firm")},
+           "bySide": by_side(graded),
            "days": [{"date": d, **summ(by_date[d]),
                      "games": sorted(by_date[d], key=lambda r: -r["confidence"])}
                     for d in sorted(by_date, reverse=True)[:14]]}
     json.dump(out, open(RECORD, "w"), separators=(",", ":"))
     with open(RECORD_JS, "w") as f:
         f.write("window.__SPORTS_RECORD__=" + json.dumps(out, separators=(",", ":")) + ";")
+    write_graded(graded, voids, out["generated"])
     o = out["overall"]
     print(f"sports: {o['n'] if o else 0} graded, {void} void ({void - unplayed} tied, "
           f"{unplayed} never played)", file=sys.stderr)
+
+
+def graded_row(r):
+    """A graded or void pick as kept in GRADED: the pick, its price and its
+    result, without the form and rating detail the page shows."""
+    return {k: v for k, v in r.items() if k not in GRADED_DROP}
+
+
+def merge_graded(old, graded, voids):
+    """Every row in `old` kept, each id this run graded replaced by the new
+    grading (a late correction to a score wins). Sorted by start then id."""
+    rows = {str(r.get("id")): r for r in old or [] if r.get("id") is not None}
+    for r in list(graded) + list(voids):
+        if r.get("id") is None: continue
+        rows[str(r["id"])] = graded_row(r)
+    return sorted(rows.values(), key=lambda r: (r.get("when") or "", str(r.get("id"))))
+
+
+def write_graded(graded, voids, generated, path=GRADED):
+    try:
+        with open(path) as f: old = json.load(f).get("graded") or []
+    except Exception:
+        old = []
+    rows = merge_graded(old, graded, voids)
+    with open(path, "w") as f:
+        json.dump({"generated": generated, "graded": rows}, f, separators=(",", ":"), ensure_ascii=False)
+    return rows
 
 
 def history(workers=6):

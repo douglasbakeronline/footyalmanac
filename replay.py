@@ -370,7 +370,7 @@ def main():
         return
     if args.freeze:
         os.makedirs(args.cache, exist_ok=True)
-        body = freeze(tune.load(args.cache), args.freeze)
+        body = freeze(tune.load(args.cache, fill=False), args.freeze)   # openfootball rows only (15 Nov 2026)
         print(f"froze {len(body['data'])} harness seasons and {len(body['current'])} cached "
               f"current seasons to {args.freeze}, sha256 {body['sha256']}", file=sys.stderr)
         return

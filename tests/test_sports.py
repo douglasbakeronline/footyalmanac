@@ -360,3 +360,31 @@ class Windows(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SideMark(unittest.TestCase):
+    """15 Nov 2026: a college pick away from home or on a neutral court is
+    marked; home picks and the other sports are not. The record tallies the
+    college sports by side with the pre-registered tripwire."""
+    def test_wary(self):
+        self.assertIsNone(S.wary("ncaab", True, False))
+        self.assertEqual(S.wary("ncaab", False, False)["kind"], "away")
+        self.assertEqual(S.wary("cfb", True, True)["kind"], "neutral")
+        self.assertIsNone(S.wary("nba", False, False))
+        self.assertIsNone(S.wary("nfl", False, True))
+
+    def test_by_side_tally_and_tripwire(self):
+        def row(sport, home_pick, ok, conf=0.8, neutral=False):
+            return {"sport": sport, "home": "H", "away": "A", "pick": "H" if home_pick else "A",
+                    "neutral": neutral, "ok": ok, "confidence": conf}
+        graded = [row("cfb", False, False)] * 100 + [row("cfb", True, True)] * 10 + [row("nba", False, False)] * 5
+        t = S.by_side(graded)
+        self.assertEqual(t["cfb"]["away"]["n"], 100)
+        self.assertEqual(t["cfb"]["away"]["landed"], 0)
+        self.assertTrue(t["cfb"]["tripwire"])            # 100 away picks, far under quote
+        self.assertEqual(t["cfb"]["home"]["landed"], 10)
+        self.assertIsNone(t["ncaab"]["away"])
+        self.assertFalse(t["ncaab"]["tripwire"])
+        self.assertNotIn("nba", t)
+        few = S.by_side([row("ncaab", False, False)] * 99)
+        self.assertFalse(few["ncaab"]["tripwire"])       # under WARY_TRIP_N

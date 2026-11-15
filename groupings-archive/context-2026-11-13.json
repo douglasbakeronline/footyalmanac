@@ -1,0 +1,268 @@
+{
+ "Drina Zvornik v Vele\u017e Nevesinje|Drina Zvornik": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant: I found no injury, suspension or line-up reports for either side, and the date is listed as 14 Nov (not 13 Nov) on several sites, with kick-off times varying by source.",
+  "numbers": "Drina Zvornik: 22 pts from 15 games (6W 4D 5L, GF 28 GA 15) and 6th on Tribuna's table, with a recent 0-1 loss at Leotar and a 0-2 loss at Potkozarje. Their home record is 7 games, 5W 2D 0L, 16-5. Vele\u017e Nevesinje: 12 pts from 15 games (3W 3D 9L, GF 13 GA 38, GD -25), 13th on Tribuna's table, five straight league losses, away 3W 1D 3L (though that same table showed 3W 2D 9L and 11 pts); the 8-0 res",
+  "reads": 1,
+  "reason": "Drina are 3rd\u20136th (22 pts, GD +13/+14, sources differ) and unbeaten at home (5W 2D 0L) against 12th\u201313th Vele\u017e, who have lost five in a row; Drina won 8-0 in the reverse fixture on 2 Sept (footballtransfers.com, sportsport.ba).",
+  "sources": [
+   {
+    "title": "Prva Liga RS 2026/2027 Standings - Football Transfers",
+    "url": "https://www.footballtransfers.com/us/leagues-cups/national/ba/prva-liga-rs"
+   },
+   {
+    "title": "Prva liga RS 2026/27: tabela, raspored i prijenosi",
+    "url": "https://onlinekladionice.ba/gdje-gledati-prva-liga-rs/"
+   },
+   {
+    "title": "Tabele i rezultati za Prva liga Republike Srpske - SportSport.ba",
+    "url": "https://sportsport.ba/tabele-lige/fudbal/bosna-i-hercegovina/prva-liga-republike-srpske/8"
+   },
+   {
+    "title": "FK Vele\u017e Nevesinje - Raspored kola i utakmica - SportSport.ba",
+    "url": "https://sportsport.ba/klub/fk-velez-nevesinje/136"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "Houston Rockets v Utah Jazz|Houston Rockets": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Houston are missing only Steven Adams (soleus) and Clint Capela (ankle). Utah are without Markkanen (hand fracture), Jaren Jackson Jr. (MCL tear), Nurkic and Porzingis (not with team), with Keyonte George questionable, so the injury picture strongly favours Houston, though no confirmed line-up for t",
+  "numbers": "Houston are 9-3 and 3rd in the West (6-1 at home), scoring 115.4 and conceding 106.5 per game; their last five games, newest first, are W W L L W per Land of Basketball. Utah are 1-11 and 15th in the West, scoring 106.6 and conceding 118.1, and have lost all of their last 10. Houston won the last meeting 129-101 on April 3, 2026.",
+  "reads": 1,
+  "reason": "The NBA official injury report dated 11/11/26 lists Houston's only absences as the centres Adams and Capela, plus two-way players on G League assignments. Utah, 1-11 with a -7.7 SRS, is missing Markkanen, Jackson Jr., Porzingis and Nurkic, with George questionable.",
+  "sources": [
+   {
+    "title": "NBA Injury Report 11/11/26 05:00 PM",
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_05_00PM.pdf"
+   },
+   {
+    "title": "2026-27 NBA Standings - Basketball Reference",
+    "url": "https://www.basketball-reference.com/leagues/NBA_2027_standings.html"
+   },
+   {
+    "title": "NBA 2026-27 Regular Season Standings - Land of Basketball",
+    "url": "https://www.landofbasketball.com/yearbyyear/2026_2027_standings.htm"
+   },
+   {
+    "title": "2026-27 NBA Standings: Conference - Fox Sports",
+    "url": "https://www.foxsports.com/nba/standings"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "Indiana Pacers v New York Knicks|New York Knicks": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Haliburton, Ben Sheppard and Johnny Furphy are out for Indiana and Aaron Nesmith (knee) is a game-time decision, while the Knicks have no injury designations and Josh Hart returned on Wednesday.",
+  "numbers": "Knicks 6-5, 5th in the East, 110.3 points for and 103.5 against, 2-2 away, 6-4 in their last 10 and lost their latest game to Cleveland 115-107; Pacers 4-8, 11th in the East, 111.6 for and 114.0 against, 1-4 at home, 3-7 in their last 10 but won their latest game. Recent head-to-head favours New York: they won 136-110 and 101-92 in March 2026, while Indiana won 137-134 in overtime in February 2026",
+  "reads": 1,
+  "reason": "Indiana are 4-8 and without Tyrese Haliburton (hamstring, out at least 10 more days) while the Knicks list no injuries, and the spread is about 6.5 to 7.5 points for New York (Sports Mole preview, ESPN, Bleacher Report).",
+  "sources": [
+   {
+    "title": "Preview: New York Knicks vs. Indiana Pacers: Player props, injury report and prediction (Sports Mole)",
+    "url": "https://www.sportsmole.co.uk/basketball/indiana-pacers/preview/new-york-knicks-vs-indiana-pacers-player-props-injury-report-and-prediction--nba_608975.html"
+   },
+   {
+    "title": "Knicks vs. Pacers (Nov 13, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909296/knicks-pacers"
+   },
+   {
+    "title": "2026-27 NBA Standings: Conference (Fox Sports)",
+    "url": "https://www.foxsports.com/nba/standings"
+   },
+   {
+    "title": "Knicks at Pacers Prediction and Odds (Nov. 13, 2026) - OG.com",
+    "url": "https://og.com/learn/knicks-at-pacers-11-13-26-prediction"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "Karbon Cherkasy v Atlet|Karbon Cherkasy": {
+  "at": "2026-11-12T07:05:04Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant. I found no published injury, suspension or line-up news, but the match is on the LNZ training base ground in Heronymivka, and one source lists a 12:30 local kick-off.",
+  "numbers": "Karbon are 1st after 11 games with 6W 4D 1L, 24 goals for and 12 against, 22 pts, and their last five are D W W W W. Atlet are 5th after 11 games with 4W 4D 3L, 19 for and 15 against, 16 pts, and their last five are D W D D L. Their only meeting this season was a 2-2 draw in Kyiv on 13 September.",
+  "reads": 1,
+  "reason": "Leaders Karbon (1st, 22 pts, unbeaten in their last five) host 5th-placed Atlet, who have won once in five, and I found no injury, suspension or rotation news for either side (standings from cherkassy-sport.com).",
+  "sources": [
+   {
+    "title": "\u0414\u0435 \u0456 \u043a\u043e\u043b\u0438 \u0424\u041a \u00ab\u041a\u0430\u0440\u0431\u043e\u043d\u00bb \u043f\u0440\u0438\u0439\u043c\u0430\u0454 \u00ab\u0410\u0442\u043b\u0435\u0442\u00bb \u0443 15 \u0442\u0443\u0440\u0456 \u0447\u0435\u043c\u043f\u0456\u043e\u043d\u0430\u0442\u0443 \u0423\u043a\u0440\u0430\u0457\u043d\u0438 \u0437 \u0444\u0443\u0442\u0431\u043e\u043b\u0443",
+    "url": "https://cherkassy-sport.com/futbol/79661-de-i-koly-fk-karbon-pryimaie-atlet-u-15-turi-chempionatu-ukrainy-z-futbolu.html"
+   },
+   {
+    "title": "FC Metalurh Zaporizhya - Streaming and TV Schedule, Fixtures, Results (Druha Liga table with form)",
+    "url": "https://www.livesoccertv.com/teams/ukraine/metalurh-zaporizhya/"
+   },
+   {
+    "title": "\u0427\u0435\u0440\u043a\u0430\u0441\u044c\u043a\u0438\u0439 \u00ab\u041a\u0430\u0440\u0431\u043e\u043d\u00bb \u043d\u0430 \u0432\u0438\u0457\u0437\u0434\u0456 \u0440\u043e\u0437\u0456\u0439\u0448\u043e\u0432\u0441\u044f \u043c\u0438\u0440\u043e\u043c \u0437 \u043a\u0438\u0457\u0432\u0441\u044c\u043a\u0438\u043c \u0424\u041a \u00ab\u0410\u0442\u043b\u0435\u0442\u0456\u043a\u00bb",
+    "url": "https://cherkassy-sport.com/futbol/78188-cherkaskyi-karbon-na-vyizdi-roziishovsia-myrom-z-kyivskym-fk-atletik.html"
+   },
+   {
+    "title": "\u041a\u0430\u0440\u0431\u043e\u043d \u0427\u0435\u0440\u043a\u0430\u0441\u0441\u044b - \u0410\u0442\u043b\u0435\u0442 \u041a\u0438\u0435\u0432: \u043f\u0440\u043e\u0433\u043d\u043e\u0437\u044b 13 \u043d\u043e\u044f\u0431\u0440\u044f 2026",
+    "url": "https://kushvsporte.ru/event/7065013-karbon-cherkassy-atlet-kiev"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "Morocco v Niger|Morocco": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Morocco are without Saibari, Ounahi, El Kaabi, Rahimi, Igamane, Riad and Amrabat, and El Aynaoui has been replaced in the squad through injury; Niger have left out Adebayor and Wonkoye and are fielding a largely local squad, and no confirmed line-ups were found.",
+  "numbers": "Morocco lead Group A with 6 points from 2 (wins over Gabon and Lesotho) and have won all 6 previous meetings with Niger, conceding once. Niger have 3 points from 2 (2-1 win over Lesotho, 2-0 loss to Gabon), their form across all competitions is D-L-W-L-L, and Morocco's is W-L-W-W-D (Khel Now); I did not find a full goals-for and goals-against table.",
+  "reads": 1,
+  "reason": "Morocco are missing several attackers (Saibari, Ounahi, El Kaabi, Rahimi, Igamane, Riad) and are expected to change the XI and try new options before a second Niger game on 17 November, per Sports Mole and Africasoccer, but Niger are a 111th-ranked side priced 28.00 to win, so I found no concrete re",
+  "sources": [
+   {
+    "title": "Preview: Morocco vs Niger - prediction, team news, lineups - Sports Mole",
+    "url": "https://www.sportsmole.co.uk/football/morocco/africa-cup-of-nations/preview/morocco-vs-niger-prediction-team-news-lineups_608937.html"
+   },
+   {
+    "title": "Morocco make changes for Niger clash as 2027 Africa Cup of Nations qualifiers continue - Africasoccer",
+    "url": "https://africasoccer.com/morocco-make-changes-for-niger-clash-as-2027-africa-cup-of-nations-qualifiers-continue/"
+   },
+   {
+    "title": "Morocco's five tactical experiments for Niger double-header - Africasoccer",
+    "url": "https://africasoccer.com/moroccos-five-tactical-experiments-for-niger-double-header"
+   },
+   {
+    "title": "Strasbourg's Samir El Mourabet replaces crocked Neil El Aynaoui in Morocco squad - Africasoccer",
+    "url": "https://africasoccer.com/strasbourg-midfielder-samir-el-mourabet-replaces-injured-neil-el-aynaoui-in-morocco-squad"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Ospitaletto v Dolomiti Bellunesi|Ospitaletto": {
+  "at": "2026-11-12T13:47:46Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant for Ospitaletto, and no confirmed line-ups or injury list for this match were found; Dolomiti have had a long injury list this season (Mignanelli out for weeks with a knee injury, per an earlier preview) and a new manager, Vinicio Espinal.",
+  "numbers": "Ospitaletto: 4th, 22 pts from 13 (6W 4D 3L), goals 19 for and 11 against; recent games were a 1-0 win at Desenzano, losses to Pergolettese and Pro Vercelli, and a 0-0 draw with Trento (I could not find a clean last-five sequence, and no home-only split). Dolomiti Bellunesi: second-bottom on 10 pts, 8 goals for and 14 against after 11 games (the latest figures I found), with a 0-4 loss at home to L",
+  "reads": 1,
+  "reason": "Nothing found argues against the pick: bet365's preview (12 Nov 2026) has Ospitaletto 4th on 22 points and Dolomiti Bellunesi second-bottom on 10 after six straight defeats, under a manager who only arrived in early November.",
+  "sources": [
+   {
+    "title": "Ospitaletto-Dolomiti Bellunesi: orario, probabili formazioni (bet365 News)",
+    "url": "https://news.bet365.it/it-it/article/cp-ospitaletto-dolomiti-bellunesi-orario-probabili-formazioni-e-dove-vederla-in-tv-e-streaming/2026111210065398891"
+   },
+   {
+    "title": "Classifica Serie C Girone A 2026/2027 - I AM CALCIO",
+    "url": "https://novara.iamcalcio.it/classifiche/861/serie-c-girone-a/"
+   },
+   {
+    "title": "Dolomiti Bellunesi Standings, Matches and Scores - Futbol24",
+    "url": "https://www.futbol24.com/team/Italy/Dolomiti-Bellunesi"
+   },
+   {
+    "title": "Dolomiti Bellunesi-Lecco: diretta live e risultato (Calciomagazine)",
+    "url": "https://www.calciomagazine.net/dolomiti-bellunesi-lecco-diretta-risultato-1-novembre-2026-252267.html"
+   }
+  ],
+  "verdict": "clear"
+ },
+ "TCU Horned Frogs v Milwaukee Panthers|TCU Horned Frogs": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-haiku-5-5",
+  "news": "Center Luke Bamgboye is out with a foot injury for an indefinite period, and Robbie Avila is finalising eligibility to join TCU as a transfer.",
+  "numbers": "TCU is 3-0 after a 100-92 double-overtime win over Louisiana-Monroe, with no other 2026-27 results or points-per-game figures found. Milwaukee is 2-2 and first in the Horizon, averaging 79.0 points and allowing 77.8, with a 99-48 win at Indiana State among its results; its full last five was not confirmed.",
+  "reads": 1,
+  "reason": "TCU's starting center Luke Bamgboye is out indefinitely with a foot injury, and the Frogs needed two overtimes to beat Louisiana-Monroe (1-2) on Nov 10, but nothing found makes a home win over Milwaukee clearly less likely than the model's 90%.",
+  "sources": [
+   {
+    "title": "Career day for Micah Robinson helps TCU men's basketball avoid upset loss - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/career-day-micah-robinson-helps-045108026.html"
+   },
+   {
+    "title": "TCU basketball announces crucial Robbie Avila update - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/tcu-basketball-announces-crucial-robbie-211734140.html"
+   },
+   {
+    "title": "TCU Holds on to Beat ULM, 100-92 in Double Overtime - TCU Athletics",
+    "url": "https://gofrogs.com/news/2026/11/11/mens-basketball-tcu-holds-on-to-beat-ulm-100-92-in-double-overtime"
+   },
+   {
+    "title": "Milwaukee Panthers Scores, Stats and Highlights - ESPN",
+    "url": "https://www.espn.com/mens-college-basketball/team/_/id/270/milwaukee-panthers"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Tahiti v Cook Islands|Tahiti": {
+  "at": "2026-11-13T00:40:35Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Tahiti coach Jo\u00ebl Frechet's squad for this game is mostly V\u00e9nus, Tefana and Tohie'a players, with no injury or rotation news found, and Cook Islands boosted their side for the second Rarotonga match with three Australia-based players.",
+  "numbers": "No league table applies. FIFA rankings (7 Oct 2026) are Tahiti 157 and Cook Islands 187. The two Rarotonga friendlies were a 3-1 Tahiti win and a 3-2 Cook Islands win, and Cook Islands had played no internationals since their 2024 World Cup qualifiers. I found no full last-five results for either side.",
+  "reads": 1,
+  "reason": "Tahiti have won 11 of 12 meetings, but Cook Islands won the most recent game 3-2 on 30 September after Tahiti won the first game 3-1, so the ~78% is not a safe margin (Oceania Football, Tahiti Infos).",
+  "sources": [
+   {
+    "title": "Farewells, fresh starts and rivalries headline November international window (Oceania Football)",
+    "url": "https://www.oceaniafootball.com/farewells-fresh-starts-and-rivalries-headline-november-international-window"
+   },
+   {
+    "title": "Football \u2013 Les Toa Aito veulent convaincre (Tahiti Infos)",
+    "url": "https://www.tahiti-infos.com/Football-Les-Toa-Aito-veulent-convaincre_a240032.html"
+   },
+   {
+    "title": "Football \u2013 D\u00e9faite historique des Toa Aito \u00e0 Rarotonga (Tahiti Infos)",
+    "url": "https://www.tahiti-infos.com/Football-Defaite-historique-des-Toa-Aito-a-Rarotonga_a239585.html"
+   },
+   {
+    "title": "Cook Islands Make History with Stunning 3-2 Victory Over Tahiti (Cook Islands Football)",
+    "url": "https://www.cookislandsfootball.com/ook-islands-make-history-with-stunning-3-2-victory-over-tahiti/"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "UT Martin Skyhawks v Champion Christian Tigers|UT Martin Skyhawks": {
+  "at": "2026-11-13T00:51:51Z",
+  "model": "claude-haiku-5-5",
+  "news": "No team news for either side was found and nothing significant was reported.",
+  "numbers": "UT Martin is 1-2 in 2026-27 after a 82-65 win at Arkansas State, and Champion Christian is 2-1 after a 97-81 home win over Central Baptist. Goals-per-game and last-five data for both sides were not found; UT Martin beat Champion Christian 96-52 in December 2025.",
+  "reads": 1,
+  "reason": "No injury, suspension or line-up news for either side turned up, so there is no sourced reason to move the 95% model figure, but the search also could not confirm the players available, which is why this is caution rather than clear. The UTM athletics preview confirms the game is a Friday 6 p.m. hom",
+  "sources": [
+   {
+    "title": "Skyhawks Make 2026-27 Home Debut Tomorrow Against Champion Christian - UTM Athletics",
+    "url": "https://utmsports.com/news/2026/11/12/mens-basketball-skyhawks-make-2026-27-home-debut-tomorrow-against-champion-christian"
+   },
+   {
+    "title": "Hopkins puts up 21, UT Martin defeats Champion Christian 96-52 - The Washington Post",
+    "url": "https://www.washingtonpost.com/sports/colleges/2025/12/14/champion-christian-ut-martin/3db5f4e0-d957-11f0-b484-4459fa8e79e5_story.html"
+   },
+   {
+    "title": "UT Martin 96-52 Champion Christian (Dec 14, 2025) Final Score - ESPN",
+    "url": "https://www.espn.com/mens-college-basketball/game/_/gameId/401829394/champ-chrstn-ut-martin"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Vasas II v Szegedi VSE|Vasas II": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Nothing significant found: no injury, suspension or line-up news for either side, and no sign of rotation or anything riding on the game for either team.",
+  "numbers": "Vasas II (MLSZ adatbank, after 15 games): 6th, 21 pts, W5 D6 L4, goals 30-19, last five D D D D V (newest first), and the opening-day 1-1 at Szeged. Szegedi VSE (after 15 games): 15th, 10 pts, W2 D4 L9, goals 21-41, 4 wins' worth of away points only 4 from 7 away games, last five V D W W D (newest first).",
+  "reads": 1,
+  "reason": "Vasas II have drawn their last four league games and have won only 5 of 15, so 77% looks generous against a side that is 15th. Both the MLSZ adatbank and Vasas's own site list this game for 15 Nov 2026 at Vasas's ground, not 13 Nov, so confirm the date.",
+  "sources": [
+   {
+    "title": "NB III. D\u00e9l-Keleti csoport 15. fordul\u00f3 - MLSZ adatbank (Vasas II table and form)",
+    "url": "https://adatbank.mlsz.hu/league/67/0/34054/15.html"
+   },
+   {
+    "title": "NB III. D\u00e9l-Keleti csoport 15. fordul\u00f3 - MLSZ adatbank (Szegedi VSE table and form)",
+    "url": "https://adatbank.mlsz.hu/league/67/0/34054/15.html"
+   },
+   {
+    "title": "NB III, D\u00e9lkeleti csoport, 2026\u20132027 - Nemzeti Sport (fixture list, 1-1 opener)",
+    "url": "https://www.nemzetisport.hu/labdarugo-nb-ii/2026/07/nb-iii-delkeleti-csoport-2026-2027"
+   },
+   {
+    "title": "Vasas FC II \u2013 Meton-FC Dabas 1:1 - FC Dabas",
+    "url": "https://www.fcdabas.hu/2026/11/08/vasas-fc-ii-meton-fc-dabas-11-2/"
+   }
+  ],
+  "verdict": "caution"
+ }
+}

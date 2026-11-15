@@ -35,7 +35,8 @@ review so no variant is picked because it happened to look good):
            opp7, rule5 or short instead (10 Nov 2026, issue #155)
   modelcard the Model card's rule (the model's own picks at or above the
            bookmakers' chance) on the same legs, staked as the Card (10 Nov 2026)
-  tennis80 tennis legs at 80%+ on model and tested rate (live: 75%)
+  tennis75 tennis legs at 75%+, the floor before CARD_RULE 10 (11 Nov 2026)
+  tennis80 tennis legs at 80%+ on model and tested rate (live: 85% since 11 Nov)
            (9 Nov 2026: tennis legs are the Card's one consistent leak, 22 of
            40 full-rule legs landed v 71% quoted; registered before the pool
            holds enough real-priced tennis legs to read them)
@@ -113,32 +114,32 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
     were taken at their last price)."""
     idx = idx or G.results_index(); names = name_indexes(idx)
     by, skipped, recovered = defaultdict(list), defaultdict(int), 0
-    for fn in sorted(os.listdir(pool_dir)) if os.path.isdir(pool_dir) else []:
-        if not fn.startswith("pool-") or not fn.endswith(".json.gz"): continue
-        d = fn[5:15]
+    # 13 Nov 2026: one row a fixture (G.pool_rows): a fixture moved to another
+    # day was counted twice, once on the day it was not played
+    for d, row in G.pool_rows(pool_dir):
         if d < POOL_FROM or (since and d < since) or (until and d > until): continue
-        with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: a = json.load(f)
-        for row in a.get("legs") or []:
-            mk = pool_market(row, closing, recover)
-            if mk is None:
-                skipped["estimate only"] += 1; continue
-            if mk.get("recovered"): recovered += 1
-            l = dict(row, **mk, est=False)
-            if l.get("sport") == "football" and not l.get("side"):
-                l["side"] = "h" if l["pick"] == l.get("home") else "a"
-            st, res = settle_pool(l, idx, names)
-            if st not in ("won", "lost"):
-                skipped[st] += 1; continue
-            l["won"] = st == "won"; l["result"] = res
-            l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
-            l.setdefault("hit", l.get("pTested") or l.get("p"))
-            # the bookmakers' chance is the archived one (honest() would refit it
-            # from the first margin, wrong at the closing price); p as honest() sets it
-            l["implied"] = round(1 / l["odds"], 4); l.setdefault("pTested", l["p"])
-            l["p"] = round(min(l["pTested"], l["fair"]), 4); l["edge"] = round(l["p"] * l["odds"] - 1, 4)
-            slot = G.uk_slot(l)
-            if slot: by[slot[0]].append(l)
-            else: skipped["no time"] += 1
+        mk = pool_market(row, closing, recover)
+        if mk is None:
+            skipped["estimate only"] += 1; continue
+        if mk.get("recovered"): recovered += 1
+        l = dict(row, **mk, est=False)
+        # 14 Nov 2026: an order of play published before the start clears the estimate
+        l["timeEst"] = G.pool_time_est(row)
+        if l.get("sport") == "football" and not l.get("side"):
+            l["side"] = "h" if l["pick"] == l.get("home") else "a"
+        st, res = settle_pool(l, idx, names)
+        if st not in ("won", "lost"):
+            skipped[st] += 1; continue
+        l["won"] = st == "won"; l["result"] = res
+        l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
+        l.setdefault("hit", l.get("pTested") or l.get("p"))
+        # the bookmakers' chance is the archived one (honest() would refit it
+        # from the first margin, wrong at the closing price); p as honest() sets it
+        l["implied"] = round(1 / l["odds"], 4); l.setdefault("pTested", l["p"])
+        l["p"] = round(min(l["pTested"], l["fair"]), 4); l["edge"] = round(l["p"] * l["odds"] - 1, 4)
+        slot = G.uk_slot(l)
+        if slot: by[slot[0]].append(l)
+        else: skipped["no time"] += 1
     skipped = dict(skipped)
     if recovered: skipped["recovered, counted at the last price"] = recovered
     return by, skipped
@@ -213,6 +214,8 @@ VARIANTS = {
     # 9 Nov 2026, pre-registered for the tennis tripwire and the 30 Nov review
     "notennis": {"CARD_SPORTS_OFF": set(G.CARD_SPORTS_OFF) | {"tennis"}},
     "tennis80": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.80)},
+    # 11 Nov 2026: live tennis floor raised to 85% (CARD_RULE 10); the old 75%
+    "tennis75": {"CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75)},
     # 9 Nov 2026 (claude/card-staking-2026-11-09.md), pre-registered for the
     # 30 Nov review: the same groups at one unit each. Live stakes two on a 2x;
     # the live 2x has landed under quote and the 3x over, the football-data
@@ -258,6 +261,20 @@ VARIANTS = {
     # on 6-14 Nov). Pre-registered before any result: the model up to 5 points
     # under the bookmakers' chance. Volume is not return; gated like the rest.
     "m7under5": {"CARD_MODEL_EDGE": -0.05},
+    # 11 Nov 2026 evening (claude/card-m7wide-2026-11-11.md), pre-registered
+    # before any result: the rule 8 Card with the wider API-Football leagues
+    # admitted (CARD_CORE_ONLY False, card_league: no cups, no new leagues).
+    # The funnel has "league" the largest single fault on football (224 of
+    # 439 pool legs from 6 Nov). Pool only: football-data carries no wider
+    # league. Volume is not return; gated like the rest.
+    "m7wide": {"CARD_CORE_ONLY": False},   # live from 11 Nov 2026 (CARD_RULE 11)
+    "m7core": {"CARD_CORE_ONLY": True},    # core leagues only, the rule to CARD_RULE 10
+    # 12 Nov 2026 (claude/card-m7legs2-2026-11-12.md), pre-registered before
+    # any result: the rule 11 Card 2x may also be two picks. On 11 Nov five NBA
+    # picks cleared the full rule at 1.53-1.64 and no group was built: three
+    # of them pay 3.6x+, over the 2x band (2.0-3.0), and a group needed three.
+    # Two picks at 1.40-1.73 sit in the band. Volume is not return; gated.
+    "m7legs2": {"CARD_LEGS": (2, 3, 4, 5)},
     # 11 Nov 2026, Douglas: "Preferably 3x or more. Then 2.5x. Then 2x. Then
     # 1.5x ... I need the groups to win every time. But ultimately this has to
     # be a profitable business." Pre-registered before any result: the rule 8
@@ -265,6 +282,17 @@ VARIANTS = {
     # its most likely combination in the band, up to three a day, two units a
     # group like the 2x), and the ladder in his order, one group a band.
     **{v: payout_patch(kinds) for v, kinds in PAYOUTS.items()},
+    # 12 Nov 2026 (groupings.CARD_SPAN, claude/card-span-2026-11-12.md): live,
+    # and a day live leaves empty borrows the next day's legs (one group, at
+    # least one of the day's own picks); the next day never reuses them
+    "span2": {"_SPAN": True},
+    # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md), pre-registered before any
+    # result: the rule 11 Card with rule 6's opposition condition on its
+    # football picks (groupings.CARD_MODEL_OPP_MIN). 9+ is rule 6's floor, the
+    # one condition that held in all five football-data seasons; 5.0 (4/1) is
+    # the Edge flag's floor since 11 Nov. Gated like the rest.
+    "m7opp9": {"CARD_MODEL_OPP_MIN": {"football": 9.0}},
+    "m7opp5": {"CARD_MODEL_OPP_MIN": {"football": 5.0}},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
@@ -274,7 +302,12 @@ VARIANTS = {
 # rebuilt live exactly ("identical to live" in the 11 Nov review) and the
 # fillers built nothing. Each now runs on the rule 6 Card with its one change,
 # as registered, and is paired against both live and rule6.
-RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x")}
+# 12 Nov 2026: the rule 6 Card ran with tennis at 75% (29 Oct to 11 Nov); the
+# live floor went to 85% with CARD_RULE 10, and RULE6 had inherited it, so
+# rule6, notennis and tennis80 replayed identically (no tennis leg reaches 85%
+# on the pool). Pinned to the floor rule 6 ran with, like CARD_CORE_ONLY.
+RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True,
+         "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75)}
 RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80"}
 
 
@@ -294,6 +327,30 @@ def build_wide(day_legs, date):
         g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1
         groups.append(g)
     return groups
+
+
+def build_span(by, dates):
+    """12 Nov 2026: live, and each day live leaves empty takes one group from
+    its own legs and the next day's (at least one of its own), the way
+    groupings.build_card does under CARD_SPAN. Days in order; legs a two-day
+    group holds are not used again the next day."""
+    from datetime import date as _date, timedelta as _td
+    out, held = {}, set()
+    for d in dates:
+        own = [l for l in by[d] if l["event"] not in held]
+        gs = build(own, d, "live")
+        if not gs:
+            nd = (_date.fromisoformat(d) + _td(days=1)).isoformat()
+            after = G.lock_time(d, "Day")
+            for name, _, _, _ in G.built_kinds():
+                mine = {o["event"] for o in own}
+                g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name,
+                                need=lambda l: l["event"] in mine)
+                if not g or not any(l["event"] in mine for l in g["legs"]): continue
+                g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1; g["span"] = True
+                held |= {l["event"] for l in g["legs"]}; gs = [g]; break
+        out[d] = gs
+    return out
 
 
 def build(day_legs, date, variant):
@@ -397,7 +454,8 @@ def main():
                        "source": {"pool": use_pool, "poolFrom": POOL_FROM if use_pool else None, "closing": closing, "recover": recover,
                                   "poolLegs": dict(sports) if use_pool else None, "poolLeftOut": skipped if use_pool else None}}
     for v in VARIANTS:
-        days = {d: build(by[d], d, v) for d in dates}
+        if VARIANTS[v].get("_SPAN"): days = build_span(by, dates)
+        else: days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
         out[v] = days
         summarise(days, v)

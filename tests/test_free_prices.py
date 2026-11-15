@@ -121,6 +121,32 @@ class SportsGameOdds(Base):
         self.assertEqual(self.urls, []); self.assertEqual(r["sgoSkipped"], ["NBA"])
 
 
+class SgoConsensus(Base):
+    def test_consensus_when_no_book_is_listed(self):
+        r = {}
+        reply = lambda u: {"data": [{"status": {"startsAt": "2026-11-12T00:30:00Z"},
+            "teams": {"home": {"names": {"long": "Boston Celtics"}}, "away": {"names": {"long": "Brooklyn Nets"}}},
+            "odds": {"points-home-game-ml-home": {"bookOdds": "-400", "bookOddsAvailable": True},
+                     "points-away-game-ml-away": {"bookOdds": "+310", "bookOddsAvailable": True}}}]}
+        a = nba()
+        with mock.patch.dict(os.environ, {"SGO_API_KEY": "k"}):
+            FP.price_sgo([a], {"2026-11-11"}, r, cache_dir=self.dir, fetch=reply, now=NOW)
+        self.assertEqual((a["odds"], a["opp"], a["bestBook"]), (1.25, 4.1, "SportsGameOdds consensus"))
+        self.assertEqual(r["sgo"]["matched"], 1)
+
+
+class SgoDiagnostics(Base):
+    def test_a_miss_leaves_a_sample_in_the_report(self):
+        r = {}
+        reply = lambda u: {"data": [{"teams": {"home": {"names": {"long": "Other Team"}}, "away": {"names": {"long": "Someone"}}},
+                                      "status": {"startsAt": "2026-11-12T00:30:00Z"}, "odds": {}}]}
+        with mock.patch.dict(os.environ, {"SGO_API_KEY": "k"}):
+            FP.price_sgo([nba()], {"2026-11-11"}, r, cache_dir=self.dir, fetch=reply, now=NOW)
+        self.assertEqual(r["sgo"]["matched"], 0)
+        s = r["sgo"]["sample"]["NBA"]
+        self.assertEqual(s["events"], 1); self.assertIn("Other Team", s["teams"]); self.assertEqual(s["leg"][0], ["Boston Celtics", "Brooklyn Nets"])
+
+
 class BoardPrice(unittest.TestCase):
     def test_exchange_marked_on_the_board(self):
         P = G.board_prices([dict(tennis(), odds=1.52, exchange="betfair", bestBook="Betfair Exchange")])

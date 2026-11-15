@@ -994,6 +994,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-v{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;justify-self:start}
 .tb-row.back .tb-v{color:var(--home)}
 .tb-row.caution .tb-v{color:var(--draw-ink,#7a5c12)}
+.tb-row.slip .tb-v{color:var(--ink)} .tb-row.slip.won .tb-v{color:var(--home)} .tb-row.slip.lost .tb-v{color:var(--away)}
+.tb-bands{width:100%;border-collapse:collapse;font:12px var(--f-num);margin-top:6px}
+.tb-bands th,.tb-bands td{padding:4px 8px;text-align:right;border-top:1px solid var(--rule-soft)} .tb-bands th{font:700 10.5px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute-ink,var(--mute))}
+.tb-bands td:first-child,.tb-bands th:first-child{text-align:left} .tb-bands .neg{color:var(--away)} .tb-bands .pos{color:var(--home)}
 .tb-row.avoid .tb-v,.tb-row.unknown .tb-v{color:var(--away)}
 .tb-m b{display:block;font-size:14px}
 .tb-m small{display:block;font-size:12px;color:var(--mute);line-height:1.4;margin-top:1px}
@@ -1220,9 +1224,15 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .tb-more .tb-tbl td{white-space:normal}
 .tb-more .tb-tbl td:nth-child(2){white-space:nowrap}
 @media (max-width:480px){.tb-score{padding:14px 12px}.tb-tbl th,.tb-tbl td{padding:7px 4px}.tb-sum-n b{font-size:30px}}
+.cxchip{display:inline-block;margin-left:5px;font:700 9.5px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;padding:2px 4px;border:1px solid currentColor;vertical-align:middle}
+.cxchip.clear{color:var(--edge)}
+.cxchip.caution{color:#7a5a12}
+.cxchip.against{color:#fff;background:var(--away);border-color:var(--away)}
+.slip .og-cx{margin-top:6px}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
 .tb-picks-n{font-size:12px;color:var(--mute);margin:2px 0 8px}
+.cx-paused{font-size:12px;color:var(--mute);margin:10px 0 0;padding-left:10px;border-left:2px solid var(--rule)}
 .tb-picks .og-l.cx-off{opacity:.65}
 .og-cx{margin-top:4px;font-size:11.5px;line-height:1.4;color:var(--ink-2)}
 .og-cx summary{cursor:pointer;list-style:none}
@@ -1338,6 +1348,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .gl-tabs::-webkit-scrollbar{display:none}
 .gl-tabs button,.gl-arw{font:600 12px var(--f-ui);background:none;border:1px solid transparent;color:var(--ink-2);padding:4px 7px;min-height:32px;cursor:pointer;white-space:nowrap}
 .gl-tabs button i{font-style:normal;font-family:var(--f-num);font-size:10.5px;color:var(--mute);margin-left:4px}
+.gl-tabs button.past{color:var(--mute)}
 .gl-tabs button.on{background:var(--cover-ink);color:var(--yellow);border-color:var(--cover-ink)}
 .gl-tabs button.on i{color:var(--yellow-soft)}
 .gl-arw{font-size:18px;line-height:1;padding:2px 9px;border-color:var(--rule)}
@@ -1362,6 +1373,183 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .gl-key .won{background:var(--edge);border-color:var(--edge)} .gl-key .lost{background:var(--away);border-color:var(--away)}
 .gl-key .ahead{background:var(--edge-soft);border-color:var(--edge)} .gl-key .behind{background:var(--away-soft);border-color:var(--away)}
 .gl-key .play{background:var(--yellow);border-color:var(--cover-ink)} .gl-key .up{background:var(--surface);border-color:var(--ink)}
+/* Scale (15 Nov 2026): Daily List winners with a second condition added.
+   Sits between the Daily List (a ranked list, the glance dots) and Bets
+   (group cards, a scoreboard). claude/scale-2026-11-15.md */
+.sc-head{margin-top:18px;display:flex;flex-wrap:wrap;gap:12px 40px;align-items:flex-end;justify-content:space-between}
+.sc-head .lede{margin-top:0;flex:999 1 420px;min-width:0}
+.sc-head h2{display:flex;align-items:center;gap:12px}
+.sc-trial{background:var(--yellow);color:var(--cover-ink);border:1px solid var(--cover-ink);font:700 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 8px}
+.sc-tiles{flex:1 1 380px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border:1px solid var(--cover-ink);background:var(--red);color:#fff}
+.sc-tiles div{padding:8px 12px;border-left:1px solid rgba(255,255,255,.35);min-width:0}
+.sc-tiles div:first-child{border-left:0}
+.sc-tiles span{display:block;font:600 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase}
+.sc-tiles b{display:block;font-family:var(--f-display);font-weight:400;font-size:32px;line-height:1.1}
+.sc-tiles small{display:block;font-family:var(--f-num);font-size:11.5px}
+.sc-glance{margin-top:20px;border:1px solid var(--rule);background:var(--surface);padding:12px 16px 10px}
+.sc-gtop{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px}
+.sc-gtop h3,.sc-h3{font-family:var(--f-display);font-weight:400;text-transform:uppercase;letter-spacing:.01em;margin:0}
+.sc-gtop h3{font-size:18px}
+.sc-key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12.5px;color:var(--ink-2)}
+.sc-key span{display:inline-flex;align-items:center;gap:5px}
+.sc-dot{display:inline-block;flex:0 0 auto;width:16px;height:16px;border-radius:50%;box-sizing:border-box;border:2px solid var(--edge);background:var(--edge)}
+.sc-key .sc-dot{width:12px;height:12px}
+.sc-dot.won{background:var(--edge-soft);border-width:3px}
+.sc-dot.lost{background:var(--away);border-color:var(--away)}
+.sc-dot.up{background:var(--surface);border:1.5px solid var(--ink)}
+.sc-dot.started{background:var(--yellow);border:1.5px solid var(--cover-ink)}
+.sc-dot.void{background:var(--rule-soft);border:1.5px solid var(--mute)}
+.sc-dot.off{width:8px;height:8px;border:0;background:var(--rule)}
+.sc-key .sc-dot.off{width:8px;height:8px}
+.sc-grow{display:grid;grid-template-columns:92px minmax(0,1fr) minmax(0,1.5fr) minmax(0,.7fr) 188px;align-items:stretch;border-top:1px solid var(--rule-soft)}
+.sc-grow > div{padding:6px 0}
+.sc-grow .sc-dots{padding-left:10px;padding-right:6px;border-left:1px solid var(--rule)}
+.sc-ghead{border-top:0}
+.sc-gbtn{cursor:pointer}
+.sc-gbtn:hover,.sc-gbtn.on{background:var(--paper)}
+.sc-gbtn:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+.sc-gd small{display:block;font:500 10.5px var(--f-ui);letter-spacing:.04em;text-transform:none;color:var(--mute)}
+.sc-gnote b{color:var(--ink-2)}
+.sc-ghead .sc-dots{font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);padding-top:0;padding-bottom:4px}
+.sc-offs{display:inline-flex;gap:4px;align-items:center}
+.sc-offs small{font-family:var(--f-num);font-size:11px;color:var(--mute)}
+/* The week behind, as a table (15 Nov 2026, Douglas): each past day's ten
+   strongest Scale picks with the pick, the result and whether both scored. */
+.sc-week{margin-top:12px}
+.sc-wday{border-top:1px solid var(--rule)}
+.sc-wday > summary{list-style:none;cursor:pointer;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;padding:9px 0 7px;font:600 13px var(--f-ui)}
+.sc-wday > summary::-webkit-details-marker{display:none}
+.sc-wday > summary .d{font-family:var(--f-display);font-weight:400;font-size:16px;letter-spacing:.03em;text-transform:uppercase}
+.sc-wday > summary .r{font:500 12px var(--f-ui);color:var(--mute)}
+.sc-wday > summary .s{font:600 12px var(--f-num);color:var(--ink-2);margin-left:auto}
+.sc-wday > summary .open{font:500 12px var(--f-ui);color:var(--home);text-decoration:underline;text-underline-offset:2px}
+.sc-wrow{display:grid;grid-template-columns:22px 60px minmax(0,1fr) 44px 110px 92px;gap:0 10px;align-items:baseline;padding:5px 0;border-top:1px solid var(--rule-soft);font-size:13px}
+.sc-wrow.h{font:600 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);border-top:0;padding-bottom:2px}
+.sc-wrow .i{font:600 11px var(--f-num);color:var(--mute)}
+.sc-wrow .sp{font:700 10px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pk b{display:block;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pk small{display:block;font-size:11.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sc-wrow .pc{font:600 13px var(--f-num);text-align:right}
+.sc-wrow .re{font:600 12px var(--f-ui)} .sc-wrow .re small{font:500 11px var(--f-num);color:var(--mute);margin-left:4px}
+.sc-wrow .re.won,.sc-wrow .bt.yes{color:var(--home)} .sc-wrow .re.lost,.sc-wrow .bt.no{color:var(--away)} .sc-wrow .re.void,.sc-wrow .bt.na{color:var(--mute)}
+.sc-wrow .bt{font:600 12px var(--f-ui)}
+@media (max-width:700px){
+  .sc-wrow{grid-template-columns:18px minmax(0,1fr) 40px 86px;gap:0 8px}
+  .sc-wrow .sp{display:none} .sc-wrow .bt{grid-column:2 / -1;padding-left:0;font-weight:500;font-size:11.5px}
+  .sc-wrow.h .bt{display:none}
+}
+.sc-tier{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px;margin-top:14px;padding:5px 10px;background:var(--cover-ink);color:var(--yellow)}
+.sc-cols + .sc-tier{margin-top:0}
+.sc-tier b{font-family:var(--f-display);font-weight:400;font-size:15px;letter-spacing:.05em;text-transform:uppercase}
+.sc-tier span{font-size:12.5px;color:#fff}
+.sc-tier.reserve{background:var(--ink-2)}
+.sc-tier.else{background:var(--surface);color:var(--ink);border:1px solid var(--rule)}
+.sc-tier.else span{color:var(--ink-2)}
+.sc-tier + .sc-row{border-top:0}
+.sc-card.fb h4{background:var(--red);color:#fff}
+.sc-grows{margin-top:10px}
+.sc-grow.before .sc-gd{color:var(--mute)}
+.sc-gd{font:600 13px var(--f-ui);letter-spacing:.05em;text-transform:uppercase;color:var(--ink-2)}
+.sc-dots{min-width:0;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.sc-gs{font-family:var(--f-num);font-size:12px;color:var(--ink-2);text-align:right;padding-left:10px;white-space:nowrap}
+.sc-gnote{margin:8px 0 0;font-size:13px;color:var(--mute)}
+.sc-sec{margin-top:30px}
+.sc-sech{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px;border-bottom:1px solid var(--cover-ink);padding-bottom:6px}
+.sc-h3{font-size:22px}
+.sc-h3 small{font:600 14px var(--f-ui);letter-spacing:.04em;color:var(--ink-2);text-transform:none;margin-left:6px}
+.sc-days{display:flex;gap:6px}
+.sc-days button{min-height:32px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);font:600 13px var(--f-ui);padding:4px 10px;cursor:pointer}
+.sc-days button[aria-pressed="true"]{border-color:var(--cover-ink);background:var(--cover-ink);color:var(--yellow)}
+.sc-days button:focus-visible{outline:2px solid var(--home);outline-offset:1px}
+.sc-cols,.sc-row{display:grid;grid-template-columns:52px minmax(0,1.5fr) minmax(0,.8fr) minmax(0,1.25fr) 140px 142px;gap:16px;align-items:center}
+.sc-cols{padding:8px 0 6px;font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sc-row{padding:9px 0;border-top:1px solid var(--rule)}
+.sc-cols + .sc-row{border-top-color:var(--rule-soft)}
+.sc-t{font-family:var(--f-num);font-size:13px;color:var(--ink-2)}
+.sc-m{min-width:0}
+.sc-m small{display:block;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.sc-m span{color:var(--ink-2)}
+.sc-m b{font-size:16px}
+.sc-bar{display:flex;align-items:center;gap:8px}
+.sc-bar i{flex:1 1 auto;height:8px;background:var(--rule-soft);display:block}
+.sc-bar i u{display:block;height:8px;background:var(--ink)}
+.sc-bar em{flex:0 0 38px;font:600 14px var(--f-num);font-style:normal;text-align:right}
+.sc-bar.g i u{background:var(--edge)} .sc-bar.g em{color:var(--edge)}
+.sc-b{min-width:0}
+.sc-b > span{display:block;font-size:14px}
+.sc-b > small{display:block;font-size:12px;color:var(--mute)}
+.sc-p b{font:600 15px var(--f-num)}
+.sc-p small{font-size:12px;color:var(--mute);margin-left:4px}
+.sc-p .sc-nb{display:block;margin:0;font-size:12px}
+.sc-p .sc-none{font-size:14px;color:var(--ink);margin:0}
+.sc-p .sc-none small{margin-left:0}
+.sc-tag{display:inline-block;font:700 11.5px var(--f-ui);letter-spacing:.07em;text-transform:uppercase;padding:2px 8px;border:1px solid var(--cover-ink);color:var(--ink);white-space:nowrap}
+.sc-tag.short,.sc-tag.lost{background:var(--away);border-color:var(--away);color:#fff}
+.sc-tag.scale{background:var(--edge);border-color:var(--edge);color:#fff}
+.sc-tag.won{background:var(--edge-soft);border-color:var(--edge);color:var(--edge)}
+.sc-tag.void{border-color:var(--rule);color:var(--mute)}
+.sc-tag.started{background:var(--yellow)}
+.sc-x small{display:block;margin-top:3px;font-family:var(--f-num);font-size:11.5px;color:var(--mute)}
+.sc-foot{margin:10px 0 0;font-size:13px;color:var(--mute);max-width:100ch}
+.sc-off{margin-top:8px;font-size:13px;color:var(--ink-2)}
+.sc-off summary{cursor:pointer;color:var(--ink-2)}
+.sc-off ul{margin:6px 0 0;padding-left:18px;columns:2 260px;color:var(--mute)}
+.sc-groups{display:flex;flex-wrap:wrap;gap:16px;margin-top:14px}
+.sc-card{flex:1 1 280px;min-width:0;border:1px solid var(--cover-ink);background:var(--surface);display:flex;flex-direction:column}
+.sc-card h4{margin:0;background:var(--cover-ink);color:var(--yellow);padding:6px 12px;font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.05em;text-transform:uppercase;display:flex;justify-content:space-between;gap:10px}
+.sc-card h4 small{font:600 12px var(--f-ui);letter-spacing:.06em;color:#fff;align-self:center}
+.sc-card ol{list-style:none;margin:0;padding:12px 12px 0;display:flex;flex-direction:column;gap:6px;flex:1 1 auto}
+.sc-card li{font-size:15px}
+.sc-card li span{color:var(--ink-2)}
+.sc-card li small{font-family:var(--f-num);font-size:12.5px;color:var(--mute);white-space:nowrap}
+.sc-card li .sc-dot{width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.sc-cf{margin:12px;padding-top:10px;border-top:1px solid var(--rule)}
+.sc-cf b{display:block;font-family:var(--f-display);font-weight:400;font-size:26px;line-height:1.1}
+.sc-cf p{margin:2px 0 0;font-size:13px;color:var(--ink-2)}
+.sc-cf .sc-tag{margin-top:6px}
+.sc-empty{margin-top:14px;border:1px solid var(--rule);background:var(--surface);padding:12px 14px;font-size:14px;color:var(--ink-2);max-width:92ch}
+.sc-empty b{display:block;font-family:var(--f-display);font-weight:400;font-size:20px;text-transform:uppercase;color:var(--ink)}
+.sc-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.sc-chips span{border:1px solid var(--rule);background:var(--surface);font-size:13px;padding:2px 8px}
+.sc-chips span i{font-style:normal;font-family:var(--f-num);font-size:11.5px;color:var(--mute);margin-left:5px}
+.sc-board{display:flex;flex-wrap:wrap;gap:20px 32px;margin-top:14px}
+.sc-tablewrap{flex:2 1 560px;min-width:0}
+.sc-table{width:100%;min-width:560px;border-collapse:collapse;border-top:1px solid var(--cover-ink)}
+.sc-table th{font:600 11.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute);text-align:left;padding:6px 10px 6px 0;border-bottom:1px solid var(--rule)}
+.sc-table td{padding:7px 10px 7px 0;border-bottom:1px solid var(--rule);font-size:14px;vertical-align:baseline}
+.sc-table td.n{font-family:var(--f-num);font-size:13px;white-space:nowrap}
+.sc-table td.s{font-family:var(--f-num);font-weight:600;color:var(--edge);white-space:nowrap}
+.sc-table td small{display:block;font-size:12px;color:var(--mute)}
+.sc-table tr.sub td{color:var(--ink-2)}
+.sc-side{flex:1 1 280px;min-width:0;border:1px solid var(--rule);background:var(--surface);padding:12px 14px}
+.sc-side h4{margin:0;font:600 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.sc-side b.big{display:block;margin-top:8px;font-family:var(--f-display);font-weight:400;font-size:22px;text-transform:uppercase}
+.sc-side p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
+.sc-side ul{list-style:none;margin:8px 0 0;padding:0;font-size:13.5px}
+.sc-side li{padding:5px 0;border-top:1px solid var(--rule-soft);display:flex;gap:8px;justify-content:space-between}
+.sc-side li span{min-width:0;color:var(--ink-2)}
+.sc-side li em{font-style:normal;font-family:var(--f-num);font-size:12.5px;white-space:nowrap}
+.sc-side li em.w{color:var(--edge);font-weight:600} .sc-side li em.l{color:var(--away)}
+@media (max-width:760px){
+  .sc-cols{display:none}
+  .sc-row{grid-template-columns:48px minmax(0,1fr) auto;gap:6px 10px;align-items:start;padding:11px 0}
+  .sc-row .sc-m{grid-column:2 / 4}
+  .sc-row .sc-w{grid-column:2 / 4}
+  .sc-row .sc-b{grid-column:2 / 4}
+  .sc-row .sc-p{grid-column:2}
+  .sc-row .sc-x{grid-column:3;text-align:right}
+  .sc-w::before{content:"Winner";display:block;font:600 11px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+  .sc-grow{grid-template-columns:58px minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr)}
+  .sc-gd{font-size:11.5px;letter-spacing:.02em}
+  .sc-gs{display:none}
+  .sc-grow .sc-dots{padding-left:6px;padding-right:4px;gap:4px}
+  .sc-grow .sc-dot{width:12px;height:12px}
+  .sc-grow .sc-dot.won{border-width:2.5px}
+  .sc-grow .sc-dot.off{width:6px;height:6px}
+  .sc-ghead .sc-dots{font-size:10px;letter-spacing:.03em}
+  .sc-tiles b{font-size:26px}
+  .sc-tiles span{font-size:10.5px;letter-spacing:.05em}
+}
 /* Days at a glance (How it went, 10 Nov 2026): a day label column and a line per day */
 .dglance{margin-top:22px}
 .dg-grid{margin-top:8px}
@@ -1610,6 +1798,7 @@ footer b{color:var(--ink-2)}
 <nav class="views" id="views" aria-label="Boards">
   <button data-view="list" aria-pressed="true">Daily List</button>
   <button data-view="today" aria-pressed="false">Bets</button>
+  <button data-view="scale" aria-pressed="false">Scale</button>
   <button data-view="starred" aria-pressed="false">Starred</button>
   <button data-view="fixtures" aria-pressed="false">Football</button>
   <button data-view="tennis" aria-pressed="false">Tennis</button>
@@ -1667,6 +1856,7 @@ footer b{color:var(--ink-2)}
 
 <main id="days"></main>
 <section id="today" hidden></section>
+<section id="scale" hidden></section>
 <section id="list" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
@@ -1681,6 +1871,8 @@ footer b{color:var(--ink-2)}
 <script src="sports-data.js"></script>
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
+<script src="scale.js"></script>
+<script src="slip.js"></script>
 <!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
      several MB raw) are loaded by loadRecords() the first time "How it went"
      opens, not here (26 Oct 2026). First paint needs only the summary that
@@ -2251,6 +2443,18 @@ function bookChip(v, best){
   if(v === 0) return `<span class="bkchip off" title="UK bookmakers price this game${best ? ` (best ${best[0]} ${(+best[1]).toFixed(2)})` : ""} but ${LB_BOOK} does not."><span class="lg">Not at Hill</span><span class="sm">No Hill</span></span>`;
   return `<span class="bkchip none" title="The UK bookmakers' list was read and this game was not on it (or its name did not match). Big college favourites are often not offered in the UK."><span class="lg">No UK price</span><span class="sm">No UK</span></span>`;
 }
+/* 12 Nov 2026 (Douglas: "I could do with more context and understanding or
+   flags"): the context check's verdict on a pick (groupings.context_page), a
+   small flag beside the price. Display only: the model's number never moves. */
+function cxFor(sport, home, away){
+  const G = window.__GROUPINGS__;
+  return G && G.contexts && G.contexts[lbKey(sport, home, away)] || null;
+}
+function cxChip(sport, home, away){
+  const c = cxFor(sport, home, away); if(!c) return "";
+  const lab = {clear: "Clear", caution: "Caution", against: "Against"}[c.verdict] || "";
+  return lab ? `<span class="cxchip ${ogEsc(c.verdict)}" title="Context check: ${ogEsc(c.reason || "")}">${lab}</span>` : "";
+}
 function hillChip(sport, home, away){
   const G = window.__GROUPINGS__, k = lbKey(sport, home, away), m = G && G.listBooks && G.listBooks[k];
   if(m && (m.h || m.b || m.c)) return bookChip(m.h ? m.h : m.b ? 0 : m.c ? -1 : null, m.x);
@@ -2487,8 +2691,10 @@ function appendFixture(sec, g, i, dayDate, btts){
     saveStarred();
     star.textContent = starGlyph(id);
     star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
-    if(!$("#starred").hidden) renderStarred();
-    if(!$("#list").hidden) renderList();
+    holdPlace(star, id, () => {
+      if(!$("#starred").hidden) renderStarred();
+      if(!$("#list").hidden) renderList();
+    });
   });
 
   const btn = document.createElement("button");
@@ -2503,14 +2709,15 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name)}</div>`;
-  btn.addEventListener("click", ()=>{
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name)}</div>`;
+  btn.dataset.oid = id;
+  btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
     state.open = state.open===id ? null : id;
     render();
     if(!$("#starred").hidden) renderStarred();
     if(!$("#list").hidden) renderList();
     if(!$("#today").hidden) renderToday();
-  });
+  }));
 
   line.appendChild(star);
   line.appendChild(btn);
@@ -2544,7 +2751,8 @@ function starredLegs(){
     if(g.celtic) warn.push("Celtic's Law: " + g.celtic.reasons.join("; "));
     if(g.unrated) warn.push("a side has no rating on file");
     legs.push({name: `${g.home.name} v ${g.away.name}`, pick, p: g.p[k], acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn, where: `Football · ${g.leagueName}`, when: g.kickoff});
+      list: g.list, reserve: g.reserve, warn, where: `Football · ${g.leagueName}`, when: g.kickoff,
+      cx: cxFor("football", g.home.name, g.away.name)});
   }));
   const others = [];
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
@@ -2554,7 +2762,7 @@ function starredLegs(){
     const warn = [];
     if(/qualif/i.test(g.label || "")) warn.push("a qualifying round: thin ratings, and not what was tested");
     legs.push({name: `${g.home} v ${g.away}`, pick: g.pick, p: g.confidence, acc: g.accuracy,
-      list: g.list, reserve: g.reserve, warn, when: g.when,
+      list: g.list, reserve: g.reserve, warn, when: g.when, cx: cxFor(g.sport, g.home, g.away),
       where: g.sport === "tennis" ? `Tennis · ${g.label}` : `${OG_SPORT[g.sport] || g.sport} · ${g.label}`});
   });
   legs.forEach(l => {
@@ -2618,16 +2826,17 @@ function runSlip(){
       <td class="n">${pct(l.p)}%<small>${fairOdds(l.p)}</small></td>
       <td class="n">${l.acc ? pct(l.acc.hit) + "%" : "–"}<small>${l.acc ? (accLive(l.acc) ? "live at " : "tested at ") + bandLabel(l.acc) : ""}</small></td>
       <td><span class="verdict">${l.verdict}</span>${l.warn.length ? `<small>${l.warn.map(w => w[0].toUpperCase() + w.slice(1)).join(". ")}.</small>`
-        : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}</td>
+        : `<small>${l.list ? "Clears the Daily List bar." : "Below the bar, Firm or better."}</small>`}${l.cx ? ogContext({context: l.cx}) : ""}</td>
     </tr>`).join("");
   const strong = legs.filter(l => l.verdict === "Strong").length;
   const wary = legs.filter(l => l.verdict === "Wary").length;
+  const cxAgainst = legs.filter(l => l.cx && l.cx.verdict === "against").length;
   return `
     <div class="slip-total">
       <div><span>All ${legs.length} land</span><b>${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>
         <small>about 1 in ${Math.max(1, Math.round(1 / all))} · fair odds ${fairOdds(all)}</small></div>
       <div><span>Loses</span><b>${((1 - all) * 100).toFixed(0)}%</b><small>of the time, on these numbers</small></div>
-      <div><span>Verdicts</span><b>${strong} strong</b><small>${wary} to be wary of</small></div>
+      <div><span>Verdicts</span><b>${strong} strong</b><small>${wary} to be wary of${cxAgainst ? ` · ${cxAgainst} the context check reads against` : ""}</small></div>
     </div>
     <p class="slip-note">${legs.length > 1 ? `Weakest leg: <b>${weakest.pick}</b> at ${pct(weakest.p)}%.
       Without it, the rest land ${(without * 100).toFixed(0)}% of the time. ` : ""}Fair odds are 1 ÷ the site's chance,
@@ -2828,19 +3037,30 @@ function glanceState(it){
    drawing is as wide in units as it is in pixels, so its text is true size at
    any width or orientation. */
 const GL_DAYS = 7;
-let GL_IDX = 0;
+let GL_IDX = 0, GL_DATE = null;   // GL_DATE: the day in view, kept across redraws
+/* 12 Nov 2026, Douglas: "I want the at a glance visual thing to also scroll
+   back the last 7 days too". The days behind today come from daylist.py's
+   `past` (each list as it stood before its games started, with results); the
+   track opens on today and swipes left into the week behind. */
+function glancePast(){
+  const DL = window.__DAY_LIST__;
+  return (DL && DL.past || []).map(p => ({date: p.date,
+    items: (p.list || []).map(g => ({kind: "pinned", past: true, g: {...g, when: g.start}}))}));
+}
 function glanceWidth(){
   const el = document.getElementById("glance");
   const w = el ? el.clientWidth - 32 : (document.documentElement.clientWidth || 400) - 56;
   return Math.round(Math.min(1600, Math.max(280, w)));
 }
-function glanceDay(date, i, W){
-  const items = (listCollect().byDay[date] || []);
+function glanceDay(date, i, W, given){
+  const items = given || (listCollect().byDay[date] || []);
   const day0 = new Date(date + "T00:00:00"), t0 = day0.getTime(), span = 864e5;
-  const pts = items.map(it => ({it, p: weekPick(it), ...glanceState(it)})).filter(x => !isNaN(x.t)).sort((a, b) => a.t - b.t);
+  // a past day's pick with no result yet reads "result due", never "in play"
+  const pts = items.map(it => { const s = glanceState(it); if(it.past && !["won", "lost", "void"].includes(s.st)) s.st = "due";
+    return {it, p: weekPick(it), ...s}; }).filter(x => !isNaN(x.t)).sort((a, b) => a.t - b.t);
   if(!pts.length) return null;
   const n = k => pts.filter(x => k.includes(x.st)).length;
-  const won = n(["won"]), lost = n(["lost"]), live = n(["play", "ahead", "behind", "level"]), fin = n(["fwon", "flost"]), up = n(["up"]);
+  const won = n(["won"]), lost = n(["lost"]), live = n(["play", "ahead", "behind", "level"]), fin = n(["fwon", "flost"]), up = n(["up"]), due = n(["due"]);
   const next = pts.find(x => x.st === "up");
   const until = next ? (() => { const m = Math.max(0, Math.round((next.t - Date.now()) / 6e4));
     return m >= 1440 ? "" : m >= 60 ? `${Math.floor(m / 60)}h ${m % 60}m` : `${m}m`; })() : "";
@@ -2856,13 +3076,15 @@ function glanceDay(date, i, W){
   const ticks = hours.map(h => { const x = X(t0 + h * 36e5);
     return `<line x1="${x}" x2="${x}" y1="80" y2="85" class="gl-tk"/><text x="${x}" y="98" text-anchor="${h === 0 ? "start" : h === 24 ? "end" : "middle"}" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`; }).join("");
   const now = Date.now(), nowX = X(now);
-  const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
-  const dots = placed.map(d => `<g class="gl-hit" data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
+  const word = {won:"Won", lost:"Lost", void:"Void", up:"To come", due:"Result due", play:"In play", ahead:"In play, ahead", behind:"In play, behind", level:"In play, level", fwon:"Finished, won (not yet graded)", flost:"Finished, lost (not yet graded)"};
+  const dots = placed.map(d => `<g class="gl-hit"${i < 0 ? ` aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}"` : ` data-pk="${lbKey(d.p.sport, d.p.home, d.p.away).replace(/"/g, "&quot;")}" role="button" tabindex="0" aria-label="${d.p.pick} to beat ${d.p.opp}, ${word[d.st]}: go to the pick"`}><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="11" class="gl-tap"/><circle cx="${d.cx.toFixed(1)}" cy="${d.cy}" r="5.5" class="gl-d ${d.st === "due" ? "up" : d.st}"><title>${localTime(new Date(d.t).toISOString())} · ${d.p.pick} to beat ${d.p.opp} · ${d.p.label} · ${pct(d.p.conf)}% · ${word[d.st]}${d.score ? " " + d.score : ""}</title></circle></g>`).join("");
   const parts = [won && `<b class="g-won">${won} won</b>`, lost && `<b class="g-lost">${lost} lost</b>`, live && `<b class="g-live">${live} in play</b>`,
-                 fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`].filter(Boolean).join(" · ");
-  const name = i === 0 ? "Today" : i === 1 ? "Tomorrow" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "short"});
-  const short = i === 0 ? "Today" : i === 1 ? "Tmrw" : new Date(date + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"});
-  return {date, i, name, short, count: pts.length, html: `<div class="gl-day" data-gld="${date}" role="group" aria-label="${name}, ${pts.length} list pick${pts.length === 1 ? "" : "s"}">
+                 fin && `<b>${fin} finished, not yet graded</b>`, up && `<b>${up} to come</b>`, due && `<b>${due} result due</b>`].filter(Boolean).join(" · ");
+  const dd = new Date(date + "T12:00:00");
+  const name = i === 0 ? "Today" : i === 1 ? "Tomorrow" : i === -1 ? "Yesterday" : dd.toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "short"});
+  const short = i === 0 ? "Today" : i === 1 ? "Tmrw" : i === -1 ? "Yday"
+    : i < 0 ? dd.toLocaleDateString("en-GB", {weekday: "short"}) + " " + dd.getDate() : dd.toLocaleDateString("en-GB", {weekday: "short"});
+  return {date, i, name, short, count: pts.length, won, lost, html: `<div class="gl-day${i < 0 ? " gl-past" : ""}" data-gld="${date}" role="group" aria-label="${name}, ${pts.length} list pick${pts.length === 1 ? "" : "s"}">
     <p class="gl-sum"><b class="gl-dn">${name}</b> ${parts}${next ? ` · ${i === 0 ? "next" : "first"} <b>${localTime(new Date(next.t).toISOString())}</b> ${next.p.label}${until ? `, in ${until}` : ""}` : ""}</p>
     <svg viewBox="0 ${y0} ${W} ${H - y0}" width="${W}" role="img" aria-label="${name}'s list picks by start time">
       <line x1="${M}" x2="${W - M}" y1="80" y2="80" class="gl-ax"/>${ticks}
@@ -2870,16 +3092,21 @@ function glanceDay(date, i, W){
       ${dots}</svg></div>`};
 }
 function todayGlance(){
-  const W = glanceWidth(), days = [];
+  const W = glanceWidth(), days = [], today = localDay(new Date().toISOString());
+  const t0 = Date.parse(today + "T12:00:00");
+  glancePast().filter(p => p.date < today).forEach(p => {
+    const d = glanceDay(p.date, Math.round((Date.parse(p.date + "T12:00:00") - t0) / 864e5), W, p.items); if(d) days.push(d); });
   for(let i = 0; i < GL_DAYS; i++){
     const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
     const d = glanceDay(date, i, W); if(d) days.push(d);
   }
   if(!days.length) return "";
-  GL_IDX = Math.min(GL_IDX, days.length - 1);
+  // open on the day last in view, else today (or the first day after it)
+  const at = GL_DATE && days.findIndex(d => d.date === GL_DATE);
+  GL_IDX = at != null && at >= 0 ? at : Math.max(0, days.findIndex(d => d.i >= 0));
   const tabs = days.length > 1 ? `<div class="gl-nav">
       <button type="button" class="gl-arw" data-glstep="-1" aria-label="Previous day"${GL_IDX === 0 ? " disabled" : ""}>‹</button>
-      <div class="gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}"${k === GL_IDX ? ' class="on"' : ""}>${d.short}<i>${d.count}</i></button>`).join("")}</div>
+      <div class="gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}" class="${[k === GL_IDX ? "on" : "", d.i < 0 ? "past" : ""].filter(Boolean).join(" ")}">${d.short}<i>${d.i < 0 && d.won + d.lost ? `${d.won}/${d.won + d.lost}` : d.count}</i></button>`).join("")}</div>
       <button type="button" class="gl-arw" data-glstep="1" aria-label="Next day"${GL_IDX === days.length - 1 ? " disabled" : ""}>›</button></div>` : "";
   return `<section class="glance" id="glance" aria-label="The days at a glance">
     <div class="gl-top"><h3>${days.length > 1 ? "At a glance" : "Today at a glance"}</h3>${tabs}</div>
@@ -2899,6 +3126,14 @@ function glanceSync(jump){
     tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: "auto"});
   }
   el.querySelectorAll("[data-glgo]").forEach(b => { const on = +b.dataset.glgo === GL_IDX; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
+  const cur = tr.children[GL_IDX]; if(cur) GL_DATE = cur.dataset.gld;
+  // the day tabs scroll sideways on their own (a fortnight of tabs); keep the
+  // one in view showing without moving the page
+  const tabs = el.querySelector(".gl-tabs"), on = tabs && tabs.querySelector(".on");
+  if(on && tabs.scrollWidth > tabs.clientWidth){
+    const l = on.offsetLeft - tabs.offsetLeft, r = l + on.offsetWidth;
+    if(l < tabs.scrollLeft || r > tabs.scrollLeft + tabs.clientWidth) tabs.scrollLeft = Math.max(0, l - (tabs.clientWidth - on.offsetWidth) / 2);
+  }
   el.querySelectorAll("[data-glstep]").forEach(b => b.disabled = (+b.dataset.glstep < 0 ? GL_IDX === 0 : GL_IDX === n - 1));
   if(!tr.dataset.wired){ tr.dataset.wired = 1; let raf = 0;
     tr.addEventListener("scroll", () => { if(raf) return; raf = requestAnimationFrame(() => { raf = 0;
@@ -3100,8 +3335,9 @@ function renderList(){
       const fold = document.createElement("details");
       fold.className = "resv";
       fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
+      const nWary = extra.filter(it => sideWary(it.g)).length;
       fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.</span><i aria-hidden="true"></i></summary>`;
+        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
       fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
       sec.appendChild(fold);
       const puts = (it, i) => it.kind === "football"
@@ -3508,6 +3744,47 @@ const accLine = a => !a ? "" : accLive(a)
   : `Calls at <em>${bandLabel(a)}</em> landed <em>${pct(a.hit)}%</em> of the time across
   <em>${a.n}</em> games the model was never tuned on${a.season ? ` (${a.season})` : ""}.`;
 
+/* 11 Nov 2026 (Douglas: "whenever I click on a fixture on the daily list it
+   auto scrolls back to the top"): opening a row redraws its board, and the
+   redraw empties the board for a moment, so the browser clamped the scroll
+   near the top. The tapped row is put back where it was on the screen. */
+function holdPlace(btn, id, redraw){
+  const top = btn.getBoundingClientRect().top;
+  redraw();
+  const sel = `[data-oid="${window.CSS && CSS.escape ? CSS.escape(id) : id.replace(/"/g, '\\"')}"]`;
+  const now = [...document.querySelectorAll(sel)].find(b => b.offsetParent !== null);
+  if(!now) return;
+  const dy = now.getBoundingClientRect().top - top;
+  if(Math.abs(dy) > 1) window.scrollBy({top: dy, left: 0, behavior: "auto"});
+  try { now.focus({preventScroll: true}); } catch(err) {}
+}
+/* 11 Nov 2026 (Douglas, after Casper Ruud lost at 1.22: "Tennis score must
+   go lower"; then "Both"): a tennis pick under 80% says so. Graded tennis at
+   70-80% lands about as quoted (75.6% v 74.5%), so one in four loses: fine as
+   a single read, costly in an accumulator. The Card takes tennis at 85%+. */
+function tennisWary(g){
+  if(!g || g.sport !== "tennis" || !(g.confidence < 0.80)) return "";
+  return `<span class="flagged wary" title="A tennis pick under 80%: about one in four of these loses, so it is a weak accumulator leg. The Card takes tennis only at 85% and over.">Under 80</span>`;
+}
+/* 15 Nov 2026 (Douglas, after Saturday's reserve): a college pick away from
+   home or on a neutral court says so. The replay (70%+, Aug-Dec, both test
+   seasons) has college basketball home picks landing 88.8% v 83.5% quoted,
+   away 76.0% v 77.3%, neutral 74.9% v 78.3%; live, away college picks have
+   landed under quote (college basketball 11 of 21, college football 36 of 54
+   v 78%). Shown, never hidden; the number on the row is unchanged. Computed
+   from the row so pinned and archived rows carry it too (sports.wary is the
+   same rule). */
+const WARY_SPORTS = new Set(["ncaab", "cfb"]);
+function sideWary(g){
+  if(!g || !WARY_SPORTS.has(g.sport) || !(g.confidence >= 0.70)) return null;
+  if(g.neutral) return {kind: "neutral", label: "Neutral", why: "A college pick on a neutral court: in testing these land under their quote (college basketball 75% v 78%) while home picks land above it."};
+  if(g.pick && g.home && g.pick !== g.home) return {kind: "away", label: "Away", why: "A college pick away from home: in testing these land as quoted while home picks land above it; on the live record they have landed under it (college basketball 11 of 21, college football 36 of 54 at 70%+)."};
+  return null;
+}
+function sideWaryChip(g){
+  const w = sideWary(g);
+  return w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "";
+}
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
@@ -3747,7 +4024,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div></div>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
@@ -3779,7 +4056,7 @@ function sportRow(g, i, showSport, host){
     state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
     state.starredGames = state.starredGames || {};
     state.starredGames[id] = g;
-    saveStarred(); rerenderOpen();
+    saveStarred(); holdPlace(star, id, rerenderOpen);
   });
   const btn = document.createElement("button");
   btn.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
@@ -3795,8 +4072,9 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}</div>`;
-  btn.addEventListener("click", () => { state.open = state.open === id ? null : id; rerenderOpen(); });
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div>`;
+  btn.dataset.oid = id;
+  btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);
   const frag = document.createDocumentFragment();
   frag.appendChild(line);
@@ -4642,13 +4920,13 @@ function ogCard(g){
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
-  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.span ? `two days: ${ogEsc(new Date(g.span[0] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))} and ${ogEsc(new Date(g.span[1] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))}` : g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>${card && g.stake > 1 ? `${g.stake} units: ` : ""}£${(stake * (card ? g.stake || 1 : 1)) % 1 ? (stake * (card ? g.stake || 1 : 1)).toFixed(2) : stake * (card ? g.stake || 1 : 1)} returns £${(stake * (card ? g.stake || 1 : 1) * g.odds).toFixed(2)}</span>${(() => { const u = stake * (card ? g.stake || 1 : 1);
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
     ${ogStatus(g)}${card ? ogPlacedNote(g, OG_DAY) : ""}
     <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
     <div>${legs}</div>${card || paper ? ogBooks(g) : ""}${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
-    <div class="og-f">${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${!paper && g.basis === "model" ? "Each pick is one the model rates at or above the bookmakers' chance, and the group's chance is the model's own. " : ""}${paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult && g.basis !== "model" ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${g.span ? "<b>Two days.</b> Nothing on the first day made a group, so this one takes the next day's picks too, under the same rule. Place it before its first pick starts; it settles when the last one finishes. " : ""}${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${!paper && g.basis === "model" ? "Each pick is one the model rates at or above the bookmakers' chance, and the group's chance is the model's own. " : ""}${paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult && g.basis !== "model" ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
@@ -4949,12 +5227,15 @@ function tbRecord(){
     : `<p class="tb-verdict">No settled groups yet. A group is won only when every pick wins; a draw is a loss.</p>`;
   const sp = Object.entries(R.cardLegsBySport || {});
   const sportRows = sp.map(([s_, t]) => {
-    const st = t.tripwire ? ["bad", "Coming off"] : t.z != null && t.z <= -fz ? ["bad", `Watch: ${Math.max(fn - t.legs, 0)} more legs decide`]
+    // 14 Nov 2026: a sport with its own floor (tennis, 85%) is judged on the legs that floor admits (atFloor)
+    const u = t.atFloor || t, at = t.atFloor ? ` at ${pct(t.floor)}%+` : "";
+    const st = t.tripwire ? ["bad", "Coming off"] : u.z != null && u.z <= -fz ? ["bad", `Watch: ${Math.max(fn - u.legs, 0)} more legs${at} decide`]
+      : t.atFloor && t.z != null && t.z < 0 ? ["warn", `Under; judged at ${pct(t.floor)}%+ (${u.legs} so far)`]
       : t.z != null && t.z < 0 ? ["warn", "Slightly under"] : ["ok", "On or above"];
     return `<tr><th>${ogEsc(OG_SPORT[s_] || s_)}</th><td>${t.landed} / ${t.legs}</td><td>${pct(t.rate)}%</td><td>${pct(t.quoted)}%</td><td><span class="tb-st ${st[0]}">${st[1]}</span></td></tr>`; }).join("");
   const sportTbl = sp.length ? `<table class="tb-tbl"><caption>Picks by sport, every group</caption>
       <thead><tr><th>Sport</th><th>Landed</th><th>Rate</th><th>Expected</th><th></th></tr></thead><tbody>${sportRows}</tbody></table>
-    <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs.</p>` : "";
+    <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs${sp.some(([, t]) => t.atFloor) ? "; a sport with its own floor counts only the picks that floor would take today" : ""}.</p>` : "";
   const wl = x => x && x.settled ? `${x.won} of ${x.settled}` : "–";
   const more = [];
   Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}`, wl(t), ret(t)]));
@@ -4972,6 +5253,55 @@ function tbRecord(){
    double of the two most likely and every flagged pick as one slip, priced
    at the average and the best price, and what each did on the football-data
    seasons (D.edgeTested, from tools/card_legs_history.py). Display only. */
+/* 15 Nov 2026 (Douglas, after a five-fold at 6.6 and an eleven-fold at 3.0:
+   "a better way of reading and automating picks"): the slip, slip.py. The
+   day's 3 to 5 legs paying 3x to 6x, chosen for expected return, each leg's
+   chance the landed rate its sport and price band has shown on the results
+   ledger, legs from losing bands and legs the model prices above the market
+   refused, offered only when the expected return covers the stake. */
+const SLIP = window.__SLIP__ || null;
+function slipSection(date){
+  if(!SLIP) return "";
+  const day = (SLIP.days || []).find(d => d.date === date);
+  const R = SLIP.rule_text || {}, rec = SLIP.record || {}, gate = rec.gate || {}, rp = SLIP.replay || {};
+  const pence = ev => `${Math.round(ev * 100)}p`;
+  const sign = x => (x >= 0 ? "+" : "") + (Math.round(x * 1000) / 10).toFixed(1) + "%";
+  const tm = s => new Date(s).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"});
+  const why = {few: "fewer than three legs clear the leg rule", value: "the best slip the legs allow returns less than the stake on its tested chances",
+               short: "every slip the legs allow pays under 3x: the picks that clear the rule are too short-priced", long: "every slip the legs allow pays over 6x",
+               spread: "no set of legs lands between 3x and 6x"};
+  let body;
+  if(!day) body = `<div class="empty tb-empty">No slip built for ${fmtDay(date)} yet; it is built for today and tomorrow on each build.</div>`;
+  else if(!day.slip){
+    const off = Object.entries(day.off || {}).map(([k, n]) => `${n} ${k}`).join(", ");
+    body = `<div class="empty tb-empty">No slip on ${fmtDay(date)}: ${why[day.why] || day.why || "nothing qualified"}. ${day.candidates || 0} leg${day.candidates === 1 ? "" : "s"} cleared the leg rule${off ? `; left out: ${ogEsc(off)}` : ""}. An empty day stays empty.</div>`;
+  } else {
+    const s = day.slip, st = s.state || "open", started = Date.parse(s.first) <= Date.now();
+    const legs = s.legs.map(l => { const ls = (s.legStates || {})[l.key];
+      return `<div class="tb-row slip ${ls || ""}"><span class="tb-v">${ls === "won" ? "Won" : ls === "lost" ? "Lost" : ls === "void" ? "Void" : ({football: "Football", tennis: "Tennis", ncaab: "College", cfb: "College", nba: "NBA", nfl: "NFL", rugby: "Rugby"}[l.sport] || ogEsc(l.sport))}</span>
+        <span class="tb-m"><b>${ogEsc(l.pick)}</b><small>v ${ogEsc(l.side === "h" ? l.away : l.home)} · ${ogEsc(l.comp || "")} · ${tm(l.start)}${l.list ? " · Daily List" : l.reserve ? " · reserve" : ""}</small>
+          <small class="tb-why">Tested: ${ogEsc(l.basis)} landed (${Math.round(l.chance * 100)}%); model ${Math.round(l.conf * 100)}%; band ${sign(l.bandRet)} a leg at the price</small></span>
+        <span class="tb-pp">${l.price.toFixed(2)}<small>${ogEsc(l.book || "")}</small></span></div>`; }).join("");
+    body = `<div class="tb-rows">${legs}</div>
+      <div class="tb-proof edge"><div><span>${s.legs.length}-fold${st === "won" ? ", won" : st === "lost" ? ", lost" : st === "void" ? ", void" : started ? ", under way" : ""}</span><b>${s.price.toFixed(2)}</b><small>tested chance it lands ${Math.round(s.chance * 100)}% · expected return <b>${pence(s.ev)}</b> in the pound${"ret" in s ? ` · returned ${s.ret.toFixed(2)}` : ""}${started ? "" : " · open until " + tm(s.first)}</small></div></div>`;
+  }
+  const rates = SLIP.rates || {};
+  const bandRows = Object.keys(rates).sort((a, b) => a === "all" ? -1 : b === "all" ? 1 : a.localeCompare(b)).map(sp =>
+    Object.entries(rates[sp]).filter(([, v]) => v.n >= (R.ratesMinN || 50)).sort().map(([b, v]) =>
+      `<tr><td>${sp === "all" ? "All sports" : ogEsc(SD && SD.sports && SD.sports[sp] ? SD.sports[sp].name : sp)}</td><td>${b}</td><td>${v.n}</td><td>${Math.round(v.rate * 100)}%</td><td>${Math.round(v.implied * 100)}%</td><td class="${v.ret >= 0 ? "pos" : "neg"}">${sign(v.ret)}</td></tr>`).join("")).join("");
+  const record = gate.n ? `On this site: ${rec.won} won of ${gate.n}, ${sign(gate.ret)} at the archived price, p(loss) ${gate.pLoss}; the gate (${gate.need.n} slips, positive, p(loss) at most ${gate.need.pLoss}) ${gate.pass ? "<b>passed</b>" : "not yet met"}.`
+    : "No slip settled on this site yet.";
+  const replay = rp.settled ? ` Walked forward over the ledger before ${SLIP.from}: ${rp.won} of ${rp.settled} won, ${sign(rp.gate.ret)}, p(loss) ${rp.gate.pLoss} (${rp.built} days could be built; the band rates were thin before November).` : "";
+  return `<section class="tb-win tb-slip"><h3 class="tb-h">The slip <small>3 to 5 legs paying 3x to 6x, chosen for return, each leg's chance its tested landed rate</small></h3>
+    ${body}
+    <p class="tb-snap"><b>How it is built.</b> Every priced pick still to start, every sport, at ${Math.round((R.confMin || 0.62) * 100)}%+. A leg's chance is the rate its sport and price band have landed on the results ledger (${R.ratesMinN || 50}+ graded picks, else the pooled band), not the model's number. A leg is refused when its band returns worse than ${sign(R.legRetMin ?? -0.02)} at the price, when the model sits more than ${Math.round((R.aboveMax || 0.05) * 100)} points above the price's own chance (those picks land 49-56% and lose 9-14% a leg), or when it is an away college pick. From what is left, the set of ${(R.legs || [3, 5]).join(" to ")} legs from different fixtures with the highest expected return inside the band, offered only when that return covers the stake. Prices are those read at the last build; check before placing.</p>
+    <p class="tb-snap">${record}${replay} Short prices are not the problem: an accumulator compounds whatever each leg loses to the margin, and the longer bands lose more.</p>
+    <details class="how"><summary>Landed against the price, by sport and band</summary>
+      <table class="tb-bands"><thead><tr><th>Sport</th><th>Price</th><th>Picks</th><th>Landed</th><th>Implied</th><th>Return a leg</th></tr></thead><tbody>${bandRows}</tbody></table>
+      <p class="tb-snap">Graded picks at 62%+ with a pre-start price on the results ledger; return at the price recorded (William Hill's where it had one, else the last average). A tally of what happened, never fitted.</p></details>
+  </section>`;
+}
+
 function edgeSection(date){
   const games = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge)
     .sort((a, b) => (a.kickoff || "").localeCompare(b.kickoff || ""));
@@ -5235,10 +5565,53 @@ function cardPicksHtml(day, gs){
     return `<div class="og-l${off ? " cx-off" : ""}"><span class="t">${ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${off ? " · kept off by the context check" : ""}</small>${ogContext(l)}</span>
       <span class="o">${l.est ? "est. " : ""}${(+l.odds).toFixed(2)}${hill ? `<small class="read">Hill ${(+hill).toFixed(2)}</small>` : ""}</span><span class="c">${pct(l.pModel)}%</span></div>`; }).join("");
-  return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}, with the context check</summary>
-    <p class="tb-picks-n">Each passes the Card's rule on its own (the model 60%+ and at or above the bookmakers, priced 1.15 to 1.90). ${gs.length ? "" : "Not enough for a group: a group needs three or more from different competitions, at most two from one, paying 2x or more. "}Shown for information, not a bet.</p>
+  return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}${cxPaused() ? "" : ", with the context check"}</summary>
+    <p class="tb-picks-n">Each passes the Card's rule on its own (the model 60%+ and at or above the bookmakers, priced 1.15 to 1.90). ${gs.length ? "" : `Not enough for a group: a group needs three or more, at most two from one competition, together paying ${(((OG.rules || {}).card || {}).build || []).length === 1 ? "2.00 to 3.00" : "2x or more"}. `}Shown for information, not a bet.</p>
     <div class="og">${rows}</div></details>`;
 }
+// 14 Nov 2026: the context check pauses itself when the API key reaches its
+// usage limit (groupings-data.js contextPaused, the time it resumes). The page
+// says so, so no one reads an unread pick as checked.
+function cxPaused(){
+  const t = OG && OG.contextPaused; if(!t) return "";
+  const d = new Date(String(t).replace(/Z$/, ":00Z"));
+  if(isNaN(d) || d.getTime() <= Date.now()) return "";
+  return d.toLocaleDateString("en-GB", {day: "numeric", month: "short", timeZone: "UTC"});
+}
+function cxPausedHtml(){
+  const d = cxPaused(); if(!d) return "";
+  return `<p class="cx-paused">The context check is paused until ${d}: its API allowance is used up for the month. No pick is being read, so none is kept off for news.</p>`;
+}
+// 13 Nov 2026: why a day has no group, from groupings.card_short. On 13 Nov
+// the page said "too few picks" when three qualified and together paid 3.51,
+// over the 2x group's 3.00 top.
+function cardShortText(s){
+  const again = "Prices are read again on every build (six a day), so a group can still appear. A blank day is the rule working.";
+  if(!s) return `No group on this day: too few picks clear the rule so far. ${again}`;
+  const n = s.picks, lo = (+s.band[0]).toFixed(2), hi = (+s.band[1]).toFixed(2);
+  const picks = n === 1 ? "one pick clears" : `${n === 0 ? "no" : n} picks clear`;
+  if(s.why === "long") return `No group on this day: ${n} picks clear the rule, but every set of them pays more than a ${s.kind} can (the cheapest ${(+s.best).toFixed(2)}, over its ${hi} top). A shorter pick in place of one of them would. ${again}`;
+  if(s.why === "short") return `No group on this day: ${n} picks clear the rule, but together they pay at most ${(+s.best).toFixed(2)}, under the ${s.kind}'s ${lo}. ${again}`;
+  if(s.why === "spread") return `No group on this day: ${n} picks clear the rule, but from ${s.comps} competition${s.comps === 1 ? "" : "s"}, and a group takes at most two from one. ${again}`;
+  if(s.why === "chance") return `No group on this day: ${n} picks clear the rule, but no set paying ${lo} to ${hi} has the model's combined chance high enough. ${again}`;
+  return `No group on this day: ${picks} the rule so far, and a group needs ${s.need || 3}. ${again}`;
+}
+// 12 Nov 2026: the playbook's timing habit reads the price-timing check
+// (groupings.timing_page, tools/price_timing.page_read) on settled Card-rule
+// picks, so it says only what the record still supports. The 10 Nov line
+// ("about 2 points more" late, 104 picks) had faded to nothing by 12 Nov.
+function placeHabit(t) {
+  const why = "a group can still change until its first start, so a late slip matches the one the record grades.";
+  if (!t || !t.n) return `<b>Place once, before the first start.</b> Nearer it than not: ${why}`;
+  const on = `on ${t.n} settled Card-rule picks${t.at ? ` to ${fmtShort(t.at)}` : ""}`;
+  const pts = Math.abs(t.lateGainPct).toFixed(1);
+  if (t.read === "take the price late")
+    return `<b>Place once, late.</b> Any time before a group's first kick-off, nearer it than not: ${on} the last price before the start paid ${pts} points more than the first, and ${why}`;
+  if (t.read === "take the price when published")
+    return `<b>Place once, early.</b> Soon after a group is published: ${on} the first price paid ${pts} points more than the last before the start. A group can still change until its first start, so check it before the first kick-off.`;
+  return `<b>Place once, before the first start.</b> Nearer it than not: ${why} The price gives no reason to wait or to hurry: ${on}, the first and the last pre-start prices paid about the same.`;
+}
+
 function renderToday(){
   const host = $("#today"); if(!host) return;
   if(!OG || !(OG.days || []).length){
@@ -5265,7 +5638,7 @@ function renderToday(){
         <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : lk ? `${when}${locked ? " · placed? leave it" : " · place it once it locks"}` : "each group is open until its first kick-off; place any time before"}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty tb-empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
-            : "No group on this day: too few picks clear the rule so far. Prices are read again on every build (six a day), and a group appears here as soon as three picks qualify. A blank day is the rule working."}</div>`}${cardPicksHtml(day, gs)}</section>`;
+            : cardShortText(day.cardShort)}</div>`}${cxPausedHtml()}${cardPicksHtml(day, gs)}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
   host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}
@@ -5273,16 +5646,16 @@ function renderToday(){
       ${C.modelRule ? `<p><b>The model's own picks</b> (from 11 Nov 2026). ${(C.build || []).length === 1 ? `Up to three groups a day from different fixtures, each paying <b>2x or more</b> (the 3x was dropped on 11 Nov: replayed on five football seasons and the last fortnight, it lost in three seasons of four and dragged the card down), from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.` : `Up to six groups a day from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.`} Every pick is one the model rates ${pct(C.fairMin || 0.6)}%+ and at or above the bookmakers' own chance, priced 1.15 to 1.90 by a bookmaker,
-      football from the core leagues, a tennis pick at 75%+ on the model and its tested rate, NFL and college sports off. Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
+      football from the core leagues and, since 11 Nov, the wider leagues (core picks first), a tennis pick at 85%+ on the model and its tested rate (75% until 11 Nov), NFL and college sports off. Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       ${C.filler === false ? `A day the model's picks leave empty stays empty: no group is better than a weak one (the wider-rule filler was switched off on 11 Nov; its groups stay in the record).` : `A day the model's picks leave empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers ${Math.round((C.wideFairMin || 0.6) * 100)}%+), marked and graded apart.`}</p>` : `<p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+
       with the model in agreement, any sport still on the Daily List. NFL and college football picks are off the card on their
-      live record, a tennis pick needs the model and its tested rate both at 75%+, and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay; 31 Oct: 10+ under lost on every sample) and the opposition priced 9 or longer (6 Nov 2026: on last season's replay favourites with the opposition at 9+ landed 84% against 76% quoted, and with the opposition under 6 they landed below quote; the opposition's price is shown on every pick). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
+      live record, a tennis pick needs the model and its tested rate both at 85%+ (75% from 29 Oct to 11 Nov 2026), and a football pick comes from the core leagues with the model 5 to 10 points under the bookmakers' chance (29 Oct 2026: only those legs landed above their quote on the archive, and groups built from wider-league picks lost on the replay; 31 Oct: 10+ under lost on every sample) and the opposition priced 9 or longer (6 Nov 2026: on last season's replay favourites with the opposition at 9+ landed 84% against 76% quoted, and with the opposition under 6 they landed below quote; the opposition's price is shown on every pick). Cards are built for today and the next three days. There is no clock: a group is open until its first kick-off, place it any time before, and it only changes if a pick fails the rule (the reason is logged). At its first kick-off it is frozen as published and that is what the record grades.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       A day the full rule leaves empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+), marked and graded apart.</p>`}</div>
     <ol class="tb-play">
-      <li><b>Place once, late.</b> Any time before a group's first kick-off, nearer it than not: on 104 settled Card-rule picks the last price before the start paid about 2 points more than the first (10 Nov 2026), and a group can still change until its first start, so a late slip matches the one the record grades. A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
+      <li>${placeHabit(OG.timing)} A pick that isn't offered takes a substitute from its group; never merge two groups.</li>
       <li><b>Stake flat.</b> ${(C.build || []).length === 1 ? "Two units on each 2x, every day the same; the stake box below is one unit. Up to three groups a day, each from different fixtures." : "Two units on each 2x, one on each 3x, every day the same; the stake box below is one unit. Up to six groups a day, each from different fixtures."}</li>
       <li><b>Leave it.</b> No checking mid-game, no cash out, no topping up. Results show here once every pick has finished.</li>
       <li><b>Only the card.</b> And the Edge picks below; nothing else.</li>
@@ -5294,6 +5667,7 @@ function renderToday(){
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${wins.map(winHtml).join("")}
+    ${slipSection(day.date)}
     ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
@@ -5325,6 +5699,206 @@ function renderToday(){
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
 }
 
+/* ---------- Scale (15 Nov 2026, Douglas: "scaling the odds and even
+   reducing the stake"): the model's winners with a second condition added,
+   from scale.py (scale.js). Three tiers, in this order: Daily List picks,
+   Daily List reserve, everything else at 55%+ topping the day up to ten
+   games. Football only where William Hill prices win and both score; tennis
+   in straight sets and the NBA, NFL and rugby by a margin, tracked without
+   a price. Display only. claude/scale-tiers-2026-11-15.md ---------- */
+const SCALE = window.__SCALE__ || null;
+let SC_DAY = null;
+const scE = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const scTime = s => new Date(s).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"});
+const scDate = (d, long) => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", long ? {weekday:"long", day:"numeric", month:"long", timeZone:"UTC"} : {weekday:"short", day:"numeric", month:"short", timeZone:"UTC"});
+const scPct = x => Math.round(x * 100) + "%";
+const scOf = (k, n) => n ? `${scPct(k / n)}` : "–";
+const scRet = t => t && t.priced ? `${t.ret >= 0 ? "+" : "−"}${Math.abs(t.ret * 100).toFixed(1)}% <small>${t.priced} priced</small>` : "–";
+const SC_TIERS = ["list", "reserve", "else"];
+const SC_TIER = {list:"Daily List picks", reserve:"Daily List reserve", else:"Everything else"};
+const SC_TIER_SHORT = {list:"Daily List", reserve:"Reserve", else:"Everything else"};
+const scCfg = s => (SCALE && SCALE.sports && SCALE.sports[s]) || {name: s, bet: "", long: ""};
+const scLow = s => String(s || "").charAt(0).toLowerCase() + String(s || "").slice(1);
+const scMinus = s => String(s || "").replace(/-(\d)/g, "−$1");
+function scWord(sport, state){
+  if(state === "scale") return sport === "football" ? "Won and both scored" : "Won " + scLow(scCfg(sport).bet);
+  if(state === "won") return sport === "football" ? "Won to nil" : sport === "tennis" ? "Won, dropped a set" : "Won by less";
+  return {lost:"Pick lost", void:"Void", up:"To play", started:"Under way"}[state] || "To play";
+}
+const scState = p => p.state || (new Date(p.start).getTime() <= Date.now() ? "started" : "up");
+function scTag(p){
+  const st = scState(p), det = p.detail ? `<small>${scE(p.detail)}</small>` : "";
+  if(st === "scale") return `<span class="sc-tag scale">Scale landed</span>${det}`;
+  if(st === "won") return `<span class="sc-tag won">${scE(scWord(p.sport, "won").replace("Won, d", "D"))}</span>${det}`;
+  if(st === "lost") return `<span class="sc-tag lost">Lost</span>${det}`;
+  if(st === "void") return `<span class="sc-tag void">Void</span>`;
+  if(st === "started") return SCALE && p.start.slice(0, 10) < SCALE.today ? `<span class="sc-tag void">No result</span>` : `<span class="sc-tag started">Under way</span>`;
+  if(p.price && p.chance && p.price < 1 / p.chance) return `<span class="sc-tag short" title="William Hill's price is under the price this chance needs to break even">Price too short</span>`;
+  return "";
+}
+function scRow(p){
+  const opp = p.side === "h" ? p.away : p.home;
+  const needs = p.chance ? (1 / p.chance).toFixed(2) : null;
+  const price = p.price
+    ? `<b>${p.price.toFixed(2)}</b>${needs ? `<small>needs ${needs}</small>` : ""}${p.best && p.best > p.price ? `<small class="sc-nb">best ${p.best.toFixed(2)} ${scE(p.bestBook || "")}</small>` : ""}`
+    : `<p class="sc-none" title="No price feed for this bet yet: this is the line to look for at ${scE(SCALE.book)}">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : "No price on file"}${needs ? `<small class="sc-nb">needs ${needs} · no feed yet</small>` : ""}</p>`;
+  return `<div class="sc-row">
+    <div class="sc-t">${p.timed === false ? "–" : scTime(p.start)}</div>
+    <div class="sc-m"><small>${scE(p.sport === "football" || p.sport === "tennis" ? scCfg(p.sport).name + " · " : "")}${scE(p.comp || "")}</small><b>${scE(p.pick)}</b> <span>v ${scE(opp)}</span></div>
+    <div class="sc-w"><div class="sc-bar"><i><u style="width:${Math.round((p.conf || 0) * 100)}%"></u></i><em>${scPct(p.conf || 0)}</em></div></div>
+    <div class="sc-b"><span>${scE(p.bet)}</span><div class="sc-bar g"><i><u style="width:${Math.round((p.chance || 0) * 100)}%"></u></i><em>${scPct(p.chance || 0)}</em></div><small>${p.basis === "model" ? "the model's number" : scE(p.basis || "")}</small></div>
+    <div class="sc-p">${price}</div>
+    <div class="sc-x">${scTag(p)}</div>
+  </div>`;
+}
+function scCard(g, byKey){
+  const legs = g.legs.map(k => byKey[k]).filter(Boolean);
+  const needs = g.chance ? 1 / g.chance : null, inN = needs ? Math.max(2, Math.round(needs)) : null;
+  const done = g.state === "won" || g.state === "lost" || g.state === "void";
+  const head = g.price ? `Pays ${g.price.toFixed(2)}` : `Lands 1 in ${inN}`;
+  const line = g.price
+    ? `Lands about 1 in ${inN}, so it needs ${needs.toFixed(1)}. Winners alone: ${scPct(g.winners)}.`
+    : `Needs ${needs.toFixed(1)} to break even. Winners alone: ${scPct(g.winners)}. Price it at ${scE(SCALE.book)}: no feed yet for every leg.`;
+  const tag = g.state === "won" ? `<span class="sc-tag scale">Won${g.ret ? ` · returned ${g.ret.toFixed(2)}` : ""}</span>`
+    : g.state === "lost" ? `<span class="sc-tag lost">Lost</span>`
+    : g.state === "void" ? `<span class="sc-tag void">Void</span>`
+    : g.price && needs && g.price < needs ? `<span class="sc-tag short">Price too short</span>` : "";
+  return `<article class="sc-card${g.kind === "f3" ? " fb" : ""}"><h4>${scE(g.name)}<small>${done ? "" : "from " + scTime(g.first)}</small></h4>
+    <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l)))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : ""}</small></li>`).join("")}</ol>
+    <div class="sc-cf"><b>${head}</b><p>${line}</p>${tag}</div></article>`;
+}
+function renderScale(){
+  const host = $("#scale"); if(!host) return;
+  const S = SCALE;
+  if(!S){
+    host.innerHTML = `<div class="lede"><h2>Scale</h2></div><div class="empty">No Scale list in this build yet. It appears after the next build.</div>`;
+    return;
+  }
+  const days = S.days || [];
+  if(!SC_DAY || !days.some(d => d.date === SC_DAY)) SC_DAY = (days.find(d => d.date === S.today) || days[0] || {}).date;
+  const day = days.find(d => d.date === SC_DAY) || {date: S.today, picks: [], off: [], groups: []};
+  const bs = (S.record && S.record.bySport) || {}, bt = (S.record && S.record.byTier) || {};
+  const sum3 = o => Object.values(o).reduce((a, t) => ({n: a.n + t.n, won: a.won + t.won, scale: a.scale + t.scale}), {n:0, won:0, scale:0});
+  const tot = sum3(bs);
+  const since = scDate(S.from), floor = scPct(S.floor || 0.55), target = S.target || 10;
+  const tiles = `<div class="sc-tiles" role="group" aria-label="The Scale record since ${scE(since)}">
+    <div><span>Scale picks graded</span><b>${tot.n}</b><small>since ${scE(since)}</small></div>
+    <div><span>Winner landed</span><b>${scOf(tot.won, tot.n)}</b><small>${tot.won} of ${tot.n}</small></div>
+    <div><span>Scale landed</span><b>${scOf(tot.scale, tot.n)}</b><small>${tot.scale} of ${tot.n}</small></div></div>`;
+  // the glance: one line a day, newest first; a column a tier, a dot a pick
+  const gl = (S.glance || []).slice().reverse();
+  const dot = (x, old) => { const nores = old && x.state === "started";
+    const t = `${x.pick}: ${nores ? "No result on file" : scWord(x.sport, x.state)}${x.detail ? " · " + x.detail : ""}`;
+    return `<span class="sc-dot ${nores ? "void" : x.state}" role="img" aria-label="${scE(t)}" title="${scE(t)}"></span>`; };
+  const grow = g => {
+    const live = g.dots.filter(x => ["scale","won","lost"].includes(x.state)), sc = live.filter(x => x.state === "scale").length;
+    const open = g.dots.filter(x => x.state === "up" || x.state === "started").length;
+    const old = g.date < S.today, tail = open ? ` · ${open} ${old ? "no result" : "to play"}` : "";
+    const sum = !g.dots.length ? "no picks" : live.length ? `${sc} of ${live.length} Scale${tail}` : open ? `${open} ${old ? "no result" : "to play"}` : "void";
+    const offs = g.off ? `<span class="sc-offs" role="img" aria-label="${g.off} Daily List football picks not priced at ${scE(S.book)}" title="${g.off} Daily List football picks not priced at ${scE(S.book)}">${Array.from({length: Math.min(g.off, 6)}, () => `<span class="sc-dot off"></span>`).join("")}${g.off > 6 ? `<small>+${g.off - 6}</small>` : ""}</span>` : "";
+    const cell = t => `<div class="sc-dots" data-t="${SC_TIER_SHORT[t]}">${g.dots.filter(x => (x.tier || "list") === t).map(x => dot(x, old)).join("")}${t === "list" ? offs : ""}</div>`;
+    return `<div class="sc-grow sc-gbtn${g.replay ? " before" : ""}${g.date === day.date ? " on" : ""}" data-d="${g.date}" role="button" tabindex="0" aria-label="${scE(scDate(g.date, true))}: open the day's list"><div class="sc-gd">${scE(scDate(g.date))}${g.replay ? "<small>replayed</small>" : ""}</div>${SC_TIERS.map(cell).join("")}<div class="sc-gs">${sum}</div></div>`; };
+  const bfo = S.before || {}, bf = bfo.bySport || {}, bfT = bfo.byTier || {}, bfG = bfo.groups || {}, bft = sum3(bf);
+  const tl = t => bfT[t] && bfT[t].n ? `${{list:"Daily List picks", reserve:"the reserve", else:"everything else"}[t]} ${bfT[t].scale} of ${bfT[t].n} (${scOf(bfT[t].scale, bfT[t].n)}, ${scOf(bfT[t].won, bfT[t].n)} won)` : "";
+  const gkeys = Object.keys(bfG).filter(k => bfG[k].n);
+  // 15 Nov 2026, Douglas: "10 games shown with what the recommendation was of the model, and whether or
+  // not that won or lost with the team, and if both teams scored ... in order of strongest ... bettable".
+  // Each past day's ten strongest picks (the tab's order: tier, then the chance the bet lands; football only
+  // where the book prices it, so nothing obscure), as a table. The dot rows stay for today and tomorrow.
+  const SPORT_SHORT = {football:"Football", tennis:"Tennis", nba:"NBA", nfl:"NFL", rugby:"Rugby", ncaab:"College", cfb:"College"};
+  const tennisScore = d => { const m = String(d || "").match(/\b\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?(?:\s+\d{1,2}-\d{1,2}(?:\s*\(\d+(?:-\d+)?\))?)*(?:\s+ret\.?)?/); return m ? m[0] : d; };
+  const wrow = (x, i) => { const st = x.state, opp = x.side === "h" ? x.away : x.home, det = x.sport === "tennis" ? tennisScore(x.detail) : x.detail;
+    const res = st === "scale" || st === "won" ? "won" : st === "lost" ? "lost" : "void";
+    const word = st === "scale" || st === "won" ? "Won" : st === "lost" ? "Lost" : st === "void" ? "Void" : "No result";
+    const bt = x.sport === "football" ? (x.btts === true ? ["yes", "Both scored"] : x.btts === false ? ["no", "Not both"] : ["na", ""])
+             : st === "scale" ? ["yes", scE(scCfg(x.sport).bet)] : st === "won" ? ["no", scE(scWord(x.sport, "won").replace("Won, d", "D"))] : ["na", ""];
+    return `<div class="sc-wrow"><span class="i">${i + 1}</span><span class="sp">${SPORT_SHORT[x.sport] || scE(x.sport)}</span>
+      <span class="pk"><b>${scE(x.pick)}</b><small>v ${scE(opp)} · ${scE(String(x.comp || "").split(" · ").pop())}${x.priced === S.book ? " · Hill" : ""}</small></span>
+      <span class="pc">${scPct(x.conf || 0)}</span><span class="re ${res}">${word}${det && st !== "up" ? `<small>${scE(det)}</small>` : ""}</span><span class="bt ${bt[0]}">${bt[1]}</span></div>`; };
+  const TIER_N = {list: 0, reserve: 1, else: 2};
+  const wday = (g, openIt) => { const bettable = g.dots.filter(x => x.priced), unpriced = g.dots.length - bettable.length;
+    const top = bettable.slice().sort((a, b) => (TIER_N[a.tier || "list"] - TIER_N[b.tier || "list"]) || ((b.conf || 0) - (a.conf || 0))).slice(0, target);
+    const done = top.filter(x => ["scale", "won", "lost"].includes(x.state)), won = done.filter(x => x.state !== "lost").length;
+    const fb = done.filter(x => x.sport === "football"), bt = fb.filter(x => x.btts === true).length;
+    const sum = done.length ? `${won} of ${done.length} won${fb.length ? ` · both scored in ${bt} of ${fb.length} football` : ""}` : "no results";
+    return `<details class="sc-wday"${openIt ? " open" : ""}><summary><span class="d">${scE(scDate(g.date))}</span><span class="r">${g.replay ? "replayed, " : ""}${top.length} of ${bettable.length} bettable${unpriced ? `, ${unpriced} with no bookmaker price left off` : ""}</span><span class="s">${sum}</span><span class="open sc-gbtn" data-d="${g.date}" role="button" tabindex="0">full list</span></summary>
+      ${top.length ? `<div class="sc-wrow h"><span class="i"></span><span class="sp">Sport</span><span class="pk">The model's pick</span><span class="pc">Model</span><span class="re">Result</span><span class="bt">Both scored / Scale</span></div>${top.map(wrow).join("")}` : `<div class="sc-empty">No picks on this day.</div>`}
+    </details>`; };
+  const past = gl.filter(g => g.date < S.today), week = past.slice(0, 7), older = past.slice(7);
+  const glance = `<section class="sc-glance" aria-label="Scale at a glance">
+    <div class="sc-gtop"><h3>Scale at a glance</h3>
+      <div class="sc-key"><span><i class="sc-dot"></i>Won and landed the Scale</span><span><i class="sc-dot won"></i>Won, Scale missed</span><span><i class="sc-dot lost"></i>Pick lost</span><span><i class="sc-dot up"></i>To play</span><span><i class="sc-dot void"></i>Void</span><span><i class="sc-dot off"></i>Not priced at ${scE(S.book)}</span></div></div>
+    <div class="sc-grows"><div class="sc-grow sc-ghead"><div class="sc-gd"></div>${SC_TIERS.map(t => `<div class="sc-dots">${SC_TIER_SHORT[t]}</div>`).join("")}<div class="sc-gs"></div></div>
+      ${gl.filter(g => g.date >= S.today).map(grow).join("") || `<div class="sc-grow"><div class="sc-gd">Nothing yet.</div></div>`}</div>
+    <div class="sc-week">
+      <p class="sc-gnote" style="margin:12px 0 4px"><b>The week behind, ten a day.</b> Each day's ten strongest picks, Daily List picks first, then the reserve, then the rest, strongest model number first within each, and only games a bookmaker feed priced before the start (football where ${scE(S.book)} priced the bet; "Hill" marks a game ${scE(S.book)} priced); anything unpriced is left off and counted. The model's pick, its number, the result, and for football whether both teams scored; for the other sports whether the Scale margin landed. Tap "full list" for every pick of the day.</p>
+      ${week.map((g, i) => wday(g, i < 3)).join("") || `<div class="sc-empty">Nothing yet.</div>`}
+      ${older.length ? `<details class="sc-off"><summary>${older.length} more day${older.length === 1 ? "" : "s"}</summary>${older.map(g => wday(g, false)).join("")}</details>` : ""}
+    </div>
+    ${bft.n ? `<p class="sc-gnote"><b>Days before ${scE(since)} are a replay</b>: today's rule run on what was published before each start, results added afterwards. Scale landed: ${SC_TIERS.map(tl).filter(Boolean).join("; ")}.${gkeys.length ? ` Groups won: ${gkeys.map(k => `${scLow(String(bfG[k].name).replace("Scale ", ""))} ${bfG[k].won} of ${bfG[k].n}`).join(", ")}.` : ""} No prices are on file for those days, so this says how often it landed, not what it paid. Tap a day to see its picks.</p>` : ""}
+  </section>`;
+  // the day's list, a line a tier
+  const byKey = {}; day.picks.forEach(p => byKey[p.key] = p);
+  const tabDays = days.filter(d => !d.past || d.date === day.date);
+  const tabs = tabDays.length > 1 ? `<div class="sc-days" id="scDays">${tabDays.map(d => `<button type="button" data-d="${d.date}" aria-pressed="${d.date === day.date}">${d.date === S.today ? "Today" : scE(scDate(d.date))} · ${d.picks.length}</button>`).join("")}</div>` : "";
+  const off = day.off || [];
+  const offComps = [...new Set(off.map(o => o.comp))];
+  const tierNote = {list: "cleared the list's own bar", reserve: "under the bar, Firm 62% or better", else: `the model's pick at ${floor} or better, added to bring the day to ${target} games`};
+  const tierBlock = t => { const ps = day.picks.filter(p => (p.tier || "list") === t);
+    return ps.length ? `<div class="sc-tier ${t}"><b>${SC_TIER[t]}</b><span>${ps.length} · ${tierNote[t]}</span></div>${ps.map(scRow).join("")}` : ""; };
+  const list = `<section class="sc-sec">
+    <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3>${tabs}</div>
+    ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>${scE(S.book)}</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
+      : `<div class="sc-empty"><b>No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
+    ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for win and both score (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
+    <p class="sc-foot">Within a tier the order is the chance the Scale bet lands. Football's chance is the model's own number; every other sport's is how often picks at that confidence have landed the bet in the site's record. "Needs" is the price that breaks even at the chance shown.</p>
+  </section>`;
+  // the day's groups
+  const open = day.picks.filter(p => scState(p) === "up").length;
+  const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>from the top of the list; the football threefold is priced on every leg</small></h3>
+    ${day.groups.length ? `<div class="sc-groups">${day.groups.map(g => scCard(g, byKey)).join("")}</div>`
+      : `<div class="sc-empty"><b>No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs three Scale picks still to start; ${open === 0 ? "there are none" : open === 1 ? "there is one" : "there are two"}.`}</div>`}
+  </section>`;
+  // where the book prices the football bet
+  const lg = S.leagues || [];
+  const chip = l => `<span>${scE(l.name)}<i>${l.n}</i></span>`;
+  const leagues = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Where ${scE(S.book)} prices win and both score<small>${lg.length} leagues in the last 14 days</small></h3>
+    <div class="sc-chips">${lg.slice(0, 12).map(chip).join("") || "<span>No prices on file yet</span>"}</div>
+    ${lg.length > 12 ? `<details class="sc-off"><summary>${lg.length - 12} more leagues</summary><div class="sc-chips">${lg.slice(12).map(chip).join("")}</div></details>` : ""}
+    <p class="sc-foot">Read from the price feed on every build, so the list follows what ${scE(S.book)} offers. The number is the fixtures priced. A football game with no price never reaches the Scale list.</p></section>`;
+  // the scoreboard
+  const rp = S.replay || {}, rf = rp.football || {}, rb = rp.basis || {};
+  const srow = (name, bet, t, sub) => t && (t.n || t.void) ? `<tr${sub ? ' class="sub"' : ""}><td>${sub ? "" : "<b>"}${scE(name)}${sub ? "" : "</b>"}${sub ? `<small>${scE(sub)}</small>` : ""}</td><td>${scE(bet)}</td><td class="n">${t.n}</td><td class="n">${t.won} <small>${scOf(t.won, t.n)}</small></td><td class="s">${t.scale} <small>${scOf(t.scale, t.n)}</small></td><td class="n">${scRet(t)}</td></tr>` : "";
+  const liveRows = SC_TIERS.map(t => srow(SC_TIER[t], "every sport", bt[t])).join("") + Object.keys(bs).map(s => srow(scCfg(s).name, scCfg(s).long, bs[s])).join("");
+  const beforeRows = SC_TIERS.map(t => srow(SC_TIER[t], "every sport", bfT[t], "replayed before " + since)).join("")
+    + Object.keys(bf).map(s => srow(scCfg(s).name, scCfg(s).long, bf[s], "replayed before " + since)).join("");
+  const tallyRows = SC_TIERS.map(t => srow("Football, " + scLow(SC_TIER[t]), scCfg("football").long, rf[t], "every graded pick before " + since + " in leagues " + S.book + " prices now")).join("")
+    + Object.keys(rb).map(s => srow(scCfg(s).name, scCfg(s).long, rb[s].all, "every graded pick at " + floor + " or better: the tally behind the chance")
+      + srow(scCfg(s).name, scCfg(s).long, rb[s].strong, "of those, picks at 75% or better")).join("");
+  const thead = `<thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at ${scE(S.book)}</th></tr></thead>`;
+  const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
+  const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
+  const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
+    ${gn ? `<ul>${Object.keys(gk).filter(k => gk[k].n).map(k => `<li><span>${scE(String(gk[k].name || k).replace("Scale ", ""))}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : ""}</em></li>`).join("")}</ul>
+      <ul>${rec.slice(0, 8).map(r => `<li><span>${scE(scDate(r.date))} · ${scE(r.name.replace("Scale ", ""))}</span><em class="${r.state === "won" ? "w" : "l"}">${r.state === "won" ? "Won" + (r.ret ? " " + r.ret.toFixed(2) : "") : "Lost"}</em></li>`).join("")}</ul>`
+      : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}
+    ${gkeys.length ? `<h4 style="margin-top:14px">Replayed before ${scE(since)}, no prices</h4><ul>${gkeys.map(k => `<li><span>${scE(String(bfG[k].name).replace("Scale ", ""))}</span><em>${bfG[k].won} of ${bfG[k].n} won</em></li>`).join("")}</ul>` : ""}</div>`;
+  const board = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scoreboard<small>how often the winner and the Scale bet landed</small></h3>
+    <div class="sc-board"><div class="sc-tablewrap"><div style="overflow-x:auto"><table class="sc-table">
+      ${thead}
+      <tbody>${liveRows || `<tr><td colspan="6">Nothing graded since ${scE(since)} yet.</td></tr>`}${beforeRows}</tbody></table></div>
+      <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started, by tier and by sport. The rows under them are the replay of the days before the tab: the same rule, chosen from what was published before each start, results added afterwards. They say how often the bet landed, never that it paid: there are no prices behind them.</p>
+      ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
+  host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
+      <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with both teams scoring, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the bet.</p></div>${tiles}</div>
+    ${glance}${list}${groups}${leagues}${board}`;
+  const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
+  const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
+    const h = $("#scList"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };
+  host.querySelectorAll(".sc-gbtn").forEach(el => { el.onclick = e => { e.preventDefault(); e.stopPropagation(); openDay(el); };
+    el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openDay(el); } }; });
+}
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -5350,10 +5924,12 @@ $("#views").addEventListener("click", e=>{
   $("#tennis").hidden = !tennis;
   $("#list").hidden = !list;
   $("#today").hidden = !today;
+  $("#scale").hidden = v !== "scale";
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
   if(today) renderToday();
+  if(v === "scale") renderScale();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time

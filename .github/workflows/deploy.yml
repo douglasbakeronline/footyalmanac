@@ -4,7 +4,7 @@ name: Rebuild and publish
 # when you have edited adjustments.json and want it live now.
 on:
   schedule:
-    # Seven runs a day (six until 10 Nov 2026), timed to when results land rather than evenly spaced,
+    # Ten runs a day (seven until 13 Nov 2026, six until 10 Nov), timed to when results land rather than evenly spaced,
     # so the Daily List shows wins and losses within a couple of hours of a
     # game ending (Douglas, 7 Oct 2026). There is no in-play feed: a started
     # game shows as pending until the next run after its result is published.
@@ -34,6 +34,15 @@ on:
     - cron: "0 17 * * *"
     - cron: "30 19 * * *"
     - cron: "15 22 * * *"
+    # 13 Nov 2026: backups for the lunch, evening and night briefings
+    # (notify.py SLOTS 11:00, 16:00, 21:00 UK). GitHub runs scheduled
+    # workflows late at busy times: the 12 Nov lunch push went 2h18 late and
+    # the night push 1h40 (claude/briefing-lateness-2026-11-13.md), so each
+    # slot gets a second, earlier queue time, off the hour. A briefing is
+    # sent once a day per slot whichever build is first (briefed.json).
+    - cron: "7 11 * * *"
+    - cron: "7 16 * * *"
+    - cron: "7 21 * * *"
   workflow_dispatch:
   push:
     branches: [main]
@@ -290,6 +299,38 @@ jobs:
               print(f"today's groupings record: {new_n} groups")
           PY
 
+      # The results ledger (ledger.py, 14 Nov 2026): every prediction of every
+      # sport with its result and its pre-start price, merged and never
+      # trimmed, and the ungraded report (a ::warning:: on Monday's first
+      # build). After groupings.py, whose board prices it keeps. Allowed to
+      # fail: nothing on the page reads it.
+      - name: Write the results ledger
+        run: python3 ledger.py || echo "::warning::ledger failed; keeping the last one"
+
+      # Football markets beyond the match winner (markets.py, 14 Nov 2026):
+      # both teams to score, goals lines, win and both score, win to nil,
+      # double chance, draw no bet. The model's number and the bookmakers'
+      # price for every fixture today and tomorrow, archived to
+      # predictions-markets/ and graded into markets-record.json. One
+      # API-Football sweep a date about every five hours; it stands down when
+      # the day's allowance runs low. Allowed to fail: the page does not read it.
+      - name: Price and grade the football markets
+        run: python3 markets.py || echo "::warning::markets failed; keeping the last record"
+
+      # Scale (scale.py, 15 Nov 2026): Daily List winners with a second
+      # condition added (football: and both teams score, only where William
+      # Hill prices it, read from markets.py's archive; tennis: in straight
+      # sets). Archives each day's picks and groups to scale-archive/, grades
+      # them from the records and writes scale.js for the Scale tab. Fetches
+      # nothing. Allowed to fail: the tab then shows its empty state.
+      - name: Build and grade the Scale list
+        run: python3 scale.py || echo "::warning::scale failed; the Scale tab keeps its empty state"
+      # The slip (slip.py, 15 Nov 2026): the day's 3-5 legs paying 3x-6x,
+      # chosen for expected return from the ledger's band rates, archived to
+      # slip-archive/ and graded. Reads results-ledger.json.gz (ledger.py above).
+      - name: The slip
+        run: python3 slip.py || echo "::warning::slip failed; the Bets tab keeps the last slip"
+
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
       - name: Normalise the App key
@@ -353,6 +394,14 @@ jobs:
           cp -r history-tennis /tmp/archive/ 2>/dev/null || true
           cp -r history-sports predictions-sports /tmp/archive/ 2>/dev/null || true
           cp sports-data.js sports-record.json sports-record.js /tmp/archive/ 2>/dev/null || true
+          # every graded pick of the other sports (sports.py) and the results ledger (ledger.py)
+          cp sports-graded.json results-ledger.json.gz /tmp/archive/ 2>/dev/null || true
+          # the football markets archive and its record (markets.py)
+          cp -r predictions-markets /tmp/archive/ 2>/dev/null || true
+          cp markets-record.json /tmp/archive/ 2>/dev/null || true
+          # the Scale list's picks and groups as published (scale.py)
+          cp -r scale-archive /tmp/archive/ 2>/dev/null || true
+          cp -r slip-archive /tmp/archive/ 2>/dev/null || true      # the slip as published (slip.py)
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -380,6 +429,20 @@ jobs:
             cp -r /tmp/archive/history-sports/. history-sports/ 2>/dev/null || true
             cp -r /tmp/archive/predictions-sports/. predictions-sports/ 2>/dev/null || true
             cp /tmp/archive/sports-data.js /tmp/archive/sports-record.json /tmp/archive/sports-record.js . 2>/dev/null || true
+            cp /tmp/archive/sports-graded.json /tmp/archive/results-ledger.json.gz . 2>/dev/null || true
+            if [ -d /tmp/archive/predictions-markets ]; then
+              mkdir -p predictions-markets
+              cp -r /tmp/archive/predictions-markets/. predictions-markets/
+            fi
+            cp /tmp/archive/markets-record.json . 2>/dev/null || true
+            if [ -d /tmp/archive/scale-archive ]; then
+              mkdir -p scale-archive
+              cp -r /tmp/archive/scale-archive/. scale-archive/
+            fi
+            if [ -d /tmp/archive/slip-archive ]; then
+              mkdir -p slip-archive
+              cp -r /tmp/archive/slip-archive/. slip-archive/
+            fi
             cp /tmp/archive/fifa-rankings.json . 2>/dev/null || true
             mkdir -p groupings-archive
             cp -r /tmp/archive/groupings-archive/. groupings-archive/ 2>/dev/null || true
@@ -387,6 +450,7 @@ jobs:
             git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
+                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json scale-archive slip-archive 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
@@ -441,6 +505,7 @@ jobs:
           cp data.json _site/data.json         # handy if you want the raw numbers
           cp README.md _site/README.md
           cp record.json _site/record.json
+          cp markets-record.json _site/markets-record.json 2>/dev/null || true   # the football markets record (markets.py)
           cp analysis.html _site/analysis.html   # Almanac Analysis, reads record.json (6 Oct 2026)
           # The touch icons and the manifest are fetched by the device rather
           # than parsed out of the page, so they need to exist at real URLs or
@@ -459,6 +524,9 @@ jobs:
             echo "::warning::no daylist this run — started picks will not show on today's list"
           cp groupings-data.js groupings.json _site/ 2>/dev/null || \
             echo "::warning::no groupings this run — the Odds tab will show its empty state"
+          cp slip.js slip.json _site/ 2>/dev/null || echo "::warning::no slip files this run"
+          cp scale.js scale.json _site/ 2>/dev/null || \
+            echo "::warning::no scale files this run — the Scale tab will show its empty state"
 
       - uses: actions/upload-pages-artifact@v3
         with:

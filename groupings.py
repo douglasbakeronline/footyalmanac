@@ -110,6 +110,7 @@ the groups landed 11 of 58 (19%). They stay in the record under their names.
 Standard library only.
 """
 import gzip, itertools, json, math, os, re, sys, time, unicodedata, urllib.request
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
 from zoneinfo import ZoneInfo
@@ -437,6 +438,11 @@ def price_football(L, dates, report):
     import sources as S
     from datetime import date as _date
     calls, matched = 0, 0
+    miss = Counter()      # 14 Nov 2026: why a football leg stayed unpriced
+    miss_comps = defaultdict(Counter)
+    def _miss(l, why):
+        miss[why] += 1
+        miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
     # 22 Oct 2026: the build now reads every API-Football price by date
     # (odds.af_odds_day, cached); a leg found there costs no call. The
     # one-fixture call stays as the fallback for anything it missed.
@@ -459,7 +465,12 @@ def price_football(L, dates, report):
             fid = next((fid for fid, (h, a, ft) in teams.items()
                         if not (t and ft and abs((t - ft).total_seconds()) > 5400)
                         and same(h, l["home"]) and same(a, l["away"])), None)
-            if fid is None: continue
+            if fid is None:
+                # both names found but the kick-offs 90+ minutes apart (a moved
+                # fixture) reads differently from a name API-Football spells
+                # another way or a fixture it does not list at all
+                named = any(same(h, l["home"]) and same(a, l["away"]) for h, a, _ in teams.values())
+                _miss(l, "kickoff" if named else "noFixture"); continue
             row = bulk.get(str(fid))
             if row:
                 i = 0 if l["side"] == "h" else 2
@@ -474,11 +485,13 @@ def price_football(L, dates, report):
             # bulk day prices missed now gets its own call too, up to
             # FB_CALLS_MULT a build (API-Football Pro: 7,500 a day, about 3,300
             # left after the build on 11 Nov). Before, it stayed an estimate.
-            if l.get("multOnly") and calls >= FB_CALLS_MULT: continue
+            if l.get("multOnly") and calls >= FB_CALLS_MULT:
+                _miss(l, "capped"); continue
             try:
                 items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
             except Exception as e:
-                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}"); continue
+                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}")
+                _miss(l, "error"); continue
             prices = {"Home": [], "Away": [], "Draw": []}
             books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
             uk_px = {"Home": {}, "Away": {}, "Draw": {}}   # 29 Oct 2026: every UK book's price, by side
@@ -507,7 +520,12 @@ def price_football(L, dates, report):
                          margin=margin_of(avg) if len(avg) == 3 else None,
                          src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
                 matched += 1
+            else:
+                _miss(l, "noOdds")
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
+    if miss:
+        report["football"]["miss"] = dict(miss)
+        report["football"]["missComps"] = {w: c.most_common(5) for w, c in miss_comps.items()}
 
 def american(x):
     try: x = float(str(x).replace("+", ""))
@@ -895,7 +913,7 @@ def books_wanted(l, sports):
     lo, hi = min(CARD_ODDS[0], CARD_WIDE_ODDS[0]), max(CARD_ODDS[1], CARD_WIDE_ODDS[1])
     return (l.get("odds") and not l.get("est") and not l.get("bookOdds") and l["sport"] in sports
             and l["sport"] not in CARD_SPORTS_OFF and lo <= l["odds"] <= hi
-            and (l.get("pModel") or 0) >= CARD_SPORT_MIN.get(l["sport"], CARD_WIDE_FAIR_MIN))
+            and (l.get("pModel") or 0) >= BOOKS_SPORT_MIN.get(l["sport"], CARD_WIDE_FAIR_MIN))
 
 
 def price_api_sports(L, dates, report, cache_dir=None, now=None, fetch=None, books_only=False):
@@ -1468,7 +1486,17 @@ CARD_POOL = 24
 # not been tested live in volume. Football, rugby and the NBA are unchanged.
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
 CARD_SPORTS_OFF = {"nfl", "cfb", "ncaab"}   # ncaab 31 Oct 2026: no live record yet (season starts Nov); back at 50 graded games, Douglas's call
-CARD_SPORT_MIN = {"tennis": 0.75}
+CARD_SPORT_MIN = {"tennis": 0.85}
+# 11 Nov 2026 (CARD_RULE 10, Douglas after Casper Ruud lost at 1.22 on a Hill
+# accumulator: "Tennis score must go lower", then "Both" on the two changes
+# put to him): the tennis floor rises from 75% to 85%. Not a recalibration:
+# graded tennis lands on quote or above at 70%+ (70-80% 75.6% v 74.5%,
+# 80-90% 86.8% v 84.6%, 90%+ 96.7% v 92.8%, 1,422 picks), but on the Card
+# tennis legs landed 22 of 40 (z -2.2), most of them 75-85%. The owner's
+# call, not a gate pass; "tennis80" and "tennis75" replay the lower floors.
+# UK-book pricing keeps the old 75% (BOOKS_SPORT_MIN) so the Hill price still
+# shows on those picks.
+BOOKS_SPORT_MIN = {"tennis": 0.75}
 # 29 Oct 2026, second pass (tools/card_replay.py on the priced archive, 11 Sep
 # to 28 Oct): of the 193 legs that cleared the Card rule, core-league legs
 # landed 78.8% against 67.5% quoted (n=113, +9% a unit at the average price)
@@ -1494,7 +1522,16 @@ CARD_SPORT_MIN = {"tennis": 0.75}
 # the compounding in a treble loses. Core only again; the wider pool stays
 # out until it has a record line of its own. CARD_MAX_GROUPS stays at 6 so
 # a full weekend is not capped.
-CARD_CORE_ONLY = True
+CARD_CORE_ONLY = False
+# 11 Nov 2026 (CARD_RULE 11), Douglas on Leotar (Bosnia RS, 1.52, model 67%
+# v the bookmakers' 59%), kept off only by the league limit: "This should
+# have been on. So relax all rules that would of said otherwise." Wider
+# leagues (card_league: API-Football leagues; cups, internationals and new
+# leagues still out) now reach the Card; CARD_CORE_NUDGE puts core picks
+# first at an equal chance. The owner's call against the replay: `m7wide`
+# (now live) 28 groups 15 won +32% v core only 12 groups 8 won +69%
+# (--recover, p(worse) 0.44), claude/card-m7wide-2026-11-11.md. `m7core`
+# replays core only beside it.
 CARD_CORE_NUDGE = 0.02
 # 29 Oct 2026, backtest at Douglas's request (claude/betting-groups-review-
 # 2026-10-29.md, fifth pass): the one cut that lands above quote in every
@@ -1565,12 +1602,12 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 9     # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026)
+CARD_RULE = 11    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
 # it's about finding a good edge." So from CARD_RULE 7 the Card is built by
-# the Model card's rule (model_fault): a priced core-league or 75%+ tennis /
+# the Model card's rule (model_fault): a priced core-league or CARD_SPORT_MIN tennis (85%+ since 11 Nov 2026) /
 # NBA / rugby pick at 1.15-1.90 the model rates 60%+ and at or above the
 # bookmakers' chance, the group's chance the model's own (as_model), staked
 # as before. The evidence at the switch, all under the 30 Nov gate: live on
@@ -1586,6 +1623,15 @@ CARD_MODEL_RULE = True
 # The edge the model must have over the bookmakers' chance on a Card pick
 # under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
 CARD_MODEL_EDGE = 0.0
+# 15 Nov 2026 (claude/card-m7opp-2026-11-15.md): the opposition's price as a
+# condition on the model's own picks. Rule 6's opposition 9+ is the one Card
+# condition that held in all five football-data seasons (511 legs, 83.8% v
+# 76.2% quoted), but model_fault never read it, so under rule 7 the Card took
+# VVV-Venlo (opposition 4.83) and the like. Empty: live unchanged. The
+# variants m7opp9 and m7opp5 (tools/card_replay.py, card_legs_history.py
+# cardM7) set it, pre-registered before any result; a live change needs the
+# gate. Football only, as for CARD_OPP_MIN.
+CARD_MODEL_OPP_MIN = {}
 # 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
 # kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
 # replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
@@ -1612,7 +1658,7 @@ CARD_RANGE = {n: (lo, hi) for n, lo, hi, _ in CARD_KINDS}
 # 31 Oct 2026, Douglas: "the whole point is that our model is meant to pick
 # winners". The Model card: the model's own picks, built beside the Card on
 # paper every day, never staked or pushed, graded apart (cardModel). Same
-# price band and kinds; a leg is a core-league / 75%+ tennis pick the MODEL
+# price band and kinds; a leg is a core-league / CARD_SPORT_MIN tennis pick the MODEL
 # rates 60%+ and at or above the bookmakers' chance (the model's own value
 # call), and the group's chance is the model's number, not the market's. If
 # these beat the price over the month, the Card changes.
@@ -1689,6 +1735,17 @@ CARD_WIDE_RULE = 2      # 1: bookmakers 55%+ (25 Oct to 11 Nov 2026); 2: bookmak
 # and the record (cardWide, cardWideByRule) stay; the replay keeps `fillwide`.
 # Set True to bring it back. claude/card-filler-off-2026-11-11.md.
 CARD_FILLER = False
+# 12 Nov 2026, Douglas: "if you can't make a card on 1 day - then look to the
+# next day ahead to combine fixtures to be able to create a card." When a
+# day's picks make no group, the build tries one from that day's qualifying
+# picks and the next day's together (at least one from the first day), under
+# the same rule: the model's own picks, 2x, three to five, two a competition
+# at most, the context check. It is the first day's group (archived and
+# graded there), open until its first start like any other, and the next
+# day's picks it takes are not used again on that day's own Card. Marked
+# `span` and tallied apart (`cardSpan`). The owner's call; `span2` replays it.
+# claude/card-span-2026-11-12.md.
+CARD_SPAN = True
 # 11 Nov 2026, Douglas: "with added human contextual review it does much
 # better. I need the groups to have the same contextual reading ... I want
 # this contextual review now. But also just a better understanding of the
@@ -1701,6 +1758,7 @@ CARD_FILLER = False
 # (cardContext). Set False to stop the veto; the reads still show.
 # claude/context-check-2026-11-11.md.
 CARD_CONTEXT = True
+CX_LIST_MIN = 0.75   # 12 Nov 2026: Daily List picks at this model chance+ get a context read (display only)
 
 def core_league(code):
     """A core football league: in engine.LEAGUES, not the API-Football wider
@@ -1831,13 +1889,21 @@ def model_fault(l):
     if l.get("est") or not l.get("odds"): return f"{l['pick']}: no bookmaker price"
     if not (CARD_ODDS[0] <= l["odds"] <= CARD_ODDS[1]): return f"{l['pick']}: {l['odds']:.2f} is outside {CARD_ODDS[0]:.2f} to {CARD_ODDS[1]:.2f}"
     if l.get("sport") in CARD_SPORTS_OFF: return f"{l['pick']}: its sport is off the Card"
-    if l.get("sport") == "football" and not core_league(l.get("code")): return f"{l['pick']}: outside the core leagues"
+    # 11 Nov 2026: the league limit reads CARD_CORE_ONLY, as card_fault does,
+    # so the replay and the funnel can relax it (`m7wide`); live is True, so
+    # the Card is unchanged. Wider means card_league: no cups, no new leagues.
+    if l.get("sport") == "football" and not (core_league(l.get("code")) if CARD_CORE_ONLY else card_league(l.get("code"))):
+        return f"{l['pick']}: outside the core leagues"
     if l.get("sport") == "football" and l.get("why") not in CLEAN_WHY: return f"{l['pick']}: the Daily List excludes it"
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
     if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
         return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    omin = CARD_MODEL_OPP_MIN.get(l.get("sport"))
+    if omin:
+        if not l.get("opp"): return f"{l['pick']}: no bookmaker price for the opposition"
+        if l["opp"] < omin: return f"{l['pick']}: the opposition is priced {l['opp']:.2f}, under {omin:g}"
     return None
 
 def as_model(l):
@@ -1850,23 +1916,30 @@ def as_card(l, wide=False):
     wider-rule filler, which is still chosen on the bookmakers' numbers."""
     return as_model(l) if CARD_MODEL_RULE and not wide else as_mult(l)
 
-def best_card(L, used, after, name, wide=False):
+def best_card(L, used, after, name, wide=False, need=None):
     """The CARD_LEGS picks with the highest combined chance (bookmakers'
     fair; the model's own on a Model kind) whose combined price falls in
-    the kind's range, or None."""
+    the kind's range, or None. `need` (13 Nov 2026, CARD_SPAN): a leg test
+    that at least one pick of the group must pass, applied inside the
+    search, so a two-day group is the best one holding a pick of its own
+    day rather than the best of both days, then refused when it held none."""
     lo, hi = CARD_RANGE[name]
     if is_model(name):
         cands = [as_model(l) for l in L if l["event"] not in used and model_fault(l) is None and (parse(l["when"]) or after) >= after]
     else:
         cands = [as_card(l, wide) for l in L if l["event"] not in used and card_fault(l, wide) is None
                  and (parse(l["when"]) or after) >= after]
-    cands = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))[:CARD_POOL]
+    ranked = sorted(cands, key=lambda l: (-math.log(l["p"]) / math.log(l["odds"]), -l["p"]))
+    cands = ranked[:CARD_POOL]
+    if need is not None:   # a needed pick ranked past the pool still competes
+        cands += [l for l in ranked[CARD_POOL:] if need(l)][:CARD_POOL // 4]
     # 29 Oct 2026: core-league picks first at an equal chance (the nudge is for
     # choosing only; the quoted chance is still the bookmakers')
     nudge = lambda l: l["p"] + (CARD_CORE_NUDGE if l.get("sport") == "football" and core_league(l.get("code")) else 0)
     top = None
     for k in (CARD_WIDE_LEGS if wide else CARD_LEGS):
         for c in itertools.combinations(cands, k):
+            if need is not None and not any(need(l) for l in c): continue
             o = mult_combo(c, lo, hi)
             if o is None: continue
             p = math.prod(l["p"] for l in c)
@@ -1970,7 +2043,7 @@ def archived_card(date):
         seen.add(card_slot(g)); out.append(g)
     return out
 
-def build_card(L, date, now, prev=None, log=None, archived=None):
+def build_card(L, date, now, prev=None, log=None, archived=None, taken=None):
     """The Card for one UK date: up to two groups in each window. L holds the
     day's legs (any board date); each is placed by its UK kick-off. A slot
     locked in the day's archive (archived, read from disk when None) is reused
@@ -1981,7 +2054,12 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
     for l in L:
         s = uk_slot(l)
         if s and s[0] == date: by_win[s[1]].append(l)
-    groups, used, filled = [], set(), set()
+    # 12 Nov 2026 (CARD_SPAN): the next day's picks, for a two-day group, and
+    # the picks a two-day group from the day before already holds
+    nd = (datetime.fromisoformat(date).date() + timedelta(days=1)).isoformat()
+    nxt = [l for l in L if (uk_slot(l) or (None,))[0] == nd]
+    taken = set(taken or ())
+    groups, used, filled = [], set(taken), set()
     if archived is None: archived = archived_card(date)
     for g in list(archived) + list(prev or []):
         if not is_card(g.get("name")): continue
@@ -2003,7 +2081,12 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
             g["status"] = "underway" if underway(g, now) else ("late" if g.get("late") else "locked")
             groups.append(g); used |= {l["event"] for l in g["legs"]}; filled.add(slot); continue
         if g.get("wide"): continue    # rebuilt below: a full-rule group takes its place when one can be made
-        ng, why = recheck_card(g, by_win[g["window"]])
+        if not g.get("locked") and {l["event"] for l in g["legs"]} & taken:
+            if log is not None:
+                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
+                            "picks": [l["pick"] for l in g["legs"]], "why": ["a pick is held by the day before's two-day group"]})
+            continue
+        ng, why = recheck_card(g, by_win[g["window"]] + (nxt if g.get("span") else []))
         if ng is None:
             if log is not None:
                 log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
@@ -2029,6 +2112,21 @@ def build_card(L, date, now, prev=None, log=None, archived=None):
                          status="replacement" if f"{w}|{name}" in replaced else "new")
                 for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
                 used |= {l["event"] for l in g["legs"]}; filled.add((w, name, seq)); groups.append(g)
+    # 12 Nov 2026 (CARD_SPAN): a window the full rule left empty tries one group
+    # from its own picks and the next day's, holding at least one of its own
+    for w, _, _ in (CARD_WINDOWS if CARD_SPAN else []):
+        if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
+        own = [l for l in by_win[w] if l["event"] not in used]
+        if not own: continue
+        for name, _, _, _ in built_kinds():
+            mine = lambda l: (uk_slot(l) or (None,))[0] == date
+            g = best_card(own + [l for l in nxt if l["event"] not in used], used, after, name, need=mine)
+            if not g or not any(mine(l) for l in g["legs"]): continue
+            lock = first_kick(g) or lock_time(date, w)
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False,
+                     status="new", span=[date, nd])
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            used |= {l["event"] for l in g["legs"]}; filled.add((w, name, 1)); groups.append(g)
     # The wider rule, only for a window the full rule left empty (CARD_FILLER).
     for w, _, _ in (CARD_WINDOWS if CARD_FILLER else []):
         if now >= window_end(date, w) or any(f[0] == w for f in filled): continue
@@ -2306,6 +2404,64 @@ def settle_pool(l, idx, names):
         return ("won" if norm(g["winner"]) == norm(l["pick"]) else "lost"), g.get("score")
     return st, res
 
+def pool_time_est(row):
+    """True while a pool row's start is only an estimate (14 Nov 2026): its
+    first-written `timeEst`, cleared once a later pre-start build had the
+    order of play (`timeSet`, archive_pool). Rows written before 14 Nov carry
+    no `timeSet` and keep their first flag."""
+    return bool(row.get("timeEst")) and not row.get("timeSet")
+
+POOL_MOVE_DAYS = 3   # a pool row this close to another of the same pick is one fixture moved (13 Nov 2026)
+
+def _same_fixture(a, b):
+    """True when two pool rows of one (event, pick) are the same fixture: the
+    same id when both carry one, else starts within POOL_MOVE_DAYS."""
+    if a.get("id") and b.get("id"): return str(a["id"]) == str(b["id"])
+    ta, tb = parse(a.get("when") or ""), parse(b.get("when") or "")
+    if ta is None or tb is None: return (a.get("date") or "") == (b.get("date") or "")
+    return abs((ta - tb).total_seconds()) <= POOL_MOVE_DAYS * 86400
+
+def pool_rows(pool_dir=None):
+    """[(file date, row)] over every pool file, one row a fixture (13 Nov 2026).
+    archive_pool keys rows by (event, pick) within a day's file, so a fixture
+    the source moves to another day gets a second row in the new day's file
+    and the old row stays where it was, with its stale start and no later
+    price (68 of 2,650 pool picks at 13 Nov: 38 tennis matches placed a day
+    early, 25 football, Drina Zvornik on 13 and 14 Nov). Both settle against
+    the same result, so the replay counted the leg twice, once on a day it
+    was not played, and the dedup in card_funnel kept the first, stale row.
+    Here a moved fixture keeps the row of its latest placement (the latest
+    `firstAt`, then the later file): the start the builds last judged by,
+    priced before that start. Two rows with different ids, or starts more
+    than POOL_MOVE_DAYS apart, are two fixtures (a rematch). Nothing in the
+    archive is changed."""
+    pool_dir = pool_dir or ARCHIVE
+    files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
+        if os.path.isdir(pool_dir) else []
+    rows, by_key = [], {}
+    for fn in files:
+        try:
+            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f:
+                legs = json.load(f).get("legs") or []
+        except (OSError, ValueError):
+            continue
+        for row in legs:
+            i = len(rows); rows.append((fn[5:15], row))
+            by_key.setdefault((row.get("sport"), row.get("event"), row.get("pick")), []).append(i)
+    drop = set()
+    for idxs in by_key.values():
+        if len(idxs) < 2: continue
+        clusters = []
+        for i in idxs:
+            for c in clusters:
+                if any(_same_fixture(rows[i][1], rows[j][1]) for j in c): c.append(i); break
+            else:
+                clusters.append([i])
+        for c in clusters:
+            keep = max(c, key=lambda j: (rows[j][1].get("firstAt") or "", rows[j][0], j))
+            drop.update(j for j in c if j != keep)
+    return [r for i, r in enumerate(rows) if i not in drop]
+
 VOID_AFTER = 72 * 3600   # a football leg with no result this long after kick-off is void (25 Oct 2026)
 
 def dead_fixtures(dates):
@@ -2385,8 +2541,9 @@ def avoid_list(dl, limit=12):
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "off", "level": "avoid", "score": 0.05})
         elif l.get("sport") in CARD_SPORT_MIN and l["pModel"] >= 0.70 and \
                 (l["pModel"] < CARD_SPORT_MIN[l["sport"]] or (l.get("hit") or 0) < CARD_SPORT_MIN[l["sport"]]):
-            # 29 Oct 2026: a tennis pick under the Card's 75% floor on the model
-            # or its tested rate; such legs landed 59% on the Card (n=32)
+            # a tennis pick under the Card's floor (85% since 11 Nov 2026, 75%
+            # from 29 Oct) on the model or its tested rate; tennis legs landed
+            # 22 of 40 on the Card to 9 Nov
             out.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                         "odds": l["odds"], "model": l["pModel"], "fair": l["fair"], "kind": "thin", "level": "caution", "score": 0.04})
     return sorted(out, key=lambda x: (x["level"] != "avoid", -x["score"]))[:limit]
@@ -2454,6 +2611,17 @@ def archive_pool(L, now, dates):
                 # 11 Nov 2026: the context check's latest verdict before the start
                 # (a read, not a price; graded forward by context_record)
                 if not started and l.get("context"): old["context"] = l["context"]
+                # 14 Nov 2026: a tennis match first archived before its order of
+                # play (timeEst, the tournament's usual first start) keeps that
+                # flag as first written, so the replay and the funnel read it as
+                # "no order of play" for good, though a later build before the
+                # start had the real time (21 pool rows to 14 Nov, Ruud and
+                # Andreescu among them). The first such build stamps `timeSet`
+                # and the start it read (`whenSet`); a time, not a price, and
+                # `timeEst` itself is never changed. Read by pool_time_est.
+                if not started and old.get("timeEst") and not l.get("timeEst") and not old.get("timeSet"):
+                    old["timeSet"] = stamp
+                    if l.get("when"): old["whenSet"] = l["when"]
                 if not started:
                     # 10 Nov 2026: UK books read on a later build (the list pass
                     # reaches estimates too), for the list's at-the-book record
@@ -2556,6 +2724,16 @@ def _lb_mark(row):
     top = max(books.items(), key=lambda kv: kv[1]) if books else None
     return {"h": books.get(CARD_BOOK), "b": len(books), "x": [top[0], top[1]] if top else None, "c": checked}
 
+def context_page(L):
+    """{sport|home|away: the context verdict} for every leg read (display only;
+    the model's number never moves)."""
+    out = {}
+    for l in L:
+        c = l.get("context")
+        if not c or not c.get("verdict"): continue
+        out[_lb_key(l.get("sport"), *_lb_sides(l))] = {k: c.get(k) for k in ("verdict", "reason", "news", "numbers", "sources", "at")}
+    return out
+
 def board_prices(L):
     """{sport|home|away: price} for every leg this build priced from a
     bookmaker (11 Nov 2026, Douglas: "We need to get a grip on odds for all
@@ -2608,38 +2786,30 @@ def list_at_book(idx, now=None, pool_dir=None):
     groups = {"atBook": blank(), "notAtBook": blank(), "unchecked": blank()}
     by_sport, picks = {}, {}
     names = name_indexes(idx)
-    files = sorted(fn for fn in os.listdir(pool_dir) if fn.startswith("pool-") and fn.endswith(".json.gz")) \
-        if os.path.isdir(pool_dir) else []
-    for fn in files:
-        d = fn[5:15]
+    # 13 Nov 2026: one row a fixture (pool_rows), not a moved fixture twice
+    for d, r in pool_rows(pool_dir):
         if d < LIST_BOOK_FROM: continue
-        try:
-            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f:
-                rows = json.load(f).get("legs") or []
-        except (OSError, ValueError):
-            continue
-        for r in rows:
-            if not r.get("list"): continue
-            books, checked = _lb_books(r)
-            hill = books.get(CARD_BOOK)
-            home, away = _lb_sides(r)
-            if d >= keep_from and checked:
-                # the price; 0: UK books price it, not this one; -1: no UK book listed it
-                picks[f"{_lb_key(r.get('sport'), home, away)}|{d}"] = hill or (0 if books else -1)
-            leg = dict(r)
-            if leg.get("sport") == "football" and not leg.get("side"):
-                leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
-            # 11 Nov 2026: settle_pool, not settle: most US-sport rows were first
-            # archived before `id` joined POOL_KEYS, so settle left them pending
-            # and the tally read 1 settled pick of 40 (#235)
-            try: st, _ = settle_pool(leg, idx, names)
-            except (KeyError, TypeError): continue
-            if st not in ("won", "lost"): continue
-            g = "atBook" if hill else "notAtBook" if checked else "unchecked"
-            for t in (groups[g], by_sport.setdefault(r.get("sport"), {k: blank() for k in groups})[g]):
-                t["n"] += 1; t["won"] += st == "won"; t["quoted"] += r.get("pModel") or 0
-                if hill:
-                    t["staked"] += 1; t["returned"] += hill if st == "won" else 0
+        if not r.get("list"): continue
+        books, checked = _lb_books(r)
+        hill = books.get(CARD_BOOK)
+        home, away = _lb_sides(r)
+        if d >= keep_from and checked:
+            # the price; 0: UK books price it, not this one; -1: no UK book listed it
+            picks[f"{_lb_key(r.get('sport'), home, away)}|{d}"] = hill or (0 if books else -1)
+        leg = dict(r)
+        if leg.get("sport") == "football" and not leg.get("side"):
+            leg["side"] = "h" if leg.get("pick") == leg.get("home") else "a"
+        # 11 Nov 2026: settle_pool, not settle: most US-sport rows were first
+        # archived before `id` joined POOL_KEYS, so settle left them pending
+        # and the tally read 1 settled pick of 40 (#235)
+        try: st, _ = settle_pool(leg, idx, names)
+        except (KeyError, TypeError): continue
+        if st not in ("won", "lost"): continue
+        g = "atBook" if hill else "notAtBook" if checked else "unchecked"
+        for t in (groups[g], by_sport.setdefault(r.get("sport"), {k: blank() for k in groups})[g]):
+            t["n"] += 1; t["won"] += st == "won"; t["quoted"] += r.get("pModel") or 0
+            if hill:
+                t["staked"] += 1; t["returned"] += hill if st == "won" else 0
     def done(t):
         out = {"n": t["n"], "won": t["won"]}
         if t["n"]:
@@ -2659,8 +2829,29 @@ def card_legs_by_sport(days):
     CARD_FLOOR_Z standard errors or more on CARD_FLOOR_N+ legs; the tally
     carries that test as `tripwire` so the page and the build sessions read
     it from the record rather than recount it. A tally of the scoreboard,
-    nothing fitted (Rule 1)."""
-    by = {}
+    nothing fitted (Rule 1).
+
+    14 Nov 2026: a sport with its own floor (CARD_SPORT_MIN, tennis at 85%
+    since CARD_RULE 10) is judged on the legs today's floor would admit
+    (`atFloor`: the leg's chance at the floor or more), because every one of
+    the 41 tennis legs in the record was priced under 85% (30 of them under
+    rule 1, before even the 75% floor) and none has reached the Card since.
+    The top-level figures stay every leg, shown as before; `tripwire` reads
+    `atFloor` where a floor exists (`tripwireAll` keeps the every-leg test).
+    claude/card-tripwire-at-floor-2026-11-14.md."""
+    def tally():
+        return {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0}
+    def add(t, l):
+        t["legs"] += 1; t["landed"] += l["status"] == "won"
+        t["expected"] += l["p"]; t["var"] += l["p"] * (1 - l["p"])
+    def read(t):
+        z = round((t["landed"] - t["expected"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None
+        out = {"legs": t["legs"], "landed": t["landed"], "expected": round(t["expected"], 2),
+               "rate": round(t["landed"] / t["legs"], 4) if t["legs"] else None,
+               "quoted": round(t["expected"] / t["legs"], 4) if t["legs"] else None, "z": z}
+        out["tripwire"] = bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)
+        return out
+    by, at = {}, {}
     for d in days:
         seen = set()
         for g in d["groups"]:
@@ -2669,15 +2860,18 @@ def card_legs_by_sport(days):
                 k = (l["event"], l["pick"])
                 if l["status"] not in ("won", "lost") or k in seen: continue
                 seen.add(k)
-                t = by.setdefault(l["sport"], {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0})
-                t["legs"] += 1; t["landed"] += l["status"] == "won"
-                t["expected"] += l["p"]; t["var"] += l["p"] * (1 - l["p"])
+                add(by.setdefault(l["sport"], tally()), l)
+                floor = CARD_SPORT_MIN.get(l["sport"])
+                if floor is not None and l["p"] >= floor:
+                    add(at.setdefault(l["sport"], tally()), l)
     out = {}
     for sp, t in sorted(by.items(), key=lambda kv: (-kv[1]["legs"], kv[0])):
-        z = round((t["landed"] - t["expected"]) / math.sqrt(t["var"]), 2) if t["var"] > 0 else None
-        out[sp] = {"legs": t["legs"], "landed": t["landed"], "expected": round(t["expected"], 2),
-                   "rate": round(t["landed"] / t["legs"], 4), "quoted": round(t["expected"] / t["legs"], 4), "z": z,
-                   "tripwire": bool(z is not None and t["legs"] >= CARD_FLOOR_N and z <= CARD_FLOOR_Z)}
+        out[sp] = read(t)
+        floor = CARD_SPORT_MIN.get(sp)
+        if floor is not None:
+            a = read(at.get(sp) or tally())
+            out[sp].update({"floor": floor, "atFloor": a, "tripwireAll": out[sp]["tripwire"],
+                            "tripwire": a["tripwire"]})
     return out
 
 def card_picks(L, date, now):
@@ -2696,6 +2890,44 @@ def card_picks(L, date, now):
         out.append({k: l.get(k) for k in ("pick", "event", "sport", "comp", "when", "odds", "pModel", "fair", "bookOdds", "est", "context")})
     return sorted(out, key=lambda x: x.get("when") or "9")
 
+def card_short(L, date, now, used=()):
+    """13 Nov 2026: why a day with no Card group has none, for the page. The
+    day's picks that pass the Card's rule and have not started (the ones
+    best_card could use), and what stopped them making a group of the first
+    kind built: "few" (under CARD_LEGS' minimum), "spread" (enough picks but
+    too many from one competition, COMP_MAX), "long" (every allowed set pays
+    over the band's top, so `best` is the cheapest), "short" (every set under
+    its bottom, `best` the dearest) or "chance" (sets in the band, all under
+    the chance floor). None when a group could be built. Display only: the
+    page said "too few picks" on 13 Nov when three qualified and paid 3.51
+    together, over the 2x band's 3.00."""
+    name = built_kinds()[0][0]
+    lo, hi = CARD_RANGE[name]
+    after = now + timedelta(minutes=20)
+    c = [as_card(l) for l in L if (uk_slot(l) or (None,))[0] == date and l["event"] not in used
+         and card_fault(l) is None and (parse(l.get("when") or "") or after) >= after]
+    seen, cands = set(), []
+    for l in sorted(c, key=lambda l: -l["p"]):
+        if l["event"] in seen: continue
+        seen.add(l["event"]); cands.append(l)
+    out = {"kind": name, "band": [lo, hi], "picks": len(cands), "comps": len({l.get("comp") for l in cands}),
+           "need": min(CARD_LEGS), "best": None, "why": "few"}
+    if len(cands) < min(CARD_LEGS): return out
+    prices, inband = [], False
+    for k in CARD_LEGS:
+        for combo in itertools.combinations(cands[:CARD_POOL], k):
+            if mult_combo(combo, 0, float("inf")) is None: continue
+            o = math.prod(l["odds"] for l in combo); prices.append(o)
+            if lo <= o <= hi:
+                if math.prod(l["p"] for l in combo) >= MIN_CHANCE[name]: return None
+                inband = True
+    if not prices: out["why"] = "spread"
+    elif inband: out["why"] = "chance"
+    elif min(prices) > hi: out.update(why="long", best=round(min(prices), 2))
+    elif max(prices) < lo: out.update(why="short", best=round(max(prices), 2))
+    else: out["why"] = "chance"      # sets on both sides of the band, none inside it
+    return out
+
 def context_record(idx, pool_dir=None):
     """11 Nov 2026 (CARD_CONTEXT): the context check graded forward. Every
     pool leg the check read (`context`, archived with the pool), settled, by
@@ -2705,26 +2937,21 @@ def context_record(idx, pool_dir=None):
     day, the last verdict before the start. A tally, nothing fitted (Rule 1)."""
     pool_dir = pool_dir or ARCHIVE
     names = name_indexes(idx); by, seen = {}, set()
-    files = sorted(f for f in os.listdir(pool_dir) if f.startswith("pool-") and f.endswith(".json.gz")) if os.path.isdir(pool_dir) else []
-    for fn in files[-60:]:
-        try:
-            with gzip.open(os.path.join(pool_dir, fn), "rt", encoding="utf-8") as f: rows = json.load(f).get("legs") or []
-        except Exception:
-            continue
-        for row in rows:
-            v = (row.get("context") or {}).get("verdict")
-            k = (row.get("date"), row.get("event"), row.get("pick"))
-            if not v or k in seen: continue
-            l = dict(row)
-            if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
-            st, _ = settle_pool(l, idx, names)
-            if st not in ("won", "lost"): continue
-            seen.add(k)
-            t = by.setdefault(v, {"legs": 0, "landed": 0, "model": 0.0, "var": 0.0, "fair": 0.0, "nFair": 0})
-            pm = row.get("pModel") or 0
-            t["legs"] += 1; t["landed"] += st == "won"; t["model"] += pm; t["var"] += pm * (1 - pm)
-            fr = row.get("fair") if not row.get("est") else (row.get("priced") or {}).get("fair")
-            if fr is not None: t["fair"] += fr; t["nFair"] += 1
+    # 13 Nov 2026: one row a fixture (pool_rows), the last placement's verdict
+    for _, row in pool_rows(pool_dir):
+        v = (row.get("context") or {}).get("verdict")
+        k = (row.get("date"), row.get("event"), row.get("pick"))
+        if not v or k in seen: continue
+        l = dict(row)
+        if l.get("sport") == "football" and not l.get("side"): l["side"] = "h" if l["pick"] == l.get("home") else "a"
+        st, _ = settle_pool(l, idx, names)
+        if st not in ("won", "lost"): continue
+        seen.add(k)
+        t = by.setdefault(v, {"legs": 0, "landed": 0, "model": 0.0, "var": 0.0, "fair": 0.0, "nFair": 0})
+        pm = row.get("pModel") or 0
+        t["legs"] += 1; t["landed"] += st == "won"; t["model"] += pm; t["var"] += pm * (1 - pm)
+        fr = row.get("fair") if not row.get("est") else (row.get("priced") or {}).get("fair")
+        if fr is not None: t["fair"] += fr; t["nFair"] += 1
     out = {}
     for v in ("clear", "caution", "against"):
         t = by.get(v)
@@ -2789,6 +3016,10 @@ def grade(now=None):
                        # every other kind), so the record reads at the page's stakes too.
                        "stake": g.get("stake") or 1,
                        "wide": bool(g.get("wide")), "late": bool(g.get("late")), "locked": bool(g.get("locked")), "lockAt": g.get("lockAt"),
+                       # 15 Nov 2026: the two days of a two-day group (CARD_SPAN) and
+                       # the group's basis travel too. span was dropped here, so
+                       # cardSpan tallied 0 groups with 14 Nov's two-day group on file.
+                       "span": g.get("span"), "basis": g.get("basis"),
                        "paid": round(paid, 2), "paidBest": round(paid_best, 2),
                        "paidLock": round(paid_lock, 2) if paid_lock is not None else None,
                        "legsWon": sts.count("won"), "legsLost": sts.count("lost"),
@@ -2857,6 +3088,8 @@ def grade(now=None):
            # rule) are tallied on their own lines and never count toward it.
            "card": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late")]),
            "cardWide": tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late")]),
+           # 12 Nov 2026: two-day groups (CARD_SPAN), also in the Card record
+           "cardSpan": tally([g for g in allg if is_card(g["name"]) and g.get("span") and not g.get("late")]),
            # 11 Nov 2026: the wider rule by version (CARD_WIDE_RULE)
            "cardWideByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and g.get("wide") and not g.get("late") and g.get("wideRule") == r])
                               for r in sorted({g.get("wideRule") for g in allg if is_card(g["name"]) and g.get("wide") and g.get("wideRule")})},
@@ -2873,8 +3106,23 @@ def grade(now=None):
     json.dump(out, open(os.path.join(HERE, "groupings-record.json"), "w"), indent=1, ensure_ascii=False)
     return out
 
+def timing_page():
+    """12 Nov 2026: the price-timing read for the playbook's "Place once"
+    habit (tools/price_timing.page_read), from the committed pool archives.
+    Display only; None when it cannot be read, and the page then makes no
+    claim about first v last price."""
+    try:
+        sys.modules.setdefault("groupings", sys.modules[__name__])
+        tools = os.path.join(HERE, "tools")
+        if tools not in sys.path: sys.path.insert(0, tools)
+        import price_timing
+        return price_timing.page_read()
+    except Exception as e:
+        print(f"groupings: price timing read skipped ({type(e).__name__}: {e})", file=sys.stderr)
+        return None
+
 def write_page(out, record):
-    page = dict(out, record=record)
+    page = dict(out, record=record, timing=timing_page())
     with open(os.path.join(HERE, "groupings-data.js"), "w") as f:
         f.write("window.__GROUPINGS__=" + json.dumps(page, separators=(",", ":")).replace("</", "<\\/") + ";")
 
@@ -2903,20 +3151,27 @@ def main():
         cands = []
         for l in L:
             s_ = uk_slot(l)
-            if s_ and s_[0] in dates and card_fault(l) is None:
-                l["ukDate"] = s_[0]; cands.append(l)
+            if not s_ or s_[0] not in dates: continue
+            card = card_fault(l) is None
+            # 12 Nov 2026 (Douglas): Daily List picks at 75%+ are read too,
+            # within the daily cap, after the Card's (context_review.priority)
+            if card or (l.get("list") and (l.get("pModel") or 0) >= CX_LIST_MIN):
+                l["ukDate"] = s_[0]; l["cxCard"] = card; cands.append(l)
         CX.review(cands, now, report)
-        for l in cands: l.pop("ukDate", None)
+        for l in cands: l.pop("ukDate", None); l.pop("cxCard", None)
     except Exception as e:
         report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
-    days = []
+    days, span_taken = [], set()
     for d in dates:
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
         log = list(pd.get("log") or [])
         # 25 Oct 2026: the Card replaces the older kinds as what is put forward.
         # Legs are placed by UK kick-off, so a day takes legs from every board date.
-        groups = build_card(L, d, now, prev=pd.get("groups"), log=log)
+        span_taken_in = set(span_taken)
+        groups = build_card(L, d, now, prev=pd.get("groups"), log=log, taken=span_taken)
+        # 12 Nov 2026 (CARD_SPAN): the next day's picks a two-day group holds
+        span_taken = {l["event"] for g in groups if g.get("span") for l in g["legs"]}
         # 11 Nov 2026: under CARD_RULE 7 the Card is the model's own picks, so the paper Model card stops
         if not CARD_MODEL_RULE: groups += build_model_card(L, d, now, prev=pd.get("groups"))
         live = [g for g in groups if g.get("status") != "underway"]
@@ -2931,6 +3186,8 @@ def main():
                      # every pick the Card's rule admits this day, with its context
                      # verdict, shown when they make no group (or more than the groups use)
                      "cardPicks": card_picks(L, d, now),
+                     # 13 Nov 2026: why a day has no group, said plainly on the page
+                     "cardShort": None if any(is_card(g.get("name")) for g in groups) else card_short(L, d, now, used=span_taken_in),
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway", "locked", "late")},
                      "previously": len(pd.get("groups") or []) if pd else None,
@@ -2952,14 +3209,20 @@ def main():
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
-                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "wideLegs": list(CARD_WIDE_LEGS),
+                              "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "span": CARD_SPAN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS), "context": CARD_CONTEXT,
                               "windows": [list(w) for w in CARD_WINDOWS]}},
            "sources": report, "days": days,
            # 10 Nov 2026: each list pick's William Hill mark, for the page
            "listBooks": list_books_page(L, dates, now),
            # 11 Nov 2026: a bookmaker price for every priced game, every sport
-           "prices": board_prices(L)}
+           "prices": board_prices(L),
+           # 12 Nov 2026: the context check's verdict on every read pick, keyed like
+           # listBooks, for the Daily List, Starred and the slip checker (display only)
+           "contexts": context_page(L),
+           # 14 Nov 2026: when the context check is paused for the API's usage
+           # limit, the time it resumes, so the page says no pick is being read
+           "contextPaused": (report.get("context") or {}).get("paused")}
     # The full priced pool goes in the JSON only (the page does not need it),
     # so the office can regroup later in the day from games still to start.
     full = dict(out, pool={d: [l for l in L if l["date"] == d] for d in dates})
@@ -2972,8 +3235,33 @@ def main():
     write_page(dict(out, check=check_pool(L)), record)
     print(f"groupings: {sum(len(d['groups']) for d in days)} groups over {len(days)} days; "
           f"{report['priced']} of {report['legs']} legs priced", file=sys.stderr)
+    # 11 Nov 2026: what each price source did this build, so the log answers
+    # "is Betfair / SportsGameOdds working?" without the published JSON
+    def _src(name):
+        r = report.get(name)
+        if isinstance(r, dict):
+            bits = [f"{k} {r[k]}" for k in ("matched", "legs", "calls", "objects", "monthObjects", "usedToday", "dayCap", "left") if r.get(k) is not None]
+            return f"{name}: " + ", ".join(bits) + (f", error {str(r['error'])[:120]}" if r.get("error") else "")
+        return f"{name}: {r}" if r else None
+    srcs = [x for x in (_src(n) for n in ("football", "espn", "espn_soccer", "apiSports", "pinnwire", "oddsApi", "sgo", "betfair", "matchbook", "oddsApiList")) if x]
+    print("  prices: " + " | ".join(srcs), file=sys.stderr)
+    # 14 Nov 2026: why football legs stayed unpriced, and where, so a session
+    # can tell a name API-Football spells another way (noFixture) from a game
+    # it lists with no odds (noOdds) without the published JSON
+    fm = report.get("football") if isinstance(report.get("football"), dict) else {}
+    if fm.get("miss"):
+        print("  football unpriced: " + "; ".join(
+            f"{w} {n} (" + ", ".join(f"{c} {k}" for c, k in fm["missComps"].get(w, [])[:3]) + ")"
+            for w, n in sorted(fm["miss"].items(), key=lambda kv: -kv[1])), file=sys.stderr)
+    # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
+    # how far its legs got and what a game looked like, on its own line
+    sg = report.get("sgo")
+    if isinstance(sg, dict) and not sg.get("matched"):
+        print("  sgo miss: " + json.dumps({k: sg[k] for k in ("named", "noSide", "noBooks", "oddKeys", "sample") if k in sg})[:1500], file=sys.stderr)
+    errs = [e for e in report.get("errors", []) if any(k in e for k in ("betfair", "matchbook", "sgo", "price_"))]
+    if errs: print("  price errors: " + "; ".join(errs)[:800], file=sys.stderr)
     cx = report.get("context") or {}
-    print(f"  context check: {'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
+    print(f"  context check: {('paused until ' + cx['paused'] + ' (API usage limit)') if cx.get('paused') else 'on' if cx.get('on') else 'off (no ANTHROPIC_API_KEY)'}, {cx.get('calls', 0)} reads this build, "
           f"{cx.get('read', 0)} picks with a verdict, {cx.get('against', 0)} against; "
           + "; ".join(e for e in report.get("errors", []) if e.startswith("context"))[:600], file=sys.stderr)
     for d in days:

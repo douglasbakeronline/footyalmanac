@@ -30,6 +30,14 @@ class LegsBySport(unittest.TestCase):
         self.assertIn("**Tripwire fired for tennis", body)
         self.assertIn("`CARD_SPORTS_OFF`", body)
 
+    def test_floor_line_for_a_sport_with_its_own_floor(self):
+        t = {"legs": 41, "landed": 23, "rate": 0.561, "quoted": 0.71, "z": -2.13, "tripwire": False, "tripwireAll": False,
+             "floor": 0.85, "atFloor": {"legs": 0, "landed": 0, "rate": None, "quoted": None, "z": None, "tripwire": False}}
+        body = post_with({"cardLegsBySport": {"tennis": t}})
+        self.assertIn("tennis at today's 85% floor (the legs the sport-off test counts): none yet", body)
+        t["atFloor"] = {"legs": 4, "landed": 3, "rate": 0.75, "quoted": 0.88, "z": -0.8, "tripwire": False}
+        self.assertIn("3 of 4 landed (75%) v 88% quoted, z -0.8", post_with({"cardLegsBySport": {"tennis": t}}))
+
     def test_no_section_without_the_tally(self):
         body = post_with({})
         self.assertNotIn("Legs by sport", body)
@@ -76,10 +84,6 @@ class PriceTimingLines(unittest.TestCase):
         self.assertIn("(take the price late), day-resampled p(no drift) 0.003", body)
         self.assertIn("singles on 104 settled legs (69 won): -7.21% at the first price, -5.26% at the last pre-start price, late +1.95 points, p(late no better) 0.011", body)
         self.assertIn("not started yet, left out until their last price is in: 5 leg(s)", body)
-
-
-if __name__ == "__main__":
-    unittest.main()
 
 
 class OncePerDay(unittest.TestCase):
@@ -160,3 +164,71 @@ class ContextCheck(unittest.TestCase):
 
     def test_no_section_without_reads(self):
         self.assertNotIn("context check", post_with({}))
+
+
+class BothSidesOfTheGate(unittest.TestCase):
+    """12 Nov 2026: the pool read beside the football-data seasons, so a pool
+    lead the seasons refused is not read as a candidate."""
+    REP = {"variants": {"live": {"legs": 24},
+                        "m7under5": {"legs": 45, "vsLivePerDay": 2.1, "pWorse": 0.01},
+                        "m7core": {"legs": 12, "vsLivePerDay": 0.9, "pWorse": 0.2},
+                        "good": {"legs": 120, "vsLivePerDay": 0.5, "pWorse": 0.1},
+                        "short": {"legs": 0, "vsLivePerDay": 0.44, "pWorse": 0.2}}}
+    HIST = {"seasons": {"fit": {"season": "2025-26", "cardM7Paired": {
+                "m7under5": {"perDay": -0.41, "pWorse": 0.96, "identical": False},
+                "m7core": {"perDay": 0.0, "pWorse": None, "identical": True},
+                "good": {"perDay": 0.2, "pWorse": 0.2, "identical": False}}},
+            "check": {"season": "2026-27", "cardM7Paired": {
+                "m7under5": {"perDay": -0.34, "pWorse": 0.62, "identical": False},
+                "m7core": {"perDay": 0.0, "pWorse": None, "identical": True},
+                "good": {"perDay": 0.1, "pWorse": 0.25, "identical": False}}}}}
+
+    def test_refused_on_seasons(self):
+        out = "\n".join(P.fd_gate_lines(self.REP, self.HIST))
+        self.assertIn("| m7under5 | +2.10 | 0.01 | 45 | -0.41, 0.96 | -0.34, 0.62 | fails: pool 45 legs of 100, football-data 2025-26, 2026-27 |", out)
+        self.assertIn("not a candidate however the pool reads: m7under5.", out)
+
+    def test_identical_has_no_read(self):
+        self.assertIn("| m7core | +0.90 | 0.2 | 12 | identical | identical | no football-data read", "\n".join(P.fd_gate_lines(self.REP, self.HIST)))
+
+    def test_full_pass_says_act(self):
+        out = "\n".join(P.fd_gate_lines(self.REP, self.HIST))
+        self.assertIn("| good | +0.50 | 0.1 | 120 | +0.20, 0.2 | +0.10, 0.25 | **passes** |", out)
+        self.assertIn("**Full gate passed: good.", out)
+
+    def test_one_season_missing_fails(self):
+        h = {"seasons": {"fit": self.HIST["seasons"]["fit"]}}
+        self.assertIn("fit and check not both on file", "\n".join(P.fd_gate_lines(self.REP, h)))
+
+    def test_nothing_on_file(self):
+        self.assertIn("no paired season read on file yet", P.fd_gate_lines(self.REP, {})[0])
+
+    def test_empty_variant_named_apart(self):
+        v = {k: {"groups": 0, "won": 0, "expected": 0, "return": None, "emptyDays": 1, **r} for k, r in self.REP["variants"].items()}
+        files = {"card-replay.json": {"from": "2026-11-01", "to": "2026-11-02", "days": 2, "variants": v}}
+        posted = []
+        with mock.patch.object(P, "load", side_effect=lambda p: files.get(p, {})), \
+             mock.patch.object(P, "gh", side_effect=lambda *a: posted.append(a) or {}), \
+             mock.patch.object(P, "funnel_section", return_value=[]), mock.patch.object(P, "edge_section", return_value=[]), \
+             mock.patch("builtins.print"):
+            P.main()
+        body = next(x for a in posted for x in a if isinstance(x, str) and x.startswith("body="))
+        self.assertIn("Built nothing on these days, so ahead of live only by live's losses (not a read): short.", body)
+        watch = next(l for l in body.splitlines() if l.startswith("Ahead of live but under"))
+        self.assertNotIn("short", watch)
+
+
+class ContextPause(unittest.TestCase):
+    """14 Nov 2026: a paused context check is said in bold."""
+    def test_pause_line(self):
+        from datetime import datetime, timezone
+        now = datetime(2026, 11, 14, 3, 40, tzinfo=timezone.utc)
+        out = P.context_pause_line({"2026-11-14": 6, "pausedUntil": "2026-12-01T00:00Z"}, now)
+        self.assertTrue(out and out[0].startswith("**The context check is paused until 2026-12-01T00:00Z"))
+        self.assertEqual(P.context_pause_line({"pausedUntil": "2026-11-01T00:00Z"}, now), [])
+        self.assertEqual(P.context_pause_line({"2026-11-14": 6}, now), [])
+        self.assertEqual(P.context_pause_line({}, now), [])
+
+
+if __name__ == "__main__":
+    unittest.main()

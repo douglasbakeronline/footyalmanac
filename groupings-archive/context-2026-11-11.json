@@ -1,81 +1,81 @@
 {
  "New Orleans Pelicans v Brooklyn Nets|New Orleans Pelicans": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T22:07:03Z",
   "model": "claude-sonnet-5-5",
-  "news": "Pelicans are without Yves Missi (knee) and Trendon Watford (ankle), and Trey Murphy III is probable with knee management; for the Nets, Nolan Traore is questionable (calf) and Egor Demin is probable (bone bruise).",
-  "numbers": "Pelicans are 4-7 and 5th in the Southwest, at 117.5 points for and 122.4 against per game, 3-3 at home, with a last five of W 135-134 OT at MEM, W 120-113 OT v UTA, L v MIN, L 139-123 at LAC and L 138-87 at GS. Nets are 2-8, at 106.7 for and 115.7 against, 1-5 away, have lost 8 of their last 10 and lost 130-93 at Dallas in their last game.",
-  "reads": 1,
-  "reason": "Pelicans are only 4-7 on a three-game losing streak, including a 138-87 loss at Golden State, and they are without Yves Missi, though Brooklyn (2-8, 1-5 away) is weaker and the spread of NO -4.5 broadly matches the 65% estimate (CBS Sports, Yahoo Sports).",
+  "news": "Pelicans are without Missi (knee), Watford (ankle) and Mathurin (thumb) with Murphy III's status disputed between sources, while Nets guard Mikel Brown Jr. is out (illness), Nolan Traore is questionable (calf) and Egor Demin is probable.",
+  "numbers": "Pelicans are 4-7 (3-3 at home, on a three-game losing streak; last five W 135-134 OT at MEM, W 120-113 OT v UTA, L 115-109 v MIN, L 139-123 at LAC, L 138-87 at GS) and score 117.5 and concede 122.4 points per game (29th defensively). Nets are 2-8 (1-5 away, two straight losses including 130-93 at Dallas) and score 106.7 and concede 115.7; I found only their last two results, not a full last five, ",
+  "reads": 2,
+  "reason": "Pelicans are missing Yves Missi, Trendon Watford and Bennedict Mathurin, and Trey Murphy III's status is disputed (the team's report says doubtful, ESPN says game-time decision, Yahoo says probable), but they are still 4.5-point home favourites against a 2-8 Nets side, so nothing clearly cuts the 65",
   "sources": [
+   {
+    "title": "Pelicans vs. Nets: Injury Report, Game Preview 11/11/2026 - NBA.com",
+    "url": "https://www.nba.com/pelicans/news/pelicans-vs-nets-injury-report-game-preview-11-11-2026"
+   },
+   {
+    "title": "Nets vs. Pelicans (Nov 11, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909972/nets-pelicans"
+   },
    {
     "title": "New Orleans Pelicans News, Scores and Stats 2026-27 - CBS Sports",
     "url": "https://www.cbssports.com/nba/teams/NO/new-orleans-pelicans/"
    },
    {
-    "title": "Nets at Pelicans game preview: How to watch, injuries, lineups - Yahoo Sports",
-    "url": "https://sports.yahoo.com/articles/nets-pelicans-game-preview-watch-141117388.html"
-   },
-   {
-    "title": "NBA injury report: Barnes, Haliburton out Wednesday, November 11 - TalkBasket.net",
-    "url": "https://www.talkbasket.net/227458-nba-injury-report-barnes-haliburton-out-wednesday-november-11"
-   },
-   {
-    "title": "Nets vs Pelicans Prediction - TheRX",
-    "url": "https://www.therx.com/nba/nets-pelicans-nba-picks-november-11-2026/55063/"
+    "title": "Nets, Pelicans Both Looking for Answers After Blowouts - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/nets-pelicans-both-looking-answers-150037351.html"
    }
   ],
   "verdict": "caution"
  },
  "New York Knicks v Cleveland Cavaliers|New York Knicks": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T21:45:05Z",
   "model": "claude-sonnet-5-5",
-  "news": "Knicks: Josh Hart is out and the team is playing the second night of a back-to-back, though it beat Milwaukee by 32 on Nov 10. Cavaliers: Sam Merrill and Nae'Qwan Tomlin are out, Jaylon Tyson is questionable, and the Cavs had Tuesday off.",
-  "numbers": "Knicks are 6-4 and fourth in the East on a four-game win streak, with a +8.3 scoring margin and about 102-104 points allowed per game. Cavaliers are 5-6 and seventh, 1-4 away, and have lost four of their last five, including 97-109 at home to the Knicks on Nov 7.",
-  "reads": 1,
-  "reason": "The Knicks are on the second night of a back-to-back without Josh Hart (ankle/illness), and the market and other models price them at roughly 60-63% rather than 70% (Dimers 62.5%, AccuScore 60%, moneyline about -168).",
+  "news": "Knicks: Towns questionable and Josh Hart probable (back from illness), with Justin Champagnie out; Cavaliers: Sam Merrill, Nae'Qwan Tomlin and Khalifa Diop out and Jaylon Tyson questionable (ankle, has missed six games).",
+  "numbers": "Knicks 6-4, 4th in the East, 4-2 at home, won 4 straight, scoring 110.6 and conceding 102.3 per game (Fox Sports standings). Cavaliers 5-6, 7th in the East, 1-4 away, lost 2 straight, scoring 116.6 and conceding 115.0; Knicks won 7 of the last 10 head-to-heads per Sportsgambler, and swept Cleveland in last season's playoffs.",
+  "reads": 2,
+  "reason": "Karl-Anthony Towns is questionable (sore left calf) and the Knicks are on the second night of a back-to-back, while the market has them at about -152 to -180 (roughly 60-64%), below the model's 70% (NBA injury report and Yahoo/DraftKings previews).",
   "sources": [
    {
-    "title": "Cavaliers vs. Knicks (Nov 11, 2026) Pregame - ESPN",
-    "url": "https://www.espn.com/nba/preview?gameId=401909967"
+    "title": "Injury Report 11/11/26 (NBA official)",
+    "url": "https://ak-static.cms.nba.com/referee/injury/Injury-Report_2026-11-11_02_00PM.pdf"
    },
    {
-    "title": "Cavaliers vs Knicks Prediction: Wednesday NBA Rematch at MSG - Predictem",
-    "url": "https://www.predictem.com/nba/cavaliers-vs-knicks-prediction-wednesday-nba-rematch-at-msg/"
+    "title": "Final Injury Report for Cavaliers-Knicks - Athlon",
+    "url": "https://athlonsports.com/nba/new-york-knicks/final-injury-report-for-cavaliers-knicks-will-karl-anthony-towns-josh-hart-play"
    },
    {
-    "title": "Cavaliers vs. Knicks prediction, odds, pick for Nov. 11, 2026 - Dimers",
-    "url": "https://www.dimers.com/nba/news/cleveland-cavaliers-vs-new-york-knicks-prediction-11-11-2026-ac"
+    "title": "Cavaliers vs Knicks Prediction, Pick, NBA Odds - Yahoo Sports",
+    "url": "https://sports.yahoo.com/articles/cavaliers-vs-knicks-prediction-pick-142251839.html"
    },
    {
-    "title": "Cleveland Cavaliers Release Injury Report vs. New York Knicks (Nov. 11) - Heavy",
-    "url": "https://heavy.com/sports/nba/cleveland-cavaliers/injury-report-vs-knicks-november-11/"
+    "title": "Cavaliers vs. Knicks Prediction, Picks & Odds - The Lines",
+    "url": "https://www.thelines.com/nba/picks/cavaliers-vs-knicks-prediction-picks-odds-ny-to-continue-winning-ways/"
    }
   ],
   "verdict": "caution"
  },
  "Utah Jazz v Orlando Magic|Orlando Magic": {
-  "at": "2026-11-11T14:41:02Z",
+  "at": "2026-11-11T23:22:16Z",
   "model": "claude-sonnet-5-5",
-  "news": "Magic out: Banchero (ankle), Suggs (knee), Isaac (knee), Penda (hamstring) and Nelson (ankle); Bane (illness) and da Silva (calf) are day-to-day. Jazz out: Jackson Jr. (knee) and Nurkic (foot); Markkanen (wrist) and George (ankle) are day-to-day after missing Tuesday's game, and the Jazz are also on",
-  "numbers": "Orlando is 3-7 (11th in the East, 3-3 away) and allows 114.6 points per game; Utah is 1-10 (15th in the West, 1-5 at home), averages 106.5 points per game and has lost nine straight. Orlando ended a four-game slide at Sacramento on Tuesday behind Franz Wagner's 33 points. The Magic won both meetings last season (120-117 and 128-127 OT), though Utah has won 7 of the last 9 meetings at the Delta Cen",
-  "reads": 1,
-  "reason": "Orlando is without Banchero, Suggs, Isaac and Penda and is on the second night of a back-to-back, but Utah is 1-10 on a nine-game losing streak and also missing Jaren Jackson Jr. and Nurkic, with Markkanen and George listed as day-to-day (iHeart injury report, ESPN preview).",
+  "news": "Orlando is without Banchero, Suggs and Isaac, with da Silva and Cain doubtful; Utah is without Markkanen (fractured hand), Jackson Jr. and Nurkic, with George questionable, and is also on a back-to-back after facing Miami on Nov 10.",
+  "numbers": "Orlando is 3-7 and 11th in the East. They are 3-3 on the road, and their last five are L, L, L, L (OT) and W 107-100 at Sacramento on Nov 10 (CBS Sports, Bang The Book). Utah is 1-10 and 15th in the West, on a 9-game losing streak and a five-game home losing streak, with the market making them 4.5-point underdogs (ESPN, iHeart).",
+  "reads": 2,
+  "reason": "Both sides are badly hurt and Orlando is also on the second night of a back-to-back, but Utah is 1-10 and has lost Markkanen for at least a month, so nothing clearly pushes the Magic below 67% (ESPN, iHeart/Roundtable previews).",
   "sources": [
    {
-    "title": "Magic vs. Jazz Injury Report \u2013 iHeart",
-    "url": "https://957wdae.iheart.com/content/2026-11-11-magic-vs-jazz-injury-report-nov-11/"
+    "title": "Magic vs. Jazz (Nov 11, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909973/magic-jazz"
    },
    {
-    "title": "Magic vs. Jazz (Nov 11, 2026) Pregame - ESPN",
-    "url": "https://www.espn.com/nba/preview?gameId=401909973"
+    "title": "Magic vs. Jazz Predictions, Odds & Stats - iHeart",
+    "url": "https://957wdae.iheart.com/content/2026-11-11-magic-vs-jazz-predictions-odds-stats-nov-11/"
    },
    {
-    "title": "Preview: Utah Jazz End Back-to-Back Against Orlando Magic - NBA.com",
-    "url": "https://www.nba.com/jazz/news/preview-utah-jazz-end-back-to-back-against-orlando-magic"
+    "title": "How to Watch Magic Vs Jazz, Injury Report and More - Roundtable",
+    "url": "https://roundtable.io/sports/nba/magic/news/how-to-watch-magic-vs-jazz-injury-report-and-more"
    },
    {
-    "title": "Utah Jazz vs Orlando Magic Prediction & Betting Tips - Bet-Experts",
-    "url": "https://www.bet-experts.com/picks/basketball/nba/utah-jazz-vs-orlando-magic-prediction-betting-tips-12-11-2026"
+    "title": "Orlando Magic at Utah Jazz: 3 Things to Watch - Orlando Magic Daily",
+    "url": "https://orlandomagicdaily.com/orlando-magic-at-utah-jazz-nov-11-2026-3-things-watch-odds-prediction-01m75xc8v05z"
    }
   ],
   "verdict": "caution"

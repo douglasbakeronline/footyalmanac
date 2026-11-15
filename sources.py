@@ -106,7 +106,7 @@ FIXTURE_FILES = {
 }
 
 # Status markers the schedules append to a side: [postponed], [awarded], etc.
-ANNOTATION = re.compile(r"\s*\[[^\]]*\]\s*$")
+ANNOTATION = re.compile(r"\s*(?:\[[^\]]*\]|\(\*+\))\s*$")
 
 SUFFIXES = re.compile(
     r"\s+(FC|AFC|CF|SC|AC|BSC|VfL|VfB|TSG|SV|FSV|SpVgg|BV|SK|CD|UD|RCD|RC|SD|"
@@ -134,15 +134,53 @@ def _open(req, timeout, tries=3, pause=1.5):
     raise err
 
 
+def _raw_keep_path(url):
+    return os.path.join(AF_CACHE_DIR, "raw-" + re.sub(r"[^a-zA-Z0-9._-]", "_", url)[-150:])
+
+
 def _get(url, cache_dir=None, timeout=30):
+    """One download. A good copy is kept in .afcache (which CI persists); when
+    every retry fails on an outage (not a 4xx, which is an answer) the last
+    good copy is used with a warning, so openfootball being down for a build
+    no longer leaves most leagues with no history or fixtures (Rule 9)."""
     if cache_dir:
         os.makedirs(cache_dir, exist_ok=True)
         p = os.path.join(cache_dir, re.sub(r"[^a-zA-Z0-9._-]", "_", url)[-120:])
         if os.path.exists(p):
             return open(p, "rb").read()
-    data = _open(url, timeout)
+    try:
+        data = _open(url, timeout)
+    except urllib.error.HTTPError as e:
+        if 400 <= e.code < 500 and e.code != 429:
+            raise
+        data = _raw_last_good(url, e)
+    except Exception as e:
+        data = _raw_last_good(url, e)
+    else:
+        try:
+            os.makedirs(AF_CACHE_DIR, exist_ok=True)
+            keep = _raw_keep_path(url)
+            tmp = f"{keep}.{os.getpid()}.{threading.get_ident()}.tmp"
+            with open(tmp, "wb") as fh:
+                fh.write(data)
+            os.replace(tmp, keep)
+        except OSError:
+            pass                      # a failed cache write never fails the build
     if cache_dir:
         open(p, "wb").write(data)
+    return data
+
+
+def _raw_last_good(url, err):
+    try:
+        keep = _raw_keep_path(url)
+        with open(keep, "rb") as fh:
+            data = fh.read()
+    except OSError:
+        raise err                     # no earlier copy: the caller's fallback decides
+    age = (time.time() - os.path.getmtime(keep)) / 86400
+    print(f"WARNING: {url} unreachable: using the last good copy ({age:.1f} days old)",
+          file=sys.stderr)
     return data
 
 
@@ -375,7 +413,7 @@ def load_current(code, season):
     return rows, (date.fromisoformat(through) if through else None)
 
 
-def topup_current(code, season, until=None, sleep=0.12, log=None):
+def topup_current(code, season, until=None, sleep=0.12, log=None, since=None):
     """Walk this season's completed matches forward and cache the result.
 
     The problem this solves
@@ -390,8 +428,14 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     Fetching the season fresh each morning is three hundred requests per
     competition, so it is walked once and topped up. The cache is committed by
     the workflow, so a normal build asks for three or four days.
+
+    `since` (13 Nov 2026) starts a first walk later than the season's start,
+    for a league whose primary source already holds the early results
+    (build.lagging_results): no point asking ESPN for August again.
     """
     start, _ = season_window(season)
+    if since is not None:
+        start = max(start, since)
     until = until or (date.today() - timedelta(days=1))
     rows, through = load_current(code, season)
     # Re-ask the tail: yesterday's build may have caught a game in progress.
@@ -426,9 +470,11 @@ def topup_current(code, season, until=None, sleep=0.12, log=None):
     # walked: stop `through` just before the first failure so the next build asks
     # again, instead of losing those results for good. A competition that has
     # never answered (dead slug, no cache yet) is saved as before, or every
-    # build would re-walk the whole season.
+    # build would re-walk the whole season. A lagging league's walk (`since`)
+    # is never marked done on a failure: its primary source still has those
+    # results to come, and marking it would leave the table stale for good.
     mark = until
-    if first_bad is not None and (through is not None or ok_days):
+    if first_bad is not None and (through is not None or ok_days or since is not None):
         mark = first_bad - timedelta(days=1)
         if through is not None:
             mark = max(mark, through)
@@ -1350,7 +1396,7 @@ _PLAYED = re.compile(
 # it after the away side ("CA Mineiro  v SE Palmeiras  2-2 (1-1)"). Without this
 # the score is silently absorbed into the away team's name and every played
 # match is read as a future fixture.
-_TRAILING = re.compile(r"^(.+?)\s{2,}(\d+)\s*-\s*(\d+)(?:\s*\(\s*\d+\s*-\s*\d+\s*\))?\s*$")
+_TRAILING = re.compile(r"^(.+?)\s+(\d+)\s*-\s*(\d+)(?:\s*\(\s*\d+\s*-\s*\d+\s*\))?\s*$")
 # A tie decided after 90 minutes carries the extra-time or shootout score first
 # and the 90-minute score in the bracket: "0-1 a.e.t. (0-0)", "4-5 pen. 2-2
 # a.e.t. (2-2, 2-1)". The board prices 90 minutes, so that bracket is the result
@@ -1823,8 +1869,11 @@ def _base(n):
                  ("ł", "l"), ("ż", "z"), ("ą", "a"), ("ę", "e"), ("š", "s"), ("ž", "z"),
                  ("č", "c"), ("ș", "s"), ("ț", "t"), ("ă", "a"), ("â", "a"), ("î", "i"),
                  ("å", "a"), ("æ", "ae"), ("ğ", "g"), ("ı", "i"), ("ş", "s"),
-                 ("é", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
-                 ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n")):
+                 ("é", "e"), ("è", "e"), ("ü", "u"), ("ö", "o"), ("ä", "a"), ("á", "a"),
+                 ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n"),
+                 # 13 Nov 2026: Portuguese and Turkish letters ESPN writes plain
+                 # (Famalicão, Guimarães, İstanbul lowers to i + a combining dot)
+                 ("ã", "a"), ("õ", "o"), ("ê", "e"), ("ô", "o"), ("\u0307", "")):
         n = n.replace(a, b)
     drop = {"fc", "cf", "afc", "sc", "ac", "as", "ss", "us", "cd", "ud", "rc",
             "sd", "ca", "sv", "tsg", "vfl", "vfb", "bv", "sk", "nk", "hnk",
@@ -1878,6 +1927,9 @@ def _bare_place(norm):
 # common cases are listed explicitly. Extend this as mismatches show up on the
 # site as "not rated" rows.
 ALIASES = {
+    # 13 Nov 2026: Belgian Pro League, ESPN's spellings
+    "racing genk": "krc genk", "royal charleroi": "sporting charleroi",
+    "sint truidense": "stvv", "union st gilloise": "royale union saint gilloise",
     "man city": "manchester city", "man utd": "manchester united",
     "man united": "manchester united", "spurs": "tottenham hotspur",
     "wolves": "wolverhampton wanderers", "nottm forest": "nottingham forest",
@@ -1915,6 +1967,14 @@ ALIASES = {
     # "Club Brugge" loses "club" as a generic word and reduces to the bare
     # city, which the matcher rightly refuses (Cercle Brugge is also there).
     "brugge": "brugge kv",
+    # ESPN's Austrian and Greek spellings against openfootball's (13 Nov 2026,
+    # from the lagging-league fill: current/at.1 and gr.1 against the 2026-27 files)
+    "rheindorf altach": "scr altach", "wsg swarovski tirol": "wsg tirol",
+    "aek athens": "aek", "ofi crete": "ofi", "saint johnstone": "st johnstone",
+    # the first lagging-league build's unmatched names (13 Nov 2026 CI log)
+    "athletico pr": "paranaense", "atletico mg": "mineiro",
+    "red bull bragantino": "rb bragantino", "deportivo": "deportivo la coruna",
+    "nec nijmegen": "nec", "erzurum bb": "bb erzurumspor",
 }
 
 

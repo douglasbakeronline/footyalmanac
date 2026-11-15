@@ -165,7 +165,7 @@ class LegsBySport(unittest.TestCase):
         self.assertFalse(by["tennis"]["tripwire"])
 
     def test_tripwire_fires_at_the_floor(self):
-        legs = [dict(leg(f"T{i}"), sport="tennis", p=0.8) for i in range(G.CARD_FLOOR_N)]
+        legs = [dict(leg(f"T{i}"), sport="tennis", p=0.86) for i in range(G.CARD_FLOOR_N)]
         days = [{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
                                                     "legs": [dict(l, status="won" if i < 30 else "lost") for i, l in enumerate(legs)]}]}]
         t = G.card_legs_by_sport(days)["tennis"]
@@ -175,6 +175,23 @@ class LegsBySport(unittest.TestCase):
         short = G.card_legs_by_sport([{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
                                                                            "legs": days[0]["groups"][0]["legs"][:G.CARD_FLOOR_N - 1]}]}])["tennis"]
         self.assertFalse(short["tripwire"])   # one leg short of the floor, however far under
+
+    def test_floor_sport_judged_on_legs_the_floor_admits(self):
+        """14 Nov 2026: tennis (CARD_SPORT_MIN 85%) legs priced under the floor
+        stay in the every-leg figures but not in the sport-off test."""
+        floor = G.CARD_SPORT_MIN["tennis"]
+        under = [dict(leg(f"U{i}"), sport="tennis", p=floor - 0.1, status="won" if i < 25 else "lost") for i in range(G.CARD_FLOOR_N)]
+        over = [dict(leg(f"O{i}"), sport="tennis", p=floor + 0.05, status="won") for i in range(3)]
+        days = [{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False, "legs": under + over}]}]
+        t = G.card_legs_by_sport(days)["tennis"]
+        self.assertEqual(t["legs"], G.CARD_FLOOR_N + 3)
+        self.assertTrue(t["tripwireAll"])          # every leg: far under on 50+
+        self.assertEqual((t["atFloor"]["legs"], t["atFloor"]["landed"]), (3, 3))
+        self.assertFalse(t["tripwire"])            # the test reads the floor's legs
+        self.assertEqual(t["floor"], floor)
+        fb = G.card_legs_by_sport([{"date": "2026-11-01", "groups": [{"name": "Card 2x", "wide": False, "late": False,
+                                                                        "legs": [dict(leg("F"), status="won")]}]}])["football"]
+        self.assertNotIn("atFloor", fb)            # no floor of its own: unchanged
 
 
 class Stakes(unittest.TestCase):
@@ -195,3 +212,19 @@ class Stakes(unittest.TestCase):
         rec = graded([card("Card 2x", "Day", ["A", "B", "C"])], ["won"] * 3)
         k = rec["card"]
         self.assertEqual((k["unitsStaked"], k["unitsReturned"]), (k["staked"], k["returned"]))
+
+
+class Span(unittest.TestCase):
+    """15 Nov 2026: a two-day group (CARD_SPAN) keeps its span on the graded
+    row, so cardSpan counts it (it tallied 0 with 14 Nov's group on file)."""
+    def test_two_day_group_is_tallied_as_one(self):
+        a = card("Card 2x", "Day", ["A", "B", "C"], span=["2026-10-26", "2026-10-27"], basis="model")
+        b = card("Card 2x", "Day", ["D", "E", "F"])
+        rec = graded([a, b], ["won"] * 6)
+        self.assertEqual(rec["cardSpan"]["groups"], 1)
+        self.assertEqual(rec["cardSpan"]["won"], 1)
+        self.assertEqual(rec["card"]["groups"], 2)            # still in the Card record
+        rows = rec["days"][0]["groups"]
+        self.assertEqual(rows[0]["span"], ["2026-10-26", "2026-10-27"])
+        self.assertEqual(rows[0]["basis"], "model")
+        self.assertIsNone(rows[1]["span"])

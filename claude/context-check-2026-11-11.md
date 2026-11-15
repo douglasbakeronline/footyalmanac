@@ -53,3 +53,27 @@ that review has fired (`tools/card_review_post.py` `context_section`,
 - Cost: a few picks a day, each a handful of searches; pennies a day.
 - The web search tool version is `web_search_20250305` unless
   `CONTEXT_TOOL` is set; a refused call logs the API's own words.
+
+## 12 Nov 2026: Daily List picks too, inside the plan's credit
+
+Douglas: "Can I add this to daily list games with a rating of over 75? ...
+football first then the next most beneficial sports", within his Max plan's
+API credit ($100 a month, granted monthly; auto-reload off, so requests stop
+at zero rather than overspend).
+
+- Read too: every Daily List pick at `groupings.CX_LIST_MIN` (75%)+ model
+  chance, after the Card's picks. Order (`context_review.priority`): Card
+  picks, then football, NBA, tennis, college basketball, the rest; the
+  strongest first within each.
+- At most `DAILY_READS` (25) a UK day across builds, counted in
+  `groupings-archive/context-ledger.json`; still `MAX_REVIEWS` (16) a build.
+- Sonnet for Card picks, football and NBA (`RICH_SPORTS`), Haiku
+  (`CHEAP_MODEL`) for the rest. The first two days' real cost on Sonnet was
+  about $0.20-0.25 a read, nearly all tokens (web search about $0.01 each).
+  Expect about $2-3 a day at the cap.
+- Display only, never the model's number: a Clear / Caution / Against flag
+  beside the price on Daily List and sport rows and on Starred
+  (`cxChip`), and the full read in the slip checker (`groupings.context_page`
+  writes `contexts` to `groupings-data.js`). Only Card picks are vetoed.
+- Graded forward with the rest (`cardContext` reads every pool leg with a
+  verdict, list picks included).

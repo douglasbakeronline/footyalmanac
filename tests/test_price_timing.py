@@ -28,7 +28,12 @@ def tennis(i, odds, last, model=0.76):   # 75%+ on model and tested rate, no mor
 
 
 class PriceTiming(unittest.TestCase):
+    # these fixtures are 76% tennis legs, written under the 75% floor; the
+    # floor is 85% from 11 Nov 2026 (CARD_RULE 10), which is not what is tested
+    def tearDown(self): self._floor.stop()
     def setUp(self):
+        from unittest import mock
+        self._floor = mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.75}); self._floor.start()
         self.dir = tempfile.mkdtemp()
         legs = [fb(1, 1.30, 1.35), fb(2, 1.40, 1.36),
                 fb(3, 1.25, 1.30, est=True, priced={"odds": 1.28, "best": 1.30, "bookOdds": {"William Hill": 1.30}, "margin": 1.04,
@@ -99,6 +104,19 @@ class PriceTiming(unittest.TestCase):
         self.assertEqual(sorted(l["pick"] for l in L), ["Q6", "Q7"])          # tennis 12:00 started, football 15:00 not
         self.assertEqual(len(pending), 3)
         self.assertEqual(PT.report(L, pending=pending)["notStarted"], 3)
+
+    def test_page_read(self):
+        # 12 Nov 2026: the compact read the Bets tab's "Place once" habit quotes
+        from datetime import datetime, timezone
+        from unittest import mock
+        now = datetime(2026, 11, 22, 9, 0, tzinfo=timezone.utc)
+        with mock.patch.object(PT, "settle", lambda L, idx=None: [dict(l, won=True) for l in L]):
+            r = PT.page_read(self.dir, now=now)
+            self.assertEqual((r["n"], r["won"], r["read"], r["at"], r["rule"]), (5, 5, "too few legs to read", "2026-11-22", G.CARD_RULE))
+            self.assertEqual(set(r), {"n", "won", "lateGainPct", "p", "read", "lastMedianH", "at", "rule"})
+            self.assertEqual(PT.page_read(tempfile.mkdtemp(), now=now), {"n": 0, "at": "2026-11-22", "rule": G.CARD_RULE})
+        with mock.patch.object(PT, "page_read", side_effect=OSError("no archive")):
+            self.assertIsNone(G.timing_page())                               # the page then makes no price claim
 
     def test_empty(self):
         self.assertEqual(PT.report([]), {"legs": 0, "lastAfterStart": 0})

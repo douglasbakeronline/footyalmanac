@@ -289,3 +289,38 @@ Suggested fix (unchanged from 28 Oct): in `archive_predictions`, collapse a
 same-league, same-teams pair whose earlier-published copy has not started to
 the latest-published copy. Only the future-dated copies matter, so grading of
 played games is untouched. No matcher or `LIVE_NAMES` change was needed.
+
+## 13 November 2026: fixture audit of `predictions/2026-11-13.json`
+
+1,153 rows, dated 13 to 19 Nov. `nametest.py` passes ("duplicate feeds: 1
+skipped", the known `AF_DUPLICATES` case). Clean: 0 unrated rows, 0 rows whose
+kick-off UTC day differs from the row date (UK date = UTC date, GMT), no club
+at two kick-offs at the same instant, 10 rows without a kick-off (all br.1
+round of 18 Nov, dated by day), no duplicate (league, home, away, date).
+
+Looked at and left alone:
+
+1. **Home/away swapped pairs on different dates (22)**: afcon.q (the 13/14 Nov
+   legs v the 17 Nov returns), concacaf.nations, the Colombia v Chile friendly
+   and Monarcas v Leones Negros UDG (af.263, 13 v 15 Nov). Two-leg or
+   return fixtures, not duplicates.
+2. **Same teams, same direction, two dates (2)**: Unisport Bafang v Canon
+   (af.411, 14 Nov 17:00 and 15 Nov 16:00; the earlier-published 00:51 copy
+   holds the 15th, so it was moved, the known reschedule case of 5 Nov) and
+   Tahiti v Cook Islands (friendly, 14 and 17 Nov 05:30 UTC, same publish
+   time; a pair of friendlies, both rows from one build, so not a reschedule).
+3. **Spelling splits (6 folded names)**: Atlético / Atletico Nacional,
+   América / America de Cali, Internacional de Bogotá / Bogota, Alianza
+   Atlético / Atletico, Vila Nova / Vilanova, Red Star FC 93 / RED Star.
+   Each pair sits in different competitions: the Colombian league and the
+   Copa Libertadores / Sudamericana feed (afc.241) spell one club two ways,
+   while Atletico Nacional (afc.503, Copa Peru), Vilanova (af.443) and
+   Alianza Atletico (afc.1232) are different clubs that happen to fold the
+   same. The afc.503 and afc.66 rows are all marked Celtic's Law
+   (cup, cross-division) and rated as ordinary low-level sides (Atletico
+   Nacional 45.8% at home to Juventud Palmeiras), so none resolved to the
+   Colombian club. No forced match, no `LIVE_NAMES` change.
+
+No matcher, `LIVE_NAMES` or `nametest.py` change was needed. A note instead of a
+change: the evidence found nothing real to fix. The 28 Oct suggestion (collapse
+rescheduled same-teams pairs in `archive_predictions`) stays open, Douglas's call.

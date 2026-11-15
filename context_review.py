@@ -38,6 +38,16 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 ARCHIVE = os.path.join(HERE, "groupings-archive")
 API = "https://api.anthropic.com/v1/messages"
 MODEL = os.environ.get("CONTEXT_MODEL", "claude-sonnet-5-5")
+# 12 Nov 2026 (Douglas: Daily List picks at 75%+ too, football first, then the
+# most useful sports, inside the Max plan's monthly API credit, about $100):
+# Sonnet where the news is richest and the judgement matters most, Haiku
+# (about a third of the cost) for the rest; at most DAILY_READS a UK day,
+# read in PRIORITY order (Card picks first, then by sport, then the strongest).
+CHEAP_MODEL = os.environ.get("CONTEXT_CHEAP_MODEL", "claude-haiku-5-5")
+RICH_SPORTS = {"football", "nba"}
+PRIORITY = ("football", "nba", "tennis", "ncaab", "rugby", "nrl", "nfl", "mlb", "nhl", "wnba", "cfb")
+DAILY_READS = int(os.environ.get("CONTEXT_DAILY_READS", "25"))
+LEDGER = "context-ledger.json"
 MAX_REVIEWS = 16        # calls a build
 MAX_SEARCHES = 5        # web searches a pick
 REFRESH_H = 3           # a second read this close to the start (line-ups)
@@ -103,10 +113,37 @@ Answer with ONLY this JSON, no other text:
 TOOLS = tuple(t for t in (os.environ.get("CONTEXT_TOOL"), "web_search_20250305") if t)
 
 
+def model_for(l):
+    return MODEL if l.get("cxCard") or l.get("sport") in RICH_SPORTS else CHEAP_MODEL
+
+
+def priority(l):
+    """Card picks first, then football, NBA, tennis, college basketball, the
+    rest, the strongest first within each, then the earliest start."""
+    sp = l.get("sport")
+    return (0 if l.get("cxCard") else 1, PRIORITY.index(sp) if sp in PRIORITY else len(PRIORITY),
+            -(l.get("pModel") or 0), l.get("when") or "9")
+
+
+def ledger_load():
+    try:
+        with open(os.path.join(ARCHIVE, LEDGER)) as f: return json.load(f)
+    except Exception:
+        return {}
+
+
+def ledger_save(led):
+    os.makedirs(ARCHIVE, exist_ok=True)
+    days = {k: v for k, v in led.items() if k[:1].isdigit()}
+    keep = dict(sorted(days.items())[-14:])
+    if led.get(PAUSE_KEY): keep[PAUSE_KEY] = led[PAUSE_KEY]
+    with open(os.path.join(ARCHIVE, LEDGER), "w") as f: json.dump(keep, f, indent=1, sort_keys=True)
+
+
 def call(l, key, post=None):
     last = None
     for tool in TOOLS:
-        body = {"model": MODEL, "max_tokens": 1500,
+        body = {"model": model_for(l), "max_tokens": 1500,
                 "tools": [{"type": tool, "name": "web_search", "max_uses": MAX_SEARCHES}],
                 "messages": [{"role": "user", "content": prompt(l)}]}
         if post: return post(body)
@@ -117,9 +154,52 @@ def call(l, key, post=None):
                 return json.loads(r.read().decode())
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")[:300]
+            if e.code in (400, 402, 403, 429) and _LIMIT.search(msg):
+                raise UsageLimit(msg)
             last = RuntimeError(f"HTTP {e.code} with {tool}: {msg}")
             if e.code != 400: break
     raise last
+
+
+# 14 Nov 2026: the API key reached its monthly usage limit at 00:2x UTC ("You
+# have reached your specified API usage limits. You will regain access on
+# 2026-12-01 at 00:00 UTC."), and every build after kept asking for every due
+# pick, failing each one, with nothing on the page or in the nightly review
+# to say the check had stopped. A usage-limit reply now pauses the check:
+# the time it names (else PAUSE_DEFAULT_H from now) goes in the ledger as
+# PAUSE_KEY, one probe call a build until it passes (failed calls cost
+# nothing, so a raised limit resumes the check on the next build), and the
+# build, the page
+# (groupings-data.js contextPaused) and the Card review say so. Card picks
+# with no verdict are admitted as before (only "against" vetoes).
+PAUSE_KEY = "pausedUntil"
+PAUSE_DEFAULT_H = 24
+_LIMIT = re.compile(r"usage limit|credit balance|billing|quota", re.I)
+_REGAIN = re.compile(r"regain access on (\d{4}-\d{2}-\d{2})(?: at (\d{2}:\d{2}))?", re.I)
+
+
+class UsageLimit(RuntimeError):
+    """The API refused for the account's limit, not for this pick."""
+
+
+def limit_until(msg, now):
+    """The ISO time a usage-limit message says access returns, or None when
+    the message is not a usage limit."""
+    if not _LIMIT.search(msg or ""): return None
+    m = _REGAIN.search(msg)
+    if m:
+        try:
+            t = datetime.strptime(m.group(1) + " " + (m.group(2) or "00:00"), "%Y-%m-%d %H:%M").replace(tzinfo=timezone.utc)
+            return t.strftime("%Y-%m-%dT%H:%MZ")
+        except ValueError:
+            pass
+    return (now + timedelta(hours=PAUSE_DEFAULT_H)).strftime("%Y-%m-%dT%H:%MZ")
+
+
+def paused(led, now):
+    """The ledger's pause time if it is still in the future, else None."""
+    t = parse_when(led.get(PAUSE_KEY))
+    return led[PAUSE_KEY] if t and t > now else None
 
 
 def parse(reply):
@@ -156,27 +236,42 @@ def review(legs, now, report=None, post=None, key=None):
     report = report if report is not None else {}
     key = key or os.environ.get("ANTHROPIC_API_KEY")
     by_date, calls = {}, 0
-    for l in sorted(legs, key=lambda l: l.get("when") or "9"):
+    led = ledger_load(); today = now.astimezone(timezone.utc).date().isoformat()
+    left = max(0, DAILY_READS - led.get(today, 0))
+    stop = paused(led, now)
+    if not stop and led.get(PAUSE_KEY): led.pop(PAUSE_KEY, None); ledger_save(led)
+    probe = bool(stop)      # while paused, one call a build tests whether the limit was raised
+    for l in sorted(legs, key=priority):
         d = l.get("ukDate") or l.get("date")
         store = by_date.setdefault(d, load(d))
         old = store.get(key_of(l))
-        if (key or post) and calls < MAX_REVIEWS and due(old, l, now):
+        if (key or post) and (not stop or probe) and calls < min(MAX_REVIEWS, left) and due(old, l, now):
             try:
+                probe = False
                 v = parse(call(l, key, post)); calls += 1
+                if stop:                     # the probe got through: the limit was raised
+                    stop = None; led.pop(PAUSE_KEY, None)
                 if v:
-                    v["at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ"); v["model"] = MODEL
+                    v["at"] = now.strftime("%Y-%m-%dT%H:%M:%SZ"); v["model"] = model_for(l)
                     v["reads"] = (old or {}).get("reads", 0) + 1
                     store[key_of(l)] = old = v
                 else:
                     report.setdefault("errors", []).append(f"context: unreadable reply for {l.get('pick')}")
+            except UsageLimit as e:
+                stop = led[PAUSE_KEY] = limit_until(str(e), now)
+                ledger_save(led)
+                report.setdefault("errors", []).append(f"context: paused until {stop}, API usage limit: {str(e)[:200]}")
             except Exception as e:
                 report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:300]}")
         if old: l["context"] = old
     for d, store in by_date.items():
         if store: save(d, store)
+    if calls:
+        led[today] = led.get(today, 0) + calls; ledger_save(led)
     report["context"] = {"calls": calls, "read": sum(1 for l in legs if l.get("context")),
                          "against": sum(1 for l in legs if (l.get("context") or {}).get("verdict") == "against"),
-                         "model": MODEL, "on": bool(key or post)}
+                         "today": led.get(today, 0), "dailyCap": DAILY_READS, "on": bool(key or post),
+                         "paused": stop or None}
     return calls
 
 

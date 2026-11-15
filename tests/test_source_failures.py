@@ -144,3 +144,34 @@ class EspnDayTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+@mock.patch.object(sources.time, "sleep", lambda s: None)
+class RawLastGoodTests(unittest.TestCase):
+    def setUp(self):
+        import tempfile
+        self.tmp = tempfile.mkdtemp()
+        p = mock.patch.object(sources, "AF_CACHE_DIR", self.tmp)
+        p.start()
+        self.addCleanup(p.stop)
+
+    def test_outage_uses_last_good_copy_loudly(self):
+        with mock.patch.object(sources.urllib.request, "urlopen", Flaky(b"data")):
+            self.assertEqual(sources._get("http://x/a.json"), b"data")
+        down = Flaky(*[OSError("down")] * 3)
+        with mock.patch.object(sources.urllib.request, "urlopen", down), \
+                mock.patch("sys.stderr", new_callable=io.StringIO) as err:
+            self.assertEqual(sources._get("http://x/a.json"), b"data")
+        self.assertIn("last good copy", err.getvalue())
+
+    def test_outage_without_copy_raises(self):
+        with mock.patch.object(sources.urllib.request, "urlopen", Flaky(*[OSError("down")] * 3)):
+            with self.assertRaises(OSError):
+                sources._get("http://x/b.json")
+
+    def test_404_never_falls_back(self):
+        with mock.patch.object(sources.urllib.request, "urlopen", Flaky(b"data")):
+            sources._get("http://x/c.json")
+        with mock.patch.object(sources.urllib.request, "urlopen", Flaky(http(404))):
+            with self.assertRaises(urllib.error.HTTPError):
+                sources._get("http://x/c.json")

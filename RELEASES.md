@@ -4,6 +4,651 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-11-15-9: The replays' check season runs past 20 Sep (tag pending)
+
+**What changed:** `tune.load`, the loader behind `tune.py`, `backtest.py`, `replay.py`, `tools/card_legs_history.py`, `tools/goals_value.py` and `tools/model_ideas.py`, now scores the check season's unscored openfootball fixtures from the ESPN results the daily build commits in `current/` (`tune.fill_current`), by the live build's own rule (`build.fill_lagging`: its own pair within 21 days, never over the source, all or nothing on names). openfootball stopped scoring after 20 Sep, the build was fixed on 13 Nov, but every replay still ended its 2026-27 season there: the Card's football-data check season had 7 candidate legs in October, so no rule 7 variant's check-season side could be read, and the Monday calibration and home-advantage refits confirmed on August and September only.
+
+**Evidence:** sandbox, 15 Nov: check fixtures 903 to 1,638 (735 filled in 14 leagues, Belgium 98, none refused on names; fit season unchanged at 5,262). `claude/replay-check-season-lag-2026-11-15.md`. 6 tests in `tests/test_tune_fill.py`; suite and `nametest.py` pass. `card-legs-history.yml` runs on this pull request with the fuller 2026-27.
+
+**Files:** `tune.py`, `replay.py` (`--freeze` keeps openfootball rows only), `tools/card_legs_history.py` (docstring), `tests/test_tune_fill.py`, `claude/replay-check-season-lag-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model constant, `calibration.json`, `home-advantage.json`, any Card rule, the live build, the page, the evaluation harness (frozen snapshots).
+
+**Roll back:** `git revert` the merge commit, or `tune.load(cache, fill=False)`.
+
+## 2026-11-15-8: m7opp5 read on five seasons: ahead in all five, waiting on the pool (tag pending)
+
+**What changed:** the note only. `m7opp5` (the model's picks, football opposition priced 5.0+) on the five football-data seasons: ahead of live in every one, +0.10 to +0.16 units a day; pooled 150 groups, 73 won v 62.8 expected, +17.5% v live +9.6%, p(worse) 0.014 on 450 legs. The pool is ahead too (p 0.07) but on 33 legs, under the 100-leg gate, so the live rule is unchanged. `m7opp9` builds 9 groups in five seasons.
+
+**Files:** `claude/card-m7opp-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any rule or code.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-15-7: The opposition's price on the model's picks, replayed (tag pending)
+
+**What changed:** nothing on the page or the live Card. Rule 6's opposition condition (the other side priced 9+), the one Card condition that held in all five football-data seasons, was not carried over when the Card became the model's own picks on 11 Nov: `model_fault` never read it, and the first rule 11 group took VVV-Venlo with the opposition at 4.83 (lost). `groupings.CARD_MODEL_OPP_MIN` (empty, so live is unchanged) now lets the replay put it back, and two variants are pre-registered: `m7opp9` (9+) and `m7opp5` (5.0, the Edge flag's floor), on the pool nightly and on the five football-data seasons (`cardM7`).
+
+**Evidence:** first pool and archive read (11 Sep to 14 Nov): live 20 groups, 8 won, -1%; `m7opp5` 11 groups, 6 won, +42%, +0.76 units a day v live, p(worse) 0.07 on 33 legs (gate 100); `m7opp9` one group. The football-data side runs in CI. `claude/card-m7opp-2026-11-15.md`. 5 tests in `tests/test_card_m7opp.py`; suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_m7opp.py`, `claude/card-m7opp-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any live `CARD_*` rule, `CARD_RULE`, the model, the page.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-15-5: The week behind shows only games a bookmaker priced; the Analysis page brought up to date
+
+**What changed:** Douglas: "make sure all games were a game / league available to bet on", and "update the analysis page with the latest context of the model".
+- Scale at a glance: each past day's table now takes only picks a bookmaker feed priced before the start (`scale.priced_keys` reads the results ledger; football keeps its own win-and-both-score price or the replay's proxy), marks a game William Hill priced with "Hill", and counts the unpriced picks left off in the day line.
+- Analysis page: the prose now describes the model as it stands on 15 Nov 2026: the cup calibration, the lagging-source fill and stale-league flag, the Daily List order and Group A / B, the wider leagues' 75% bar, the ranked-international rule, the full tested-and-rejected list (form by stage, team news, table position, the home-and-away tilt, FIFA lift damping, the goals scale, tennis hot form, home advantage per league on its weekly gate), the market's edge on the archive, the priced record's reading (short favourites hold their value, model-above-market picks land about half the time), the Bets tab in place of the Odds tab with its four tested-apart lines, the college sports' Away / Neutral marks and list status, tennis's list status and surface, and a dated "updated" line. The live tables are unchanged.
+
+**Evidence:** rendered in headless Chromium, no errors, no overflow; one test added; suite and `nametest.py` pass.
+
+**Files:** `scale.py`, `index.html`, `analysis.html`, `tests/test_scale.py`, `RELEASES.md`.
+
+**Not changed:** any rule, model or record.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-15-4: Scale at a glance shows ten a day for the week behind
+
+**What changed:** Douglas: "I want there to be 10 games shown with what the recommendation was of the model, and whether or not that won or lost with the team, and if both teams scored ... in order of strongest ... make sure that it was bettable." The Scale tab's glance now lists each past day (the last seven open, the rest in a fold) as a table of its ten strongest picks: Daily List picks first, then the reserve, then the rest, strongest model number first within each; football only where William Hill prices the bet, as before, so nothing obscure. Each row: sport, the model's pick and opponent, competition, the model's number, Won / Lost / Void / No result with the score, and for football whether both teams scored (for the other sports whether the Scale margin landed). The day line sums it ("7 of 10 won · both scored in 2 of 3 football") and "full list" opens the day. The dot rows stay for today and tomorrow. `scale.py` writes the fields the table needs into the glance (`both_scored` from the score).
+
+**Evidence:** rendered in headless Chromium at 1280px and 400px, no horizontal overflow; two tests in `tests/test_scale.py`; suite and `nametest.py` pass.
+
+**Files:** `scale.py`, `index.html`, `tests/test_scale.py`, `RELEASES.md`.
+
+**Not changed:** the Scale rule, tiers, groups or grading; the archive.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-15-4: Scale in three tiers, five sports and ten games a day (tag pending)
+
+**What changed:** the Scale tab now lists ten or more games a day in three tiers, each with its own line on the glance and the list: **Daily List picks**, **Daily List reserve**, and **everything else** the model picks at 55% or better, added strongest first only until the day has ten games. Three sports join football and tennis, each with a margin for its second condition: the NBA to win by 10 or more, the NFL by 7 or more, rugby by 8 or more. Within a tier the order is the chance the Scale bet lands. Each day has a threefold, fourfold and fivefold from the top of that order, and a football threefold priced on every leg at William Hill. An unpriced pick names the line to look for at William Hill (handicap -9.5, set betting 2-0) and the price its chance needs. Also fixed: a fixture replayed within days (New Zealand v India, 12 and 15 Nov) was graded with the earlier game's score before it kicked off.
+
+**Why:** Douglas, on the first live day (two football picks, no group): "at least 10 games per day ... tiers with lines on that infographic that say daily list pick, daily list reserve pick, everything else ... NFL, basketball, you're going to need to propose something based on the data ... every day to have at least 5 games, to add into some sort of scale accumulator."
+
+**Evidence:** the margins come from every graded pick in `sports-graded.json`. At 75%+: the NBA by 10+ 20 of 31 (65%), the NFL by 7+ 11 of 17 (65%), rugby by 8+ 23 of 35 (66%), tennis in straight sets 160 of 243 (66%). At 55%+: 43%, 43%, 58%, 48%. Football by tier in leagues Hill prices: list 43 picks, 81% won, 33% with both scoring; reserve 86, 65%, 33%; everything else 300, 60%, 26%. Under the new rule 15 Nov has 19 picks (6 list, 13 reserve) and four groups, 16 Nov has 10 (1, 7 and 2 from everything else). None of the margin or straight-sets bets has a price on file: the tab says how often they land, not that they pay.
+
+**The days before the tab, replayed:** at Douglas's request ("retrospectively add picks ... follow the same rules ... add in the results afterwards, so it's not biased") the glance now shows 1 to 14 Nov rebuilt under the same rule: picks, tiers and order taken only from what was published before each start, the tallied chances from results dated before the day, results attached afterwards. 288 graded picks: Daily List tier 72, 90% won, 62% landed the Scale; reserve 215, 71% and 42%. Groups won: threefold 4 of 14, fourfold 4 of 14, fivefold 3 of 14, football threefold 0 of 5. The last seven days: list 26 of 26 won, 14 landed; threefold 1 of 7, fivefold 0 of 7. Football "at William Hill" is a proxy for those days and nothing in them has a price, so they say how often it landed, not what it paid. They are tallied apart from the record; a tap on any day of the glance opens its picks.
+
+**Tested:** `tests/test_scale.py` (36 cases: the margin sample, the band rate, the top-up, tier order, the football threefold, margin grading, the earlier-meeting guard, the replay's chances not seeing the day's results); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build (no page errors, no sideways scroll).
+
+**Files:** `scale.py` (`RULE` 2), `daylist.py` (`pinned(every=True)`), `markets.py` (`_result_for`), `index.html`, `tests/test_scale.py`, `claude/scale-tiers-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any model, the Daily List, the reserve's rule, the Card. College basketball and college football stay off Scale (UK books rarely price them).
+
+**Roll back:** `git revert` the merge commit; `scale-archive/` can stay.
+## 2026-11-15-3: The slip, built for return
+
+**What changed:** the Bets tab has **The slip** (`slip.py`, `slipSection`), one accumulator a UK day of 3 to 5 legs paying 3x to 6x, chosen for expected return: each leg's chance is the landed rate its sport and price band have shown on the results ledger (50+ graded picks, else the pooled band), legs from bands returning worse than -2% a leg, legs the model prices more than 5 points above the market, and away college picks are refused, and the slip is offered only when its expected return covers the stake. It shows the expected return in pence per pound, the tested basis of every leg, why an empty day is empty, and a table of landed-against-the-price by sport and band. Archived to `slip-archive/` (frozen at the first leg's start), graded from the ledger, tallied against a pre-registered gate (100 slips, positive, p(loss) <= 0.10) with a walk-forward replay over the ledger's past days beside it.
+
+**Evidence:** `claude/the-slip-2026-11-15.md`. On the ledger, picks at 1.00-1.15 return -0.4% a leg, 1.30-1.50 -3.3%, 1.50-1.80 -13.8%; picks the model rates 5+ points above the price land 49-56% and lose 9-14% a leg. Douglas's eleven-fold at 3.0 was the better bet per pound than his five-fold at 6.6. Replay before today: 6 days built, 2 won, +7.3% (not evidence yet). 10 new tests in `tests/test_slip.py`; suite and `nametest.py` pass; Bets tab checked in headless Chromium at 1280px and 400px.
+
+**Files:** `slip.py`, `index.html`, `tests/test_slip.py`, `.github/workflows/deploy.yml` (runs after `scale.py`, archives `slip-archive/`, copies `slip.js`), `.gitignore`, `slip-archive/`, `claude/the-slip-2026-11-15.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model, the Daily List, the Card, the Edge flag, the Scale tab, the ledger.
+
+**Roll back:** `git revert` the merge commit; the Bets tab loses the section and nothing else moves.
+
+## 2026-11-15-2: Away and Neutral marks on college picks
+
+**What changed:** every college basketball and college football row at 70%+ whose pick is away from home, or on a neutral court, carries an `Away` or `Neutral` chip (Daily List, reserve, sport tabs, pinned rows), and the reserve's summary line counts them. `sports.wary` writes the mark into the archive; `index.html` `sideWary` draws it from the row. `sports-record.json` gains `bySide` (landed v quoted by side per college sport at 70%+) with a pre-registered tripwire: 100 away picks two standard errors under quote takes that sport's away picks out of the reserve.
+
+**Evidence:** `claude/college-side-mark-2026-11-15.md`. Replay (live parameters, 70%+, Aug-Dec, both test seasons): college basketball home picks 88.8% v 83.5% quoted (z +6.5), away 76.0% v 77.3%, neutral 74.9% v 78.3%; college football home 84.5% v 81.0%, away 79.9% v 78.0%. Live: college basketball away 11 of 21, neutral 9 of 16; college football away 36 of 54 (67% v 78%, z -2.0). The carried-rating idea (sides with an early loss) was tested on the same replay and is not a signal. Tests in `tests/test_sports.py`; suite and `nametest.py` pass; page checked in headless Chromium.
+
+**Files:** `sports.py`, `index.html`, `tests/test_sports.py`, `claude/college-side-mark-2026-11-15.md`, `claude/daily-list-losses-2026-11-14.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any probability, bar, list or reserve membership, the order, any constant in `sports.json`.
+
+**Roll back:** `git revert` the merge commit; or `WARY_SPORTS = set()` in `sports.py` and `index.html` to drop the mark alone.
+
+## 2026-11-15-2: the Scale tab: Daily List winners with a second condition added (tag pending)
+
+**What changed:** a new tab, **Scale**, third in the bar after Bets (Douglas, 14 Nov 2026: "scaling the odds and even reducing the stake"). A Scale pick is a Daily List pick at the list's own bar with one more condition: football to win with both teams scoring, shown only where William Hill prices that bet; tennis to win in straight sets. Each UK day gets a threefold, fourfold and fivefold of the picks most likely to land, when there are that many. The tab opens with the record and Scale at a glance, a line of dots a day (won and landed, won only, lost, to play, not priced at Hill), then the day's list with each pick's winner chance, Scale chance, Hill's price and the price it needs, the groups, the leagues Hill prices and a scoreboard. New `scale.py` builds, archives (`scale-archive/`) and grades it on every deploy.
+
+**Why:** Douglas wants bigger prices from smaller groups and smaller stakes than a long winners' accumulator, without lowering the bar on the winner, and wants the tracking visible. His feedback on the mock-up was that several leagues on it are not at William Hill, so the football list is cut to what Hill prices, read from the price feed on every build.
+
+**Evidence:** football Daily List picks in leagues Hill prices, before the tab: 43, 35 won (81%), 14 with both scoring (33%). Tennis picks at 75%+: 243, 213 won (88%), 160 in straight sets (66%). First day (15 Nov): 11 football list picks, 2 priced at Hill, 9 left off, no group; both Hill prices are under what the model's chance needs (2.80 v 3.39, 3.50 v 4.50), and the tab says so. Football alone is about two picks a day, so days without a group will be common until the other sports' margin bets are added.
+
+**Tested:** `tests/test_scale.py` (23 cases: straight sets from a score, the band rate, nested groups, what freezes at a start, grading); full suite and `nametest.py` pass. The tab checked in Chrome at 1280px and 400px on a local build (no page errors, no sideways scroll).
+
+**Files:** `scale.py`, `index.html`, `tests/test_scale.py`, `.github/workflows/deploy.yml` (run it, archive `scale-archive/`, copy `scale.js` / `scale.json` to the site), `.gitignore`, `agents/pick_task.py`, `agents/open_pr.sh` (protected path), `claude/scale-2026-11-15.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any model, the Daily List, the Card, Bets. Prices feed no model; they only decide which football picks the Scale list shows.
+
+**Roll back:** `git revert` the merge commit. `scale-archive/` can stay.
+
+## 2026-11-15: two-day Card groups counted in the record; the review reads the model's-picks Card on its own (tag pending)
+
+**What changed:** `groupings.grade` now carries a group's `span` (and `basis`) onto its graded row. It dropped them, so `groupings-record.json` `cardSpan` tallied 0 groups with the first two-day group on file (14 Nov: VVV-Venlo, Pistoiese, Philadelphia 76ers, 2.36). The nightly Card review's live section now counts two-day groups in its window and adds one line for the Card as it is built today: the groups under `CARD_RULE` 7 and later (the model's own picks, from 11 Nov) with settled, won v expected and the return at the page's stakes, read from `cardByRule`.
+
+**Why:** the review's live line mixed rules 4 to 11, so whether the model's-picks Card is landing could not be read without opening the record; and the two-day groups (`CARD_SPAN`, 12 Nov) are the owner's call to be reviewed on their own tally, which read zero.
+
+**Evidence:** `grade()` on the current archive: `cardSpan` 1 group (pending) after the fix, 0 before; the Card record unchanged at 37 groups. The live section on today's files: "Days with a group: 9 of 14; groups 13; last group published for 2026-11-14. Rules: 5, 6, 11. Two-day groups (`CARD_SPAN`): 1." and "The model's-picks Card (rules 11, from 11 Nov): 1 group(s), 0 settled ... none settled yet."
+
+**Tested:** `tests/test_groupings_record.py` `Span` (fails on the old code), `tests/test_review_live_days.py` two new cases; full suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_review_post.py`, both tests, this entry.
+
+**Not changed:** any Card rule, the Card record's own tallies, the page.
+
+**Roll back:** `git revert` the merge commit; the next build regrades the record.
+
+## 2026-11-14-9: ten football markets tracked, priced and graded (tag pending)
+
+**What changed:** new `markets.py` gives every football fixture the model's number for ten markets beyond the match winner (both teams to score, over / under 1.5, 2.5 and 3.5, the pick to win and both score, to win and over 2.5, to win to nil, double chance, draw no bet, the pick's team to score), prices each from API-Football for today and tomorrow (average, best UK book, William Hill, the bookmakers' fair chance), archives them to `predictions-markets/` frozen at kick-off, and grades them into `markets-record.json` with a pre-registered gate per market. The nightly Card review prints the table and says a pass in bold. deploy.yml runs it after the ledger and commits the archive and record; the record is also published on the site. Agents' protected paths now include the four bot-written files added today.
+
+**Why:** Douglas, 14 Nov 2026: "For football fixtures I want to start looking at winner and btts, as well as just btts, goals over 2.5, and any other things you suggest. Let's go hard on setting this up to track on football", and the reviewing must be automated.
+
+**Evidence:** the price feed was probed live first (`tools/markets_probe.py` on `odds-probe-run`): every market is priced, an all-bets sweep costs the same pages as the match-winner sweep (57 on 14 Nov), William Hill prices six of the ten. Calibration on 11,112 graded fixtures replayed from the archive: double chance 75.6% v 75.1%, draw no bet 67.6% v 66.1%, win to nil 26.9% v 27.0%, win and both score 24.1% v 21.5% (on quote from 25% up); the goals markets run low (over / under 2.5 57.8% v 54.3%, over / under 3.5 67.0% v 71.8%). No price history exists for these markets, so no return is claimed. `claude/football-markets-2026-11-14.md`.
+
+**Tested:** `tests/test_markets.py` (grid agrees with the published chances, win and both score plus win to nil equals win, every market settled, API-Football's labels, margin removal, the archive frozen at kick-off, the record, the gate, the review section); the fetch path run against a stubbed feed; full suite and `nametest.py` pass. Not run against the real feed from the sandbox (no key): CI is the check, see the "markets:" lines in the build log.
+
+**Files:** `markets.py`, `tools/card_review_post.py`, `.github/workflows/deploy.yml`, `agents/pick_task.py`, `agents/open_pr.sh`, `tests/test_markets.py`, `claude/football-markets-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, the Daily List, the Card, any existing record, the page. Prices feed nothing. About 400 API-Football calls a day, standing down under 2,000 left.
+
+**Roll back:** `git revert` the merge commit; the archive and record can stay.
+
+## 2026-11-14-8: every release tagged automatically (tag pending)
+
+**What changed:** new `release-tags.yml` runs on every push to `main` and tags each `RELEASES.md` entry headed `## YYYY-MM-DD[-N]: title` that has no tag, as `release-<id>`, annotated with its title, on the first-parent commit that added the entry (`tools/release_tags.py`). Existing tags are read from the remote and never moved; headers without an id of that shape, or with an id used twice, are skipped and listed.
+
+**Why:** Douglas, 14 Nov 2026: "I'm not going to add tags myself so can we find another way?" Cloud sessions cannot push tags and the API proxy refuses tag writes; only the office's own merges were being tagged (by footyalmanac-hq), so 31 entries from 11 to 14 Nov had no tag.
+
+**Evidence:** a dry run against `main` at `dca98b0` lists 31 tags to create, `release-2026-11-11-3` to `release-2026-11-14-7`, each on its merge. Twelve entries headed `## 2026-11-1x (tag pending): ...` (no suffix) are skipped: their ids are ambiguous.
+
+**Tested:** `tests/test_release_tags.py` (header parsing, skips, the commit that added an entry, an existing tag left alone); full suite and `nametest.py` pass.
+
+**Files:** `.github/workflows/release-tags.yml`, `tools/release_tags.py`, `tests/test_release_tags.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** the site, the model, any record. Workflow path: owner merge.
+
+**Roll back:** `git revert` the merge commit; tags already made can stay.
+
+## 2026-11-14-7: every prediction kept with its result and price (tag pending)
+
+**What changed:** `sports.py` writes `sports-graded.json`, every graded and void pick of the other sports, merged and never trimmed, as `record-graded.json` is for football. New `ledger.py` writes `results-ledger.json.gz`: one row a prediction across every sport, with its result and its pre-start price (the football archive's market block, the pool's first and last real price with William Hill's, and each build's board prices, so a game priced on any build keeps its price after the start). It carries a summary (landed, quoted, and the flat return at the recorded, best and Hill price, by sport, list / reserve / board and band), price coverage by sport, and the ungraded report: picks three or more days past their start with no result, by competition, printed every build and raised as a `::warning::` on the first build of each UK Monday. deploy.yml runs it after `groupings.py` and commits both files with the archive.
+
+**Why:** Douglas, 14 Nov 2026: "are we storing every result against our prediction so we can learn from it?" `sports-record.json` kept 14 days of game rows, so October's rugby, NFL and college football list picks could not be read one by one; about 650 predictions (465 older than two weeks) had fallen out of the record unseen; and no file held a pick's result beside its price, so a band's hit rate could not be read as a return.
+
+**Evidence (first read, 14 Nov):** 15,983 predictions since 20 Aug; 186 ungraded 3-14 days past the start (1 a Daily List pick), 466 past 14 days (Czech First League, LaLiga, Süper Lig, Saudi league and wider leagues the most). Daily List picks with a price: 75-85% 65 priced, landed 86% at an average 1.19, +2.2%; 85%+ 145 priced (124 college basketball), landed 92% at 1.06 (break-even 94%), -2.2%. The 882 football rows from before publish times were recorded (`legacy-unverified`) stay out, by the same rule the record grades by.
+
+**Tested:** `tests/test_ledger.py` (latest pre-start copy, late copies ignored, moved fixture once, rematch and series apart, results, prices by side and before the start, merge never loses a result, the Monday warning, `merge_graded`); full suite (939) and `nametest.py` pass; ledger.py run on the repo's archives as above.
+
+**Files:** `ledger.py`, `sports.py`, `.github/workflows/deploy.yml`, `tests/test_ledger.py`, `claude/results-ledger-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, any grading rule, any record file's contents, the page.
+
+**Roll back:** `git revert` the merge commit; the two new files can stay or be deleted.
+
+## 2026-11-14-6: the build says why a football leg stayed unpriced (tag pending)
+
+**What changed:** `groupings.price_football` counts each football leg it could not price by reason and competition, and the build log prints one line for it ("football unpriced: noOdds 60 (...); noFixture 40 (...)"): `noFixture` (API-Football lists no fixture under those names that day), `kickoff` (both names found, kick-offs 90+ minutes apart: a moved game), `noOdds` (fixture found, no 1X2 price for the side), `capped` (a mid-priced leg over `FB_CALLS_MULT`), `error`. Also in `groupings.json` under the price report (`football.miss`, `football.missComps`).
+
+**Why:** the 17:21 build on 14 Nov priced 122 of 229 football legs, with 5,744 API-Football calls left, and nothing said why the other 107 failed. The funnel counts 36 football legs for 14-17 Nov that pass every Card condition but the price (most in fifth-tier regional leagues: NB III, Tercera RFEF, Oberliga). A `noFixture` count in one league is a spelling to add to `LIVE_NAMES`; `noOdds` is a game no book prices, and no fix exists. Today there is no way to tell them apart without a debug run.
+
+**Tested:** `tests/test_football_unpriced.py` (each reason, by competition; the cap; no `miss` key when all priced); full suite (927) and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** which legs are priced or how, any Card rule, the model, any record row. Diagnostic only.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-14-5: the tennis tripwire judges the picks today's 85% floor takes (tag pending)
+
+**What changed:** the Card's sport-off test (`groupings.card_legs_by_sport`) judges a sport with its own floor (tennis, 85% since `CARD_RULE` 10) on the legs that floor admits (`atFloor`); the every-leg tally stays and is shown as before, with `tripwireAll` beside it. The Bets scoreboard's tennis row reads "Under; judged at 85%+ (0 so far)" instead of "Watch: 9 more legs decide", and the nightly Card review adds the floor's own line.
+
+**Why:** all 41 tennis Card legs in the record were priced under 85% (30 under rule 1, before any tennis floor); none has reached the Card since the floor went to 85%. Nine more tennis legs landing as quoted would have taken tennis off the Card on evidence from picks the rule no longer makes.
+
+**Evidence:** `groupings-record.json` at 14 Nov: tennis 23 of 41 (56% v 71%, z -2.13), 0 legs at 85%+; on the pool 85%+ tennis four legs, all won (`claude/pool-order-of-play-2026-11-14.md`). `claude/card-tripwire-at-floor-2026-11-14.md`.
+
+**Tested:** `tests/test_groupings_record.py` `test_floor_sport_judged_on_legs_the_floor_admits` (under-floor legs fire the every-leg test, not the tripwire; sports without a floor unchanged), the floor test moved to 86% legs; `tests/test_card_review_post.py` `test_floor_line_for_a_sport_with_its_own_floor`; full suite and `nametest.py` pass; the scoreboard rendered at 1280 and 400 wide.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_review_post.py`, both test files, `claude/card-tripwire-at-floor-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, the live Card, the model, any record row.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-14-4: the pool remembers when a tennis order of play arrived (tag pending)
+
+**What changed:** the pool archive now stamps `timeSet` and `whenSet` once on a tennis row first written on an estimated start (`timeEst`), from the first build before the start that has the real time. The Card replay, the funnel and the price-gap count read `groupings.pool_time_est`, so such a leg is no longer refused as "no order of play" for ever.
+
+**Why:** `timeEst` stayed as first written, so the replay and the funnel refused every tennis match archived before its order of play, though the live Card re-reads it and can admit it once timed: 21 pool rows at 14 Nov, all played at a real time hours later (Ruud estimated 10:00, played 17:05). The funnel's tennis "no-time" column was counting them. Forward only: old rows keep their flag; none was within reach of the 85% tennis floor.
+
+**Evidence, tennis legs (HQ's top Card task):** 177 settled tennis pool legs; 60-70% model calls landed 58.8% v 64.6%, bookmakers 60-70% 12 of 27; 70%+ on quote; 85%+ four legs, all won. The shortfall is in the band the Card's floor already keeps off. `claude/pool-order-of-play-2026-11-14.md`.
+
+**Tested:** `tests/test_card_pool_replay.py` `test_order_of_play_clears_estimate` (stamped once, a new estimate does not stamp, nothing after the start, `timeEst` unchanged); full suite and `nametest.py` pass.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_funnel.py`, `tests/test_card_pool_replay.py`, `claude/pool-order-of-play-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any Card rule, the live Card, the model, any archived row.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-14-3: a league table still missing results is flagged (tag pending)
+
+**What changed:** after the lagging fill, a league with five or more unplayed fixtures dated more than three days back (`build.stale_leagues`, `STALE_MIN`, `STALE_GRACE`) has its fixtures flagged under Celtic's Law with the reason (`stale_reason`): today only the Czech First League, "missing 41 results from 9 Oct on". Flagged rows drop a tier and stay off the Daily List, the reserve, the Card's pool and the Edge flag, as every Celtic row does. API-Football and football-data leagues meeting the count are logged as `stale watch`, not flagged.
+
+**Why:** ESPN's cze.1 slug returns nothing this season, so the 13 Nov lagging fill scored no Czech result and every Czech fixture since October has been priced on a table that stops at early October, shown as an ordinary row (one at 86% on 8 Nov). With the wider leagues on the Card since 11 Nov, a Czech favourite could have reached a group on six-week-old ratings.
+
+**Tested:** `tests/test_lagging_results.py` `StaleLeagues` (four cases); full suite and `nametest.py` pass; local build on the cached ESPN rows flags cze.1 alone and the 21-22 Nov Czech rows carry the reason; the row's flag rendered at 1280 and 400 wide.
+
+**Files:** `build.py`, `tests/test_lagging_results.py`, `claude/stale-league-flag-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** any probability, the model, calibration, any Card rule. The Czech table itself still needs a second source.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-14-2: the Belgian Pro League back on the board, its table complete (tag pending)
+
+**What changed:** a league whose openfootball file has no fixture dated from today on (`build.exhausted_codes`; today only Belgium) now takes its fixture window from ESPN under openfootball's spelling (`build.fill_window`), and its ESPN results for pairings the file lists only as "datum TBC" are added to its table (`fill_lagging(append=True)`) instead of dropped.
+
+**Why:** the Belgian 2026-27 file dates rounds 1 to 7 only, so no Belgian Pro League game has been on the board, the Daily List, the Edge flag or the Card since 20 Sep, and 37 of its 99 results to 13 Nov had no fixture to fill. On the cached ESPN rows: 61 filled and 37 dropped before, 98 scored after (61 + 37), every club on 11 games, no pairing twice, every name matched once.
+
+**Tested:** six new cases in `tests/test_lagging_results.py` (only a league with nothing ahead, undated-round result added, a listed pair never added, off by default, all or nothing on names, window fixtures under the primary spelling and never twice); full suite and `nametest.py` pass; a fast build ran (no ESPN here). CI's first build should print `window be.1` and `lag be.1: 98`.
+
+**Files:** `build.py`, `tests/test_lagging_results.py`, `claude/belgium-undated-rounds-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** the model, constants, calibration, any Card rule, the parser's rule that an undated match is not shown.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-14: the context check pauses itself at the API usage limit, and says so (tag pending)
+
+**What changed:** when the Messages API refuses for the key's usage limit, the context check stops for the build, records the time access returns (`pausedUntil` in `groupings-archive/context-ledger.json`), makes one probe call a build until then (a refused call costs nothing), and resumes by itself when the probe gets through or the time passes. The Bets tab's Card section says the check is paused until that date and that no pick is being kept off for news; the nightly Card review says so in bold; the build log says "paused until".
+
+**Why:** at 00:24 UTC on 14 Nov the key reached its monthly limit ("regain access on 2026-12-01"), after 25 reads on each of 12 and 13 Nov. Every later build would ask again for every due pick and fail, while the page still said "with the context check" over picks nobody had read. No Card rule changes: only an "against" verdict ever vetoed, so unread picks are admitted as before rule 9.
+
+**Tested:** `tests/test_context_review.py` (limit time parsed, one refusal stops the build, the pause holds across builds with one probe each, a probe that gets through resumes it, it clears after the date, the ledger keeps 14 days and the pause), `tests/test_card_review_post.py` (bold pause line); full suite and `nametest.py` pass; the Card section rendered at 1280 and 400 wide.
+
+**Files:** `context_review.py`, `groupings.py`, `index.html`, `tools/card_review_post.py`, both test files, `claude/context-paused-2026-11-14.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** `CARD_CONTEXT`, any Card rule, `DAILY_READS`, the record.
+
+**Roll back:** `git revert` the merge commit; then delete `pausedUntil` from `groupings-archive/context-ledger.json` if it is set.
+
+## 2026-11-13-14: the nightly Card review opens with what the live Card published (tag pending)
+
+**What changed:** the nightly Card review issue now starts with the live Card's own output over the last 14 finished days (`card_review_post.live_days_section`): days with a group, groups, the last day a group was published, the rules they ran under, and in bold a run of three or more empty days. Full-rule Card groups only, not the wider-rule filler or the paper Model card.
+
+**Why:** the Card has published no group since 10 Nov (rule 6's last; rules 7 to 11 went live on 11 Nov), and nothing in the review said so. Its replay tables read rules against each other on the pool, not what the page put up. Over 31 Oct to 13 Nov: 17 Card groups on 9 of 14 days, then 11, 12 and 13 Nov empty. That is the rule as set (empty days stay empty, Douglas 11 Nov), and every volume relief replayed so far failed the gate, so this is a line to read, not a trigger.
+
+**Tested:** `tests/test_review_live_days.py` (empty run, filler and Model card excluded, today not read, missing folder); full suite and `nametest.py` pass.
+
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `CLAUDE.md`, this entry.
+
+**Not changed:** any Card rule, the page, the record.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13-12: tennis legs in the groups, gap located, no rule to ship (tag pending)
+
+**What changed:** a dated note only, `claude/tennis-legs-gap-2026-11-13.md`.
+**Evidence:** 71 of 109 distinct settled tennis legs won v 84.4 expected. No attribute (gap to market, round, opposition, rule, model band) isolates it; the bookmakers' implied chances were as high as the model's; legs since the 85% floor (1-13 Nov) are 11 of 14 v 11.2. No tennis price history to replay a rule on, so Rule 3 gates cannot be run.
+**Files:** `claude/tennis-legs-gap-2026-11-13.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORT_MIN`, the tripwire, any model constant.
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13 Belgian openfootball file parsed properly (tag pending)
+
+**What changed:** `parse_fixture_txt` now reads a score after the away side separated by one space ("KV Kortrijk 3-0") and drops a "(*)" annotation from club names, so the junk names `KV Kortrijk 3-0` and `Lommel SK (*)` no longer appear. `è` is folded in `_base` and four ESPN spellings are aliased (Racing Genk, Royal Charleroi, Sint-Truidense, Union St.-Gilloise); Standard Liege matches once `è` folds.
+**Evidence:** the 2026-27 Belgian file holds one scored match (Club Brugge 3-0) and rounds 8+ are undated, so the lagging fill can now match all names; check the next build's `lag be.1` line. `tests/test_belgium_parse.py` added; nametest and the suite pass.
+**Files:** `sources.py`, `tests/test_belgium_parse.py`.
+**Not changed:** Czechia (`cze.1` returns 0 from ESPN's slug), no model constants.
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13-11: four more lagging leagues matched (tag pending)
+
+**What changed:** the first CI build of release 2026-11-13-10 filled 382 results across eight leagues and held seven back on unmatched ESPN names, as designed. Six aliases (Athletico-PR, Atlético-MG, Red Bull Bragantino, Deportivo, NEC Nijmegen, Erzurum BB) and five accent folds in `sources._base` (ã õ ê ô and the combining dot under a lowered "İ", for Famalicão, Guimarães, Başakşehir) let Brazil, Spain, the Netherlands, Portugal and Turkey fill on the next build.
+
+**Evidence:** deploy run 43468024759's `lag` lines; the stale-unplayed warning fell from 789 to 407. `claude/openfootball-lag-2026-11-13.md` (CI section).
+
+**Tested:** `nametest.py` all clear (rated pool 1124 clubs, none resolving elsewhere); `tests/test_lagging_results.py` adds the nine pairs; full suite passes.
+
+**Not changed:** Belgium (its 2026-27 file parses with no scores and junk names: a parser fault, filed as an issue), Czechia (ESPN returns nothing), any model constant or Card rule.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13-10: the core leagues see their October and November results (tag pending)
+
+**What changed:** openfootball's 2026-27 files stopped scoring matches after 20 Sep 2026, and the build took the current season for its fifteen whole-season leagues (Premier League, Championship, LaLiga, Bundesliga, Serie A, Ligue 1, Eredivisie, Primeira Liga, Scottish Premiership, Austria, Greece, Czechia, Brazil, Turkey, Belgium) from those files alone. The build now walks ESPN from the day after each league's last scored fixture and scores the blank fixtures under openfootball's spelling (`build.lagging_codes`, `build.fill_lagging`, `sources.topup_current(since=)`), cached in `current/` like the existing top-up.
+
+**Evidence:** 746 played matches missing on 13 Nov (six rounds of the Premier League; Belgium no current season at all), the CI warning's 789 with football-data's leagues. Since rule 7 the Card's football picks and the Edge flag read these tables. `claude/openfootball-lag-2026-11-13.md`.
+
+**Guards:** a result fills only the blank fixture of the same home and away clubs within 21 days, never one openfootball scored (the primary source wins); one unmatched or doubly matched ESPN club fills nothing for that league and is named in a `::warning::` (Rule 6); a failed lag walk is never marked done. Five aliases from the cached Austrian, Greek and Scottish rows.
+
+**Tested:** `tests/test_lagging_results.py` (12 tests: fill, primary wins, window, moved match, all-or-nothing names, lag selection, failed walk retried, aliases); the cached at.1, gr.1 and sco.1 rows against their 2026-27 files match every club; full suite and `nametest.py` pass; a sandbox build runs the path (ESPN unreachable here, so CI's first build is the real check: look for the `lag <code>: N result(s) filled` lines).
+
+**Not changed:** engine constants, calibration, any Card or list rule, the gap leagues' top-up.
+
+**Roll back:** `git revert` the merge commit; the `current/` caches it adds are harmless and are ignored once the code is gone.
+
+## 2026-11-13 Odds tab price coverage: write-up only (tag pending)
+
+**What changed:** nothing on the site. A dated note on why no price source was added.
+
+**Evidence:** pool 9-13 Nov has 0 unpriced football legs among 86; a missing price cost the Card 4 legs in two days (`claude/card-price-gaps-2026-11-12.md`). No API key in the sandbox, so no before/after.
+
+**Files:** `claude/price-coverage-oscar-2026-11-13.md`, `RELEASES.md`.
+
+**Not changed:** `groupings.py`, any model, any price rule.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13-9: free-source check for uncovered leagues, nothing to add (tag pending)
+
+**What changed:** nothing on the page or the model. A dated line in `claude/data-expansion-plan.md` records the re-probe.
+
+**Evidence:** football-data.co.uk `new/` returns the same 16 leagues (all already covered); openfootball 2026-27 `de.3.json`, `pt.2.json` and the 3. Liga file are 404. No free, automatable source exists for the remaining gaps (Rule 10).
+
+**Files:** `claude/data-expansion-plan.md`, this entry.
+
+**Not changed:** `sources.py`, `FDX`, the Daily List rules.
+
+**Roll back:** `git revert` this release's commit.
+
+
+## 2026-11-13-8: Serie D Girone C, test not run (tag pending)
+
+**What changed:** nothing on the page or the model. A dated note records why the Serie D Girone C accuracy question (30% over 54 games) could not be tested.
+
+**Evidence:** no af.428 history in `history/` or `cache/`, no `API_FOOTBALL_KEY` in the unattended run, and the scoreboard is off limits (Rule 1). No fit/check season, so no paired bootstrap and no gate read.
+
+**Files:** `claude/serie-d-girone-c-2026-11-13.md`, this entry.
+
+**Not changed:** `HOME_MULT`, `home-advantage.json`, any draw handling, the model.
+
+**Roll back:** `git revert` this release's commit.
+
+
+## 2026-11-13-7: briefing pushes logged, late ones named (tag pending)
+
+**What changed:** nothing on the page or the Card. Each briefing push (07:00, 11:00, 16:00, 21:00 UK) is now logged with how many minutes after its slot it went, and a slot a late build skipped is logged as skipped (`groupings-archive/briefed.json` `log`, 21 days). The nightly Card review shows the table and names in bold any slot whose median push is over an hour late or that was skipped.
+
+**Why:** the pushes come from deploy.yml's scheduled builds, which GitHub runs late at busy times: the 12 Nov lunch push went at 13:18 UK (2h18 late), the night push at 22:40 (1h40); on 13 Nov the 12:00 UTC build had not started by 12:40, so a deploy was dispatched by hand. Douglas bets at those times, so a late push is a late price. `claude/briefing-lateness-2026-11-13.md`.
+
+**Tested:** `tests/test_briefing_log.py` (lateness in GMT and BST, skipped slots logged once, an old file without a log, trimming, `due_slot` unchanged, the review table); full suite and `nametest.py` pass.
+
+**Files:** `notify.py` (`mark_sent`, `LOG_DAYS`), `tools/card_review_post.py` (`briefing_section`), `tests/test_briefing_log.py`, the note, `CLAUDE.md`.
+
+**Not changed:** when briefings are sent, what they say, the deploy schedule (backup crons are a separate `needs-owner` pull request), any Card rule.
+
+**Roll back:** `git revert` the merge commit; old `briefed.json` files read as before.
+
+
+## 2026-11-13-6: the pool reads each fixture once (tag pending)
+
+**What changed:** nothing on the Card. The pool archive holds a fixture the source moved to another day twice (the new day's file and the old one, with the stale start), and the replays, the funnel, the price-timing read and the Daily List's at-William-Hill record counted it twice or kept the stale row. They now read the pool through `groupings.pool_rows`, one row a fixture, its latest placement. "How it went"'s at-Hill line drops three double-counted picks.
+
+**Evidence:** 68 of 2,650 pool picks sat in two or more day files at 13 Nov (38 tennis, 25 football, Drina Zvornik on 13 and 14 Nov). Replay legs 759 to 756 (1,533 to 1,511 with `--recover`), every variant's groups unchanged; funnel legs at a real price 729 to 740 (the stale row was the unpriced one); `listAtBook` at Hill 18/18 to 17/17. `claude/pool-moved-fixtures-2026-11-13.md`. Eight new tests (`tests/test_pool_rows.py`); full suite and `nametest.py` pass.
+
+**Files:** `groupings.py` (`pool_rows`, `_same_fixture`, `POOL_MOVE_DAYS`; `list_at_book`, `context_record`), `tools/card_replay.py`, `tools/card_funnel.py`, `tools/price_timing.py`, `tests/test_pool_rows.py`, `claude/pool-moved-fixtures-2026-11-13.md`, `CLAUDE.md`.
+
+**Not changed:** `archive_pool` and the archive itself, every `CARD_*` constant, the live Card, the model.
+
+**Roll back:** `git revert` this release's commit.
+
+
+## 2026-11-13-5: openfootball outage keeps the last good copy (tag pending)
+
+**What changed:** nothing for a reader on a normal day. When openfootball (the source for most leagues' history and fixtures) is unreachable after three retries, the build now uses the last good copy of each file, with a warning naming the URL and its age, instead of silently rating those leagues with no data. A 4xx (file not carried) is still an answer and never falls back. With no earlier copy the error is raised as before and the existing fallbacks run.
+
+**Evidence:** `_get` had retries but no fallback, unlike football-data.co.uk (`_fdx_text`), so a single outage meant empty history and fixtures for every openfootball league. Three new tests with a fake failing source in `tests/test_source_failures.py`; full suite and `nametest.py` pass.
+
+**Files:** `sources.py` (`_get`, `_raw_keep_path`, `_raw_last_good`), `tests/test_source_failures.py`, `RELEASES.md`.
+
+**Not changed:** the model, ESPN, football-data and API-Football handling, the stale-fixture check in `build.py`.
+
+**Roll back:** `git revert` this release's commit.
+
+
+## 2026-11-13-4: fixture audit of 13 Nov (tag pending)
+
+**What changed:** nothing for a reader. A dated audit of `predictions/2026-11-13.json` added to `claude/data-integrity.md`.
+
+**Evidence:** 1,153 rows: 0 unrated, 0 date/kick-off mismatches, 0 duplicate keys, no club at two kick-offs at once. 22 swapped-team pairs are two-leg or return fixtures; 2 same-direction pairs are a known reschedule (Unisport Bafang v Canon) and a double friendly (Tahiti v Cook Islands); 6 folded-name splits are different feeds or different clubs, rated as such. `nametest.py` passes.
+
+**Files:** `claude/data-integrity.md`, `RELEASES.md`.
+
+**Not changed:** matcher, `LIVE_NAMES`, archive keys.
+
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-13-3: tests for the international rating fit (tag pending)
+
+**What changed:** nothing for a reader. `tune_international.py` (371 lines, the international rating fit) was the largest module with no test at all. 16 tests now pin tournament tiers, row parsing (unplayed and pre-cutoff rows dropped, neutral only on "TRUE"), recency and tier weights, the fit's ordering and its shared-shift fix, `outcome` summing to 1, `score` (unrated skipped, baseline), and the paired bootstrap (deterministic, directional).
+
+**Evidence:** all 16 pass against the current code; no bug exposed, so no code changed. Full suite and nametest pass.
+
+**Files:** `tests/test_tune_international.py`, this entry.
+
+**Not changed:** any model, constant or data file.
+
+**Roll back:** `git revert` the merge commit.
+
+
+## 2026-11-13-2: the Card's bookmaker read on the same picks (tag pending)
+
+**What changed:** advisory only. The nightly Card review now sets each UK bookmaker against William Hill (the Card's book) on the picks both priced, at the first and the last pre-start price, with the settled singles return at each, and the best UK price against Hill. It says in bold when a book pays more than Hill on both counts, as a question for Douglas.
+
+**Why:** issue #156. The review ranked each book against the average on its own set of legs, which cannot say whether Bet365 beats William Hill on the same pick.
+
+**Evidence:** Card-rule legs in the pool, 30 Oct to 13 Nov: Bet365 +1.06% a pick over Hill on 88 paired football picks over 11 days (ahead on 10 days, p 0.000), about +3% on a three-pick 2x; settled singles -2.25% at Hill v -1.11% at Bet365. Betfair (-0.95%) and BetVictor (-1.27%) are behind Hill. Best UK price pick by pick +1.58%. NBA and tennis too few paired. `claude/card-book-paired-2026-11-13.md`.
+
+**Tested:** `tests/test_book_vs.py` (pairing, both tails, ties read as neither, too few, review lines); full suite and nametest.
+
+**Files:** `tools/price_timing.py`, `tools/card_review_post.py`, `tests/test_book_vs.py`, the note, `CLAUDE.md`.
+
+**Not changed:** `CARD_BOOK` (Douglas's book), any Card rule, the page.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-13: the two-day group finds its best group, and an empty day says why (tag pending)
+
+**What changed:** (1) a day with no Card group that borrows the next day's picks (`CARD_SPAN`) now takes the best group that holds one of its own picks; before, it took the best group of both days and gave up if that held none of the first day's. (2) An empty day on the Bets tab now says why: too few picks, too many from one competition, or, as on 13 and 15 Nov, three picks that clear the rule but together pay more than a 2x group can (13 Nov: 3.51, over 3.00). It used to say "too few picks" whatever the reason.
+
+**Why:** the span is Douglas's rule (12 Nov) and was built narrower than he asked; the page gave the wrong reason on the first empty day it was read. `claude/card-empty-day-why-2026-11-13.md`.
+
+**Tested:** `tests/test_card_span.py` (two new tests; the first failed on the old code), `tests/test_card_short.py`; full suite and nametest; the Bets tab rendered at 1280 and 400 wide on the 13 Nov pool.
+
+**Files:** `groupings.py` (`best_card` `need`, the span pass, `card_short`, `cardShort` per day), `tools/card_replay.py` (`build_span`), `index.html` (`cardShortText`), tests, the note, `CLAUDE.md`.
+
+**Not changed:** any `CARD_*` constant, `CARD_RULE`, the band, the record.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-12-10: the playbook's "place late" line follows the evidence (tag pending)
+
+**What changed:** the Card's playbook no longer says the last price paid about 2 points more than the first. Its first habit is now written from the price-timing check on every build: "Place once, late" with the gain only while settled Card-rule picks show one (50+ legs, day-resampled p <= 0.10), "Place once, early" if the read turns, and otherwise "Place once, before the first start" (nearer it than not, as a group can change until its first start) with the plain read that the first and last prices paid about the same. Today it reads the last: 174 settled picks to 12 Nov.
+
+**Why:** the line quoted the 10 Nov read (+1.95 points late on 104 legs, p 0.011). On 12 Nov the same test gave -0.25 points on 174 legs, p 0.70, and on the rule 6 legs of the same days, rebuilt, +0.32. The page was telling people to wait for a gain the record no longer shows. `claude/place-late-faded-2026-11-12.md`.
+
+**Tested:** `tests/test_price_timing.py` (`page_read`, `timing_page` returns None on failure); full suite and nametest; Bets tab rendered at 1280 and 400 wide from a scratch build.
+
+**Files:** `tools/price_timing.py` (`page_read`), `groupings.py` (`timing_page`, `timing` in `groupings-data.js`), `index.html` (`placeHabit`), `tests/test_price_timing.py`, `claude/place-late-faded-2026-11-12.md`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, push or briefing time, the nightly review.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-12-9: the nightly Card review shows both sides of the gate (tag pending)
+
+**What changed:** the nightly Card review issue now puts each rule 7 variant's pool read beside its football-data seasons (`cardM7Paired` in `card-legs-history.json`, which tune.yml commits on Mondays), with a gate verdict per variant: passes, or fails and why (pool legs short of 100, pool p(worse), or the football-data season it lost). A variant ahead on the pool but behind live on any football-data season is named as not a candidate. When one passes every side the review says so in bold, so the next build session acts. Variants that built nothing on the replayed days (short, notennis, tennis80 on 12 Nov) leave the "watch" list and are named apart: their +0.44 a day was only live's losses.
+
+**Why:** on 12 Nov the review listed `m7under5` as ahead of live at p(worse) 0.014 while the five football-data seasons had already refused it (behind in all five, pooled p(worse) 0.99, `claude/card-m7under5-seasons-2026-11-12.md`). The gate in CLAUDE.md has three sides; the review showed one, inviting the next session to reopen a settled question.
+
+**Tested:** `tests/test_card_review_post.py` (refused on seasons, identical to live, full pass, a missing season, nothing on file, the empty variant); rendered against a local `card_replay.py --since 2026-10-29` run. Until Monday's tune.yml commits `cardM7Paired`, the section says no paired season read is on file.
+
+**Files:** `tools/card_review_post.py`, `tests/test_card_review_post.py`, `CLAUDE.md`.
+
+**Not changed:** any Card rule, the replay, the gate itself.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-12-8: the context check reads Daily List picks too (tag pending)
+
+**What changed:** every Daily List pick at 75%+ now gets a context read (team news, rotation, motivation, table, goals, last five) after the Card's picks, football first, then NBA, tennis, college basketball and the rest, within 25 reads a day. Sonnet reads Card picks, football and NBA; Haiku the rest. Each read shows as a Clear / Caution / Against flag beside the price on the Daily List, sport tabs and Starred, and in full in the slip checker. Display only: the model's number never moves, and only Card picks are vetoed.
+
+**Why:** Douglas: "I just feel now I've made a shortlist from the daily games I could do with more context and understanding or flags", within his plan's $100 monthly API credit.
+
+**Cost:** about $2-3 a day at the cap (first reads cost $0.20-0.25 each on Sonnet).
+
+**Files:** `context_review.py` (`priority`, `model_for`, `DAILY_READS`, ledger), `groupings.py` (`CX_LIST_MIN`, `context_page`), `index.html` (`cxChip`, slip checker), `tests/test_context_review.py`, `claude/context-check-2026-11-11.md`, `CLAUDE.md`.
+
+**Roll back:** `CX_LIST_MIN = 1.01` reads Card picks only; `git revert` the merge commit.
+
+## 2026-11-12-7: damping the FIFA ranking's big lifts tested and rejected (tag pending)
+
+**What changed:** nothing in the model. `tools/fifa_lift_damping.py` tests eleven ways to soften the ranking's big lifts on ranked internationals (fit Oct 2022-Sep 2023, check Oct 2023-Oct 2024); none passes the gates. Note `claude/fifa-lift-damping-2026-11-12.md`, a line in CLAUDE.md's Tested and rejected.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-12-6: two-day Card groups when a day makes none (tag pending)
+
+**What changed:** a day whose picks make no Card group now tries one group from its own qualifying picks plus the next day's, under the same rule, holding at least one of its own (`groupings.CARD_SPAN`). It is open until its first start, labelled "two days" on the Bets tab, kept in the Card record and apart as `cardSpan`; the next day's Card never reuses its picks.
+
+**Why:** Douglas: "if you can't make a card on 1 day - then look to the next day ahead to combine fixtures to be able to create a card."
+
+**Evidence:** pool replay `span2`: two more days with a group (17 v 15), return +31% v +33%, paired p(worse) 0.49. Owner's call under the 100-leg gate. `claude/card-span-2026-11-12.md`.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`span2`), `tests/test_card_span.py`, `claude/card-span-2026-11-12.md`, `CLAUDE.md`.
+
+**Not changed:** the leg rule, stakes, the 2x shape.
+
+**Roll back:** `CARD_SPAN = False`, or `git revert` the merge commit.
+
+## 2026-11-12 (tag pending): the value demand's relief refused on five seasons
+
+**What changed:** advisory only. The football-data Card replay now runs `m7under5` (the model up to 5 points under the bookmakers) and `m7core`, and pairs every rule 7 variant against live by day, per season and pooled (`cardM7Paired`, `cardM7Pooled`).
+**Why:** the 12 Nov nightly review had `m7under5` well ahead of live on the pool (p(worse) 0.014, 45 legs) a day after it read well behind. It had never been run on football-data.
+**Evidence:** five seasons, 912 legs: behind live in every season, pooled -0.31 units a day, p(worse) 0.99; 304 groups -6.9% (120 won v 120.5 expected) v live 162 groups +9.6%. On the pool it leads only at first real prices (p(worse) 0.10), is level on `--recover` (0.51) and behind at closing (0.63). The value demand stays. `m7core` equals live on football-data (all core leagues), so the wider-leagues rule is read on the pool only. `claude/card-m7under5-seasons-2026-11-12.md`.
+**Files:** `tools/card_legs_history.py`, `tests/test_card_m7_paired.py`, `claude/card-m7under5-seasons-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-12 (tag pending): the Card review counts legs lost to a missing price
+
+**What changed:** advisory only. The Card funnel and the nightly Card review now count the legs with no bookmaker price that pass every other Card condition (`price_gaps`), split into days already started (lost) and days still to come.
+**Why:** the Card was empty on 11 and 12 Nov, and 943 pool legs from 6 Nov were "estimate only". If those would have cleared, the price feed was the lever.
+**Evidence:** from 10 Nov (every leg keeps its first real price) a missing price cost four legs on started days (Ýokary Liga 2, Eerste Divisie 1, one tennis); none was the leg a group lacked. 57 legs for 13-15 Nov are still unpriced, mostly lower-tier football. Price coverage is not what starves the Card now. `claude/card-price-gaps-2026-11-12.md`.
+**Files:** `tools/card_funnel.py`, `tools/card_review_post.py`, `tests/test_card_funnel_gaps.py`, `claude/card-price-gaps-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, pricing, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-12 (tag pending): two-pick Card groups replayed and refused
+
+**What changed:** advisory only. `m7legs2` pre-registered in the Card replay (the 2x may be two picks as well as three to five), on the pool and the football-data seasons.
+**Why:** the live Card built nothing for 11 or 12 Nov. On 11 Nov five NBA picks cleared the full rule at 1.53-1.64, but any three pay 3.6x+, over the 2x band, and a group needs three.
+**Evidence:** pool 30 Oct to 15 Nov: 17 groups v live 7 at first real prices (p(worse) 0.47), 25 v 16 on `--recover` (+12% v +51%, p(worse) 0.80), -11% v +6% at closing prices. Football-data 2025-26: 114 groups, 43 won v 53.3 expected, -18% v live +22%, 8 losing months of 10. The extra groups are the weak ones. `claude/card-m7legs2-2026-11-12.md`.
+**Files:** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_m7legs2.py`, `claude/card-m7legs2-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card (still 3-5 picks), any CARD_* constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-12 (tag pending): the rule 6 replay keeps its own tennis floor
+
+**What changed:** advisory only. The Card replay's rule 6 family had inherited the live tennis floor (85% since CARD_RULE 10), so `rule6`, `notennis` and `tennis80` replayed identically and `rule6` built almost nothing. `RULE6` now pins tennis at 75%, the floor rule 6 ran with.
+**Evidence:** pool 30 Oct to 14 Nov, `--recover`: `rule6` 3 groups before, 11 groups 5 won +8% after (matches the 11 Nov morning read); `notennis` v `rule6` +0.23 units a day, p(worse) 0.42, where it read "identical" before. `claude/card-replay-rule6-tennis-2026-11-12.md`.
+**Files:** `tools/card_replay.py`, `tests/test_card_replay_rule6_family.py`, `claude/card-replay-rule6-tennis-2026-11-12.md`, `CLAUDE.md`.
+**Not changed:** the live Card, any CARD_* constant, `tennis75`, the page, the record.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-12 (tag pending): At a glance scrolls back a week
+
+**What changed:** At a glance on the Daily List now holds the last seven days as well as the week ahead. It opens on today; swipe or tap back through each past day's list, every pick at its start time, won or lost, with the day's score on its tab (e.g. "Sun 8 18/21").
+**How:** `daylist.py` writes `past` into `daylist.js`: each of the last seven UK days' lists as they stood before each game started (the same membership rule as today's pin), with results from the record files. About 36 KB.
+**Files:** `daylist.py`, `index.html` (`glancePast`, `todayGlance`, `glanceDay`, `glanceSync`), `tests/test_daylist.py`.
+**Checked:** browser at 400 and 1280 wide: tabs Thu 5 to Mon 17, opens on Today, the selected tab kept in view, the page does not move, no sideways scroll.
+**Not changed:** the list, the record, How it went.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-11 (tag pending): the Card takes the wider leagues (CARD_RULE 11)
+
+**What changed:** football picks from the wider leagues (API-Football's, e.g. Bosnia RS) can now go on the Card; cups and internationals stay out, and a core-league pick still comes first at an equal chance.
+**Evidence:** Douglas on Leotar (1.52, model 67% v 59%), kept off only by the league limit: "This should have been on. So relax all rules that would of said otherwise." The replay he was shown leans the other way (wider 28 groups, 15 won, +32% v core only 12 groups, 8 won, +69%); the owner's call. `claude/card-wider-leagues-2026-11-11.md`.
+**Files:** `groupings.py`, `tools/card_replay.py` (`m7core`; rule 6 replays pinned to core), `index.html` (wording), tests, `CLAUDE.md`.
+**Not changed:** the tennis floor, the price range, the 60% model floor, the value demand, cups and internationals.
+**Roll back:** `git revert` the commit, or set `CARD_CORE_ONLY = True`.
+
+
+## 2026-11-11 (tag pending): SportsGameOdds prices US games from its consensus line
+
+**What changed:** SportsGameOdds now prices the US games nothing else priced. The build log (#259) showed 47 of its games matched ours by name and all 47 came with no per-bookmaker prices on the free plan; each still carries SportsGameOdds' consensus price, which is now used (labelled "SportsGameOdds consensus").
+**Evidence:** deploy log after #259: `named 47, noBooks 47`, odds keys `points-home-game-ml-home` / `points-away-game-ml-away` present. Betfair answers our CI with its HTML "Forbidden" page, a location block: not fixable from GitHub's US runners.
+**Files:** `free_prices.py`, `tests/test_free_prices.py`.
+**Not changed:** any model number or pick; prices are display and Card veto only.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-11 (tag pending): why the free price sources priced nothing, shown in the build log
+
+**What changed:** the first build with keys showed SportsGameOdds fetching 128 games and matching none, and Betfair's login refused with a bare HTTP 403. The build log now shows, when SportsGameOdds matches nothing, what one of its games and one of our legs look like (names, start), and how far each got (named, no side, no books); an HTTP error from any free source now carries the reply's first line, so a location block reads as one.
+**Evidence:** deploy run 43105328356 (#250's log line): `sgo: matched 0, legs 128, monthObjects 128`, `betfair: error HTTP Error 403: Forbidden`, `matchbook: no key`.
+**Files:** `free_prices.py`, `tests/test_free_prices.py`.
+**Not changed:** any price, any pick.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-11 (tag pending): tennis at 85% on the Card, "Under 80" on tennis rows, rows keep their place
+
+**What changed:** the Card takes a tennis pick only at 85%+ on the model and its tested rate (was 75%), `CARD_RULE` 10. Every tennis row under 80% shows "Under 80". Opening or starring a row no longer moves the page: the tapped row stays where it was on screen.
+**Evidence:** Douglas, after Casper Ruud lost at 1.22 on a Hill five-fold: "Tennis score must go lower", then "Both". Graded tennis lands on quote or above from 70% (1,422 picks), so the numbers stay; the Card's tennis legs landed 22 of 40 (z -2.2). Browser check at 390 and 1280: row top unchanged after opening, no sideways scroll. `claude/tennis-floor-85-2026-11-11.md`.
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`tennis75`), tests, `claude/tennis-floor-85-2026-11-11.md`, `CLAUDE.md`.
+**Not changed:** any tennis number, the Daily List bar, UK-book pricing for 75-85% tennis (`BOOKS_SPORT_MIN`).
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-11 (tag pending): the Card's league limit read by the replay and the funnel, `m7wide` pre-registered
+
+**What changed:** advisory only. Under rule 7/8 the Card's core-league limit was hard-coded in `groupings.model_fault`, so the funnel could not relax it and named the value demand as the one condition costing groups. `model_fault` now reads `CARD_CORE_ONLY` as `card_fault` does; it stays True, so the live Card is unchanged (replay `live` identical before and after). The funnel gains a "league" relief and `tools/card_replay.py` gains `m7wide` (the rule 8 Card with the wider API-Football leagues, cups and new leagues still out), registered before it was read.
+
+**Evidence:** funnel, pool 6 to 14 Nov at real prices: 45 football legs kept off by the league limit alone v 14 by the value demand; days with a 2x 3 -> 4, groups 4 -> 9. `m7wide` v live: first real prices 19 groups +19% v 6 +82% (p(worse) 0.60); `--recover` 28 groups +32% v 12 +69% (p 0.44); closing p 0.76. 84 legs, under the 100-leg gate. `claude/card-m7wide-2026-11-11.md`.
+
+**Files:** `groupings.py`, `tools/card_replay.py`, `tools/card_funnel.py`, `tests/test_card_m7wide.py`, `claude/card-m7wide-2026-11-11.md`, `CLAUDE.md`.
+
+**Not changed:** `CARD_CORE_ONLY` (True), `CARD_RULE`, the page, the record.
+
+**Roll back:** `git revert` the merge commit.
+
+## 2026-11-11-6 Build log: one line per price source (tag pending)
+
+For the owner: each build's log now prints what every price source did
+(matched, calls, allowance, any error), so whether Betfair, Matchbook or
+SportsGameOdds is working can be read straight off the Actions log.
+
+Files: `groupings.py` (the summary print in `main`). Nothing on the page.
+
+Roll back: `git revert` this commit.
+
+## 2026-11-11 (tag pending): Own-band List admission re-run, note only
+
+**What changed:** a note, no code. The rule was shipped on 20 Oct 2026; the replay re-run reproduces it.
+**Evidence:** held out, rugby 426 at 78.9% -> 232 at 84.1% (dropped 72.7%, p(worse) 0.002); college basketball 3,792 at 78.9% -> 1,884 at 87.4% (dropped 70.5%, p 0.000); NFL 110 at 71.8% -> 62 at 77.4% (p 0.07). `claude/own-band-rerun-2026-11-11.md`.
+**Files:** `claude/own-band-rerun-2026-11-11.md`, `RELEASES.md`.
+**Not changed:** any code or bar.
+**Roll back:** `git revert` the commit.
+
+
+## 2026-11-11 (tag pending): Card tennis legs, note only
+
+**What changed:** a note, no code. Tennis Card legs are 8 of 15 since 29 Oct (z -2.1), 23 of 41 in all (z -2.13), under the 50-leg tripwire.
+**Evidence:** `claude/tennis-card-legs-2026-11-11.md`. Cuts are 3 to 8 legs a cell and no tennis price history exists to replay a rule; gates cannot be met.
+**Files:** `claude/tennis-card-legs-2026-11-11.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, `CARD_SPORT_MIN`, `CARD_RULE`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-11-16: the context check graded in the nightly Card review (tag pending)
 
 **What changed:** advisory only. The nightly Card review issue gains a "context check" section: every settled pick the check read, by verdict (clear, caution, against), landed against the model's own number and the bookmakers' chance, from `groupings-record.json` `cardContext`. It carries the pre-registered review written into words: at 30 settled "against" picks, if they land at or above the model's number, the review says in bold that the next build session sets `CARD_CONTEXT = False`; otherwise it says the veto stays, or how many are still to come.

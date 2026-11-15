@@ -1,0 +1,74 @@
+"""Why a football leg stayed unpriced (groupings.price_football, 14 Nov 2026).
+No network: API-Football is stubbed. Standard library only."""
+import os, sys, tempfile, unittest
+from datetime import date
+from unittest import mock
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+import groupings as G
+import odds as O
+import sources as S
+
+
+def fx(fid, d, home, away, hour=19):
+    return {"league": {"id": 1}, "fixture": {"id": fid, "date": f"{d}T{hour:02d}:00:00+00:00", "status": {"short": "NS"}},
+            "teams": {"home": {"name": home}, "away": {"name": away}}, "score": {"fulltime": {"home": None, "away": None}}}
+
+
+def leg(t, home, away, comp, hour=19, mult=False):
+    l = {"sport": "football", "date": t, "when": f"{t}T{hour:02d}:00:00Z", "home": home, "away": away,
+         "side": "h", "comp": comp, "pick": home}
+    if mult: l["multOnly"] = True
+    return l
+
+
+class FootballUnpriced(unittest.TestCase):
+    def run_price(self, L, day, odds_by_fid, cap=None):
+        t = L[0]["date"]
+        def af_get(path):
+            fid = int(path.split("fixture=")[1].split("&")[0])
+            items = odds_by_fid.get(fid, [])
+            S._AF_CACHE[path] = items; S.AF_USAGE["calls"] += 1
+            return items
+        rep = {}
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "x"}), \
+             mock.patch.object(S, "AF_CACHE_DIR", d), mock.patch.object(S, "_af_day", return_value=day), \
+             mock.patch.object(O, "af_prices", lambda dates: {}), mock.patch.object(S, "_af_get", af_get), \
+             mock.patch.object(G, "FB_CALLS_MULT", G.FB_CALLS_MULT if cap is None else cap):
+            S._AF_CACHE.clear()
+            G.price_football(L, {t}, rep)
+            S._AF_CACHE.clear()
+        return rep["football"]
+
+    def test_each_reason_counted_by_competition(self):
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.50"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "6.0"}]}]}]}]
+        day = [fx(11, t, "Arsenal", "Chelsea"), fx(12, t, "Leeds", "Hull"), fx(13, t, "Celtic", "Rangers", hour=12)]
+        L = [leg(t, "Arsenal", "Chelsea", "Premier League"),          # priced
+             leg(t, "Leeds", "Hull", "Championship"),                 # listed, no odds
+             leg(t, "Celtic", "Rangers", "Premiership", hour=19),     # moved: kick-offs 7h apart
+             leg(t, "Zzyzx Town", "Qwerty Rovers", "Liga X")]         # not listed at all
+        r = self.run_price(L, day, {11: book})
+        self.assertEqual(r["matched"], 1)
+        self.assertEqual(L[0]["odds"], 1.5)
+        self.assertEqual(r["miss"], {"noOdds": 1, "kickoff": 1, "noFixture": 1})
+        self.assertEqual(r["missComps"]["noFixture"], [("Liga X", 1)])
+        self.assertEqual(r["missComps"]["noOdds"], [("Championship", 1)])
+
+    def test_capped_mid_priced_legs(self):
+        t = date.today().isoformat()
+        day = [fx(21, t, "Leeds", "Hull")]
+        L = [leg(t, "Leeds", "Hull", "Championship", mult=True)]
+        r = self.run_price(L, day, {}, cap=0)
+        self.assertEqual(r["miss"], {"capped": 1})
+
+    def test_no_miss_key_when_all_priced(self):
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.50"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "6.0"}]}]}]}]
+        r = self.run_price([leg(t, "Arsenal", "Chelsea", "Premier League")], [fx(11, t, "Arsenal", "Chelsea")], {11: book})
+        self.assertNotIn("miss", r)
+
+
+if __name__ == "__main__":
+    unittest.main()

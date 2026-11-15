@@ -1,0 +1,110 @@
+{
+ "Ghana v Somalia|Ghana": {
+  "at": "2026-11-12T14:24:22Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Kudus, Jordan Ayew, Partey and Salisu return under interim coach Kim Lars Bj\u00f6rkegren, only Alidu Seidu (who has since arrived) and Marvin Senaya were missing from camp, and a projected XI is published with no confirmed injury absences. The return leg is Monday 16 Nov at the same venue, so some rotat",
+  "numbers": "Group C: Ghana are bottom on 0 points after a 0-2 loss to C\u00f4te d'Ivoire and a 2-4 home loss to The Gambia; Somalia are third on goal difference, also on 0 points, after losing 0-2 to C\u00f4te d'Ivoire and 1-2 to The Gambia (3News, YEN, beIN). Somalia's other recent results were 0-0 draws with Mauritius and Oman, and Ghana won both previous meetings 5-0 and 2-0 (3News, MyJoyOnline); I did not find a ve",
+  "reads": 1,
+  "reason": "Ghana have lost both qualifiers, sacked coach Carlos Queiroz and are on an eight-game winless run in AFCON qualifying (ModernGhana), so the 91% model figure deserves scepticism, but Ghana have a near-full-strength squad and Somalia are also pointless.",
+  "sources": [
+   {
+    "title": "2027 AFCON Qualifiers: Ghana vs Somalia - Preview (3News)",
+    "url": "https://3news.com/sports/2027-afcon-qualifiers-ghana-vs-somalia-preview"
+   },
+   {
+    "title": "LIVE: Ghana vs Somalia (beIN Sports)",
+    "url": "https://www.beinsports.com/en-us/soccer/africa-cup-of-nations-qualification/articles/live-ghana-vs-somalia-afcon-2027-qualifiers-2026-11-11"
+   },
+   {
+    "title": "AFCON 2027Q: Black Stars face Somalia with qualification hopes hanging in the balance (MyJoyOnline)",
+    "url": "https://www.myjoyonline.com/afcon-2027q-black-stars-face-somalia-with-qualification-hopes-hanging-in-the-balance/"
+   },
+   {
+    "title": "Ghana host Somalia in crucial qualifier as Bj\u00f6rkegren targets winning start (ModernGhana)",
+    "url": "https://www.modernghana.com/sports/1543890/2027-afcon-qualifiers-ghana-host-somalia-in-cruci.html"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Minnesota Timberwolves v Dallas Mavericks|Minnesota Timberwolves": {
+  "at": "2026-11-11T22:15:02Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Minnesota are without Anthony Edwards (knee, out to about Dec 21) and Donte DiVincenzo (Achilles, out to April); Dallas list Lively, de Larrea and Biberovic, plus Morez Johnson Jr. as day-to-day, and Flagg and Irving are playing.",
+  "numbers": "Minnesota are 8-3, fifth in the West, with a 4-1 home record. Their last five are W 115-100 v Utah, W 115-109 at New Orleans, W 117-107 at Houston, W 112-100 v Milwaukee and L 111-121 at San Antonio. Dallas are 7-4 (2-2 away) after home wins over Utah, Brooklyn and Indiana (125-122 on Nov 9, when Cooper Flagg scored 43). I found no points scored or conceded season totals and no recent head-to-head",
+  "reads": 1,
+  "reason": "Anthony Edwards is out with a knee injury until about Dec 21 (ESPN injury report), which the model may not price in, but Minnesota has won four straight without him, so I can't call it clearly below 72%.",
+  "sources": [
+   {
+    "title": "Mavericks vs. Timberwolves (Nov 12, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909978"
+   },
+   {
+    "title": "Dusty May Warns Mavericks About LaMelo Ball, Timberwolves Despite Anthony Edwards Injury - Yardbarker",
+    "url": "https://www.yardbarker.com/nba/articles/dusty_may_warns_mavericks_about_lamelo_ball_timberwolves_despite_anthony_edwards_injury/s1_17810_44548919"
+   },
+   {
+    "title": "Mavericks at Timberwolves Prediction and Odds - OG.com",
+    "url": "https://og.com/learn/mavericks-at-timberwolves-11-12-26-prediction"
+   },
+   {
+    "title": "Wolves Last 5 Games This Season By Game - StatMuse",
+    "url": "https://www.statmuse.com/nba/ask/wolves-last-5-games-this-season-by-game"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Senegal v Sudan|Senegal": {
+  "at": "2026-11-12T16:16:01Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Senegal are without Sadio Man\u00e9 and Idrissa Gana Gueye, and Kr\u00e9pin Diatta is reportedly injured. Sports Mole reports no injuries or suspensions for Sudan, and the Koulibaly\u2013Niakhat\u00e9 centre-back pairing is intact.",
+  "numbers": "Group J after two games: Senegal top on 4 points (goals 2 for, 1 against), with two 1-0 wins reported in the sources I found, while Sudan are third on 3 points (2 for, 4 against) after a 4-1 loss in Mozambique. Senegal's reported form is W-L-D-W-W, Sudan's is W-L-L-W-L, and Senegal are unbeaten in 8 meetings (5 wins, 3 draws), including a 3-1 win in the January 2026 AFCON last 16.",
+  "reads": 2,
+  "reason": "Senegal have scored only twice in two qualifiers and are without Man\u00e9, Gana Gueye and reportedly Diatta, but the market (DraftKings -1200, about 92%) and the rest of the evidence still back them, so nothing clearly lowers the 91% (Sports Mole preview, Sport News Africa, VAVEL).",
+  "sources": [
+   {
+    "title": "Preview: Senegal vs Sudan - prediction, team news, lineups - Sports Mole",
+    "url": "https://www.sportsmole.co.uk/football/senegal/africa-cup-of-nations/preview/senegal-vs-sudan-prediction-team-news-lineups_608874.html"
+   },
+   {
+    "title": "Senegal top Group J with 4 points as Vieira prepares for Sudan without Man\u00e9 or Gana Gueye - Sport News Africa",
+    "url": "https://sportnewsafrica.com/en/news/senegal-top-group-j-with-4-points-as-vieira-prepares-for-sudan-without-mane-or-gana-gueye/"
+   },
+   {
+    "title": "Senegal vs Sudan LIVE, Latest Score, Goals and AFCON Qualifiers Updates - VAVEL USA",
+    "url": "https://www.vavel.com/en-us/soccer/2026/11/12/1278976-senegal-vs-sudan-live-latest-score-goals-and-afcon-qualifiers-updates.html"
+   },
+   {
+    "title": "AFCON Predictions - 12 November, Qualifiers - bets.co.za",
+    "url": "https://www.bets.co.za/soccer/caf-africa-cup-of-nations/afcon-qualifiers-predictions-12-november-2026-20261111-0014/"
+   }
+  ],
+  "verdict": "caution"
+ },
+ "Washington Wizards v Detroit Pistons|Detroit Pistons": {
+  "at": "2026-11-12T02:58:50Z",
+  "model": "claude-sonnet-5-5",
+  "news": "Detroit are missing Duren (out to about Nov 24) and Joe (out to about Nov 17); Washington's list from ESPN is Coulibaly (listed back Nov 11), Vukcevic, Beekman, Champagnie and Watkins, with Anthony Davis having played at Indiana, and I found no confirmed line-ups for this game.",
+  "numbers": "Detroit were 6-3 (4-1 away) going into their Nov 9 win over Washington, so likely 7-3 now; I did not find a confirmed current record or last-five run for them. Washington are 4-8 after losing five straight (ATL, ATL, OKC, DET, IND), scoring 108.1 ppg before the Indiana game, and have lost three of their last four at home.",
+  "reads": 1,
+  "reason": "Detroit are without All-Star centre Jalen Duren (hamstring, listed out until about Nov 24) and Isaiah Joe, but they still beat this same Wizards side 122-111 on Nov 9 with both missing, and Washington are on a back-to-back after losing 114-101 at Indiana on Nov 11 (ESPN injury report; VAVEL; ESPN re",
+  "sources": [
+   {
+    "title": "Pistons vs. Wizards (Nov 12, 2026) - ESPN",
+    "url": "https://www.espn.com/nba/game/_/gameId/401909977/pistons-wizards"
+   },
+   {
+    "title": "Pacers 114-101 Wizards (Nov 11, 2026) Game Recap - ESPN",
+    "url": "https://www.espn.com/nba/recap?gameId=401909966"
+   },
+   {
+    "title": "2026-27 Washington Wizards Roster and Stats - Basketball-Reference",
+    "url": "https://www.basketball-reference.com/teams/WAS/2027.html"
+   },
+   {
+    "title": "Detroit Pistons 122-111 Washington Wizards - VAVEL USA",
+    "url": "https://vavel.com/en-us/nba/2026/11/09/1278718-pistons-vs-wizards-live-score-updates-and-play-by-play-in-nba.html"
+   }
+  ],
+  "verdict": "caution"
+ }
+}

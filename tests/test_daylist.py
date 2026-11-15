@@ -62,6 +62,25 @@ class Results(unittest.TestCase):
         self.assertEqual(out["summary"]["list"], {"n": 1, "won": 0, "lost": 1, "void": 0, "started": 0, "upcoming": 0})
 
 
+class PastDays(unittest.TestCase):
+    """12 Nov 2026: At a glance scrolls back a week (daylist.py `past`)."""
+    def test_last_seven_days_oldest_first_with_results(self):
+        with tempfile.TemporaryDirectory() as d:
+            os.makedirs(os.path.join(d, "predictions-tennis"))
+            # a list pick on 3 Oct (two days back) and a reserve pick the same day
+            m = dict(tennis("2026-10-03T04:00:00Z", pid="7"), date="2026-10-03")
+            r = dict(tennis("2026-10-03T04:00:00Z", pid="8", lst=False, res=True), date="2026-10-03", playerA="Z")
+            json.dump([m, r], open(os.path.join(d, "predictions-tennis", "2026-10-03.json"), "w"))
+            json.dump({"graded": [{"key": "7", "ok": True, "void": False, "winner": "B"}]},
+                      open(os.path.join(d, "tennis-record.json"), "w"))
+            out = DL.build(NOW, here=d, fetch=False)
+        past = out["past"]
+        self.assertEqual([p["date"] for p in past], ["2026-09-28", "2026-09-29", "2026-09-30", "2026-10-01", "2026-10-02", "2026-10-03", "2026-10-04"])
+        day = next(p for p in past if p["date"] == "2026-10-03")
+        self.assertEqual([(i["pick"], i["status"]) for i in day["list"]], [("B", "won")])   # list only
+        self.assertIn("start", day["list"][0])
+
+
 class FullObjects(unittest.TestCase):
     def test_tennis_full_from_archive_and_football_carried(self):
         t = tennis("2026-10-05T04:00:00Z")

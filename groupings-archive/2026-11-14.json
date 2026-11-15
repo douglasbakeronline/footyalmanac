@@ -1,0 +1,704 @@
+{
+ "date": "2026-11-14",
+ "published": "2026-11-14T20:46:16Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 11,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-14T12:12:44Z",
+   "lockAt": "2026-11-14T19:00:00Z",
+   "locked": true,
+   "late": false,
+   "span": [
+    "2026-11-14",
+    "2026-11-15"
+   ],
+   "bench": [
+    {
+     "pick": "Kagoshima United",
+     "event": "Kagoshima United v Gainare Tottori",
+     "sport": "football",
+     "comp": "J3 League",
+     "when": "2026-11-15T04:00:00Z",
+     "date": "2026-11-15",
+     "odds": 1.39,
+     "best": 1.42,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.42,
+      "Betfair": 1.36,
+      "BetVictor": 1.33
+     },
+     "p": 0.6955,
+     "pModel": 0.6955,
+     "fair": 0.6426,
+     "hit": 0.7483,
+     "src": "API-Football, average of 10 bookmakers",
+     "pricedAt": "2026-11-14T17:25:55Z",
+     "id": null,
+     "home": "Kagoshima United",
+     "away": "Gainare Tottori",
+     "players": null,
+     "opp": 6.03,
+     "draw": 4.28
+    },
+    {
+     "pick": "Atlético Albericia",
+     "event": "Atlético Albericia v Barquereño",
+     "sport": "football",
+     "comp": "Tercera División RFEF - Group 3",
+     "when": "2026-11-14T18:00:00Z",
+     "date": "2026-11-14",
+     "odds": 1.43,
+     "best": 1.45,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.45
+     },
+     "p": 0.636,
+     "pModel": 0.636,
+     "fair": 0.6271,
+     "hit": 0.7121,
+     "src": "API-Football, average of 7 bookmakers",
+     "pricedAt": "2026-11-14T17:25:46Z",
+     "id": null,
+     "home": "Atlético Albericia",
+     "away": "Barquereño",
+     "players": null,
+     "opp": 5.71,
+     "draw": 4.12
+    }
+   ],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.36,
+   "p": 0.425,
+   "implied": 0.423,
+   "bestOdds": 2.36,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "VVV-Venlo v FC Eindhoven",
+     "home": "VVV-Venlo",
+     "away": "FC Eindhoven",
+     "side": "h",
+     "pick": "VVV-Venlo",
+     "code": "nl.2",
+     "comp": "Eerste Divisie",
+     "country": "Netherlands",
+     "when": "2026-11-14T19:00:00Z",
+     "date": "2026-11-14",
+     "pModel": 0.7007,
+     "p": 0.7007,
+     "fx": {
+      "u21Side": false,
+      "league": "nl.2",
+      "leagueName": "Eerste Divisie",
+      "short": "ER2",
+      "country": "Netherlands",
+      "iso": "nld",
+      "tier": 2,
+      "order": 103,
+      "round": "2026-27-keuken-kampioen-divisie",
+      "cup": false,
+      "date": "2026-11-14",
+      "time": "19:00",
+      "kickoff": "2026-11-14T19:00:00Z",
+      "home": {
+       "name": "VVV-Venlo",
+       "att": 1.224,
+       "def": 0.929,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eerste Divisie",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 13,
+        "D": 6,
+        "L": 19,
+        "GF": 50,
+        "GA": 58,
+        "GD": -8,
+        "Pts": 45,
+        "PPG": 1.184
+       },
+       "now": {
+        "P": 14,
+        "W": 9,
+        "D": 2,
+        "L": 3,
+        "GF": 37,
+        "GA": 22,
+        "GD": 15,
+        "Pts": 29,
+        "PPG": 2.071
+       }
+      },
+      "away": {
+       "name": "FC Eindhoven",
+       "att": 0.809,
+       "def": 1.177,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eerste Divisie",
+       "form": {
+        "pts": 0,
+        "max": 15,
+        "seq": "LLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 14,
+        "D": 5,
+        "L": 19,
+        "GF": 51,
+        "GA": 69,
+        "GD": -18,
+        "Pts": 47,
+        "PPG": 1.237
+       },
+       "now": {
+        "P": 14,
+        "W": 3,
+        "D": 2,
+        "L": 9,
+        "GF": 18,
+        "GA": 31,
+        "GD": -13,
+        "Pts": 11,
+        "PPG": 0.786
+       }
+      },
+      "p": {
+       "h": 0.7007,
+       "d": 0.1734,
+       "a": 0.1259
+      },
+      "xg": [
+       2.67,
+       1.03
+      ],
+      "btts": 0.564,
+      "over25": 0.5976,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.7007,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5978,
+        0.2098,
+        0.1923
+       ],
+       "best": [
+        1.55,
+        4.5,
+        5.0
+       ],
+       "avg": [
+        1.55,
+        4.42,
+        4.83
+       ],
+       "ev": [
+        0.0861,
+        -0.2197,
+        -0.3705
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 10,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "pDraw": 0.1734,
+     "multOnly": false,
+     "odds": 1.55,
+     "best": 1.55,
+     "books": 10,
+     "opp": 4.83,
+     "draw": 4.42,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.55,
+      "Bet365": 1.55,
+      "Betfair": 1.55,
+      "BetVictor": 1.53
+     },
+     "margin": 1.0771,
+     "pricedAt": "2026-11-14T17:25:46Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.6452,
+     "pTested": 0.7007,
+     "fair": 0.599,
+     "edge": -0.0716,
+     "context": {
+      "at": "2026-11-14T00:28:42Z",
+      "model": "claude-sonnet-5-5",
+      "news": "VVV are without Alex Schalk, Philip Heise, Jay de Graef, Gino Schmidt and Nassim Ait Mouhou, and no confirmed line-ups were found; Eindhoven had a 5-3 cup win over Volendam in midweek.",
+      "numbers": "VVV-Venlo are 2nd with 29 points from 14 games (9W 2D 3L, goals 37-22), at home 4W 2D 1L (19-11), and their last five were W D W W D. FC Eindhoven are 20th (last) with 11 points from 14 (3W 2D 9L, goals 18-31), and have lost their last five league games, including 0-3 to Jong Ajax. They are 1W 1D 4L away (7-15), and VVV have not lost any of the last eight meetings, including 1-0 at home in Feb 202",
+      "reads": 1,
+      "reason": "VVV are missing five players, including captain Alex Schalk, but they are second and face bottom side Eindhoven, so this doesn't clearly push the chance below 70% (VVV-Venlo preview via Headliner).",
+      "sources": [
+       {
+        "title": "Dijkhuizen blikt vooruit op FC Eindhoven",
+        "url": "https://noordbrabant.headliner.nl/item/dijkhuizen-blikt-vooruit-op-fc-eindhoven-elke-wedstrijd-is-lastig-in-deze-competitie-vvvvenlo-2198"
+       },
+       {
+        "title": "Stand Eerste Divisie 2026/2027 - Voetbalkrant",
+        "url": "https://www.voetbalkrant.com/nederland/eerste-divisie/stand"
+       },
+       {
+        "title": "Eerste Divisie 2026-27 Table & Standings - Sports Mole",
+        "url": "https://www.sportsmole.co.uk/football/eerste-divisie/table.html"
+       },
+       {
+        "title": "Wedtips VVV-Venlo – FC Eindhoven - Bet-Experts",
+        "url": "https://www.bet-experts.nl/nieuws/vvv-venlo-fc-eindhoven-voorspelling-wedtips"
+       }
+      ],
+      "verdict": "caution"
+     },
+     "basis": "model",
+     "firstOdds": 1.56
+    },
+    {
+     "sport": "football",
+     "event": "Pistoiese v Coriano",
+     "home": "Pistoiese",
+     "away": "Coriano",
+     "side": "h",
+     "pick": "Pistoiese",
+     "code": "af.429",
+     "comp": "Serie D - Girone D",
+     "country": "Italy",
+     "when": "2026-11-15T13:30:00Z",
+     "date": "2026-11-15",
+     "pModel": 0.7772,
+     "p": 0.7772,
+     "fx": {
+      "u21Side": false,
+      "league": "af.429",
+      "leagueName": "Serie D - Girone D",
+      "short": "SER",
+      "country": "Italy",
+      "iso": "ita",
+      "tier": 2,
+      "order": 509,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-15",
+      "time": "13:30",
+      "kickoff": "2026-11-15T13:30:00Z",
+      "home": {
+       "name": "Pistoiese",
+       "att": 1.495,
+       "def": 0.555,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone D",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWLWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 20,
+        "D": 12,
+        "L": 3,
+        "GF": 62,
+        "GA": 23,
+        "GD": 39,
+        "Pts": 72,
+        "PPG": 2.057
+       },
+       "now": {
+        "P": 11,
+        "W": 9,
+        "D": 1,
+        "L": 1,
+        "GF": 24,
+        "GA": 5,
+        "GD": 19,
+        "Pts": 28,
+        "PPG": 2.545
+       }
+      },
+      "away": {
+       "name": "Coriano",
+       "att": 0.769,
+       "def": 1.076,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Serie D - Girone D",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLLDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 7,
+        "D": 10,
+        "L": 18,
+        "GF": 29,
+        "GA": 47,
+        "GD": -18,
+        "Pts": 31,
+        "PPG": 0.886
+       },
+       "now": {
+        "P": 11,
+        "W": 2,
+        "D": 3,
+        "L": 6,
+        "GF": 10,
+        "GA": 15,
+        "GD": -5,
+        "Pts": 9,
+        "PPG": 0.818
+       }
+      },
+      "p": {
+       "h": 0.7772,
+       "d": 0.1673,
+       "a": 0.0555
+      },
+      "xg": [
+       2.24,
+       0.42
+      ],
+      "btts": 0.4481,
+      "over25": 0.5109,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7772,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7326,
+        0.1736,
+        0.0938
+       ],
+       "best": [
+        1.24,
+        5.23,
+        9.68
+       ],
+       "avg": [
+        1.24,
+        5.23,
+        9.68
+       ],
+       "ev": [
+        -0.0363,
+        -0.1245,
+        -0.4626
+       ],
+       "src": "API-Football",
+       "books": 3
+      },
+      "rank": 9,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "pDraw": 0.1673,
+     "multOnly": false,
+     "odds": 1.24,
+     "best": 1.24,
+     "books": 3,
+     "opp": 9.68,
+     "draw": 5.23,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.1008,
+     "pricedAt": "2026-11-14T17:25:55Z",
+     "src": "API-Football, average of 3 bookmakers",
+     "implied": 0.8065,
+     "pTested": 0.7772,
+     "fair": 0.7326,
+     "edge": -0.0916,
+     "basis": "model",
+     "firstOdds": 1.24,
+     "lastOdds": 1.24,
+     "lastBest": 1.24,
+     "lastAt": "2026-11-15T12:17:48Z",
+     "lockPrice": {
+      "odds": 1.24,
+      "best": 1.24,
+      "book": null,
+      "at": "2026-11-14T20:46:16Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Philadelphia 76ers v Indiana Pacers",
+     "home": "Philadelphia 76ers",
+     "away": "Indiana Pacers",
+     "pick": "Philadelphia 76ers",
+     "comp": "NBA",
+     "when": "2026-11-15T18:00Z",
+     "date": "2026-11-15",
+     "id": "401909985",
+     "pModel": 0.7804,
+     "p": 0.7804,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909985",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-15T18:00Z",
+      "home": "Philadelphia 76ers",
+      "away": "Indiana Pacers",
+      "neutral": false,
+      "pHome": 0.7804,
+      "pick": "Philadelphia 76ers",
+      "confidence": 0.7804,
+      "tier": "Strong",
+      "eloH": 1575,
+      "eloA": 1390,
+      "gamesH": 278,
+      "gamesA": 300,
+      "hfa": 25,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "123-112",
+        "opp": "Toronto Raptors",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "L",
+        "score": "101-123",
+        "opp": "Boston Celtics",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "W",
+        "score": "127-121",
+        "opp": "Chicago Bulls",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "95-119",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "112-106",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "106-104",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "114-101",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "122-125",
+        "opp": "Dallas Mavericks",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "102-114",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "107-103",
+        "opp": "Memphis Grizzlies",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "recordH": {
+       "w": 10,
+       "l": 3,
+       "d": 0
+      },
+      "recordA": {
+       "w": 5,
+       "l": 8,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-10-28",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "109-114"
+       },
+       {
+        "date": "2026-04-10",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "94-105"
+       },
+       {
+        "date": "2026-02-25",
+        "home": "Indiana Pacers",
+        "away": "Philadelphia 76ers",
+        "score": "114-135"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "ukChecked": true,
+     "odds": 1.23,
+     "best": 1.23,
+     "bestBook": "SportsGameOdds consensus",
+     "books": 1,
+     "opp": 4.31,
+     "draw": null,
+     "margin": 1.043,
+     "pricedAt": "2026-11-14T12:13:56Z",
+     "src": "SportsGameOdds, average of 1 bookmaker",
+     "sgoBooks": {
+      "SportsGameOdds consensus": 1.23
+     },
+     "implied": 0.813,
+     "pTested": 0.7668,
+     "fair": 0.7795,
+     "edge": -0.0568,
+     "basis": "model",
+     "firstOdds": 1.23,
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-15T12:17:48Z",
+     "lockPrice": {
+      "odds": 1.32,
+      "best": 1.32,
+      "book": "SportsGameOdds consensus",
+      "at": "2026-11-14T20:46:16Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-14T17:26:41Z",
+   "archivedAt": "2026-11-14T20:46:16Z"
+  }
+ ]
+}
