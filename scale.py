@@ -47,9 +47,11 @@ Three tiers, shown in that order (TIERS):
 Within a tier the order is the chance the Scale bet lands. Each UK day's
 picks are archived in scale-archive/<day>.json as they stood before their
 starts (a pick is replaced until it starts, never after), with the day's
-groups (KINDS): a double, threefold, fourfold and fivefold of Daily List
-picks only (GROUP_TIERS), most likely to land first, each frozen once its
-first leg starts. A day without two such picks has no group. Everything is graded from the records
+groups (KINDS): a double, threefold, fourfold and fivefold, most likely to
+land first, each frozen once its first leg starts: Daily List picks only
+(GROUP_TIERS), except football, whose legs come from every football fixture
+William Hill offers at FLOOR+ (GROUP_ANY_TIER, rule 4). A day without two
+such legs has no group. Everything is graded from the records
 score.py, score_tennis.py and sports.py write. A group is won when every leg
 landed its Scale bet; a void leg (a retirement) is settled on the rest. A
 group's return is only counted when every leg had a price.
@@ -72,9 +74,10 @@ from datetime import date, datetime, timedelta, timezone
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 ARCHIVE = "scale-archive"
-RULE = 3                    # the pick and group rule (estimated prices, 15 Nov 2026, are display and record only, no bump); bump on any change (1: Daily List picks only, football and tennis;
+RULE = 4                    # the pick and group rule (estimated prices, 15 Nov 2026, are display and record only, no bump); bump on any change (1: Daily List picks only, football and tennis;
                             # 2: three tiers, the margin sports, groups from the top of the tier order, football to win
-                            # and both score; 3: groups from Daily List picks only, football to win and over 2.5 goals)
+                            # and both score; 3: groups from Daily List picks only, football to win and over 2.5 goals;
+                            # 4: a group's football legs from every football fixture at FLOOR+ that William Hill offers)
 LIVE_FROM = "2026-11-15"    # the tab's first day; earlier days are filled once from the pre-start archives and tallied apart
 BOOK = "William Hill"
 DAYS_AHEAD = 2              # UK days built: today and tomorrow
@@ -82,6 +85,13 @@ GLANCE_DAYS = 14            # days shown on the tab's glance strip
 FLOOR = 0.55                # the model's confidence in the winner: nothing under it is a Scale pick
 TARGET = 10                 # games a day: the "else" tier tops the day up to this many, never past it
 BAND_MIN = 30               # a confidence band's own rate needs this many graded picks; else a wider band
+# 15 Nov 2026, Douglas: "I want you to scour all football fixtures and pick from those. We need to widen the
+# pool, otherwise there's not enough to choose from." A group's football legs come from every football candidate
+# still to start (any tier, FLOOR+, a game William Hill offers), ranked with the rest by the chance its own bet lands:
+# football's chance is the model's number for that fixture, so a weaker winner with a low-scoring outlook ranks low
+# by itself. Other sports keep GROUP_TIERS. Such a leg is added to the day's picks (tier as found) so it is
+# archived, shown and graded like any other.
+GROUP_ANY_TIER = ("football",)
 GROUP_TIERS = ("list",)     # a group's legs: Daily List picks only. 15 Nov 2026, on the whole record: their Scale bet
                             # landed 207 of 320 times (65%) across the five sports against 524 of 1,098 (48%) for the
                             # reserve, so a reserve leg is a coin toss inside an accumulator (claude/scale-strong-legs-2026-11-15.md)
@@ -368,10 +378,11 @@ def replay_day(day, here, sample, proxy):
     top = [p for p in cands if p["tier"] != "else"]
     rest = sorted([p for p in cands if p["tier"] == "else"], key=rank)
     picks = top + rest[:max(0, TARGET - len(top))]
+    picks, groups = with_group_legs(picks, cands, early)
     return {"date": day, "rule": RULE, "replay": True,
             "picks": sorted(picks, key=lambda p: (p["start"], p["key"])),
             "off": sorted(off, key=lambda p: (p["start"], p["key"])),
-            "groups": build_groups(picks, early)}
+            "groups": groups}
 
 
 def choose(cands, old, now):
@@ -388,12 +399,24 @@ def choose(cands, old, now):
     return top + opened[:need]
 
 
+def with_group_legs(picks, cands, now):
+    """The day's picks and groups when a group may take a candidate the day's
+    top-up left out (GROUP_ANY_TIER): groups are built from the picks plus
+    those candidates, and any leg chosen from outside the picks joins them."""
+    have = {p["key"] for p in picks}
+    extra = [c for c in cands if c["key"] not in have and c.get("sport") in GROUP_ANY_TIER]
+    groups = build_groups(picks + extra, now)
+    legs = {k for g in groups for k in g["legs"]}
+    return picks + [c for c in extra if c["key"] in legs], groups
+
+
 def build_groups(picks, now):
     """The day's groups from the Daily List picks still to start (GROUP_TIERS),
     most likely to land first: a double, threefold, fourfold and fivefold,
     each as far as those picks go. A day with fewer than two has no group;
     the reserve and the rest never fill one."""
-    cand = sorted([p for p in picks if parse_utc(p["start"]) > now and p.get("chance") and (p.get("tier") or "list") in GROUP_TIERS],
+    cand = sorted([p for p in picks if parse_utc(p["start"]) > now and p.get("chance")
+                   and ((p.get("tier") or "list") in GROUP_TIERS or p.get("sport") in GROUP_ANY_TIER)],
                   key=lambda p: (-p["chance"], p["start"], p["key"]))
     out = []
     for kind, k, name, sport in KINDS:
@@ -681,8 +704,8 @@ def build(now=None, here=HERE):
                 merged = replay_day(day, here, sample, proxy)
             else:
                 cands, off = day_picks(day, now, here, market_rows, sample)
-                picks = choose(cands, old, now)
-                merged = merge_day(old, picks, off, build_groups(picks, now), now, stamp)
+                picks, groups = with_group_legs(choose(cands, old, now), cands, now)
+                merged = merge_day(old, picks, off, groups, now, stamp)
                 merged["date"] = day
         except Exception as e:      # a bad archive never stops the days already on file
             print(f"scale: {day} not built ({type(e).__name__}: {e})", file=sys.stderr)
