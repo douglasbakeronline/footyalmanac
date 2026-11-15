@@ -5,6 +5,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-15-12: the office agents and Elena run on the Max-plan token when it is set (tag pending)
+
+**What changed:** `office-agents.yml` and `ceo.yml` pass only `CLAUDE_CODE_OAUTH_TOKEN` to the Claude action when that secret is set; the API key is passed only when it is the sole key. Before, both were passed and the action always used the API key.
+
+**Why:** the API key hit its $10 monthly cap at 00:24 UTC on 14 Nov. The agents' own logs report about $13 of usage from 5 to 13 Nov (about $2 a day at four sprints), and the context check read 25 picks on each of 12 and 13 Nov on the same key. Every sprint since has been refused in under a second. On the Max token the agents cost nothing extra and the key is left for the context check.
+
+**Needs the owner:** add the `CLAUDE_CODE_OAUTH_TOKEN` repository secret (`claude setup-token` on the Mac) if it is not set. Without it nothing changes.
+
+**Not changed:** `deploy.yml`, `context_review.py`, `DAILY_READS`, any Card rule.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-15-11: the office sprint skips a task whose pull request lost its labels (tag pending)
 
 **What changed:** `agents/pick_task.py` now also treats an objective as busy when an open pull request's branch is `office-agent/<date>-<key>`, read from the branch name (`branch_objectives`), not only from its `objective:` label.
