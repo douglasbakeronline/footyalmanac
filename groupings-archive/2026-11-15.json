@@ -1,6 +1,6 @@
 {
  "date": "2026-11-15",
- "published": "2026-11-15T12:17:48Z",
+ "published": "2026-11-15T12:24:47Z",
  "groups": [
   {
    "name": "Card 2x",
@@ -633,18 +633,18 @@
      "firstOdds": 1.35,
      "lastOdds": 1.35,
      "lastBest": 1.4,
-     "lastAt": "2026-11-15T12:17:48Z",
+     "lastAt": "2026-11-15T12:24:47Z",
      "lockPrice": {
       "odds": 1.35,
       "best": 1.4,
       "book": "Bet365",
-      "at": "2026-11-15T12:17:48Z"
+      "at": "2026-11-15T12:24:47Z"
      }
     }
    ],
    "status": "underway",
    "checked": "2026-11-15T09:17:22Z",
-   "archivedAt": "2026-11-15T12:17:48Z"
+   "archivedAt": "2026-11-15T12:24:47Z"
   }
  ]
 }
