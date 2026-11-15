@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T01:52:45Z",
+ "graded": "2026-11-15T02:00:20Z",
  "overall": {
   "groups": 130,
   "settled": 130,
@@ -86,10 +86,10 @@
    "ret": -0.0289
   },
   "notAtBook": {
-   "n": 55,
-   "won": 54,
-   "rate": 0.9818,
-   "quoted": 0.9131
+   "n": 56,
+   "won": 55,
+   "rate": 0.9821,
+   "quoted": 0.9123
   },
   "unchecked": {
    "n": 23,
@@ -108,8 +108,10 @@
      "ret": 0.1314
     },
     "notAtBook": {
-     "n": 0,
-     "won": 0
+     "n": 1,
+     "won": 1,
+     "rate": 1.0,
+     "quoted": 0.871
     },
     "unchecked": {
      "n": 7,
