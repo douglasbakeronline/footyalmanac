@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T13:40:47Z",
+ "graded": "2026-11-15T14:43:03Z",
  "overall": {
   "groups": 133,
   "settled": 130,
@@ -7,8 +7,8 @@
   "z": -1.12,
   "lost": 92,
   "pending": 3,
-  "legs": 503,
-  "legsWon": 364,
+  "legs": 505,
+  "legsWon": 366,
   "returned": 110.52,
   "staked": 130,
   "returnedBest": 115.13,
@@ -20,9 +20,9 @@
   "unitsReturnedBest": 128.37,
   "clv": {
    "n": 147,
-   "shortened": 58,
-   "drifted": 54,
-   "mean": 0.0009
+   "shortened": 57,
+   "drifted": 55,
+   "mean": 0.0004
   }
  },
  "cardLegsBySport": {
@@ -56,12 +56,12 @@
    "tripwire": false
   },
   "football": {
-   "legs": 31,
-   "landed": 22,
-   "expected": 20.89,
-   "rate": 0.7097,
-   "quoted": 0.674,
-   "z": 0.43,
+   "legs": 33,
+   "landed": 24,
+   "expected": 22.42,
+   "rate": 0.7273,
+   "quoted": 0.6795,
+   "z": 0.59,
    "tripwire": false
   },
   "rugby": {
@@ -86,16 +86,16 @@
    "ret": -0.0624
   },
   "notAtBook": {
-   "n": 60,
-   "won": 59,
-   "rate": 0.9833,
-   "quoted": 0.9127
+   "n": 62,
+   "won": 61,
+   "rate": 0.9839,
+   "quoted": 0.9079
   },
   "unchecked": {
-   "n": 23,
-   "won": 22,
-   "rate": 0.9565,
-   "quoted": 0.8714
+   "n": 25,
+   "won": 24,
+   "rate": 0.96,
+   "quoted": 0.8632
   },
   "bySport": {
    "football": {
@@ -108,16 +108,16 @@
      "ret": 0.1314
     },
     "notAtBook": {
-     "n": 1,
-     "won": 1,
+     "n": 3,
+     "won": 3,
      "rate": 1.0,
-     "quoted": 0.871
+     "quoted": 0.8004
     },
     "unchecked": {
-     "n": 7,
-     "won": 6,
-     "rate": 0.8571,
-     "quoted": 0.781
+     "n": 9,
+     "won": 8,
+     "rate": 0.8889,
+     "quoted": 0.7783
     }
    },
    "nba": {
@@ -264,7 +264,8 @@
    "ncaab|gonzaga bulldogs|lsu tigers|2026-11-14": 1.4,
    "ncaab|navy midshipmen|hampton pirates|2026-11-14": 0,
    "ncaab|pacific tigers|air force falcons|2026-11-14": 0,
-   "football|finland|san marino|2026-11-15": 1.04,
+   "football|finland|san marino|2026-11-15": 1.03,
+   "football|inter moengotapoe|flora|2026-11-15": 0,
    "football|new zealand|india|2026-11-15": 1.17,
    "football|diósgyőr ii|nyiregyhaza ii|2026-11-15": 0,
    "football|tatabánya|gyori eto ii|2026-11-15": 0,
@@ -343,8 +344,8 @@
    "z": -0.69,
    "lost": 21,
    "pending": 3,
-   "legs": 92,
-   "legsWon": 65,
+   "legs": 94,
+   "legsWon": 67,
    "returned": 22.13,
    "staked": 31,
    "returnedBest": 22.44,
@@ -356,9 +357,9 @@
    "unitsReturnedBest": 35.68,
    "clv": {
     "n": 77,
-    "shortened": 24,
-    "drifted": 28,
-    "mean": -0.0033
+    "shortened": 23,
+    "drifted": 29,
+    "mean": -0.0043
    }
   },
   "Card 3x": {
@@ -660,8 +661,8 @@
   "z": -0.17,
   "lost": 25,
   "pending": 3,
-  "legs": 111,
-  "legsWon": 74,
+  "legs": 113,
+  "legsWon": 76,
   "returned": 32.99,
   "staked": 37,
   "returnedBest": 33.45,
@@ -673,9 +674,9 @@
   "unitsReturnedBest": 44.6,
   "clv": {
    "n": 91,
-   "shortened": 31,
-   "drifted": 35,
-   "mean": -0.0017
+   "shortened": 30,
+   "drifted": 36,
+   "mean": -0.0026
   }
  },
  "cardWide": {
@@ -913,8 +914,8 @@
    "z": -0.86,
    "lost": 1,
    "pending": 3,
-   "legs": 1,
-   "legsWon": 0,
+   "legs": 3,
+   "legsWon": 2,
    "returned": 0,
    "staked": 1,
    "returnedBest": 0,
@@ -926,9 +927,9 @@
    "unitsReturnedBest": 0,
    "clv": {
     "n": 6,
-    "shortened": 1,
-    "drifted": 1,
-    "mean": 0.0005
+    "shortened": 0,
+    "drifted": 2,
+    "mean": -0.0128
    }
   }
  },
@@ -940,8 +941,8 @@
    "z": 0.24,
    "lost": 13,
    "pending": 3,
-   "legs": 62,
-   "legsWon": 45,
+   "legs": 64,
+   "legsWon": 47,
    "returned": 20.77,
    "staked": 21,
    "returnedBest": 21.01,
@@ -953,9 +954,9 @@
    "unitsReturnedBest": 32.16,
    "clv": {
     "n": 45,
-    "shortened": 13,
-    "drifted": 17,
-    "mean": 0.0033
+    "shortened": 12,
+    "drifted": 18,
+    "mean": 0.0016
    }
   },
   "Daytime": {
@@ -1084,9 +1085,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Diósgyőr II",
@@ -1102,8 +1103,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7726,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "1-0",
        "opp": 5.04
       },
       {
@@ -1120,8 +1121,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7577,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-0",
        "opp": 11.89
       },
       {
@@ -1194,7 +1195,7 @@
        "when": "2026-11-15T15:00:00Z",
        "odds": 1.23,
        "best": 1.23,
-       "lastOdds": 1.23,
+       "lastOdds": 1.31,
        "lockOdds": 1.23,
        "lockBest": 1.22,
        "lockBook": "William Hill",
@@ -1274,7 +1275,7 @@
        "when": "2026-11-15T21:00Z",
        "odds": 1.65,
        "best": 1.65,
-       "lastOdds": 1.62,
+       "lastOdds": 1.65,
        "lockOdds": 1.62,
        "lockBest": 1.62,
        "lockBook": null,
