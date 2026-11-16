@@ -11,6 +11,13 @@
 # Hours are UTC and cover both GMT and BST (UK = UTC+1 in summer):
 #   06-08 morning, 10-12 lunch, 15-17 evening, 20-22 night.
 # tests/test_briefing_watch.py fails if a slot falls outside these windows.
+#
+# 16 Nov 2026: GitHub shed these crons too (none of the nine 06-08 UTC runs
+# started that morning; the morning push was unsent at 08:36). So every
+# deploy run now ends by dispatching this workflow with wait=true
+# (deploy.yml `briefing-next`): it sleeps until the next unsent slot (at most
+# tools/briefing_watch.MAX_WAIT_MIN away), checks for up to LOOP_MIN minutes
+# and dispatches a deploy under the same rule. The crons stay as a backstop.
 name: Briefing watch
 on:
   schedule:
@@ -19,16 +26,24 @@ on:
     - cron: "5,25,45 15-17 * * *"
     - cron: "5,25,45 20-22 * * *"
   workflow_dispatch:
+    inputs:
+      wait:
+        description: "Sleep until the next unsent briefing slot, then check (tools/briefing_watch.py --wait)"
+        type: boolean
+        default: false
 permissions:
   contents: read
   actions: write        # to dispatch deploy.yml (a GITHUB_TOKEN dispatch does start a run)
+# A waiting run has its own group: a cron run arriving while one sleeps would
+# otherwise cancel the pending wait the next deploy queued.
 concurrency:
-  group: briefing-watch
+  group: briefing-watch-${{ inputs.wait && 'wait' || 'cron' }}
   cancel-in-progress: false
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    # a --wait run sleeps up to MAX_WAIT_MIN + LOOP_MIN (345); 6h is the cap
+    timeout-minutes: ${{ inputs.wait && 355 || 5 }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -46,4 +61,5 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
-        run: python3 tools/briefing_watch.py
+          WAIT: ${{ inputs.wait && '--wait' || '' }}
+        run: python3 tools/briefing_watch.py $WAIT

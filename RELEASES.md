@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-briefing-chain: each build starts the wait for the next briefing (tag pending)
+
+**What changed:** the briefings no longer wait on a scheduled run near their slot. Every deploy run ends by starting the briefing watchdog in wait mode: it sleeps until the next unsent slot (07:00, 11:00, 16:00, 21:00 UK) and dispatches the build that sends it, which starts the next wait.
+
+**Evidence:** GitHub shed the watchdog's own crons: none of the nine 06:05-08:45 UTC runs started on 16 Nov, the only morning deploy started at 06:14 UTC, and the morning push was unsent 96 minutes after its hour at 08:36 UTC (sent by a hand dispatch from the build session). `claude/briefing-chain-2026-11-16.md`.
+
+**Files:** `tools/briefing_watch.py` (`next_wait`, `wait_and_kick`, `--wait`), `.github/workflows/deploy.yml` (`briefing-next`), `.github/workflows/briefing-watch.yml` (`wait` input, timeout, concurrency per mode), `tests/test_briefing_watch.py`, `claude/briefing-chain-2026-11-16.md`, `CLAUDE.md`.
+
+**Not changed:** `notify.py`, the slots, the crons, any Card rule.
+
+**Roll back:** `git revert` the merge commit, or remove the `briefing-next` job.
+
 ## 2026-11-16-comp3: the Card's two-a-competition cap replayed on football-data too (tag pending)
 
 **What changed:** nothing on the page. `comp3` (three Card picks from one competition, pre-registered 10 Nov) now runs in the football-data replay of the model's-picks Card (`cardM7`, paired and pooled), so the 30 Nov review can gate it on both sides.
