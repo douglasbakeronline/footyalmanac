@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-2: every scale bet tracked across every sport (tag pending)
+
+**What changed:** the Scale tab has a new table, **Every scale bet**: for each sport, every way of scaling a winner the final score can settle (football's goals, to-nil and margin bets; tennis straight sets and games handicaps; each sport's points-handicap ladder), how often each landed by confidence band, for Daily List picks and over the last 28 days, with the price it needs. It updates on every build. Douglas: "can we track all of these across all sports please?"
+**Evidence:** first read on the whole record: football at 85%+ win by 2+ 82%, win and over 2.5 74%, win and both score 31%; tennis at 85%+ by 4+ games 84% against straight sets 78%; college basketball at 85%+ by 10+ 84%.
+**Files:** `scale_ladder.py` (new), `scale.py` (`ladder` in scale.json), `index.html` (`scLadder`), `tests/test_scale_ladder.py`, `claude/scale-every-bet-2026-11-16.md`, CLAUDE.md.
+**Not changed:** the Scale tab's own bets, picks and groups; any model; the record.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-briefing-on-the-hour: chained briefings dispatched on the slot's hour (tag pending)
 
 **What changed:** the briefing chain now dispatches the build at the slot's hour (07:00, 11:00, 16:00, 21:00 UK) instead of ten minutes after, so a chained push should land about five minutes after its hour. The nightly Card review's briefing table drops the stale "backup cron" advice and adds a line for the chain's own days from 17 Nov.
