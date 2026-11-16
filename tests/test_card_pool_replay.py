@@ -189,6 +189,40 @@ class PoolReplay(unittest.TestCase):
         self.assertEqual(skipped, {"estimate only": 1, "pending": 2})
         self.assertEqual({l["pick"] for l in by[DAY]}, {"Bea Roy", "Cara Fox", "Boston Celtics"})
 
+    def test_opposition_from_the_football_archive(self):
+        # 16 Nov 2026: a pool leg written before `opp` was kept takes the
+        # archive's pre-start average for the other side, and only that
+        arsenal = os.path.join(self.dir, f"pool-{DAY}.json.gz")
+        with gzip.open(arsenal, "rt") as f: d = json.load(f)
+        for r in d["legs"]:
+            if r["pick"] == "Arsenal": r.pop("opp", None); r.pop("draw", None)
+        with gzip.open(arsenal, "wt") as f: json.dump(d, f)
+        pred = tempfile.mkdtemp()
+        row = {"league": "en.1", "date": DAY, "home": "Arsenal", "away": "Burnley", "kickoff": f"{DAY}T15:00:00Z",
+               "published": f"{DAY}T09:00:00Z", "market": {"avg": [1.25, 6.0, 11.0]}}
+        late = dict(row, home="Leeds", away="Fulham", published=f"{DAY}T16:00:00Z", market={"avg": [1.5, 4.0, 3.0]})
+        with open(os.path.join(pred, f"{DAY}.json"), "w") as f: json.dump([row, late], f)
+        by, skipped = CR.pool_legs(pool_dir=self.dir, idx=self.idx, pred_dir=pred)
+        legs = {l["pick"]: l for l in by[DAY]}
+        self.assertEqual(legs["Arsenal"]["opp"], 11.0); self.assertEqual(legs["Arsenal"]["draw"], 6.0)
+        self.assertEqual(legs["Arsenal"]["oppFrom"], "archive")
+        self.assertEqual(legs["Leeds"]["opp"], 9.2)            # its own price stands; the late archive row is never read
+        self.assertNotIn("oppFrom", legs["Leeds"])
+        self.assertEqual(skipped["opposition price from the football archive (kept)"], 1)
+        # without the archive the leg has no opposition price, as before
+        by, _ = CR.pool_legs(pool_dir=self.dir, idx=self.idx)
+        self.assertIsNone({l["pick"]: l for l in by[DAY]}["Arsenal"].get("opp"))
+
+    def test_archive_opp_away_side_and_publish_time(self):
+        aidx = {("en.1", DAY, "A", "B"): [5.0, 4.0, 1.6]}
+        self.assertEqual(CR.archive_opp({"sport": "football", "code": "en.1", "when": f"{DAY}T15:00Z", "home": "A", "away": "B", "pick": "B", "side": "a"}, aidx), (5.0, 4.0))
+        self.assertIsNone(CR.archive_opp({"sport": "nba", "code": "en.1", "when": f"{DAY}T15:00Z", "home": "A", "away": "B", "pick": "B"}, aidx))
+        pred = tempfile.mkdtemp()
+        with open(os.path.join(pred, f"{DAY}.json"), "w") as f:
+            json.dump([{"league": "en.1", "date": DAY, "home": "A", "away": "B", "kickoff": f"{DAY}T15:00:00Z", "published": f"{DAY}T15:30:00Z",
+                        "market": {"avg": [1.2, 6, 12]}}], f)
+        self.assertEqual(CR.archive_opp_index(pred), {})
+
     def test_pool_market_prefers_row_then_block(self):
         self.assertIsNone(CR.pool_market({"est": True, "odds": 1.3}))
         self.assertEqual(CR.pool_market({"est": True, "odds": 1.3, "priced": {"odds": 1.4, "fair": 0.7}})["odds"], 1.4)

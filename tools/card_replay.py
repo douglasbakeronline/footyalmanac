@@ -74,6 +74,44 @@ IDX = {"h": 0, "d": 1, "a": 2}
 CORE = {c for c, m in E.LEAGUES.items() if not c.startswith("af.") and not m.get("cup") and not m.get("international")}
 POOL_FROM = "2026-10-30"     # the first pool file; archive_pool shipped 30 Oct 2026
 POOL_DIR = os.path.join(HERE, "groupings-archive")
+PRED_DIR = os.path.join(HERE, "predictions")
+
+
+def archive_opp_index(pred_dir=PRED_DIR, since=POOL_FROM):
+    """(league, date, home, away) -> the football archive's average 1X2
+    prices, from rows published before their kick-off (16 Nov 2026). The pool
+    kept no opposition price before 6 Nov (`opp` joined the pool's keys then),
+    so 382 priced football legs from 30 Oct to 9 Nov could not be read by any
+    variant with an opposition condition (rule6 and its family, m7opp5,
+    m7opp9): each faulted "no bookmaker price for the opposition". The
+    archive's `market` is the same API-Football average, written when the
+    build published the row; on the 246 legs that carry both it agrees with
+    the pool's own price on the 5.0 and 9.0 lines 91% of the time (median
+    difference 0). Later files overwrite earlier ones, so the latest
+    pre-start copy stands."""
+    out = {}
+    if not pred_dir or not os.path.isdir(pred_dir): return out
+    for f in sorted(os.listdir(pred_dir)):
+        if not f.endswith(".json") or f[:10] < since: continue
+        try: rows = json.load(open(os.path.join(pred_dir, f)))
+        except (OSError, ValueError): continue
+        for x in rows if isinstance(rows, list) else []:
+            mk = x.get("market") or {}
+            avg = mk.get("avg")
+            if not avg or len(avg) != 3 or not x.get("kickoff") or (x.get("published") or "") > x["kickoff"]: continue
+            out[(x.get("league"), x.get("date"), x.get("home"), x.get("away"))] = avg
+    return out
+
+
+def archive_opp(row, aidx):
+    """The opposition's and the draw's average price for a football pool row
+    from the archive index, or None."""
+    if row.get("sport") != "football" or not aidx: return None
+    avg = aidx.get((row.get("code"), (row.get("when") or "")[:10], row.get("home"), row.get("away")))
+    side = row.get("side") or ("h" if row.get("pick") == row.get("home") else "a")
+    if not avg or side not in ("h", "a"): return None
+    o = avg[2 - IDX[side]]
+    return (round(o, 2), round(avg[1], 2) if avg[1] else None) if o else None
 
 
 def pool_market(row, closing=False, recover=False):
@@ -108,12 +146,16 @@ near = G._near
 settle_pool = G.settle_pool
 
 
-def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None, recover=False):
+def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None, recover=False, pred_dir=None):
     """Pool rows -> settled legs in groupings' shape, by Card day, with a
     tally of what was left out and why (and, with recover, how many legs
-    were taken at their last price)."""
+    were taken at their last price). A football leg with no opposition price
+    takes the football archive's (archive_opp, 16 Nov 2026); pred_dir defaults
+    to predictions/ only for the live pool, so a test's pool reads no disk."""
     idx = idx or G.results_index(); names = name_indexes(idx)
-    by, skipped, recovered = defaultdict(list), defaultdict(int), 0
+    if pred_dir is None and pool_dir == POOL_DIR: pred_dir = PRED_DIR
+    aidx = archive_opp_index(pred_dir) if pred_dir else {}
+    by, skipped, recovered, oppfill = defaultdict(list), defaultdict(int), 0, 0
     # 13 Nov 2026: one row a fixture (G.pool_rows): a fixture moved to another
     # day was counted twice, once on the day it was not played
     for d, row in G.pool_rows(pool_dir):
@@ -122,6 +164,11 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
         if mk is None:
             skipped["estimate only"] += 1; continue
         if mk.get("recovered"): recovered += 1
+        if not mk.get("opp"):
+            ao = archive_opp(row, aidx)
+            if ao:
+                mk = dict(mk, opp=ao[0], oppFrom="archive")
+                if ao[1] and not mk.get("draw"): mk["draw"] = ao[1]
         l = dict(row, **mk, est=False)
         # 14 Nov 2026: an order of play published before the start clears the estimate
         l["timeEst"] = G.pool_time_est(row)
@@ -131,6 +178,7 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
         if st not in ("won", "lost"):
             skipped[st] += 1; continue
         l["won"] = st == "won"; l["result"] = res
+        if l.get("oppFrom") == "archive": oppfill += 1
         l["core"] = G.core_league(l.get("code")) if l.get("sport") == "football" else False
         l.setdefault("hit", l.get("pTested") or l.get("p"))
         # the bookmakers' chance is the archived one (honest() would refit it
@@ -142,6 +190,7 @@ def pool_legs(since=None, until=None, closing=False, pool_dir=POOL_DIR, idx=None
         else: skipped["no time"] += 1
     skipped = dict(skipped)
     if recovered: skipped["recovered, counted at the last price"] = recovered
+    if oppfill: skipped["opposition price from the football archive (kept)"] = oppfill
     return by, skipped
 
 
