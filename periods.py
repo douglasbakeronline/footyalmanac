@@ -31,7 +31,9 @@ from datetime import date, datetime, timedelta
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(HERE, "periods")
-LOOKBACK = 10        # days of graded fixtures looked for on each run
+LOOKBACK = 180       # days of graded fixtures looked for on each run (10 until 16 Nov 2026: sources
+                     # now fills older day files' half times once, HT_BACK_DAYS, so the season fills in)
+MISSED = "missed.json"   # fixtures tried against a day file with half times and not matched: never tried again
 
 
 def _load(path, default=None):
@@ -90,13 +92,19 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
             files[path] = _load(path, {}) or {}
         if key_of(g) in files[path]:
             have.add(key_of(g))
-    want = [g for g in graded if key_of(g) not in have]
+    mpath = os.path.join(here, "periods", MISSED)
+    missed = {k: d for k, d in (_load(mpath, {}) or {}).items() if d >= since}
+    want = [g for g in graded if key_of(g) not in have and key_of(g) not in missed]
     if not want:
         return 0, 0, []
     dates = {date.fromisoformat(g["date"]) + timedelta(days=o) for g in want for o in (-1, 0, 1)}
     days = cached_days(cache_dir or S.AF_CACHE_DIR, dates)
-    if not days:
-        log.append("periods: no cached day files with half-time scores yet")
+    # Only fixtures whose own day has half times on file are tried; the rest wait for sources to fill it.
+    ready = {t.date().isoformat() for t, *_ in days.values() if t}
+    want = [g for g in want if g["date"] in ready]
+    if not days or not want:
+        log.append("periods: no cached day files with half-time scores yet" if not days else
+                   "periods: no new graded fixtures on days with half-time scores")
         return len(want), 0, []
     index = [(fid, t, h, a) for fid, (t, h, a, _, _) in days.items()]
 
@@ -117,7 +125,13 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
         files[path][key_of(g)] = [ht[0], ht[1], ft[0], ft[1], int(fid)]
         touched.add(path)
         found += 1
+    for i, g in enumerate(want):
+        if key_of(g) not in files[os.path.join(here, "periods", f"football-{g['date'][:7]}.json")]:
+            missed[key_of(g)] = g["date"]
     os.makedirs(os.path.join(here, "periods"), exist_ok=True)
+    with open(mpath + ".tmp", "w", encoding="utf-8") as f:
+        json.dump(dict(sorted(missed.items())), f, separators=(",", ":"), ensure_ascii=False)
+    os.replace(mpath + ".tmp", mpath)
     for path in touched:
         tmp = path + ".tmp"
         with open(tmp, "w", encoding="utf-8") as f:

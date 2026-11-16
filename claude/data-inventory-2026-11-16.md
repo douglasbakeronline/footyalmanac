@@ -14,7 +14,7 @@ read only by the script that needs it, so its size does not slow a build.
 |---|---|---|---|---|
 | Football predictions as published (every fixture, chances, expected goals, tier, list flag, prices where known) | `predictions/<date>.json` | 20 Aug 2026 | 37 MB (85 days) | ~0.4 MB a day on disk, ~0.1 MB in git |
 | Football results, graded | `record-graded.json` (full), `record.json` (summary) | 20 Aug 2026 | 5.2 MB | ~40 KB a day |
-| Football half-time scores, for graded fixtures | `periods/football-YYYY-MM.json` | **16 Nov 2026, new** | 0 | ~2 KB a day |
+| Football half-time scores, for graded fixtures | `periods/football-YYYY-MM.json` | **16 Nov 2026, new; this season back to June filled in over the next few scheduled builds (QA, 16 Nov)** | 0 | ~2 KB a day |
 | Football markets (both score, goals lines, win and over 2.5, to nil, double chance, draw no bet, team to score): the model's number and prices | `predictions-markets/<date>.json.gz` | 14 Nov 2026 | 128 KB | ~40 KB a day |
 | Football extra bookmaker lines (Asian handicap, handicap result, half-time/full-time, half winners, first-half goals, team totals, win both halves, clean sheets), average and William Hill | inside the same rows, key `x` | **16 Nov 2026, new** | | ~20 KB a day compressed |
 | Football results by competition, the season so far | `current/` | Sep 2026 | 1.3 MB | replaced, not grown |
