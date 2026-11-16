@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-16: the Doc Brown ribbon made thick
+
+**What changed:** the 45-degree ribbon is thick again and sits against the right edge of the red panel, the quote on three lines and mostly readable (Douglas). Same on the Mailer page.
+**Evidence:** checked on the live page at 1178px and 918px covers.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-15: Google Analytics connected directly, tabs reported to it (tag pending)
 
 **For a reader:** nothing visible. Google Analytics showed "No data received" for the Sports Almanac stream: the Tag Manager container on the site holds no Google tag, so nothing was passed on. GA4 (`G-35788M25WE`) now loads straight after Tag Manager on every page (main page, Analysis, the Mailer), and every tab opened is sent to it as a `tab_view` event with `tab`, `tab_name` and `page_path`, so no Tag Manager setup is needed. Do not also add a Google tag for G-35788M25WE inside Tag Manager: every view would count twice.
