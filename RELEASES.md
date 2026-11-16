@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-18: the ribbon's quote shortened and filled to the edges
+
+**What changed:** the ribbon reads "Wait a minute, Doc. Are you telling me that you built a time machine?" on four larger lines that run almost edge to edge of the band, a letter or two clipped (Douglas). The red panel now clips the band, so it looks the same behind the black rows at every width. Same on the Mailer page.
+**Evidence:** checked on the live page at 1178px and 918px covers.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-17: the ribbon quotes Marty, centred
 
 **What changed:** the corner ribbon now reads "Wait a minute, Doc. Are you telling me that you built a time machine... out of a DeLorean?" on five lines, each centred on the visible part of the band, so the whole line reads (Douglas). Same on the Mailer page.
