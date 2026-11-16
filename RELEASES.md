@@ -49,6 +49,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** the Scale rule, the groups' selection, any number on the record.
 
 **Roll back:** `git revert` the merge commit.
+## 2026-11-16-5: two-row navigation, Doc Brown on the flash, and a responsible-gambling footer (tag pending)
+
+**What changed:** the tab bar under the cover is now two rows (Douglas chose option 4 of the navigation mock-ups). Row one holds the Almanac's sections, Daily List, Bets, Scale, Starred, How it went, Analysis and HQ, in italic Anton on black like the 2026 band, split by slashes, the open one in white with a yellow underline. Row two is a yellow strip holding the sports, the open one reversed out in black. Both rows centre on desktop and scroll sideways on a phone; the bar stays sticky. The corner flash on the red stat panel now reads "Roads? Where we're going, we don't need roads." on a wider band at a shallower angle, so the whole line sits inside the panel. Every page (the Almanac and Analysis) ends with an 18+ "Keep it a game" banner: GamCare, BeGambleAware and GamStop.
+**Evidence:** checked in a browser against the live data at 1180px and at 400px: every tab opens its board (Football tested), hidden sports stay hidden, the quote clears the last stat cell, the phone rows scroll.
+**Not changed:** what any tab shows, the cover above the bar, the click handling (`#views` and each button's `data-view` are as before). Mailer has no page yet, so it has no tab.
+**Files:** `index.html`, `analysis.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-4: the site moves to sportsalmanac.bet (tag pending)
 
 **What changed:** the site is served at https://sportsalmanac.bet/ (registered at Hostinger; four GitHub Pages A records and a `www` CNAME to `douglasbakeronline.github.io`; the custom domain set in Settings > Pages). The links the build writes into the day list, notifications, the free-prices user agent and the Julius export now point there. The old `douglasbakeronline.github.io/footyalmanac/` address redirects to the new one, so shared links keep working.

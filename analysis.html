@@ -380,6 +380,47 @@ footer{margin-top:56px;padding-top:18px;border-top:1px solid var(--rule);font-si
 footer a{color:var(--ink-2)}
 footer p{margin-top:10px;line-height:1.6}
 footer b{color:var(--ink-2)}
+
+/* ---------- the two-row nav (16 Nov 2026, Douglas: option 4 of the nav mock-ups) ----------
+   Row one, the Almanac's sections, set like the year band above it: italic Anton
+   in yellow on black, split by slashes, the open one white with a yellow
+   underline. Row two, the sports, on a yellow strip: ink type, the open one
+   reversed out. Same buttons and data-view as before, so nothing that reads
+   #views changes. Both rows centre on desktop and scroll sideways on a phone. */
+#views.almanac{display:block;background:#100e0c;border:1px solid #100e0c;border-top:0}
+#views.almanac .nav-sections,#views.almanac .nav-sports{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+#views.almanac .nav-sections > *{position:relative;flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;
+  background:transparent;border:0;color:var(--yellow);font-family:var(--f-display);font-style:italic;font-weight:400;
+  font-size:22px;letter-spacing:.01em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sections > * + *::before{content:"/";position:absolute;left:-4px;color:#5a524a;font-style:normal;pointer-events:none}
+#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
+  text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:6px}
+#views.almanac .nav-sections > :hover{color:#fff}
+#views.almanac .nav-sports{background:var(--yellow);border-top:1px solid #100e0c}
+#views.almanac .nav-sports > *{flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;background:transparent;
+  border:0;color:#100e0c;font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > .nav-on{background:#100e0c;color:var(--yellow)}
+#views.almanac .nav-sports > :hover{text-decoration:underline;text-underline-offset:4px}
+#views.almanac button:focus-visible,#views.almanac a:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+#views.almanac .nav-sports > :focus-visible{outline-color:#100e0c}
+#views.almanac [hidden]{display:none}
+@media (max-width:860px){
+  #views.almanac{overflow:visible}
+  #views.almanac .nav-sections,#views.almanac .nav-sports{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
+  #views.almanac .nav-sections::-webkit-scrollbar,#views.almanac .nav-sports::-webkit-scrollbar{display:none}
+  #views.almanac .nav-sections > *{font-size:17px;padding:0 11px}
+  #views.almanac .nav-sports > *{padding:0 11px}
+}
+/* ---------- responsible gambling, at the foot of every page (16 Nov 2026, Douglas) ---------- */
+.rg{margin-top:32px;display:flex;flex-wrap:wrap;border:1px solid #100e0c;background:var(--surface)}
+.rg-age{flex:0 0 auto;display:flex;align-items:center;background:#100e0c;color:var(--yellow);font-family:var(--f-display);
+  font-weight:400;font-size:40px;line-height:1;padding:16px 22px}
+.rg-copy{flex:1 1 220px;min-width:0;padding:14px 20px}
+.rg-copy h2{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.03em;text-transform:uppercase;margin:0}
+.rg-copy p{margin-top:6px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.rg-copy a{color:var(--home)}
 </style>
 <style>
 /* ---------- Almanac Analysis (6 Oct 2026) ----------
@@ -490,22 +531,27 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 <!-- 25 Oct 2026, Douglas: the Almanac's tab bar stays as it is on this page.
      Each tab links back to that board (index.html#<view>); sport tabs hide by
      the same rule as on the Almanac (no games and nothing graded). -->
-<nav class="views" id="views" aria-label="Boards">
-  <a class="hq-link" href="./">Daily List</a>
-  <a class="hq-link" href="./#today">Bets</a>
-  <a class="hq-link" href="./#fixtures">Football</a>
-  <a class="hq-link" href="./#tennis">Tennis</a>
-  <a class="hq-link" href="./#sport:nfl" data-sport="nfl">NFL</a>
-  <a class="hq-link" href="./#sport:nba" data-sport="nba">Basketball</a>
-  <a class="hq-link" href="./#sport:rugby" data-sport="rugby">Rugby</a>
-  <a class="hq-link" href="./#sport:nhl" data-sport="nhl">Ice hockey</a>
-  <a class="hq-link" href="./#sport:cfb" data-sport="cfb">College football</a>
-  <a class="hq-link" href="./#sport:ncaab" data-sport="ncaab">College basketball</a>
-  <a class="hq-link" href="./#sport:nrl" data-sport="nrl">Rugby league</a>
-  <a class="hq-link" href="./#starred">Starred</a>
-  <a class="hq-link" href="./#results">How it went</a>
-  <span class="hq-link nav-on" aria-current="page">Analysis</span>
-  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
+<nav class="views almanac" id="views" aria-label="Boards">
+ <div class="nav-sections">
+   <a href="./">Daily List</a>
+   <a href="./#today">Bets</a>
+   <a href="./#scale">Scale</a>
+   <a href="./#starred">Starred</a>
+   <a href="./#results">How it went</a>
+   <span class="nav-on" aria-current="page">Analysis</span>
+   <a href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
+ </div>
+ <div class="nav-sports">
+   <a href="./#fixtures">Football</a>
+   <a href="./#tennis">Tennis</a>
+   <a href="./#sport:nfl" data-sport="nfl">NFL</a>
+   <a href="./#sport:nba" data-sport="nba">Basketball</a>
+   <a href="./#sport:rugby" data-sport="rugby">Rugby</a>
+   <a href="./#sport:nhl" data-sport="nhl">Ice hockey</a>
+   <a href="./#sport:cfb" data-sport="cfb">College football</a>
+   <a href="./#sport:ncaab" data-sport="ncaab">College basketball</a>
+   <a href="./#sport:nrl" data-sport="nrl">Rugby league</a>
+ </div>
 </nav>
 <script src="sports-data.js"></script>
 <script src="sports-record.js"></script>
@@ -608,6 +654,15 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 </div>
 
 <footer id="footer"></footer>
+<aside class="rg" aria-label="Gambling responsibly">
+  <b class="rg-age">18+</b>
+  <div class="rg-copy">
+    <h2>Keep it a game</h2>
+    <p>Every pick can lose. Decide your limit before you bet and never chase a loss. Free, confidential help:
+      GamCare <b>0808 8020 133</b> · <a href="https://www.begambleaware.org">BeGambleAware.org</a> ·
+      <a href="https://www.gamstop.co.uk">GamStop</a></p>
+  </div>
+</aside>
 </div>
 <script>
 /* Almanac Analysis. Reads record.json, which score.py writes on every build:
