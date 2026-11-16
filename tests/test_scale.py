@@ -257,6 +257,24 @@ class MergeDay(unittest.TestCase):
         m = S.merge_day({"rule": S.RULE, "picks": ps, "groups": [done, half]}, ps, [], [], NOW, "t")
         self.assertEqual(sorted(str(g["kind"]) for g in m["groups"]), ["2", "f3"])   # frozen under this rule: stands
 
+    def test_a_frozen_groups_leg_from_outside_the_picks_stays_on_file(self):
+        # 16 Nov 2026: the fourfold froze at 13:00 with Cuba v Grenada, a football leg taken from outside the
+        # picks (rule 4); a later build's groups no longer used it, it was not on the picks, and it was dropped,
+        # so the frozen group could never grade.
+        ps = [pick("e", "2026-11-15T09:00:00Z", 0.6, 1.6), pick("a", "2026-11-15T15:00:00Z", 0.3, 3.0)]
+        x = pick("x", "2026-11-15T18:00:00Z", 0.7, None, sport="football", tier="else")
+        frozen = {"kind": 3, "name": "Scale threefold", "legs": ["e", "a", "x"], "first": "2026-11-15T09:00:00Z", "chance": 0.1, "price": None}
+        m = S.merge_day({"rule": S.RULE, "picks": ps + [x], "groups": [frozen]}, ps, [], [], NOW, "t")
+        self.assertEqual([g["kind"] for g in m["groups"]], [3])
+        self.assertIn("x", [p["key"] for p in m["picks"]])
+
+    def test_a_frozen_groups_lost_leg_is_taken_back_from_the_days_candidates(self):
+        ps = [pick("e", "2026-11-15T09:00:00Z", 0.6, 1.6)]
+        x = pick("x", "2026-11-15T18:00:00Z", 0.7, None, sport="football", tier="else")
+        frozen = {"kind": 2, "name": "Scale double", "legs": ["e", "x"], "first": "2026-11-15T09:00:00Z", "chance": 0.4, "price": None}
+        m = S.merge_day({"rule": S.RULE, "picks": ps, "groups": [frozen]}, ps, [], [], NOW, "t", pool=[x])
+        self.assertIn("x", [p["key"] for p in m["picks"]])
+
     def test_left_off_never_lists_a_pick_that_is_on(self):
         off = [{"key": "a", "start": "2026-11-15T15:00:00Z", "comp": "X", "pick": "Ha"}, {"key": "z", "start": "2026-11-15T15:00:00Z", "comp": "X", "pick": "Hz"}]
         m = S.merge_day({}, [pick("a", "2026-11-15T15:00:00Z", 0.3, 3.0)], off, [], NOW, "t")

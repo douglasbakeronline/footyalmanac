@@ -444,7 +444,7 @@ def build_groups(picks, now):
     return out
 
 
-def merge_day(old, picks, off, groups, now, stamp):
+def merge_day(old, picks, off, groups, now, stamp, pool=None):
     """The day's archive after this build. A pick, and a left-off entry, is
     replaced until it starts and kept as it stood from then on. One that has
     started and is not on file is still added: every field of it comes from
@@ -452,21 +452,30 @@ def merge_day(old, picks, off, groups, now, stamp):
     a missed build loses nothing (`choose` never passes a started "else"
     pick). A group is replaced until its first leg starts, and is never built
     from a leg that has started; one frozen under an earlier rule is kept only
-    when all its legs have started."""
+    when all its legs have started. A frozen group's legs always stay on
+    file (16 Nov 2026, QA): a football leg taken from outside the picks
+    (GROUP_ANY_TIER) is no pick of its own, and once a later build's groups
+    stopped using it, it was dropped and the group could never grade; one
+    already lost is taken back from `pool`, the day's candidates."""
     started = lambda s: (parse_utc(s) or now) <= now
     old = old or {}
     keep = [p for p in old.get("picks") or [] if started(p["start"])]
     keys = {p["key"] for p in keep}
     new_picks = keep + [p for p in picks if p["key"] not in keys]
     have = {p["key"] for p in new_picks}
+    old_rule = old.get("rule") or 1
+    frozen_legs = {k for g in old.get("groups") or [] if started(g["first"])
+                   and ((g.get("rule") or old_rule) >= RULE or all(k in keys for k in g["legs"])) for k in g["legs"]}
+    for p in list(old.get("picks") or []) + list(pool or []):
+        if p["key"] in frozen_legs and p["key"] not in have:
+            new_picks.append(p); have.add(p["key"])
     off_keep = [p for p in old.get("off") or [] if started(p["start"]) and p["key"] not in have]
     okeys = {p["key"] for p in off_keep} | have
     new_off = off_keep + [p for p in off if p["key"] not in okeys]
     # A frozen group stands as published. One frozen under an earlier rule stands only if every leg has
     # started: a leg still to start is replaced by this rule's pick (rule 3 changed football's bet), and the
     # group would then show, and grade by, a bet it was never built from.
-    old_rule = old.get("rule") or 1
-    begun = {p["key"] for p in keep}
+    begun = keys
     frozen = {g["kind"]: g for g in old.get("groups") or [] if started(g["first"])
               and ((g.get("rule") or old_rule) >= RULE or all(k in begun for k in g["legs"]))}
     new_groups = list(frozen.values())
@@ -705,7 +714,7 @@ def build(now=None, here=HERE):
             else:
                 cands, off = day_picks(day, now, here, market_rows, sample)
                 picks, groups = with_group_legs(choose(cands, old, now), cands, now)
-                merged = merge_day(old, picks, off, groups, now, stamp)
+                merged = merge_day(old, picks, off, groups, now, stamp, pool=cands)
                 merged["date"] = day
         except Exception as e:      # a bad archive never stops the days already on file
             print(f"scale: {day} not built ({type(e).__name__}: {e})", file=sys.stderr)

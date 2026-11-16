@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-4: a frozen Scale group keeps every leg it was built from (tag pending)
+
+**For a reader:** today's Scale fourfold (frozen at 13:00) showed a leg, Cuba v Grenada, that had dropped off the day's picks, so it could never settle and would have sat "pending" for good. Under rule 4 a group's football legs can come from outside the day's picks; when a later build's groups stopped using such a leg, it was no longer kept, while the frozen group still named it. A frozen group's legs now always stay on file, and one already lost is taken back from the day's candidates, so today's file repairs itself on the next build.
+
+**Evidence:** `scale-archive/2026-11-16.json` (fourfold leg `f|concacaf.nations|2026-11-16|Cuba|Grenada` not in `picks`); `scale.py` run on the committed files with the fix puts it back. Found by the QA review (`claude/qa-review-2026-11-16.md`).
+
+**Files:** `scale.py` (`merge_day`, `pool`), `tests/test_scale.py` (two tests).
+
+**Not changed:** the Scale rule, the groups' selection, any number on the record.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-16-3: half-time and quarter scores, bookmaker lines and the model's rating gap kept for every sport (tag pending)
 
 **What changed:** more of every game is now kept for later analysis, at no extra API cost. Football: the half-time score of every graded fixture (`periods/`, from the API-Football day sweep already made) and the bookmakers' extra lines for our fixtures (Asian handicap, handicap result, half-time/full-time, half winners, first-half goals, team totals, win both halves, clean sheets; average and William Hill, `x` in the markets archive). NBA, NFL, rugby, college sports, baseball, WNBA: points by period for every final game and ESPN's line (spread, total, money lines) in `history-sports/`, and on each prediction the rating gap it rests on (`eloDiff`) and the line at the time. A data inventory lists what is kept and what is not. Douglas: "we need to make sure we get to the level where everything is captured."
