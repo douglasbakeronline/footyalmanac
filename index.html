@@ -822,6 +822,54 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 }
 .views button:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
 
+/* ---------- the two-row nav (16 Nov 2026, Douglas: option 4 of the nav mock-ups) ----------
+   Row one, the Almanac's sections, set like the year band above it: italic Anton
+   in yellow on black, split by slashes, the open one white with a yellow
+   underline. Row two, the sports, on a yellow strip: ink type, the open one
+   reversed out. Same buttons and data-view as before, so nothing that reads
+   #views changes. Both rows centre on desktop and scroll sideways on a phone. */
+#views.almanac{display:block;background:#100e0c;border:1px solid #100e0c;border-top:0}
+#views.almanac .nav-sections,#views.almanac .nav-sports{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+#views.almanac .nav-sections > *{position:relative;flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;
+  background:transparent;border:0;color:var(--yellow);font-family:var(--f-display);font-style:italic;font-weight:400;
+  font-size:22px;letter-spacing:.01em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sections > * + *::before{content:"/";position:absolute;left:-4px;color:#5a524a;font-style:normal;pointer-events:none}
+#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
+  text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:6px}
+#views.almanac .nav-sections > :hover{color:#fff}
+#views.almanac .nav-sports{background:var(--yellow);border-top:1px solid #100e0c}
+#views.almanac .nav-sports > *{flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;background:transparent;
+  border:0;color:#100e0c;font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > .nav-on{background:#100e0c;color:var(--yellow)}
+#views.almanac .nav-sports > :hover{text-decoration:underline;text-underline-offset:4px}
+#views.almanac button:focus-visible,#views.almanac a:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+#views.almanac .nav-sports > :focus-visible{outline-color:#100e0c}
+#views.almanac [hidden]{display:none}
+@media (max-width:860px){
+  #views.almanac{overflow:visible}
+  #views.almanac .nav-sections,#views.almanac .nav-sports{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
+  #views.almanac .nav-sections::-webkit-scrollbar,#views.almanac .nav-sports::-webkit-scrollbar{display:none}
+  #views.almanac .nav-sections > *{font-size:17px;padding:0 11px}
+  #views.almanac .nav-sports > *{padding:0 11px}
+}
+/* the corner flash carries Doc Brown's line (16 Nov 2026, Douglas): a wider band at a
+   shallower angle so the whole quote sits inside the red panel. ".meta .flash" because
+   ".meta div" (each stat cell's padding, alignment and divider) otherwise wins over ".flash".
+   Checked in a browser at 1180px: the quote clears "533 of 615 landed". Hidden under 700px as before. */
+.meta .flash{right:-172px;bottom:auto;top:50%;margin-top:-15px;width:520px;transform:rotate(-16deg);
+  padding:4px 0;text-align:center;border-right:0;min-width:0}
+.meta .flash span{font-size:10px;letter-spacing:.03em;line-height:1.25}
+/* ---------- responsible gambling, at the foot of every page (16 Nov 2026, Douglas) ---------- */
+.rg{margin-top:32px;display:flex;flex-wrap:wrap;border:1px solid #100e0c;background:var(--surface)}
+.rg-age{flex:0 0 auto;display:flex;align-items:center;background:#100e0c;color:var(--yellow);font-family:var(--f-display);
+  font-weight:400;font-size:40px;line-height:1;padding:16px 22px}
+.rg-copy{flex:1 1 220px;min-width:0;padding:14px 20px}
+.rg-copy h2{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.03em;text-transform:uppercase;margin:0}
+.rg-copy p{margin-top:6px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.rg-copy a{color:var(--home)}
+
 /* ---------- tennis ----------
    Deliberately reuses .row, .rank, .club, .stat, .bar, .tier, .conf, .ko,
    .day-head and .ruler as-is rather than a parallel .tXXX set — the first
@@ -1812,26 +1860,30 @@ footer b{color:var(--ink-2)}
     <h1><span class="a">Sports</span><span class="b">Almanac</span></h1>
     <div class="sub">Complete sports statistics</div>
     <div class="yr"><b id="window">—</b></div>
-    <div class="meta" id="meta"><div class="flash"><span>Football</span><span>Tennis</span><span>&amp; more soon</span></div></div>
+    <div class="meta" id="meta"><div class="flash" title="Doc Brown, Back to the Future (1985)"><span>Roads? Where we’re going,</span><span>we don’t need roads.</span></div></div>
   </div>
 </header>
-<nav class="views" id="views" aria-label="Boards">
-  <button data-view="list" aria-pressed="true">Daily List</button>
-  <button data-view="today" aria-pressed="false">Bets</button>
-  <button data-view="scale" aria-pressed="false">Scale</button>
-  <button data-view="starred" aria-pressed="false">Starred</button>
-  <button data-view="fixtures" aria-pressed="false">Football</button>
-  <button data-view="tennis" aria-pressed="false">Tennis</button>
-  <button data-view="sport:nfl" aria-pressed="false">NFL</button>
-  <button data-view="sport:nba" aria-pressed="false">Basketball</button>
-  <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
-  <button data-view="sport:nhl" aria-pressed="false">Ice hockey</button>
-  <button data-view="sport:cfb" aria-pressed="false">College football</button>
-  <button data-view="sport:ncaab" aria-pressed="false">College basketball</button>
-  <button data-view="sport:nrl" aria-pressed="false">Rugby league</button>
-  <button data-view="results" aria-pressed="false">How it went</button>
-  <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
-  <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
+<nav class="views almanac" id="views" aria-label="Boards">
+ <div class="nav-sections">
+   <button data-view="list" aria-pressed="true">Daily List</button>
+   <button data-view="today" aria-pressed="false">Bets</button>
+   <button data-view="scale" aria-pressed="false">Scale</button>
+   <button data-view="starred" aria-pressed="false">Starred</button>
+   <button data-view="results" aria-pressed="false">How it went</button>
+   <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
+   <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
+ </div>
+ <div class="nav-sports">
+   <button data-view="fixtures" aria-pressed="false">Football</button>
+   <button data-view="tennis" aria-pressed="false">Tennis</button>
+   <button data-view="sport:nfl" aria-pressed="false">NFL</button>
+   <button data-view="sport:nba" aria-pressed="false">Basketball</button>
+   <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
+   <button data-view="sport:nhl" aria-pressed="false">Ice hockey</button>
+   <button data-view="sport:cfb" aria-pressed="false">College football</button>
+   <button data-view="sport:ncaab" aria-pressed="false">College basketball</button>
+   <button data-view="sport:nrl" aria-pressed="false">Rugby league</button>
+ </div>
 </nav>
 <section class="lede" id="fbLede" hidden></section>
 <div class="note" id="note"></div>
@@ -1884,6 +1936,15 @@ footer b{color:var(--ink-2)}
 <section id="results" hidden></section>
 
 <footer id="footer"></footer>
+<aside class="rg" aria-label="Gambling responsibly">
+  <b class="rg-age">18+</b>
+  <div class="rg-copy">
+    <h2>Keep it a game</h2>
+    <p>Every pick can lose. Decide your limit before you bet and never chase a loss. Free, confidential help:
+      GamCare <b>0808 8020 133</b> · <a href="https://www.begambleaware.org">BeGambleAware.org</a> ·
+      <a href="https://www.gamstop.co.uk">GamStop</a></p>
+  </div>
+</aside>
 </div>
 
 <script src="data.js"></script>
