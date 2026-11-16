@@ -518,6 +518,7 @@ jobs:
           cp record.json _site/record.json
           cp markets-record.json _site/markets-record.json 2>/dev/null || true   # the football markets record (markets.py)
           cp analysis.html _site/analysis.html   # Almanac Analysis, reads record.json (6 Oct 2026)
+          cp mailer.html _site/mailer.html       # the Mailer sign-up page (16 Nov 2026)
           # The touch icons and the manifest are fetched by the device rather
           # than parsed out of the page, so they need to exist at real URLs or
           # a home-screen save falls back to a screenshot of the page.
