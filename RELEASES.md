@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-22: a later Card review run refreshes the day's issue (tag pending)
+
+**What changed:** the nightly Card review posted once a day and every later run posted nothing, so today's issue (#342, 12:02 UTC) said "no paired season read on file yet" although tune.yml had committed the football-data paired read at 13:16 and the review ran again at 19:41. A later run now rewrites the day's issue body when its files say something new, with a closing "Refreshed" line; it never opens a second review or a second integrity issue. The gate table also says "identical to live on the pool" (was "behind on the pool") and names an identical football-data season as identical.
+**Evidence:** the gate table rebuilt locally on today's files: no rule 7 variant passes; `m7opp5` is ahead on the pool (+0.79 a day, p(worse) 0.00, 33 legs of 100) and on 2026-27 (+0.67, 0.00) but 2025-26 misses at p(worse) 0.323; `m7under5`, `m7short`, `m7legs2`, `pay15` are behind live on football-data. No Card rule changed.
+**Files:** `tools/card_review_post.py` (`review_body`, `posted_issue`, `refreshed`, `unrefreshed`), `tests/test_card_review_post.py` (four tests).
+**Roll back:** `git revert`.
+
 ## 2026-11-16-21: paragraph copy runs the full width
 
 **What changed:** intro and explainer copy (the Daily List's lede, notes, prose, footers, empty states) now fills the width of its container on desktop instead of stopping at about half (Douglas). Every page.
