@@ -7,6 +7,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-19: ribbon line spacing and offsets set by hand
+
+**What changed:** the ribbon's quote lines sit closer (line height 1) and each line's offset along the band is Douglas's own (-25, -12, -1, -12px). Same on the Mailer page.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-18: the ribbon's quote shortened and filled to the edges
 
 **What changed:** the ribbon reads "Wait a minute, Doc. Are you telling me that you built a time machine?" on four larger lines that run almost edge to edge of the band, a letter or two clipped (Douglas). The red panel now clips the band, so it looks the same behind the black rows at every width. Same on the Mailer page.
