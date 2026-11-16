@@ -317,6 +317,12 @@ jobs:
       - name: Price and grade the football markets
         run: python3 markets.py || echo "::warning::markets failed; keeping the last record"
 
+      # Half-time scores for the football graded (periods.py, 16 Nov 2026):
+      # read from the API-Football day files already cached, no calls, kept in
+      # periods/football-YYYY-MM.json. Allowed to fail: nothing reads it yet.
+      - name: Keep the football half-time scores
+        run: python3 periods.py || echo "::warning::periods failed; nothing kept this run"
+
       # Scale (scale.py, 15 Nov 2026): Daily List winners with a second
       # condition added (football: and both teams score, only where William
       # Hill prices it, read from markets.py's archive; tennis: in straight
@@ -402,6 +408,7 @@ jobs:
           # the Scale list's picks and groups as published (scale.py)
           cp -r scale-archive /tmp/archive/ 2>/dev/null || true
           cp -r slip-archive /tmp/archive/ 2>/dev/null || true      # the slip as published (slip.py)
+          cp -r periods /tmp/archive/ 2>/dev/null || true           # football half-time scores (periods.py)
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -439,6 +446,10 @@ jobs:
               mkdir -p scale-archive
               cp -r /tmp/archive/scale-archive/. scale-archive/
             fi
+            if [ -d /tmp/archive/periods ]; then
+              mkdir -p periods
+              cp -r /tmp/archive/periods/. periods/
+            fi
             if [ -d /tmp/archive/slip-archive ]; then
               mkdir -p slip-archive
               cp -r /tmp/archive/slip-archive/. slip-archive/
@@ -450,7 +461,7 @@ jobs:
             git add -A predictions current record.json record-graded.json tennis-data.js \
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
-                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json scale-archive slip-archive 2>/dev/null) \
+                       $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json scale-archive slip-archive periods 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"

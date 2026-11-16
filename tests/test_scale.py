@@ -365,7 +365,7 @@ class Wiring(unittest.TestCase):
         self.assertIn("python3 scale.py", yml)
         self.assertIn("cp scale.js scale.json _site/", yml)
         self.assertGreater(yml.index("python3 scale.py"), yml.index("python3 markets.py"))
-        self.assertIn("markets-record.json scale-archive slip-archive 2>/dev/null", yml)
+        self.assertIn("markets-record.json scale-archive slip-archive periods 2>/dev/null", yml)
 
 
 if __name__ == "__main__":

@@ -318,6 +318,57 @@ NOT_PLAYED = ("STATUS_CANCELED", "STATUS_POSTPONED", "STATUS_ABANDONED",
               "STATUS_SUSPENDED", "STATUS_FORFEIT")
 
 
+def _periods(side):
+    """A competitor's points by period (quarter, half, inning, set) from ESPN's
+    linescores, or None. 16 Nov 2026: kept so half and quarter bets can be
+    settled later (claude/data-capture-2026-11-16.md)."""
+    out = []
+    for p in side.get("linescores") or []:
+        v = p.get("value", p.get("displayValue")) if isinstance(p, dict) else p
+        try:
+            out.append(int(float(v)))
+        except (TypeError, ValueError):
+            return None
+    return out or None
+
+
+def _num(v):
+    try:
+        return float(str(v).replace("+", "")) if v not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
+
+
+def line_of(comp):
+    """The bookmaker's line ESPN shows on an event (its partner book, often
+    DraftKings), or None: the home spread (negative when home is favoured),
+    the total and both money lines, closing when shown, else opening. Free
+    with the scoreboard call already made. 16 Nov 2026."""
+    o = (comp.get("odds") or [None])[0]
+    if not isinstance(o, dict):
+        return None
+    ps, ml, tot = o.get("pointSpread") or {}, o.get("moneyline") or {}, o.get("total") or {}
+    pick = lambda blk: (blk.get("close") or blk.get("open") or {}) if isinstance(blk, dict) else {}
+    spread = _num(pick(ps.get("home")).get("line")) if ps.get("home") else None
+    if spread is None:
+        spread = _num(o.get("spread"))
+        # ESPN's bare "spread" is signed for the favourite in "details" ("CLE -9.5")
+        det = str(o.get("details") or "")
+        if spread is not None and det and o.get("homeTeamOdds", {}).get("favorite") is False:
+            spread = abs(spread)
+        elif spread is not None and det and o.get("homeTeamOdds", {}).get("favorite") is True:
+            spread = -abs(spread)
+    total = _num(pick(tot.get("over")).get("line", "").lstrip("ou")) if tot.get("over") else None
+    if total is None:
+        total = _num(o.get("overUnder"))
+    out = {"spread": spread, "total": total,
+           "mlH": _num(pick(ml.get("home")).get("odds")) if ml.get("home") else _num((o.get("homeTeamOdds") or {}).get("moneyLine")),
+           "mlA": _num(pick(ml.get("away")).get("odds")) if ml.get("away") else _num((o.get("awayTeamOdds") or {}).get("moneyLine")),
+           "by": (o.get("provider") or {}).get("name")}
+    out = {k: v for k, v in out.items() if v is not None}
+    return out if set(out) - {"by"} else None
+
+
 def _game(ev, feed):
     """One ESPN event -> a game dict, or None for anything unusable."""
     if (ev.get("season") or {}).get("type") in feed["skip"]:
@@ -339,12 +390,22 @@ def _game(ev, feed):
             hs, as_ = int(float(home.get("score"))), int(float(away.get("score")))
         except (TypeError, ValueError):
             final = False
-    return {"id": ev.get("id"), "when": comp.get("date") or ev.get("date"),
-            "feed": feed["path"], "label": feed["label"], "pool": feed["pool"],
-            "h": ht["id"], "hn": ht.get("displayName") or ht.get("name"),
-            "a": at["id"], "an": at.get("displayName") or at.get("name"),
-            "neutral": bool(comp.get("neutralSite")), "state": st.get("state"),
-            "final": final, "hs": hs, "as": as_}
+    g = {"id": ev.get("id"), "when": comp.get("date") or ev.get("date"),
+         "feed": feed["path"], "label": feed["label"], "pool": feed["pool"],
+         "h": ht["id"], "hn": ht.get("displayName") or ht.get("name"),
+         "a": at["id"], "an": at.get("displayName") or at.get("name"),
+         "neutral": bool(comp.get("neutralSite")), "state": st.get("state"),
+         "final": final, "hs": hs, "as": as_}
+    # 16 Nov 2026: points by period for a final game (hp / ap), the line ESPN
+    # shows (line). Extra keys: nothing that reads a game needs them.
+    if final:
+        hp, ap = _periods(home), _periods(away)
+        if hp and ap and len(hp) == len(ap):
+            g["hp"], g["ap"] = hp, ap
+    ln = line_of(comp)
+    if ln:
+        g["line"] = ln
+    return g
 
 
 def _hist_path(feed):
@@ -781,6 +842,11 @@ def build(start=None):
                    "confidence": round(conf, 4), "tier": tier_of(conf),
                    "eloH": round(eh[0]), "eloA": round(ea[0]), "gamesH": eh[2], "gamesA": ea[2],
                    "hfa": 0 if g["neutral"] else sp["params"]["hfa"],
+                   # 16 Nov 2026: the rating gap the pick rests on, home's side,
+                   # home advantage included (a margin in points is read from it
+                   # later against history), and the line ESPN showed at the time
+                   "eloDiff": round(eh[0] - ea[0] + (0 if g["neutral"] else sp["params"]["hfa"]), 1),
+                   **({"line": g["line"]} if g.get("line") else {}),
                    "wary": wary(sport, ph >= 0.5, g["neutral"]),
                    "accuracy": accuracy_for(conf, sp.get("bandsCheck")),
                    "formH": form(by_team.get((g["pool"], g["h"]), []), g["h"]),

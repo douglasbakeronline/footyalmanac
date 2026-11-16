@@ -1065,13 +1065,17 @@ def _compact(f):
     """The fields this project reads from a fixture, as a short list."""
     fx, lg = f.get("fixture") or {}, f.get("league") or {}
     tm, ft = f.get("teams") or {}, (f.get("score") or {}).get("fulltime") or {}
-    # The country rides last (20 Oct 2026): af_rows checks it for the hand-set
+    ht = (f.get("score") or {}).get("halftime") or {}
+    # The country rides tenth (20 Oct 2026): af_rows checks it for the hand-set
     # AF_NEW ids, and without it every current-season row of those five
     # leagues was dropped as "wrong country". Day files written before then
     # have nine fields and expand with no country.
     return [lg.get("id"), lg.get("season"), fx.get("id"), fx.get("date"),
             (fx.get("status") or {}).get("short"), (tm.get("home") or {}).get("name"),
-            (tm.get("away") or {}).get("name"), ft.get("home"), ft.get("away"), lg.get("country")]
+            (tm.get("away") or {}).get("name"), ft.get("home"), ft.get("away"), lg.get("country"),
+            # 16 Nov 2026: the half-time score rides last (periods.py keeps it
+            # for our graded fixtures); day files written before have ten fields
+            ht.get("home"), ht.get("away")]
 
 
 def _expand(c):
@@ -1080,9 +1084,11 @@ def _expand(c):
     league = {"id": lid, "season": season}
     if country:
         league["country"] = country
+    score = {"fulltime": {"home": hg, "away": ag}}
+    if len(c) > 11 and c[10] is not None and c[11] is not None:
+        score["halftime"] = {"home": c[10], "away": c[11]}
     return {"league": league, "fixture": {"id": fid, "date": when, "status": {"short": st}},
-            "teams": {"home": {"name": home}, "away": {"name": away}},
-            "score": {"fulltime": {"home": hg, "away": ag}}}
+            "teams": {"home": {"name": home}, "away": {"name": away}}, "score": score}
 
 
 def _af_day(d):
