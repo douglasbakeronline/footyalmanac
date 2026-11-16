@@ -5986,6 +5986,11 @@ $("#views").addEventListener("click", e=>{
   $("#controls").hidden = !fixtures;
   $("#fbLede").hidden = !fixtures;
   try { history.replaceState(null, "", v === "list" ? location.pathname + location.search : "#" + v); } catch(err) {}
+  // 16 Nov 2026, Douglas: "will it track tab selection?" A tab change rewrites the address without
+  // loading a page, so Google Tag Manager sees it only through this event: one "tab_view" per tab
+  // opened, the landing tab included (the click below). In GTM: a Custom Event trigger on tab_view.
+  try { (window.dataLayer = window.dataLayer || []).push({event: "tab_view", tab: v,
+    tab_name: (b.textContent || "").trim(), page_path: location.pathname + (v === "list" ? "" : "#" + v)}); } catch(err) {}
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
   readbarEl.hidden = !fixtures;
