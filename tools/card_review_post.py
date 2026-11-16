@@ -31,8 +31,14 @@ def already_posted(title):
     A second, later schedule makes a missed night post itself, so a run whose
     day already has its review posts nothing: one issue a night, as before.
     Looks at the last few card-review issues by title, open or closed."""
+    return posted_issue(title) is not None
+
+
+def posted_issue(title):
+    """The day's card-review issue (number, body), or None."""
     got = gh(f"repos/{REPO}/issues?labels=card-review&state=all&per_page=10")
-    return isinstance(got, list) and any((i or {}).get("title") == title for i in got)
+    if not isinstance(got, list): return None
+    return next((i for i in got if (i or {}).get("title") == title), None)
 
 
 def pct(x): return f"{x * 100:+.1f}%" if x is not None else "n/a"
@@ -357,11 +363,12 @@ def fd_gate_lines(rep, hist):
             verdict = "**passes**"; passed.append(v)
         else:
             why = []
-            if (r.get("vsLivePerDay") or 0) <= 0: why.append("behind on the pool")
+            if r.get("pWorse") is None and not (r.get("vsLivePerDay") or 0): why.append("identical to live on the pool")
+            elif (r.get("vsLivePerDay") or 0) <= 0: why.append("behind on the pool")
             elif r.get("pWorse") is None or r["pWorse"] > GATE_P: why.append(f"pool p(worse) {r.get('pWorse')}")
             elif gate_legs(r) < GATE_LEGS: why.append(f"pool {gate_legs(r)} legs of {GATE_LEGS}")
             if not fd_ok:
-                bad = [s for s, x, k in fd if k in ("fit", "check") and not fd_beats(x)]
+                bad = [s + (" identical" if x.get("identical") else "") for s, x, k in fd if k in ("fit", "check") and not fd_beats(x)]
                 why.append("football-data " + (", ".join(bad) if bad else "fit and check not both on file"))
             verdict = "fails: " + ", ".join(why)
         out.append(f"| {v} | {r['vsLivePerDay']:+.2f} | {r.get('pWorse') if r.get('pWorse') is not None else 'identical'} | {gate_legs(r)} | " + " | ".join(cells) + f" | {verdict} |")
@@ -448,7 +455,9 @@ def live_days_section(archive="groupings-archive", today_=None, days=14, record=
     return lines + [""]
 
 
-def main():
+def review_body():
+    """The review's markdown, built from the files on disk (16 Nov 2026:
+    split from main so a later run can refresh the day's issue)."""
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
     lines = [f"# Card review {today}", ""]
     f = integ.get("findings", [])
@@ -554,21 +563,51 @@ def main():
     lines += markets_section(load("markets-record.json"))
     lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
-    body = "\n".join(lines)
-    if already_posted(f"Card review {today}") and os.environ.get("FORCE_POST") != "1":
-        print(f"Card review {today} is already posted; nothing posted this run (FORCE_POST=1 posts anyway).")
+    return "\n".join(lines)
+
+
+REFRESHED = "\n\n_Refreshed "
+
+
+def refreshed(body, when):
+    """The body with a closing line naming when a later run rewrote it."""
+    return body + REFRESHED + when + " UTC by a later run, on newer files (tune.yml's Monday football-data read lands after the morning review)._"
+
+
+def unrefreshed(body):
+    """The body without its refreshed line, to compare two runs' reviews."""
+    i = (body or "").rfind(REFRESHED)
+    return body[:i] if i >= 0 else (body or "")
+
+
+def main():
+    body = review_body()
+    f = load("integrity.json").get("findings", [])
+    title = f"Card review {today}"
+    issue = posted_issue(title)
+    if issue and os.environ.get("FORCE_POST") != "1":
+        # 16 Nov 2026: the day's review posted at 12:02, tune.yml committed the
+        # football-data paired read at 13:16, and the 19:41 run posted nothing,
+        # so the issue said "no paired season read on file yet" all day. A
+        # later run now rewrites the day's body when its files say something
+        # new; it never opens a second review or a second integrity issue.
+        if issue.get("number") and unrefreshed(issue.get("body")).strip() != body.strip():
+            gh("-X", "PATCH", f"repos/{REPO}/issues/{issue['number']}", "-f",
+               "body=" + refreshed(body, datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M")))
+            print(f"{title} was already posted; its body was refreshed with this run's read.")
+        else:
+            print(f"{title} is already posted and unchanged; nothing posted this run (FORCE_POST=1 posts anyway).")
         print(body)
         return
     ensure_label("card-review", "c8102e", "The nightly Card review")
     ensure_label("office-backlog", "0e8a16", "A task for the office sprint")
-    gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title=Card review {today}", "-f", f"body={body}", "-f", "labels[]=card-review")
+    gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title={title}", "-f", f"body={body}", "-f", "labels[]=card-review")
     if f:
         fb = "\n".join(f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:30])
         gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title=Card integrity: {len(f)} finding(s) on {today}",
            "-f", f"body=The nightly checker (tools/card_integrity.py) found:\n\n{fb}\n\nFix the cause in the pipeline (grading, pricing or archiving), not the record by hand; add a test that would have caught it. Deliverable: a change that passes the gates.",
            "-f", "labels[]=office-backlog", "-f", "labels[]=agent:engineer")
     print(body)
-
 
 if __name__ == "__main__":
     main()

@@ -108,6 +108,44 @@ class OncePerDay(unittest.TestCase):
     def test_skips_when_today_is_posted(self):
         self.assertEqual(self.run_with([{"title": f"Card review {P.today}"}]), [])
 
+    def patches(self, issues):
+        posted = []
+        def fake(*a):
+            if a and isinstance(a[0], str) and a[0].startswith(f"repos/{P.REPO}/issues?"):
+                return issues
+            posted.append(a); return {}
+        with mock.patch.object(P, "load", side_effect=lambda p: {}), \
+             mock.patch.object(P, "gh", side_effect=fake), \
+             mock.patch.dict(os.environ, {}), mock.patch("builtins.print"):
+            P.main()
+        return [a for a in posted if a and a[0] == "-X" and a[1] == "PATCH"]
+
+    def test_a_later_run_refreshes_a_stale_body(self):
+        """16 Nov 2026: the review posted at 12:02, tune.yml committed the
+        football-data paired read at 13:16, and the 19:41 run posted nothing,
+        so the day's issue said "no paired season read on file yet"."""
+        got = self.patches([{"title": f"Card review {P.today}", "number": 7, "body": "old body"}])
+        self.assertEqual(len(got), 1)
+        self.assertTrue(got[0][2].endswith("/issues/7"))
+        self.assertIn("Refreshed", got[0][4])
+
+    def test_an_unchanged_body_is_left_alone(self):
+        posted = []
+        def fake(*a):
+            if a and isinstance(a[0], str) and a[0].startswith(f"repos/{P.REPO}/issues?"):
+                return [{"title": f"Card review {P.today}", "number": 7, "body": P.refreshed(body, "2026-11-16 19:41")}]
+            posted.append(a); return {}
+        with mock.patch.object(P, "load", side_effect=lambda p: {}), \
+             mock.patch.object(P, "gh", side_effect=lambda *a: {}), mock.patch("builtins.print"):
+            body = P.review_body()
+        with mock.patch.object(P, "load", side_effect=lambda p: {}), \
+             mock.patch.object(P, "gh", side_effect=fake), mock.patch("builtins.print"):
+            P.main()
+        self.assertEqual([a for a in posted if a and a[0] == "-X"], [])
+
+    def test_strip_refreshed_line(self):
+        self.assertEqual(P.unrefreshed(P.refreshed("a\nb", "2026-11-16 19:41")), "a\nb")
+
     def test_force_posts_anyway(self):
         self.assertEqual(len(self.run_with([{"title": f"Card review {P.today}"}], force="1")), 1)
 
@@ -199,6 +237,15 @@ class BothSidesOfTheGate(unittest.TestCase):
     def test_one_season_missing_fails(self):
         h = {"seasons": {"fit": self.HIST["seasons"]["fit"]}}
         self.assertIn("fit and check not both on file", "\n".join(P.fd_gate_lines(self.REP, h)))
+
+    def test_identical_on_the_pool_is_not_behind(self):
+        rep = {"variants": {"live": {"legs": 36}, "comp3": {"legs": 36, "vsLivePerDay": 0.0, "pWorse": None}}}
+        h = {"seasons": {"fit": {"season": "2025-26", "cardM7Paired": {"comp3": {"perDay": 0.11, "pWorse": 0.0, "identical": False}}},
+                         "check": {"season": "2026-27", "cardM7Paired": {"comp3": {"perDay": 0.0, "pWorse": None, "identical": True}}}}}
+        out = "\n".join(P.fd_gate_lines(rep, h))
+        self.assertIn("identical to live on the pool", out)
+        self.assertNotIn("behind on the pool", out)
+        self.assertIn("football-data 2026-27 identical", out)
 
     def test_nothing_on_file(self):
         self.assertIn("no paired season read on file yet", P.fd_gate_lines(self.REP, {})[0])
