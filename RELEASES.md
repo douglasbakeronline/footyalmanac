@@ -6,6 +6,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-12: the Mailer page and tab, sign-ups into Supabase, and the flash as tape
+
+**What changed:** a Mailer tab closes the sections row on every page and opens `mailer.html`, the sign-up for the Daily List email: email, the three emails (Daily List, Scale, Sunday Record), an 18+ and consent tick, and a hidden spam trap. Sign-ups go to Supabase: the Inbox Innovation project (the free plan allows two projects and the other one is personal finance), in its own `almanac` schema that the API does not expose, written only through `almanac_subscribe` (security definer; the publishable key can call it and read nothing). Rows start `pending` for double opt-in; `almanac_confirm`, `almanac_get_preferences` and `almanac_update_preferences` are ready for the confirm and preferences links once sending is set up. The corner flash is now a strip of tape with torn ends and a soft shadow, the quote centred on it, overhanging the panel.
+**Evidence:** the functions tested as the anon role (sign-up, repeat sign-up, spam trap; the anon role has no access to the schema or to Inbox Innovation's tables). The page rendered at 1440px and 400px; the tape checked on the live page at 1178px and 918px covers.
+**Not changed:** nothing is emailed yet: the confirmation and daily sends need Resend and the sending domain.
+**Files:** `mailer.html` (new), `index.html`, `analysis.html`, `.github/workflows/deploy.yml` (publishes `mailer.html`).
+**Roll back:** `git revert`; the Supabase objects are `almanac.*` and `public.almanac_*`.
+
 ## 2026-11-16-11: the Doc Brown flash on narrower screens (tag pending)
 
 **Shipped in:** ce8d6de (first logged as 2026-11-16-6, an id another session had already used the same afternoon)
