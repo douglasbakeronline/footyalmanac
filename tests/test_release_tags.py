@@ -14,6 +14,11 @@ class Entries(unittest.TestCase):
         self.assertEqual([(r, t) for r, t, _ in found], [("2026-11-14-7", "the ledger"), ("2026-11-14", "a pause")])
         self.assertEqual(len(skipped), 3)
 
+    def test_a_word_id_is_an_id(self):
+        found, skipped = R.entries("## 2026-11-16-comp3: the cap replayed (tag pending)\n## 2026-11-15-span-held: held")
+        self.assertEqual([r for r, _, _ in found], ["2026-11-16-comp3", "2026-11-15-span-held"])
+        self.assertEqual(skipped, [])
+
 
 class Commits(unittest.TestCase):
     def setUp(self):
@@ -37,6 +42,21 @@ class Commits(unittest.TestCase):
         subprocess.run(["git", "tag", "release-2026-11-13", a], check=True)
         todo, _ = R.plan()
         self.assertEqual(todo, [("release-2026-11-14", b, "second")])
+
+    def test_a_renumbered_entry_is_tagged_on_the_commit_it_names(self):
+        a = self.commit("# R\n## 2026-11-13: first\n", "a")
+        self.commit("# R\n## 2026-11-13-2: first\n\n**Shipped in:** " + a[:9] + "\n", "renumber")
+        todo, _ = R.plan()
+        self.assertEqual(todo, [("release-2026-11-13-2", a, "first")])
+
+
+class Unique(unittest.TestCase):
+    def test_no_release_id_is_used_twice_since_tagging_began(self):
+        # 16 Nov 2026 (QA): three ids used twice on 15 Nov left three releases untagged.
+        here = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        with open(os.path.join(here, "RELEASES.md"), encoding="utf-8") as f:
+            ids = [m.group(1) for m in map(R.HEADER.match, f.read().splitlines()) if m and m.group(1) >= "2026-11-14"]
+        self.assertEqual(sorted({i for i in ids if ids.count(i) > 1}), [])
 
 
 if __name__ == "__main__":

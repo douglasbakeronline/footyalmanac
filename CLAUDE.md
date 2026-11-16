@@ -385,7 +385,10 @@ and pushed to `main` with a release note, so it can be rolled back.
    `## YYYY-MM-DD[-N]: title` on each push to `main` (`tools/release_tags.py`,
    on the merge that added it, never moving a tag), so a missed or impossible
    tag (cloud sessions cannot push tags) is made anyway. Give every entry an id
-   of that shape, unique.
+   of that shape, unique (`tests/test_release_tags.py` fails on a repeat from
+   14 Nov 2026 on); a word id (`## 2026-11-16-comp3:`) is tagged too, and an
+   entry renumbered later names its commit with `**Shipped in:** <sha>` so its
+   tag lands on the merge that shipped it (16 Nov 2026).
 4. Roll back with `git revert`, never `git reset`: the bot's daily archive
    commits sit between releases. Instructions are at the top of `RELEASES.md`.
 
