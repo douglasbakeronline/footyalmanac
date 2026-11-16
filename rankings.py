@@ -217,6 +217,7 @@ def _fifa_page(errors=None, notes=None):
         if errors is not None:
             errors.append(("page", f"{type(e).__name__}: {e}"))
         return set(), None
+    _fifa_page.html = html
     ids = {int(m) for m in re.findall(r"dateId=id(\d{4,6})", html)}
     lists = []
     for blob in re.findall(r'<script[^>]*type="application/json"[^>]*>(.*?)</script>', html, re.S):
@@ -238,6 +239,68 @@ def _fifa_page(errors=None, notes=None):
                         f", {len(lists)} ranking list(s), none parsable" if lists else ", no ranking rows")
                      + (", __NEXT_DATA__" if "__NEXT_DATA__" in html else ""))
     return ids, rel
+
+
+# 15 Nov 2026: FIFA's page loads its ranking from this endpoint, by schedule id
+# ("FRS_Male_Football_20260720", listed with its publication date in the page's
+# embedded JSON `dates`), not by the numeric dateId the ranking-overview API
+# still answers only up to 20 Jul. It spells a few sides differently from the
+# overview, so they are mapped back to the spelling on file.
+FIFA_SCHEDULE_URL = ("https://inside.fifa.com/api/live-world-ranking/get-rankings?mode=schedule"
+                     "&gender=1&locale=en&rankingType=football&scheduleId={}")
+FIFA_SCHEDULE_NAMES = {
+    "Brunei": "Brunei Darussalam", "Hong Kong": "Hong Kong, China", "Macau, China": "Macau",
+    "St. Kitts and Nevis": "St Kitts and Nevis", "St. Lucia": "St Lucia",
+    "St. Vincent / Grenadines": "St Vincent and the Grenadines",
+}
+
+
+def _schedule_dates(html):
+    """[(schedule id, publication date)] newest first, from the "dates" lists in
+    a FIFA ranking page's embedded JSON (ids like FRS_Male_Football_20260720)."""
+    out = []
+    for blob in re.findall(r'<script[^>]*type="application/json"[^>]*>(.*?)</script>', html, re.S):
+        for m in re.finditer(r'"id":"(FRS_Male_Football_\d{8})","iso":"(\d{4}-\d{2}-\d{2})', blob):
+            if (m.group(1), m.group(2)) not in out:
+                out.append((m.group(1), m.group(2)))
+    return sorted(out, key=lambda x: x[1], reverse=True)
+
+
+def _parse_schedule(doc, day):
+    """A release from the schedule endpoint's JSON, or None."""
+    rows = doc.get("rankings") if isinstance(doc, dict) else None
+    if not rows:
+        return None
+    teams = {}
+    for r in rows:
+        if r.get("rank") is None:
+            continue
+        name = FIFA_SCHEDULE_NAMES.get(r["teamName"], r["teamName"])
+        teams[name] = [r["rank"], round(float(r["totalPoints"]), 2)]
+    return {"id": None, "date": day, "teams": teams} if teams else None
+
+
+def _fifa_schedule(html, errors=None, notes=None):
+    """The newest men's release the page's schedule list names, read from the
+    endpoint the page itself calls, or None."""
+    dates = _schedule_dates(html or "")
+    if not dates:
+        if notes is not None:
+            notes.append("FIFA ranking: the page names no schedule ids")
+        return None
+    sid, day = dates[0]
+    try:
+        rel = _parse_schedule(_get(FIFA_SCHEDULE_URL.format(sid)), day)
+    except Exception as e:
+        if errors is not None:
+            errors.append((sid, f"{type(e).__name__}: {e}"))
+        return None
+    if notes is not None:
+        notes.append(f"FIFA ranking: schedule {sid} dated {day}: "
+                     + (f"{len(rel['teams'])} teams" if rel else "no rows"))
+    if rel:
+        rel["from"] = f"the ranking page's schedule {sid}"
+    return rel
 
 
 def _fifa_latest_id(errors=None, notes=None):
@@ -278,9 +341,13 @@ def refresh_fifa(scan=160, log=None):
     start = max(FIFA_SEED, cur["id"] if cur else 0) + 1
     errors, notes = [], []
     latest, overview = _fifa_latest(errors, notes)
+    _fifa_page.html = ""
     page_ids, page_rel = _fifa_page(errors, notes)
+    sched = _fifa_schedule(_fifa_page.html, errors, notes)
+    if sched and (page_rel is None or sched["date"] >= page_rel["date"]):
+        page_rel = sched
     if page_rel and (overview is None or page_rel["date"] > overview["date"]):
-        page_rel["from"] = "the ranking page"
+        page_rel.setdefault("from", "the ranking page")
         overview = page_rel
     ids = list(range(start, start + scan))
     front = sorted({i for i in page_ids | {latest or 0} if i >= start}, reverse=True)

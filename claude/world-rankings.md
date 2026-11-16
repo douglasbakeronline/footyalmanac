@@ -80,3 +80,14 @@ now also reads the public page `/fifa-rankings/world-ranking/men` (`_fifa_page`)
 its `dateId=id` links go to the front of the scan and its embedded JSON's
 longest `rankingItem` list is a release under the same checks. Its log line
 ("FIFA ranking: page N chars ...") says what the page held if it is not.
+
+Fourth read, 15 Nov 2026 (from a sandbox that could reach inside.fifa.com): the
+page's JS calls `/api/live-world-ranking/get-rankings?mode=schedule&gender=1&
+locale=en&rankingType=football&scheduleId=FRS_Male_Football_YYYYMMDD`. The ids
+are listed with publication dates in the page's embedded `dates` JSON
+(`FRS_Male_Football_20260720` = the 7 Oct 2026 release; the id carries the
+window start, not the publication date). The numeric dateId overview API holds
+nothing after id15175. `rankings._fifa_schedule` reads it; the 7 Oct release
+(211 teams) is now on file. The new endpoint spells six sides differently
+(`FIFA_SCHEDULE_NAMES`). Watch: the next release should arrive by the same
+path with a newer `iso` date.
