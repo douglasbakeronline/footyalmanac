@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-comp3: the Card's two-a-competition cap replayed on football-data too (tag pending)
+
+**What changed:** nothing on the page. `comp3` (three Card picks from one competition, pre-registered 10 Nov) now runs in the football-data replay of the model's-picks Card (`cardM7`, paired and pooled), so the 30 Nov review can gate it on both sides.
+
+**Evidence:** the UK day 16 Nov has four NBA picks that pass every Card condition and no group, because `COMP_MAX` allows two from one competition and a 2x needs three; over 13 to 19 Nov lifting the cap builds a 2x on 3 days of 7 (live 2). On the settled pool, 30 Oct to 15 Nov, comp3 is identical to live (12 groups, 4 won v 4.97 expected, -25%). `claude/card-comp3-2026-11-16.md`.
+
+**Files:** `tools/card_legs_history.py`, `tests/test_card_comp3.py`, `claude/card-comp3-2026-11-16.md`, `CLAUDE.md`, this entry.
+
+**Not changed:** `COMP_MAX` (2), `CARD_RULE` 11, any Card condition.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-16: FIFA ranking read from the endpoint FIFA's page uses (tag pending)
 
 **What changed:** the build can now take FIFA's 7 Oct 2026 release (211 teams) in place of the 20 Jul one on file. The file itself is not committed here: it is bot-written, so the first deploy after the merge refreshes it (the sandbox that rebased this cannot reach inside.fifa.com). FIFA's page loads its ranking from `/api/live-world-ranking/get-rankings?mode=schedule&gender=1&rankingType=football&scheduleId=FRS_Male_Football_YYYYMMDD`, with schedule ids listed with their publication dates in the page's embedded `dates` JSON. The numeric `dateId` overview API answers nothing after 20 Jul. `rankings._fifa_schedule` reads the newest schedule id from the page and takes that release under the existing checks (`FIFA_MIN_SHARE`, `_same_list`); six spellings the new endpoint changes (Brunei, Hong Kong, Macau, St Kitts and Nevis, St Lucia, St Vincent) are mapped back to the file's (`FIFA_SCHEDULE_NAMES`). Internationals on the Daily List are adjusted on the new points.

@@ -528,7 +528,12 @@ def replay_split(split, splits_fn, log):
                                           # as football-data's leagues are all core leagues
                                           "m7under5", "m7core",
                                           # 15 Nov 2026: the opposition's price on the model's picks
-                                          "m7opp9", "m7opp5")}
+                                          "m7opp9", "m7opp5",
+                                          # 16 Nov 2026: three picks from one competition
+                                          # (card_replay comp3, pre-registered 10 Nov), here
+                                          # three from one league; NBA-only nights build
+                                          # nothing under live's two (claude/card-comp3-2026-11-16.md)
+                                          "comp3")}
     res["cardM7Paired"] = m7_paired(res["cardM7"])
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
