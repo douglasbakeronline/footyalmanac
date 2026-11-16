@@ -1861,6 +1861,11 @@ footer b{color:var(--ink-2)}
 .bkchip .sm{display:none}
 .bkchip.px{color:var(--ink-2)}
 @media (max-width:480px){ .conf .bkchip .lg{display:none} .conf .bkchip .sm{display:inline} }
+
+/* paragraph copy runs the full width of its container (16 Nov 2026, Douglas: the Daily List's intro
+   sat in half the space on desktop). Text blocks only; charts, tables, inputs and buttons keep theirs. */
+.lede,.m-lede,.prose,.note,.list-rule,.why,.og-mult-p,.hon-lede,.tr-lede,.sc-foot,.sc-empty,
+.steps,.cols,footer,.wrap .empty,.wrap p{max-width:100%}
 </style>
 </head>
 <body>

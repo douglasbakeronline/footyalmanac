@@ -7,6 +7,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-21: paragraph copy runs the full width
+
+**What changed:** intro and explainer copy (the Daily List's lede, notes, prose, footers, empty states) now fills the width of its container on desktop instead of stopping at about half (Douglas). Every page.
+**Files:** `index.html`, `analysis.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-20: ribbon line offsets corrected
 
 **What changed:** the ribbon's third and fourth lines sit at 0 and +12px (Douglas's correction; the last line was clipped at -12px). Same on the Mailer page.
