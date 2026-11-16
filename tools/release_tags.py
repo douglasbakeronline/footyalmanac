@@ -20,7 +20,9 @@ never moved. Standard library only.
 """
 import argparse, re, subprocess, sys
 
-HEADER = re.compile(r"^## (\d{4}-\d{2}-\d{2}(?:-\d+)?): (.+?)\s*$")
+# 16 Nov 2026 (QA): a word id ("## 2026-11-16-comp3:") is tagged too; seven
+# releases of 15-16 Nov written that way had been skipped as "no id".
+HEADER = re.compile(r"^## (\d{4}-\d{2}-\d{2}(?:-[0-9a-z]+(?:-[0-9a-z]+)*)?): (.+?)\s*$")
 PENDING = re.compile(r"\s*\(tag pending\)\s*$", re.I)
 
 
@@ -48,6 +50,24 @@ def entries(text):
     return [e for e in found if e[0] not in dup], skipped
 
 
+SHIPPED = re.compile(r"^\*\*Shipped in:\*\*\s*`?([0-9a-f]{7,40})`?", re.I)
+
+
+def shipped_in(text):
+    """{header line: commit} for entries that name the commit they shipped
+    in (`**Shipped in:** abc1234`). A release renumbered after the fact (16 Nov
+    2026: three ids used twice on 15 Nov, so never tagged) keeps its tag on
+    the merge that shipped it, not on the commit that renumbered it."""
+    out, head = {}, None
+    for line in text.splitlines():
+        if line.startswith("## "):
+            head = line; continue
+        m = SHIPPED.match(line.strip())
+        if head and m and head not in out:
+            out[head] = m.group(1)
+    return out
+
+
 def commit_of(line, ref="HEAD"):
     """The first first-parent commit that added this exact header line."""
     out = git("log", ref, "--first-parent", "--reverse", "--format=%H", "-S", line, "--", "RELEASES.md").split()
@@ -68,11 +88,16 @@ def plan(ref="HEAD", remote=None):
     have = existing(remote)
     todo, skipped = [], []
     found, bad = entries(text)
+    named = shipped_in(text)
     skipped += [f"no id: {l}" for l in bad]
     for rid, title, line in found:
         tag = f"release-{rid}"
         if tag in have: continue
-        sha = commit_of(line, ref)
+        sha = None
+        if line in named:
+            r = subprocess.run(["git", "rev-parse", "--verify", "-q", named[line] + "^{commit}"], capture_output=True, text=True)
+            sha = r.stdout.strip() or None
+        sha = sha or commit_of(line, ref)
         if not sha:
             skipped.append(f"commit not in history: {line}"); continue
         todo.append((tag, sha, title))

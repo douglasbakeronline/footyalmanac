@@ -21,6 +21,16 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** `daylist.py`, `notify.py`, `free_prices.py`, `tools/julius_export.py`.
 **Roll back:** `git revert`; to drop the domain, Remove it under Settings > Pages.
 
+## 2026-11-16-7: every release tagged, release ids kept unique (tag pending)
+
+**For a reader:** nothing on the page. Three releases of 15 Nov (the college Away / Neutral marks, Scale at a glance's ten a day, the FIFA dateless overview) shared their ids with other entries, so the tagger skipped them and they had no tag to roll back to. They are renumbered 2026-11-15-24 to -26, each naming the commit that shipped it (`**Shipped in:**`), and `tools/release_tags.py` tags such an entry on that commit rather than on the renumbering. Seven more of 15-16 Nov had word ids (`2026-11-16-comp3`, `2026-11-15-span-held` and five others) and were skipped as "no id"; the tagger now reads a word id, so they are tagged on their own merges. A test now fails CI when any release id from 14 Nov on is used twice. Older duplicate ids (October, 2026-11-10) stay as they are: their tags were made by hand or by the office long ago.
+
+**Evidence:** `tools/release_tags.py` lists duplicate ids as skipped; `git ls-remote --tags` had no tag for the three. Found by the QA review (`claude/qa-review-2026-11-16.md`).
+
+**Files:** `RELEASES.md`, `tools/release_tags.py` (`shipped_in`, `HEADER`), `CLAUDE.md` (release step 3), `tests/test_release_tags.py`.
+
+**Roll back:** `git revert` the merge commit; tags already made stay.
+
 ## 2026-11-16-3: half-time and quarter scores, bookmaker lines and the model's rating gap kept for every sport (tag pending)
 
 **What changed:** more of every game is now kept for later analysis, at no extra API cost. Football: the half-time score of every graded fixture (`periods/`, from the API-Football day sweep already made) and the bookmakers' extra lines for our fixtures (Asian handicap, handicap result, half-time/full-time, half winners, first-half goals, team totals, win both halves, clean sheets; average and William Hill, `x` in the markets archive). NBA, NFL, rugby, college sports, baseball, WNBA: points by period for every final game and ESPN's line (spread, total, money lines) in `history-sports/`, and on each prediction the rating gap it rests on (`eloDiff`) and the line at the time. A data inventory lists what is kept and what is not. Douglas: "we need to make sure we get to the level where everything is captured."
@@ -194,7 +204,9 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** any model, the Daily List, other sports' group legs, saved bookmarks.
 **Roll back:** `git revert`; or `GROUP_ANY_TIER = ()` with a `RULE` bump for the Scale half alone.
 
-## 2026-11-15-18: the FIFA ranking taken from the dateless overview (tag pending)
+## 2026-11-15-24: the FIFA ranking taken from the dateless overview (tag pending)
+
+**Shipped in:** `036b7f03` (renumbered on 16 Nov 2026: its id was used twice, so it was never tagged)
 
 **What changed:** the first build after 2026-11-15-17 (deploy run 43715171219) logged what FIFA's dateless overview returns, with and without `rankingType`: `keys: ['rankings']`, the current release's rows and no release id, while no id from 15176 to 15335 answers. So the id scan could never find it. `rankings.refresh_fifa` now parses the overview's own rows as a release and takes it when it is dated after the file, holds 80%+ of the teams on file and reads as the same ranking (`_same_list`: 80%+ of the file's top 20 inside its top 30, so a women's or futsal list is refused); the file keeps its id so the scan starts where it did. The log says "new release ... from the dateless overview", or why it was refused, with the rows' team count and date.
 **Evidence:** run 43715171219's "FIFA ranking:" lines (above). `tests/test_rankings.py` +4 (overview rows taken, older rows ignored, another ranking refused, `_same_list`); suite OK; `nametest.py` clear. Confirmed on the merge's own CI build, not in the sandbox (inside.fifa.com is blocked there).
@@ -336,7 +348,9 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` the merge commit.
 
-## 2026-11-15-4: Scale at a glance shows ten a day for the week behind
+## 2026-11-15-25: Scale at a glance shows ten a day for the week behind
+
+**Shipped in:** `00388c3a` (renumbered on 16 Nov 2026: its id was used twice, so it was never tagged)
 
 **What changed:** Douglas: "I want there to be 10 games shown with what the recommendation was of the model, and whether or not that won or lost with the team, and if both teams scored ... in order of strongest ... make sure that it was bettable." The Scale tab's glance now lists each past day (the last seven open, the rest in a fold) as a table of its ten strongest picks: Daily List picks first, then the reserve, then the rest, strongest model number first within each; football only where William Hill prices the bet, as before, so nothing obscure. Each row: sport, the model's pick and opponent, competition, the model's number, Won / Lost / Void / No result with the score, and for football whether both teams scored (for the other sports whether the Scale margin landed). The day line sums it ("7 of 10 won · both scored in 2 of 3 football") and "full list" opens the day. The dot rows stay for today and tomorrow. `scale.py` writes the fields the table needs into the glance (`both_scored` from the score).
 
@@ -377,7 +391,9 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` the merge commit; the Bets tab loses the section and nothing else moves.
 
-## 2026-11-15-2: Away and Neutral marks on college picks
+## 2026-11-15-26: Away and Neutral marks on college picks
+
+**Shipped in:** `e2ae8654` (renumbered on 16 Nov 2026: its id was used twice, so it was never tagged)
 
 **What changed:** every college basketball and college football row at 70%+ whose pick is away from home, or on a neutral court, carries an `Away` or `Neutral` chip (Daily List, reserve, sport tabs, pinned rows), and the reserve's summary line counts them. `sports.wary` writes the mark into the archive; `index.html` `sideWary` draws it from the row. `sports-record.json` gains `bySide` (landed v quoted by side per college sport at 70%+) with a pre-registered tripwire: 100 away picks two standard errors under quote takes that sport's away picks out of the reserve.
 
