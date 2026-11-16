@@ -3,6 +3,19 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+
+## 2026-11-16-8: football half-time scores filled in for the season so far (tag pending)
+
+**For a reader:** nothing on the page yet. Half-time scores were being kept only from 16 Nov: a finished day's API-Football file is never asked for again, and every day before 16 Nov had been cached without its half time. A finished day file without one is now asked for once more on scheduled builds, up to 25 a build and 180 days back (about 170 calls once, spread over a few builds; today's builds left 6,500 of the 7,500 a day unused), and `periods.py` looks back 180 days instead of 10. A graded fixture tried against a day with half times and not matched is noted in `periods/missed.json` and not tried again, so the matching stays quick.
+
+**Evidence:** the 13:57 deploy's log: "periods: no cached day files with half-time scores yet". Matching 6,000 fixtures from scratch takes about a minute, hence the missed list. Found by the QA review (`claude/qa-review-2026-11-16.md`).
+
+**Files:** `sources.py` (`_ht_refetch`, `HT_BACK_DAYS`, `HT_REFETCH_MAX`), `periods.py` (`LOOKBACK`, `MISSED`), `tests/test_data_capture.py`, `CLAUDE.md`, `claude/data-inventory-2026-11-16.md`.
+
+**Not changed:** push-triggered builds (`AF_FRUGAL`) never refetch; nothing reads the half times yet.
+
+**Roll back:** `git revert` the merge commit, or `HT_REFETCH_MAX = 0`.
+
 ## 2026-11-16-6: a frozen Scale group keeps every leg it was built from (tag pending)
 
 **For a reader:** today's Scale fourfold (frozen at 13:00) showed a leg, Cuba v Grenada, that had dropped off the day's picks, so it could never settle and would have sat "pending" for good. Under rule 4 a group's football legs can come from outside the day's picks; when a later build's groups stopped using such a leg, it was no longer kept, while the frozen group still named it. A frozen group's legs now always stay on file, and one already lost is taken back from the day's candidates, so today's file repairs itself on the next build.

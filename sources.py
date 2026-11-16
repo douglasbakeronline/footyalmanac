@@ -848,6 +848,26 @@ def _af_season(code, year, current):
 AF_CUP_BACK, AF_CUP_AHEAD = 12, 8         # results to grade, fixtures to price
 AF_DAY_TTL = 45 * 60
 AF_FRUGAL_TTL = 24 * 3600   # a push-triggered build reuses a day this old (30 Oct 2026)
+# 16 Nov 2026 (QA): day files finished before the half time was kept
+# (_compact's 11th and 12th fields) are asked for once more, up to
+# HT_REFETCH_MAX a process and HT_BACK_DAYS back, on scheduled builds only
+# (never AF_FRUGAL), so periods.py can keep this season's half-time scores.
+# About 170 calls once, a few builds' worth, against a 7,500 daily allowance.
+HT_BACK_DAYS = 180
+HT_REFETCH_MAX = 25
+_HT_REFETCH = {"n": 0}
+_HT_LOCK = threading.Lock()
+
+
+def _ht_refetch(d, doc, today):
+    rows = doc.get("rows") or []
+    if not rows or len(rows[0]) > 11 or os.environ.get("AF_FRUGAL") or d < today - timedelta(days=HT_BACK_DAYS):
+        return False
+    with _HT_LOCK:
+        if _HT_REFETCH["n"] >= HT_REFETCH_MAX:
+            return False
+        _HT_REFETCH["n"] += 1
+        return True
 _AF_POOL = {}
 _AF_POOL_LOCK = threading.Lock()   # a pool is built once, by one thread; the rest wait for it
 
@@ -1112,7 +1132,9 @@ def _af_day(d):
             stale = [_expand(c) for c in doc.get("rows") or []]
             # 30 Oct 2026: AF_FRUGAL (a push-triggered build, deploy.yml) keeps a
             # day's fixtures for a day rather than 45 minutes; see odds.af_odds_day
-            if doc.get("final") or age < (AF_FRUGAL_TTL if os.environ.get("AF_FRUGAL") else AF_DAY_TTL):
+            if doc.get("final") and _ht_refetch(d, doc, today):
+                pass
+            elif doc.get("final") or age < (AF_FRUGAL_TTL if os.environ.get("AF_FRUGAL") else AF_DAY_TTL):
                 return stale
         except Exception:
             pass

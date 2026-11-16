@@ -80,8 +80,23 @@ class Periods(unittest.TestCase):
             kept = json.load(open(files[0]))
             self.assertEqual(kept["en.1|2026-11-15|Arsenal|Leeds United"][:4], [0, 1, 2, 1])
             self.assertEqual(periods.check(here), (1, 0))
-            # a second run looks only for what is missing
-            self.assertEqual(periods.build(here, today=date(2026, 11, 16), cache_dir=cache)[0], 1)
+            # a second run looks only for what is missing and was not tried already (16 Nov 2026, QA:
+            # the look-back is now the season, and matching every miss again on each build is slow)
+            self.assertEqual(periods.build(here, today=date(2026, 11, 16), cache_dir=cache)[0], 0)
+
+    def test_a_day_without_half_time_on_file_is_not_tried_yet(self):
+        with tempfile.TemporaryDirectory() as here:
+            cache = os.path.join(here, ".afcache")
+            os.makedirs(cache)
+            row = [39, 2026, 1, "2026-10-01T15:00:00+00:00", "FT", "Arsenal", "Leeds United", 2, 1, "England"]
+            with gzip.open(os.path.join(cache, "day-2026-10-01.json.gz"), "wt") as fh:
+                json.dump({"final": True, "rows": [row]}, fh)
+            json.dump({"graded": [{"league": "en.1", "date": "2026-10-01", "home": "Arsenal", "away": "Leeds United",
+                                   "result": [2, 1], "kickoff": "2026-10-01T15:00:00Z"}]}, open(os.path.join(here, "record-graded.json"), "w"))
+            self.assertEqual(periods.build(here, today=date(2026, 11, 16), cache_dir=cache)[:2], (0, 0))
+            with gzip.open(os.path.join(cache, "day-2026-10-01.json.gz"), "wt") as fh:
+                json.dump({"final": True, "rows": [row + [1, 0]]}, fh)
+            self.assertEqual(periods.build(here, today=date(2026, 11, 16), cache_dir=cache)[:2], (1, 1))
 
 
 class ExtraFootballLines(unittest.TestCase):
@@ -95,6 +110,61 @@ class ExtraFootballLines(unittest.TestCase):
         self.assertIn("btts", row)
         g = {"league": "en.1", "date": "2026-11-16", "home": "A", "away": "B", "xg": [2.0, 0.8], "p": {"h": 0.7, "d": 0.18, "a": 0.12}}
         self.assertEqual(markets.row_for(g, row, "x")["x"]["Asian Handicap"]["Home -1.5"][0], 2.45)
+
+
+class HalfTimeBackfill(unittest.TestCase):
+    """16 Nov 2026 (QA): a finished day cached before the half time was kept
+    is asked for once more, so the season's half-time scores fill in."""
+
+    def _write(self, d, path, n):
+        row = [39, 2026, 1, f"{path}T15:00:00+00:00", "FT", "A", "B", 2, 1, "England", 1, 0][:n]
+        with gzip.open(os.path.join(d, f"day-{path}.json.gz"), "wt") as fh:
+            json.dump({"final": True, "rows": [row]}, fh)
+
+    def _fx(self, day):
+        return [{"league": {"id": 39, "season": 2026, "country": "England"},
+                 "fixture": {"id": 1, "date": f"{day}T15:00:00+00:00", "status": {"short": "FT"}},
+                 "teams": {"home": {"name": "A"}, "away": {"name": "B"}},
+                 "score": {"fulltime": {"home": 2, "away": 1}, "halftime": {"home": 1, "away": 0}}}]
+
+    def test_an_old_final_day_without_half_time_is_asked_once(self):
+        from unittest import mock
+        from datetime import timedelta
+        day = date.today() - timedelta(days=20)
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(sources, "AF_CACHE_DIR", d), \
+                mock.patch.dict(sources._HT_REFETCH, {"n": 0}), mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("AF_FRUGAL", None)
+            self._write(d, day.isoformat(), 10)
+            with mock.patch.object(sources, "_af_get", return_value=self._fx(day.isoformat())) as g:
+                f = sources._af_day(day)[0]
+                sources._af_day(day)
+                self.assertEqual(g.call_count, 1)
+            self.assertEqual(f["score"]["halftime"], {"home": 1, "away": 0})
+
+    def test_too_old_or_over_the_cap_is_left_alone(self):
+        from unittest import mock
+        from datetime import timedelta
+        old = date.today() - timedelta(days=sources.HT_BACK_DAYS + 5)
+        recent = date.today() - timedelta(days=20)
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(sources, "AF_CACHE_DIR", d), \
+                mock.patch.dict(sources._HT_REFETCH, {"n": sources.HT_REFETCH_MAX}):
+            os.environ.pop("AF_FRUGAL", None)
+            self._write(d, old.isoformat(), 10)
+            self._write(d, recent.isoformat(), 10)
+            with mock.patch.object(sources, "_af_get") as g:
+                sources._af_day(old); sources._af_day(recent)
+                g.assert_not_called()
+
+    def test_a_push_build_never_backfills(self):
+        from unittest import mock
+        from datetime import timedelta
+        day = date.today() - timedelta(days=20)
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(sources, "AF_CACHE_DIR", d), \
+                mock.patch.dict(sources._HT_REFETCH, {"n": 0}), mock.patch.dict(os.environ, {"AF_FRUGAL": "1"}):
+            self._write(d, day.isoformat(), 10)
+            with mock.patch.object(sources, "_af_get") as g:
+                sources._af_day(day)
+                g.assert_not_called()
 
 
 if __name__ == "__main__":
