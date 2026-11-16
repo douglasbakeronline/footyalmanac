@@ -1,4 +1,4 @@
-"""Google Tag Manager on every published page (16 Nov 2026).
+"""Google Tag Manager and Google Analytics on every published page (16 Nov 2026).
 
 Douglas, 16 Nov 2026: "Please add this to every page and make sure it gets
 added to all future pages". The tag sits in the source of each page
@@ -15,6 +15,10 @@ Standard library only.
 import argparse, glob, os, re, sys
 
 GTM_ID = "GTM-WP7C2F6B"
+# 16 Nov 2026: Google Analytics 4 straight from the page (Douglas's stream "Sports Almanac", measurement
+# ID from GA Admin -> Data streams), as the GTM container held no Google tag and GA showed "No data
+# received". Don't also add a Google tag for this ID inside GTM: every view would count twice.
+GA_ID = "G-35788M25WE"
 TAG = f"""<!-- Google Tag Manager (16 Nov 2026, Douglas). On every page: tools/tag_pages.py adds it on deploy if missing. -->
 <script async src="https://www.googletagmanager.com/gtm.js?id={GTM_ID}"></script>
 <script>
@@ -23,22 +27,41 @@ TAG = f"""<!-- Google Tag Manager (16 Nov 2026, Douglas). On every page: tools/t
   gtag('js', new Date());
 </script>
 """
+GA_TAG = f"""<!-- Google Analytics 4, direct (16 Nov 2026). Tabs are sent as tab_view events from index.html. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id={GA_ID}"></script>
+<script>gtag('config', '{GA_ID}');</script>
+"""
 HEAD = re.compile(r"<head[^>]*>\s*(<meta\s+charset=[^>]*>\s*)?", re.I)
 
 
-def has_tag(html):
+def has_gtm(html):
     return f"gtm.js?id={GTM_ID}" in html
 
 
+def has_ga(html):
+    return f"gtag/js?id={GA_ID}" in html
+
+
+def has_tag(html):
+    return has_gtm(html) and has_ga(html)
+
+
 def add_tag(html):
-    """The page with the tag after <head> (and its charset line); unchanged if
-    it already has it or has no <head>."""
+    """The page with the tags after <head> (and its charset line): Tag Manager
+    first (it defines gtag), then Analytics. Each is added only if missing;
+    unchanged if the page has no <head>."""
     if has_tag(html):
         return html
-    m = HEAD.search(html)
-    if not m:
-        return html
-    return html[:m.end()] + TAG + html[m.end():]
+    if not has_gtm(html):
+        m = HEAD.search(html)
+        if not m:
+            return html
+        html = html[:m.end()] + TAG + html[m.end():]
+    if not has_ga(html):
+        i = html.index("gtag('js', new Date());")
+        i = html.index("</script>", i) + len("</script>\n")
+        html = html[:i] + GA_TAG + html[i:]
+    return html
 
 
 def pages(root):
