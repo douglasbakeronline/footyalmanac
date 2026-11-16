@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-17: the ribbon quotes Marty, centred
+
+**What changed:** the corner ribbon now reads "Wait a minute, Doc. Are you telling me that you built a time machine... out of a DeLorean?" on five lines, each centred on the visible part of the band, so the whole line reads (Douglas). Same on the Mailer page.
+**Evidence:** checked on the live page at 1178px and 918px covers.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-16: the Doc Brown ribbon made thick
 
 **What changed:** the 45-degree ribbon is thick again and sits against the right edge of the red panel, the quote on three lines and mostly readable (Douglas). Same on the Mailer page.
