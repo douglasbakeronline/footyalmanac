@@ -3,7 +3,7 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
-## 2026-11-16-4: a frozen Scale group keeps every leg it was built from (tag pending)
+## 2026-11-16-6: a frozen Scale group keeps every leg it was built from (tag pending)
 
 **For a reader:** today's Scale fourfold (frozen at 13:00) showed a leg, Cuba v Grenada, that had dropped off the day's picks, so it could never settle and would have sat "pending" for good. Under rule 4 a group's football legs can come from outside the day's picks; when a later build's groups stopped using such a leg, it was no longer kept, while the frozen group still named it. A frozen group's legs now always stay on file, and one already lost is taken back from the day's candidates, so today's file repairs itself on the next build.
 
@@ -14,6 +14,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** the Scale rule, the groups' selection, any number on the record.
 
 **Roll back:** `git revert` the merge commit.
+## 2026-11-16-4: the site moves to sportsalmanac.bet (tag pending)
+
+**What changed:** the site is served at https://sportsalmanac.bet/ (registered at Hostinger; four GitHub Pages A records and a `www` CNAME to `douglasbakeronline.github.io`; the custom domain set in Settings > Pages). The links the build writes into the day list, notifications, the free-prices user agent and the Julius export now point there. The old `douglasbakeronline.github.io/footyalmanac/` address redirects to the new one, so shared links keep working.
+**Not changed:** `groupings.PUBLISHED` still reads the published `groupings.json` through the github.io address, which follows the redirect; HQ stays at github.io. Cloudflare Web Analytics needs nothing: the beacon reports from any host.
+**Files:** `daylist.py`, `notify.py`, `free_prices.py`, `tools/julius_export.py`.
+**Roll back:** `git revert`; to drop the domain, Remove it under Settings > Pages.
 
 ## 2026-11-16-3: half-time and quarter scores, bookmaker lines and the model's rating gap kept for every sport (tag pending)
 

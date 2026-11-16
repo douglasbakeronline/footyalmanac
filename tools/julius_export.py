@@ -170,7 +170,7 @@ README = """# Sports Almanac: graded predictions for review ({day})
 Every prediction the site published and has since graded, across every
 sport, exported on {day} by `tools/julius_export.py` from the site's own
 grading files. Nothing is regraded or filtered beyond what the site grades.
-Site: https://douglasbakeronline.github.io/footyalmanac/
+Site: https://sportsalmanac.bet/
 
 ## Files
 

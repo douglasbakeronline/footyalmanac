@@ -25,7 +25,7 @@ William Hill is now Caesars. Prices never feed a model. Standard library only.
 import json, os, time, urllib.error, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
-UA = {"User-Agent": "footyalmanac/1.0 (+https://douglasbakeronline.github.io/footyalmanac/)"}
+UA = {"User-Agent": "footyalmanac/1.0 (+https://sportsalmanac.bet/)"}
 
 # ---------- shared ----------
 def _cache_dir(cache_dir):
