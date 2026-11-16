@@ -19,11 +19,22 @@ it dispatches deploy.yml on main. The build then sends the briefing exactly
 as a cron build would (notify.due_slot / mark_sent; nothing sends twice).
 Builds nothing itself, reads nothing but briefed.json and the run list.
 
-    GH_TOKEN=... REPO=owner/name python3 tools/briefing_watch.py [--dry-run]
+    GH_TOKEN=... REPO=owner/name python3 tools/briefing_watch.py [--dry-run] [--wait]
+
+--wait (16 Nov 2026): GitHub shed the watchdog's own crons too (on 16 Nov
+not one of the nine 06:05-08:45 UTC runs started, and the morning push was
+still unsent at 08:36). So every deploy run now ends by dispatching this
+watchdog with --wait (deploy.yml `briefing-next`; a GITHUB_TOKEN dispatch
+does start a run). It sleeps until the next unsent slot's hour plus the grace
+if that is at most MAX_WAIT_MIN away, then checks every POLL_MIN minutes for
+up to LOOP_MIN minutes, reading briefed.json and the run list fresh from the
+API each time, and dispatches a deploy under the same rule as above. The
+deploy that sends one slot starts the wait for the next, so the briefings no
+longer depend on a cron firing near the slot.
 
 Standard library only.
 """
-import json, os, re, sys, urllib.request
+import json, os, re, sys, tempfile, time, urllib.request
 from datetime import datetime, timedelta, timezone
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,6 +45,9 @@ GRACE_MIN = 10        # minutes after a slot's hour before the watchdog acts
 MAX_KICKS = 2         # dispatches a slot at most (a failed build gets one retry)
 ACTIVE = {"queued", "in_progress", "waiting", "pending", "requested"}
 WORKFLOW = "deploy.yml"
+MAX_WAIT_MIN = 300    # --wait: the furthest slot it will sleep for (job limit 6h; lunch to evening is ~290)
+LOOP_MIN = 45         # --wait: how long after the slot's hour it keeps checking
+POLL_MIN = 5          # --wait: minutes between checks once the slot is due
 WATCH_FILE = os.path.join(HERE, ".github", "workflows", "briefing-watch.yml")
 
 
@@ -65,6 +79,31 @@ def decide(now, runs, path=None):
     return True, f"{slot}: unsent {late} minutes after its hour, no deploy running"
 
 
+def next_wait(now, path=None):
+    """(slot, seconds to sleep) for the next slot of the UK day still unsent,
+    or None when there is none within MAX_WAIT_MIN. A slot already due and
+    unsent waits 0 (or the rest of its grace); a due slot more than LOOP_MIN
+    past its hour is left to the next build."""
+    try:
+        with open(path or N.brief_file()) as f: st = json.load(f)
+    except (OSError, ValueError):
+        st = {}
+    uk = now.astimezone(N.UK)
+    sent = (st.get("slots") or []) if st.get("date") == uk.date().isoformat() else []
+    for name, _ in N.SLOTS:
+        if name in sent:
+            continue
+        start = slot_start(now, name)
+        if now > start + timedelta(minutes=LOOP_MIN):
+            continue
+        wake = start + timedelta(minutes=GRACE_MIN)
+        secs = max(0, int((wake - now).total_seconds()))
+        if secs > MAX_WAIT_MIN * 60:
+            return None
+        return name, secs
+    return None
+
+
 def watched_utc_hours(path=WATCH_FILE):
     """UTC hours the watchdog's crons cover (for the test that every slot is
     watched in both GMT and BST)."""
@@ -85,14 +124,62 @@ def _api(method, url, token, body=None):
     return json.loads(raw) if raw else {}
 
 
+def _brief_now(repo, token, path):
+    """briefed.json as main has it now (the checkout is stale after a sleep)."""
+    req = urllib.request.Request(f"https://api.github.com/repos/{repo}/contents/groupings-archive/briefed.json?ref=main",
+                                 headers={"Authorization": f"Bearer {token}", "Accept": "application/vnd.github.raw+json",
+                                          "X-GitHub-Api-Version": "2022-11-28"})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as r, open(path, "wb") as f:
+            f.write(r.read())
+    except Exception as e:
+        print(f"briefing_watch: could not read briefed.json from main ({e}); using the checkout's")
+        return None
+    return path
+
+
+def _runs(base, token, now):
+    since = (now - timedelta(hours=6)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    return _api("GET", f"{base}/runs?per_page=50&created=%3E%3D{since}", token).get("workflow_runs") or []
+
+
+def wait_and_kick(repo, token, base, dry, sleep=time.sleep, clock=lambda: datetime.now(timezone.utc)):
+    tmp = os.path.join(tempfile.mkdtemp(), "briefed.json")
+    path = _brief_now(repo, token, tmp)
+    nxt = next_wait(clock(), path)
+    if not nxt:
+        print(f"briefing_watch: no unsent slot within {MAX_WAIT_MIN} minutes"); return 0
+    slot, secs = nxt
+    print(f"briefing_watch: waiting {secs // 60} minutes for the {slot} slot")
+    sleep(secs)
+    end = slot_start(clock(), slot) + timedelta(minutes=LOOP_MIN)
+    while True:
+        now = clock()
+        path = _brief_now(repo, token, tmp)
+        go, why = decide(now, _runs(base, token, now), path)
+        print(f"briefing_watch: {now:%H:%M} UTC {why}")
+        if go:
+            if not dry:
+                _api("POST", f"{base}/dispatches", token, {"ref": "main"})
+                print("briefing_watch: deploy dispatched")
+            return 0
+        if N.due_slot(now, path) is None and now >= slot_start(now, slot):
+            return 0   # sent (or nothing due): done
+        if now + timedelta(minutes=POLL_MIN) > end:
+            print(f"briefing_watch: {slot} still unsent {LOOP_MIN} minutes after its hour; left to the next build")
+            return 0
+        sleep(POLL_MIN * 60)
+
+
 def main(argv):
     token, repo = os.environ.get("GH_TOKEN"), os.environ.get("REPO")
     if not token or not repo:
         print("briefing_watch: GH_TOKEN or REPO not set"); return 0
-    now = datetime.now(timezone.utc)
-    since = (now - timedelta(hours=6)).strftime("%Y-%m-%dT%H:%M:%SZ")
     base = f"https://api.github.com/repos/{repo}/actions/workflows/{WORKFLOW}"
-    runs = _api("GET", f"{base}/runs?per_page=50&created=%3E%3D{since}", token).get("workflow_runs") or []
+    if "--wait" in argv:
+        return wait_and_kick(repo, token, base, "--dry-run" in argv)
+    now = datetime.now(timezone.utc)
+    runs = _runs(base, token, now)
     go, why = decide(now, runs)
     print(f"briefing_watch: {why}")
     if go and "--dry-run" not in argv:

@@ -532,6 +532,28 @@ jobs:
         with:
           path: _site
 
+  # 16 Nov 2026: start the briefing watchdog's wait for the next slot
+  # (tools/briefing_watch.py --wait). GitHub sheds scheduled runs, the
+  # watchdog's own included, so the chain runs from build to build: this
+  # build's watchdog sleeps until the next unsent slot and dispatches the
+  # build that sends it, which starts the next wait. Runs whether or not the
+  # build ran (a held push still keeps the chain). Never fails the deploy.
+  briefing-next:
+    needs: [gate, build]
+    if: always()
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      actions: write
+    steps:
+      - name: Dispatch the briefing watchdog in wait mode
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api -X POST "repos/${{ github.repository }}/actions/workflows/briefing-watch.yml/dispatches" \
+            -f ref=main -f 'inputs[wait]=true' && echo "briefing watchdog dispatched (wait)"
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
