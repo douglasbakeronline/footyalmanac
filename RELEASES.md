@@ -7,6 +7,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-23: college basketball reads this season sooner, and marks sides behind .500
+
+**What changed:** a college basketball team's first six games of a season now move its rating half as far again (`sports.EARLY_K`), so a side that has changed over the summer is found sooner. College basketball rows in November and December whose picked side has a losing record (3+ games) carry a "Behind .500" mark. UMBC v Iona tonight reads 77% instead of 81%, marked.
+**Evidence:** replay fit 2024-25, check 2025-26 (5,814 games): log loss 0.5499 to 0.5475, p(worse) 0.00, 65%+ gap 0.022 to 0.020; a heavier summer regression was worse. Behind .500 picks landed 75% v 80% quoted on the replay, under in both seasons. `claude/ncaab-early-k-2026-11-16.md`, `tools/ncaab_carry_eval.py`.
+**Files:** `sports.py`, `sports.json` (ncaab refit), `index.html`, `tests/test_sports_early_k.py`, `tools/ncaab_carry_eval.py`, `claude/ncaab-early-k-2026-11-16.md`.
+**Not changed:** other sports; the Daily List bar (85%); k, home advantage and summer regression (pinned at live).
+**Roll back:** `git revert`.
+
 ## 2026-11-16-22: a later Card review run refreshes the day's issue (tag pending)
 
 **What changed:** the nightly Card review posted once a day and every later run posted nothing, so today's issue (#342, 12:02 UTC) said "no paired season read on file yet" although tune.yml had committed the football-data paired read at 13:16 and the review ran again at 19:41. A later run now rewrites the day's issue body when its files say something new, with a closing "Refreshed" line; it never opens a second review or a second integrity issue. The gate table also says "identical to live on the pool" (was "behind on the pool") and names an identical football-data season as identical.

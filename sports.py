@@ -212,7 +212,13 @@ GRID = {"k": (8, 12, 16, 20, 25, 32, 40), "hfa": (0, 25, 50, 75, 100),
 # Baseball's fit sat on the grid's lowest K (8) on 12 Nov 2026, so its grid is
 # widened downwards (claude/mlb-elo-k-2026-11-12.md). Other sports keep GRID.
 GRID_SPORT = {"mlb": {"k": (3, 4, 5, 6, 8, 12, 16, 20), "hfa": (0, 15, 25, 50),
-                      "regress": (0.0, 0.1, 0.25, 0.5), "mov": (0, 1)}}
+                      "regress": (0.0, 0.1, 0.25, 0.5), "mov": (0, 1)},
+              # College basketball pinned at the settings the early-season K
+              # was tested on (16 Nov 2026, EARLY_K). A free refit with it
+              # chose k 25 and no summer regression and lost the season-phase
+              # calibration (65%+ gap 0.022 -> 0.028): untested together, so
+              # not shipped. Unpin only with a paired test of that set.
+              "ncaab": {"k": (32,), "hfa": (100,), "regress": (0.25,), "mov": (1,)}}
 
 # A feed: an ESPN scoreboard path, the months it plays in, which weekdays to
 # walk for history (rugby is almost all Friday to Sunday; asking for every day
@@ -487,19 +493,33 @@ def p_home(eh, ea, hfa, neutral):
     return 1.0 / (1.0 + 10 ** (-((eh - ea) + (0 if neutral else hfa)) / 400.0))
 
 
+# A faster K early in the season (16 Nov 2026, after UMBC v Iona: UMBC rated
+# 81% on last season's team with no starter back). A team's first earlyN games
+# after a summer break move its rating earlyK times as far. College basketball,
+# replay fit 2024-25, check 2025-26 (5,814 games), each variant with its own
+# phase calibration: x1.5 for 6 games -0.0024 log loss, p(worse) 0.00, 65%+ gap
+# 0.022 -> 0.020; a heavier summer regression (0.35, 0.5) was worse. Merged into
+# the sport's params by tune_sport, so sports.json carries it.
+# tools/ncaab_carry_eval.py, claude/ncaab-early-k-2026-11-16.md.
+EARLY_K = {"ncaab": {"earlyK": 1.5, "earlyN": 6}}
+
+
 class Elo:
     def __init__(self, p):
         self.p = p
         self.r = {}       # (pool, team id) -> [elo, last date, games]
+        self.season = {}  # (pool, team id) -> games since the last summer break
 
     def get(self, pool, team, when):
         k = (pool, team)
         e = self.r.get(k)
         if e is None:
             e = self.r[k] = [1500.0, when, 0]
+            self.season[k] = 0
         elif (datetime.fromisoformat(when[:10]) - datetime.fromisoformat(e[1][:10])).days > OFFSEASON_DAYS:
             e[0] = 1500 + (e[0] - 1500) * (1 - self.p["regress"])
             e[1] = when   # regress once per break: predict() is called again for later games
+            self.season[k] = 0
         return e
 
     def predict(self, g):
@@ -515,12 +535,18 @@ class Elo:
             margin = abs(g["hs"] - g["as"])
             diff = (eh[0] - ea[0]) if s == 1.0 else (ea[0] - eh[0])
             m = math.log(margin + 1) * 2.2 / (max(diff, -400) * 0.001 + 2.2)
-        delta = self.p["k"] * m * (s - ph)
+        early = 1.0
+        if self.p.get("earlyN") and min(self.season.get((g["pool"], g["h"]), 0),
+                                       self.season.get((g["pool"], g["a"]), 0)) < self.p["earlyN"]:
+            early = self.p.get("earlyK", 1.0)
+        delta = self.p["k"] * early * m * (s - ph)
         eh[0] += delta
         ea[0] -= delta
         for e in (eh, ea):
             e[1] = g["when"]
             e[2] += 1
+        for t in ((g["pool"], g["h"]), (g["pool"], g["a"])):
+            self.season[t] = self.season.get(t, 0) + 1
         return ph
 
 
@@ -654,14 +680,15 @@ def tune_sport(sport, verbose=True):
         for hfa in grid["hfa"]:
             for reg in grid["regress"]:
                 for mov in grid["mov"]:
-                    p = {"k": k, "hfa": hfa, "regress": reg, "mov": mov}
+                    p = {"k": k, "hfa": hfa, "regress": reg, "mov": mov, **EARLY_K.get(sport, {})}
                     ll, _ = score(p, FIT)
                     if ll and (best is None or sum(ll) / len(ll) < best[0]):
                         best = (sum(ll) / len(ll), p)
     fitted = best[1]
     ll_fit_c, rows_fit = score(fitted, FIT)
     ll_new, rows_chk = score(fitted, CHECK)
-    ll_def, _ = score(DEFAULTS, CHECK)
+    defaults = {**DEFAULTS, **EARLY_K.get(sport, {})}
+    ll_def, _ = score(defaults, CHECK)
     n = len(ll_new)
 
     # 1. does the model beat backing the home side at the fit window's home rate?
@@ -675,7 +702,7 @@ def tune_sport(sport, verbose=True):
     # 2. is the fitted set worth shipping over the defaults?
     m_d, sd_d, pw_d = paired(ll_new, ll_def) if n else (0, 0, 1)
     use_fitted = n >= MIN_HOLDOUT and pw_d <= MAX_P_WORSE and -m_d >= MIN_GAIN
-    params = fitted if use_fitted else DEFAULTS
+    params = fitted if use_fitted else defaults
     if not use_fitted:
         _, rows_fit = score(params, FIT)
         ll_new, rows_chk = score(params, CHECK)
