@@ -30,7 +30,10 @@ if that is at most MAX_WAIT_MIN away, then checks every POLL_MIN minutes for
 up to LOOP_MIN minutes, reading briefed.json and the run list fresh from the
 API each time, and dispatches a deploy under the same rule as above. The
 deploy that sends one slot starts the wait for the next, so the briefings no
-longer depend on a cron firing near the slot.
+longer depend on a cron firing near the slot. The wait acts on the slot's
+hour itself (WAIT_GRACE_MIN 0, 16 Nov 2026 evening): the 10-minute grace is
+for the cron watchdog, which leaves room for a late cron; on the chain it only
+added ten minutes (16 Nov lunch: dispatched 11:15, pushed 11:19, 19 late).
 
 Standard library only.
 """
@@ -42,6 +45,8 @@ sys.path.insert(0, HERE)
 import notify as N
 
 GRACE_MIN = 10        # minutes after a slot's hour before the watchdog acts
+WAIT_GRACE_MIN = 0    # --wait (16 Nov 2026): the chain is the sender, so it acts on the hour;
+                      # with the cron's 10 minutes on top of a ~5-minute build, lunch landed 19 late
 MAX_KICKS = 2         # dispatches a slot at most (a failed build gets one retry)
 ACTIVE = {"queued", "in_progress", "waiting", "pending", "requested"}
 WORKFLOW = "deploy.yml"
@@ -61,15 +66,17 @@ def slot_start(now, slot):
     return uk.replace(hour=h, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
 
 
-def decide(now, runs, path=None):
+def decide(now, runs, path=None, grace=GRACE_MIN):
     """(dispatch?, reason). `runs` are deploy.yml runs from the REST API
-    (created_at, status, event), any order."""
+    (created_at, status, event), any order. `grace`: minutes after the slot's
+    hour before acting (the cron watchdog leaves room for a late cron; the
+    --wait chain does not, WAIT_GRACE_MIN)."""
     slot = N.due_slot(now, path)
     if not slot:
         return False, "no slot due"
     start = slot_start(now, slot)
-    if now < start + timedelta(minutes=GRACE_MIN):
-        return False, f"{slot}: inside the {GRACE_MIN}-minute grace"
+    if now < start + timedelta(minutes=grace):
+        return False, f"{slot}: inside the {grace}-minute grace"
     if any(r.get("status") in ACTIVE for r in runs):
         return False, f"{slot}: a deploy is running or queued, it will send it"
     kicks = [r for r in runs if r.get("event") == "workflow_dispatch" and _ts(r["created_at"]) >= start]
@@ -79,7 +86,7 @@ def decide(now, runs, path=None):
     return True, f"{slot}: unsent {late} minutes after its hour, no deploy running"
 
 
-def next_wait(now, path=None):
+def next_wait(now, path=None, grace=WAIT_GRACE_MIN):
     """(slot, seconds to sleep) for the next slot of the UK day still unsent,
     or None when there is none within MAX_WAIT_MIN. A slot already due and
     unsent waits 0 (or the rest of its grace); a due slot more than LOOP_MIN
@@ -96,7 +103,7 @@ def next_wait(now, path=None):
         start = slot_start(now, name)
         if now > start + timedelta(minutes=LOOP_MIN):
             continue
-        wake = start + timedelta(minutes=GRACE_MIN)
+        wake = start + timedelta(minutes=grace)
         secs = max(0, int((wake - now).total_seconds()))
         if secs > MAX_WAIT_MIN * 60:
             return None
@@ -156,7 +163,7 @@ def wait_and_kick(repo, token, base, dry, sleep=time.sleep, clock=lambda: dateti
     while True:
         now = clock()
         path = _brief_now(repo, token, tmp)
-        go, why = decide(now, _runs(base, token, now), path)
+        go, why = decide(now, _runs(base, token, now), path, grace=WAIT_GRACE_MIN)
         print(f"briefing_watch: {now:%H:%M} UTC {why}")
         if go:
             if not dry:
