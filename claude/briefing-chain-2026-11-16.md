@@ -61,3 +61,27 @@ the morning slot is still late, the overnight crons are the gap.
 
 Roll back: remove the `briefing-next` job from `deploy.yml`; the crons and
 the plain watchdog carry on as on 15 Nov.
+
+## The first chained slot, and the grace dropped (16 Nov evening session)
+
+The lunch slot was the first one the chain sent: the wait started at 08:48
+UTC, woke at 11:10 (the slot plus the 10-minute grace), dispatched at 11:15,
+and the build pushed at 11:19:45, 19 minutes after the hour (against 74 and
+84 on 14 and 15 Nov). The build took under five minutes from dispatch to
+push (the hand dispatch that morning: 3m45s), so most of the 19 minutes was
+the grace.
+
+The grace exists for the cron watchdog, which should leave a late cron its
+chance before dispatching. The chain has no cron to wait for, so
+`WAIT_GRACE_MIN` (0) now wakes it on the slot's hour; the cron watchdog keeps
+`GRACE_MIN` (10). Expected lateness on a chained slot: about five minutes.
+Dispatching before the hour was not taken: `notify.due_slot` sends nothing
+before the hour, and a build that reaches the push step early sends nothing
+and costs a second build. A deploy already running at the hour is still left
+to finish; if it reached its push step before the hour, the next poll (five
+minutes) finds the slot unsent and no run, and dispatches.
+
+The nightly review's briefing table had told the reader a backup cron in
+deploy.yml was the fix (stale since 15 Nov). It now prints a line for the
+chain's own days from `CHAIN_FROM` (17 Nov, the first full chained day),
+since the 14-day medians mix the cron days with the chain's.

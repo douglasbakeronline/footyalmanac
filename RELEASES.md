@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-briefing-on-the-hour: chained briefings dispatched on the slot's hour (tag pending)
+
+**What changed:** the briefing chain now dispatches the build at the slot's hour (07:00, 11:00, 16:00, 21:00 UK) instead of ten minutes after, so a chained push should land about five minutes after its hour. The nightly Card review's briefing table drops the stale "backup cron" advice and adds a line for the chain's own days from 17 Nov.
+
+**Evidence:** lunch on 16 Nov was the first chained slot: woke 11:10, dispatched 11:15, pushed 11:19:45, 19 minutes late (74 and 84 on 14 and 15 Nov). Dispatch to push took under five minutes, so most of the delay was the grace, which is there for the cron watchdog, not the chain. `claude/briefing-chain-2026-11-16.md`.
+
+**Files:** `tools/briefing_watch.py` (`WAIT_GRACE_MIN`, `grace` on `decide` and `next_wait`), `tools/card_review_post.py` (`CHAIN_FROM`, `briefing_section`), `tests/test_briefing_watch.py`, `tests/test_briefing_log.py`, `claude/briefing-chain-2026-11-16.md`, `CLAUDE.md`.
+
+**Not changed:** `notify.py`, the slots, any workflow file, the cron watchdog's 10-minute grace, any Card rule.
+
+**Roll back:** `git revert` the merge commit, or set `WAIT_GRACE_MIN = 10`.
+
 ## 2026-11-16-briefing-chain: each build starts the wait for the next briefing (tag pending)
 
 **What changed:** the briefings no longer wait on a scheduled run near their slot. Every deploy run ends by starting the briefing watchdog in wait mode: it sleeps until the next unsent slot (07:00, 11:00, 16:00, 21:00 UK) and dispatches the build that sends it, which starts the next wait.

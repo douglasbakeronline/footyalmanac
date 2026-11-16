@@ -230,6 +230,7 @@ def context_section(r):
     return out + [""]
 
 
+CHAIN_FROM = "2026-11-17"   # first full UK day of the briefing chain (16 Nov's morning predates it)
 BRIEF_LATE = 60    # minutes: a slot whose median push is later than this is named in bold
 
 
@@ -253,8 +254,17 @@ def briefing_section(st, days=14, today_=None):
         med = sent[len(sent) // 2] if sent else None
         out.append(f"| {name} | {len(sent)} | {med if med is not None else 'n/a'} | {sent[-1] if sent else 'n/a'} | {skip} |")
         if (med is not None and med > BRIEF_LATE) or skip: late.append(name)
-    out.append(f"**Late or skipped: {', '.join(late)}. The deploy crons run late; a backup cron (deploy.yml, an owner change) is the fix.**"
-               if late else f"Every slot's median push within {BRIEF_LATE} minutes, none skipped.")
+    out.append(f"**Late or skipped: {', '.join(late)}.**" if late else f"Every slot's median push within {BRIEF_LATE} minutes, none skipped.")
+    # 16 Nov 2026: the 14-day medians mix the cron days with the chain's
+    # (briefing_watch.py --wait from CHAIN_FROM), so the chain gets its own line.
+    chain = sorted(e["late"] for e in log if e.get("date", "") >= CHAIN_FROM and e.get("late") is not None)
+    cskip = sum(1 for e in log if e.get("date", "") >= CHAIN_FROM and e.get("skipped"))
+    if chain or cskip:
+        med = chain[len(chain) // 2] if chain else None
+        out.append(f"Since the briefing chain ({CHAIN_FROM}, `briefing_watch.py --wait`): {len(chain)} sent, median "
+                   f"{med if med is not None else 'n/a'} minutes late, worst {chain[-1] if chain else 'n/a'}, {cskip} skipped. "
+                   "A slot the chain sends lands about five minutes after its hour; later means the chain broke "
+                   "(a build that did not dispatch `briefing-next`).")
     return out + [""]
 
 

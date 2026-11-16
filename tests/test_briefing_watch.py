@@ -99,18 +99,19 @@ class NextWait(unittest.TestCase):
         self.brief("2026-11-15", ["morning", "lunch", "evening", "night"])
         slot, secs = W.next_wait(at("2026-11-16T06:21:00"), self.p)
         self.assertEqual(slot, "morning")
-        self.assertEqual(secs, (39 + W.GRACE_MIN) * 60)
+        self.assertEqual(secs, (39 + W.WAIT_GRACE_MIN) * 60)
 
     def test_due_and_unsent_waits_only_the_grace(self):
         self.brief("2026-11-16", [])
         self.assertEqual(W.next_wait(at("2026-11-16T07:30:00"), self.p), ("morning", 0))
-        self.assertEqual(W.next_wait(at("2026-11-16T07:04:00"), self.p), ("morning", 6 * 60))
+        self.assertEqual(W.next_wait(at("2026-11-16T07:04:00"), self.p), ("morning", 0))
+        self.assertEqual(W.next_wait(at("2026-11-16T07:04:00"), self.p, grace=10), ("morning", 6 * 60))
 
     def test_sent_slot_moves_to_the_next(self):
         self.brief("2026-11-16", ["morning"])
         slot, secs = W.next_wait(at("2026-11-16T07:20:00"), self.p)
         self.assertEqual(slot, "lunch")
-        self.assertEqual(secs, (3 * 60 + 40 + W.GRACE_MIN) * 60)
+        self.assertEqual(secs, (3 * 60 + 40 + W.WAIT_GRACE_MIN) * 60)
 
     def test_too_far_ahead_is_left_to_the_crons(self):
         self.brief("2026-11-16", ["morning", "lunch"])
@@ -128,6 +129,17 @@ class NextWait(unittest.TestCase):
     def test_nothing_after_the_night_slot(self):
         self.brief("2026-11-16", ["morning", "lunch", "evening", "night"])
         self.assertIsNone(W.next_wait(at("2026-11-16T22:00:00"), self.p))
+
+    def test_wait_acts_on_the_hour(self):
+        # 16 Nov lunch: the chain woke at 11:10, dispatched 11:15, pushed 11:19.
+        # On the chain there is no cron to wait for, so it acts at 11:00.
+        self.brief("2026-11-16", ["morning"])
+        self.assertEqual(W.WAIT_GRACE_MIN, 0)
+        self.assertEqual(W.next_wait(at("2026-11-16T08:49:00"), self.p), ("lunch", (2 * 60 + 11) * 60))
+        go, _ = W.decide(at("2026-11-16T11:00:30"), [], self.p, grace=W.WAIT_GRACE_MIN)
+        self.assertTrue(go)
+        go, why = W.decide(at("2026-11-16T11:00:30"), [], self.p)   # the cron watchdog keeps its grace
+        self.assertFalse(go); self.assertIn("grace", why)
 
     def test_wait_fits_the_job_limit(self):
         self.assertLessEqual(W.MAX_WAIT_MIN + W.LOOP_MIN + W.POLL_MIN, 350)
@@ -159,7 +171,7 @@ class WaitAndKick(unittest.TestCase):
     def test_sleeps_then_dispatches(self):
         self.go()
         self.assertEqual(len(self.posts), 1)
-        self.assertEqual(self.t[0], at("2026-11-16T07:10:00"))
+        self.assertEqual(self.t[0], at("2026-11-16T07:00:00"))   # on the hour (WAIT_GRACE_MIN)
 
     def test_dry_run_does_not_dispatch(self):
         self.go(dry=True)

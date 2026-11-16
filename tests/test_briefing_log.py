@@ -68,6 +68,16 @@ class Section(unittest.TestCase):
         out = "\n".join(P.briefing_section({"log": [{"date": "2026-11-12", "slot": "night", "late": 20}]}))
         self.assertIn("within 60 minutes", out)
 
+    def test_chain_line(self):
+        st = {"log": [{"date": "2026-11-15", "slot": "morning", "late": 138},
+                      {"date": P.CHAIN_FROM, "slot": "morning", "late": 5},
+                      {"date": P.CHAIN_FROM, "slot": "lunch", "late": 4}]}
+        out = "\n".join(P.briefing_section(st, today_=P.CHAIN_FROM))
+        self.assertIn("2 sent, median 5 minutes late, worst 5, 0 skipped", out)
+        self.assertNotIn("backup cron", out)
+        old = "\n".join(P.briefing_section({"log": st["log"][:1]}, today_="2026-11-16"))
+        self.assertNotIn("briefing chain", old)
+
     def test_window(self):
         st = {"log": [{"date": "2026-10-01", "slot": "lunch", "late": 200}]}
         self.assertEqual(P.briefing_section(st, today_="2026-11-13"), [])
