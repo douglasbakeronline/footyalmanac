@@ -539,6 +539,11 @@ jobs:
           cp scale.js scale.json _site/ 2>/dev/null || \
             echo "::warning::no scale files this run — the Scale tab will show its empty state"
 
+      # 16 Nov 2026, Douglas: Google Tag Manager on every page, future pages included.
+      # The pages carry it in their source; this adds it to any published page that does not.
+      - name: Google Tag Manager on every page
+        run: python3 tools/tag_pages.py _site || echo "::warning::a published page has no <head>, so no tag"
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: _site

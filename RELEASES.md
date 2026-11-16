@@ -4,6 +4,17 @@ Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
 
+
+## 2026-11-16-9: Google Tag Manager on every page (tag pending)
+
+**For a reader:** nothing visible. Douglas's Google Tag Manager container (`GTM-WP7C2F6B`) now loads on every page of the site, the main page and Almanac Analysis, straight after `<head>`, as he supplied it. Future pages get it too: a test fails CI on any page in the repo without it, and the deploy adds it to any published page that still lacks it (with a warning naming the page). The Cloudflare beacon is unchanged.
+
+**Files:** `index.html`, `analysis.html`, `tools/tag_pages.py` (new), `tests/test_tag_pages.py` (new), `.github/workflows/deploy.yml` (the "Google Tag Manager on every page" step), `CLAUDE.md`.
+
+**Not changed:** no consent banner. If the container fires Google Analytics or ad tags that set cookies, UK rules (PECR) expect consent first; Cloudflare's beacon sets none.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-16-8: football half-time scores filled in for the season so far (tag pending)
 
 **For a reader:** nothing on the page yet. Half-time scores were being kept only from 16 Nov: a finished day's API-Football file is never asked for again, and every day before 16 Nov had been cached without its half time. A finished day file without one is now asked for once more on scheduled builds, up to 25 a build and 180 days back (about 170 calls once, spread over a few builds; today's builds left 6,500 of the 7,500 a day unused), and `periods.py` looks back 180 days instead of 10. A graded fixture tried against a day with half times and not matched is noted in `periods/missed.json` and not tried again, so the matching stays quick.
