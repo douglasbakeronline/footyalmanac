@@ -80,6 +80,7 @@ class OppIntegrity(unittest.TestCase):
         self.assertTrue(CI.needs_opp({"rule": 6}, "2026-11-08", l))
         self.assertFalse(CI.needs_opp({"rule": 7}, "2026-11-11", l))
         self.assertFalse(CI.needs_opp({"rule": 8}, "2026-11-11", l))
+        self.assertTrue(CI.needs_opp({"rule": 12}, "2026-11-16", l))   # 16 Nov 2026: rule 12 reads it again
         self.assertFalse(CI.needs_opp({"rule": 6, "wide": True}, "2026-11-08", l))
         self.assertFalse(CI.needs_opp({"rule": 6}, "2026-11-05", l))
         self.assertFalse(CI.needs_opp({"rule": 6}, "2026-11-08", dict(l, opp=9.5)))
