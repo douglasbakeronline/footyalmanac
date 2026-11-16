@@ -861,6 +861,9 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .meta .flash{right:-172px;bottom:auto;top:50%;margin-top:-15px;width:520px;transform:rotate(-16deg);
   padding:4px 0;text-align:center;border-right:0;min-width:0}
 .meta .flash span{font-size:10px;letter-spacing:.03em;line-height:1.25}
+/* between 701 and 1219px the cover narrows and the last cell's "534 of 616 landed" reaches the
+   band: a smaller quote, further into the corner (checked at a 918px cover) */
+@media (max-width:1219px){ .meta .flash{right:-205px;margin-top:-13px} .meta .flash span{font-size:8.5px} }
 /* ---------- responsible gambling, at the foot of every page (16 Nov 2026, Douglas) ---------- */
 .rg{margin-top:32px;display:flex;flex-wrap:wrap;border:1px solid #100e0c;background:var(--surface)}
 .rg-age{flex:0 0 auto;display:flex;align-items:center;background:#100e0c;color:var(--yellow);font-family:var(--f-display);
