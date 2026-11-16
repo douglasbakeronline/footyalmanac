@@ -342,6 +342,10 @@ VARIANTS = {
     # the Edge flag's floor since 11 Nov. Gated like the rest.
     "m7opp9": {"CARD_MODEL_OPP_MIN": {"football": 9.0}},
     "m7opp5": {"CARD_MODEL_OPP_MIN": {"football": 5.0}},
+    # 16 Nov 2026: CARD_RULE 12 set m7opp5 live (Douglas's call, before its
+    # pool gate), so m7opp5 now equals live; rule 11, with no opposition
+    # condition, is replayed as m7noopp (claude/card-opp5-list2x-2026-11-16.md)
+    "m7noopp": {"CARD_MODEL_OPP_MIN": {}},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants

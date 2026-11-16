@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-24: the Card needs the opposition at 4/1 or longer, and the List 2x runs on paper (tag pending)
+
+**What changed:** a football pick on the Card now needs its opponent priced 5.0 (4/1) or longer (`groupings.CARD_MODEL_OPP_MIN` `{"football": 5.0}`, `CARD_RULE` 12). Douglas asked "what can you do here to actually win" after a run of lost 2x groups, and said yes to this. Beside the Card, a new **List 2x** runs on paper every day: the Daily List's own picks priced 1.15+, the model's strongest first, added until the slip pays 2x (`build_list_card`, `list_group`). It is never staked or pushed, and is graded apart as `cardList` in `groupings-record.json`. The Bets tab shows it in an "On paper: the List 2x" fold, with its record under "More numbers".
+
+**Evidence:** the condition is the pre-registered `m7opp5`, set live before its 100-pool-leg gate as Douglas's call. Across five football-data seasons it was +17.5% against +9.6% pooled (450 legs, p(worse) 0.014), ahead in all five. On the pool (`tools/card_replay.py`, 16 Nov) the new live Card shows 20 groups, 11 won, +34%. Rule 11 without the condition (`m7noopp`) shows 23 groups, 9 won, −4%, with paired p(worse) 1.00 for rule 11. The List 2x has no evidence behind it yet. That is why it runs on paper: list picks land 87.5% but returned −1.6% a pick at their prices on the results ledger.
+
+**Files:** `groupings.py`, `index.html`, `tools/card_replay.py` (`m7noopp`), `tools/card_legs_history.py`, `tools/card_integrity.py` (`needs_opp` reads rule 12), `tests/test_list_card.py`, `tests/test_card_m7opp.py`, `tests/test_card_model_rule.py`, `tests/test_card_funnel_model.py`, `tests/test_context_review.py`, `claude/card-opp5-list2x-2026-11-16.md`, `CLAUDE.md`.
+
+**Not changed:** the Card's other conditions, its stakes and the 2x-only build. The Daily List is unchanged and still takes no bookmaker input. NBA and tennis Card picks carry no opposition condition.
+
+**Roll back:** `CARD_MODEL_OPP_MIN = {}` and `CARD_RULE` 11 for the condition. Remove the `build_list_card` line in `build()` for the List 2x. Or `git revert` the merge.
+
 ## 2026-11-16-23: college basketball reads this season sooner, and marks sides behind .500
 
 **What changed:** a college basketball team's first six games of a season now move its rating half as far again (`sports.EARLY_K`), so a side that has changed over the summer is found sooner. College basketball rows in November and December whose picked side has a losing record (3+ games) carry a "Behind .500" mark. UMBC v Iona tonight reads 77% instead of 81%, marked.

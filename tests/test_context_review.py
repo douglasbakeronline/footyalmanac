@@ -85,7 +85,7 @@ class Review(unittest.TestCase):
 class Veto(unittest.TestCase):
     def model_leg(self):
         l = {"sport": "football", "event": "Ajax v Other", "pick": "Ajax", "code": "en.1", "comp": "Premier League",
-             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8}
+             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "opp": 7.0}
         return l
 
     def test_against_keeps_the_pick_off_the_card(self):
@@ -113,7 +113,7 @@ class CardPicks(unittest.TestCase):
     """11 Nov 2026: the day's backed picks with their verdicts, for the page."""
     def test_lists_backed_picks_and_the_vetoed(self):
         base = {"sport": "football", "code": "en.1", "comp": "Premier League", "odds": 1.50, "est": False,
-                "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "date": "2026-11-14"}
+                "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "date": "2026-11-14", "opp": 7.0}
         ok = dict(base, event="A v B", pick="A", when="2026-11-14T15:00:00Z", context={"verdict": "clear"})
         off = dict(base, event="C v D", pick="C", when="2026-11-14T17:30:00Z", context={"verdict": "against", "reason": "x"})
         low = dict(base, event="E v F", pick="E", when="2026-11-14T15:00:00Z", pModel=0.50)

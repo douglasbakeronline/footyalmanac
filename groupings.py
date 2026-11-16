@@ -1602,7 +1602,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 11    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026)
+CARD_RULE = 12    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1631,7 +1631,14 @@ CARD_MODEL_EDGE = 0.0
 # variants m7opp9 and m7opp5 (tools/card_replay.py, card_legs_history.py
 # cardM7) set it, pre-registered before any result; a live change needs the
 # gate. Football only, as for CARD_OPP_MIN.
-CARD_MODEL_OPP_MIN = {}
+# 16 Nov 2026, CARD_RULE 12 (Douglas, on the group record: "what can you do
+# here to actually win"; on the proposal, "Yes"): set live at 5.0 (4/1), the
+# m7opp5 variant, before its 100-pool-leg gate. The owner's call on the
+# evidence: five football-data seasons +17.5% v +9.6% pooled on 450 legs,
+# p(worse) 0.014, ahead in all five; the pool 33 legs, p 0.07. Rule 11 (no
+# opposition condition) is replayed as `m7noopp`; {} rolls it back.
+# claude/card-opp5-list2x-2026-11-16.md.
+CARD_MODEL_OPP_MIN = {"football": 5.0}
 # 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
 # kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
 # replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
@@ -1667,6 +1674,21 @@ RISK.update({"Model 2x": "On paper, the model's own picks", "Model 3x": "On pape
 MIN_CHANCE.update({n: f for n, _, _, f in MODEL_KINDS})
 CARD_RANGE.update({n: (lo, hi) for n, lo, hi, _ in MODEL_KINDS})
 def is_model(name): return str(name).startswith("Model")
+
+# 16 Nov 2026 (claude/card-opp5-list2x-2026-11-16.md), Douglas: "look at the
+# daily list and reserve - why are not mirroring that's success". The List
+# 2x: the Daily List's own picks priced LIST_ODDS_MIN+, strongest on the model
+# first, added one at a time until the slip pays 2x. On paper every day,
+# never staked or pushed, graded apart (cardList), so the Card and a slip of
+# the list's own winners are compared on results rather than argued. Not a
+# rule the evidence backs yet: list picks land 87.5% but returned -1.6% a
+# pick at their prices (results ledger, 16 Nov), and each extra pick adds
+# the bookmaker's margin again.
+LIST_KINDS = [("List 2x", 2.0)]
+LIST_ODDS_MIN = 1.15
+LIST_LEGS_MAX = 6
+RISK.update({"List 2x": "On paper, never staked"})
+def is_list(name): return str(name).startswith("List")
 
 def is_card(name): return str(name).startswith("Card")
 
@@ -2203,6 +2225,63 @@ def build_model_card(L, date, now, prev=None, archived=None):
     for g in groups:
         g["model"] = True; g["stake"] = 0
         g["bookOdds"] = at_book(g); g["book"] = CARD_BOOK   # 9 Nov 2026: the paper card shows William Hill too
+    return groups
+
+def list_group(L, used, after, name=LIST_KINDS[0][0], target=LIST_KINDS[0][1]):
+    """The List 2x from a day's legs: Daily List picks with a real bookmaker
+    price of LIST_ODDS_MIN+, not started, one a fixture, the model's strongest
+    first, taken until the combined price reaches the target. None when the
+    day's list cannot reach it in LIST_LEGS_MAX picks."""
+    cands = [as_model(l) for l in L if l.get("list") and not l.get("est") and l.get("odds") and l["odds"] >= LIST_ODDS_MIN
+             and l["event"] not in used and (parse(l.get("when")) or after) >= after]
+    cands.sort(key=lambda l: (-l["pModel"], -l["odds"], l.get("when") or "9"))
+    legs_, seen, o = [], set(), 1.0
+    for l in cands:
+        if l["event"] in seen: continue
+        legs_.append(dict(l)); seen.add(l["event"]); o *= l["odds"]
+        if o >= target or len(legs_) >= LIST_LEGS_MAX: break
+    if o < target: return None
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    fair = [l.get("fair") for l in legs_]
+    return {"name": name, "risk": RISK.get(name), "band": [target, None], "minChance": 0,
+            "odds": round(o, 2), "p": round(math.prod(l["pModel"] for l in legs_), 4),
+            "pFair": round(math.prod(fair), 4) if all(f is not None for f in fair) else None,
+            "implied": round(math.prod(l.get("implied") or 1 / l["odds"] for l in legs_), 4),
+            "estimates": 0, "basis": "model", "rule": 1, "wide": False, "legs": legs_,
+            "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
+
+def build_list_card(L, date, now, prev=None, archived=None):
+    """The List 2x for one UK date (16 Nov 2026), on paper, as the Model card
+    was: built once, held as first built until its first start (no re-check:
+    paper is graded as published), then frozen and archived."""
+    stamp = iso(now); after = now + timedelta(minutes=20)
+    w = CARD_WINDOWS[0][0]
+    if archived is None:
+        try:
+            with open(os.path.join(ARCHIVE, f"{date}.json")) as f: archived = [g for g in json.load(f).get("groups") or [] if is_list(g.get("name"))]
+        except (OSError, ValueError):
+            archived = []
+    groups, filled = [], set()
+    for g in list(archived) + [g for g in (prev or []) if is_list(g.get("name"))]:
+        if g["name"] in filled: continue
+        lock = first_kick(g) or lock_time(date, w)
+        g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
+        g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
+        groups.append(g); filled.add(g["name"])
+    if now < window_end(date, w):
+        day_legs = [l for l in L if (uk_slot(l) or (None, None))[0] == date]
+        for name, target in LIST_KINDS:
+            if name in filled: continue
+            g = list_group(day_legs, set(), after, name, target)
+            if not g: continue
+            lock = first_kick(g) or lock_time(date, w)
+            g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
+                     paper=True, bench=[], book=CARD_BOOK, stake=0)
+            for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+            filled.add(name); groups.append(g)
+    for g in groups:
+        g["paper"] = True; g["stake"] = 0
+        g["bookOdds"] = at_book(g); g["book"] = CARD_BOOK
     return groups
 
 LEGACY_WINDOWS = [("Overnight", 0, 9), ("Daytime", 9, 17), ("Evening", 17, 24)]   # to 28 Oct 2026
@@ -3114,6 +3193,8 @@ def grade(now=None):
            "cardLate": tally([g for g in allg if is_card(g["name"]) and g.get("late")]),
            # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
            "cardModel": tally([g for g in allg if is_model(g["name"])]),
+           # 16 Nov 2026: the List 2x, the Daily List's own picks on paper, its own line
+           "cardList": tally([g for g in allg if is_list(g["name"])]),
            # 29 Oct 2026: each Card rule version on its own line, so a change to the
            # rule is judged against the rules before it rather than blended in.
            "cardByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == r])
@@ -3194,6 +3275,8 @@ def main():
         span_taken = {l["event"] for g in groups if g.get("span") for l in g["legs"]}
         # 11 Nov 2026: under CARD_RULE 7 the Card is the model's own picks, so the paper Model card stops
         if not CARD_MODEL_RULE: groups += build_model_card(L, d, now, prev=pd.get("groups"))
+        # 16 Nov 2026: the List 2x on paper beside the Card (cardList)
+        groups += build_list_card(L, d, now, prev=pd.get("groups"))
         live = [g for g in groups if g.get("status") != "underway"]
         core = [l for l in dl if not l.get("multOnly")]   # the counts the page has always shown
         days.append({"date": d, "legs": len(core), "priced": sum(1 for l in core if not l.get("est")),

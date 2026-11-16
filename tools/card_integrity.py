@@ -96,8 +96,10 @@ def needs_opp(g, day, l):
     price: only rule 6 full-rule groups (from 6 Nov 2026) read it. From
     CARD_RULE 7 (11 Nov 2026, the model's own picks) and on the wider-rule
     filler the opposition's price is no condition, so its absence is not a
-    finding (it would open an office-backlog issue for nothing)."""
-    if g.get("wide") or (g.get("rule") or 0) >= 7 or day < "2026-11-06": return False
+    finding (it would open an office-backlog issue for nothing). From
+    CARD_RULE 12 (16 Nov 2026) football reads it again (5.0+)."""
+    r = g.get("rule") or 0
+    if g.get("wide") or 7 <= r < 12 or day < "2026-11-06": return False
     return l.get("sport") == "football" and not l.get("est") and bool(l.get("odds")) and not l.get("opp")
 
 
