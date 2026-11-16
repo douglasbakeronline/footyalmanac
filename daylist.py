@@ -226,7 +226,7 @@ def attach_results(items, record, trec, srec):
     return items
 
 
-SITE = "https://douglasbakeronline.github.io/footyalmanac/"
+SITE = "https://sportsalmanac.bet/"
 
 
 def previous_full(day, fetch=True):
