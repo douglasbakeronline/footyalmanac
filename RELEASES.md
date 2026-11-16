@@ -6,6 +6,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-13: the Card replay reads the opposition's price on the pool's early legs (tag pending)
+
+**What changed:** the pool archive kept no opposition price for football legs before 6 Nov, so 382 priced football legs from 30 Oct to 9 Nov faulted in every replay variant with an opposition condition (`rule6` and its family, `m7opp5`, `m7opp9`) for missing data, not for their rule. `tools/card_replay.py` now takes the opposition's and the draw's average price for those legs from the football archive (`predictions/`, rows published before kick-off, `archive_opp`), marked `oppFrom: "archive"`; the nightly Card review counts them apart from the legs left out.
+**Evidence:** on the 246 legs carrying both prices the archive's agrees with the pool's on the 5.0 and 9.0 lines 91% of the time (median difference 0). In the review's window, `m7opp5` goes from 4 groups on 12 legs (-42%, p(worse) 0.24) to 11 groups on 33 legs (+2%, p(worse) 0.00); live is unchanged. Two new tests; nametest and the suite pass. `claude/card-replay-archive-opp-2026-11-16.md`.
+**Not changed:** no Card rule. `m7opp5` is still under the gate's 100 pool legs; the funnel is untouched.
+**Files:** `tools/card_replay.py`, `tools/card_review_post.py`, `tests/test_card_pool_replay.py`, `claude/card-replay-archive-opp-2026-11-16.md`, `CLAUDE.md`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-12: the Mailer page and tab, sign-ups into Supabase, and the flash as tape
 
 **What changed:** a Mailer tab closes the sections row on every page and opens `mailer.html`, the sign-up for the Daily List email: email, the three emails (Daily List, Scale, Sunday Record), an 18+ and consent tick, and a hidden spam trap. Sign-ups go to Supabase: the Inbox Innovation project (the free plan allows two projects and the other one is personal finance), in its own `almanac` schema that the API does not expose, written only through `almanac_subscribe` (security definer; the publishable key can call it and read nothing). Rows start `pending` for double opt-in; `almanac_confirm`, `almanac_get_preferences` and `almanac_update_preferences` are ready for the confirm and preferences links once sending is set up. The corner flash is now a strip of tape with torn ends and a soft shadow, the quote centred on it, overhanging the panel.

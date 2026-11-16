@@ -463,8 +463,12 @@ def main():
         if src.get("pool"):
             # 9 Nov 2026: the legs come from the archived pool from poolFrom
             legs = ", ".join(f"{k} {v}" for k, v in sorted((src.get("poolLegs") or {}).items(), key=lambda x: -x[1])) or "none"
-            out = ", ".join(f"{k} {v}" for k, v in sorted((src.get("poolLeftOut") or {}).items())) or "none"
-            lines.append(f"Source: the archived pool from {src['poolFrom']} (settled priced legs: {legs}; left out: {out})"
+            lo = src.get("poolLeftOut") or {}
+            # 16 Nov 2026: legs kept with an opposition price from the football
+            # archive are counted apart from the legs left out
+            out = ", ".join(f"{k} {v}" for k, v in sorted(lo.items()) if "(kept)" not in k) or "none"
+            kept = "".join(f"; {k.replace(' (kept)', '')}: {v} legs" for k, v in sorted(lo.items()) if "(kept)" in k)
+            lines.append(f"Source: the archived pool from {src['poolFrom']} (settled priced legs: {legs}; left out: {out}{kept})"
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines += coverage_lines(rep, load("groupings-record.json"))
