@@ -1454,6 +1454,17 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-gs{font-family:var(--f-num);font-size:12px;color:var(--ink-2);text-align:right;padding-left:10px;white-space:nowrap}
 .sc-gnote{margin:8px 0 0;font-size:13px;color:var(--mute)}
 .sc-sec{margin-top:30px}
+/* Every scale bet (scale_ladder.py, 16 Nov 2026): a tally per sport, bet and band */
+.sc-lad td{white-space:nowrap}
+.sc-lad td.r{text-align:right;font:500 13px var(--f-num)}
+.sc-lad td.r small{display:block;font-size:11px;color:var(--mute)}
+.sc-lad td.r.thin{color:var(--mute)}
+.sc-lad td.r.hi{background:color-mix(in srgb, var(--edge) 12%, transparent)}
+.sc-lad th.r{text-align:right}
+.sc-lad .bk{display:block;font-size:12px;color:var(--mute)}
+.sc-lad tr.now td:first-child b::after{content:"On the tab";margin-left:6px;font:600 10px var(--f-num);letter-spacing:.04em;text-transform:uppercase;color:var(--edge)}
+.sc-ladseg{margin:10px 0 12px;flex-wrap:wrap}
+.sc-ladseg button{flex:0 0 auto}
 .sc-sech{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px;border-bottom:1px solid var(--cover-ink);padding-bottom:6px}
 .sc-h3{font-size:22px}
 .sc-h3 small{font:600 14px var(--f-ui);letter-spacing:.04em;color:var(--ink-2);text-transform:none;margin-left:6px}
@@ -5781,6 +5792,34 @@ function scCard(g, byKey){
     <ol>${legs.map(l => `<li>${l.state || done ? `<span class="sc-dot ${scState(l)}" role="img" aria-label="${scE(scWord(l.sport, scState(l), l.market))}"></span>` : ""}<b>${scE(l.pick)}</b> <span>${scE(scLow(l.bet))}</span> <small>${scPct(l.chance)}${l.price ? " · " + l.price.toFixed(2) : l.est ? " · ≈ " + l.est.toFixed(2) : ""}</small></li>`).join("")}</ol>
     <div class="sc-cf"><b>${head}</b><p>${line}</p>${tag}</div></article>`;
 }
+// Every scale bet (scale_ladder.py, 16 Nov 2026, Douglas: "can we track all of these
+// across all sports"): for each sport, how often each way of scaling a winner
+// landed on the whole record, by confidence band, for Daily List picks and over
+// the last four weeks, with the price it needs. A tally, never a fit.
+let SC_LAD = "football";
+const SC_LAD_NOW = {football: "w_o25", tennis: "straight", nba: "by10", nfl: "by7", rugby: "by8"};
+function scLadder(L){
+  if(!L || !L.sports || !Object.keys(L.sports).length) return "";
+  const sports = Object.keys(L.sports);
+  if(!sports.includes(SC_LAD)) SC_LAD = sports[0];
+  const sp = L.sports[SC_LAD];
+  const cell = (t, hi) => {
+    if(!t || !t.n) return `<td class="r thin">–</td>`;
+    const thin = t.n < 20;
+    return `<td class="r${thin ? " thin" : ""}${hi && !thin ? " hi" : ""}">${Math.round((t.rate || 0) * 100)}%<small>${t.n}${t.needs ? " · needs " + t.needs.toFixed(2) : ""}</small></td>`;
+  };
+  const bands = L.bands || [];
+  const head = `<tr><th>Bet</th>${bands.map(b => `<th class="r">${scE(b.endsWith("+") ? b.slice(0, -1) + "%+" : b + "%")}</th>`).join("")}<th class="r">Daily List</th><th class="r">Last ${L.recentDays} days</th><th class="r">All</th></tr>`;
+  const rows = sp.bets.map(b => {
+    const band = bands.map(x => cell(((sp.band || {})[x] || {})[b.key], (((sp.band || {})[x] || {})[b.key] || {}).rate >= 0.6));
+    const lst = ((sp.tier || {}).list || {})[b.key];
+    return `<tr class="${SC_LAD_NOW[SC_LAD] === b.key ? "now" : ""}"><td><b>${scE(b.label)}</b><span class="bk">${scE(b.book)}</span></td>${band.join("")}${cell(lst, (lst || {}).rate >= 0.6)}${cell((sp.recent || {})[b.key])}${cell((sp.all || {})[b.key])}</tr>`;
+  }).join("");
+  return `<section class="sc-sec" id="scLadder"><h3 class="sc-h3 sc-sech">Every scale bet<small>how often each way of scaling a winner has landed, every sport</small></h3>
+    <div class="seg sc-ladseg" id="scLadSeg">${sports.map(k => `<button type="button" data-lad="${k}" aria-pressed="${k === SC_LAD}">${scE(L.sports[k].name)}</button>`).join("")}</div>
+    <div style="overflow-x:auto"><table class="sc-table sc-lad">${head}<tbody>${rows}</tbody></table></div>
+    <p class="sc-foot">${sp.picks.toLocaleString()} graded ${scE(sp.name.toLowerCase())} picks at ${Math.round((L.floor || 0.55) * 100)}% or better, by the model's confidence in the winner. Each cell: how often the bet landed, how many picks, and the price it needs to break even at that rate. Shaded: lands 60% or more. Grey: under 20 picks, too few to lean on. Set the price it needs against ${scE((SCALE && SCALE.book) || "William Hill")}'s: a bet only pays over time when the price is above it.${sp.unsettled && sp.unsettled.length ? ` Not tracked (the record holds final scores only): ${sp.unsettled.map(scE).join(", ")}.` : ""}</p></section>`;
+}
 function renderScale(){
   const host = $("#scale"); if(!host) return;
   const S = SCALE;
@@ -5912,7 +5951,10 @@ function renderScale(){
       ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
       <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with over 2.5 goals, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the fixture's result-and-goals bets. Groups take Daily List picks, and football from every fixture ${scE(S.book)} offers.</p></div>${tiles}</div>
-    ${glance}${list}${groups}${leagues}${board}`;
+    ${glance}${list}${groups}${leagues}${board}${scLadder(S.ladder)}`;
+  const bindLad = () => { const ls = $("#scLadSeg"); if(ls) ls.onclick = e => { const b = e.target.closest("button[data-lad]"); if(!b) return;
+    SC_LAD = b.dataset.lad; const sec = $("#scLadder"); if(sec){ sec.outerHTML = scLadder(S.ladder); bindLad(); } }; };
+  bindLad();
   const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
   const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
     const h = $("#scList"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };

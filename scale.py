@@ -767,6 +767,12 @@ def build(now=None, here=HERE):
                                      "priced": priced_by(p, pkeys)} for p in entry["picks"]]})
     cov = coverage(market_rows, now)
     order = [str(k[0]) for k in KINDS]
+    try:                            # every scale bet, every sport (scale_ladder.py, 16 Nov 2026); a tally, display only
+        import scale_ladder as ladder
+        lad = ladder.build(here, today)
+    except Exception as e:
+        print(f"scale: ladder not built ({type(e).__name__}: {e})", file=sys.stderr)
+        lad = None
     out = {"generated": stamp, "rule": RULE, "book": BOOK, "today": today.isoformat(), "from": LIVE_FROM,
            "floor": FLOOR, "target": TARGET, "tiers": list(TIERS),
            "sports": {s: {k: v for k, v in c.items() if k in ("name", "bet", "long", "find")} for s, c in SPORTS.items()},
@@ -782,6 +788,7 @@ def build(now=None, here=HERE):
                       "byTier": {t: _done(before_tier[t]) for t in TIERS if t in before_tier},
                       "groups": {k: {"name": t["name"], "n": t["n"], "won": t["won"], "void": t["void"], **({"estN": t["estN"], "estRet": round(t["estReturned"] / t["estN"] - 1, 4)} if t.get("estN") else {})}
                                  for k, t in sorted(before_kinds.items(), key=lambda kv: order.index(kv[0]) if kv[0] in order else 99)}},
+           "ladder": lad,
            "replay": {"football": replay(here, {c["league"] for c in cov}, LIVE_FROM), "basis": basis(sample),
                       "byTier": basis_tier(sample)},
            "leagues": cov}
