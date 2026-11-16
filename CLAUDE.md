@@ -8,7 +8,7 @@ games sit at the top, and grades itself publicly against what actually
 happened. It began as football-only, which is why many notes and names say
 "football" or "footy".
 
-- Live: https://douglasbakeronline.github.io/footyalmanac/
+- Live: https://sportsalmanac.bet/ (since 16 Nov 2026; the github.io address redirects)
 - Repo: https://github.com/douglasbakeronline/footyalmanac (public)
 - Owner: Douglas. At least one other collaborator has push access.
 

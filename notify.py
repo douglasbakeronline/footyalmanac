@@ -77,7 +77,7 @@ def send(topic, title, body, tags="soccer", priority="high", click=None):
 # slot is sent, so a late build never sends a stale one; slots sent are kept
 # in groupings-archive/briefed.json, which the build already commits, so a
 # repeated build never sends twice. Display only, like everything here.
-SITE = "https://douglasbakeronline.github.io/footyalmanac/"
+SITE = "https://sportsalmanac.bet/"
 SLOTS = [("morning", 7), ("lunch", 11), ("evening", 16), ("night", 21)]
 BRIEF_FILE = os.path.join(HERE, "groupings-archive", "briefed.json")
 GROUP_A_MIN = 0.85     # daylist.GROUP_A_MIN

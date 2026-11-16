@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-4: the site moves to sportsalmanac.bet (tag pending)
+
+**What changed:** the site is served at https://sportsalmanac.bet/ (registered at Hostinger; four GitHub Pages A records and a `www` CNAME to `douglasbakeronline.github.io`; the custom domain set in Settings > Pages). The links the build writes into the day list, notifications, the free-prices user agent and the Julius export now point there. The old `douglasbakeronline.github.io/footyalmanac/` address redirects to the new one, so shared links keep working.
+**Not changed:** `groupings.PUBLISHED` still reads the published `groupings.json` through the github.io address, which follows the redirect; HQ stays at github.io. Cloudflare Web Analytics needs nothing: the beacon reports from any host.
+**Files:** `daylist.py`, `notify.py`, `free_prices.py`, `tools/julius_export.py`.
+**Roll back:** `git revert`; to drop the domain, Remove it under Settings > Pages.
+
 ## 2026-11-16-3: half-time and quarter scores, bookmaker lines and the model's rating gap kept for every sport (tag pending)
 
 **What changed:** more of every game is now kept for later analysis, at no extra API cost. Football: the half-time score of every graded fixture (`periods/`, from the API-Football day sweep already made) and the bookmakers' extra lines for our fixtures (Asian handicap, handicap result, half-time/full-time, half winners, first-half goals, team totals, win both halves, clean sheets; average and William Hill, `x` in the markets archive). NBA, NFL, rugby, college sports, baseball, WNBA: points by period for every final game and ESPN's line (spread, total, money lines) in `history-sports/`, and on each prediction the rating gap it rests on (`eloDiff`) and the line at the time. A data inventory lists what is kept and what is not. Douglas: "we need to make sure we get to the level where everything is captured."
