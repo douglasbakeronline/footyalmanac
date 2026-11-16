@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-15T23:29:16Z",
+ "graded": "2026-11-16T00:43:42Z",
  "overall": {
   "groups": 133,
   "settled": 132,
@@ -7,8 +7,8 @@
   "z": -1.27,
   "lost": 94,
   "pending": 1,
-  "legs": 510,
-  "legsWon": 369,
+  "legs": 511,
+  "legsWon": 370,
   "returned": 110.52,
   "staked": 132,
   "returnedBest": 115.13,
@@ -46,6 +46,15 @@
    },
    "tripwireAll": false
   },
+  "nba": {
+   "legs": 37,
+   "landed": 29,
+   "expected": 26.29,
+   "rate": 0.7838,
+   "quoted": 0.7107,
+   "z": 0.99,
+   "tripwire": false
+  },
   "football": {
    "legs": 36,
    "landed": 25,
@@ -53,15 +62,6 @@
    "rate": 0.6944,
    "quoted": 0.6801,
    "z": 0.19,
-   "tripwire": false
-  },
-  "nba": {
-   "legs": 36,
-   "landed": 28,
-   "expected": 25.67,
-   "rate": 0.7778,
-   "quoted": 0.7131,
-   "z": 0.87,
    "tripwire": false
   },
   "rugby": {
@@ -78,18 +78,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 32,
-   "won": 28,
-   "rate": 0.875,
-   "quoted": 0.8803,
-   "returned": 30.35,
-   "ret": -0.0516
+   "n": 34,
+   "won": 30,
+   "rate": 0.8824,
+   "quoted": 0.8829,
+   "returned": 32.45,
+   "ret": -0.0456
   },
   "notAtBook": {
-   "n": 66,
-   "won": 65,
-   "rate": 0.9848,
-   "quoted": 0.9076
+   "n": 67,
+   "won": 66,
+   "rate": 0.9851,
+   "quoted": 0.9079
   },
   "unchecked": {
    "n": 26,
@@ -100,12 +100,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 7,
-     "won": 7,
+     "n": 8,
+     "won": 8,
      "rate": 1.0,
-     "quoted": 0.8656,
-     "returned": 7.92,
-     "ret": 0.1314
+     "quoted": 0.8799,
+     "returned": 8.95,
+     "ret": 0.1187
     },
     "notAtBook": {
      "n": 4,
@@ -122,12 +122,12 @@
    },
    "nba": {
     "atBook": {
-     "n": 4,
-     "won": 3,
-     "rate": 0.75,
-     "quoted": 0.8431,
-     "returned": 3.2,
-     "ret": -0.2
+     "n": 5,
+     "won": 4,
+     "rate": 0.8,
+     "quoted": 0.8481,
+     "returned": 4.27,
+     "ret": -0.146
     },
     "notAtBook": {
      "n": 0,
@@ -150,10 +150,10 @@
      "ret": -0.096
     },
     "notAtBook": {
-     "n": 62,
-     "won": 61,
-     "rate": 0.9839,
-     "quoted": 0.9139
+     "n": 63,
+     "won": 62,
+     "rate": 0.9841,
+     "quoted": 0.9142
     },
     "unchecked": {
      "n": 13,
@@ -303,19 +303,19 @@
    "ncaab|st. john's red storm|syracuse orange|2026-11-16": 0,
    "ncaab|usc trojans|arkansas-pine bluff golden lions|2026-11-16": 0,
    "ncaab|wisconsin badgers|coastal carolina chanticleers|2026-11-16": 0,
-   "ncaab|maryland terrapins|alcorn state braves|2026-11-16": -1,
+   "ncaab|maryland terrapins|alcorn state braves|2026-11-16": 1.0,
    "football|trinidad and tobago|antigua and barbuda|2026-11-17": 1.14,
-   "ncaab|kentucky wildcats|grambling tigers|2026-11-17": -1,
+   "ncaab|kentucky wildcats|grambling tigers|2026-11-17": 1.0,
    "ncaab|north carolina central eagles|virginia lynchburg dragons|2026-11-17": -1,
-   "ncaab|clemson tigers|the citadel bulldogs|2026-11-17": -1,
-   "ncaab|georgia bulldogs|jacksonville dolphins|2026-11-17": -1,
+   "ncaab|clemson tigers|the citadel bulldogs|2026-11-17": 1.01,
+   "ncaab|georgia bulldogs|jacksonville dolphins|2026-11-17": 1.01,
    "ncaab|southeast missouri state redhawks|midway eagles|2026-11-17": -1,
-   "ncaab|minnesota golden gophers|western illinois leathernecks|2026-11-17": -1,
+   "ncaab|minnesota golden gophers|western illinois leathernecks|2026-11-17": 0,
    "ncaab|texas a&m aggies|se louisiana lions|2026-11-17": -1,
-   "ncaab|oregon state beavers|east texas a&m lions|2026-11-17": -1,
+   "ncaab|oregon state beavers|east texas a&m lions|2026-11-17": 0,
    "ncaab|ucla bruins|long beach state beach|2026-11-17": -1,
-   "ncaab|uc san diego tritons|texas southern tigers|2026-11-17": -1,
-   "ncaab|saint mary's gaels|portland state vikings|2026-11-17": -1,
+   "ncaab|uc san diego tritons|texas southern tigers|2026-11-17": 0,
+   "ncaab|saint mary's gaels|portland state vikings|2026-11-17": 0,
    "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": -1,
    "ncaab|florida gators|notre dame fighting irish|2026-11-17": -1,
    "ncaab|purdue boilermakers|lipscomb bisons|2026-11-17": -1,
@@ -333,7 +333,30 @@
    "ncaab|ole miss rebels|nicholls colonels|2026-11-18": -1,
    "ncaab|virginia cavaliers|old dominion monarchs|2026-11-18": -1,
    "ncaab|gonzaga bulldogs|montana state bobcats|2026-11-18": -1,
-   "ncaab|baylor bears|jackson state tigers|2026-11-18": -1
+   "ncaab|baylor bears|jackson state tigers|2026-11-18": -1,
+   "football|al ain|al-dhafra|2026-11-19": 1.15,
+   "nba|los angeles lakers|utah jazz|2026-11-19": -1,
+   "ncaab|st. john's red storm|siena saints|2026-11-19": -1,
+   "ncaab|miami (oh) redhawks|defiance yellow jackets|2026-11-19": -1,
+   "ncaab|longwood lancers|vmi keydets|2026-11-19": -1,
+   "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": -1,
+   "ncaab|george mason patriots|north carolina central eagles|2026-11-19": -1,
+   "ncaab|uic flames|chicago state cougars|2026-11-19": -1,
+   "ncaab|texas tech red raiders|lsu new orleans privateers|2026-11-19": -1,
+   "ncaab|ut rio grande valley vaqueros|college of biblical studies ambassadors|2026-11-19": -1,
+   "ncaab|cincinnati bearcats|youngstown state penguins|2026-11-19": -1,
+   "ncaab|marquette golden eagles|northern illinois huskies|2026-11-19": -1,
+   "ncaab|texas state bobcats|incarnate word cardinals|2026-11-19": -1,
+   "ncaab|arkansas state red wolves|arkansas-pine bluff golden lions|2026-11-19": -1,
+   "ncaab|lsu tigers|ul monroe warhawks|2026-11-19": -1,
+   "ncaab|oklahoma sooners|campbell fighting camels|2026-11-19": -1,
+   "ncaab|nebraska cornhuskers|south dakota coyotes|2026-11-19": -1,
+   "ncaab|byu cougars|northern colorado bears|2026-11-19": -1,
+   "ncaab|utah state aggies|weber state wildcats|2026-11-19": -1,
+   "ncaab|missouri tigers|alcorn state braves|2026-11-19": -1,
+   "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": -1,
+   "ncaab|san diego state aztecs|texas southern tigers|2026-11-19": -1,
+   "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": -1
   }
  },
  "cardContext": {
@@ -362,8 +385,8 @@
    "z": -0.98,
    "lost": 23,
    "pending": 1,
-   "legs": 99,
-   "legsWon": 70,
+   "legs": 100,
+   "legsWon": 71,
    "returned": 22.13,
    "staked": 33,
    "returnedBest": 22.44,
@@ -679,8 +702,8 @@
   "z": -0.46,
   "lost": 27,
   "pending": 1,
-  "legs": 118,
-  "legsWon": 79,
+  "legs": 119,
+  "legsWon": 80,
   "returned": 32.99,
   "staked": 39,
   "returnedBest": 33.45,
@@ -932,8 +955,8 @@
    "z": -1.5,
    "lost": 3,
    "pending": 1,
-   "legs": 8,
-   "legsWon": 5,
+   "legs": 9,
+   "legsWon": 6,
    "returned": 0,
    "staked": 3,
    "returnedBest": 0,
@@ -959,8 +982,8 @@
    "z": -0.14,
    "lost": 15,
    "pending": 1,
-   "legs": 69,
-   "legsWon": 50,
+   "legs": 70,
+   "legsWon": 51,
    "returned": 20.77,
    "staked": 23,
    "returnedBest": 21.01,
@@ -1263,9 +1286,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Biellese",
@@ -1299,8 +1322,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6229,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "123-131",
        "opp": 2.3
       },
       {
