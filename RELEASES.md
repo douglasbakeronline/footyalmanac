@@ -6,6 +6,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-14: the Doc Brown flash as a quiet 45-degree ribbon
+
+**What changed:** the corner flash is a thin yellow ribbon at 45 degrees that starts under the 2026 band and runs under the tab bar, so only its middle crosses the red panel; the quote is centred on it and mostly hidden, a nod rather than a feature (Douglas). Replaces the tape strip. Same on the Mailer page.
+**Evidence:** checked on the live page at 1178px and 918px covers.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-13: the Card replay reads the opposition's price on the pool's early legs (tag pending)
 
 **What changed:** the pool archive kept no opposition price for football legs before 6 Nov, so 382 priced football legs from 30 Oct to 9 Nov faulted in every replay variant with an opposition condition (`rule6` and its family, `m7opp5`, `m7opp9`) for missing data, not for their rule. `tools/card_replay.py` now takes the opposition's and the draw's average price for those legs from the football archive (`predictions/`, rows published before kick-off, `archive_opp`), marked `oppFrom: "archive"`; the nightly Card review counts them apart from the legs left out.
