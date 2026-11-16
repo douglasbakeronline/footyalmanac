@@ -7,6 +7,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-20: ribbon line offsets corrected
+
+**What changed:** the ribbon's third and fourth lines sit at 0 and +12px (Douglas's correction; the last line was clipped at -12px). Same on the Mailer page.
+**Files:** `index.html`, `mailer.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-19: ribbon line spacing and offsets set by hand
 
 **What changed:** the ribbon's quote lines sit closer (line height 1) and each line's offset along the band is Douglas's own (-25, -12, -1, -12px). Same on the Mailer page.
