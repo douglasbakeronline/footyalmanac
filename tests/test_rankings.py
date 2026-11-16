@@ -375,5 +375,35 @@ class Refresh(unittest.TestCase):
         self.assertFalse(os.path.exists(self.path))
 
 
+class Schedule(unittest.TestCase):
+    """The endpoint FIFA's page calls (15 Nov 2026): schedule ids, not dateIds."""
+    PAGE = ('<script type="application/json">{"dates":[{"year":"2026","dates":['
+            '{"id":"FRS_Male_Football_20260720","iso":"2026-10-07T10:10:08.375Z"},'
+            '{"id":"FRS_Male_Football_20260611","iso":"2026-07-20T08:37:28.979Z"}]}]}</script>')
+
+    def test_dates_newest_first(self):
+        self.assertEqual(R._schedule_dates(self.PAGE)[0], ("FRS_Male_Football_20260720", "2026-10-07"))
+        self.assertEqual(R._schedule_dates("<html></html>"), [])
+
+    def test_parse_maps_names_back_to_file_spelling(self):
+        doc = {"rankings": [{"teamName": "Spain", "rank": 1, "totalPoints": 2011.571862},
+                            {"teamName": "Hong Kong", "rank": 150, "totalPoints": 900.123456},
+                            {"teamName": "Unranked", "rank": None, "totalPoints": 0}]}
+        rel = R._parse_schedule(doc, "2026-10-07")
+        self.assertEqual(rel["teams"], {"Spain": [1, 2011.57], "Hong Kong, China": [150, 900.12]})
+        self.assertEqual(rel["date"], "2026-10-07")
+        self.assertIsNone(R._parse_schedule({"rankings": []}, "2026-10-07"))
+
+    def test_fetch_uses_newest_schedule(self):
+        seen = []
+        def fake(url, timeout=20):
+            seen.append(url)
+            return {"rankings": [{"teamName": "Spain", "rank": 1, "totalPoints": 2000.0}]}
+        with mock.patch.object(R, "_get", fake):
+            rel = R._fifa_schedule(self.PAGE)
+        self.assertIn("scheduleId=FRS_Male_Football_20260720", seen[0])
+        self.assertEqual(rel["date"], "2026-10-07")
+
+
 if __name__ == "__main__":
     unittest.main()
