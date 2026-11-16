@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-16-3: half-time and quarter scores, bookmaker lines and the model's rating gap kept for every sport (tag pending)
+
+**What changed:** more of every game is now kept for later analysis, at no extra API cost. Football: the half-time score of every graded fixture (`periods/`, from the API-Football day sweep already made) and the bookmakers' extra lines for our fixtures (Asian handicap, handicap result, half-time/full-time, half winners, first-half goals, team totals, win both halves, clean sheets; average and William Hill, `x` in the markets archive). NBA, NFL, rugby, college sports, baseball, WNBA: points by period for every final game and ESPN's line (spread, total, money lines) in `history-sports/`, and on each prediction the rating gap it rests on (`eloDiff`) and the line at the time. A data inventory lists what is kept and what is not. Douglas: "we need to make sure we get to the level where everything is captured."
+**Evidence:** the repository is 88 MB on GitHub with full history; git already compresses each file, so the daily files are left as they are. Nothing new is loaded by the page.
+**Files:** `periods.py` (new), `sources.py` (`_compact` / `_expand` keep the half time), `sports.py` (`_periods`, `line_of`, `_game`, `eloDiff`), `markets.py` (`EXTRA_BETS`, `x`, `ODDS_VERSION` 2), `.github/workflows/deploy.yml` (runs `periods.py`, commits `periods/`), `tests/test_data_capture.py`, `tests/test_scale.py` (wiring), `claude/data-inventory-2026-11-16.md`, CLAUDE.md.
+**Not changed:** any model, pick, list, Card or Scale rule; anything on the page.
+**Roll back:** `git revert`. Old day files and archives read as before (the new fields are optional).
+
 ## 2026-11-16-2: every scale bet tracked across every sport (tag pending)
 
 **What changed:** the Scale tab has a new table, **Every scale bet**: for each sport, every way of scaling a winner the final score can settle (football's goals, to-nil and margin bets; tennis straight sets and games handicaps; each sport's points-handicap ladder), how often each landed by confidence band, for Daily List picks and over the last 28 days, with the price it needs. It updates on every build. Douglas: "can we track all of these across all sports please?"

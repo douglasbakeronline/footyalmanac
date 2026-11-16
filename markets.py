@@ -78,7 +78,7 @@ ODDS_PARTIAL_TTL = 3600       # a sweep cut short is retried sooner
 ODDS_MAX_PAGES = 90           # a date's ceiling: 900 priced fixtures
 ODDS_MAX_SECONDS = 180        # a sweep stops here, keeps what it has and resumes on the next build
 AF_FLOOR = 2000               # calls left today under which the sweep stands down (the build comes first)
-ODDS_VERSION = 1
+ODDS_VERSION = 2              # 2 (16 Nov 2026): rows carry the extra lines (`x`, EXTRA_BETS)
 GATE_N, GATE_P, GATE_EDGE = 150, 0.10, 0.05
 BOOK = "William Hill"         # groupings.CARD_BOOK
 
@@ -204,6 +204,19 @@ WHOLE = {"btts": (("yes", "no"), 1), "o15": (("over", "under"), 1), "o25": (("ov
          "wo25": (("h", "h/under", "d/over", "d/under", "a", "a/under"), 1)}
 
 
+# 16 Nov 2026 (Douglas: "make sure we get to the level where everything is
+# captured"): the sweep already returns every bet of every book; these are kept
+# as well, by API-Football's bet name, so the scale bets the record can settle
+# (handicaps, halves, team totals) have the bookmakers' lines beside them. Only
+# the average over books and William Hill's price, and only for fixtures this
+# site predicts (the archive rows), so the files stay small. Nothing reads them yet.
+EXTRA_BETS = ("Asian Handicap", "Handicap Result", "HT/FT Double", "First Half Winner", "Second Half Winner",
+              "Goals Over/Under First Half", "Total - Home", "Total - Away", "Home Team Score a Goal",
+              "Away Team Score a Goal", "Win Both Halves", "Home win both halves", "Away win both halves",
+              "To Win Either Half", "Clean Sheet - Home", "Clean Sheet - Away")
+EXTRA_MAX = 120                 # values kept a fixture at most, a guard on file size
+
+
 def _whole(market, sel):
     if market in ("tts", "wtn"):
         return (sel, f"{sel}/no"), 1
@@ -220,12 +233,21 @@ def parse_odds(items):
     for item in items or []:
         fid = (item.get("fixture") or {}).get("id")
         if not fid: continue
-        acc = {}
+        acc, extra = {}, {}
         for b in item.get("bookmakers") or []:
             name = b.get("name")
             uk = O.uk_book(name)
             seen = set()
             for bet in b.get("bets") or []:
+                if bet.get("name") in EXTRA_BETS:
+                    hill = uk and O.uk_name(name) == BOOK
+                    for v in bet.get("values") or []:
+                        try: o = float(v.get("odd"))
+                        except (TypeError, ValueError): continue
+                        if o <= 1.0: continue
+                        e = extra.setdefault(bet["name"], {}).setdefault(str(v.get("value")).strip(), [[], None])
+                        e[0].append(o)
+                        if hill: e[1] = round(o, 2)
                 if bet.get("id") not in BETS: continue
                 for v in bet.get("values") or []:
                     hit = LABELS.get((bet.get("id"), str(v.get("value")).strip()))
@@ -243,6 +265,14 @@ def parse_odds(items):
             row[mk] = {oc: {k: v for k, v in (("o", round(sum(a["all"]) / len(a["all"]), 3)), ("n", len(a["all"])),
                                               ("b", a["b"]), ("bb", a["bb"]), ("h", a["h"])) if v is not None}
                        for oc, a in outs.items()}
+        if extra:
+            x, n = {}, 0
+            for bn, vals in extra.items():
+                for val, (os_, h) in vals.items():
+                    if n >= EXTRA_MAX: break
+                    x.setdefault(bn, {})[val] = [round(sum(os_) / len(os_), 3), h] if h else [round(sum(os_) / len(os_), 3)]
+                    n += 1
+            row["x"] = x
         if row: out[str(fid)] = row
     return out
 
@@ -359,9 +389,12 @@ def row_for(g, prices=None, published=None):
     for mk, v in nums.items():
         blk = price_of(prices, mk, v["s"])
         if blk: v.update(blk)
-    return {"league": g["league"], "date": g["date"], "home": g["home"], "away": g["away"],
-            "kickoff": g.get("kickoff"), "published": published, "side": side, "v": RULE,
-            "celtic": bool(g.get("celtic")), "m": nums}
+    row = {"league": g["league"], "date": g["date"], "home": g["home"], "away": g["away"],
+           "kickoff": g.get("kickoff"), "published": published, "side": side, "v": RULE,
+           "celtic": bool(g.get("celtic")), "m": nums}
+    if (prices or {}).get("x"):
+        row["x"] = prices["x"]          # the extra lines (EXTRA_BETS): {bet: {value: [average, Hill]}}
+    return row
 
 
 PRICE_KEYS = ("o", "n", "b", "bb", "h", "f")
@@ -383,6 +416,8 @@ def merge_rows(old, new, now):
         if not ko and r["date"] <= now.date().isoformat():
             continue        # no kick-off time on its own day: cannot be shown to predate the start
         if prev:
+            if "x" not in r and "x" in prev:
+                r["x"] = prev["x"]      # a later build with no extra lines keeps the earlier ones
             for mk, v in r["m"].items():
                 pv = (prev.get("m") or {}).get(mk) or {}
                 if "o" not in v and "o" in pv and pv.get("s") == v["s"]:
