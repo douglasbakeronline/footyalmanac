@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-16T18:58:08Z",
+ "graded": "2026-11-16T21:01:53Z",
  "overall": {
   "groups": 133,
   "settled": 133,
@@ -307,7 +307,7 @@
    "football|singapore|brazil|2026-11-17": 1.02,
    "football|argentina|costa rica|2026-11-17": 1.1,
    "football|uruguay|dominican republic|2026-11-17": 1.11,
-   "football|trinidad and tobago|antigua and barbuda|2026-11-17": 1.18,
+   "football|trinidad and tobago|antigua and barbuda|2026-11-17": 1.17,
    "ncaab|kentucky wildcats|grambling tigers|2026-11-17": 1.0,
    "ncaab|north carolina central eagles|virginia lynchburg dragons|2026-11-17": -1,
    "ncaab|clemson tigers|the citadel bulldogs|2026-11-17": 1.01,
@@ -319,8 +319,8 @@
    "ncaab|ucla bruins|long beach state beach|2026-11-17": -1,
    "ncaab|uc san diego tritons|texas southern tigers|2026-11-17": 0,
    "ncaab|saint mary's gaels|portland state vikings|2026-11-17": 0,
-   "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": -1,
-   "ncaab|florida gators|notre dame fighting irish|2026-11-17": -1,
+   "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": 0,
+   "ncaab|florida gators|notre dame fighting irish|2026-11-17": 0,
    "ncaab|purdue boilermakers|lipscomb bisons|2026-11-17": -1,
    "ncaab|miami hurricanes|rider broncs|2026-11-18": -1,
    "ncaab|bucknell bison|akron zips|2026-11-18": -1,
