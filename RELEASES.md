@@ -5,6 +5,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-16-10: every tab opened is sent to Google Tag Manager (tag pending)
+
+**For a reader:** nothing visible. Tabs change without loading a page, so Tag Manager saw only the first page view. Every tab opened now pushes a `tab_view` event to the dataLayer, the tab a visitor lands on included, with the tab's key (`tab`, e.g. `today`, `sport:nba`), its label (`tab_name`, e.g. "Bets") and a path (`page_path`, e.g. `/#today`). To report it, the GTM container needs a Custom Event trigger on `tab_view` firing a GA4 event or page-view tag that reads those three dataLayer variables.
+
+**Evidence:** checked in a headless browser on `index.html`: opening the page then Bets, Scale, Starred and Football gave five events in order, no page errors.
+
+**Files:** `index.html` (the view switch), `tests/test_tag_pages.py`, `CLAUDE.md`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-16-9: Google Tag Manager on every page (tag pending)
 
 **For a reader:** nothing visible. Douglas's Google Tag Manager container (`GTM-WP7C2F6B`) now loads on every page of the site, the main page and Almanac Analysis, straight after `<head>`, as he supplied it. Future pages get it too: a test fails CI on any page in the repo without it, and the deploy adds it to any published page that still lacks it (with a warning naming the page). The Cloudflare beacon is unchanged.

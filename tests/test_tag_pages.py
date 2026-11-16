@@ -27,6 +27,14 @@ class EveryPage(unittest.TestCase):
         self.assertIn("gtag('js', new Date());", T.TAG)
 
 
+class TabViews(unittest.TestCase):
+    def test_every_tab_change_is_sent_to_tag_manager(self):
+        # 16 Nov 2026: tabs change without a page load, so the view switch pushes a tab_view event.
+        page = open(os.path.join(HERE, "index.html"), encoding="utf-8").read()
+        switch = page[page.index("/* ---------- view switching ---------- */"):]
+        self.assertIn('event: "tab_view"', switch[:switch.index("window.scrollTo({top:0});")])
+
+
 class AddTag(unittest.TestCase):
     def test_added_after_head_and_charset_once(self):
         page = '<!DOCTYPE html>\n<html><head>\n<meta charset="utf-8">\n<title>x</title></head><body></body></html>'
