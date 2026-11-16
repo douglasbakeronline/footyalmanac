@@ -3888,6 +3888,25 @@ function sideWary(g){
 }
 function sideWaryChip(g){
   const w = sideWary(g);
+  return (w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "") + trailWaryChip(g);
+}
+/* A college basketball pick in November-December whose side has played three
+   or more games this season and lost more than it has won is marked "Behind
+   .500" (16 Nov 2026, after UMBC v Iona). The replay, 70%+ picks: 72% v 80%
+   quoted in 2024-25 (n 155) and 78% v 81% in 2025-26 (n 176), 75% v 80% over
+   every season on file (n 391, z -2.6), every other pick 86% v 85%; the faster
+   early-season K (sports.EARLY_K) does not close it. Shown, never hidden; the
+   number is unchanged. tools/ncaab_carry_eval.py, claude/ncaab-early-k-2026-11-16.md. */
+function trailWary(g){
+  if(!g || g.sport !== "ncaab" || !(g.confidence >= 0.70) || !g.when) return null;
+  const m = +String(g.when).slice(5, 7);
+  if(m !== 11 && m !== 12) return null;
+  const rec = g.pick === g.home ? g.recordH : g.pick === g.away ? g.recordA : null;
+  if(!rec || (rec.w + rec.l) < 3 || !(rec.l > rec.w)) return null;
+  return {label: "Behind .500", why: `${g.pick} are ${rec.w}-${rec.l} this season. College picks of a side with a losing record in November and December have landed about 75% against 80% quoted in testing: the rating is still carrying last season's team.`};
+}
+function trailWaryChip(g){
+  const w = trailWary(g);
   return w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "";
 }
 function rerenderOpen(){
