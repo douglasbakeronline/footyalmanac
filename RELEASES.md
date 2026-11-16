@@ -6,6 +6,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-11: the Doc Brown flash on narrower screens (tag pending)
+
+**Shipped in:** ce8d6de (first logged as 2026-11-16-6, an id another session had already used the same afternoon)
+
+**What changed:** between 701px and 1219px wide the quote on the corner flash is smaller and sits further into the corner, so it no longer runs over the List record cell's "534 of 616 landed".
+**Evidence:** checked in a browser on the live page with a 918px cover: the band now starts right of the cell's text.
+**Files:** `index.html`.
+**Roll back:** `git revert`.
+
 ## 2026-11-16-10: every tab opened is sent to Google Tag Manager (tag pending)
 
 **For a reader:** nothing visible. Tabs change without loading a page, so Tag Manager saw only the first page view. Every tab opened now pushes a `tab_view` event to the dataLayer, the tab a visitor lands on included, with the tab's key (`tab`, e.g. `today`, `sport:nba`), its label (`tab_name`, e.g. "Bets") and a path (`page_path`, e.g. `/#today`). To report it, the GTM container needs a Custom Event trigger on `tab_view` firing a GA4 event or page-view tag that reads those three dataLayer variables.
@@ -49,13 +58,6 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** the Scale rule, the groups' selection, any number on the record.
 
 **Roll back:** `git revert` the merge commit.
-## 2026-11-16-6: the Doc Brown flash on narrower screens (tag pending)
-
-**What changed:** between 701px and 1219px wide the quote on the corner flash is smaller and sits further into the corner, so it no longer runs over the List record cell's "534 of 616 landed".
-**Evidence:** checked in a browser on the live page with a 918px cover: the band now starts right of the cell's text.
-**Files:** `index.html`.
-**Roll back:** `git revert`.
-
 ## 2026-11-16-5: two-row navigation, Doc Brown on the flash, and a responsible-gambling footer (tag pending)
 
 **What changed:** the tab bar under the cover is now two rows (Douglas chose option 4 of the navigation mock-ups). Row one holds the Almanac's sections, Daily List, Bets, Scale, Starred, How it went, Analysis and HQ, in italic Anton on black like the 2026 band, split by slashes, the open one in white with a yellow underline. Row two is a yellow strip holding the sports, the open one reversed out in black. Both rows centre on desktop and scroll sideways on a phone; the bar stays sticky. The corner flash on the red stat panel now reads "Roads? Where we're going, we don't need roads." on a wider band at a shallower angle, so the whole line sits inside the panel. Every page (the Almanac and Analysis) ends with an 18+ "Keep it a game" banner: GamCare, BeGambleAware and GamStop.
