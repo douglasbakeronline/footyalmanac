@@ -6,6 +6,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-16-15: Google Analytics connected directly, tabs reported to it (tag pending)
+
+**For a reader:** nothing visible. Google Analytics showed "No data received" for the Sports Almanac stream: the Tag Manager container on the site holds no Google tag, so nothing was passed on. GA4 (`G-35788M25WE`) now loads straight after Tag Manager on every page (main page, Analysis, the Mailer), and every tab opened is sent to it as a `tab_view` event with `tab`, `tab_name` and `page_path`, so no Tag Manager setup is needed. Do not also add a Google tag for G-35788M25WE inside Tag Manager: every view would count twice.
+
+**Evidence:** headless browser on all three pages: GA configured on each, three tab events for three tabs on the main page, no page errors.
+
+**Files:** `tools/tag_pages.py` (`GA_ID`, `GA_TAG`, `add_tag` adds whichever is missing), `index.html`, `analysis.html`, `mailer.html`, `tests/test_tag_pages.py`, `CLAUDE.md`.
+
+**Not changed:** no consent banner (see 2026-11-16-9).
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-16-14: the Doc Brown flash as a quiet 45-degree ribbon
 
 **What changed:** the corner flash is a thin yellow ribbon at 45 degrees that starts under the 2026 band and runs under the tab bar, so only its middle crosses the red panel; the quote is centred on it and mostly hidden, a nod rather than a feature (Douglas). Replaces the tape strip. Same on the Mailer page.

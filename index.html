@@ -9,6 +9,9 @@
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
 </script>
+<!-- Google Analytics 4, direct (16 Nov 2026). Tabs are sent as tab_view events from index.html. -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-35788M25WE"></script>
+<script>gtag('config', 'G-35788M25WE');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sports Almanac — complete fixture statistics</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -6058,8 +6061,10 @@ $("#views").addEventListener("click", e=>{
   // 16 Nov 2026, Douglas: "will it track tab selection?" A tab change rewrites the address without
   // loading a page, so Google Tag Manager sees it only through this event: one "tab_view" per tab
   // opened, the landing tab included (the click below). In GTM: a Custom Event trigger on tab_view.
-  try { (window.dataLayer = window.dataLayer || []).push({event: "tab_view", tab: v,
-    tab_name: (b.textContent || "").trim(), page_path: location.pathname + (v === "list" ? "" : "#" + v)}); } catch(err) {}
+  try { const tv = {tab: v, tab_name: (b.textContent || "").trim(), page_path: location.pathname + (v === "list" ? "" : "#" + v)};
+    (window.dataLayer = window.dataLayer || []).push(Object.assign({event: "tab_view"}, tv));
+    // Google Analytics 4 directly (16 Nov 2026): the same tab_view, so GA reports tabs with no GTM setup.
+    if(typeof window.gtag === "function") window.gtag("event", "tab_view", tv); } catch(err) {}
   $("#days").hidden = !fixtures;
   $("#note").hidden = !fixtures;
   readbarEl.hidden = !fixtures;

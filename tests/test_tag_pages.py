@@ -26,20 +26,32 @@ class EveryPage(unittest.TestCase):
         self.assertIn("function gtag(){dataLayer.push(arguments);}", T.TAG)
         self.assertIn("gtag('js', new Date());", T.TAG)
 
+    def test_analytics_loads_after_tag_manager_once(self):
+        page = open(os.path.join(HERE, "index.html"), encoding="utf-8").read()
+        self.assertEqual(page.count("gtag/js?id=G-35788M25WE"), 1)
+        self.assertLess(page.index("gtag('js', new Date());"), page.index("gtag('config', 'G-35788M25WE');"))
+
 
 class TabViews(unittest.TestCase):
     def test_every_tab_change_is_sent_to_tag_manager(self):
         # 16 Nov 2026: tabs change without a page load, so the view switch pushes a tab_view event.
         page = open(os.path.join(HERE, "index.html"), encoding="utf-8").read()
         switch = page[page.index("/* ---------- view switching ---------- */"):]
-        self.assertIn('event: "tab_view"', switch[:switch.index("window.scrollTo({top:0});")])
+        body = switch[:switch.index("window.scrollTo({top:0});")]
+        self.assertIn('event: "tab_view"', body)
+        self.assertIn('window.gtag("event", "tab_view", tv)', body)
 
 
 class AddTag(unittest.TestCase):
+    def test_a_page_with_tag_manager_only_gets_analytics_added_once(self):
+        page = "<html><head>\n" + T.TAG + "<title>x</title></head></html>"
+        out = T.add_tag(page)
+        self.assertEqual((out.count("gtm.js?id="), out.count("gtag/js?id=")), (1, 1))
+
     def test_added_after_head_and_charset_once(self):
         page = '<!DOCTYPE html>\n<html><head>\n<meta charset="utf-8">\n<title>x</title></head><body></body></html>'
         out = T.add_tag(page)
-        self.assertTrue(out.index("gtm.js") > out.index("charset") and out.index("gtm.js") < out.index("<title>"))
+        self.assertTrue(out.index("gtm.js") > out.index("charset") and out.index("gtm.js") < out.index("gtag/js") < out.index("<title>"))
         self.assertEqual(T.add_tag(out), out)
 
     def test_a_page_without_head_is_left_alone(self):
