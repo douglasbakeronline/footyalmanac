@@ -424,6 +424,11 @@ footer b{color:var(--ink-2)}
 .rg-copy h2{font-family:var(--f-display);font-weight:400;font-size:20px;letter-spacing:.03em;text-transform:uppercase;margin:0}
 .rg-copy p{margin-top:6px;font-size:14px;line-height:1.55;color:var(--ink-2)}
 .rg-copy a{color:var(--home)}
+
+/* paragraph copy runs the full width of its container (16 Nov 2026, Douglas: the Daily List's intro
+   sat in half the space on desktop). Text blocks only; charts, tables, inputs and buttons keep theirs. */
+.lede,.m-lede,.prose,.note,.list-rule,.why,.og-mult-p,.hon-lede,.tr-lede,.sc-foot,.sc-empty,
+.steps,.cols,footer,.wrap .empty,.wrap p{max-width:100%}
 </style>
 <style>
 /* ---------- Almanac Analysis (6 Oct 2026) ----------
