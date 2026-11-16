@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-09T13:31:55+00:00",
+ "generated": "2026-11-16T13:14:55+00:00",
  "market": "over/under 2.5",
  "source": "football-data.co.uk",
  "edge": 0.05,
@@ -76,9 +76,9 @@
    "pricedMatches": 7274
   },
   "check": {
-   "n": 772,
-   "logLossModel": 0.6746,
-   "logLossMarket": 0.654,
+   "n": 1392,
+   "logLossModel": 0.6804,
+   "logLossMarket": 0.661,
    "bands": {
     "0-40": {
      "n": 0,
@@ -87,34 +87,34 @@
      "market": null
     },
     "40-45": {
-     "n": 20,
-     "landed": 0.4,
-     "model": 0.434,
-     "market": 0.429
+     "n": 40,
+     "landed": 0.5,
+     "model": 0.436,
+     "market": 0.435
     },
     "45-50": {
-     "n": 190,
-     "landed": 0.516,
-     "model": 0.481,
-     "market": 0.5
+     "n": 380,
+     "landed": 0.558,
+     "model": 0.48,
+     "market": 0.514
     },
     "50-55": {
-     "n": 362,
-     "landed": 0.591,
+     "n": 647,
+     "landed": 0.58,
      "model": 0.525,
-     "market": 0.546
+     "market": 0.557
     },
     "55-60": {
-     "n": 185,
-     "landed": 0.719,
-     "model": 0.567,
-     "market": 0.623
+     "n": 295,
+     "landed": 0.688,
+     "model": 0.568,
+     "market": 0.633
     },
     "60-65": {
-     "n": 14,
-     "landed": 0.857,
-     "model": 0.616,
-     "market": 0.739
+     "n": 29,
+     "landed": 0.828,
+     "model": 0.612,
+     "market": 0.745
     },
     "65-101": {
      "n": 1,
@@ -123,28 +123,28 @@
      "market": 0.773
     }
    },
-   "bets": 418,
-   "hit": 0.328,
-   "quoted": 0.388,
-   "roi": -0.192,
-   "pRoiNotPositive": 0.999,
-   "clvBets": 418,
-   "clv": -0.0386,
+   "bets": 809,
+   "hit": 0.35,
+   "quoted": 0.385,
+   "roi": -0.1234,
+   "pRoiNotPositive": 0.998,
+   "clvBets": 809,
+   "clv": -0.0343,
    "pClvNotPositive": 1.0,
    "bySide": {
     "over": {
-     "bets": 92,
-     "won": 40,
-     "roi": -0.0303
+     "bets": 130,
+     "won": 59,
+     "roi": 0.0027
     },
     "under": {
-     "bets": 326,
-     "won": 97,
-     "roi": -0.2377
+     "bets": 679,
+     "won": 224,
+     "roi": -0.1476
     }
    },
    "season": "2026-27",
-   "pricedMatches": 2263
+   "pricedMatches": 2305
   }
  },
  "valueGate": false,

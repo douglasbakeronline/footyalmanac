@@ -568,12 +568,6 @@
     ]
    },
    {
-    "code": "be.1",
-    "reasons": [
-     "no test season"
-    ]
-   },
-   {
     "code": "us.1",
     "reasons": [
      "no test season"
@@ -1159,22 +1153,22 @@
   "fitted": 1.0226
  },
  "checkSeason": {
-  "n": 2204,
-  "shipped": 1.0234,
-  "fitted": 1.0231,
-  "delta": -0.0003,
-  "sd": 0.0003,
-  "pWorse": 0.113,
-  "shippedAcc": 0.4823,
-  "fittedAcc": 0.4823
+  "n": 2985,
+  "shipped": 1.0095,
+  "fitted": 1.0087,
+  "delta": -0.0008,
+  "sd": 0.0002,
+  "pWorse": 0.001,
+  "shippedAcc": 0.5039,
+  "fittedAcc": 0.5039
  },
  "gates": {
   "enoughData": true,
   "notWorse": true,
-  "worthIt": false
+  "worthIt": true
  },
- "pass": false,
- "generated": "2026-11-09",
- "consecutivePasses": 0,
+ "pass": true,
+ "generated": "2026-11-16",
+ "consecutivePasses": 1,
  "applied": false
 }
