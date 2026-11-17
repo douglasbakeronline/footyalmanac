@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-card-seasons-third: Card over three past seasons, asked a third time (tag pending)
+
+**What changed:** nothing on the page. A dated note points to the 9 and 10 Nov replays, which already answer the ask.
+
+**Evidence:** none new; the sandbox cannot fetch football-data. Existing: under-market cut 70.9-73.3% landed v 68.0-69.1% quoted over 2022-25, no gap band positive in every season, opposition 9+ holds.
+
+**Files:** `claude/card-seasons-third-ask-2026-11-17.md`, this entry.
+
+**Not changed:** the Card's rule, any constant, the tool.
+
+**Roll back:** `git revert` the merge; docs only.
+
 ## 2026-11-17-opp-under6: Card legs with the opposition under 6, read against the seasons (tag pending)
 
 **What changed:** nothing on the page. A dated note records the check the planner asked for.
