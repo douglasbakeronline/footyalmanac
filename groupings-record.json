@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-17T17:09:22Z",
+ "graded": "2026-11-17T19:50:59Z",
  "overall": {
-  "groups": 133,
+  "groups": 134,
   "settled": 133,
   "won": 39,
   "z": -1.13,
   "lost": 94,
-  "pending": 0,
+  "pending": 1,
   "legs": 513,
   "legsWon": 372,
   "returned": 113.74,
@@ -19,10 +19,10 @@
   "unitsReturned": 130.15,
   "unitsReturnedBest": 134.89,
   "clv": {
-   "n": 147,
-   "shortened": 59,
-   "drifted": 55,
-   "mean": 0.0004
+   "n": 149,
+   "shortened": 60,
+   "drifted": 56,
+   "mean": 0.0003
   }
  },
  "cardLegsBySport": {
@@ -125,7 +125,7 @@
     "mean": null
    }
   },
-  "unknown": 0,
+  "unknown": 1,
   "legs": {
    "rule12": {
     "legs": 0,
@@ -370,8 +370,8 @@
    "ncaab|wisconsin badgers|coastal carolina chanticleers|2026-11-16": 0,
    "ncaab|maryland terrapins|alcorn state braves|2026-11-16": 1.0,
    "football|singapore|brazil|2026-11-17": 1.02,
-   "football|argentina|costa rica|2026-11-17": 1.08,
-   "football|uruguay|dominican republic|2026-11-17": 1.1,
+   "football|argentina|costa rica|2026-11-17": 1.07,
+   "football|uruguay|dominican republic|2026-11-17": 1.08,
    "football|trinidad and tobago|antigua and barbuda|2026-11-17": 1.17,
    "ncaab|kentucky wildcats|grambling tigers|2026-11-17": 1.0,
    "ncaab|north carolina central eagles|virginia lynchburg dragons|2026-11-17": -1,
@@ -459,12 +459,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 34,
+   "groups": 35,
    "settled": 34,
    "won": 11,
    "z": -0.72,
    "lost": 23,
-   "pending": 0,
+   "pending": 1,
    "legs": 101,
    "legsWon": 72,
    "returned": 25.35,
@@ -477,10 +477,10 @@
    "unitsReturned": 41.76,
    "unitsReturnedBest": 42.2,
    "clv": {
-    "n": 77,
-    "shortened": 25,
-    "drifted": 29,
-    "mean": -0.0043
+    "n": 79,
+    "shortened": 26,
+    "drifted": 30,
+    "mean": -0.0042
    }
   },
   "Card 3x": {
@@ -776,12 +776,12 @@
   }
  },
  "card": {
-  "groups": 40,
+  "groups": 41,
   "settled": 40,
   "won": 13,
   "z": -0.22,
   "lost": 27,
-  "pending": 0,
+  "pending": 1,
   "legs": 120,
   "legsWon": 81,
   "returned": 36.21,
@@ -794,10 +794,10 @@
   "unitsReturned": 50.53,
   "unitsReturnedBest": 51.12,
   "clv": {
-   "n": 91,
-   "shortened": 32,
-   "drifted": 36,
-   "mean": -0.0025
+   "n": 93,
+   "shortened": 33,
+   "drifted": 37,
+   "mean": -0.0026
   }
  },
  "cardWide": {
@@ -1127,16 +1127,41 @@
     "drifted": 2,
     "mean": -0.0122
    }
+  },
+  "13": {
+   "groups": 1,
+   "settled": 0,
+   "won": 0,
+   "z": null,
+   "lost": 0,
+   "pending": 1,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "returnedLock": 0,
+   "stakedLock": 0,
+   "expected": 0,
+   "unitsStaked": 0,
+   "unitsReturned": 0,
+   "unitsReturnedBest": 0,
+   "clv": {
+    "n": 2,
+    "shortened": 1,
+    "drifted": 1,
+    "mean": -0.0033
+   }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 24,
+   "groups": 25,
    "settled": 24,
    "won": 9,
    "z": 0.16,
    "lost": 15,
-   "pending": 0,
+   "pending": 1,
    "legs": 71,
    "legsWon": 52,
    "returned": 23.99,
@@ -1149,10 +1174,10 @@
    "unitsReturned": 38.31,
    "unitsReturnedBest": 38.68,
    "clv": {
-    "n": 45,
-    "shortened": 14,
-    "drifted": 18,
-    "mean": 0.0016
+    "n": 47,
+    "shortened": 15,
+    "drifted": 19,
+    "mean": 0.0014
    }
   },
   "Daytime": {
@@ -1257,6 +1282,98 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-17",
+   "published": "2026-11-17T19:50:16Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 13,
+     "wideRule": null,
+     "odds": 2.99,
+     "p": 0.3402,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-17T19:45:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Tonbridge Angels",
+       "event": "Tonbridge Angels v Chesham United",
+       "sport": "football",
+       "comp": "National League South",
+       "when": "2026-11-17T19:45:00Z",
+       "odds": 1.81,
+       "best": 1.81,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6331,
+       "status": "pending",
+       "result": null,
+       "opp": 3.65,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "San Antonio Spurs",
+       "event": "San Antonio Spurs v Detroit Pistons",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-18T01:00Z",
+       "odds": 1.24,
+       "best": 1.24,
+       "lastOdds": 1.23,
+       "lockOdds": 1.23,
+       "lockBest": 1.23,
+       "lockBook": null,
+       "est": false,
+       "p": 0.691,
+       "status": "pending",
+       "result": null,
+       "opp": 4.3,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Los Angeles Lakers",
+       "event": "Los Angeles Lakers v Charlotte Hornets",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-18T04:00Z",
+       "odds": 1.33,
+       "best": 1.33,
+       "lastOdds": 1.35,
+       "lockOdds": 1.35,
+       "lockBest": 1.35,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7776,
+       "status": "pending",
+       "result": null,
+       "opp": 3.48,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-15",
    "published": "2026-11-15T12:24:47Z",
