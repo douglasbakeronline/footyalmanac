@@ -7,6 +7,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-daily-2x: the Daily 2x, one slip every day, and its tracker (tag pending)
+
+**For a reader.** The Bets tab now opens with **Today's 2x**: one slip a day, the model's strongest picks priced 1.10 or more, added until it pays 2x. Picks come from the Daily List first, then the reserve, then the day's strongest football (model 65%+), then other sports (65%+); college sports are left out. As many picks as it takes, up to eight. A day that cannot reach 2x still gets its strongest slip, marked short. Under it, a tracker: a tile a day with each pick as a dot (green landed, red lost, grey to come), the slip's price and result, and the running tally (slips won v expected, return, picks landed), with what the replay taught.
+
+**Evidence.** Replayed on the results ledger, 3 Oct to 16 Nov, list and reserve picks with a real price, college basketball out: strongest first at 1.10+, 28 slips in 33 days, 14 won (50%), +22% at the recorded price, 3.9 picks a slip. At any price 16 of 28 (57%, +40%), but Douglas rules out picks under 1.10. Ordering the same picks by shortest price instead: 10 of 28 (36%, -22%). Above 1.15 every price band of list and reserve picks landed 3 to 6 points under its price (college basketball 15 to 20 under), so the slip rests on the model's ordering, not on value. 28 slips is a small sample. Douglas, 17 Nov: "we have to have one card every day ... aiming for above a 2x is our benchmark".
+
+**Files.** `groupings.py` (`daily_group`, `DAILY_*`, `is_daily`, `cardDaily`, `reserve` and `tier` carried on legs), `index.html` (`dailySection`, `dailyTracker`, CSS), `tests/test_daily_2x.py`, `tests/test_list_card.py`, `claude/daily-2x-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** The rule 12 Card, the List 2x and List long, the slip, every model and the Daily List.
+
+**Roll back.** `git revert` this merge; the Daily 2x stops being built and its archived slips stay graded in `groupings-record.json`.
 ## 2026-11-17-legs4: Leg properties, fourth look (tag pending)
 
 **What changed:** nothing on the site. A dated note records a fourth leg-property look: no rule shipped.

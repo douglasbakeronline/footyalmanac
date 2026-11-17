@@ -335,7 +335,7 @@ def legs(dates):
                         # so the group still carries its full fixture row after kick-off
                         # when the live files no longer list the game (Douglas).
                         "fx": g,
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
                         "pDraw": round(p.get("d", 0), 4), "multOnly": pl < WIDE_MIN})
     # 24 Oct 2026, Douglas: "Multipliers should be across all sports". Every
     # published sport's picks now enter the pool; those outside GROUP_SPORTS,
@@ -361,7 +361,7 @@ def legs(dates):
                     "players": [m.get("playerA"), m.get("playerB")],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "timeEst": time_est, "date": d, "id": m.get("id"), "fx": m,
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
-                    "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
+                    "list": bool(m.get("list")), "reserve": bool(m.get("reserve")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
                     # 25 Oct 2026, Douglas: tennis back on the Card. It stays off the
                     # Daily List (build_tennis.LIST_ON) until its live record holds;
                     # on the Card a tennis pick still needs a bookmaker price, the
@@ -378,7 +378,7 @@ def legs(dates):
             out.append({"sport": key, "event": f"{g['home']} v {g['away']}", "home": g["home"], "away": g["away"],
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
                         "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN, "listOff": bool(sp.get("listOff")), "fx": g})
     return out
 
@@ -1701,8 +1701,69 @@ LIST_LEGS_MAX = 6
 LIST_LONG_LEGS = 10
 LIST_SPORTS_OFF = {"ncaab", "cfb"}
 RISK.update({"List 2x": "On trial: the list's picks, 1.15+", "List long": "On trial: the list's picks, any price"})
-def is_list(name): return str(name).startswith("List")
+def is_list(name): return str(name).startswith(("List", "Daily"))
 def is_list_long(name): return str(name) == "List long"
+
+# 17 Nov 2026 (claude/daily-2x-2026-11-17.md), Douglas: "we have to have one
+# card every day ... aiming for above a 2x is our benchmark ... anything under
+# 1.10 is just pointless". The Daily 2x: one slip a UK day, the model's
+# strongest picks first, each priced DAILY_ODDS_MIN+ by a bookmaker, added until
+# the slip pays DAILY_TARGET, as many picks as it takes up to DAILY_LEGS_MAX.
+# Picks come in tiers (DAILY_TIERS): the Daily List, then the reserve, then the
+# day's football picks at DAILY_FB_MIN+ on the model (football the deepest
+# board), then any other sport at DAILY_ANY_MIN+. Replayed on the results ledger
+# (3 Oct to 16 Nov, list and reserve, strongest first, 1.10+): 28 of 33 days
+# had a slip, 14 won (50%), +22% at the recorded price, 3.9 picks a slip;
+# strongest-first beat shortest-price-first (36%) on the same picks. College
+# sports stay out: 1.15+ college basketball list and reserve picks landed
+# 57-64% against 76-84% priced. A day that cannot reach 2x in any tier still
+# gets its strongest slip, marked short. Graded on its own line (cardDaily);
+# staking is the reader's.
+DAILY_NAME = "Daily 2x"
+DAILY_TARGET = 2.0
+DAILY_ODDS_MIN = 1.10
+DAILY_LEGS_MAX = 8
+DAILY_FB_MIN = 0.65
+DAILY_ANY_MIN = 0.65
+DAILY_SPORTS_OFF = {"ncaab", "cfb"}
+DAILY_TIERS = ("list", "reserve", "football", "any")
+RISK[DAILY_NAME] = "On trial: one 2x a day, strongest picks first"
+def is_daily(name): return str(name) == DAILY_NAME
+
+def daily_tier(l):
+    if l.get("list"): return "list"
+    if l.get("reserve"): return "reserve"
+    if l.get("sport") == "football" and (l.get("pModel") or 0) >= DAILY_FB_MIN: return "football"
+    if (l.get("pModel") or 0) >= DAILY_ANY_MIN: return "any"
+    return None
+
+def daily_group(L, after):
+    """The Daily 2x from a day's legs (see DAILY_*): tier by tier, strongest
+    first within a tier, until the price reaches DAILY_TARGET. Always returns
+    a slip when any pick qualifies; short=True when it stops below 2x."""
+    cands = []
+    for l in L:
+        t = daily_tier(l)
+        if (t is None or l.get("est") or not l.get("odds") or l["odds"] < DAILY_ODDS_MIN
+                or l.get("sport") in DAILY_SPORTS_OFF or (parse(l.get("when")) or after) < after):
+            continue
+        m = as_model(l); m["tier"] = t; cands.append(m)
+    cands.sort(key=lambda l: (DAILY_TIERS.index(l["tier"]), -l["pModel"], -l["odds"], l.get("when") or "9"))
+    legs_, seen, o = [], set(), 1.0
+    for l in cands:
+        if l["event"] in seen: continue
+        legs_.append(dict(l)); seen.add(l["event"]); o *= l["odds"]
+        if o >= DAILY_TARGET or len(legs_) >= DAILY_LEGS_MAX: break
+    if not legs_: return None
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    fair = [l.get("fair") for l in legs_]
+    return {"name": DAILY_NAME, "risk": RISK[DAILY_NAME], "band": [DAILY_TARGET, None], "minChance": 0,
+            "odds": round(o, 2), "p": round(math.prod(l["pModel"] for l in legs_), 4),
+            "pFair": round(math.prod(fair), 4) if all(f is not None for f in fair) else None,
+            "implied": round(math.prod(l.get("implied") or 1 / l["odds"] for l in legs_), 4),
+            "estimates": 0, "basis": "model", "rule": 1, "wide": False, "legs": legs_, "tested": list_tested(legs_),
+            "short": o < DAILY_TARGET, "tiers": sorted({l["tier"] for l in legs_}, key=DAILY_TIERS.index),
+            "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
 
 
 def list_tested(legs_):
@@ -2309,10 +2370,19 @@ def build_list_card(L, date, now, prev=None, archived=None):
     if now < window_end(date, w):
         day_legs = [l for l in L if (uk_slot(l) or (None, None))[0] == date]
         taken = set()
+        # 17 Nov 2026: the Daily 2x first, independent of the List kinds (it may share picks)
+        if DAILY_NAME not in filled:
+            g = daily_group(day_legs, after)
+            if g:
+                lock = first_kick(g) or lock_time(date, w)
+                g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
+                         paper=True, bench=[], book=CARD_BOOK, stake=0)
+                for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+                filled.add(DAILY_NAME); groups.append(g)
         for name, target, odds_min, legs_max in LIST_KINDS:
             if name in filled: continue
             # the List long is built only when the 2x cannot be (the same picks would be in both)
-            if is_list_long(name) and any(not is_list_long(n) for n in filled): continue
+            if is_list_long(name) and any(not is_list_long(n) and not is_daily(n) for n in filled): continue
             g = list_group(day_legs, taken, after, name, target, odds_min, legs_max)
             if not g: continue
             taken |= {l["event"] for l in g["legs"]}
@@ -2695,7 +2765,7 @@ def check_pool(L):
             for l in L if not l.get("est") and l.get("fair") is not None]
 
 POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
-             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge",
+             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "reserve", "tier", "multOnly", "edge",
              "opp", "draw",
              # 9 Nov 2026: the result keys (settle needs id for tennis and US
              # sport) and the two flags card_fault reads, so the pool replays
@@ -3236,7 +3306,9 @@ def grade(now=None):
            # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
            "cardModel": tally([g for g in allg if is_model(g["name"])]),
            # 16 Nov 2026: the List 2x, the Daily List's own picks on paper, its own line
-           "cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"])]),
+           "cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"]) and not is_daily(g["name"])]),
+           # 17 Nov 2026: the Daily 2x, one slip a day, its own line
+           "cardDaily": tally([g for g in allg if is_daily(g["name"])]),
            # 17 Nov 2026: the List long, the same picks at any price to 2x, its own line
            "cardListLong": tally([g for g in allg if is_list_long(g["name"])]),
            # 29 Oct 2026: each Card rule version on its own line, so a change to the
