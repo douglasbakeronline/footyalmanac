@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-17T04:51:54Z",
+ "graded": "2026-11-17T07:08:26Z",
  "overall": {
   "groups": 133,
   "settled": 133,
@@ -151,10 +151,10 @@
    "ret": -0.0392
   },
   "notAtBook": {
-   "n": 74,
-   "won": 73,
-   "rate": 0.9865,
-   "quoted": 0.908
+   "n": 77,
+   "won": 76,
+   "rate": 0.987,
+   "quoted": 0.9081
   },
   "unchecked": {
    "n": 26,
@@ -215,10 +215,10 @@
      "ret": -0.076
     },
     "notAtBook": {
-     "n": 70,
-     "won": 69,
-     "rate": 0.9857,
-     "quoted": 0.9137
+     "n": 73,
+     "won": 72,
+     "rate": 0.9863,
+     "quoted": 0.9135
     },
     "unchecked": {
      "n": 13,
@@ -384,18 +384,18 @@
    "ncaab|ucla bruins|long beach state beach|2026-11-17": -1,
    "ncaab|uc san diego tritons|texas southern tigers|2026-11-17": 0,
    "ncaab|saint mary's gaels|portland state vikings|2026-11-17": 0,
-   "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": 0,
-   "ncaab|florida gators|notre dame fighting irish|2026-11-17": 0,
-   "ncaab|purdue boilermakers|lipscomb bisons|2026-11-17": -1,
+   "ncaab|houston cougars|rutgers scarlet knights|2026-11-17": 1.04,
+   "ncaab|florida gators|notre dame fighting irish|2026-11-17": 1.04,
+   "ncaab|purdue boilermakers|lipscomb bisons|2026-11-17": 1.02,
    "ncaab|miami hurricanes|rider broncs|2026-11-18": 0,
-   "ncaab|bucknell bison|akron zips|2026-11-18": -1,
-   "ncaab|saint joseph's hawks|wagner seahawks|2026-11-18": -1,
-   "ncaab|florida state seminoles|ball state cardinals|2026-11-18": 0,
-   "ncaab|xavier musketeers|cleveland state vikings|2026-11-18": 0,
+   "ncaab|bucknell bison|akron zips|2026-11-18": 1.1,
+   "ncaab|saint joseph's hawks|wagner seahawks|2026-11-18": 0,
+   "ncaab|florida state seminoles|ball state cardinals|2026-11-18": 1.01,
+   "ncaab|xavier musketeers|cleveland state vikings|2026-11-18": 1.0,
    "ncaab|alabama crimson tide|kennesaw state owls|2026-11-18": 0,
-   "ncaab|massachusetts minutemen|bryant bulldogs|2026-11-18": -1,
+   "ncaab|massachusetts minutemen|bryant bulldogs|2026-11-18": 0,
    "ncaab|vanderbilt commodores|eastern illinois panthers|2026-11-18": 0,
-   "ncaab|illinois state redbirds|bellarmine knights|2026-11-18": -1,
+   "ncaab|illinois state redbirds|bellarmine knights|2026-11-18": 0,
    "ncaab|smu mustangs|oral roberts golden eagles|2026-11-18": 0,
    "ncaab|depaul blue demons|maryland eastern shore hawks|2026-11-18": 0,
    "ncaab|ole miss rebels|nicholls colonels|2026-11-18": 0,
