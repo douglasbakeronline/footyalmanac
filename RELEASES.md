@@ -7,7 +7,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
-## 2026-11-17-1: a phone push for every Mailer sign-up (tag pending)
+## 2026-11-17-signup-push: a phone push for every Mailer sign-up (tag pending)
 
 **What changed:** a new Mailer sign-up sends Douglas a push through ntfy: "New Mailer sign-up", the emails chosen and how many are on the list. The reader's address is never in the push. It is set up in the Supabase database (Inbox Innovation project): the trigger `almanac_signup_push` on `almanac.subscribers`, the function `almanac.notify_signup()` (security definer, not callable by the API roles), `pg_net`, and the topic in Vault as `almanac_ntfy_topic`. The site's code is unchanged.
 
