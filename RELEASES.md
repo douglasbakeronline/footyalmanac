@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-legs4: Leg properties, fourth look (tag pending)
+
+**What changed:** nothing on the site. A dated note records a fourth leg-property look: no rule shipped.
+
+**Evidence:** pool of 22 days, 74 settled real-priced football 65%+ legs landed 56 v 50.7 expected; tested-rate cut 31/47 v 25/27, far under the 250 legs Rule 3 needs. Earlier football-data scans stand.
+
+**Files:** `claude/leg-property-fourth-2026-11-17.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `groupings.py`, any model or constant.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-17-edge-retest: Edge over the price, fourth run, no edge (tag pending)
 
 **What changed:** nothing on the site. A dated note records the fourth run of the value test on a check season that has doubled.
