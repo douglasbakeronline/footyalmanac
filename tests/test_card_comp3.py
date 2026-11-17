@@ -26,7 +26,8 @@ class Comp3(unittest.TestCase):
 
     def test_in_football_data_m7_list(self):
         src = open(os.path.join(HERE, "tools", "card_legs_history.py")).read()
-        self.assertIn('"comp3")}', src)
+        m7 = src[src.index('res["cardM7"] = {'):src.index('res["cardM7Paired"]')]
+        self.assertIn('"comp3"', m7)
 
     def test_patch_lifts_cap_and_restores(self):
         saved = G.COMP_MAX

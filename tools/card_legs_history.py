@@ -366,8 +366,16 @@ def card_season(L, variant="live"):
         slot = G.uk_slot(leg)
         if slot: by[slot[0]].append(leg)
     days, run, series, months = {}, 0.0, [], defaultdict(lambda: [0, 0, 0.0, 0.0])
-    for d in sorted(by):
-        gs = CR.build(by[d], d, variant)
+    # 17 Nov 2026: two-day groups, as the page (CARD_SPAN, since 12 Nov) and
+    # the pool replay's live build them; a variant spans when card_replay.spans
+    # says so (nospan is the rollback, the rule 6 family and the Model card
+    # never span). Built day by day until then, so the football-data side of
+    # the gate read a different live from the pool side
+    # (claude/card-legs-history-span-2026-11-17.md)
+    dates = sorted(by)
+    built = CR.build_span(by, dates, variant) if CR.spans(variant) else {d: CR.build(by[d], d, variant) for d in dates}
+    for d in dates:
+        gs = built.get(d)
         if not gs: continue
         days[d] = gs
         pnl = sum(g["stake"] * (g["odds"] - 1) if g["won"] else -g["stake"] for g in gs)
@@ -535,7 +543,10 @@ def replay_split(split, splits_fn, log):
                                           # (card_replay comp3, pre-registered 10 Nov), here
                                           # three from one league; NBA-only nights build
                                           # nothing under live's two (claude/card-comp3-2026-11-16.md)
-                                          "comp3")}
+                                          "comp3",
+                                          # 17 Nov 2026: live spans two days here too; nospan is
+                                          # the rollback (CARD_SPAN = False), as on the pool
+                                          "nospan")}
     res["cardM7Paired"] = m7_paired(res["cardM7"])
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
