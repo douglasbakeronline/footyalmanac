@@ -7,6 +7,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-4: the empty-day fillers (#155) closed as overtaken (tag pending)
+
+**What changed:** nothing on the site. A dated note records that the filler test was done on 10 Nov and the filler switched off by the owner on 11 Nov.
+**Evidence:** `fillopp7` and `fillshort` fill no empty day; `fillrule5` 4 pool groups, 2 won v 1.28 expected (12 legs, far under the 100-leg gate); `fillwide` pool 2 of 12 v 4.14 expected; live `cardWide` 1 of 3, 4.18 back on 5 units.
+**Files:** `claude/card-fillers-closed-2026-11-17.md`.
+**Not changed:** `CARD_FILLER` stays False, `CARD_RULE` 12.
+**Roll back:** delete the note.
+
 ## 2026-11-17-3: no links to the code; Analysis opens with About the Sports Almanac
 
 **What changed:** every link from the site to the code repository and to HQ is gone (the HQ tab, the Analysis footer, the release-log link), and README.md is no longer published with the site (Douglas: the code is not for the public). Analysis now opens with **About the Sports Almanac**: what the site does, the sports and how a call is made, how it is checked, a plain risk warning (the model is in beta), and the Daily List, the Card and Scale each with its risk level and the last seven days and today as day tiles. The rest of the page is brought up to date (API-Football and prices named correctly, the college basketball early-season K and Behind .500 mark, no references to code files).
