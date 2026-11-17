@@ -7,6 +7,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-tennis-surface-4: tennis surface, fourth check, note only (tag pending)
+
+**What changed:** nothing a reader sees. A dated note records that the surface idea has no new evidence to test.
+**Evidence:** Sackmann 2026 files 404 and tennis-data.co.uk 403 again on 17 Nov; ESPN has no surface field; the hand-kept map was rejected on 13 Oct (WTA +0.0024 log loss, p(worse) 0.88; ATP +0.0031, 0.95).
+**Files:** `claude/tennis-surface-fourth-check-2026-11-17.md`.
+**Not changed:** `build_tennis.py`, ratings, the Daily List rule.
+**Roll back:** delete the note.
+
 ## 2026-11-17-4: the empty-day fillers (#155) closed as overtaken (tag pending)
 
 **What changed:** nothing on the site. A dated note records that the filler test was done on 10 Nov and the filler switched off by the owner on 11 Nov.
