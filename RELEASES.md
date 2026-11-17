@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-16-25: the Mailer is a tab like the others (tag pending)
+
+**What changed:** the Mailer opens inside the main page with the same cover, stat panel and tab bar as the Daily List; only the content below the bar changes (`#mailer` section and a `mailer` view in `index.html`). Douglas: "I want the same hero section, banners, navs ... just when you click on mailer, it's just the content below that changes." The separate "Almanac Mailer" cover is gone. `mailer.html` now only forwards to `./#mailer` (it keeps the GTM and GA tags), so old links still work, and Analysis links to `./#mailer`.
+
+**Evidence:** checked in Chrome at 1280px and 400px. `mailer.html` lands on `/#mailer` with no script errors, and switching to the Daily List hides the form. The tag tests pass.
+
+**Files:** `index.html`, `mailer.html`, `analysis.html`.
+
+**Not changed:** the form, its Supabase function, the copy and the consent wording.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-16-24: the Card needs the opposition at 4/1 or longer, and the List 2x runs on paper (tag pending)
 
 **What changed:** a football pick on the Card now needs its opponent priced 5.0 (4/1) or longer (`groupings.CARD_MODEL_OPP_MIN` `{"football": 5.0}`, `CARD_RULE` 12). Douglas asked "what can you do here to actually win" after a run of lost 2x groups, and said yes to this. Beside the Card, a new **List 2x** runs on paper every day: the Daily List's own picks priced 1.15+, the model's strongest first, added until the slip pays 2x (`build_list_card`, `list_group`). It is never staked or pushed, and is graded apart as `cardList` in `groupings-record.json`. The Bets tab shows it in an "On paper: the List 2x" fold, with its record under "More numbers".
