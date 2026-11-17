@@ -7,6 +7,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-5: Card bookmaker and price timing, by week and hour (#156) (tag pending)
+
+**What changed:** nothing on the site. `tools/price_timing.py` now also reports each UK book against `CARD_BOOK` by week and the move to the start by first-price hour and sport; a dated note records the read.
+**Evidence:** `claude/card-book-over-time-2026-11-17.md`. Bet365 pays +1.41% a pick over William Hill at the first price (82 paired football picks, 13 days, p 0.000) and +0.89% at the last, ahead in 3 of 4 weeks (the fourth is one pick); Betfair and BetVictor behind in every week. Timing: settled singles late v first +0.84 points on 200 legs, p 0.29, no clear read; football and NBA none either; the last price sits a median 1.3 h before the start.
+**Files:** `tools/price_timing.py`, `tests/test_book_vs.py`, `claude/card-book-over-time-2026-11-17.md`.
+**Not changed:** `CARD_BOOK` (William Hill is Douglas's account), `notify.py` push times, any rule.
+**Roll back:** `git revert`.
+
 ## 2026-11-17-4: the empty-day fillers (#155) closed as overtaken (tag pending)
 
 **What changed:** nothing on the site. A dated note records that the filler test was done on 10 Nov and the filler switched off by the owner on 11 Nov.

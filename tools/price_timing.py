@@ -245,6 +245,37 @@ def book_vs(L, S=None, base=None, min_n=MIN_BOOK):
     return {"base": base, "books": out}
 
 
+def book_weekly(L, base=None, key="bookOdds"):
+    """Each UK book against `base` on the legs both priced, by ISO week of
+    the fixture's date (17 Nov 2026, #156: per book over time). Says whether
+    a book's lead is steady or one bad week: weeks with each paired mean
+    and the number of weeks ahead."""
+    base = base or G.CARD_BOOK
+    books = sorted({b for l in L for b in (l.get(key) or {})} - {base})
+    out = {}
+    for b in books:
+        wk = defaultdict(list)
+        for l in L:
+            bo = l.get(key) or {}
+            if not bo.get(base) or not bo.get(b) or not l.get("date"): continue
+            try: d = datetime.strptime(l["date"][:10], "%Y-%m-%d")
+            except ValueError: continue
+            y, w, _ = d.isocalendar()
+            wk[f"{y}-W{w:02d}"].append(bo[b] / bo[base] - 1)
+        rows = {k: {"n": len(v), "meanPct": round(sum(v) / len(v) * 100, 2)} for k, v in sorted(wk.items())}
+        if rows: out[b] = {"weeks": rows, "weeksAhead": sum(r["meanPct"] > 0 for r in rows.values()), "weeksBehind": sum(r["meanPct"] < 0 for r in rows.values())}
+    return out
+
+
+def hours_by_sport(L):
+    """First-price hour (UTC) of the move to the start, by sport (17 Nov 2026)."""
+    out = defaultdict(lambda: defaultdict(list))
+    for l in L:
+        fa = l.get("firstPriceAt")
+        if fa: out[l.get("sport") or "?"][fa[11:13]].append(l["lastOdds"] / l["odds"] - 1)
+    return {s: {h: {"n": len(v), "meanMovePct": round(sum(v) / len(v) * 100, 2)} for h, v in sorted(hs.items())} for s, hs in sorted(out.items())}
+
+
 def leads(L):
     b = defaultdict(list)
     for l in L:
@@ -282,6 +313,8 @@ def report(L, dropped=(), S=None, pending=()):
     if S is not None: rep["settled"] = settled(S)
     rep["books"] = book_table(L)
     rep["vsBook"] = book_vs(L, S)
+    rep["bookWeekly"] = book_weekly(L)
+    rep["hoursBySport"] = hours_by_sport(L)
     hours = defaultdict(list)
     for l in L:
         fa = l.get("firstPriceAt")

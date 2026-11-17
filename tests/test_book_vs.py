@@ -55,5 +55,16 @@ class BookVs(unittest.TestCase):
         self.assertEqual(C.book_vs_lines(None), []); self.assertEqual(C.book_vs_lines({"base": "William Hill", "books": {}}), [])
 
 
+
+class BookWeekly(unittest.TestCase):
+    def test_weeks_and_hours_by_sport(self):
+        L = [leg(i, 1.40, 1.42, d) for i, d in enumerate(["2026-11-02", "2026-11-03", "2026-11-10"])] + [leg(9, 1.40, 1.38, "2026-11-11")]
+        r = PT.book_weekly(L, base="William Hill")["Bet365"]
+        self.assertEqual(r["weeks"]["2026-W45"]["n"], 2); self.assertEqual(r["weeks"]["2026-W46"]["n"], 2)
+        self.assertEqual(r["weeksAhead"], 1); self.assertEqual(r["weeksBehind"], 0)
+        h = PT.hours_by_sport([dict(l, firstPriceAt="2026-11-02T19:10:00+00:00", lastOdds=1.5) for l in L[:2]])
+        self.assertEqual(h["football"]["19"]["n"], 2)
+
+
 if __name__ == "__main__":
     unittest.main()
