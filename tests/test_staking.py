@@ -53,6 +53,34 @@ class Sources(unittest.TestCase):
         self.assertAlmostEqual(rate, 3 / 4)
         self.assertEqual(per_season, round(0.75 * 365))
 
+    def test_record_rate_from_the_current_card_shape(self):
+        """17 Nov 2026: the rate counts groups from RATE_FROM to the record's
+        last day, empty days and pending groups included; outcomes still come
+        from every settled group."""
+        rec = {"days": [
+            {"date": "2026-11-17", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "pending"}]},
+            {"date": "2026-11-12", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "won"},
+                                             {"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "lost", "wide": True}]},
+            {"date": "2026-10-27", "groups": [{"name": "Card 2x", "p": 0.4, "odds": 2.2, "status": "won"}] * 10}]}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            json.dump(rec, open(os.path.join(d, "groupings-record.json"), "w"))
+            out = S.groups_from_record("2026-11-11")
+        gs, rate, per_season, frm = out
+        self.assertEqual(len(gs), 11)                # ten old and one new settled
+        self.assertAlmostEqual(rate, 2 / 7)          # 11 to 17 Nov, two groups (one pending)
+        self.assertEqual((per_season, frm), (round(2 / 7 * 365), "2026-11-11"))
+        rep = S.report({"live": out + ()})
+        self.assertEqual(rep["live"]["rateFrom"], "2026-11-11")
+        self.assertEqual(rep["live"]["bankroll"]["month"]["groups"], round(2 / 7 * 30))
+
+    def test_record_rate_falls_back_on_a_short_span(self):
+        rec = {"days": [{"date": "2026-11-12", "groups": [{"name": "Card 2x", "p": 0.4, "odds": 2.2, "status": "won"}]}]}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            json.dump(rec, open(os.path.join(d, "groupings-record.json"), "w"))
+            out = S.groups_from_record("2026-11-11")
+        self.assertEqual(len(out), 3)                # two days on file: the whole span's rate
+        self.assertAlmostEqual(out[1], 1.0)
+
     def test_report_says_too_few(self):
         r = S.report({"replay": ([], None, None)})
         self.assertEqual(r["replay"], {"groups": 0, "note": "too few groups"})

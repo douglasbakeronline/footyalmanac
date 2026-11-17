@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-staking-rate: the Card's bankroll read at its current rate (tag pending)
+
+**For a reader.** Nothing on the page. The nightly Card review's live bankroll lines now count the groups the Card makes today (the 2x alone since 11 Nov, empty days included), not October's six-a-day Card.
+
+**Evidence.** Live rate 1.9 a day (40 groups over the 21 days that had one) becomes 0.71 (5 groups, 11 to 17 Nov). A month: 57 groups, 48.7-unit drawdown, 98-unit bankroll becomes 21 groups, 24.6 units, 50 units. `claude/card-staking-live-rate-2026-11-17.md`.
+
+**Files.** `tools/staking.py` (`RATE_FROM`, `RATE_MIN_DAYS`, `rateFrom`), `tools/card_review_post.py`, `tests/test_staking.py`, the note.
+
+**Not changed.** Any Card rule, `CARD_STAKE`, the record, the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-fd-span: the football-data Card replay builds two-day groups, like the page (tag pending)
 
 **For a reader.** Nothing on the page. The football-data side of the Card's gate now replays the Card the page builds, two-day groups included, as the pool side has since earlier today; both sides of the gate read the same live.

@@ -46,18 +46,37 @@ def groups_from_history():
     return gs, (len(gs) / days if days else None), (round(len(gs) / n) if n else None)
 
 
-def groups_from_record():
+# 17 Nov 2026: the live rate is read from the Card's current shape only. The
+# record's groups date from 26 Oct, when the Card built a 2x and a 3x in up to
+# three windows a day (up to six groups); since CARD_RULE 8 (11 Nov 2026) it
+# builds the 2x alone and many days build nothing. The whole span's rate (40
+# groups over the 21 days that had one, 1.9 a day) put 57 groups into the
+# month's bankroll where the page now makes about 20. The outcomes still come
+# from every settled group (more groups, the same stakes); only the rate, and so
+# the month's and season's group counts, come from RATE_FROM to the record's
+# last day, empty days counted.
+RATE_FROM = "2026-11-11"
+RATE_MIN_DAYS = 7
+
+
+def groups_from_record(rate_from=RATE_FROM):
     try: r = json.load(open(os.path.join(HERE, "groupings-record.json")))
     except Exception: return [], None, None
-    gs, dates = [], set()
+    gs, dates, recent, last = [], set(), 0, None
     for d in r.get("days", []):
+        last = max(last or d["date"], d["date"])
         for g in d.get("groups", []):
-            if not str(g.get("name", "")).startswith("Card") or g.get("status") not in ("won", "lost"): continue
-            if g.get("wide") or g.get("late"): continue
+            if not str(g.get("name", "")).startswith("Card") or g.get("wide") or g.get("late"): continue
+            if rate_from and d["date"] >= rate_from and g.get("status") != "void": recent += 1
+            if g.get("status") not in ("won", "lost"): continue
             gs.append((g["p"], g["odds"], g["status"] == "won", STAKE.get(g["name"], 1))); dates.add(d["date"])
+    days = (_d(last) - _d(rate_from)).days + 1 if (rate_from and last and last >= rate_from) else 0
+    if days >= RATE_MIN_DAYS:
+        rate = recent / days
+        # the live Card runs every sport all year: a season is 365 days at its rate
+        return gs, rate, (round(rate * 365) if rate else None), rate_from
     span = (_d(max(dates)) - _d(min(dates))).days + 1 if dates else 0
     rate = len(gs) / span if span else None
-    # the live Card runs every sport all year: a season is 365 days at its rate
     return gs, rate, (round(rate * 365) if rate else None)
 
 
@@ -105,7 +124,8 @@ def bankroll(gs, k, n=4000):
 
 def report(sources):
     rep = {}
-    for name, (gs, rate, per_season) in sources.items():
+    for name, src in sources.items():
+        gs, rate, per_season = src[:3]
         if len(gs) < 10: rep[name] = {"groups": len(gs), "note": "too few groups"}; continue
         flat = sim(gs, 0)
         lift = sum(w for _, _, w, _ in gs) / max(1e-9, sum(p for p, *_ in gs))
@@ -113,6 +133,7 @@ def report(sources):
                "flat1pct": flat, "halfKelly": sim(gs, 0.5, lift=lift), "quarterKelly": sim(gs, 0.25, lift=lift)}
         if rate:
             res["groupsPerDay"] = round(rate, 2)
+            if len(src) > 3: res["rateFrom"] = src[3]
             # a month at the source's rate, and a season: the replay's own groups a
             # season (football, August to May), 365 days of the live Card
             res["bankroll"] = {"month": bankroll(gs, max(1, round(rate * 30))), "season": bankroll(gs, max(1, per_season or len(gs)))}

@@ -554,7 +554,7 @@ def review_body():
             lines += [f"## Staking, {k} ({s['groups']} groups, landed/expected {s['landedOverExpected']})",
                       f"- flat 1% a group: median season {pct(fl['median'])}, 10th-90th {pct(fl['p10'])} to {pct(fl['p90'])}, worst drawdown (95%) {fl['p95Drawdown'] * 100:.0f}%",
                       kelly_line(s),
-                      ] + [f"- {lab} ({b['groups']} groups at {s.get('groupsPerDay')} a day, the page's stakes): 95%-worst drawdown {b['p95DrawdownUnits']} units, "
+                      ] + [f"- {lab} ({b['groups']} groups at {s.get('groupsPerDay')} a day{' since ' + s['rateFrom'] if s.get('rateFrom') else ''}, the page's stakes): 95%-worst drawdown {b['p95DrawdownUnits']} units, "
                            f"median {b['medianPnlUnits']:+} units on {b['staked']} staked; a bankroll of {b['units']} units keeps that drawdown to half"
                            for lab, b in ((k2, (s.get("bankroll") or {}).get(k2)) for k2 in ("month", "season")) if b] + [""]
     by = load("groupings-record.json").get("cardLegsBySport") or {}
