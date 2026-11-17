@@ -8,6 +8,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-integrity-slim: the Card integrity check no longer crashes on the record's slim legs, reads every staked slip, and the review arrives in the morning (tag pending)
+
+**For a reader.** Nothing on the page. The nightly Card review's integrity check works again and now watches the Daily 2x, List 2x and List long as well as the Card; the review should post in the morning instead of around noon.
+
+**Evidence.** `tools/card_integrity.py` on today's `groupings-record.json` died with `KeyError: 'date'`: the record keeps a slim leg (no date, home, away or id) and the first football leg pending 24h+ (Pistoiese v Coriano, 15 Nov, no result on file) reached `groupings.settle()`, which needs them. The check runs with continue-on-error, so the review would have opened an office-backlog issue for a crash, not a finding. `full_leg` takes the full leg from the day's archive (or the day before, for a two-day group), else the date from the start and the sides from the event: 0 findings, 15 of 15 Card legs since 10 Nov replayable. The no-opposition-price check also asked rule 13 legs for an opposition price rule 13 never reads; it now asks rules 6 and 12 only (`OPP_RULES`). The review's 03:40 UTC cron fired between 10:55 and 12:07 UTC on every day from 9 to 16 Nov; deploy.yml's new `card-review-next` job dispatches it from the first build at or after 03:40 UTC that finds no review issue for the day and none running (the crons stay as backups; `card_review_post` posts one issue a day).
+
+**Files.** `tools/card_integrity.py` (`full_leg`, `staked`, `OPP_RULES`), `.github/workflows/deploy.yml` (`card-review-next`), `tests/test_card_integrity_staked.py`, `tests/test_card_funnel_model.py`, `claude/card-integrity-slim-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** Any Card rule or `CARD_RULE`; the record; the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-rule13-split: rule 13's groups split by what rule 12 would have said (tag pending)
 
 **For a reader.** Nothing on the page. The record now tells apart the Card groups rule 12 would also have built from those holding a pick only rule 13 (the model alone) admits, so the 30 Nov review can see what dropping the bookmaker conditions added, from the live record rather than only the replay.

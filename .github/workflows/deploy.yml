@@ -570,6 +570,35 @@ jobs:
           gh api -X POST "repos/${{ github.repository }}/actions/workflows/briefing-watch.yml/dispatches" \
             -f ref=main -f 'inputs[wait]=true' && echo "briefing watchdog dispatched (wait)"
 
+  # 17 Nov 2026: the nightly Card review's 03:40 UTC cron has fired between
+  # 10:55 and 12:07 UTC on every day from 9 to 16 Nov (the 09:25 backup in the
+  # evening), so the 03:17 and 09:17 London build sessions never had the day's
+  # review. The first build at or after 03:40 UTC that finds no review issue
+  # for the UTC day, and no review running, dispatches one. The crons stay as
+  # backups; card_review_post posts one issue a day whichever run comes first.
+  card-review-next:
+    needs: [build]
+    if: always() && needs.build.result == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    permissions:
+      actions: write
+      issues: read
+    steps:
+      - name: Dispatch the Card review if the day has none yet
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          now=$(date -u +%H%M); day=$(date -u +%F)
+          if [ "$now" -lt 0340 ]; then echo "before 03:40 UTC: the night's grading may not be in"; exit 0; fi
+          have=$(gh api "repos/$REPO/issues?labels=card-review&state=all&per_page=5" --jq "[.[] | select(.title == \"Card review $day\")] | length")
+          if [ "$have" != "0" ]; then echo "Card review $day already posted"; exit 0; fi
+          busy=$(gh api "repos/$REPO/actions/workflows/card-review.yml/runs?per_page=5" --jq '[.workflow_runs[] | select(.status != "completed")] | length')
+          if [ "$busy" != "0" ]; then echo "a Card review is already running"; exit 0; fi
+          gh api -X POST "repos/$REPO/actions/workflows/card-review.yml/dispatches" -f ref=main && echo "Card review dispatched for $day"
+
   deploy:
     needs: build
     runs-on: ubuntu-latest
