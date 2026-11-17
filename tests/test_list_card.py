@@ -51,9 +51,40 @@ class ListCard(unittest.TestCase):
 
     def test_graded_apart(self):
         src = open(os.path.join(HERE, "groupings.py")).read()
-        self.assertIn('"cardList": tally([g for g in allg if is_list(g["name"])])', src)
+        self.assertIn('"cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"])])', src)
+        self.assertIn('"cardListLong": tally([g for g in allg if is_list_long(g["name"])])', src)
         self.assertIn("build_list_card(L, d, now", src)
 
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ListLong(unittest.TestCase):
+    """17 Nov 2026: the List long when the 2x cannot be made, college sports out."""
+    def test_long_built_only_when_2x_cannot(self):
+        L = [leg(i, 1.10, 0.95 - i * 0.01) for i in range(1, 9)]       # eight at 1.10: 1.10^8 = 2.14
+        gs = G.build_list_card(L, DAY, NOW, archived=[])
+        self.assertEqual([g["name"] for g in gs], ["List long"])
+        self.assertEqual(len(gs[0]["legs"]), 8)
+        self.assertGreaterEqual(gs[0]["odds"], 2.0)
+
+    def test_2x_first_and_no_long_beside_it(self):
+        L = [leg(1, 1.50, 0.9), leg(2, 1.50, 0.9)] + [leg(i, 1.10, 0.8) for i in range(3, 12)]
+        gs = G.build_list_card(L, DAY, NOW, archived=[])
+        self.assertEqual([g["name"] for g in gs], ["List 2x"])
+
+    def test_long_gives_up_past_ten(self):
+        L = [leg(i, 1.05, 0.95) for i in range(1, 15)]                 # 1.05^10 = 1.63
+        self.assertEqual(G.build_list_card(L, DAY, NOW, archived=[]), [])
+
+    def test_college_left_out(self):
+        L = [leg(1, 1.50, 0.95, sport="ncaab"), leg(2, 1.50, 0.9, sport="cfb"), leg(3, 1.50, 0.9), leg(4, 1.50, 0.9)]
+        g = G.list_group(L, set(), NOW)
+        self.assertEqual({l["pick"] for l in g["legs"]}, {"a3", "a4"})
+
+    def test_tested_chance_present_or_none(self):
+        L = [leg(1, 1.50, 0.9), leg(2, 1.50, 0.9)]
+        g = G.list_group(L, set(), NOW)
+        self.assertIn("tested", g)
+        self.assertTrue(g["tested"] is None or 0 < g["tested"] <= 1)
