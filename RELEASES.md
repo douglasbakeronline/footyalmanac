@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-1: the Card funnel reads rule 12's opposition floor (tag pending)
+
+**What changed:** the nightly Card review's funnel had no key for rule 12's two opposition messages, so a football leg with no opposition price vanished from the table, one priced under 5.0 counted as "other", and the missing-price count dropped every football leg (46 to 3). The funnel now has an `opposition` column and relief, an unpriced leg stands in at the floor, and a missing opposition price is taken from the football archive as the replay does.
+
+**Evidence:** pool 6 to 17 Nov under rule 12: football clear 32 to 44, 31 opposition faults shown (was 0), price gaps 3 to 63 (38 football on started days). The opposition floor alone costs one group in fifteen days (13 v 12). `claude/card-funnel-rule12-2026-11-17.md`.
+
+**Files:** `tools/card_funnel.py`, `tests/test_card_funnel_model.py`, `claude/card-funnel-rule12-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed:** every Card rule; the replay; the page.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-16-25: the Mailer is a tab like the others (tag pending)
 
 **What changed:** the Mailer opens inside the main page with the same cover, stat panel and tab bar as the Daily List; only the content below the bar changes (`#mailer` section and a `mailer` view in `index.html`). Douglas: "I want the same hero section, banners, navs ... just when you click on mailer, it's just the content below that changes." The separate "Almanac Mailer" cover is gone. `mailer.html` now only forwards to `./#mailer` (it keeps the GTM and GA tags), so old links still work, and Analysis links to `./#mailer`.

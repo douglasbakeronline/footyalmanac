@@ -68,6 +68,10 @@ MODEL_RELIEF = {
     "no-value": {"CARD_MODEL_EDGE": -0.05},      # the model up to 5 points under the bookmakers
     "comp-cap": {"COMP_MAX": 3},
 }
+# 17 Nov 2026 (CARD_RULE 12): the opposition floor on football picks
+# (CARD_MODEL_OPP_MIN). Its relief joins only while the floor is live, as an
+# empty floor relaxes nothing.
+MODEL_OPP_RELIEF = {"opposition": {"CARD_MODEL_OPP_MIN": {}}}
 
 # card_fault's messages, in its own order, to a short key. A message no
 # pattern matches is "other" (tests/test_card_funnel.py covers every branch).
@@ -87,8 +91,13 @@ PATTERNS = [
 KEYS = ["sport-off", "league", "under-market", "opposition", "sport-floor", "no-time", "price-range",
         "fair-floor", "model-floor", "model-above", "other"]
 
-# model_fault's messages (CARD_RULE 7), in its own order.
+# model_fault's messages (CARD_RULE 7), in its own order. The opposition
+# goes first (17 Nov 2026): "no bookmaker price for the opposition" carries
+# "no bookmaker price", so under rule 12 it was read as a missing price (a
+# key the table has no column for, so the leg vanished) and "the opposition
+# is priced 4.50, under 5" fell to "other".
 MODEL_PATTERNS = [
+    ("opposition", ("opposition",)),
     ("sport-off", ("off the Daily List", "off the Card")),
     ("no-time", ("order of play",)),
     ("no-price", ("no bookmaker price",)),
@@ -100,7 +109,7 @@ MODEL_PATTERNS = [
     ("no-value", ("sees no value",)),
 ]
 MODEL_KEYS = ["sport-off", "no-time", "league", "list-excluded", "price-range", "sport-floor", "model-floor",
-              "no-value", "other"]
+              "no-value", "opposition", "other"]
 
 
 def model_rule():
@@ -109,7 +118,12 @@ def model_rule():
 
 def rule_sets():
     """(patterns, reliefs, table keys) for the Card rule that is live."""
-    if model_rule(): return MODEL_PATTERNS, MODEL_RELIEF, MODEL_KEYS
+    if model_rule():
+        relief = dict(MODEL_RELIEF)
+        if getattr(G, "CARD_MODEL_OPP_MIN", None):
+            relief = {k: v for k, v in relief.items() if k != "comp-cap"}
+            relief.update(MODEL_OPP_RELIEF); relief["comp-cap"] = MODEL_RELIEF["comp-cap"]
+        return MODEL_PATTERNS, relief, MODEL_KEYS
     return PATTERNS, RELIEF, KEYS
 
 
@@ -130,10 +144,15 @@ def fault_key(msg):
     return "other"
 
 
-def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False):
+def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False, pred_dir=None):
     """Card day -> legs at their first real price, settled or not, one per
-    fixture (G.pool_rows). A leg with no real price is counted, not kept."""
+    fixture (G.pool_rows). A leg with no real price is counted, not kept.
+    A football leg with no opposition price takes the football archive's, as
+    card_replay.pool_legs does (17 Nov 2026); pred_dir defaults to
+    predictions/ only for the live pool, so a test's pool reads no disk."""
     by, unpriced = defaultdict(list), Counter()
+    if pred_dir is None and pool_dir == R.POOL_DIR: pred_dir = R.PRED_DIR
+    aidx = R.archive_opp_index(pred_dir) if pred_dir else {}
     # 13 Nov 2026: G.pool_rows keeps a moved fixture's latest placement; the
     # (event, pick) dedup here kept the first, stale row and merged rematches
     for d, row in G.pool_rows(pool_dir):
@@ -143,6 +162,11 @@ def pool_days(since=None, until=None, pool_dir=R.POOL_DIR, recover=False):
         if not slot or (since and slot[0] < since) or (until and slot[0] > until): continue
         if mk is None:
             unpriced[(slot[0], row.get("sport"))] += 1; continue
+        if not mk.get("opp"):
+            ao = R.archive_opp(row, aidx)
+            if ao:
+                mk = dict(mk, opp=ao[0], oppFrom="archive")
+                if ao[1] and not mk.get("draw"): mk["draw"] = ao[1]
         l = dict(row, **mk, est=False)
         # 14 Nov 2026: an order of play published before the start clears the estimate
         l["timeEst"] = G.pool_time_est(row)
@@ -166,6 +190,10 @@ def unpriced_ok(row):
     if model_rule():
         lo, hi = G.CARD_ODDS
         l.update(est=False, odds=round((lo + hi) / 2, 2), fair=None)
+        # 17 Nov 2026 (CARD_RULE 12): an unpriced leg has no opposition price
+        # either; stand in at the floor, as a fuller feed is the most this adds
+        omin = (getattr(G, "CARD_MODEL_OPP_MIN", None) or {}).get(l.get("sport"))
+        if omin and not l.get("opp"): l["opp"] = omin
         return G.card_fault(l) is None
     l["est"] = True
     return fault_key(G.card_fault(l)) is not None and "no bookmaker price" in (G.card_fault(l) or "")
