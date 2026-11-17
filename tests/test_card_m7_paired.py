@@ -68,8 +68,11 @@ class OnFootballData(unittest.TestCase):
         Lm = H.legs(pairs, model=True)
         self.assertEqual(len(Lm), 6)
         self.assertTrue(all(l["model"] < l["fair"] for l in Lm))
-        live, u5 = H.card_season(Lm, "live"), H.card_season(Lm, "m7under5")
+        # 17 Nov 2026 (CARD_RULE 13): live has no value demand, so the rule 12
+        # Card (`rule12`) is the one that refuses them
+        live, u5 = H.card_season(Lm, "rule12"), H.card_season(Lm, "m7under5")
         self.assertEqual(live["groups"], 0)
+        self.assertGreater(H.card_season(Lm, "live")["groups"], 0)
         self.assertGreater(u5["groups"], 0)
         self.assertTrue(all(x["legs"] >= 3 for x in u5["groupList"]))
         x = H.m7_paired({"live": live, "m7under5": u5})["m7under5"]

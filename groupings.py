@@ -335,7 +335,7 @@ def legs(dates):
                         # so the group still carries its full fixture row after kick-off
                         # when the live files no longer list the game (Douglas).
                         "fx": g,
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
                         "pDraw": round(p.get("d", 0), 4), "multOnly": pl < WIDE_MIN})
     # 24 Oct 2026, Douglas: "Multipliers should be across all sports". Every
     # published sport's picks now enter the pool; those outside GROUP_SPORTS,
@@ -361,7 +361,7 @@ def legs(dates):
                     "players": [m.get("playerA"), m.get("playerB")],
                     "comp": f"{m.get('tournament')} {m.get('round') or ''}".strip(), "when": when, "timeEst": time_est, "date": d, "id": m.get("id"), "fx": m,
                     "pModel": round(m["confidence"], 4), "p": round(pl, 4), "hit": m["accuracy"].get("cumHit", m["accuracy"]["hit"]), "n": m["accuracy"].get("cumN", m["accuracy"]["n"]),
-                    "list": bool(m.get("list")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
+                    "list": bool(m.get("list")), "reserve": bool(m.get("reserve")), "multOnly": "tennis" not in GROUP_SPORTS or pl < WIDE_MIN,
                     # 25 Oct 2026, Douglas: tennis back on the Card. It stays off the
                     # Daily List (build_tennis.LIST_ON) until its live record holds;
                     # on the Card a tennis pick still needs a bookmaker price, the
@@ -378,7 +378,7 @@ def legs(dates):
             out.append({"sport": key, "event": f"{g['home']} v {g['away']}", "home": g["home"], "away": g["away"],
                         "pick": g["pick"], "comp": g.get("label") or sp.get("name"), "when": g.get("when"), "date": t.date().isoformat(),
                         "id": g.get("id"), "pModel": round(g["confidence"], 4), "p": round(pl, 4),
-                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")),
+                        "hit": g["accuracy"].get("cumHit", g["accuracy"]["hit"]), "n": g["accuracy"].get("cumN", g["accuracy"]["n"]), "list": bool(g.get("list")), "reserve": bool(g.get("reserve")),
                         "multOnly": key not in GROUP_SPORTS or pl < WIDE_MIN, "listOff": bool(sp.get("listOff")), "fx": g})
     return out
 
@@ -1602,7 +1602,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 12    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026)
+CARD_RULE = 13    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026); 13: no bookmaker condition, the model alone (17 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1622,7 +1622,15 @@ CARD_RULE = 12    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagu
 CARD_MODEL_RULE = True
 # The edge the model must have over the bookmakers' chance on a Card pick
 # under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
-CARD_MODEL_EDGE = 0.0
+# 17 Nov 2026 (CARD_RULE 13), Douglas: "forget about comparison to bookies
+# ... let's just follow the model", then "just drop both of those": None
+# switches the value demand off, so a Card pick is chosen on the model's
+# number alone and the bookmakers' chance is never read. The owner's call
+# against the record (picks the model rates 5-10 points above the price's
+# chance landed 56%, -13.5% a leg; 10+ above 49%): the model's calibration
+# is trusted as a whole. Rule 12 is replayed as `rule12`; 0.0 restores it.
+# claude/card-rule13-model-only-2026-11-17.md.
+CARD_MODEL_EDGE = None
 # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md): the opposition's price as a
 # condition on the model's own picks. Rule 6's opposition 9+ is the one Card
 # condition that held in all five football-data seasons (511 legs, 83.8% v
@@ -1638,7 +1646,10 @@ CARD_MODEL_EDGE = 0.0
 # p(worse) 0.014, ahead in all five; the pool 33 legs, p 0.07. Rule 11 (no
 # opposition condition) is replayed as `m7noopp`; {} rolls it back.
 # claude/card-opp5-list2x-2026-11-16.md.
-CARD_MODEL_OPP_MIN = {"football": 5.0}
+# 17 Nov 2026 (CARD_RULE 13): emptied with CARD_MODEL_EDGE, Douglas's call
+# ("I'm obviously still going to win if we are high confidence"); the floor
+# lived one day. `rule12` replays it at 5.0.
+CARD_MODEL_OPP_MIN = {}
 # 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
 # kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
 # replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
@@ -1701,8 +1712,69 @@ LIST_LEGS_MAX = 6
 LIST_LONG_LEGS = 10
 LIST_SPORTS_OFF = {"ncaab", "cfb"}
 RISK.update({"List 2x": "On trial: the list's picks, 1.15+", "List long": "On trial: the list's picks, any price"})
-def is_list(name): return str(name).startswith("List")
+def is_list(name): return str(name).startswith(("List", "Daily"))
 def is_list_long(name): return str(name) == "List long"
+
+# 17 Nov 2026 (claude/daily-2x-2026-11-17.md), Douglas: "we have to have one
+# card every day ... aiming for above a 2x is our benchmark ... anything under
+# 1.10 is just pointless". The Daily 2x: one slip a UK day, the model's
+# strongest picks first, each priced DAILY_ODDS_MIN+ by a bookmaker, added until
+# the slip pays DAILY_TARGET, as many picks as it takes up to DAILY_LEGS_MAX.
+# Picks come in tiers (DAILY_TIERS): the Daily List, then the reserve, then the
+# day's football picks at DAILY_FB_MIN+ on the model (football the deepest
+# board), then any other sport at DAILY_ANY_MIN+. Replayed on the results ledger
+# (3 Oct to 16 Nov, list and reserve, strongest first, 1.10+): 28 of 33 days
+# had a slip, 14 won (50%), +22% at the recorded price, 3.9 picks a slip;
+# strongest-first beat shortest-price-first (36%) on the same picks. College
+# sports stay out: 1.15+ college basketball list and reserve picks landed
+# 57-64% against 76-84% priced. A day that cannot reach 2x in any tier still
+# gets its strongest slip, marked short. Graded on its own line (cardDaily);
+# staking is the reader's.
+DAILY_NAME = "Daily 2x"
+DAILY_TARGET = 2.0
+DAILY_ODDS_MIN = 1.10
+DAILY_LEGS_MAX = 8
+DAILY_FB_MIN = 0.65
+DAILY_ANY_MIN = 0.65
+DAILY_SPORTS_OFF = {"ncaab", "cfb"}
+DAILY_TIERS = ("list", "reserve", "football", "any")
+RISK[DAILY_NAME] = "On trial: one 2x a day, strongest picks first"
+def is_daily(name): return str(name) == DAILY_NAME
+
+def daily_tier(l):
+    if l.get("list"): return "list"
+    if l.get("reserve"): return "reserve"
+    if l.get("sport") == "football" and (l.get("pModel") or 0) >= DAILY_FB_MIN: return "football"
+    if (l.get("pModel") or 0) >= DAILY_ANY_MIN: return "any"
+    return None
+
+def daily_group(L, after):
+    """The Daily 2x from a day's legs (see DAILY_*): tier by tier, strongest
+    first within a tier, until the price reaches DAILY_TARGET. Always returns
+    a slip when any pick qualifies; short=True when it stops below 2x."""
+    cands = []
+    for l in L:
+        t = daily_tier(l)
+        if (t is None or l.get("est") or not l.get("odds") or l["odds"] < DAILY_ODDS_MIN
+                or l.get("sport") in DAILY_SPORTS_OFF or (parse(l.get("when")) or after) < after):
+            continue
+        m = as_model(l); m["tier"] = t; cands.append(m)
+    cands.sort(key=lambda l: (DAILY_TIERS.index(l["tier"]), -l["pModel"], -l["odds"], l.get("when") or "9"))
+    legs_, seen, o = [], set(), 1.0
+    for l in cands:
+        if l["event"] in seen: continue
+        legs_.append(dict(l)); seen.add(l["event"]); o *= l["odds"]
+        if o >= DAILY_TARGET or len(legs_) >= DAILY_LEGS_MAX: break
+    if not legs_: return None
+    legs_.sort(key=lambda l: l.get("when") or "9")
+    fair = [l.get("fair") for l in legs_]
+    return {"name": DAILY_NAME, "risk": RISK[DAILY_NAME], "band": [DAILY_TARGET, None], "minChance": 0,
+            "odds": round(o, 2), "p": round(math.prod(l["pModel"] for l in legs_), 4),
+            "pFair": round(math.prod(fair), 4) if all(f is not None for f in fair) else None,
+            "implied": round(math.prod(l.get("implied") or 1 / l["odds"] for l in legs_), 4),
+            "estimates": 0, "basis": "model", "rule": 1, "wide": False, "legs": legs_, "tested": list_tested(legs_),
+            "short": o < DAILY_TARGET, "tiers": sorted({l["tier"] for l in legs_}, key=DAILY_TIERS.index),
+            "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
 
 
 def list_tested(legs_):
@@ -1958,13 +2030,26 @@ def model_fault(l):
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
-    if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
+    if CARD_MODEL_EDGE is not None and l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
         return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
     omin = CARD_MODEL_OPP_MIN.get(l.get("sport"))
     if omin:
         if not l.get("opp"): return f"{l['pick']}: no bookmaker price for the opposition"
         if l["opp"] < omin: return f"{l['pick']}: the opposition is priced {l['opp']:.2f}, under {omin:g}"
     return None
+
+# The Card's two bookmaker conditions as rule 12 ran them (16 Nov 2026), for
+# the leg's `rule12Fault` under rule 13 and the `rule12` replay variant.
+RULE12_PATCH = {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}}
+
+def fault_under(l, patch):
+    """model_fault's verdict on a leg with the module constants in `patch`
+    set for the call only (the live constants are restored whatever happens)."""
+    g = globals(); saved = {k: g[k] for k in patch}
+    try:
+        g.update(patch); return model_fault(l)
+    finally:
+        g.update(saved)
 
 def as_model(l):
     """A leg as the Model card carries it: its chance is the model's own."""
@@ -2009,6 +2094,11 @@ def best_card(L, used, after, name, wide=False, need=None):
     if not top: return None
     _, p, c, o = top
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
+    if CARD_MODEL_RULE and not wide and CARD_MODEL_EDGE is None:
+        # 17 Nov 2026 (CARD_RULE 13): what rule 12 would have said of each
+        # pick, kept on the leg so the review can split the groups without a
+        # replay (claude/card-rule13-model-only-2026-11-17.md)
+        for l in legs_: l["rule12Fault"] = fault_under(l, RULE12_PATCH)
     return {"name": name, "risk": "Wider rule" if wide else RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
             "estimates": 0, "basis": "model" if is_model(name) or (CARD_MODEL_RULE and not wide) else "bookmakers",
@@ -2303,16 +2393,28 @@ def build_list_card(L, date, now, prev=None, archived=None):
     for g in list(archived) + [g for g in (prev or []) if is_list(g.get("name"))]:
         if g["name"] in filled: continue
         lock = first_kick(g) or lock_time(date, w)
+        # 17 Nov 2026: a Daily 2x built short of 2x is rebuilt until it starts,
+        # as prices for later days arrive; a full one is held as first built.
+        if is_daily(g.get("name")) and g.get("short") and not g.get("locked") and now < lock: continue
         g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
         g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
         groups.append(g); filled.add(g["name"])
     if now < window_end(date, w):
         day_legs = [l for l in L if (uk_slot(l) or (None, None))[0] == date]
         taken = set()
+        # 17 Nov 2026: the Daily 2x first, independent of the List kinds (it may share picks)
+        if DAILY_NAME not in filled:
+            g = daily_group(day_legs, after)
+            if g:
+                lock = first_kick(g) or lock_time(date, w)
+                g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
+                         paper=True, bench=[], book=CARD_BOOK, stake=0)
+                for l in g["legs"]: l.setdefault("firstOdds", l["odds"])
+                filled.add(DAILY_NAME); groups.append(g)
         for name, target, odds_min, legs_max in LIST_KINDS:
             if name in filled: continue
             # the List long is built only when the 2x cannot be (the same picks would be in both)
-            if is_list_long(name) and any(not is_list_long(n) for n in filled): continue
+            if is_list_long(name) and any(not is_list_long(n) and not is_daily(n) for n in filled): continue
             g = list_group(day_legs, taken, after, name, target, odds_min, legs_max)
             if not g: continue
             taken |= {l["event"] for l in g["legs"]}
@@ -2695,7 +2797,7 @@ def check_pool(L):
             for l in L if not l.get("est") and l.get("fair") is not None]
 
 POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
-             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "multOnly", "edge",
+             "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "reserve", "tier", "multOnly", "edge",
              "opp", "draw",
              # 9 Nov 2026: the result keys (settle needs id for tennis and US
              # sport) and the two flags card_fault reads, so the pool replays
@@ -3236,7 +3338,9 @@ def grade(now=None):
            # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
            "cardModel": tally([g for g in allg if is_model(g["name"])]),
            # 16 Nov 2026: the List 2x, the Daily List's own picks on paper, its own line
-           "cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"])]),
+           "cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"]) and not is_daily(g["name"])]),
+           # 17 Nov 2026: the Daily 2x, one slip a day, its own line
+           "cardDaily": tally([g for g in allg if is_daily(g["name"])]),
            # 17 Nov 2026: the List long, the same picks at any price to 2x, its own line
            "cardListLong": tally([g for g in allg if is_list_long(g["name"])]),
            # 29 Oct 2026: each Card rule version on its own line, so a change to the
@@ -3355,6 +3459,7 @@ def main():
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
+                              "modelEdge": CARD_MODEL_EDGE, "modelOppMin": CARD_MODEL_OPP_MIN,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "span": CARD_SPAN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS), "context": CARD_CONTEXT,

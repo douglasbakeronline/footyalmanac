@@ -15,6 +15,65 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** `CARD_BOOK` (William Hill is Douglas's account), `notify.py` push times, any rule.
 **Roll back:** `git revert`.
 
+## 2026-11-17-card-rule13: the Card on the model alone, rule 13 (tag pending)
+
+**For a reader.** The Card's picks are now chosen on the model's number alone. Until today a pick also had to be rated by the model at or above the bookmakers' chance (since 11 Nov) and, for football, have the opposition priced 5.0 or longer (since 16 Nov). Both conditions are off, at the owner's instruction (17 Nov 2026: "forget about comparison to bookies... let's just follow the model", then "just drop both of those"). The rule still needs a bookmaker price of 1.15 to 1.90 (so a 2x comes in three to five picks), the model at 60%+, tennis at 85%+, NFL and the college sports off. The rule text on the Bets tab and each group's footer say so from today, and the record tallies rule 13 on its own line.
+
+**Evidence.** None for the change; the record argued against it, and the note says so. On the pool (every sport, first real price, 30 Oct to 17 Nov) rule 13 builds 41 groups on 21 days, 17 won (41%), -4% at a flat stake; rule 12 on the same days 20 groups, 11 won (55%), +34%; paired by day rule 12 +0.79 units a day, p(worse) 0.09. The nearest football-data proxy (`m7under5`) was behind the value-demand Card in all five seasons. The estimate given to Douglas: about 40 to 45% of rule 13 groups won over a month, -5% to -10% on turnover, 90% band roughly -30% to +20%. `claude/card-rule13-model-only-2026-11-17.md`.
+
+**Files.** `groupings.py` (`CARD_MODEL_EDGE` None switches the value demand off, `CARD_MODEL_OPP_MIN` {}, `CARD_RULE` 13; `RULE12_PATCH`, `fault_under`, and each Card leg carries `rule12Fault`, rule 12's verdict, so the review can split the groups without a replay; `rules.card.modelEdge` / `modelOppMin` for the page), `index.html` (the rule copy reads them), `tools/card_replay.py` and `tools/card_legs_history.py` (`rule12` and `m7value` variants), `tools/card_funnel.py` (the `no-value` relief joins only while the demand is live, `MODEL_VALUE_RELIEF`), tests (`tests/test_card_rule13.py` new; four Card tests re-pinned to rule 13, the rule 12 behaviour kept under a patch).
+
+**Not changed.** The Daily 2x (the every-day slip, shipped earlier today), the List card, the slip, the Edge flag, the price band, the model's 60% floor, the tennis floor, the sports off, the context veto, two-day groups, `COMP_MAX`. No model input.
+
+**Roll back.** `git revert` this merge, or set `CARD_MODEL_EDGE = 0.0` and `CARD_MODEL_OPP_MIN = {"football": 5.0}` with `CARD_RULE` 14.
+
+## 2026-11-17-daily-2x-rebuild: a short Daily 2x is rebuilt until it starts (tag pending)
+
+**For a reader.** A later day's 2x built before its prices are in (19 and 20 Nov were 1.64 and 1.44) now rebuilds on every build until it reaches 2x or starts; a slip at 2x is held as first built. **Files.** `groupings.py` (`build_list_card`), `tests/test_daily_2x.py`. **Roll back.** `git revert` this merge.
+
+## 2026-11-17-daily-2x: the Daily 2x, one slip every day, and its tracker (tag pending)
+
+**For a reader.** The Bets tab now opens with **Today's 2x**: one slip a day, the model's strongest picks priced 1.10 or more, added until it pays 2x. Picks come from the Daily List first, then the reserve, then the day's strongest football (model 65%+), then other sports (65%+); college sports are left out. As many picks as it takes, up to eight. A day that cannot reach 2x still gets its strongest slip, marked short. Under it, a tracker: a tile a day with each pick as a dot (green landed, red lost, grey to come), the slip's price and result, and the running tally (slips won v expected, return, picks landed), with what the replay taught.
+
+**Evidence.** Replayed on the results ledger, 3 Oct to 16 Nov, list and reserve picks with a real price, college basketball out: strongest first at 1.10+, 28 slips in 33 days, 14 won (50%), +22% at the recorded price, 3.9 picks a slip. At any price 16 of 28 (57%, +40%), but Douglas rules out picks under 1.10. Ordering the same picks by shortest price instead: 10 of 28 (36%, -22%). Above 1.15 every price band of list and reserve picks landed 3 to 6 points under its price (college basketball 15 to 20 under), so the slip rests on the model's ordering, not on value. 28 slips is a small sample. Douglas, 17 Nov: "we have to have one card every day ... aiming for above a 2x is our benchmark".
+
+**Files.** `groupings.py` (`daily_group`, `DAILY_*`, `is_daily`, `cardDaily`, `reserve` and `tier` carried on legs), `index.html` (`dailySection`, `dailyTracker`, CSS), `tests/test_daily_2x.py`, `tests/test_list_card.py`, `claude/daily-2x-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** The rule 12 Card, the List 2x and List long, the slip, every model and the Daily List.
+
+**Roll back.** `git revert` this merge; the Daily 2x stops being built and its archived slips stay graded in `groupings-record.json`.
+## 2026-11-17-legs4: Leg properties, fourth look (tag pending)
+
+**What changed:** nothing on the site. A dated note records a fourth leg-property look: no rule shipped.
+
+**Evidence:** pool of 22 days, 74 settled real-priced football 65%+ legs landed 56 v 50.7 expected; tested-rate cut 31/47 v 25/27, far under the 250 legs Rule 3 needs. Earlier football-data scans stand.
+
+**Files:** `claude/leg-property-fourth-2026-11-17.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `groupings.py`, any model or constant.
+
+**Roll back:** `git revert` the merge.
+
+## 2026-11-17-edge-retest: Edge over the price, fourth run, no edge (tag pending)
+
+**What changed:** nothing on the site. A dated note records the fourth run of the value test on a check season that has doubled.
+
+**Evidence:** football-data.co.uk prices, fit 2025-26 (12,510 legs), check 2026-27 (3,576). Legs the model rates 2 / 4 / 6 points above the bookmakers' fair chance land -1.8 / -2.1 / -1.5 below it on fit and -1.8 / -1.9 / -1.1 on check (bootstrap p(<=0) 0.76 to 1.00); no cut by price, side or band is positive on both seasons; the opposite control lands +2.3 / +2.8 above. Gates failed.
+
+**Files:** `claude/odds-edge-retest-2026-11-17.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `MAX_ABOVE_BOOK`, the Card and group rules, every model.
+
+**Roll back:** `git revert` the merge; docs only.
+
+## 2026-11-17-tennis-surface-4: tennis surface, fourth check, note only (tag pending)
+
+**What changed:** nothing a reader sees. A dated note records that the surface idea has no new evidence to test.
+**Evidence:** Sackmann 2026 files 404 and tennis-data.co.uk 403 again on 17 Nov; ESPN has no surface field; the hand-kept map was rejected on 13 Oct (WTA +0.0024 log loss, p(worse) 0.88; ATP +0.0031, 0.95).
+**Files:** `claude/tennis-surface-fourth-check-2026-11-17.md`.
+**Not changed:** `build_tennis.py`, ratings, the Daily List rule.
+**Roll back:** delete the note.
+
 ## 2026-11-17-4: the empty-day fillers (#155) closed as overtaken (tag pending)
 
 **What changed:** nothing on the site. A dated note records that the filler test was done on 10 Nov and the filler switched off by the owner on 11 Nov.
