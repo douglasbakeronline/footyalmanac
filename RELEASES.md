@@ -7,6 +7,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-5: Card bookmaker and price timing, by week and hour (#156) (tag pending)
+
+**What changed:** nothing on the site. `tools/price_timing.py` now also reports each UK book against `CARD_BOOK` by week and the move to the start by first-price hour and sport; a dated note records the read.
+**Evidence:** `claude/card-book-over-time-2026-11-17.md`. Bet365 pays +1.41% a pick over William Hill at the first price (82 paired football picks, 13 days, p 0.000) and +0.89% at the last, ahead in 3 of 4 weeks (the fourth is one pick); Betfair and BetVictor behind in every week. Timing: settled singles late v first +0.84 points on 200 legs, p 0.29, no clear read; football and NBA none either; the last price sits a median 1.3 h before the start.
+**Files:** `tools/price_timing.py`, `tests/test_book_vs.py`, `claude/card-book-over-time-2026-11-17.md`.
+**Not changed:** `CARD_BOOK` (William Hill is Douglas's account), `notify.py` push times, any rule.
+**Roll back:** `git revert`.
+
 ## 2026-11-17-card-rule13: the Card on the model alone, rule 13 (tag pending)
 
 **For a reader.** The Card's picks are now chosen on the model's number alone. Until today a pick also had to be rated by the model at or above the bookmakers' chance (since 11 Nov) and, for football, have the opposition priced 5.0 or longer (since 16 Nov). Both conditions are off, at the owner's instruction (17 Nov 2026: "forget about comparison to bookies... let's just follow the model", then "just drop both of those"). The rule still needs a bookmaker price of 1.15 to 1.90 (so a 2x comes in three to five picks), the model at 60%+, tennis at 85%+, NFL and the college sports off. The rule text on the Bets tab and each group's footer say so from today, and the record tallies rule 13 on its own line.
