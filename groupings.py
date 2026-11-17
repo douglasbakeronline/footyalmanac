@@ -3115,6 +3115,38 @@ def card_legs_by_sport(days):
                             "tripwire": a["tripwire"]})
     return out
 
+def card_rule13_split(days, tally):
+    """17 Nov 2026 (CARD_RULE 13, the Card on the model alone): the rule 13
+    Card groups split by what rule 12 would have said of their picks, from
+    each leg's `rule12Fault` as built. `rule12`: every pick rule 12 admits
+    too (the groups the old rule would also have put forward); `rule13only`:
+    at least one pick only rule 13 admits; `unknown`: a group with a leg
+    built before the field. `legs` tallies each settled pick once a day,
+    landed against the model's chance, each way. The 30 Nov review reads
+    this beside the `rule12` replay: if `rule13only` lands under its chance
+    while `rule12` holds, the switch is costing money. A tally of the
+    scoreboard, nothing fitted (Rule 1).
+    claude/card-rule13-split-2026-11-17.md."""
+    cand = [g for d in days for g in d["groups"]
+            if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == 13]
+    known = [g for g in cand if g["legs"] and all(l.get("r12") for l in g["legs"])]
+    r12 = [g for g in known if all(l.get("rule12Fault") is None for l in g["legs"])]
+    r13 = [g for g in known if any(l.get("rule12Fault") is not None for l in g["legs"])]
+    ids = {id(g) for g in known}
+    legs = {"rule12": {"legs": 0, "landed": 0, "expected": 0.0}, "rule13only": {"legs": 0, "landed": 0, "expected": 0.0}}
+    for d in days:
+        seen = set()
+        for g in d["groups"]:
+            if id(g) not in ids: continue
+            for l in g["legs"]:
+                k = (l["event"], l["pick"])
+                if l["status"] not in ("won", "lost") or k in seen: continue
+                seen.add(k)
+                t = legs["rule12" if l.get("rule12Fault") is None else "rule13only"]
+                t["legs"] += 1; t["landed"] += l["status"] == "won"; t["expected"] += l["p"]
+    for t in legs.values(): t["expected"] = round(t["expected"], 2)
+    return {"rule12": tally(r12), "rule13only": tally(r13), "unknown": len(cand) - len(known), "legs": legs}
+
 def card_picks(L, date, now):
     """The day's picks that pass the Card's rule before the context check, not
     yet started, each with its context verdict (an "against" one marked as
@@ -3224,7 +3256,11 @@ def grade(now=None):
                 legs.append({"pick": l["pick"], "event": l["event"], "sport": l["sport"], "comp": l.get("comp"), "when": l.get("when"),
                              "odds": l["odds"], "best": max(l.get("best") or l["odds"], l["odds"]), "lastOdds": l.get("lastOdds"),
                              "lockOdds": lp.get("odds"), "lockBest": lp.get("best"), "lockBook": lp.get("book"),
-                             "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res, "opp": l.get("opp")})
+                             "est": bool(l.get("est")), "p": l["p"], "status": st, "result": res, "opp": l.get("opp"),
+                             # 17 Nov 2026: what rule 12 said of the pick as built under
+                             # rule 13 (None: rule 12 took it too); r12 False when the leg
+                             # was built before the field existed (card_rule13_split)
+                             "rule12Fault": l.get("rule12Fault"), "r12": "rule12Fault" in l})
             # 25 Oct 2026: a football leg still without a result VOID_AFTER
             # after kick-off, while every other leg has settled, was postponed
             # or abandoned without the source saying so. It is void and drops
@@ -3308,6 +3344,9 @@ def grade(now=None):
            # 9 Nov 2026: the Card's legs by sport, the test for taking a sport
            # off the Card (CLAUDE.md, the delegated decisions: tennis first).
            "cardLegsBySport": card_legs_by_sport(days),
+           # 17 Nov 2026: rule 13's groups, those rule 12 would have built apart
+           # from those holding a pick only rule 13 admits (card_rule13_split)
+           "cardRule13Split": card_rule13_split(days, tally),
            # 10 Nov 2026: the Daily List at William Hill (list_at_book)
            "listAtBook": list_at_book(idx),
            # 11 Nov 2026: the context check by verdict (context_record)

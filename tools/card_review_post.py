@@ -188,6 +188,28 @@ def list_book_section(r):
     return out + [""]
 
 
+def rule13_split_section(r):
+    """17 Nov 2026 (CARD_RULE 13): the rule 13 Card's groups and picks split
+    by what rule 12 would have said (groupings.card_rule13_split), so the 30
+    Nov review reads what the switch added without a replay. A tally of the
+    record, never a fit."""
+    if not r: return []
+    a, b = r.get("rule12") or {}, r.get("rule13only") or {}
+    if not (a.get("groups") or b.get("groups") or r.get("unknown")): return []
+    def row(lab, t, lg):
+        ret = pct(t["returned"] / t["staked"] - 1) if t.get("staked") else ""
+        legs = (f"{lg['landed']} of {lg['legs']} v {lg['expected']} expected" if lg.get("legs") else "none settled")
+        return (f"| {lab} | {t.get('groups', 0)} | {t.get('settled', 0)} | {t.get('won', 0)} v {t.get('expected', 0)} | "
+                f"{ret} | {legs} |")
+    lg = r.get("legs") or {}
+    out = ["## Rule 13's groups, split by what rule 12 would have said", "",
+           "| groups | built | settled | won v expected | return (1 unit) | picks landed |", "|---|---|---|---|---|---|",
+           row("rule 12 would have built it too", a, lg.get("rule12") or {}),
+           row("holds a pick only rule 13 admits", b, lg.get("rule13only") or {})]
+    if r.get("unknown"): out.append(f"\n{r['unknown']} rule 13 group(s) built before `rule12Fault` was kept, left out.")
+    return out + ["Read beside the `rule12` replay at the 30 Nov review (claude/card-rule13-split-2026-11-17.md).", ""]
+
+
 CONTEXT_REVIEW_AT = 30   # "against" picks settled before the veto is judged (claude/context-check-2026-11-11.md)
 
 
@@ -556,6 +578,7 @@ def review_body():
         lines += [("**Tripwire fired for " + ", ".join(fired) + ": the next build session adds it to `CARD_SPORTS_OFF` (CARD_RULE bump, note, release).**" if fired
                    else "A sport comes off the Card at 50+ legs two standard errors or more under quote (the Daily List's rule)."), ""]
     lines += context_pause_line(load("groupings-archive/context-ledger.json"))
+    lines += rule13_split_section(load("groupings-record.json").get("cardRule13Split"))
     lines += context_section(load("groupings-record.json").get("cardContext"))
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()

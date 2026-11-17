@@ -7,6 +7,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-17-rule13-split: rule 13's groups split by what rule 12 would have said (tag pending)
+
+**For a reader.** Nothing on the page. The record now tells apart the Card groups rule 12 would also have built from those holding a pick only rule 13 (the model alone) admits, so the 30 Nov review can see what dropping the bookmaker conditions added, from the live record rather than only the replay.
+
+**Evidence.** None needed: a tally. Every rule 13 leg already carried `rule12Fault`; `grade()` dropped it. The split is empty until the first rule 13 group locks (17 Nov).
+
+**Files.** `groupings.py` (`rule12Fault` and `r12` on graded legs, `card_rule13_split`, `cardRule13Split` in `groupings-record.json`), `tools/card_review_post.py` (`rule13_split_section`), `tests/test_card_rule13_split.py`, `claude/card-rule13-split-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** Any Card rule or `CARD_RULE`; the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-5: Card bookmaker and price timing, by week and hour (#156) (tag pending)
 
 **What changed:** nothing on the site. `tools/price_timing.py` now also reports each UK book against `CARD_BOOK` by week and the move to the start by first-price hour and sport; a dated note records the read.
