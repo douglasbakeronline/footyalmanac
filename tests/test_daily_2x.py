@@ -45,6 +45,14 @@ class Daily2x(unittest.TestCase):
         src = open(os.path.join(HERE, "groupings.py")).read()
         self.assertIn('"cardDaily": tally([g for g in allg if is_daily(g["name"])])', src)
 
+    def test_short_slip_rebuilt_full_slip_held(self):
+        short = [g for g in G.build_list_card([leg(1, 1.30, 0.9, lst=True)], DAY, NOW, archived=[]) if G.is_daily(g["name"])][0]
+        more = [leg(1, 1.30, 0.9, lst=True), leg(2, 1.60, 0.95, lst=True)]
+        again = [g for g in G.build_list_card(more, DAY, NOW, prev=[short], archived=[]) if G.is_daily(g["name"])][0]
+        self.assertFalse(again["short"])
+        held = [g for g in G.build_list_card(more + [leg(3, 1.9, 0.99, lst=True)], DAY, NOW, prev=[again], archived=[]) if G.is_daily(g["name"])][0]
+        self.assertEqual({l["pick"] for l in held["legs"]}, {l["pick"] for l in again["legs"]})
+
     def test_reserve_reaches_the_leg(self):
         src = open(os.path.join(HERE, "groupings.py")).read()
         self.assertEqual(src.count('"reserve": bool('), 3)

@@ -2364,6 +2364,9 @@ def build_list_card(L, date, now, prev=None, archived=None):
     for g in list(archived) + [g for g in (prev or []) if is_list(g.get("name"))]:
         if g["name"] in filled: continue
         lock = first_kick(g) or lock_time(date, w)
+        # 17 Nov 2026: a Daily 2x built short of 2x is rebuilt until it starts,
+        # as prices for later days arrive; a full one is held as first built.
+        if is_daily(g.get("name")) and g.get("short") and not g.get("locked") and now < lock: continue
         g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
         g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
         groups.append(g); filled.add(g["name"])
