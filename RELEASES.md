@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-band-50-55: Football 50-55% band over its quote: tested, rejected (tag pending)
+
+**What changed:** nothing on the site. A note only.
+
+**Evidence:** live 50-55% calls landed 408 of 721 v 379.0 quoted (z +2.2), spread across wider leagues, other leagues, Celtic's Law and not (all z +1.4 to +1.7). On the replay the fit season is on quote (52.3% v 52.4%, n 815); the check season lands over quote in every band (50-55: 56.5% v 52.3%, n 308), so it is a season-wide shift. A 50-55 bend fitted on 2025-26 and checked on 2026-27 (2,320): gain -0.0003, p(worse) 0.94. Fails rule 3.
+
+**Files:** `claude/band-50-55-2026-11-17.md`.
+
+**Not changed:** `calibration.json`, the engine.
+
+**Roll back:** delete the note.
+
 ## 2026-11-17-card-return-locate: The Card's 0.831 return located, no rule change (tag pending)
 
 **What changed:** a note only (`claude/card-return-locate-2026-11-17.md`). Nothing a reader sees.
