@@ -400,7 +400,7 @@
      "firstOdds": 1.29,
      "lastOdds": 1.23,
      "lastBest": 1.23,
-     "lastAt": "2026-11-17T20:08:44Z",
+     "lastAt": "2026-11-17T21:10:33Z",
      "lockPrice": {
       "odds": 1.23,
       "best": 1.23,
@@ -581,7 +581,7 @@
      "firstOdds": 1.26,
      "lastOdds": 1.35,
      "lastBest": 1.35,
-     "lastAt": "2026-11-17T20:08:44Z",
+     "lastAt": "2026-11-17T21:10:33Z",
      "lockPrice": {
       "odds": 1.35,
       "best": 1.35,
@@ -593,6 +593,488 @@
    "status": "underway",
    "checked": "2026-11-17T17:09:16Z",
    "archivedAt": "2026-11-17T19:50:16Z"
+  },
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.47,
+   "p": 0.4228,
+   "pFair": 0.3572,
+   "implied": 0.4057,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Andrea Lazaro Garcia v Barbara Gatica",
+     "pick": "Andrea Lazaro Garcia",
+     "tour": "WTA",
+     "tournament": "LP Open by IND",
+     "players": [
+      "Andrea Lazaro Garcia",
+      "Barbara Gatica"
+     ],
+     "comp": "LP Open by IND Round 1",
+     "when": "2026-11-17T20:30:00Z",
+     "timeEst": false,
+     "date": "2026-11-17",
+     "id": "186794",
+     "fx": {
+      "id": "186794",
+      "espn": [
+       "Andrea Lazaro Garcia",
+       "Barbara Gatica"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-17",
+      "time": "20:30",
+      "timeTbc": false,
+      "tournament": "LP Open by IND",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Andrea Lazaro Garcia",
+      "playerB": "Barbara Gatica",
+      "ratingA": {
+       "elo": 2071,
+       "matches": 421,
+       "surfaceElo": 1813
+      },
+      "ratingB": {
+       "elo": 1879,
+       "matches": 199,
+       "surfaceElo": 1713
+      },
+      "p": {
+       "a": 0.7092,
+       "b": 0.2908
+      },
+      "pick": "Andrea Lazaro Garcia",
+      "confidence": 0.7092,
+      "tier": "Strong",
+      "rankA": 140,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6747,
+       "n": 83,
+       "cumHit": 0.6747,
+       "cumN": 83,
+       "quoted": 0.724,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7092,
+     "p": 0.7092,
+     "hit": 0.6747,
+     "n": 83,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.34,
+     "best": 1.34,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 3.3,
+     "draw": null,
+     "margin": 1.0482,
+     "pricedAt": "2026-11-17T02:30:33Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7463,
+     "pTested": 0.6747,
+     "fair": 0.712,
+     "edge": -0.0959,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.34
+    },
+    {
+     "sport": "nba",
+     "event": "LA Clippers v Utah Jazz",
+     "home": "LA Clippers",
+     "away": "Utah Jazz",
+     "pick": "LA Clippers",
+     "comp": "NBA",
+     "when": "2026-11-18T03:30Z",
+     "date": "2026-11-18",
+     "id": "401910006",
+     "pModel": 0.7667,
+     "p": 0.7667,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910006",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-18T03:30Z",
+      "home": "LA Clippers",
+      "away": "Utah Jazz",
+      "neutral": false,
+      "pHome": 0.7667,
+      "pick": "LA Clippers",
+      "confidence": 0.7667,
+      "tier": "Strong",
+      "eloH": 1468,
+      "eloA": 1296,
+      "gamesH": 272,
+      "gamesA": 260,
+      "hfa": 25,
+      "eloDiff": 196.8,
+      "line": {
+       "spread": -5.5,
+       "total": 223.5,
+       "mlH": -219.0,
+       "mlA": 182.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "113-105",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "113-112",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "L",
+        "score": "110-133",
+        "opp": "Phoenix Suns",
+        "home": false,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "W",
+        "score": "139-123",
+        "opp": "New Orleans Pelicans",
+        "home": true,
+        "date": "2026-11-09"
+       },
+       {
+        "r": "L",
+        "score": "116-117",
+        "opp": "Miami Heat",
+        "home": true,
+        "date": "2026-11-05"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "102-110",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "118-125",
+        "opp": "Houston Rockets",
+        "home": false,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "L",
+        "score": "108-123",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "109-115",
+        "opp": "Miami Heat",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "L",
+        "score": "100-115",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-11-09"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 8,
+       "d": 0
+      },
+      "recordA": {
+       "w": 1,
+       "l": 13,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-01-28",
+        "home": "Utah Jazz",
+        "away": "LA Clippers",
+        "score": "103-115"
+       },
+       {
+        "date": "2026-01-02",
+        "home": "LA Clippers",
+        "away": "Utah Jazz",
+        "score": "118-101"
+       },
+       {
+        "date": "2025-10-23",
+        "home": "Utah Jazz",
+        "away": "LA Clippers",
+        "score": "129-108"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.46,
+     "margin": 1.0395,
+     "opp": 2.82,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-17T02:43:57Z",
+     "implied": 0.6849,
+     "pTested": 0.7667,
+     "fair": 0.6589,
+     "edge": -0.038,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.46,
+     "lastOdds": 1.42,
+     "lastBest": 1.42,
+     "lastAt": "2026-11-17T21:10:33Z"
+    },
+    {
+     "sport": "nba",
+     "event": "Los Angeles Lakers v Charlotte Hornets",
+     "home": "Los Angeles Lakers",
+     "away": "Charlotte Hornets",
+     "pick": "Los Angeles Lakers",
+     "comp": "NBA",
+     "when": "2026-11-18T04:00Z",
+     "date": "2026-11-18",
+     "id": "401910005",
+     "pModel": 0.7776,
+     "p": 0.7776,
+     "hit": 0.8221,
+     "n": 298,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910005",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-18T04:00Z",
+      "home": "Los Angeles Lakers",
+      "away": "Charlotte Hornets",
+      "neutral": false,
+      "pHome": 0.7776,
+      "pick": "Los Angeles Lakers",
+      "confidence": 0.7776,
+      "tier": "Strong",
+      "eloH": 1635,
+      "eloA": 1452,
+      "gamesH": 282,
+      "gamesA": 261,
+      "hfa": 25,
+      "eloDiff": 207.6,
+      "line": {
+       "spread": -8.5,
+       "total": 218.5,
+       "mlH": -381.0,
+       "mlA": 302.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7668,
+       "n": 133,
+       "cumHit": 0.8221,
+       "cumN": 298
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "131-123",
+        "opp": "Phoenix Suns",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "123-112",
+        "opp": "Milwaukee Bucks",
+        "home": false,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "W",
+        "score": "124-114",
+        "opp": "Atlanta Hawks",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "W",
+        "score": "121-116",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "124-118",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-07"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "105-113",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "96-101",
+        "opp": "Phoenix Suns",
+        "home": false,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "W",
+        "score": "124-112",
+        "opp": "Cleveland Cavaliers",
+        "home": true,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "80-119",
+        "opp": "Boston Celtics",
+        "home": true,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "L",
+        "score": "104-114",
+        "opp": "Brooklyn Nets",
+        "home": false,
+        "date": "2026-11-05"
+       }
+      ],
+      "recordH": {
+       "w": 12,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 9,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-01-16",
+        "home": "Los Angeles Lakers",
+        "away": "Charlotte Hornets",
+        "score": "117-135"
+       },
+       {
+        "date": "2025-11-11",
+        "home": "Charlotte Hornets",
+        "away": "Los Angeles Lakers",
+        "score": "111-121"
+       },
+       {
+        "date": "2025-02-20",
+        "home": "Los Angeles Lakers",
+        "away": "Charlotte Hornets",
+        "score": "97-100"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.26,
+     "margin": 1.0424,
+     "opp": 4.02,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-17T02:43:57Z",
+     "implied": 0.7937,
+     "pTested": 0.7668,
+     "fair": 0.7614,
+     "edge": -0.0406,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.26,
+     "lastOdds": 1.35,
+     "lastBest": 1.35,
+     "lastAt": "2026-11-17T21:10:33Z"
+    }
+   ],
+   "tested": 0.3935,
+   "short": false,
+   "tiers": [
+    "reserve"
+   ],
+   "bestOdds": 2.47,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-17T02:43:52Z",
+   "checked": "2026-11-17T02:43:52Z",
+   "lockAt": "2026-11-17T20:30:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-17T21:10:33Z"
   }
  ]
 }

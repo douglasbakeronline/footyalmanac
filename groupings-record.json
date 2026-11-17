@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-17T20:08:48Z",
+ "graded": "2026-11-17T21:10:41Z",
  "overall": {
-  "groups": 134,
+  "groups": 135,
   "settled": 133,
   "won": 39,
   "z": -1.13,
   "lost": 94,
-  "pending": 1,
+  "pending": 2,
   "legs": 513,
   "legsWon": 372,
   "returned": 113.74,
@@ -19,10 +19,10 @@
   "unitsReturned": 130.15,
   "unitsReturnedBest": 134.89,
   "clv": {
-   "n": 149,
-   "shortened": 60,
+   "n": 150,
+   "shortened": 61,
    "drifted": 56,
-   "mean": 0.0003
+   "mean": 0.0005
   }
  },
  "cardLegsBySport": {
@@ -390,7 +390,7 @@
    "ncaab|miami hurricanes|rider broncs|2026-11-18": 0,
    "ncaab|bucknell bison|akron zips|2026-11-18": 1.06,
    "ncaab|saint joseph's hawks|wagner seahawks|2026-11-18": 0,
-   "ncaab|florida state seminoles|ball state cardinals|2026-11-18": 1.01,
+   "ncaab|florida state seminoles|ball state cardinals|2026-11-18": 1.0,
    "ncaab|xavier musketeers|cleveland state vikings|2026-11-18": 1.0,
    "ncaab|alabama crimson tide|kennesaw state owls|2026-11-18": 0,
    "ncaab|massachusetts minutemen|bryant bulldogs|2026-11-18": 0,
@@ -953,12 +953,12 @@
   }
  },
  "cardDaily": {
-  "groups": 0,
+  "groups": 1,
   "settled": 0,
   "won": 0,
   "z": null,
   "lost": 0,
-  "pending": 0,
+  "pending": 1,
   "legs": 0,
   "legsWon": 0,
   "returned": 0,
@@ -971,10 +971,10 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 0,
-   "shortened": 0,
-   "drifted": 0,
-   "mean": null
+   "n": 2,
+   "shortened": 1,
+   "drifted": 1,
+   "mean": -0.0192
   }
  },
  "cardListLong": {
@@ -1367,6 +1367,92 @@
        "status": "pending",
        "result": null,
        "opp": 3.48,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Daily 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 1,
+     "wideRule": null,
+     "odds": 2.47,
+     "p": 0.4228,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-17T20:30:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Andrea Lazaro Garcia",
+       "event": "Andrea Lazaro Garcia v Barbara Gatica",
+       "sport": "tennis",
+       "comp": "LP Open by IND Round 1",
+       "when": "2026-11-17T20:30:00Z",
+       "odds": 1.34,
+       "best": 1.34,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7092,
+       "status": "pending",
+       "result": null,
+       "opp": 3.3,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "LA Clippers",
+       "event": "LA Clippers v Utah Jazz",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-18T03:30Z",
+       "odds": 1.46,
+       "best": 1.46,
+       "lastOdds": 1.42,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7667,
+       "status": "pending",
+       "result": null,
+       "opp": 2.82,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Los Angeles Lakers",
+       "event": "Los Angeles Lakers v Charlotte Hornets",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-18T04:00Z",
+       "odds": 1.26,
+       "best": 1.26,
+       "lastOdds": 1.35,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7776,
+       "status": "pending",
+       "result": null,
+       "opp": 4.02,
        "rule12Fault": null,
        "r12": false
       }
