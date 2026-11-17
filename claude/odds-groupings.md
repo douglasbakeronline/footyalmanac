@@ -250,3 +250,7 @@ Unchanged data, unchanged answer: legs 2, 4 and 6 points above fair landed -1.8 
 ## Leg properties, third look (9 Nov 2026)
 
 No new rule. The football-data scans of 23 and 31 Oct stand; the pool archive (tested rate per leg since 30 Oct) holds 45 real-priced football 65%+ legs to 8 Nov, far under the 250 the gates need. Re-cut tested rate and Celtic's Law at the 30 Nov review. See `claude/leg-property-third-2026-11-09.md`.
+
+## Edge over the price, fourth run (17 Nov 2026)
+
+Check season now 3,576 legs (was 1,749). Legs 2, 4 and 6 points above fair landed -1.8 / -2.1 / -1.5 on fit (n 4,188 / 2,539 / 1,510) and -1.8 / -1.9 / -1.1 on check (n 1,460 / 964 / 639); by price range, side and band no cell is positive on both seasons; the model-below-market control landed +2.3 / +2.8. There is no edge and no value-leg rule. See `claude/odds-edge-retest-2026-11-17.md`.
