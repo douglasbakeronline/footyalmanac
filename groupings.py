@@ -229,7 +229,7 @@ RANGE = {n: (lo, hi) for n, lo, hi in BANDS + WIDE_BANDS}
 # Where the last build's groups are read from, so this build can re-check
 # them. The CI workspace starts clean, so the published copy is the one that
 # exists there; a local run also has its own groupings.json. The newer wins.
-PUBLISHED = "https://douglasbakeronline.github.io/footyalmanac/groupings.json"
+PUBLISHED = "https://sportsalmanac.bet/groupings.json"
 LOG_KEEP = 12           # replacement notes kept per day
 UA ={"User-Agent": "Mozilla/5.0 (footyalmanac groupings)"}
 

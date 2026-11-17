@@ -7,6 +7,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-2: no links to the code; Analysis opens with About the Sports Almanac
+
+**What changed:** every link from the site to the code repository and to HQ is gone (the HQ tab, the Analysis footer, the release-log link), and README.md is no longer published with the site (Douglas: the code is not for the public). Analysis now opens with **About the Sports Almanac**: what the site does, the sports and how a call is made, how it is checked, a plain risk warning (the model is in beta), and the Daily List, the Card and Scale each with its risk level and the last seven days and today as day tiles. The rest of the page is brought up to date (API-Football and prices named correctly, the college basketball early-season K and Behind .500 mark, no references to code files).
+**Files:** `analysis.html`, `index.html`, `groupings.py` (the published groupings file read from sportsalmanac.bet), `.github/workflows/deploy.yml`.
+**Not changed:** the repository's own visibility (Douglas's decision; see the session note).
+**Roll back:** `git revert`.
+
 ## 2026-11-17-signup-push: a phone push for every Mailer sign-up (tag pending)
 
 **What changed:** a new Mailer sign-up sends Douglas a push through ntfy: "New Mailer sign-up", the emails chosen and how many are on the list. The reader's address is never in the push. It is set up in the Supabase database (Inbox Innovation project): the trigger `almanac_signup_push` on `almanac.subscribers`, the function `almanac.notify_signup()` (security definer, not callable by the API roles), `pg_net`, and the topic in Vault as `almanac_ntfy_topic`. The site's code is unchanged.
