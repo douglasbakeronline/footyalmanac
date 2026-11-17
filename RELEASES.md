@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-card-book-reread: Which book to write the Card for, re-read (tag pending)
+
+**What changed:** nothing on the site. A dated note re-reading the paired book comparison to 17 Nov.
+**Evidence:** Bet365 pays +1.11% a pick over William Hill at the first price (102 paired, p 0.000) and +0.86% at the last (66, p 0.000); Betfair and BetVictor are behind Hill. Best UK price +1.64% a pick, under the 2-point bar for a page statement.
+**Files:** `claude/card-book-reread-2026-11-17.md`.
+**Not changed:** `CARD_BOOK` (William Hill), the owner's call per CLAUDE.md.
+**Roll back:** delete the note.
+
 ## 2026-11-17-card-seasons-third: Card over three past seasons, asked a third time (tag pending)
 
 **What changed:** nothing on the page. A dated note points to the 9 and 10 Nov replays, which already answer the ask.
