@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-card-return-locate: The Card's 0.831 return located, no rule change (tag pending)
+
+**What changed:** a note only (`claude/card-return-locate-2026-11-17.md`). Nothing a reader sees.
+**Evidence:** landing is on quote (9 of 27 v 9.7 expected). Flat return a leg: football +0.074 (43), NBA +0.129 (33), tennis -0.19 (14, all under today's 85% floor), college basketball -0.50 (3, off the Card), rugby -0.16 (6). Weekday and price-band slices are noise on under 50 legs.
+**Files:** `claude/card-return-locate-2026-11-17.md`, `RELEASES.md`.
+**Not changed:** every Card constant, `tools/card_replay.py`.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-17-replay-span: the Card replay's live builds two-day groups, like the page (tag pending)
 
 **For a reader.** Nothing on the page. The nightly Card review's `live` row is the Card the page builds again: since 12 Nov the page has made two-day groups (`CARD_SPAN`), but the replay built `live` day by day and ran the two-day Card as a variant (`span2`), so every variant was paired against a Card nobody runs.
