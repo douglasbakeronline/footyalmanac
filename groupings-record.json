@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-17T04:31:27Z",
+ "graded": "2026-11-17T04:51:54Z",
  "overall": {
   "groups": 133,
   "settled": 133,
@@ -74,6 +74,71 @@
    "tripwire": false
   }
  },
+ "cardRule13Split": {
+  "rule12": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "z": null,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "returnedLock": 0,
+   "stakedLock": 0,
+   "expected": 0,
+   "unitsStaked": 0,
+   "unitsReturned": 0,
+   "unitsReturnedBest": 0,
+   "clv": {
+    "n": 0,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": null
+   }
+  },
+  "rule13only": {
+   "groups": 0,
+   "settled": 0,
+   "won": 0,
+   "z": null,
+   "lost": 0,
+   "pending": 0,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "returnedLock": 0,
+   "stakedLock": 0,
+   "expected": 0,
+   "unitsStaked": 0,
+   "unitsReturned": 0,
+   "unitsReturnedBest": 0,
+   "clv": {
+    "n": 0,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": null
+   }
+  },
+  "unknown": 0,
+  "legs": {
+   "rule12": {
+    "legs": 0,
+    "landed": 0,
+    "expected": 0.0
+   },
+   "rule13only": {
+    "legs": 0,
+    "landed": 0,
+    "expected": 0.0
+   }
+  }
+ },
  "listAtBook": {
   "book": "William Hill",
   "from": "2026-11-10",
@@ -86,10 +151,10 @@
    "ret": -0.0392
   },
   "notAtBook": {
-   "n": 73,
-   "won": 72,
-   "rate": 0.9863,
-   "quoted": 0.9083
+   "n": 74,
+   "won": 73,
+   "rate": 0.9865,
+   "quoted": 0.908
   },
   "unchecked": {
    "n": 26,
@@ -150,10 +215,10 @@
      "ret": -0.076
     },
     "notAtBook": {
-     "n": 69,
-     "won": 68,
-     "rate": 0.9855,
-     "quoted": 0.9141
+     "n": 70,
+     "won": 69,
+     "rate": 0.9857,
+     "quoted": 0.9137
     },
     "unchecked": {
      "n": 13,
@@ -1236,7 +1301,9 @@
        "p": 0.7726,
        "status": "won",
        "result": "1-0",
-       "opp": 5.04
+       "opp": 5.04,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tatabánya",
@@ -1254,7 +1321,9 @@
        "p": 0.7577,
        "status": "won",
        "result": "2-0",
-       "opp": 11.89
+       "opp": 11.89,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ancona",
@@ -1272,7 +1341,9 @@
        "p": 0.6848,
        "status": "lost",
        "result": "1-1",
-       "opp": 7.01
+       "opp": 7.01,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -1316,7 +1387,9 @@
        "p": 0.7772,
        "status": "pending",
        "result": null,
-       "opp": 9.68
+       "opp": 9.68,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Manacor",
@@ -1334,7 +1407,9 @@
        "p": 0.7514,
        "status": "lost",
        "result": "0-1",
-       "opp": 10.16
+       "opp": 10.16,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Philadelphia 76ers",
@@ -1352,7 +1427,9 @@
        "p": 0.7804,
        "status": "won",
        "result": "131-124",
-       "opp": 3.21
+       "opp": 3.21,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -1396,7 +1473,9 @@
        "p": 0.6232,
        "status": "won",
        "result": "2-0",
-       "opp": 5.11
+       "opp": 5.11,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Los Angeles Lakers",
@@ -1414,7 +1493,9 @@
        "p": 0.6229,
        "status": "won",
        "result": "123-131",
-       "opp": 2.3
+       "opp": 2.3,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Rockets",
@@ -1432,7 +1513,9 @@
        "p": 0.7852,
        "status": "won",
        "result": "119-147",
-       "opp": 4.01
+       "opp": 4.01,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -1485,7 +1568,9 @@
        "p": 0.7007,
        "status": "lost",
        "result": "1-2",
-       "opp": 4.83
+       "opp": 4.83,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pistoiese",
@@ -1503,7 +1588,9 @@
        "p": 0.7772,
        "status": "pending",
        "result": null,
-       "opp": 9.68
+       "opp": 9.68,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Philadelphia 76ers",
@@ -1521,7 +1608,9 @@
        "p": 0.7804,
        "status": "won",
        "result": "131-124",
-       "opp": 4.31
+       "opp": 4.31,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -1571,7 +1660,9 @@
        "p": 0.7792,
        "status": "won",
        "result": "(5) Laura Samson (CZE) bt Carolina Alves (BRA) 6-7 (3-7) 7-6 (7-5) 6-1",
-       "opp": 4.34
+       "opp": 4.34,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Miami Heat",
@@ -1589,7 +1680,9 @@
        "p": 0.7509,
        "status": "won",
        "result": "109-115",
-       "opp": 3.86
+       "opp": 3.86,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Orlando Magic",
@@ -1607,7 +1700,9 @@
        "p": 0.6681,
        "status": "won",
        "result": "100-107",
-       "opp": 2.9
+       "opp": 2.9,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -1657,7 +1752,9 @@
        "p": 0.7464,
        "status": "won",
        "result": "3-0",
-       "opp": 10.01
+       "opp": 10.01,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cleveland Cavaliers",
@@ -1675,7 +1772,9 @@
        "p": 0.74,
        "status": "lost",
        "result": "124-112",
-       "opp": 3.7
+       "opp": 3.7,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "San Antonio Spurs",
@@ -1693,7 +1792,9 @@
        "p": 0.7509,
        "status": "won",
        "result": "96-122",
-       "opp": 3.86
+       "opp": 3.86,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -1737,7 +1838,9 @@
        "p": 0.5778,
        "status": "lost",
        "result": "0-2",
-       "opp": 5.05
+       "opp": 5.05,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Técnico Universitario",
@@ -1755,7 +1858,9 @@
        "p": 0.5863,
        "status": "lost",
        "result": "1-2",
-       "opp": 5.42
+       "opp": 5.42,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Golden State Warriors",
@@ -1773,7 +1878,9 @@
        "p": 0.7619,
        "status": "won",
        "result": "138-87",
-       "opp": 4.03
+       "opp": 4.03,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -1823,7 +1930,9 @@
        "p": 0.7571,
        "status": "won",
        "result": "(2) Carlos Alcaraz (ESP) bt (3) Ben Shelton (USA) 7-6 (7-5) 7-5",
-       "opp": 4.06
+       "opp": 4.06,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Philadelphia 76ers",
@@ -1841,7 +1950,9 @@
        "p": 0.7672,
        "status": "won",
        "result": "121-127",
-       "opp": 4.12
+       "opp": 4.12,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Detroit Pistons",
@@ -1859,7 +1970,9 @@
        "p": 0.6235,
        "status": "lost",
        "result": "116-121",
-       "opp": 2.55
+       "opp": 2.55,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -1903,7 +2016,9 @@
        "p": 0.7077,
        "status": "lost",
        "result": "2-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Celtic",
@@ -1921,7 +2036,9 @@
        "p": 0.8404,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "SC Freiburg",
@@ -1939,7 +2056,9 @@
        "p": 0.6946,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -1983,7 +2102,9 @@
        "p": 0.8404,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Baltika Kaliningrad",
@@ -2001,7 +2122,9 @@
        "p": 0.6093,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Porto",
@@ -2019,7 +2142,9 @@
        "p": 0.6383,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -2069,7 +2194,9 @@
        "p": 0.7508,
        "status": "won",
        "result": "(3) Ben Shelton (USA) bt Luca Van Assche (FRA) 5-7 6-3 6-4",
-       "opp": 3.89
+       "opp": 3.89,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AS Roma",
@@ -2087,7 +2214,9 @@
        "p": 0.7363,
        "status": "won",
        "result": "3-0",
-       "opp": 9.08
+       "opp": 9.08,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Oklahoma City Thunder",
@@ -2105,7 +2234,9 @@
        "p": 0.7942,
        "status": "won",
        "result": "114-75",
-       "opp": 4.67
+       "opp": 4.67,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2149,7 +2280,9 @@
        "p": 0.7632,
        "status": "won",
        "result": "43-23",
-       "opp": 4.49
+       "opp": 4.49,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Denver Nuggets",
@@ -2167,7 +2300,9 @@
        "p": 0.7002,
        "status": "won",
        "result": "102-114",
-       "opp": 3.2
+       "opp": 3.2,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Rockets",
@@ -2185,7 +2320,9 @@
        "p": 0.7256,
        "status": "lost",
        "result": "102-99",
-       "opp": 3.49
+       "opp": 3.49,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2229,7 +2366,9 @@
        "p": 0.8028,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Chelmsford City",
@@ -2247,7 +2386,9 @@
        "p": 0.7074,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Saint-Étienne",
@@ -2265,7 +2406,9 @@
        "p": 0.6909,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2309,7 +2452,9 @@
        "p": 0.6909,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Vancouver Whitecaps",
@@ -2327,7 +2472,9 @@
        "p": 0.6523,
        "status": "won",
        "result": "0-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "San Diego",
@@ -2345,7 +2492,9 @@
        "p": 0.6776,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -2395,7 +2544,9 @@
        "p": 0.8169,
        "status": "won",
        "result": "Robin Montgomery (USA) bt Maaya Rajeshwaran Revathi (IND) 6-3 6-3",
-       "opp": 5.39
+       "opp": 5.39,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Toronto Raptors",
@@ -2413,7 +2564,9 @@
        "p": 0.6861,
        "status": "won",
        "result": "107-121",
-       "opp": 3.06
+       "opp": 3.06,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dallas Mavericks",
@@ -2431,7 +2584,9 @@
        "p": 0.6875,
        "status": "won",
        "result": "112-100",
-       "opp": 3.08
+       "opp": 3.08,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2475,7 +2630,9 @@
        "p": 0.7711,
        "status": "won",
        "result": "(2) Carlos Alcaraz (ESP) bt (11) Taylor Fritz (USA) 6-7 (10-12) 7-5 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Oklahoma City Thunder",
@@ -2493,7 +2650,9 @@
        "p": 0.6979,
        "status": "won",
        "result": "97-128",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dallas Mavericks",
@@ -2511,7 +2670,9 @@
        "p": 0.7159,
        "status": "won",
        "result": "112-100",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2555,7 +2716,9 @@
        "p": 0.7711,
        "status": "won",
        "result": "(2) Carlos Alcaraz (ESP) bt (11) Taylor Fritz (USA) 6-7 (10-12) 7-5 6-3",
-       "opp": 3.45
+       "opp": 3.45,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Atlanta Hawks",
@@ -2573,7 +2736,9 @@
        "p": 0.7166,
        "status": "won",
        "result": "139-132",
-       "opp": 2.99
+       "opp": 2.99,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dallas Mavericks",
@@ -2591,7 +2756,9 @@
        "p": 0.7159,
        "status": "won",
        "result": "112-100",
-       "opp": 3.08
+       "opp": 3.08,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -2641,7 +2808,9 @@
        "p": 0.8818,
        "status": "won",
        "result": "(1) Anna Blinkova (FRA) bt Zongyu Li (CHN) 6-3 4-6 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Anastasia Zakharova",
@@ -2659,7 +2828,9 @@
        "p": 0.8786,
        "status": "won",
        "result": "(7) Anastasia Zakharova (RUS) bt Vaishnavi Adkar (IND) 6-3 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bianca Andreescu",
@@ -2677,7 +2848,9 @@
        "p": 0.7757,
        "status": "won",
        "result": "(8) Bianca Andreescu (CAN) bt Luisina Giovannini (ARG) 6-1 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Golden State Warriors",
@@ -2695,7 +2868,9 @@
        "p": 0.6728,
        "status": "won",
        "result": "120-100",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -2745,7 +2920,9 @@
        "p": 0.8135,
        "status": "lost",
        "result": "Tomas Martin Etcheverry (ARG) bt (8) Alex de Minaur (AUS) 7-6 (7-2) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New York Knicks",
@@ -2763,7 +2940,9 @@
        "p": 0.8227,
        "status": "won",
        "result": "135-105",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Denver Nuggets",
@@ -2781,7 +2960,9 @@
        "p": 0.6311,
        "status": "won",
        "result": "128-109",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2825,7 +3006,9 @@
        "p": 0.7822,
        "status": "lost",
        "result": "Tomas Martin Etcheverry (ARG) bt (8) Alex de Minaur (AUS) 7-6 (7-2) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Club Olimpia",
@@ -2843,7 +3026,9 @@
        "p": 0.7055,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Oklahoma City Thunder",
@@ -2861,7 +3046,9 @@
        "p": 0.6576,
        "status": "won",
        "result": "124-116",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -2905,7 +3092,9 @@
        "p": 0.8169,
        "status": "lost",
        "result": "Ignacio Buse (PER) bt (4) Daniil Medvedev (RUS) 6-4 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Memphis Grizzlies",
@@ -2923,7 +3112,9 @@
        "p": 0.6904,
        "status": "lost",
        "result": "103-107",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Universitario",
@@ -2941,7 +3132,9 @@
        "p": 0.6287,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Rockets",
@@ -2959,7 +3152,9 @@
        "p": 0.7267,
        "status": "lost",
        "result": "107-117",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -3009,7 +3204,9 @@
        "p": 0.8169,
        "status": "won",
        "result": "(6) Polina Kudermetova (UZB) bt Viktoria Morvayova (SVK) 6-3 4-6 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Paula Badosa",
@@ -3027,7 +3224,9 @@
        "p": 0.7412,
        "status": "lost",
        "result": "Elena Pridankina (RUS) bt Paula Badosa (ESP) 7-5 ret",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alianza Lima",
@@ -3045,7 +3244,9 @@
        "p": 0.6628,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3089,7 +3290,9 @@
        "p": 0.7675,
        "status": "lost",
        "result": "Elena Pridankina (RUS) bt Paula Badosa (ESP) 7-5 ret",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "IK Sirius",
@@ -3107,7 +3310,9 @@
        "p": 0.7974,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dorking Wanderers",
@@ -3125,7 +3330,9 @@
        "p": 0.7737,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ebbsfleet United",
@@ -3143,7 +3350,9 @@
        "p": 0.6006,
        "status": "won",
        "result": "0-6",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3187,7 +3396,9 @@
        "p": 0.7956,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dorking Wanderers",
@@ -3205,7 +3416,9 @@
        "p": 0.7731,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ebbsfleet United",
@@ -3223,7 +3436,9 @@
        "p": 0.6,
        "status": "won",
        "result": "0-6",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -3273,7 +3488,9 @@
        "p": 0.7464,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Philadelphia 76ers",
@@ -3291,7 +3508,9 @@
        "p": 0.8177,
        "status": "won",
        "result": "126-107",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Memphis Grizzlies",
@@ -3309,7 +3528,9 @@
        "p": 0.6572,
        "status": "lost",
        "result": "134-135",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3353,7 +3574,9 @@
        "p": 0.6131,
        "status": "won",
        "result": "0-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Detroit Pistons",
@@ -3371,7 +3594,9 @@
        "p": 0.6226,
        "status": "won",
        "result": "91-124",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Rockets",
@@ -3389,7 +3614,9 @@
        "p": 0.6362,
        "status": "won",
        "result": "109-93",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3433,7 +3660,9 @@
        "p": 0.7758,
        "status": "won",
        "result": "(3) Solana Sierra (ARG) bt Selena Janicijevic (FRA) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Atlanta Hawks",
@@ -3451,7 +3680,9 @@
        "p": 0.6362,
        "status": "won",
        "result": "104-108",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Minnesota Timberwolves",
@@ -3469,7 +3700,9 @@
        "p": 0.7867,
        "status": "won",
        "result": "112-100",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3513,7 +3746,9 @@
        "p": 0.8056,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Florida Gators",
@@ -3531,7 +3766,9 @@
        "p": 0.6888,
        "status": "won",
        "result": "77-67",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Arizona Wildcats",
@@ -3549,7 +3786,9 @@
        "p": 0.811,
        "status": "lost",
        "result": "84-75",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -3599,7 +3838,9 @@
        "p": 0.8006,
        "status": "won",
        "result": "(2) Carlos Alcaraz (ESP) bt (5) Alex de Minaur (AUS) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sarpsborg FK",
@@ -3617,7 +3858,9 @@
        "p": 0.6284,
        "status": "lost",
        "result": "2-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Los Angeles Lakers",
@@ -3635,7 +3878,9 @@
        "p": 0.6311,
        "status": "won",
        "result": "131-125",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3679,7 +3924,9 @@
        "p": 0.7514,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Villanova Wildcats",
@@ -3697,7 +3944,9 @@
        "p": 0.7564,
        "status": "lost",
        "result": "72-74",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Nashville",
@@ -3715,7 +3964,9 @@
        "p": 0.7254,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3759,7 +4010,9 @@
        "p": 0.6397,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "IF Elfsborg",
@@ -3777,7 +4030,9 @@
        "p": 0.6888,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Palermo",
@@ -3795,7 +4050,9 @@
        "p": 0.6904,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -3845,7 +4102,9 @@
        "p": 0.6132,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AS Roma",
@@ -3863,7 +4122,9 @@
        "p": 0.6091,
        "status": "won",
        "result": "2-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Olympiakos Piraeus",
@@ -3881,7 +4142,9 @@
        "p": 0.6498,
        "status": "won",
        "result": "2-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -3925,7 +4188,9 @@
        "p": 0.7107,
        "status": "won",
        "result": "37-30",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dragons",
@@ -3943,7 +4208,9 @@
        "p": 0.794,
        "status": "won",
        "result": "35-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Columbus Crew",
@@ -3961,7 +4228,9 @@
        "p": 0.6638,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4005,7 +4274,9 @@
        "p": 0.8201,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New York City",
@@ -4023,7 +4294,9 @@
        "p": 0.6566,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Memphis Grizzlies",
@@ -4041,7 +4314,9 @@
        "p": 0.7605,
        "status": "won",
        "result": "136-105",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4085,7 +4360,9 @@
        "p": 0.7112,
        "status": "lost",
        "result": "28-31",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cleveland Cavaliers",
@@ -4103,7 +4380,9 @@
        "p": 0.7567,
        "status": "won",
        "result": "111-136",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "San Antonio Spurs",
@@ -4121,7 +4400,9 @@
        "p": 0.8219,
        "status": "won",
        "result": "121-111",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4165,7 +4446,9 @@
        "p": 0.6,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Stockport County",
@@ -4183,7 +4466,9 @@
        "p": 0.7389,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Atlanta Hawks",
@@ -4201,7 +4486,9 @@
        "p": 0.6158,
        "status": "lost",
        "result": "121-99",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4245,7 +4532,9 @@
        "p": 0.8681,
        "status": "won",
        "result": "19-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Northampton Saints",
@@ -4263,7 +4552,9 @@
        "p": 0.8082,
        "status": "won",
        "result": "28-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Porto",
@@ -4281,7 +4572,9 @@
        "p": 0.8177,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4325,7 +4618,9 @@
        "p": 0.6201,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bath Rugby",
@@ -4343,7 +4638,9 @@
        "p": 0.8351,
        "status": "won",
        "result": "36-28",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Munster",
@@ -4361,7 +4658,9 @@
        "p": 0.6204,
        "status": "lost",
        "result": "3-15",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -4411,7 +4710,9 @@
        "p": 0.7197,
        "status": "won",
        "result": "1-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Toronto Raptors",
@@ -4429,7 +4730,9 @@
        "p": 0.6572,
        "status": "lost",
        "result": "114-121",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Minnesota Timberwolves",
@@ -4447,7 +4750,9 @@
        "p": 0.705,
        "status": "won",
        "result": "127-101",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4491,7 +4796,9 @@
        "p": 0.6133,
        "status": "lost",
        "result": "16-22",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Detroit Pistons",
@@ -4509,7 +4816,9 @@
        "p": 0.7333,
        "status": "won",
        "result": "94-110",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Miami Heat",
@@ -4527,7 +4836,9 @@
        "p": 0.7333,
        "status": "won",
        "result": "145-125",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -4577,7 +4888,9 @@
        "p": 0.7227,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Minnesota United",
@@ -4595,7 +4908,9 @@
        "p": 0.6561,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "América",
@@ -4613,7 +4928,9 @@
        "p": 0.6678,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4657,7 +4974,9 @@
        "p": 0.6061,
        "status": "lost",
        "result": "Alycia Parks (USA) bt Kimberly Birrell (AUS) 6-3 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Naomi Osaka",
@@ -4675,7 +4994,9 @@
        "p": 0.7753,
        "status": "lost",
        "result": "Mia Pohankova (SVK) bt (7) Naomi Osaka (JPN) 6-3 7-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Maria Timofeeva",
@@ -4693,7 +5014,9 @@
        "p": 0.6454,
        "status": "lost",
        "result": "Xinran Sun (CHN) bt (7) Maria Timofeeva (UZB) 6-3 4-6 7-6 (7-3)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4737,7 +5060,9 @@
        "p": 0.8093,
        "status": "lost",
        "result": "Valeriya Strakhova (UKR) bt Polona Hercog (SLO) 2-6 6-2 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Melgar",
@@ -4755,7 +5080,9 @@
        "p": 0.7306,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Portland Trail Blazers",
@@ -4773,7 +5100,9 @@
        "p": 0.6953,
        "status": "lost",
        "result": "103-124",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -4817,7 +5146,9 @@
        "p": 0.6404,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Nadia Podoroska",
@@ -4835,7 +5166,9 @@
        "p": 0.7515,
        "status": "won",
        "result": "(8) Nadia Podoroska (ARG) bt Miriam Bulgaru (ROM) 6-1 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New Orleans Pelicans",
@@ -4853,7 +5186,9 @@
        "p": 0.675,
        "status": "won",
        "result": "132-120",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Elena Rybakina",
@@ -4871,7 +5206,9 @@
        "p": 0.7589,
        "status": "void",
        "result": "void",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -4921,7 +5258,9 @@
        "p": 0.7302,
        "status": "lost",
        "result": "Kamilla Rakhimova (UZB) bt Ekaterina Alexandrova (RUS) 6-4 4-6 7-6 (7-5)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Paula Badosa",
@@ -4939,7 +5278,9 @@
        "p": 0.72,
        "status": "won",
        "result": "(5) Paula Badosa (ESP) bt Sinja Kraus (AUT) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alexandra Eala",
@@ -4957,7 +5298,9 @@
        "p": 0.7181,
        "status": "won",
        "result": "(8) Alexandra Eala (PHI) bt Talia Gibson (AUS) 4-6 6-2 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5001,7 +5344,9 @@
        "p": 0.6654,
        "status": "lost",
        "result": "Tallon Griekspoor (NED) bt Brandon Nakashima (USA) 6-1 4-6 7-6 (7-2)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Casper Ruud",
@@ -5019,7 +5364,9 @@
        "p": 0.6568,
        "status": "lost",
        "result": "Nuno Borges (POR) bt (9) Casper Ruud (NOR) 1-6 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Fratria",
@@ -5037,7 +5384,9 @@
        "p": 0.7222,
        "status": "lost",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5081,7 +5430,9 @@
        "p": 0.6156,
        "status": "lost",
        "result": "Han Shi (CHN) bt Dayana Yastremska (UKR) 7-5 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Robin Montgomery",
@@ -5099,7 +5450,9 @@
        "p": 0.7044,
        "status": "lost",
        "result": "(5) Lisa Pigato (ITA) bt Robin Montgomery (USA) 6-0 7-6 (9-7)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Katarina Zavatska",
@@ -5117,7 +5470,9 @@
        "p": 0.8129,
        "status": "won",
        "result": "Katarina Zavatska (UKR) bt Laura Mair (ITA) 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Jakub Mensik",
@@ -5135,7 +5490,9 @@
        "p": 0.8032,
        "status": "lost",
        "result": "Adrian Mannarino (FRA) bt (8) Jakub Mensik (CZE) 6-4 7-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5179,7 +5536,9 @@
        "p": 0.7421,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Detroit Pistons",
@@ -5197,7 +5556,9 @@
        "p": 0.705,
        "status": "won",
        "result": "97-89",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cleveland Cavaliers",
@@ -5215,7 +5576,9 @@
        "p": 0.7664,
        "status": "won",
        "result": "121-111",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5259,7 +5622,9 @@
        "p": 0.6045,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Charlotte",
@@ -5277,7 +5642,9 @@
        "p": 0.633,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Inter Miami",
@@ -5295,7 +5662,9 @@
        "p": 0.6402,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -5345,7 +5714,9 @@
        "p": 0.7333,
        "status": "won",
        "result": "125-114",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sorana Cirstea",
@@ -5363,7 +5734,9 @@
        "p": 0.6859,
        "status": "lost",
        "result": "Maya Joint (AUS) bt (6) Sorana Cirstea (ROM) 6-3 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Leylah Fernandez",
@@ -5381,7 +5754,9 @@
        "p": 0.7967,
        "status": "won",
        "result": "Leylah Fernandez (CAN) bt Himeno Sakatsume (JPN) 6-2 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5425,7 +5800,9 @@
        "p": 0.6444,
        "status": "won",
        "result": "120-110",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Nikola Bartunkova",
@@ -5443,7 +5820,9 @@
        "p": 0.6521,
        "status": "lost",
        "result": "Aliaksandra Sasnovich (BLR) bt Nikola Bartunkova (CZE) 6-4 6-7 (5-7) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tereza Valentova",
@@ -5461,7 +5840,9 @@
        "p": 0.6581,
        "status": "lost",
        "result": "Mia Pohankova (SVK) bt Tereza Valentova (CZE) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5505,7 +5886,9 @@
        "p": 0.7419,
        "status": "won",
        "result": "(3) Rafael Jodar (ESP) bt Alejandro Tabilo (CHI) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Muras United",
@@ -5523,7 +5906,9 @@
        "p": 0.7555,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alex Michelsen",
@@ -5541,7 +5926,9 @@
        "p": 0.6439,
        "status": "won",
        "result": "Alex Michelsen (USA) bt Botic Van De Zandschulp (NED) 5-7 6-3 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5585,7 +5972,9 @@
        "p": 0.6363,
        "status": "won",
        "result": "Martyna Kubka (POL) bt Mia Ristic (SER) 6-3 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Francisco Cerundolo",
@@ -5603,7 +5992,9 @@
        "p": 0.6479,
        "status": "lost",
        "result": "Cameron Norrie (GBR) bt Francisco Cerundolo (ARG) 6-4 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Anna Blinkova",
@@ -5621,7 +6012,9 @@
        "p": 0.6489,
        "status": "won",
        "result": "(1) Anna Blinkova (FRA) bt Dalma Galfi (HUN) 6-3 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5665,7 +6058,9 @@
        "p": 0.8025,
        "status": "won",
        "result": "(3) Fiona Ferro (FRA) bt Sofia Johnson (GBR) 7-5 1-6 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Maria Lourdes Carle",
@@ -5683,7 +6078,9 @@
        "p": 0.6237,
        "status": "won",
        "result": "Maria Lourdes Carle (ARG) bt Laura Pigossi (BRA) 7-5 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Boston Celtics",
@@ -5701,7 +6098,9 @@
        "p": 0.8177,
        "status": "won",
        "result": "125-124",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5745,7 +6144,9 @@
        "p": 0.64,
        "status": "won",
        "result": "(4) Flavio Cobolli (ITA) bt Grigor Dimitrov (BUL) 6-4 3-6 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AS Roma",
@@ -5763,7 +6164,9 @@
        "p": 0.7114,
        "status": "won",
        "result": "4-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Luton Town",
@@ -5781,7 +6184,9 @@
        "p": 0.6077,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -5831,7 +6236,9 @@
        "p": 0.8309,
        "status": "won",
        "result": "(5) Elise Mertens (BEL) bt Moyuka Uchijima (JPN) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Nikola Bartunkova",
@@ -5849,7 +6256,9 @@
        "p": 0.62,
        "status": "lost",
        "result": "Aliaksandra Sasnovich (BLR) bt Nikola Bartunkova (CZE) 6-4 6-7 (5-7) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Daria Snigur",
@@ -5867,7 +6276,9 @@
        "p": 0.6579,
        "status": "lost",
        "result": "Anna Bondar (HUN) bt (1) Daria Snigur (UKR) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5911,7 +6322,9 @@
        "p": 0.7115,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sinja Kraus",
@@ -5929,7 +6342,9 @@
        "p": 0.6203,
        "status": "won",
        "result": "Sinja Kraus (AUT) bt Panna Udvardy (HUN) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Maria Timofeeva",
@@ -5947,7 +6362,9 @@
        "p": 0.62,
        "status": "won",
        "result": "(7) Maria Timofeeva (UZB) bt Teodora Kostovic (SER) 6-4 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -5991,7 +6408,9 @@
        "p": 0.6123,
        "status": "won",
        "result": "Matteo Berrettini (ITA) bt Tomas Martin Etcheverry (ARG) 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Valentin Vacherot",
@@ -6009,7 +6428,9 @@
        "p": 0.6366,
        "status": "won",
        "result": "Valentin Vacherot (MON) bt Mariano Navone (ARG) 6-3 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Navbahor",
@@ -6027,7 +6448,9 @@
        "p": 0.6014,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6071,7 +6494,9 @@
        "p": 0.6891,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Learner Tien",
@@ -6089,7 +6514,9 @@
        "p": 0.6859,
        "status": "won",
        "result": "Learner Tien (USA) bt Luca Van Assche (FRA) 6-3 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Miami Heat",
@@ -6107,7 +6534,9 @@
        "p": 0.7415,
        "status": "lost",
        "result": "109-113",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6151,7 +6580,9 @@
        "p": 0.6791,
        "status": "won",
        "result": "(5) Alex de Minaur (AUS) bt Tomas Machac (CZE) 1-6 6-4 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Gabriela Ce",
@@ -6169,7 +6600,9 @@
        "p": 0.7888,
        "status": "won",
        "result": "Gabriela Ce (BRA) bt Fernanda Labrana (CHI) 6-4 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Ula",
@@ -6187,7 +6620,9 @@
        "p": 0.694,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -6237,7 +6672,9 @@
        "p": 0.8007,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Club Brugge KV",
@@ -6255,7 +6692,9 @@
        "p": 0.6968,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Waterhouse",
@@ -6273,7 +6712,9 @@
        "p": 0.7514,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6317,7 +6758,9 @@
        "p": 0.7116,
        "status": "void",
        "result": "no result",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AFC Eskilstuna",
@@ -6335,7 +6778,9 @@
        "p": 0.7402,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Zenit St Petersburg",
@@ -6353,7 +6798,9 @@
        "p": 0.718,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6397,7 +6844,9 @@
        "p": 0.6993,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "JDFS Alberts",
@@ -6415,7 +6864,9 @@
        "p": 0.8694,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bantu",
@@ -6433,7 +6884,9 @@
        "p": 0.7808,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Diriangén",
@@ -6451,7 +6904,9 @@
        "p": 0.7268,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6495,7 +6950,9 @@
        "p": 0.7035,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Olympique de Marseille",
@@ -6513,7 +6970,9 @@
        "p": 0.6118,
        "status": "won",
        "result": "4-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Bayern München",
@@ -6531,7 +6990,9 @@
        "p": 0.6752,
        "status": "won",
        "result": "1-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6575,7 +7036,9 @@
        "p": 0.6446,
        "status": "won",
        "result": "0-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Molde",
@@ -6593,7 +7056,9 @@
        "p": 0.6408,
        "status": "won",
        "result": "5-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Forge",
@@ -6611,7 +7076,9 @@
        "p": 0.6948,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6655,7 +7122,9 @@
        "p": 0.6404,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Vikingur Gota",
@@ -6673,7 +7142,9 @@
        "p": 0.6547,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AFC Ajax",
@@ -6691,7 +7162,9 @@
        "p": 0.6515,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6735,7 +7208,9 @@
        "p": 0.765,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Toledo",
@@ -6753,7 +7228,9 @@
        "p": 0.6704,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Panathinaikos",
@@ -6771,7 +7248,9 @@
        "p": 0.7277,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6815,7 +7294,9 @@
        "p": 0.6567,
        "status": "won",
        "result": "0-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AFC Ajax",
@@ -6833,7 +7314,9 @@
        "p": 0.6553,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Olympique de Marseille",
@@ -6851,7 +7334,9 @@
        "p": 0.6457,
        "status": "won",
        "result": "4-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6895,7 +7380,9 @@
        "p": 0.8077,
        "status": "lost",
        "result": "21-27",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Deportivo Maipu",
@@ -6913,7 +7400,9 @@
        "p": 0.7566,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Los Angeles Lakers",
@@ -6931,7 +7420,9 @@
        "p": 0.6802,
        "status": "won",
        "result": "123-132",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -6975,7 +7466,9 @@
        "p": 0.6572,
        "status": "lost",
        "result": "25-28",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Detroit Lions",
@@ -6993,7 +7486,9 @@
        "p": 0.6158,
        "status": "won",
        "result": "20-17",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New York Knicks",
@@ -7011,7 +7506,9 @@
        "p": 0.7173,
        "status": "lost",
        "result": "102-111",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7061,7 +7558,9 @@
        "p": 0.7832,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bodo/Glimt",
@@ -7079,7 +7578,9 @@
        "p": 0.8042,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Hamilton Academical",
@@ -7097,7 +7598,9 @@
        "p": 0.708,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ospreys",
@@ -7115,7 +7618,9 @@
        "p": 0.8093,
        "status": "won",
        "result": "31-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -7159,7 +7664,9 @@
        "p": 0.676,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Fiorentino",
@@ -7177,7 +7684,9 @@
        "p": 0.6526,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Leinster",
@@ -7195,7 +7704,9 @@
        "p": 0.8233,
        "status": "won",
        "result": "24-18",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7245,7 +7756,9 @@
        "p": 0.7078,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Vipers",
@@ -7263,7 +7776,9 @@
        "p": 0.8075,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Oddevold",
@@ -7281,7 +7796,9 @@
        "p": 0.6825,
        "status": "won",
        "result": "7-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -7325,7 +7842,9 @@
        "p": 0.7788,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Seeb",
@@ -7343,7 +7862,9 @@
        "p": 0.6636,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cham",
@@ -7361,7 +7882,9 @@
        "p": 0.8075,
        "status": "won",
        "result": "5-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Connacht",
@@ -7379,7 +7902,9 @@
        "p": 0.8929,
        "status": "won",
        "result": "48-27",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7429,7 +7954,9 @@
        "p": 0.6436,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Internazionale",
@@ -7447,7 +7974,9 @@
        "p": 0.7298,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sporting CP",
@@ -7465,7 +7994,9 @@
        "p": 0.7014,
        "status": "lost",
        "result": "2-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7515,7 +8046,9 @@
        "p": 0.7345,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ramsgate",
@@ -7533,7 +8066,9 @@
        "p": 0.7097,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AS Roma",
@@ -7551,7 +8086,9 @@
        "p": 0.8296,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -7595,7 +8132,9 @@
        "p": 0.6313,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "IFK Norrkoping",
@@ -7613,7 +8152,9 @@
        "p": 0.5348,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Nassr",
@@ -7631,7 +8172,9 @@
        "p": 0.6572,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Forest Green Rovers",
@@ -7649,7 +8192,9 @@
        "p": 0.6396,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ebbsfleet United",
@@ -7667,7 +8212,9 @@
        "p": 0.6368,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7717,7 +8264,9 @@
        "p": 0.7399,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sorana Cirstea",
@@ -7735,7 +8284,9 @@
        "p": 0.8624,
        "status": "won",
        "result": "(8) Sorana Cirstea (ROM) bt Han Shi (CHN) 6-3 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Luunja",
@@ -7753,7 +8304,9 @@
        "p": 0.8985,
        "status": "won",
        "result": "11-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bursaspor",
@@ -7771,7 +8324,9 @@
        "p": 0.7405,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Hilal",
@@ -7789,7 +8344,9 @@
        "p": 0.8416,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -7833,7 +8390,9 @@
        "p": 0.7707,
        "status": "lost",
        "result": "Facundo Diaz Acosta (ARG) bt (8) Thiago Agustin Tirante (ARG) 6-7 (3-7) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Jaime Faria",
@@ -7851,7 +8410,9 @@
        "p": 0.7758,
        "status": "lost",
        "result": "Felix Balshaw (FRA) bt Jaime Faria (POR) 6-2 4-6 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alex Michelsen",
@@ -7869,7 +8430,9 @@
        "p": 0.7687,
        "status": "won",
        "result": "(5) Alex Michelsen (USA) bt Andrea Guerrieri (ITA) 6-1 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Kuwait",
@@ -7887,7 +8450,9 @@
        "p": 0.7824,
        "status": "won",
        "result": "7-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Lorenzo Sonego",
@@ -7905,7 +8470,9 @@
        "p": 0.7671,
        "status": "lost",
        "result": "Moise Kouame (FRA) bt Lorenzo Sonego (ITA) 7-6 (7-2) 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -7955,7 +8522,9 @@
        "p": 0.8991,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tartu Welco",
@@ -7973,7 +8542,9 @@
        "p": 0.8072,
        "status": "won",
        "result": "4-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Karlskrona",
@@ -7991,7 +8562,9 @@
        "p": 0.8984,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "KI Klaksvik",
@@ -8009,7 +8582,9 @@
        "p": 0.9002,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Izarra",
@@ -8027,7 +8602,9 @@
        "p": 0.8982,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8071,7 +8648,9 @@
        "p": 0.8995,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Angkor Tiger",
@@ -8089,7 +8668,9 @@
        "p": 0.898,
        "status": "won",
        "result": "6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Farsta",
@@ -8107,7 +8688,9 @@
        "p": 0.7826,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sturm Graz",
@@ -8125,7 +8708,9 @@
        "p": 0.7624,
        "status": "won",
        "result": "6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New England Patriots",
@@ -8143,7 +8728,9 @@
        "p": 0.8173,
        "status": "won",
        "result": "26-19",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8187,7 +8774,9 @@
        "p": 0.7706,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "NSI Runavik",
@@ -8205,7 +8794,9 @@
        "p": 0.8091,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cieza",
@@ -8223,7 +8814,9 @@
        "p": 0.7398,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Olympique Lyonnais",
@@ -8241,7 +8834,9 @@
        "p": 0.7674,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Los Angeles Rams",
@@ -8259,7 +8854,9 @@
        "p": 0.8103,
        "status": "lost",
        "result": "16-18",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8303,7 +8900,9 @@
        "p": 0.7656,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tarxien Rainbows",
@@ -8321,7 +8920,9 @@
        "p": 0.7825,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Panathinaikos",
@@ -8339,7 +8940,9 @@
        "p": 0.7715,
        "status": "won",
        "result": "5-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Twente '65",
@@ -8357,7 +8960,9 @@
        "p": 0.7659,
        "status": "lost",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Kansas City Chiefs",
@@ -8375,7 +8980,9 @@
        "p": 0.7485,
        "status": "won",
        "result": "22-6",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8419,7 +9026,9 @@
        "p": 0.7697,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "F.C. København",
@@ -8437,7 +9046,9 @@
        "p": 0.6853,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Indianapolis Colts",
@@ -8455,7 +9066,9 @@
        "p": 0.7585,
        "status": "lost",
        "result": "20-26",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Real Madrid",
@@ -8473,7 +9086,9 @@
        "p": 0.766,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cienciano del Cusco",
@@ -8491,7 +9106,9 @@
        "p": 0.761,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8535,7 +9152,9 @@
        "p": 0.7401,
        "status": "won",
        "result": "6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Salzburg",
@@ -8553,7 +9172,9 @@
        "p": 0.7318,
        "status": "void",
        "result": "no result",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pistoiese",
@@ -8571,7 +9192,9 @@
        "p": 0.7407,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Philadelphia Eagles",
@@ -8589,7 +9212,9 @@
        "p": 0.6501,
        "status": "lost",
        "result": "14-25",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "PAOK",
@@ -8607,7 +9232,9 @@
        "p": 0.7591,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -8657,7 +9284,9 @@
        "p": 0.86,
        "status": "lost",
        "result": "(16) Maja Chwalinska (POL) bt (7) Iga Swiatek (POL) 7-5 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Stockholm Internazionale",
@@ -8675,7 +9304,9 @@
        "p": 0.809,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Boreham Wood",
@@ -8693,7 +9324,9 @@
        "p": 0.7713,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "James Madison Dukes",
@@ -8711,7 +9344,9 @@
        "p": 0.9285,
        "status": "won",
        "result": "49-22",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "North Dakota State Bison",
@@ -8729,7 +9364,9 @@
        "p": 0.9312,
        "status": "won",
        "result": "31-17",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8773,7 +9410,9 @@
        "p": 0.7827,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Folkestone Invicta",
@@ -8791,7 +9430,9 @@
        "p": 0.7693,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Texas Longhorns",
@@ -8809,7 +9450,9 @@
        "p": 0.9215,
        "status": "lost",
        "result": "24-27",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Texas Tech Red Raiders",
@@ -8827,7 +9470,9 @@
        "p": 0.9224,
        "status": "won",
        "result": "53-25",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Club Olimpia",
@@ -8845,7 +9490,9 @@
        "p": 0.7708,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -8889,7 +9536,9 @@
        "p": 0.767,
        "status": "lost",
        "result": "(25) Alejandro Davidovich Fokina (ESP) bt (1) Alexander Zverev (GER) 5-7 6-4 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Harborough Town",
@@ -8907,7 +9556,9 @@
        "p": 0.7633,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sporting Gijón",
@@ -8925,7 +9576,9 @@
        "p": 0.6812,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Miami Hurricanes",
@@ -8943,7 +9596,9 @@
        "p": 0.9316,
        "status": "won",
        "result": "43-35",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Cougars",
@@ -8961,7 +9616,9 @@
        "p": 0.8618,
        "status": "won",
        "result": "35-32",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9005,7 +9662,9 @@
        "p": 0.8089,
        "status": "won",
        "result": "6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Altyn Asyr",
@@ -9023,7 +9682,9 @@
        "p": 0.8088,
        "status": "void",
        "result": "postponed",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Georgia Bulldogs",
@@ -9041,7 +9702,9 @@
        "p": 0.9313,
        "status": "lost",
        "result": "24-27",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Deportivo La Guaira",
@@ -9059,7 +9722,9 @@
        "p": 0.7564,
        "status": "lost",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "South Florida Bulls",
@@ -9077,7 +9742,9 @@
        "p": 0.8672,
        "status": "won",
        "result": "29-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9121,7 +9788,9 @@
        "p": 0.8075,
        "status": "lost",
        "result": "1-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "B71",
@@ -9139,7 +9808,9 @@
        "p": 0.7824,
        "status": "won",
        "result": "6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Barrow",
@@ -9157,7 +9828,9 @@
        "p": 0.7652,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Army Black Knights",
@@ -9175,7 +9848,9 @@
        "p": 0.7688,
        "status": "won",
        "result": "56-24",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Temple Owls",
@@ -9193,7 +9868,9 @@
        "p": 0.8644,
        "status": "lost",
        "result": "31-38",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9237,7 +9914,9 @@
        "p": 0.8072,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Altrincham",
@@ -9255,7 +9934,9 @@
        "p": 0.7624,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Indiana Hoosiers",
@@ -9273,7 +9954,9 @@
        "p": 0.719,
        "status": "lost",
        "result": "15-19",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Duke Blue Devils",
@@ -9291,7 +9974,9 @@
        "p": 0.7747,
        "status": "lost",
        "result": "20-24",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cavalry",
@@ -9309,7 +9994,9 @@
        "p": 0.8083,
        "status": "won",
        "result": "4-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -9359,7 +10046,9 @@
        "p": 0.9007,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Iga Swiatek",
@@ -9377,7 +10066,9 @@
        "p": 0.859,
        "status": "won",
        "result": "(7) Iga Swiatek (POL) bt Ann Li (USA) 6-4 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Qadsiah",
@@ -9395,7 +10086,9 @@
        "p": 0.8383,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Rot-Weiß Erfurt",
@@ -9413,7 +10106,9 @@
        "p": 0.6795,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Rapid Wien",
@@ -9431,7 +10126,9 @@
        "p": 0.7573,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -9481,7 +10178,9 @@
        "p": 0.9218,
        "status": "won",
        "result": "(5) Elina Svitolina (UKR) bt Hanyu Guo (CHN) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Clara Burel",
@@ -9499,7 +10198,9 @@
        "p": 0.8608,
        "status": "won",
        "result": "Clara Burel (FRA) bt Mathilde Lollia (FRA) 6-0 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sint-Truidense",
@@ -9517,7 +10218,9 @@
        "p": 0.7585,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "AFC Bournemouth",
@@ -9535,7 +10238,9 @@
        "p": 0.7422,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "East Carolina Pirates",
@@ -9553,7 +10258,9 @@
        "p": 0.717,
        "status": "lost",
        "result": "30-17",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9597,7 +10304,9 @@
        "p": 0.8533,
        "status": "won",
        "result": "(2) Laura Samson (CZE) bt Lucie Nguyen Tan (FRA) 6-0 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Iga Swiatek",
@@ -9615,7 +10324,9 @@
        "p": 0.8599,
        "status": "won",
        "result": "(7) Iga Swiatek (POL) bt Ashlyn Krueger (USA) 6-1 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FC Twente",
@@ -9633,7 +10344,9 @@
        "p": 0.7413,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Envigado",
@@ -9651,7 +10364,9 @@
        "p": 0.6793,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dinamo Zagreb",
@@ -9669,7 +10384,9 @@
        "p": 0.8341,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9713,7 +10430,9 @@
        "p": 0.7498,
        "status": "lost",
        "result": "(11) Diana Shnaider (RUS) bt (6) Karolina Muchova (CZE) 7-5 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Mingəçevir",
@@ -9731,7 +10450,9 @@
        "p": 0.7398,
        "status": "lost",
        "result": "1-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tamara Zidansek",
@@ -9749,7 +10470,9 @@
        "p": 0.7491,
        "status": "won",
        "result": "(6) Tamara Zidansek (SLO) bt Joelle Lilly Sophie Steur (GER) 6-2 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tartu Welco",
@@ -9767,7 +10490,9 @@
        "p": 0.679,
        "status": "won",
        "result": "0-7",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "SC Freiburg",
@@ -9785,7 +10510,9 @@
        "p": 0.6816,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -9835,7 +10562,9 @@
        "p": 0.9133,
        "status": "won",
        "result": "(7) Iga Swiatek (POL) bt Magdalena Frech (POL) 6-2 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Aryna Sabalenka",
@@ -9853,7 +10582,9 @@
        "p": 0.8707,
        "status": "lost",
        "result": "Ann Li (USA) bt (1) Aryna Sabalenka (BLR) 3-6 6-4 7-6 (7-5)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Parnu JK Vaprus U21",
@@ -9871,7 +10602,9 @@
        "p": 0.8074,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "FCI Levadia II",
@@ -9889,7 +10622,9 @@
        "p": 0.7825,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Haugesund",
@@ -9907,7 +10642,9 @@
        "p": 0.7402,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -9951,7 +10688,9 @@
        "p": 0.8644,
        "status": "lost",
        "result": "Jelena Ostapenko (LAT) bt (2) Jessica Pegula (USA) 2-6 7-6 (9-7) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Fiona Ferro",
@@ -9969,7 +10708,9 @@
        "p": 0.8598,
        "status": "won",
        "result": "(3) Fiona Ferro (FRA) bt Selena Janicijevic (FRA) 7-5 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Batman Petrolspor",
@@ -9987,7 +10728,9 @@
        "p": 0.7404,
        "status": "won",
        "result": "4-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Liverpool",
@@ -10005,7 +10748,9 @@
        "p": 0.6887,
        "status": "won",
        "result": "3-6",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Aston Villa",
@@ -10023,7 +10768,9 @@
        "p": 0.76,
        "status": "won",
        "result": "6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10067,7 +10814,9 @@
        "p": 0.8553,
        "status": "lost",
        "result": "Hanyu Guo (CHN) bt Katie Volynets (USA) 6-4 4-6 7-6 (7-3)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Punjab",
@@ -10085,7 +10834,9 @@
        "p": 0.6858,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Guiomar Maristany Zuleta De Reales",
@@ -10103,7 +10854,9 @@
        "p": 0.8597,
        "status": "won",
        "result": "(5) Guiomar Maristany Zuleta De Reales (ESP) bt Martha Matoula (GRE) 6-0 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bryne",
@@ -10121,7 +10874,9 @@
        "p": 0.6791,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Manchester City",
@@ -10139,7 +10894,9 @@
        "p": 0.7145,
        "status": "lost",
        "result": "2-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10183,7 +10940,9 @@
        "p": 0.8548,
        "status": "won",
        "result": "(6) Karolina Muchova (CZE) bt Catherine McNally (USA) 3-6 7-6 (7-1) 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Julia Grabher",
@@ -10201,7 +10960,9 @@
        "p": 0.7277,
        "status": "won",
        "result": "(1) Julia Grabher (AUT) bt Lidia Encheva (BUL) 4-6 7-5 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Leylah Fernandez",
@@ -10219,7 +10980,9 @@
        "p": 0.8585,
        "status": "won",
        "result": "Leylah Fernandez (CAN) bt Han Shi (CHN) 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Royal Vision",
@@ -10237,7 +11000,9 @@
        "p": 0.7402,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Atlético Junior",
@@ -10255,7 +11020,9 @@
        "p": 0.6771,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -10305,7 +11072,9 @@
        "p": 0.9451,
        "status": "won",
        "result": "Raluka Serban (CYP) bt Analu Freitas (POR) 6-1 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Jessica Bouzas Maneiro",
@@ -10323,7 +11092,9 @@
        "p": 0.9449,
        "status": "won",
        "result": "(1) Jessica Bouzas Maneiro (ESP) bt Milana Ivantsiv (POR) 6-2 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Slavia Prague",
@@ -10341,7 +11112,9 @@
        "p": 0.8383,
        "status": "lost",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "IFK Norrkoping",
@@ -10359,7 +11132,9 @@
        "p": 0.8979,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ebbsfleet United",
@@ -10377,7 +11152,9 @@
        "p": 0.766,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10421,7 +11198,9 @@
        "p": 0.7487,
        "status": "won",
        "result": "(6) Tamara Zidansek (SLO) bt Despina Papamichail (GRE) 6-4 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Orlando Pirates",
@@ -10439,7 +11218,9 @@
        "p": 0.7683,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Ittihad",
@@ -10457,7 +11238,9 @@
        "p": 0.683,
        "status": "lost",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Gainsborough Trinity",
@@ -10475,7 +11258,9 @@
        "p": 0.7627,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bayern Munich",
@@ -10493,7 +11278,9 @@
        "p": 0.6815,
        "status": "lost",
        "result": "3-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10537,7 +11324,9 @@
        "p": 0.9177,
        "status": "lost",
        "result": "Hanyu Guo (CHN) bt (12) Sorana Cirstea (ROM) 1-6 7-6 (8-6) 7-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Francesca Jones",
@@ -10555,7 +11344,9 @@
        "p": 0.9183,
        "status": "won",
        "result": "(2) Francesca Jones (GBR) bt Martina Colmegna (ITA) 7-5 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Fiona Ferro",
@@ -10573,7 +11364,9 @@
        "p": 0.8545,
        "status": "won",
        "result": "(3) Fiona Ferro (FRA) bt Aurora Zantedeschi (ITA) 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ekaterine Gorgodze",
@@ -10591,7 +11384,9 @@
        "p": 0.8561,
        "status": "lost",
        "result": "Lucia Cortez Llorca (ESP) bt (8) Ekaterine Gorgodze (GEO) 6-4 7-6 (7-3)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Dominika Salkova",
@@ -10609,7 +11404,9 @@
        "p": 0.9367,
        "status": "won",
        "result": "(6) Dominika Salkova (CZE) bt Elisa Visentin (ITA) 6-0 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -10659,7 +11456,9 @@
        "p": 0.9225,
        "status": "lost",
        "result": "Zizou Bergs (BEL) bt (2) Carlos Alcaraz (ESP) 7-5 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Julia Grabher",
@@ -10677,7 +11476,9 @@
        "p": 0.8564,
        "status": "won",
        "result": "(1) Julia Grabher (AUT) bt Deborah Chiesa (ITA) 3-6 6-4 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "PAOK",
@@ -10695,7 +11496,9 @@
        "p": 0.8399,
        "status": "lost",
        "result": "1-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Novorizontino",
@@ -10713,7 +11516,9 @@
        "p": 0.8367,
        "status": "won",
        "result": "5-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Nacional Asunción",
@@ -10731,7 +11536,9 @@
        "p": 0.7691,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10775,7 +11582,9 @@
        "p": 0.8075,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alexandra Eala",
@@ -10793,7 +11602,9 @@
        "p": 0.8723,
        "status": "lost",
        "result": "Han Shi (CHN) bt (13) Alexandra Eala (PHI) 4-6 6-3 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Susan Bandecchi",
@@ -10811,7 +11622,9 @@
        "p": 0.8616,
        "status": "won",
        "result": "Susan Bandecchi (SUI) bt Gaia Maduzzi (ITA) 6-3 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "IF Elfsborg",
@@ -10829,7 +11642,9 @@
        "p": 0.7663,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Malmö FF",
@@ -10847,7 +11662,9 @@
        "p": 0.6885,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -10891,7 +11708,9 @@
        "p": 0.8602,
        "status": "void",
        "result": "void",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Arthur Fils",
@@ -10909,7 +11728,9 @@
        "p": 0.773,
        "status": "lost",
        "result": "Botic Van De Zandschulp (NED) bt (8) Arthur Fils (FRA) 7-5 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Struga",
@@ -10927,7 +11748,9 @@
        "p": 0.7824,
        "status": "lost",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Forge",
@@ -10945,7 +11768,9 @@
        "p": 0.7402,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Always Ready",
@@ -10963,7 +11788,9 @@
        "p": 0.7596,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -11013,7 +11840,9 @@
        "p": 0.8088,
        "status": "lost",
        "result": "0-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Lijabatho",
@@ -11031,7 +11860,9 @@
        "p": 0.8979,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Sunnersta",
@@ -11049,7 +11880,9 @@
        "p": 0.9002,
        "status": "won",
        "result": "7-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Exeter Chiefs",
@@ -11067,7 +11900,9 @@
        "p": 0.9115,
        "status": "won",
        "result": "34-28",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Vikingur Reykjavik",
@@ -11085,7 +11920,9 @@
        "p": 0.7835,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11129,7 +11966,9 @@
        "p": 0.8346,
        "status": "won",
        "result": "Hubert Hurkacz (POL) bt Yi Zhou (CHN) 6-2 3-6 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Virtus",
@@ -11147,7 +11986,9 @@
        "p": 0.8977,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New England Patriots",
@@ -11165,7 +12006,9 @@
        "p": 0.7527,
        "status": "won",
        "result": "45-17",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Minnesota Vikings",
@@ -11183,7 +12026,9 @@
        "p": 0.6761,
        "status": "won",
        "result": "13-23",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Stade Toulousain",
@@ -11201,7 +12046,9 @@
        "p": 0.9024,
        "status": "won",
        "result": "45-34",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11245,7 +12092,9 @@
        "p": 0.7701,
        "status": "lost",
        "result": "Arthur Gea (FRA) bt (3) Ben Shelton (USA) 7-6 (7-5) 7-6 (7-3)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Alexander Zverev",
@@ -11263,7 +12112,9 @@
        "p": 0.8268,
        "status": "won",
        "result": "(1) Alexander Zverev (GER) bt Quentin Halys (FRA) 6-4 6-7 (8-10) 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Österlen",
@@ -11281,7 +12132,9 @@
        "p": 0.6791,
        "status": "won",
        "result": "5-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Union Magdalena",
@@ -11299,7 +12152,9 @@
        "p": 0.7406,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pachuca",
@@ -11317,7 +12172,9 @@
        "p": 0.681,
        "status": "lost",
        "result": "3-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11361,7 +12218,9 @@
        "p": 0.8088,
        "status": "lost",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ranger's",
@@ -11379,7 +12238,9 @@
        "p": 0.8078,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Slávia TU Košice",
@@ -11397,7 +12258,9 @@
        "p": 0.8075,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Union St. Gilloise",
@@ -11415,7 +12278,9 @@
        "p": 0.8089,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "BK Häcken",
@@ -11433,7 +12298,9 @@
        "p": 0.7702,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11477,7 +12344,9 @@
        "p": 0.7668,
        "status": "won",
        "result": "(9) Alex de Minaur (AUS) bt Rei Sakamoto (JPN) 7-6 (8-6) 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Guangzhou E-Power",
@@ -11495,7 +12364,9 @@
        "p": 0.783,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Talasgücü Belediyespor",
@@ -11513,7 +12384,9 @@
        "p": 0.7836,
        "status": "won",
        "result": "6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Toledo",
@@ -11531,7 +12404,9 @@
        "p": 0.7835,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "SE Palmeiras",
@@ -11549,7 +12424,9 @@
        "p": 0.6806,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11593,7 +12470,9 @@
        "p": 0.7829,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "CSKA Moscow",
@@ -11611,7 +12490,9 @@
        "p": 0.7647,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Kongsvinger",
@@ -11629,7 +12510,9 @@
        "p": 0.7399,
        "status": "won",
        "result": "6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pittsburgh Steelers",
@@ -11647,7 +12530,9 @@
        "p": 0.6375,
        "status": "won",
        "result": "34-22",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Seattle Seahawks",
@@ -11665,7 +12550,9 @@
        "p": 0.6492,
        "status": "lost",
        "result": "29-32",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -11715,7 +12602,9 @@
        "p": 0.8966,
        "status": "won",
        "result": "50-19",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Kitchee",
@@ -11733,7 +12622,9 @@
        "p": 0.899,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Carlos Alcaraz",
@@ -11751,7 +12642,9 @@
        "p": 0.9303,
        "status": "won",
        "result": "(2) Carlos Alcaraz (ESP) bt Juan Manuel Cerundolo (ARG) 6-3 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Kairat Almaty",
@@ -11769,7 +12662,9 @@
        "p": 0.8974,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pittsburgh Panthers",
@@ -11787,7 +12682,9 @@
        "p": 0.8608,
        "status": "lost",
        "result": "17-21",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11831,7 +12728,9 @@
        "p": 0.8975,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Hereford",
@@ -11849,7 +12748,9 @@
        "p": 0.7568,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "East Carolina Pirates",
@@ -11867,7 +12768,9 @@
        "p": 0.863,
        "status": "won",
        "result": "28-12",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Leinster",
@@ -11885,7 +12788,9 @@
        "p": 0.8991,
        "status": "won",
        "result": "29-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "James Madison Dukes",
@@ -11903,7 +12808,9 @@
        "p": 0.8607,
        "status": "won",
        "result": "24-27",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -11947,7 +12854,9 @@
        "p": 0.7826,
        "status": "lost",
        "result": "2-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Billericay Town",
@@ -11965,7 +12874,9 @@
        "p": 0.7627,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Racing Club Warwick",
@@ -11983,7 +12894,9 @@
        "p": 0.7298,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Notre Dame Fighting Irish",
@@ -12001,7 +12914,9 @@
        "p": 0.935,
        "status": "won",
        "result": "58-7",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ohio State Buckeyes",
@@ -12019,7 +12934,9 @@
        "p": 0.937,
        "status": "won",
        "result": "45-16",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12063,7 +12980,9 @@
        "p": 0.8369,
        "status": "won",
        "result": "(8) Arthur Fils (FRA) bt Pavel Kotov (RUS) 6-3 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Gyulai Termál",
@@ -12081,7 +13000,9 @@
        "p": 0.7832,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Franke",
@@ -12099,7 +13020,9 @@
        "p": 0.7836,
        "status": "won",
        "result": "5-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Northwestern Wildcats",
@@ -12117,7 +13040,9 @@
        "p": 0.9332,
        "status": "won",
        "result": "45-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Western Michigan Broncos",
@@ -12135,7 +13060,9 @@
        "p": 0.8637,
        "status": "won",
        "result": "38-7",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12179,7 +13106,9 @@
        "p": 0.8571,
        "status": "won",
        "result": "24-10",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Felix Auger Aliassime",
@@ -12197,7 +13126,9 @@
        "p": 0.8266,
        "status": "won",
        "result": "(4) Felix Auger-Aliassime (CAN) bt Camilo Ugo Carabelli (ARG) 4-6 7-6 (7-1) 7-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bodo/Glimt",
@@ -12215,7 +13146,9 @@
        "p": 0.8363,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Independiente del Valle",
@@ -12233,7 +13166,9 @@
        "p": 0.7675,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Ohio Bobcats",
@@ -12251,7 +13186,9 @@
        "p": 0.7694,
        "status": "won",
        "result": "31-14",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12295,7 +13232,9 @@
        "p": 0.7724,
        "status": "won",
        "result": "(11) Taylor Fritz (USA) bt Matteo Arnaldi (ITA) 7-5 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Rot-weiss Oberhausen",
@@ -12313,7 +13252,9 @@
        "p": 0.7406,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Bicskei",
@@ -12331,7 +13272,9 @@
        "p": 0.7398,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Toledo Rockets",
@@ -12349,7 +13292,9 @@
        "p": 0.8659,
        "status": "lost",
        "result": "8-23",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Navy Midshipmen",
@@ -12367,7 +13312,9 @@
        "p": 0.7682,
        "status": "won",
        "result": "34-26",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -12417,7 +13364,9 @@
        "p": 0.8354,
        "status": "won",
        "result": "(1) Alexander Zverev (GER) bt Wu Yibing (CHN) 6-4 7-6 (7-4)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Lorenzo Musetti",
@@ -12435,7 +13384,9 @@
        "p": 0.9177,
        "status": "lost",
        "result": "Yi Zhou (CHN) bt (24) Lorenzo Musetti (ITA) 7-6 (9-7) 3-6 7-6 (7-1)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Varketili",
@@ -12453,7 +13404,9 @@
        "p": 0.7835,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Almere City",
@@ -12471,7 +13424,9 @@
        "p": 0.766,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "La Fiorita",
@@ -12489,7 +13444,9 @@
        "p": 0.8984,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12533,7 +13490,9 @@
        "p": 0.8327,
        "status": "won",
        "result": "(3) Ben Shelton (USA) bt Daniel Altmaier (GER) 6-3 7-6 (8-6)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Jwaaya",
@@ -12551,7 +13510,9 @@
        "p": 0.7823,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "PSV",
@@ -12569,7 +13530,9 @@
        "p": 0.7687,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cork City",
@@ -12587,7 +13550,9 @@
        "p": 0.8079,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Montevideo City Torque",
@@ -12605,7 +13570,9 @@
        "p": 0.6772,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12649,7 +13616,9 @@
        "p": 0.7693,
        "status": "won",
        "result": "(13) Jakub Mensik (CZE) bt Miomir Kecmanovic (SER) 6-3 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Arabi",
@@ -12667,7 +13636,9 @@
        "p": 0.679,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Tartu Welco",
@@ -12685,7 +13656,9 @@
        "p": 0.679,
        "status": "won",
        "result": "4-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cham",
@@ -12703,7 +13676,9 @@
        "p": 0.8081,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Louisville Cardinals",
@@ -12721,7 +13696,9 @@
        "p": 0.7205,
        "status": "won",
        "result": "44-20",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -12765,7 +13742,9 @@
        "p": 0.7724,
        "status": "lost",
        "result": "Hubert Hurkacz (POL) bt (10) Novak Djokovic (SER) 6-4 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Pakhtakor",
@@ -12783,7 +13762,9 @@
        "p": 0.7398,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Borussia Dortmund",
@@ -12801,7 +13782,9 @@
        "p": 0.7209,
        "status": "lost",
        "result": "2-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Glasgow Warriors",
@@ -12819,7 +13802,9 @@
        "p": 0.755,
        "status": "won",
        "result": "36-19",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Folgore",
@@ -12837,7 +13822,9 @@
        "p": 0.7399,
        "status": "won",
        "result": "1-5",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -12887,7 +13874,9 @@
        "p": 0.7686,
        "status": "won",
        "result": "22-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Karolina Muchova",
@@ -12905,7 +13894,9 @@
        "p": 0.7791,
        "status": "lost",
        "result": "(26) Nikola Bartunkova (CZE) bt (7) Karolina Muchova (CZE) 6-3 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Mirra Andreeva",
@@ -12923,7 +13914,9 @@
        "p": 0.7731,
        "status": "won",
        "result": "(4) Mirra Andreeva (RUS) bt (19) Ekaterina Alexandrova (RUS) 7-6 (7-4) 7-6 (7-3)",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Al Ansar",
@@ -12941,7 +13934,9 @@
        "p": 0.7834,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Liberty Flames",
@@ -12959,7 +13954,9 @@
        "p": 0.9217,
        "status": "won",
        "result": "35-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -13009,7 +14006,9 @@
        "p": 0.8457,
        "status": "won",
        "result": "(1) Carlos Alcaraz (ESP) bt Jiri Lehecka (CZE) 7-6 (7-4) 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Algeria",
@@ -13027,7 +14026,9 @@
        "p": 0.9177,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Switzerland",
@@ -13045,7 +14046,9 @@
        "p": 0.8989,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Slovakia",
@@ -13063,7 +14066,9 @@
        "p": 0.824,
        "status": "won",
        "result": "0-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Montserrat",
@@ -13081,7 +14086,9 @@
        "p": 0.8386,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13125,7 +14132,9 @@
        "p": 0.7635,
        "status": "won",
        "result": "Emerson Jones (AUS) bt Mai Hontama (JPN) 6-4 6-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "South Korea",
@@ -13143,7 +14152,9 @@
        "p": 0.7353,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Spain U21",
@@ -13161,7 +14172,9 @@
        "p": 0.8651,
        "status": "won",
        "result": "7-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Croatia U21",
@@ -13179,7 +14192,9 @@
        "p": 0.7601,
        "status": "won",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Colombia",
@@ -13197,7 +14212,9 @@
        "p": 0.8209,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13241,7 +14258,9 @@
        "p": 0.7286,
        "status": "won",
        "result": "(6) Novak Djokovic (SER) bt (5) Alex de Minaur (AUS) 7-6 (7-3) 0-1 ret",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Heilongjiang Lava Spring",
@@ -13259,7 +14278,9 @@
        "p": 0.6693,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Slovakia U21",
@@ -13277,7 +14298,9 @@
        "p": 0.7276,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Cleethorpes Town",
@@ -13295,7 +14318,9 @@
        "p": 0.7252,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Angola",
@@ -13313,7 +14338,9 @@
        "p": 0.7321,
        "status": "won",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13357,7 +14384,9 @@
        "p": 0.7116,
        "status": "won",
        "result": "(26) Nikola Bartunkova (CZE) bt Sinja Kraus (AUT) 6-0 4-6 6-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Lucrezia Stefanini",
@@ -13375,7 +14404,9 @@
        "p": 0.7116,
        "status": "won",
        "result": "(8) Lucrezia Stefanini (ITA) bt Carole Monnet (FRA) 7-5 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "England U21",
@@ -13393,7 +14424,9 @@
        "p": 0.688,
        "status": "lost",
        "result": "3-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Spain",
@@ -13411,7 +14444,9 @@
        "p": 0.7255,
        "status": "won",
        "result": "1-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Braintree",
@@ -13429,7 +14464,9 @@
        "p": 0.6643,
        "status": "lost",
        "result": "1-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -13479,7 +14516,9 @@
        "p": 0.8652,
        "status": "won",
        "result": "(8) Iga Swiatek (POL) bt (30) Donna Vekic (CRO) 4-6 7-6 (7-0) 6-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Carlos Alcaraz",
@@ -13497,7 +14536,9 @@
        "p": 0.9094,
        "status": "won",
        "result": "(1) Carlos Alcaraz (ESP) bt Jaume Munar (ESP) 5-7 6-3 6-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "TSC Backa Topola",
@@ -13515,7 +14556,9 @@
        "p": 0.7118,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Montenegro",
@@ -13533,7 +14576,9 @@
        "p": 0.7332,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "France",
@@ -13551,7 +14596,9 @@
        "p": 0.727,
        "status": "won",
        "result": "4-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
@@ -13601,7 +14648,9 @@
        "p": 0.8042,
        "status": "won",
        "result": "23-12",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Montpellier Herault",
@@ -13619,7 +14668,9 @@
        "p": 0.8833,
        "status": "won",
        "result": "28-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Seattle Seahawks",
@@ -13637,7 +14688,9 @@
        "p": 0.8226,
        "status": "won",
        "result": "30-23",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Puerto Rico",
@@ -13655,7 +14708,9 @@
        "p": 0.8371,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Aruba",
@@ -13673,7 +14728,9 @@
        "p": 0.901,
        "status": "won",
        "result": "3-2",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13717,7 +14774,9 @@
        "p": 0.834,
        "status": "lost",
        "result": "17-21",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Lois Boisson",
@@ -13735,7 +14794,9 @@
        "p": 0.7642,
        "status": "lost",
        "result": "(4) Leolia Jeanjean (FRA) bt Lois Boisson (FRA) 7-6 (7-3) 4-6 6-4",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Netherlands",
@@ -13753,7 +14814,9 @@
        "p": 0.8311,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Portugal",
@@ -13771,7 +14834,9 @@
        "p": 0.7993,
        "status": "won",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Minnesota Vikings",
@@ -13789,7 +14854,9 @@
        "p": 0.8151,
        "status": "won",
        "result": "15-10",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13833,7 +14900,9 @@
        "p": 0.7903,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "New York Giants",
@@ -13851,7 +14920,9 @@
        "p": 0.6839,
        "status": "won",
        "result": "36-24",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Morocco",
@@ -13869,7 +14940,9 @@
        "p": 0.8348,
        "status": "void",
        "result": "postponed",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Egypt",
@@ -13887,7 +14960,9 @@
        "p": 0.7321,
        "status": "lost",
        "result": "0-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Montego Bay United",
@@ -13905,7 +14980,9 @@
        "p": 0.7901,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -13949,7 +15026,9 @@
        "p": 0.7119,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Osasuna II",
@@ -13967,7 +15046,9 @@
        "p": 0.748,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Castellón",
@@ -13985,7 +15066,9 @@
        "p": 0.7356,
        "status": "lost",
        "result": "1-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Baltimore Ravens",
@@ -14003,7 +15086,9 @@
        "p": 0.8215,
        "status": "won",
        "result": "24-18",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Guyana",
@@ -14021,7 +15106,9 @@
        "p": 0.8202,
        "status": "won",
        "result": "8-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -14065,7 +15152,9 @@
        "p": 0.7119,
        "status": "won",
        "result": "3-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Levante II",
@@ -14083,7 +15172,9 @@
        "p": 0.7117,
        "status": "lost",
        "result": "0-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "jerv",
@@ -14101,7 +15192,9 @@
        "p": 0.7118,
        "status": "lost",
        "result": "3-3",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Buffalo Bills",
@@ -14119,7 +15212,9 @@
        "p": 0.7027,
        "status": "lost",
        "result": "26-29",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Houston Texans",
@@ -14137,7 +15232,9 @@
        "p": 0.7044,
        "status": "lost",
        "result": "30-34",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     },
@@ -14181,7 +15278,9 @@
        "p": 0.7118,
        "status": "lost",
        "result": "2-1",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Agoncillo",
@@ -14199,7 +15298,9 @@
        "p": 0.7118,
        "status": "won",
        "result": "2-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Barcelona",
@@ -14217,7 +15318,9 @@
        "p": 0.6634,
        "status": "won",
        "result": "7-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Central Cordoba",
@@ -14235,7 +15338,9 @@
        "p": 0.6693,
        "status": "won",
        "result": "1-0",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       },
       {
        "pick": "Kansas City Chiefs",
@@ -14253,7 +15358,9 @@
        "p": 0.6633,
        "status": "won",
        "result": "27-30",
-       "opp": null
+       "opp": null,
+       "rule12Fault": null,
+       "r12": false
       }
      ]
     }
