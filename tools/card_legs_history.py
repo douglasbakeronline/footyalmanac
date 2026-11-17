@@ -530,7 +530,7 @@ def replay_split(split, splits_fn, log):
                                           # 15 Nov 2026: the opposition's price on the model's picks
                                           "m7opp9", "m7opp5",
                                           # 16 Nov 2026: rule 11 (no opposition condition), now that 5.0 is live
-                                          "m7noopp",
+                                          "m7noopp", "rule12", "m7value",
                                           # 16 Nov 2026: three picks from one competition
                                           # (card_replay comp3, pre-registered 10 Nov), here
                                           # three from one league; NBA-only nights build

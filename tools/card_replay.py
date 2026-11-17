@@ -346,6 +346,12 @@ VARIANTS = {
     # pool gate), so m7opp5 now equals live; rule 11, with no opposition
     # condition, is replayed as m7noopp (claude/card-opp5-list2x-2026-11-16.md)
     "m7noopp": {"CARD_MODEL_OPP_MIN": {}},
+    # 17 Nov 2026: CARD_RULE 13 dropped both bookmaker conditions (the value
+    # demand and the opposition floor), so m7noopp is live less the value
+    # demand and m7opp5 is live less neither. The rule 12 Card is replayed
+    # as rule12 for the 30 Nov review (claude/card-rule13-model-only-2026-11-17.md).
+    "rule12": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}},
+    "m7value": {"CARD_MODEL_EDGE": 0.0},   # the value demand alone (rule 11)
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants

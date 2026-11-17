@@ -19,10 +19,17 @@ class M7Opp(unittest.TestCase):
 
     def tearDown(self): G.CARD_MODEL_OPP_MIN = self.saved
 
-    def test_live_reads_opposition_floor_5(self):
-        # 16 Nov 2026, CARD_RULE 12: m7opp5 set live
-        self.assertEqual(G.CARD_MODEL_OPP_MIN, {"football": 5.0})
-        self.assertGreaterEqual(G.CARD_RULE, 12)
+    def test_live_reads_no_opposition_floor(self):
+        # 16 Nov 2026, CARD_RULE 12: m7opp5 set live; 17 Nov 2026, CARD_RULE 13:
+        # emptied again with the value demand (Douglas: "just drop both of those")
+        self.assertEqual(G.CARD_MODEL_OPP_MIN, {})
+        self.assertGreaterEqual(G.CARD_RULE, 13)
+        self.assertIsNone(G.model_fault(leg(4.5)))
+        self.assertIsNone(G.model_fault(leg(None)))
+        self.assertEqual(R.VARIANTS["rule12"], {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}})
+
+    def test_floor_5_as_rule12_ran_it(self):
+        G.CARD_MODEL_OPP_MIN = {"football": 5.0}
         self.assertIn("under 5", G.model_fault(leg(4.5)))
         self.assertIsNone(G.model_fault(leg(5.0)))
         self.assertIn("no bookmaker price for the opposition", G.model_fault(leg(None)))
