@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-2: The List card in the open, with a List long for thin days
+
+**What changed:** Douglas: "at least one or two cards a day just made up of the daily list picks ... just having no cards is awful", and a review of what wins on the list. The List 2x comes out of its "on paper" fold onto the Bets tab as **The List card**, and gains a second kind: when the 2x cannot be made from legs at 1.15+ in six, the **List long** takes the list's picks at any price, up to ten, to 2x. College sports are left out. Each group shows a Tested chance (the ledger's landed rates by sport and price band) beside the model's. The record keeps the two kinds on their own lines (`cardList`, `cardListLong`).
+
+**Evidence:** `claude/list-card-2026-11-17.md`. The pattern review of 592 graded list picks: landed as quoted in every cut (sport, side, band, price, family, weekday, window, model v price); no cut beats the price. On the ledger's 23 priced days a List 2x could be built on 5 (5 won), a List long on 7 (3 won). Tests in `tests/test_list_card.py` (11); suite and `nametest.py` pass; Bets tab rendered at 1280px and 400px.
+
+**Files:** `groupings.py`, `index.html`, `tests/test_list_card.py`, `claude/list-card-2026-11-17.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the Card, the slip, the Daily List, any model.
+
+**Roll back:** `git revert` the merge commit; or `LIST_KINDS = [("List 2x", 2.0, 1.15, 6)]` to drop the long kind alone.
+
 ## 2026-11-17-signup-push: a phone push for every Mailer sign-up (tag pending)
 
 **What changed:** a new Mailer sign-up sends Douglas a push through ntfy: "New Mailer sign-up", the emails chosen and how many are on the list. The reader's address is never in the push. It is set up in the Supabase database (Inbox Innovation project): the trigger `almanac_signup_push` on `almanac.subscribers`, the function `almanac.notify_signup()` (security definer, not callable by the API roles), `pg_net`, and the topic in Vault as `almanac_ntfy_topic`. The site's code is unchanged.

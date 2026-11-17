@@ -1684,11 +1684,48 @@ def is_model(name): return str(name).startswith("Model")
 # rule the evidence backs yet: list picks land 87.5% but returned -1.6% a
 # pick at their prices (results ledger, 16 Nov), and each extra pick adds
 # the bookmaker's margin again.
-LIST_KINDS = [("List 2x", 2.0)]
+# 17 Nov 2026, Douglas, after a List-built slip won at 5.14: "there's got to
+# be a way where we can have at least one or two cards a day just made up of
+# the daily list picks ... just having no cards is awful". The pattern review
+# (claude/list-card-2026-11-17.md): the list lands as quoted in every cut
+# (sport, side, band, price, family, weekday, window, model v price); no
+# segment beats the price. So the List card is not a value rule, it is the
+# list's own winners combined, with its tested chance shown. Two kinds, each
+# (name, target price, lowest leg price, most legs): the List 2x as before,
+# and the List long, up to LIST_LONG_LEGS legs at any price, so a day whose
+# list is all short favourites still has a card. College sports are left
+# out (LIST_SPORTS_OFF): rarely priced in the UK, and under quote away.
+LIST_KINDS = [("List 2x", 2.0, 1.15, 6), ("List long", 2.0, 1.0, 10)]
 LIST_ODDS_MIN = 1.15
 LIST_LEGS_MAX = 6
-RISK.update({"List 2x": "On paper, never staked"})
+LIST_LONG_LEGS = 10
+LIST_SPORTS_OFF = {"ncaab", "cfb"}
+RISK.update({"List 2x": "On trial: the list's picks, 1.15+", "List long": "On trial: the list's picks, any price"})
 def is_list(name): return str(name).startswith("List")
+def is_list_long(name): return str(name) == "List long"
+
+
+def list_tested(legs_):
+    """The chance a List group lands on the results ledger's own landed rates
+    by sport and price band (slip.band_rates, 50+ graded picks a band, else
+    the pooled band), beside the model's number; None when a leg's band is
+    untested. A tally, never a fit."""
+    try:
+        import slip as SL
+        rows = (SL._load(os.path.join(HERE, SL.LEDGER), {}) or {}).get("rows") or []
+        rates = SL.band_rates(rows)
+    except Exception:
+        return None
+    ch = 1.0
+    for l in legs_:
+        try:
+            import slip as SL
+            c, _, _ = SL.leg_chance(l.get("sport"), SL.band_of(l["odds"]), rates)
+        except Exception:
+            c = None
+        if c is None: return None
+        ch *= c
+    return round(ch, 4)
 
 def is_card(name): return str(name).startswith("Card")
 
@@ -2227,19 +2264,20 @@ def build_model_card(L, date, now, prev=None, archived=None):
         g["bookOdds"] = at_book(g); g["book"] = CARD_BOOK   # 9 Nov 2026: the paper card shows William Hill too
     return groups
 
-def list_group(L, used, after, name=LIST_KINDS[0][0], target=LIST_KINDS[0][1]):
-    """The List 2x from a day's legs: Daily List picks with a real bookmaker
-    price of LIST_ODDS_MIN+, not started, one a fixture, the model's strongest
-    first, taken until the combined price reaches the target. None when the
-    day's list cannot reach it in LIST_LEGS_MAX picks."""
-    cands = [as_model(l) for l in L if l.get("list") and not l.get("est") and l.get("odds") and l["odds"] >= LIST_ODDS_MIN
+def list_group(L, used, after, name=LIST_KINDS[0][0], target=LIST_KINDS[0][1], odds_min=LIST_ODDS_MIN, legs_max=LIST_LEGS_MAX):
+    """A List group from a day's legs: Daily List picks with a real bookmaker
+    price of odds_min+, not a college sport, not started, one a fixture, the
+    model's strongest first, taken until the combined price reaches the
+    target. None when the day's list cannot reach it in legs_max picks."""
+    cands = [as_model(l) for l in L if l.get("list") and not l.get("est") and l.get("odds") and l["odds"] >= odds_min
+             and l.get("sport") not in LIST_SPORTS_OFF
              and l["event"] not in used and (parse(l.get("when")) or after) >= after]
     cands.sort(key=lambda l: (-l["pModel"], -l["odds"], l.get("when") or "9"))
     legs_, seen, o = [], set(), 1.0
     for l in cands:
         if l["event"] in seen: continue
         legs_.append(dict(l)); seen.add(l["event"]); o *= l["odds"]
-        if o >= target or len(legs_) >= LIST_LEGS_MAX: break
+        if o >= target or len(legs_) >= legs_max: break
     if o < target: return None
     legs_.sort(key=lambda l: l.get("when") or "9")
     fair = [l.get("fair") for l in legs_]
@@ -2247,7 +2285,7 @@ def list_group(L, used, after, name=LIST_KINDS[0][0], target=LIST_KINDS[0][1]):
             "odds": round(o, 2), "p": round(math.prod(l["pModel"] for l in legs_), 4),
             "pFair": round(math.prod(fair), 4) if all(f is not None for f in fair) else None,
             "implied": round(math.prod(l.get("implied") or 1 / l["odds"] for l in legs_), 4),
-            "estimates": 0, "basis": "model", "rule": 1, "wide": False, "legs": legs_,
+            "estimates": 0, "basis": "model", "rule": 2, "wide": False, "legs": legs_, "tested": list_tested(legs_),
             "bestOdds": round(math.prod(max(l.get("best") or l["odds"], l["odds"]) for l in legs_), 2)}
 
 def build_list_card(L, date, now, prev=None, archived=None):
@@ -2270,10 +2308,14 @@ def build_list_card(L, date, now, prev=None, archived=None):
         groups.append(g); filled.add(g["name"])
     if now < window_end(date, w):
         day_legs = [l for l in L if (uk_slot(l) or (None, None))[0] == date]
-        for name, target in LIST_KINDS:
+        taken = set()
+        for name, target, odds_min, legs_max in LIST_KINDS:
             if name in filled: continue
-            g = list_group(day_legs, set(), after, name, target)
+            # the List long is built only when the 2x cannot be (the same picks would be in both)
+            if is_list_long(name) and any(not is_list_long(n) for n in filled): continue
+            g = list_group(day_legs, taken, after, name, target, odds_min, legs_max)
             if not g: continue
+            taken |= {l["event"] for l in g["legs"]}
             lock = first_kick(g) or lock_time(date, w)
             g.update(window=w, rank=w, seq=1, first=stamp, checked=stamp, lockAt=iso(lock), locked=False, late=False, status="new",
                      paper=True, bench=[], book=CARD_BOOK, stake=0)
@@ -3194,7 +3236,9 @@ def grade(now=None):
            # 31 Oct 2026: the Model card, the model's own picks on paper, its own line
            "cardModel": tally([g for g in allg if is_model(g["name"])]),
            # 16 Nov 2026: the List 2x, the Daily List's own picks on paper, its own line
-           "cardList": tally([g for g in allg if is_list(g["name"])]),
+           "cardList": tally([g for g in allg if is_list(g["name"]) and not is_list_long(g["name"])]),
+           # 17 Nov 2026: the List long, the same picks at any price to 2x, its own line
+           "cardListLong": tally([g for g in allg if is_list_long(g["name"])]),
            # 29 Oct 2026: each Card rule version on its own line, so a change to the
            # rule is judged against the rules before it rather than blended in.
            "cardByRule": {str(r): tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == r])

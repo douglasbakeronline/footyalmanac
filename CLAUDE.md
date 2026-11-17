@@ -185,6 +185,7 @@ How they fit this repo:
 | `claude/scale-every-bet-2026-11-16.md` | Every scale bet tracked across every sport (`scale_ladder.py`, the Scale tab's Every scale bet table): which bets, what the scores cannot settle, the first read (football win by 2+ 82% and tennis by 4+ games 84% at 85%+). Read before changing a Scale bet or quoting a scale rate. |
 | `claude/scale-estimated-prices-2026-11-15.md` | Estimated prices on the Scale tab where no feed prices a bet (`est_price`, `EST_MARGIN`, `estRet`): how they are worked, how they show, why an estimated return says the bets landed as often as their chance and not that a book would have paid it. Read before quoting a Scale return or changing a margin. |
 | `claude/card-m7opp-2026-11-15.md` | Rule 6's opposition condition was dropped with the switch to the model's picks (`model_fault` never read it); `CARD_MODEL_OPP_MIN` (empty live) and the pre-registered `m7opp9` / `m7opp5`; 5.0 ahead of live in all five football-data seasons (pooled 450 legs, +17.5% v +9.6%, p(worse) 0.014) and on the pool (33 legs, p 0.07): waits for 100 pool legs; 9+ builds almost nothing. Read before touching the opposition condition under rule 7+. |
+| `claude/list-card-2026-11-17.md` | The Daily List pattern review (lands as quoted in every cut, no cut beats the price) and the List card in the open: List 2x (1.15+, six) else List long (any price, ten), college out, Tested chance from the ledger, own record lines, the 30-group review rule. Read before touching `LIST_KINDS` or claiming a pattern in the list's winners. |
 | `claude/card-opp5-list2x-2026-11-16.md` | The Card's rule 12 (football opposition 5.0+, set live as the owner's call before its gate; pool +34% v rule 11's -4%) and the List 2x on paper (`build_list_card`, `cardList`): why the Daily List's success does not carry into groups. Read before touching `CARD_MODEL_OPP_MIN` or the List 2x. |
 | `claude/card-comp3-2026-11-16.md` | The two-picks-a-competition cap (`COMP_MAX` 2) on the model's-picks Card: NBA-only nights build nothing (16 Nov: four clear NBA picks, no group); `comp3` added to the football-data replay so the gate has both sides; identical to live on the settled pool so far. Read before touching `COMP_MAX`. |
 | `claude/qa-review-2026-11-16.md` | The QA review of the 15-16 Nov work: a frozen Scale group losing a leg (#347), ten releases untagged (#348), half-time scores only from 16 Nov (#349), the checks that passed, MLB K 3 on the grid's edge. Read before the next QA pass. |
@@ -572,9 +573,14 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   "Yes").** `CARD_MODEL_OPP_MIN` `{"football": 5.0}`, the pre-registered
   `m7opp5`, set live before its pool gate: football-data +17.5% v +9.6% on 450
   legs (p(worse) 0.014), pool +34% v rule 11's -4% (p(worse) 1.00, 14 days).
-  `m7noopp` replays rule 11. Beside it the **List 2x** on paper (`build_list_card`,
-  `cardList`): the Daily List's picks at 1.15+, strongest first, to 2x; read at
-  30 settled groups (`claude/card-opp5-list2x-2026-11-16.md`).
+  `m7noopp` replays rule 11. Beside it the **List card** (`build_list_card`; 17 Nov 2026 in the open on
+  the Bets tab, Douglas: "having no cards is awful"): the **List 2x**, the
+  Daily List's picks at 1.15+, strongest first, to 2x in six, else the **List
+  long**, any price to 2x in ten (`LIST_KINDS`, college sports out,
+  `LIST_SPORTS_OFF`), each with a Tested chance from the ledger's band rates
+  (`list_tested`), on their own record lines (`cardList`, `cardListLong`);
+  staked by Douglas, never pushed; read at 30 settled groups each
+  (`claude/card-opp5-list2x-2026-11-16.md`, `claude/list-card-2026-11-17.md`).
 - **No Reports page for the weekly PDF.** It adds nothing to the return;
   the Sunday email is the delivery.
 - **Opposition 9+ (rule 6) stays**: the one condition that holds in every
