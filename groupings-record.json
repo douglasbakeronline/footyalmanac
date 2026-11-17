@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-17T21:10:41Z",
+ "graded": "2026-11-17T23:32:30Z",
  "overall": {
   "groups": 135,
   "settled": 133,
@@ -7,8 +7,8 @@
   "z": -1.13,
   "lost": 94,
   "pending": 2,
-  "legs": 513,
-  "legsWon": 372,
+  "legs": 514,
+  "legsWon": 373,
   "returned": 113.74,
   "staked": 133,
   "returnedBest": 118.39,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 150,
    "shortened": 61,
-   "drifted": 56,
-   "mean": 0.0005
+   "drifted": 55,
+   "mean": 0.0006
   }
  },
  "cardLegsBySport": {
@@ -56,12 +56,12 @@
    "tripwire": false
   },
   "football": {
-   "legs": 36,
-   "landed": 25,
-   "expected": 24.48,
-   "rate": 0.6944,
-   "quoted": 0.6801,
-   "z": 0.19,
+   "legs": 37,
+   "landed": 26,
+   "expected": 25.12,
+   "rate": 0.7027,
+   "quoted": 0.6788,
+   "z": 0.31,
    "tripwire": false
   },
   "rugby": {
@@ -143,12 +143,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 39,
-   "won": 35,
-   "rate": 0.8974,
-   "quoted": 0.8869,
-   "returned": 37.47,
-   "ret": -0.0392
+   "n": 40,
+   "won": 36,
+   "rate": 0.9,
+   "quoted": 0.8866,
+   "returned": 38.49,
+   "ret": -0.0377
   },
   "notAtBook": {
    "n": 77,
@@ -207,12 +207,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 25,
-     "won": 22,
-     "rate": 0.88,
-     "quoted": 0.8988,
-     "returned": 23.1,
-     "ret": -0.076
+     "n": 26,
+     "won": 23,
+     "rate": 0.8846,
+     "quoted": 0.8979,
+     "returned": 24.12,
+     "ret": -0.0723
     },
     "notAtBook": {
      "n": 73,
@@ -465,8 +465,8 @@
    "z": -0.72,
    "lost": 23,
    "pending": 1,
-   "legs": 101,
-   "legsWon": 72,
+   "legs": 102,
+   "legsWon": 73,
    "returned": 25.35,
    "staked": 34,
    "returnedBest": 25.7,
@@ -479,8 +479,8 @@
    "clv": {
     "n": 79,
     "shortened": 26,
-    "drifted": 30,
-    "mean": -0.0042
+    "drifted": 29,
+    "mean": -0.004
    }
   },
   "Card 3x": {
@@ -782,8 +782,8 @@
   "z": -0.22,
   "lost": 27,
   "pending": 1,
-  "legs": 120,
-  "legsWon": 81,
+  "legs": 121,
+  "legsWon": 82,
   "returned": 36.21,
   "staked": 40,
   "returnedBest": 36.71,
@@ -796,8 +796,8 @@
   "clv": {
    "n": 93,
    "shortened": 33,
-   "drifted": 37,
-   "mean": -0.0026
+   "drifted": 36,
+   "mean": -0.0024
   }
  },
  "cardWide": {
@@ -974,7 +974,7 @@
    "n": 2,
    "shortened": 1,
    "drifted": 1,
-   "mean": -0.0192
+   "mean": -0.0122
   }
  },
  "cardListLong": {
@@ -1135,8 +1135,8 @@
    "z": null,
    "lost": 0,
    "pending": 1,
-   "legs": 0,
-   "legsWon": 0,
+   "legs": 1,
+   "legsWon": 1,
    "returned": 0,
    "staked": 0,
    "returnedBest": 0,
@@ -1149,8 +1149,8 @@
    "clv": {
     "n": 2,
     "shortened": 1,
-    "drifted": 1,
-    "mean": -0.0033
+    "drifted": 0,
+    "mean": 0.0041
    }
   }
  },
@@ -1162,8 +1162,8 @@
    "z": 0.16,
    "lost": 15,
    "pending": 1,
-   "legs": 71,
-   "legsWon": 52,
+   "legs": 72,
+   "legsWon": 53,
    "returned": 23.99,
    "staked": 24,
    "returnedBest": 24.27,
@@ -1176,8 +1176,8 @@
    "clv": {
     "n": 47,
     "shortened": 15,
-    "drifted": 19,
-    "mean": 0.0014
+    "drifted": 18,
+    "mean": 0.0017
    }
   },
   "Daytime": {
@@ -1306,9 +1306,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Tonbridge Angels",
@@ -1324,8 +1324,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6331,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-0",
        "opp": 3.65,
        "rule12Fault": null,
        "r12": false
@@ -1358,7 +1358,7 @@
        "when": "2026-11-18T04:00Z",
        "odds": 1.33,
        "best": 1.33,
-       "lastOdds": 1.35,
+       "lastOdds": 1.33,
        "lockOdds": 1.35,
        "lockBest": 1.35,
        "lockBook": null,
@@ -1444,7 +1444,7 @@
        "when": "2026-11-18T04:00Z",
        "odds": 1.26,
        "best": 1.26,
-       "lastOdds": 1.35,
+       "lastOdds": 1.33,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
