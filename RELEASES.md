@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-edge-retest: Edge over the price, fourth run, no edge (tag pending)
+
+**What changed:** nothing on the site. A dated note records the fourth run of the value test on a check season that has doubled.
+
+**Evidence:** football-data.co.uk prices, fit 2025-26 (12,510 legs), check 2026-27 (3,576). Legs the model rates 2 / 4 / 6 points above the bookmakers' fair chance land -1.8 / -2.1 / -1.5 below it on fit and -1.8 / -1.9 / -1.1 on check (bootstrap p(<=0) 0.76 to 1.00); no cut by price, side or band is positive on both seasons; the opposite control lands +2.3 / +2.8 above. Gates failed.
+
+**Files:** `claude/odds-edge-retest-2026-11-17.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** `MAX_ABOVE_BOOK`, the Card and group rules, every model.
+
+**Roll back:** `git revert` the merge; docs only.
+
 ## 2026-11-17-tennis-surface-4: tennis surface, fourth check, note only (tag pending)
 
 **What changed:** nothing a reader sees. A dated note records that the surface idea has no new evidence to test.
