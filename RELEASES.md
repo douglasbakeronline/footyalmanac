@@ -9,6 +9,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-17-opp-under6: Card legs with the opposition under 6, read against the seasons (tag pending)
+
+**What changed:** nothing on the page. A dated note records the check the planner asked for.
+
+**Evidence:** football-data legs (model 60%+, 1.15-1.90): opposition under 6 landed 64.5% v 64.4% modelled on 76 legs in 2025-26 (-4.3% at price) and 88.2% on 17 in 2026-27 (+29.8%). The live 18 of 21 matches the current season, not last season's; pooled 93 legs, +2.7%, signs opposite by season. Gates not met, no rule change; the Card does not read the opposition since rule 13. `claude/card-opp-under6-live-2026-11-17.md`.
+
+**Files:** `claude/card-opp-under6-live-2026-11-17.md`, this entry.
+
+**Not changed:** the Card's rule, `CARD_OPP_MIN`, `CARD_MODEL_OPP_MIN`, any model constant.
+
+**Roll back:** `git revert` the merge; docs only.
+
 ## 2026-11-17-band-50-55: Football 50-55% band over its quote: tested, rejected (tag pending)
 
 **What changed:** nothing on the site. A note only.
