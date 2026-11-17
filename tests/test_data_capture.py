@@ -84,6 +84,25 @@ class Periods(unittest.TestCase):
             # the look-back is now the season, and matching every miss again on each build is slow)
             self.assertEqual(periods.build(here, today=date(2026, 11, 16), cache_dir=cache)[0], 0)
 
+    def test_an_entry_whose_result_was_corrected_is_dropped_and_looked_for_again(self):
+        # 17 Nov 2026: Quindio v Real Cartagena was kept at 0-1 and later regraded 0-2.
+        with tempfile.TemporaryDirectory() as here:
+            cache = os.path.join(here, ".afcache"); os.makedirs(cache); os.makedirs(os.path.join(here, "periods"))
+            key = "en.1|2026-11-15|Arsenal|Leeds United"
+            json.dump({key: [0, 0, 0, 1, 1]}, open(os.path.join(here, "periods", "football-2026-11.json"), "w"))
+            json.dump({"graded": [{"league": "en.1", "date": "2026-11-15", "home": "Arsenal", "away": "Leeds United",
+                                   "result": [0, 2], "kickoff": "2026-11-15T15:00:00Z"}]}, open(os.path.join(here, "record-graded.json"), "w"))
+            periods.build(here, today=date(2026, 11, 16), cache_dir=cache)
+            self.assertEqual(periods.check(here), (0, 0))      # stale entry gone, no day file to replace it yet
+            row = sources._compact({"league": {"id": 39, "season": 2026}, "fixture": {"id": 1, "date": "2026-11-15T15:00:00+00:00", "status": {"short": "FT"}},
+                                    "teams": {"home": {"name": "Arsenal"}, "away": {"name": "Leeds United"}},
+                                    "score": {"fulltime": {"home": 0, "away": 2}, "halftime": {"home": 0, "away": 1}}})
+            with gzip.open(os.path.join(cache, "day-2026-11-15.json.gz"), "wt") as fh:
+                json.dump({"final": True, "rows": [row]}, fh)
+            periods.build(here, today=date(2026, 11, 16), cache_dir=cache)
+            kept = json.load(open(os.path.join(here, "periods", "football-2026-11.json")))
+            self.assertEqual(kept[key][:4], [0, 1, 0, 2])
+
     def test_a_day_without_half_time_on_file_is_not_tried_yet(self):
         with tempfile.TemporaryDirectory() as here:
             cache = os.path.join(here, ".afcache")

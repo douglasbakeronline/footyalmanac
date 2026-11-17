@@ -85,13 +85,24 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
     since = (today - timedelta(days=LOOKBACK)).isoformat()
     graded = [g for g in (_load(os.path.join(here, "record-graded.json"), {}) or {}).get("graded") or []
               if g.get("date", "") >= since and g.get("result")]
-    files, have = {}, set()
+    files, have, stale = {}, set(), set()
     for g in graded:
         path = os.path.join(here, "periods", f"football-{g['date'][:7]}.json")
         if path not in files:
             files[path] = _load(path, {}) or {}
-        if key_of(g) in files[path]:
+        kept = files[path].get(key_of(g))
+        if kept and list(kept[2:4]) == list(g["result"]):
             have.add(key_of(g))
+        elif kept:
+            # 17 Nov 2026: the result was corrected after the half time was kept (Quindio v Real Cartagena,
+            # kept at 0-1 and regraded 0-2). Drop the stale entry and look again; it comes back only when
+            # the day file's full time agrees with the record.
+            del files[path][key_of(g)]
+            stale.add(path)
+    for path in stale:              # written now, so a stale entry goes even when nothing new is found
+        with open(path + ".tmp", "w", encoding="utf-8") as f:
+            json.dump(dict(sorted(files[path].items())), f, separators=(",", ":"), ensure_ascii=False)
+        os.replace(path + ".tmp", path)
     mpath = os.path.join(here, "periods", MISSED)
     missed = {k: d for k, d in (_load(mpath, {}) or {}).items() if d >= since}
     want = [g for g in graded if key_of(g) not in have and key_of(g) not in missed]

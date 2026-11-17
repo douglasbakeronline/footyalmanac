@@ -8,6 +8,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-17-6: a half-time score is looked up again when its result is corrected (tag pending)
+
+**For a reader:** nothing visible. The QA follow-up on 17 Nov found the half-time backfill working (12,355 football fixtures kept, August and September still filling at 25 days a build) and one entry disagreeing with the record: Quindio v Real Cartagena was kept while both sources had it 0-1, and the result was later corrected to 0-2. `periods.py` never looked at a kept entry again. Now an entry whose full time no longer matches the graded result is dropped and looked up afresh; it comes back only when the day file agrees.
+
+**Files:** `periods.py`, `tests/test_data_capture.py`.
+
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-17-integrity-slim: the Card integrity check no longer crashes on the record's slim legs, reads every staked slip, and the review arrives in the morning (tag pending)
 
 **For a reader.** Nothing on the page. The nightly Card review's integrity check works again and now watches the Daily 2x, List 2x and List long as well as the Card; the review should post in the morning instead of around noon.
