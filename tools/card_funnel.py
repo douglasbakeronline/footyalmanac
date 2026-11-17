@@ -65,9 +65,11 @@ MODEL_RELIEF = {
     "price-range": {"CARD_ODDS": G.CARD_WIDE_ODDS},
     "sport-floor": {"CARD_SPORT_MIN": {}},
     "model-floor": {"CARD_FAIR_MIN": 0.55},
-    "no-value": {"CARD_MODEL_EDGE": -0.05},      # the model up to 5 points under the bookmakers
     "comp-cap": {"COMP_MAX": 3},
 }
+# The value demand (CARD_MODEL_EDGE) and its relief join only while the demand
+# is live (None since CARD_RULE 13, 17 Nov 2026), as MODEL_OPP_RELIEF does.
+MODEL_VALUE_RELIEF = {"no-value": {"CARD_MODEL_EDGE": -0.05}}      # the model up to 5 points under the bookmakers
 # 17 Nov 2026 (CARD_RULE 12): the opposition floor on football picks
 # (CARD_MODEL_OPP_MIN). Its relief joins only while the floor is live, as an
 # empty floor relaxes nothing.
@@ -119,10 +121,10 @@ def model_rule():
 def rule_sets():
     """(patterns, reliefs, table keys) for the Card rule that is live."""
     if model_rule():
-        relief = dict(MODEL_RELIEF)
-        if getattr(G, "CARD_MODEL_OPP_MIN", None):
-            relief = {k: v for k, v in relief.items() if k != "comp-cap"}
-            relief.update(MODEL_OPP_RELIEF); relief["comp-cap"] = MODEL_RELIEF["comp-cap"]
+        relief = {k: v for k, v in MODEL_RELIEF.items() if k != "comp-cap"}
+        if getattr(G, "CARD_MODEL_EDGE", None) is not None: relief.update(MODEL_VALUE_RELIEF)
+        if getattr(G, "CARD_MODEL_OPP_MIN", None): relief.update(MODEL_OPP_RELIEF)
+        relief["comp-cap"] = MODEL_RELIEF["comp-cap"]
         return MODEL_PATTERNS, relief, MODEL_KEYS
     return PATTERNS, RELIEF, KEYS
 

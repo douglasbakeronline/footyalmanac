@@ -7,6 +7,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-card-rule13: the Card on the model alone, rule 13 (tag pending)
+
+**For a reader.** The Card's picks are now chosen on the model's number alone. Until today a pick also had to be rated by the model at or above the bookmakers' chance (since 11 Nov) and, for football, have the opposition priced 5.0 or longer (since 16 Nov). Both conditions are off, at the owner's instruction (17 Nov 2026: "forget about comparison to bookies... let's just follow the model", then "just drop both of those"). The rule still needs a bookmaker price of 1.15 to 1.90 (so a 2x comes in three to five picks), the model at 60%+, tennis at 85%+, NFL and the college sports off. The rule text on the Bets tab and each group's footer say so from today, and the record tallies rule 13 on its own line.
+
+**Evidence.** None for the change; the record argued against it, and the note says so. On the pool (every sport, first real price, 30 Oct to 17 Nov) rule 13 builds 41 groups on 21 days, 17 won (41%), -4% at a flat stake; rule 12 on the same days 20 groups, 11 won (55%), +34%; paired by day rule 12 +0.79 units a day, p(worse) 0.09. The nearest football-data proxy (`m7under5`) was behind the value-demand Card in all five seasons. The estimate given to Douglas: about 40 to 45% of rule 13 groups won over a month, -5% to -10% on turnover, 90% band roughly -30% to +20%. `claude/card-rule13-model-only-2026-11-17.md`.
+
+**Files.** `groupings.py` (`CARD_MODEL_EDGE` None switches the value demand off, `CARD_MODEL_OPP_MIN` {}, `CARD_RULE` 13; `RULE12_PATCH`, `fault_under`, and each Card leg carries `rule12Fault`, rule 12's verdict, so the review can split the groups without a replay; `rules.card.modelEdge` / `modelOppMin` for the page), `index.html` (the rule copy reads them), `tools/card_replay.py` and `tools/card_legs_history.py` (`rule12` and `m7value` variants), `tools/card_funnel.py` (the `no-value` relief joins only while the demand is live, `MODEL_VALUE_RELIEF`), tests (`tests/test_card_rule13.py` new; four Card tests re-pinned to rule 13, the rule 12 behaviour kept under a patch).
+
+**Not changed.** The Daily 2x (the every-day slip, shipped earlier today), the List card, the slip, the Edge flag, the price band, the model's 60% floor, the tennis floor, the sports off, the context veto, two-day groups, `COMP_MAX`. No model input.
+
+**Roll back.** `git revert` this merge, or set `CARD_MODEL_EDGE = 0.0` and `CARD_MODEL_OPP_MIN = {"football": 5.0}` with `CARD_RULE` 14.
+
 ## 2026-11-17-daily-2x-rebuild: a short Daily 2x is rebuilt until it starts (tag pending)
 
 **For a reader.** A later day's 2x built before its prices are in (19 and 20 Nov were 1.64 and 1.44) now rebuilds on every build until it reaches 2x or starts; a slip at 2x is held as first built. **Files.** `groupings.py` (`build_list_card`), `tests/test_daily_2x.py`. **Roll back.** `git revert` this merge.

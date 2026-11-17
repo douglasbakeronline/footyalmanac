@@ -1602,7 +1602,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 12    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026)
+CARD_RULE = 13    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026); 13: no bookmaker condition, the model alone (17 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1622,7 +1622,15 @@ CARD_RULE = 12    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagu
 CARD_MODEL_RULE = True
 # The edge the model must have over the bookmakers' chance on a Card pick
 # under CARD_RULE 7 (0: at or above them). Variants m7edge* in card_replay.
-CARD_MODEL_EDGE = 0.0
+# 17 Nov 2026 (CARD_RULE 13), Douglas: "forget about comparison to bookies
+# ... let's just follow the model", then "just drop both of those": None
+# switches the value demand off, so a Card pick is chosen on the model's
+# number alone and the bookmakers' chance is never read. The owner's call
+# against the record (picks the model rates 5-10 points above the price's
+# chance landed 56%, -13.5% a leg; 10+ above 49%): the model's calibration
+# is trusted as a whole. Rule 12 is replayed as `rule12`; 0.0 restores it.
+# claude/card-rule13-model-only-2026-11-17.md.
+CARD_MODEL_EDGE = None
 # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md): the opposition's price as a
 # condition on the model's own picks. Rule 6's opposition 9+ is the one Card
 # condition that held in all five football-data seasons (511 legs, 83.8% v
@@ -1638,7 +1646,10 @@ CARD_MODEL_EDGE = 0.0
 # p(worse) 0.014, ahead in all five; the pool 33 legs, p 0.07. Rule 11 (no
 # opposition condition) is replayed as `m7noopp`; {} rolls it back.
 # claude/card-opp5-list2x-2026-11-16.md.
-CARD_MODEL_OPP_MIN = {"football": 5.0}
+# 17 Nov 2026 (CARD_RULE 13): emptied with CARD_MODEL_EDGE, Douglas's call
+# ("I'm obviously still going to win if we are high confidence"); the floor
+# lived one day. `rule12` replays it at 5.0.
+CARD_MODEL_OPP_MIN = {}
 # 11 Nov 2026 (CARD_RULE 8), Douglas: "Just do better on the groups." The
 # kinds the Card builds. Six pre-registered shapes of the rule 7 Card were
 # replayed (tools/card_replay.py m7*, tools/card_legs_history.py cardM7):
@@ -2019,13 +2030,26 @@ def model_fault(l):
     smin = CARD_SPORT_MIN.get(l.get("sport"))
     if smin and (l["pModel"] < smin or (l.get("hit") or 0) < smin): return f"{l['pick']}: a {l['sport']} pick needs {pct(smin)}+"
     if l["pModel"] < CARD_FAIR_MIN: return f"{l['pick']}: the model ({pct(l['pModel'])}) is under {pct(CARD_FAIR_MIN)}"
-    if l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
+    if CARD_MODEL_EDGE is not None and l.get("fair") is not None and l["pModel"] < l["fair"] + CARD_MODEL_EDGE:
         return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
     omin = CARD_MODEL_OPP_MIN.get(l.get("sport"))
     if omin:
         if not l.get("opp"): return f"{l['pick']}: no bookmaker price for the opposition"
         if l["opp"] < omin: return f"{l['pick']}: the opposition is priced {l['opp']:.2f}, under {omin:g}"
     return None
+
+# The Card's two bookmaker conditions as rule 12 ran them (16 Nov 2026), for
+# the leg's `rule12Fault` under rule 13 and the `rule12` replay variant.
+RULE12_PATCH = {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}}
+
+def fault_under(l, patch):
+    """model_fault's verdict on a leg with the module constants in `patch`
+    set for the call only (the live constants are restored whatever happens)."""
+    g = globals(); saved = {k: g[k] for k in patch}
+    try:
+        g.update(patch); return model_fault(l)
+    finally:
+        g.update(saved)
 
 def as_model(l):
     """A leg as the Model card carries it: its chance is the model's own."""
@@ -2070,6 +2094,11 @@ def best_card(L, used, after, name, wide=False, need=None):
     if not top: return None
     _, p, c, o = top
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
+    if CARD_MODEL_RULE and not wide and CARD_MODEL_EDGE is None:
+        # 17 Nov 2026 (CARD_RULE 13): what rule 12 would have said of each
+        # pick, kept on the leg so the review can split the groups without a
+        # replay (claude/card-rule13-model-only-2026-11-17.md)
+        for l in legs_: l["rule12Fault"] = fault_under(l, RULE12_PATCH)
     return {"name": name, "risk": "Wider rule" if wide else RISK.get(name), "band": [lo, hi], "minChance": MIN_CHANCE[name],
             "odds": round(o, 2), "p": round(p, 4), "implied": round(math.prod(l["implied"] for l in legs_), 4),
             "estimates": 0, "basis": "model" if is_model(name) or (CARD_MODEL_RULE and not wide) else "bookmakers",
@@ -3430,6 +3459,7 @@ def main():
                      "card": {"odds": list(CARD_ODDS), "fairMin": CARD_FAIR_MIN, "modelMin": MULT_MODEL_MIN, "book": CARD_BOOK, "bench": CARD_BENCH,
                               "coreOnly": CARD_CORE_ONLY, "coreNudge": CARD_CORE_NUDGE, "underMarket": CARD_UNDER_MARKET, "underMax": CARD_UNDER_MAX, "oppMin": CARD_OPP_MIN, "legs": list(CARD_LEGS), "floorZ": CARD_FLOOR_Z, "floorN": CARD_FLOOR_N,
                               "maxGroups": CARD_MAX_GROUPS, "stake": CARD_STAKE, "rule": CARD_RULE, "modelRule": CARD_MODEL_RULE, "build": list(CARD_BUILD),
+                              "modelEdge": CARD_MODEL_EDGE, "modelOppMin": CARD_MODEL_OPP_MIN,
                               "sportsOff": sorted(CARD_SPORTS_OFF), "sportMin": CARD_SPORT_MIN,
                               "wideOdds": list(CARD_WIDE_ODDS), "wideFairMin": CARD_WIDE_FAIR_MIN, "wideRule": CARD_WIDE_RULE, "filler": CARD_FILLER, "span": CARD_SPAN, "wideLegs": list(CARD_WIDE_LEGS),
                               "aboveBook": MULT_ABOVE_BOOK, "legs": list(CARD_LEGS), "context": CARD_CONTEXT,

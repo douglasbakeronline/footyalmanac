@@ -39,6 +39,8 @@ class OppositionRule12(unittest.TestCase):
     under 5" as other."""
     def setUp(self):
         p = mock.patch.object(G, "CARD_MODEL_OPP_MIN", {"football": 5.0}); p.start(); self.addCleanup(p.stop)
+        # 17 Nov 2026 (CARD_RULE 13) switched the value demand off too; these read rule 12
+        q = mock.patch.object(G, "CARD_MODEL_EDGE", 0.0); q.start(); self.addCleanup(q.stop)
 
     def key(self, l): return CF.fault_key(G.card_fault(l))
 
@@ -60,6 +62,10 @@ class OppositionRule12(unittest.TestCase):
 
 
 class ModelKeys(unittest.TestCase):
+    def setUp(self):
+        # 17 Nov 2026 (CARD_RULE 13) switched the value demand off; these keys read rule 11/12
+        q = mock.patch.object(G, "CARD_MODEL_EDGE", 0.0); q.start(); self.addCleanup(q.stop)
+
     def key(self, l): return CF.fault_key(G.card_fault(l))
 
     def test_every_model_fault_branch_has_its_own_key(self):
@@ -85,6 +91,9 @@ class ModelKeys(unittest.TestCase):
             self.assertIn("opposition", CF.leg_relief())
             self.assertEqual(list(CF.rule_sets()[1])[-1], "comp-cap")
         self.assertIn("no-value", CF.leg_relief())
+        with mock.patch.object(G, "CARD_MODEL_EDGE", None):      # rule 13: no value demand, no relief for it
+            self.assertNotIn("no-value", CF.leg_relief())
+            self.assertEqual(list(CF.rule_sets()[1])[-1], "comp-cap")
 
     def test_days_table_counts_every_2x(self):
         # nine clear legs at 1.30 from different competitions: three 2x groups (three legs each, 2.20)
@@ -102,7 +111,7 @@ class ModelKeys(unittest.TestCase):
         by = {DAY: [nba(1), dict(nba(2), pModel=0.69, fair=0.72)]}
         f = CF.funnel(by)
         self.assertEqual(f["sole"]["nba"], {"no-value": 1})
-        self.assertEqual(G.CARD_MODEL_EDGE, 0.0)   # restored
+        self.assertEqual(G.CARD_MODEL_EDGE, 0.0)   # restored (patched to rule 12 in setUp)
 
 
 class OppIntegrity(unittest.TestCase):
