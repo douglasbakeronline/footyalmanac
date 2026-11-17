@@ -7,6 +7,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-17-rule13-split: rule 13's groups split by what rule 12 would have said (tag pending)
+
+**For a reader.** Nothing on the page. The record now tells apart the Card groups rule 12 would also have built from those holding a pick only rule 13 (the model alone) admits, so the 30 Nov review can see what dropping the bookmaker conditions added, from the live record rather than only the replay.
+
+**Evidence.** None needed: a tally. Every rule 13 leg already carried `rule12Fault`; `grade()` dropped it. The split is empty until the first rule 13 group locks (17 Nov).
+
+**Files.** `groupings.py` (`rule12Fault` and `r12` on graded legs, `card_rule13_split`, `cardRule13Split` in `groupings-record.json`), `tools/card_review_post.py` (`rule13_split_section`), `tests/test_card_rule13_split.py`, `claude/card-rule13-split-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** Any Card rule or `CARD_RULE`; the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-card-rule13: the Card on the model alone, rule 13 (tag pending)
 
 **For a reader.** The Card's picks are now chosen on the model's number alone. Until today a pick also had to be rated by the model at or above the bookmakers' chance (since 11 Nov) and, for football, have the opposition priced 5.0 or longer (since 16 Nov). Both conditions are off, at the owner's instruction (17 Nov 2026: "forget about comparison to bookies... let's just follow the model", then "just drop both of those"). The rule still needs a bookmaker price of 1.15 to 1.90 (so a 2x comes in three to five picks), the model at 60%+, tennis at 85%+, NFL and the college sports off. The rule text on the Bets tab and each group's footer say so from today, and the record tallies rule 13 on its own line.
