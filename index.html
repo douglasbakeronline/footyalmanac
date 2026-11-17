@@ -1866,6 +1866,45 @@ footer b{color:var(--ink-2)}
    sat in half the space on desktop). Text blocks only; charts, tables, inputs and buttons keep theirs. */
 .lede,.m-lede,.prose,.note,.list-rule,.why,.og-mult-p,.hon-lede,.tr-lede,.sc-foot,.sc-empty,
 .steps,.cols,footer,.wrap .empty,.wrap p{max-width:100%}
+
+/* ---------- the Mailer tab (16 Nov 2026, from mailer.html) ---------- */
+.mailer{display:flex;flex-wrap:wrap;gap:24px;align-items:flex-start;margin-top:22px}
+.mailer-form{flex:999 1 520px;min-width:0;background:var(--surface);border:1px solid #100e0c;box-shadow:6px 6px 0 #100e0c;
+  padding:24px;display:flex;flex-direction:column;gap:22px}
+.mailer-side{flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:18px}
+.m-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute)}
+.mailer-form input[type=email]{width:100%;box-sizing:border-box;font-family:var(--f-num);font-size:16px;padding:12px 14px;
+  border:1px solid #100e0c;background:#fff;min-height:48px;margin-top:6px}
+.mailer-form input[type=email]:focus{outline:2px solid #100e0c;outline-offset:1px}
+.m-opt{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--rule-soft);min-height:44px;cursor:pointer}
+.m-opt:last-child{border-bottom:0}
+.m-opt input{width:20px;height:20px;margin:1px 0 0;accent-color:#100e0c;flex:0 0 auto}
+.m-opt small{display:block;font-size:13.5px;color:var(--ink-2);margin-top:2px;line-height:1.4}
+.m-opt em{font-style:normal;color:var(--mute)}
+.m-tag{font-family:var(--f-display);font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;padding:1px 6px;
+  background:var(--yellow-soft);border:1px solid var(--draw);margin-left:4px}
+.m-consent{border-top:1px solid #100e0c;padding-top:16px;display:flex;flex-direction:column;gap:12px}
+.m-consent .m-opt{border:0;padding:0}
+.m-submit{align-self:flex-start;font-family:var(--f-display);font-size:22px;letter-spacing:.08em;text-transform:uppercase;
+  border:1px solid #100e0c;padding:12px 24px;min-height:56px;cursor:pointer;background:var(--yellow);color:#100e0c;box-shadow:4px 4px 0 #100e0c}
+.m-submit[disabled]{background:var(--rule-soft);color:var(--mute);box-shadow:none;cursor:not-allowed}
+.m-fine{font-size:12.5px;color:var(--mute);line-height:1.5;margin:0}
+.m-msg{font-size:14px;padding:10px 12px;border-left:var(--rail) solid var(--away);background:var(--away-soft);color:#5e1e2e}
+.m-msg[hidden]{display:none}
+.m-done h2{font-family:var(--f-display);font-weight:400;font-size:34px;text-transform:uppercase;line-height:1;margin:12px 0 0}
+.m-done p{margin-top:10px;font-size:16px;line-height:1.5;color:var(--ink-2)}
+.m-badge{display:inline-block;background:var(--yellow);border:1px solid #100e0c;padding:2px 10px;font-family:var(--f-display);font-size:14px;
+  letter-spacing:.08em;text-transform:uppercase}
+.m-card{background:var(--surface);border:1px solid var(--rule);padding:18px}
+.m-card h3{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);margin:0}
+.m-card ol{margin:10px 0 0;padding-left:18px;font-size:14.5px;line-height:1.55;color:var(--ink-2)}
+.m-card p{margin-top:8px;font-size:14px;line-height:1.55;color:var(--ink-2)}
+.mailer [hidden]{display:none}
+.m-card a,.m-done a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:2px}
+.m-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
+.m-lede{margin-top:26px;max-width:92ch}
+.m-lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1;text-transform:uppercase;margin:4px 0 0}
+.m-lede p{margin-top:10px;font-size:17px;line-height:1.5;color:var(--ink-2)}
 </style>
 </head>
 <body>
@@ -1892,7 +1931,7 @@ footer b{color:var(--ink-2)}
    <button data-view="results" aria-pressed="false">How it went</button>
    <a class="hq-link" href="analysis.html" title="Almanac Analysis: the banding table, day-by-day results and how the model works">Analysis</a>
    <a class="hq-link" href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
-    <a href="mailer.html">Mailer</a>
+   <button data-view="mailer" aria-pressed="false">Mailer</button>
  </div>
  <div class="nav-sports">
    <button data-view="fixtures" aria-pressed="false">Football</button>
@@ -1955,6 +1994,60 @@ footer b{color:var(--ink-2)}
 <section id="tennis" hidden></section>
 <section id="sport" hidden></section>
 <section id="results" hidden></section>
+<!-- 16 Nov 2026, Douglas: the Mailer is a tab like the rest (same cover and bar; only this changes).
+     mailer.html now forwards here. -->
+<section id="mailer" hidden>
+<section class="m-lede">
+  <div class="m-label">The Mailer</div>
+  <h2>The Daily List, in your inbox</h2>
+  <p>The ten strongest picks from games UK bookies price, a suggested triple and, if you want it, the day's Scale bet. Sent at 20:00 the evening before, so the overnight US games are in it. Every pick is graded in public the morning after.</p>
+</section>
+
+<div class="mailer">
+  <form class="mailer-form" id="mailerForm" novalidate>
+    <div>
+      <label class="m-label" for="mEmail">Email address</label>
+      <input id="mEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+    </div>
+    <fieldset style="border:0;margin:0;padding:0">
+      <legend class="m-label" style="padding:0;margin-bottom:6px">What you get</legend>
+      <label class="m-opt"><input type="checkbox" name="daily" checked><span><b>The Daily List</b> <em>· every evening</em><small>The Top 10 and the suggested triple, with form, kick-off times and bookie prices.</small></span></label>
+      <label class="m-opt"><input type="checkbox" name="scale"><span><b>Scale</b><span class="m-tag">Beta</span><small>The day's bigger-odds bet, inside the daily email.</small></span></label>
+      <label class="m-opt"><input type="checkbox" name="sunday" checked><span><b>Sunday Record</b> <em>· once a week</em><small>How every pick went, and the ones you could bet at real prices.</small></span></label>
+    </fieldset>
+    <div class="m-hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
+    <div class="m-consent">
+      <label class="m-opt"><input type="checkbox" name="adult" id="mAdult"><span id="mConsentText"><b>I am 18 or over</b> and I'd like the Sports Almanac emails ticked above. I can unsubscribe from any email.</span></label>
+      <div class="m-msg" id="mMsg" role="alert" hidden></div>
+      <button class="m-submit" id="mSubmit" type="submit">Join the list</button>
+      <p class="m-fine">Your address is stored securely in London and used only to send the emails you choose. It is never sold or shared. Every email has a one-click unsubscribe.</p>
+    </div>
+  </form>
+
+  <section class="mailer-form m-done" id="mailerDone" hidden>
+    <span class="m-badge">You're on the list</span>
+    <h2>Thanks for joining</h2>
+    <p id="mDoneText">We'll email you to confirm your address before the first Daily List arrives. Nothing in your inbox? Look in Promotions or spam.</p>
+    <p><a href="./" data-goto="list">Back to today's Daily List</a></p>
+  </section>
+
+  <aside class="mailer-side">
+    <div class="m-card">
+      <h3>What a daily email holds</h3>
+      <ol>
+        <li>The Top 10, strongest first: kick-off, form, the model's chance and the best UK price.</li>
+        <li>A suggested triple: the three most likely picks paying ×1.30 or more together.</li>
+        <li>The Scale bet, if you've chosen it: the same winners with a second condition, for bigger odds.</li>
+        <li>The last three days of the Daily List, every pick and how it went.</li>
+      </ol>
+    </div>
+    <div class="m-card">
+      <h3>Honest numbers</h3>
+      <p>Short prices land often and pay little, and a high hit rate is not the same as a profit. Every pick is graded the morning after on <a href="./#results" data-goto="results">How it went</a>, losses included.</p>
+    </div>
+  </aside>
+</div>
+</section>
 
 <footer id="footer"></footer>
 <aside class="rg" aria-label="Gambling responsibly">
@@ -6111,6 +6204,7 @@ $("#views").addEventListener("click", e=>{
   $("#list").hidden = !list;
   $("#today").hidden = !today;
   $("#scale").hidden = v !== "scale";
+  $("#mailer").hidden = v !== "mailer";
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
@@ -6136,6 +6230,41 @@ $("#footer").innerHTML = `
   WTA; tennis history from Jeff Sackmann's archive.</p>
   <p>This is a model, not a tip sheet. It is the model's own independent read; the betting market
   sees team news it does not, and on average prices matches better.</p>`;
+
+// 16 Nov 2026: the Mailer tab's links back into the page
+document.querySelectorAll("#mailer [data-goto]").forEach(a => a.onclick = e => { e.preventDefault();
+  const b = $(`#views button[data-view="${a.dataset.goto}"]`); if(b) b.click(); });
+/* 16 Nov 2026: sign-ups go to Supabase through one function, almanac_subscribe.
+   The publishable key can call that function and nothing else (the table sits in
+   a schema the API does not expose). Double opt-in: rows start "pending" until the
+   reader confirms from the email. */
+(() => {
+  const URL_ = "https://nangcsyicqfvfawyvkus.supabase.co/rest/v1/rpc/almanac_subscribe";
+  const KEY = "sb_publishable_aNDvbiKjeNgZx9iIg75tZw_vQDmP28F";
+  const f = document.getElementById("mailerForm"), msg = document.getElementById("mMsg"), btn = document.getElementById("mSubmit");
+  const show = t => { msg.textContent = t; msg.hidden = !t; };
+  f.addEventListener("submit", async e => {
+    e.preventDefault(); show("");
+    const email = f.email.value.trim();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return show("That email address doesn't look right.");
+    if (!f.adult.checked) return show("Please confirm you're 18 or over.");
+    if (!f.daily.checked && !f.scale.checked && !f.sunday.checked) return show("Choose at least one email.");
+    btn.disabled = true; btn.textContent = "Joining…";
+    try {
+      const r = await fetch(URL_, { method: "POST", headers: { "Content-Type": "application/json", "apikey": KEY },
+        body: JSON.stringify({ p: { email, daily: f.daily.checked, scale: f.scale.checked, sunday: f.sunday.checked,
+          adult: true, consent: document.getElementById("mConsentText").textContent.trim(), website: f.website.value,
+          source: "mailer" } }) });
+      if (!r.ok) throw new Error(String(r.status));
+      try { (window.dataLayer = window.dataLayer || []).push({ event: "mailer_signup" }); } catch (err) {}
+      f.hidden = true; document.getElementById("mailerDone").hidden = false;
+      window.scrollTo({ top: document.getElementById("mailerDone").getBoundingClientRect().top + scrollY - 120, behavior: "smooth" });
+    } catch (err) {
+      show("Sorry, that didn't go through. Please try again in a minute.");
+      btn.disabled = false; btn.textContent = "Join the list";
+    }
+  });
+})();
 
 render();
 updateReadbar();
