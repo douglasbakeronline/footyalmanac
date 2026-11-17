@@ -9,6 +9,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-fd-span: the football-data Card replay builds two-day groups, like the page (tag pending)
+
+**For a reader.** Nothing on the page. The football-data side of the Card's gate now replays the Card the page builds, two-day groups included, as the pool side has since earlier today; both sides of the gate read the same live.
+
+**Evidence.** Five football-data seasons (CI run 44128924620): live 476 groups, return 0.950 v day by day (`nospan`) 391 groups, 0.933; two-day groups ahead in four seasons of five. Against the spanning live no variant passes the gate; `rule12` pooled 1.026 (+0.14 a day, p(worse) 0.11) but behind on 2026-27 and the pool. `claude/card-legs-history-span-2026-11-17.md`.
+
+**Files.** `tools/card_legs_history.py` (`card_season` uses `card_replay.spans` / `build_span`; `nospan` in `cardM7`), `tests/test_card_legs_history_span.py`, `tests/test_card_comp3.py` (source check loosened), `claude/card-legs-history-span-2026-11-17.md`, `claude/card-replay-live-span-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** Any Card rule or `CARD_RULE`; the pool replay; the record; the page.
+
+**Roll back.** `git revert` this merge.
 
 ## 2026-11-17-card-book-reread: Which book to write the Card for, re-read (tag pending)
 

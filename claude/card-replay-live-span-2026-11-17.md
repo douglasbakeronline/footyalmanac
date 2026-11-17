@@ -52,10 +52,9 @@ live (rule 13) +0.6 to +1.1 units a day ahead, p(worse) for rule 12 0.84 to
 
 ## Limits
 
-- The football-data seasons (`tools/card_legs_history.py`) still build day
-  by day, so their `live` has no two-day groups; the pool side of the gate
-  now does. A variant paired on both reads a slightly different live on
-  each.
+- The football-data seasons (`tools/card_legs_history.py`) built day by
+  day until later the same day; they span now too
+  (`claude/card-legs-history-span-2026-11-17.md`).
 - The pool has no prices kept for legs first written as estimates before
   10 Nov; the replay rebuilds 25 to 26 of the record's 26 groups.
 
