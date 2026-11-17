@@ -331,10 +331,14 @@ VARIANTS = {
     # its most likely combination in the band, up to three a day, two units a
     # group like the 2x), and the ladder in his order, one group a band.
     **{v: payout_patch(kinds) for v, kinds in PAYOUTS.items()},
-    # 12 Nov 2026 (groupings.CARD_SPAN, claude/card-span-2026-11-12.md): live,
-    # and a day live leaves empty borrows the next day's legs (one group, at
-    # least one of the day's own picks); the next day never reuses them
-    "span2": {"_SPAN": True},
+    # 12 Nov 2026 (groupings.CARD_SPAN, claude/card-span-2026-11-12.md): a day
+    # the full rule leaves empty borrows the next day's legs (one group, at
+    # least one of the day's own picks); the next day never reuses them. Live
+    # since 12 Nov, but until 17 Nov the replay's "live" built without it and
+    # this ran as span2; now every live-machinery variant spans while
+    # CARD_SPAN is on (`spans`), and nospan replays the rollback
+    # (claude/card-replay-live-span-2026-11-17.md).
+    "nospan": {"_SPAN": False},
     # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md), pre-registered before any
     # result: the rule 11 Card with rule 6's opposition condition on its
     # football picks (groupings.CARD_MODEL_OPP_MIN). 9+ is rule 6's floor, the
@@ -388,26 +392,59 @@ def build_wide(day_legs, date):
     return groups
 
 
-def build_span(by, dates):
-    """12 Nov 2026: live, and each day live leaves empty takes one group from
-    its own legs and the next day's (at least one of its own), the way
-    groupings.build_card does under CARD_SPAN. Days in order; legs a two-day
-    group holds are not used again the next day."""
+def spans(variant):
+    """17 Nov 2026: whether a variant is built with two-day groups. Every
+    variant on the live machinery spans while groupings.CARD_SPAN is live
+    (it is part of the live Card since 12 Nov), unless it sets `_SPAN`
+    itself (nospan). The rule 6 family is pinned to how rule 6 ran (no
+    two-day groups then) and the paper Model card never had them."""
+    patch = patch_of(variant)
+    if "_SPAN" in patch: return bool(patch["_SPAN"])
+    if variant in RULE6_FAMILY or patch.get("_KINDS") == "model": return False
+    return bool(G.CARD_SPAN)
+
+
+def _patched(patch):
+    """Set a variant's constants on groupings; returns the saved values."""
+    saved = {k: getattr(G, k) for k in patch if hasattr(G, k) and not k.startswith("_")}
+    for k, v in patch.items():
+        if k != "CARD_LEGS_3X" and not k.startswith("_"): setattr(G, k, v)
+    return saved
+
+
+def build_span(by, dates, variant="live"):
+    """12 Nov 2026: a variant's Card, and each day it leaves empty takes one
+    group from its own legs and the next day's (at least one of its own), the
+    way groupings.build_card does under CARD_SPAN, under the variant's own
+    constants. Days in order; legs a two-day group holds are not used again
+    the next day. A filler variant (`_FILL`) spans on live's rule first and
+    fills only a day still empty, as the page would with both on."""
     from datetime import date as _date, timedelta as _td
+    patch = patch_of(variant)
+    fill = patch.get("_FILL")
+    base = "live" if fill else variant
+    rule = {} if fill else patch
     out, held = {}, set()
     for d in dates:
         own = [l for l in by[d] if l["event"] not in held]
-        gs = build(own, d, "live")
+        gs = build(own, d, base)
         if not gs:
             nd = (_date.fromisoformat(d) + _td(days=1)).isoformat()
-            after = G.lock_time(d, "Day")
-            for name, _, _, _ in G.built_kinds():
-                mine = {o["event"] for o in own}
-                g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name,
-                                need=lambda l: l["event"] in mine)
-                if not g or not any(l["event"] in mine for l in g["legs"]): continue
-                g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1; g["span"] = True
-                held |= {l["event"] for l in g["legs"]}; gs = [g]; break
+            mine = {o["event"] for o in own}
+            saved = _patched(rule)
+            try:
+                after = G.lock_time(d, "Day")
+                for name, _, _, _ in G.built_kinds():
+                    g = G.best_card(own + [l for l in by.get(nd, []) if l["event"] not in held], set(), after, name,
+                                    need=lambda l: l["event"] in mine)
+                    if not g or not any(l["event"] in mine for l in g["legs"]): continue
+                    g["won"] = all(l["won"] for l in g["legs"]); g["stake"] = G.CARD_STAKE.get(name, 1); g["seq"] = 1; g["span"] = True
+                    held |= {l["event"] for l in g["legs"]}; gs = [g]; break
+            finally:
+                for k, v in saved.items(): setattr(G, k, v)
+        if not gs and fill:
+            gs = build_wide(own, d) if fill == "wide" else build(own, d, fill)
+            for g in gs: g["fill"] = True
         out[d] = gs
     return out
 
@@ -513,7 +550,7 @@ def main():
                        "source": {"pool": use_pool, "poolFrom": POOL_FROM if use_pool else None, "closing": closing, "recover": recover,
                                   "poolLegs": dict(sports) if use_pool else None, "poolLeftOut": skipped if use_pool else None}}
     for v in VARIANTS:
-        if VARIANTS[v].get("_SPAN"): days = build_span(by, dates)
+        if spans(v): days = build_span(by, dates, v)
         else: days = {d: build(by[d], d, v) for d in dates}
         days = {d: g for d, g in days.items() if g}
         out[v] = days

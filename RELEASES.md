@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-replay-span: the Card replay's live builds two-day groups, like the page (tag pending)
+
+**For a reader.** Nothing on the page. The nightly Card review's `live` row is the Card the page builds again: since 12 Nov the page has made two-day groups (`CARD_SPAN`), but the replay built `live` day by day and ran the two-day Card as a variant (`span2`), so every variant was paired against a Card nobody runs.
+
+**Evidence.** Pool, 29 Oct to 18 Nov: live 25 groups, 11 won, +0.5% becomes 26, 13, +15.0% (the old `span2`). `m7under5` (+0.50 a day, p(worse) 0.00 before) and `tennis75` drop off the watch list (-0.17, 0.59 and +0.08, 0.48); `pay3` stays ahead on 88 legs; `rule12` reads -1.09 a day v live (p(worse) 0.90). `claude/card-replay-live-span-2026-11-17.md`.
+
+**Files.** `tools/card_replay.py` (`spans`, `build_span` under a variant's constants, `nospan` replaces `span2`), `tests/test_card_replay_live_span.py`, `groupings.py` (comment only), `claude/card-replay-live-span-2026-11-17.md`, `CLAUDE.md`.
+
+**Not changed.** Any Card rule or `CARD_RULE`; the football-data replay (still day by day); the record; the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-6: a half-time score is looked up again when its result is corrected (tag pending)
 
 **For a reader:** nothing visible. The QA follow-up on 17 Nov found the half-time backfill working (12,355 football fixtures kept, August and September still filling at 25 days a build) and one entry disagreeing with the record: Quindio v Real Cartagena was kept while both sources had it 0-1, and the result was later corrected to 0-2. `periods.py` never looked at a kept entry again. Now an entry whose full time no longer matches the graded result is dropped and looked up afresh; it comes back only when the day file agrees.

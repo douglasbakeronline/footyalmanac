@@ -1874,8 +1874,9 @@ CARD_FILLER = False
 # at most, the context check. It is the first day's group (archived and
 # graded there), open until its first start like any other, and the next
 # day's picks it takes are not used again on that day's own Card. Marked
-# `span` and tallied apart (`cardSpan`). The owner's call; `span2` replays it.
-# claude/card-span-2026-11-12.md.
+# `span` and tallied apart (`cardSpan`). The owner's call; tools/card_replay.py's
+# live spans too since 17 Nov 2026 and `nospan` replays the rollback.
+# claude/card-span-2026-11-12.md, claude/card-replay-live-span-2026-11-17.md.
 CARD_SPAN = True
 # 11 Nov 2026, Douglas: "with added human contextual review it does much
 # better. I need the groups to have the same contextual reading ... I want
