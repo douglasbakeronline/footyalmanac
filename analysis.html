@@ -53,6 +53,7 @@
      favours, the jacket grey for the draw, the banner red for the side it
      expects to lose. Position still says which side is home. */
   --ink:#1a1511;
+  --edge:#1c6b3a;
   --ink-2:#4b4038;
   --mute:#6e6355;        /* 4.8:1 on paper; was #867a6b at 3.4:1, too faint for small labels */
   --mute-ink:#6e6355;
@@ -429,6 +430,42 @@ footer b{color:var(--ink-2)}
    sat in half the space on desktop). Text blocks only; charts, tables, inputs and buttons keep theirs. */
 .lede,.m-lede,.prose,.note,.list-rule,.why,.og-mult-p,.hon-lede,.tr-lede,.sc-foot,.sc-empty,
 .steps,.cols,footer,.wrap .empty,.wrap p{max-width:100%}
+
+/* About the Sports Almanac (17 Nov 2026, Douglas): what the site is, the three
+   ways to use it and their risk, each with the last seven days and today. */
+.about{margin-top:18px}
+.about>h2{font-family:var(--f-display);font-weight:400;font-size:clamp(22px,2.6vw,30px);text-transform:uppercase;letter-spacing:.01em}
+.ab-lead{margin-top:6px;font-size:15px;line-height:1.55;color:var(--ink-2);max-width:100%}
+.ab-lead b{color:var(--ink)}
+.ab-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:12px}
+.ab-grid .card{margin-top:0}
+.about h3{font-family:var(--f-ui);font-size:11px;font-weight:700;letter-spacing:.11em;text-transform:uppercase;color:var(--mute);margin-bottom:6px}
+.ab-grid p,.ab-prod p{font-size:14px;line-height:1.55;color:var(--ink-2)}
+.ab-risk{margin-top:14px;padding:10px 14px;border-left:4px solid var(--away);background:var(--away-soft);font-size:14px;line-height:1.5;color:#4a1a12}
+.ab-prod{margin-top:14px;padding:12px 14px;background:var(--surface);border:1px solid var(--rule)}
+.ab-head{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.ab-head h3{margin:0;color:var(--ink);font-size:12px}
+.ab-chip{font-family:var(--f-ui);font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:2px 7px;border:1px solid}
+.ab-chip.r1{color:#8a6a10;border-color:#c9a64a;background:#fbf1d6}
+.ab-chip.r2{color:#9a4a12;border-color:#d79a6a;background:#fbe6d6}
+.ab-chip.r3{color:#fff;border-color:var(--away);background:var(--away)}
+.ab-strip{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:6px;margin-top:10px}
+.ab-day{border:1px solid var(--rule);background:var(--paper);padding:6px 7px 7px;min-width:0}
+.ab-day.today{border-color:var(--ink);background:#fff}
+.ab-day .d{font-family:var(--f-ui);font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);white-space:nowrap}
+.ab-day.today .d{color:var(--ink)}
+.ab-day .n{font-family:var(--f-num);font-size:14px;font-weight:600;color:var(--ink);margin-top:2px;white-space:nowrap}
+.ab-day .n small{font-size:10.5px;color:var(--mute);font-weight:400}
+.ab-bar{display:flex;height:5px;margin-top:5px;background:var(--rule-soft)}
+.ab-bar i{display:block;height:100%}
+.ab-bar .w,.ab-key .w{background:var(--edge,#1c6b3a)}
+.ab-bar .l,.ab-key .l{background:var(--away)}
+.ab-bar .p,.ab-key .p{background:var(--rule)}
+.ab-none{grid-column:1/-1;font-size:13px;color:var(--mute)}
+.ab-key{margin-top:8px;font-size:12px;color:var(--mute)}
+.ab-key i{display:inline-block;width:10px;height:10px;margin:0 4px -1px 10px}
+.ab-key i:first-child{margin-left:0}
+@media (max-width:860px){ .ab-grid{grid-template-columns:1fr} .ab-strip{grid-template-columns:repeat(4,minmax(0,1fr))} }
 </style>
 <style>
 /* ---------- Almanac Analysis (6 Oct 2026) ----------
@@ -547,7 +584,6 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
    <a href="./#starred">Starred</a>
    <a href="./#results">How it went</a>
    <span class="nav-on" aria-current="page">Analysis</span>
-   <a href="https://douglasbakeronline.github.io/footyalmanac-hq/" title="FootyAlmanac HQ: the agent office, daily briefings and accountability">HQ</a>
     <a href="./#mailer">Mailer</a>
  </div>
  <div class="nav-sports">
@@ -576,11 +612,86 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 </script>
 <div class="note" id="note"></div>
 
+<section class="about" id="about">
+  <h2>About the Sports Almanac</h2>
+  <p class="ab-lead">The Sports Almanac reads every game it can price and asks one question: <b>which results are most likely to go as expected?</b> It ranks the day so the most predictable games sit at the top, says plainly when a call is weak, publishes every number before the start and grades itself in public afterwards.</p>
+  <div class="ab-grid">
+    <div class="card"><h3>The sports</h3><p>Football across more than 70 leagues and cups, tennis on both tours, the NBA and college basketball, the NFL and college football, rugby union and league, and the NHL.</p></div>
+    <div class="card"><h3>How a call is made</h3><p>Football rates every side's attack and defence and prices every scoreline. The other sports use ratings that rise and fall with each result, with home advantage and the margin of victory. No bookmaker price goes into any prediction.</p></div>
+    <div class="card"><h3>How it is checked</h3><p>A level of confidence only earns a place once calls at that level landed in testing on games the model never saw. Every pick is archived before the start and graded after it, and nothing is ever tuned on the live record.</p></div>
+  </div>
+
+  <div class="ab-risk"><b>Every prediction can lose.</b> The results so far are promising, but the model is in beta: it gets games wrong, sometimes several in a day, and none of it is a promise. Bet only what you can afford to lose.</div>
+
+  <div class="ab-prod" id="ab-list">
+    <div class="ab-head"><h3>The Daily List</h3><span class="ab-chip r1">Risky</span></div>
+    <p>The strongest single picks of the day across every sport: only levels of confidence that landed at least four times in five in testing. Roughly one pick in five or six still misses.</p>
+    <div class="ab-strip" aria-label="The Daily List, the last seven days and today"></div>
+  </div>
+  <div class="ab-prod" id="ab-card">
+    <div class="ab-head"><h3>Bets: the Card</h3><span class="ab-chip r2">Riskier</span></div>
+    <p>Three to five of the model's picks combined into one bet paying about twice the stake. Every pick has to land, so one miss loses the lot, and some days build no group at all. On trial.</p>
+    <div class="ab-strip" aria-label="The Card, the last seven days and today"></div>
+  </div>
+  <div class="ab-prod" id="ab-scale">
+    <div class="ab-head"><h3>Scale</h3><span class="ab-chip r3">Riskiest</span></div>
+    <p>The model's winners with a second condition for bigger odds: to win with over 2.5 goals in football, in straight sets in tennis, by a margin in the US sports and rugby. Bigger prices because they lose far more often. The highest risk on the site.</p>
+    <div class="ab-strip" aria-label="Scale, the last seven days and today"></div>
+  </div>
+  <p class="ab-key"><i class="w"></i>won <i class="l"></i>lost <i class="p"></i>to come or not yet graded. Each tile is one day: the Daily List and Scale count picks, the Card counts groups.</p>
+</section>
+
+<script src="daylist.js"></script>
+<script src="groupings-data.js"></script>
+<script src="scale.js"></script>
+<script>
+/* About strips: the last seven days and today for the Daily List (daylist.js),
+   the Card (groupings-data.js, record days, Card groups only, the wider-rule
+   filler left out) and Scale (scale.js glance). Display only. */
+(() => {
+  const ukDay = () => new Date().toLocaleDateString("en-CA", {timeZone: "Europe/London"});
+  const today = ukDay();
+  const add = (iso, k) => { const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + k); return d.toISOString().slice(0, 10); };
+  const days = Array.from({length: 8}, (_, i) => add(today, i - 7));
+  const label = iso => iso === today ? "Today" : new Date(iso + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", day: "numeric", timeZone: "UTC"});
+  const tile = (iso, c) => {
+    const tot = c.won + c.lost + c.open;
+    if(!tot) return `<div class="ab-day${iso === today ? " today" : ""}"><div class="d">${label(iso)}</div><div class="n"><small>none</small></div><div class="ab-bar"></div></div>`;
+    const w = 100 * c.won / tot, l = 100 * c.lost / tot;
+    const settled = c.won + c.lost;
+    const n = settled ? `${c.won}/${settled}` : `${c.open}<small> to come</small>`;
+    const extra = settled && c.open ? ` <small>+${c.open}</small>` : "";
+    return `<div class="ab-day${iso === today ? " today" : ""}" title="${label(iso)}: ${c.won} won, ${c.lost} lost${c.open ? `, ${c.open} to come or not yet graded` : ""}"><div class="d">${label(iso)}</div><div class="n">${n}${extra}</div><div class="ab-bar"><i class="w" style="width:${w.toFixed(1)}%"></i><i class="l" style="width:${l.toFixed(1)}%"></i><i class="p" style="flex:1"></i></div></div>`;
+  };
+  const count = states => states.reduce((c, s) => (s === "won" ? c.won++ : s === "lost" ? c.lost++ : s === "void" ? 0 : c.open++, c), {won: 0, lost: 0, open: 0});
+  const draw = (id, byDay) => {
+    const el = document.querySelector(`#${id} .ab-strip`);
+    if(!el) return;
+    if(!byDay) { el.innerHTML = `<div class="ab-none">Not available right now; it fills in on the next build.</div>`; return; }
+    el.innerHTML = days.map(d => tile(d, count(byDay[d] || []))).join("");
+  };
+  try {
+    const DL = window.__DAY_LIST__, m = {};
+    if(DL) { (DL.past || []).forEach(p => m[p.date] = (p.list || []).map(g => g.status)); if(DL.date) m[DL.date] = (DL.list || []).map(g => g.status); }
+    draw("ab-list", DL ? m : null);
+  } catch(e) { draw("ab-list", null); }
+  try {
+    const R = window.__GROUPINGS__ && window.__GROUPINGS__.record, m = {};
+    (R && R.days || []).forEach(d => m[d.date] = (d.groups || []).filter(g => /^Card/.test(g.name || "") && !g.wide).map(g => g.status === "pending" ? "open" : g.status));
+    draw("ab-card", R ? m : null);
+  } catch(e) { draw("ab-card", null); }
+  try {
+    const S = window.__SCALE__, m = {};
+    (S && S.glance || []).forEach(g => m[g.date] = (g.dots || []).map(d => d.state));
+    draw("ab-scale", S ? m : null);
+  } catch(e) { draw("ab-scale", null); }
+})();
+</script>
 <section class="lede">
   <h2>Clear numbers, plainly graded</h2>
   <p>Every football game the Almanac prices gets a chance for a home win, a draw and an away win. The biggest of the three is the <b>top pick</b>, and its chance is the <b>confidence</b>. This page puts the two side by side: what the model said before kick-off, and what happened. If calls quoted at 70% land about 70% of the time, the numbers can be trusted at face value. If they don't, this is where it shows.</p>
-  <p style="font-size:13px;color:var(--mute,#6e6355)">Updated 15 November 2026. The tables below are live from the record; the prose describes the model as it stands on that date (the <a href="https://github.com/douglasbakeronline/footyalmanac/blob/main/RELEASES.md">release log</a> has every change since).</p>
-  <div class="toc"><a href="#bands">The banding table</a><a href="#chart">Quoted against landed</a><a href="#days">Day by day</a><a href="#how">How a prediction is made</a><a href="#why">Why it works this way</a><a href="#grading">How it is graded</a><a href="#limits">What it cannot see</a></div>
+  <p style="font-size:13px;color:var(--mute,#6e6355)">Updated 17 November 2026. The tables below are live from the record; the prose describes the model as it stands on that date.</p>
+  <div class="toc"><a href="#about">About</a><a href="#bands">The banding table</a><a href="#chart">Quoted against landed</a><a href="#days">Day by day</a><a href="#how">How a prediction is made</a><a href="#why">Why it works this way</a><a href="#grading">How it is graded</a><a href="#limits">What it cannot see</a></div>
 </section>
 
 <h2 class="sect" id="bands">The banding table, 50% to 100%</h2>
@@ -622,7 +733,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 <details class="more" id="daymore" hidden><summary>Show every day</summary></details>
 
 <h2 class="sect" id="how">How a prediction is made</h2>
-<div class="prose"><p>Football runs through one engine, <code>engine.py</code>, in seven stages. Nothing here is a black box: each number on a fixture row comes from a function you can read, and the settings below are read from the live build, not typed in.</p></div>
+<div class="prose"><p>Football runs through one model in seven stages. Nothing here is a black box: each number on a fixture row comes from the steps below, and the settings shown are read from the live build, not typed in.</p></div>
 <div class="steps" id="steps"></div>
 
 <h2 class="sect" id="why">Why it works this way</h2>
@@ -657,7 +768,7 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 <div class="prose">
   <p><b>Team news.</b> Injuries, rotation, a new manager or a side with nothing to play for are not in the data. That is most of what a person adds when checking a game by hand, and most of the remaining misses.</p>
   <p><b>Blind spots, flagged rather than hidden.</b> Promoted sides, unrated clubs, cross-division cup ties, clubs with no prior season and leagues whose results are running late are flagged (Celtic's Law) and dropped a confidence tier. They never make the Daily List.</p>
-  <p><b>The other sports have their own blind spots.</b> College basketball and college football carry much of last season's rating into a new roster. In testing, home college picks land above their quote and away or neutral-court picks do not, so those are marked Away or Neutral on their rows; college football is off the Daily List on its live record, college basketball is on it at 85% and over. Tennis is on the list at 75% on both tours; the ratings know hard courts best.</p>
+  <p><b>The other sports have their own blind spots.</b> College basketball and college football carry much of last season's rating into a new roster. In testing, home college picks land above their quote and away or neutral-court picks do not, so those are marked Away or Neutral on their rows. Early in the season a college basketball side with a losing record is marked Behind .500: its rating is still carrying last season's team, and in testing those picks landed about 75% against 80% quoted. College football is off the Daily List on its live record; college basketball is on it at 85% and over. Tennis is on the list at 75% on both tours; the ratings know hard courts best.</p>
   <p><b>Small samples at the top.</b> Calls at 85% and above are rare, so one or two results move a band by ten points or more. Read those rows as direction, not proof.</p>
   <p><b>Roughly one Daily List pick in five or six still misses.</b> That is sport, and a higher bar does not remove it.</p>
 </div>
@@ -897,7 +1008,7 @@ function renderSteps(R){
   const M = R.model || {}, C = M.calibration || {}, Li = M.list || {};
   const n2 = v => v == null ? "—" : String(+v);
   const steps = [
-    ["Collect the results", `Every morning at 05:15 UTC, and again through the day as games finish, the build reads completed results and upcoming fixtures for <b>${M.leagues || "70+"} competitions</b> from free sources: openfootball, ESPN's public scoreboards, football-data.co.uk and API-Football. No paid data, and no bookmaker prices.`],
+    ["Collect the results", `Every morning at 05:15 UTC, and again through the day as games finish, the build reads completed results and upcoming fixtures for <b>${M.leagues || "70+"} competitions</b> from openfootball, ESPN's public scoreboards, football-data.co.uk and API-Football. Bookmaker prices are collected for the Bets and Scale tabs, but none goes into a prediction.`],
     ["Rate every team's attack and defence", `For each league, a side's <b>attack</b> is goals scored per game against the league average, and its <b>defence</b> is goals conceded the same way. 1.00 is average; an attack of 1.30 scores 30% more than an average side. Each rating is pulled toward 1.00 by <b>${M.shrink ?? "—"}</b> games of league-average results, so a short run cannot produce an extreme number, and kept within ${(M.attBounds || []).map(v => (+v).toFixed(2)).join("–")} (attack) and ${(M.defBounds || []).map(v => (+v).toFixed(2)).join("–")} (defence). A promoted or relegated side carries its rating across using league strengths.`],
     ["Blend last season with this one", `Early in a season last season's rating does most of the work. The weight on this season grows with games played:<div class="formula">weight on this season = played ÷ (played + ${M.blendK ?? "—"})</div>So after ${M.blendK ?? "—"} games it is 50/50, and after 20 games about 77% this season.`],
     ["Turn ratings into expected goals", `Each side's expected goals multiply its attack, the opponent's defence, the league's average goals per side, and a venue factor (top tier: home ×${n2(M.homeMult)}, away ×${n2(M.awayMult)}; lower divisions a little more). Recent form adds a nudge of at most ±${M.formMax != null ? Math.round(M.formMax * 100) : "—"}%.<div class="formula">home goals = attack(home) × defence(away) × league average × ${n2(M.homeMult)} × form</div>`],
@@ -906,10 +1017,10 @@ function renderSteps(R){
     ["Tier it, and pick the Daily List", `Each game gets a confidence tier. A game the model is blind on before kick-off (a promoted side, an unrated club, a cross-division cup tie) is flagged under Celtic's Law and dropped a tier. The <b>Daily List</b> takes only win picks, never a draw, at <b>${Li.min ? Math.round(Li.min * 100) : 80}%</b> or more for leagues and <b>${Li.minIntl ? Math.round(Li.minIntl * 100) : 75}%</b> for internationals, from levels that landed at least 80% of the time in testing (the wider leagues from API-Football, with their own bands, at 75%). Men's internationals use their own ratings, re-scored with the FIFA ranking, and must clear the bar on the model's own number before the ranking moves it. Picks are ordered by confidence; Group A is the strongest five at 85% or better, never padded.`],
   ];
   $("#steps").innerHTML = steps.map(([h, p]) => `<div class="step"><h3>${h}</h3><div class="sp">${p}</div></div>`).join("") +
-    `<div class="prose"><p><b>Other sports</b> use their own models and are graded separately. Tennis uses surface-blended Elo (results since June are read as hard court, the one surface source that is free), re-scored with the ATP ranking for men's matches. The NFL, basketball, college sports and rugby use Elo with home advantage, margin of victory and a 25% off-season regression. A sport is only published if it beats simply backing the home side, and it reaches the Daily List only where its own 5-point band landed 80% or more on games it was never tuned on. Every sport's record is tallied by side and by band on the site, never fitted.</p></div>`;
+    `<div class="prose"><p><b>Other sports</b> use their own models and are graded separately. Tennis uses surface-blended Elo (results since June are read as hard court, the one surface source that is free), re-scored with the ATP ranking for men's matches. The NFL, basketball, ice hockey, college sports and both rugby codes use Elo with home advantage, margin of victory and an off-season pull towards average; in college basketball a team's first six games of a season count half as much again, because rosters change so much over the summer. A sport is only published if it beats simply backing the home side, and it reaches the Daily List only where its own 5-point band landed 80% or more on games it was never tuned on. Every sport's record is tallied by side and by band on the site, never fitted.</p></div>`;
 }
 
-$("#footer").innerHTML = `<p><b>Sports Almanac Analysis.</b> Built from <code>record.json</code>, which the site writes on every build. Every prediction is archived before kick-off and graded afterwards, and nothing is fitted on the record. <a href="./">Back to the Almanac</a> · <a href="https://douglasbakeronline.github.io/footyalmanac-hq/">FootyAlmanac HQ</a> · <a href="https://github.com/douglasbakeronline/footyalmanac">Source and release log</a></p>`;
+$("#footer").innerHTML = `<p><b>Sports Almanac Analysis.</b> Built from <code>record.json</code>, which the site writes on every build. Every prediction is archived before kick-off and graded afterwards, and nothing is fitted on the record. <a href="./">Back to the Almanac</a></p>`;
 
 fetch("record.json?v=" + Date.now()).then(r => { if (!r.ok) throw new Error(r.status); return r.json(); }).then(R => {
   RECORD = R;

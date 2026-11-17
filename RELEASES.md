@@ -7,6 +7,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-3: no links to the code; Analysis opens with About the Sports Almanac
+
+**What changed:** every link from the site to the code repository and to HQ is gone (the HQ tab, the Analysis footer, the release-log link), and README.md is no longer published with the site (Douglas: the code is not for the public). Analysis now opens with **About the Sports Almanac**: what the site does, the sports and how a call is made, how it is checked, a plain risk warning (the model is in beta), and the Daily List, the Card and Scale each with its risk level and the last seven days and today as day tiles. The rest of the page is brought up to date (API-Football and prices named correctly, the college basketball early-season K and Behind .500 mark, no references to code files).
+**Files:** `analysis.html`, `index.html`, `groupings.py` (the published groupings file read from sportsalmanac.bet), `.github/workflows/deploy.yml`.
+**Not changed:** the repository's own visibility (Douglas's decision; see the session note).
+**Roll back:** `git revert`.
 ## 2026-11-17-2: The List card in the open, with a List long for thin days
 
 **What changed:** Douglas: "at least one or two cards a day just made up of the daily list picks ... just having no cards is awful", and a review of what wins on the list. The List 2x comes out of its "on paper" fold onto the Bets tab as **The List card**, and gains a second kind: when the 2x cannot be made from legs at 1.15+ in six, the **List long** takes the list's picks at any price, up to ten, to 2x. College sports are left out. Each group shows a Tested chance (the ledger's landed rates by sport and price band) beside the model's. The record keeps the two kinds on their own lines (`cardList`, `cardListLong`).
