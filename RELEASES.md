@@ -7,6 +7,16 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-signup-push: a phone push for every Mailer sign-up (tag pending)
+
+**What changed:** a new Mailer sign-up sends Douglas a push through ntfy: "New Mailer sign-up", the emails chosen and how many are on the list. The reader's address is never in the push. It is set up in the Supabase database (Inbox Innovation project): the trigger `almanac_signup_push` on `almanac.subscribers`, the function `almanac.notify_signup()` (security definer, not callable by the API roles), `pg_net`, and the topic in Vault as `almanac_ntfy_topic`. The site's code is unchanged.
+
+**Evidence:** a test push to the topic returned 200 from ntfy.
+
+**Not changed:** the form, `almanac_subscribe`, the site.
+
+**Roll back:** `drop trigger almanac_signup_push on almanac.subscribers;` in the Supabase SQL editor.
+
 ## 2026-11-17-1: the Card funnel reads rule 12's opposition floor (tag pending)
 
 **What changed:** the nightly Card review's funnel had no key for rule 12's two opposition messages, so a football leg with no opposition price vanished from the table, one priced under 5.0 counted as "other", and the missing-price count dropped every football leg (46 to 3). The funnel now has an `opposition` column and relief, an unpriced leg stands in at the floor, and a missing opposition price is taken from the football archive as the replay does.
