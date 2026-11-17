@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-17T01:45:44Z",
+ "graded": "2026-11-17T02:30:38Z",
  "overall": {
   "groups": 133,
   "settled": 133,
@@ -78,18 +78,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 35,
-   "won": 31,
-   "rate": 0.8857,
-   "quoted": 0.8829,
-   "returned": 33.45,
-   "ret": -0.0443
+   "n": 38,
+   "won": 34,
+   "rate": 0.8947,
+   "quoted": 0.8853,
+   "returned": 36.47,
+   "ret": -0.0403
   },
   "notAtBook": {
-   "n": 71,
-   "won": 70,
-   "rate": 0.9859,
-   "quoted": 0.9077
+   "n": 72,
+   "won": 71,
+   "rate": 0.9861,
+   "quoted": 0.9078
   },
   "unchecked": {
    "n": 26,
@@ -142,18 +142,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 21,
-     "won": 18,
-     "rate": 0.8571,
-     "quoted": 0.8945,
-     "returned": 19.08,
-     "ret": -0.0914
+     "n": 24,
+     "won": 21,
+     "rate": 0.875,
+     "quoted": 0.8967,
+     "returned": 22.1,
+     "ret": -0.0792
     },
     "notAtBook": {
-     "n": 67,
-     "won": 66,
-     "rate": 0.9851,
-     "quoted": 0.9136
+     "n": 68,
+     "won": 67,
+     "rate": 0.9853,
+     "quoted": 0.9137
     },
     "unchecked": {
      "n": 13,
@@ -306,7 +306,7 @@
    "ncaab|maryland terrapins|alcorn state braves|2026-11-16": 1.0,
    "football|singapore|brazil|2026-11-17": 1.02,
    "football|argentina|costa rica|2026-11-17": 1.08,
-   "football|uruguay|dominican republic|2026-11-17": 1.11,
+   "football|uruguay|dominican republic|2026-11-17": 1.1,
    "football|trinidad and tobago|antigua and barbuda|2026-11-17": 1.17,
    "ncaab|kentucky wildcats|grambling tigers|2026-11-17": 1.0,
    "ncaab|north carolina central eagles|virginia lynchburg dragons|2026-11-17": -1,
@@ -337,7 +337,7 @@
    "ncaab|virginia cavaliers|old dominion monarchs|2026-11-18": 0,
    "ncaab|gonzaga bulldogs|montana state bobcats|2026-11-18": 0,
    "ncaab|baylor bears|jackson state tigers|2026-11-18": -1,
-   "football|al ain|al-dhafra|2026-11-19": 1.15,
+   "football|al ain|al-dhafra|2026-11-19": 1.14,
    "nba|los angeles lakers|utah jazz|2026-11-19": -1,
    "ncaab|st. john's red storm|siena saints|2026-11-19": -1,
    "ncaab|miami (oh) redhawks|defiance yellow jackets|2026-11-19": -1,
