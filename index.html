@@ -1905,6 +1905,31 @@ footer b{color:var(--ink-2)}
 .m-lede{margin-top:26px;max-width:92ch}
 .m-lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1;text-transform:uppercase;margin:4px 0 0}
 .m-lede p{margin-top:10px;font-size:17px;line-height:1.5;color:var(--ink-2)}
+
+/* 17 Nov 2026: the Daily 2x and its tracker */
+.tb-daily{border-top:4px solid var(--red,#c8102e)}
+.dx{margin-top:14px}
+.dx-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line,#ccc);border:1px solid var(--line,#ccc)}
+.dx-s{background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.dx-s b{font:400 28px/1 Anton,Impact,sans-serif}
+.dx-s span{font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+.dx-s small{font-size:12px;color:var(--mute,#666)}
+.dx-days{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
+.dx-t{border:1px solid var(--line,#ccc);background:#fff;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
+.dx-t.won{background:#e6f4ea;border-color:#1e7b34}
+.dx-t.lost{background:#fbe9e9;border-color:#b3261e}
+.dx-d{font-size:11px;text-transform:uppercase;line-height:1}
+.dx-d b{display:block;font:400 20px/1.1 Anton,Impact,sans-serif}
+.dx-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:9px}
+.dx-dots i,.dx-key i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#bbb}
+.dx-dots i.w,.dx-key i.w{background:#1e7b34}
+.dx-dots i.l,.dx-key i.l{background:#b3261e}
+.dx-o{font-weight:700;font-size:13px}
+.dx-r{font-size:11px;color:var(--mute,#666)}
+.dx-key{font-size:12px;color:var(--mute,#666);margin:8px 0 0}
+.dx-key i{vertical-align:-1px;margin:0 2px 0 8px}
+.dx-none{font-size:13px;color:var(--mute,#666)}
+@media(max-width:600px){.dx-stats{grid-template-columns:repeat(2,1fr)}.dx-s b{font-size:22px}}
 </style>
 </head>
 <body>
@@ -5128,7 +5153,8 @@ function ogCard(g){
   const n = g.legs.length, risk = g.risk || (g.name === "Double" ? "Lowest risk" : g.name === "Treble" ? "Low risk" : "");
   const card = String(g.name).startsWith("Card");
   const paper = String(g.name).startsWith("Model") || String(g.name).startsWith("List");
-  const listPaper = String(g.name).startsWith("List");
+  const daily = g.name === "Daily 2x";
+  const listPaper = String(g.name).startsWith("List") || daily;
   const mult = g.name.startsWith("Multiplier") || card;
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
@@ -5137,16 +5163,55 @@ function ogCard(g){
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
         data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
-  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.span ? `two days: ${ogEsc(new Date(g.span[0] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))} and ${ogEsc(new Date(g.span[1] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))}` : g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : listPaper ? "the Daily List's own picks · on trial" : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
+  return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.span ? `two days: ${ogEsc(new Date(g.span[0] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))} and ${ogEsc(new Date(g.span[1] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))}` : g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : daily ? (g.short ? "today's 2x · short of 2x today" : "today's 2x · on trial") : listPaper ? "the Daily List's own picks · on trial" : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>${card && g.stake > 1 ? `${g.stake} units: ` : ""}£${(stake * (card ? g.stake || 1 : 1)) % 1 ? (stake * (card ? g.stake || 1 : 1)).toFixed(2) : stake * (card ? g.stake || 1 : 1)} returns £${(stake * (card ? g.stake || 1 : 1) * g.odds).toFixed(2)}</span>${(() => { const u = stake * (card ? g.stake || 1 : 1);
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
     ${ogStatus(g)}${card ? ogPlacedNote(g, OG_DAY) : ""}
     <div class="og-k"><span class="og-k-l">All ${n} land</span>${ogFigures(g)}</div>
     <div>${legs}</div>${card || paper ? ogBooks(g) : ""}${card ? ogBench(g) : ""}${card && g.status !== "underway" ? `<div class="og-pl"><button type="button" class="og-placed-btn${ogPlaced(g, OG_DAY) ? " on" : ""}" data-slot="${ogEsc(ogSlotKey(g, OG_DAY))}">${ogPlaced(g, OG_DAY) ? "Placed ✓ (tap to undo)" : "Mark as placed"}</button></div>` : ""}
-    <div class="og-f">${g.span ? "<b>Two days.</b> Nothing on the first day made a group, so this one takes the next day's picks too, under the same rule. Place it before its first pick starts; it settles when the last one finishes. " : ""}${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${!paper && g.basis === "model" ? "Each pick is one the model rates at or above the bookmakers' chance, and the group's chance is the model's own. " : ""}${listPaper ? `<b>The list's picks.</b> ${g.name === "List long" ? "Any price, up to ten picks" : "Priced 1.15+, up to six picks"}, strongest first, until the slip pays 2x. Each pick's chance shown is the model's; the Tested figure is the ledger's landed rate for each pick's sport and price band, multiplied. Graded on its own line. ` : paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult && g.basis !== "model" ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
+    <div class="og-f">${g.span ? "<b>Two days.</b> Nothing on the first day made a group, so this one takes the next day's picks too, under the same rule. Place it before its first pick starts; it settles when the last one finishes. " : ""}${g.wide ? "<b>Wider rule.</b> Nothing in this window cleared the full rule, so this group takes three to five picks priced 1.08 to 2.10 at the bookmakers' ${Math.round((((OG.rules || {}).card || {}).wideFairMin || 0.6) * 100)}%+, the model still within 5 points of them. Rebuilt on every build until the window locks, and replaced by a full-rule group if one can be made. Graded apart. " : ""}${started ? `<b>${started} of ${g.legs.length} already started</b>, so this group can no longer be placed as it stands. ` : ""}${!paper && g.basis === "model" ? "Each pick is one the model rates at or above the bookmakers' chance, and the group's chance is the model's own. " : ""}${daily ? `<b>One 2x a day.</b> The model's strongest picks priced 1.10 or more, the Daily List first, then the reserve, then the day's strongest football, then other sports, college sports left out, added until the slip pays 2x.${g.short ? " <b>Today nothing more qualified, so this slip pays under 2x.</b>" : ""} Graded on its own line. ` : listPaper ? `<b>The list's picks.</b> ${g.name === "List long" ? "Any price, up to ten picks" : "Priced 1.15+, up to six picks"}, strongest first, until the slip pays 2x. Each pick's chance shown is the model's; the Tested figure is the ledger's landed rate for each pick's sport and price band, multiplied. Graded on its own line. ` : paper ? "<b>On paper.</b> Each pick's chance is the model's own, and each pick is one the model rates at or above the bookmakers' chance. Graded like the card, never staked. " : mult && g.basis !== "model" ? "Each pick's chance is the bookmakers' own (the price less their margin); the model only vetoes picks it rates well above the market. " : ""}${g.estimates ? `${g.estimates} of ${g.legs.length} price${g.estimates === 1 ? " is marked est.: estimated" : "s are marked est.: estimated"} from the model, not a bookmaker price (the model's price less a typical margin; no bookmaker price found yet).` : "Every price is a bookmaker average, read at the time shown."}${g.legs.some(l => l.stale) ? " A \"last price\" could not be read this build, so the last confirmed price stands." : ""}</div></article>`;
 }
 
 const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
+
+// 17 Nov 2026, Douglas: "we have to have one card every day ... aiming for above a
+// 2x ... I want a nice, visual graphic tracker that says what we're doing".
+// The Daily 2x (groupings.daily_group) and its tracker: every day a tile, each
+// pick a dot, the slip's price and result; then the tally and what it teaches.
+function dailySection(day){
+  const g = day.groups.find(x => x.name === "Daily 2x");
+  return `<section class="tb-win tb-daily"><h3 class="tb-h">Today's 2x <small>one slip a day, the model's strongest picks at 1.10+, to 2x · on trial</small></h3>
+    ${g ? `<div class="og-grid">${ogCard(g)}</div>` : `<div class="empty tb-empty">No 2x for ${fmtDay(day.date)} yet: no priced pick at 1.10+ has come in. It is rebuilt on every build.</div>`}
+    ${dailyTracker()}</section>`;
+}
+function dailyTracker(){
+  const days = ((OG.record || {}).days || []).map(d => ({date: d.date, g: (d.groups || []).find(x => x.name === "Daily 2x")})).filter(d => d.g)
+    .sort((a, b) => a.date < b.date ? -1 : 1).slice(-21);
+  const R = (OG.record || {}).cardDaily || {};
+  const ls = s => s === "won" ? "w" : s === "lost" ? "l" : s === "void" ? "v" : "p";
+  const tiles = days.map(({date, g}) => {
+    const st = g.status || "pending";
+    const dots = (g.legs || []).map(l => `<i class="${ls(l.status)}" title="${ogEsc(l.pick)} ${l.odds}${l.status ? " · " + l.status : ""}"></i>`).join("");
+    const dt = new Date(date + "T12:00:00Z");
+    return `<li class="dx-t ${st}"><span class="dx-d">${dt.toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"})}<b>${dt.getUTCDate()}</b></span>
+      <span class="dx-dots">${dots}</span><span class="dx-o">${Number(g.odds).toFixed(2)}${g.short ? "*" : ""}</span>
+      <span class="dx-r">${st === "won" ? "Won" : st === "lost" ? "Lost" : st === "void" ? "Void" : "To come"}</span></li>`;
+  }).join("");
+  const set = R.settled || 0, won = R.won || 0, ret = set ? (R.returned - R.staked) / R.staked : null;
+  const legsN = R.legs || 0, legsW = R.legsWon || 0;
+  const stat = (k, v, sub) => `<div class="dx-s"><b>${v}</b><span>${k}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
+  return `<div class="dx">
+    <div class="dx-stats">
+      ${stat("slips won", set ? `${won}/${set}` : "–", set ? `${Math.round(won / set * 100)}%` : "from today")}
+      ${stat("expected", set ? (R.expected || 0).toFixed(1) : "–", "on the model's chance")}
+      ${stat("return", ret == null ? "–" : `${ret >= 0 ? "+" : ""}${Math.round(ret * 100)}%`, "one unit a slip")}
+      ${stat("picks landed", legsN ? `${Math.round(legsW / legsN * 100)}%` : "–", legsN ? `${legsW} of ${legsN}` : "")}
+    </div>
+    ${tiles ? `<ol class="dx-days">${tiles}</ol>` : `<p class="dx-none">The tracker fills from today, one tile a day.</p>`}
+    <p class="dx-key"><i class="w"></i> landed <i class="l"></i> lost <i class="p"></i> to come · each tile one day's slip, its price below${days.some(d => d.g.short) ? " (* under 2x that day)" : ""}</p>
+    <p class="tb-snap"><b>What we're learning.</b> Before the tab, the same rule replayed on 3 Oct to 16 Nov: 28 slips in 33 days, 14 won (50%), +22% at the price recorded, about four picks a slip. Ranking picks by the model's strength beat ranking by the shortest price (36%) on the same picks, which is why the model picks the order. Every pick above 1.15 has landed slightly under its price, so the slip wins on the model's ordering, not on value. We judge it at 50 settled slips: won against expected, and the return.</p>
+  </div>`;
+}
 function ogRecord(compact){
   const R = OG && OG.record;
   if(!R || !(R.days || []).length) return `<div class="og-rec"><div class="day-head"><h2>How the groups did</h2></div>
@@ -5457,7 +5522,7 @@ function tbRecord(){
   const more = [];
   Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}`, wl(t), ret(t)]));
   Object.keys(bw).forEach(n => more.push([n === "Day" ? "One window a day (from 29 Oct)" : `${n} window (to 28 Oct)`, wl(bw[n]), ret(bw[n])]));
-  [["Late groups, not in the record", R.cardLate], ["Wider-rule groups (off since 11 Nov)", R.cardWide], ["Model card on paper (31 Oct to 10 Nov)", R.cardModel], ["List 2x (from 16 Nov)", R.cardList], ["List long (from 17 Nov)", R.cardListLong]]
+  [["Late groups, not in the record", R.cardLate], ["Wider-rule groups (off since 11 Nov)", R.cardWide], ["Model card on paper (31 Oct to 10 Nov)", R.cardModel], ["List 2x (from 16 Nov)", R.cardList], ["List long (from 17 Nov)", R.cardListLong], ["Daily 2x (from 17 Nov)", R.cardDaily]]
     .forEach(([l, x]) => x && x.settled && more.push([l, wl(x), ret(x)]));
   if(c && c.n) more.push(["Prices that shortened after we published", `${c.shortened} of ${c.n}`, `${c.drifted} drifted`]);
   const moreTbl = `<details class="tb-more"><summary>More numbers</summary>
@@ -5843,7 +5908,7 @@ function renderToday(){
   const model = day.groups.filter(isModel);
   // 16 Nov 2026: the List 2x, the Daily List's own picks on paper (groupings.build_list_card)
   const isList = g => String(g.name).startsWith("List");
-  const lists = day.groups.filter(isList);
+  const lists = day.groups.filter(g => isList(g) && g.name !== "Daily 2x");
   const other = day.groups.filter(g => !isCard(g) && !isModel(g) && !isList(g) && g.status !== "underway");
   const avoid = day.avoid || [];
   const nCard = d => d.groups.filter(g => isCard(g) && g.status !== "underway").length;
@@ -5886,6 +5951,7 @@ function renderToday(){
     <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+    ${dailySection(day)}
     ${wins.map(winHtml).join("")}
     <!-- 17 Nov 2026, Douglas: "at least one or two cards a day just made up of the daily list picks ... having no cards is awful". The List card, in the open. -->
     <section class="tb-win tb-list"><h3 class="tb-h">The List card <small>the Daily List's own picks combined to 2x; on trial, each with its tested chance</small></h3>

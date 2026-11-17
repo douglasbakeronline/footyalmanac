@@ -581,6 +581,7 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   (`list_tested`), on their own record lines (`cardList`, `cardListLong`);
   staked by Douglas, never pushed; read at 30 settled groups each
   (`claude/card-opp5-list2x-2026-11-16.md`, `claude/list-card-2026-11-17.md`).
+- **The Daily 2x (17 Nov 2026, Douglas: "we have to have one card every day ... aiming for above a 2x").** `groupings.daily_group`: one slip a day at the top of the Bets tab, the model's strongest picks at 1.10+ (list, then reserve, then football 65%+, then any sport 65%+; college out), up to eight, until 2x; a short day is still published, marked. Ledger replay 3 Oct to 16 Nov: 14 of 28 won, +22%. Graded as `cardDaily`, tracked by `dailyTracker`; judged at 50 settled slips (`claude/daily-2x-2026-11-17.md`).
 - **No Reports page for the weekly PDF.** It adds nothing to the return;
   the Sunday email is the delivery.
 - **Opposition 9+ (rule 6) stays**: the one condition that holds in every
