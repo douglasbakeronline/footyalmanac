@@ -7,6 +7,10 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-17-daily-2x-rebuild: a short Daily 2x is rebuilt until it starts (tag pending)
+
+**For a reader.** A later day's 2x built before its prices are in (19 and 20 Nov were 1.64 and 1.44) now rebuilds on every build until it reaches 2x or starts; a slip at 2x is held as first built. **Files.** `groupings.py` (`build_list_card`), `tests/test_daily_2x.py`. **Roll back.** `git revert` this merge.
+
 ## 2026-11-17-daily-2x: the Daily 2x, one slip every day, and its tracker (tag pending)
 
 **For a reader.** The Bets tab now opens with **Today's 2x**: one slip a day, the model's strongest picks priced 1.10 or more, added until it pays 2x. Picks come from the Daily List first, then the reserve, then the day's strongest football (model 65%+), then other sports (65%+); college sports are left out. As many picks as it takes, up to eight. A day that cannot reach 2x still gets its strongest slip, marked short. Under it, a tracker: a tile a day with each pick as a dot (green landed, red lost, grey to come), the slip's price and result, and the running tally (slips won v expected, return, picks landed), with what the replay taught.
