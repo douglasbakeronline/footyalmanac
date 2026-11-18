@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-pool-recheck: the Card replay already runs on the pool (tag pending)
+
+**What changed.** A dated note only.
+**Evidence.** 13 pool-replay tests pass; the replay reads 1,217 settled priced pool legs over 20 days; live 26 groups, 13 won v 39% expected. `claude/card-replay-pool-recheck-2026-11-18.md`.
+**Files.** The note.
+**Not changed.** Any code, rule or record.
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-18-cap160: the Card's long legs read, a 1.60 cap pre-registered (tag pending)
 
 **For a reader.** Nothing on the page. The nightly Card review and the Monday football-data read gain one variant, `m7cap160`: the Card with its price range capped at 1.60.
