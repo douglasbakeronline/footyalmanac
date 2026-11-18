@@ -1299,6 +1299,44 @@ def af_rows_from(src):
     return out
 
 
+# Leagues whose primary source has stopped scoring and that ESPN does not
+# score either, read instead from the API-Football day pool the build already
+# holds (18 Nov 2026). openfootball's Czech 2026-27 file stopped after 20 Sep
+# and ESPN's cze.1 slug answers nothing for the season, so the Czech table had
+# been flagged under Celtic's Law since 14 Nov (build.stale_leagues). The ids
+# were set by hand, so a row from another country is dropped (rule 6).
+AF_LAG = {"cze.1": 345}
+
+
+def af_lag_results(code, season):
+    """Played fixtures of one AF_LAG league's current season from the shared
+    API-Football date pool, as fixture rows. No calls beyond the pool every
+    API-Football league already reads; [] without a key (a local build) or
+    when the pool has none. The country check is af_rows' for AF_NEW: rows
+    cached before the country was kept carry none and are judged by the rest;
+    at least one must carry it and every one that does must match, or none is
+    used. Returns (rows, None) or ([], reason)."""
+    if code not in AF_LAG or not os.environ.get("API_FOOTBALL_KEY"):
+        return [], None
+    pool = af_season_pool(season)
+    if not pool:
+        return [], None
+    return af_lag_pick(code, season, pool.get(AF_LAG[code], []))
+
+
+def af_lag_pick(code, season, fixtures):
+    """af_lag_results' filter on one league's pool fixtures (testable apart)."""
+    year = int(season.split("-")[0])
+    src = [f for f in fixtures if (f.get("league") or {}).get("season") == year]
+    if not src:
+        return [], None
+    want = _E.canon_country(_E.LEAGUES[code]["country"])
+    got = {_E.canon_country(c) for c in ((f.get("league") or {}).get("country") for f in src) if c}
+    if got != {want}:
+        return [], f"AF id {AF_LAG[code]} returned {sorted(got)}, expected {want}"
+    return [r for r in af_rows_from(src) if r["hg"] is not None], None
+
+
 def af_rows(code, season):
     """Every match of one season, played or still to come, as fixture rows.
     For a domestic cup, the matches inside the shared date pool's window."""
@@ -1901,7 +1939,11 @@ def _base(n):
                  ("í", "i"), ("ó", "o"), ("ú", "u"), ("ç", "c"), ("ñ", "n"),
                  # 13 Nov 2026: Portuguese and Turkish letters ESPN writes plain
                  # (Famalicão, Guimarães, İstanbul lowers to i + a combining dot)
-                 ("ã", "a"), ("õ", "o"), ("ê", "e"), ("ô", "o"), ("\u0307", "")):
+                 ("ã", "a"), ("õ", "o"), ("ê", "e"), ("ô", "o"), ("\u0307", ""),
+                 # 18 Nov 2026: Czech letters (openfootball writes Viktoria
+                 # Plzeň, API-Football Plzen), for the Czech results fill
+                 ("ň", "n"), ("ř", "r"), ("ý", "y"), ("ů", "u"), ("ě", "e"),
+                 ("ť", "t"), ("ď", "d")):
         n = n.replace(a, b)
     drop = {"fc", "cf", "afc", "sc", "ac", "as", "ss", "us", "cd", "ud", "rc",
             "sd", "ca", "sv", "tsg", "vfl", "vfb", "bv", "sk", "nk", "hnk",
@@ -1958,6 +2000,8 @@ ALIASES = {
     # 13 Nov 2026: Belgian Pro League, ESPN's spellings
     "racing genk": "krc genk", "royal charleroi": "sporting charleroi",
     "sint truidense": "stvv", "union st gilloise": "royale union saint gilloise",
+    # 18 Nov 2026: Czech First League, API-Football's short spelling
+    "plzen": "viktoria plzen",
     "man city": "manchester city", "man utd": "manchester united",
     "man united": "manchester united", "spurs": "tottenham hotspur",
     "wolves": "wolverhampton wanderers", "nottm forest": "nottingham forest",

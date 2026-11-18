@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-czech-af: the Czech First League scored from API-Football (tag pending)
+
+**What changed:** the Czech First League's table (`cze.1`) had stopped at 20 Sep: openfootball's 2026-27 file stopped scoring and ESPN's `cze.1` slug answers nothing, so since 14 Nov every Czech fixture has been flagged under Celtic's Law (41 results missing from 9 Oct). The build now scores its blank fixtures from the API-Football day pool it already reads for the wider leagues (`sources.AF_LAG`, `af_lag_results`, `af_lag_pick`; `build.fill_lagging(source="apifootball")`), under openfootball's spelling, all or nothing on names and on country. No extra API calls, nothing written to `current/`. Czech letters (ň ř ý ů ě ť ď) now fold in `sources._base`, and `plzen` is an alias of Viktoria Plzeň. When the fill lands, the stale flag clears itself and Czech favourites can reach the Daily List and the Card again on a current table.
+**Evidence:** cannot be run here (the sandbox reaches no API-Football); the first CI build prints `lag cze.1: N result(s) filled from API-Football`, or a warning naming the unmatched clubs or the wrong country, and fills nothing. Tests: `tests/test_af_lag.py` (the 16 openfootball spellings against API-Football's short ones, one club each; season, country and played filters; the fill under openfootball's names). `claude/czech-results-api-football-2026-11-18.md`.
+**Files:** `sources.py`, `build.py`, `tests/test_af_lag.py`, the note, `CLAUDE.md`.
+**Not changed:** any model constant, any `CARD_*` constant, the stale-league rule, the record.
+**Roll back:** `git revert` this merge (Czech rows go back to flagged).
+
 ## 2026-11-18-staking-live-rule: the Card's bankroll read from the live rule's replays (tag pending)
 
 **What changed:** the nightly Card review's staking sections. The "replay" bankroll was the rule 5/6 Card (football only, 2x and 3x); it now reads the live rule's football-data replay (`cardM7.live`), and a new "pool" section reads the live rule rebuilt on the archived pool, every sport (`card-replay.json` now carries the live variant's `groupList`).
