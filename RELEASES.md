@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered, third check (tag pending)
+
+**What changed:** a dated note only, `claude/af-new-leagues-recheck-2026-11-18.md`. No code, model or rule changed.
+**Evidence:** all six countries are already in the build (`sources.AF_NEW`, `af.301`, lower divisions in `af-leagues.json`); the 17 Nov archive holds 5-8 fixtures for each top flight; extra API allowance per build 0; `nametest.py` clear. Rule 3 replay needs the API key and prior-season history, unavailable here, so the leagues stay off the List.
+**Files:** `claude/af-new-leagues-recheck-2026-11-18.md`, `RELEASES.md`.
+**Not changed:** `sources.py`, any model number, the Daily List.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-price-timing-hour: when to take the Card's prices, re-read by hour and sport (tag pending)
 
 **What changed.** A dated note only.
