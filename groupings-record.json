@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-18T01:52:10Z",
+ "graded": "2026-11-18T02:56:05Z",
  "overall": {
   "groups": 135,
   "settled": 133,
@@ -143,18 +143,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 46,
-   "won": 41,
-   "rate": 0.8913,
-   "quoted": 0.8891,
-   "returned": 43.71,
-   "ret": -0.0498
+   "n": 49,
+   "won": 43,
+   "rate": 0.8776,
+   "quoted": 0.89,
+   "returned": 45.71,
+   "ret": -0.0671
   },
   "notAtBook": {
-   "n": 77,
-   "won": 76,
-   "rate": 0.987,
-   "quoted": 0.9081
+   "n": 82,
+   "won": 81,
+   "rate": 0.9878,
+   "quoted": 0.9088
   },
   "unchecked": {
    "n": 26,
@@ -207,18 +207,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 28,
-     "won": 25,
-     "rate": 0.8929,
-     "quoted": 0.8979,
-     "returned": 26.17,
-     "ret": -0.0654
+     "n": 31,
+     "won": 27,
+     "rate": 0.871,
+     "quoted": 0.8984,
+     "returned": 28.17,
+     "ret": -0.0913
     },
     "notAtBook": {
-     "n": 73,
-     "won": 72,
-     "rate": 0.9863,
-     "quoted": 0.9135
+     "n": 78,
+     "won": 77,
+     "rate": 0.9872,
+     "quoted": 0.9139
     },
     "unchecked": {
      "n": 13,
