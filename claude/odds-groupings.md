@@ -258,3 +258,24 @@ Check season now 3,576 legs (was 1,749). Legs 2, 4 and 6 points above fair lande
 ## Leg properties, fourth look (17 Nov 2026)
 
 No new rule. Pool: 74 settled real-priced football 65%+ legs, landed 56 v 50.7 expected; tested-rate cut points the wrong way on tiny cells (31/47 v 25/27). Far under the 250 the gates need. See `claude/leg-property-fourth-2026-11-17.md`.
+
+## Group bands against their stated chance (18 Nov 2026, Jade, backtest of the rules)
+
+Read from `groupings-record.json` `byBand` (settled groups, published chance summed as `expected`, flat stake at the average price). Nothing refitted; the record is read, not tuned on.
+
+| Band | Settled | Won | Expected | Landed v stated | Return |
+|---|---|---|---|---|---|
+| Steady (retired) | 25 | 4 | 9.7 | 16% v 39% (z about -2.3) | -57% |
+| Balanced (retired) | 17 | 5 | 5.0 | 29% v 30% | +23% |
+| Stretch (retired) | 15 | 1 | 3.6 | 7% v 24% (z about -1.6) | -53% |
+| Banker (retired) | 2 | 1 | 0.8 | too few | -9% |
+| Wider Treble / Fourfold | 7 | 3 | 2.6 | 43% v 37% | -9% / -30% |
+| Multiplier | 3 | 1 | 0.8 | too few | -2% |
+| Card 2x | 36 | 11 | 13.7 | 31% v 38% (z -0.9) | -30% |
+| Card 3x | 16 | 7 | 4.2 | 44% v 27% (z +1.6) | +41% |
+
+Reading:
+- The 65% / 30 tested-rate bar, the spread rules and the Double / Treble bands that used them are retired (`retired` in the record, `current` is the Card only). Their last record is 136 groups settled overall, 39 won v 46.2 expected (z -1.3): groups landed under their stated chance, mostly from Steady and Stretch, the two bands with the lowest-priced and longest legs. Balanced alone landed as stated.
+- Per-band samples are 2 to 25 groups. None meets the 100-group bar the gates need, so no band rule is shown to improve the hit rate at the same odds. A replay of the retired rules on past days is not possible on the scoreboard (rule 1) and the pool archive starts 30 Oct 2026, after these kinds stopped being built.
+- The shortfall repeats the singles result: a group's stated chance multiplies leg chances that each already land at or just under quote, so over-statement compounds by leg count (Steady and Stretch carry the most legs).
+- No code change. Live groups are the Card, graded under its own rules (`cardByRule`); its replay is `tools/card_replay.py` and the 30 Nov review. Reopen this when a retired kind is rebuilt or a band reaches 100 settled groups.
