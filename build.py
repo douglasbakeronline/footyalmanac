@@ -872,7 +872,7 @@ def fill_window(rows, espn, window=LAG_WINDOW):
     return added, []
 
 
-def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False):
+def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source="espn"):
     """Score the primary source's unplayed fixtures from ESPN results.
 
     rows: one league's fixture rows (openfootball spelling), filled in place.
@@ -886,6 +886,8 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False):
     primary source does not list at all (an undated round) is added as a row
     of its own instead of being dropped; a pair the source lists anywhere is
     never added, so a dated fixture cannot be counted twice.
+    source: what the filled rows are marked as coming from (`filledFrom`;
+    "apifootball" for the AF_LAG leagues, 18 Nov 2026).
     Returns (filled, unmatched names, results with no fixture to fill)."""
     mapping, bad = _map_names(rows, results)
     if bad:
@@ -909,7 +911,7 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False):
         if not open_:
             pair = (mapping[x["home"]], mapping[x["away"]])
             if append and not by_pair.get(pair):
-                row = dict(x, home=pair[0], away=pair[1], filledFrom="espn")
+                row = dict(x, home=pair[0], away=pair[1], filledFrom=source)
                 rows.append(row)
                 by_pair[pair].append(row)
                 filled += 1
@@ -920,7 +922,7 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False):
         r["hg"], r["ag"] = x["hg"], x["ag"]
         if abs((date.fromisoformat(r["date"]) - d).days) > 1:
             r["date"] = x["date"]          # a moved match is dated when it was played
-        r["filledFrom"] = "espn"
+        r["filledFrom"] = source
         filled += 1
     return filled, [], unplaced
 
@@ -1084,6 +1086,33 @@ def main():
                           file=sys.stderr)
             for line in issues[:5]:
                 print(f"    lag {line}", file=sys.stderr)
+
+    # Lagging leagues ESPN does not score either (18 Nov 2026, Czechia): their
+    # results come from the API-Football day pool the build already reads for
+    # the wider leagues, under the primary source's spelling, all or nothing
+    # on names as above. Nothing is written to current/ (API-Football data is
+    # not for redistribution); the next build reads the pool again.
+    if not args.no_topup:
+        for c in sorted(S.AF_LAG):
+            if c not in fixtures or not any(r["hg"] is None and r["date"] < start.isoformat()
+                                            for r in fixtures[c]):
+                continue
+            res, why = S.af_lag_results(c, E.LEAGUES[c].get("season", SEASON))
+            if why:
+                print(f"::warning::{c}: API-Football results not used, {why}", file=sys.stderr)
+                continue
+            if not res:
+                print(f"    lag {c}: no API-Football results to fill (no key or none in the pool)",
+                      file=sys.stderr)
+                continue
+            filled, bad, unplaced = fill_lagging(fixtures[c], res, start, source="apifootball")
+            if bad:
+                print(f"::warning::{c}: API-Football results not used, club names unmatched: "
+                      + "; ".join(bad[:8]), file=sys.stderr)
+            else:
+                print(f"    lag {c}: {filled} result(s) filled from API-Football"
+                      + (f", {unplaced} with no fixture to fill" if unplaced else ""),
+                      file=sys.stderr)
 
     stale, stale_watch = stale_leagues(fixtures, start)
     if stale:
