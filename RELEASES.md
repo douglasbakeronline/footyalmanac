@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-price-gaps-rule13: the Card review's price gaps read under rule 13 (tag pending)
+
+**What changed:** the nightly Card review's "Legs kept off by a missing price" section no longer says a priced leg must clear the value demand (there is none under `CARD_RULE` 13), and now names the started days the live Card left empty that held such legs.
+**Evidence:** 108 legs pass every condition but the price since 10 Nov, 39 on started days; 6 of those on 4 empty days (11, 12, 13, 16 Nov), at most 2 a day against the 3 a group needs, all lower leagues no UK book prices. Price coverage is still not the lever. `claude/card-price-gaps-rule13-2026-11-18.md`.
+**Files:** `tools/card_funnel.py`, `tools/card_review_post.py`, `tests/test_card_funnel_gaps.py`, `tests/test_empty_card_days.py`, the note, `CLAUDE.md`.
+**Not changed:** any `CARD_*` constant, the record, the page.
+**Roll back:** `git revert` this merge.
+
 ## 2026-11-18-weakest-sport: no other sport is under quote by two standard errors (tag pending)
 
 **What changed:** a dated note only, `claude/weakest-sport-read-2026-11-18.md`.

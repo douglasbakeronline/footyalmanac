@@ -59,6 +59,24 @@ class PriceGaps(unittest.TestCase):
         txt = "\n".join(CF.gap_lines(CF.price_gaps("2026-11-10", None, "2026-11-19", pool_dir=d)))
         self.assertIn("**1**", txt); self.assertIn("| nba | 1 | 0 |", txt)
 
+    def test_closing_line_reads_the_live_rule(self):
+        # 18 Nov 2026: under rule 13 there is no value demand to clear
+        g = {"legs": 1, "past": 1, "bySport": {"nba|past": 1}, "comps": [], "days": {"2026-11-18": 1}}
+        with mock.patch.object(G, "CARD_MODEL_EDGE", None):
+            txt = "\n".join(CF.gap_lines(g))
+        self.assertNotIn("value demand, so", txt); self.assertIn("no value demand", txt)
+        with mock.patch.object(G, "CARD_MODEL_EDGE", 0.0):
+            self.assertIn("must still clear the value demand", "\n".join(CF.gap_lines(g)))
+
+    def test_empty_days_named(self):
+        g = {"legs": 4, "past": 3, "bySport": {"nba|past": 3, "nba|to come": 1}, "comps": [],
+             "days": {"2026-11-15": 2, "2026-11-16": 1}}
+        txt = "\n".join(CF.gap_lines(g, empty={"2026-11-16", "2026-11-17"}))
+        self.assertIn("1 of them on 1 started day the Card left empty (2026-11-16)", txt)
+        txt = "\n".join(CF.gap_lines(g, empty=set()))
+        self.assertIn("none on a started day the Card left empty", txt)
+        self.assertNotIn("left empty", "\n".join(CF.gap_lines(g)))
+
 
 if __name__ == "__main__":
     unittest.main()

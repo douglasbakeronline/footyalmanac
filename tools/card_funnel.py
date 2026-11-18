@@ -229,8 +229,12 @@ def price_gaps(since=None, until=None, today=None, pool_dir=R.POOL_DIR, recover=
             "days": dict(sorted(Counter(r["date"] for r in rows if r["past"]).items()))}
 
 
-def gap_lines(g):
-    """Markdown lines for price_gaps(): what missing prices cost the Card."""
+def gap_lines(g, empty=None):
+    """Markdown lines for price_gaps(): what missing prices cost the Card.
+    18 Nov 2026: `empty`, the started days the live Card published no group,
+    names how many of the started-day legs fell on those days (the days a
+    fuller feed could have changed); the closing line reads the live rule, as
+    under CARD_RULE 13 there is no value demand left for a priced leg to clear."""
     if not g or not g.get("legs"): return ["No leg was kept off the Card by a missing price alone."]
     sports = sorted({k.split("|")[0] for k in g["bySport"]})
     out = [f"Legs with no bookmaker price that pass every other Card condition: **{g['legs']}**, "
@@ -240,7 +244,24 @@ def gap_lines(g):
         out.append(f"| {s} | {g['bySport'].get(s + '|past', 0)} | {g['bySport'].get(s + '|to come', 0)} |")
     if g["comps"]:
         out += ["", "Most often unpriced on started days: " + "; ".join(f"{c} ({s}) {n}" for s, c, n in g["comps"]) + "."]
-    out += ["A priced leg must still clear the value demand, so this is the most a fuller price feed could add.", ""]
+    if empty is not None:
+        hit = {d: n for d, n in (g.get("days") or {}).items() if d in empty}
+        if hit:
+            k = len(hit)
+            out += ["", f"{sum(hit.values())} of them on {k} started day{'s' if k != 1 else ''} the Card left empty "
+                        f"({', '.join(sorted(hit))}): the days a fuller price feed could have changed. "
+                        + (f"At most {max(hit.values())} on one day, against the {min(G.CARD_LEGS)} picks a group needs, "
+                           "so the feed alone would not have filled one; with the day's priced legs it might."
+                           if max(hit.values()) < min(G.CARD_LEGS) else
+                           f"Up to {max(hit.values())} on one day, enough for a group of {min(G.CARD_LEGS)} on their own.")]
+        else:
+            out += ["", "Of the started-day legs, none on a started day the Card left empty: a fuller feed would have added to days that already had a group."]
+    if getattr(G, "CARD_MODEL_EDGE", None) is None and model_rule():
+        out += ["Under the live rule there is no value demand: a priced leg reaches the Card if its price sits inside "
+                f"`CARD_ODDS` {tuple(G.CARD_ODDS)}, so this is the most a fuller price feed could add, "
+                "and only where a UK book would take the bet.", ""]
+    else:
+        out += ["A priced leg must still clear the value demand, so this is the most a fuller price feed could add.", ""]
     return out
 
 
