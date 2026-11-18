@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-cap160: the Card's long legs read, a 1.60 cap pre-registered (tag pending)
+
+**For a reader.** Nothing on the page. The nightly Card review and the Monday football-data read gain one variant, `m7cap160`: the Card with its price range capped at 1.60.
+
+**Evidence.** Results ledger, 60%+ picks at the first price: football 1.60-1.90 landed 50.0% v the model's 63.5% (76 legs, z -2.45, -14.9%); NBA and tennis the same way on few legs; under 1.60 on quote. The Card seldom picks such legs: pool replay `m7cap160` +0.03 units a day v live, p(worse) 0.41 on 123 legs. `claude/card-m7cap160-2026-11-18.md`.
+
+**Files.** `tools/card_replay.py`, `tools/card_legs_history.py`, `tests/test_card_m7cap160.py`, the note, `CLAUDE.md`.
+
+**Not changed.** `CARD_ODDS`, `CARD_RULE`, the Daily 2x, the record, the page.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-17-staking-rate: the Card's bankroll read at its current rate (tag pending)
 
 **For a reader.** Nothing on the page. The nightly Card review's live bankroll lines now count the groups the Card makes today (the 2x alone since 11 Nov, empty days included), not October's six-a-day Card.

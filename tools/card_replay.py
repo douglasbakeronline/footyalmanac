@@ -356,6 +356,13 @@ VARIANTS = {
     # as rule12 for the 30 Nov review (claude/card-rule13-model-only-2026-11-17.md).
     "rule12": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}},
     "m7value": {"CARD_MODEL_EDGE": 0.0},   # the value demand alone (rule 11)
+    # 18 Nov 2026 (claude/card-m7cap160-2026-11-18.md): on the results ledger,
+    # 60%+ picks priced 1.60 to 1.90 at their first price landed 47% against
+    # the model's 64% (95 legs, football, NBA and tennis; football alone 76
+    # legs, 50% v 64%, z -2.45), the legs rule 13 admits once the value
+    # demand is off. Pre-registered before any group replay: the Card's price
+    # range capped at 1.60. m7short (1.50) is the existing tighter cap.
+    "m7cap160": {"CARD_ODDS": (1.15, 1.60)},
 }
 
 # 11 Nov 2026 (claude/card-replay-rule6-family-2026-11-11.md): the variants
