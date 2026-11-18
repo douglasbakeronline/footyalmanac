@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-18T21:10:50Z",
+ "graded": "2026-11-18T23:00:38Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -20,7 +20,7 @@
   "unitsReturnedBest": 134.89,
   "clv": {
    "n": 157,
-   "shortened": 63,
+   "shortened": 64,
    "drifted": 58,
    "mean": -0.0001
   }
@@ -122,7 +122,7 @@
     "n": 8,
     "shortened": 3,
     "drifted": 3,
-    "mean": -0.018
+    "mean": -0.0194
    }
   },
   "unknown": 0,
@@ -505,7 +505,7 @@
     "n": 85,
     "shortened": 28,
     "drifted": 32,
-    "mean": -0.0056
+    "mean": -0.0057
    }
   },
   "Card 3x": {
@@ -822,7 +822,7 @@
    "n": 99,
    "shortened": 35,
    "drifted": 39,
-   "mean": -0.0038
+   "mean": -0.0039
   }
  },
  "cardWide": {
@@ -997,9 +997,9 @@
   "unitsReturnedBest": 0,
   "clv": {
    "n": 5,
-   "shortened": 2,
+   "shortened": 3,
    "drifted": 2,
-   "mean": 0.0038
+   "mean": 0.0118
   }
  },
  "cardListLong": {
@@ -1175,7 +1175,7 @@
     "n": 8,
     "shortened": 3,
     "drifted": 3,
-    "mean": -0.018
+    "mean": -0.0194
    }
   }
  },
@@ -1202,7 +1202,7 @@
     "n": 53,
     "shortened": 17,
     "drifted": 21,
-    "mean": -0.0013
+    "mean": -0.0015
    }
   },
   "Daytime": {
@@ -1363,7 +1363,7 @@
        "when": "2026-11-19T00:30Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.52,
+       "lastOdds": 1.57,
        "lockOdds": 1.4,
        "lockBest": 1.4,
        "lockBook": null,
@@ -1449,7 +1449,7 @@
        "when": "2026-11-19T01:00Z",
        "odds": 1.36,
        "best": 1.36,
-       "lastOdds": 1.52,
+       "lastOdds": 1.54,
        "lockOdds": 1.36,
        "lockBest": 1.36,
        "lockBook": null,
@@ -1469,7 +1469,7 @@
        "when": "2026-11-19T03:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.16,
+       "lastOdds": 1.18,
        "lockOdds": 1.22,
        "lockBest": 1.22,
        "lockBook": null,
@@ -1535,7 +1535,7 @@
        "when": "2026-11-19T00:00Z",
        "odds": 1.21,
        "best": 1.21,
-       "lastOdds": 1.15,
+       "lastOdds": 1.14,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1555,7 +1555,7 @@
        "when": "2026-11-19T00:00Z",
        "odds": 1.33,
        "best": 1.33,
-       "lastOdds": 1.33,
+       "lastOdds": 1.27,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1575,7 +1575,7 @@
        "when": "2026-11-19T03:00Z",
        "odds": 1.15,
        "best": 1.15,
-       "lastOdds": 1.16,
+       "lastOdds": 1.18,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1641,7 +1641,7 @@
        "when": "2026-11-19T00:00Z",
        "odds": 1.34,
        "best": 1.34,
-       "lastOdds": 1.33,
+       "lastOdds": 1.27,
        "lockOdds": 1.33,
        "lockBest": 1.33,
        "lockBook": null,
