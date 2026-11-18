@@ -1,14 +1,14 @@
 {
- "graded": "2026-11-18T14:00:01Z",
+ "graded": "2026-11-18T16:11:40Z",
  "overall": {
-  "groups": 138,
+  "groups": 139,
   "settled": 136,
   "won": 39,
   "z": -1.32,
   "lost": 97,
-  "pending": 2,
-  "legs": 520,
-  "legsWon": 376,
+  "pending": 3,
+  "legs": 522,
+  "legsWon": 378,
   "returned": 113.74,
   "staked": 136,
   "returnedBest": 118.39,
@@ -19,10 +19,10 @@
   "unitsReturned": 130.15,
   "unitsReturnedBest": 134.89,
   "clv": {
-   "n": 156,
+   "n": 157,
    "shortened": 63,
-   "drifted": 57,
-   "mean": 0.0009
+   "drifted": 59,
+   "mean": 0.0007
   }
  },
  "cardLegsBySport": {
@@ -56,12 +56,12 @@
    "tripwire": false
   },
   "football": {
-   "legs": 38,
-   "landed": 26,
-   "expected": 25.78,
-   "rate": 0.6842,
-   "quoted": 0.6784,
-   "z": 0.08,
+   "legs": 39,
+   "landed": 27,
+   "expected": 26.39,
+   "rate": 0.6923,
+   "quoted": 0.6768,
+   "z": 0.21,
    "tripwire": false
   },
   "rugby": {
@@ -125,7 +125,7 @@
     "mean": null
    }
   },
-  "unknown": 3,
+  "unknown": 4,
   "legs": {
    "rule12": {
     "legs": 0,
@@ -482,14 +482,14 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 37,
+   "groups": 38,
    "settled": 36,
    "won": 11,
    "z": -0.93,
    "lost": 25,
-   "pending": 1,
-   "legs": 105,
-   "legsWon": 74,
+   "pending": 2,
+   "legs": 106,
+   "legsWon": 75,
    "returned": 25.35,
    "staked": 36,
    "returnedBest": 25.7,
@@ -500,10 +500,10 @@
    "unitsReturned": 41.76,
    "unitsReturnedBest": 42.2,
    "clv": {
-    "n": 83,
-    "shortened": 27,
-    "drifted": 30,
-    "mean": -0.0039
+    "n": 85,
+    "shortened": 28,
+    "drifted": 33,
+    "mean": -0.0042
    }
   },
   "Card 3x": {
@@ -799,14 +799,14 @@
   }
  },
  "card": {
-  "groups": 43,
+  "groups": 44,
   "settled": 42,
   "won": 13,
   "z": -0.44,
   "lost": 29,
-  "pending": 1,
-  "legs": 124,
-  "legsWon": 83,
+  "pending": 2,
+  "legs": 125,
+  "legsWon": 84,
   "returned": 36.21,
   "staked": 42,
   "returnedBest": 36.71,
@@ -817,10 +817,10 @@
   "unitsReturned": 50.53,
   "unitsReturnedBest": 51.12,
   "clv": {
-   "n": 97,
-   "shortened": 34,
-   "drifted": 37,
-   "mean": -0.0024
+   "n": 99,
+   "shortened": 35,
+   "drifted": 40,
+   "mean": -0.0026
   }
  },
  "cardWide": {
@@ -982,8 +982,8 @@
   "z": -0.86,
   "lost": 1,
   "pending": 1,
-  "legs": 3,
-  "legsWon": 2,
+  "legs": 4,
+  "legsWon": 3,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -996,7 +996,7 @@
   "clv": {
    "n": 5,
    "shortened": 2,
-   "drifted": 3,
+   "drifted": 2,
    "mean": -0.0056
   }
  },
@@ -1152,14 +1152,14 @@
    }
   },
   "13": {
-   "groups": 3,
+   "groups": 4,
    "settled": 2,
    "won": 0,
    "z": -1.0,
    "lost": 2,
-   "pending": 1,
-   "legs": 4,
-   "legsWon": 2,
+   "pending": 2,
+   "legs": 5,
+   "legsWon": 3,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -1170,23 +1170,23 @@
    "unitsReturned": 0,
    "unitsReturnedBest": 0,
    "clv": {
-    "n": 6,
-    "shortened": 2,
-    "drifted": 1,
-    "mean": 0.0002
+    "n": 8,
+    "shortened": 3,
+    "drifted": 4,
+    "mean": -0.0035
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 27,
+   "groups": 28,
    "settled": 26,
    "won": 9,
    "z": -0.13,
    "lost": 17,
-   "pending": 1,
-   "legs": 75,
-   "legsWon": 54,
+   "pending": 2,
+   "legs": 76,
+   "legsWon": 55,
    "returned": 23.99,
    "staked": 26,
    "returnedBest": 24.27,
@@ -1197,10 +1197,10 @@
    "unitsReturned": 38.31,
    "unitsReturnedBest": 38.68,
    "clv": {
-    "n": 51,
-    "shortened": 16,
-    "drifted": 19,
-    "mean": 0.0015
+    "n": 53,
+    "shortened": 17,
+    "drifted": 22,
+    "mean": 0.0008
    }
   },
   "Daytime": {
@@ -1415,9 +1415,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1433,8 +1433,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.616,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-1",
        "opp": 5.5,
        "rule12Fault": null,
        "r12": false
@@ -1447,7 +1447,7 @@
        "when": "2026-11-19T01:00Z",
        "odds": 1.36,
        "best": 1.36,
-       "lastOdds": 1.36,
+       "lastOdds": 1.38,
        "lockOdds": 1.36,
        "lockBest": 1.36,
        "lockBook": null,
@@ -1467,7 +1467,7 @@
        "when": "2026-11-19T03:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.22,
+       "lastOdds": 1.23,
        "lockOdds": 1.22,
        "lockBest": 1.22,
        "lockBook": null,
@@ -1501,9 +1501,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -1519,8 +1519,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7854,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "(2) Carlos Alcaraz (ESP) bt (4) Daniil Medvedev (RUS) 6-2 6-4",
        "opp": 3.82,
        "rule12Fault": null,
        "r12": false
@@ -1553,7 +1553,7 @@
        "when": "2026-11-19T00:00Z",
        "odds": 1.33,
        "best": 1.33,
-       "lastOdds": 1.34,
+       "lastOdds": 1.33,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1573,7 +1573,7 @@
        "when": "2026-11-19T03:00Z",
        "odds": 1.15,
        "best": 1.15,
-       "lastOdds": 1.22,
+       "lastOdds": 1.23,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1582,6 +1582,92 @@
        "status": "pending",
        "result": null,
        "opp": 6.0,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 13,
+     "wideRule": null,
+     "odds": 2.4,
+     "p": 0.3261,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-18T15:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Cotonsport",
+       "event": "Cotonsport v Stade Renard",
+       "sport": "football",
+       "comp": "Elite One",
+       "when": "2026-11-18T15:00:00Z",
+       "odds": 1.31,
+       "best": 1.33,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6305,
+       "status": "pending",
+       "result": null,
+       "opp": 7.7,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Houston Rockets",
+       "event": "Indiana Pacers v Houston Rockets",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-19T00:00Z",
+       "odds": 1.34,
+       "best": 1.34,
+       "lastOdds": 1.33,
+       "lockOdds": 1.33,
+       "lockBest": 1.33,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7411,
+       "status": "pending",
+       "result": null,
+       "opp": 3.36,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Phoenix Suns",
+       "event": "Sacramento Kings v Phoenix Suns",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-19T03:00Z",
+       "odds": 1.37,
+       "best": 1.37,
+       "lastOdds": 1.39,
+       "lockOdds": 1.39,
+       "lockBest": 1.39,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6979,
+       "status": "pending",
+       "result": null,
+       "opp": 3.2,
        "rule12Fault": null,
        "r12": false
       }

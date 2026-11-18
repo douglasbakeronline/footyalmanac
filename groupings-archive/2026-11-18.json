@@ -400,7 +400,7 @@
      "firstOdds": 1.36,
      "lastOdds": 1.4,
      "lastBest": 1.4,
-     "lastAt": "2026-11-18T13:59:40Z",
+     "lastAt": "2026-11-18T16:09:37Z",
      "lockPrice": {
       "odds": 1.4,
       "best": 1.4,
@@ -581,7 +581,7 @@
      "firstOdds": 1.35,
      "lastOdds": 1.37,
      "lastBest": 1.37,
-     "lastAt": "2026-11-18T13:59:40Z",
+     "lastAt": "2026-11-18T16:09:37Z",
      "lockPrice": {
       "odds": 1.35,
       "best": 1.35,
@@ -996,9 +996,9 @@
      "edge": -0.0394,
      "basis": "model",
      "firstOdds": 1.36,
-     "lastOdds": 1.36,
-     "lastBest": 1.36,
-     "lastAt": "2026-11-18T13:59:40Z",
+     "lastOdds": 1.38,
+     "lastBest": 1.38,
+     "lastAt": "2026-11-18T16:09:37Z",
      "lockPrice": {
       "odds": 1.36,
       "best": 1.36,
@@ -1183,9 +1183,9 @@
      "edge": -0.0402,
      "basis": "model",
      "firstOdds": 1.19,
-     "lastOdds": 1.22,
-     "lastBest": 1.22,
-     "lastAt": "2026-11-18T13:59:40Z",
+     "lastOdds": 1.23,
+     "lastBest": 1.23,
+     "lastAt": "2026-11-18T16:09:37Z",
      "lockPrice": {
       "odds": 1.22,
       "best": 1.22,
@@ -1491,7 +1491,7 @@
      "firstOdds": 1.21,
      "lastOdds": 1.14,
      "lastBest": 1.14,
-     "lastAt": "2026-11-18T13:59:40Z"
+     "lastAt": "2026-11-18T16:09:37Z"
     },
     {
      "sport": "nba",
@@ -1666,9 +1666,9 @@
      "basis": "model",
      "tier": "reserve",
      "firstOdds": 1.33,
-     "lastOdds": 1.34,
-     "lastBest": 1.34,
-     "lastAt": "2026-11-18T13:59:40Z"
+     "lastOdds": 1.33,
+     "lastBest": 1.33,
+     "lastAt": "2026-11-18T16:09:37Z"
     },
     {
      "sport": "nba",
@@ -1843,9 +1843,9 @@
      "basis": "model",
      "tier": "list",
      "firstOdds": 1.15,
-     "lastOdds": 1.22,
-     "lastBest": 1.22,
-     "lastAt": "2026-11-18T13:59:40Z"
+     "lastOdds": 1.23,
+     "lastBest": 1.23,
+     "lastAt": "2026-11-18T16:09:37Z"
     }
    ],
    "tested": 0.3626,
@@ -1870,6 +1870,586 @@
    "stake": 0,
    "bookOdds": null,
    "archivedAt": "2026-11-18T13:59:40Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 13,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-18T01:42:44Z",
+   "lockAt": "2026-11-18T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": 2.35,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.4,
+   "p": 0.3261,
+   "implied": 0.4158,
+   "bestOdds": 2.44,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Cotonsport v Stade Renard",
+     "home": "Cotonsport",
+     "away": "Stade Renard",
+     "side": "h",
+     "pick": "Cotonsport",
+     "code": "af.411",
+     "comp": "Elite One",
+     "country": "Cameroon",
+     "when": "2026-11-18T15:00:00Z",
+     "date": "2026-11-18",
+     "pModel": 0.6305,
+     "p": 0.6305,
+     "fx": {
+      "u21Side": false,
+      "league": "af.411",
+      "leagueName": "Elite One",
+      "short": "ELI",
+      "country": "Cameroon",
+      "iso": "",
+      "tier": 2,
+      "order": 439,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-18",
+      "time": "15:00",
+      "kickoff": "2026-11-18T15:00:00Z",
+      "home": {
+       "name": "Cotonsport",
+       "att": 1.201,
+       "def": 0.756,
+       "played": 4,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Elite One",
+       "form": {
+        "pts": 9,
+        "max": 12,
+        "seq": "LWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26 + 2026/27 so far",
+       "last": {
+        "P": 30,
+        "W": 14,
+        "D": 10,
+        "L": 6,
+        "GF": 40,
+        "GA": 29,
+        "GD": 11,
+        "Pts": 52,
+        "PPG": 1.733
+       },
+       "now": {
+        "P": 4,
+        "W": 3,
+        "D": 0,
+        "L": 1,
+        "GF": 10,
+        "GA": 3,
+        "GD": 7,
+        "Pts": 9,
+        "PPG": 2.25
+       }
+      },
+      "away": {
+       "name": "Stade Renard",
+       "att": 0.948,
+       "def": 1.153,
+       "played": 5,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Elite One",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DWLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26 + 2026/27 so far",
+       "last": {
+        "P": 29,
+        "W": 12,
+        "D": 7,
+        "L": 10,
+        "GF": 33,
+        "GA": 25,
+        "GD": 8,
+        "Pts": 43,
+        "PPG": 1.483
+       },
+       "now": {
+        "P": 5,
+        "W": 1,
+        "D": 2,
+        "L": 2,
+        "GF": 5,
+        "GA": 11,
+        "GD": -6,
+        "Pts": 5,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.6305,
+       "d": 0.2348,
+       "a": 0.1347
+      },
+      "xg": [
+       1.88,
+       0.69
+      ],
+      "btts": 0.4948,
+      "over25": 0.5015,
+      "score": [
+       1,
+       0
+      ],
+      "confidence": 0.6305,
+      "evidence": "mixed",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 3,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.646,
+       "n": 3240,
+       "cumHit": 0.7121,
+       "cumN": 9156,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7121,
+     "n": 9156,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.2348,
+     "multOnly": true,
+     "odds": 1.31,
+     "best": 1.33,
+     "books": 7,
+     "opp": 7.7,
+     "draw": 4.63,
+     "bestBook": "Betfair",
+     "bookOdds": {
+      "William Hill": 1.3,
+      "Bet365": 1.28,
+      "Betfair": 1.33
+     },
+     "pricedAt": "2026-11-18T13:59:40Z",
+     "margin": 1.1084,
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.7634,
+     "pTested": 0.6305,
+     "fair": 0.6887,
+     "edge": -0.174,
+     "basis": "model",
+     "firstOdds": 1.25
+    },
+    {
+     "sport": "nba",
+     "event": "Indiana Pacers v Houston Rockets",
+     "home": "Indiana Pacers",
+     "away": "Houston Rockets",
+     "pick": "Houston Rockets",
+     "comp": "NBA",
+     "when": "2026-11-19T00:00Z",
+     "date": "2026-11-19",
+     "id": "401910008",
+     "pModel": 0.7411,
+     "p": 0.7411,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910008",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-19T00:00Z",
+      "home": "Indiana Pacers",
+      "away": "Houston Rockets",
+      "neutral": false,
+      "pHome": 0.2589,
+      "pick": "Houston Rockets",
+      "confidence": 0.7411,
+      "tier": "Strong",
+      "eloH": 1384,
+      "eloA": 1604,
+      "gamesH": 301,
+      "gamesA": 274,
+      "hfa": 25,
+      "eloDiff": -195.1,
+      "line": {
+       "spread": 7.5,
+       "total": 224.5,
+       "mlH": 236.0,
+       "mlA": -290.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "124-131",
+        "opp": "Philadelphia 76ers",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "106-104",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "114-101",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "122-125",
+        "opp": "Dallas Mavericks",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "L",
+        "score": "102-114",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-11-07"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "110-128",
+        "opp": "Miami Heat",
+        "home": false,
+        "date": "2026-11-17"
+       },
+       {
+        "r": "W",
+        "score": "147-119",
+        "opp": "Washington Wizards",
+        "home": false,
+        "date": "2026-11-16"
+       },
+       {
+        "r": "W",
+        "score": "125-118",
+        "opp": "Utah Jazz",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "115-108",
+        "opp": "Golden State Warriors",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "W",
+        "score": "110-100",
+        "opp": "Denver Nuggets",
+        "home": true,
+        "date": "2026-11-10"
+       }
+      ],
+      "recordH": {
+       "w": 5,
+       "l": 9,
+       "d": 0
+      },
+      "recordA": {
+       "w": 11,
+       "l": 4,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-02-03",
+        "home": "Indiana Pacers",
+        "away": "Houston Rockets",
+        "score": "114-118"
+       },
+       {
+        "date": "2025-12-30",
+        "home": "Houston Rockets",
+        "away": "Indiana Pacers",
+        "score": "126-119"
+       },
+       {
+        "date": "2025-03-05",
+        "home": "Indiana Pacers",
+        "away": "Houston Rockets",
+        "score": "115-102"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.34,
+     "margin": 1.0439,
+     "opp": 3.36,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.33,
+      "Bet365": 1.35,
+      "Betfair": 1.33,
+      "BetVictor": 1.32
+     },
+     "pricedAt": "2026-11-18T14:00:00Z",
+     "implied": 0.7463,
+     "pTested": 0.7411,
+     "fair": 0.7149,
+     "edge": -0.042,
+     "basis": "model",
+     "firstOdds": 1.38,
+     "lastOdds": 1.33,
+     "lastBest": 1.33,
+     "lastAt": "2026-11-18T16:09:37Z",
+     "lockPrice": {
+      "odds": 1.33,
+      "best": 1.33,
+      "book": null,
+      "at": "2026-11-18T16:09:37Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Sacramento Kings v Phoenix Suns",
+     "home": "Sacramento Kings",
+     "away": "Phoenix Suns",
+     "pick": "Phoenix Suns",
+     "comp": "NBA",
+     "when": "2026-11-19T03:00Z",
+     "date": "2026-11-19",
+     "id": "401910018",
+     "pModel": 0.6979,
+     "p": 0.6979,
+     "hit": 0.769,
+     "n": 658,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910018",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-19T03:00Z",
+      "home": "Sacramento Kings",
+      "away": "Phoenix Suns",
+      "neutral": false,
+      "pHome": 0.3021,
+      "pick": "Phoenix Suns",
+      "confidence": 0.6979,
+      "tier": "Firm",
+      "eloH": 1330,
+      "eloA": 1513,
+      "gamesH": 262,
+      "gamesA": 269,
+      "hfa": 25,
+      "eloDiff": -157.6,
+      "line": {
+       "spread": 6.5,
+       "total": 227.5,
+       "mlH": 220.0,
+       "mlA": -269.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6776,
+       "n": 183,
+       "cumHit": 0.769,
+       "cumN": 658
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "103-125",
+        "opp": "Oklahoma City Thunder",
+        "home": true,
+        "date": "2026-11-16"
+       },
+       {
+        "r": "L",
+        "score": "107-120",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "L",
+        "score": "100-107",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "L",
+        "score": "108-114",
+        "opp": "Miami Heat",
+        "home": true,
+        "date": "2026-11-09"
+       },
+       {
+        "r": "L",
+        "score": "109-124",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-11-07"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "117-105",
+        "opp": "Denver Nuggets",
+        "home": false,
+        "date": "2026-11-17"
+       },
+       {
+        "r": "L",
+        "score": "123-131",
+        "opp": "Los Angeles Lakers",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "101-96",
+        "opp": "Charlotte Hornets",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "W",
+        "score": "133-110",
+        "opp": "LA Clippers",
+        "home": true,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "L",
+        "score": "96-122",
+        "opp": "San Antonio Spurs",
+        "home": true,
+        "date": "2026-11-10"
+       }
+      ],
+      "recordH": {
+       "w": 1,
+       "l": 12,
+       "d": 0
+      },
+      "recordA": {
+       "w": 6,
+       "l": 7,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-04",
+        "home": "Sacramento Kings",
+        "away": "Phoenix Suns",
+        "score": "103-114"
+       },
+       {
+        "date": "2026-01-03",
+        "home": "Phoenix Suns",
+        "away": "Sacramento Kings",
+        "score": "129-102"
+       },
+       {
+        "date": "2025-11-27",
+        "home": "Sacramento Kings",
+        "away": "Phoenix Suns",
+        "score": "100-112"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.37,
+     "margin": 1.0424,
+     "opp": 3.2,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.36,
+      "Bet365": 1.37,
+      "Betfair": 1.4,
+      "BetVictor": 1.34
+     },
+     "pricedAt": "2026-11-18T14:00:00Z",
+     "implied": 0.7299,
+     "pTested": 0.6776,
+     "fair": 0.7002,
+     "edge": -0.0717,
+     "basis": "model",
+     "firstOdds": 1.46,
+     "lastOdds": 1.39,
+     "lastBest": 1.39,
+     "lastAt": "2026-11-18T16:09:37Z",
+     "lockPrice": {
+      "odds": 1.39,
+      "best": 1.39,
+      "book": null,
+      "at": "2026-11-18T16:09:37Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-18T13:59:40Z",
+   "archivedAt": "2026-11-18T16:09:37Z"
   }
  ]
 }
