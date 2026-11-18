@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-18T11:10:12Z",
+ "graded": "2026-11-18T12:55:12Z",
  "overall": {
-  "groups": 136,
+  "groups": 137,
   "settled": 135,
   "won": 39,
   "z": -1.26,
   "lost": 96,
-  "pending": 1,
+  "pending": 2,
   "legs": 519,
   "legsWon": 376,
   "returned": 113.74,
@@ -19,10 +19,10 @@
   "unitsReturned": 130.15,
   "unitsReturnedBest": 134.89,
   "clv": {
-   "n": 152,
+   "n": 154,
    "shortened": 62,
    "drifted": 56,
-   "mean": 0.0007
+   "mean": 0.0006
   }
  },
  "cardLegsBySport": {
@@ -125,7 +125,7 @@
     "mean": null
    }
   },
-  "unknown": 2,
+  "unknown": 3,
   "legs": {
    "rule12": {
     "legs": 0,
@@ -410,7 +410,7 @@
    "ncaab|longwood lancers|vmi keydets|2026-11-19": 0,
    "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": 1.05,
    "ncaab|george mason patriots|north carolina central eagles|2026-11-19": 0,
-   "ncaab|uic flames|chicago state cougars|2026-11-19": 1.0,
+   "ncaab|uic flames|chicago state cougars|2026-11-19": 1.01,
    "ncaab|texas tech red raiders|lsu new orleans privateers|2026-11-19": 0,
    "ncaab|ut rio grande valley vaqueros|college of biblical studies ambassadors|2026-11-19": -1,
    "ncaab|cincinnati bearcats|youngstown state penguins|2026-11-19": 0,
@@ -422,7 +422,7 @@
    "ncaab|nebraska cornhuskers|south dakota coyotes|2026-11-19": 0,
    "ncaab|byu cougars|northern colorado bears|2026-11-19": 0,
    "ncaab|utah state aggies|weber state wildcats|2026-11-19": 0,
-   "ncaab|missouri tigers|alcorn state braves|2026-11-19": -1,
+   "ncaab|missouri tigers|alcorn state braves|2026-11-19": 0,
    "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": 0,
    "ncaab|san diego state aztecs|texas southern tigers|2026-11-19": 0,
    "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": 0,
@@ -482,12 +482,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 36,
+   "groups": 37,
    "settled": 35,
    "won": 11,
    "z": -0.83,
    "lost": 24,
-   "pending": 1,
+   "pending": 2,
    "legs": 104,
    "legsWon": 74,
    "returned": 25.35,
@@ -500,10 +500,10 @@
    "unitsReturned": 41.76,
    "unitsReturnedBest": 42.2,
    "clv": {
-    "n": 81,
+    "n": 83,
     "shortened": 27,
     "drifted": 30,
-    "mean": -0.0038
+    "mean": -0.0039
    }
   },
   "Card 3x": {
@@ -799,12 +799,12 @@
   }
  },
  "card": {
-  "groups": 42,
+  "groups": 43,
   "settled": 41,
   "won": 13,
   "z": -0.33,
   "lost": 28,
-  "pending": 1,
+  "pending": 2,
   "legs": 123,
   "legsWon": 83,
   "returned": 36.21,
@@ -817,10 +817,10 @@
   "unitsReturned": 50.53,
   "unitsReturnedBest": 51.12,
   "clv": {
-   "n": 95,
+   "n": 97,
    "shortened": 34,
    "drifted": 37,
-   "mean": -0.0023
+   "mean": -0.0024
   }
  },
  "cardWide": {
@@ -1152,12 +1152,12 @@
    }
   },
   "13": {
-   "groups": 2,
+   "groups": 3,
    "settled": 1,
    "won": 0,
    "z": -0.72,
    "lost": 1,
-   "pending": 1,
+   "pending": 2,
    "legs": 3,
    "legsWon": 2,
    "returned": 0,
@@ -1170,21 +1170,21 @@
    "unitsReturned": 0,
    "unitsReturnedBest": 0,
    "clv": {
-    "n": 4,
+    "n": 6,
     "shortened": 2,
     "drifted": 1,
-    "mean": 0.004
+    "mean": 0.0002
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 26,
+   "groups": 27,
    "settled": 25,
    "won": 9,
    "z": 0.01,
    "lost": 16,
-   "pending": 1,
+   "pending": 2,
    "legs": 74,
    "legsWon": 54,
    "returned": 23.99,
@@ -1197,10 +1197,10 @@
    "unitsReturned": 38.31,
    "unitsReturnedBest": 38.68,
    "clv": {
-    "n": 49,
+    "n": 51,
     "shortened": 16,
     "drifted": 19,
-    "mean": 0.0018
+    "mean": 0.0015
    }
   },
   "Daytime": {
@@ -1381,7 +1381,7 @@
        "when": "2026-11-19T01:00Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.35,
+       "lastOdds": 1.37,
        "lockOdds": 1.35,
        "lockBest": 1.35,
        "lockBook": null,
@@ -1390,6 +1390,92 @@
        "status": "pending",
        "result": null,
        "opp": 3.18,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 3,
+     "rule": 13,
+     "wideRule": null,
+     "odds": 2.39,
+     "p": 0.3958,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-18T12:30:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Şanlıurfaspor",
+       "event": "Şanlıurfaspor v Erbaaspor",
+       "sport": "football",
+       "comp": "2. Lig",
+       "when": "2026-11-18T12:30:00Z",
+       "odds": 1.44,
+       "best": 1.44,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.616,
+       "status": "pending",
+       "result": null,
+       "opp": 5.5,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Detroit Pistons",
+       "event": "New Orleans Pelicans v Detroit Pistons",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-19T01:00Z",
+       "odds": 1.36,
+       "best": 1.36,
+       "lastOdds": 1.36,
+       "lockOdds": 1.36,
+       "lockBest": 1.36,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7308,
+       "status": "pending",
+       "result": null,
+       "opp": 3.27,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Los Angeles Lakers",
+       "event": "Los Angeles Lakers v Utah Jazz",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-19T03:00Z",
+       "odds": 1.22,
+       "best": 1.22,
+       "lastOdds": 1.22,
+       "lockOdds": 1.22,
+       "lockBest": 1.22,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8792,
+       "status": "pending",
+       "result": null,
+       "opp": 4.5,
        "rule12Fault": null,
        "r12": false
       }
