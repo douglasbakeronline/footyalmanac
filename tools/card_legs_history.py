@@ -546,7 +546,10 @@ def replay_split(split, splits_fn, log):
                                           "comp3",
                                           # 17 Nov 2026: live spans two days here too; nospan is
                                           # the rollback (CARD_SPAN = False), as on the pool
-                                          "nospan")}
+                                          "nospan",
+                                          # 18 Nov 2026: the price range capped at 1.60
+                                          # (claude/card-m7cap160-2026-11-18.md)
+                                          "m7cap160")}
     res["cardM7Paired"] = m7_paired(res["cardM7"])
     res["edgeAccas"] = edge_accas(L)   # 10 Nov 2026: the Edge flag's legs as accumulators
     # 11 Nov 2026 (#224): Douglas's mismatch rule, judged against the price
