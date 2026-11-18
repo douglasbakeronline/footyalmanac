@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-group-bands: Group bands against their stated chance, backtest write-up (tag pending)
+
+**What changed:** nothing in the site. A dated section in `claude/odds-groupings.md` reads every group band in `groupings-record.json` against its stated chance. Findings only: the evidence fails the gates (2 to 36 groups a band, 100 needed), so no rule change.
+**Evidence:** retired kinds 136 settled, 39 won v 46.2 expected (z -1.3); Steady 4 of 25 v 9.7, Stretch 1 of 15 v 3.6, Balanced 5 of 17 v 5.0; Card 2x 11 of 36 v 13.7, Card 3x 7 of 16 v 4.2.
+**Files:** `claude/odds-groupings.md`.
+**Not changed:** `groupings.py`, any constant, any record file.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-tennis-keys-3: Tennis keys with no Odds API match, third look (tag pending)
 
 **What changed:** nothing in the site. A dated note records that the logging asked for already exists and that the key list still has not been seen.
