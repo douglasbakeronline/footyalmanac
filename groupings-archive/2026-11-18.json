@@ -400,7 +400,7 @@
      "firstOdds": 1.36,
      "lastOdds": 1.57,
      "lastBest": 1.57,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.4,
       "best": 1.4,
@@ -581,7 +581,7 @@
      "firstOdds": 1.35,
      "lastOdds": 1.4,
      "lastBest": 1.4,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.35,
       "best": 1.35,
@@ -998,7 +998,7 @@
      "firstOdds": 1.36,
      "lastOdds": 1.54,
      "lastBest": 1.54,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.36,
       "best": 1.36,
@@ -1185,7 +1185,7 @@
      "firstOdds": 1.19,
      "lastOdds": 1.18,
      "lastBest": 1.18,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.22,
       "best": 1.22,
@@ -1491,7 +1491,7 @@
      "firstOdds": 1.21,
      "lastOdds": 1.14,
      "lastBest": 1.14,
-     "lastAt": "2026-11-18T22:59:06Z"
+     "lastAt": "2026-11-18T23:19:05Z"
     },
     {
      "sport": "nba",
@@ -1666,9 +1666,9 @@
      "basis": "model",
      "tier": "reserve",
      "firstOdds": 1.33,
-     "lastOdds": 1.27,
-     "lastBest": 1.27,
-     "lastAt": "2026-11-18T22:59:06Z"
+     "lastOdds": 1.29,
+     "lastBest": 1.29,
+     "lastAt": "2026-11-18T23:19:05Z"
     },
     {
      "sport": "nba",
@@ -1845,7 +1845,7 @@
      "firstOdds": 1.15,
      "lastOdds": 1.18,
      "lastBest": 1.18,
-     "lastAt": "2026-11-18T22:59:06Z"
+     "lastAt": "2026-11-18T23:19:05Z"
     }
    ],
    "tested": 0.3626,
@@ -2249,9 +2249,9 @@
      "edge": -0.042,
      "basis": "model",
      "firstOdds": 1.38,
-     "lastOdds": 1.27,
-     "lastBest": 1.27,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastOdds": 1.29,
+     "lastBest": 1.29,
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.33,
       "best": 1.33,
@@ -2438,7 +2438,7 @@
      "firstOdds": 1.46,
      "lastOdds": 1.37,
      "lastBest": 1.37,
-     "lastAt": "2026-11-18T22:59:06Z",
+     "lastAt": "2026-11-18T23:19:05Z",
      "lockPrice": {
       "odds": 1.39,
       "best": 1.39,
