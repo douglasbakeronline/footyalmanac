@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-office-review: office review and next week's priorities (tag pending)
+
+**What changed:** `claude/office-review-2026-11-18.md`: what shipped 9 to 18 Nov, what was learned (including rejected tests), where accuracy stands, three tasks for next week (Kofi, Hannah, Susie). A report by nature.
+
+**Evidence:** read from `record.json`, `groupings-record.json` and `RELEASES.md`; nothing fitted.
+
+**Files:** `claude/office-review-2026-11-18.md`, `RELEASES.md`.
+
+**Not changed:** code, model numbers, the site.
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-group-bands: Group bands against their stated chance, backtest write-up (tag pending)
 
 **What changed:** nothing in the site. A dated section in `claude/odds-groupings.md` reads every group band in `groupings-record.json` against its stated chance. Findings only: the evidence fails the gates (2 to 36 groups a band, 100 needed), so no rule change.
