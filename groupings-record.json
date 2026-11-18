@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-17T23:48:29Z",
+ "graded": "2026-11-18T01:44:22Z",
  "overall": {
   "groups": 135,
   "settled": 133,
@@ -7,8 +7,8 @@
   "z": -1.13,
   "lost": 94,
   "pending": 2,
-  "legs": 514,
-  "legsWon": 373,
+  "legs": 515,
+  "legsWon": 374,
   "returned": 113.74,
   "staked": 133,
   "returnedBest": 118.39,
@@ -143,12 +143,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 40,
-   "won": 36,
-   "rate": 0.9,
-   "quoted": 0.8866,
-   "returned": 38.49,
-   "ret": -0.0377
+   "n": 46,
+   "won": 41,
+   "rate": 0.8913,
+   "quoted": 0.8891,
+   "returned": 43.71,
+   "ret": -0.0498
   },
   "notAtBook": {
    "n": 77,
@@ -158,19 +158,19 @@
   },
   "unchecked": {
    "n": 26,
-   "won": 25,
-   "rate": 0.9615,
+   "won": 24,
+   "rate": 0.9231,
    "quoted": 0.8632
   },
   "bySport": {
    "football": {
     "atBook": {
-     "n": 8,
-     "won": 8,
-     "rate": 1.0,
-     "quoted": 0.8799,
-     "returned": 8.95,
-     "ret": 0.1187
+     "n": 12,
+     "won": 11,
+     "rate": 0.9167,
+     "quoted": 0.8899,
+     "returned": 12.12,
+     "ret": 0.01
     },
     "notAtBook": {
      "n": 4,
@@ -180,8 +180,8 @@
     },
     "unchecked": {
      "n": 10,
-     "won": 9,
-     "rate": 0.9,
+     "won": 8,
+     "rate": 0.8,
      "quoted": 0.7868
     }
    },
@@ -207,12 +207,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 26,
-     "won": 23,
-     "rate": 0.8846,
+     "n": 28,
+     "won": 25,
+     "rate": 0.8929,
      "quoted": 0.8979,
-     "returned": 24.12,
-     "ret": -0.0723
+     "returned": 26.17,
+     "ret": -0.0654
     },
     "notAtBook": {
      "n": 73,
@@ -404,25 +404,25 @@
    "ncaab|baylor bears|jackson state tigers|2026-11-18": -1,
    "football|al ain|al-dhafra|2026-11-19": 1.14,
    "nba|los angeles lakers|utah jazz|2026-11-19": -1,
-   "ncaab|st. john's red storm|siena saints|2026-11-19": -1,
+   "ncaab|st. john's red storm|siena saints|2026-11-19": 0,
    "ncaab|miami (oh) redhawks|defiance yellow jackets|2026-11-19": -1,
    "ncaab|longwood lancers|vmi keydets|2026-11-19": -1,
-   "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": -1,
+   "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": 0,
    "ncaab|george mason patriots|north carolina central eagles|2026-11-19": -1,
    "ncaab|uic flames|chicago state cougars|2026-11-19": -1,
    "ncaab|texas tech red raiders|lsu new orleans privateers|2026-11-19": -1,
    "ncaab|ut rio grande valley vaqueros|college of biblical studies ambassadors|2026-11-19": -1,
-   "ncaab|cincinnati bearcats|youngstown state penguins|2026-11-19": -1,
-   "ncaab|marquette golden eagles|northern illinois huskies|2026-11-19": -1,
+   "ncaab|cincinnati bearcats|youngstown state penguins|2026-11-19": 0,
+   "ncaab|marquette golden eagles|northern illinois huskies|2026-11-19": 0,
    "ncaab|texas state bobcats|incarnate word cardinals|2026-11-19": -1,
    "ncaab|arkansas state red wolves|arkansas-pine bluff golden lions|2026-11-19": -1,
    "ncaab|lsu tigers|ul monroe warhawks|2026-11-19": -1,
-   "ncaab|oklahoma sooners|campbell fighting camels|2026-11-19": -1,
-   "ncaab|nebraska cornhuskers|south dakota coyotes|2026-11-19": -1,
-   "ncaab|byu cougars|northern colorado bears|2026-11-19": -1,
-   "ncaab|utah state aggies|weber state wildcats|2026-11-19": -1,
+   "ncaab|oklahoma sooners|campbell fighting camels|2026-11-19": 0,
+   "ncaab|nebraska cornhuskers|south dakota coyotes|2026-11-19": 0,
+   "ncaab|byu cougars|northern colorado bears|2026-11-19": 0,
+   "ncaab|utah state aggies|weber state wildcats|2026-11-19": 0,
    "ncaab|missouri tigers|alcorn state braves|2026-11-19": -1,
-   "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": -1,
+   "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": 0,
    "ncaab|san diego state aztecs|texas southern tigers|2026-11-19": -1,
    "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": -1,
    "football|fc bayern münchen|1. fc köln|2026-11-20": 1.08,
@@ -436,7 +436,29 @@
    "ncaab|portland state vikings|northwest indian redhawks|2026-11-20": -1,
    "ncaab|stanford cardinal|sacramento state hornets|2026-11-20": -1,
    "ncaab|usc trojans|tarleton state texans|2026-11-20": -1,
-   "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": -1
+   "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": -1,
+   "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": -1,
+   "nba|los angeles lakers|sacramento kings|2026-11-21": -1,
+   "nba|philadelphia 76ers|milwaukee bucks|2026-11-21": -1,
+   "ncaab|virginia cavaliers|loyola maryland greyhounds|2026-11-21": -1,
+   "ncaab|tennessee volunteers|coastal carolina chanticleers|2026-11-21": -1,
+   "ncaab|purdue boilermakers|oakland golden grizzlies|2026-11-21": -1,
+   "ncaab|eastern kentucky colonels|bellarmine knights|2026-11-21": -1,
+   "ncaab|kennesaw state owls|se louisiana lions|2026-11-21": -1,
+   "ncaab|vanderbilt commodores|ucf knights|2026-11-21": -1,
+   "ncaab|arkansas razorbacks|mississippi valley state delta devils|2026-11-21": -1,
+   "ncaab|smu mustangs|south alabama jaguars|2026-11-21": -1,
+   "ncaab|missouri tigers|le moyne dolphins|2026-11-21": -1,
+   "ncaab|kansas state wildcats|campbell fighting camels|2026-11-21": -1,
+   "ncaab|illinois fighting illini|eastern illinois panthers|2026-11-21": -1,
+   "ncaab|north carolina tar heels|marshall thundering herd|2026-11-21": -1,
+   "ncaab|fresno state bulldogs|alabama state hornets|2026-11-21": -1,
+   "ncaab|bucknell bison|siena saints|2026-11-21": -1,
+   "ncaab|unc greensboro spartans|south carolina upstate spartans|2026-11-21": -1,
+   "ncaab|michigan state spartans|detroit mercy titans|2026-11-21": -1,
+   "ncaab|james madison dukes|virginia lynchburg dragons|2026-11-21": -1,
+   "ncaab|massachusetts minutemen|maine black bears|2026-11-21": -1,
+   "ncaab|georgetown hoyas|coppin state eagles|2026-11-21": -1
   }
  },
  "cardContext": {
@@ -959,8 +981,8 @@
   "z": null,
   "lost": 0,
   "pending": 1,
-  "legs": 0,
-  "legsWon": 0,
+  "legs": 1,
+  "legsWon": 1,
   "returned": 0,
   "staked": 0,
   "returnedBest": 0,
@@ -1392,9 +1414,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Andrea Lazaro Garcia",
@@ -1410,8 +1432,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7092,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "(4) Andrea Lazaro Garcia (ESP) bt Barbara Gatica (CHI) 3-6 6-2 6-3",
        "opp": 3.3,
        "rule12Fault": null,
        "r12": false
