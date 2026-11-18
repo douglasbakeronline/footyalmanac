@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-weakest-sport: no other sport is under quote by two standard errors (tag pending)
+
+**What changed:** a dated note only, `claude/weakest-sport-read-2026-11-18.md`.
+**Evidence:** NFL 61.5% v 65.0% (104), college football 67.3% v 70.0% (358; 70%+ z about -1.4), baseball 50% v 55.9% (54), ATP 63.2% v 63.5% (551), WTA 64.2% v 64.3% (916); NBA, college basketball, rugby above quote. None reaches z -2, so no test was run.
+**Files:** `claude/weakest-sport-read-2026-11-18.md`, `RELEASES.md`.
+**Not changed:** any model, rule or code.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18 Croatia, Serbia, Ukraine, Hungary, Korea, UAE: already covered, third check (tag pending)
 
 **What changed:** a dated note only, `claude/af-new-leagues-recheck-2026-11-18.md`. No code, model or rule changed.
