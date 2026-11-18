@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-18T16:53:28Z",
+ "graded": "2026-11-18T19:28:28Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -7,8 +7,8 @@
   "z": -1.32,
   "lost": 97,
   "pending": 3,
-  "legs": 522,
-  "legsWon": 378,
+  "legs": 523,
+  "legsWon": 379,
   "returned": 113.74,
   "staked": 136,
   "returnedBest": 118.39,
@@ -20,9 +20,9 @@
   "unitsReturnedBest": 134.89,
   "clv": {
    "n": 157,
-   "shortened": 63,
-   "drifted": 59,
-   "mean": 0.0007
+   "shortened": 62,
+   "drifted": 60,
+   "mean": -0.0006
   }
  },
  "cardLegsBySport": {
@@ -46,6 +46,15 @@
    },
    "tripwireAll": false
   },
+  "football": {
+   "legs": 40,
+   "landed": 28,
+   "expected": 27.03,
+   "rate": 0.7,
+   "quoted": 0.6756,
+   "z": 0.33,
+   "tripwire": false
+  },
   "nba": {
    "legs": 40,
    "landed": 31,
@@ -53,15 +62,6 @@
    "rate": 0.775,
    "quoted": 0.7137,
    "z": 0.87,
-   "tripwire": false
-  },
-  "football": {
-   "legs": 39,
-   "landed": 27,
-   "expected": 26.39,
-   "rate": 0.6923,
-   "quoted": 0.6768,
-   "z": 0.21,
    "tripwire": false
   },
   "rugby": {
@@ -107,8 +107,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 5,
-   "legsWon": 3,
+   "legs": 6,
+   "legsWon": 4,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -120,9 +120,9 @@
    "unitsReturnedBest": 0,
    "clv": {
     "n": 8,
-    "shortened": 3,
-    "drifted": 4,
-    "mean": -0.0035
+    "shortened": 2,
+    "drifted": 5,
+    "mean": -0.0273
    }
   },
   "unknown": 0,
@@ -133,9 +133,9 @@
     "expected": 0.78
    },
    "rule13only": {
-    "legs": 4,
-    "landed": 2,
-    "expected": 2.6
+    "legs": 5,
+    "landed": 3,
+    "expected": 3.23
    }
   },
   "derived": 4
@@ -144,12 +144,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 49,
-   "won": 43,
-   "rate": 0.8776,
-   "quoted": 0.89,
-   "returned": 45.71,
-   "ret": -0.0671
+   "n": 50,
+   "won": 44,
+   "rate": 0.88,
+   "quoted": 0.8901,
+   "returned": 46.71,
+   "ret": -0.0658
   },
   "notAtBook": {
    "n": 88,
@@ -208,12 +208,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 31,
-     "won": 27,
-     "rate": 0.871,
-     "quoted": 0.8984,
-     "returned": 28.17,
-     "ret": -0.0913
+     "n": 32,
+     "won": 28,
+     "rate": 0.875,
+     "quoted": 0.8983,
+     "returned": 29.17,
+     "ret": -0.0884
     },
     "notAtBook": {
      "n": 84,
@@ -409,9 +409,9 @@
    "ncaab|st. john's red storm|siena saints|2026-11-19": 0,
    "ncaab|miami (oh) redhawks|defiance yellow jackets|2026-11-19": -1,
    "ncaab|longwood lancers|vmi keydets|2026-11-19": 0,
-   "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": 1.05,
+   "ncaab|south carolina gamecocks|elon phoenix|2026-11-19": 0,
    "ncaab|george mason patriots|north carolina central eagles|2026-11-19": 0,
-   "ncaab|uic flames|chicago state cougars|2026-11-19": 1.01,
+   "ncaab|uic flames|chicago state cougars|2026-11-19": 0,
    "ncaab|texas tech red raiders|lsu new orleans privateers|2026-11-19": 0,
    "ncaab|ut rio grande valley vaqueros|college of biblical studies ambassadors|2026-11-19": -1,
    "ncaab|cincinnati bearcats|youngstown state penguins|2026-11-19": 0,
@@ -439,6 +439,7 @@
    "ncaab|stanford cardinal|sacramento state hornets|2026-11-20": -1,
    "ncaab|usc trojans|tarleton state texans|2026-11-20": -1,
    "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": -1,
+   "football|vihren|pirin blagoevgrad|2026-11-21": 0,
    "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": -1,
    "nba|los angeles lakers|sacramento kings|2026-11-21": -1,
    "nba|philadelphia 76ers|milwaukee bucks|2026-11-21": -1,
@@ -489,8 +490,8 @@
    "z": -0.93,
    "lost": 25,
    "pending": 2,
-   "legs": 106,
-   "legsWon": 75,
+   "legs": 107,
+   "legsWon": 76,
    "returned": 25.35,
    "staked": 36,
    "returnedBest": 25.7,
@@ -502,9 +503,9 @@
    "unitsReturnedBest": 42.2,
    "clv": {
     "n": 85,
-    "shortened": 28,
-    "drifted": 33,
-    "mean": -0.0042
+    "shortened": 27,
+    "drifted": 34,
+    "mean": -0.0064
    }
   },
   "Card 3x": {
@@ -806,8 +807,8 @@
   "z": -0.44,
   "lost": 29,
   "pending": 2,
-  "legs": 125,
-  "legsWon": 84,
+  "legs": 126,
+  "legsWon": 85,
   "returned": 36.21,
   "staked": 42,
   "returnedBest": 36.71,
@@ -819,9 +820,9 @@
   "unitsReturnedBest": 51.12,
   "clv": {
    "n": 99,
-   "shortened": 35,
-   "drifted": 40,
-   "mean": -0.0026
+   "shortened": 34,
+   "drifted": 41,
+   "mean": -0.0045
   }
  },
  "cardWide": {
@@ -998,7 +999,7 @@
    "n": 5,
    "shortened": 2,
    "drifted": 2,
-   "mean": -0.0056
+   "mean": -0.0075
   }
  },
  "cardListLong": {
@@ -1159,8 +1160,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 5,
-   "legsWon": 3,
+   "legs": 6,
+   "legsWon": 4,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -1172,9 +1173,9 @@
    "unitsReturnedBest": 0,
    "clv": {
     "n": 8,
-    "shortened": 3,
-    "drifted": 4,
-    "mean": -0.0035
+    "shortened": 2,
+    "drifted": 5,
+    "mean": -0.0273
    }
   }
  },
@@ -1186,8 +1187,8 @@
    "z": -0.13,
    "lost": 17,
    "pending": 2,
-   "legs": 76,
-   "legsWon": 55,
+   "legs": 77,
+   "legsWon": 56,
    "returned": 23.99,
    "staked": 26,
    "returnedBest": 24.27,
@@ -1199,9 +1200,9 @@
    "unitsReturnedBest": 38.68,
    "clv": {
     "n": 53,
-    "shortened": 17,
-    "drifted": 22,
-    "mean": 0.0008
+    "shortened": 16,
+    "drifted": 23,
+    "mean": -0.0027
    }
   },
   "Daytime": {
@@ -1362,7 +1363,7 @@
        "when": "2026-11-19T00:30Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.4,
+       "lastOdds": 1.52,
        "lockOdds": 1.4,
        "lockBest": 1.4,
        "lockBook": null,
@@ -1382,7 +1383,7 @@
        "when": "2026-11-19T01:00Z",
        "odds": 1.38,
        "best": 1.38,
-       "lastOdds": 1.37,
+       "lastOdds": 1.4,
        "lockOdds": 1.35,
        "lockBest": 1.35,
        "lockBook": null,
@@ -1448,7 +1449,7 @@
        "when": "2026-11-19T01:00Z",
        "odds": 1.36,
        "best": 1.36,
-       "lastOdds": 1.38,
+       "lastOdds": 1.52,
        "lockOdds": 1.36,
        "lockBest": 1.36,
        "lockBook": null,
@@ -1534,7 +1535,7 @@
        "when": "2026-11-19T00:00Z",
        "odds": 1.21,
        "best": 1.21,
-       "lastOdds": 1.14,
+       "lastOdds": 1.15,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1608,9 +1609,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Cotonsport",
@@ -1626,8 +1627,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6305,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "1-0",
        "opp": 7.7,
        "rule12Fault": "Cotonsport: the model (63%) sees no value at the bookmakers' 69%",
        "r12": "derived"
