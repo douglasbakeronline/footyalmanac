@@ -219,3 +219,18 @@ drop the stale `be.1` source line so it cannot return as phantom fixtures.
 2. **Sports score shown in the wrong order at neutral sites.** ESPN can swap home and away between the archive and the result; the winner (from the result's own sides) was right but the stored score read home-away the wrong way round: 4 of 631 recent games (Houston, USC, Florida State, Gonzaga rows). `sports.settle` now orients the score to the archived home side by name.
 
 **Not changed:** football grading, any model, the tier ladder. Record files are bot-written and will update on the next daily run. Tests: `tests/test_tennis_winner_spelling.py`, `tests/test_sports_score_order.py`.
+
+
+## Grading audit, 18 November 2026 (Susie, Results Auditor)
+
+**Sample and method:** 1,133 football games graded 11-17 Nov, 508 sports games from the same window and 57 tennis matches checked against ESPN's public scoreboards (fetched live, scoreboard by date). Matched to an ESPN completed game by name and date: 269 football (the rest are leagues or spellings the all-competitions scoreboard does not carry; not guessed at), 188 sports (by ESPN game id) and every tennis row that ESPN lists with a winner (about 55 of 56 non-void). That is 510+ results checked. ESPN is the grading source too, so this tests storage, orientation and the grading code, not the feed.
+
+**Result: 0 mismatches.** Football full-time score v ESPN: 269 of 269. Sports winner, score (either orientation) and `ok` v pick: 188 of 188. Tennis winner v ESPN: no disagreement; `ok` equals `winner == pick` on every non-void row.
+
+**Edge cases, read against live ESPN statuses (14 days, ATP and WTA):** the feed carries STATUS_FINAL, STATUS_WALKOVER (54), STATUS_RETIRED (42), SCHEDULED and IN_PROGRESS only. Walkovers are void (`score_tennis.outcome`), retirements graded, unfinished matches stay pending. Football and sports: cancelled, postponed, abandoned, suspended and forfeited are never results (`sources._row`, `sports.NOT_PLAYED`), and a sports game with no final seven days on is void. Covered by `tests/test_grading.py`.
+
+**No grading bug found, no code changed.**
+
+**Observation, a policy question for Douglas, not a bug:** a retirement stands as a graded result, as the module documents. Of 53 graded retirements, 12 came before the first set was finished (scores like 4-1 ret, 5-2 ret): 5 of those picks landed, 7 did not. UK bookmakers usually void a match retired from before a set is complete, so on those 12 the record shows a loss (or win) a bettor would have had refunded. Rule 1 and the owner's standing decision keep the grading as is; if he wants first-set retirements void, the change is in `score_tennis.outcome` (about 1% of tennis rows, 12 of 1,493), and would only touch the model-record, not any rating (the Elo still takes the result).
+
+**Not changed:** any grader, model, record file.
