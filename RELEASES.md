@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-price-timing-hour: when to take the Card's prices, re-read by hour and sport (tag pending)
+
+**What changed.** A dated note only.
+**Evidence.** 283 pool legs: early-priced +1.89% (p 0.037) but football +0.61% (p 0.22), NBA +4.84% on 43 legs; evening-priced -0.38%; settled late gain +0.65 points on 249 legs, p 0.307, no clear read. `claude/price-timing-hour-sport-2026-11-18.md`.
+**Files.** The note.
+**Not changed.** `notify.py`, `SLOTS`, build times, any rule.
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-18-pool-recheck: the Card replay already runs on the pool (tag pending)
 
 **What changed.** A dated note only.
