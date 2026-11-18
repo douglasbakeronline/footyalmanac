@@ -37,6 +37,34 @@ class Sources(unittest.TestCase):
         self.assertAlmostEqual(rate, 3 / 11)       # 10 days and 1 day of replay
         self.assertEqual(per_season, 2)            # three groups over two seasons, rounded
 
+    def test_history_prefers_the_live_rule(self):
+        """18 Nov 2026: `cardM7.live` (the page's rule) over `card` (rule 5/6)."""
+        hist = {"seasons": {"fit": {
+            "card": {"groupList": [{"date": "2025-08-10", "name": "Card 3x", "p": 0.25, "odds": 3.4, "stake": 1, "won": False}]},
+            "cardM7": {"live": {"groupList": [
+                {"date": "2025-09-01", "name": "Card 2x", "p": 0.45, "odds": 2.1, "stake": 2, "won": True},
+                {"date": "2025-09-04", "name": "Card 2x", "p": 0.45, "odds": 2.2, "stake": 2, "won": False}]}}},
+            "check": {"card": {"groupList": [{"date": "2026-08-10", "name": "Card 2x", "p": 0.4, "odds": 2.1, "stake": 2, "won": False}]}}}}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            json.dump(hist, open(os.path.join(d, "card-legs-history.json"), "w"))
+            gs, rate, _ = S.groups_from_history()
+        # the fit season from cardM7.live, the check season (no cardM7) falls back to card
+        self.assertEqual(gs, [(0.45, 2.1, True, 2), (0.45, 2.2, False, 2), (0.4, 2.1, False, 2)])
+        self.assertAlmostEqual(rate, 3 / 5)
+
+    def test_pool_reads_the_live_variant_and_counts_empty_days(self):
+        rep = {"days": 2, "from": "2026-11-01", "to": "2026-11-10", "variants": {"live": {"groupList": [
+            {"date": "2026-11-01", "name": "Card 2x", "p": 0.4, "odds": 2.3, "stake": 2, "won": True, "legs": 3},
+            {"date": "2026-11-10", "name": "Card 2x", "p": 0.4, "odds": 2.0, "stake": 2, "won": False, "legs": 3}]}}}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            json.dump(rep, open(os.path.join(d, "card-replay.json"), "w"))
+            gs, rate, per_season = S.groups_from_pool()
+            self.assertEqual(gs, [(0.4, 2.3, True, 2), (0.4, 2.0, False, 2)])
+            self.assertAlmostEqual(rate, 2 / 10)
+            self.assertEqual(per_season, 73)
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            self.assertEqual(S.groups_from_pool(), ([], None, None))
+
     def test_record_leaves_out_wide_late_and_pending(self):
         rec = {"days": [{"date": "2026-11-01", "groups": [
                     {"name": "Card 2x", "p": 0.4, "odds": 2.2, "status": "won"},

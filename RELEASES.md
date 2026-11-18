@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-staking-live-rule: the Card's bankroll read from the live rule's replays (tag pending)
+
+**What changed:** the nightly Card review's staking sections. The "replay" bankroll was the rule 5/6 Card (football only, 2x and 3x); it now reads the live rule's football-data replay (`cardM7.live`), and a new "pool" section reads the live rule rebuilt on the archived pool, every sport (`card-replay.json` now carries the live variant's `groupList`).
+**Evidence:** football-data live rule 47 groups, 24 won v 19.0 expected, season bankroll 34 units (was 28 from the old Card); pool 26 groups, 13 v 10.0, 1.24 a day, 95 units; live record 41 groups, 0.929 of expected, 317 units. `claude/card-staking-live-rule-2026-11-18.md`.
+**Files:** `tools/staking.py`, `tools/card_replay.py`, `tools/card_review_post.py`, `tests/test_staking.py`, the note, `CLAUDE.md`.
+**Not changed:** any `CARD_*` constant, `CARD_STAKE`, the record, the page.
+**Roll back:** `git revert` this merge.
+
 ## 2026-11-18-price-gaps-rule13: the Card review's price gaps read under rule 13 (tag pending)
 
 **What changed:** the nightly Card review's "Legs kept off by a missing price" section no longer says a priced leg must clear the value demand (there is none under `CARD_RULE` 13), and now names the started days the live Card left empty that held such legs.
