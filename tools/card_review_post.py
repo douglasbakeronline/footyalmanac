@@ -97,7 +97,8 @@ def funnel_section(today_=None, days=14):
         # 12 Nov 2026: the legs a missing price alone kept off. From 10 Nov
         # only, when every leg began carrying its first real price; before
         # that an estimate in the archive is the archive's gap, not the feed's.
-        gaps = CF.gap_lines(CF.price_gaps(max(since, "2026-11-10"), None, today_ or today))
+        g0 = max(since, "2026-11-10")
+        gaps = CF.gap_lines(CF.price_gaps(g0, None, today_ or today), empty=empty_card_days(g0, today_ or today))
     except Exception as e:
         gaps = [f"Price gaps not read: {type(e).__name__}: {e}", ""]
     return ([f"## Card funnel from {since} (the pool to its last file, each leg's first condition failed)", ""]
@@ -420,6 +421,27 @@ def book_vs_lines(vb):
     for b, f in ahead:
         out.append(f"- **{b} pays more than {base} on {f['n']} paired picks (about {f['group3Pct']:+.1f}% a Card 2x). `CARD_BOOK` is Douglas's book, so this is his call, not the session's.**")
     return out
+
+
+def empty_card_days(since, today_, archive="groupings-archive"):
+    """18 Nov 2026: the started days from `since` to yesterday on which the
+    live Card published no group (the full-rule Card only, as in
+    live_days_section: not the filler, the paper cards or retired kinds).
+    The archive holds a day file only for days that published something."""
+    import re as _re
+    from datetime import date as _date, timedelta as _td
+    end = _date.fromisoformat(today_) - _td(days=1)
+    d, days = _date.fromisoformat(since), []
+    while d <= end:
+        days.append(d.isoformat()); d += _td(days=1)
+    have = set()
+    if os.path.isdir(archive):
+        for f in os.listdir(archive):
+            if _re.fullmatch(r"\d{4}-\d{2}-\d{2}\.json", f) and f[:-5] in days:
+                gs = load(os.path.join(archive, f)).get("groups") or []
+                if any(str(g.get("name") or "").startswith("Card ") and not g.get("wide") for g in gs):
+                    have.add(f[:-5])
+    return {x for x in days if x not in have}
 
 
 def live_days_section(archive="groupings-archive", today_=None, days=14, record=None):
