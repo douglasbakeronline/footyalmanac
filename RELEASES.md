@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-rule12-recheck: rule 13's split reads its groups again (tag pending)
+
+**What changed:** the record's split of the rule 13 Card (`cardRule13Split`: would rule 12 have built the group, or does it hold a pick only rule 13 admits) counted every group as unknown. `recheck_card` rebuilt each leg from the board and dropped `rule12Fault` on the first re-check, so no rule 13 group reached the archive with it. The re-check now asks rule 12 again, and the grader reads an archived rule 13 leg without the field from the leg as frozen (`rule12_fault`, marked `r12` "derived"; the review says how many groups were read that way).
+**Evidence:** all four rule 13 Card groups to 18 Nov were `unknown`; derived, every one holds a pick rule 12 would have refused, and both settled groups lost on such a pick (Spurs 69% v the bookmakers' 78%; Isparta, opposition 4.41). Four groups: a record, not a reason to act. `claude/card-rule12-fault-recheck-2026-11-18.md`. Tests: `tests/test_card_rule12_recheck.py` (fails on the old code), full suite 1,204 passing, `nametest.py` clear.
+**Files:** `groupings.py`, `tools/card_review_post.py`, `tests/test_card_rule12_recheck.py`, the note, `CLAUDE.md`.
+**Not changed:** any `CARD_*` constant, which picks the Card takes, the archive files, the page.
+**Roll back:** `git revert` this merge (the split goes back to unknown).
+
 ## 2026-11-18-office-review: office review and next week's priorities (tag pending)
 
 **What changed:** `claude/office-review-2026-11-18.md`: what shipped 9 to 18 Nov, what was learned (including rejected tests), where accuracy stands, three tasks for next week (Kofi, Hannah, Susie). A report by nature.

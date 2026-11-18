@@ -192,6 +192,7 @@ How they fit this repo:
 | `claude/card-integrity-slim-2026-11-17.md` | The integrity check's crash on the record's slim legs (Pistoiese v Coriano, `KeyError: 'date'`), `full_leg`, the staked slips it now reads, `OPP_RULES`, and the review dispatched from the first build after 03:40 UTC. Read before touching `tools/card_integrity.py` or the review's timing. |
 | `claude/card-m7cap160-2026-11-18.md` | 60%+ picks priced 1.60-1.90 on the ledger (football 76 legs, 50% v the model's 64%, z -2.45), how rarely the Card or the Daily 2x picks them, `m7cap160` replayed and rejected (behind live on both football-data seasons). Read before touching `CARD_ODDS`. |
 | `claude/card-rule13-split-2026-11-17.md` | Rule 13's Card groups split by what rule 12 would have said (`cardRule13Split` in `groupings-record.json`, `rule12Fault` kept on graded legs, a table in the nightly review): how to read it beside the `rule12` replay at the 30 Nov review. |
+| `claude/card-rule12-fault-recheck-2026-11-18.md` | `recheck_card` dropped `rule12Fault`, so no rule 13 group reached the archive with it; now re-asked on each re-check, and archived legs without it read from the frozen leg (`rule12_fault`, `r12` "derived"). The four rule 13 groups to 18 Nov all hold a rule-13-only pick. |
 | `claude/list-card-2026-11-17.md` | The Daily List pattern review (lands as quoted in every cut, no cut beats the price) and the List card in the open: List 2x (1.15+, six) else List long (any price, ten), college out, Tested chance from the ledger, own record lines, the 30-group review rule. Read before touching `LIST_KINDS` or claiming a pattern in the list's winners. |
 | `claude/card-opp5-list2x-2026-11-16.md` | The Card's rule 12 (football opposition 5.0+, set live as the owner's call before its gate; pool +34% v rule 11's -4%) and the List 2x on paper (`build_list_card`, `cardList`): why the Daily List's success does not carry into groups. Read before touching `CARD_MODEL_OPP_MIN` or the List 2x. |
 | `claude/card-comp3-2026-11-16.md` | The two-picks-a-competition cap (`COMP_MAX` 2) on the model's-picks Card: NBA-only nights build nothing (16 Nov: four clear NBA picks, no group); `comp3` added to the football-data replay so the gate has both sides; identical to live on the settled pool so far. Read before touching `COMP_MAX`. |
@@ -594,7 +595,7 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   of those").** `CARD_MODEL_EDGE` None (the value demand off) and
   `CARD_MODEL_OPP_MIN` {} (rule 12's opposition floor, live one day). The
   owner's call against the record: pool rule 13 41 groups 41% won -4%, rule 12
-  20 groups 55% +34%, p(worse) 0.09. Every Card leg carries `rule12Fault`, graded into `cardRule13Split` (rule 12 would have built it v a pick only rule 13 admits, `claude/card-rule13-split-2026-11-17.md`);
+  20 groups 55% +34%, p(worse) 0.09. Every Card leg carries `rule12Fault`, graded into `cardRule13Split` (rule 12 would have built it v a pick only rule 13 admits, `claude/card-rule13-split-2026-11-17.md`; re-asked on every re-check since 18 Nov 2026, `claude/card-rule12-fault-recheck-2026-11-18.md`);
   `rule12` and `m7value` replay beside live; read at 30 Nov or 50 settled
   groups, and put a reversal to Douglas with the numbers, since the switch
   was his (`claude/card-rule13-model-only-2026-11-17.md`).
