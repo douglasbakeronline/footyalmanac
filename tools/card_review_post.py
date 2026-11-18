@@ -261,6 +261,131 @@ def context_section(r):
     return out + [""]
 
 
+# 18 Nov 2026: every pre-registered Card decision in one table, so the 30 Nov
+# review and each build session see what is waiting, what is due and what has
+# fired without reading ten notes. Each trigger is copied from the note named
+# in the row; nothing here decides anything, and the counts are the record's
+# (a tally of the scoreboard, never a fit, Rule 1) or the pool replay's.
+REVIEW_DAY = "2026-11-30"
+
+
+def _settled(t): return (t or {}).get("settled", 0) or 0
+
+
+def _ret(t):
+    t = t or {}
+    us, ur = t.get("unitsStaked") or t.get("staked") or 0, t.get("unitsReturned") if t.get("unitsStaked") else t.get("returned")
+    return f"{pct(ur / us - 1)} at the page's stakes" if us else "no return yet"
+
+
+def _tally(t):
+    t = t or {}
+    if not _settled(t): return "none settled"
+    z = t.get("z")
+    return f"{t.get('won', 0)} of {_settled(t)} won v {t.get('expected', 0):.2f} expected (z {z if z is not None else 'n/a'}), {_ret(t)}"
+
+
+def _pool(rep, v):
+    r = ((rep or {}).get("variants") or {}).get(v)
+    if not r: return f"`{v}` not in tonight's replay"
+    if r.get("pWorse") is None: return f"`{v}` identical to live on the pool"
+    return f"`{v}` v live {r.get('vsLivePerDay', 0):+.2f} a day, p(worse) {r['pWorse']}, {r.get('legs', 0)} legs"
+
+
+def card_tennis_since(rec, rule=10):
+    """Settled tennis legs on full-rule Card groups from CARD_RULE `rule` (the
+    tennis75 review counts legs under the 85% floor's rule)."""
+    n = 0
+    for d in (rec or {}).get("days") or []:
+        for g in d.get("groups") or []:
+            if not str(g.get("name", "")).startswith("Card") or g.get("wide") or g.get("late") or (g.get("rule") or 0) < rule:
+                continue
+            n += sum(1 for l in g.get("legs") or [] if l.get("sport") == "tennis" and l.get("status") in ("won", "lost"))
+    return n
+
+
+def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50):
+    """The pre-registered decisions table: decision, trigger, where it stands,
+    status (waiting / **due** / **fired**) and who acts."""
+    today_ = today_ or today
+    rec, rep = rec or {}, rep or {}
+    days_left = (datetime.fromisoformat(REVIEW_DAY).date() - datetime.fromisoformat(today_).date()).days
+    vs = rep.get("variants") or {}
+    rows = []
+
+    def row(name, trigger, now, status, who): rows.append(f"| {name} | {trigger} | {now} | {status} | {who} |")
+
+    # 1. A sport off the Card (claude/card-tripwire-at-floor-2026-11-14.md)
+    for sp, t in (rec.get("cardLegsBySport") or {}).items():
+        a = t.get("atFloor") if t.get("atFloor") is not None else t
+        z = a.get("z")
+        if not (t.get("tripwire") or sp == "tennis"): continue
+        row(f"{sp.capitalize()} off the Card", f"{floor_n}+ legs{' at the floor' if t.get('atFloor') is not None else ''}, z {floor_z:g} or under",
+            f"{a.get('legs', 0)} legs, z {z if z is not None else 'n/a'}", "**fired**" if t.get("tripwire") else "waiting",
+            "the next session, without asking")
+    # 2. The floor line (CARD_FLOOR_Z, the page's verdict on the Card record)
+    k = rec.get("card") or {}
+    z = k.get("z")
+    fired = z is not None and _settled(k) >= floor_n and z <= floor_z
+    row("The Card's floor line", f"{floor_n}+ settled groups, z {floor_z:g} or under", _tally(k),
+        "**fired**" if fired else "waiting", "the page says so; the rule is Douglas's")
+    # 3. Rule 13 v rule 12 (claude/card-rule13-model-only-2026-11-17.md)
+    t13 = (rec.get("cardByRule") or {}).get("13")
+    due = days_left <= 0 or _settled(t13) >= 50
+    r12 = vs.get("rule12") or {}
+    lead = ""
+    if r12.get("pWorse") is not None:
+        lead = "; rule 12 ahead on the pool" if (r12.get("vsLivePerDay") or 0) > 0 and r12["pWorse"] <= 0.30 else "; rule 13 not behind on the pool"
+    row("Rule 13 (the model alone) v rule 12", f"{REVIEW_DAY} or 50 settled rule 13 groups; rule 12 ahead at p(worse) 0.30 or under",
+        f"{_tally(t13)}; {_pool(rep, 'rule12')}{lead}", "**due**" if due else "waiting", "Douglas (the switch was his)")
+    # 4. Tennis floor back to 75% (claude/tennis-floor-85-2026-11-11.md)
+    n_t = card_tennis_since(rec)
+    t75 = vs.get("tennis75") or {}
+    beat = t75.get("pWorse") is not None and (t75.get("vsLivePerDay") or 0) > 0 and t75["pWorse"] <= 0.30
+    row("Tennis floor back to 75%", "30 tennis Card legs under rule 10+, `tennis75` ahead at p(worse) 0.30 or under",
+        f"{n_t} tennis legs; {_pool(rep, 'tennis75')}", "**due**" if n_t >= 30 and beat else "waiting", "the next session")
+    # 5. Core leagues only again (claude/card-wider-leagues-2026-11-11.md)
+    mc = vs.get("m7core") or {}
+    beat = mc.get("pWorse") is not None and (mc.get("vsLivePerDay") or 0) > 0 and mc["pWorse"] <= 0.30
+    row("Core leagues only again", f"{REVIEW_DAY}, `m7core` ahead at p(worse) 0.30 or under", _pool(rep, "m7core"),
+        "**due**" if days_left <= 0 and beat else ("waiting (ahead)" if beat else "waiting"), "the 30 Nov review")
+    # 6. The opposition floor again (claude/card-m7opp-2026-11-15.md, overtaken by rule 13)
+    for v in ("m7opp5", "m7opp9"):
+        r = vs.get(v) or {}
+        legs = (r.get("legs") or 0)
+        pool = r.get("pWorse") is not None and (r.get("vsLivePerDay") or 0) > 0 and r["pWorse"] <= 0.30 and legs >= 100
+        fd = fd_side(hist, v)
+        fd_ok = len(fd) >= 2 and all(fd_beats(x) for _, x, _ in fd)
+        fd_txt = (f"; football-data ahead in {sum(1 for _, x, _ in fd if fd_beats(x))} of {len(fd)} season(s)" if fd
+                  else "; no football-data read on file")
+        row(f"Opposition floor `{v}`", "beats live on both football-data seasons and the pool, 100+ legs", _pool(rep, v) + fd_txt,
+            "**due**" if pool and fd_ok else "waiting", "Douglas (rule 13 dropped it at his call)")
+    # 7. The context veto (claude/context-check-2026-11-11.md)
+    a = (rec.get("cardContext") or {}).get("against") or {}
+    n = a.get("legs", 0)
+    fired = n >= CONTEXT_REVIEW_AT and a.get("rate", 0) >= a.get("model", 1)
+    row("Context veto off", f"{CONTEXT_REVIEW_AT} settled \"against\" picks landing at or above the model",
+        f"{n} settled" + (f", {a['rate'] * 100:.0f}% v {a['model'] * 100:.0f}%" if n else ""),
+        "**fired**" if fired else ("reviewed, stays" if n >= CONTEXT_REVIEW_AT else "waiting"), "the next session, without asking")
+    # 8. The Daily 2x (claude/daily-2x-2026-11-17.md)
+    d = rec.get("cardDaily") or {}
+    dz = d.get("z")
+    row("The Daily 2x's rule", "50 settled slips, z -2 or under", _tally(d),
+        "**fired**" if _settled(d) >= 50 and dz is not None and dz <= -2 else ("**due**" if _settled(d) >= 50 else "waiting"), "the next session")
+    # 9. The List 2x and List long (claude/list-card-2026-11-17.md)
+    for key, name, rule in (("cardList", "The List 2x as a method", "30 settled, positive, p(loss) under 0.30"),
+                            ("cardListLong", "The List long dropped", "30 settled, under the stake")):
+        t = rec.get(key) or {}
+        row(name, rule, _tally(t), "**due**" if _settled(t) >= 30 else "waiting", "the next session reads it; a stake line is Douglas's")
+    head = [f"## Pre-registered decisions ({REVIEW_DAY} review in {days_left} day(s))" if days_left > 0
+            else f"## Pre-registered decisions (the {REVIEW_DAY} review is due)", "",
+            "| decision | trigger | now | status | who acts |", "|---|---|---|---|---|"]
+    live = [r for r in rows if "**fired**" in r or "**due**" in r]
+    tail = [f"**{len(live)} decision(s) due or fired: the next build session acts on each as its row says.**" if live
+            else "Nothing due or fired; every trigger is copied from the note behind it."]
+    return head + rows + [""] + tail + [""]
+
+
 CHAIN_FROM = "2026-11-17"   # first full UK day of the briefing chain (16 Nov's morning predates it)
 BRIEF_LATE = 60    # minutes: a slot whose median push is later than this is named in bold
 
@@ -509,6 +634,7 @@ def review_body():
     f = integ.get("findings", [])
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
     lines += live_days_section()
+    lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"))
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
                   "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]

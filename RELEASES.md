@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-decisions-table: the Card review lists every pre-registered decision (tag pending)
+
+**What changed:** the nightly Card review opens, after the live Card's 14 days, with one table of every pre-registered Card decision: the tennis tripwire, the floor line, rule 13 v rule 12, the tennis floor back to 75%, core leagues only, the opposition floor (`m7opp5`, `m7opp9`), the context veto, the Daily 2x, the List 2x and List long. Each row gives the trigger from its note, where it stands tonight, waiting / **due** / **fired**, and who acts; a bold line counts what is due. The opposition floor's auto-adopt now goes to Douglas, since rule 13 dropped it at his call.
+**Evidence:** tonight nothing is due or fired (Card 13 of 42 v 14.33 expected, z -0.44; rule 13 0 of 2; `rule12` -0.89 a day on the pool, p(worse) 0.853). The List card has built nothing since 16 Nov because no non-college list pick had a real price of 1.15+ over the international break. `claude/card-decisions-table-2026-11-18.md`. Tests: `tests/test_review_decisions.py` (7), full suite passing, `nametest.py` clear.
+**Files:** `tools/card_review_post.py`, `tests/test_review_decisions.py`, the note, `CLAUDE.md`.
+**Not changed:** any `CARD_*` constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-rule12-recheck: rule 13's split reads its groups again (tag pending)
 
 **What changed:** the record's split of the rule 13 Card (`cardRule13Split`: would rule 12 have built the group, or does it hold a pick only rule 13 admits) counted every group as unknown. `recheck_card` rebuilt each leg from the board and dropped `rule12Fault` on the first re-check, so no rule 13 group reached the archive with it. The re-check now asks rule 12 again, and the grader reads an archived rule 13 leg without the field from the leg as frozen (`rule12_fault`, marked `r12` "derived"; the review says how many groups were read that way).
