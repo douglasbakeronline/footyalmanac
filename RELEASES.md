@@ -37,6 +37,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back.** `git revert` this merge.
 
+## 2026-11-18-stake-line: Card stake line re-checked, still not built (tag pending)
+
+**What changed:** a note only, `claude/card-stake-line-2026-11-18.md`. No page change.
+**Evidence:** the pool replay of the live rule holds 26 groups (13 won v 39% expected) against the 100 the 10 Nov note set as the condition; the football-data replay's 33 groups are superseded football-only rules. A stated unit from either would be false precision.
+**Files:** `claude/card-stake-line-2026-11-18.md`, `RELEASES.md`.
+**Not changed:** `CARD_STAKE`, `CARD_RULE`, `tools/staking.py`, any record, the page.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-17-staking-rate: the Card's bankroll read at its current rate (tag pending)
 
 **For a reader.** Nothing on the page. The nightly Card review's live bankroll lines now count the groups the Card makes today (the 2x alone since 11 Nov, empty days included), not October's six-a-day Card.
