@@ -1,0 +1,598 @@
+{
+ "date": "2026-11-18",
+ "published": "2026-11-18T11:08:16Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 13,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 2,
+   "first": "2026-11-18T03:46:02Z",
+   "lockAt": "2026-11-18T10:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 3.07,
+   "p": 0.3308,
+   "implied": 0.3261,
+   "bestOdds": 3.18,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Isparta 32 Spor v Somaspor",
+     "home": "Isparta 32 Spor",
+     "away": "Somaspor",
+     "side": "h",
+     "pick": "Isparta 32 Spor",
+     "code": "af.205",
+     "comp": "2. Lig",
+     "country": "Turkey",
+     "when": "2026-11-18T10:00:00Z",
+     "date": "2026-11-18",
+     "pModel": 0.6629,
+     "p": 0.6629,
+     "fx": {
+      "u21Side": false,
+      "league": "af.205",
+      "leagueName": "2. Lig",
+      "short": "2. ",
+      "country": "Turkey",
+      "iso": "tur",
+      "tier": 2,
+      "order": 608,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-18",
+      "time": "10:00",
+      "kickoff": "2026-11-18T10:00:00Z",
+      "home": {
+       "name": "Isparta 32 Spor",
+       "att": 1.176,
+       "def": 1.033,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DLLLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 31,
+        "W": 15,
+        "D": 9,
+        "L": 7,
+        "GF": 61,
+        "GA": 36,
+        "GD": 25,
+        "Pts": 54,
+        "PPG": 1.742
+       },
+       "now": {
+        "P": 11,
+        "W": 4,
+        "D": 2,
+        "L": 5,
+        "GF": 20,
+        "GA": 21,
+        "GD": -1,
+        "Pts": 14,
+        "PPG": 1.273
+       }
+      },
+      "away": {
+       "name": "Somaspor",
+       "att": 0.772,
+       "def": 1.21,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LLDWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 6,
+        "D": 6,
+        "L": 20,
+        "GF": 35,
+        "GA": 68,
+        "GD": -33,
+        "Pts": 24,
+        "PPG": 0.75
+       },
+       "now": {
+        "P": 11,
+        "W": 3,
+        "D": 2,
+        "L": 6,
+        "GF": 12,
+        "GA": 20,
+        "GD": -8,
+        "Pts": 11,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.6629,
+       "d": 0.1937,
+       "a": 0.1434
+      },
+      "xg": [
+       2.42,
+       1.0
+      ],
+      "btts": 0.5559,
+      "over25": 0.5781,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.6629,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5574,
+        0.2384,
+        0.2042
+       ],
+       "best": [
+        1.67,
+        3.8,
+        4.5
+       ],
+       "avg": [
+        1.61,
+        3.77,
+        4.41
+       ],
+       "ev": [
+        0.107,
+        -0.2639,
+        -0.3547
+       ],
+       "src": "API-Football",
+       "books": 8
+      },
+      "rank": 4,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6793,
+       "n": 2254,
+       "cumHit": 0.7483,
+       "cumN": 5916,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7483,
+     "n": 5916,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1937,
+     "multOnly": false,
+     "odds": 1.61,
+     "best": 1.67,
+     "books": 8,
+     "opp": 4.41,
+     "draw": 3.77,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.62,
+      "Bet365": 1.67,
+      "Betfair": 1.62
+     },
+     "margin": 1.1115,
+     "pricedAt": "2026-11-18T07:07:43Z",
+     "src": "API-Football, average of 8 bookmakers",
+     "implied": 0.6211,
+     "pTested": 0.6629,
+     "fair": 0.5588,
+     "edge": -0.1003,
+     "basis": "model",
+     "firstOdds": 1.61
+    },
+    {
+     "sport": "nba",
+     "event": "Toronto Raptors v Washington Wizards",
+     "home": "Toronto Raptors",
+     "away": "Washington Wizards",
+     "pick": "Toronto Raptors",
+     "comp": "NBA",
+     "when": "2026-11-19T00:30Z",
+     "date": "2026-11-19",
+     "id": "401910012",
+     "pModel": 0.7213,
+     "p": 0.7213,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910012",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-19T00:30Z",
+      "home": "Toronto Raptors",
+      "away": "Washington Wizards",
+      "neutral": false,
+      "pHome": 0.7213,
+      "pick": "Toronto Raptors",
+      "confidence": 0.7213,
+      "tier": "Strong",
+      "eloH": 1469,
+      "eloA": 1339,
+      "gamesH": 267,
+      "gamesA": 261,
+      "hfa": 25,
+      "eloDiff": 155.1,
+      "line": {
+       "spread": -6.5,
+       "total": 226.5,
+       "mlH": -265.0,
+       "mlA": 218.0,
+       "by": "Draft Kings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "102-111",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-18"
+       },
+       {
+        "r": "L",
+        "score": "108-112",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "112-123",
+        "opp": "Philadelphia 76ers",
+        "home": false,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "L",
+        "score": "93-98",
+        "opp": "Boston Celtics",
+        "home": true,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "102-118",
+        "opp": "Memphis Grizzlies",
+        "home": true,
+        "date": "2026-11-10"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "120-136",
+        "opp": "Memphis Grizzlies",
+        "home": true,
+        "date": "2026-11-17"
+       },
+       {
+        "r": "L",
+        "score": "119-147",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-11-16"
+       },
+       {
+        "r": "L",
+        "score": "140-144",
+        "opp": "Detroit Pistons",
+        "home": true,
+        "date": "2026-11-13"
+       },
+       {
+        "r": "L",
+        "score": "101-114",
+        "opp": "Indiana Pacers",
+        "home": false,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "111-122",
+        "opp": "Detroit Pistons",
+        "home": false,
+        "date": "2026-11-10"
+       }
+      ],
+      "recordH": {
+       "w": 5,
+       "l": 9,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 11,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-10-23",
+        "home": "Washington Wizards",
+        "away": "Toronto Raptors",
+        "score": "102-112"
+       },
+       {
+        "date": "2026-03-01",
+        "home": "Washington Wizards",
+        "away": "Toronto Raptors",
+        "score": "125-134"
+       },
+       {
+        "date": "2025-12-27",
+        "home": "Washington Wizards",
+        "away": "Toronto Raptors",
+        "score": "138-117"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.38,
+     "margin": 1.0391,
+     "opp": 3.18,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-11-18T07:19:08Z",
+     "implied": 0.7246,
+     "pTested": 0.7213,
+     "fair": 0.6973,
+     "edge": -0.0377,
+     "basis": "model",
+     "firstOdds": 1.36,
+     "lastOdds": 1.4,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-18T11:08:16Z",
+     "lockPrice": {
+      "odds": 1.4,
+      "best": 1.4,
+      "book": null,
+      "at": "2026-11-18T11:08:16Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "Oklahoma City Thunder v Atlanta Hawks",
+     "home": "Oklahoma City Thunder",
+     "away": "Atlanta Hawks",
+     "pick": "Oklahoma City Thunder",
+     "comp": "NBA",
+     "when": "2026-11-19T01:00Z",
+     "date": "2026-11-19",
+     "id": "401910014",
+     "pModel": 0.6919,
+     "p": 0.6919,
+     "hit": 0.769,
+     "n": 658,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910014",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-19T01:00Z",
+      "home": "Oklahoma City Thunder",
+      "away": "Atlanta Hawks",
+      "neutral": false,
+      "pHome": 0.6919,
+      "pick": "Oklahoma City Thunder",
+      "confidence": 0.6919,
+      "tier": "Firm",
+      "eloH": 1613,
+      "eloA": 1508,
+      "gamesH": 309,
+      "gamesA": 269,
+      "hfa": 25,
+      "eloDiff": 130.3,
+      "line": {
+       "spread": -6.5,
+       "total": 228.5,
+       "mlH": -265.0,
+       "mlA": 218.0,
+       "by": "Draft Kings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.6776,
+       "n": 183,
+       "cumHit": 0.769,
+       "cumN": 658
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "125-103",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-11-16"
+       },
+       {
+        "r": "L",
+        "score": "112-113",
+        "opp": "LA Clippers",
+        "home": false,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "L",
+        "score": "108-118",
+        "opp": "Portland Trail Blazers",
+        "home": false,
+        "date": "2026-11-12"
+       },
+       {
+        "r": "L",
+        "score": "103-123",
+        "opp": "Portland Trail Blazers",
+        "home": false,
+        "date": "2026-11-11"
+       },
+       {
+        "r": "W",
+        "score": "114-75",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-08"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "113-106",
+        "opp": "Milwaukee Bucks",
+        "home": false,
+        "date": "2026-11-16"
+       },
+       {
+        "r": "L",
+        "score": "117-125",
+        "opp": "Chicago Bulls",
+        "home": false,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "L",
+        "score": "114-124",
+        "opp": "Los Angeles Lakers",
+        "home": true,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "W",
+        "score": "124-121",
+        "opp": "Brooklyn Nets",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "139-132",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-07"
+       }
+      ],
+      "recordH": {
+       "w": 9,
+       "l": 5,
+       "d": 0
+      },
+      "recordA": {
+       "w": 8,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-12-30",
+        "home": "Oklahoma City Thunder",
+        "away": "Atlanta Hawks",
+        "score": "140-129"
+       },
+       {
+        "date": "2025-10-25",
+        "home": "Atlanta Hawks",
+        "away": "Oklahoma City Thunder",
+        "score": "100-117"
+       },
+       {
+        "date": "2025-03-01",
+        "home": "Atlanta Hawks",
+        "away": "Oklahoma City Thunder",
+        "score": "119-135"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.38,
+     "margin": 1.0391,
+     "opp": 3.18,
+     "src": "ESPN, Draft Kings moneyline",
+     "pricedAt": "2026-11-18T07:19:08Z",
+     "implied": 0.7246,
+     "pTested": 0.6776,
+     "fair": 0.6973,
+     "edge": -0.0649,
+     "basis": "model",
+     "firstOdds": 1.35,
+     "lastOdds": 1.35,
+     "lastBest": 1.35,
+     "lastAt": "2026-11-18T11:08:16Z",
+     "lockPrice": {
+      "odds": 1.35,
+      "best": 1.35,
+      "book": null,
+      "at": "2026-11-18T11:08:16Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-18T07:18:48Z",
+   "archivedAt": "2026-11-18T11:08:16Z"
+  }
+ ]
+}
