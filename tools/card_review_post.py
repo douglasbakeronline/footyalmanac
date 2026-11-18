@@ -569,11 +569,14 @@ def review_body():
             by = ", ".join(f"{k} {v}" for k, v in (pt.get("lastAfterStartBySport") or {}).items())
             lines.append(f"- left out: {pt['lastAfterStart']} leg(s) whose last price came after the start on file" + (f" ({by})" if by else ""))
         lines.append("")
-    for k in ("replay", "live"):
+    # 18 Nov 2026: the replay row is the live rule on football-data (it was
+    # rule 5/6 football only), and the pool row the live rule on every sport
+    stake_label = {"replay": "replay, football-data, the live rule", "pool": "replay, the archived pool, the live rule", "live": "live"}
+    for k in ("replay", "pool", "live"):
         s = st.get(k) or {}
         if s.get("flat1pct"):
             fl = s["flat1pct"]
-            lines += [f"## Staking, {k} ({s['groups']} groups, landed/expected {s['landedOverExpected']})",
+            lines += [f"## Staking, {stake_label[k]} ({s['groups']} groups, landed/expected {s['landedOverExpected']})",
                       f"- flat 1% a group: median season {pct(fl['median'])}, 10th-90th {pct(fl['p10'])} to {pct(fl['p90'])}, worst drawdown (95%) {fl['p95Drawdown'] * 100:.0f}%",
                       kelly_line(s),
                       ] + [f"- {lab} ({b['groups']} groups at {s.get('groupsPerDay')} a day{' since ' + s['rateFrom'] if s.get('rateFrom') else ''}, the page's stakes): 95%-worst drawdown {b['p95DrawdownUnits']} units, "

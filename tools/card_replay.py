@@ -569,6 +569,14 @@ def main():
                                  "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days),
                                  # 10 Nov 2026: the legs, for the decision gate (100+ legs, CLAUDE.md)
                                  "legs": sum(len(g["legs"]) for g in gs), "legsWon": sum(l["won"] for g in gs for l in g["legs"])}
+        if v == "live":
+            # 18 Nov 2026: the live rule's own groups, for tools/staking.py's
+            # bankroll (it had read the football-data `card` key, rule 5/6
+            # football only, a Card the page no longer builds)
+            report["variants"][v]["groupList"] = [
+                {"date": g.get("date") or d, "name": g["name"], "p": round(g["p"], 4), "odds": round(g["odds"], 3),
+                 "stake": g["stake"], "won": bool(g["won"]), "legs": len(g["legs"])}
+                for d, gl in sorted(days.items()) for g in gl]
         fg = [g for g in gs if g.get("fill")]
         if "_FILL" in VARIANTS[v]:
             # 10 Nov 2026 (#155): the filler's own groups, on the days live left empty

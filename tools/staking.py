@@ -2,7 +2,9 @@
 """
 Stake size and bankroll for the Card (9 Nov 2026, Douglas: "consistent
 returns"). Advisory. Reads card-legs-history.json (the whole Card replayed
-over past seasons, tune.yml) and groupings-record.json (the live Card).
+over past seasons, tune.yml; the live rule's `cardM7.live` since 18 Nov 2026),
+card-replay.json (the live rule on the archived pool, every sport, the same
+review run) and groupings-record.json (the live Card).
 
 For each source: the groups' prices and outcomes, then by bootstrap the
 return and the worst drawdown at a flat 1% of the bankroll, half Kelly and
@@ -31,6 +33,15 @@ def _d(s):
     return date.fromisoformat(s[:10])
 
 
+def _gl(season):
+    """18 Nov 2026: the live rule's own replay (`cardM7.live`, the model's
+    picks, the 2x alone, two-day groups since 17 Nov) where the file holds it;
+    the `card` key is rule 5/6 football only, a Card the page no longer builds
+    (claude/card-stake-line-2026-11-18.md), kept only as the fallback."""
+    live = ((season.get("cardM7") or {}).get("live") or {}).get("groupList")
+    return live if live is not None else (season.get("card") or {}).get("groupList") or []
+
+
 def groups_from_history():
     """[(p, odds, won, stake)], groups a day, groups a season: the replayed
     Card on every season it holds."""
@@ -38,12 +49,28 @@ def groups_from_history():
     except Exception: return [], None, None
     gs, days, n = [], 0, 0
     for s in d.get("seasons", {}).values():
-        gl = (s.get("card") or {}).get("groupList") or []
+        gl = _gl(s)
         gs += [(g["p"], g["odds"], bool(g["won"]), g.get("stake") or STAKE.get(g.get("name"), 1)) for g in gl]
         ds = sorted({g["date"] for g in gl})
         # a football season runs August to May: the replay's span, not 365 days
         if ds: days += (_d(ds[-1]) - _d(ds[0])).days + 1; n += 1
     return gs, (len(gs) / days if days else None), (round(len(gs) / n) if n else None)
+
+
+def groups_from_pool():
+    """18 Nov 2026: the live rule rebuilt on the archived pool (every sport,
+    real prices; card-replay.json, written earlier in the same review run by
+    tools/card_replay.py). The rate is its groups over the replay's days,
+    empty days counted; a season is 365 days at that rate, as for the live
+    Card, which also runs every sport all year."""
+    try: d = json.load(open(os.path.join(HERE, "card-replay.json")))
+    except Exception: return [], None, None
+    gl = ((d.get("variants") or {}).get("live") or {}).get("groupList") or []
+    gs = [(g["p"], g["odds"], bool(g["won"]), g.get("stake") or STAKE.get(g.get("name"), 1)) for g in gl]
+    days = d.get("days") or 0
+    if d.get("from") and d.get("to"): days = (_d(d["to"]) - _d(d["from"])).days + 1
+    rate = len(gs) / days if days else None
+    return gs, rate, (round(rate * 365) if rate else None)
 
 
 # 17 Nov 2026: the live rate is read from the Card's current shape only. The
@@ -143,7 +170,7 @@ def report(sources):
 
 
 def main():
-    rep = report({"replay": groups_from_history(), "live": groups_from_record()})
+    rep = report({"replay": groups_from_history(), "pool": groups_from_pool(), "live": groups_from_record()})
     print(json.dumps(rep, indent=1))
     if "--json" in sys.argv: json.dump(rep, open(sys.argv[sys.argv.index("--json") + 1], "w"), indent=1)
 
