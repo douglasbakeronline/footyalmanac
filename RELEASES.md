@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-18-tennis-keys-3: Tennis keys with no Odds API match, third look (tag pending)
+
+**What changed:** nothing in the site. A dated note records that the logging asked for already exists and that the key list still has not been seen.
+**Evidence:** `groupings.py --probe` already reports `tennisKeys` and `noKey` (#55); no `ODDS_API_KEY` here and no committed report holds the list, so no fix can be tested.
+**Files:** `claude/odds-api-tennis-keys-2026-11-18.md`.
+**Not changed:** `_odds_keys`, any model, any price rule.
+**Roll back:** delete the note.
+
 ## 2026-11-18-czech-af: the Czech First League scored from API-Football (tag pending)
 
 **What changed:** the Czech First League's table (`cze.1`) had stopped at 20 Sep: openfootball's 2026-27 file stopped scoring and ESPN's `cze.1` slug answers nothing, so since 14 Nov every Czech fixture has been flagged under Celtic's Law (41 results missing from 9 Oct). The build now scores its blank fixtures from the API-Football day pool it already reads for the wider leagues (`sources.AF_LAG`, `af_lag_results`, `af_lag_pick`; `build.fill_lagging(source="apifootball")`), under openfootball's spelling, all or nothing on names and on country. No extra API calls, nothing written to `current/`. Czech letters (ň ř ý ů ě ť ď) now fold in `sources._base`, and `plzen` is an alias of Viktoria Plzeň. When the fill lands, the stale flag clears itself and Czech favourites can reach the Daily List and the Card again on a current table.
