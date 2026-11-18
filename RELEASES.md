@@ -37,6 +37,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` the commit.
 
+## 2026-11-18-grading-audit: Grading audit against ESPN, no bug (tag pending)
+
+**What changed:** nothing a reader sees. A dated audit in `claude/results-review-board.md`.
+
+**Evidence:** 1,133 football, 508 sports and 57 tennis rows from 11-17 Nov checked against ESPN's scoreboards: 269 football, 188 sports and about 55 tennis matched to a completed game, 0 mismatches. Walkovers (54 in the live feed) void, retirements (42) graded, as documented. 12 of 53 graded tennis retirements came before the first set finished (5 landed, 7 not): a policy question, recorded for Douglas.
+
+**Files:** `claude/results-review-board.md`, `RELEASES.md`.
+
+**Not changed:** all code, models, record files.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-18-group-bands: Group bands against their stated chance, backtest write-up (tag pending)
 
 **What changed:** nothing in the site. A dated section in `claude/odds-groupings.md` reads every group band in `groupings-record.json` against its stated chance. Findings only: the evidence fails the gates (2 to 36 groups a band, 100 needed), so no rule change.
