@@ -2052,6 +2052,27 @@ def fault_under(l, patch):
     finally:
         g.update(saved)
 
+def rule12_fault(l):
+    """What rule 12's two bookmaker conditions alone say of a leg the live
+    rule admitted (18 Nov 2026): the value demand, then the football
+    opposition floor, at RULE12_PATCH's values, or None. For an archived
+    rule 13 leg that lost its `rule12Fault` (recheck_card rebuilt legs from
+    the board without it until 18 Nov), read from the leg as frozen at its
+    start; the other conditions are not asked again, as the live rule
+    passed them. claude/card-rule12-fault-recheck-2026-11-18.md."""
+    edge = RULE12_PATCH["CARD_MODEL_EDGE"]
+    if edge is not None and l.get("fair") is not None and l["pModel"] < l["fair"] + edge:
+        return f"{l['pick']}: the model ({pct(l['pModel'])}) sees no value at the bookmakers' {pct(l['fair'])}"
+    omin = RULE12_PATCH["CARD_MODEL_OPP_MIN"].get(l.get("sport"))
+    if omin:
+        if not l.get("opp"): return f"{l['pick']}: no bookmaker price for the opposition"
+        if l["opp"] < omin: return f"{l['pick']}: the opposition is priced {l['opp']:.2f}, under {omin:g}"
+    return None
+
+def keeps_rule12(wide=False):
+    """True while the Card's legs carry `rule12Fault` (CARD_RULE 13)."""
+    return bool(CARD_MODEL_RULE and not wide and CARD_MODEL_EDGE is None)
+
 def as_model(l):
     """A leg as the Model card carries it: its chance is the model's own."""
     return dict(l, p=l["pModel"], basis="model")
@@ -2095,7 +2116,7 @@ def best_card(L, used, after, name, wide=False, need=None):
     if not top: return None
     _, p, c, o = top
     legs_ = sorted([dict(l) for l in c], key=lambda l: l.get("when") or "9")
-    if CARD_MODEL_RULE and not wide and CARD_MODEL_EDGE is None:
+    if keeps_rule12(wide):
         # 17 Nov 2026 (CARD_RULE 13): what rule 12 would have said of each
         # pick, kept on the leg so the review can split the groups without a
         # replay (claude/card-rule13-model-only-2026-11-17.md)
@@ -2125,7 +2146,12 @@ def recheck_card(g, L):
             cur = stale_price(cur, old)
         f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
-        legs_.append(dict(as_card(cur, bool(g.get("wide"))), firstOdds=old.get("firstOdds", old.get("odds"))))
+        nl = dict(as_card(cur, bool(g.get("wide"))), firstOdds=old.get("firstOdds", old.get("odds")))
+        # 18 Nov 2026: the leg is rebuilt from this build's board, so what rule
+        # 12 says of it is asked again here; until today it was dropped on the
+        # first re-check and no rule 13 group reached the archive with it
+        if keeps_rule12(bool(g.get("wide"))): nl["rule12Fault"] = fault_under(nl, RULE12_PATCH)
+        legs_.append(nl)
     if why: return None, why
     lo, hi = CARD_RANGE[g["name"]]
     # 30 Oct 2026: a published group holds through ordinary price drift. The
@@ -3116,6 +3142,12 @@ def card_legs_by_sport(days):
                             "tripwire": a["tripwire"]})
     return out
 
+def r13_leg(g, l):
+    """A leg of a rule 13 Card group (not the wider rule, not late) with what
+    rule 12_fault needs to read it."""
+    return (is_card(g.get("name")) and g.get("rule") == 13 and not g.get("wide") and not g.get("late")
+            and l.get("pModel") is not None)
+
 def card_rule13_split(days, tally):
     """17 Nov 2026 (CARD_RULE 13, the Card on the model alone): the rule 13
     Card groups split by what rule 12 would have said of their picks, from
@@ -3146,7 +3178,9 @@ def card_rule13_split(days, tally):
                 t = legs["rule12" if l.get("rule12Fault") is None else "rule13only"]
                 t["legs"] += 1; t["landed"] += l["status"] == "won"; t["expected"] += l["p"]
     for t in legs.values(): t["expected"] = round(t["expected"], 2)
-    return {"rule12": tally(r12), "rule13only": tally(r13), "unknown": len(cand) - len(known), "legs": legs}
+    return {"rule12": tally(r12), "rule13only": tally(r13), "unknown": len(cand) - len(known), "legs": legs,
+            # 18 Nov 2026: groups whose verdict was read from the frozen legs (r12 "derived")
+            "derived": sum(1 for g in known if any(l.get("r12") == "derived" for l in g["legs"]))}
 
 def card_picks(L, date, now):
     """The day's picks that pass the Card's rule before the context check, not
@@ -3261,7 +3295,12 @@ def grade(now=None):
                              # 17 Nov 2026: what rule 12 said of the pick as built under
                              # rule 13 (None: rule 12 took it too); r12 False when the leg
                              # was built before the field existed (card_rule13_split)
-                             "rule12Fault": l.get("rule12Fault"), "r12": "rule12Fault" in l})
+                             # 18 Nov 2026: a rule 13 Card leg archived without the field
+                             # (the re-check dropped it) is read from the leg as frozen,
+                             # marked "derived" (rule12_fault)
+                             **({"rule12Fault": l.get("rule12Fault"), "r12": True} if "rule12Fault" in l
+                                else {"rule12Fault": rule12_fault(l), "r12": "derived"} if r13_leg(g, l)
+                                else {"rule12Fault": None, "r12": False})})
             # 25 Oct 2026: a football leg still without a result VOID_AFTER
             # after kick-off, while every other leg has settled, was postponed
             # or abandoned without the source saying so. It is void and drops

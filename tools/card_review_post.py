@@ -207,6 +207,8 @@ def rule13_split_section(r):
            "| groups | built | settled | won v expected | return (1 unit) | picks landed |", "|---|---|---|---|---|---|",
            row("rule 12 would have built it too", a, lg.get("rule12") or {}),
            row("holds a pick only rule 13 admits", b, lg.get("rule13only") or {})]
+    if r.get("derived"): out.append(f"\n{r['derived']} group(s) read from their legs as frozen at the start: the re-check had dropped "
+                                    "`rule12Fault` until 18 Nov (claude/card-rule12-fault-recheck-2026-11-18.md).")
     if r.get("unknown"): out.append(f"\n{r['unknown']} rule 13 group(s) built before `rule12Fault` was kept, left out.")
     return out + ["Read beside the `rule12` replay at the 30 Nov review (claude/card-rule13-split-2026-11-17.md).", ""]
 
