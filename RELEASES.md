@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-mlb-recheck: MLB above-quote gap re-checked, no change (tag pending)
+
+**What changed:** nothing for a reader. A dated note records that the MLB live gap (27 of 40, z +1.5) is the same 40 games as on 12 Nov, so no new evidence.
+**Evidence:** `sports-graded.json` recomputed; history check window lands under quote (60%+ 61.4% v 64.0%, 3,626 games). Gates: not applicable, no model change.
+**Files:** `claude/mlb-above-quote-recheck-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** `sports.py`, `sports.json`, calibration.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-19-untimed-board: La Liga, the Süper Lig and Brazil's Serie A take API-Football's date and time (tag pending)
 
 **What changed.** openfootball dates these three leagues by round and gives no
