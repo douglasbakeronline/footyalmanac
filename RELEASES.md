@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-tennis-set-scores: tennis set scores on the Daily List (tag pending)
+
+**What changed:** a settled tennis row on the Daily List now shows the set scores under the winner ("Strakhova won · 6-3 7-6(3)"), read from the tennis result's note (winner first, a tiebreak as the loser's points, "ret." or "Walkover" where the note says so). Douglas, 19 Nov 2026: "I'm not seeing the tennis scores applied."
+**Evidence:** the parser checked on 30 real notes from `tennis-record.json` (tiebreaks, retirements, walkovers); the list checked in a browser at 1280px and 400px on 19 Nov's list (Erjavec v Strakhova, Fils v Zverev).
+**Files:** `index.html` (`tennisSets`, `putPinned`), `RELEASES.md`.
+**Not changed:** grading, the records, any other sport's row.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-pl-times: the Premier League and Serie A take API-Football's kick-offs (tag pending)
 
 **For a reader.** Premier League games now show their real TV kick-offs and days instead of openfootball's Saturday 15:00 placeholder, and Serie A's 29 Nov round, which openfootball gives no time, takes its real day and time as La Liga, Brazil's Serie A and the Süper Lig already do. On 21 Nov that is Manchester City v Fulham and Newcastle v Arsenal priced (both names found, the kick-offs apart) and Liverpool v Manchester United on its Sunday. A Card group can no longer hold a 12:30 game open until 15:00.
