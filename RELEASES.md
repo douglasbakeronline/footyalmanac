@@ -9,6 +9,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-last-price: a started game keeps its last price on the Daily List (tag pending)
+
+**For a reader.** A Daily List row for a game already played (the early-hours NBA and tennis, looked at in the afternoon) kept its won / lost mark but lost its price chip, because the build only prices games still to come. The chip now stays, in grey, showing the last price read before the start (William Hill's where it had one, else the average), with "Last price before the start" in its tooltip. Douglas, 19 Nov 2026: "keep the odds there as we last knew them ... a slight reference point."
+
+**How.** `groupings.past_prices` reads yesterday's and today's pool files (`groupings-archive/pool-<date>.json.gz`) for every game this build no longer carries and takes `lastOdds` / `lastBest` / `lastBooks` (the last pre-start price the archive already keeps), else the first real price; estimates are never used. Merged under this build's own prices in `groupings-data.js` `prices` with `past: true`; `priceChip` in `index.html` adds the `past` class (muted ink) and the tooltip line. Display only; nothing reads it.
+
+**Files.** `groupings.py` (`past_prices`, `PAST_PRICE_DAYS`), `index.html` (`priceChip`, `.bkchip.past`), `tests/test_past_prices.py` (new). Checked at 1280 and 400px on the local build (166 past prices from the 18 and 19 Nov pools).
+
+**Not changed.** The William Hill marks on list rows (`listBooks`, which already read the pool for started list picks), the record, grading, any model.
+
+**Roll back.** `git revert` this merge.
 ## 2026-11-19-racing-log-keys: the racing build names the feed's fields (tag pending)
 
 **What changed:** each build prints the racecard's race and runner field names. The free plan's 72 races came with no going, distance, trainer form or prices, and the log shows whether those are missing from the plan or named differently.
