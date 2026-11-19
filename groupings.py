@@ -452,6 +452,21 @@ def af_same(af_name, board_name):
     alt = AF_SPELLINGS.get(board_name)
     return bool(alt) and same(af_name, alt)
 
+def card_reach(l):
+    """True when a football leg could reach the Card once priced: the model
+    at CARD_FAIR_MIN or over, in a league the Card takes, clean of the Daily
+    List's blind spots. A price test only, so it decides nothing on the Card
+    (card_fault and model_fault still do)."""
+    return (l.get("sport") == "football" and (l.get("pModel") or 0) >= CARD_FAIR_MIN
+            and card_league(l.get("code")) and l.get("why", None) in CLEAN_WHY)
+
+def call_order(l):
+    """The order price_football spends its capped per-fixture calls in
+    (19 Nov 2026): Card-reachable legs, then list and reserve picks, then the
+    rest; within each, the nearest day, then the strongest pick."""
+    tier = 0 if card_reach(l) else 1 if (l.get("list") or l.get("reserve")) else 2
+    return (tier, l.get("date") or "", -(l.get("pModel") or 0))
+
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
 
@@ -497,96 +512,103 @@ def price_football(L, dates, report):
                     for f in fx}
         # API-Football's "TBD" (time to be defined) fixtures carry a stand-in time
         tbd.update(f["fixture"]["id"] for f in fx if ((f["fixture"].get("status") or {}).get("short")) == "TBD")
-    for d in sorted(pools):
+    # 19 Nov 2026: the per-fixture calls for mid-priced legs stop at
+    # FB_CALLS_MULT a build, and until now went in board order, so a 62%
+    # Premier League pick the Card could take was "capped" behind 45% picks in
+    # the Oberliga (the 11:05 UTC build: capped 97, Premier League 5). Legs the
+    # Card can reach go first, then list and reserve picks, then the rest, each
+    # nearest day first and strongest first (`call_order`). Same calls, same
+    # cap; only who gets them changes.
+    for l in sorted((l for l in fb if l["date"] in pools), key=call_order):
+        d = l["date"]
         teams = pools[d]
-        for l in fb:
-            if l["date"] != d or l.get("odds"): continue
-            t = parse(l["when"])
-            fid = next((fid for fid, (h, a, ft) in teams.items()
-                        if not (t and ft and abs((t - ft).total_seconds()) > 5400)
-                        and af_same(h, l["home"]) and af_same(a, l["away"])), None)
-            if fid is None:
-                # both names found but the kick-offs 90+ minutes apart (a moved
-                # fixture) reads differently from a name API-Football spells
-                # another way or a fixture it does not list at all
-                named = any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in teams.values())
-                # 19 Nov 2026: the first named read had Liverpool v Manchester
-                # United and Brazil's Serie A under noFixture with no fixture
-                # near on the board's date: API-Football lists them on another
-                # day in the window (a fixture the board's source dates wrong).
-                # Counted as `moved`, never priced: the board's date is wrong.
-                moved = None if named else next(
-                    (od for od in sorted(pools) if od != d
-                     and any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in pools[od].values())), None)
-                _miss(l, "kickoff" if named else "moved" if moved else "noFixture")
-                if moved and len(moved_legs) < NOFIXTURE_KEEP:
-                    moved_legs.append({"date": d, "afDate": moved, "comp": l.get("comp") or l.get("code"),
-                                       "home": l["home"], "away": l["away"]})
-                if not named and not moved and len(nofix) < NOFIXTURE_KEEP:
-                    nofix.append({"date": d, "comp": l.get("comp") or l.get("code"), "home": l["home"], "away": l["away"],
-                                  "near": sorted(f"{h} v {a}" for h, a, _ in teams.values()
-                                                 if af_same(h, l["home"]) or af_same(a, l["away"]))[:3]})
-                continue
-            # 19 Nov 2026: La Liga, the Süper Lig and Brazil's Serie A reach the
-            # board with no kick-off time (openfootball's round dates), and a leg
-            # with no `when` never counts as started, so a Card group holding one
-            # stayed open, and the leg in the pool, past its real start. A leg
-            # matched here on both names and the board's date takes API-Football's
-            # kick-off. The board row itself is not changed.
-            if not l.get("when") and teams[fid][2] and fid not in tbd:
-                l["when"], l["whenSrc"] = iso(teams[fid][2]), "API-Football"
-                timed.append(f"{l['home']} v {l['away']}")
-            row = bulk.get(str(fid))
-            if row:
-                i = 0 if l["side"] == "h" else 2
-                l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
-                         opp=round(row["avg"][2 - i], 2), draw=round(row["avg"][1], 2),
-                         bestBook=(row.get("maxBook") or [None, None, None])[i],
-                         bookOdds=(row.get("ukBooks") or [{}, {}, {}])[i],
-                         margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
-                         src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
-                matched += 1; continue
-            # 11 Nov 2026 (Douglas: "odds for all games"): a mid-priced leg the
-            # bulk day prices missed now gets its own call too, up to
-            # FB_CALLS_MULT a build (API-Football Pro: 7,500 a day, about 3,300
-            # left after the build on 11 Nov). Before, it stayed an estimate.
-            if l.get("multOnly") and calls >= FB_CALLS_MULT:
-                _miss(l, "capped"); continue
-            try:
-                items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
-            except Exception as e:
-                report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}")
-                _miss(l, "error"); continue
-            prices = {"Home": [], "Away": [], "Draw": []}
-            books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
-            uk_px = {"Home": {}, "Away": {}, "Draw": {}}   # 29 Oct 2026: every UK book's price, by side
-            for item in items:
-                for b in item.get("bookmakers") or []:
-                    uk = O.uk_book(b.get("name"))
-                    for bet in b.get("bets") or []:
-                        if bet.get("id") != 1: continue
-                        for v in bet.get("values") or []:
-                            try:
-                                o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
-                                if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
-                                if uk: uk_px[v["value"]][O.uk_name(b.get("name"))] = round(o, 2)
-                            except (KeyError, ValueError): pass
-            books = sorted(books)
-            side = prices["Home" if l["side"] == "h" else "Away"]
-            if side:
-                avg = [sum(v) / len(v) for v in prices.values() if v]
-                mean = sum(side) / len(side)
-                uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
-                other = prices["Away" if l["side"] == "h" else "Home"]
-                l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
-                         opp=round(sum(other) / len(other), 2) if other else None,
-                         draw=round(sum(prices["Draw"]) / len(prices["Draw"]), 2) if prices["Draw"] else None,
-                         bestBook=uk_top[1], bookOdds=uk_px["Home" if l["side"] == "h" else "Away"], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
-                         margin=margin_of(avg) if len(avg) == 3 else None,
-                         src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
-                matched += 1
-            else:
-                _miss(l, "noOdds")
+        if l.get("odds"): continue
+        t = parse(l["when"])
+        fid = next((fid for fid, (h, a, ft) in teams.items()
+                    if not (t and ft and abs((t - ft).total_seconds()) > 5400)
+                    and af_same(h, l["home"]) and af_same(a, l["away"])), None)
+        if fid is None:
+            # both names found but the kick-offs 90+ minutes apart (a moved
+            # fixture) reads differently from a name API-Football spells
+            # another way or a fixture it does not list at all
+            named = any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in teams.values())
+            # 19 Nov 2026: the first named read had Liverpool v Manchester
+            # United and Brazil's Serie A under noFixture with no fixture
+            # near on the board's date: API-Football lists them on another
+            # day in the window (a fixture the board's source dates wrong).
+            # Counted as `moved`, never priced: the board's date is wrong.
+            moved = None if named else next(
+                (od for od in sorted(pools) if od != d
+                 and any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in pools[od].values())), None)
+            _miss(l, "kickoff" if named else "moved" if moved else "noFixture")
+            if moved and len(moved_legs) < NOFIXTURE_KEEP:
+                moved_legs.append({"date": d, "afDate": moved, "comp": l.get("comp") or l.get("code"),
+                                   "home": l["home"], "away": l["away"]})
+            if not named and not moved and len(nofix) < NOFIXTURE_KEEP:
+                nofix.append({"date": d, "comp": l.get("comp") or l.get("code"), "home": l["home"], "away": l["away"],
+                              "near": sorted(f"{h} v {a}" for h, a, _ in teams.values()
+                                             if af_same(h, l["home"]) or af_same(a, l["away"]))[:3]})
+            continue
+        # 19 Nov 2026: La Liga, the Süper Lig and Brazil's Serie A reach the
+        # board with no kick-off time (openfootball's round dates), and a leg
+        # with no `when` never counts as started, so a Card group holding one
+        # stayed open, and the leg in the pool, past its real start. A leg
+        # matched here on both names and the board's date takes API-Football's
+        # kick-off. The board row itself is not changed.
+        if not l.get("when") and teams[fid][2] and fid not in tbd:
+            l["when"], l["whenSrc"] = iso(teams[fid][2]), "API-Football"
+            timed.append(f"{l['home']} v {l['away']}")
+        row = bulk.get(str(fid))
+        if row:
+            i = 0 if l["side"] == "h" else 2
+            l.update(odds=round(row["avg"][i], 2), best=round(row["max"][i], 2), books=row["books"],
+                     opp=round(row["avg"][2 - i], 2), draw=round(row["avg"][1], 2),
+                     bestBook=(row.get("maxBook") or [None, None, None])[i],
+                     bookOdds=(row.get("ukBooks") or [{}, {}, {}])[i],
+                     margin=margin_of(row["avg"]), pricedAt=read_at(O._af_odds_path(_date.fromisoformat(d))),
+                     src="API-Football, average of " + (f"{row['books']} bookmakers" if row["books"] != 1 else "1 bookmaker"))
+            matched += 1; continue
+        # 11 Nov 2026 (Douglas: "odds for all games"): a mid-priced leg the
+        # bulk day prices missed now gets its own call too, up to
+        # FB_CALLS_MULT a build (API-Football Pro: 7,500 a day, about 3,300
+        # left after the build on 11 Nov). Before, it stayed an estimate.
+        if l.get("multOnly") and calls >= FB_CALLS_MULT:
+            _miss(l, "capped"); continue
+        try:
+            items, n = _odds_for(fid, key, S.AF_CACHE_DIR); calls += n
+        except Exception as e:
+            report.setdefault("errors", []).append(f"odds {fid}: {type(e).__name__}")
+            _miss(l, "error"); continue
+        prices = {"Home": [], "Away": [], "Draw": []}
+        books = set(); top = {}    # best price per side among UK-licensed books (odds.UK_BOOKS)
+        uk_px = {"Home": {}, "Away": {}, "Draw": {}}   # 29 Oct 2026: every UK book's price, by side
+        for item in items:
+            for b in item.get("bookmakers") or []:
+                uk = O.uk_book(b.get("name"))
+                for bet in b.get("bets") or []:
+                    if bet.get("id") != 1: continue
+                    for v in bet.get("values") or []:
+                        try:
+                            o = float(v["odd"]); prices[v["value"]].append(o); books.add(b.get("name"))
+                            if uk and o > top.get(v["value"], (0, None))[0]: top[v["value"]] = (o, b.get("name"))
+                            if uk: uk_px[v["value"]][O.uk_name(b.get("name"))] = round(o, 2)
+                        except (KeyError, ValueError): pass
+        books = sorted(books)
+        side = prices["Home" if l["side"] == "h" else "Away"]
+        if side:
+            avg = [sum(v) / len(v) for v in prices.values() if v]
+            mean = sum(side) / len(side)
+            uk_top = top.get("Home" if l["side"] == "h" else "Away", (0, None))
+            other = prices["Away" if l["side"] == "h" else "Home"]
+            l.update(odds=round(mean, 2), best=round(uk_top[0] if uk_top[1] else mean, 2), books=len(books),
+                     opp=round(sum(other) / len(other), 2) if other else None,
+                     draw=round(sum(prices["Draw"]) / len(prices["Draw"]), 2) if prices["Draw"] else None,
+                     bestBook=uk_top[1], bookOdds=uk_px["Home" if l["side"] == "h" else "Away"], pricedAt=read_at(os.path.join(S.AF_CACHE_DIR, f"odds-{fid}.json")),
+                     margin=margin_of(avg) if len(avg) == 3 else None,
+                     src="API-Football, average of " + (f"{len(books)} bookmakers" if len(books) != 1 else books[0]))
+            matched += 1
+        else:
+            _miss(l, "noOdds")
     report["football"] = {"calls": calls, "matched": matched, "legs": len(fb)}
     if miss:
         report["football"]["miss"] = dict(miss)
