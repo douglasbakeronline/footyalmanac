@@ -1342,16 +1342,27 @@ def af_lag_pick(code, season, fixtures):
 # Brazil's Serie A on the board had `kickoff` null and a date a day either
 # side of the real one. build.fill_untimed takes the date and time from
 # API-Football. Ids set by hand, so the country is checked (rule 6).
-AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71}
+AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71, "it.1": 135}
+# 19 Nov 2026 (night): Serie A's 29 Nov round reaches openfootball with no
+# time either (10 of 10), so it.1 joins. The Premier League's file does carry
+# times, but nominal ones: every game of the 21 and 28 Nov rounds at Saturday
+# 15:00, so the 19:39 UTC build could not price Manchester City v Fulham or
+# Newcastle v Arsenal (`kickoff`: API-Football has the TV times), counted
+# Liverpool v Manchester United as `moved` (Sunday) and left a Card group
+# holding a 12:30 game open to 15:00. For AF_RETIME leagues a timed row also
+# takes API-Football's date and time when they differ (build.fill_untimed
+# `retime`), under the same rules: all or nothing on names, one fixture.
+AF_RETIME = {"en.1": 39}
 
 
 def af_untimed_rows(code, start, end):
     """API-Football's fixtures for one AF_UNTIMED league over start..end as
     fixture rows (UTC date and time), TBD stand-in times left out. [] without
     a key or when the country is not the league's."""
-    if code not in AF_UNTIMED or not os.environ.get("API_FOOTBALL_KEY"):
+    lid = AF_UNTIMED.get(code) or AF_RETIME.get(code)
+    if not lid or not os.environ.get("API_FOOTBALL_KEY"):
         return []
-    src = af_day_pool(start, end).get(AF_UNTIMED[code], [])
+    src = af_day_pool(start, end).get(lid, [])
     return af_untimed_pick(code, src)
 
 

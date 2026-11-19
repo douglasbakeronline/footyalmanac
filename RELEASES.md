@@ -9,6 +9,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-pl-times: the Premier League and Serie A take API-Football's kick-offs (tag pending)
+
+**For a reader.** Premier League games now show their real TV kick-offs and days instead of openfootball's Saturday 15:00 placeholder, and Serie A's 29 Nov round, which openfootball gives no time, takes its real day and time as La Liga, Brazil's Serie A and the Süper Lig already do. On 21 Nov that is Manchester City v Fulham and Newcastle v Arsenal priced (both names found, the kick-offs apart) and Liverpool v Manchester United on its Sunday. A Card group can no longer hold a 12:30 game open until 15:00.
+
+**Evidence.** The 19:39 UTC build: `untimed tr.1: 13`, so the Süper Lig fix landed (#417 closed); its pricing line `kickoff 4 (Premier League 2)`, `moved 1 (Premier League)`; openfootball's en.1 file has all 20 games of the 21 and 28 Nov rounds at 15:00 and it.1's 29 Nov round 10 of 10 untimed. `claude/premier-league-nominal-times-2026-11-19.md`.
+
+**Files.** `sources.py` (`AF_UNTIMED` it.1, `AF_RETIME` en.1, `af_untimed_rows`), `build.py` (`fill_untimed` `retime`), `tests/test_untimed.py`, the note, `CLAUDE.md`.
+
+**Not changed.** Any Card constant, the name matcher, `price_football`'s 90-minute guard, the archive.
+
+**Check.** The next CI build should log `untimed en.1: N fixture(s)` with no en.1 warning and no Premier League game under `kickoff` or "football moved:".
+
+**Roll back.** `git revert` this merge, or empty `AF_RETIME` and drop it.1 from `AF_UNTIMED`.
+
 ## 2026-11-19-card-rule14: the Card back on rule 8's constants, and the scoreboard on the live rule (tag pending)
 
 **For a reader.** The Card runs rule 8's constants again (rule 14): the model's picks rated at or above the bookmakers, core leagues only, tennis at 75%+, the 2x alone, no two-day groups. Douglas, 19 Nov 2026, shown every rule rebuilt on the whole archive: "let's then group to rule 8". The Bets tab's "Is it working?" box now headlines the live rule's own groups and legs, named and dated, with every rule since 25 Oct under More numbers; the Card's rule text reads the live constants. Fewer cards (rule 8 built one about one day in three), the Daily 2x and List card unchanged.

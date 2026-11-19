@@ -63,6 +63,57 @@ class FillUntimed(unittest.TestCase):
         self.assertEqual(B.fill_untimed(self.rows(), [], START), (0, []))
 
 
+class Retime(unittest.TestCase):
+    """AF_RETIME leagues (19 Nov 2026): openfootball's Premier League times are
+    nominal (every game Saturday 15:00 UK), so a timed row takes API-Football's
+    date and time when its UTC kick-off differs."""
+    def rows(self):
+        return [row("Manchester City", "Fulham", "2026-11-21", time="15:00"),
+                row("Liverpool", "Manchester United", "2026-11-21", time="15:00"),
+                row("Chelsea", "Leeds United", "2026-11-21", time="15:00")]
+
+    def afs(self):
+        return [af("Manchester City", "Fulham", "2026-11-21", "12:30"),
+                af("Liverpool", "Manchester United", "2026-11-22", "16:30"),
+                af("Chelsea", "Leeds", "2026-11-21", "15:00")]
+
+    def test_retime_takes_tv_times(self):
+        rows = self.rows()
+        n, bad = B.fill_untimed(rows, self.afs(), START, retime="eng")
+        self.assertEqual((n, bad), (2, []))
+        self.assertEqual((rows[0]["date"], rows[0]["time"], rows[0]["utc"]), ("2026-11-21", "12:30", True))
+        self.assertEqual((rows[1]["date"], rows[1]["time"]), ("2026-11-22", "16:30"))
+        # 15:00 UK in November is 15:00 UTC: already right, left as it was
+        self.assertNotIn("utc", rows[2])
+        self.assertEqual(S.kickoff_utc(rows[0], "eng"), "2026-11-21T12:30:00Z")
+
+    def test_bst_time_that_agrees_is_left(self):
+        rows = [row("Manchester City", "Fulham", "2026-09-26", time="15:00")]
+        n, _ = B.fill_untimed(rows, [af("Manchester City", "Fulham", "2026-09-26", "14:00")],
+                              date(2026, 9, 20), retime="eng")
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["time"], "15:00")
+
+    def test_without_retime_timed_rows_untouched(self):
+        rows = self.rows()
+        n, _ = B.fill_untimed(rows, self.afs(), START)
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["time"], "15:00")
+
+    def test_retime_all_or_nothing_on_names(self):
+        rows = self.rows()
+        n, bad = B.fill_untimed(rows, self.afs() + [af("Zzyzx Rovers", "Fulham", "2026-11-28", "15:00")],
+                                START, retime="eng")
+        self.assertEqual(n, 0)
+        self.assertTrue(bad)
+        self.assertEqual(rows[0]["time"], "15:00")
+
+    def test_leagues_registered(self):
+        self.assertEqual(S.AF_RETIME.get("en.1"), 39)
+        self.assertEqual(S.AF_UNTIMED.get("it.1"), 135)
+        self.assertFalse(set(S.AF_RETIME) & set(S.AF_UNTIMED))
+
+
 class Pick(unittest.TestCase):
     def fx(self, status, country="Spain"):
         return {"fixture": {"date": "2026-11-20T20:00:00+00:00", "status": {"short": status}},
