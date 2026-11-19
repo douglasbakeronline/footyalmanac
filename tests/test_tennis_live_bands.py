@@ -106,7 +106,7 @@ class PlaceholderDay(unittest.TestCase):
 
     def test_card_refuses_a_leg_with_no_order_of_play(self):
         import groupings as G
-        leg = {"pick": "A", "odds": 1.5, "fair": 0.7, "pModel": 0.7, "timeEst": True}
+        leg = {"pick": "A", "odds": 1.5, "fair": 0.7, "pModel": 0.7, "timeEst": True, "when": "2026-11-21T15:00:00Z"}
         self.assertIn("order of play", G.card_fault(leg))
         self.assertIn("order of play", G.mult_fault(leg))
         leg["timeEst"] = False

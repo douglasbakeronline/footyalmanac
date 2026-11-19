@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-no-kickoff: football legs with no kick-off time take API-Football's, and the Card waits for one (tag pending)
+
+**What changed:** La Liga, the Süper Lig and Brazil's Serie A reach the board with no kick-off time (every one of their 29 rows on 19 Nov). A football leg with no time never counted as started, so a Card group holding one could stay open past the real kick-off. A leg matched to an API-Football fixture now takes that fixture's kick-off (`whenSrc`), the Card refuses a leg with no start time (the football twin of the tennis order-of-play guard), and a re-check keeps a published leg's kick-off. Six more API-Football spellings are priced: Union St. Gilloise, Hertha BSC, U. Catolica, LDU de Quito, Atletico Torque, West Ham W.
+**Evidence:** deploy run 44478001048 (19 Nov 07:13 UTC): noFixture 14, six of the twelve named beside their fixture under another spelling; `predictions/2026-11-19.json` 29 rows with no kick-off, four of them list or reserve picks. No archived Card leg has lacked a time so far (540 legs). `claude/football-no-kickoff-2026-11-19.md`.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `tests/test_context_review.py`, `tests/test_tennis_live_bands.py` (their legs now carry a start), the note, `CLAUDE.md`.
+**Not changed:** any `CARD_*` constant or `CARD_RULE`, the replays, the board, the Daily List, `score.py`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-af-spellings: four football spellings priced, moved fixtures told apart (tag pending)
 
 **What changed:** football legs whose names API-Football spells another way are now priced: AGF (Aarhus), Inverness Caledonian Thistle (Inverness CT), STVV (St. Truiden), Dux Logroño (Edf Logrono W), via `groupings.AF_SPELLINGS`. A leg with no fixture on its date but listed by API-Football on another day in the window is counted `moved` ("football moved:" in the build log, `football.moved` in `groupings.json`), not `noFixture`, and never priced.

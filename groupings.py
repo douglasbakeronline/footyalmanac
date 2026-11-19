@@ -435,6 +435,14 @@ AF_SPELLINGS = {
     "Inverness Caledonian Thistle": "Inverness CT",
     "STVV": "St. Truiden",
     "Dux Logroño": "Edf Logrono",
+    # 19 Nov 2026, the second named read (07:13 UTC build): six more, each
+    # beside its fixture in `near`, in leagues the Card admits.
+    "Royale Union Saint-Gilloise": "Union St. Gilloise",   # Pro League
+    "Hertha Berlin": "Hertha BSC",                         # 2. Bundesliga
+    "Universidad Católica": "U. Catolica",                 # Chile
+    "Liga de Quito": "LDU de Quito",                       # Ecuador
+    "Montevideo City Torque": "Atletico Torque",           # Uruguay
+    "West Ham United": "West Ham",                         # WSL "West Ham W"
 }
 
 
@@ -466,7 +474,7 @@ def price_football(L, dates, report):
     # names, so a spelling for LIVE_NAMES could not be told from a fixture
     # API-Football does not list without the paid feed. Each noFixture leg is
     # now named with the day's fixtures sharing one of its names (`near`).
-    nofix, moved_legs = [], []
+    nofix, moved_legs, timed = [], [], []
     def _miss(l, why):
         miss[why] += 1
         miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
@@ -479,7 +487,7 @@ def price_football(L, dates, report):
     except Exception as e:
         bulk = {}
         report.setdefault("errors", []).append(f"bulk odds: {type(e).__name__}")
-    pools = {}
+    pools, tbd = {}, set()
     for d in sorted(dates):
         try:
             fx = S._af_day(_date.fromisoformat(d))
@@ -487,6 +495,8 @@ def price_football(L, dates, report):
             report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}"); continue
         pools[d] = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
                     for f in fx}
+        # API-Football's "TBD" (time to be defined) fixtures carry a stand-in time
+        tbd.update(f["fixture"]["id"] for f in fx if ((f["fixture"].get("status") or {}).get("short")) == "TBD")
     for d in sorted(pools):
         teams = pools[d]
         for l in fb:
@@ -517,6 +527,15 @@ def price_football(L, dates, report):
                                   "near": sorted(f"{h} v {a}" for h, a, _ in teams.values()
                                                  if af_same(h, l["home"]) or af_same(a, l["away"]))[:3]})
                 continue
+            # 19 Nov 2026: La Liga, the Süper Lig and Brazil's Serie A reach the
+            # board with no kick-off time (openfootball's round dates), and a leg
+            # with no `when` never counts as started, so a Card group holding one
+            # stayed open, and the leg in the pool, past its real start. A leg
+            # matched here on both names and the board's date takes API-Football's
+            # kick-off. The board row itself is not changed.
+            if not l.get("when") and teams[fid][2] and fid not in tbd:
+                l["when"], l["whenSrc"] = iso(teams[fid][2]), "API-Football"
+                timed.append(f"{l['home']} v {l['away']}")
             row = bulk.get(str(fid))
             if row:
                 i = 0 if l["side"] == "h" else 2
@@ -576,6 +595,8 @@ def price_football(L, dates, report):
         report["football"]["noFixture"] = nofix
     if moved_legs:
         report["football"]["moved"] = moved_legs
+    if timed:
+        report["football"]["timed"] = len(timed)
 
 def american(x):
     try: x = float(str(x).replace("+", ""))
@@ -1974,6 +1995,9 @@ def card_fault(l, wide=False):
     if CARD_MODEL_RULE and not wide:
         # 11 Nov 2026 (CARD_RULE 7): the model's own picks
         if l.get("timeEst"): return f"{l['pick']}: no order of play yet, the day is unconfirmed"
+        # 19 Nov 2026: a leg with no start time can never be shown to have been
+        # published before it (and never freezes its group), so it waits for one.
+        if not l.get("when"): return f"{l['pick']}: no kick-off time or order of play yet, the start is unconfirmed"
         f = model_fault(l)
         if f: return f
         # 11 Nov 2026 (CARD_RULE 9): the context check (context_review.py)
@@ -2194,6 +2218,10 @@ def recheck_card(g, L):
             # price stands, flagged stale, until a build can read one again; the
             # model's side of the check still runs on this build's number.
             cur = stale_price(cur, old)
+        if not cur.get("when") and old.get("when"):
+            # 19 Nov 2026: a kick-off taken from API-Football (whenSrc) stands
+            # when this build could not read it again, as the price does
+            cur = dict(cur, when=old["when"], whenSrc=old.get("whenSrc"))
         f = card_fault(cur, bool(g.get("wide")))
         if f: why.append(f); continue
         nl = dict(as_card(cur, bool(g.get("wide"))), firstOdds=old.get("firstOdds", old.get("odds")))
@@ -2875,7 +2903,7 @@ def check_pool(L):
 
 POOL_KEYS = ("sport", "event", "pick", "home", "away", "side", "comp", "code", "country", "when", "date", "odds", "best", "bestBook",
              "bookOdds", "margin", "src", "pricedAt", "est", "pModel", "pTested", "p", "fair", "implied", "hit", "n", "list", "reserve", "tier", "multOnly", "edge",
-             "opp", "draw",
+             "opp", "draw", "whenSrc",
              # 9 Nov 2026: the result keys (settle needs id for tennis and US
              # sport) and the two flags card_fault reads, so the pool replays
              "id", "listOff", "timeEst",
@@ -3642,6 +3670,8 @@ def main():
         print("  football moved: " + "; ".join(
             f"{m['comp']}: {m['home']} v {m['away']} on {m['date']}, API-Football {m['afDate']}"
             for m in fm["moved"])[:2000], file=sys.stderr)
+    if fm.get("timed"):
+        print(f"  football timed: {fm['timed']} leg(s) with no board kick-off took API-Football's", file=sys.stderr)
     # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
     # how far its legs got and what a game looked like, on its own line
     sg = report.get("sgo")

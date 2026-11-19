@@ -103,6 +103,23 @@ class FootballUnpriced(unittest.TestCase):
         self.assertEqual(r["matched"], 3)
         self.assertNotIn("miss", r)
 
+    def test_af_spellings_second_read(self):
+        """19 Nov 2026 07:13 build: six more board names beside their fixture under another spelling."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.70"}, {"value": "Draw", "odd": "3.8"}, {"value": "Away", "odd": "4.5"}]}]}]}]
+        pairs = [(("Kortrijk", "Union St. Gilloise"), ("KV Kortrijk", "Royale Union Saint-Gilloise", "Pro League")),
+                 (("Energie Cottbus", "Hertha BSC"), ("Energie Cottbus", "Hertha Berlin", "2. Bundesliga")),
+                 (("Colo Colo", "U. Catolica"), ("Colo Colo", "Universidad Católica", "Primera División")),
+                 (("LDU de Quito", "Aucas"), ("Liga de Quito", "Aucas", "Liga Pro")),
+                 (("Progreso", "Atletico Torque"), ("Progreso", "Montevideo City Torque", "Primera División")),
+                 (("Arsenal W", "West Ham W"), ("Arsenal", "West Ham United", "Women's Super League"))]
+        day = [fx(80 + i, t, h, a, hour=10 + i) for i, ((h, a), _) in enumerate(pairs)]
+        L = [leg(t, h, a, c, hour=10 + i) for i, (_, (h, a, c)) in enumerate(pairs)]
+        r = self.run_price(L, day, {80 + i: book for i in range(len(pairs))})
+        self.assertEqual(r["matched"], len(pairs))
+        self.assertNotIn("miss", r)
+
     def test_af_spelling_still_needs_both_names_and_kickoff(self):
         t = date.today().isoformat()
         day = [fx(61, t, "Aarhus", "Brondby"), fx(62, t, "Aarhus", "Lyngby", hour=12)]
@@ -129,5 +146,61 @@ class FootballUnpriced(unittest.TestCase):
         self.assertNotIn("odds", L[0])
 
 
+class NoKickoff(unittest.TestCase):
+    """19 Nov 2026: La Liga, the Süper Lig and Brazil's Serie A reach the board with no kick-off time."""
+    def test_matched_leg_with_no_time_takes_api_footballs(self):
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.50"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "6.0"}]}]}]}]
+        l = leg(t, "FC Barcelona", "Villarreal", "La Liga"); l["when"] = None
+        r = FootballUnpriced.run_price(self, [l], [fx(91, t, "Barcelona", "Villarreal", hour=20)], {91: book})
+        self.assertEqual(l["when"], f"{t}T20:00:00Z")
+        self.assertEqual(l["whenSrc"], "API-Football")
+        self.assertEqual(r["timed"], 1)
+        self.assertEqual(l["odds"], 1.5)
+
+    def test_tbd_fixture_time_is_not_taken(self):
+        t = date.today().isoformat()
+        f = fx(93, t, "Galatasaray", "Samsunspor", hour=0); f["fixture"]["status"]["short"] = "TBD"
+        l = leg(t, "Galatasaray", "Samsunspor", "Süper Lig"); l["when"] = None
+        FootballUnpriced.run_price(self, [l], [f], {})
+        self.assertIsNone(l["when"])
+        self.assertIn("no kick-off time", G.card_fault(dict(l, code="tr.1", odds=1.5, est=False, fair=0.64,
+                                                             pModel=0.68, why=None, hit=0.8, opp=7.0, event="x")))
+
+    def test_board_time_is_never_overwritten(self):
+        t = date.today().isoformat()
+        l = leg(t, "Arsenal", "Chelsea", "Premier League", hour=15)
+        r = FootballUnpriced.run_price(self, [l], [fx(92, t, "Arsenal", "Chelsea", hour=16)], {})
+        self.assertEqual(l["when"], f"{t}T15:00:00Z")
+        self.assertNotIn("whenSrc", l)
+        self.assertNotIn("timed", r)
+
+    def test_card_refuses_a_leg_with_no_start(self):
+        l = {"sport": "football", "event": "Ajax v Other", "pick": "Ajax", "code": "en.1", "comp": "Premier League",
+             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "opp": 7.0, "when": None}
+        self.assertIn("no kick-off time", G.card_fault(l))
+        l["when"] = "2026-11-21T15:00:00Z"
+        self.assertIsNone(G.card_fault(l))
+
+    def test_funnel_reads_it_as_no_time(self):
+        sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "tools"))
+        import card_funnel as F
+        l = {"sport": "football", "event": "Ajax v Other", "pick": "Ajax", "code": "en.1", "comp": "Premier League",
+             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "opp": 7.0, "when": None}
+        self.assertEqual(F.fault_key(G.card_fault(l)), "no-time")
+
+    def test_recheck_keeps_the_published_kickoff(self):
+        old = {"event": "Ajax v Other", "pick": "Ajax", "when": "2026-11-21T15:00:00Z", "whenSrc": "API-Football",
+               "odds": 1.5}
+        cur = {"sport": "football", "event": "Ajax v Other", "pick": "Ajax", "code": "en.1", "comp": "Premier League",
+               "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "p": 0.68, "why": None, "hit": 0.8, "opp": 7.0,
+               "when": None}
+        g = {"rule": G.CARD_RULE, "name": "Card 2x", "legs": [old]}
+        _, why = G.recheck_card(g, [cur])
+        self.assertFalse(any("kick-off" in w for w in why), why)
+
+
 if __name__ == "__main__":
     unittest.main()
+

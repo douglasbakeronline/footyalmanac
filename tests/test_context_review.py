@@ -85,7 +85,8 @@ class Review(unittest.TestCase):
 class Veto(unittest.TestCase):
     def model_leg(self):
         l = {"sport": "football", "event": "Ajax v Other", "pick": "Ajax", "code": "en.1", "comp": "Premier League",
-             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "opp": 7.0}
+             "odds": 1.50, "est": False, "fair": 0.64, "pModel": 0.68, "why": None, "hit": 0.8, "opp": 7.0,
+             "when": "2026-11-21T15:00:00Z"}
         return l
 
     def test_against_keeps_the_pick_off_the_card(self):
