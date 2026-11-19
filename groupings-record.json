@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T18:01:06Z",
+ "graded": "2026-11-19T19:31:59Z",
  "overall": {
   "groups": 140,
   "settled": 139,
@@ -7,8 +7,8 @@
   "z": -1.33,
   "lost": 99,
   "pending": 1,
-  "legs": 532,
-  "legsWon": 384,
+  "legs": 533,
+  "legsWon": 385,
   "returned": 116.14,
   "staked": 139,
   "returnedBest": 120.83,
@@ -171,12 +171,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 51,
-   "won": 44,
-   "rate": 0.8627,
-   "quoted": 0.8902,
-   "returned": 46.71,
-   "ret": -0.0841
+   "n": 52,
+   "won": 45,
+   "rate": 0.8654,
+   "quoted": 0.888,
+   "returned": 47.83,
+   "ret": -0.0802
   },
   "notAtBook": {
    "n": 110,
@@ -193,12 +193,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 12,
-     "won": 11,
-     "rate": 0.9167,
-     "quoted": 0.8899,
-     "returned": 12.12,
-     "ret": 0.01
+     "n": 13,
+     "won": 12,
+     "rate": 0.9231,
+     "quoted": 0.881,
+     "returned": 13.24,
+     "ret": 0.0185
     },
     "notAtBook": {
      "n": 5,
@@ -456,8 +456,8 @@
    "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": 0,
    "football|fc bayern münchen|1. fc köln|2026-11-20": 1.07,
    "nba|san antonio spurs|la clippers|2026-11-20": -1,
-   "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": 1.15,
-   "ncaab|high point panthers|montana state bobcats|2026-11-20": 1.07,
+   "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": 1.17,
+   "ncaab|high point panthers|montana state bobcats|2026-11-20": 1.08,
    "ncaab|ohio state buckeyes|umbc retrievers|2026-11-20": 0,
    "ncaab|texas longhorns|southern utah thunderbirds|2026-11-20": 0,
    "ncaab|louisville cardinals|stetson hatters|2026-11-20": 0,
@@ -1027,8 +1027,8 @@
   "z": -1.21,
   "lost": 2,
   "pending": 1,
-  "legs": 7,
-  "legsWon": 5,
+  "legs": 8,
+  "legsWon": 6,
   "returned": 0,
   "staked": 2,
   "returnedBest": 0,
@@ -1374,9 +1374,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Al Ain",
@@ -1392,8 +1392,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7736,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-1",
        "opp": 13.2,
        "rule12Fault": null,
        "r12": false
