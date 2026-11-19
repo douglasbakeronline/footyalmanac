@@ -2636,10 +2636,10 @@ function hdaChip(m, i){
   return `<span class="hda" title="Bookmakers' average price for the home win, the draw and the away win">${[0, 1, 2].map(j => `<b class="${cls(j)}">${(+m.avg[j]).toFixed(2)}</b>`).join("<i>/</i>")}</span>`;
 }
 function oppLine(g){
-  const pool = (OG && OG.check) || []; if(!pool.length || !g.pick) return "";
+  const pool = (OG && OG.check) || []; if(!g.pick) return ""; if(!pool.length) return pastLine(g);
   const d = (g.when || "").slice(0, 10);
   const c = pool.find(x => x.k === g.pick && x.d === d && (x.e === `${g.home} v ${g.away}` || x.e === `${g.away} v ${g.home}`));
-  if(!c || !c.o) return "";
+  if(!c || !c.o) return pastLine(g);   // 19 Nov 2026: a started game, out of this build's pool, keeps its last price
   const hp = g.pick === g.home;
   const px = hp ? [c.o, c.w, c.p] : [c.p, c.w, c.o];
   const avg = c.w ? px : [px[0], null, px[2]];
@@ -4259,6 +4259,20 @@ function pinFinal(g, r){
   if(sc) return g.sport === "football" ? `Final ${sc}` : sc;
   return r.winner ? `${String(r.winner).trim().split(/\s+/).slice(-1)[0]} won` : "";
 }
+/* 19 Nov 2026 (Douglas: "I want the odds under the red and yellow bar as
+   well, as they are on the upcoming games"): a started Daily List row's
+   Bookies line, from the last pre-start price the pool kept
+   (groupings.past_prices: the pick, the draw where there is one, the other
+   side), laid out as oppLine does for a game still to come. Display only. */
+function pastLine(g){
+  const G = window.__GROUPINGS__, q = G && G.prices && G.prices[lbKey(g.sport, g.home, g.away)];
+  if(!q || !q.o) return "";
+  const hp = q.pk ? q.pk === g.home : g.side !== "a";
+  const px = hp ? [q.o, q.draw, q.opp] : [q.opp, q.draw, q.o];
+  const parts = px.map((o, j) => o ? `<b class="${(j === 0) === hp ? "pk" : (o >= 9 ? "opp-long" : "")}">${(+o).toFixed(2)}</b>` : null).filter(Boolean);
+  if(!parts.length) return "";
+  return `<div class="mkt ${hp ? "h" : "a"}" title="Bookmakers' ${q.past ? "last price before the start" : "price"} for ${g.home}${q.draw ? ", the draw" : ""} and ${g.away}${q.opp ? "" : " (only the pick's price was read)"}. Display only, never used by the model.">Bookies <span class="hda">${parts.join("<i>/</i>")}</span></div>`;
+}
 function pinnedRow(g, i){
   const k = SPORT_K[g.tier] ?? 0;
   const [cls, label] = pinStatus(g);
@@ -4279,7 +4293,7 @@ function pinnedRow(g, i){
       <div class="comp"><span class="tour-chip">${name}</span><span>${g.comp || ""}</span></div></div>
     <div class="side"><div class="club${g.side === "h" ? " pick" : ""}"><span>${g.home}</span></div>
       <div class="stat">Pick: ${g.pick}</div></div>
-    <div class="barcell">${barHtml}</div>
+    <div class="barcell">${barHtml}${pastLine(g)}</div>
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>

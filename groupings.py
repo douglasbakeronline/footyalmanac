@@ -3151,7 +3151,10 @@ def past_prices(have, now=None, pool_dir=None):
             best = r.get("lastBest") or r.get("best") or (max(books.values()) if books else None)
             bb = r.get("bestBook") if not r.get("lastBest") else (max(books, key=books.get) if books else None)
             out[k] = {"p": r.get("pick"), "o": odds_, "b": best, "bb": bb, "h": books.get(CARD_BOOK),
-                      "n": len(books) or r.get("n") or None, "t": r.get("lastAt") or r.get("pricedAt"), "past": True}
+                      "n": len(books) or r.get("n") or None, "t": r.get("lastAt") or r.get("pricedAt"), "past": True,
+                      # 19 Nov 2026: the other side's and the draw's last price too, for
+                      # the Bookies line under the bar on a started Daily List row
+                      "opp": r.get("lastOpp") or r.get("opp"), "draw": r.get("draw"), "pk": r.get("pick")}
     return out
 
 def list_books_page(L, dates, now=None):
