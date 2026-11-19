@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T03:24:45Z",
+ "graded": "2026-11-19T04:55:20Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -7,8 +7,8 @@
   "z": -1.32,
   "lost": 97,
   "pending": 3,
-  "legs": 528,
-  "legsWon": 382,
+  "legs": 529,
+  "legsWon": 383,
   "returned": 113.74,
   "staked": 136,
   "returnedBest": 118.39,
@@ -27,12 +27,12 @@
  },
  "cardLegsBySport": {
   "nba": {
-   "legs": 43,
-   "landed": 32,
-   "expected": 30.7,
-   "rate": 0.7442,
-   "quoted": 0.714,
-   "z": 0.44,
+   "legs": 44,
+   "landed": 33,
+   "expected": 31.43,
+   "rate": 0.75,
+   "quoted": 0.7144,
+   "z": 0.53,
    "tripwire": false
   },
   "tennis": {
@@ -107,8 +107,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 9,
-   "legsWon": 5,
+   "legs": 10,
+   "legsWon": 6,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -128,9 +128,9 @@
   "unknown": 0,
   "legs": {
    "rule12": {
-    "legs": 3,
-    "landed": 2,
-    "expected": 2.24
+    "legs": 4,
+    "landed": 3,
+    "expected": 2.97
    },
    "rule13only": {
     "legs": 6,
@@ -152,10 +152,10 @@
    "ret": -0.0658
   },
   "notAtBook": {
-   "n": 102,
-   "won": 100,
-   "rate": 0.9804,
-   "quoted": 0.9102
+   "n": 108,
+   "won": 106,
+   "rate": 0.9815,
+   "quoted": 0.9118
   },
   "unchecked": {
    "n": 27,
@@ -216,10 +216,10 @@
      "ret": -0.0884
     },
     "notAtBook": {
-     "n": 97,
-     "won": 95,
-     "rate": 0.9794,
-     "quoted": 0.9141
+     "n": 103,
+     "won": 101,
+     "rate": 0.9806,
+     "quoted": 0.9155
     },
     "unchecked": {
      "n": 13,
@@ -505,8 +505,8 @@
    "z": -0.93,
    "lost": 25,
    "pending": 2,
-   "legs": 110,
-   "legsWon": 77,
+   "legs": 111,
+   "legsWon": 78,
    "returned": 25.35,
    "staked": 36,
    "returnedBest": 25.7,
@@ -822,8 +822,8 @@
   "z": -0.44,
   "lost": 29,
   "pending": 2,
-  "legs": 129,
-  "legsWon": 86,
+  "legs": 130,
+  "legsWon": 87,
   "returned": 36.21,
   "staked": 42,
   "returnedBest": 36.71,
@@ -1175,8 +1175,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 9,
-   "legsWon": 5,
+   "legs": 10,
+   "legsWon": 6,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -1202,8 +1202,8 @@
    "z": -0.13,
    "lost": 17,
    "pending": 2,
-   "legs": 80,
-   "legsWon": 57,
+   "legs": 81,
+   "legsWon": 58,
    "returned": 23.99,
    "staked": 26,
    "returnedBest": 24.27,
@@ -1432,9 +1432,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1470,8 +1470,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7308,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "109-122",
        "opp": 3.27,
        "rule12Fault": null,
        "r12": "derived"
