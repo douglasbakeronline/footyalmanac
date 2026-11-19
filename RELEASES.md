@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-card-calls-first: capped football price calls go to Card picks first (tag pending)
+
+**What changed:** each build makes at most 150 one-fixture price calls for mid-priced football legs the day's bulk prices missed. They went in board order, so a 62% Premier League pick the Card could take was left unpriced (off the Card) behind 45% picks in lower leagues. The calls now go first to legs the Card could take once priced (model 60%+, a league the Card takes, clean), then list and reserve picks, then the rest, nearest day and strongest pick first.
+**Evidence:** deploy run 44511549028 (19 Nov 11:05 UTC): "football unpriced: ... capped 97 (Premier League 5, ...)". The pool for 21 and 22 Nov holds 71 Card-reachable football legs with no real price, 24 of them mid-priced. `claude/football-calls-card-first-2026-11-19.md`. Tests: two new in `tests/test_football_unpriced.py` (the first fails on the old code), full suite 1,221 passing, `nametest.py` clear.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, the note, `CLAUDE.md`.
+**Not changed:** `FB_CALLS_MULT`, any `CARD_*` constant or `CARD_RULE`, the replays, the page.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-no-kickoff: football legs with no kick-off time take API-Football's, and the Card waits for one (tag pending)
 
 **What changed:** La Liga, the Süper Lig and Brazil's Serie A reach the board with no kick-off time (every one of their 29 rows on 19 Nov). A football leg with no time never counted as started, so a Card group holding one could stay open past the real kick-off. A leg matched to an API-Football fixture now takes that fixture's kick-off (`whenSrc`), the Card refuses a leg with no start time (the football twin of the tennis order-of-play guard), and a re-check keeps a published leg's kick-off. Six more API-Football spellings are priced: Union St. Gilloise, Hertha BSC, U. Catolica, LDU de Quito, Atletico Torque, West Ham W.

@@ -62,6 +62,35 @@ class FootballUnpriced(unittest.TestCase):
         r = self.run_price(L, day, {}, cap=0)
         self.assertEqual(r["miss"], {"capped": 1})
 
+    def test_capped_calls_go_to_card_reachable_legs_first(self):
+        """19 Nov 2026: the capped per-fixture calls went in board order, so a 62% Premier League
+        pick the Card could take was capped behind a 45% Oberliga pick. Card-reachable legs go first."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.60"}, {"value": "Draw", "odd": "4.0"}, {"value": "Away", "odd": "5.5"}]}]}]}]
+        day = [fx(101, t, "Bamberg", "Ansbach", hour=13), fx(102, t, "Leeds", "Hull", hour=14),
+               fx(103, t, "Arsenal", "Chelsea", hour=15)]
+        weak = dict(leg(t, "Bamberg", "Ansbach", "Oberliga", hour=13, mult=True), code="af.999", pModel=0.45)
+        listed = dict(leg(t, "Leeds", "Hull", "Championship", hour=14, mult=True), code="en.2", pModel=0.50, list=True)
+        card = dict(leg(t, "Arsenal", "Chelsea", "Premier League", hour=15, mult=True), code="en.1", pModel=0.62)
+        r = self.run_price([weak, listed, card], day, {101: book, 102: book, 103: book}, cap=1)
+        self.assertEqual(card.get("odds"), 1.6)
+        self.assertNotIn("odds", weak)
+        self.assertNotIn("odds", listed)
+        self.assertEqual(r["miss"], {"capped": 2})
+        r = self.run_price([weak, dict(listed), dict(card, pModel=0.55)], day, {101: book, 102: book, 103: book}, cap=1)
+        self.assertEqual(r["matched"], 1)   # the list pick outranks the rest when nothing reaches the Card
+
+    def test_call_order(self):
+        a = {"sport": "football", "code": "en.1", "pModel": 0.61, "date": "2026-11-22"}
+        b = {"sport": "football", "code": "en.1", "pModel": 0.70, "date": "2026-11-21"}
+        c = {"sport": "football", "code": "en.1", "pModel": 0.58, "date": "2026-11-20", "reserve": True}
+        d = {"sport": "football", "code": "en.1", "pModel": 0.75, "date": "2026-11-20", "why": "celtic"}
+        self.assertEqual(sorted([a, b, c, d], key=G.call_order), [b, a, c, d])
+        self.assertTrue(G.card_reach(a))
+        self.assertFalse(G.card_reach(d))                          # a Daily List blind spot
+        self.assertFalse(G.card_reach(dict(a, pModel=0.59)))       # under CARD_FAIR_MIN
+
     def test_no_miss_key_when_all_priced(self):
         t = date.today().isoformat()
         book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
