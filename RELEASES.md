@@ -120,6 +120,13 @@ guard stays as the backstop. No model number, no Card constant.
 **Not changed.** The William Hill marks on list rows (`listBooks`, which already read the pool for started list picks), the record, grading, any model.
 
 **Roll back.** `git revert` this merge.
+## 2026-11-19-racing-open-on-races: the racing tab opens on its races (tag pending)
+
+**What changed:** Douglas, 21:37: "Why are there no horse races listed?" The tab opened on Tips, and on the free racing plan (no bookmaker prices) there are no tips, so the 72 races sat behind Every race under a message that read as the model finding nothing. The tab now opens on the first day with a race still to run, and on Every race when that day has no tips; the Tips board says plainly when the feed sends no prices; a race with no clear pick still names its top-rated horse (muted, No read).
+**Evidence:** deploy runs 44582456256 to 44615154586: "racing: 72 races on 2 day(s), 0 tips"; checked in a browser at 1280px and 400px on that day's archive.
+**Files:** `index.html`, `RELEASES.md`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-racing-distance: race distances from the free racecards (tag pending)
 
 **What changed:** the free racecards carry the distance only in furlongs (`distance_f`, read from the field list the build now logs); it shows as miles and furlongs ("2m 0½f").
