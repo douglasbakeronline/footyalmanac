@@ -9,6 +9,37 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-untimed-board: La Liga, the Süper Lig and Brazil's Serie A take API-Football's date and time (tag pending)
+
+**What changed.** openfootball dates these three leagues by round and gives no
+kick-off, so every row on the 19 Nov board (br.1 10, es.1 10, tr.1 9) had no
+start and a date a day either side of the real one (Athletic v Espanyol: board
+22 Nov, API-Football 20 Nov). `build.fill_untimed` now gives each such row the
+date and UTC time API-Football lists, before the window is cut, so the row
+lands on its real day with a real start and the Daily List, archive and
+grading use it. Rule: unplayed, no time, dated today or later, exactly one
+fixture of the same two clubs within 3 days, TBD stand-in times ignored, all or
+nothing on names per league (a club that matches nothing, or two that match
+one, changes nothing and logs a warning). Build log: "untimed <code>: N
+fixture(s) took API-Football's date and time".
+
+**Evidence.** Unit tests (`tests/test_untimed.py`, 7) for the date move, the
+name refusal, played / timed / far rows, a pair listed twice, TBD and country.
+The sandbox cannot reach API-Football, so the first CI build with the key is
+the live check: read the "untimed" lines and compare `kickoff` on the three
+leagues in `predictions/<date>.json`.
+
+**Files.** `build.py` (`fill_untimed`, one block in `main`), `sources.py`
+(`AF_UNTIMED`, `af_untimed_rows`, `af_untimed_pick`), `tests/test_untimed.py`.
+
+**Not changed.** `predictions/` and `ledger.py` untouched: a pick moves between
+days only through the board row, before it is archived; archives already
+written keep their date, and a fixture first archived on the nominal day and
+then moved is handled by ledger's existing moved-fixture rule. #416's Card
+guard stays as the backstop. No model number, no Card constant.
+
+**Roll back.** `git revert` this commit.
+
 ## 2026-11-19-last-price: a started game keeps its last price on the Daily List (tag pending)
 
 **For a reader.** A Daily List row for a game already played (the early-hours NBA and tennis, looked at in the afternoon) kept its won / lost mark but lost its price chip, because the build only prices games still to come. The chip now stays, in grey, showing the last price read before the start (William Hill's where it had one, else the average), with "Last price before the start" in its tooltip. Douglas, 19 Nov 2026: "keep the odds there as we last knew them ... a slight reference point."

@@ -1337,6 +1337,37 @@ def af_lag_pick(code, season, fixtures):
     return [r for r in af_rows_from(src) if r["hg"] is not None], None
 
 
+# Leagues whose primary source (openfootball) dates a round nominally and gives
+# no kick-off (19 Nov 2026, #417): every row of La Liga, the Süper Lig and
+# Brazil's Serie A on the board had `kickoff` null and a date a day either
+# side of the real one. build.fill_untimed takes the date and time from
+# API-Football. Ids set by hand, so the country is checked (rule 6).
+AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71}
+
+
+def af_untimed_rows(code, start, end):
+    """API-Football's fixtures for one AF_UNTIMED league over start..end as
+    fixture rows (UTC date and time), TBD stand-in times left out. [] without
+    a key or when the country is not the league's."""
+    if code not in AF_UNTIMED or not os.environ.get("API_FOOTBALL_KEY"):
+        return []
+    src = af_day_pool(start, end).get(AF_UNTIMED[code], [])
+    return af_untimed_pick(code, src)
+
+
+def af_untimed_pick(code, fixtures):
+    """af_untimed_rows' filter on one league's pool fixtures (testable apart)."""
+    src = [f for f in fixtures
+           if ((f.get("fixture") or {}).get("status") or {}).get("short") != "TBD"]
+    if not src:
+        return []
+    want = _E.canon_country(_E.LEAGUES[code]["country"])
+    got = {_E.canon_country(c) for c in ((f.get("league") or {}).get("country") for f in src) if c}
+    if got and got != {want}:
+        return []
+    return af_rows_from(src)
+
+
 def af_rows(code, season):
     """Every match of one season, played or still to come, as fixture rows.
     For a domestic cup, the matches inside the shared date pool's window."""
