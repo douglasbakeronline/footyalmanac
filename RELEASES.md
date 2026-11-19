@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-nofixture-names: unpriced football legs named in the build log (tag pending)
+
+**What changed:** a football leg API-Football lists under no fixture (`noFixture`) is now named in the build log ("football noFixture: date competition: home v away (near: ...)") and in `groupings.json` (`football.noFixture`, up to `NOFIXTURE_KEEP` 12), with the day's fixtures that share one of its names. Until now the log gave only counts.
+**Evidence:** the 18 Nov 23:15 build logged "noFixture 11 (Serie A 5, Premier League 2, Superliga 1)": core-league legs left unpriced, so off the Card and the Edge flag, and CLAUDE.md's rule is that a noFixture cluster in one league is a spelling for `LIVE_NAMES`. Without names no session could tell which, as the sandbox cannot reach API-Football. The next CI build prints them.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `CLAUDE.md`.
+**Not changed:** which legs are priced, any `CARD_*` constant, the page, the record.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-decisions-table: the Card review lists every pre-registered decision (tag pending)
 
 **What changed:** the nightly Card review opens, after the live Card's 14 days, with one table of every pre-registered Card decision: the tennis tripwire, the floor line, rule 13 v rule 12, the tennis floor back to 75%, core leagues only, the opposition floor (`m7opp5`, `m7opp9`), the context veto, the Daily 2x, the List 2x and List long. Each row gives the trigger from its note, where it stands tonight, waiting / **due** / **fired**, and who acts; a bold line counts what is due. The opposition floor's auto-adopt now goes to Douglas, since rule 13 dropped it at his call.
