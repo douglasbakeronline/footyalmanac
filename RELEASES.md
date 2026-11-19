@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-own-band-third: own-band List admission already shipped (tag pending)
+
+**What changed:** nothing for a reader. A dated note records that the planner's own-band task is the rule shipped on 20 Oct 2026 and live for every sport.
+**Evidence:** `sports.stored_threshold` on `sports.json`: NFL 80%, NBA 80%, rugby 80%, cfb 80% (off the list), ncaab 85%, WNBA 85%. Held-out numbers in the 20 Oct and 11 Nov notes.
+**Files:** `claude/own-band-rerun-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** all code and constants.
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-19-nofixture-names: unpriced football legs named in the build log (tag pending)
 
 **What changed:** a football leg API-Football lists under no fixture (`noFixture`) is now named in the build log ("football noFixture: date competition: home v away (near: ...)") and in `groupings.json` (`football.noFixture`, up to `NOFIXTURE_KEEP` 12), with the day's fixtures that share one of its names. Until now the log gave only counts.
