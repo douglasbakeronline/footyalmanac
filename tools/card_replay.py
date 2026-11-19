@@ -295,6 +295,9 @@ VARIANTS = {
     # "The model rules"). The rule 6 Card it replaced is kept here, so the 30 Nov
     # review still pairs the two on the same legs.
     "rule6": {},     # RULE6 below: the rule 6 Card, base of the family
+    # 19 Nov 2026 (RULES below): the rules before rule 6, on the rule 6 base
+    "rule1": {"CARD_CORE_ONLY": False, "CARD_UNDER_MAX": 0, "CARD_OPP_MIN": {}},
+    "rule4": {"CARD_UNDER_MAX": 0, "CARD_OPP_MIN": {}},
     # 11 Nov 2026 (Douglas: "Just do better on the groups"): the rule 7 Card's
     # group shape and edge, each one change from live, run on the pool and on
     # five football-data seasons (card_legs_history.py cardM7*).
@@ -355,6 +358,14 @@ VARIANTS = {
     # demand and m7opp5 is live less neither. The rule 12 Card is replayed
     # as rule12 for the 30 Nov review (claude/card-rule13-model-only-2026-11-17.md).
     "rule12": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}},
+    # 19 Nov 2026 (RULES below): the model's-picks rules before rule 11, each
+    # as it ran (the value demand on, no two-day groups before 12 Nov)
+    "rule7": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True,
+              "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75), "_SPAN": False},
+    "rule8": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": True,
+              "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75), "_SPAN": False},
+    "rule10": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": True, "_SPAN": False},
+    "rule11": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}},
     "m7value": {"CARD_MODEL_EDGE": 0.0},   # the value demand alone (rule 11)
     # 18 Nov 2026 (claude/card-m7cap160-2026-11-18.md): on the results ledger,
     # 60%+ picks priced 1.60 to 1.90 at their first price landed 47% against
@@ -378,7 +389,30 @@ VARIANTS = {
 # on the pool). Pinned to the floor rule 6 ran with, like CARD_CORE_ONLY.
 RULE6 = {"CARD_MODEL_RULE": False, "CARD_RULE": 6, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True,
          "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75)}
-RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80"}
+RULE6_FAMILY = {"rule6", "under8", "under10", "four3x", "wider", "uncapped", "short", "rule5", "opp7", "notennis", "tennis80",
+                "rule1", "rule4"}
+
+# 19 Nov 2026 (Douglas: "I would have hoped that the idea for the card rule
+# has been tracked the entire time since it was incepted ... which rule has
+# performed the best over the entire timeline"): every CARD_RULE the page has
+# run, as a variant built on the whole pool, so each rule is read on the same
+# days rather than only on the days it was live. The live dates are from
+# groupings.CARD_RULE's history. Rule 9 (the context veto) cannot be rebuilt
+# on days it did not read, so it is not a variant; rules 2 and 3 changed only
+# the windows and the page, not the picks. Rule 13 is `live`.
+RULES = [
+    # number, variant, live from, live to, one line
+    (1, "rule1", "2026-10-25", "2026-10-28", "bookmakers' favourites the model rates 5+ under them, any league, 2x and 3x"),
+    (4, "rule4", "2026-10-29", "2026-10-30", "core leagues only"),
+    (5, "rule5", "2026-10-31", "2026-11-05", "the gap capped at 10 under"),
+    (6, "rule6", "2026-11-06", "2026-11-10", "the opposition priced 9+"),
+    (7, "rule7", "2026-11-11", "2026-11-11", "the model's own picks at or above the bookmakers, 2x and 3x, core leagues, tennis 75%+"),
+    (8, "rule8", "2026-11-11", "2026-11-11", "the 2x alone"),
+    (10, "rule10", "2026-11-11", "2026-11-11", "tennis at 85%+"),
+    (11, "rule11", "2026-11-11", "2026-11-15", "the wider leagues in (two-day groups from 12 Nov)"),
+    (12, "rule12", "2026-11-16", "2026-11-16", "football opposition priced 5.0+"),
+    (13, "live", "2026-11-17", None, "the model alone: no bookmaker condition"),
+]
 
 
 def patch_of(variant):
@@ -607,9 +641,29 @@ def main():
         print(f"paired {v} - {base} on {len(alld)} days: {sum(diffs)/len(diffs):+.2f} units a day, "
               f"90% {bs[200]:+.2f} to {bs[3799]:+.2f}, p(worse) {sum(x < 0 for x in bs)/len(bs):.2f}")
         report["variants"][v].update({keys[0]: round(sum(diffs) / len(diffs), 3), keys[1]: round(sum(x < 0 for x in bs) / len(bs), 3)})
+    report["rules"] = rules_table(report["variants"])
+    print("\nEvery Card rule on the whole archive (the same days for each; RULES):")
+    for r in report["rules"]:
+        print(f"  rule {r['rule']:>2} ({r['from']} to {r['to'] or 'now'}): {r['groups']} groups, won {r['won']} (expected {r['expected']}), "
+              f"return {(r['return'] - 1) * 100:+.0f}%, {r['legs']} legs" + (f", v live {r['vsLivePerDay']:+.2f} a day, p(worse) {r['pWorse']}" if r.get("pWorse") is not None else "")
+              + f"  {r['what']}" if r["groups"] else f"  rule {r['rule']:>2}: no groups  {r['what']}")
     if "--json" in sys.argv:
         with open(sys.argv[sys.argv.index("--json") + 1], "w") as f: json.dump(report, f, indent=1)
     return report
+
+
+def rules_table(variants):
+    """19 Nov 2026: every CARD_RULE (RULES) read from the replay's variants,
+    in order, with its live dates; the one table that answers which rule did
+    best on the same days."""
+    rows = []
+    for n, v, a, b, what in RULES:
+        r = variants.get(v) or {}
+        rows.append({"rule": n, "variant": v, "from": a, "to": b, "what": what,
+                     "groups": r.get("groups", 0), "won": r.get("won", 0), "expected": r.get("expected", 0),
+                     "return": r.get("return") or 0, "legs": r.get("legs", 0), "emptyDays": r.get("emptyDays"),
+                     "vsLivePerDay": r.get("vsLivePerDay"), "pWorse": r.get("pWorse")})
+    return rows
 
 
 if __name__ == "__main__":

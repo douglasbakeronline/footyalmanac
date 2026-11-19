@@ -465,6 +465,30 @@ def rule6_lines(rep):
                         for v, r in fam) + "."]
 
 
+def rules_section(rep, rec):
+    """19 Nov 2026 (Douglas: "which rule has performed the best over the entire
+    timeline"): every CARD_RULE rebuilt on the whole pool (card_replay.RULES),
+    the same days for each, beside its own live record (groupings-record.json
+    cardByRule, the days it ran). The replay column is the comparison; the
+    live column is what the page staked."""
+    rules = (rep or {}).get("rules") or []
+    if not rules: return []
+    by = (rec or {}).get("cardByRule") or {}
+    lines = [f"## Every Card rule on the same days ({rep.get('from')} to {rep.get('to')})", "",
+             "| rule | live | replayed on the whole archive: groups | won / expected | return | v live / day | p(worse) | live record: groups | won / expected | return at stakes |",
+             "|---|---|---|---|---|---|---|---|---|---|"]
+    for r in rules:
+        t = by.get(str(r["rule"])) or {}
+        live = f"{t.get('settled', 0)}" if t else "0"
+        lret = pct(t["unitsReturned"] / t["unitsStaked"] - 1) if t.get("unitsStaked") else "n/a"
+        lines.append(f"| {r['rule']}: {r['what']} | {r['from']} to {r['to'] or 'now'} | {r['groups']} | {r['won']} / {r['expected']} | "
+                     f"{pct(r['return'] - 1) if r['groups'] else 'n/a'} | {r['vsLivePerDay'] if r.get('vsLivePerDay') is not None else ('live' if r['variant'] == 'live' else '')} | "
+                     f"{r['pWorse'] if r.get('pWorse') is not None else ''} | {live} | {t.get('won', 0)} / {t.get('expected', 0)} | {lret} |")
+    lines += ["", "Rule 9 (the context veto) is not rebuilt: it depends on reads made on the day. Rules 2 and 3 changed the windows and the page, not the picks. "
+              "The replay column reads every rule on the same legs; the live column is only the days each ran, so it is the smaller sample.", ""]
+    return lines
+
+
 def fd_side(hist, v):
     """One variant's football-data read, season by season (12 Nov 2026): the
     rule 7 variants are paired by day against live in each replayed season
@@ -654,6 +678,8 @@ def review_body():
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines += coverage_lines(rep, load("groupings-record.json"))
         lines += rule6_lines(rep)
+        lines.append("")
+        lines += rules_section(rep, load("groupings-record.json"))
         lines.append("")
         lines += fill_lines(rep)
         cands = candidates(rep)

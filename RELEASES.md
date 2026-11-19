@@ -9,6 +9,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-card-rules-table: every Card rule replayed on the same days (tag pending)
+
+**For a reader.** The nightly Card review now opens its replay section with one table of every Card rule the page has run (1, 4, 5, 6, 7, 8, 10, 11, 12, 13), each rebuilt on the whole archived pool so they are read on the same days, with its live dates and its own live record beside it. Douglas, 19 Nov 2026: "which rule has performed the best over the entire timeline."
+
+**Evidence.** The read at 19 Nov is in `claude/card-rules-timeline-2026-11-19.md`: no rule beats live at the gate; the few-group core-league rules sit above expectation and every widening at or under it.
+
+**Files.** `tools/card_replay.py` (`RULES`, variants `rule1`, `rule4`, `rule7`, `rule8`, `rule10`, `rule11`, `rules_table`, the `rules` block in `card-replay.json`), `tools/card_review_post.py` (`rules_section`), `tests/test_card_rules_table.py`.
+
+**Not changed.** The live Card, any constant, the existing variants and their pairing.
+
+**Roll back.** `git revert` this merge.
 ## 2026-11-19-mlb-recheck: MLB above-quote gap re-checked, no change (tag pending)
 
 **What changed:** nothing for a reader. A dated note records that the MLB live gap (27 of 40, z +1.5) is the same 40 games as on 12 Nov, so no new evidence.
