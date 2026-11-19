@@ -1930,6 +1930,18 @@ footer b{color:var(--ink-2)}
 .dx-key i{vertical-align:-1px;margin:0 2px 0 8px}
 .dx-none{font-size:13px;color:var(--mute,#666)}
 @media(max-width:600px){.dx-stats{grid-template-columns:repeat(2,1fr)}.dx-s b{font-size:22px}}
+/* ---------- horse racing (19 Nov 2026, racing.py, on trial): only the new pieces ---------- */
+.rc-fit{display:inline-block;width:96px;height:9px;background:#f0f2f0;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(16,14,12,.18)}
+.rc-fit i{display:block;height:100%;background:var(--yellow)}
+.rc-fit.weak i{background:var(--red)}
+@media (max-width:700px){.rc-fit{width:64px}}
+.sc-dot.rc-placed{background:var(--yellow-mid);border-color:var(--draw)}
+.rc-days{gap:0;row-gap:10px;align-items:flex-end}
+.rc-day{display:inline-flex;flex-direction:column;align-items:center;gap:5px;padding:0 7px;border-left:1px solid var(--rule)}
+.rc-day:first-child{border-left:0;padding-left:0}
+.rc-dd{display:flex;gap:3px;align-items:center;min-height:16px}
+.rc-day small{font:500 10px var(--f-num);color:var(--mute);white-space:nowrap}
+.row.rc-nr .club{text-decoration:line-through;color:var(--mute)}
 </style>
 </head>
 <body>
@@ -1960,6 +1972,7 @@ footer b{color:var(--ink-2)}
  <div class="nav-sports">
    <button data-view="fixtures" aria-pressed="false">Football</button>
    <button data-view="tennis" aria-pressed="false">Tennis</button>
+   <button data-view="racing" aria-pressed="false">Horse racing</button>
    <button data-view="sport:nfl" aria-pressed="false">NFL</button>
    <button data-view="sport:nba" aria-pressed="false">Basketball</button>
    <button data-view="sport:rugby" aria-pressed="false">Rugby</button>
@@ -2016,6 +2029,7 @@ footer b{color:var(--ink-2)}
 <section id="list" hidden></section>
 <section id="starred" hidden></section>
 <section id="tennis" hidden></section>
+<section id="racing" hidden></section>
 <section id="sport" hidden></section>
 <section id="results" hidden></section>
 <!-- 16 Nov 2026, Douglas: the Mailer is a tab like the rest (same cover and bar; only this changes).
@@ -2091,6 +2105,7 @@ footer b{color:var(--ink-2)}
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
 <script src="scale.js"></script>
+<script src="racing.js"></script>
 <script src="slip.js"></script>
 <!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
      several MB raw) are loaded by loadRecords() the first time "How it went"
@@ -6237,6 +6252,266 @@ function renderScale(){
     el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openDay(el); } }; });
 }
 
+/* ---------- Horse racing (racing.py, 19 Nov 2026, on trial) ----------
+   Douglas, 19 Nov 2026: "surface like what we believe is going to be accurate for
+   that day", "happy to have it marked as trial somewhere, but I want it published".
+   Four boards under one tab, drawn with the site's own row, bar, record and
+   ladder styles (the mock-ups he signed off): Tips (the day's few, most likely
+   first, with a tracker of every tip by day), Every race (each meeting, its
+   top-rated horse), Racecards (one race, every runner) and Record (chance v
+   winners, running profit, by band, what the model is learning). The bar's
+   three colours carry over: yellow the chance to win, grey to place without
+   winning, red out of the places. Display only; racing.js is racing.py's. */
+let RC_BOARD = "tips", RC_DAY = null, RC_RACE = null, RC_OPEN = null;
+const rcE = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const rcPct = p => p == null ? "–" : Math.round(p * 100) + "%";
+const rcPrice = d => d == null ? "–" : Number(d).toFixed(2);
+const rcTier = p => p >= .5 ? [3, "Strong"] : p >= .33 ? [2, "Firm"] : p >= .22 ? [1, "Lean"] : [0, "No read"];
+function rcBar(win, place){
+  const w = Math.round(win * 100), pl = Math.max(0, Math.round((place - win) * 100)), out = Math.max(0, 100 - w - pl);
+  return `<div class="barcell"><div class="bar"><i class="win" style="width:${w}%"><b>${w}</b></i>` +
+    `<i class="draw d" style="width:${pl}%"><b>${pl >= 8 ? pl : ""}</b></i><i class="lose a" style="width:${out}%"><b>${out >= 8 ? out : ""}</b></i></div></div>`;
+}
+function rcDays(R){ return Object.keys(R.days || {}).sort(); }
+function rcDayLabel(d){
+  try { return new Date(d + "T12:00:00").toLocaleDateString("en-GB", {weekday:"long", day:"numeric", month:"long"}); } catch(e) { return d; }
+}
+function rcWindow(off){ const h = parseInt(off, 10); return isNaN(h) ? 2 : h < 15 ? 0 : h < 18 ? 1 : 2; }
+const RC_WINDOWS = [["Midday to 3pm", "bet by 11:30"], ["3pm to 6pm", "bet at lunchtime"], ["Evening", "bet early evening"]];
+
+function rcTipRow(race, i){
+  const t = race.tip, top = race.runners[0] || {}, k = rcTier(t.p)[0], open = RC_OPEN === race.id;
+  const dg = t.danger ? `<div class="club">${rcE(t.danger.horse)}</div><div class="stat">${t.danger.price ? "price " + rcPrice(t.danger.price) + " · " : ""}${rcPct(t.danger.p)}</div>` : "";
+  return `<div class="row-line"><button type="button" class="row" data-rc-open="${rcE(race.id)}" aria-expanded="${open}">
+    <span class="rank t${k}">${i + 1}</span>
+    <div class="ko"><time>${rcE(race.off)}</time><div class="comp"><span>${rcE(race.course)} · ${rcE(race.cls || race.type)}</span></div></div>
+    <div class="side"><div class="club">${rcE(t.horse)}</div><div class="stat">${rcE(top.jockey)} · ${rcE(top.trainer)} · <i class="pos">${rcE(top.form)}</i></div></div>
+    ${rcBar(t.p, t.place)}
+    <div class="pred"><b>${rcPrice(t.take)}+</b><small>${t.bet === "win" ? "win" : "each-way"} · edge +${Math.round(t.edge * 100)}%</small></div>
+    <div class="side away">${dg}</div>
+    <div class="conf">${rcPct(t.p)}<span class="tier t${k}">${rcTier(t.p)[1]}</span></div>
+  </button></div>` + (open ? rcDetail(race, race.runners[0]) : "");
+}
+
+function rcFit(label, today, score){
+  const s = Math.max(4, Math.min(100, Math.round(score)));
+  return `<tr><td>${label}</td><td style="text-align:left;font-family:var(--f-ui);font-size:13px">${rcE(today)}</td>` +
+    `<td><span class="rc-fit${s < 40 ? " weak" : ""}" role="img" aria-label="Fit ${s} of 100"><i style="width:${s}%"></i></span></td></tr>`;
+}
+function rcDetail(race, r){
+  if(!r) return "";
+  const field = race.runners, ors = field.map(x => x.or).filter(x => x != null);
+  const orRank = r.or == null ? null : 1 + ors.filter(x => x > r.or).length;
+  const runs = (r.form || "").replace(/[^0-9PFURB]/gi, "").slice(-3);
+  const formS = runs ? [...runs].reduce((a, ch) => a + ({1:100,2:72,3:55,4:42,5:32,6:24}[ch] || 10), 0) / runs.length : 0;
+  const fresh = r.lastRun == null ? 50 : r.lastRun < 7 ? 60 : r.lastRun <= 45 ? 100 : r.lastRun <= 90 ? 75 : r.lastRun <= 180 ? 50 : 30;
+  const t = race.tip && race.tip.id === r.id ? race.tip : null;
+  const q = encodeURIComponent;
+  return `<div class="detail">
+    <div class="research"><a href="https://www.google.com/search?q=${q(r.horse + " horse")}" target="_blank" rel="noopener">Search ${rcE(r.horse)}</a>
+      <a href="https://www.google.com/search?q=${q(race.off + " " + race.course + " racecard")}" target="_blank" rel="noopener">Search the ${rcE(race.off)} at ${rcE(race.course)}</a></div>
+    <div class="detail-grid">
+      <div><h3>What the model weighs</h3><table class="sheet"><tr><th>Factor</th><th style="text-align:left">Today</th><th>Fit</th></tr>
+        ${rcFit("Rating", r.or == null ? "no official rating" : "OR " + r.or + (orRank ? " · " + orRank + " of " + field.length : ""), r.or == null || !ors.length ? 30 : 100 - (orRank - 1) * (80 / Math.max(1, ors.length - 1)))}
+        ${rcFit("Form", r.form || "no form", formS)}
+        ${rcFit("Trainer", r.t14 == null ? "no 14-day figure" : r.t14 + "% winners, 14 days", r.t14 == null ? 40 : Math.min(100, r.t14 * 4))}
+        ${rcFit("Freshness", r.lastRun == null ? "first run" : r.lastRun + " days since its last run", fresh)}
+      </table></div>
+      <div><h3>The price</h3><table class="sheet"><tr><th>&nbsp;</th><th>Now</th></tr>
+        <tr><td>Best UK price</td><td>${rcPrice(r.price)}${r.book ? " · " + rcE(r.book) : ""}</td></tr>
+        <tr><td>Model chance</td><td>${rcPct(r.p)} (fair ${r.p ? rcPrice(1 / r.p) : "–"})</td></tr>
+        <tr><td>Bookies' chance</td><td>${rcPct(r.mkt)}</td></tr>
+        <tr><td>To place</td><td>${rcPct(r.place)} · ${race.places} place${race.places > 1 ? "s" : ""}${race.places > 1 ? " at 1/" + Math.round(1 / race.frac) : ""}</td></tr>
+        ${t ? `<tr><td>Take at</td><td style="color:var(--edge);font-weight:600">${rcPrice(t.take)} or bigger · ${t.bet}</td></tr>` : ""}
+      </table></div>
+    </div>
+    <div class="why">The chance blends the racecard (rating, form, trainer, freshness) with the bookies' own prices, so it only moves away from the market where the form gives a reason. On trial: the blend is refitted once ${"500"} races are graded.</div>
+  </div>`;
+}
+
+function rcTracker(S){
+  const byDay = (S && S.byDay) || {}, days = Object.keys(byDay).sort().slice(-30);
+  if(!days.length) return `<p class="sc-gnote">The tracker fills from the first graded day: one column a day, each dot a tip.</p>`;
+  const cls = {won: "sc-dot won", placed: "sc-dot rc-placed", lost: "sc-dot lost", void: "sc-dot void"};
+  const cols = days.map(d => {
+    const ts = byDay[d], w = ts.filter(t => t.state === "won").length, p = ts.filter(t => t.state === "placed").length;
+    const lab = new Date(d + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short", day:"numeric"});
+    return `<span class="rc-day" title="${rcE(lab)}: ${ts.length} tip${ts.length > 1 ? "s" : ""}, ${w} won, ${p} placed"><span class="rc-dd">${ts.map(t => `<i class="${cls[t.state] || "sc-dot up"}"></i>`).join("")}</span><small>${rcE(lab)}</small></span>`;
+  }).join("");
+  return `<div class="sc-key"><span><i class="sc-dot won"></i>Won</span><span><i class="sc-dot rc-placed"></i>Placed (each-way paid)</span><span><i class="sc-dot lost"></i>Lost</span><span><i class="sc-dot void"></i>Withdrawn</span></div>
+    <div class="sc-dots rc-days" style="margin-top:10px">${cols}</div>
+    <p class="sc-gnote">One column a day, oldest first. Hover a day for its count and results.</p>`;
+}
+
+function rcRecordStrip(S){
+  if(!S || !S.tips) return "";
+  return `<div class="record"><h3>Racing tips · since launch (trial)</h3>
+    <div><span>Tips</span><b>${S.tips}</b><small>${S.settled} settled</small></div>
+    <div><span>Won</span><b>${S.won}</b><small>${S.settled ? Math.round(S.won / S.settled * 100) + "%" : "–"}</small></div>
+    <div><span>Placed, not won</span><b>${S.placed}</b><small>each-way returns</small></div>
+    <div class="${S.profit >= 0 ? "beat" : "lose"}"><span>Profit</span><b>${S.profit >= 0 ? "+" : ""}${S.profit} pts</b><small>1 point a tip, at the published price</small></div>
+    <div class="${(S.beatClose || 0) >= .5 ? "beat" : "lose"}"><span>Beat the starting price</span><b>${S.beatClose == null ? "–" : Math.round(S.beatClose * 100) + "%"}</b><small>${S.beatCloseN} tips with a starting price</small></div>
+  </div>`;
+}
+
+function rcTips(R, races){
+  const tips = races.filter(r => r.tip).sort((a, b) => b.tip.p - a.tip.p);
+  const groups = [[], [], []];
+  tips.forEach(r => groups[rcWindow(r.off)].push(r));
+  let n = 0;
+  const ruler = `<div class="ruler"><span></span><span>Off · course</span><span>Tip</span><span class="r-bar"><span>Win</span><span>Place</span><span>Out</span></span><span style="text-align:center">Take at</span><span style="text-align:right">Main danger</span><span style="text-align:right">Chance</span></div>`;
+  const body = groups.map((g, i) => !g.length ? "" : `<section class="day"><div class="day-head"><h2>${RC_WINDOWS[i][0]}</h2><span class="count">${g.length} tip${g.length > 1 ? "s" : ""} · ${RC_WINDOWS[i][1]}</span></div>${ruler}${g.sort((a, b) => (a.off > b.off) - (a.off < b.off)).map(r => rcTipRow(r, n++)).join("")}</section>`).join("");
+  const skipped = races.filter(r => !r.tip);
+  const skipRows = skipped.slice(0, 8).map(r => `<div class="tb-row avoid"><span class="tb-v">Skip</span><span class="tb-m"><b>${rcE(r.off)} ${rcE(r.course)} · ${rcE(r.name)}</b><small class="tb-why">${rcE(r.skip || "")}</small></span><span class="tb-p">–</span></div>`).join("");
+  const nrs = races.filter(r => (r.nonRunners || []).length).slice(0, 6).map(r => `<div class="tb-row caution"><span class="tb-v">Runner out</span><span class="tb-m"><b>${rcE(r.off)} ${rcE(r.course)}</b><small class="tb-why">${r.nonRunners.map(x => rcE(x.horse)).join(", ")} out · ${r.field} left, ${r.places} place${r.places > 1 ? "s" : ""} each-way</small></span><span class="tb-p"></span></div>`).join("");
+  return rcRecordStrip(R.record) + `<div class="glance" aria-label="Every tip, by day">${rcTracker(R.record)}</div>
+    <ol class="tb-play">
+      <li><b>One horse, one race, only when it pays.</b> Most races get no tip. A tip is the horse whose price is bigger than its real chance, so over many tips the winners pay for the losers.</li>
+      <li><b>Win</b> means it has to finish first. <b>Each-way</b> is two equal bets, one to win and one to finish in the places (the first 2, 3 or 4), paid at a fraction of the price. It suits a longer price with a good chance of placing.</li>
+      <li><b>Take at</b> is the lowest price still worth taking. Prices move all morning; below it, skip the bet.</li>
+    </ol>` +
+    (tips.length ? body : `<div class="empty tb-empty">No tips ${RC_DAY === rcDays(R)[0] ? "today" : "for this day"}: no horse had a clear chance at a price that pays more than it. That is the rule working, not a gap.</div>`) +
+    (nrs ? `<h3 class="tb-h">Changes <small>non-runners since the cards were first read</small></h3><div class="tb-rows">${nrs}</div>` : "") +
+    (skipRows ? `<h3 class="tb-h">Races left alone <small>${skipped.length} of ${races.length} · Every race has each read</small></h3><div class="tb-rows">${skipRows}</div>` : "");
+}
+
+function rcRaceRow(r, i){
+  const top = r.runners[0] || {}, k = r.tip ? rcTier(r.tip.p)[0] : (r.tier || 0);
+  const nr = r.tier === 0 && !r.tip;
+  return `<div class="row-line"><button type="button" class="row${nr ? " noread" : ""}" data-rc-race="${rcE(r.id)}">
+    <span class="rank${k ? " t" + k : ""}">${i + 1}</span>
+    <div class="ko"><time>${rcE(r.off)}</time><div class="comp"><span>${rcE(r.name)}${r.dist ? " · " + rcE(r.dist) : ""}</span></div></div>
+    <div class="side"><div class="club">${nr ? "No clear pick" : rcE(top.horse)}</div><div class="stat">${rcE(top.jockey)} · ${rcE(top.trainer)}${r.tip ? ' · <span class="flag live">Tip</span>' : ""}</div></div>
+    ${rcBar(top.p || 0, top.place || 0)}
+    <div class="pred"><b>${rcPrice(top.price)}</b><small>${top.p ? "fair " + rcPrice(1 / top.p) : ""}</small></div>
+    <div class="side away"><div class="club">${r.field} runners</div><div class="stat">${r.places > 1 ? "E/W " + r.places + " places" : "win only"}</div></div>
+    <div class="conf">${rcPct(top.p)}<span class="tier t${r.tier || 0}">${r.tierName || "No read"}</span></div>
+  </button></div>`;
+}
+
+function rcEvery(races){
+  const meets = {};
+  races.forEach(r => (meets[r.course] = meets[r.course] || []).push(r));
+  const ruler = `<div class="ruler"><span></span><span>Off · race</span><span>Top-rated horse</span><span class="r-bar"><span>Win</span><span>Place</span><span>Out</span></span><span style="text-align:center">Price</span><span style="text-align:right">Field</span><span style="text-align:right">Chance</span></div>`;
+  return Object.entries(meets).map(([c, rs]) => {
+    const g = rs[0].going ? " · " + rcE(rs[0].going) : "", tips = rs.filter(r => r.tip).length;
+    return `<section class="day"><div class="day-head"><h2>${rcE(c)}${rs[0].region === "IRE" ? " (IRE)" : ""}${g}</h2><span class="count">${rs.length} race${rs.length > 1 ? "s" : ""}${tips ? " · " + tips + " tip" + (tips > 1 ? "s" : "") : ""}</span></div>${ruler}${rs.map(rcRaceRow).join("")}</section>`;
+  }).join("") + `<p class="tb-foot">Tap a race for its racecard. Yellow is the chance to win, grey to place without winning, red out of the places.</p>`;
+}
+
+function rcCard(races){
+  const race = races.find(r => r.id === RC_RACE) || races.find(r => r.tip) || races[0];
+  if(!race) return "";
+  RC_RACE = race.id;
+  const meets = [...new Set(races.map(r => r.course))];
+  const chips = meets.map(c => `<button type="button" class="chip" data-rc-course="${rcE(c)}" aria-pressed="${c === race.course}">${rcE(c)}</button>`).join("");
+  const times = races.filter(r => r.course === race.course).map(r => `<button type="button" class="chip" data-rc-race="${rcE(r.id)}" aria-pressed="${r.id === race.id}">${rcE(r.off)}</button>`).join("");
+  const ruler = `<div class="ruler"><span>No.</span><span>Age · weight</span><span>Horse</span><span class="r-bar"><span>Win</span><span>Place</span><span>Out</span></span><span style="text-align:center">Price</span><span style="text-align:right">Form · rating</span><span style="text-align:right">Chance</span></div>`;
+  const tipId = race.tip && race.tip.id;
+  const rows = race.runners.map(r => {
+    const tk = r.id === tipId ? rcTier(r.p)[0] : 0, open = RC_OPEN === race.id + "|" + r.id;
+    const st = Math.floor((r.lbs || 0) / 14), lb = Math.round((r.lbs || 0) - st * 14);
+    return `<div class="row-line"><button type="button" class="row" data-rc-runner="${rcE(race.id + "|" + r.id)}" aria-expanded="${open}">
+      <span class="rank${tk ? " t" + tk : ""}">${rcE(r.no || "")}</span>
+      <div class="ko"><time>${r.age ? rcE(r.age) + "yo" : ""}${r.lbs ? " · " + st + "-" + lb : ""}</time><div class="comp"><span>${r.lastRun != null ? r.lastRun + " days" : "debut"}${r.gear ? " · " + rcE(r.gear) : ""}${r.draw ? " · drawn " + rcE(r.draw) : ""}</span></div></div>
+      <div class="side"><div class="club">${rcE(r.horse)}</div><div class="stat">${rcE(r.jockey)} · ${rcE(r.trainer)}${r.id === tipId ? ' · <span class="flag live">Tip</span>' : ""}</div></div>
+      ${rcBar(r.p, r.place)}
+      <div class="pred"><b>${rcPrice(r.price)}</b><small>${r.p ? "fair " + rcPrice(1 / r.p) : ""}</small></div>
+      <div class="side away"><div class="club num">${rcE(r.form || "–")}</div><div class="stat">${r.or != null ? "OR " + r.or : "unrated"}</div></div>
+      <div class="conf">${rcPct(r.p)}<span class="tier t${tk}">${tk ? rcTier(r.p)[1] : "&nbsp;"}</span></div>
+    </button></div>` + (open ? rcDetail(race, r) : "");
+  }).join("") + (race.nonRunners || []).map(x => `<div class="row-line"><div class="row noread rc-nr"><span class="rank">${rcE(x.no || "")}</span><div class="ko"><time>NR</time></div><div class="side"><div class="club">${rcE(x.horse)}</div><div class="stat">non-runner</div></div><div class="barcell"><div class="bar"></div></div><div class="pred"></div><div class="side away"></div><div class="conf"><span class="tier t0">Out</span></div></div></div>`).join("");
+  const proof = `<div class="tb-proof">
+    <div><span>Class · distance</span><b>${rcE(race.cls || "–")}${race.dist ? " · " + rcE(race.dist) : ""}</b><small>${rcE(race.type)}${race.handicap ? " · handicap" : ""}</small></div>
+    <div><span>Going</span><b>${rcE(race.going || "–")}</b><small>${rcE(race.surface)}</small></div>
+    <div><span>Runners</span><b>${race.field}</b><small>${race.places > 1 ? race.places + " places at 1/" + Math.round(1 / race.frac) : "win only"}</small></div>
+    <div><span>Almanac read</span><b>${race.tip ? rcE(race.tip.horse) : "No tip"}</b><small>${race.tip ? race.tip.bet + " · take " + rcPrice(race.tip.take) + "+" : rcE(race.skip || "")}</small></div>
+  </div>`;
+  return `<div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:18px;align-items:flex-end">
+      <div><div class="ctl-label" style="margin-bottom:4px">Meeting</div><div class="chips">${chips}</div></div>
+      <div><div class="ctl-label" style="margin-bottom:4px">Race</div><div class="chips">${times}</div></div></div>
+    <section class="day"><div class="day-head"><h2>${rcE(race.off)} ${rcE(race.course)}</h2><span class="count">${rcE(race.name)}</span></div>${proof}${ruler}${rows}</section>
+    <p class="tb-foot">Tap a runner for what the model weighs. Form reads oldest to newest: P pulled up, F fell, U unseated rider. OR is the official rating.</p>`;
+}
+
+function rcCalibSvg(bands){
+  const X = p => 34 + p * 460, Y = p => 196 - p * 300;
+  let g = [0, .2, .4, .6].map(v => `<line class="hg" x1="34" x2="310" y1="${Y(v)}" y2="${Y(v)}"></line><text class="ht" x="28" y="${Y(v) + 3}" text-anchor="end">${v * 100}%</text><text class="ht" x="${X(v)}" y="210" text-anchor="middle">${v * 100}%</text>`).join("");
+  g += `<line class="hq" x1="${X(0)}" y1="${Y(0)}" x2="${X(.6)}" y2="${Y(.6)}"></line>`;
+  bands.filter(b => b.n >= 10).forEach(b => {
+    const e = Math.min(.6, b.expected / b.n), a = Math.min(.6, b.won / b.n), ci = 1.96 * Math.sqrt(e * (1 - e) / b.n);
+    g += `<line class="hci" x1="${X(e)}" x2="${X(e)}" y1="${Y(Math.min(.6, a + ci))}" y2="${Y(Math.max(0, a - ci))}"></line><circle class="hd${a < e - ci ? " under" : ""}" cx="${X(e)}" cy="${Y(a)}" r="4"></circle>`;
+  });
+  return `<svg viewBox="0 0 320 220" role="img" aria-label="Model chance against how often horses won, by band">${g}</svg>`;
+}
+function rcProfitSvg(series){
+  if(!series || series.length < 2) return `<p class="hon-foot">The line starts once two tips have settled.</p>`;
+  const lo = Math.min(0, ...series), hi = Math.max(1, ...series), X = i => 34 + i * 276 / (series.length - 1), Y = v => 196 - (v - lo) / (hi - lo) * 180;
+  let g = `<line class="hz" x1="34" x2="310" y1="${Y(0)}" y2="${Y(0)}"></line><text class="ht" x="28" y="${Y(0) + 3}" text-anchor="end">0</text>`;
+  g += `<polyline class="hl" points="${series.map((v, i) => X(i).toFixed(1) + "," + Y(v).toFixed(1)).join(" ")}"></polyline>`;
+  const last = series[series.length - 1];
+  g += `<text class="ht hv" x="${X(series.length - 1)}" y="${Y(last) - 8}" text-anchor="end">${last >= 0 ? "+" : ""}${last} pts</text><text class="ht" x="34" y="212">1st tip</text><text class="ht" x="310" y="212" text-anchor="end">tip ${series.length}</text>`;
+  return `<svg viewBox="0 0 320 220" role="img" aria-label="Running profit, one point a tip">${g}</svg>`;
+}
+function rcRecord(R){
+  const S = R.record;
+  if(!S || !S.runners) return `<div class="empty tb-empty">The record starts with the first graded race day. Every runner's chance is checked against how often those horses win, and every tip against its price.</div>`;
+  const bands = S.bands.map(b => `<tr><td>${Math.round(b.lo * 100)} to ${Math.round(b.hi * 100)}%</td><td>${b.n}</td><td>${b.expected}</td><td>${b.won}</td></tr>`).join("");
+  const learn = S.learn.map(c => { const z = c.z, word = c.n < 100 ? "Too few yet" : z == null ? "–" : z <= -2 ? "Model too keen" : z >= 2 ? "Worth more weight" : "On the line";
+    const col = c.n < 100 ? "--mute" : z <= -2 ? "--away" : z >= 2 ? "--home" : "--ink-2";
+    return `<tr><td>${rcE(c.name)}</td><td>${c.n}</td><td>${c.expected}</td><td>${c.won}</td><td style="text-align:left;font-family:var(--f-ui);font-weight:600;color:var(${col})">${word}</td></tr>`; }).join("");
+  return `<section class="honest"><h3>Is the racing model honest?</h3>
+    <p class="hon-lede">Does a horse the model gives 30% win about 30% of the time? And do the tips make money at the price published?</p>
+    <div class="hon-grid">
+      <figure><figcaption><b>Chance v winners.</b> Every graded runner, in bands by the model's chance. A dot on the line means the chance was right; red means the model was too keen.</figcaption>${rcCalibSvg(S.bands)}
+        <div class="hon-key"><span><i class="kq"></i>Perfect</span><span><i class="kd"></i>How often they won</span><span><i class="kc"></i>Margin for luck</span></div></figure>
+      <figure><figcaption><b>Running profit, 1 point a tip.</b> At the best UK price when the tip was published. ${S.beatClose == null ? "" : "Beat the starting price on " + Math.round(S.beatClose * 100) + "% of tips."}</figcaption>${rcProfitSvg(S.series)}</figure>
+    </div><p class="hon-foot">${S.races} races and ${S.runners} runners graded. ${S.fitReady ? "Enough for the first refit of the blend." : "The blend is refitted at 500 graded races."}</p></section>
+    <h3 class="tb-h">By model chance <small>every graded runner</small></h3>
+    <div class="ladder" style="margin-top:12px"><table><tr><th>Chance</th><th>Runners</th><th>Expected wins</th><th>Won</th></tr>${bands}</table></div>
+    <h3 class="tb-h">What the model is learning <small>expected wins against actual, by condition; a read needs 100 runners</small></h3>
+    <div class="ladder" style="margin-top:12px"><table><tr><th>Condition</th><th>Runners</th><th>Expected</th><th>Won</th><th style="text-align:left">Read</th></tr>${learn}</table></div>`;
+}
+
+function renderRacing(){
+  const host = $("#racing"), R = window.RACING;
+  const lede = sub => `<section class="lede"><h2>Horse racing <span class="m-tag">Trial</span></h2><p>${sub}</p>
+    <p class="cov">On trial: published and graded in public, with a model still learning. UK and Irish racing, UK bookies' prices.</p></section>`;
+  if(!R || R.status !== "live"){
+    host.innerHTML = lede("A short list of tips from the day's UK and Irish races: a horse only makes the list when it has a clear chance and the bookies' price pays more than that chance.") +
+      `<div class="empty tb-empty">${rcE((R && R.note) || "The racing feed is not connected yet. Tips appear here on the first build with it.")}</div>` + (R && R.record ? rcRecord(R) : "");
+    return;
+  }
+  const days = rcDays(R);
+  if(!RC_DAY || !days.includes(RC_DAY)) RC_DAY = days[0];
+  const races = (R.days[RC_DAY] || []).slice().sort((a, b) => (a.when || "") < (b.when || "") ? -1 : 1);
+  const boards = [["tips", "Tips"], ["races", "Every race"], ["card", "Racecards"], ["record", "Record"]];
+  const ctl = `<div class="controls" style="position:static">
+    <div><div class="ctl-label" style="margin-bottom:4px">Board</div><div class="boards" id="rcBoards">${boards.map(([k, l]) => `<button type="button" data-rc-board="${k}" aria-pressed="${RC_BOARD === k}">${l}</button>`).join("")}</div></div>
+    ${days.length > 1 ? `<div><div class="ctl-label" style="margin-bottom:4px">Day</div><div class="seg">${days.map(d => `<button type="button" data-rc-day="${d}" aria-pressed="${d === RC_DAY}">${rcDayLabel(d).split(" ").slice(0, 2).join(" ")}</button>`).join("")}</div></div>` : ""}
+  </div>`;
+  const nTips = races.filter(r => r.tip).length;
+  const sub = {tips: `${nTips} tip${nTips === 1 ? "" : "s"} from ${races.length} races on ${rcDayLabel(RC_DAY)}. A race only makes the list when a horse has a clear chance <b>and</b> the best UK price pays more than it. Most likely first.`,
+    races: "Every race at every meeting, with the model's top-rated horse, its chance to win and to place, and the best UK price beside the fair price.",
+    card: "One race at a time: every runner with its chance to win and to place, and its price. Open a runner for what the model weighs.",
+    record: "How the racing model is doing, graded every morning: the chance it gives each horse against how often those horses win, and every tip against its price."}[RC_BOARD];
+  const body = !races.length && RC_BOARD !== "record" ? `<div class="empty tb-empty">No UK or Irish racing on the card for this day.</div>`
+    : RC_BOARD === "tips" ? rcTips(R, races) : RC_BOARD === "races" ? rcEvery(races) : RC_BOARD === "card" ? rcCard(races) : rcRecord(R);
+  host.innerHTML = lede(sub) + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
+  host.onclick = e => {
+    const b = e.target.closest("[data-rc-board],[data-rc-day],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
+    if(!b) return;
+    const d = b.dataset;
+    if(d.rcBoard) RC_BOARD = d.rcBoard;
+    else if(d.rcDay){ RC_DAY = d.rcDay; RC_RACE = null; }
+    else if(d.rcOpen) RC_OPEN = RC_OPEN === d.rcOpen ? null : d.rcOpen;
+    else if(d.rcCourse){ const r = races.find(x => x.course === d.rcCourse); RC_RACE = r && r.id; RC_BOARD = "card"; }
+    else if(d.rcRace){ RC_RACE = d.rcRace; RC_BOARD = "card"; RC_OPEN = null; }
+    else if(d.rcRunner) RC_OPEN = RC_OPEN === d.rcRunner ? null : d.rcRunner;
+    renderRacing();
+  };
+}
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -6270,12 +6545,14 @@ $("#views").addEventListener("click", e=>{
   $("#list").hidden = !list;
   $("#today").hidden = !today;
   $("#scale").hidden = v !== "scale";
+  $("#racing").hidden = v !== "racing";
   $("#mailer").hidden = v !== "mailer";
   $("#sport").hidden = !sport;
   if(sport) renderSport(sport);
   if(list) renderList();
   if(today) renderToday();
   if(v === "scale") renderScale();
+  if(v === "racing") renderRacing();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time

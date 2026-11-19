@@ -9,6 +9,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-horse-racing: the Horse racing tab, on trial (tag pending)
+
+**What changed:** a new sport tab, Horse racing, after Tennis in the sports row (and on the Analysis page's bar). UK and Irish racing from The Racing API. Every runner gets a chance to win and to place; the day's tips are the horses with a clear chance (22%+) whose best UK price pays at least 8% more than it, most likely first, at most six a day, never in fields over 16. Four boards in the site's own styles: Tips (the record, a tracker of every tip by day with a divider per day, the tips grouped by Douglas's betting windows with the price to take and the main danger, changes and races left alone), Every race, Racecards and Record (chance v winners, running profit, by band, what the model is learning by condition). Marked Trial throughout.
+**Evidence:** none yet: a new sport with no graded race. The chance follows Benter (1994): a racecard score (official rating, form, trainer's 14 days, time since the last run) blended with the bookies' fair chance, starter weights refitted by hand at 500 graded races. `tests/test_racing.py` pins the reader, each-way terms, the place chance, the tip rule, settlement and the empty states; the tab was checked in a browser at 1280px and 400px on a sample card (no horizontal overflow, no page errors).
+**Needs:** the secrets `RACING_API_USERNAME` and `RACING_API_PASSWORD` (theracingapi.com). Until then the tab says the feed is not connected. The first build with them: `python3 racing.py --probe` prints the feed's field names to check against `race_of` / `runner_of`.
+**Files:** `racing.py`, `index.html`, `analysis.html`, `.github/workflows/deploy.yml`, `.gitignore`, `tests/test_racing.py`, `claude/horse-racing-2026-11-19.md`, `CLAUDE.md`.
+**Not changed:** every other sport, the Daily List, the Card, Scale, any model.
+**Roll back:** `git revert` the commit; `predictions-racing/` and `racing-record.json` are harmless if left.
+
 ## 2026-11-19-card-calls-first: capped football price calls go to Card picks first (tag pending)
 
 **What changed:** each build makes at most 150 one-fixture price calls for mid-priced football legs the day's bulk prices missed. They went in board order, so a 62% Premier League pick the Card could take was left unpriced (off the Card) behind 45% picks in lower leagues. The calls now go first to legs the Card could take once priced (model 60%+, a league the Card takes, clean), then list and reserve picks, then the rest, nearest day and strongest pick first.

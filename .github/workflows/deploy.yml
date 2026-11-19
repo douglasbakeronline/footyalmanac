@@ -337,6 +337,17 @@ jobs:
       - name: The slip
         run: python3 slip.py || echo "::warning::slip failed; the Bets tab keeps the last slip"
 
+      # Horse racing (racing.py, 19 Nov 2026, on trial): UK and Irish racecards
+      # from The Racing API, a chance for every runner, the day's few tips, each
+      # race frozen at its off in predictions-racing/, graded into
+      # racing-record.json, racing.js for the tab. Silent without the secrets
+      # (the tab says the feed is not connected). Allowed to fail.
+      - name: Horse racing
+        env:
+          RACING_API_USERNAME: ${{ secrets.RACING_API_USERNAME }}
+          RACING_API_PASSWORD: ${{ secrets.RACING_API_PASSWORD }}
+        run: python3 racing.py || echo "::warning::racing failed; the tab keeps its last page"
+
       # main is protected (ruleset "Protect main"): only the office App and the
       # owner may push to it directly, so the archive is pushed with an App token.
       - name: Normalise the App key
@@ -409,6 +420,8 @@ jobs:
           cp -r scale-archive /tmp/archive/ 2>/dev/null || true
           cp -r slip-archive /tmp/archive/ 2>/dev/null || true      # the slip as published (slip.py)
           cp -r periods /tmp/archive/ 2>/dev/null || true           # football half-time scores (periods.py)
+          cp -r predictions-racing /tmp/archive/ 2>/dev/null || true   # horse racing as published (racing.py)
+          cp racing-record.json /tmp/archive/ 2>/dev/null || true
           # the FIFA ranking, refreshed by build.py when FIFA publishes a new release
           cp fifa-rankings.json /tmp/archive/ 2>/dev/null || true
           # The Odds tab's archive and record
@@ -450,6 +463,11 @@ jobs:
               mkdir -p periods
               cp -r /tmp/archive/periods/. periods/
             fi
+            if [ -d /tmp/archive/predictions-racing ]; then
+              mkdir -p predictions-racing
+              cp -r /tmp/archive/predictions-racing/. predictions-racing/
+            fi
+            cp /tmp/archive/racing-record.json . 2>/dev/null || true
             if [ -d /tmp/archive/slip-archive ]; then
               mkdir -p slip-archive
               cp -r /tmp/archive/slip-archive/. slip-archive/
@@ -462,6 +480,7 @@ jobs:
                        predictions-tennis tennis-record.json tennis-record.js history-tennis \
                        history-sports predictions-sports sports-data.js sports-record.json sports-record.js \
                        $(ls -d sports-graded.json results-ledger.json.gz predictions-markets markets-record.json scale-archive slip-archive periods 2>/dev/null) \
+                       $(ls -d predictions-racing racing-record.json 2>/dev/null) \
                        fifa-rankings.json groupings-archive groupings-record.json
             if git diff --staged --quiet; then
               echo "nothing new to archive"
@@ -538,6 +557,8 @@ jobs:
           cp slip.js slip.json _site/ 2>/dev/null || echo "::warning::no slip files this run"
           cp scale.js scale.json _site/ 2>/dev/null || \
             echo "::warning::no scale files this run — the Scale tab will show its empty state"
+          cp racing.js _site/ 2>/dev/null || \
+            echo "::warning::no racing.js this run — the Horse racing tab will show its empty state"
 
       # 16 Nov 2026, Douglas: Google Tag Manager on every page, future pages included.
       # The pages carry it in their source; this adds it to any published page that does not.
