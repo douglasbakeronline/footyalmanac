@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-af-spellings: four football spellings priced, moved fixtures told apart (tag pending)
+
+**What changed:** football legs whose names API-Football spells another way are now priced: AGF (Aarhus), Inverness Caledonian Thistle (Inverness CT), STVV (St. Truiden), Dux Logroño (Edf Logrono W), via `groupings.AF_SPELLINGS`. A leg with no fixture on its date but listed by API-Football on another day in the window is counted `moved` ("football moved:" in the build log, `football.moved` in `groupings.json`), not `noFixture`, and never priced.
+**Evidence:** the first named read (#410, deploy run 44450821083) had noFixture 26; of the twelve named, four were these spellings beside their fixture in `near`, in leagues the Card admits, so each was off the Card for a name alone. Liverpool v Manchester United, Brentford v Everton and five Brazilian Serie A games had no fixture on the board's date. `claude/football-nofixture-names-2026-11-19.md`. Tests: three new in `tests/test_football_unpriced.py` (all fail on the old code), full suite passing, `nametest.py` clear, fast build clean.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, the note, `CLAUDE.md`.
+**Not changed:** `same`, `LIVE_NAMES`, any `CARD_*` constant, the model, the page.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-own-band-third: own-band List admission already shipped (tag pending)
 
 **What changed:** nothing for a reader. A dated note records that the planner's own-band task is the rule shipped on 20 Oct 2026 and live for every sport.
