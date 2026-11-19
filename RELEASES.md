@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-card-rule14: the Card back on rule 8's constants, and the scoreboard on the live rule (tag pending)
+
+**For a reader.** The Card runs rule 8's constants again (rule 14): the model's picks rated at or above the bookmakers, core leagues only, tennis at 75%+, the 2x alone, no two-day groups. Douglas, 19 Nov 2026, shown every rule rebuilt on the whole archive: "let's then group to rule 8". The Bets tab's "Is it working?" box now headlines the live rule's own groups and legs, named and dated, with every rule since 25 Oct under More numbers; the Card's rule text reads the live constants. Fewer cards (rule 8 built one about one day in three), the Daily 2x and List card unchanged.
+
+**Evidence.** On the pool rebuilt rule by rule (30 Oct to 19 Nov): rule 8 8 groups, 5 won v 3.2 expected, +64%, +14% a leg on 24 legs; rule 13 46 groups, -4%. Rule 8 v live +0.51 units a day, p(worse) 0.15 on 24 legs, under the gate's 100; the five-season football replay agrees in direction. The owner's call on a small sample. `claude/card-rule14-rule8-2026-11-19.md`.
+
+**Files.** `groupings.py` (`CARD_MODEL_EDGE` 0.0, `CARD_CORE_ONLY` True, `CARD_SPORT_MIN` tennis 0.75, `CARD_SPAN` False, `CARD_RULE` 14; `cardLive`, `cardLiveRule`, `cardLiveLegsBySport`), `tools/card_replay.py` (rules 10 to 13 pinned, `rule13`, `span2`, `RULES`), `index.html` (`tbRecord`, `RULE_WHAT`, `RULE_FROM`, the rule copy), fourteen test files re-pinned. Checked at 1280 and 400px.
+
+**Not changed.** `CARD_MODEL_OPP_MIN` (empty), `CARD_BUILD` (2x), the context veto (paused), the Daily 2x, the List card, the slip, every record.
+
+**Roll back.** `git revert` this merge, or set the `rule13` variant's constants with `CARD_RULE` 15.
+
 ## 2026-11-19-super-lig-times: the Süper Lig takes API-Football's kick-offs (tag pending)
 
 **For a reader.** Süper Lig games now show their real day and kick-off, as La Liga and Brazil's Serie A have since this afternoon. The first build with the untimed fill (#425) moved 15 La Liga and 11 Brazilian games to their real days but refused the Süper Lig whole: API-Football spells BB Erzurumspor "Erzurumspor FK", and the fill is all or nothing on names. Galatasaray v Samsunspor and Kocaelispor v Fenerbahçe (21 Nov, board 22 Nov) went unpriced as "moved", and a leg with no start cannot reach the Card.

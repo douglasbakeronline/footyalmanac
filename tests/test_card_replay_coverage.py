@@ -63,7 +63,7 @@ class TennisVariants(unittest.TestCase):
         self.assertTrue(G.CARD_SPORTS_OFF <= CR.VARIANTS["notennis"]["CARD_SPORTS_OFF"])
         self.assertEqual(CR.VARIANTS["tennis80"]["CARD_SPORT_MIN"]["tennis"], 0.80)
         self.assertNotIn("tennis", G.CARD_SPORTS_OFF)
-        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.85)
+        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.75)   # 19 Nov 2026 (CARD_RULE 14): rule 8's floor
         self.assertEqual(CR.VARIANTS["tennis75"]["CARD_SPORT_MIN"]["tennis"], 0.75)
 
     def test_patch_reaches_card_fault_and_is_restored(self):

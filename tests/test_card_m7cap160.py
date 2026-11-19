@@ -18,7 +18,7 @@ class Cap160(unittest.TestCase):
     def test_registered_on_the_pool(self):
         self.assertEqual(R.VARIANTS["m7cap160"], {"CARD_ODDS": (1.15, 1.60)})
         self.assertNotIn("m7cap160", R.RULE6_FAMILY)
-        self.assertTrue(R.spans("m7cap160"))   # live machinery, two-day groups like live
+        self.assertEqual(R.spans("m7cap160"), bool(G.CARD_SPAN))   # live machinery, two-day groups as live has them
 
     def test_registered_on_football_data(self):
         src = open(os.path.join(HERE, "tools", "card_legs_history.py"), encoding="utf-8").read()

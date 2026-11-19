@@ -18,10 +18,18 @@ def leg(odds=1.40, model=0.66, fair=None, opp=3.5, sport="football"):
             "pTested": model, "hit": model, "why": None, "opp": opp, "draw": 4.0, "est": False, "p": fair}
 
 
+RULE13 = {"CARD_MODEL_EDGE": None, "CARD_MODEL_OPP_MIN": {}, "CARD_CORE_ONLY": False, "CARD_SPORT_MIN": {"tennis": 0.85}}
+
+
 class Rule13(unittest.TestCase):
+    def setUp(self):
+        # 19 Nov 2026 (CARD_RULE 14): rule 13 ran from 17 to 18 Nov; its behaviour is tested under its own constants
+        for k, v in RULE13.items():
+            p = mock.patch.object(G, k, v); p.start(); self.addCleanup(p.stop)
+
     def test_live_constants(self):
-        self.assertEqual(G.CARD_RULE, 13)
-        self.assertIsNone(G.CARD_MODEL_EDGE)
+        self.assertEqual(G.CARD_RULE, 14)
+        self.assertEqual(R.VARIANTS["rule13"]["CARD_MODEL_EDGE"], None)
         self.assertEqual(G.CARD_MODEL_OPP_MIN, {})
         self.assertTrue(G.CARD_MODEL_RULE)
 
@@ -40,14 +48,14 @@ class Rule13(unittest.TestCase):
         self.assertIsNotNone(G.model_fault(leg(sport="tennis", model=0.80)))   # the 85% tennis floor
 
     def test_rule12_is_a_variant(self):
-        self.assertEqual(R.VARIANTS["rule12"], {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}})
+        self.assertEqual({k: R.VARIANTS["rule12"][k] for k in ("CARD_MODEL_EDGE", "CARD_MODEL_OPP_MIN")}, {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}})
         self.assertEqual(R.VARIANTS["m7value"], {"CARD_MODEL_EDGE": 0.0})
-        with mock.patch.multiple(G, **R.VARIANTS["rule12"]):
+        with mock.patch.multiple(G, **{k: v for k, v in R.VARIANTS["rule12"].items() if not k.startswith("_")}):
             self.assertIn("sees no value", G.model_fault(leg(1.40, 0.62)))
             self.assertIn("under 5", G.model_fault(leg(model=0.72, opp=2.2)))
 
     def test_rule12_fault_kept_on_each_leg(self):
-        self.assertEqual(G.RULE12_PATCH, R.VARIANTS["rule12"])
+        self.assertEqual(G.RULE12_PATCH, {k: R.VARIANTS["rule12"][k] for k in G.RULE12_PATCH})
         self.assertIn("sees no value", G.fault_under(leg(1.40, 0.62), G.RULE12_PATCH))
         self.assertIsNone(G.fault_under(leg(1.40, 0.72, opp=6.0), G.RULE12_PATCH))
         self.assertIsNone(G.CARD_MODEL_EDGE)   # restored after the call
@@ -67,7 +75,7 @@ class Rule13(unittest.TestCase):
         self.assertIn("under 5", faults["P0"]); self.assertIn("under 5", faults["P1"])
         self.assertIn("sees no value", faults["P2"])   # 76% v the bookmakers' 77%
 
-    def test_funnel_has_no_value_relief_live(self):
+    def test_funnel_has_no_value_relief_under_rule13(self):
         self.assertNotIn("no-value", CF.leg_relief())
         self.assertNotIn("opposition", CF.leg_relief())
         self.assertEqual(list(CF.rule_sets()[1])[-1], "comp-cap")

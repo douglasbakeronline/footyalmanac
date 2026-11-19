@@ -1273,6 +1273,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .tb-sum-n span{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin-top:4px}
 .tb-sum-t{flex:1 1 220px;font-size:13.5px;line-height:1.45}
 .tb-sum-t p{margin:0 0 4px}
+.tb-rule-line{margin:0 0 12px;font-size:13px;line-height:1.45;color:var(--mute)}
+.tb-rule-line b{color:var(--ink)}
 .tb-verdict{margin:12px 0 0;padding:8px 10px;font-size:13px;line-height:1.45;border-left:3px solid var(--rule);background:var(--paper,transparent)}
 .tb-verdict.ok{border-left-color:var(--edge)}
 .tb-verdict.warn{border-left-color:var(--gold)}
@@ -5512,6 +5514,14 @@ function tbCheckHtml(){
       <span class="tb-p">${x.r.p != null ? pct(x.r.p) + "%" : "–"}</span></div>`).join("")}</div>
     <div class="tb-sum">${known.length ? `<b>${known.length === rows.length ? "All" : known.length + " of " + rows.length} together: about ${(all * 100).toFixed(all < 0.1 ? 1 : 0)}%</b>, roughly 1 in ${Math.max(1, Math.round(1 / all))}. ` : ""}${bad ? `Take out the ${bad} marked Avoid or No read first.` : "No pick is flagged."}</div>`;
 }
+/* 19 Nov 2026: the Card's rules by number, for the scoreboard (the replay's
+   card_replay.RULES carries the same list; rules 2, 3 and 9 changed the page,
+   the windows and the context veto, not the picks). */
+const RULE_WHAT = {"1": "bookmakers' favourites the model rates under them, any league, 2x and 3x", "4": "core leagues only", "5": "the gap capped at 10 under",
+  "6": "the opposition priced 9+", "7": "the model's picks at or above the bookmakers, 2x and 3x", "8": "the 2x alone", "10": "tennis at 85%+",
+  "11": "the wider leagues in", "12": "football opposition priced 5.0+", "13": "the model alone, no bookmaker condition",
+  "14": "rule 8's constants again: the model at or above the bookmakers, core leagues, tennis 75%+, the 2x alone"};
+const RULE_FROM = {"1": "25 Oct", "4": "29 Oct", "5": "31 Oct", "6": "6 Nov", "7": "11 Nov", "8": "11 Nov", "10": "11 Nov", "11": "11 Nov", "12": "16 Nov", "13": "17 Nov", "14": "19 Nov"};
 function tbRecord(){
   // 11 Nov 2026, Douglas: "This section is far too chaotic." One headline (the
   // Card's record and what it has returned at the page's stakes), one verdict,
@@ -5519,7 +5529,12 @@ function tbRecord(){
   // Same numbers as before (groupings-record.json); nothing is recounted here.
   const R = OG && OG.record; if(!R) return "";
   const C = (OG.rules || {}).card || {}, fz = Math.abs(C.floorZ || -2), fn = C.floorN || 50;
-  const k = R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
+  // 19 Nov 2026 (Douglas: "any data viz just specific to rule 8"): the headline
+  // and the picks-by-sport table are the live rule's own groups (cardLive, from
+  // the rule's first day); every rule together sits in More numbers
+  const live = R.cardLive && R.cardLiveRule === C.rule ? R.cardLive : null;
+  const k = live || R.card || {}, bw = R.cardByWindow || {}, c = (R.overall || {}).clv;
+  const liveFrom = live ? ((RULE_FROM || {})[String(C.rule)] || "") : "";
   const sgn = x => (x >= 0 ? "+" : "") + x.toFixed(2);
   const pc = (r, s_) => s_ ? `${r >= s_ ? "+" : ""}${Math.round((r / s_ - 1) * 100)}%` : "";
   const units = x => x.unitsStaked ? [x.unitsReturned - x.unitsStaked, x.unitsStaked, x.unitsReturned] : [x.returned - x.staked, x.staked, x.returned];
@@ -5529,17 +5544,18 @@ function tbRecord(){
   const verdict = zr == null ? ["", "No settled groups yet."]
     : zr <= -fz && k.settled >= fn ? ["bad", `Under the floor: ${fz} standard errors under expected on ${k.settled} groups. The rule is retired.`]
     : zr < 0 ? ["warn", `Winning a little less often than expected (${zr.toFixed(1)} standard errors), inside normal luck. It is retired at ${fz} under on ${fn}+ groups.`]
-    : down ? ["warn", `Winning as often as expected (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), but that is not enough to make money at these prices. The rule changed on 11 Nov; the new one has to do better than this.`]
+    : down ? ["warn", `Winning as often as expected (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), but that is not enough to make money at these prices.`]
     : ["ok", `Winning as often as expected or better (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), and ahead. It is retired only at ${fz} under on ${fn}+ groups.`];
-  const head = k.settled ? `<div class="tb-sum">
+  const ruleLine = live ? `<p class="tb-rule-line"><b>Card rule ${C.rule}</b>${liveFrom ? `, from ${liveFrom}` : ""}: ${ogEsc(RULE_WHAT[String(C.rule)] || "the current rule")}. The figures below are this rule's own groups; every rule since 25 Oct is under More numbers.</p>` : "";
+  const head = ruleLine + (k.settled ? `<div class="tb-sum">
       <div class="tb-sum-n"><b>${k.won}</b><span>won</span></div>
       <div class="tb-sum-n"><b>${k.lost}</b><span>lost</span></div>
       <div class="tb-sum-t"><p><b>${Math.round(k.won / k.settled * 100)}% of ${k.settled} groups won</b>, against ${k.expected.toFixed(1)} expected${k.pending ? `; ${k.pending} to settle` : ""}.</p>
         <p>At the page's stakes: <b>${ret(k)}</b> units staked${k.returnedBest != null ? `; ${pc(k.returnedBest, k.staked)} at the best prices, one unit a group` : ""}.</p></div>
     </div>
     <p class="tb-verdict ${verdict[0]}">${verdict[1]}</p>`
-    : `<p class="tb-verdict">No settled groups yet. A group is won only when every pick wins; a draw is a loss.</p>`;
-  const sp = Object.entries(R.cardLegsBySport || {});
+    : `<p class="tb-verdict">No settled groups yet${live ? " under this rule" : ""}. A group is won only when every pick wins; a draw is a loss.</p>`);
+  const sp = Object.entries((live && R.cardLiveLegsBySport) || R.cardLegsBySport || {});
   const sportRows = sp.map(([s_, t]) => {
     // 14 Nov 2026: a sport with its own floor (tennis, 85%) is judged on the legs that floor admits (atFloor)
     const u = t.atFloor || t, at = t.atFloor ? ` at ${pct(t.floor)}%+` : "";
@@ -5547,12 +5563,13 @@ function tbRecord(){
       : t.atFloor && t.z != null && t.z < 0 ? ["warn", `Under; judged at ${pct(t.floor)}%+ (${u.legs} so far)`]
       : t.z != null && t.z < 0 ? ["warn", "Slightly under"] : ["ok", "On or above"];
     return `<tr><th>${ogEsc(OG_SPORT[s_] || s_)}</th><td>${t.landed} / ${t.legs}</td><td>${pct(t.rate)}%</td><td>${pct(t.quoted)}%</td><td><span class="tb-st ${st[0]}">${st[1]}</span></td></tr>`; }).join("");
-  const sportTbl = sp.length ? `<table class="tb-tbl"><caption>Picks by sport, every group</caption>
+  const sportTbl = sp.length ? `<table class="tb-tbl"><caption>Picks by sport, ${live ? `rule ${C.rule}'s groups` : "every group"}</caption>
       <thead><tr><th>Sport</th><th>Landed</th><th>Rate</th><th>Expected</th><th></th></tr></thead><tbody>${sportRows}</tbody></table>
     <p class="tb-note">A sport comes off the Card when it lands ${fz} standard errors under expected over ${fn}+ legs${sp.some(([, t]) => t.atFloor) ? "; a sport with its own floor counts only the picks that floor would take today" : ""}.</p>` : "";
   const wl = x => x && x.settled ? `${x.won} of ${x.settled}` : "–";
   const more = [];
-  Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}`, wl(t), ret(t)]));
+  if(live && R.card && R.card.settled) more.push(["The Card, every rule since 25 Oct", wl(R.card), ret(R.card)]);
+  Object.entries(R.cardByRule || {}).forEach(([r, t]) => more.push([`Card rule ${r}${String(r) === String(C.rule) ? " (now)" : ""}${RULE_WHAT[r] ? `: ${RULE_WHAT[r]}` : ""}`, wl(t), ret(t)]));
   Object.keys(bw).forEach(n => more.push([n === "Day" ? "One window a day (from 29 Oct)" : `${n} window (to 28 Oct)`, wl(bw[n]), ret(bw[n])]));
   [["Late groups, not in the record", R.cardLate], ["Wider-rule groups (off since 11 Nov)", R.cardWide], ["Model card on paper (31 Oct to 10 Nov)", R.cardModel], ["List 2x (from 16 Nov)", R.cardList], ["List long (from 17 Nov)", R.cardListLong], ["Daily 2x (from 17 Nov)", R.cardDaily]]
     .forEach(([l, x]) => x && x.settled && more.push([l, wl(x), ret(x)]));
@@ -5962,8 +5979,8 @@ function renderToday(){
     <details class="how tb-rule tb-part"><summary>The Card: its rule in full</summary><div class="lede">
       ${C.modelRule ? `<p><b>The model's own picks</b> (from 11 Nov 2026). ${(C.build || []).length === 1 ? `Up to three groups a day from different fixtures, each paying <b>2x or more</b> (the 3x was dropped on 11 Nov: replayed on five football seasons and the last fortnight, it lost in three seasons of four and dragged the card down), from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.` : `Up to six groups a day from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
-      kicking off between 07:00 and 07:00 the next morning, three to five picks each.`} Every pick is one the model rates ${pct(C.fairMin || 0.6)}%+${C.modelEdge == null ? " (from 17 Nov the model's number alone: no comparison with the bookmakers' chance, no condition on the opposition's price)" : " and at or above the bookmakers' own chance"}, priced 1.15 to 1.90 by a bookmaker,
-      football from the core leagues and, since 11 Nov, the wider leagues (core picks first), a tennis pick at 85%+ on the model and its tested rate (75% until 11 Nov), NFL and college sports off. Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
+      kicking off between 07:00 and 07:00 the next morning, three to five picks each.`} Every pick is one the model rates ${pct(C.fairMin || 0.6)}%+${C.modelEdge == null ? " (the model's number alone: no comparison with the bookmakers' chance, no condition on the opposition's price)" : " and at or above the bookmakers' own chance"}, priced 1.15 to 1.90 by a bookmaker,
+      football from ${C.coreOnly ? "the core leagues only" : "the core leagues and the wider leagues (core picks first)"}, a tennis pick at ${pct((C.sportMin || {}).tennis || 0.75)}%+ on the model and its tested rate, NFL and college sports off${C.span ? "; a day with no group of its own may take one from its picks and the next day's" : ""}.${C.rule >= 14 ? " From 19 Nov the card runs rule 8's constants, the rule that did best when every rule was rebuilt on the whole archive (wider leagues, the 85% tennis floor and two-day groups were tried from 11 to 19 Nov and are off)." : ""} Each group's chance is the model's number. Until 11 Nov the card took the bookmakers' favourites the model rated below them; that rule is still replayed beside this one.
       Prices are written for ${ogEsc(C.book || "William Hill")}; a pick ${ogEsc(C.book || "William Hill")} doesn't offer says so and names who does, and each group carries substitutes for a pick you can't get.
       ${C.filler === false ? `A day the model's picks leave empty stays empty: no group is better than a weak one (the wider-rule filler was switched off on 11 Nov; its groups stay in the record).` : `A day the model's picks leave empty gets a <b>wider-rule</b> group (three to five picks, 1.08 to 2.10, bookmakers ${Math.round((C.wideFairMin || 0.6) * 100)}%+), marked and graded apart.`}</p>` : `<p>The card for the day: up to six groups from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks from different fixtures, every pick priced by the bookmakers at ${pct(C.fairMin || 0.6)}%+

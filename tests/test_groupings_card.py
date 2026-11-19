@@ -336,7 +336,8 @@ class SportRule(unittest.TestCase):
             self.assertIn("off the Card", G.card_fault(leg(0, 1.40, 0.80, f"{DATE}T20:00:00Z", sport=s)))
 
     def test_tennis_needs_85_on_model_and_tested_rate(self):
-        # 11 Nov 2026 (CARD_RULE 10): 85%, up from 75%
+        # 11 Nov 2026 (CARD_RULE 10): 85%, up from 75%; 19 Nov 2026 (CARD_RULE 14) back to 75%, so the floor is patched here
+        p = mock.patch.object(G, "CARD_SPORT_MIN", {"tennis": 0.85}); p.start(); self.addCleanup(p.stop)
         t = dict(leg(1, 1.40, 0.80, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.90)
         self.assertIn("85%", G.card_fault(t))
         t = dict(leg(2, 1.12, 0.88, f"{DATE}T12:00:00Z", sport="tennis"), hit=0.80)

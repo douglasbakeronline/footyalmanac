@@ -27,6 +27,9 @@ def leg(i, d, hour, odds=1.40, model=0.76):
 
 class Span(unittest.TestCase):
     def setUp(self):
+        # 19 Nov 2026 (CARD_RULE 14): these tests read the 12 to 19 Nov constants (two-day groups, wider leagues, tennis 85%, the model alone)
+        for k, v in (("CARD_SPAN", True), ("CARD_CORE_ONLY", False), ("CARD_SPORT_MIN", {"tennis": 0.85}), ("CARD_MODEL_EDGE", None)):
+            p = mock.patch.object(G, k, v); p.start(); self.addCleanup(p.stop)
         self.L = [leg(0, D1, 19)] + [leg(i, D2, 15 + i) for i in range(1, 4)]
 
     def test_rule_admits_every_leg(self):

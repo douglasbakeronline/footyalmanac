@@ -25,6 +25,11 @@ def board(day):
 
 
 class Recheck(unittest.TestCase):
+    def setUp(self):
+        # 19 Nov 2026 (CARD_RULE 14): these tests read the 12 to 19 Nov constants (two-day groups, wider leagues, tennis 85%, the model alone)
+        for k, v in (("CARD_SPAN", True), ("CARD_CORE_ONLY", False), ("CARD_SPORT_MIN", {"tennis": 0.85}), ("CARD_MODEL_EDGE", None)):
+            p = mock.patch.object(G, k, v); p.start(); self.addCleanup(p.stop)
+
     def test_rule12_fault_survives_the_recheck(self):
         day = (datetime.now(timezone.utc) + timedelta(days=2)).astimezone(G.UK).date().isoformat()
         L = board(day)
