@@ -402,7 +402,7 @@
      "firstOdds": 1.41,
      "lastOdds": 1.4,
      "lastBest": 1.4,
-     "lastAt": "2026-11-19T15:56:44Z"
+     "lastAt": "2026-11-19T16:08:26Z"
     },
     {
      "sport": "nfl",
@@ -576,9 +576,9 @@
      "basis": "model",
      "tier": "reserve",
      "firstOdds": 1.13,
-     "lastOdds": 1.14,
-     "lastBest": 1.14,
-     "lastAt": "2026-11-19T15:56:44Z"
+     "lastOdds": 1.13,
+     "lastBest": 1.13,
+     "lastAt": "2026-11-19T16:08:26Z"
     }
    ],
    "tested": 0.4683,
