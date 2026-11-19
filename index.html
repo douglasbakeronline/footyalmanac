@@ -4251,8 +4251,27 @@ function putPinned(sec, g, i, date){
   line.querySelector(".row").classList.add("pinned-full");
   pred.removeAttribute("aria-hidden");
   pred.classList.add("pin-pred");
-  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final ? `<small>${final}</small>` : ""}${was ? `<small class="was">${was}</small>` : ""}`;
+  const sets = g.sport === "tennis" ? tennisSets(r.note) : "";
+  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final ? `<small>${final}</small>` : ""}${sets ? `<small class="sets">${sets}</small>` : ""}${was ? `<small class="was">${was}</small>` : ""}`;
   liveWatch(pred, g, date);
+}
+/* 19 Nov 2026 (Douglas: "I'm not seeing the tennis scores applied"): the set
+   scores from the tennis result's note ("(1) Alexander Zverev (GER) bt (6)
+   Arthur Fils (FRA) 6-4 7-6 (8-6)"), winner first, a tiebreak as the loser's
+   points in brackets: "6-4 7-6(6)". A retirement or walkover says so. */
+function tennisSets(note){
+  if(!note) return "";
+  const s = String(note), out = [];
+  const re = /(\d{1,2})-(\d{1,2})(?:\s*\((\d+)-(\d+)\))?/g;
+  let m;
+  while((m = re.exec(s))){
+    const a = +m[1], b = +m[2];
+    if(a > 7 || b > 7) continue;
+    out.push(`${a}-${b}` + (m[3] != null ? `(${Math.min(+m[3], +m[4])})` : ""));
+  }
+  if(/\bw\/?o\b|walkover/i.test(s)) return out.length ? out.join(" ") + " w/o" : "Walkover";
+  if(/\bret(\.|ired)?\b/i.test(s)) out.push("ret.");
+  return out.join(" ");
 }
 // The settled result for the middle cell: "Final 1–0" for football, the
 // score for the other team sports, "Golubic won" for tennis (surname, so it fits).
