@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-champ-draw-signals: Championship draw signals rejected (tag pending)
+
+**What changed:** nothing for a reader. A dated note and the reproducing tool record two untested en.2 draw ideas, both rejected.
+**Evidence:** walk-forward replay, live curve, paired bootstrap 1500 reps. Draw lift by low expected total: worse in all four seasons (delta +0.0015 to +0.0164, p(worse) 0.93 to 0.997). Club draw-rate lift: +0.0023 on the fit season 2025-26 (p 0.98), +0.0016 on 2026-27 (95 fixtures, under the 250 gate), best case -0.0009 in 2023-24 with p 0.28 and a sign flip.
+**Files:** `tools/championship_draw_total.py`, `claude/championship-draw-signals-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** all model constants, `engine.py`, `replay.py`.
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-19-own-band-third: own-band List admission already shipped (tag pending)
 
 **What changed:** nothing for a reader. A dated note records that the planner's own-band task is the rule shipped on 20 Oct 2026 and live for every sport.
