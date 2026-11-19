@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-racing-feed-diagnose: the racing feed says why it refused, and falls back by plan (tag pending)
+
+**What changed:** the first build with the secrets was refused (HTTP 401, deploy run 44552853538). The build log now carries The Racing API's own error message, and racecards come from the richest endpoint the plan allows (`racecards/standard`, then `basic`, then `free`, `CARD_PATHS`), with the one that answered named in the log.
+**Evidence:** the 401 above; `tests/test_racing.py` `FeedFallback`.
+**Files:** `racing.py`, `tests/test_racing.py`.
+**Not changed:** the model, the tip rule, grading, the page.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-horse-racing: the Horse racing tab, on trial (tag pending)
 
 **What changed:** a new sport tab, Horse racing, after Tennis in the sports row (and on the Analysis page's bar). UK and Irish racing from The Racing API. Every runner gets a chance to win and to place; the day's tips are the horses with a clear chance (22%+) whose best UK price pays at least 8% more than it, most likely first, at most six a day, never in fields over 16. Four boards in the site's own styles: Tips (the record, a tracker of every tip by day with a divider per day, the tips grouped by Douglas's betting windows with the price to take and the main danger, changes and races left alone), Every race, Racecards and Record (chance v winners, running profit, by band, what the model is learning by condition). Marked Trial throughout.
