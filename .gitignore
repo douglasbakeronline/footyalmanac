@@ -26,3 +26,4 @@ scale.js
 # The slip's data, rebuilt by slip.py on every deploy (slip-archive/ is what is kept)
 slip.json
 slip.js
+racing.js
