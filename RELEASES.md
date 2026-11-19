@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-card-mid-band: the Card's 1.30-1.60 legs read, no change (tag pending)
+
+**What changed:** nothing on the page. A dated note, `claude/card-mid-price-band-2026-11-19.md`.
+**Evidence:** on the results ledger, 60%+ picks priced 1.30-1.60 landed 266 of 400 v 273.2 expected (z -0.78; football +0.58); the Card's own 30 of 50 is a small sample of a band on quote. The long band (1.60-1.90, z -3.4) is the one under quote, and its caps (`m7cap160`, `m7short`) already replayed behind live on both football-data seasons.
+**Files:** claude/card-mid-price-band-2026-11-19.md, RELEASES.md.
+**Not changed:** `CARD_ODDS`, `CARD_RULE`, the record, the page.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-19-untimed-board: La Liga, the Süper Lig and Brazil's Serie A take API-Football's date and time (tag pending)
 
 **What changed.** openfootball dates these three leagues by round and gives no
