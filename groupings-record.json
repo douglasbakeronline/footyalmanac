@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T16:29:48Z",
+ "graded": "2026-11-19T16:49:12Z",
  "overall": {
   "groups": 140,
   "settled": 139,
@@ -476,7 +476,8 @@
    "ncaab|cincinnati bearcats|umass lowell river hawks|2026-11-22": -1,
    "ncaab|memphis tigers|evansville purple aces|2026-11-22": -1,
    "ncaab|texas longhorns|southern indiana screaming eagles|2026-11-22": -1,
-   "ncaab|boston college eagles|njit highlanders|2026-11-22": -1
+   "ncaab|boston college eagles|njit highlanders|2026-11-22": -1,
+   "football|trabzonspor|eyüpspor|2026-11-22": 1.12
   }
  },
  "cardContext": {
