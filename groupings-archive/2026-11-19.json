@@ -309,7 +309,7 @@
      "firstOdds": 1.25,
      "lastOdds": 1.26,
      "lastBest": 1.26,
-     "lastAt": "2026-11-19T15:50:18Z"
+     "lastAt": "2026-11-19T15:56:44Z"
     },
     {
      "sport": "tennis",
@@ -402,7 +402,7 @@
      "firstOdds": 1.41,
      "lastOdds": 1.4,
      "lastBest": 1.4,
-     "lastAt": "2026-11-19T15:50:18Z"
+     "lastAt": "2026-11-19T15:56:44Z"
     },
     {
      "sport": "nfl",
@@ -578,7 +578,7 @@
      "firstOdds": 1.13,
      "lastOdds": 1.14,
      "lastBest": 1.14,
-     "lastAt": "2026-11-19T15:50:18Z"
+     "lastAt": "2026-11-19T15:56:44Z"
     }
    ],
    "tested": 0.4683,
