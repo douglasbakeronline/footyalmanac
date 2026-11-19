@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T02:34:12Z",
+ "graded": "2026-11-19T03:24:45Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -7,8 +7,8 @@
   "z": -1.32,
   "lost": 97,
   "pending": 3,
-  "legs": 525,
-  "legsWon": 381,
+  "legs": 528,
+  "legsWon": 382,
   "returned": 113.74,
   "staked": 136,
   "returnedBest": 118.39,
@@ -27,12 +27,12 @@
  },
  "cardLegsBySport": {
   "nba": {
-   "legs": 41,
+   "legs": 43,
    "landed": 32,
-   "expected": 29.29,
-   "rate": 0.7805,
-   "quoted": 0.7144,
-   "z": 0.95,
+   "expected": 30.7,
+   "rate": 0.7442,
+   "quoted": 0.714,
+   "z": 0.44,
    "tripwire": false
   },
   "tennis": {
@@ -107,7 +107,7 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 7,
+   "legs": 9,
    "legsWon": 5,
    "returned": 0,
    "staked": 2,
@@ -128,14 +128,14 @@
   "unknown": 0,
   "legs": {
    "rule12": {
-    "legs": 2,
+    "legs": 3,
     "landed": 2,
-    "expected": 1.52
+    "expected": 2.24
    },
    "rule13only": {
-    "legs": 5,
+    "legs": 6,
     "landed": 3,
-    "expected": 3.23
+    "expected": 3.93
    }
   },
   "derived": 4
@@ -152,10 +152,10 @@
    "ret": -0.0658
   },
   "notAtBook": {
-   "n": 99,
-   "won": 97,
-   "rate": 0.9798,
-   "quoted": 0.9093
+   "n": 102,
+   "won": 100,
+   "rate": 0.9804,
+   "quoted": 0.9102
   },
   "unchecked": {
    "n": 27,
@@ -216,10 +216,10 @@
      "ret": -0.0884
     },
     "notAtBook": {
-     "n": 94,
-     "won": 92,
-     "rate": 0.9787,
-     "quoted": 0.9132
+     "n": 97,
+     "won": 95,
+     "rate": 0.9794,
+     "quoted": 0.9141
     },
     "unchecked": {
      "n": 13,
@@ -505,7 +505,7 @@
    "z": -0.93,
    "lost": 25,
    "pending": 2,
-   "legs": 108,
+   "legs": 110,
    "legsWon": 77,
    "returned": 25.35,
    "staked": 36,
@@ -822,7 +822,7 @@
   "z": -0.44,
   "lost": 29,
   "pending": 2,
-  "legs": 127,
+  "legs": 129,
   "legsWon": 86,
   "returned": 36.21,
   "staked": 42,
@@ -999,8 +999,8 @@
   "z": -0.86,
   "lost": 1,
   "pending": 1,
-  "legs": 5,
-  "legsWon": 4,
+  "legs": 6,
+  "legsWon": 5,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -1175,7 +1175,7 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 7,
+   "legs": 9,
    "legsWon": 5,
    "returned": 0,
    "staked": 2,
@@ -1202,7 +1202,7 @@
    "z": -0.13,
    "lost": 17,
    "pending": 2,
-   "legs": 78,
+   "legs": 80,
    "legsWon": 57,
    "returned": 23.99,
    "staked": 26,
@@ -1347,8 +1347,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 1,
-     "legsPending": 2,
+     "legsLost": 3,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Isparta 32 Spor",
@@ -1384,8 +1384,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7213,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "99-103",
        "opp": 3.18,
        "rule12Fault": null,
        "r12": "derived"
@@ -1404,8 +1404,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6919,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "112-117",
        "opp": 3.18,
        "rule12Fault": "Oklahoma City Thunder: the model (69%) sees no value at the bookmakers' 70%",
        "r12": "derived"
@@ -1518,9 +1518,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -1556,8 +1556,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7911,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "137-130",
        "opp": 4.73,
        "rule12Fault": null,
        "r12": false
