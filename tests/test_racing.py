@@ -200,11 +200,17 @@ class FeedFallback(unittest.TestCase):
             return {"racecards": []}
         old = racing.fetch_region
         racing.fetch_region = fake
+        racing._card_path[0] = None
         try:
             self.assertEqual(racing.fetch_cards([("day", "today")], "x"), {"racecards": []})
+            self.assertEqual(calls, list(racing.CARD_PATHS))
+            # the second day asks only the endpoint that answered
+            racing.fetch_cards([("day", "tomorrow")], "x")
+            self.assertEqual(calls[-1], "racecards/free")
+            self.assertEqual(len(calls), len(racing.CARD_PATHS) + 1)
         finally:
             racing.fetch_region = old
-        self.assertEqual(calls, list(racing.CARD_PATHS))
+            racing._card_path[0] = None
 
     def test_other_errors_raise(self):
         import urllib.error
@@ -213,6 +219,7 @@ class FeedFallback(unittest.TestCase):
             raise urllib.error.HTTPError(path, 500, "Server", {}, None)
         old = racing.fetch_region
         racing.fetch_region = fake
+        racing._card_path[0] = None
         try:
             with self.assertRaises(urllib.error.HTTPError):
                 racing.fetch_cards([], "x")

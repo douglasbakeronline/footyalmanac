@@ -44,6 +44,7 @@ import math
 import os
 import re
 import sys
+import time
 import urllib.parse
 import urllib.error
 import urllib.request
@@ -99,9 +100,18 @@ RESULT_PAGE = 50
 CARD_PATHS = ("racecards/standard", "racecards/basic", "racecards/free")
 
 
+GAP_S = 1.2                        # the free plan allows one request a second
+_last_call = [0.0]
+_card_path = [None]                # the racecard endpoint the plan allows, once found
+
+
 def fetch(path, params=None, auth=None):
     """One GET against The Racing API. Repeated keys (region) are allowed.
     An HTTP error carries the API's own message into the build log."""
+    wait = GAP_S - (time.monotonic() - _last_call[0])
+    if wait > 0:
+        time.sleep(wait)
+    _last_call[0] = time.monotonic()
     q = urllib.parse.urlencode(params or [], doseq=True)
     req = urllib.request.Request(f"{API}/{path}" + (f"?{q}" if q else ""),
                                  headers={"Authorization": auth, "User-Agent": "sportsalmanac"})
@@ -120,10 +130,13 @@ def fetch(path, params=None, auth=None):
 def fetch_cards(params, auth):
     """Racecards from the richest endpoint the plan allows."""
     last = None
-    for path in CARD_PATHS:
+    paths = (_card_path[0],) if _card_path[0] else CARD_PATHS
+    for path in paths:
         try:
             payload = fetch_region(path, params, CARD_REGION_PARAM, auth)
-            print(f"racing: racecards from {path}")
+            if _card_path[0] != path:
+                print(f"racing: racecards from {path}")
+            _card_path[0] = path
             return payload
         except urllib.error.HTTPError as e:
             if e.code not in (401, 403):
