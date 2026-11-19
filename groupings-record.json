@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-19T15:20:21Z",
+ "graded": "2026-11-19T15:31:49Z",
  "overall": {
-  "groups": 139,
+  "groups": 140,
   "settled": 139,
   "won": 40,
   "z": -1.33,
   "lost": 99,
-  "pending": 0,
+  "pending": 1,
   "legs": 532,
   "legsWon": 384,
   "returned": 116.14,
@@ -19,9 +19,9 @@
   "unitsReturned": 134.95,
   "unitsReturnedBest": 139.77,
   "clv": {
-   "n": 157,
-   "shortened": 64,
-   "drifted": 58,
+   "n": 160,
+   "shortened": 65,
+   "drifted": 59,
    "mean": -0.0002
   }
  },
@@ -993,12 +993,12 @@
   }
  },
  "cardDaily": {
-  "groups": 2,
+  "groups": 3,
   "settled": 2,
   "won": 0,
   "z": -1.21,
   "lost": 2,
-  "pending": 0,
+  "pending": 1,
   "legs": 7,
   "legsWon": 5,
   "returned": 0,
@@ -1011,10 +1011,10 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 5,
-   "shortened": 3,
-   "drifted": 2,
-   "mean": 0.0085
+   "n": 8,
+   "shortened": 4,
+   "drifted": 3,
+   "mean": 0.0052
   }
  },
  "cardListLong": {
@@ -1322,6 +1322,118 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-19",
+   "published": "2026-11-19T15:31:09Z",
+   "groups": [
+    {
+     "name": "Daily 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 1,
+     "wideRule": null,
+     "odds": 2.23,
+     "p": 0.2616,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-19T15:25:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Al Ain",
+       "event": "Al Ain v Al-Dhafra",
+       "sport": "football",
+       "comp": "Pro League",
+       "when": "2026-11-19T15:25:00Z",
+       "odds": 1.12,
+       "best": 1.14,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7736,
+       "status": "pending",
+       "result": null,
+       "opp": 13.2,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Veronika Erjavec",
+       "event": "Veronika Erjavec v Valeriya Strakhova",
+       "sport": "tennis",
+       "comp": "LP Open by IND Round 2",
+       "when": "2026-11-19T16:00:00Z",
+       "odds": 1.25,
+       "best": 1.25,
+       "lastOdds": 1.26,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7216,
+       "status": "pending",
+       "result": null,
+       "opp": 3.99,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Alexander Zverev",
+       "event": "Arthur Fils v Alexander Zverev",
+       "sport": "tennis",
+       "comp": "Nitto ATP Finals Group Stage",
+       "when": "2026-11-19T19:30:00Z",
+       "odds": 1.41,
+       "best": 1.41,
+       "lastOdds": 1.4,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6384,
+       "status": "pending",
+       "result": null,
+       "opp": 3.12,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Houston Texans",
+       "event": "Houston Texans v Indianapolis Colts",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-20T01:15Z",
+       "odds": 1.13,
+       "best": 1.13,
+       "lastOdds": 1.13,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.734,
+       "status": "pending",
+       "result": null,
+       "opp": 6.25,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-18",
    "published": "2026-11-18T11:08:16Z",

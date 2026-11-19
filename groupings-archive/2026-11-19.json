@@ -1,0 +1,608 @@
+{
+ "date": "2026-11-19",
+ "published": "2026-11-19T15:31:09Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.23,
+   "p": 0.2616,
+   "pFair": 0.361,
+   "implied": 0.4483,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Al Ain v Al-Dhafra",
+     "home": "Al Ain",
+     "away": "Al-Dhafra",
+     "side": "h",
+     "pick": "Al Ain",
+     "code": "af.301",
+     "comp": "Pro League",
+     "country": "United Arab Emirates",
+     "when": "2026-11-19T15:25:00Z",
+     "date": "2026-11-19",
+     "pModel": 0.7736,
+     "p": 0.7736,
+     "fx": {
+      "u21Side": false,
+      "league": "af.301",
+      "leagueName": "Pro League",
+      "short": "PRO",
+      "country": "United Arab Emirates",
+      "iso": "",
+      "tier": 2,
+      "order": 619,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-19",
+      "time": "15:25",
+      "kickoff": "2026-11-19T15:25:00Z",
+      "home": {
+       "name": "Al Ain",
+       "att": 1.292,
+       "def": 0.662,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 8,
+        "max": 15,
+        "seq": "WWDLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 26,
+        "W": 21,
+        "D": 5,
+        "L": 0,
+        "GF": 62,
+        "GA": 18,
+        "GD": 44,
+        "Pts": 68,
+        "PPG": 2.615
+       },
+       "now": {
+        "P": 7,
+        "W": 4,
+        "D": 2,
+        "L": 1,
+        "GF": 12,
+        "GA": 7,
+        "GD": 5,
+        "Pts": 14,
+        "PPG": 2.0
+       }
+      },
+      "away": {
+       "name": "Al-Dhafra",
+       "att": 0.831,
+       "def": 1.212,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LLWWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 26,
+        "W": 6,
+        "D": 4,
+        "L": 16,
+        "GF": 28,
+        "GA": 52,
+        "GD": -24,
+        "Pts": 22,
+        "PPG": 0.846
+       },
+       "now": {
+        "P": 7,
+        "W": 2,
+        "D": 0,
+        "L": 5,
+        "GF": 9,
+        "GA": 13,
+        "GD": -4,
+        "Pts": 6,
+        "PPG": 0.857
+       }
+      },
+      "p": {
+       "h": 0.7736,
+       "d": 0.153,
+       "a": 0.0733
+      },
+      "xg": [
+       2.6,
+       0.67
+      ],
+      "btts": 0.505,
+      "over25": 0.5656,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7736,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8084,
+        0.1228,
+        0.0687
+       ],
+       "best": [
+        1.14,
+        8.0,
+        15.0
+       ],
+       "avg": [
+        1.12,
+        7.38,
+        13.2
+       ],
+       "ev": [
+        -0.1181,
+        0.224,
+        0.0995
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 2,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.153,
+     "multOnly": false,
+     "odds": 1.12,
+     "best": 1.14,
+     "books": 9,
+     "opp": 13.2,
+     "draw": 7.38,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.14,
+      "Bet365": 1.14,
+      "Betfair": 1.1,
+      "BetVictor": 1.09
+     },
+     "margin": 1.1024,
+     "pricedAt": "2026-11-18T22:58:07Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.8929,
+     "pTested": 0.7736,
+     "fair": 0.81,
+     "edge": -0.1336,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.12
+    },
+    {
+     "sport": "tennis",
+     "event": "Veronika Erjavec v Valeriya Strakhova",
+     "pick": "Veronika Erjavec",
+     "tour": "WTA",
+     "tournament": "LP Open by IND",
+     "players": [
+      "Veronika Erjavec",
+      "Valeriya Strakhova"
+     ],
+     "comp": "LP Open by IND Round 2",
+     "when": "2026-11-19T16:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-19",
+     "id": "186808",
+     "fx": {
+      "id": "186808",
+      "espn": [
+       "Veronika Erjavec",
+       "Valeriya Strakhova"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-19",
+      "time": "16:00",
+      "timeTbc": false,
+      "tournament": "LP Open by IND",
+      "round": "Round 2",
+      "surface": "Hard",
+      "playerA": "Veronika Erjavec",
+      "playerB": "Valeriya Strakhova",
+      "ratingA": {
+       "elo": 1985,
+       "matches": 411,
+       "surfaceElo": 1712
+      },
+      "ratingB": {
+       "elo": 1788,
+       "matches": 442,
+       "surfaceElo": 1586
+      },
+      "p": {
+       "a": 0.7216,
+       "b": 0.2784
+      },
+      "pick": "Veronika Erjavec",
+      "confidence": 0.7216,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6786,
+       "n": 84,
+       "cumHit": 0.6786,
+       "cumN": 84,
+       "quoted": 0.7238,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7216,
+     "p": 0.7216,
+     "hit": 0.6786,
+     "n": 84,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.25,
+     "best": 1.25,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 3.99,
+     "draw": null,
+     "margin": 1.0481,
+     "pricedAt": "2026-11-18T22:59:47Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8,
+     "pTested": 0.6786,
+     "fair": 0.7633,
+     "edge": -0.1518,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.25,
+     "lastOdds": 1.26,
+     "lastBest": 1.26,
+     "lastAt": "2026-11-19T15:31:09Z"
+    },
+    {
+     "sport": "tennis",
+     "event": "Arthur Fils v Alexander Zverev",
+     "pick": "Alexander Zverev",
+     "tour": "ATP",
+     "tournament": "Nitto ATP Finals",
+     "players": [
+      "Arthur Fils",
+      "Alexander Zverev"
+     ],
+     "comp": "Nitto ATP Finals Group Stage",
+     "when": "2026-11-19T19:30:00Z",
+     "timeEst": false,
+     "date": "2026-11-19",
+     "id": "187504",
+     "fx": {
+      "id": "187504",
+      "espn": [
+       "Arthur Fils",
+       "Alexander Zverev"
+      ],
+      "tour": "ATP",
+      "date": "2026-11-19",
+      "time": "19:30",
+      "timeTbc": false,
+      "tournament": "Nitto ATP Finals",
+      "round": "Group Stage",
+      "surface": "Hard",
+      "playerA": "Arthur Fils",
+      "playerB": "Alexander Zverev",
+      "ratingA": {
+       "elo": 2124,
+       "matches": 306,
+       "surfaceElo": 1990
+      },
+      "ratingB": {
+       "elo": 2232,
+       "matches": 556,
+       "surfaceElo": 2107
+      },
+      "p": {
+       "a": 0.3616,
+       "b": 0.6384
+      },
+      "pick": "Alexander Zverev",
+      "confidence": 0.6384,
+      "tier": "Firm",
+      "rankA": 7,
+      "rankB": 1,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.6022,
+       "n": 93,
+       "cumHit": 0.6022,
+       "cumN": 93,
+       "quoted": 0.6248,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.6384,
+     "p": 0.6384,
+     "hit": 0.6022,
+     "n": 93,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.41,
+     "best": 1.41,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 3.12,
+     "draw": null,
+     "margin": 1.0287,
+     "pricedAt": "2026-11-18T22:59:47Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.7092,
+     "pTested": 0.6022,
+     "fair": 0.6894,
+     "edge": -0.1509,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.41,
+     "lastOdds": 1.4,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-19T15:31:09Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Houston Texans v Indianapolis Colts",
+     "home": "Houston Texans",
+     "away": "Indianapolis Colts",
+     "pick": "Houston Texans",
+     "comp": "NFL",
+     "when": "2026-11-20T01:15Z",
+     "date": "2026-11-20",
+     "id": "401873066",
+     "pModel": 0.734,
+     "p": 0.734,
+     "hit": 0.7217,
+     "n": 115,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873066",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-20T01:15Z",
+      "home": "Houston Texans",
+      "away": "Indianapolis Colts",
+      "neutral": false,
+      "pHome": 0.734,
+      "pick": "Houston Texans",
+      "confidence": 0.734,
+      "tier": "Strong",
+      "eloH": 1521,
+      "eloA": 1394,
+      "gamesH": 66,
+      "gamesA": 61,
+      "hfa": 50,
+      "eloDiff": 176.3,
+      "line": {
+       "spread": -12.5,
+       "total": 43.5,
+       "mlH": -750.0,
+       "mlA": 525.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.653,
+       "n": 49,
+       "cumHit": 0.7217,
+       "cumN": 115
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "24-27",
+        "opp": "Cleveland Browns",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "44-22",
+        "opp": "Los Angeles Chargers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "21-27",
+        "opp": "New York Giants",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "34-31",
+        "opp": "Jacksonville Jaguars",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "W",
+        "score": "26-3",
+        "opp": "Tennessee Titans",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "24-22",
+        "opp": "Miami Dolphins",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "23-27",
+        "opp": "Dallas Cowboys",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "7-42",
+        "opp": "Jacksonville Jaguars",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "10-16",
+        "opp": "Minnesota Vikings",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "20-26",
+        "opp": "Tennessee Titans",
+        "home": true,
+        "date": "2026-10-18"
+       }
+      ],
+      "recordH": {
+       "w": 3,
+       "l": 6,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 7,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-09-27",
+        "home": "Indianapolis Colts",
+        "away": "Houston Texans",
+        "score": "19-17"
+       },
+       {
+        "date": "2026-01-04",
+        "home": "Houston Texans",
+        "away": "Indianapolis Colts",
+        "score": "38-30"
+       },
+       {
+        "date": "2025-11-30",
+        "home": "Indianapolis Colts",
+        "away": "Houston Texans",
+        "score": "16-20"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.13,
+     "margin": 1.045,
+     "opp": 6.25,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-18T23:00:36Z",
+     "implied": 0.885,
+     "pTested": 0.653,
+     "fair": 0.8469,
+     "edge": -0.2621,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.13,
+     "lastOdds": 1.13,
+     "lastBest": 1.13,
+     "lastAt": "2026-11-19T15:31:09Z"
+    }
+   ],
+   "tested": 0.4683,
+   "short": false,
+   "tiers": [
+    "list",
+    "reserve"
+   ],
+   "bestOdds": 2.27,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-18T22:59:06Z",
+   "checked": "2026-11-18T22:59:06Z",
+   "lockAt": "2026-11-19T15:25:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-19T15:31:09Z"
+  }
+ ]
+}
