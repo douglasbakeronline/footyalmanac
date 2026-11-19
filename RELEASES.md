@@ -9,6 +9,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-racing-log-keys: the racing build names the feed's fields (tag pending)
+
+**What changed:** each build prints the racecard's race and runner field names. The free plan's 72 races came with no going, distance, trainer form or prices, and the log shows whether those are missing from the plan or named differently.
+**Files:** `racing.py`, `RELEASES.md`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-racing-rate-limit: racing calls spaced for the free plan (tag pending)
 
 **What changed:** the racing build now waits 1.2 seconds between calls (`GAP_S`) and, once one racecard endpoint answers, asks only that one for the next day. The 15:32 build (run 44555182414) found the account on the free plan ("Standard Plan required", "Basic Plan required"), took today's free racecards, then had tomorrow's refused: "Rate limit exceeded: 1 per 1 second".
