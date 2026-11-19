@@ -9,6 +9,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-super-lig-times: the Süper Lig takes API-Football's kick-offs (tag pending)
+
+**For a reader.** Süper Lig games now show their real day and kick-off, as La Liga and Brazil's Serie A have since this afternoon. The first build with the untimed fill (#425) moved 15 La Liga and 11 Brazilian games to their real days but refused the Süper Lig whole: API-Football spells BB Erzurumspor "Erzurumspor FK", and the fill is all or nothing on names. Galatasaray v Samsunspor and Kocaelispor v Fenerbahçe (21 Nov, board 22 Nov) went unpriced as "moved", and a leg with no start cannot reach the Card.
+
+**Evidence.** The 16:28 UTC build log (`tr.1: API-Football kick-offs not used, club names unmatched: Erzurumspor FK`); `predictions/2026-11-19.json` (9 of 9 tr.1 rows with no kick-off). `claude/super-lig-untimed-spelling-2026-11-19.md`.
+
+**Files.** `sources.py` (`ALIASES`), `tests/test_lagging_results.py`, the note.
+
+**Not changed.** The fill's rule, the matcher's guards, any Card constant.
+
+**Check.** The next CI build should log `untimed tr.1: 9 fixture(s)` and no Süper Lig games under "football moved:".
+
+**Roll back.** `git revert` this merge.
 ## 2026-11-19-past-bookies: the Bookies line under the bar on a played Daily List game (tag pending)
 
 **For a reader.** A Daily List row for a game already played now carries the same "Bookies 1.18 / 5.11" line under its probability bar as a game still to come (the pick's price, the draw where there is one, the other side), from the last price read before the start. Douglas, 19 Nov 2026: "I want the odds under the red and yellow bar as well, as they are on the upcoming games ... easier to read that way."
