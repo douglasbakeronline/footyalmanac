@@ -421,6 +421,7 @@ def _odds_for(fid, key, cache_dir):
 
 
 FB_CALLS_MULT = 150   # per build, for legs the bulk day prices missed
+NOFIXTURE_KEEP = 12   # noFixture legs named in the report and the build log (19 Nov 2026)
 
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
@@ -440,6 +441,11 @@ def price_football(L, dates, report):
     calls, matched = 0, 0
     miss = Counter()      # 14 Nov 2026: why a football leg stayed unpriced
     miss_comps = defaultdict(Counter)
+    # 19 Nov 2026: the 18 Nov builds counted noFixture 11 (Serie A 5) with no
+    # names, so a spelling for LIVE_NAMES could not be told from a fixture
+    # API-Football does not list without the paid feed. Each noFixture leg is
+    # now named with the day's fixtures sharing one of its names (`near`).
+    nofix = []
     def _miss(l, why):
         miss[why] += 1
         miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
@@ -470,7 +476,12 @@ def price_football(L, dates, report):
                 # fixture) reads differently from a name API-Football spells
                 # another way or a fixture it does not list at all
                 named = any(same(h, l["home"]) and same(a, l["away"]) for h, a, _ in teams.values())
-                _miss(l, "kickoff" if named else "noFixture"); continue
+                _miss(l, "kickoff" if named else "noFixture")
+                if not named and len(nofix) < NOFIXTURE_KEEP:
+                    nofix.append({"date": d, "comp": l.get("comp") or l.get("code"), "home": l["home"], "away": l["away"],
+                                  "near": sorted(f"{h} v {a}" for h, a, _ in teams.values()
+                                                 if same(h, l["home"]) or same(a, l["away"]))[:3]})
+                continue
             row = bulk.get(str(fid))
             if row:
                 i = 0 if l["side"] == "h" else 2
@@ -526,6 +537,8 @@ def price_football(L, dates, report):
     if miss:
         report["football"]["miss"] = dict(miss)
         report["football"]["missComps"] = {w: c.most_common(5) for w, c in miss_comps.items()}
+    if nofix:
+        report["football"]["noFixture"] = nofix
 
 def american(x):
     try: x = float(str(x).replace("+", ""))
@@ -3584,6 +3597,10 @@ def main():
         print("  football unpriced: " + "; ".join(
             f"{w} {n} (" + ", ".join(f"{c} {k}" for c, k in fm["missComps"].get(w, [])[:3]) + ")"
             for w, n in sorted(fm["miss"].items(), key=lambda kv: -kv[1])), file=sys.stderr)
+    if fm.get("noFixture"):
+        print("  football noFixture: " + "; ".join(
+            f"{m['date']} {m['comp']}: {m['home']} v {m['away']}" + (f" (near: {', '.join(m['near'])})" if m["near"] else "")
+            for m in fm["noFixture"])[:2000], file=sys.stderr)
     # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
     # how far its legs got and what a game looked like, on its own line
     sg = report.get("sgo")

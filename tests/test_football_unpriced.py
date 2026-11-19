@@ -69,6 +69,26 @@ class FootballUnpriced(unittest.TestCase):
         r = self.run_price([leg(t, "Arsenal", "Chelsea", "Premier League")], [fx(11, t, "Arsenal", "Chelsea")], {11: book})
         self.assertNotIn("miss", r)
 
+    def test_nofixture_legs_named_with_near_fixtures(self):
+        """19 Nov 2026: a noFixture leg is named, with the day's fixtures that share one of its names, so a
+        session can tell a spelling (add it to LIVE_NAMES) from a fixture API-Football does not list."""
+        t = date.today().isoformat()
+        day = [fx(31, t, "Qqx Inter", "AC Milan"), fx(32, t, "Leeds", "Hull")]
+        L = [leg(t, "Internazionale", "AC Milan", "Serie A"),   # one side spelt another way
+             leg(t, "Zzyzx Town", "Qwerty Rovers", "Liga X")]   # not listed at all
+        r = self.run_price(L, day, {})
+        named = {(m["home"], m["away"]): m for m in r["noFixture"]}
+        self.assertEqual(named[("Internazionale", "AC Milan")]["near"], ["Qqx Inter v AC Milan"])
+        self.assertEqual(named[("Internazionale", "AC Milan")]["comp"], "Serie A")
+        self.assertEqual(named[("Zzyzx Town", "Qwerty Rovers")]["near"], [])
+
+    def test_nofixture_list_is_capped(self):
+        t = date.today().isoformat()
+        L = [leg(t, f"Side {i}", f"Other {i}", "Liga X") for i in range(G.NOFIXTURE_KEEP + 5)]
+        r = self.run_price(L, [fx(41, t, "Leeds", "Hull")], {})
+        self.assertEqual(r["miss"]["noFixture"], G.NOFIXTURE_KEEP + 5)
+        self.assertEqual(len(r["noFixture"]), G.NOFIXTURE_KEEP)
+
 
 if __name__ == "__main__":
     unittest.main()
