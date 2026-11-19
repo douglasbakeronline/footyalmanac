@@ -927,6 +927,44 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
     return filled, [], unplaced
 
 
+def fill_untimed(rows, af, start, window=3):
+    """Give a league's unplayed rows with no kick-off the date and time
+    API-Football lists (19 Nov 2026, #417: La Liga, the Süper Lig and Brazil's
+    Serie A come from openfootball dated by round with no time, a day either
+    side of the real day, so the board, the Daily List and the archive carried
+    the wrong day and no start).
+
+    rows: one league's rows (primary spelling), changed in place. af: its
+    API-Football rows ({date, time, home, away}, UTC). A row is changed only
+    when it is unplayed, dated `start` or later, has no time, and exactly one
+    API-Football fixture of the same two clubs lies within `window` days; the
+    row then takes that fixture's date and time (`utc` True, `timeFrom`
+    "apifootball"). All or nothing on names (Rule 6): one club that matches
+    nothing, or two that match one, changes nothing. A pair listed twice in
+    the window is left alone. Returns (changed, unmatched names)."""
+    todo = [r for r in rows if r.get("hg") is None and not r.get("time")
+            and r["date"] >= start.isoformat()]
+    if not todo or not af:
+        return 0, []
+    mapping, bad = _map_names(rows, af)
+    if bad:
+        return 0, bad
+    by_pair = defaultdict(list)
+    for x in af:
+        by_pair[(mapping[x["home"]], mapping[x["away"]])].append(x)
+    changed = 0
+    for r in todo:
+        d = date.fromisoformat(r["date"])
+        near = [x for x in by_pair.get((r["home"], r["away"]), [])
+                if abs((date.fromisoformat(x["date"]) - d).days) <= window]
+        if len(near) != 1 or not near[0].get("time"):
+            continue
+        r["date"], r["time"], r["utc"] = near[0]["date"], near[0]["time"], True
+        r["timeFrom"] = "apifootball"
+        changed += 1
+    return changed, []
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--days", type=int, default=4, help="days of fixtures to include")
@@ -1112,6 +1150,21 @@ def main():
             else:
                 print(f"    lag {c}: {filled} result(s) filled from API-Football"
                       + (f", {unplaced} with no fixture to fill" if unplaced else ""),
+                      file=sys.stderr)
+
+    # Leagues openfootball gives no kick-off (19 Nov 2026, #417): date and
+    # time from API-Football, all or nothing on names, before the window is cut.
+    if not args.no_topup and os.environ.get("API_FOOTBALL_KEY"):
+        for c in sorted(S.AF_UNTIMED):
+            if c not in fixtures:
+                continue
+            rows_af = S.af_untimed_rows(c, start - timedelta(days=1), end + timedelta(days=3))
+            n, bad = fill_untimed(fixtures[c], rows_af, start)
+            if bad:
+                print(f"::warning::{c}: API-Football kick-offs not used, club names unmatched: "
+                      + "; ".join(bad[:8]), file=sys.stderr)
+            else:
+                print(f"    untimed {c}: {n} fixture(s) took API-Football's date and time",
                       file=sys.stderr)
 
     stale, stale_watch = stale_leagues(fixtures, start)
