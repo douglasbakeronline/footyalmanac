@@ -3121,6 +3121,39 @@ def board_prices(L):
                                           "t": l.get("pricedAt"), **({"x": l["exchange"]} if l.get("exchange") else {})}
     return out
 
+PAST_PRICE_DAYS = (-1, 0)   # yesterday's and today's pool files
+
+def past_prices(have, now=None, pool_dir=None):
+    """19 Nov 2026 (Douglas: a game played in the early hours loses its price
+    chip by the afternoon; "keep the odds there as we last knew them"): for
+    every game in yesterday's and today's pool files that this build no longer
+    carries (started, so out of L), the last price read before its start
+    (lastOdds / lastBest / lastBooks, else the first), marked `past` so the
+    chip says it is the last known price, not a live one. Display only."""
+    now = now or datetime.now(timezone.utc)
+    today = now.astimezone(ZoneInfo("Europe/London")).date()
+    out = {}
+    for off in PAST_PRICE_DAYS:
+        d = (today + timedelta(days=off)).isoformat()
+        try:
+            with gzip.open(os.path.join(pool_dir or ARCHIVE, f"pool-{d}.json.gz"), "rt", encoding="utf-8") as f:
+                rows = json.load(f).get("legs") or []
+        except (OSError, ValueError):
+            continue
+        for r in rows:
+            odds_ = r.get("lastOdds") or (None if r.get("est") else r.get("odds")) or (r.get("priced") or {}).get("odds")
+            if not odds_: continue
+            h, a = _lb_sides(r)
+            if not h or not a: continue
+            k = _lb_key(r["sport"], h, a)
+            if k in have or k in out: continue
+            books = r.get("lastBooks") or r.get("bookOdds") or (r.get("priced") or {}).get("bookOdds") or {}
+            best = r.get("lastBest") or r.get("best") or (max(books.values()) if books else None)
+            bb = r.get("bestBook") if not r.get("lastBest") else (max(books, key=books.get) if books else None)
+            out[k] = {"p": r.get("pick"), "o": odds_, "b": best, "bb": bb, "h": books.get(CARD_BOOK),
+                      "n": len(books) or r.get("n") or None, "t": r.get("lastAt") or r.get("pricedAt"), "past": True}
+    return out
+
 def list_books_page(L, dates, now=None):
     """{sport|home|away: mark} for every Daily List pick still to start (this
     build's legs) and today's and yesterday's started ones (the pool archive),
@@ -3647,7 +3680,7 @@ def main():
            # 10 Nov 2026: each list pick's William Hill mark, for the page
            "listBooks": list_books_page(L, dates, now),
            # 11 Nov 2026: a bookmaker price for every priced game, every sport
-           "prices": board_prices(L),
+           "prices": {**past_prices(set(), now), **board_prices(L)},
            # 12 Nov 2026: the context check's verdict on every read pick, keyed like
            # listBooks, for the Daily List, Starred and the slip checker (display only)
            "contexts": context_page(L),
