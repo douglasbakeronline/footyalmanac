@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-racing-rate-limit: racing calls spaced for the free plan (tag pending)
+
+**What changed:** the racing build now waits 1.2 seconds between calls (`GAP_S`) and, once one racecard endpoint answers, asks only that one for the next day. The 15:32 build (run 44555182414) found the account on the free plan ("Standard Plan required", "Basic Plan required"), took today's free racecards, then had tomorrow's refused: "Rate limit exceeded: 1 per 1 second".
+**Evidence:** the log lines above; `tests/test_racing.py` `FeedFallback`.
+**Files:** `racing.py`, `tests/test_racing.py`.
+**Not changed:** the model, the tip rule, grading, the page.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-racing-feed-diagnose: the racing feed says why it refused, and falls back by plan (tag pending)
 
 **What changed:** the first build with the secrets was refused (HTTP 401, deploy run 44552853538). The build log now carries The Racing API's own error message, and racecards come from the richest endpoint the plan allows (`racecards/standard`, then `basic`, then `free`, `CARD_PATHS`), with the one that answered named in the log.
