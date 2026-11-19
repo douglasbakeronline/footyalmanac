@@ -666,6 +666,12 @@ def main(argv=None):
                     print("race keys:", sorted(first.keys()))
                     print("runner keys:", sorted(((first.get("runners") or [{}])[0]).keys()))
                     return 0
+                first = (cards_of(payload) or [None])[0]
+                if first and not by_day:
+                    # every build names the fields the plan sends, so a blank
+                    # column on the page can be traced to the feed (19 Nov 2026)
+                    print("racing: race keys:", ",".join(sorted(first.keys())))
+                    print("racing: runner keys:", ",".join(sorted(((first.get("runners") or [{}])[0]).keys())))
                 for c in filter(in_regions, cards_of(payload)):
                     by_day.setdefault(race_of(c)["date"], []).append(c)
         for day, cards in sorted(by_day.items()):
