@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-18T23:19:23Z",
+ "graded": "2026-11-19T01:03:29Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -432,12 +432,12 @@
    "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": -1,
    "ncaab|high point panthers|montana state bobcats|2026-11-20": -1,
    "ncaab|ohio state buckeyes|umbc retrievers|2026-11-20": -1,
-   "ncaab|texas longhorns|southern utah thunderbirds|2026-11-20": -1,
+   "ncaab|texas longhorns|southern utah thunderbirds|2026-11-20": 0,
    "ncaab|louisville cardinals|stetson hatters|2026-11-20": -1,
    "ncaab|illinois state redbirds|eureka red devils|2026-11-20": -1,
    "ncaab|portland state vikings|northwest indian redhawks|2026-11-20": -1,
-   "ncaab|stanford cardinal|sacramento state hornets|2026-11-20": -1,
-   "ncaab|usc trojans|tarleton state texans|2026-11-20": -1,
+   "ncaab|stanford cardinal|sacramento state hornets|2026-11-20": 0,
+   "ncaab|usc trojans|tarleton state texans|2026-11-20": 0,
    "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": -1,
    "football|vihren|pirin blagoevgrad|2026-11-21": 0,
    "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": -1,
@@ -461,7 +461,21 @@
    "ncaab|michigan state spartans|detroit mercy titans|2026-11-21": -1,
    "ncaab|james madison dukes|virginia lynchburg dragons|2026-11-21": -1,
    "ncaab|massachusetts minutemen|maine black bears|2026-11-21": -1,
-   "ncaab|georgetown hoyas|coppin state eagles|2026-11-21": -1
+   "ncaab|georgetown hoyas|coppin state eagles|2026-11-21": -1,
+   "football|beerschot va|krc genk ii|2026-11-22": 0,
+   "nfl|chicago bears|new orleans saints|2026-11-22": 1.12,
+   "nfl|kansas city chiefs|arizona cardinals|2026-11-22": 1.06,
+   "nfl|denver broncos|las vegas raiders|2026-11-22": 1.15,
+   "nba|san antonio spurs|new orleans pelicans|2026-11-22": -1,
+   "nba|sacramento kings|boston celtics|2026-11-22": -1,
+   "ncaab|cal poly mustangs|northern arizona lumberjacks|2026-11-22": -1,
+   "ncaab|vermont catamounts|brown bears|2026-11-22": -1,
+   "ncaab|duke blue devils|washington state cougars|2026-11-22": -1,
+   "ncaab|marquette golden eagles|chicago state cougars|2026-11-22": -1,
+   "ncaab|cincinnati bearcats|umass lowell river hawks|2026-11-22": -1,
+   "ncaab|memphis tigers|evansville purple aces|2026-11-22": -1,
+   "ncaab|texas longhorns|southern indiana screaming eagles|2026-11-22": -1,
+   "ncaab|boston college eagles|njit highlanders|2026-11-22": -1
   }
  },
  "cardContext": {
