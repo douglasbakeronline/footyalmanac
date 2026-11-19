@@ -21,8 +21,10 @@ class M7Wide(unittest.TestCase):
     def tearDown(self): G.CARD_CORE_ONLY = self.saved
 
     def test_live_admits_wider_leagues(self):
-        # 11 Nov 2026 (CARD_RULE 11): wider leagues on, at Douglas's call
-        self.assertFalse(G.CARD_CORE_ONLY)
+        # 11 Nov 2026 (CARD_RULE 11): wider leagues on, at Douglas's call;
+        # 19 Nov 2026 (CARD_RULE 14): core leagues only again
+        self.assertTrue(G.CARD_CORE_ONLY)
+        G.CARD_CORE_ONLY = False
         self.assertIsNone(G.model_fault(leg("af.311")))
         self.assertIsNone(G.model_fault(leg("en.1")))
         G.CARD_CORE_ONLY = True

@@ -26,7 +26,7 @@ class M7Opp(unittest.TestCase):
         self.assertGreaterEqual(G.CARD_RULE, 13)
         self.assertIsNone(G.model_fault(leg(4.5)))
         self.assertIsNone(G.model_fault(leg(None)))
-        self.assertEqual(R.VARIANTS["rule12"], {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}})
+        self.assertEqual(R.VARIANTS["rule12"]["CARD_MODEL_OPP_MIN"], {"football": 5.0})
 
     def test_floor_5_as_rule12_ran_it(self):
         G.CARD_MODEL_OPP_MIN = {"football": 5.0}

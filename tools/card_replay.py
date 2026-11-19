@@ -342,6 +342,7 @@ VARIANTS = {
     # CARD_SPAN is on (`spans`), and nospan replays the rollback
     # (claude/card-replay-live-span-2026-11-17.md).
     "nospan": {"_SPAN": False},
+    "span2": {"_SPAN": True},    # 19 Nov 2026: two-day groups, live from 12 to 19 Nov, off under CARD_RULE 14
     # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md), pre-registered before any
     # result: the rule 11 Card with rule 6's opposition condition on its
     # football picks (groupings.CARD_MODEL_OPP_MIN). 9+ is rule 6's floor, the
@@ -357,15 +358,23 @@ VARIANTS = {
     # demand and the opposition floor), so m7noopp is live less the value
     # demand and m7opp5 is live less neither. The rule 12 Card is replayed
     # as rule12 for the 30 Nov review (claude/card-rule13-model-only-2026-11-17.md).
-    "rule12": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}},
+    "rule12": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {"football": 5.0}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": False,
+               "CARD_SPORT_MIN": {"tennis": 0.85}, "_SPAN": True},   # pinned 19 Nov 2026
     # 19 Nov 2026 (RULES below): the model's-picks rules before rule 11, each
     # as it ran (the value demand on, no two-day groups before 12 Nov)
     "rule7": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x", "Card 3x"), "CARD_CORE_ONLY": True,
               "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75), "_SPAN": False},
     "rule8": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": True,
               "CARD_SPORT_MIN": dict(G.CARD_SPORT_MIN, tennis=0.75), "_SPAN": False},
-    "rule10": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": True, "_SPAN": False},
-    "rule11": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}},
+    "rule10": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": True,
+               "CARD_SPORT_MIN": {"tennis": 0.85}, "_SPAN": False},
+    # 19 Nov 2026 (CARD_RULE 14 set rule 8's constants live): rules 11 to 13
+    # pinned in full, as live no longer carries their wider leagues, 85%
+    # tennis floor or two-day groups
+    "rule11": {"CARD_MODEL_EDGE": 0.0, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": False,
+               "CARD_SPORT_MIN": {"tennis": 0.85}, "_SPAN": True},
+    "rule13": {"CARD_MODEL_EDGE": None, "CARD_MODEL_OPP_MIN": {}, "CARD_BUILD": ("Card 2x",), "CARD_CORE_ONLY": False,
+               "CARD_SPORT_MIN": {"tennis": 0.85}, "_SPAN": True},
     "m7value": {"CARD_MODEL_EDGE": 0.0},   # the value demand alone (rule 11)
     # 18 Nov 2026 (claude/card-m7cap160-2026-11-18.md): on the results ledger,
     # 60%+ picks priced 1.60 to 1.90 at their first price landed 47% against
@@ -411,7 +420,8 @@ RULES = [
     (10, "rule10", "2026-11-11", "2026-11-11", "tennis at 85%+"),
     (11, "rule11", "2026-11-11", "2026-11-15", "the wider leagues in (two-day groups from 12 Nov)"),
     (12, "rule12", "2026-11-16", "2026-11-16", "football opposition priced 5.0+"),
-    (13, "live", "2026-11-17", None, "the model alone: no bookmaker condition"),
+    (13, "rule13", "2026-11-17", "2026-11-18", "the model alone: no bookmaker condition, wider leagues, two-day groups"),
+    (14, "live", "2026-11-19", None, "rule 8's constants again: the model at or above the bookmakers, core leagues, tennis 75%+, 2x alone"),
 ]
 
 

@@ -35,6 +35,10 @@ def days_of(card):
 
 
 class FootballDataSpans(unittest.TestCase):
+    def setUp(self):
+        # 19 Nov 2026 (CARD_RULE 14): live no longer spans; these read the 12 to 19 Nov rule
+        p = mock.patch.object(G, "CARD_SPAN", True); p.start(); self.addCleanup(p.stop)
+
     def test_live_spans_the_short_day(self):
         L = two_days()
         self.assertEqual(len(L), 6)

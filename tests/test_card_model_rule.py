@@ -28,7 +28,7 @@ class TwoXOnly(unittest.TestCase):
         self.assertTrue(gs)
         self.assertEqual({g["name"] for g in gs}, {"Card 2x"})
         self.assertLessEqual(len(gs), 3)
-        self.assertEqual(G.CARD_RULE, 13)
+        self.assertEqual(G.CARD_RULE, 14)
 
 
 class ModelRule(unittest.TestCase):
@@ -40,9 +40,10 @@ class ModelRule(unittest.TestCase):
         self.assertIsNone(G.card_fault(leg(1, 1.50, 0.70)))       # bookmakers about 67%, model 70%: opposition 5.0 no longer matters
 
     def test_model_under_the_market_passes_under_rule13(self):
-        # 17 Nov 2026 (CARD_RULE 13): the value demand is off (CARD_MODEL_EDGE None)
-        self.assertIsNone(G.CARD_MODEL_EDGE)
-        self.assertIsNone(G.card_fault(leg(1, 1.40, 0.66)))   # bookmakers about 71%, model 66%
+        # 17 Nov 2026 (CARD_RULE 13): the value demand was off (CARD_MODEL_EDGE None); back on under rule 14 (19 Nov 2026)
+        self.assertEqual(G.CARD_MODEL_EDGE, 0.0)
+        with mock.patch.object(G, "CARD_MODEL_EDGE", None):
+            self.assertIsNone(G.card_fault(leg(1, 1.40, 0.66)))   # bookmakers about 71%, model 66%
 
     def test_model_under_the_market_fails_with_the_value_demand(self):
         with mock.patch.object(G, "CARD_MODEL_EDGE", 0.0):   # rule 7 to 12

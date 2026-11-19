@@ -26,14 +26,17 @@ def by_day():
 
 class LiveSpans(unittest.TestCase):
     def test_who_spans(self):
-        self.assertTrue(G.CARD_SPAN)
-        self.assertTrue(CR.spans("live"))
-        self.assertTrue(CR.spans("rule12"))
+        # 19 Nov 2026 (CARD_RULE 14): live runs without two-day groups; rules 11 to 13 keep theirs
+        self.assertFalse(G.CARD_SPAN)
+        self.assertFalse(CR.spans("live"))
+        self.assertTrue(CR.spans("rule12")); self.assertTrue(CR.spans("rule13")); self.assertTrue(CR.spans("span2"))
+        with mock.patch.object(G, "CARD_SPAN", True):
+            self.assertTrue(CR.spans("live"))
         self.assertFalse(CR.spans("nospan"))
         self.assertFalse(CR.spans("rule6"))
         self.assertFalse(CR.spans("opp7"))
         self.assertFalse(CR.spans("modelcard"))
-        self.assertNotIn("span2", CR.VARIANTS)
+        self.assertEqual(CR.VARIANTS["span2"], {"_SPAN": True})   # 19 Nov 2026: back as the rollback's opposite
         with mock.patch.object(G, "CARD_SPAN", False):
             self.assertFalse(CR.spans("live"))
 

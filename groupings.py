@@ -1579,7 +1579,7 @@ CARD_POOL = 24
 # not been tested live in volume. Football, rugby and the NBA are unchanged.
 # Time of day was checked and makes no difference (z -0.16 overnight v rest).
 CARD_SPORTS_OFF = {"nfl", "cfb", "ncaab"}   # ncaab 31 Oct 2026: no live record yet (season starts Nov); back at 50 graded games, Douglas's call
-CARD_SPORT_MIN = {"tennis": 0.85}
+CARD_SPORT_MIN = {"tennis": 0.75}   # 19 Nov 2026 (CARD_RULE 14): rule 8's floor; 0.85 from 11 to 19 Nov (rule 10)
 # 11 Nov 2026 (CARD_RULE 10, Douglas after Casper Ruud lost at 1.22 on a Hill
 # accumulator: "Tennis score must go lower", then "Both" on the two changes
 # put to him): the tennis floor rises from 75% to 85%. Not a recalibration:
@@ -1615,7 +1615,7 @@ BOOKS_SPORT_MIN = {"tennis": 0.75}
 # the compounding in a treble loses. Core only again; the wider pool stays
 # out until it has a record line of its own. CARD_MAX_GROUPS stays at 6 so
 # a full weekend is not capped.
-CARD_CORE_ONLY = False
+CARD_CORE_ONLY = True   # 19 Nov 2026 (CARD_RULE 14): core leagues only again, rule 8's constant; False from 11 to 19 Nov (rule 11)
 # 11 Nov 2026 (CARD_RULE 11), Douglas on Leotar (Bosnia RS, 1.52, model 67%
 # v the bookmakers' 59%), kept off only by the league limit: "This should
 # have been on. So relax all rules that would of said otherwise." Wider
@@ -1695,7 +1695,7 @@ def first_kick(g):
     return min(ts) if ts else None
 CARD_STAKE = {"Card 2x": 2, "Card 3x": 1}
 CARD_DRIFT = 0.10   # a published group holds while its combined price stays within 10% of its band (30 Oct 2026)
-CARD_RULE = 13    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026); 13: no bookmaker condition, the model alone (17 Nov 2026)
+CARD_RULE = 14    # 2: sport rule; 3: one window, bookOdds, bench; 4: core leagues only (29 Oct 2026); 5: gap capped at 10 under (31 Oct 2026); 6: opposition priced 9+ (6 Nov 2026); 7: the model's own picks (11 Nov 2026); 8: Card 2x only (11 Nov 2026); 9: the context check vetoes (11 Nov 2026); 10: tennis at 85%+ (11 Nov 2026); 11: wider leagues on (11 Nov 2026); 12: football opposition priced 5.0+ (16 Nov 2026); 13: no bookmaker condition, the model alone (17 Nov 2026); 14: rule 8's constants (the model at or above the bookmakers, core leagues, tennis 75%+, 2x alone, no two-day groups), the best rule on the whole archive (19 Nov 2026)
 # 11 Nov 2026, Douglas: "I want the model to pick higher than the bookmakers
 # also - I need wins", and on the choice put to him (make the Model card the
 # Card, stake both, or wait for the 30 Nov review): "The model rules. Then
@@ -1723,7 +1723,15 @@ CARD_MODEL_RULE = True
 # chance landed 56%, -13.5% a leg; 10+ above 49%): the model's calibration
 # is trusted as a whole. Rule 12 is replayed as `rule12`; 0.0 restores it.
 # claude/card-rule13-model-only-2026-11-17.md.
-CARD_MODEL_EDGE = None
+# 19 Nov 2026 (CARD_RULE 14), Douglas, shown every rule rebuilt on the whole
+# archive (claude/card-rules-timeline-2026-11-19.md): "let's then group to
+# rule 8". Rule 8's constants are set live: the value demand back on (0.0),
+# core leagues only, tennis at 75%+, the 2x alone, no two-day groups. On the
+# pool at the switch rule 8 was 8 groups, 5 won v 3.2 expected, +64%, legs
+# +14% a leg (24); rule 13 46 groups, -4%. The owner's call on a small
+# sample; rule 13 is kept as the replay variant `rule13`.
+# claude/card-rule14-rule8-2026-11-19.md.
+CARD_MODEL_EDGE = 0.0
 # 15 Nov 2026 (claude/card-m7opp-2026-11-15.md): the opposition's price as a
 # condition on the model's own picks. Rule 6's opposition 9+ is the one Card
 # condition that held in all five football-data seasons (511 legs, 83.8% v
@@ -1970,7 +1978,7 @@ CARD_FILLER = False
 # `span` and tallied apart (`cardSpan`). The owner's call; tools/card_replay.py's
 # live spans too since 17 Nov 2026 and `nospan` replays the rollback.
 # claude/card-span-2026-11-12.md, claude/card-replay-live-span-2026-11-17.md.
-CARD_SPAN = True
+CARD_SPAN = False   # 19 Nov 2026 (CARD_RULE 14): rule 8 ran without two-day groups, and was measured without them; True from 12 to 19 Nov
 # 11 Nov 2026, Douglas: "with added human contextual review it does much
 # better. I need the groups to have the same contextual reading ... I want
 # this contextual review now. But also just a better understanding of the
@@ -3225,7 +3233,7 @@ def list_at_book(idx, now=None, pool_dir=None):
             "bySport": {sp: {k: done(v) for k, v in t.items()} for sp, t in sorted(by_sport.items())},
             "picks": picks}
 
-def card_legs_by_sport(days):
+def card_legs_by_sport(days, rule=None):
     """The Card's settled legs by sport over the full rule (not wide, not
     late), each pick once a day: landed against the bookmakers' quote in
     standard errors. 9 Nov 2026 (CLAUDE.md, the delegated decisions): the
@@ -3242,7 +3250,10 @@ def card_legs_by_sport(days):
     rule 1, before even the 75% floor) and none has reached the Card since.
     The top-level figures stay every leg, shown as before; `tripwire` reads
     `atFloor` where a floor exists (`tripwireAll` keeps the every-leg test).
-    claude/card-tripwire-at-floor-2026-11-14.md."""
+    claude/card-tripwire-at-floor-2026-11-14.md.
+
+    19 Nov 2026: `rule` limits the tally to groups built under one CARD_RULE
+    (the live rule's own line on the Bets scoreboard, `cardLiveLegsBySport`)."""
     def tally():
         return {"legs": 0, "landed": 0, "expected": 0.0, "var": 0.0}
     def add(t, l):
@@ -3260,6 +3271,7 @@ def card_legs_by_sport(days):
         seen = set()
         for g in d["groups"]:
             if not (is_card(g["name"]) and not g.get("wide") and not g.get("late")): continue
+            if rule is not None and g.get("rule") != rule: continue
             for l in g["legs"]:
                 k = (l["event"], l["pick"])
                 if l["status"] not in ("won", "lost") or k in seen: continue
@@ -3520,6 +3532,11 @@ def grade(now=None):
            # 9 Nov 2026: the Card's legs by sport, the test for taking a sport
            # off the Card (CLAUDE.md, the delegated decisions: tennis first).
            "cardLegsBySport": card_legs_by_sport(days),
+           # 19 Nov 2026 (Douglas: "any data viz just specific to rule 8"): the
+           # live rule's own groups and legs, the Bets scoreboard's headline
+           "cardLive": tally([g for g in allg if is_card(g["name"]) and not g.get("wide") and not g.get("late") and g.get("rule") == CARD_RULE]),
+           "cardLiveRule": CARD_RULE,
+           "cardLiveLegsBySport": card_legs_by_sport(days, rule=CARD_RULE),
            # 17 Nov 2026: rule 13's groups, those rule 12 would have built apart
            # from those holding a pick only rule 13 admits (card_rule13_split)
            "cardRule13Split": card_rule13_split(days, tally),

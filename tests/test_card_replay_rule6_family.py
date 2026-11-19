@@ -50,7 +50,7 @@ class Rule6Family(unittest.TestCase):
     def test_rule6_keeps_its_tennis_floor(self):
         """12 Nov 2026: rule 6 ran with tennis at 75%; the live 85% (CARD_RULE 10)
         must not leak into it, or rule6, notennis and tennis80 replay alike."""
-        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.85)
+        self.assertEqual(G.CARD_SPORT_MIN["tennis"], 0.75)   # 19 Nov 2026 (CARD_RULE 14)
         self.assertEqual(CR.patch_of("rule6")["CARD_SPORT_MIN"]["tennis"], 0.75)
         self.assertEqual(CR.patch_of("tennis80")["CARD_SPORT_MIN"]["tennis"], 0.80)
         self.assertEqual(CR.patch_of("notennis")["CARD_SPORT_MIN"]["tennis"], 0.75)

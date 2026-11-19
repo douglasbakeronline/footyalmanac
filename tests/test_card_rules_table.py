@@ -31,11 +31,15 @@ class Rules(unittest.TestCase):
         self.assertEqual(R.VARIANTS["rule7"]["CARD_BUILD"], ("Card 2x", "Card 3x"))
         self.assertEqual(R.VARIANTS["rule8"]["CARD_BUILD"], ("Card 2x",))
         self.assertEqual(R.VARIANTS["rule7"]["CARD_SPORT_MIN"]["tennis"], 0.75)
-        self.assertNotIn("CARD_SPORT_MIN", R.VARIANTS["rule10"])   # the live 85% floor
+        self.assertEqual(R.VARIANTS["rule10"]["CARD_SPORT_MIN"]["tennis"], 0.85)
         for v in ("rule7", "rule8", "rule10"):
             self.assertFalse(R.spans(v))                           # no two-day groups before 12 Nov
             self.assertEqual(R.VARIANTS[v]["CARD_MODEL_EDGE"], 0.0)
-        self.assertTrue(R.spans("rule11")); self.assertTrue(R.spans("rule12"))
+        self.assertTrue(R.spans("rule11")); self.assertTrue(R.spans("rule12")); self.assertTrue(R.spans("rule13"))
+        self.assertFalse(R.spans("live"))   # rule 14 (19 Nov 2026): rule 8's constants, no two-day groups
+        self.assertEqual(R.patch_of("live"), {})
+        for k, v in R.VARIANTS["rule8"].items():
+            if not k.startswith("_"): self.assertEqual(getattr(G, k), v, k)
 
     def test_rules_table_and_section(self):
         variants = {"live": {"groups": 4, "won": 2, "expected": 1.5, "return": 1.1, "legs": 12, "emptyDays": 3},
