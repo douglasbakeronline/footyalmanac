@@ -20,6 +20,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed.** The William Hill marks on list rows (`listBooks`, which already read the pool for started list picks), the record, grading, any model.
 
 **Roll back.** `git revert` this merge.
+## 2026-11-19-racing-distance: race distances from the free racecards (tag pending)
+
+**What changed:** the free racecards carry the distance only in furlongs (`distance_f`, read from the field list the build now logs); it shows as miles and furlongs ("2m 0½f").
+**Files:** `racing.py`, `tests/test_racing.py`, `RELEASES.md`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-racing-log-keys: the racing build names the feed's fields (tag pending)
 
 **What changed:** each build prints the racecard's race and runner field names. The free plan's 72 races came with no going, distance, trainer form or prices, and the log shows whether those are missing from the plan or named differently.

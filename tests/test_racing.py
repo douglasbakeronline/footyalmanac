@@ -49,6 +49,13 @@ class RaceReading(unittest.TestCase):
         self.assertEqual(racing.ew_terms(13, True), (3, 0.25))
         self.assertEqual(racing.ew_terms(18, True), (4, 0.25))
 
+    def test_furlongs(self):
+        self.assertEqual(racing.furlongs("16.5"), "2m 0½f")
+        self.assertEqual(racing.furlongs("8"), "1m")
+        self.assertEqual(racing.furlongs("7"), "7f")
+        self.assertEqual(racing.furlongs("24"), "3m")
+        self.assertEqual(racing.furlongs(None), "")
+
     def test_form(self):
         self.assertEqual(racing.form_runs("3P-142"), [3, "P", 1, 4, 2])
         self.assertGreater(racing.form_score("111"), racing.form_score("999"))
