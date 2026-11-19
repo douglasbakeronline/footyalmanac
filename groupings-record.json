@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T14:28:57Z",
+ "graded": "2026-11-19T15:20:21Z",
  "overall": {
   "groups": 139,
   "settled": 139,
@@ -431,7 +431,7 @@
    "nba|san antonio spurs|la clippers|2026-11-20": -1,
    "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": 1.15,
    "ncaab|high point panthers|montana state bobcats|2026-11-20": 1.07,
-   "ncaab|ohio state buckeyes|umbc retrievers|2026-11-20": 1.0,
+   "ncaab|ohio state buckeyes|umbc retrievers|2026-11-20": 0,
    "ncaab|texas longhorns|southern utah thunderbirds|2026-11-20": 0,
    "ncaab|louisville cardinals|stetson hatters|2026-11-20": 0,
    "ncaab|illinois state redbirds|eureka red devils|2026-11-20": -1,
