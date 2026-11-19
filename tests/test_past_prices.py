@@ -20,7 +20,7 @@ class PastPrices(unittest.TestCase):
         self.d = tempfile.mkdtemp()
         write_pool(self.d, "2026-11-19", [
             {"sport": "nba", "event": "Celtics v Knicks", "home": "Celtics", "away": "Knicks", "pick": "Celtics",
-             "odds": 1.40, "lastOdds": 1.36, "lastBest": 1.40, "lastAt": "2026-11-19T00:30:00Z",
+             "odds": 1.40, "lastOdds": 1.36, "lastBest": 1.40, "lastAt": "2026-11-19T00:30:00Z", "opp": 3.1, "lastOpp": 3.3,
              "lastBooks": {"William Hill": 1.36, "Bet365": 1.40}, "pricedAt": "2026-11-18T10:00:00Z"},
             {"sport": "football", "event": "A v B", "home": "A", "away": "B", "pick": "A", "odds": 1.50, "est": True},
             {"sport": "tennis", "event": "X v Y", "home": "X", "away": "Y", "pick": "X", "odds": 1.80, "est": True,
@@ -35,6 +35,7 @@ class PastPrices(unittest.TestCase):
         out = G.past_prices(set(), NOW, pool_dir=self.d)
         q = out[G._lb_key("nba", "Celtics", "Knicks")]
         self.assertEqual((q["o"], q["h"], q["b"], q["bb"], q["t"], q["past"]), (1.36, 1.36, 1.40, "Bet365", "2026-11-19T00:30:00Z", True))
+        self.assertEqual((q["opp"], q["draw"], q["pk"]), (3.3, None, "Celtics"))   # the other side's last price, for the Bookies line
 
     def test_yesterday_and_priced_block_count_estimates_do_not(self):
         out = G.past_prices(set(), NOW, pool_dir=self.d)
