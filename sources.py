@@ -2078,6 +2078,9 @@ ALIASES = {
     "athletico pr": "paranaense", "atletico mg": "mineiro",
     "red bull bragantino": "rb bragantino", "deportivo": "deportivo la coruna",
     "nec nijmegen": "nec", "erzurum bb": "bb erzurumspor",
+    # 19 Nov 2026: API-Football's Süper Lig spelling; the one unmatched name
+    # that kept every tr.1 row from taking API-Football's kick-off (#417)
+    "erzurumspor fk": "bb erzurumspor",
 }
 
 
