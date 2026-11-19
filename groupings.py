@@ -423,6 +423,27 @@ def _odds_for(fid, key, cache_dir):
 FB_CALLS_MULT = 150   # per build, for legs the bulk day prices missed
 NOFIXTURE_KEEP = 12   # noFixture legs named in the report and the build log (19 Nov 2026)
 
+# 19 Nov 2026: the first named noFixture read (the 03:21 UTC build) showed
+# board names API-Football spells another way, each beside its fixture in
+# `near`: AGF / Aarhus (Superliga), Inverness Caledonian Thistle / Inverness CT
+# (Scottish Championship), STVV / St. Truiden (Pro League), Dux Logroño / Edf
+# Logrono W (Liga F, the club's old name). same() cannot see these. Board name
+# -> API-Football's spelling, read only when matching a football leg to an
+# API-Football fixture; both names and the kick-off must still agree.
+AF_SPELLINGS = {
+    "AGF": "Aarhus",
+    "Inverness Caledonian Thistle": "Inverness CT",
+    "STVV": "St. Truiden",
+    "Dux Logroño": "Edf Logrono",
+}
+
+
+def af_same(af_name, board_name):
+    """same(), or the board name's API-Football spelling (AF_SPELLINGS)."""
+    if same(af_name, board_name): return True
+    alt = AF_SPELLINGS.get(board_name)
+    return bool(alt) and same(af_name, alt)
+
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
 
@@ -445,7 +466,7 @@ def price_football(L, dates, report):
     # names, so a spelling for LIVE_NAMES could not be told from a fixture
     # API-Football does not list without the paid feed. Each noFixture leg is
     # now named with the day's fixtures sharing one of its names (`near`).
-    nofix = []
+    nofix, moved_legs = [], []
     def _miss(l, why):
         miss[why] += 1
         miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
@@ -458,29 +479,43 @@ def price_football(L, dates, report):
     except Exception as e:
         bulk = {}
         report.setdefault("errors", []).append(f"bulk odds: {type(e).__name__}")
+    pools = {}
     for d in sorted(dates):
         try:
             fx = S._af_day(_date.fromisoformat(d))
         except Exception as e:
             report.setdefault("errors", []).append(f"fixtures {d}: {type(e).__name__}"); continue
-        teams = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
-                 for f in fx}
+        pools[d] = {f["fixture"]["id"]: (f["teams"]["home"]["name"], f["teams"]["away"]["name"], parse(f["fixture"]["date"]))
+                    for f in fx}
+    for d in sorted(pools):
+        teams = pools[d]
         for l in fb:
             if l["date"] != d or l.get("odds"): continue
             t = parse(l["when"])
             fid = next((fid for fid, (h, a, ft) in teams.items()
                         if not (t and ft and abs((t - ft).total_seconds()) > 5400)
-                        and same(h, l["home"]) and same(a, l["away"])), None)
+                        and af_same(h, l["home"]) and af_same(a, l["away"])), None)
             if fid is None:
                 # both names found but the kick-offs 90+ minutes apart (a moved
                 # fixture) reads differently from a name API-Football spells
                 # another way or a fixture it does not list at all
-                named = any(same(h, l["home"]) and same(a, l["away"]) for h, a, _ in teams.values())
-                _miss(l, "kickoff" if named else "noFixture")
-                if not named and len(nofix) < NOFIXTURE_KEEP:
+                named = any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in teams.values())
+                # 19 Nov 2026: the first named read had Liverpool v Manchester
+                # United and Brazil's Serie A under noFixture with no fixture
+                # near on the board's date: API-Football lists them on another
+                # day in the window (a fixture the board's source dates wrong).
+                # Counted as `moved`, never priced: the board's date is wrong.
+                moved = None if named else next(
+                    (od for od in sorted(pools) if od != d
+                     and any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in pools[od].values())), None)
+                _miss(l, "kickoff" if named else "moved" if moved else "noFixture")
+                if moved and len(moved_legs) < NOFIXTURE_KEEP:
+                    moved_legs.append({"date": d, "afDate": moved, "comp": l.get("comp") or l.get("code"),
+                                       "home": l["home"], "away": l["away"]})
+                if not named and not moved and len(nofix) < NOFIXTURE_KEEP:
                     nofix.append({"date": d, "comp": l.get("comp") or l.get("code"), "home": l["home"], "away": l["away"],
                                   "near": sorted(f"{h} v {a}" for h, a, _ in teams.values()
-                                                 if same(h, l["home"]) or same(a, l["away"]))[:3]})
+                                                 if af_same(h, l["home"]) or af_same(a, l["away"]))[:3]})
                 continue
             row = bulk.get(str(fid))
             if row:
@@ -539,6 +574,8 @@ def price_football(L, dates, report):
         report["football"]["missComps"] = {w: c.most_common(5) for w, c in miss_comps.items()}
     if nofix:
         report["football"]["noFixture"] = nofix
+    if moved_legs:
+        report["football"]["moved"] = moved_legs
 
 def american(x):
     try: x = float(str(x).replace("+", ""))
@@ -3601,6 +3638,10 @@ def main():
         print("  football noFixture: " + "; ".join(
             f"{m['date']} {m['comp']}: {m['home']} v {m['away']}" + (f" (near: {', '.join(m['near'])})" if m["near"] else "")
             for m in fm["noFixture"])[:2000], file=sys.stderr)
+    if fm.get("moved"):
+        print("  football moved: " + "; ".join(
+            f"{m['comp']}: {m['home']} v {m['away']} on {m['date']}, API-Football {m['afDate']}"
+            for m in fm["moved"])[:2000], file=sys.stderr)
     # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
     # how far its legs got and what a game looked like, on its own line
     sg = report.get("sgo")

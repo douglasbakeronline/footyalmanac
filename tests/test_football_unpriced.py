@@ -89,6 +89,45 @@ class FootballUnpriced(unittest.TestCase):
         self.assertEqual(r["miss"]["noFixture"], G.NOFIXTURE_KEEP + 5)
         self.assertEqual(len(r["noFixture"]), G.NOFIXTURE_KEEP)
 
+    def test_af_spellings_match(self):
+        """19 Nov 2026: board names API-Football spells another way (AF_SPELLINGS) are priced."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.70"}, {"value": "Draw", "odd": "3.8"}, {"value": "Away", "odd": "4.5"}]}]}]}]
+        day = [fx(51, t, "Aarhus", "Lyngby"), fx(52, t, "Inverness CT", "Ayr Utd", hour=15),
+               fx(53, t, "Charleroi", "St. Truiden", hour=17)]
+        L = [leg(t, "AGF", "Lyngby Boldklub", "Superliga"),
+             leg(t, "Inverness Caledonian Thistle", "Ayr United", "Championship", hour=15),
+             leg(t, "Sporting Charleroi", "STVV", "Pro League", hour=17)]
+        r = self.run_price(L, day, {51: book, 52: book, 53: book})
+        self.assertEqual(r["matched"], 3)
+        self.assertNotIn("miss", r)
+
+    def test_af_spelling_still_needs_both_names_and_kickoff(self):
+        t = date.today().isoformat()
+        day = [fx(61, t, "Aarhus", "Brondby"), fx(62, t, "Aarhus", "Lyngby", hour=12)]
+        L = [leg(t, "AGF", "Lyngby Boldklub", "Superliga", hour=19)]
+        r = self.run_price(L, day, {})
+        self.assertEqual(r["miss"], {"kickoff": 1})
+        self.assertNotIn("odds", L[0])
+
+    def test_fixture_on_another_day_is_moved_not_nofixture(self):
+        """19 Nov 2026: a leg API-Football lists on another day in the window is `moved`, never priced."""
+        t0, t1 = "2026-11-21", "2026-11-22"
+        pools = {t0: [fx(71, t0, "Liverpool W", "Chelsea W")], t1: [fx(72, t1, "Liverpool", "Manchester United")]}
+        L = [leg(t0, "Liverpool", "Manchester United", "Premier League")]
+        rep = {}
+        with tempfile.TemporaryDirectory() as d, mock.patch.dict(os.environ, {"API_FOOTBALL_KEY": "x"}), \
+             mock.patch.object(S, "AF_CACHE_DIR", d), mock.patch.object(S, "_af_day", lambda dd: pools[dd.isoformat()]), \
+             mock.patch.object(O, "af_prices", lambda dates: {}):
+            G.price_football(L, {t0, t1}, rep)
+        r = rep["football"]
+        self.assertEqual(r["miss"], {"moved": 1})
+        self.assertEqual(r["moved"], [{"date": t0, "afDate": t1, "comp": "Premier League",
+                                       "home": "Liverpool", "away": "Manchester United"}])
+        self.assertNotIn("noFixture", r)
+        self.assertNotIn("odds", L[0])
+
 
 if __name__ == "__main__":
     unittest.main()
