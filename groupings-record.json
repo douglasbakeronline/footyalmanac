@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-19T01:23:49Z",
+ "graded": "2026-11-19T02:34:12Z",
  "overall": {
   "groups": 139,
   "settled": 136,
@@ -7,8 +7,8 @@
   "z": -1.32,
   "lost": 97,
   "pending": 3,
-  "legs": 523,
-  "legsWon": 379,
+  "legs": 525,
+  "legsWon": 381,
   "returned": 113.74,
   "staked": 136,
   "returnedBest": 118.39,
@@ -26,6 +26,15 @@
   }
  },
  "cardLegsBySport": {
+  "nba": {
+   "legs": 41,
+   "landed": 32,
+   "expected": 29.29,
+   "rate": 0.7805,
+   "quoted": 0.7144,
+   "z": 0.95,
+   "tripwire": false
+  },
   "tennis": {
    "legs": 41,
    "landed": 23,
@@ -53,15 +62,6 @@
    "rate": 0.7,
    "quoted": 0.6756,
    "z": 0.33,
-   "tripwire": false
-  },
-  "nba": {
-   "legs": 40,
-   "landed": 31,
-   "expected": 28.55,
-   "rate": 0.775,
-   "quoted": 0.7137,
-   "z": 0.87,
    "tripwire": false
   },
   "rugby": {
@@ -107,8 +107,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 6,
-   "legsWon": 4,
+   "legs": 7,
+   "legsWon": 5,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -128,9 +128,9 @@
   "unknown": 0,
   "legs": {
    "rule12": {
-    "legs": 1,
-    "landed": 1,
-    "expected": 0.78
+    "legs": 2,
+    "landed": 2,
+    "expected": 1.52
    },
    "rule13only": {
     "legs": 5,
@@ -152,10 +152,10 @@
    "ret": -0.0658
   },
   "notAtBook": {
-   "n": 88,
-   "won": 86,
-   "rate": 0.9773,
-   "quoted": 0.9074
+   "n": 99,
+   "won": 97,
+   "rate": 0.9798,
+   "quoted": 0.9093
   },
   "unchecked": {
    "n": 27,
@@ -174,10 +174,10 @@
      "ret": 0.01
     },
     "notAtBook": {
-     "n": 4,
-     "won": 4,
+     "n": 5,
+     "won": 5,
      "rate": 1.0,
-     "quoted": 0.8086
+     "quoted": 0.8348
     },
     "unchecked": {
      "n": 11,
@@ -216,10 +216,10 @@
      "ret": -0.0884
     },
     "notAtBook": {
-     "n": 84,
-     "won": 82,
-     "rate": 0.9762,
-     "quoted": 0.9121
+     "n": 94,
+     "won": 92,
+     "rate": 0.9787,
+     "quoted": 0.9132
     },
     "unchecked": {
      "n": 13,
@@ -427,7 +427,7 @@
    "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": 0,
    "ncaab|san diego state aztecs|texas southern tigers|2026-11-19": 0,
    "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": 0,
-   "football|fc bayern münchen|1. fc köln|2026-11-20": 1.08,
+   "football|fc bayern münchen|1. fc köln|2026-11-20": 1.07,
    "nba|san antonio spurs|la clippers|2026-11-20": -1,
    "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": -1,
    "ncaab|high point panthers|montana state bobcats|2026-11-20": -1,
@@ -439,6 +439,7 @@
    "ncaab|stanford cardinal|sacramento state hornets|2026-11-20": 0,
    "ncaab|usc trojans|tarleton state texans|2026-11-20": 0,
    "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": -1,
+   "football|gyulai termál|bkv előre|2026-11-21": 0,
    "football|vihren|pirin blagoevgrad|2026-11-21": 0,
    "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": -1,
    "nba|los angeles lakers|sacramento kings|2026-11-21": -1,
@@ -504,8 +505,8 @@
    "z": -0.93,
    "lost": 25,
    "pending": 2,
-   "legs": 107,
-   "legsWon": 76,
+   "legs": 108,
+   "legsWon": 77,
    "returned": 25.35,
    "staked": 36,
    "returnedBest": 25.7,
@@ -821,8 +822,8 @@
   "z": -0.44,
   "lost": 29,
   "pending": 2,
-  "legs": 126,
-  "legsWon": 85,
+  "legs": 127,
+  "legsWon": 86,
   "returned": 36.21,
   "staked": 42,
   "returnedBest": 36.71,
@@ -998,8 +999,8 @@
   "z": -0.86,
   "lost": 1,
   "pending": 1,
-  "legs": 4,
-  "legsWon": 3,
+  "legs": 5,
+  "legsWon": 4,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -1174,8 +1175,8 @@
    "z": -1.0,
    "lost": 2,
    "pending": 2,
-   "legs": 6,
-   "legsWon": 4,
+   "legs": 7,
+   "legsWon": 5,
    "returned": 0,
    "staked": 2,
    "returnedBest": 0,
@@ -1201,8 +1202,8 @@
    "z": -0.13,
    "lost": 17,
    "pending": 2,
-   "legs": 77,
-   "legsWon": 56,
+   "legs": 78,
+   "legsWon": 57,
    "returned": 23.99,
    "staked": 26,
    "returnedBest": 24.27,
@@ -1517,9 +1518,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Carlos Alcaraz",
@@ -1575,8 +1576,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7653,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "104-119",
        "opp": 3.33,
        "rule12Fault": null,
        "r12": false
@@ -1623,9 +1624,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Cotonsport",
@@ -1661,8 +1662,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7411,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "104-119",
        "opp": 3.36,
        "rule12Fault": null,
        "r12": "derived"
