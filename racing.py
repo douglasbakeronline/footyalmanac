@@ -94,13 +94,42 @@ RESULT_REGION_PARAM = "region"
 RESULT_PAGE = 50
 
 
+# Racecard endpoints by plan, richest first: a plan refused one (401 / 403)
+# falls back to the next, and the build log says which answered.
+CARD_PATHS = ("racecards/standard", "racecards/basic", "racecards/free")
+
+
 def fetch(path, params=None, auth=None):
-    """One GET against The Racing API. Repeated keys (region) are allowed."""
+    """One GET against The Racing API. Repeated keys (region) are allowed.
+    An HTTP error carries the API's own message into the build log."""
     q = urllib.parse.urlencode(params or [], doseq=True)
     req = urllib.request.Request(f"{API}/{path}" + (f"?{q}" if q else ""),
                                  headers={"Authorization": auth, "User-Agent": "sportsalmanac"})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        return json.load(r)
+    try:
+        with urllib.request.urlopen(req, timeout=40) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        try:
+            body = e.read().decode("utf-8", "replace")[:300]
+        except Exception:
+            body = ""
+        print(f"racing: {path} answered {e.code}: {body}")
+        raise
+
+
+def fetch_cards(params, auth):
+    """Racecards from the richest endpoint the plan allows."""
+    last = None
+    for path in CARD_PATHS:
+        try:
+            payload = fetch_region(path, params, CARD_REGION_PARAM, auth)
+            print(f"racing: racecards from {path}")
+            return payload
+        except urllib.error.HTTPError as e:
+            if e.code not in (401, 403):
+                raise
+            last = e
+    raise last
 
 
 def fetch_region(path, params, key, auth):
@@ -618,7 +647,7 @@ def main(argv=None):
         else:
             by_day = {}
             for which in ("today", "tomorrow"):
-                payload = fetch_region("racecards/standard", [("day", which)], CARD_REGION_PARAM, auth)
+                payload = fetch_cards([("day", which)], auth)
                 if a.probe:
                     first = (cards_of(payload) or [{}])[0]
                     print("race keys:", sorted(first.keys()))

@@ -188,5 +188,37 @@ class EndToEnd(unittest.TestCase):
                 os.environ.update(env)
 
 
+class FeedFallback(unittest.TestCase):
+    def test_refused_endpoint_falls_back(self):
+        import urllib.error
+        calls = []
+
+        def fake(path, params, key, auth):
+            calls.append(path)
+            if path != "racecards/free":
+                raise urllib.error.HTTPError(path, 401, "Unauthorized", {}, None)
+            return {"racecards": []}
+        old = racing.fetch_region
+        racing.fetch_region = fake
+        try:
+            self.assertEqual(racing.fetch_cards([("day", "today")], "x"), {"racecards": []})
+        finally:
+            racing.fetch_region = old
+        self.assertEqual(calls, list(racing.CARD_PATHS))
+
+    def test_other_errors_raise(self):
+        import urllib.error
+
+        def fake(path, params, key, auth):
+            raise urllib.error.HTTPError(path, 500, "Server", {}, None)
+        old = racing.fetch_region
+        racing.fetch_region = fake
+        try:
+            with self.assertRaises(urllib.error.HTTPError):
+                racing.fetch_cards([], "x")
+        finally:
+            racing.fetch_region = old
+
+
 if __name__ == "__main__":
     unittest.main()
