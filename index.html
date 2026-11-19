@@ -6296,7 +6296,7 @@ function renderScale(){
    winners, running profit, by band, what the model is learning). The bar's
    three colours carry over: yellow the chance to win, grey to place without
    winning, red out of the places. Display only; racing.js is racing.py's. */
-let RC_BOARD = "tips", RC_DAY = null, RC_RACE = null, RC_OPEN = null;
+let RC_BOARD = "tips", RC_DAY = null, RC_RACE = null, RC_OPEN = null, RC_PICKED = false;
 const rcE = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const rcPct = p => p == null ? "–" : Math.round(p * 100) + "%";
 const rcPrice = d => d == null ? "–" : Number(d).toFixed(2);
@@ -6404,7 +6404,9 @@ function rcTips(R, races){
       <li><b>Win</b> means it has to finish first. <b>Each-way</b> is two equal bets, one to win and one to finish in the places (the first 2, 3 or 4), paid at a fraction of the price. It suits a longer price with a good chance of placing.</li>
       <li><b>Take at</b> is the lowest price still worth taking. Prices move all morning; below it, skip the bet.</li>
     </ol>` +
-    (tips.length ? body : `<div class="empty tb-empty">No tips ${RC_DAY === rcDays(R)[0] ? "today" : "for this day"}: no horse had a clear chance at a price that pays more than it. That is the rule working, not a gap.</div>`) +
+    (tips.length ? body : races.some(r => r.runners.some(x => x.price)) ?
+      `<div class="empty tb-empty">No tips for this day: no horse had a clear chance at a price that pays more than it. That is the rule working, not a gap. <a href="#" data-rc-board="races">See every race</a>.</div>` :
+      `<div class="empty tb-empty">No tips yet: the racing feed is not sending bookmaker prices, and a tip needs a price to beat. Every race and every runner's chance is on <a href="#" data-rc-board="races">Every race</a>.</div>`) +
     (nrs ? `<h3 class="tb-h">Changes <small>non-runners since the cards were first read</small></h3><div class="tb-rows">${nrs}</div>` : "") +
     (skipRows ? `<h3 class="tb-h">Races left alone <small>${skipped.length} of ${races.length} · Every race has each read</small></h3><div class="tb-rows">${skipRows}</div>` : "");
 }
@@ -6415,7 +6417,7 @@ function rcRaceRow(r, i){
   return `<div class="row-line"><button type="button" class="row${nr ? " noread" : ""}" data-rc-race="${rcE(r.id)}">
     <span class="rank${k ? " t" + k : ""}">${i + 1}</span>
     <div class="ko"><time>${rcE(r.off)}</time><div class="comp"><span>${rcE(r.name)}${r.dist ? " · " + rcE(r.dist) : ""}</span></div></div>
-    <div class="side"><div class="club">${nr ? "No clear pick" : rcE(top.horse)}</div><div class="stat">${rcE(top.jockey)} · ${rcE(top.trainer)}${r.tip ? ' · <span class="flag live">Tip</span>' : ""}</div></div>
+    <div class="side"><div class="club">${rcE(top.horse)}</div><div class="stat">${rcE(top.jockey)} · ${rcE(top.trainer)}${r.tip ? ' · <span class="flag live">Tip</span>' : ""}</div></div>
     ${rcBar(top.p || 0, top.place || 0)}
     <div class="pred"><b>${rcPrice(top.price)}</b><small>${top.p ? "fair " + rcPrice(1 / top.p) : ""}</small></div>
     <div class="side away"><div class="club">${r.field} runners</div><div class="stat">${r.places > 1 ? "E/W " + r.places + " places" : "win only"}</div></div>
@@ -6517,7 +6519,13 @@ function renderRacing(){
     return;
   }
   const days = rcDays(R);
-  if(!RC_DAY || !days.includes(RC_DAY)) RC_DAY = days[0];
+  // 19 Nov 2026 (Douglas: "Why are there no horse races listed?"): open on the first day with a race
+  // still to run, and on Every race when that day has no tips, so the tab never opens on an empty board.
+  if(!RC_DAY || !days.includes(RC_DAY)){
+    const now = Date.now();
+    RC_DAY = days.find(d => (R.days[d] || []).some(r => r.when && Date.parse(r.when) > now)) || days[days.length - 1];
+    if(!RC_PICKED && !(R.days[RC_DAY] || []).some(r => r.tip)) RC_BOARD = "races";
+  }
   const races = (R.days[RC_DAY] || []).slice().sort((a, b) => (a.when || "") < (b.when || "") ? -1 : 1);
   const boards = [["tips", "Tips"], ["races", "Every race"], ["card", "Racecards"], ["record", "Record"]];
   const ctl = `<div class="controls" style="position:static">
@@ -6535,8 +6543,9 @@ function renderRacing(){
   host.onclick = e => {
     const b = e.target.closest("[data-rc-board],[data-rc-day],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
     if(!b) return;
+    e.preventDefault();
     const d = b.dataset;
-    if(d.rcBoard) RC_BOARD = d.rcBoard;
+    if(d.rcBoard){ RC_BOARD = d.rcBoard; RC_PICKED = true; }
     else if(d.rcDay){ RC_DAY = d.rcDay; RC_RACE = null; }
     else if(d.rcOpen) RC_OPEN = RC_OPEN === d.rcOpen ? null : d.rcOpen;
     else if(d.rcCourse){ const r = races.find(x => x.course === d.rcCourse); RC_RACE = r && r.id; RC_BOARD = "card"; }
