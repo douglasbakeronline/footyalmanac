@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-past-bookies: the Bookies line under the bar on a played Daily List game (tag pending)
+
+**For a reader.** A Daily List row for a game already played now carries the same "Bookies 1.18 / 5.11" line under its probability bar as a game still to come (the pick's price, the draw where there is one, the other side), from the last price read before the start. Douglas, 19 Nov 2026: "I want the odds under the red and yellow bar as well, as they are on the upcoming games ... easier to read that way."
+
+**How.** `groupings.past_prices` now keeps the other side's last price (`opp`) and the draw's (`draw`) with the pick's; `pastLine` in `index.html` draws the line for pinned rows, and `oppLine` falls back to it for a started game that has left the build's pool. Display only.
+
+**Files.** `groupings.py`, `index.html`, `tests/test_past_prices.py`. Checked at 1280 and 400px on the local build.
+
+**Not changed.** Upcoming rows, the chips on the right, the record.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-19-last-price: a started game keeps its last price on the Daily List (tag pending)
 
 **For a reader.** A Daily List row for a game already played (the early-hours NBA and tennis, looked at in the afternoon) kept its won / lost mark but lost its price chip, because the build only prices games still to come. The chip now stays, in grey, showing the last price read before the start (William Hill's where it had one, else the average), with "Last price before the start" in its tooltip. Douglas, 19 Nov 2026: "keep the odds there as we last knew them ... a slight reference point."
