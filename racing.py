@@ -242,6 +242,17 @@ def runner_of(r):
     }
 
 
+def furlongs(f):
+    """'16.5' furlongs -> '2m 0½f' (the free racecards carry only distance_f)."""
+    f = _num(f)
+    if not f:
+        return ""
+    m, rest = divmod(f, 8)
+    whole, half = int(rest), rest - int(rest) >= 0.5
+    fur = f"{whole}{'½' if half else ''}f" if (whole or half) else ""
+    return " ".join(x for x in (f"{int(m)}m" if m else "", fur) if x)
+
+
 def race_of(raw):
     runners = [runner_of(r) for r in raw.get("runners") or []]
     off = _first(raw, "off_dt", "off_datetime")
@@ -263,7 +274,7 @@ def race_of(raw):
         "name": name,
         "type": str(_first(raw, "type", "race_type") or ""),
         "cls": str(_first(raw, "race_class", "class") or ""),
-        "dist": str(_first(raw, "distance", "dist") or ""),
+        "dist": str(_first(raw, "distance", "dist") or furlongs(_first(raw, "distance_f"))),
         "going": str(_first(raw, "going") or "").title(),
         "surface": str(_first(raw, "surface") or ""),
         "handicap": handicap,
