@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-tennis-card-recheck: Card tennis legs re-read, no change (tag pending)
+
+**What changed:** nothing on the site. A dated note records that the planner's tennis shortfall (8 of 15) sits inside the 41 pre-floor legs already read on 13 and 14 Nov; no leg at the 85% floor exists.
+**Evidence:** `cardLegsBySport.tennis` 23/41, z -2.13, `atFloor` 0 legs; no tennis price history to replay a rule on (Rule 3 gates cannot run).
+**Files:** `claude/tennis-card-legs-recheck-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, `CARD_SPORT_MIN`, any rule.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-18-decisions-table: the Card review lists every pre-registered decision (tag pending)
 
 **What changed:** the nightly Card review opens, after the live Card's 14 days, with one table of every pre-registered Card decision: the tennis tripwire, the floor line, rule 13 v rule 12, the tennis floor back to 75%, core leagues only, the opposition floor (`m7opp5`, `m7opp9`), the context veto, the Daily 2x, the List 2x and List long. Each row gives the trigger from its note, where it stands tonight, waiting / **due** / **fired**, and who acts; a bold line counts what is due. The opposition floor's auto-adopt now goes to Douglas, since rule 13 dropped it at his call.
