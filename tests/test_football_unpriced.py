@@ -233,3 +233,34 @@ class NoKickoff(unittest.TestCase):
 if __name__ == "__main__":
     unittest.main()
 
+
+
+class CardUnpriced(unittest.TestCase):
+    """20 Nov 2026: the price reports name a competition with its country, and
+    count the Card-reachable football legs no source priced."""
+
+    def test_comp_label_carries_country(self):
+        self.assertEqual(G.comp_label({"comp": "Premier League", "country": "Russia"}), "Premier League (Russia)")
+        self.assertEqual(G.comp_label({"comp": "Championship"}), "Championship")
+        self.assertEqual(G.comp_label({"code": "en.1"}), "en.1")
+
+    def test_card_unpriced_counts_reachable_legs_only(self):
+        base = {"sport": "football", "date": "2026-11-21", "home": "A", "away": "B"}
+        core = dict(base, code="en.1", comp="Premier League", country="England", pModel=0.64)
+        priced = dict(core, home="C", odds=1.5)
+        weak = dict(core, home="D", pModel=0.55)
+        wider = dict(core, home="E", code="af.235", comp="Premier League", country="Russia")
+        n, named = G.card_unpriced([core, priced, weak, wider])
+        with mock.patch.object(G, "CARD_CORE_ONLY", True):
+            n, named = G.card_unpriced([core, priced, weak, wider])
+            self.assertEqual(n, 1)
+            self.assertEqual(named, [{"date": "2026-11-21", "comp": "Premier League (England)", "home": "A",
+                                      "away": "B", "pModel": 0.64}])
+            self.assertFalse(G.card_reach(wider))   # rule 14: a wider league cannot reach the Card
+
+    def test_card_unpriced_keep(self):
+        legs = [{"sport": "football", "code": "en.1", "pModel": 0.6 + i / 100, "date": "2026-11-21",
+                 "home": f"H{i}", "away": "X"} for i in range(5)]
+        n, named = G.card_unpriced(legs, keep=2)
+        self.assertEqual(n, 5)
+        self.assertEqual([m["home"] for m in named], ["H4", "H3"])   # strongest first on a day

@@ -457,8 +457,12 @@ def card_reach(l):
     at CARD_FAIR_MIN or over, in a league the Card takes, clean of the Daily
     List's blind spots. A price test only, so it decides nothing on the Card
     (card_fault and model_fault still do)."""
+    # 20 Nov 2026: the league test is the live Card's own (card_fault's), so
+    # under CARD_CORE_ONLY (rule 14) a wider-league leg no longer takes a
+    # capped call ahead of a list pick the Card could never use.
+    league = core_league if CARD_CORE_ONLY else card_league
     return (l.get("sport") == "football" and (l.get("pModel") or 0) >= CARD_FAIR_MIN
-            and card_league(l.get("code")) and l.get("why", None) in CLEAN_WHY)
+            and league(l.get("code")) and l.get("why", None) in CLEAN_WHY)
 
 def call_order(l):
     """The order price_football spends its capped per-fixture calls in
@@ -466,6 +470,27 @@ def call_order(l):
     rest; within each, the nearest day, then the strongest pick."""
     tier = 0 if card_reach(l) else 1 if (l.get("list") or l.get("reserve")) else 2
     return (tier, l.get("date") or "", -(l.get("pModel") or 0))
+
+def comp_label(l):
+    """A football leg's competition for the price reports, with its country
+    (20 Nov 2026): "Premier League" is the name of a dozen leagues (England,
+    Russia, Kuwait, Uganda, Hong Kong...), and the 19 Nov builds' "noOdds
+    (Premier League 12)" read as England's when only 5 were, none a Card leg."""
+    c = l.get("comp") or l.get("code") or "?"
+    return f"{c} ({l['country']})" if l.get("country") else c
+
+
+def card_unpriced(L, keep=None):
+    """Football legs the Card could take once priced (card_reach) that no
+    source priced this build, nearest first (20 Nov 2026). The one price
+    gap that can cost the Card a group; the rest of "football unpriced" is
+    legs it would never take."""
+    keep = NOFIXTURE_KEEP if keep is None else keep
+    out = [l for l in L if card_reach(l) and not l.get("odds")]
+    out.sort(key=lambda l: (l.get("date") or "", -(l.get("pModel") or 0)))
+    return len(out), [{"date": l.get("date"), "comp": comp_label(l), "home": l.get("home"), "away": l.get("away"),
+                       "pModel": round(l.get("pModel") or 0, 3)} for l in out[:keep]]
+
 
 def price_football(L, dates, report):
     """API-Football prices for the football legs.
@@ -492,7 +517,7 @@ def price_football(L, dates, report):
     nofix, moved_legs, timed = [], [], []
     def _miss(l, why):
         miss[why] += 1
-        miss_comps[why][l.get("comp") or l.get("code") or "?"] += 1
+        miss_comps[why][comp_label(l)] += 1
     # 22 Oct 2026: the build now reads every API-Football price by date
     # (odds.af_odds_day, cached); a leg found there costs no call. The
     # one-fixture call stays as the fallback for anything it missed.
@@ -1192,6 +1217,12 @@ def price(L, dates):
     # 10 Nov 2026: UK prices for the Daily List picks, display only (Douglas
     # bets the list at William Hill and many picks are not on it)
     price_odds_api(L, dates, report, list_books=True)
+    # 20 Nov 2026: Card-reachable football legs every source left unpriced,
+    # counted and named after the last source ("football Card unpriced:")
+    if isinstance(report.get("football"), dict):
+        n, named = card_unpriced(L)
+        report["football"]["cardUnpriced"] = n
+        if named: report["football"]["cardUnpricedLegs"] = named
     for l in L:
         if not l.get("odds"):
             # 22 Oct 2026: with a typical bookmaker margin (MARGIN), so a group
@@ -3745,6 +3776,10 @@ def main():
         print("  football moved: " + "; ".join(
             f"{m['comp']}: {m['home']} v {m['away']} on {m['date']}, API-Football {m['afDate']}"
             for m in fm["moved"])[:2000], file=sys.stderr)
+    if "cardUnpriced" in fm:
+        print(f"  football Card unpriced: {fm['cardUnpriced']}" + (": " + "; ".join(
+            f"{m['date']} {m['comp']}: {m['home']} v {m['away']} ({m['pModel']:.0%})"
+            for m in fm.get("cardUnpricedLegs") or [])[:1500] if fm.get("cardUnpricedLegs") else ""), file=sys.stderr)
     if fm.get("timed"):
         print(f"  football timed: {fm['timed']} leg(s) with no board kick-off took API-Football's", file=sys.stderr)
     # 11 Nov 2026: SportsGameOdds matched none of 128 games on its first build;
