@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-czech-grading: the Czech First League is graded again (tag pending)
+
+**What changed:** `score.py` never saw a Czech First League result after openfootball stopped scoring on 20 Sep (ESPN carries none), so 41 fixtures from 9 Oct to 8 Nov sat ungraded and the league had no 2026-27 rows on the record. `score.lag_results` now grades the `sources.AF_LAG` leagues from the same API-Football day pool the build has filled their table from since 18 Nov, all or nothing on names, same-date first and a day or two off through `nearby_results`' guards, kept in `current/settled-results.json` like the cup results.
+**Evidence:** the ledger's ungraded report (19:17 UTC build) led with `football|cze.1 8`; `record-graded.json` has no 2026-27 Czech row; the build log reads "lag cze.1: 40 result(s) filled from API-Football". 41 fixtures, 6 reserve picks, 10 at 60%+, none on the Daily List. `tests/test_score_lag.py` (6 tests).
+**Files:** `score.py`, `tests/test_score_lag.py`, `claude/czech-grading-2026-11-20.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the model, the Card and its grading, the Daily List, the build's fill, League One's seven 14 Nov games (postponed, not a grading fault).
+**Roll back:** `git revert` the merge, and drop the `cze.1` keys it added to `current/settled-results.json`.
+
 ## 2026-11-20-bookies-mark: rows say when the bookmakers rate a pick far lower than the model (tag pending)
 
 **What changed:** every row of every sport (the football board, the sport tabs, pinned Daily List rows) carries a **Bookies NN** mark when the model's chance sits 10+ points above the bookmakers' fair chance (`bookGapChip` in `index.html`, `BOOK_GAP` 0.10). The fair chance is the build's own price (`groupings.board_prices` now carries `f`, the leg's fair chance, also on past prices), else the football market line, else ESPN's free moneyline for US games no UK book prices (`mlFair`). The hover says what the bookmakers give and the evidence. `tools/market_gap.py` prints the tally behind it from the results ledger, by band and sport.
