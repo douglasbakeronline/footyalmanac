@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-free-source-check: no free source for the remaining leagues (tag pending)
+
+**What changed:** a dated line in `claude/data-expansion-plan.md`. No code, data or page change.
+**Evidence:** openfootball `2026-27/de.3.json` still returns 404; the 13 Nov checks of ESPN, football-data.co.uk `new/` and openfootball are unchanged. 3. Liga, Liga Portugal 2, UAE and Poland 2 have no free automatable fixture source.
+**Files:** `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** every league, source and the Daily List rules.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-20-tennis-ranks-fallback: ATP ranks survive an ESPN outage (tag pending)
 
 **What changed:** `rankings.tennis_ranks` returned `{}` on any failure with no retry and no message, so one ESPN blip silently dropped the ATP ranking adjustment from every men's tennis pick in that build. It now retries with backoff (3 tries, 4xx not retried), falls back to the last good copy kept in `.afcache` with a warning, and only returns `{}` (with a warning) when there is no earlier copy. Rule 9.
