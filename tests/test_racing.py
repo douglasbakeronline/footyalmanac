@@ -236,3 +236,33 @@ class FeedFallback(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class FeedNote(unittest.TestCase):
+    """20 Nov 2026: the free plan sends racecards with no prices and refuses results; the page says so."""
+
+    def days(self, price):
+        return {"2026-11-20": [{"runners": [{"horse": "A", "price": price}, {"horse": "B", "price": None}]}]}
+
+    def test_free_plan_no_prices_no_results(self):
+        old = racing._card_path[0]
+        try:
+            racing._card_path[0] = "racecards/free"
+            feed = racing.feed_of(self.days(None), results_refused=True)
+        finally:
+            racing._card_path[0] = old
+        self.assertEqual(feed, {"plan": "free", "prices": False, "results": False})
+        note = racing.feed_note(feed)
+        self.assertIn("free plan sends no bookies' prices and no results", note)
+        self.assertIn("no tips can be made", note)
+        self.assertIn("nothing can be graded", note)
+
+    def test_full_feed_has_no_note(self):
+        feed = racing.feed_of(self.days(4.5), results_refused=False)
+        self.assertTrue(feed["prices"])
+        self.assertEqual(racing.feed_note(feed), "")
+        self.assertEqual(racing.feed_note(None), "")
+
+    def test_prices_but_no_results(self):
+        note = racing.feed_note({"plan": "basic", "prices": True, "results": False})
+        self.assertEqual(note, "The Racing API's basic plan sends no results, so nothing can be graded.")

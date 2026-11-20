@@ -9,6 +9,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-kickoff-named: kick-off misses named, OL Lyonnes priced, racing says why it has no tips (tag pending)
+
+**For a reader.** The Horse racing tab now says, above its boards, when the feed's plan sends no bookies' prices or results (today: the free plan, so no tips and nothing graded). Nothing else on the page.
+
+**Evidence.** The 03:08 UTC build: "football Card unpriced: 2", one of them OL Lyonnes v Strasbourg (D1 Arkema, 74%) beside "Lyon W v Strasbourg W"; "kickoff 2 (Championship, Serie A)" with no names; racing "racecards from racecards/free", results 401 "Standard Plan required", 0 tips. `claude/kickoff-legs-racing-feed-2026-11-20.md`.
+
+**Files.** `groupings.py` (`AF_SPELLINGS`, `price_football`, the "football kickoff:" log line), `racing.py` (`feed_of`, `feed_note`, `write_page`), `index.html` (`renderRacing`), `tests/test_football_unpriced.py`, `tests/test_racing.py`, the note, `CLAUDE.md`.
+
+**Not changed.** Any Card constant, the 90-minute kick-off guard, the racing model or tip rule, the records.
+
+**Check.** The next CI build logs "football kickoff:" when a kick-off miss occurs, and OL Lyonnes leaves noFixture.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-20-card-unpriced: the price log names the Card's own gaps (tag pending)
 
 **For a reader.** Nothing on the page. The build log and `groupings.json` now say how many football legs the Card could take were left unpriced by every source, and name them ("football Card unpriced: N"); the price reports name each competition with its country, so Russia's or Kuwait's Premier League no longer reads as England's. Under rule 14, the Card's capped price calls go to core-league legs first, as the Card can take nothing else.

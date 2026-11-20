@@ -443,6 +443,9 @@ AF_SPELLINGS = {
     "Liga de Quito": "LDU de Quito",                       # Ecuador
     "Montevideo City Torque": "Atletico Torque",           # Uruguay
     "West Ham United": "West Ham",                         # WSL "West Ham W"
+    # 20 Nov 2026 (03:08 UTC build): OL Lyonnes v Strasbourg, D1 Arkema, 74%,
+    # a Card-reachable leg named under noFixture beside "Lyon W v Strasbourg W".
+    "OL Lyonnes": "Lyon W",                                # D1 Arkema
 }
 
 
@@ -514,7 +517,7 @@ def price_football(L, dates, report):
     # names, so a spelling for LIVE_NAMES could not be told from a fixture
     # API-Football does not list without the paid feed. Each noFixture leg is
     # now named with the day's fixtures sharing one of its names (`near`).
-    nofix, moved_legs, timed = [], [], []
+    nofix, moved_legs, timed, kick = [], [], [], []
     def _miss(l, why):
         miss[why] += 1
         miss_comps[why][comp_label(l)] += 1
@@ -566,6 +569,15 @@ def price_football(L, dates, report):
                 (od for od in sorted(pools) if od != d
                  and any(af_same(h, l["home"]) and af_same(a, l["away"]) for h, a, _ in pools[od].values())), None)
             _miss(l, "kickoff" if named else "moved" if moved else "noFixture")
+            # 20 Nov 2026: `kickoff` legs named with both times, as noFixture
+            # legs are, so a league whose board times are nominal (as the
+            # Premier League's were, sources.AF_RETIME) shows by name.
+            if named and len(kick) < NOFIXTURE_KEEP:
+                kick.append({"date": d, "comp": comp_label(l), "home": l["home"], "away": l["away"],
+                             "board": (l.get("when") or "")[11:16] or None,
+                             "af": sorted({iso(ft)[11:16] for h, a, ft in teams.values()
+                                           if ft and af_same(h, l["home"]) and af_same(a, l["away"])}),
+                             "card": card_reach(l)})
             if moved and len(moved_legs) < NOFIXTURE_KEEP:
                 moved_legs.append({"date": d, "afDate": moved, "comp": l.get("comp") or l.get("code"),
                                    "home": l["home"], "away": l["away"]})
@@ -642,6 +654,8 @@ def price_football(L, dates, report):
         report["football"]["noFixture"] = nofix
     if moved_legs:
         report["football"]["moved"] = moved_legs
+    if kick:
+        report["football"]["kickoff"] = kick
     if timed:
         report["football"]["timed"] = len(timed)
 
@@ -3776,6 +3790,11 @@ def main():
         print("  football moved: " + "; ".join(
             f"{m['comp']}: {m['home']} v {m['away']} on {m['date']}, API-Football {m['afDate']}"
             for m in fm["moved"])[:2000], file=sys.stderr)
+    if fm.get("kickoff"):
+        print("  football kickoff: " + "; ".join(
+            f"{m['date']} {m['comp']}: {m['home']} v {m['away']} board {m['board'] or '?'} UTC, API-Football "
+            + "/".join(m["af"]) + (" (Card-reachable)" if m["card"] else "")
+            for m in fm["kickoff"])[:2000], file=sys.stderr)
     if "cardUnpriced" in fm:
         print(f"  football Card unpriced: {fm['cardUnpriced']}" + (": " + "; ".join(
             f"{m['date']} {m['comp']}: {m['home']} v {m['away']} ({m['pModel']:.0%})"

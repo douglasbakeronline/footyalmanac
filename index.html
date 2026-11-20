@@ -6561,7 +6561,10 @@ function renderRacing(){
     record: "How the racing model is doing, graded every morning: the chance it gives each horse against how often those horses win, and every tip against its price."}[RC_BOARD];
   const body = !races.length && RC_BOARD !== "record" ? `<div class="empty tb-empty">No UK or Irish racing on the card for this day.</div>`
     : RC_BOARD === "tips" ? rcTips(R, races) : RC_BOARD === "races" ? rcEvery(races) : RC_BOARD === "card" ? rcCard(races) : rcRecord(R);
-  host.innerHTML = lede(sub) + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
+  // 20 Nov 2026: the feed's plan can send racecards with no prices and refuse results (the free
+  // plan), so the tab says why it has no tips instead of showing "0 tips" with no reason.
+  const feedNote = R.note ? `<p class="note">${rcE(R.note)}</p>` : "";
+  host.innerHTML = lede(sub) + feedNote + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
   host.onclick = e => {
     const b = e.target.closest("[data-rc-board],[data-rc-day],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
     if(!b) return;
