@@ -4545,7 +4545,7 @@ function listReviewDays(){
     res: `${side(g, g.actual)}`, small: `${g.result[0]}–${g.result[1]}`, status: fbWon(g) ? "won" : "lost", t: g.kickoff})));
   ((TT && TT.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g), sk: "tennis",
     sport: "Tennis", comp: [g.tour, g.tournament, g.round].filter(Boolean).join(" · "), home: g.playerA, away: g.playerB,
-    pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: g.note || "",
+    pick: g.pick, conf: g.confidence, tier: g.tier, res: g.void ? "Void" : g.winner || "", small: tennisSets(g.note) || g.note || "",
     status: g.void ? "void" : g.ok ? "won" : "lost", t: g.start})));
   ((SR && SR.days) || []).forEach(d => (d.games || []).filter(grp).forEach(g => put(d.date, {grp: grp(g), sk: g.sport,
     sport: (SD && SD.sports[g.sport] || {name:g.sport}).name, comp: g.label, home: g.home, away: g.away,
@@ -4556,7 +4556,10 @@ function listReviewDays(){
     // today's pinned list replaces the records' partial copy of the same day
     const pin = grp => it => {
       const r = it.result || {};
-      const sc = Array.isArray(r.score) ? `${r.score[0]}–${r.score[1]}` : "";
+      // 20 Nov 2026 (Douglas: "add the scores for all sports across the how it went page"): the pinned
+      // list stores a score as text ("91-69"), so read either shape; tennis gives its set scores
+      const sc = Array.isArray(r.score) ? `${r.score[0]}–${r.score[1]}` : r.score ? String(r.score).replace("-", "–")
+        : it.sport === "tennis" ? tennisSets(r.note) : "";
       return {grp, sk: it.sport, sport: it.sport === "football" ? "Football" : it.sport === "tennis" ? "Tennis" : (SD && SD.sports[it.sport] || {name:it.sport}).name,
         comp: it.comp || "", home: it.home, away: it.away, pick: it.pick, conf: it.confidence, tier: it.tier,
         res: it.status === "won" || it.status === "lost" ? (r.winner || (r.ok ? it.pick : "")) : it.status === "void" ? "Void" : "",
