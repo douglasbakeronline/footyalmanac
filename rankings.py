@@ -26,7 +26,7 @@ Sources: FIFA's own ranking API (inside.fifa.com, by release id; history in
 the repo as fifa-rankings.json, refreshed when a new release appears), and
 ESPN's tennis rankings (top 150 by athlete id). Standard library only.
 """
-import concurrent.futures as cf, json, math, os, re, sys, urllib.request
+import concurrent.futures as cf, json, math, os, re, sys, time, urllib.error, urllib.request
 from datetime import date, datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -415,19 +415,62 @@ def adjust_fifa(conf, fav, opp):
 # tennis
 # ---------------------------------------------------------------------------
 
+RANKS_CACHE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), ".afcache")
+
+
+def _get_retry(url, tries=3, pause=1.5):
+    """_get with backoff for transient failures (timeouts, resets, 5xx, 429);
+    a 4xx is an answer and is raised at once."""
+    for attempt in range(tries):
+        try:
+            return _get(url)
+        except urllib.error.HTTPError as e:
+            if 400 <= e.code < 500 and e.code != 429:
+                raise
+            err = e
+        except Exception as e:
+            err = e
+        if attempt + 1 < tries:
+            time.sleep(pause * (2 ** attempt))
+    raise err
+
+
 def tennis_ranks(tour):
-    """{ESPN athlete id: rank} for the current top 150, or {} on any failure."""
+    """{ESPN athlete id: rank} for the current top 150. A failed fetch is
+    retried with backoff; if it still fails the last good copy kept in
+    .afcache is used with a warning (Rule 9: yesterday's ranks beat silently
+    dropping the ATP adjustment from every pick); {} only when there is none."""
+    keep = os.path.join(RANKS_CACHE_DIR, f"tennis-ranks-{tour}.json")
     try:
-        idx = _get(f"https://sports.core.api.espn.com/v2/sports/tennis/leagues/{tour}/rankings")
+        idx = _get_retry(f"https://sports.core.api.espn.com/v2/sports/tennis/leagues/{tour}/rankings")
         ref = idx["items"][0]["$ref"].replace("http://", "https://")
-        doc = _get(ref)
-    except Exception:
-        return {}
+        doc = _get_retry(ref)
+    except Exception as e:
+        try:
+            with open(keep) as fh:
+                out = json.load(fh)
+            age = (time.time() - os.path.getmtime(keep)) / 86400
+            print(f"WARNING: {tour} rankings unreachable ({type(e).__name__}: {e}): "
+                  f"using the last good copy ({age:.1f} days old)", file=sys.stderr)
+            return out
+        except (OSError, ValueError):
+            print(f"WARNING: {tour} rankings unreachable ({type(e).__name__}: {e}) "
+                  f"and no earlier copy: ranks unavailable", file=sys.stderr)
+            return {}
     out = {}
     for r in doc.get("ranks") or []:
         m = re.search(r"/athletes/(\d+)", (r.get("athlete") or {}).get("$ref", ""))
         if m and r.get("current"):
             out[m.group(1)] = int(r["current"])
+    if out:
+        try:
+            os.makedirs(RANKS_CACHE_DIR, exist_ok=True)
+            tmp = f"{keep}.{os.getpid()}.tmp"
+            with open(tmp, "w") as fh:
+                json.dump(out, fh)
+            os.replace(tmp, keep)
+        except OSError:
+            pass                      # a failed cache write never fails the build
     return out
 
 

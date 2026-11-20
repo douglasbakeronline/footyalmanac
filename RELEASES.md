@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-tennis-ranks-fallback: ATP ranks survive an ESPN outage (tag pending)
+
+**What changed:** `rankings.tennis_ranks` returned `{}` on any failure with no retry and no message, so one ESPN blip silently dropped the ATP ranking adjustment from every men's tennis pick in that build. It now retries with backoff (3 tries, 4xx not retried), falls back to the last good copy kept in `.afcache` with a warning, and only returns `{}` (with a warning) when there is no earlier copy. Rule 9.
+**Evidence:** `tests/test_rankings.py` `TennisRanksFailure`: retry then success writes the copy, an outage reads the last good copy, an outage with no copy is empty. Football pipeline untouched.
+**Files:** `rankings.py`, `tests/test_rankings.py`, `RELEASES.md`.
+**Not changed:** the ATP adjustment, its weights, FIFA fetching, every other source (already retry or fall back).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-20-belgium-dup: Belgian Pro League no longer priced twice (tag pending)
 
 **What changed:** `af.144` (API-Football's Belgian Pro League) joins `engine.AF_DUPLICATES`, so the build skips it and `be.1` is the one feed. Readers lose the second copy of each Belgian game on the board.

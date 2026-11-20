@@ -405,5 +405,40 @@ class Schedule(unittest.TestCase):
         self.assertEqual(rel["date"], "2026-10-07")
 
 
+
+class TennisRanksFailure(unittest.TestCase):
+    DOC = {"items": [{"$ref": "http://x/ref"}]}
+    RANKS = {"ranks": [{"athlete": {"$ref": "http://x/athletes/42?lang=en"}, "current": 3}]}
+
+    def run_ranks(self, get, cache):
+        with mock.patch.object(R, "_get", get), mock.patch.object(R, "RANKS_CACHE_DIR", cache), \
+                mock.patch.object(R.time, "sleep"):
+            return R.tennis_ranks("atp")
+
+    def test_retry_then_success_writes_copy(self):
+        calls = []
+        def get(url, timeout=20):
+            calls.append(url)
+            if len(calls) == 1:
+                raise OSError("blip")
+            return self.DOC if "rankings" in url and "ref" not in url else self.RANKS
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(self.run_ranks(get, d), {"42": 3})
+            self.assertTrue(os.path.exists(os.path.join(d, "tennis-ranks-atp.json")))
+
+    def test_outage_uses_last_good_copy(self):
+        def down(url, timeout=20):
+            raise OSError("down")
+        with tempfile.TemporaryDirectory() as d:
+            with open(os.path.join(d, "tennis-ranks-atp.json"), "w") as fh:
+                json.dump({"7": 1}, fh)
+            self.assertEqual(self.run_ranks(down, d), {"7": 1})
+
+    def test_outage_without_copy_is_empty(self):
+        def down(url, timeout=20):
+            raise OSError("down")
+        with tempfile.TemporaryDirectory() as d:
+            self.assertEqual(self.run_ranks(down, d), {})
+
 if __name__ == "__main__":
     unittest.main()
