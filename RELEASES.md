@@ -9,6 +9,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-cha-spellings: the Championship's API-Football spellings (tag pending)
+
+**For a reader.** Championship rows now take API-Football's kick-off where the board's was stale (Sheffield United v Watford, 21 Nov, 12:30 to 15:00), so such games can be priced for the Card.
+
+**Evidence.** The 11:05 UTC build after #441: Serie A retimed 13 fixtures, but "en.2: API-Football kick-offs not used, club names unmatched: QPR; Sheffield Utd", so all or nothing left every Championship row as it was. `claude/championship-af-spellings-2026-11-20.md`.
+
+**Files.** `sources.py` (`ALIASES`: `sheffield utd`, `qpr`), `tests/test_untimed.py`, the note, `CLAUDE.md`.
+
+**Not changed.** Any Card constant, the matcher's rules, the 90-minute guard, the model.
+
+**Check.** The next CI build logs "untimed en.2: N fixture(s)" with no warning.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-20-retime-cha-sea: the Championship and Serie A take API-Football's kick-offs (tag pending)
 
 **For a reader.** Championship and Serie A rows show API-Football's kick-off where the board's differed (Sheffield United v Watford moves from 12:30 to 15:00 on 21 Nov), and such games can now be priced.

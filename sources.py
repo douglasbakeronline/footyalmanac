@@ -2100,6 +2100,10 @@ ALIASES = {
     # 19 Nov 2026: API-Football's Süper Lig spelling; the one unmatched name
     # that kept every tr.1 row from taking API-Football's kick-off (#417)
     "erzurumspor fk": "bb erzurumspor",
+    # 20 Nov 2026: API-Football's Championship spellings, the two unmatched
+    # names that kept every en.2 row from taking its kick-off under AF_RETIME
+    # (11:05 UTC build: "club names unmatched: QPR; Sheffield Utd")
+    "sheffield utd": "sheffield united", "qpr": "queens park rangers",
 }
 
 

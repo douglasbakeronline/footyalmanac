@@ -127,6 +127,22 @@ class Retime(unittest.TestCase):
         self.assertEqual(S.kickoff_utc(rows[0], "ita"), "2026-11-22T14:00:00Z")
         self.assertEqual(rows[1]["time"], "19:45")
 
+    def test_championship_api_football_spellings(self):
+        """20 Nov 2026: API-Football's "Sheffield Utd" and "QPR" kept every
+        Championship row from AF_RETIME; both now map, and Sheffield United v
+        Watford's stale 12:30 takes API-Football's 15:00."""
+        pool = ["Sheffield United", "Watford", "Queens Park Rangers", "Wrexham",
+                "Sheffield Wednesday", "West Bromwich Albion"]
+        rows = [row("Sheffield United", "Watford", "2026-11-21", time="12:30"),
+                row("Queens Park Rangers", "Wrexham", "2026-11-21", time="15:00")]
+        afs = [af("Sheffield Utd", "Watford", "2026-11-21", "15:00"),
+               af("QPR", "Wrexham", "2026-11-21", "15:00")]
+        self.assertEqual(S.match_team("Sheffield Utd", pool), "Sheffield United")
+        self.assertEqual(S.match_team("QPR", pool), "Queens Park Rangers")
+        n, bad = B.fill_untimed(rows, afs, START, retime="eng")
+        self.assertEqual((n, bad), (1, []))
+        self.assertEqual(S.kickoff_utc(rows[0], "eng"), "2026-11-21T15:00:00Z")
+
 
 class Pick(unittest.TestCase):
     def fx(self, status, country="Spain"):
