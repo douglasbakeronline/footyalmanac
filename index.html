@@ -1300,6 +1300,7 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .cxchip.clear{color:var(--edge)}
 .cxchip.caution{color:#7a5a12}
 .cxchip.against{color:#fff;background:var(--away);border-color:var(--away)}
+.flagged.gap{white-space:nowrap}   /* the Bookies mark (bookGapChip), one line on a phone */
 .slip .og-cx{margin-top:6px}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
@@ -2948,7 +2949,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name)}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name) + bookGapChip(g, "football")}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
     state.open = state.open===id ? null : id;
@@ -4046,6 +4047,51 @@ function trailWaryChip(g){
   const w = trailWary(g);
   return w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "";
 }
+/* 20 Nov 2026 (Douglas, after a hand review of the day's slip: "Can we learn
+   from this method ... for automation", then "build now"): the Bookies mark.
+   A pick the model rates BOOK_GAP (10 points) or more above the bookmakers'
+   fair chance says what the bookmakers give. On the results ledger (3 Oct to
+   20 Nov, every sport, 60%+, first price) the 193 such picks landed 51.3%
+   against the model's 71.2% and the bookmakers' 53.0%; the other 1,190 landed
+   74.2% v 71.9%. Stephen F. Austin (83% v about 63%) was the example. The fair
+   chance is the build's own price (groupings.board_prices f), else the
+   football market line, else ESPN's free moneyline for a US game no UK book
+   prices (mlFair, tools/market_gap.ml_fair). Shown, never hidden: the model's
+   number is unchanged and no bookmaker number reaches a model. */
+const BOOK_GAP = 0.10;
+function mlImplied(ml){
+  ml = Number(ml); if(!ml || !isFinite(ml)) return null;
+  return ml < 0 ? -ml / (-ml + 100) : 100 / (ml + 100);
+}
+function mlFair(line, side){
+  if(!line) return null;
+  const h = mlImplied(line.mlH), a = mlImplied(line.mlA);
+  if(h == null || a == null || h + a <= 0) return null;
+  return (side === "h" ? h : a) / (h + a);
+}
+function bookFair(g, sport){
+  if(!g) return null;
+  let home = g.home, away = g.away, pick = g.pick, side = null;
+  if(home && typeof home === "object"){            // the football board's fixture
+    home = g.home.name; away = g.away.name;
+    if(!g.p) return null;
+    const mp = [g.p.h, g.p.d, g.p.a], i = mp.indexOf(Math.max(...mp));
+    if(i === 1) return null;                        // a draw read: no pick to mark
+    side = i === 0 ? "h" : "a"; pick = side === "h" ? home : away;
+  } else side = pick === home ? "h" : pick === away ? "a" : null;
+  if(!side) return null;
+  const G = window.__GROUPINGS__, q = G && G.prices && G.prices[lbKey(sport, home, away)];
+  if(q && q.f != null && (!q.p || q.p === pick)) return {fair: +q.f, pick, by: "bookmakers"};
+  if(g.market && g.market.p){ const f = g.market.p[side === "h" ? 0 : 2]; if(f) return {fair: +f, pick, by: "bookmakers"}; }
+  const f = mlFair(g.line, side);
+  return f == null ? null : {fair: f, pick, by: g.line.by ? `${g.line.by} via ESPN` : "ESPN's line"};
+}
+function bookGapChip(g, sport){
+  const conf = g && g.confidence, b = conf ? bookFair(g, sport) : null;
+  if(!b || !(conf - b.fair >= BOOK_GAP)) return "";
+  const m = Math.round(conf * 100), f = Math.round(b.fair * 100);
+  return `<span class="flagged wary gap" title="The bookmakers (${ogEsc(b.by)}) give ${ogEsc(b.pick)} ${f}%, ${m - f} points under the model's ${m}%. Since 3 Oct, picks the model rated 10+ points above the bookmakers landed 51% (193 picks), near the bookmakers' 53%, not the model's 71%. Display only: the model's number is unchanged.">Bookies ${f}</span>`;
+}
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
@@ -4318,7 +4364,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div></div>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   return line;
 }
@@ -4366,7 +4412,7 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}</div>`;
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);

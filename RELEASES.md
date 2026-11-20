@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-bookies-mark: rows say when the bookmakers rate a pick far lower than the model (tag pending)
+
+**What changed:** every row of every sport (the football board, the sport tabs, pinned Daily List rows) carries a **Bookies NN** mark when the model's chance sits 10+ points above the bookmakers' fair chance (`bookGapChip` in `index.html`, `BOOK_GAP` 0.10). The fair chance is the build's own price (`groupings.board_prices` now carries `f`, the leg's fair chance, also on past prices), else the football market line, else ESPN's free moneyline for US games no UK book prices (`mlFair`). The hover says what the bookmakers give and the evidence. `tools/market_gap.py` prints the tally behind it from the results ledger, by band and sport.
+**Evidence:** Douglas's hand review of 20 Nov: Stephen F. Austin (model 83%, DraftKings via ESPN 63%) and South Dakota State (81% v 68%) were the picks the market argued against. On `results-ledger.json.gz` (3 Oct to 20 Nov, every sport, 60%+, first price, fair taken as 1 / price / 1.05): the 193 picks 10+ points above the bookmakers landed 51.3% against the model's 71.2% and the bookmakers' 53.0%; the other 1,190 landed 74.2% v 71.9%. College basketball 15+ above: 48 picks, 37.5% v the model's 75.3%. Matches `tools/market_check.py`'s archive read (picks the model rates above the market land at the market's rate).
+**Files:** `index.html`, `groupings.py`, `tools/market_gap.py`, `tests/test_market_gap.py`, `claude/bookies-mark-2026-11-20.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** every model, the Daily List and its order (still no bookmaker input), the Card, the Scale, the slip, the context check. Display only.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-20-nominal-dates: games played off their archived round date are graded (tag pending)
 
 **What changed:** `score.py` graded a football prediction only from a result on the same date. openfootball dates some leagues by round (the Premier League a nominal Saturday, La Liga and Brazil's Serie A with no time), so a match played a day later was never graded: Crystal Palace v Liverpool, archived 7 Nov, played 8 Nov. `score.nearby_results` now grades such a prediction from the build's committed ESPN cache (`current/`), the one result of the same pair within `NEAR_DAYS` (3) days, names mapped all or nothing; never when a prediction exists on the result's own date, never when two could claim it, never a match played earlier than archived unless the price was published before that day.
