@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-20T02:18:14Z",
+ "graded": "2026-11-20T03:12:45Z",
  "overall": {
   "groups": 140,
   "settled": 140,
@@ -171,18 +171,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 53,
+   "n": 54,
    "won": 46,
-   "rate": 0.8679,
-   "quoted": 0.8886,
+   "rate": 0.8519,
+   "quoted": 0.8887,
    "returned": 48.91,
-   "ret": -0.0772
+   "ret": -0.0943
   },
   "notAtBook": {
-   "n": 111,
-   "won": 109,
-   "rate": 0.982,
-   "quoted": 0.912
+   "n": 114,
+   "won": 112,
+   "rate": 0.9825,
+   "quoted": 0.9126
   },
   "unchecked": {
    "n": 27,
@@ -235,18 +235,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 33,
+     "n": 34,
      "won": 29,
-     "rate": 0.8788,
-     "quoted": 0.8991,
+     "rate": 0.8529,
+     "quoted": 0.899,
      "returned": 30.25,
-     "ret": -0.0833
+     "ret": -0.1103
     },
     "notAtBook": {
-     "n": 106,
-     "won": 104,
-     "rate": 0.9811,
-     "quoted": 0.9156
+     "n": 109,
+     "won": 107,
+     "rate": 0.9817,
+     "quoted": 0.9162
     },
     "unchecked": {
      "n": 13,
@@ -468,6 +468,7 @@
    "ncaab|miami hurricanes|manhattan jaspers|2026-11-20": 0,
    "football|gyulai termál|bkv előre|2026-11-21": 0,
    "football|vihren|pirin blagoevgrad|2026-11-21": 0,
+   "football|cosmos|faetano|2026-11-21": 0,
    "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": -1,
    "nba|los angeles lakers|sacramento kings|2026-11-21": -1,
    "nba|philadelphia 76ers|milwaukee bucks|2026-11-21": -1,
