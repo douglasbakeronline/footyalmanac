@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-cups-tests: tests for tune_domestic_cups.py (tag pending)
+
+**What changed:** nothing a reader sees. `tune_domestic_cups.py` (279 lines, the cup-tie parser, the outcome model, the paired bootstrap and the tier fit) had no test; 16 now pin it.
+**Evidence:** it was one of the largest modules with zero test imports (with `tune_strengths.py`, `eurotest.py`, `backtest.py`). Tests cover `parse_clean` (both line shapes, half-time brackets, headers, pens / a.e.t. / aggregates dropped, CRLF), `outcome` (sums to 1, symmetric, rho 0 equals Poisson), `paired` (zero delta, clear loser, fixed seed), `score`, `fit_tiers` (top tier anchored, unseen tier at its prior) and `load_cup_ties` with `fetch` stubbed (a tie with an unresolved side is dropped). No bug found. Full suite 1286 tests OK, `nametest.py` all clear.
+**Files:** `tests/test_tune_domestic_cups.py`.
+**Not changed:** the module, the model, any constant.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-20-fillers-again: empty Card days, fillers asked again, no change (tag pending)
 
 **What changed.** A note only: `claude/card-empty-days-fillers-again-2026-11-20.md`.
