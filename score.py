@@ -35,6 +35,14 @@ EPS = 1e-9
 # still ungraded is worth one ESPN request per competition per date.
 LIVE_LOOKBACK = 10
 
+# Days a cached result may sit from a prediction's date and still grade it
+# (20 Nov 2026, claude/nominal-date-grading-2026-11-20.md). openfootball dates
+# some leagues by round (the Premier League a nominal Saturday, La Liga and
+# Brazil's Serie A with no time), so a match played the day after was archived
+# under the round's date and never met its result: Crystal Palace v Liverpool,
+# archived 7 Nov, played 8 Nov.
+NEAR_DAYS = 3
+
 # Results the live source settled, kept between builds (6 Oct 2026). Without
 # this a fixture openfootball never backfills (internationals, most ESPN-only
 # competitions) was graded only while it sat inside LIVE_LOOKBACK, then fell
@@ -208,6 +216,68 @@ def live_results(pending, log=None):
             hit = next((r for r in played if r["home"] == h and r["away"] == a), None)
             if hit:
                 out[key] = (hit["hg"], hit["ag"])
+    return out
+
+
+def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=None):
+    """Results for predictions archived under a round's nominal date.
+
+    Reads the season-so-far cache the build commits in current/ (ESPN results,
+    ESPN spelling) for each league with an ungraded, past prediction, maps the
+    clubs to the archive's spelling all or nothing (Rule 6, `build._map_names`)
+    and grades a prediction from the one result of the same home and away
+    clubs within `window` days. Refused, so nothing is graded twice and no
+    late price is graded:
+    - a result whose own date has a prediction of the same pair (that row owns
+      it: the copy retimed from API-Football, or the build that had the date);
+    - a result two predictions could claim, or a prediction two results could;
+    - a match played before the archived date when the prediction was not
+      published before that day began (UTC): its real kick-off is unknown, so
+      the price cannot be shown to be early.
+    Returns {prediction key: (hg, ag)}."""
+    today = (today or E.uk_today()).isoformat()
+    load = load or S.load_current
+    pending = defaultdict(list)
+    for k in preds:
+        if k not in results and k[1] < today:
+            pending[k[0]].append(k)
+    out, late = {}, 0
+    for code, keys in sorted(pending.items()):
+        meta = E.LEAGUES.get(code) or {}
+        if meta.get("cup") or meta.get("international"):
+            continue
+        cached, _ = load(code, meta.get("season") or E.current_season(code))
+        played = [x for x in (cached or {}).values() if x.get("hg") is not None and x["date"] < today]
+        if not played:
+            continue
+        import build as B
+        mapping, bad = B._map_names([{"home": k[2], "away": k[3]} for k in preds if k[0] == code], played)
+        if bad:
+            if log is not None:
+                log.append(f"{code}: cached results not used, unmatched: {'; '.join(bad[:5])}")
+            continue
+        by_pair = defaultdict(list)
+        for x in played:
+            by_pair[(mapping[x["home"]], mapping[x["away"]])].append(x)
+        claims = defaultdict(list)
+        for k in keys:
+            d = date.fromisoformat(k[1])
+            near = [x for x in by_pair.get((k[2], k[3]), [])
+                    if abs((date.fromisoformat(x["date"]) - d).days) <= window]
+            if len(near) != 1 or (code, near[0]["date"], k[2], k[3]) in preds:
+                continue
+            x = near[0]
+            if x["date"] < k[1] and not (preds[k].get("published") or "~") < x["date"]:
+                late += 1
+                continue
+            claims[(x["date"], k[2], k[3])].append((k, x))
+        for got in claims.values():
+            if len(got) == 1:
+                k, x = got[0]
+                out[k] = (x["hg"], x["ag"])
+    if log is not None and (out or late):
+        log.append(f"{len(out)} graded from a result dated off the archive's round date; "
+                   f"{late} left out (played earlier than archived, price not shown to be early)")
     return out
 
 
@@ -446,6 +516,17 @@ def graded_rows(save=True):
     results.update(live)
     if live:
         settled.update(live)
+        if save:
+            save_settled(settled)
+
+    # A match played a day or two off its archived round date (20 Nov 2026).
+    note = []
+    near = nearby_results(preds, results, log=note)
+    for line in note:
+        print(f"  {line}", file=sys.stderr)
+    if near:
+        results.update(near)
+        settled.update(near)
         if save:
             save_settled(settled)
 

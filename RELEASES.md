@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-nominal-dates: games played off their archived round date are graded (tag pending)
+
+**What changed:** `score.py` graded a football prediction only from a result on the same date. openfootball dates some leagues by round (the Premier League a nominal Saturday, La Liga and Brazil's Serie A with no time), so a match played a day later was never graded: Crystal Palace v Liverpool, archived 7 Nov, played 8 Nov. `score.nearby_results` now grades such a prediction from the build's committed ESPN cache (`current/`), the one result of the same pair within `NEAR_DAYS` (3) days, names mapped all or nothing; never when a prediction exists on the result's own date, never when two could claim it, never a match played earlier than archived unless the price was published before that day.
+**Evidence:** on the committed archive and record, 46 predictions graded that were not (Brazil's Serie A 31, Premier League 5, Ligue 1 4, La Liga 2, four others); none a Daily List pick, one reserve; 22 left out as not shown to be early; 780 nominal copies left alone beside a real-date copy. `tests/test_score_nearby.py` (9 tests). `claude/nominal-date-grading-2026-11-20.md`.
+**Files:** `score.py`, `tests/test_score_nearby.py`, `claude/nominal-date-grading-2026-11-20.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the model, the Card and its grading, the Daily List, `live_results`, the build's lagging fill.
+**Roll back:** `git revert` the merge; results already kept in `current/settled-results.json` stay graded unless those keys are dropped too.
+
 ## 2026-11-20-free-source-check: no free source for the remaining leagues (tag pending)
 
 **What changed:** a dated line in `claude/data-expansion-plan.md`. No code, data or page change.
