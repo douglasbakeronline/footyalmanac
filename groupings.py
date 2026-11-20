@@ -3171,7 +3171,10 @@ def board_prices(L):
         books = l.get("bookOdds") or {}
         out[_lb_key(l["sport"], h, a)] = {"p": l.get("pick"), "o": l["odds"], "b": l.get("best"), "bb": l.get("bestBook"),
                                           "h": books.get(CARD_BOOK), "n": l.get("books") or len(books) or None,
-                                          "t": l.get("pricedAt"), **({"x": l["exchange"]} if l.get("exchange") else {})}
+                                          "t": l.get("pricedAt"), **({"x": l["exchange"]} if l.get("exchange") else {}),
+                                          # 20 Nov 2026: the bookmakers' fair chance for the pick, for the
+                                          # page's Bookies mark (tools/market_gap.py). Display only.
+                                          **({"f": l["fair"]} if l.get("fair") is not None else {})}
     return out
 
 PAST_PRICE_DAYS = (-1, 0)   # yesterday's and today's pool files
@@ -3207,7 +3210,8 @@ def past_prices(have, now=None, pool_dir=None):
                       "n": len(books) or r.get("n") or None, "t": r.get("lastAt") or r.get("pricedAt"), "past": True,
                       # 19 Nov 2026: the other side's and the draw's last price too, for
                       # the Bookies line under the bar on a started Daily List row
-                      "opp": r.get("lastOpp") or r.get("opp"), "draw": r.get("draw"), "pk": r.get("pick")}
+                      "opp": r.get("lastOpp") or r.get("opp"), "draw": r.get("draw"), "pk": r.get("pick"),
+                      **({"f": f} if (f := r.get("fair") if r.get("fair") is not None else (r.get("priced") or {}).get("fair")) is not None else {})}
     return out
 
 def list_books_page(L, dates, now=None):
