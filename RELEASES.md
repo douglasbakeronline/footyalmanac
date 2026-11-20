@@ -9,6 +9,30 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-19-card-mid-band: the Card's 1.30-1.60 legs read, no change (tag pending)
+
+**What changed:** nothing on the page. A dated note, `claude/card-mid-price-band-2026-11-19.md`.
+**Evidence:** on the results ledger, 60%+ picks priced 1.30-1.60 landed 266 of 400 v 273.2 expected (z -0.78; football +0.58); the Card's own 30 of 50 is a small sample of a band on quote. The long band (1.60-1.90, z -3.4) is the one under quote, and its caps (`m7cap160`, `m7short`) already replayed behind live on both football-data seasons.
+**Files:** claude/card-mid-price-band-2026-11-19.md, RELEASES.md.
+**Not changed:** `CARD_ODDS`, `CARD_RULE`, the record, the page.
+**Roll back:** `git revert` the merge.
+
+## 2026-11-19-champ-draw-signals: Championship draw signals rejected (tag pending)
+
+**What changed:** nothing for a reader. A dated note and the reproducing tool record two untested en.2 draw ideas, both rejected.
+**Evidence:** walk-forward replay, live curve, paired bootstrap 1500 reps. Draw lift by low expected total: worse in all four seasons (delta +0.0015 to +0.0164, p(worse) 0.93 to 0.997). Club draw-rate lift: +0.0023 on the fit season 2025-26 (p 0.98), +0.0016 on 2026-27 (95 fixtures, under the 250 gate), best case -0.0009 in 2023-24 with p 0.28 and a sign flip.
+**Files:** `tools/championship_draw_total.py`, `claude/championship-draw-signals-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** all model constants, `engine.py`, `replay.py`.
+**Roll back:** `git revert` this commit.
+
+## 2026-11-19-tennis-card-recheck: Card tennis legs re-read, no change (tag pending)
+
+**What changed:** nothing on the site. A dated note records that the planner's tennis shortfall (8 of 15) sits inside the 41 pre-floor legs already read on 13 and 14 Nov; no leg at the 85% floor exists.
+**Evidence:** `cardLegsBySport.tennis` 23/41, z -2.13, `atFloor` 0 legs; no tennis price history to replay a rule on (Rule 3 gates cannot run).
+**Files:** `claude/tennis-card-legs-recheck-2026-11-19.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, `CARD_SPORT_MIN`, any rule.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-20-results-scores: scores on every How it went row (tag pending)
 
 **What changed:** How it went's Daily List board shows the final score on every settled row, every sport. Today's day comes from the pinned list (`daylist.js`), which stores a score as text ("91-69"); the board read only a pair of numbers, so the current day's football, basketball, NFL, hockey and rugby rows showed no score. Tennis rows show set scores ("6-3 7-6(3)") in place of the full result note. Douglas, 20 Nov 2026: "add the scores for all sports across the how it went page".
