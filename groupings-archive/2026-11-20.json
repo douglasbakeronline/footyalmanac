@@ -1,0 +1,629 @@
+{
+ "date": "2026-11-20",
+ "published": "2026-11-20T16:08:27Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 3.47,
+   "p": 0.3755,
+   "pFair": 0.2126,
+   "implied": 0.2879,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Shabab Al Ahli Dubai v Ajman",
+     "home": "Shabab Al Ahli Dubai",
+     "away": "Ajman",
+     "side": "h",
+     "pick": "Shabab Al Ahli Dubai",
+     "code": "af.301",
+     "comp": "Pro League",
+     "country": "United Arab Emirates",
+     "when": "2026-11-20T15:25:00Z",
+     "date": "2026-11-20",
+     "pModel": 0.7061,
+     "p": 0.7061,
+     "fx": {
+      "u21Side": false,
+      "league": "af.301",
+      "leagueName": "Pro League",
+      "short": "PRO",
+      "country": "United Arab Emirates",
+      "iso": "",
+      "tier": 2,
+      "order": 619,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-20",
+      "time": "15:25",
+      "kickoff": "2026-11-20T15:25:00Z",
+      "home": {
+       "name": "Shabab Al Ahli Dubai",
+       "att": 1.27,
+       "def": 0.662,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WLDWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 26,
+        "W": 17,
+        "D": 7,
+        "L": 2,
+        "GF": 60,
+        "GA": 18,
+        "GD": 42,
+        "Pts": 58,
+        "PPG": 2.231
+       },
+       "now": {
+        "P": 7,
+        "W": 4,
+        "D": 1,
+        "L": 2,
+        "GF": 12,
+        "GA": 7,
+        "GD": 5,
+        "Pts": 13,
+        "PPG": 1.857
+       }
+      },
+      "away": {
+       "name": "Ajman",
+       "att": 0.939,
+       "def": 1.105,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LWLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 26,
+        "W": 9,
+        "D": 5,
+        "L": 12,
+        "GF": 27,
+        "GA": 34,
+        "GD": -7,
+        "Pts": 32,
+        "PPG": 1.231
+       },
+       "now": {
+        "P": 7,
+        "W": 3,
+        "D": 1,
+        "L": 3,
+        "GF": 13,
+        "GA": 16,
+        "GD": -3,
+        "Pts": 10,
+        "PPG": 1.429
+       }
+      },
+      "p": {
+       "h": 0.7061,
+       "d": 0.1881,
+       "a": 0.1058
+      },
+      "xg": [
+       2.32,
+       0.74
+      ],
+      "btts": 0.5145,
+      "over25": 0.5481,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7061,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6322,
+        0.2008,
+        0.167
+       ],
+       "best": [
+        1.45,
+        4.6,
+        5.5
+       ],
+       "avg": [
+        1.44,
+        4.53,
+        5.45
+       ],
+       "ev": [
+        0.0238,
+        -0.1347,
+        -0.4181
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 16,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7405,
+       "n": 1426,
+       "cumHit": 0.7908,
+       "cumN": 3662,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7908,
+     "n": 3662,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1881,
+     "multOnly": false,
+     "odds": 1.44,
+     "best": 1.45,
+     "books": 7,
+     "opp": 5.45,
+     "draw": 4.53,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.45,
+      "Betfair": 1.4
+     },
+     "margin": 1.0992,
+     "pricedAt": "2026-11-17T07:06:48Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.6944,
+     "pTested": 0.7061,
+     "fair": 0.6317,
+     "edge": -0.0904,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.44
+    },
+    {
+     "sport": "football",
+     "event": "Lokomotive Leipzig v RSV Eintracht",
+     "home": "Lokomotive Leipzig",
+     "away": "RSV Eintracht",
+     "side": "h",
+     "pick": "Lokomotive Leipzig",
+     "code": "af.85",
+     "comp": "Regionalliga - Nordost",
+     "country": "Germany",
+     "when": "2026-11-20T18:00:00Z",
+     "date": "2026-11-20",
+     "pModel": 0.7181,
+     "p": 0.7181,
+     "fx": {
+      "u21Side": false,
+      "league": "af.85",
+      "leagueName": "Regionalliga - Nordost",
+      "short": "REG",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 2,
+      "order": 480,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-20",
+      "time": "18:00",
+      "kickoff": "2026-11-20T18:00:00Z",
+      "home": {
+       "name": "Lokomotive Leipzig",
+       "att": 1.222,
+       "def": 0.986,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Regionalliga - Nordost",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "DDDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 23,
+        "D": 3,
+        "L": 8,
+        "GF": 65,
+        "GA": 30,
+        "GD": 35,
+        "Pts": 72,
+        "PPG": 2.118
+       },
+       "now": {
+        "P": 16,
+        "W": 6,
+        "D": 6,
+        "L": 4,
+        "GF": 32,
+        "GA": 29,
+        "GD": 3,
+        "Pts": 24,
+        "PPG": 1.5
+       }
+      },
+      "away": {
+       "name": "RSV Eintracht",
+       "att": 0.786,
+       "def": 1.247,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": null,
+       "form": {
+        "pts": 3,
+        "max": 15,
+        "seq": "LWLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": null,
+       "last": null,
+       "now": {
+        "P": 16,
+        "W": 2,
+        "D": 3,
+        "L": 11,
+        "GF": 16,
+        "GA": 36,
+        "GD": -20,
+        "Pts": 9,
+        "PPG": 0.562
+       }
+      },
+      "p": {
+       "h": 0.7181,
+       "d": 0.1672,
+       "a": 0.1147
+      },
+      "xg": [
+       2.71,
+       0.98
+      ],
+      "btts": 0.5578,
+      "over25": 0.5966,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7181,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.4819,
+        0.2442,
+        0.2739
+       ],
+       "best": [
+        1.87,
+        3.69,
+        3.29
+       ],
+       "avg": [
+        1.87,
+        3.69,
+        3.29
+       ],
+       "ev": [
+        0.3428,
+        -0.383,
+        -0.6226
+       ],
+       "src": "API-Football",
+       "books": 1
+      },
+      "rank": 14,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7405,
+       "n": 1426,
+       "cumHit": 0.7908,
+       "cumN": 3662,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7908,
+     "n": 3662,
+     "list": false,
+     "reserve": false,
+     "pDraw": 0.1672,
+     "multOnly": false,
+     "odds": 1.87,
+     "best": 1.87,
+     "books": 1,
+     "opp": 3.29,
+     "draw": 3.69,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.1097,
+     "pricedAt": "2026-11-17T07:06:48Z",
+     "src": "API-Football, average of 1 bookmaker",
+     "implied": 0.5348,
+     "pTested": 0.7181,
+     "fair": 0.4819,
+     "edge": -0.0988,
+     "basis": "model",
+     "tier": "football",
+     "firstOdds": 1.87,
+     "lastOdds": 1.87,
+     "lastBest": 1.87,
+     "lastAt": "2026-11-20T16:08:27Z"
+    },
+    {
+     "sport": "football",
+     "event": "Borussia Dortmund II v Sportfreunde Lotte",
+     "home": "Borussia Dortmund II",
+     "away": "Sportfreunde Lotte",
+     "side": "h",
+     "pick": "Borussia Dortmund II",
+     "code": "af.87",
+     "comp": "Regionalliga - West",
+     "country": "Germany",
+     "when": "2026-11-20T18:30:00Z",
+     "date": "2026-11-20",
+     "pModel": 0.7406,
+     "p": 0.7406,
+     "fx": {
+      "u21Side": false,
+      "league": "af.87",
+      "leagueName": "Regionalliga - West",
+      "short": "REG",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 2,
+      "order": 482,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-20",
+      "time": "18:30",
+      "kickoff": "2026-11-20T18:30:00Z",
+      "home": {
+       "name": "Borussia Dortmund II",
+       "att": 1.131,
+       "def": 0.732,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Regionalliga - West",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WWWLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 16,
+        "D": 10,
+        "L": 8,
+        "GF": 66,
+        "GA": 50,
+        "GD": 16,
+        "Pts": 58,
+        "PPG": 1.706
+       },
+       "now": {
+        "P": 16,
+        "W": 10,
+        "D": 5,
+        "L": 1,
+        "GF": 32,
+        "GA": 16,
+        "GD": 16,
+        "Pts": 35,
+        "PPG": 2.188
+       }
+      },
+      "away": {
+       "name": "Sportfreunde Lotte",
+       "att": 0.587,
+       "def": 1.08,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Regionalliga - West",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "WLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 11,
+        "D": 12,
+        "L": 11,
+        "GF": 45,
+        "GA": 55,
+        "GD": -10,
+        "Pts": 45,
+        "PPG": 1.324
+       },
+       "now": {
+        "P": 16,
+        "W": 1,
+        "D": 4,
+        "L": 11,
+        "GF": 10,
+        "GA": 32,
+        "GD": -22,
+        "Pts": 7,
+        "PPG": 0.438
+       }
+      },
+      "p": {
+       "h": 0.7406,
+       "d": 0.1808,
+       "a": 0.0786
+      },
+      "xg": [
+       2.25,
+       0.56
+      ],
+      "btts": 0.4788,
+      "over25": 0.5249,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7406,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6983,
+        0.177,
+        0.1248
+       ],
+       "best": [
+        1.29,
+        5.09,
+        7.22
+       ],
+       "avg": [
+        1.29,
+        5.09,
+        7.22
+       ],
+       "ev": [
+        -0.0446,
+        -0.0797,
+        -0.4325
+       ],
+       "src": "API-Football",
+       "books": 1
+      },
+      "rank": 10,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7405,
+       "n": 1426,
+       "cumHit": 0.7908,
+       "cumN": 3662,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.7908,
+     "n": 3662,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1808,
+     "multOnly": false,
+     "odds": 1.29,
+     "best": 1.29,
+     "books": 1,
+     "opp": 7.22,
+     "draw": 5.09,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.1102,
+     "pricedAt": "2026-11-17T07:06:48Z",
+     "src": "API-Football, average of 1 bookmaker",
+     "implied": 0.7752,
+     "pTested": 0.7405,
+     "fair": 0.6983,
+     "edge": -0.0992,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.29,
+     "lastOdds": 1.29,
+     "lastBest": 1.29,
+     "lastAt": "2026-11-20T16:08:27Z"
+    }
+   ],
+   "tested": 0.3055,
+   "short": false,
+   "tiers": [
+    "reserve",
+    "football"
+   ],
+   "bestOdds": 3.5,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-17T07:07:47Z",
+   "checked": "2026-11-17T07:07:47Z",
+   "lockAt": "2026-11-20T15:25:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-20T16:08:27Z"
+  }
+ ]
+}
