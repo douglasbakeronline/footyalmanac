@@ -9,6 +9,16 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-played-today: results on every sport's tab (tag pending)
+
+**What changed for a reader.** Every sport's tab (Football, Tennis, the NBA, the NFL, rugby, ice hockey, the college sports) now opens with **Played today**: every game of the UK day that has started, list or not, at its last pre-start price, with Won / Lost and the score once graded (tennis with its set scores), In play or Result due until then. The top eight by confidence, then Show all. A row still on the board after its start shows the same pill in place of the predicted score. Douglas, 20 Nov 2026: "the won or lost tab should be on every tab for each sport listed ... earlier games from this afternoon show nothing".
+
+**Why they had gone.** `data.json` drops a game at its start, so only the Daily List (from `daylist.js`) kept the day's started games.
+
+**Files.** `daylist.py` (`played_today`, `board_results`; `daylist.json` gains `played` and `results`, about 100 KB on a busy day), `index.html` (`playedSection`, `boardResult`; tennis set scores on `pinnedRow`), `tests/test_daylist_played.py`. Display only: nothing is graded or priced differently.
+
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-20-czech-grading: the Czech First League is graded again (tag pending)
 
 **What changed:** `score.py` never saw a Czech First League result after openfootball stopped scoring on 20 Sep (ESPN carries none), so 41 fixtures from 9 Oct to 8 Nov sat ungraded and the league had no 2026-27 rows on the record. `score.lag_results` now grades the `sources.AF_LAG` leagues from the same API-Football day pool the build has filled their table from since 18 Nov, all or nothing on names, same-date first and a day or two off through `nearby_results`' guards, kept in `current/settled-results.json` like the cup results.
