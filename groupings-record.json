@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-20T12:49:56Z",
+ "graded": "2026-11-20T14:04:56Z",
  "overall": {
   "groups": 140,
   "settled": 140,
@@ -185,10 +185,10 @@
    "quoted": 0.9123
   },
   "unchecked": {
-   "n": 27,
-   "won": 24,
-   "rate": 0.8889,
-   "quoted": 0.8595
+   "n": 28,
+   "won": 25,
+   "rate": 0.8929,
+   "quoted": 0.8565
   },
   "bySport": {
    "football": {
@@ -207,10 +207,10 @@
      "quoted": 0.8348
     },
     "unchecked": {
-     "n": 11,
-     "won": 8,
-     "rate": 0.7273,
-     "quoted": 0.7846
+     "n": 12,
+     "won": 9,
+     "rate": 0.75,
+     "quoted": 0.7838
     }
    },
    "nba": {
@@ -456,7 +456,7 @@
    "ncaab|arizona state sun devils|oakland golden grizzlies|2026-11-19": 0,
    "ncaab|san diego state aztecs|texas southern tigers|2026-11-19": 0,
    "ncaab|ucla bruins|cal state fullerton titans|2026-11-19": 0,
-   "football|fc bayern münchen|1. fc köln|2026-11-20": 0,
+   "football|fc bayern münchen|1. fc köln|2026-11-20": 1.1,
    "nba|san antonio spurs|la clippers|2026-11-20": -1,
    "ncaab|quinnipiac bobcats|maine black bears|2026-11-20": 1.17,
    "ncaab|high point panthers|montana state bobcats|2026-11-20": 1.08,
