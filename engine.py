@@ -347,8 +347,11 @@ AF_EXTRA = _af_extra()
 # API-Football leagues that repeat a league already fed natively. The live build
 # skips them so a fixture is never priced twice (4 Oct 2026: af.203 Super Lig
 # doubled tr.1, with different ratings for the same match). Kept in LEAGUES so
-# archived af.203 rows still grade.
-AF_DUPLICATES = {"af.203": "tr.1"}
+# archived af.203 rows still grade. af.144 (Belgium) joined on 20 Nov 2026: be.1
+# carries fixtures again (openfootball / ESPN), so 9 Pro League games sat in
+# the 20 Nov archive twice, under different spellings and ratings. af.202
+# (Tunisia) stays: tn.1 has no fixtures, so it is the sole source.
+AF_DUPLICATES = {"af.203": "tr.1", "af.144": "be.1"}
 _ISO_BY_COUNTRY = {m["country"]: m["iso"] for m in LEAGUES.values()
                    if m.get("iso") and m["iso"] != "fifa"}
 

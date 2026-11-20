@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-belgium-dup: Belgian Pro League no longer priced twice (tag pending)
+
+**What changed:** `af.144` (API-Football's Belgian Pro League) joins `engine.AF_DUPLICATES`, so the build skips it and `be.1` is the one feed. Readers lose the second copy of each Belgian game on the board.
+
+**Evidence:** `predictions/2026-11-20.json` (1,779 rows, 20 to 26 Nov) held 9 Belgian fixtures in both `be.1` and `af.144` at the same kick-off (Genk v RAAL, Mechelen v Club Brugge, Zulte Waregem v Antwerp, Anderlecht v OH Leuven, Beveren v Gent and others), spelled differently and rated separately. The 4 Oct note had predicted this once `be.1` carried fixtures (it has since the 14 Nov undated-rounds fix). Everything else clean: no exact duplicates, no unrated rows, no row whose kick-off day differs from its date, one row without a kick-off. `af.202` (Tunisia) was checked too and stays: `tn.1` has no fixtures. `nametest.py` all clear (2 duplicate feeds skipped), unit tests pass.
+
+**Files:** `engine.py`, `claude/data-integrity.md`, `RELEASES.md`.
+
+**Not changed:** the matcher, `LIVE_NAMES`, archived af.144 rows (they still grade, as `af.203` rows do).
+
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-20-cups-tests: tests for tune_domestic_cups.py (tag pending)
 
 **What changed:** nothing a reader sees. `tune_domestic_cups.py` (279 lines, the cup-tie parser, the outcome model, the paired bootstrap and the tier fit) had no test; 16 now pin it.
