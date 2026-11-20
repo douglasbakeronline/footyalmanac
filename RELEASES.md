@@ -9,6 +9,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-card-unpriced: the price log names the Card's own gaps (tag pending)
+
+**For a reader.** Nothing on the page. The build log and `groupings.json` now say how many football legs the Card could take were left unpriced by every source, and name them ("football Card unpriced: N"); the price reports name each competition with its country, so Russia's or Kuwait's Premier League no longer reads as England's. Under rule 14, the Card's capped price calls go to core-league legs first, as the Card can take nothing else.
+
+**Evidence.** The 19 Nov builds' "noOdds (Premier League 12/14)" was a dozen leagues of that name; England's five unpriced games on 21 Nov were all under the model's 60%. Core-league 60%+ legs on the pool 13 to 23 Nov: 41 priced, 2 unpriced. `claude/football-card-unpriced-2026-11-20.md`.
+
+**Files.** `groupings.py` (`comp_label`, `card_unpriced`, `card_reach`, `price`, the log lines), `tests/test_football_unpriced.py`, the note, `CLAUDE.md`.
+
+**Not changed.** Any Card constant, any price source, the matcher, the page.
+
+**Check.** The next CI build logs "football Card unpriced:" and "Premier League (England)" in "football unpriced:".
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-19-card-mid-band: the Card's 1.30-1.60 legs read, no change (tag pending)
 
 **What changed:** nothing on the page. A dated note, `claude/card-mid-price-band-2026-11-19.md`.
