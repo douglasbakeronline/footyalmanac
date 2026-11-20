@@ -324,3 +324,9 @@ Looked at and left alone:
 No matcher, `LIVE_NAMES` or `nametest.py` change was needed. A note instead of a
 change: the evidence found nothing real to fix. The 28 Oct suggestion (collapse
 rescheduled same-teams pairs in `archive_predictions`) stays open, Douglas's call.
+
+## 20 November 2026: fixture audit of `predictions/2026-11-20.json`
+
+1,779 rows, dated 20 to 26 Nov. Clean: no duplicate (league, teams, date), 0 unrated, 0 rows whose kick-off UTC day differs from the row date, 1 row without a kick-off. Same-direction pairs on two dates (15) are all two different matches or reschedules within a league; same-name clubs across competitions (Rangers, Chelsea, Paris, Guadalajara, women's v men's) are distinct.
+
+**One real fault:** `af.144` repeated `be.1`: 9 Belgian Pro League games twice at the same kick-off under different spellings (Genk / KRC Genk, Anderlecht / RSC Anderlecht). The 4 Oct note predicted it once `be.1` carried fixtures. Fixed: `af.144` added to `engine.AF_DUPLICATES` (`nametest.py` guards it). `af.202` (Tunisia) is the sole Tunisian feed (`tn.1` has no fixtures), so it stays. If `tn.1` ever carries fixtures, add `af.202`.
