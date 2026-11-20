@@ -615,8 +615,37 @@ def freeze(day, races, now):
     return out
 
 
-def write_page(status, days, record, note=""):
-    payload = {"status": status, "trial": TRIAL, "rule": RULE, "note": note,
+def feed_of(days, results_refused):
+    """What the plan in use sends (20 Nov 2026): the racecard endpoint that
+    answered, whether any runner carried a bookies' price, whether results
+    were refused. The free plan sends racecards with no prices and refuses
+    results, so no tip can be made and nothing graded; the page says so
+    instead of showing "0 tips" with no reason."""
+    path = _card_path[0] or ""
+    priced = any(x.get("price") is not None for races in days.values() for r in races or []
+                 for x in r.get("runners") or [])
+    return {"plan": path.rsplit("/", 1)[-1] or None, "prices": priced, "results": not results_refused}
+
+
+def feed_note(feed):
+    """The page's line on what the feed lacks, empty when nothing is missing."""
+    if not feed:
+        return ""
+    gaps = [w for w, ok in (("bookies' prices", feed.get("prices")), ("results", feed.get("results"))) if not ok]
+    if not gaps:
+        return ""
+    plan = f"The Racing API's {feed['plan']} plan" if feed.get("plan") else "The racing feed"
+    why = []
+    if not feed.get("prices"):
+        why.append("no tips can be made (a tip needs a price that pays more than the chance)")
+    if not feed.get("results"):
+        why.append("nothing can be graded")
+    tail = "" if feed.get("prices") else " The chances below are the racecard's alone, with no market in the blend."
+    return f"{plan} sends no {' and no '.join(gaps)}, so {' and '.join(why)}.{tail}"
+
+
+def write_page(status, days, record, note="", feed=None):
+    payload = {"status": status, "trial": TRIAL, "rule": RULE, "note": note, "feed": feed,
                "updated": dt.datetime.now(UK).isoformat(timespec="minutes"),
                "regions": [r.upper() for r in REGIONS], "days": days, "record": record}
     with open(PAGE, "w") as fh:
@@ -699,6 +728,7 @@ def main(argv=None):
     archive = load_archive()
     # results kept from earlier builds, so a race is fetched once
     results = {rid: (dict(v[0]), dict(v[1])) for rid, v in (record_old.get("results") or {}).items()}
+    refused = False
     try:
         if a.results_sample:
             with open(a.results_sample) as fh:
@@ -726,6 +756,7 @@ def main(argv=None):
             rid, finish, sp = result_of(raw)
             results[rid] = (finish, sp)
     except Exception as e:
+        refused = isinstance(e, urllib.error.HTTPError) and e.code in (401, 403)
         print(f"::warning::racing results failed: {e}")
 
     runners, tips = grade(archive, results)
@@ -739,7 +770,8 @@ def main(argv=None):
         summary = record_old.get("summary") or summary
 
     show = {d: days.get(d) or archive.get(d) for d in sorted(set(days) | set(archive))[-2:]}
-    write_page("live", show, summary)
+    feed = None if a.sample else feed_of(days, refused)
+    write_page("live", show, summary, feed_note(feed), feed)
     n = sum(len(v) for v in days.values())
     print(f"racing: {n} races on {len(days)} day(s), {sum(1 for v in days.values() for r in v if r.get('tip'))} tips; "
           f"record {summary['tips']} tips, {summary['runners']} runners graded")

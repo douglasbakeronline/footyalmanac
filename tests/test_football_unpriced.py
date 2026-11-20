@@ -264,3 +264,35 @@ class CardUnpriced(unittest.TestCase):
         n, named = G.card_unpriced(legs, keep=2)
         self.assertEqual(n, 5)
         self.assertEqual([m["home"] for m in named], ["H4", "H3"])   # strongest first on a day
+
+
+class KickoffNamed(unittest.TestCase):
+    """20 Nov 2026: `kickoff` legs (both names on API-Football's day, kick-offs 90+ minutes apart) are
+    named with the board's and API-Football's times, as noFixture legs are; the 03:08 UTC build counted
+    kickoff 2 (Championship, Serie A) with no names."""
+    run_price = FootballUnpriced.run_price
+
+    def test_kickoff_legs_named_with_both_times(self):
+        t = date.today().isoformat()
+        day = [fx(91, t, "Leeds", "Hull", hour=12), fx(92, t, "Arsenal", "Chelsea")]
+        L = [dict(leg(t, "Leeds", "Hull", "Championship", hour=15), code="en.2", pModel=0.66, country="England"),
+             leg(t, "Arsenal", "Chelsea", "Premier League")]
+        r = self.run_price(L, day, {})
+        self.assertEqual(r["miss"].get("kickoff"), 1)
+        self.assertEqual(r["kickoff"], [{"date": t, "comp": "Championship (England)", "home": "Leeds", "away": "Hull",
+                                         "board": "15:00", "af": ["12:00"], "card": True}])
+        self.assertNotIn("odds", L[0])           # still never priced: the guard is unchanged
+
+    def test_no_kickoff_key_without_kickoff_misses(self):
+        t = date.today().isoformat()
+        r = self.run_price([leg(t, "Zzyzx Town", "Qwerty Rovers", "Liga X")], [fx(93, t, "Leeds", "Hull")], {})
+        self.assertNotIn("kickoff", r)
+
+    def test_ol_lyonnes_spelling(self):
+        """D1 Arkema's OL Lyonnes is "Lyon W" on API-Football (the 03:08 UTC build's noFixture name)."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.20"}, {"value": "Draw", "odd": "6.0"}, {"value": "Away", "odd": "11.0"}]}]}]}]
+        r = self.run_price([leg(t, "OL Lyonnes", "Strasbourg", "D1 Arkema")], [fx(94, t, "Lyon W", "Strasbourg W")], {94: book})
+        self.assertEqual(r["matched"], 1)
+        self.assertNotIn("miss", r)
