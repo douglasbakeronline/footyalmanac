@@ -1342,7 +1342,7 @@ def af_lag_pick(code, season, fixtures):
 # Brazil's Serie A on the board had `kickoff` null and a date a day either
 # side of the real one. build.fill_untimed takes the date and time from
 # API-Football. Ids set by hand, so the country is checked (rule 6).
-AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71, "it.1": 135}
+AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71}
 # 19 Nov 2026 (night): Serie A's 29 Nov round reaches openfootball with no
 # time either (10 of 10), so it.1 joins. The Premier League's file does carry
 # times, but nominal ones: every game of the 21 and 28 Nov rounds at Saturday
@@ -1352,7 +1352,15 @@ AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71, "it.1": 135}
 # holding a 12:30 game open to 15:00. For AF_RETIME leagues a timed row also
 # takes API-Football's date and time when they differ (build.fill_untimed
 # `retime`), under the same rules: all or nothing on names, one fixture.
-AF_RETIME = {"en.1": 39}
+# 20 Nov 2026: the 07:01 UTC build's "football kickoff:" line named two more
+# timed rows the board had wrong: Sheffield United v Watford (Championship)
+# at 12:30 UTC on the board, API-Football 15:00 (published listings agree:
+# 3pm), and Bologna v Udinese (Serie A) at 17:00 on the board, API-Football
+# 14:00. Each was unpriced (`kickoff`) and, had it been priced inside the
+# 90-minute guard, would have carried the board's start into the Card. So the
+# Championship joins, and Serie A moves here from AF_UNTIMED: a retime league
+# also fills its untimed rows, so its 29 Nov round is still covered.
+AF_RETIME = {"en.1": 39, "en.2": 40, "it.1": 135}
 
 
 def af_untimed_rows(code, start, end):

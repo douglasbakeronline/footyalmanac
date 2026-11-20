@@ -110,8 +110,22 @@ class Retime(unittest.TestCase):
 
     def test_leagues_registered(self):
         self.assertEqual(S.AF_RETIME.get("en.1"), 39)
-        self.assertEqual(S.AF_UNTIMED.get("it.1"), 135)
+        self.assertEqual(S.AF_RETIME.get("en.2"), 40)
+        self.assertEqual(S.AF_RETIME.get("it.1"), 135)
+        self.assertNotIn("it.1", S.AF_UNTIMED)
         self.assertFalse(set(S.AF_RETIME) & set(S.AF_UNTIMED))
+
+    def test_retime_rome_time_and_untimed_row(self):
+        """Serie A under retime (20 Nov 2026): a row at 18:00 Rome (17:00 UTC)
+        takes API-Football's 14:00 UTC, and a row with no time is still filled."""
+        rows = [row("Bologna FC 1909", "Udinese Calcio", "2026-11-22", time="18:00"),
+                row("Inter", "Milan", "2026-11-29")]
+        afs = [af("Bologna", "Udinese", "2026-11-22", "14:00"),
+               af("Inter", "AC Milan", "2026-11-29", "19:45")]
+        n, bad = B.fill_untimed(rows, afs, START, retime="ita")
+        self.assertEqual((n, bad), (2, []))
+        self.assertEqual(S.kickoff_utc(rows[0], "ita"), "2026-11-22T14:00:00Z")
+        self.assertEqual(rows[1]["time"], "19:45")
 
 
 class Pick(unittest.TestCase):
