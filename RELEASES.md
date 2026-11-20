@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-fillers-again: empty Card days, fillers asked again, no change (tag pending)
+
+**What changed.** A note only: `claude/card-empty-days-fillers-again-2026-11-20.md`.
+
+**Evidence.** opp7 and short filled zero empty days on the pool; fillrule5 4 groups on 12 legs (+12%, p(worse) 0.30, under the 100-leg gate); fillwide 2 of 12 v 4.14 expected. Filler switched off by Douglas on 11 Nov; the 19 Nov empty day is rule 14's tighter rule.
+
+**Files.** The note, this entry.
+
+**Not changed.** Any Card constant, `CARD_FILLER`, the model.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-20-cha-spellings: the Championship's API-Football spellings (tag pending)
 
 **For a reader.** Championship rows now take API-Football's kick-off where the board's was stale (Sheffield United v Watford, 21 Nov, 12:30 to 15:00), so such games can be priced for the Card.
