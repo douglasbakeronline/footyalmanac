@@ -219,6 +219,61 @@ def live_results(pending, log=None):
     return out
 
 
+def lag_results(preds, results, today=None, fetch=None, log=None):
+    """Results for the AF_LAG leagues (20 Nov 2026): leagues whose openfootball
+    file stopped scoring and ESPN cannot score, today the Czech First League.
+
+    The build has scored their table from the API-Football day pool since
+    18 Nov (`sources.af_lag_results`, `build.fill_lagging(source=
+    "apifootball")`), but wrote nothing to current/, so this grader never saw a
+    Czech result after 20 Sep: 41 fixtures from 9 Oct to 8 Nov sat ungraded.
+    Same pool, same rules: clubs mapped to the archive's spelling all
+    or nothing (Rule 6, `build._map_names`), a prediction graded only from the
+    one result of the same home and away clubs on its own date; a result a day
+    or two off the archived date goes through `nearby_results` with this pool
+    as its source, under that function's guards. Returns {key: (hg, ag)}.
+    No key (a local run) or no pool: {}."""
+    today = (today or E.uk_today()).isoformat()
+    fetch = fetch or S.af_lag_results
+    codes = sorted({k[0] for k in preds if k[0] in S.AF_LAG and k not in results and k[1] < today})
+    out, pools = {}, {}
+    for code in codes:
+        season = E.LEAGUES[code].get("season") or E.current_season(code)
+        rows, why = fetch(code, season)
+        if why:
+            if log is not None:
+                log.append(f"{code}: API-Football results not used: {why}")
+            continue
+        played = [x for x in rows if x.get("hg") is not None and x["date"] < today]
+        if not played:
+            continue
+        import build as B
+        mapping, bad = B._map_names([{"home": k[2], "away": k[3]} for k in preds if k[0] == code], played)
+        if bad:
+            if log is not None:
+                log.append(f"{code}: API-Football results not used, unmatched: {'; '.join(bad[:5])}")
+            continue
+        mapped = [dict(x, home=mapping[x["home"]], away=mapping[x["away"]]) for x in played]
+        seen = defaultdict(int)
+        for x in mapped:
+            seen[(x["date"], x["home"], x["away"])] += 1
+        for x in mapped:
+            key = (code, x["date"], x["home"], x["away"])
+            if key in preds and key not in results and seen[key[1:]] == 1:
+                out[key] = (x["hg"], x["ag"])
+        pools[code] = mapped
+    if pools:
+        def load(code, season):
+            return {i: x for i, x in enumerate(pools.get(code, []))}, None
+        merged = dict(results)
+        merged.update(out)
+        sub = {k: v for k, v in preds.items() if k[0] in pools}
+        out.update(nearby_results(sub, merged, today=date.fromisoformat(today), load=load))
+    if log is not None and out:
+        log.append(f"{len(out)} graded from API-Football results ({', '.join(sorted(pools))})")
+    return out
+
+
 def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=None):
     """Results for predictions archived under a round's nominal date.
 
@@ -516,6 +571,19 @@ def graded_rows(save=True):
     results.update(live)
     if live:
         settled.update(live)
+        if save:
+            save_settled(settled)
+
+    # Leagues the build scores from API-Football (sources.AF_LAG, 20 Nov 2026).
+    # Kept in the settled cache like a live result, as the cup results are,
+    # so a match stays graded once the day pool has rolled past it.
+    note = []
+    lag = lag_results(preds, results, log=note)
+    for line in note:
+        print(f"  {line}", file=sys.stderr)
+    if lag:
+        results.update(lag)
+        settled.update(lag)
         if save:
             save_settled(settled)
 
