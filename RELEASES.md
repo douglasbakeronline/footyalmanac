@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-results-scores: scores on every How it went row (tag pending)
+
+**What changed:** How it went's Daily List board shows the final score on every settled row, every sport. Today's day comes from the pinned list (`daylist.js`), which stores a score as text ("91-69"); the board read only a pair of numbers, so the current day's football, basketball, NFL, hockey and rugby rows showed no score. Tennis rows show set scores ("6-3 7-6(3)") in place of the full result note. Douglas, 20 Nov 2026: "add the scores for all sports across the how it went page".
+**Evidence:** checked in a browser at 1280px and 400px on the 19 Nov records: no settled row without a score on the Daily List, Football, Tennis and Basketball boards.
+**Files:** `index.html` (`listReviewDays`), `RELEASES.md`.
+**Not changed:** grading, the records, `daylist.py`.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-19-tennis-set-scores: tennis set scores on the Daily List (tag pending)
 
 **What changed:** a settled tennis row on the Daily List now shows the set scores under the winner ("Strakhova won · 6-3 7-6(3)"), read from the tennis result's note (winner first, a tiebreak as the loser's points, "ret." or "Walkover" where the note says so). Douglas, 19 Nov 2026: "I'm not seeing the tennis scores applied."
