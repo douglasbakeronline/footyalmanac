@@ -9,6 +9,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-20-retime-cha-sea: the Championship and Serie A take API-Football's kick-offs (tag pending)
+
+**For a reader.** Championship and Serie A rows show API-Football's kick-off where the board's differed (Sheffield United v Watford moves from 12:30 to 15:00 on 21 Nov), and such games can now be priced.
+
+**Evidence.** The 07:01 UTC build's first named "football kickoff:" line: Sheffield United v Watford board 12:30 UTC v API-Football 15:00 (published listings: 3pm), Bologna v Udinese board 17:00 v 14:00. A stale board time under the 90-minute guard is priced and carries the wrong start into the Card. `claude/retime-championship-seriea-2026-11-20.md`.
+
+**Files.** `sources.py` (`AF_RETIME` adds `en.2`, moves `it.1` from `AF_UNTIMED`), `tests/test_untimed.py`, the note, `CLAUDE.md`.
+
+**Not changed.** Any Card constant, the 90-minute guard, the name rules (all or nothing), the model.
+
+**Check.** The next CI build logs "untimed en.2: N fixture(s)" and "untimed it.1: N" with no unmatched-name warning.
+
+**Roll back.** `git revert` this merge.
+
 ## 2026-11-20-kickoff-named: kick-off misses named, OL Lyonnes priced, racing says why it has no tips (tag pending)
 
 **For a reader.** The Horse racing tab now says, above its boards, when the feed's plan sends no bookies' prices or results (today: the free plan, so no tips and nothing graded). Nothing else on the page.
