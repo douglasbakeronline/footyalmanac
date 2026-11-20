@@ -2961,6 +2961,7 @@ function appendFixture(sec, g, i, dayDate, btts){
 
   line.appendChild(star);
   line.appendChild(btn);
+  if(!btts) boardResult(line, "football", g.home.name, g.away.name, g.kickoff, `Pred ${g.score[0]}–${g.score[1]}`);
   sec.appendChild(line);
   if(state.open===id){
     const dv = document.createElement("div");
@@ -3658,6 +3659,39 @@ function tennisStat(r, surface){
   return `<div class="stat"><span title="${ratingHelp()}">${surface} rating ${r.surfaceElo}</span> &middot; ${r.matches} matches</div>`;
 }
 
+/* 20 Nov 2026 (Douglas: "earlier games from this afternoon show nothing"):
+   each sport's tab opens with Played today, every game of the UK day that has
+   started (daylist.js "played", at its last pre-start price), Won / Lost and
+   the score once graded, In play or Result due until then. data.json drops a
+   game at its start, so these had gone from the tabs. Rows still on the board
+   are skipped here (boardResult marks them in place). Display only. */
+const PLAYED_CAP = 8, PLAYED_ALL = new Set();
+function playedSection(name, test, host, ruler){
+  const D = window.__DAY_LIST__;
+  if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
+  const shown = new Set([...host.querySelectorAll(".row-line[data-pk]")].map(e => e.dataset.pk));
+  const items = D.played.filter(it => test(it.sport) && !shown.has(lbKey(it.sport, it.home, it.away)))
+    .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+  if(!items.length) return;
+  const st = it => pinStatus(it)[0];
+  const won = items.filter(it => st(it) === "won").length, lost = items.filter(it => st(it) === "lost").length;
+  const open = items.length - won - lost - items.filter(it => st(it) === "void").length;
+  const all = PLAYED_ALL.has(name), list = all ? items : items.slice(0, PLAYED_CAP);
+  const sec = document.createElement("section");
+  sec.className = "day played";
+  sec.innerHTML = `<div class="day-head"><h2>Played today</h2>
+    <div class="count">${items.length} ${name}${won + lost ? ` · ${won} won · ${lost} lost` : ""}${open ? ` · ${open} to grade` : ""}</div></div>${ruler}`;
+  list.forEach((it, i) => sec.appendChild(pinnedRow(it, i)));
+  if(items.length > PLAYED_CAP){
+    const more = document.createElement("button");
+    more.className = "more";
+    more.innerHTML = all ? `Show the top <b>${PLAYED_CAP}</b> only` : `Show all <b>${items.length}</b> played today`;
+    more.addEventListener("click", () => { all ? PLAYED_ALL.delete(name) : PLAYED_ALL.add(name); rerenderOpen(); });
+    sec.appendChild(more);
+  }
+  const lede = host.querySelector(":scope > .lede");
+  lede ? lede.after(sec) : host.prepend(sec);
+}
 function renderTennis(){
   const host = $("#tennis");
   const TD = window.__TENNIS_DATA__;
@@ -3671,6 +3705,9 @@ function renderTennis(){
   if(!TD.matches.length){
     host.innerHTML = `<div class="empty">No upcoming tennis fixtures found for
       ${TD.from} to ${TD.to}.</div>`;
+    playedSection("matches", sp => sp === "tennis", host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
+    <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
+    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`);
     return;
   }
   host.innerHTML = `<div class="lede"><h2>Tennis</h2><p>ATP and WTA, priced from each player's
@@ -3702,6 +3739,9 @@ function renderTennis(){
     games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
     host.appendChild(sec);
   });
+  playedSection("matches", sp => sp === "tennis", host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
+    <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
+    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`);
 }
 
 function render(){
@@ -3772,6 +3812,9 @@ function render(){
         ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
         : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`)
     : `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`;
+  if(state.board !== "btts") playedSection("fixtures", s => s === "football", host, `<div class="ruler">
+    <div>#</div><div>UK time</div><div>Home</div><div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
+    <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`);
 }
 
 /* ---------- the review board ----------
@@ -4143,6 +4186,27 @@ function pinStatus(g){
   if(now < t) return ["up", "Not started"];
   return now - t < (PLAY_HOURS[g.sport] || 3) * 36e5 ? ["live", "In play"] : ["due", "Result due"];
 }
+/* 20 Nov 2026 (Douglas: "the won or lost tab should be on every tab for each
+   sport listed"): a finished row on any sport's board shows Won / Lost and the
+   score, as the Daily List does, from daylist.js "results" (every graded game
+   of the UK day and the day before, keyed by lbKey). A started row with no
+   grade yet says In play or Result due. putPinned still writes the list's own
+   rows over this. Display only. */
+function boardResult(line, sport, home, away, start, was){
+  const pred = line && line.querySelector(".pred");
+  if(!pred) return;
+  const D = window.__DAY_LIST__, r = D && D.results && D.results[lbKey(sport, home, away)];
+  const t = Date.parse(start);
+  if(!r && !(t && Date.now() >= t)) return;
+  const g = {sport, start, result: r || null};
+  const [cls, label] = pinStatus(g);
+  const final = r ? pinFinal(g, r) : "";
+  const sets = r && sport === "tennis" ? tennisSets(r.note) : "";
+  line.querySelector(".row").classList.add("pinned-full");
+  pred.removeAttribute("aria-hidden");
+  pred.classList.add("pin-pred");
+  pred.innerHTML = `<span class="pin-st ${cls}">${label}</span>${final ? `<small>${final}</small>` : ""}${sets ? `<small class="sets">${sets}</small>` : ""}${was ? `<small class="was">${was}</small>` : ""}`;
+}
 /* ---------- live scores (10 Nov 2026) ----------
    A started Daily List pick used to read "In play" until a build graded it,
    hours later: at 3am with thirty college games on, the list said nothing.
@@ -4361,7 +4425,7 @@ function pinnedRow(g, i){
     <div class="side"><div class="club${g.side === "h" ? " pick" : ""}"><span>${g.home}</span></div>
       <div class="stat">Pick: ${g.pick}</div></div>
     <div class="barcell">${barHtml}${pastLine(g)}</div>
-    <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}</div>
+    <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}${g.sport === "tennis" && tennisSets(r.note) ? `<small class="sets">${tennisSets(r.note)}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
     <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div></div>`;
@@ -4416,6 +4480,7 @@ function sportRow(g, i, showSport, host){
   btn.dataset.oid = id;
   btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);
+  if(!g.timeTbc) boardResult(line, g.sport, g.home, g.away, g.when, "");
   const frag = document.createDocumentFragment();
   frag.appendChild(line);
   if(state.open === id){
@@ -4493,6 +4558,7 @@ function renderSport(key){
   host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p></div>`;
   if(!sp.games.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
+    playedSection("games", s => s === key, host, sportRuler());
     return;
   }
   const byDay = {};
@@ -4507,6 +4573,7 @@ function renderSport(key){
     games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
     host.appendChild(sec);
   });
+  playedSection("games", s => s === key, host, sportRuler());
 }
 
 /* sports results on "How it went": same rows as tennis */

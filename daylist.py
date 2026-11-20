@@ -226,6 +226,67 @@ def attach_results(items, record, trec, srec):
     return items
 
 
+PLAYED_KEEP = ("sport", "start", "timed", "date", "comp", "chip", "home", "away", "side", "pick", "p",
+               "pHome", "confidence", "tier", "accuracy", "list", "reserve", "feed", "status", "result")
+
+
+def played_today(day, archives, now, records):
+    """Every game of the UK day that has started, every sport, list or not,
+    at its last pre-start price and with its result once graded (20 Nov 2026,
+    Douglas: "earlier games from this afternoon show nothing"). data.json drops
+    a game at its start, so without this a sport's tab lost the afternoon's
+    games entirely; the tabs draw these as their Played today section."""
+    items = [i for i in pinned(day, archives, now, every=True) if i["started"]]
+    attach_results(items, *records)
+    items.sort(key=lambda i: i["start"])
+    return [{k: i[k] for k in PLAYED_KEEP if i.get(k) is not None} for i in items]
+
+
+def _key(sport, home, away):
+    """The page's lbKey: sport|home|away, names lower-cased."""
+    return f"{sport}|{str(home or '').lower()}|{str(away or '').lower()}"
+
+
+def board_results(day, records, back=1):
+    """Every graded game of the UK day and the day before, every sport, keyed
+    as the page's rows are (lbKey), so each sport's tab can show Won / Lost
+    and the score on a finished row, not only the Daily List (20 Nov 2026,
+    Douglas: "the won or lost tab should be on every tab for each sport").
+    The same grading as attach_results; display only. The day before covers
+    US games that start after midnight UK."""
+    record, trec, srec = records
+    days = {day}
+    d0 = datetime.fromisoformat(day)
+    for k in range(1, back + 1):
+        days.add((d0 - timedelta(days=k)).date().isoformat())
+    out = {}
+    def put(k, v, d):
+        if k not in out or d == day:
+            out[k] = v
+    for d in (record or {}).get("days") or []:
+        if d.get("date") not in days: continue
+        for g in d.get("games") or []:
+            if not g.get("result"): continue
+            won = g["won"] if g.get("won") is not None else bool(g.get("ok")) and not g.get("drawRead")
+            put(_key("football", g.get("home"), g.get("away")),
+                {"ok": bool(won), "void": False, "score": f"{g['result'][0]}-{g['result'][1]}"}, d["date"])
+    for g in (trec or {}).get("graded") or []:
+        if g.get("date") not in days: continue
+        put(_key("tennis", g.get("playerA"), g.get("playerB")),
+            {"ok": None if g.get("void") else bool(g.get("ok")), "void": bool(g.get("void")),
+             "winner": g.get("winner"), "note": g.get("note")}, g["date"])
+    for d in (srec or {}).get("days") or []:
+        if d.get("date") not in days: continue
+        for g in d.get("games") or []:
+            if g.get("ok") is None and not g.get("void"): continue
+            sc = g.get("score")
+            put(_key(g.get("sport"), g.get("home"), g.get("away")),
+                {"ok": bool(g.get("ok")), "void": bool(g.get("void")),
+                 "score": f"{sc[0]}-{sc[1]}" if isinstance(sc, list) and len(sc) == 2 else None,
+                 "winner": g.get("winner")}, d["date"])
+    return out
+
+
 SITE = "https://sportsalmanac.bet/"
 
 
@@ -418,7 +479,8 @@ def build(now=None, here=HERE, fetch=True):
                for k, xs in (("list", lst), ("reserve", res), *zip(("groupA", "groupB"), groups(lst)))}
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
-            "past": past_days(now, here, records)}
+            "past": past_days(now, here, records), "results": board_results(day, records),
+            "played": played_today(day, archives, now, records)}
 
 
 def main():
