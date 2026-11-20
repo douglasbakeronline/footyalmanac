@@ -1,6 +1,6 @@
 {
 "note": "Domestic cups found on API-Football by sources.af_refresh_cups; written by the build.",
-"checked": 1794876001,
+"checked": 1795135665,
 "cups": [
 {
 "code": "afc.707",
@@ -728,7 +728,7 @@
 "id": 820,
 "name": "Crown Prince Cup",
 "country": "Kuwait",
-"season": 2025
+"season": 2026
 },
 {
 "code": "afc.720",
