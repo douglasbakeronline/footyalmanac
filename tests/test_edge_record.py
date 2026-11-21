@@ -30,6 +30,20 @@ class EdgeRecord(unittest.TestCase):
         self.assertEqual(r["live"]["n"], 1)
         self.assertEqual(S.edge_record([])["all"], {"n": 0})
 
+    def test_days_for_the_tracker(self):
+        """21 Nov 2026: one entry a graded day, oldest first, each pick with
+        the side backed, its opponent, both prices, the result, live or
+        replayed and the opposition's price (the Bets tab's tracker)."""
+        f2 = dict(FLAG, side="a", opp=6.0)
+        rows = [{"date": "2026-11-02", "home": "A", "away": "B", "actual": "a", "edge": S.edge_of({"edge": f2}, None)},
+                {"date": "2026-11-01", "home": "C", "away": "D", "actual": "d", "edge": S.edge_of({}, lambda g: FLAG)},
+                {"date": "2026-11-02", "home": "E", "away": "F", "actual": "h", "edge": None}]
+        days = S.edge_record(rows)["days"]
+        self.assertEqual([d["d"] for d in days], ["2026-11-01", "2026-11-02"])
+        self.assertEqual(days[0]["p"], [["C", "D", 1.2, 1.25, 0, 0, 11.0]])
+        self.assertEqual(days[1]["p"], [["B", "A", 1.2, 1.25, 1, 1, 6.0]])
+        self.assertEqual(S.edge_record([])["days"], [])
+
     def test_summary_carries_it(self):
         self.assertIn("edge", B.SUMMARY_KEYS)
 

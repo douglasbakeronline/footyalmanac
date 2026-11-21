@@ -1079,6 +1079,70 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 14px var(--f-num);text-align:right;white-space:nowrap}
+/* 21 Nov 2026: the Edge tracker (edgeTracker) */
+.et{margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
+.et-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.et-head h4{margin:0;font:400 22px/1 var(--f-display);letter-spacing:.02em;text-transform:uppercase}
+.et-head h4 small{display:block;margin-top:4px;font:500 12px var(--f-ui);letter-spacing:0;text-transform:none;color:var(--mute)}
+.et-seg{display:inline-flex;border:1px solid var(--ink)}
+.et-seg button{font:600 12.5px var(--f-ui);padding:7px 12px;min-height:34px;border:0;background:var(--surface);color:var(--ink);cursor:pointer}
+.et-seg button+button{border-left:1px solid var(--ink)}
+.et-seg button.on{background:var(--ink);color:var(--paper)}
+.et-stats{margin-top:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.et-s{padding:10px 12px 9px;display:flex;flex-direction:column;gap:3px}
+.et-s+.et-s{border-left:1px solid var(--rule-soft)}
+.et-s span{font:600 11px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
+.et-s b{font:400 26px/1 var(--f-display);color:var(--ink)}
+.et-s b.pos{color:var(--edge)} .et-s b.neg{color:var(--away)}
+.et-s small{font:500 12px var(--f-num);color:var(--ink-2)}
+.et-chart{margin-top:14px;padding:0 10px 0 34px}
+.et-plot{position:relative;height:170px}
+.et-plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.et-tick{position:absolute;left:0;right:0;height:0;border-top:1px solid var(--rule-soft)}
+.et-tick.zero{border-top-color:var(--mute)}
+.et-tick em{position:absolute;right:100%;margin-right:8px;transform:translateY(-50%);font:500 11px var(--f-num);font-style:normal;color:var(--mute)}
+.et-area{fill:var(--edge);opacity:.07}
+.et-best{fill:none;stroke:var(--edge);stroke-width:2.25;stroke-linejoin:round}
+.et-avg{fill:none;stroke:var(--ink-2);stroke-width:1.25;stroke-dasharray:4 3;stroke-linejoin:round}
+.et-live{position:absolute;top:0;bottom:0;border-left:1px dashed var(--mute)}
+.et-live em{position:absolute;top:-2px;right:5px;font:700 10px var(--f-ui);font-style:normal;letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.et-dot{position:absolute;width:9px;height:9px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--surface);border:2px solid var(--edge);pointer-events:none}
+.et-col{position:absolute;top:0;bottom:0;transform:translateX(-50%);border:0;padding:0;background:transparent;cursor:pointer}
+.et-col:hover,.et-col.on{background:rgba(28,107,58,.06)}
+.et-x{display:flex;justify-content:space-between;margin-top:6px;font:500 11px var(--f-num);color:var(--mute)}
+.et-key{margin:10px 0 0;font-size:12px;color:var(--mute)}
+.et-key i{display:inline-block;width:18px;height:0;vertical-align:middle;margin:0 5px 0 0}
+.et-key i.best{border-top:2.25px solid var(--edge)} .et-key i.avg{border-top:1.25px dashed var(--ink-2);margin-left:12px}
+.et-strip{margin-top:14px;display:flex;gap:6px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:6px;-webkit-overflow-scrolling:touch}
+.et-t{flex:0 0 64px;scroll-snap-align:end;display:flex;flex-direction:column;align-items:center;gap:5px;padding:7px 4px 6px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);cursor:pointer;font-family:var(--f-ui)}
+.et-t.on{border-color:var(--ink);box-shadow:inset 0 -3px 0 var(--edge)}
+.et-d{font:600 10.5px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);line-height:1}
+.et-d b{display:block;margin-top:2px;font:400 20px/1 var(--f-display);color:var(--ink);letter-spacing:0}
+.et-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:8px;max-width:52px}
+.et-dots i{width:8px;height:8px;border-radius:50%}
+.et-dots i.w{background:var(--edge)} .et-dots i.l{background:var(--away)}
+.et-u{font:600 11.5px var(--f-num)}
+.et-u.pos,.et-day h5 .pos{color:var(--edge)} .et-u.neg,.et-day h5 .neg{color:var(--away)}
+.et-day{margin-top:10px}
+.et-day h5{margin:0;display:flex;justify-content:space-between;gap:10px;font:700 13px var(--f-ui);letter-spacing:.04em;text-transform:uppercase}
+.et-day h5 span{font:600 13px var(--f-num);letter-spacing:0;text-transform:none}
+.et-day ol{list-style:none;margin:6px 0 0;padding:0}
+.et-day li{display:grid;grid-template-columns:44px minmax(0,1fr) auto;column-gap:10px;align-items:baseline;padding:7px 0;border-top:1px solid var(--rule-soft)}
+.et-r{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase}
+.et-day li.w .et-r{color:var(--edge)} .et-day li.l .et-r{color:var(--away)}
+.et-m b{display:block;font-size:14px}
+.et-m small{display:block;font-size:12px;color:var(--mute)}
+.et-p{font:600 14px var(--f-num);text-align:right;white-space:nowrap}
+.et-p small{display:block;font:500 11px var(--f-num);color:var(--mute)}
+.et-note{margin:12px 0 0;font-size:12.5px;line-height:1.45;color:var(--ink-2)}
+.et-note b{color:var(--ink)}
+@media (max-width:600px){
+  .et-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .et-s:nth-child(3){border-left:0}
+  .et-s:nth-child(n+3){border-top:1px solid var(--rule-soft)}
+  .et-s b{font-size:22px}
+  .et-plot{height:150px}
+}
 .tb-pp small{display:block;font:500 11px var(--f-num);color:var(--mute)}
 /* 10 Nov 2026: "Place now" at the top of the Bets tab (signalsPanel) */
 .sig{margin:14px 0 6px;max-width:760px;border:1px solid var(--ink);background:var(--surface);padding:14px 16px 12px}
@@ -5838,8 +5902,101 @@ function edgeSection(date){
       <p class="tb-snap"><b>Over five seasons, at 9.0+</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
       ${singles ? `<p class="tb-snap">Latest seasons, singles: ${singles}.${edgeRecordText(" On this site")} Take the best price; at the average one the edge is thin, and a short run can lose.</p>` : `<p class="tb-snap">${edgeRecordText("On this site")} Take the best price; a short run can lose.</p>`}`
       : `<div class="empty tb-empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
+    ${edgeTracker()}
   </section>`;
 }
+
+/* 21 Nov 2026 (Douglas: "a visual tracker performance graph underneath that
+   section. Either see all time or be able to scroll two weeks back"): the
+   Edge flag's graded record as a running profit line, one unit on every
+   flagged pick, at the best and the average archived price, with a strip of
+   days to tap through. From score.edge_record "days" (record.json, in the
+   inlined summary). Days before 10 Nov are the rule replayed on the prices
+   archived before kick-off, marked; nothing here is fitted. Display only. */
+const ETK = {range: "all", day: null};
+function edgeTracker(){
+  const all = (RS && RS.edge && RS.edge.days) || [];
+  if(!all.length) return `<div class="et" id="et"><div class="et-head"><h4>Tracker</h4></div>
+    <p class="et-note">The tracker fills once the first Edge picks are graded, the morning after they play.</p></div>`;
+  const days = ETK.range === "14" ? all.filter(d => d.d >= isoAdd(all[all.length - 1].d, -13)) : all;
+  const day = days.find(d => d.d === ETK.day) || days[days.length - 1];
+  const sign = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(2);
+  const signP = x => (x >= 0 ? "+" : "\u2212") + Math.abs(Math.round(x * 1000) / 10).toFixed(1) + "%";
+  const net = (ps, i) => ps.reduce((a, p) => a + (p[4] ? p[i] - 1 : -1), 0);   // i 3 best, 2 average
+  // running totals, one point a day, starting from zero before the first day
+  let cb = 0, ca = 0;
+  const pts = [{b: 0, a: 0}].concat(days.map(d => ({d: d.d, b: (cb += net(d.p, 3)), a: (ca += net(d.p, 2)), live: d.p.some(p => p[5])})));
+  const picks = days.flatMap(d => d.p), n = picks.length, won = picks.filter(p => p[4]).length;
+  const stat = (k, v, sub, cls) => `<div class="et-s"><span>${k}</span><b${cls ? ` class="${cls}"` : ""}>${v}</b><small>${sub}</small></div>`;
+  const split = (lo, hi) => { const ps = picks.filter(p => p[6] != null && p[6] >= lo && p[6] < hi);
+    return ps.length ? `${ps.filter(p => p[4]).length} of ${ps.length} won, ${signP(net(ps, 3) / ps.length)} at the best price` : "none yet"; };
+  // the chart: SVG for the lines, HTML for every label so type never stretches
+  const W = 600, H = 160, lo = Math.min(0, ...pts.map(p => Math.min(p.a, p.b))), hi = Math.max(0, ...pts.map(p => Math.max(p.a, p.b)));
+  const pad = Math.max(1, (hi - lo) * 0.08), y0 = lo - pad, y1 = hi + pad;
+  const X = i => i / (pts.length - 1) * W, Y = v => H - (v - y0) / (y1 - y0) * H, yp = v => (Y(v) / H * 100).toFixed(2) + "%";
+  const line = k => pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
+  const area = `${line("b")}L${W},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z`;
+  const step = (hi - lo) > 24 ? 10 : (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
+  const ticks = []; for(let v = Math.ceil(y0 / step) * step; v <= y1; v += step) ticks.push(v);
+  const liveAt = pts.findIndex(p => p.live);
+  const liveX = liveAt > 0 ? (X(liveAt - 1) + X(liveAt)) / 2 : null;
+  const cols = days.map((d, i) => `<button class="et-col${d.d === day.d ? " on" : ""}" data-et-day="${d.d}" style="left:${(X(i + 1) / W * 100).toFixed(2)}%;width:${(100 / (pts.length - 1)).toFixed(2)}%" aria-label="${fmtDay(d.d)}"></button>`).join("");
+  const selI = days.indexOf(day) + 1;
+  const chart = `<div class="et-chart" role="img" aria-label="Running profit, one unit a pick: ${sign(pts[pts.length - 1].b)} units at the best price, ${sign(pts[pts.length - 1].a)} at the average">
+      <div class="et-plot">
+        ${ticks.map(v => `<i class="et-tick${v === 0 ? " zero" : ""}" style="top:${yp(v)}"><em>${v > 0 ? "+" : v < 0 ? "\u2212" : ""}${Math.abs(v)}</em></i>`).join("")}
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+          <path class="et-area" d="${area}"/>
+          <path class="et-avg" d="${line("a")}" vector-effect="non-scaling-stroke"/>
+          <path class="et-best" d="${line("b")}" vector-effect="non-scaling-stroke"/>
+        </svg>
+        ${liveX != null ? `<i class="et-live" style="left:${(liveX / W * 100).toFixed(2)}%"><em>Live</em></i>` : ""}
+        <i class="et-dot" style="left:${(X(selI) / W * 100).toFixed(2)}%;top:${yp(pts[selI].b)}"></i>
+        ${cols}
+      </div>
+      <div class="et-x"><span>${fmtShort(days[0].d)}</span><span>${fmtShort(days[days.length - 1].d)}</span></div>
+    </div>`;
+  const tiles = days.map(d => { const u = net(d.p, 3);
+    return `<button class="et-t${d.d === day.d ? " on" : ""}" data-et-day="${d.d}"><span class="et-d">${new Date(d.d + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"})}<b>${new Date(d.d + "T12:00:00").getDate()}</b></span>
+      <span class="et-dots">${d.p.map(p => `<i class="${p[4] ? "w" : "l"}"></i>`).join("")}</span>
+      <span class="et-u ${u >= 0 ? "pos" : "neg"}">${sign(u)}</span></button>`; }).join("");
+  const list = day.p.map(p => `<li class="${p[4] ? "w" : "l"}"><span class="et-r">${p[4] ? "Won" : "Lost"}</span>
+      <span class="et-m"><b>${ogEsc(p[0])}</b><small>v ${ogEsc(p[1])}${p[6] != null ? ` · opponent ${Number(p[6]).toFixed(2)}` : ""} · ${p[5] ? "live" : "replayed"}</small></span>
+      <span class="et-p">${Number(p[3]).toFixed(2)}<small>avg ${Number(p[2]).toFixed(2)}</small></span></li>`).join("");
+  const dn = net(day.p, 3);
+  return `<div class="et" id="et">
+    <div class="et-head"><h4>Tracker <small>one unit on every Edge pick</small></h4>
+      <div class="et-seg" role="group" aria-label="Range"><button data-et-range="all" class="${ETK.range === "all" ? "on" : ""}">All time</button><button data-et-range="14" class="${ETK.range === "14" ? "on" : ""}">Last 14 days</button></div></div>
+    <div class="et-stats">
+      ${stat("Picks won", `${won}/${n}`, `${Math.round(won / n * 100)}% landed`)}
+      ${stat("Profit, best price", sign(pts[pts.length - 1].b), `${signP(pts[pts.length - 1].b / n)} a pick`, pts[pts.length - 1].b >= 0 ? "pos" : "neg")}
+      ${stat("Profit, average price", sign(pts[pts.length - 1].a), `${signP(pts[pts.length - 1].a / n)} a pick`, pts[pts.length - 1].a >= 0 ? "pos" : "neg")}
+      ${stat("Days", days.length, `${fmtShort(days[0].d)} to ${fmtShort(days[days.length - 1].d)}`)}
+    </div>
+    ${chart}
+    <p class="et-key"><i class="best"></i>best price <i class="avg"></i>average price · each step a day with Edge picks${liveX != null ? " · left of Live: the rule replayed on prices archived before kick-off" : ""}</p>
+    <div class="et-strip" id="etStrip">${tiles}</div>
+    <div class="et-day"><h5>${fmtDay(day.d)} <span class="${dn >= 0 ? "pos" : "neg"}">${sign(dn)} units</span></h5><ol>${list}</ol></div>
+    <p class="et-note"><b>By the opponent's price.</b> 9.0+: ${split(9, 1e9)}. 5.0 to 9.0: ${split(5, 9)}. The five-season test only backs 9.0+, so watch the second line.</p>
+  </div>`;
+}
+function isoAdd(iso, n){ const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function etDraw(){
+  const el = document.getElementById("et"); if(!el) return;
+  el.outerHTML = edgeTracker();
+  etScroll();
+}
+// keep the chosen day in view, the newest at the right of the strip
+function etScroll(){
+  const s = document.getElementById("etStrip"), on = s && s.querySelector(".on");
+  if(s && on) s.scrollLeft = Math.max(0, on.offsetLeft - s.offsetLeft - s.clientWidth + on.offsetWidth + 8);
+}
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-et-range]");
+  if(r){ ETK.range = r.dataset.etRange; ETK.day = null; etDraw(); return; }
+  const d = e.target.closest("[data-et-day]");
+  if(d){ ETK.day = d.dataset.etDay; etDraw(); }
+});
 
 /* 10 Nov 2026, Douglas ("accurate signalled bets to put on as I'm on the
    train"): "Place now", the top of the Bets tab. Only bets that pass a rule
@@ -6205,6 +6362,7 @@ function renderToday(){
         <li>Taking the best price was worth about 3p in the pound on the archive, the one edge that needs no prediction.</li>
       </ol></details>
     <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
+  etScroll();
   ogFill(host);
   sigWire(host);
   host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {

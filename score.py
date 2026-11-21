@@ -673,7 +673,16 @@ def edge_record(rows):
                 "from": min(r["date"] for r in rs), "to": max(r["date"] for r in rs)}
     fl = [r for r in rows if r.get("edge")]
     rules = sorted({r["edge"].get("rule") or 1 for r in fl})
+    # 21 Nov 2026 (Douglas: "a visual tracker performance graph" under the
+    # Bets tab's Edge picks): every graded flagged pick by day, oldest first,
+    # compact: [side backed, opponent, average, best, won 1/0, live 1/0, opposition price].
+    days = {}
+    for r in sorted(fl, key=lambda r: (r["date"], r.get("kickoff") or "", r.get("home") or "")):
+        e = r["edge"]; h = e["side"] == "h"; hn, an = r.get("home") or "", r.get("away") or ""
+        days.setdefault(r["date"], []).append([hn if h else an, an if h else hn,
+                                              e["odds"], e["best"], int(r["actual"] == e["side"]), int(bool(e["live"])), e.get("opp")])
     return {"all": tally(fl), "live": tally([r for r in fl if r["edge"]["live"]]),
+            "days": [{"d": d, "p": p} for d, p in sorted(days.items())],
             "byRule": {str(k): tally([r for r in fl if (r["edge"].get("rule") or 1) == k]) for k in rules},
             "rule": __import__("groupings").EDGE_RULE if fl else None}
 
