@@ -302,7 +302,14 @@ def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=
         if meta.get("cup") or meta.get("international"):
             continue
         cached, _ = load(code, meta.get("season") or E.current_season(code))
-        played = [x for x in (cached or {}).values() if x.get("hg") is not None and x["date"] < today]
+        # Only results a pending prediction could claim take part (21 Nov
+        # 2026): the 2026-27 Segunda cache still held June's promotion
+        # play-offs (Málaga, since promoted), so every es.2 result was refused
+        # on a club the league's archive no longer has. All or nothing on
+        # names still holds over the results that matter.
+        days = [date.fromisoformat(k[1]) for k in keys]
+        played = [x for x in (cached or {}).values() if x.get("hg") is not None and x["date"] < today
+                  and any(abs((date.fromisoformat(x["date"]) - d).days) <= window for d in days)]
         if not played:
             continue
         import build as B
@@ -319,7 +326,10 @@ def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=
             d = date.fromisoformat(k[1])
             near = [x for x in by_pair.get((k[2], k[3]), [])
                     if abs((date.fromisoformat(x["date"]) - d).days) <= window]
-            if len(near) != 1 or (code, near[0]["date"], k[2], k[3]) in preds:
+            if len(near) != 1:
+                continue
+            owner = (code, near[0]["date"], k[2], k[3])
+            if owner in preds and owner != k:
                 continue
             x = near[0]
             if x["date"] < k[1] and not (preds[k].get("published") or "~") < x["date"]:
