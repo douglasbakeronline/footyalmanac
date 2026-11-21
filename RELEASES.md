@@ -16,6 +16,8 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Files.** `daylist.py` (`played_today` covers `PLAYED_DAYS` 2 UK days, each row with its `day` and `id`), `index.html` (`playedSection` / `playedDay`, `starIdOf` for a played row, Starred reads `played`). Display only.
 
+**Also.** Three FIFA ranking tests had a release date written as 2026-10-22, which stopped being newer than their 30-day-old test file on 21 Nov and failed CI; they now use yesterday's date (`tests/test_rankings.py`).
+
 **Roll back.** `git revert` the merge.
 
 ## 2026-11-20-played-today: results on every sport's tab (tag pending)
