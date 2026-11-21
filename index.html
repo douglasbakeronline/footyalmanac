@@ -1086,6 +1086,12 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 14px var(--f-num);text-align:right;white-space:nowrap}
+/* 21 Nov 2026: Order by on the tennis and sport tabs (tabOrderCtl) */
+.tab-order{margin:4px 0 16px}
+.tab-order .ctl-label{margin-bottom:4px}
+.tab-order .seg{display:inline-flex}
+button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
+.pdetail .why{margin-top:0;padding-top:0;border-top:0}
 /* 21 Nov 2026: the Edge tracker (edgeTracker) */
 .et{margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
 .et-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
@@ -3769,14 +3775,32 @@ function tennisStat(r, surface){
 const PLAYED_CAP = 8, PLAYED_ALL = new Set();
 // 21 Nov 2026 (Douglas: "develop this across the whole website"): the day
 // before too, so a tab still shows last night's results after midnight.
+/* 21 Nov 2026 (Douglas: "The ordering on football by time kick off is not
+   working ... check all other pages"): the tennis and sport tabs had no order
+   control (always strongest first), and every tab's Played today / yesterday
+   ignored the order chosen. One choice for those tabs, remembered on this
+   device; football keeps its own Order by. Played rows follow the tab's order. */
+let TAB_ORDER = (() => { try { return localStorage.getItem("tabOrder") === "time" ? "time" : "conf"; } catch(e){ return "conf"; } })();
+function tabOrderCtl(){
+  return `<div class="tab-order"><div class="ctl-label">Order by</div><div class="seg" role="group" aria-label="Order by">
+    <button type="button" data-torder="conf" aria-pressed="${TAB_ORDER === "conf"}">Most confident</button>
+    <button type="button" data-torder="time" aria-pressed="${TAB_ORDER === "time"}">Kick-off time</button></div></div>`;
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-torder]"); if(!b) return;
+  TAB_ORDER = b.dataset.torder;
+  try { localStorage.setItem("tabOrder", TAB_ORDER); } catch(e){}
+  rerenderOpen();
+});
+const playedByTime = name => name === "fixtures" ? state.sort === "time" : TAB_ORDER === "time";
 function playedSection(name, test, host, ruler, redraw){
   const D = window.__DAY_LIST__;
   if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
   const shown = new Set([...host.querySelectorAll(".row-line[data-pk]")].map(e => e.dataset.pk));
   const days = [...new Set(D.played.map(it => it.day || D.date))].sort().reverse();
   const secs = days.map(day => playedDay(name, test, D, day, shown, ruler, redraw)).filter(Boolean);
-  const lede = host.querySelector(":scope > .lede");
-  let at = lede;
+  // under the tab's Order by when it has one, so the control sits above every row it orders
+  let at = host.querySelector(":scope > .tab-order") || host.querySelector(":scope > .lede");
   secs.forEach(sec => { at ? at.after(sec) : host.prepend(sec); at = sec; });
 }
 function playedDay(name, test, D, day, shown, ruler, redraw){
@@ -3787,7 +3811,9 @@ function playedDay(name, test, D, day, shown, ruler, redraw){
   const st = it => pinStatus(it)[0];
   const won = items.filter(it => st(it) === "won").length, lost = items.filter(it => st(it) === "lost").length;
   const open = items.length - won - lost - items.filter(it => st(it) === "void").length;
-  const key = name + "|" + day, all = PLAYED_ALL.has(key), list = all ? items : items.slice(0, PLAYED_CAP);
+  // capped like the board: the most confident first, then in kick-off order when that is the order chosen
+  const key = name + "|" + day, all = PLAYED_ALL.has(key), list = (all ? items : items.slice(0, PLAYED_CAP)).slice();
+  if(playedByTime(name)) list.sort((a, b) => String(a.start || "").localeCompare(String(b.start || "")) || (b.confidence || 0) - (a.confidence || 0));
   const sec = document.createElement("section");
   sec.className = "day played";
   sec.innerHTML = `<div class="day-head"><h2>${day === D.date ? "Played today" : "Played yesterday"}</h2>
@@ -3824,12 +3850,14 @@ function renderTennis(){
     Elo rating on the surface, pulled toward a coin flip by the amount testing found honest.
     Under a number is how often published calls at that level have landed, once a band has
     30 of them. A match showing TBC has no order of play yet: ESPN files the round under its first
-    day, and the match may be played the day after.</p></div>`;
+    day, and the match may be played the day after.</p></div>${tabOrderCtl()}`;
   const byDay = {};
   TD.matches.forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
 
   Object.keys(byDay).sort().forEach(date => {
-    const games = byDay[date].slice().sort((a,b)=> b.confidence - a.confidence);
+    const games = byDay[date].slice().sort(TAB_ORDER === "time"
+      ? (a,b) => (a.timeTbc ? 1 : 0) - (b.timeTbc ? 1 : 0) || tennisAsGame(a).when.localeCompare(tennisAsGame(b).when) || b.confidence - a.confidence
+      : (a,b)=> b.confidence - a.confidence);
     const confident = games.filter(m => m.tier !== "No read").length;
     const sec = document.createElement("section");
     sec.className = "day";
@@ -4543,7 +4571,7 @@ function pinnedRow(g, i){
   line.className = "row-line";
   line.dataset.pk = lbKey(g.sport, g.home, g.away);
   line.innerHTML = `<span class="star-btn pin-gap" aria-hidden="true"></span>
-    <div class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}">
+    <button type="button" class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}" aria-expanded="false">
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time datetime="${g.start}">${g.timed === false ? "" : localTime(g.start)}</time>
       <div class="comp"><span class="tour-chip">${name}</span><span>${g.comp || ""}</span>${sportEmoji(g.sport)}${g.sport === "football" ? cautionMark(g.league) : ""}</div></div>
@@ -4553,9 +4581,40 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}${g.sport === "tennis" && tennisSets(r.note) ? `<small class="sets">${tennisSets(r.note)}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div></div>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div></button>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
+  // 21 Nov 2026 (Douglas: "Why do some cards not clickable to reveal further
+  // info and links"): a started game is drawn from its pre-start copy, which
+  // had no detail. It now opens to the read and the research links; open rows
+  // stay open through a redraw (PIN_OPEN).
+  const id = (g.day || g.date || "") + "|" + line.dataset.pk, btn = line.querySelector(".row");
+  const open = () => { const dv = document.createElement("div"); dv.innerHTML = pinnedDetail(g); line.after(dv.firstElementChild); btn.setAttribute("aria-expanded", "true"); };
+  btn.addEventListener("click", e => {
+    if(e.target.closest("a")) return;
+    const nx = line.nextElementSibling;
+    if(nx && nx.classList.contains("pdetail")){ nx.remove(); btn.setAttribute("aria-expanded", "false"); PIN_OPEN.delete(id); }
+    else { open(); PIN_OPEN.add(id); }
+  });
+  if(PIN_OPEN.has(id)) queueMicrotask(() => { const nx = line.nextElementSibling;
+    if(line.parentNode && !(nx && nx.classList.contains("pdetail"))) open(); });
   return line;
+}
+const PIN_OPEN = new Set();
+function pinnedDetail(g){
+  const vs = g.home + " v " + g.away, r = g.result || {};
+  const comp = g.comp || (g.sport === "football" ? (lname(g.league) || {}).name || "" : "");
+  const day = g.day || g.date || "";
+  const links = g.sport === "football"
+    ? [["Match report", `${vs} ${day} match report`], ["Head to head", `${vs} head to head`], ["Predictions", `${vs} prediction`], [`${comp || "League"} table`, `${comp} table`]]
+    : g.sport === "tennis"
+      ? [["Match report", `${vs} ${comp} ${day}`], ["Head to head", `${vs} head to head`], ["Draw", `${comp} draw`]]
+      : [["Match report", `${vs} ${comp} ${day}`], ["Head to head", `${vs} head to head`], ["Standings", `${comp} standings`]];
+  const [cls, label] = pinStatus(g);
+  const acc = g.accuracy && (g.accuracy.cumHit || g.accuracy.hit);
+  const read = `<b>${label}.</b> The model backed ${g.pick} at ${Math.round((g.confidence || 0) * 100)}%${g.tier ? ` (${g.tier})` : ""}${acc ? `; calls at that level have landed ${Math.round(acc * 100)}% in testing` : ""}.${
+    r.note ? ` Result: ${r.note}.` : cls === "live" || cls === "due" ? " The numbers are frozen at the last price before the start; the result is graded at the next build." : ""}${
+    g.list ? " A Daily List pick." : g.reserve ? " A reserve pick." : ""}`;
+  return `<div class="detail rdetail pdetail">${gLinks(links)}<div class="why">${read}</div></div>`;
 }
 // "rating 1947": an Elo strength score built from every result; "· only 15
 // matches" when it rests on few. Hover (or open the row) for the scale.
@@ -4680,7 +4739,7 @@ function renderSport(key){
       numbers would not mean anything.</p></div>`;
     return;
   }
-  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p></div>`;
+  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p></div>${tabOrderCtl()}`;
   if(!sp.games.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
     playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));
@@ -4689,7 +4748,8 @@ function renderSport(key){
   const byDay = {};
   sp.games.forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
   Object.keys(byDay).sort().forEach(d => {
-    const games = byDay[d].slice().sort((a,b) => b.confidence - a.confidence);
+    const games = byDay[d].slice().sort(TAB_ORDER === "time" ? (a,b) => String(a.when).localeCompare(String(b.when)) || b.confidence - a.confidence
+                                                             : (a,b) => b.confidence - a.confidence);
     const sec = document.createElement("section");
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(d)}</h2>
