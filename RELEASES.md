@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-nwsl-kc-spelling: NWSL's Kansas City Current priced in the fallback (tag pending)
+
+**What changed.** `groupings.AF_SPELLINGS` gains "Kansas City Current" -> "Kansas City W": the 16:05 UTC build named Washington Spirit v Kansas City Current (NWSL, 22 Nov) under noFixture beside API-Football's "Washington Spirit W v Kansas City W". `same()` already reads "Washington Spirit W" as Washington Spirit; "Kansas City W" is too short beside the full name.
+**Evidence.** The build log's named noFixture line; a test that fails without the alias and passes with it. The leg is a 46% read, not Card-reachable (NWSL is a wider league and rule 14 is core only), so this is price coverage on the board, not Card volume. The day's other noFixture leg, CA Mineiro v Corinthians (Brazil, no kick-off), has no API-Football fixture sharing either name that day: a moved or postponed game, not a spelling, left alone. Also checked, nothing to change: the Saudi Pro League's ungraded reserve rows (15-16 Oct, 5-7 Nov, every 5-7 Nov kick-off a placeholder 20:00Z) are postponed rounds, Al Ahli v Al Nassr of 15 Oct played on 20 Nov; the sports record has no 0-0 or winner mismatch (#22's Saracens case is gone; three draws, two rugby, one NFL).
+**Files.** `groupings.py`, `tests/test_football_unpriced.py`, `RELEASES.md`.
+**Not changed.** Any Card rule, the model, the bulk match.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-reserve-gap: Reserve (other sports) gap located, no rule change (tag pending)
 
 **What changed:** nothing a reader sees. A note records where the reserve's shortfall sits.

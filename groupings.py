@@ -446,6 +446,9 @@ AF_SPELLINGS = {
     # 20 Nov 2026 (03:08 UTC build): OL Lyonnes v Strasbourg, D1 Arkema, 74%,
     # a Card-reachable leg named under noFixture beside "Lyon W v Strasbourg W".
     "OL Lyonnes": "Lyon W",                                # D1 Arkema
+    # 21 Nov 2026 (16:05 UTC build): Washington Spirit v Kansas City Current,
+    # NWSL, noFixture beside "Washington Spirit W v Kansas City W".
+    "Kansas City Current": "Kansas City W",                # NWSL
 }
 
 
