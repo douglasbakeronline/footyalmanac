@@ -122,6 +122,68 @@ class NearbyResults(unittest.TestCase):
         cache = {"en.1": [{"date": "2026-11-19", "home": "Crystal Palace", "away": "Liverpool", "hg": 1, "ag": 3}]}
         self.assertEqual(SC.nearby_results(preds, {}, today=TODAY, load=loader(cache)), {})
 
+    def test_played_earlier_takes_the_copy_published_before_the_match_day(self):
+        # 21 Nov 2026: La Liga's 8 Nov round, played 6 and 7 Nov; the last
+        # copy was written on the match day, the build the evening before had
+        # the same fixture
+        cache = {"es.1": [{"date": "2026-11-07", "home": "Valencia", "away": "Real Madrid", "hg": 0, "ag": 3}]}
+        key, last = pred("es.1", "2026-11-08", "Valencia", "Real Madrid", "2026-11-07T05:53:43Z")
+        _, before = pred("es.1", "2026-11-08", "Valencia", "Real Madrid", "2026-11-06T23:49:57Z")
+        before["p"] = {"h": 0.2, "d": 0.22, "a": 0.58}
+        preds = {key: last}
+        asked = []
+
+        def earlier(k, day):
+            asked.append((k, day))
+            return before
+        self.assertEqual(SC.nearby_results(dict(preds), {}, today=TODAY, load=loader(cache)), {})
+        got = SC.nearby_results(preds, {}, today=TODAY, load=loader(cache), earlier=earlier)
+        self.assertEqual(got, {key: (0, 3)})
+        self.assertEqual(asked, [(key, "2026-11-07")])
+        self.assertIs(preds[key], before)   # the copy judged is the early one
+        nothing = {key: last}
+        self.assertEqual(SC.nearby_results(nothing, {}, today=TODAY, load=loader(cache),
+                                           earlier=lambda k, d: None), {})
+        self.assertIs(nothing[key], last)
+
+    def test_earlier_copy_reads_the_archive_files(self):
+        import json
+        import tempfile
+        with tempfile.TemporaryDirectory() as d:
+            row = {"league": "es.1", "date": "2026-11-08", "home": "Valencia", "away": "Real Madrid",
+                   "published": "2026-11-06T23:49:57Z"}
+            same_day = dict(row, published="2026-11-07T05:53:43Z")
+            for name, rows in (("2026-11-06.json", [row]), ("2026-11-07.json", [same_day])):
+                with open(os.path.join(d, name), "w") as f:
+                    json.dump(rows, f)
+            key = ("es.1", "2026-11-08", "Valencia", "Real Madrid")
+            got = SC.earlier_copy(key, "2026-11-07", pred_dir=d)
+            self.assertEqual(got["published"], "2026-11-06T23:49:57Z")
+            self.assertIsNone(SC.earlier_copy(key, "2026-11-06", pred_dir=d))
+            self.assertIsNone(SC.earlier_copy(("es.1", "2026-11-08", "Sevilla", "Real Madrid"), "2026-11-07",
+                                              pred_dir=d))
+
+    def test_spelling_of_the_period_wins(self):
+        # 21 Nov 2026: the Süper Lig archived under ESPN's spelling in
+        # September (Eyupspor) and openfootball's in November (Eyüpspor)
+        preds = preds_of(pred("tr.1", "2026-09-12", "Eyupspor", "Caykur Rizespor", "2026-09-10T09:00:00Z"),
+                         pred("tr.1", "2026-11-08", "Eyüpspor", "Kocaelispor", "2026-11-06T23:49:57Z"),
+                         pred("tr.1", "2026-11-08", "Galatasaray", "Amed", "2026-11-06T23:49:57Z"))
+        cache = {"tr.1": [{"date": "2026-11-07", "home": "Eyupspor", "away": "Kocaelispor", "hg": 0, "ag": 2},
+                          {"date": "2026-11-07", "home": "Galatasaray", "away": "Amed SFK", "hg": 4, "ag": 3}]}
+        got = SC.nearby_results(preds, {}, today=TODAY, load=loader(cache))
+        self.assertEqual(got, {("tr.1", "2026-11-08", "Eyüpspor", "Kocaelispor"): (0, 2),
+                               ("tr.1", "2026-11-08", "Galatasaray", "Amed"): (4, 3)})
+
+    def test_real_date_copy_in_another_spelling_owns_the_result(self):
+        # 10 Oct under ESPN's spelling, 11 Oct under openfootball's: the
+        # round-date copy must not be graded beside it
+        preds = preds_of(pred("tr.1", "2026-10-10", "Caykur Rizespor", "Fenerbahce", "2026-10-06T09:26:52Z"),
+                         pred("tr.1", "2026-10-11", "Çaykur Rizespor", "Fenerbahçe", "2026-10-10T05:44:54Z"))
+        cache = {"tr.1": [{"date": "2026-10-10", "home": "Caykur Rizespor", "away": "Fenerbahce", "hg": 1, "ag": 2}]}
+        graded = {("tr.1", "2026-10-10", "Caykur Rizespor", "Fenerbahce"): (1, 2)}
+        self.assertEqual(SC.nearby_results(preds, graded, today=TODAY, load=loader(cache)), {})
+
 
 if __name__ == "__main__":
     unittest.main()

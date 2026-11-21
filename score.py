@@ -219,7 +219,7 @@ def live_results(pending, log=None):
     return out
 
 
-def lag_results(preds, results, today=None, fetch=None, log=None):
+def lag_results(preds, results, today=None, fetch=None, log=None, earlier=None):
     """Results for the AF_LAG leagues (20 Nov 2026): leagues whose openfootball
     file stopped scoring and ESPN cannot score, today the Czech First League.
 
@@ -268,13 +268,134 @@ def lag_results(preds, results, today=None, fetch=None, log=None):
         merged = dict(results)
         merged.update(out)
         sub = {k: v for k, v in preds.items() if k[0] in pools}
-        out.update(nearby_results(sub, merged, today=date.fromisoformat(today), load=load))
+        near = nearby_results(sub, merged, today=date.fromisoformat(today), load=load, earlier=earlier)
+        for k in near:
+            preds[k] = sub[k]   # an earlier copy nearby_results chose, if any
+        out.update(near)
     if log is not None and out:
         log.append(f"{len(out)} graded from API-Football results ({', '.join(sorted(pools))})")
     return out
 
 
-def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=None):
+_COPIES = {}   # archive file path -> {key: row}, read once a process by earlier_copy
+
+
+def earlier_copy(key, before, pred_dir=None, back=10):
+    """The latest archived copy of a prediction published before `before` (an
+    ISO date, UTC day start), or None (21 Nov 2026).
+
+    `load_predictions` keeps the last build's copy of every fixture. A match
+    played the day before its archived round date (La Liga and the Süper Lig
+    archived under 8 Nov, played 6 and 7 Nov) was refused by `nearby_results`
+    when that last copy was written on the match day itself, as its real
+    kick-off is unknown, even though the build the evening before had
+    published the same fixture. This finds that earlier copy, read from the
+    archive files dated before `before`, newest first, at most `back` days
+    back; only a copy `verification` grades, published before `before`."""
+    pred_dir = pred_dir or PRED_DIR
+    end = date.fromisoformat(before)
+    for i in range(1, back + 1):
+        path = os.path.join(pred_dir, f"{(end - timedelta(days=i)).isoformat()}.json")
+        if path not in _COPIES:
+            try:
+                with open(path) as f:
+                    _COPIES[path] = {(g["league"], g["date"], g["home"], g["away"]): g for g in json.load(f)}
+            except Exception:
+                _COPIES[path] = {}
+        g = _COPIES[path].get(tuple(key))
+        if g and verification(g) not in EXCLUDED_FROM_GRADING and (g.get("published") or "~") < before:
+            return g
+    return None
+
+
+def _runs(keys, gap):
+    """Keys sorted by date and split where consecutive dates sit more than
+    `gap` days apart."""
+    runs, last = [], None
+    for k in sorted(keys, key=lambda k: k[1]):
+        d = date.fromisoformat(k[1])
+        if last is None or (d - last).days > gap:
+            runs.append([])
+        runs[-1].append(k)
+        last = d
+    return runs
+
+
+def _owned(code, x, k, preds):
+    """True when a prediction other than `k` sits on the result's own date for
+    the same clubs, under any spelling (21 Nov 2026): the Süper Lig's October
+    rounds were archived twice, once under ESPN's spelling on the real date
+    (Caykur Rizespor v Fenerbahce, 10 Oct) and once under openfootball's on
+    the round date (Çaykur Rizespor v Fenerbahçe, 11 Oct), so the exact-name
+    check alone would have graded the round-date copy as well."""
+    if (code, x["date"], k[2], k[3]) in preds and (code, x["date"], k[2], k[3]) != k:
+        return True
+    for o in preds:
+        if o[0] == code and o[1] == x["date"] and o != k and (
+                S.match_team(x["home"], {o[2]}) and S.match_team(x["away"], {o[3]})):
+            return True
+    return False
+
+
+def _claim_run(code, keys, preds, cached, today, window, earlier, claims, log):
+    """`nearby_results` for one run of pending keys: adds (key, result, copy)
+    to `claims` by result, returns how many were left out as late."""
+    # Only results a pending prediction could claim take part (21 Nov 2026):
+    # the 2026-27 Segunda cache still held June's promotion play-offs
+    # (Málaga, since promoted), so every es.2 result was refused on a club
+    # the league's archive no longer has. All or nothing on names still
+    # holds over the results that matter.
+    days = [date.fromisoformat(k[1]) for k in keys]
+    played = [x for x in (cached or {}).values() if x.get("hg") is not None and x["date"] < today
+              and any(abs((date.fromisoformat(x["date"]) - d).days) <= window for d in days)]
+    if not played:
+        return 0
+    import build as B
+    lo = min(date.fromisoformat(x["date"]) for x in played) - timedelta(days=window)
+    hi = max(date.fromisoformat(x["date"]) for x in played) + timedelta(days=window)
+    rows = [k for k in preds if k[0] == code]
+    near_rows = [{"home": k[2], "away": k[3]} for k in rows if lo <= date.fromisoformat(k[1]) <= hi]
+    mapping, bad = B._map_names(near_rows, played)
+    if bad:
+        # A club the archive has no row for near these dates (a fixture the
+        # build never published) takes the whole season's spelling, as before
+        # 21 Nov; a near spelling, once found, always wins.
+        whole, _ = B._map_names([{"home": k[2], "away": k[3]} for k in rows], played)
+        mapping = {n: mapping.get(n) or whole.get(n) for n in whole}
+        seen = defaultdict(list)
+        for n, v in mapping.items():
+            if v is not None:
+                seen[v].append(n)
+        bad = sorted([n for n, v in mapping.items() if v is None]
+                     + [f"{'/'.join(v)} -> {t}" for t, v in seen.items() if len(v) > 1])
+    if bad:
+        if log is not None:
+            log.append(f"{code}: cached results not used, unmatched: {'; '.join(bad[:5])}")
+        return 0
+    by_pair = defaultdict(list)
+    for x in played:
+        by_pair[(mapping[x["home"]], mapping[x["away"]])].append(x)
+    late = 0
+    for k in keys:
+        d = date.fromisoformat(k[1])
+        near = [x for x in by_pair.get((k[2], k[3]), [])
+                if abs((date.fromisoformat(x["date"]) - d).days) <= window]
+        if len(near) != 1:
+            continue
+        x = near[0]
+        if _owned(code, x, k, preds):
+            continue
+        copy = None
+        if x["date"] < k[1] and not (preds[k].get("published") or "~") < x["date"]:
+            copy = earlier(k, x["date"]) if earlier else None
+            if copy is None:
+                late += 1
+                continue
+        claims[(x["date"], k[2], k[3])].append((k, x, copy))
+    return late
+
+
+def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=None, earlier=None):
     """Results for predictions archived under a round's nominal date.
 
     Reads the season-so-far cache the build commits in current/ (ESPN results,
@@ -288,7 +409,10 @@ def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=
     - a result two predictions could claim, or a prediction two results could;
     - a match played before the archived date when the prediction was not
       published before that day began (UTC): its real kick-off is unknown, so
-      the price cannot be shown to be early.
+      the price cannot be shown to be early. With `earlier` (`earlier_copy`;
+      21 Nov 2026) the last copy published before that day is graded instead
+      and put in `preds` in place of the later copy, so the row judged is the
+      price shown in advance.
     Returns {prediction key: (hg, ag)}."""
     today = (today or E.uk_today()).isoformat()
     load = load or S.load_current
@@ -296,53 +420,33 @@ def nearby_results(preds, results, today=None, window=NEAR_DAYS, load=None, log=
     for k in preds:
         if k not in results and k[1] < today:
             pending[k[0]].append(k)
-    out, late = {}, 0
+    out, late, earlier_n = {}, 0, 0
     for code, keys in sorted(pending.items()):
         meta = E.LEAGUES.get(code) or {}
         if meta.get("cup") or meta.get("international"):
             continue
         cached, _ = load(code, meta.get("season") or E.current_season(code))
-        # Only results a pending prediction could claim take part (21 Nov
-        # 2026): the 2026-27 Segunda cache still held June's promotion
-        # play-offs (Málaga, since promoted), so every es.2 result was refused
-        # on a club the league's archive no longer has. All or nothing on
-        # names still holds over the results that matter.
-        days = [date.fromisoformat(k[1]) for k in keys]
-        played = [x for x in (cached or {}).values() if x.get("hg") is not None and x["date"] < today
-                  and any(abs((date.fromisoformat(x["date"]) - d).days) <= window for d in days)]
-        if not played:
-            continue
-        import build as B
-        mapping, bad = B._map_names([{"home": k[2], "away": k[3]} for k in preds if k[0] == code], played)
-        if bad:
-            if log is not None:
-                log.append(f"{code}: cached results not used, unmatched: {'; '.join(bad[:5])}")
-            continue
-        by_pair = defaultdict(list)
-        for x in played:
-            by_pair[(mapping[x["home"]], mapping[x["away"]])].append(x)
+        # Pending predictions in runs of nearby dates, each read on its own
+        # (21 Nov 2026): the Süper Lig was archived under ESPN's spelling
+        # until October (Eyupspor, Amed SFK) and openfootball's since
+        # (Eyüpspor, Amed), so names mapped over the whole season sent each
+        # club to its old spelling and November's rows never met their
+        # results. Each run maps names over the predictions archived near its
+        # own results only.
         claims = defaultdict(list)
-        for k in keys:
-            d = date.fromisoformat(k[1])
-            near = [x for x in by_pair.get((k[2], k[3]), [])
-                    if abs((date.fromisoformat(x["date"]) - d).days) <= window]
-            if len(near) != 1:
-                continue
-            owner = (code, near[0]["date"], k[2], k[3])
-            if owner in preds and owner != k:
-                continue
-            x = near[0]
-            if x["date"] < k[1] and not (preds[k].get("published") or "~") < x["date"]:
-                late += 1
-                continue
-            claims[(x["date"], k[2], k[3])].append((k, x))
+        for run in _runs(keys, window):
+            late += _claim_run(code, run, preds, cached, today, window, earlier, claims, log)
         for got in claims.values():
             if len(got) == 1:
-                k, x = got[0]
+                k, x, copy = got[0]
                 out[k] = (x["hg"], x["ag"])
+                if copy is not None:
+                    preds[k] = copy
+                    earlier_n += 1
     if log is not None and (out or late):
-        log.append(f"{len(out)} graded from a result dated off the archive's round date; "
-                   f"{late} left out (played earlier than archived, price not shown to be early)")
+        log.append(f"{len(out)} graded from a result dated off the archive's round date"
+                   + (f" ({earlier_n} from an earlier copy published before the match day)" if earlier_n else "")
+                   + f"; {late} left out (played earlier than archived, price not shown to be early)")
     return out
 
 
@@ -588,7 +692,7 @@ def graded_rows(save=True):
     # Kept in the settled cache like a live result, as the cup results are,
     # so a match stays graded once the day pool has rolled past it.
     note = []
-    lag = lag_results(preds, results, log=note)
+    lag = lag_results(preds, results, log=note, earlier=earlier_copy)
     for line in note:
         print(f"  {line}", file=sys.stderr)
     if lag:
@@ -599,7 +703,7 @@ def graded_rows(save=True):
 
     # A match played a day or two off its archived round date (20 Nov 2026).
     note = []
-    near = nearby_results(preds, results, log=note)
+    near = nearby_results(preds, results, log=note, earlier=earlier_copy)
     for line in note:
         print(f"  {line}", file=sys.stderr)
     if near:
