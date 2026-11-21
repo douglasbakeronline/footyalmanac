@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-21-played-review: review fixes to the played rows
+
+**What changed for a reader.** Found in a review of the last two releases:
+- **Show all on Football's played sections did nothing.** The button redrew every view except the football board. Each tab now redraws itself.
+- **Football's played sections ignored the board's filters.** They now follow the competition picker and Strong reads only; with Edge only they are hidden (the archive keeps no Edge flag for a started game).
+- **An old Card leg could read "Result due".** A leg drawn from an older group, past its start and outside the two played days, was marked Result due; a row is now marked only within 36 hours of its start or when its result is known.
+- **Card and Daily 2x legs off the list now show their result.** A started leg that is neither a list nor a reserve pick is drawn from the day's played rows, with Won / Lost and the score.
+- **Smaller page data.** `daylist.js` no longer carries a separate `results` map (about 18 KB on a busy day); the page reads the same results from the played rows.
+
+**Files.** `daylist.py` (`board_results` removed, `league` on played rows), `index.html` (`playedResults`, `playedSection` redraw and filters, `boardResult`, `ogFill`), `tests/test_daylist_played.py` (now tests `played_today`), `CLAUDE.md`.
+
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-played-yesterday: results across the site, after midnight too (tag pending)
 
 **What changed for a reader.** Played today now has a **Played yesterday** section under it on every sport's tab, so last night's results stay in view after midnight instead of vanishing with the UK day. **Starred** keeps a starred game once it starts (it used to drop off with the board), with In play, Won / Lost and the score. Douglas, 21 Nov 2026: "develop this across the whole website to improve data visibility".

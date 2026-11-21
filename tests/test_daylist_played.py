@@ -1,26 +1,34 @@
-"""Results on every sport's tab (20 Nov 2026): daylist.board_results keys
-each graded game as the page's rows are (lbKey) and keeps the UK day and
-the day before only."""
-import unittest
+"""Played today and yesterday (20-21 Nov 2026): daylist.played_today keeps
+every started game of the UK day and the day before, list or not, with its
+result and its UK day, and leaves games still to start out."""
+import json, os, tempfile, unittest
+from datetime import datetime, timezone
 import daylist
 
 
-class BoardResults(unittest.TestCase):
-    def test_keys_and_days(self):
-        record = {"days": [
-            {"date": "2026-11-20", "games": [{"home": "Iskra", "away": "Spartanii", "result": [1, 0], "won": True}]},
-            {"date": "2026-11-17", "games": [{"home": "Old", "away": "Gone", "result": [0, 2], "won": False}]}]}
-        trec = {"graded": [{"date": "2026-11-19", "playerA": "A B", "playerB": "C D", "ok": False,
-                            "void": False, "winner": "C D", "note": "C D bt A B 6-4 6-4"}]}
-        srec = {"days": [{"date": "2026-11-20", "games": [
-            {"sport": "nba", "home": "Spurs", "away": "Clippers", "ok": True, "score": [124, 112]},
-            {"sport": "nba", "home": "Not", "away": "Graded", "ok": None}]}]}
-        r = daylist.board_results("2026-11-20", (record, trec, srec))
-        self.assertEqual(r["football|iskra|spartanii"], {"ok": True, "void": False, "score": "1-0"})
-        self.assertFalse(r["tennis|a b|c d"]["ok"])
-        self.assertEqual(r["nba|spurs|clippers"]["score"], "124-112")
-        self.assertNotIn("football|old|gone", r)
-        self.assertNotIn("nba|not|graded", r)
+def game(gid, when, home, away, ok=None):
+    return {"id": gid, "sport": "nba", "label": "NBA", "when": when, "home": home, "away": away,
+            "pick": home, "pHome": 0.7, "confidence": 0.7, "tier": "Strong",
+            "published": "2026-11-19T10:00:00Z"}
+
+
+class Played(unittest.TestCase):
+    def test_two_days_started_only(self):
+        with tempfile.TemporaryDirectory() as here:
+            os.makedirs(os.path.join(here, "predictions-sports"))
+            y = [game("1", "2026-11-20T19:00Z", "Spurs", "Clippers")]
+            t = [game("2", "2026-11-21T00:30Z", "Heat", "Nets"), game("3", "2026-11-21T20:00Z", "Lakers", "Suns")]
+            for d, gs in (("2026-11-20", y), ("2026-11-21", t)):
+                json.dump(gs, open(os.path.join(here, "predictions-sports", d + ".json"), "w"))
+            now = datetime(2026, 11, 21, 1, 0, tzinfo=timezone.utc)
+            srec = {"days": [{"date": "2026-11-20", "games": [dict(y[0], score=[124, 112], ok=True)]}]}
+            arch = daylist.read_archives("2026-11-21", here)
+            out = daylist.played_today("2026-11-21", arch, now, ({}, {}, srec), here)
+        got = {(p["home"], p["day"], p["status"]) for p in out}
+        self.assertIn(("Spurs", "2026-11-20", "won"), got)
+        self.assertIn(("Heat", "2026-11-21", "started"), got)
+        self.assertNotIn("Lakers", {p["home"] for p in out})
+        self.assertEqual(len([p for p in out if p["home"] == "Spurs"]), 1)
 
 
 if __name__ == "__main__":
