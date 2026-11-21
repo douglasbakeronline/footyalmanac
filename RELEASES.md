@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-order-played: kick-off order everywhere, and started games open up (tag pending)
+
+**What changed for a reader.** Douglas: "The ordering on football by time kick off is not working ... check all other pages" and "Why do some cards not clickable to reveal further info and links".
+- **Played today / Played yesterday follow the order chosen.** They sat at the top of every tab in confidence order whatever the Order by said, so on a Saturday evening football's Time order looked broken. With Time chosen they now run in kick-off order (the most confident first when capped, then by time).
+- **Tennis and every sport tab have an Order by** (Most confident / Kick-off time), remembered on this device. They had no control and were always strongest first. Tennis matches with no order of play (TBC) go last.
+- **Every started game opens.** Started games are drawn from their pre-start copy (Played sections, started Daily List picks, Starred, Card and Bets legs), which had no detail. Tapping one now shows the research links (match report, head to head, predictions, the table or standings, the draw for tennis) and the read: the pick, its confidence and tier, the tested rate and the result.
+- Checked: the football board and Daily List kick-off orders were already right; football, NBA and tennis orders and the new detail checked in a browser at 1280 and 400 wide.
+
+**Files.** `index.html` (`TAB_ORDER`, `tabOrderCtl`, `playedByTime`, `playedSection`/`playedDay`, `renderSport`, `renderTennis`, `pinnedRow`, `pinnedDetail`, `PIN_OPEN`), `RELEASES.md`.
+**Not changed.** Any model, record or card rule.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-nwsl-kc-spelling: NWSL's Kansas City Current priced in the fallback (tag pending)
 
 **What changed.** `groupings.AF_SPELLINGS` gains "Kansas City Current" -> "Kansas City W": the 16:05 UTC build named Washington Spirit v Kansas City Current (NWSL, 22 Nov) under noFixture beside API-Football's "Washington Spirit W v Kansas City W". `same()` already reads "Washington Spirit W" as Washington Spirit; "Kansas City W" is too short beside the full name.
