@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-21T12:49:38Z",
+ "graded": "2026-11-21T13:32:35Z",
  "overall": {
-  "groups": 143,
+  "groups": 144,
   "settled": 141,
   "won": 41,
   "z": -1.26,
   "lost": 100,
-  "pending": 2,
+  "pending": 3,
   "legs": 542,
   "legsWon": 393,
   "returned": 120.08,
@@ -19,10 +19,10 @@
   "unitsReturned": 138.89,
   "unitsReturnedBest": 143.82,
   "clv": {
-   "n": 167,
-   "shortened": 68,
-   "drifted": 61,
-   "mean": 0.0003
+   "n": 168,
+   "shortened": 67,
+   "drifted": 62,
+   "mean": 0.001
   }
  },
  "cardLegsBySport": {
@@ -75,12 +75,12 @@
   }
  },
  "cardLive": {
-  "groups": 0,
+  "groups": 1,
   "settled": 0,
   "won": 0,
   "z": null,
   "lost": 0,
-  "pending": 0,
+  "pending": 1,
   "legs": 0,
   "legsWon": 0,
   "returned": 0,
@@ -93,10 +93,10 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 0,
+   "n": 2,
    "shortened": 0,
    "drifted": 0,
-   "mean": null
+   "mean": 0.0
   }
  },
  "cardLiveRule": 14,
@@ -472,7 +472,7 @@
    "football|vihren|pirin blagoevgrad|2026-11-21": 1.05,
    "football|cosmos|faetano|2026-11-21": 1.2,
    "football|nasaf|mash'al|2026-11-21": 1.17,
-   "football|esperança d'andorra|carroi|2026-11-21": 0,
+   "football|esperança d'andorra|carroi|2026-11-21": 1.25,
    "nba|oklahoma city thunder|new orleans pelicans|2026-11-21": 1.18,
    "nba|los angeles lakers|sacramento kings|2026-11-21": 1.1,
    "nba|philadelphia 76ers|milwaukee bucks|2026-11-21": 1.15,
@@ -552,12 +552,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 38,
+   "groups": 39,
    "settled": 38,
    "won": 12,
    "z": -0.81,
    "lost": 26,
-   "pending": 0,
+   "pending": 1,
    "legs": 113,
    "legsWon": 79,
    "returned": 27.75,
@@ -570,10 +570,10 @@
    "unitsReturned": 46.56,
    "unitsReturnedBest": 47.08,
    "clv": {
-    "n": 85,
+    "n": 87,
     "shortened": 28,
     "drifted": 32,
-    "mean": -0.0059
+    "mean": -0.0057
    }
   },
   "Card 3x": {
@@ -869,12 +869,12 @@
   }
  },
  "card": {
-  "groups": 44,
+  "groups": 45,
   "settled": 44,
   "won": 14,
   "z": -0.34,
   "lost": 30,
-  "pending": 0,
+  "pending": 1,
   "legs": 132,
   "legsWon": 88,
   "returned": 38.61,
@@ -887,10 +887,10 @@
   "unitsReturned": 55.33,
   "unitsReturnedBest": 56.0,
   "clv": {
-   "n": 99,
+   "n": 101,
    "shortened": 35,
    "drifted": 39,
-   "mean": -0.0041
+   "mean": -0.004
   }
  },
  "cardWide": {
@@ -1090,9 +1090,9 @@
   "unitsReturnedBest": 0,
   "clv": {
    "n": 2,
-   "shortened": 2,
-   "drifted": 0,
-   "mean": 0.0077
+   "shortened": 1,
+   "drifted": 1,
+   "mean": 0.0673
   }
  },
  "cardByRule": {
@@ -1245,16 +1245,41 @@
     "drifted": 3,
     "mean": -0.0214
    }
+  },
+  "14": {
+   "groups": 1,
+   "settled": 0,
+   "won": 0,
+   "z": null,
+   "lost": 0,
+   "pending": 1,
+   "legs": 0,
+   "legsWon": 0,
+   "returned": 0,
+   "staked": 0,
+   "returnedBest": 0,
+   "returnedLock": 0,
+   "stakedLock": 0,
+   "expected": 0,
+   "unitsStaked": 0,
+   "unitsReturned": 0,
+   "unitsReturnedBest": 0,
+   "clv": {
+    "n": 2,
+    "shortened": 0,
+    "drifted": 0,
+    "mean": 0.0
+   }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 28,
+   "groups": 29,
    "settled": 28,
    "won": 10,
    "z": -0.01,
    "lost": 18,
-   "pending": 0,
+   "pending": 1,
    "legs": 83,
    "legsWon": 59,
    "returned": 26.39,
@@ -1267,10 +1292,10 @@
    "unitsReturned": 43.11,
    "unitsReturnedBest": 43.56,
    "clv": {
-    "n": 53,
+    "n": 55,
     "shortened": 17,
     "drifted": 21,
-    "mean": -0.0019
+    "mean": -0.0018
    }
   },
   "Daytime": {
@@ -1577,7 +1602,7 @@
        "when": "2026-11-21T14:00:00Z",
        "odds": 1.19,
        "best": 1.22,
-       "lastOdds": 1.18,
+       "lastOdds": 1.2,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1597,7 +1622,7 @@
        "when": "2026-11-21T19:30:00Z",
        "odds": 1.44,
        "best": 1.44,
-       "lastOdds": 1.43,
+       "lastOdds": 1.26,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1606,6 +1631,92 @@
        "status": "pending",
        "result": null,
        "opp": 5.4,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 14,
+     "wideRule": null,
+     "odds": 2.49,
+     "p": 0.3909,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-21T13:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Galatasaray",
+       "event": "Galatasaray v Samsunspor",
+       "sport": "football",
+       "comp": "Super Lig",
+       "when": "2026-11-21T13:00:00Z",
+       "odds": 1.22,
+       "best": 1.22,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7666,
+       "status": "pending",
+       "result": null,
+       "opp": 10.33,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "FK Mlada Boleslav",
+       "event": "FK Mlada Boleslav v FC Fastav Zlín",
+       "sport": "football",
+       "comp": "First League",
+       "when": "2026-11-21T14:00:00Z",
+       "odds": 1.45,
+       "best": 1.48,
+       "lastOdds": 1.45,
+       "lockOdds": 1.45,
+       "lockBest": 1.48,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.6466,
+       "status": "pending",
+       "result": null,
+       "opp": 5.59,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Rapid Wien",
+       "event": "Grazer AK v Rapid Wien",
+       "sport": "football",
+       "comp": "Bundesliga",
+       "when": "2026-11-21T18:30:00Z",
+       "odds": 1.41,
+       "best": 1.42,
+       "lastOdds": 1.41,
+       "lockOdds": 1.41,
+       "lockBest": 1.42,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.7887,
+       "status": "pending",
+       "result": null,
+       "opp": 6.71,
        "rule12Fault": null,
        "r12": false
       }
