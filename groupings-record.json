@@ -1,14 +1,14 @@
 {
- "graded": "2026-11-21T13:51:11Z",
+ "graded": "2026-11-21T14:59:11Z",
  "overall": {
-  "groups": 144,
+  "groups": 146,
   "settled": 141,
   "won": 41,
   "z": -1.26,
   "lost": 100,
-  "pending": 3,
-  "legs": 542,
-  "legsWon": 393,
+  "pending": 5,
+  "legs": 545,
+  "legsWon": 396,
   "returned": 120.08,
   "staked": 141,
   "returnedBest": 124.88,
@@ -19,9 +19,9 @@
   "unitsReturned": 138.89,
   "unitsReturnedBest": 143.82,
   "clv": {
-   "n": 168,
-   "shortened": 67,
-   "drifted": 62,
+   "n": 170,
+   "shortened": 68,
+   "drifted": 63,
    "mean": 0.001
   }
  },
@@ -75,12 +75,12 @@
   }
  },
  "cardLive": {
-  "groups": 1,
+  "groups": 2,
   "settled": 0,
   "won": 0,
   "z": null,
   "lost": 0,
-  "pending": 1,
+  "pending": 2,
   "legs": 0,
   "legsWon": 0,
   "returned": 0,
@@ -93,10 +93,10 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 2,
+   "n": 3,
    "shortened": 0,
-   "drifted": 0,
-   "mean": 0.0
+   "drifted": 1,
+   "mean": -0.0028
   }
  },
  "cardLiveRule": 14,
@@ -171,46 +171,46 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 58,
-   "won": 49,
-   "rate": 0.8448,
-   "quoted": 0.8875,
-   "returned": 52.19,
-   "ret": -0.1002
+   "n": 60,
+   "won": 51,
+   "rate": 0.85,
+   "quoted": 0.8857,
+   "returned": 54.41,
+   "ret": -0.0932
   },
   "notAtBook": {
-   "n": 130,
-   "won": 126,
-   "rate": 0.9692,
-   "quoted": 0.9135
+   "n": 131,
+   "won": 127,
+   "rate": 0.9695,
+   "quoted": 0.9139
   },
   "unchecked": {
-   "n": 29,
-   "won": 26,
-   "rate": 0.8966,
-   "quoted": 0.8569
+   "n": 30,
+   "won": 27,
+   "rate": 0.9,
+   "quoted": 0.8602
   },
   "bySport": {
    "football": {
     "atBook": {
-     "n": 14,
-     "won": 12,
-     "rate": 0.8571,
-     "quoted": 0.8778,
-     "returned": 13.24,
-     "ret": -0.0543
+     "n": 16,
+     "won": 14,
+     "rate": 0.875,
+     "quoted": 0.8722,
+     "returned": 15.46,
+     "ret": -0.0338
     },
     "notAtBook": {
-     "n": 5,
-     "won": 5,
+     "n": 6,
+     "won": 6,
      "rate": 1.0,
-     "quoted": 0.8348
+     "quoted": 0.8575
     },
     "unchecked": {
-     "n": 13,
-     "won": 10,
-     "rate": 0.7692,
-     "quoted": 0.7902
+     "n": 14,
+     "won": 11,
+     "rate": 0.7857,
+     "quoted": 0.8022
     }
    },
    "nba": {
@@ -552,12 +552,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 39,
+   "groups": 40,
    "settled": 38,
    "won": 12,
    "z": -0.81,
    "lost": 26,
-   "pending": 1,
+   "pending": 2,
    "legs": 113,
    "legsWon": 79,
    "returned": 27.75,
@@ -570,10 +570,10 @@
    "unitsReturned": 46.56,
    "unitsReturnedBest": 47.08,
    "clv": {
-    "n": 87,
+    "n": 88,
     "shortened": 28,
-    "drifted": 32,
-    "mean": -0.0057
+    "drifted": 33,
+    "mean": -0.0058
    }
   },
   "Card 3x": {
@@ -869,12 +869,12 @@
   }
  },
  "card": {
-  "groups": 45,
+  "groups": 46,
   "settled": 44,
   "won": 14,
   "z": -0.34,
   "lost": 30,
-  "pending": 1,
+  "pending": 2,
   "legs": 132,
   "legsWon": 88,
   "returned": 38.61,
@@ -887,9 +887,9 @@
   "unitsReturned": 55.33,
   "unitsReturnedBest": 56.0,
   "clv": {
-   "n": 101,
+   "n": 102,
    "shortened": 35,
-   "drifted": 39,
+   "drifted": 40,
    "mean": -0.004
   }
  },
@@ -1021,12 +1021,12 @@
   }
  },
  "cardList": {
-  "groups": 0,
+  "groups": 1,
   "settled": 0,
   "won": 0,
   "z": null,
   "lost": 0,
-  "pending": 0,
+  "pending": 1,
   "legs": 0,
   "legsWon": 0,
   "returned": 0,
@@ -1039,10 +1039,10 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 0,
-   "shortened": 0,
-   "drifted": 0,
-   "mean": null
+   "n": 3,
+   "shortened": 2,
+   "drifted": 1,
+   "mean": 0.0478
   }
  },
  "cardDaily": {
@@ -1077,8 +1077,8 @@
   "z": null,
   "lost": 0,
   "pending": 1,
-  "legs": 0,
-  "legsWon": 0,
+  "legs": 3,
+  "legsWon": 3,
   "returned": 0,
   "staked": 0,
   "returnedBest": 0,
@@ -1247,12 +1247,12 @@
    }
   },
   "14": {
-   "groups": 1,
+   "groups": 2,
    "settled": 0,
    "won": 0,
    "z": null,
    "lost": 0,
-   "pending": 1,
+   "pending": 2,
    "legs": 0,
    "legsWon": 0,
    "returned": 0,
@@ -1265,21 +1265,21 @@
    "unitsReturned": 0,
    "unitsReturnedBest": 0,
    "clv": {
-    "n": 2,
+    "n": 3,
     "shortened": 0,
-    "drifted": 0,
-    "mean": 0.0
+    "drifted": 1,
+    "mean": -0.0028
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 29,
+   "groups": 30,
    "settled": 28,
    "won": 10,
    "z": -0.01,
    "lost": 18,
-   "pending": 1,
+   "pending": 2,
    "legs": 83,
    "legsWon": 59,
    "returned": 26.39,
@@ -1292,10 +1292,10 @@
    "unitsReturned": 43.11,
    "unitsReturnedBest": 43.56,
    "clv": {
-    "n": 55,
+    "n": 56,
     "shortened": 17,
-    "drifted": 21,
-    "mean": -0.0018
+    "drifted": 22,
+    "mean": -0.0019
    }
   },
   "Daytime": {
@@ -1530,9 +1530,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Gyulai Termál",
@@ -1548,8 +1548,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.971,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "4-0",
        "opp": 22.0,
        "rule12Fault": null,
        "r12": false
@@ -1568,8 +1568,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8145,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "2-0",
        "opp": 25.25,
        "rule12Fault": null,
        "r12": false
@@ -1588,8 +1588,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8508,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "6-1",
        "opp": 19.92,
        "rule12Fault": null,
        "r12": false
@@ -1717,6 +1717,198 @@
        "status": "pending",
        "result": null,
        "opp": 6.71,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 2,
+     "rule": 14,
+     "wideRule": null,
+     "odds": 2.88,
+     "p": 0.375,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-21T14:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Ascoli",
+       "event": "Ascoli v Vicenza",
+       "sport": "football",
+       "comp": "Serie B",
+       "when": "2026-11-21T14:00:00Z",
+       "odds": 1.68,
+       "best": 1.7,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6533,
+       "status": "pending",
+       "result": null,
+       "opp": 4.96,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "SS Lazio",
+       "event": "SS Lazio v US Lecce",
+       "sport": "football",
+       "comp": "Serie A",
+       "when": "2026-11-21T14:00:00Z",
+       "odds": 1.48,
+       "best": 1.48,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6678,
+       "status": "pending",
+       "result": null,
+       "opp": 6.47,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Philadelphia 76ers",
+       "event": "Philadelphia 76ers v Milwaukee Bucks",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-21T18:00Z",
+       "odds": 1.16,
+       "best": 1.16,
+       "lastOdds": 1.17,
+       "lockOdds": 1.17,
+       "lockBest": 1.17,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8596,
+       "status": "pending",
+       "result": null,
+       "opp": 5.58,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "List 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 2,
+     "wideRule": null,
+     "odds": 2.27,
+     "p": 0.4472,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-21T14:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Cosmos",
+       "event": "Cosmos v Faetano",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-11-21T14:00:00Z",
+       "odds": 1.19,
+       "best": 1.22,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8466,
+       "status": "pending",
+       "result": null,
+       "opp": 11.41,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Philadelphia 76ers",
+       "event": "Philadelphia 76ers v Milwaukee Bucks",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-21T18:00Z",
+       "odds": 1.15,
+       "best": 1.15,
+       "lastOdds": 1.17,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8596,
+       "status": "pending",
+       "result": null,
+       "opp": 5.74,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Esperança d'Andorra",
+       "event": "Esperança d'Andorra v Carroi",
+       "sport": "football",
+       "comp": "1a Divisió",
+       "when": "2026-11-21T19:30:00Z",
+       "odds": 1.44,
+       "best": 1.44,
+       "lastOdds": 1.26,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7571,
+       "status": "pending",
+       "result": null,
+       "opp": 5.4,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Boston Celtics",
+       "event": "Sacramento Kings v Boston Celtics",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-22T03:00Z",
+       "odds": 1.15,
+       "best": 1.15,
+       "lastOdds": 1.13,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8117,
+       "status": "pending",
+       "result": null,
+       "opp": 5.93,
        "rule12Fault": null,
        "r12": false
       }
