@@ -3883,9 +3883,9 @@
      "edge": -0.0665,
      "basis": "model",
      "firstOdds": 1.15,
-     "lastOdds": 1.13,
-     "lastBest": 1.13,
-     "lastAt": "2026-11-21T20:47:22Z"
+     "lastOdds": 1.17,
+     "lastBest": 1.17,
+     "lastAt": "2026-11-21T21:08:36Z"
     }
    ],
    "tested": 0.342,
