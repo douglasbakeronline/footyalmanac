@@ -747,7 +747,96 @@ def graded_rows(save=True):
             "published": g.get("published"), "kickoff": g.get("kickoff"),
             "edge": edge_of(g, flag_of),
         })
+    # One row per match (21 Nov 2026, #464): a match archived under two
+    # spellings is graded once.
+    rows, pairs = drop_duplicates(rows)
+    DUPLICATES[:] = pairs
+    if pairs:
+        print(f"  {len(pairs)} graded twice under two spellings, counted once", file=sys.stderr)
     return preds, rows, results
+
+
+DUPLICATES = []   # (kept, dropped) row pairs, last graded_rows
+
+
+def _same_club(a, b):
+    """Two spellings of one club, both ways (Southend United / Southend)."""
+    return a == b or bool(S.match_team(a, {b}) and S.match_team(b, {a}))
+
+
+def distinct_names(rows, window=NEAR_DAYS):
+    """{league: {frozenset((a, b))}} of names the archive shows are two clubs:
+    they met each other, or one build published both, within `window` days,
+    against opponents that are not one club (Managua and UNAN Managua, which
+    `match_team` would join: Managua v UNAN Managua, 2 Nov 2026)."""
+    out = defaultdict(set)
+    builds = defaultdict(list)
+    for r in rows:
+        out[r["league"]].add(frozenset((r["home"], r["away"])))
+        if r.get("published"):
+            builds[(r["league"], r["published"])].append(r)
+    for (lg, _), rs in builds.items():
+        for i, a in enumerate(rs):
+            da = date.fromisoformat(a["date"])
+            for b in rs[i + 1:]:
+                if abs((date.fromisoformat(b["date"]) - da).days) > window:
+                    continue
+                for x, xo in ((a["home"], a["away"]), (a["away"], a["home"])):
+                    for y, yo in ((b["home"], b["away"]), (b["away"], b["home"])):
+                        if x != y and xo != yo and not _same_club(xo, yo):
+                            out[lg].add(frozenset((x, y)))
+    return out
+
+
+def drop_duplicates(rows, window=NEAR_DAYS):
+    """One graded row per match (21 Nov 2026, #464).
+
+    `load_predictions` keys on names, so a match archived under two spellings
+    (ESPN's and openfootball's, or an API-Football short form) on the same day
+    or a round date apart was graded twice: 24 copies on the record at 21 Nov
+    (National League, India, the Süper Lig, J1...). Two rows are one match when
+    they share a league, sit within `window` days, carry the same final score
+    and both clubs match under `match_team` both ways, home and away in the
+    same order. The copy kept is a Daily List copy, else a reserve copy, so
+    no list pick leaves the list's record, then the one published earliest
+    (the price shown first in advance), then the earlier date. Flags are never
+    moved between copies. Returns (kept rows, [(kept, dropped)])."""
+    by = defaultdict(list)
+    for i, r in enumerate(rows):
+        by[(r["league"], tuple(r["result"]))].append(i)
+    apart = distinct_names(rows, window)
+    drop, pairs = set(), []
+
+    def order(i):
+        r = rows[i]
+        return (not r.get("list"), not r.get("reserve"), r.get("published") or "~",
+                r["date"], r["home"], r["away"])
+
+    for idx in by.values():
+        if len(idx) < 2:
+            continue
+        idx = sorted(idx, key=order)
+        for a_pos, a in enumerate(idx):
+            if a in drop:
+                continue
+            ra = rows[a]
+            da = date.fromisoformat(ra["date"])
+            for b in idx[a_pos + 1:]:
+                if b in drop:
+                    continue
+                rb = rows[b]
+                if (ra["home"], ra["away"]) == (rb["home"], rb["away"]) and ra["date"] == rb["date"]:
+                    continue
+                if abs((date.fromisoformat(rb["date"]) - da).days) > window:
+                    continue
+                lg = ra["league"]
+                if any(frozenset((x, y)) in apart.get(lg, ()) for x, y in
+                       ((ra["home"], rb["home"]), (ra["away"], rb["away"])) if x != y):
+                    continue
+                if _same_club(ra["home"], rb["home"]) and _same_club(ra["away"], rb["away"]):
+                    drop.add(b)
+                    pairs.append((ra, rb))
+    return [r for i, r in enumerate(rows) if i not in drop], pairs
 
 
 def edge_of(g, flag_of):
@@ -886,6 +975,8 @@ def main():
             # archived prices not graded: proven late, or timing unverifiable
             "late": len(set(SKIPPED["late"])),
             "timingUnverifiable": len(set(SKIPPED["timing-unverifiable"])),
+            # one match archived under two spellings, graded once (#464)
+            "duplicates": len(DUPLICATES),
         },
         "settled": summarise([r for r in rows if not r["celtic"]]),
         "celtic": summarise([r for r in rows if r["celtic"]]),
@@ -934,7 +1025,12 @@ def main():
              "ok": correct(r), "won": won(r),
              "drawRead": r["actual"] == "d" and r["pick"] != "d" and score_draw(r),
              "expected": round(expected(r), 4)}
-            for r in sorted(rows, key=lambda r: (r["date"], r["league"], r["home"]))]},
+            for r in sorted(rows, key=lambda r: (r["date"], r["league"], r["home"]))],
+            # the second copy of a match archived under two spellings, with the
+            # copy graded in its place (#464); the ledger reads these
+            "duplicates": [{"league": b["league"], "date": b["date"], "home": b["home"], "away": b["away"],
+                            "kept": [a["date"], a["home"], a["away"]]}
+                           for a, b in sorted(DUPLICATES, key=lambda p: (p[1]["date"], p[1]["league"], p[1]["home"]))]},
             f, separators=(",", ":"), ensure_ascii=False)
 
     o = payload["overall"]

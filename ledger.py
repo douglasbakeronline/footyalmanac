@@ -178,8 +178,14 @@ def predictions(here=HERE):
 def results(here=HERE):
     """Lookups for the three graded files."""
     fb = {}
-    for g in (_load(os.path.join(here, "record-graded.json"), {}) or {}).get("graded") or []:
+    graded = _load(os.path.join(here, "record-graded.json"), {}) or {}
+    for g in graded.get("graded") or []:
         fb[(g.get("date"), g.get("league"), low(g.get("home")), low(g.get("away")))] = g
+    # a second copy of a match graded under another spelling (score.py, #464):
+    # counted once, so this copy is marked and never chased as ungraded
+    for g in graded.get("duplicates") or []:
+        fb.setdefault((g.get("date"), g.get("league"), low(g.get("home")), low(g.get("away"))),
+                      {"duplicate": True})
     tn_id, tn_names = {}, {}
     for g in (_load(os.path.join(here, "tennis-record.json"), {}) or {}).get("graded") or []:
         if g.get("key"): tn_id[str(g["key"])] = g
@@ -195,6 +201,8 @@ def result_of(r, look):
     if r["sport"] == "football":
         for d in r.get("_dates") or [r["date"]]:
             g = fb.get((d, r["comp"], low(r["home"]), low(r["away"])))
+            if g and g.get("duplicate"):
+                return "duplicate", None
             if g and g.get("result"):
                 won = g["won"] if g.get("won") is not None else bool(g.get("ok"))
                 return "won" if won else "lost", f"{g['result'][0]}-{g['result'][1]}"

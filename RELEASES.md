@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-graded-once: a match archived under two spellings is graded once (tag pending)
+
+**What changed for a reader.** The football record counted 24 matches twice, once under each spelling the archive held (Southend / Southend United, SC East Bengal / East Bengal / EAST BENGAL, Besiktas / Beşiktaş...). Each is now graded once, so How it went, the bands and the league tables count every match one time.
+**Evidence.** On the committed `record-graded.json` (13,938 rows): 24 second copies across nine competitions, 13 won v 12.48 expected (so the record barely moves); none on the Daily List, one reserve copy whose twin is reserve too, no Card leg. Managua and UNAN Managua, which the club matcher would join, are kept apart as two clubs (they met on 2 Nov). `claude/duplicate-spellings-graded-once-2026-11-21.md`.
+**Files.** `score.py` (`drop_duplicates`, `distinct_names`, `verification.duplicates`, `record-graded.json` `duplicates`), `ledger.py` (`result_of` marks a duplicate copy), `tests/test_score_duplicates.py`, `claude/duplicate-spellings-graded-once-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** The model, the Card and its grading, the Daily List rule, the prediction archive.
+**Roll back.** `git revert` the merge; the next build regrades with both copies.
+
 ## 2026-11-21-flags-emoji-caution: a flag on every football row, sport emoji, and a caution mark (tag pending)
 
 **What changed for a reader.** Every football competition now shows its country's flag: 82 wider leagues from 44 countries (Algeria to Zimbabwe, plus North Macedonia and the UAE under their API-Football spellings) had none. Every fixture row ends its league or sport name with the sport's emoji (⚽ 🎾 🏈 ⚾ 🏀 🏉 🏒). A football league whose graded picks landed 1.5+ standard errors under the model's number on 50+ picks carries a small ⚠️ with its record on hover (today Serie B, Liga MX, Colombia Primera B, Turkey 3. Lig Group 1, Serie D Girone C).
