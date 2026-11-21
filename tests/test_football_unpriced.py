@@ -297,6 +297,16 @@ class KickoffNamed(unittest.TestCase):
         self.assertEqual(r["matched"], 1)
         self.assertNotIn("miss", r)
 
+    def test_kansas_city_current_spelling(self):
+        """NWSL's Kansas City Current is "Kansas City W" on API-Football (the 21 Nov 16:05 UTC build's noFixture name)."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "2.40"}, {"value": "Draw", "odd": "3.4"}, {"value": "Away", "odd": "2.9"}]}]}]}]
+        r = self.run_price([leg(t, "Washington Spirit", "Kansas City Current", "NWSL")],
+                           [fx(97, t, "Washington Spirit W", "Kansas City W")], {97: book})
+        self.assertEqual(r["matched"], 1)
+        self.assertNotIn("miss", r)
+
     def test_abbreviations_odds_aliases(self):
         """21 Nov 2026 (03:11 UTC build): Norwich City v Queens Park Rangers, Championship,
         noFixture beside "Norwich v QPR". API-Football's short forms are football-data's
