@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-reserve-gap: Reserve (other sports) gap located, no rule change (tag pending)
+
+**What changed:** nothing a reader sees. A note records where the reserve's shortfall sits.
+**Evidence:** `claude/reserve-other-sports-gap-2026-11-21.md`. 28-day reserve 73.4% v 73.8% quoted (z -0.24, 741 picks); whole record z -0.79. Weakest cells: CFB 68-74% (z -1.83, 49), CFB away (z -1.79, 72), NCAAB away (z -2.12, only 41), NFL 62-68% (z -1.76, 23): none meets the 50-pick, 2 SE rule, and college away already has its Away mark and a pre-registered tripwire.
+**Files:** `claude/reserve-other-sports-gap-2026-11-21.md`, `RELEASES.md`.
+**Not changed:** the reserve rule, `WARY_*`, any model constant.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-21-emoji-clip: sport emoji no longer clipped (tag pending)
 
 **What changed for a reader.** The sport emoji and the caution sign at the end of a row's league name were cut off at the top and bottom (Douglas, a college football row on his phone). The row's ellipsis rule (`.ko .comp span`, overflow hidden) applied to them inside a 10px caps line; they now overflow freely at 11px.
