@@ -112,6 +112,34 @@ class Ledger(unittest.TestCase):
         self.assertAlmostEqual(s["ret"], 0.25)
         self.assertAlmostEqual(s["retBest"], 0.30)
 
+    def test_postponed_fixture_relisted_later_is_not_chased(self):
+        # Tajikistan, 21 Nov 2026: the 7 Nov round re-listed for 27 Nov
+        self.r.put("predictions/2026-11-06.json", [
+            fb("2026-11-07", "Istiqlol", "Istaravshan", 0.84, "2026-11-06T23:00:00Z", lst=True),
+            fb("2026-11-07", "Ravshan", "Khatlon", 0.60, "2026-11-06T23:00:00Z")])
+        self.r.put("predictions/2026-11-21.json", [
+            fb("2026-11-27", "Istiqlol", "Istaravshan", 0.84, "2026-11-21T18:00:00Z", lst=True)])
+        rg = json.load(open(os.path.join(self.r.dir, "record-graded.json")))
+        rg["graded"].append({"date": "2026-11-07", "league": "en.1", "home": "Ravshan", "away": "Khatlon",
+                             "result": [1, 2], "won": False})
+        self.r.put("record-graded.json", rg)
+        out = L.write(now=self.NOW, here=self.r.dir)
+        rows = {r["key"]: r for r in out["rows"]}
+        self.assertEqual(rows["football|istiqlol|istaravshan|2026-11-07"]["movedTo"], "2026-11-27")
+        self.assertNotIn("movedTo", rows["football|istiqlol|istaravshan|2026-11-27"])
+        self.assertNotIn("movedTo", rows["football|ravshan|khatlon|2026-11-07"])
+        ug = out["ungraded"]
+        self.assertEqual(ug["moved"], {"n": 1, "list": 1, "reserve": 0})
+        self.assertEqual(ug["chase"], {"n": 1, "list": 1, "reserve": 0})     # Fulham v Wolves only
+        self.assertEqual(ug["listPicks"], ["2026-11-03 football Fulham v Wolves"])
+
+    def test_played_fixture_with_later_meeting_is_not_marked(self):
+        self.r.put("predictions/2026-11-20.json", [
+            fb("2026-11-25", "Arsenal", "Leeds United", 0.8, "2026-11-20T05:00:00Z")])
+        out = L.write(now=self.NOW, here=self.r.dir)
+        rows = {r["key"]: r for r in out["rows"]}
+        self.assertNotIn("movedTo", rows["football|arsenal|leeds united|2026-11-02"])
+
     def test_kept_when_its_sources_are_gone(self):
         path = os.path.join(self.r.dir, "results-ledger.json.gz")
         L.write(now=self.NOW, here=self.r.dir, path=path)
