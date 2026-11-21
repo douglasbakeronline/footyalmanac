@@ -296,3 +296,23 @@ class KickoffNamed(unittest.TestCase):
         r = self.run_price([leg(t, "OL Lyonnes", "Strasbourg", "D1 Arkema")], [fx(94, t, "Lyon W", "Strasbourg W")], {94: book})
         self.assertEqual(r["matched"], 1)
         self.assertNotIn("miss", r)
+
+    def test_abbreviations_odds_aliases(self):
+        """21 Nov 2026 (03:11 UTC build): Norwich City v Queens Park Rangers, Championship,
+        noFixture beside "Norwich v QPR". API-Football's short forms are football-data's
+        (odds.ALIASES), so af_same reads them too."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.80"}, {"value": "Draw", "odd": "3.6"}, {"value": "Away", "odd": "4.2"}]}]}]}]
+        day = [fx(95, t, "Norwich", "QPR"), fx(96, t, "Wolves", "Fulham", hour=15)]
+        L = [leg(t, "Norwich City", "Queens Park Rangers", "Championship"),
+             leg(t, "Wolverhampton Wanderers", "Fulham", "Premier League", hour=15)]
+        r = self.run_price(L, day, {95: book, 96: book})
+        self.assertEqual(r["matched"], 2)
+        self.assertNotIn("miss", r)
+
+    def test_alias_does_not_cross_clubs(self):
+        """An alias widens a spelling, never a club: QPR is not Queen of the South."""
+        self.assertTrue(G.af_same("QPR", "Queens Park Rangers"))
+        self.assertFalse(G.af_same("QPR", "Queen of the South"))
+        self.assertFalse(G.af_same("Wolves", "Wolfsburg"))

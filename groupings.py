@@ -453,7 +453,16 @@ def af_same(af_name, board_name):
     """same(), or the board name's API-Football spelling (AF_SPELLINGS)."""
     if same(af_name, board_name): return True
     alt = AF_SPELLINGS.get(board_name)
-    return bool(alt) and same(af_name, alt)
+    if alt and same(af_name, alt): return True
+    # 21 Nov 2026 (03:11 UTC build): Norwich City v Queens Park Rangers, a
+    # Championship leg, noFixture beside "Norwich v QPR". API-Football's short
+    # forms are football-data's (QPR, Wolves, Sheffield Weds...), which
+    # odds.ALIASES already spells out for the bulk match; the one-fixture
+    # fallback now reads them too. Exact key only, and the other name and the
+    # kick-off must still agree.
+    import odds as O
+    full = O.ALIASES.get((af_name or "").strip())
+    return bool(full) and same(full, board_name)
 
 def card_reach(l):
     """True when a football leg could reach the Card once priced: the model
