@@ -9,6 +9,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-21-played-yesterday: results across the site, after midnight too (tag pending)
+
+**What changed for a reader.** Played today now has a **Played yesterday** section under it on every sport's tab, so last night's results stay in view after midnight instead of vanishing with the UK day. **Starred** keeps a starred game once it starts (it used to drop off with the board), with In play, Won / Lost and the score. Douglas, 21 Nov 2026: "develop this across the whole website to improve data visibility".
+
+**Files.** `daylist.py` (`played_today` covers `PLAYED_DAYS` 2 UK days, each row with its `day` and `id`), `index.html` (`playedSection` / `playedDay`, `starIdOf` for a played row, Starred reads `played`). Display only.
+
+**Also.** Three FIFA ranking tests had a release date written as 2026-10-22, which stopped being newer than their 30-day-old test file on 21 Nov and failed CI; they now use yesterday's date (`tests/test_rankings.py`).
+
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-20-played-today: results on every sport's tab (tag pending)
 
 **What changed for a reader.** Every sport's tab (Football, Tennis, the NBA, the NFL, rugby, ice hockey, the college sports) now opens with **Played today**: every game of the UK day that has started, list or not, at its last pre-start price, with Won / Lost and the score once graded (tennis with its set scores), In play or Result due until then. The top eight by confidence, then Show all. A row still on the board after its start shows the same pill in place of the predicted score. Douglas, 20 Nov 2026: "the won or lost tab should be on every tab for each sport listed ... earlier games from this afternoon show nothing".

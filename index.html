@@ -3102,7 +3102,14 @@ function starIdOf(it, date){
   if(it.kind === "football") return date + "|" + it.g.home.name + "|" + it.g.away.name;
   if(it.kind === "pinned"){
     const f = it.g.full;
-    if(!f) return null;
+    if(!f){
+      // a played row (daylist.js "played", 21 Nov 2026): the id its row had on the board
+      const g = it.g;
+      if(!g.home || !g.away) return null;
+      return g.sport === "football" ? date + "|" + g.home + "|" + g.away
+        : g.sport === "tennis" ? "s|t|" + g.date + "|" + g.home + "|" + g.away
+        : g.id ? "s|" + g.id : null;
+    }
     return it.g.sport === "football" ? date + "|" + f.home.name + "|" + f.away.name
       : sid(it.g.sport === "tennis" ? tennisAsGame(f) : f);
   }
@@ -3147,6 +3154,10 @@ function renderStarred(){
   const TDS = window.__TENNIS_DATA__;
   if(TDS && TDS.matches) TDS.matches.forEach(m => others.push(tennisAsGame(m)));
   others.forEach(g => take(localDay(g.when), {kind:"sport", g}));
+  // 21 Nov 2026: a starred game that has started leaves the board; it stays
+  // here with its result (daylist.js "played").
+  const DLP = window.__DAY_LIST__;
+  if(DLP && Array.isArray(DLP.played)) DLP.played.forEach(g => take(g.sport === "football" ? g.date : (g.day || DLP.date), {kind:"pinned", g}));
   Object.keys(items).sort().forEach(date => {
     any = true;
     const sec = document.createElement("section");
@@ -3666,31 +3677,40 @@ function tennisStat(r, surface){
    game at its start, so these had gone from the tabs. Rows still on the board
    are skipped here (boardResult marks them in place). Display only. */
 const PLAYED_CAP = 8, PLAYED_ALL = new Set();
+// 21 Nov 2026 (Douglas: "develop this across the whole website"): the day
+// before too, so a tab still shows last night's results after midnight.
 function playedSection(name, test, host, ruler){
   const D = window.__DAY_LIST__;
   if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
   const shown = new Set([...host.querySelectorAll(".row-line[data-pk]")].map(e => e.dataset.pk));
-  const items = D.played.filter(it => test(it.sport) && !shown.has(lbKey(it.sport, it.home, it.away)))
+  const days = [...new Set(D.played.map(it => it.day || D.date))].sort().reverse();
+  const secs = days.map(day => playedDay(name, test, D, day, shown, ruler)).filter(Boolean);
+  const lede = host.querySelector(":scope > .lede");
+  let at = lede;
+  secs.forEach(sec => { at ? at.after(sec) : host.prepend(sec); at = sec; });
+}
+function playedDay(name, test, D, day, shown, ruler){
+  const items = D.played.filter(it => (it.day || D.date) === day && test(it.sport)
+      && !shown.has(lbKey(it.sport, it.home, it.away)))
     .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
-  if(!items.length) return;
+  if(!items.length) return null;
   const st = it => pinStatus(it)[0];
   const won = items.filter(it => st(it) === "won").length, lost = items.filter(it => st(it) === "lost").length;
   const open = items.length - won - lost - items.filter(it => st(it) === "void").length;
-  const all = PLAYED_ALL.has(name), list = all ? items : items.slice(0, PLAYED_CAP);
+  const key = name + "|" + day, all = PLAYED_ALL.has(key), list = all ? items : items.slice(0, PLAYED_CAP);
   const sec = document.createElement("section");
   sec.className = "day played";
-  sec.innerHTML = `<div class="day-head"><h2>Played today</h2>
+  sec.innerHTML = `<div class="day-head"><h2>${day === D.date ? "Played today" : "Played yesterday"}</h2>
     <div class="count">${items.length} ${name}${won + lost ? ` · ${won} won · ${lost} lost` : ""}${open ? ` · ${open} to grade` : ""}</div></div>${ruler}`;
   list.forEach((it, i) => sec.appendChild(pinnedRow(it, i)));
   if(items.length > PLAYED_CAP){
     const more = document.createElement("button");
     more.className = "more";
-    more.innerHTML = all ? `Show the top <b>${PLAYED_CAP}</b> only` : `Show all <b>${items.length}</b> played today`;
-    more.addEventListener("click", () => { all ? PLAYED_ALL.delete(name) : PLAYED_ALL.add(name); rerenderOpen(); });
+    more.innerHTML = all ? `Show the top <b>${PLAYED_CAP}</b> only` : `Show all <b>${items.length}</b> played ${day === D.date ? "today" : "yesterday"}`;
+    more.addEventListener("click", () => { all ? PLAYED_ALL.delete(key) : PLAYED_ALL.add(key); rerenderOpen(); });
     sec.appendChild(more);
   }
-  const lede = host.querySelector(":scope > .lede");
-  lede ? lede.after(sec) : host.prepend(sec);
+  return sec;
 }
 function renderTennis(){
   const host = $("#tennis");

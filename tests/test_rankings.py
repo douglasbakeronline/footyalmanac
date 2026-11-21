@@ -8,6 +8,10 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import rankings as R
 
 
+# A release newer than write_men's file (30 days old). It was the literal
+# 2026-10-22, which stopped being newer on 21 Nov 2026 and failed CI.
+NEW_RELEASE = (date.today() - timedelta(days=1)).isoformat()
+
 class Maths(unittest.TestCase):
     def test_sig_logit_roundtrip(self):
         for p in (0.1, 0.5, 0.8, 0.95):
@@ -269,14 +273,14 @@ class Refresh(unittest.TestCase):
         def fake(url, timeout=20):
             if "dateId" in url:
                 return {"rankings": []}
-            return self.rows(names, "2026-10-22")
+            return self.rows(names, NEW_RELEASE)
         log = []
         with mock.patch.object(R, "_get", fake):
             new = R.refresh_fifa(scan=3, log=log)
-        self.assertEqual(new["date"], "2026-10-22")
+        self.assertEqual(new["date"], NEW_RELEASE)
         self.assertEqual(new["id"], R.FIFA_SEED)
         self.assertEqual(new["teams"]["M1"], [1, 1900])
-        self.assertEqual(json.load(open(self.path))["date"], "2026-10-22")
+        self.assertEqual(json.load(open(self.path))["date"], NEW_RELEASE)
         self.assertTrue(any("from the dateless overview" in l for l in log), log)
 
     def test_overview_rows_older_than_the_file_are_ignored(self):
@@ -292,7 +296,7 @@ class Refresh(unittest.TestCase):
         cur = self.write_men()
         names = [f"W{k}" for k in range(25)] + [f"M{k}" for k in range(20, 40)]
         fake = lambda url, timeout=20: {"rankings": []} if "dateId" in url else \
-            self.rows(names, "2026-10-22")
+            self.rows(names, NEW_RELEASE)
         log = []
         with mock.patch.object(R, "_get", fake):
             self.assertEqual(R.refresh_fifa(scan=2, log=log), cur)
@@ -301,7 +305,7 @@ class Refresh(unittest.TestCase):
     def test_ranking_page_embedded_json_is_the_release(self):
         cur = self.write_men()
         names = [f"M{k}" for k in range(40)]
-        blob = json.dumps({"props": {"pageProps": {"pageData": {"ranking": self.rows(names, "2026-10-22")["rankings"]}}}})
+        blob = json.dumps({"props": {"pageProps": {"pageData": {"ranking": self.rows(names, NEW_RELEASE)["rankings"]}}}})
         html = (f'<a href="?dateId=id15400">Oct</a><script id="__NEXT_DATA__" type="application/json">{blob}</script>')
         calls = []
         def fake(url, timeout=20):
@@ -310,7 +314,7 @@ class Refresh(unittest.TestCase):
         log = []
         with mock.patch.object(R, "_get", fake), mock.patch.object(R, "_get_text", return_value=html):
             new = R.refresh_fifa(scan=2, log=log)
-        self.assertEqual(new["date"], "2026-10-22")
+        self.assertEqual(new["date"], NEW_RELEASE)
         self.assertTrue(any("from the ranking page" in l for l in log), log)
         self.assertTrue(any("dateId=id15400" in u for u in calls))     # the page's id is asked first
 
