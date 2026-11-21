@@ -45,6 +45,7 @@ UNGRADED_DAYS = 3             # pending this long after the start: report it
 UNGRADED_STALE = 14           # pending this long: counted apart, unlikely to settle
 MOVE_DAYS = 10                # two copies of one pairing this close are one fixture, moved
 TENNIS_MOVE_DAYS = 2          # tennis: a moved match is a day or two late, a rematch is days later
+RESCHEDULE_DAYS = 45          # football: a later copy of the pairing this close marks an unplayed one moved
 MATCH_DAYS = 2                # a price joins a prediction within this many days of its start
 BANDS = (0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.62, 0.0)
 
@@ -164,9 +165,24 @@ def predictions(here=HERE):
                     c.append(r); break
             else:
                 clusters.append([r])
+        # 21 Nov 2026: a football fixture postponed by more than MOVE_DAYS
+        # comes back as a second cluster (Tajikistan's 7 Nov round re-listed
+        # for 27 Nov; Pistoiese v Coriano 15 Nov, listed for 9 Dec). The
+        # earlier copy never gets a result, so it is marked with the later
+        # date (`movedTo`) and the ungraded report counts it apart instead
+        # of chasing it. Only a mark: it is never graded from the later game.
+        later = {}
+        if rows[0]["sport"] == "football":
+            starts = [(parse_utc(max(c, key=lambda r: r["published"])["start"]), c) for c in clusters]
+            starts.sort(key=lambda t: t[0])
+            for i, (t, c) in enumerate(starts):
+                for t2, c2 in starts[i + 1:]:
+                    if (t2 - t).days <= RESCHEDULE_DAYS:
+                        later[id(c)] = max(c2, key=lambda r: r["published"])["date"]; break
         for c in clusters:
             keep = max(c, key=lambda r: r["published"])
             keep = dict(keep)
+            if id(c) in later: keep["movedTo"] = later[id(c)]
             keep["_dates"] = sorted({r["date"] for r in c})
             keep["_prices"] = [r["_price"] for r in sorted(c, key=lambda r: r["published"]) if r.get("_price")]
             out.append(keep)
@@ -334,7 +350,7 @@ def ledger_key(r):
 
 
 KEEP = ("sport", "comp", "tour", "id", "date", "start", "timed", "home", "away", "pick", "side",
-        "conf", "list", "reserve", "celtic", "why", "published")
+        "conf", "list", "reserve", "celtic", "why", "published", "movedTo")
 
 
 def band(conf):
@@ -370,6 +386,7 @@ def build_rows(here=HERE):
     for r in predictions(here):
         res, score = result_of(r, look)
         first, last = attach_prices(r, pool, board)
+        if res is not None: r = {k: v for k, v in r.items() if k != "movedTo"}   # played: not moved
         row = {"key": ledger_key(r), **{k: r.get(k) for k in KEEP if r.get(k) is not None},
                "band": band(r.get("conf")), "result": res, "score": score, "first": first, "last": last}
         out.append(row)
@@ -432,8 +449,9 @@ def summary(rows):
 def ungraded(rows, now):
     """Picks still pending UNGRADED_DAYS after their start: counted by sport
     and competition, the list picks named. Those past UNGRADED_STALE days are
-    counted apart (`stale`)."""
-    chase, stale = {}, {}
+    counted apart (`stale`), and a football fixture re-listed for a later
+    date (`movedTo`, postponed) apart again (`moved`, 21 Nov 2026)."""
+    chase, stale, moved = {}, {}, {}
     names = []
     for r in rows:
         if r.get("result") is not None: continue
@@ -441,7 +459,7 @@ def ungraded(rows, now):
         if not start: continue
         age = (now - start).total_seconds() / 86400
         if age < UNGRADED_DAYS: continue
-        tgt = stale if age >= UNGRADED_STALE else chase
+        tgt = moved if r.get("movedTo") else stale if age >= UNGRADED_STALE else chase
         k = f"{r['sport']}|{r.get('comp') or ''}"
         c = tgt.setdefault(k, {"n": 0, "list": 0, "reserve": 0})
         c["n"] += 1; c["list"] += bool(r.get("list")); c["reserve"] += bool(r.get("reserve"))
@@ -451,7 +469,8 @@ def ungraded(rows, now):
                      "reserve": sum(c["reserve"] for c in t.values())}
     order = lambda t: dict(sorted(t.items(), key=lambda kv: (-kv[1]["n"], kv[0])))
     return {"days": UNGRADED_DAYS, "staleDays": UNGRADED_STALE, "chase": tot(chase), "stale": tot(stale),
-            "byComp": order(chase), "staleByComp": order(stale), "listPicks": sorted(names)}
+            "moved": tot(moved), "byComp": order(chase), "staleByComp": order(stale),
+            "movedByComp": order(moved), "listPicks": sorted(names)}
 
 
 def price_cover(rows):
@@ -499,7 +518,8 @@ def report(out, now=None, warn=None):
     ug = out["ungraded"]
     line = (f"ungraded: {ug['chase']['n']} picks {ug['days']}+ days past their start with no result "
             f"({ug['chase']['list']} on the Daily List, {ug['chase']['reserve']} reserve); "
-            f"{ug['stale']['n']} past {ug['staleDays']} days")
+            f"{ug['stale']['n']} past {ug['staleDays']} days; "
+            f"{(ug.get('moved') or {}).get('n', 0)} re-listed for a later date (postponed, not chased)")
     top = "; ".join(f"{k} {c['n']}" for k, c in list(ug["byComp"].items())[:8])
     print(f"{'::warning::' if warn and ug['chase']['n'] else ''}{line}" + (f". Most: {top}" if top else ""))
     if warn and ug["listPicks"]:

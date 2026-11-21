@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-ledger-moved: postponed fixtures re-listed later are not chased as ungraded (tag pending)
+
+**What changed.** The results ledger's ungraded report (build log, `results-ledger.json.gz` `ungraded`) no longer chases a football fixture that was postponed and re-listed more than 10 days later. `ledger.predictions` marks the earlier copy `movedTo` (the later date) when the pairing has another copy within `RESCHEDULE_DAYS` (45) days, never on a row with a result, and `ungraded` counts it apart (`moved`, `movedByComp`; the log line adds "re-listed for a later date"). A mark only: nothing is graded from the later game.
+**Evidence.** On the committed ledger: to chase 99 to 92, stale 418 to 227, moved 199 (2 list, 10 reserve); the later copy is graded for 134 of the 199 and to come for the other 65. The cases behind it: Tajikistan's 7 Nov round re-listed for 27 Nov, and Pistoiese v Coriano (Card leg, 15 Nov, void) listed for 9 Dec. The three list picks left on the chase line are not faults (Pistoiese's 9 Dec copy not archived yet; two college basketball games postponed, voided on 22 Nov by `sports.not_played`). Two tests. `claude/ledger-postponed-relisted-2026-11-21.md`.
+**Files.** `ledger.py`, `tests/test_ledger.py`, `claude/ledger-postponed-relisted-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any Card rule, record, grade, price or page.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-order-played: kick-off order everywhere, and started games open up (tag pending)
 
 **What changed for a reader.** Douglas: "The ordering on football by time kick off is not working ... check all other pages" and "Why do some cards not clickable to reveal further info and links".
