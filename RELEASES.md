@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-af-short-names: API-Football's short club names priced in the fallback (tag pending)
+
+**What changed.** The football price fallback (`groupings.af_same`) now reads `odds.ALIASES`, so API-Football's short names (QPR, Wolves, Sheffield Weds...) match the board's full names. The 03:11 UTC build left Norwich City v Queens Park Rangers (Championship, 24 Nov) unpriced as `noFixture` beside "Norwich v QPR"; a core-league leg like that can cost the Card a pick.
+**Evidence.** The build log's named noFixture line; tests for QPR and Wolves through the fallback and a guard that an alias never crosses clubs (QPR is not Queen of the South). `claude/af-short-names-2026-11-21.md`.
+**Files.** `groupings.py` (`af_same`), `tests/test_football_unpriced.py`, `claude/af-short-names-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any Card rule, the model, the bulk price match, `AF_SPELLINGS`.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-edge-tracker: a tracker graph under Edge picks (tag pending)
 
 **What changed for a reader.** The Bets tab's Edge picks section now ends with a **Tracker** (Douglas: "a visual tracker performance graph underneath that section. Either see all time or be able to scroll two weeks back"): picks won, profit at the best and at the average price (one unit on every Edge pick), a running profit line for each, a dashed line where the live record starts (days before 10 Nov are the rule replayed on prices archived before kick-off), an **All time / Last 14 days** switch, a scrolling strip of day tiles (a dot a pick, won or lost, and the day's units), and the chosen day's picks with prices, the opponent's price and live or replayed. Below it the record split by the opponent's price, 9.0+ against 5.0 to 9.0, since the five-season test backs only 9.0+.
