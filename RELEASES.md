@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-early-copy-grading: round-date rows graded from the copy published the day before (tag pending)
+
+**What changed:** `score.nearby_results` refused a match played the day before its archived round date when the last build's copy was written on the match day (La Liga's and the Süper Lig's 8 Nov rounds, played 6 and 7 Nov), though the build the evening before had published the same fixture. It now grades that earlier copy (`score.earlier_copy`) and judges the row at that copy's numbers. It also maps names per run of nearby dates, so the Süper Lig, archived under ESPN's spelling until October and openfootball's since, meets its November results, and a result owned by a same-day prediction under another spelling is never graded twice (`_owned`).
+**Evidence:** on the committed archive, 66 more predictions graded (Süper Lig 25, La Liga 15, Austria 8, Greece 6, Scotland 5, Brazil 4), 40 won v 32.1 expected; none refused as late (was 22); none lost; none on the Daily List, 4 reserve, no Card leg; none with a graded twin within 3 days under any spelling. `claude/round-date-early-copy-grading-2026-11-21.md`, `tests/test_score_nearby.py`.
+**Files:** `score.py`, `tests/test_score_nearby.py`, `claude/round-date-early-copy-grading-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the model, the Card and its grading, the Daily List, `load_predictions` (27 existing two-spelling duplicates on the record are filed as an issue).
+**Roll back:** `git revert` the merge; results already kept in `current/settled-results.json` stay graded unless those keys are dropped too.
+
 ## 2026-11-21-af-short-names: API-Football's short club names priced in the fallback (tag pending)
 
 **What changed.** The football price fallback (`groupings.af_same`) now reads `odds.ALIASES`, so API-Football's short names (QPR, Wolves, Sheffield Weds...) match the board's full names. The 03:11 UTC build left Norwich City v Queens Park Rangers (Championship, 24 Nov) unpriced as `noFixture` beside "Norwich v QPR"; a core-league leg like that can cost the Card a pick.
