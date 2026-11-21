@@ -325,7 +325,7 @@ def eligible_league(src, comp):
     if not cm.get("cup"):
         return True
     if cm["country"] in _CONFED:
-        return sm.get("iso") in _CONFED[cm["country"]]
+        return src not in FLAG_ONLY and sm.get("iso") in _CONFED[cm["country"]]
     return canon_country(sm["country"]) == canon_country(cm["country"])
 
 # API-Football's wider coverage (30 Sep 2026, claude/data-expansion-plan.md).
@@ -368,8 +368,48 @@ def canon_country(c):
     """One spelling per country: hyphens to spaces, then the alias table."""
     c = (c or "").replace("-", " ").strip()
     return COUNTRY_ALIASES.get(c, c)
+# Flags for countries only API-Football covers (21 Nov 2026, Douglas: "Not all
+# football games have the flag"): 82 wider leagues and their cups carried no
+# iso, so their rows showed no flag. The sprite in index.html draws each of
+# these (Guadeloupe as the French tricolour, under its own code). A country missing here (or a
+# code the sprite lacks) still renders without a flag rather than an empty box,
+# and tests/test_flags.py fails CI on either.
+EXTRA_ISO = {
+    "Algeria": "dza", "Antigua And Barbuda": "atg", "Burundi": "bdi", "Cambodia": "khm",
+    "Cameroon": "cmr", "Canada": "can", "Eswatini": "swz", "Gabon": "gab", "Gambia": "gmb",
+    "Guadeloupe": "glp", "Guinea": "gin", "Hong Kong": "hkg", "Indonesia": "idn", "Iran": "irn",
+    "Iraq": "irq", "Jamaica": "jam", "Jordan": "jor", "Kazakhstan": "kaz", "Kenya": "ken",
+    "Kuwait": "kwt", "Kyrgyzstan": "kgz", "Lebanon": "lbn", "Lesotho": "lso", "Malaysia": "mys",
+    "Myanmar": "mmr", "New Zealand": "nzl", "Nicaragua": "nic", "Oman": "omn", "Palestine": "pse",
+    "San Marino": "smr", "Senegal": "sen", "Somalia": "som", "Suriname": "sur", "Tajikistan": "tjk",
+    "Tanzania": "tza", "Trinidad And Tobago": "tto", "Turkmenistan": "tkm", "Uganda": "uga",
+    "Uzbekistan": "uzb", "Vietnam": "vnm", "Zambia": "zmb", "Zimbabwe": "zwe",
+}
+
+
+# Codes whose iso is for the flag only (21 Nov 2026): before then they carried
+# none, and `eligible_league` reads iso for a continental cup's confederation,
+# so a club rated in one of these leagues stays out of those cups as before.
+FLAG_ONLY = set()
+
+
+def iso_of(country, code=None, canon=False):
+    """The flag code for a country, or "". `canon` (cups) reads the country
+    under its canonical spelling, as cups always did; a code given a flag it
+    would not have had before joins FLAG_ONLY."""
+    c = canon_country(country)
+    old = _ISO_CANON.get(c) if canon else _ISO_BY_COUNTRY.get(country)
+    if old:
+        return old
+    new = _ISO_CANON.get(c) or EXTRA_ISO.get(c) or EXTRA_ISO.get(country) or ""
+    if new and code:
+        FLAG_ONLY.add(code)
+    return new
+
+
+_ISO_CANON = {canon_country(k): v for k, v in _ISO_BY_COUNTRY.items()}
 for _i, _e in enumerate(AF_EXTRA):
-    LEAGUES[_e["code"]] = {"iso": _ISO_BY_COUNTRY.get(_e["country"], ""), "short": _e["name"][:3].upper(),
+    LEAGUES[_e["code"]] = {"iso": iso_of(_e["country"], _e["code"]), "short": _e["name"][:3].upper(),
                            "name": _e["name"], "country": _e["country"], "tier": 2, "strength": 0.5,
                            "order": 400 + _i, "season": _e["season"], "prev": _e["prev"], "afExtra": True}
 
@@ -402,14 +442,13 @@ def cup_strength(country):
 
 def register_cups(entries):
     """Add API-Football cups to LEAGUES. Idempotent; returns the codes added."""
-    iso = {canon_country(k): v for k, v in _ISO_BY_COUNTRY.items()}
     added = []
     for e in entries:
         code = e["code"]
         if code in LEAGUES:
             continue
         country = canon_country(e["country"])
-        LEAGUES[code] = {"iso": iso.get(country, ""), "short": _cup_short(e["name"]),
+        LEAGUES[code] = {"iso": iso_of(country, code, canon=True), "short": _cup_short(e["name"]),
                          "name": e["name"], "country": country, "tier": 1,
                          "strength": cup_strength(country), "order": 600 + int(e["id"]) % 10000,
                          "cup": True, "afCup": True, "season": str(e.get("season") or ""),

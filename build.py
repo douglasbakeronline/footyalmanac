@@ -295,6 +295,33 @@ def edge_tested(path=None):
     return out
 
 
+# The caution mark on fixture rows (21 Nov 2026, Douglas: "Any fixture that is
+# from a league that has proven unpredictable ... a little caution emoji").
+# A league qualifies on its own graded record: CAUTION_MIN_N picks or more
+# whose top pick landed CAUTION_Z standard errors or more under the model's
+# number. Douglas chose 1.5 over the site's usual 2 (the sport-off rule),
+# knowing some marks will be noise: across 123 leagues with 50+ picks the
+# spread is about what chance alone makes. Recomputed every build from
+# record.json's byLeague, so a league earns the mark and loses it on its record.
+# Display only: nothing ranks, prices or grades differently.
+CAUTION_MIN_N = 50
+CAUTION_Z = -1.5
+
+
+def unpredictable_leagues(by_league, min_n=CAUTION_MIN_N, z_max=CAUTION_Z):
+    """{league code: {"n", "won", "quoted", "z"}} for leagues whose graded
+    picks landed z_max standard errors or more under the model's number."""
+    out = {}
+    for code, v in (by_league or {}).items():
+        n, q, won = v.get("n") or 0, v.get("quoted"), v.get("won")
+        if n < min_n or q is None or won is None or not 0 < q < 1:
+            continue
+        z = (won - q * n) / (n * q * (1 - q)) ** 0.5
+        if z <= z_max:
+            out[code] = {"n": n, "won": won, "quoted": round(q, 4), "z": round(z, 2)}
+    return out
+
+
 def record_summary(record, sports=None, tennis=None):
     """The inlined slice of record.json (plus the list records of the sports
     and tennis files) that index.html reads on first paint."""
@@ -316,6 +343,7 @@ def record_summary(record, sports=None, tennis=None):
             if len(recent) >= LIST_RECENT:
                 break
         out["listRecent"] = recent
+        out["caution"] = unpredictable_leagues(record.get("byLeague"))
     if sports:
         out["sports"] = {"list": sports.get("list"),
                          "bySport": {k: ({"n": v.get("n"), "correct": v.get("correct")} if isinstance(v, dict) else v)

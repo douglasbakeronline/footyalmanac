@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-flags-emoji-caution: a flag on every football row, sport emoji, and a caution mark (tag pending)
+
+**What changed for a reader.** Every football competition now shows its country's flag: 82 wider leagues from 44 countries (Algeria to Zimbabwe, plus North Macedonia and the UAE under their API-Football spellings) had none. Every fixture row ends its league or sport name with the sport's emoji (⚽ 🎾 🏈 ⚾ 🏀 🏉 🏒). A football league whose graded picks landed 1.5+ standard errors under the model's number on 50+ picks carries a small ⚠️ with its record on hover (today Serie B, Liga MX, Colombia Primera B, Turkey 3. Lig Group 1, Serie D Girone C).
+**Evidence.** The caution rule is Douglas's choice of 1.5 standard errors (the site's usual bar is 2, which only Colombia Primera B clears); recomputed every build from `record.json` `byLeague`. `claude/flags-emoji-caution-2026-11-21.md`.
+**Files.** `engine.py` (`EXTRA_ISO`, `iso_of`, `FLAG_ONLY`), `build.py` (`unpredictable_leagues`, `caution` in the record summary), `index.html` (42 flag symbols, `sportEmoji`, `cautionMark`), `tests/test_flags.py`, `claude/flags-emoji-caution-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** The model, ratings, club lookups (`FLAG_ONLY` keeps continental-cup eligibility as before), the Card, the Daily List.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-early-copy-grading: round-date rows graded from the copy published the day before (tag pending)
 
 **What changed:** `score.nearby_results` refused a match played the day before its archived round date when the last build's copy was written on the match day (La Liga's and the Süper Lig's 8 Nov rounds, played 6 and 7 Nov), though the build the evening before had published the same fixture. It now grades that earlier copy (`score.earlier_copy`) and judges the row at that copy's numbers. It also maps names per run of nearby dates, so the Süper Lig, archived under ESPN's spelling until October and openfootball's since, meets its November results, and a result owned by a same-day prediction under another spelling is never graded twice (`_owned`).
