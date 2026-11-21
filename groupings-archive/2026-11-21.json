@@ -631,7 +631,7 @@
      "firstOdds": 1.18,
      "lastOdds": 1.18,
      "lastBest": 1.2,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     },
     {
      "sport": "football",
@@ -833,7 +833,7 @@
      "firstOdds": 1.46,
      "lastOdds": 1.41,
      "lastBest": 1.42,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     }
    ],
    "tested": 0.3597,
@@ -1858,7 +1858,7 @@
      "firstOdds": 1.44,
      "lastOdds": 1.26,
      "lastBest": 1.3,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     }
    ],
    "tested": 0.4142,
@@ -2507,7 +2507,7 @@
      "firstOdds": 1.41,
      "lastOdds": 1.41,
      "lastBest": 1.42,
-     "lastAt": "2026-11-21T16:08:24Z",
+     "lastAt": "2026-11-21T16:48:07Z",
      "lockPrice": {
       "odds": 1.41,
       "best": 1.42,
@@ -3107,7 +3107,7 @@
      "firstOdds": 1.15,
      "lastOdds": 1.18,
      "lastBest": 1.18,
-     "lastAt": "2026-11-21T16:08:24Z",
+     "lastAt": "2026-11-21T16:48:07Z",
      "lockPrice": {
       "odds": 1.17,
       "best": 1.17,
@@ -3511,7 +3511,7 @@
      "firstOdds": 1.15,
      "lastOdds": 1.18,
      "lastBest": 1.18,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     },
     {
      "sport": "football",
@@ -3709,7 +3709,7 @@
      "firstOdds": 1.44,
      "lastOdds": 1.26,
      "lastBest": 1.3,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     },
     {
      "sport": "nba",
@@ -3885,7 +3885,7 @@
      "firstOdds": 1.15,
      "lastOdds": 1.13,
      "lastBest": 1.13,
-     "lastAt": "2026-11-21T16:08:24Z"
+     "lastAt": "2026-11-21T16:48:07Z"
     }
    ],
    "tested": 0.342,
