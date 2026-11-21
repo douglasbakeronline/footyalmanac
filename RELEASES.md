@@ -9,6 +9,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-price-coverage-note: price coverage re-checked, no change (tag pending)
+
+**What changed.** A note only: `claude/price-coverage-oscar-2026-11-21.md`. Nothing a reader sees.
+
+**Evidence.** Core-league 60%+ football legs 41 priced, 2 unpriced over 13 to 23 Nov (both outside the Card under rule 14); the spelling list already holds 11 names; no keys here, so no before/after on today's pool.
+
+**Files.** `claude/price-coverage-oscar-2026-11-21.md`, `RELEASES.md`.
+
+**Not changed.** The matcher, sources, any model. Prices never feed a model.
+
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-20-played-today: results on every sport's tab (tag pending)
 
 **What changed for a reader.** Every sport's tab (Football, Tennis, the NBA, the NFL, rugby, ice hockey, the college sports) now opens with **Played today**: every game of the UK day that has started, list or not, at its last pre-start price, with Won / Lost and the score once graded (tennis with its set scores), In play or Result due until then. The top eight by confidence, then Show all. A row still on the board after its start shows the same pill in place of the predicted score. Douglas, 20 Nov 2026: "the won or lost tab should be on every tab for each sport listed ... earlier games from this afternoon show nothing".
