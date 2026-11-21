@@ -897,6 +897,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .sp-emo{margin-left:4px;font-size:.9em;line-height:1;flex:none}
 .caut{margin-left:4px;font-size:.85em;line-height:1;opacity:.75;cursor:help;flex:none}
 .caut:hover{opacity:1}
+/* Emoji are taller than the 10px caps line: the row's ellipsis rule
+   (.ko .comp span: overflow hidden) clipped their top and bottom (21 Nov 2026). */
+.ko .comp .sp-emo,.ko .comp .caut{overflow:visible;text-overflow:clip;max-width:none;
+  line-height:normal;padding:1px 0;font-size:11px}
 .tour-chip{
   font-family:var(--f-display);font-weight:400;font-size:9px;letter-spacing:.03em;
   background:var(--ink);color:var(--paper);padding:1px 5px;border-radius:2px;

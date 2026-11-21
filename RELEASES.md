@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-emoji-clip: sport emoji no longer clipped (tag pending)
+
+**What changed for a reader.** The sport emoji and the caution sign at the end of a row's league name were cut off at the top and bottom (Douglas, a college football row on his phone). The row's ellipsis rule (`.ko .comp span`, overflow hidden) applied to them inside a 10px caps line; they now overflow freely at 11px.
+**Evidence.** A Playwright render of the row markup with the page's own styles at 400 and 1280 wide, before and after: the football clipped flat before, whole after; league names still ellipsise.
+**Files.** `index.html` (one CSS rule), `RELEASES.md`.
+**Not changed.** Anything but the two marks' styling.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-graded-once: a match archived under two spellings is graded once (tag pending)
 
 **What changed for a reader.** The football record counted 24 matches twice, once under each spelling the archive held (Southend / Southend United, SC East Bengal / East Bengal / EAST BENGAL, Besiktas / Beşiktaş...). Each is now graded once, so How it went, the bands and the league tables count every match one time.
