@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-21T14:59:11Z",
+ "graded": "2026-11-21T15:39:14Z",
  "overall": {
   "groups": 146,
   "settled": 141,
@@ -96,7 +96,7 @@
    "n": 3,
    "shortened": 0,
    "drifted": 1,
-   "mean": -0.0028
+   "mean": -0.0056
   }
  },
  "cardLiveRule": 14,
@@ -490,7 +490,7 @@
    "ncaab|north carolina tar heels|marshall thundering herd|2026-11-21": 0,
    "ncaab|fresno state bulldogs|alabama state hornets|2026-11-21": 0,
    "ncaab|bucknell bison|siena saints|2026-11-21": -1,
-   "ncaab|unc greensboro spartans|south carolina upstate spartans|2026-11-21": 1.29,
+   "ncaab|unc greensboro spartans|south carolina upstate spartans|2026-11-21": 1.36,
    "ncaab|michigan state spartans|detroit mercy titans|2026-11-21": 0,
    "ncaab|james madison dukes|virginia lynchburg dragons|2026-11-21": -1,
    "ncaab|massachusetts minutemen|maine black bears|2026-11-21": 0,
@@ -573,7 +573,7 @@
     "n": 88,
     "shortened": 28,
     "drifted": 33,
-    "mean": -0.0058
+    "mean": -0.0059
    }
   },
   "Card 3x": {
@@ -890,7 +890,7 @@
    "n": 102,
    "shortened": 35,
    "drifted": 40,
-   "mean": -0.004
+   "mean": -0.0041
   }
  },
  "cardWide": {
@@ -1042,7 +1042,7 @@
    "n": 3,
    "shortened": 2,
    "drifted": 1,
-   "mean": 0.0478
+   "mean": 0.045
   }
  },
  "cardDaily": {
@@ -1268,7 +1268,7 @@
     "n": 3,
     "shortened": 0,
     "drifted": 1,
-    "mean": -0.0028
+    "mean": -0.0056
    }
   }
  },
@@ -1295,7 +1295,7 @@
     "n": 56,
     "shortened": 17,
     "drifted": 22,
-    "mean": -0.0019
+    "mean": -0.0021
    }
   },
   "Daytime": {
@@ -1794,7 +1794,7 @@
        "when": "2026-11-21T18:00Z",
        "odds": 1.16,
        "best": 1.16,
-       "lastOdds": 1.17,
+       "lastOdds": 1.18,
        "lockOdds": 1.17,
        "lockBest": 1.17,
        "lockBook": null,
@@ -1860,7 +1860,7 @@
        "when": "2026-11-21T18:00Z",
        "odds": 1.15,
        "best": 1.15,
-       "lastOdds": 1.17,
+       "lastOdds": 1.18,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
