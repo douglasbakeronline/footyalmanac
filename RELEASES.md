@@ -9,6 +9,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-21-venue-balance: venue-balanced goals tested and rejected (tag pending)
+
+**What changed:** nothing a reader sees. A rejected ratings test is recorded so nobody repeats it.
+**Evidence:** goals divided by the venue multiplier before the season table is built: fit 2025/26 (6,474) +0.0002 to +0.0010 log loss (worse, p(worse) 0.70-0.97); check 2026/27 (2,330) -0.0006 to +0.0006, p(worse) 0.06-0.85. Fails the gates.
+**Files:** `claude/venue-balanced-goals-2026-11-21.md`, `tools/venue_balance_eval.py`, this entry.
+**Not changed:** engine.py, calibration, any model number.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-20-played-today: results on every sport's tab (tag pending)
 
 **What changed for a reader.** Every sport's tab (Football, Tennis, the NBA, the NFL, rugby, ice hockey, the college sports) now opens with **Played today**: every game of the UK day that has started, list or not, at its last pre-start price, with Won / Lost and the score once graded (tennis with its set scores), In play or Result due until then. The top eight by confidence, then Show all. A row still on the board after its start shows the same pill in place of the predicted score. Douglas, 20 Nov 2026: "the won or lost tab should be on every tab for each sport listed ... earlier games from this afternoon show nothing".
