@@ -3679,18 +3679,18 @@ function tennisStat(r, surface){
 const PLAYED_CAP = 8, PLAYED_ALL = new Set();
 // 21 Nov 2026 (Douglas: "develop this across the whole website"): the day
 // before too, so a tab still shows last night's results after midnight.
-function playedSection(name, test, host, ruler){
+function playedSection(name, test, host, ruler, redraw){
   const D = window.__DAY_LIST__;
   if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
   const shown = new Set([...host.querySelectorAll(".row-line[data-pk]")].map(e => e.dataset.pk));
   const days = [...new Set(D.played.map(it => it.day || D.date))].sort().reverse();
-  const secs = days.map(day => playedDay(name, test, D, day, shown, ruler)).filter(Boolean);
+  const secs = days.map(day => playedDay(name, test, D, day, shown, ruler, redraw)).filter(Boolean);
   const lede = host.querySelector(":scope > .lede");
   let at = lede;
   secs.forEach(sec => { at ? at.after(sec) : host.prepend(sec); at = sec; });
 }
-function playedDay(name, test, D, day, shown, ruler){
-  const items = D.played.filter(it => (it.day || D.date) === day && test(it.sport)
+function playedDay(name, test, D, day, shown, ruler, redraw){
+  const items = D.played.filter(it => (it.day || D.date) === day && test(it.sport, it)
       && !shown.has(lbKey(it.sport, it.home, it.away)))
     .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
   if(!items.length) return null;
@@ -3707,7 +3707,7 @@ function playedDay(name, test, D, day, shown, ruler){
     const more = document.createElement("button");
     more.className = "more";
     more.innerHTML = all ? `Show the top <b>${PLAYED_CAP}</b> only` : `Show all <b>${items.length}</b> played ${day === D.date ? "today" : "yesterday"}`;
-    more.addEventListener("click", () => { all ? PLAYED_ALL.delete(key) : PLAYED_ALL.add(key); rerenderOpen(); });
+    more.addEventListener("click", () => { all ? PLAYED_ALL.delete(key) : PLAYED_ALL.add(key); (redraw || rerenderOpen)(); });
     sec.appendChild(more);
   }
   return sec;
@@ -3727,7 +3727,7 @@ function renderTennis(){
       ${TD.from} to ${TD.to}.</div>`;
     playedSection("matches", sp => sp === "tennis", host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
     <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
-    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`);
+    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`, renderTennis);
     return;
   }
   host.innerHTML = `<div class="lede"><h2>Tennis</h2><p>ATP and WTA, priced from each player's
@@ -3761,7 +3761,7 @@ function renderTennis(){
   });
   playedSection("matches", sp => sp === "tennis", host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
     <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
-    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`);
+    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`, renderTennis);
 }
 
 function render(){
@@ -3832,9 +3832,13 @@ function render(){
         ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
         : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`)
     : `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`;
-  if(state.board !== "btts") playedSection("fixtures", s => s === "football", host, `<div class="ruler">
+  // 21 Nov 2026 review: the board's own filters apply (competitions, Strong
+  // reads only); Edge only has no played section, as the archive keeps no flag.
+  if(state.board !== "btts" && state.show !== "edge") playedSection("fixtures", (s, it) => s === "football"
+    && (state.leagues.size === 0 || state.leagues.has(it.league))
+    && (state.show !== "read" || (it.tier && it.tier !== "No read")), host, `<div class="ruler">
     <div>#</div><div>UK time</div><div>Home</div><div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
-    <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`);
+    <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`, render);
 }
 
 /* ---------- the review board ----------
@@ -4208,16 +4212,27 @@ function pinStatus(g){
 }
 /* 20 Nov 2026 (Douglas: "the won or lost tab should be on every tab for each
    sport listed"): a finished row on any sport's board shows Won / Lost and the
-   score, as the Daily List does, from daylist.js "results" (every graded game
+   score, as the Daily List does, from daylist.js "played" (every started game
    of the UK day and the day before, keyed by lbKey). A started row with no
    grade yet says In play or Result due. putPinned still writes the list's own
    rows over this. Display only. */
+let PLAYED_RES = null;
+function playedResults(){
+  const D = window.__DAY_LIST__;
+  if(PLAYED_RES && PLAYED_RES.src === D) return PLAYED_RES.map;
+  const map = {};
+  ((D && D.played) || []).forEach(it => { if(it.result) map[lbKey(it.sport, it.home, it.away)] = it.result; });
+  PLAYED_RES = {src: D, map};
+  return map;
+}
 function boardResult(line, sport, home, away, start, was){
   const pred = line && line.querySelector(".pred");
   if(!pred) return;
-  const D = window.__DAY_LIST__, r = D && D.results && D.results[lbKey(sport, home, away)];
-  const t = Date.parse(start);
-  if(!r && !(t && Date.now() >= t)) return;
+  const r = playedResults()[lbKey(sport, home, away)];
+  const t = Date.parse(start), now = Date.now();
+  // no grade: only a game of the two played days reads In play / Result due
+  // (21 Nov 2026 review: an old Card leg drawn from OG_FX must not say "Result due")
+  if(!r && !(t && now >= t && now - t < 36 * 36e5)) return;
   const g = {sport, start, result: r || null};
   const [cls, label] = pinStatus(g);
   const final = r ? pinFinal(g, r) : "";
@@ -4578,7 +4593,7 @@ function renderSport(key){
   host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p></div>`;
   if(!sp.games.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
-    playedSection("games", s => s === key, host, sportRuler());
+    playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));
     return;
   }
   const byDay = {};
@@ -4593,7 +4608,7 @@ function renderSport(key){
     games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
     host.appendChild(sec);
   });
-  playedSection("games", s => s === key, host, sportRuler());
+  playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));
 }
 
 /* sports results on "How it went": same rows as tennis */
@@ -5574,6 +5589,10 @@ function ogFill(host){
       const pin = DL && [...(DL.list || []), ...(DL.reserve || [])]
         .find(p => p.sport === sport && nm(p.home) === nm(home) && nm(p.away) === nm(away));
       if(pin){ putPinned(ph, {...pin, when: pin.start}, i, date); return; }
+      // 21 Nov 2026 review: a started leg off the list and reserve (a board
+      // game) is in the day's played rows, with its result once graded
+      const pl = DL && (DL.played || []).find(p => p.sport === sport && nm(p.home) === nm(home) && nm(p.away) === nm(away));
+      if(pl){ ph.appendChild(pinnedRow(pl, i)); return; }
       const fx = OG_FX[+ph.dataset.fx];
       if(fx){
         if(sport === "football") appendFixture(ph, fx, i, date || fx.date, false);

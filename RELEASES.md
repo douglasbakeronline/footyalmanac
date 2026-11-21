@@ -10,6 +10,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-played-review: review fixes to the played rows
+
+**What changed for a reader.** Found in a review of the last two releases:
+- **Show all on Football's played sections did nothing.** The button redrew every view except the football board. Each tab now redraws itself.
+- **Football's played sections ignored the board's filters.** They now follow the competition picker and Strong reads only; with Edge only they are hidden (the archive keeps no Edge flag for a started game).
+- **An old Card leg could read "Result due".** A leg drawn from an older group, past its start and outside the two played days, was marked Result due; a row is now marked only within 36 hours of its start or when its result is known.
+- **Card and Daily 2x legs off the list now show their result.** A started leg that is neither a list nor a reserve pick is drawn from the day's played rows, with Won / Lost and the score.
+- **Smaller page data.** `daylist.js` no longer carries a separate `results` map (about 18 KB on a busy day); the page reads the same results from the played rows.
+
+**Files.** `daylist.py` (`board_results` removed, `league` on played rows), `index.html` (`playedResults`, `playedSection` redraw and filters, `boardResult`, `ogFill`), `tests/test_daylist_played.py` (now tests `played_today`), `CLAUDE.md`.
+
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-same-date-grading: September's lost results graded from the cache (tag pending)
 
 **What changed:** `score.nearby_results` let a prediction take only a result dated a day or two off its own date, never its own date, and mapped every cached result's clubs before using any. So September's ESPN-only results, which fell out of `LIVE_LOOKBACK` before the settled cache existed, stayed ungraded though the committed ESPN cache holds them, and the Segunda was refused whole on Málaga (June's play-offs, since promoted). A prediction now takes its own date's result, and only cached results within `NEAR_DAYS` of an ungraded prediction enter the all-or-nothing name map.
