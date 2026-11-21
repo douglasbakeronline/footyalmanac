@@ -60,7 +60,31 @@ class NearbyResults(unittest.TestCase):
         preds = preds_of(*BASE, pred("en.1", "2026-11-08", "Crystal Palace", "Liverpool", "2026-11-08T09:00:00Z"))
         cache = {"en.1": [{"date": "2026-11-08", "home": "Crystal Palace", "away": "Liverpool", "hg": 1, "ag": 3}]}
         got = SC.nearby_results(preds, {}, today=TODAY, load=loader(cache))
-        self.assertEqual(got, {})
+        # since 21 Nov 2026 an ungraded real-date copy takes its own result
+        self.assertEqual(got, {("en.1", "2026-11-08", "Crystal Palace", "Liverpool"): (1, 3)})
+        graded = {("en.1", "2026-11-08", "Crystal Palace", "Liverpool"): (1, 3)}
+        self.assertEqual(SC.nearby_results(preds, graded, today=TODAY, load=loader(cache)), {})
+
+    def test_same_date_result_grades_an_ungraded_prediction(self):
+        # 21 Nov 2026: ESPN-only results that fell out of LIVE_LOOKBACK before
+        # the settled cache existed (September) sit in the committed cache on
+        # the prediction's own date
+        preds = preds_of(*BASE)
+        cache = {"en.1": [{"date": "2026-11-07", "home": "Everton", "away": "Coventry City", "hg": 2, "ag": 2}]}
+        got = SC.nearby_results(preds, {}, today=TODAY, load=loader(cache))
+        self.assertEqual(got, {("en.1", "2026-11-07", "Everton", "Coventry City"): (2, 2)})
+
+    def test_old_unknown_club_does_not_block_the_league(self):
+        # es.2's 2026-27 cache held June's play-offs with Málaga, since
+        # promoted: a result no pending prediction could claim is not mapped
+        preds = preds_of(*BASE)
+        cache = {"en.1": [{"date": "2026-06-07", "home": "Málaga", "away": "Everton", "hg": 0, "ag": 1},
+                          {"date": "2026-11-08", "home": "Crystal Palace", "away": "Liverpool", "hg": 1, "ag": 3}]}
+        got = SC.nearby_results(preds, {}, today=TODAY, load=loader(cache))
+        self.assertEqual(got, {("en.1", "2026-11-07", "Crystal Palace", "Liverpool"): (1, 3)})
+        near = {"en.1": [{"date": "2026-11-06", "home": "Málaga", "away": "Everton", "hg": 0, "ag": 1},
+                         {"date": "2026-11-08", "home": "Crystal Palace", "away": "Liverpool", "hg": 1, "ag": 3}]}
+        self.assertEqual(SC.nearby_results(preds, {}, today=TODAY, load=loader(near)), {})
 
     def test_played_earlier_needs_an_early_price(self):
         cache = {"es.1": [{"date": "2026-10-31", "home": "Barcelona", "away": "Alavés", "hg": 6, "ag": 1}]}

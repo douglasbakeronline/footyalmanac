@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-same-date-grading: September's lost results graded from the cache (tag pending)
+
+**What changed:** `score.nearby_results` let a prediction take only a result dated a day or two off its own date, never its own date, and mapped every cached result's clubs before using any. So September's ESPN-only results, which fell out of `LIVE_LOOKBACK` before the settled cache existed, stayed ungraded though the committed ESPN cache holds them, and the Segunda was refused whole on Málaga (June's play-offs, since promoted). A prediction now takes its own date's result, and only cached results within `NEAR_DAYS` of an ungraded prediction enter the all-or-nothing name map.
+**Evidence:** on the committed archive and record, 778 predictions graded that were not (674 in September; League One and League Two 53 each, the Segunda 37, MLS 31), landing 46.5% v 47.7% quoted; 740 legacy-unverified, 33 verified, 5 verified by date; one Daily List pick, no Card leg; none graded twice. `tests/test_score_nearby.py` (11 tests). `claude/same-date-cache-grading-2026-11-21.md`.
+**Files:** `score.py`, `tests/test_score_nearby.py`, `claude/same-date-cache-grading-2026-11-21.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the model, the Card and its record, the Daily List, `live_results`, the guards against late and double grading.
+**Roll back:** `git revert` the merge; results already kept in `current/settled-results.json` stay graded unless those keys are dropped too.
+
 ## 2026-11-21-played-yesterday: results across the site, after midnight too (tag pending)
 
 **What changed for a reader.** Played today now has a **Played yesterday** section under it on every sport's tab, so last night's results stay in view after midnight instead of vanishing with the UK day. **Starred** keeps a starred game once it starts (it used to drop off with the board), with In play, Won / Lost and the score. Douglas, 21 Nov 2026: "develop this across the whole website to improve data visibility".
