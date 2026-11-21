@@ -9,6 +9,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-21-tennis-legs-fourth-read: Tennis legs 36 of 59 v 43, read again (tag pending)
+
+**What changed:** nothing for a reader. A dated note records the fourth read of the tennis-leg gap.
+**Evidence:** the same legs were cut by band, price, gap, round, tour, side, opposition and rule on 30 Oct, 6 Nov, 13 Nov and 19 Nov; no cut separates the misses, no tennis price history exists to replay a rule under the Rule 3 gates, and the legs under the live 75% floor are on quote (11 of 15, z -0.57).
+**Files:** `claude/tennis-legs-gap-2026-11-21.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORT_MIN`, `CARD_SPORTS_OFF`, any model number.
+**Roll back:** `git revert` the merge; docs only.
+
 ## 2026-11-20-played-today: results on every sport's tab (tag pending)
 
 **What changed for a reader.** Every sport's tab (Football, Tennis, the NBA, the NFL, rugby, ice hockey, the college sports) now opens with **Played today**: every game of the UK day that has started, list or not, at its last pre-start price, with Won / Lost and the score once graded (tennis with its set scores), In play or Result due until then. The top eight by confidence, then Show all. A row still on the board after its start shows the same pill in place of the predicted score. Douglas, 20 Nov 2026: "the won or lost tab should be on every tab for each sport listed ... earlier games from this afternoon show nothing".
