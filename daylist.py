@@ -226,20 +226,32 @@ def attach_results(items, record, trec, srec):
     return items
 
 
-PLAYED_KEEP = ("sport", "start", "timed", "date", "comp", "chip", "home", "away", "side", "pick", "p",
+PLAYED_KEEP = ("sport", "id", "start", "timed", "date", "comp", "chip", "home", "away", "side", "pick", "p",
                "pHome", "confidence", "tier", "accuracy", "list", "reserve", "feed", "status", "result")
+PLAYED_DAYS = 2     # today and the UK day before (21 Nov 2026: at midnight "today" empties)
 
 
-def played_today(day, archives, now, records):
-    """Every game of the UK day that has started, every sport, list or not,
-    at its last pre-start price and with its result once graded (20 Nov 2026,
-    Douglas: "earlier games from this afternoon show nothing"). data.json drops
-    a game at its start, so without this a sport's tab lost the afternoon's
-    games entirely; the tabs draw these as their Played today section."""
-    items = [i for i in pinned(day, archives, now, every=True) if i["started"]]
-    attach_results(items, *records)
-    items.sort(key=lambda i: i["start"])
-    return [{k: i[k] for k in PLAYED_KEEP if i.get(k) is not None} for i in items]
+def played_today(day, archives, now, records, here=HERE, days=PLAYED_DAYS):
+    """Every game of the UK day, and of the day before, that has started, every
+    sport, list or not, at its last pre-start price and with its result once
+    graded (20 Nov 2026, Douglas: "earlier games from this afternoon show
+    nothing"; 21 Nov: "develop this across the whole website"). data.json
+    drops a game at its start, so without this a sport's tab lost the day's
+    games entirely; the tabs and Starred draw these. Each row carries its UK
+    day as "day"."""
+    out = []
+    d0 = datetime.fromisoformat(day).date()
+    for k in range(days):
+        dk = (d0 - timedelta(days=k)).isoformat()
+        try:
+            arch = archives if k == 0 else read_archives(dk, here)
+            items = [i for i in pinned(dk, arch, now, every=True) if i["started"]]
+            attach_results(items, *records)
+        except Exception as e:      # an odd old archive never stops today's page
+            print(f"day list: played {dk} skipped ({e})", file=sys.stderr); continue
+        items.sort(key=lambda i: i["start"])
+        out += [dict({f: i[f] for f in PLAYED_KEEP if i.get(f) is not None}, day=dk) for i in items]
+    return out
 
 
 def _key(sport, home, away):
@@ -480,7 +492,7 @@ def build(now=None, here=HERE, fetch=True):
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
             "past": past_days(now, here, records), "results": board_results(day, records),
-            "played": played_today(day, archives, now, records)}
+            "played": played_today(day, archives, now, records, here)}
 
 
 def main():
