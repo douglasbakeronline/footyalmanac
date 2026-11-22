@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-sunday-ghosts-multisport: Saturday games no longer shown on Sunday; pick several sports at once (tag pending)
+
+**What changed for a reader.** Sunday's games no longer include La Liga and Süper Lig matches played on Friday or Saturday (Real Madrid v Celta, Sevilla v Betis, Galatasaray v Samsunspor and others), and Saturday no longer shows Sunday's Premier League games under their nominal date. The Daily List and Starred Sport filters take several sports at once: tap to add or remove a sport, Every sport to clear.
+**Evidence.** Douglas: "Some games listed on Sunday were actually Saturday games". The archive held those games under the round's Sunday with no time before 19 Nov and on their real day after; `daylist.pinned` keyed football on the date, so the two copies were two games. Now a football copy gives way to a newer pre-start copy of the same pair within 3 days on another day. On the committed archives: 11 ghost rows off Sunday 22 Nov, 10 off Saturday 21 Nov, none added. Douglas: "I want to be able to select multiple sports on the filters at once".
+**Tested.** `tests/test_daylist.py` `RoundDateGhost` (four cases), the full suite, nametest; the filters in a browser at 1280 and 400 wide with no page errors.
+**Files.** `daylist.py` (`ROUND_DAYS`), `index.html` (`toggleSport`, `LIST_SPORTS`, `STAR.sports`), `tests/test_daylist.py`, `claude/round-date-ghosts-multisport-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Grading (score.py already grades the right copy), any model constant or Card rule. The results ledger still keeps the ghost copies as ungraded rows; a follow-up.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-before-window-retime: Sunday's Premier League and Brazilian games back on the board (tag pending)
 
 **What changed for a reader.** A round openfootball dates on its nominal Saturday whose games are played on the Sunday or Monday now stays on the board on the Sunday's build. `build.fill_untimed` (the `AF_RETIME` and `AF_UNTIMED` leagues) also reads unplayed rows up to 3 days before the window and moves one to API-Football's date and time when that date is in the window; a row API-Football still lists before the window (played or postponed) is left alone.
