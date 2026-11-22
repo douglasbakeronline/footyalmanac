@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-slip-tracker: a performance tracker under the slip (tag pending)
+
+**What changed for a reader.** The slip on the Bets tab now ends with a tracker like the Edge picks one: running profit at one unit a slip against the line its tested chances expected, slips won v expected, All / Live only / Last 14 days, and a strip of slip days to tap for each day's legs. Days before the slip went live are its rule walked forward over the results ledger, marked and dashed.
+**Evidence.** Douglas: "is there a visual tracker for performance?" There was none. At 22 Nov: live 1 of 4 won v 1.5 expected (-0.34 units); with the replay, 2 of 15 v 5.2 expected (-8.02 units, expected +3.26). Too few to read; the gate is 100 slips.
+**Tested.** `slip.py` tests, the full suite, nametest; the tracker in a browser at 1280 and 400 wide, every range and a tapped day, no page errors.
+**Files.** `index.html` (`slipTracker`, `SKT`), `slip.py` (`RECENT_KEEP`, `REPLAY_KEEP`, `chance` on each live slip), `claude/slip-tracker-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** The slip's rule, its gate, any model constant or Card rule.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-sunday-ghosts-multisport: Saturday games no longer shown on Sunday; pick several sports at once (tag pending)
 
 **What changed for a reader.** Sunday's games no longer include La Liga and Süper Lig matches played on Friday or Saturday (Real Madrid v Celta, Sevilla v Betis, Galatasaray v Samsunspor and others), and Saturday no longer shows Sunday's Premier League games under their nominal date. The Daily List and Starred Sport filters take several sports at once: tap to add or remove a sport, Every sport to clear.
