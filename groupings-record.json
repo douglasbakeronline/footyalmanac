@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-22T16:52:17Z",
+ "graded": "2026-11-22T18:31:43Z",
  "overall": {
   "groups": 150,
   "settled": 146,
@@ -7,8 +7,8 @@
   "z": -1.23,
   "lost": 103,
   "pending": 4,
-  "legs": 561,
-  "legsWon": 409,
+  "legs": 564,
+  "legsWon": 412,
   "returned": 124.59,
   "staked": 146,
   "returnedBest": 129.57,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 177,
    "shortened": 69,
-   "drifted": 65,
-   "mean": 0.001
+   "drifted": 66,
+   "mean": 0.0008
   }
  },
  "cardLegsBySport": {
@@ -95,8 +95,8 @@
   "clv": {
    "n": 5,
    "shortened": 0,
-   "drifted": 1,
-   "mean": -0.0034
+   "drifted": 2,
+   "mean": -0.0109
   }
  },
  "cardLiveRule": 14,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 67,
-   "won": 57,
-   "rate": 0.8507,
-   "quoted": 0.8791,
-   "returned": 61.87,
-   "ret": -0.0766
+   "n": 68,
+   "won": 58,
+   "rate": 0.8529,
+   "quoted": 0.8774,
+   "returned": 63.17,
+   "ret": -0.071
   },
   "notAtBook": {
    "n": 139,
@@ -212,12 +212,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 19,
-     "won": 17,
-     "rate": 0.8947,
-     "quoted": 0.86,
-     "returned": 19.32,
-     "ret": 0.0168
+     "n": 20,
+     "won": 18,
+     "rate": 0.9,
+     "quoted": 0.8549,
+     "returned": 20.62,
+     "ret": 0.031
     },
     "notAtBook": {
      "n": 6,
@@ -623,8 +623,8 @@
    "clv": {
     "n": 90,
     "shortened": 28,
-    "drifted": 33,
-    "mean": -0.0057
+    "drifted": 34,
+    "mean": -0.0061
    }
   },
   "Card 3x": {
@@ -940,8 +940,8 @@
   "clv": {
    "n": 104,
    "shortened": 35,
-   "drifted": 40,
-   "mean": -0.004
+   "drifted": 41,
+   "mean": -0.0044
   }
  },
  "cardWide": {
@@ -1078,8 +1078,8 @@
   "z": -0.9,
   "lost": 1,
   "pending": 1,
-  "legs": 5,
-  "legsWon": 4,
+  "legs": 6,
+  "legsWon": 5,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -1103,8 +1103,8 @@
   "z": -0.77,
   "lost": 4,
   "pending": 1,
-  "legs": 18,
-  "legsWon": 14,
+  "legs": 19,
+  "legsWon": 15,
   "returned": 3.47,
   "staked": 5,
   "returnedBest": 3.5,
@@ -1128,8 +1128,8 @@
   "z": 1.15,
   "lost": 0,
   "pending": 1,
-  "legs": 5,
-  "legsWon": 5,
+  "legs": 6,
+  "legsWon": 6,
   "returned": 2.02,
   "staked": 1,
   "returnedBest": 2.13,
@@ -1318,8 +1318,8 @@
    "clv": {
     "n": 5,
     "shortened": 0,
-    "drifted": 1,
-    "mean": -0.0034
+    "drifted": 2,
+    "mean": -0.0109
    }
   }
  },
@@ -1345,8 +1345,8 @@
    "clv": {
     "n": 58,
     "shortened": 17,
-    "drifted": 22,
-    "mean": -0.002
+    "drifted": 23,
+    "mean": -0.0026
    }
   },
   "Daytime": {
@@ -1527,7 +1527,7 @@
        "when": "2026-11-23T01:00Z",
        "odds": 1.29,
        "best": 1.29,
-       "lastOdds": 1.29,
+       "lastOdds": 1.34,
        "lockOdds": 1.29,
        "lockBest": 1.29,
        "lockBook": null,
@@ -1561,9 +1561,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Beerschot VA",
@@ -1579,8 +1579,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7573,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "5-1",
        "opp": 6.72,
        "rule12Fault": null,
        "r12": false
@@ -1667,9 +1667,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 5,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Beerschot VA",
@@ -1685,8 +1685,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7573,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "5-1",
        "opp": 6.69,
        "rule12Fault": null,
        "r12": false
@@ -1793,9 +1793,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Tre Penne",
@@ -1831,8 +1831,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7587,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "5-1",
        "opp": 6.81,
        "rule12Fault": null,
        "r12": false
