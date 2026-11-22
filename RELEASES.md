@@ -10,6 +10,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-filters: sport and confidence filters, and a better Starred tab (tag pending)
+
+**What changed for a reader.** Douglas: "the daily list needs filter by sport", "all sports and daily list need a filter by banding", and "the starred page needs improvement to filter and also see all fixture information and links and to be able to sort by time and other tags".
+- **Daily List: Sport.** One sport or every sport, each chip with its count of list and reserve picks this week. While a filter is on, Groups A and B are not labelled (they are the day's strongest across every sport), days with nothing left are skipped, and a Clear filters link sits under the controls.
+- **Confidence bands on every board**: the Daily List, Football, Tennis and each sport tab: All, 90%+, 85-89%, 80-84%, 70-79%, 60-69%, Under 60%, read on the number the row shows, with a count on each chip and empty bands not offered. Played today / yesterday follow the band too. Football's band shows every fixture in it (no top-50 cap while a band is on).
+- **Starred: Order by** Strongest, Kick-off time, Sport, List first; **Sport**; **Show** (Everything, Daily List, Reserve, Board only, At William Hill, Edge, Still to start, each with a count); **Confidence**; and **Full details: Every row open**, which draws every starred row with its read, form and research links. The slip still runs on every starred pick.
+- Each tab remembers its choices on this device.
+
+**Checked.** In a browser at 1280 and 400 wide on the committed tennis and sports files and a fixture board built from the 21 Nov archive: chips and counts, filters on each tab, Starred ordering and every row open, no page errors.
+**Files.** `index.html` (`BANDS`, `bandCtl`, `inBand`, `LIST_SPORT`, `STAR`, `STAR_TAGS`, `rowOpen`, `OPEN_ALL`), `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any model, ranking, list membership, record or Card rule. Display only.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-decisions-rule14: the Card review's decisions table reads rule 14 (tag pending)
 
 **What changed.** The nightly Card review's pre-registered decisions table had kept rule 13's rows since rule 14 went live on 19 Nov. From `cardLiveRule` 14 it now has one row, rule 14 v `rule13` and `rule12`, read on 30 Nov with no change before (Douglas acts, the switch was his), says in bold when `rule13` is ahead on the pool, retires the tennis 75% and core-league rows rule 14 already settled (one line says so), and names Douglas on the opposition-floor rows under rule 14's no-change window.
