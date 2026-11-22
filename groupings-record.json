@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-22T13:23:51Z",
+ "graded": "2026-11-22T15:15:14Z",
  "overall": {
-  "groups": 146,
+  "groups": 150,
   "settled": 146,
   "won": 43,
   "z": -1.23,
   "lost": 103,
-  "pending": 0,
+  "pending": 4,
   "legs": 560,
   "legsWon": 408,
   "returned": 124.59,
@@ -19,10 +19,10 @@
   "unitsReturned": 145.89,
   "unitsReturnedBest": 151.07,
   "clv": {
-   "n": 170,
-   "shortened": 67,
+   "n": 177,
+   "shortened": 69,
    "drifted": 64,
-   "mean": 0.001
+   "mean": 0.0012
   }
  },
  "cardLegsBySport": {
@@ -75,12 +75,12 @@
   }
  },
  "cardLive": {
-  "groups": 2,
+  "groups": 3,
   "settled": 2,
   "won": 1,
   "z": 0.34,
   "lost": 1,
-  "pending": 0,
+  "pending": 1,
   "legs": 6,
   "legsWon": 5,
   "returned": 2.49,
@@ -93,10 +93,10 @@
   "unitsReturned": 4.98,
   "unitsReturnedBest": 5.12,
   "clv": {
-   "n": 3,
+   "n": 5,
    "shortened": 0,
    "drifted": 1,
-   "mean": -0.0056
+   "mean": -0.0034
   }
  },
  "cardLiveRule": 14,
@@ -204,10 +204,10 @@
    "quoted": 0.9148
   },
   "unchecked": {
-   "n": 31,
-   "won": 28,
-   "rate": 0.9032,
-   "quoted": 0.8586
+   "n": 32,
+   "won": 29,
+   "rate": 0.9062,
+   "quoted": 0.8555
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 15,
-     "won": 12,
-     "rate": 0.8,
-     "quoted": 0.8028
+     "n": 16,
+     "won": 13,
+     "rate": 0.8125,
+     "quoted": 0.7999
     }
    },
    "nba": {
@@ -526,7 +526,7 @@
    "ncaab|duke blue devils|washington state cougars|2026-11-22": 0,
    "ncaab|marquette golden eagles|chicago state cougars|2026-11-22": 1.0,
    "ncaab|cincinnati bearcats|umass lowell river hawks|2026-11-22": 1.0,
-   "ncaab|memphis tigers|evansville purple aces|2026-11-22": 1.02,
+   "ncaab|memphis tigers|evansville purple aces|2026-11-22": 1.01,
    "ncaab|texas longhorns|southern indiana screaming eagles|2026-11-22": 0,
    "ncaab|boston college eagles|njit highlanders|2026-11-22": 0,
    "football|trabzonspor|eyüpspor|2026-11-22": 1.11,
@@ -603,12 +603,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 40,
+   "groups": 41,
    "settled": 40,
    "won": 13,
    "z": -0.72,
    "lost": 27,
-   "pending": 0,
+   "pending": 1,
    "legs": 119,
    "legsWon": 84,
    "returned": 30.24,
@@ -621,10 +621,10 @@
    "unitsReturned": 51.54,
    "unitsReturnedBest": 52.2,
    "clv": {
-    "n": 88,
+    "n": 90,
     "shortened": 28,
     "drifted": 33,
-    "mean": -0.0059
+    "mean": -0.0057
    }
   },
   "Card 3x": {
@@ -920,12 +920,12 @@
   }
  },
  "card": {
-  "groups": 46,
+  "groups": 47,
   "settled": 46,
   "won": 15,
   "z": -0.26,
   "lost": 31,
-  "pending": 0,
+  "pending": 1,
   "legs": 138,
   "legsWon": 93,
   "returned": 41.1,
@@ -938,10 +938,10 @@
   "unitsReturned": 60.31,
   "unitsReturnedBest": 61.12,
   "clv": {
-   "n": 102,
+   "n": 104,
    "shortened": 35,
    "drifted": 40,
-   "mean": -0.0041
+   "mean": -0.004
   }
  },
  "cardWide": {
@@ -1072,12 +1072,12 @@
   }
  },
  "cardList": {
-  "groups": 1,
+  "groups": 2,
   "settled": 1,
   "won": 0,
   "z": -0.9,
   "lost": 1,
-  "pending": 0,
+  "pending": 1,
   "legs": 4,
   "legsWon": 3,
   "returned": 0,
@@ -1090,19 +1090,19 @@
   "unitsReturned": 0,
   "unitsReturnedBest": 0,
   "clv": {
-   "n": 3,
-   "shortened": 1,
+   "n": 5,
+   "shortened": 2,
    "drifted": 2,
-   "mean": 0.0459
+   "mean": 0.0293
   }
  },
  "cardDaily": {
-  "groups": 5,
+  "groups": 6,
   "settled": 5,
   "won": 1,
   "z": -0.77,
   "lost": 4,
-  "pending": 0,
+  "pending": 1,
   "legs": 18,
   "legsWon": 14,
   "returned": 3.47,
@@ -1115,19 +1115,19 @@
   "unitsReturned": 3.47,
   "unitsReturnedBest": 3.5,
   "clv": {
-   "n": 13,
-   "shortened": 5,
+   "n": 16,
+   "shortened": 6,
    "drifted": 5,
-   "mean": 0.0081
+   "mean": 0.0071
   }
  },
  "cardListLong": {
-  "groups": 1,
+  "groups": 2,
   "settled": 1,
   "won": 1,
   "z": 1.15,
   "lost": 0,
-  "pending": 0,
+  "pending": 1,
   "legs": 5,
   "legsWon": 5,
   "returned": 2.02,
@@ -1140,10 +1140,10 @@
   "unitsReturned": 2.02,
   "unitsReturnedBest": 2.13,
   "clv": {
-   "n": 2,
-   "shortened": 1,
+   "n": 6,
+   "shortened": 4,
    "drifted": 1,
-   "mean": 0.086
+   "mean": 0.0375
   }
  },
  "cardByRule": {
@@ -1298,12 +1298,12 @@
    }
   },
   "14": {
-   "groups": 2,
+   "groups": 3,
    "settled": 2,
    "won": 1,
    "z": 0.34,
    "lost": 1,
-   "pending": 0,
+   "pending": 1,
    "legs": 6,
    "legsWon": 5,
    "returned": 2.49,
@@ -1316,21 +1316,21 @@
    "unitsReturned": 4.98,
    "unitsReturnedBest": 5.12,
    "clv": {
-    "n": 3,
+    "n": 5,
     "shortened": 0,
     "drifted": 1,
-    "mean": -0.0056
+    "mean": -0.0034
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 30,
+   "groups": 31,
    "settled": 30,
    "won": 11,
    "z": 0.08,
    "lost": 19,
-   "pending": 0,
+   "pending": 1,
    "legs": 89,
    "legsWon": 64,
    "returned": 28.88,
@@ -1343,10 +1343,10 @@
    "unitsReturned": 48.09,
    "unitsReturnedBest": 48.68,
    "clv": {
-    "n": 56,
+    "n": 58,
     "shortened": 17,
     "drifted": 22,
-    "mean": -0.0021
+    "mean": -0.002
    }
   },
   "Daytime": {
@@ -1451,6 +1451,436 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-22",
+   "published": "2026-11-22T15:14:13Z",
+   "groups": [
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 14,
+     "wideRule": null,
+     "odds": 2.58,
+     "p": 0.4669,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-22T15:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Royale Union Saint-Gilloise",
+       "event": "KV Kortrijk v Royale Union Saint-Gilloise",
+       "sport": "football",
+       "comp": "Pro League",
+       "when": "2026-11-22T15:00:00Z",
+       "odds": 1.35,
+       "best": 1.36,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7621,
+       "status": "pending",
+       "result": null,
+       "opp": 7.64,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Nashville",
+       "event": "Nashville v FC Cincinnati",
+       "sport": "football",
+       "comp": "Major League Soccer",
+       "when": "2026-11-22T21:00:00Z",
+       "odds": 1.48,
+       "best": 1.5,
+       "lastOdds": 1.48,
+       "lockOdds": 1.48,
+       "lockBest": 1.5,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.7225,
+       "status": "pending",
+       "result": null,
+       "opp": 5.58,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "New York Knicks",
+       "event": "New York Knicks v Indiana Pacers",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-23T01:00Z",
+       "odds": 1.29,
+       "best": 1.29,
+       "lastOdds": 1.29,
+       "lockOdds": 1.29,
+       "lockBest": 1.29,
+       "lockBook": null,
+       "est": false,
+       "p": 0.848,
+       "status": "pending",
+       "result": null,
+       "opp": 3.76,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Daily 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 1,
+     "wideRule": null,
+     "odds": 2.26,
+     "p": 0.4065,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-22T15:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Beerschot VA",
+       "event": "Beerschot VA v KRC Genk II",
+       "sport": "football",
+       "comp": "Challenger Pro League",
+       "when": "2026-11-22T15:00:00Z",
+       "odds": 1.32,
+       "best": 1.33,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7573,
+       "status": "pending",
+       "result": null,
+       "opp": 6.72,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Chicago Bears",
+       "event": "Chicago Bears v New Orleans Saints",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T18:00Z",
+       "odds": 1.16,
+       "best": 1.16,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8298,
+       "status": "pending",
+       "result": null,
+       "opp": 5.55,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Dallas Cowboys",
+       "event": "Dallas Cowboys v Tennessee Titans",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T18:00Z",
+       "odds": 1.26,
+       "best": 1.26,
+       "lastOdds": 1.26,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7624,
+       "status": "pending",
+       "result": null,
+       "opp": 4.0,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Denver Broncos",
+       "event": "Denver Broncos v Las Vegas Raiders",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T21:25Z",
+       "odds": 1.17,
+       "best": 1.17,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8484,
+       "status": "pending",
+       "result": null,
+       "opp": 5.4,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "List long",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 2,
+     "wideRule": null,
+     "odds": 2.22,
+     "p": 0.3767,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-22T15:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 5,
+     "legs": [
+      {
+       "pick": "Beerschot VA",
+       "event": "Beerschot VA v KRC Genk II",
+       "sport": "football",
+       "comp": "Challenger Pro League",
+       "when": "2026-11-22T15:00:00Z",
+       "odds": 1.32,
+       "best": 1.33,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7573,
+       "status": "pending",
+       "result": null,
+       "opp": 6.69,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Trabzonspor",
+       "event": "Trabzonspor v Eyüpspor",
+       "sport": "football",
+       "comp": "Super Lig",
+       "when": "2026-11-22T16:00:00Z",
+       "odds": 1.14,
+       "best": 1.14,
+       "lastOdds": 1.11,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8609,
+       "status": "pending",
+       "result": null,
+       "opp": 15.29,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Chicago Bears",
+       "event": "Chicago Bears v New Orleans Saints",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T18:00Z",
+       "odds": 1.17,
+       "best": 1.17,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8298,
+       "status": "pending",
+       "result": null,
+       "opp": 5.43,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Kansas City Chiefs",
+       "event": "Kansas City Chiefs v Arizona Cardinals",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T18:00Z",
+       "odds": 1.07,
+       "best": 1.07,
+       "lastOdds": 1.07,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8207,
+       "status": "pending",
+       "result": null,
+       "opp": 9.3,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Denver Broncos",
+       "event": "Denver Broncos v Las Vegas Raiders",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T21:25Z",
+       "odds": 1.18,
+       "best": 1.18,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8484,
+       "status": "pending",
+       "result": null,
+       "opp": 5.28,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "List 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 2,
+     "wideRule": null,
+     "odds": 2.24,
+     "p": 0.4142,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-22T14:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Tre Penne",
+       "event": "Pennarossa v Tre Penne",
+       "sport": "football",
+       "comp": "Campionato",
+       "when": "2026-11-22T14:00:00Z",
+       "odds": 1.25,
+       "best": 1.27,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7754,
+       "status": "pending",
+       "result": null,
+       "opp": 9.33,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Beerschot VA",
+       "event": "Beerschot VA v KRC Genk II",
+       "sport": "football",
+       "comp": "Challenger Pro League",
+       "when": "2026-11-22T15:00:00Z",
+       "odds": 1.32,
+       "best": 1.33,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7587,
+       "status": "pending",
+       "result": null,
+       "opp": 6.81,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Chicago Bears",
+       "event": "Chicago Bears v New Orleans Saints",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T18:00Z",
+       "odds": 1.16,
+       "best": 1.16,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8298,
+       "status": "pending",
+       "result": null,
+       "opp": 5.49,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Denver Broncos",
+       "event": "Denver Broncos v Las Vegas Raiders",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-22T21:25Z",
+       "odds": 1.17,
+       "best": 1.17,
+       "lastOdds": 1.16,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8484,
+       "status": "pending",
+       "result": null,
+       "opp": 5.35,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-21",
    "published": "2026-11-21T11:08:17Z",

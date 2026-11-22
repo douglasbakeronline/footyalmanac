@@ -1,0 +1,3148 @@
+{
+ "date": "2026-11-22",
+ "published": "2026-11-22T15:14:13Z",
+ "groups": [
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 14,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-22T04:48:35Z",
+   "lockAt": "2026-11-22T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Vancouver Whitecaps",
+     "event": "Vancouver Whitecaps v Real Salt Lake",
+     "sport": "football",
+     "comp": "Major League Soccer",
+     "when": "2026-11-23T01:30:00Z",
+     "date": "2026-11-23",
+     "odds": 1.48,
+     "best": 1.48,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.48,
+      "Betfair": 1.47,
+      "BetVictor": 1.45
+     },
+     "p": 0.6454,
+     "pModel": 0.6454,
+     "fair": 0.6316,
+     "hit": 0.7459,
+     "src": "API-Football, average of 9 bookmakers",
+     "pricedAt": "2026-11-22T13:22:45Z",
+     "id": null,
+     "home": "Vancouver Whitecaps",
+     "away": "Real Salt Lake",
+     "players": null,
+     "opp": 5.4,
+     "draw": 4.75
+    }
+   ],
+   "bookOdds": 2.39,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.58,
+   "p": 0.4669,
+   "implied": 0.388,
+   "bestOdds": 2.63,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "KV Kortrijk v Royale Union Saint-Gilloise",
+     "home": "KV Kortrijk",
+     "away": "Royale Union Saint-Gilloise",
+     "side": "a",
+     "pick": "Royale Union Saint-Gilloise",
+     "code": "be.1",
+     "comp": "Pro League",
+     "country": "Belgium",
+     "when": "2026-11-22T15:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7621,
+     "p": 0.7621,
+     "fx": {
+      "u21Side": false,
+      "league": "be.1",
+      "leagueName": "Pro League",
+      "short": "BEL",
+      "country": "Belgium",
+      "iso": "bel",
+      "tier": 1,
+      "order": 16,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "15:00",
+      "kickoff": "2026-11-22T15:00:00Z",
+      "home": {
+       "name": "KV Kortrijk",
+       "att": 0.582,
+       "def": 1.229,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "WLDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 36,
+        "W": 10,
+        "D": 7,
+        "L": 19,
+        "GF": 40,
+        "GA": 63,
+        "GD": -23,
+        "Pts": 37,
+        "PPG": 1.028
+       },
+       "now": {
+        "P": 11,
+        "W": 1,
+        "D": 1,
+        "L": 9,
+        "GF": 4,
+        "GA": 23,
+        "GD": -19,
+        "Pts": 4,
+        "PPG": 0.364
+       }
+      },
+      "away": {
+       "name": "Royale Union Saint-Gilloise",
+       "att": 1.485,
+       "def": 0.556,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WDWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 40,
+        "W": 24,
+        "D": 11,
+        "L": 5,
+        "GF": 71,
+        "GA": 28,
+        "GD": 43,
+        "Pts": 83,
+        "PPG": 2.075
+       },
+       "now": {
+        "P": 11,
+        "W": 9,
+        "D": 2,
+        "L": 0,
+        "GF": 30,
+        "GA": 7,
+        "GD": 23,
+        "Pts": 29,
+        "PPG": 2.636
+       }
+      },
+      "p": {
+       "h": 0.0663,
+       "d": 0.1716,
+       "a": 0.7621
+      },
+      "xg": [
+       0.5,
+       2.27
+      ],
+      "btts": 0.4661,
+      "over25": 0.5216,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.7621,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.1319,
+        0.194,
+        0.6741
+       ],
+       "best": [
+        7.5,
+        5.0,
+        1.41
+       ],
+       "avg": [
+        7.0,
+        4.76,
+        1.37
+       ],
+       "ev": [
+        -0.5028,
+        -0.142,
+        0.0746
+       ]
+      },
+      "rank": 10,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1716,
+     "multOnly": false,
+     "odds": 1.35,
+     "best": 1.36,
+     "books": 10,
+     "opp": 7.64,
+     "draw": 5.08,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.36,
+      "Bet365": 1.33,
+      "Betfair": 1.3,
+      "BetVictor": 1.33
+     },
+     "margin": 1.0695,
+     "pricedAt": "2026-11-22T13:22:43Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7407,
+     "pTested": 0.7298,
+     "fair": 0.6926,
+     "edge": -0.065,
+     "basis": "model",
+     "firstOdds": 1.38
+    },
+    {
+     "sport": "football",
+     "event": "Nashville v FC Cincinnati",
+     "home": "Nashville",
+     "away": "FC Cincinnati",
+     "side": "h",
+     "pick": "Nashville",
+     "code": "us.1",
+     "comp": "Major League Soccer",
+     "country": "USA",
+     "when": "2026-11-22T21:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7225,
+     "p": 0.7225,
+     "fx": {
+      "u21Side": false,
+      "league": "us.1",
+      "leagueName": "Major League Soccer",
+      "short": "MLS",
+      "country": "USA",
+      "iso": "usa",
+      "tier": 1,
+      "order": 80,
+      "round": "eastern-conference-playoffs---round-one",
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "21:00",
+      "kickoff": "2026-11-22T21:00:00Z",
+      "home": {
+       "name": "Nashville",
+       "att": 1.228,
+       "def": 0.576,
+       "played": 34,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "DWDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 37,
+        "W": 17,
+        "D": 6,
+        "L": 14,
+        "GF": 61,
+        "GA": 53,
+        "GD": 8,
+        "Pts": 57,
+        "PPG": 1.541
+       },
+       "now": {
+        "P": 34,
+        "W": 23,
+        "D": 8,
+        "L": 3,
+        "GF": 71,
+        "GA": 25,
+        "GD": 46,
+        "Pts": 77,
+        "PPG": 2.265
+       }
+      },
+      "away": {
+       "name": "FC Cincinnati",
+       "att": 1.17,
+       "def": 1.237,
+       "played": 35,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Major League Soccer",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WDWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 38,
+        "W": 22,
+        "D": 5,
+        "L": 11,
+        "GF": 55,
+        "GA": 49,
+        "GD": 6,
+        "Pts": 71,
+        "PPG": 1.868
+       },
+       "now": {
+        "P": 35,
+        "W": 13,
+        "D": 10,
+        "L": 12,
+        "GF": 70,
+        "GA": 76,
+        "GD": -6,
+        "Pts": 49,
+        "PPG": 1.4
+       }
+      },
+      "p": {
+       "h": 0.7225,
+       "d": 0.1678,
+       "a": 0.1097
+      },
+      "xg": [
+       2.66,
+       0.92
+      ],
+      "btts": 0.5492,
+      "over25": 0.5895,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7225,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6309,
+        0.2014,
+        0.1677
+       ],
+       "best": [
+        1.5,
+        4.75,
+        5.5
+       ],
+       "avg": [
+        1.48,
+        4.65,
+        5.58
+       ],
+       "ev": [
+        0.0837,
+        -0.2029,
+        -0.3966
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 14,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1678,
+     "multOnly": false,
+     "odds": 1.48,
+     "best": 1.5,
+     "books": 9,
+     "opp": 5.58,
+     "draw": 4.65,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.5,
+      "Betfair": 1.5,
+      "BetVictor": 1.45
+     },
+     "margin": 1.0687,
+     "pricedAt": "2026-11-22T13:22:43Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6757,
+     "pTested": 0.718,
+     "fair": 0.6323,
+     "edge": -0.0642,
+     "basis": "model",
+     "firstOdds": 1.48,
+     "lastOdds": 1.48,
+     "lastBest": 1.5,
+     "lastAt": "2026-11-22T15:14:13Z",
+     "lockPrice": {
+      "odds": 1.48,
+      "best": 1.5,
+      "book": "Bet365",
+      "at": "2026-11-22T15:14:13Z"
+     }
+    },
+    {
+     "sport": "nba",
+     "event": "New York Knicks v Indiana Pacers",
+     "home": "New York Knicks",
+     "away": "Indiana Pacers",
+     "pick": "New York Knicks",
+     "comp": "NBA",
+     "when": "2026-11-23T01:00Z",
+     "date": "2026-11-23",
+     "id": "401910034",
+     "pModel": 0.848,
+     "p": 0.848,
+     "hit": 0.8667,
+     "n": 165,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401910034",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-23T01:00Z",
+      "home": "New York Knicks",
+      "away": "Indiana Pacers",
+      "neutral": false,
+      "pHome": 0.848,
+      "pick": "New York Knicks",
+      "confidence": 0.848,
+      "tier": "Strong",
+      "eloH": 1635,
+      "eloA": 1370,
+      "gamesH": 313,
+      "gamesA": 303,
+      "hfa": 25,
+      "eloDiff": 289.4,
+      "line": {
+       "spread": -8.5,
+       "total": 214.5,
+       "mlH": -344.0,
+       "mlA": 276.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.854,
+       "n": 89,
+       "cumHit": 0.8667,
+       "cumN": 165
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "97-96",
+        "opp": "Portland Trail Blazers",
+        "home": true,
+        "date": "2026-11-22"
+       },
+       {
+        "r": "W",
+        "score": "102-99",
+        "opp": "Minnesota Timberwolves",
+        "home": false,
+        "date": "2026-11-20"
+       },
+       {
+        "r": "W",
+        "score": "111-102",
+        "opp": "Toronto Raptors",
+        "home": false,
+        "date": "2026-11-18"
+       },
+       {
+        "r": "W",
+        "score": "112-108",
+        "opp": "Toronto Raptors",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "104-106",
+        "opp": "Indiana Pacers",
+        "home": false,
+        "date": "2026-11-14"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "119-128",
+        "opp": "Cleveland Cavaliers",
+        "home": false,
+        "date": "2026-11-21"
+       },
+       {
+        "r": "L",
+        "score": "104-119",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-11-19"
+       },
+       {
+        "r": "L",
+        "score": "124-131",
+        "opp": "Philadelphia 76ers",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "106-104",
+        "opp": "New York Knicks",
+        "home": true,
+        "date": "2026-11-14"
+       },
+       {
+        "r": "W",
+        "score": "114-101",
+        "opp": "Washington Wizards",
+        "home": true,
+        "date": "2026-11-12"
+       }
+      ],
+      "recordH": {
+       "w": 10,
+       "l": 6,
+       "d": 0
+      },
+      "recordA": {
+       "w": 5,
+       "l": 11,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-11-14",
+        "home": "Indiana Pacers",
+        "away": "New York Knicks",
+        "score": "106-104"
+       },
+       {
+        "date": "2026-03-17",
+        "home": "New York Knicks",
+        "away": "Indiana Pacers",
+        "score": "136-110"
+       },
+       {
+        "date": "2026-03-13",
+        "home": "Indiana Pacers",
+        "away": "New York Knicks",
+        "score": "92-101"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.29,
+     "margin": 1.0412,
+     "opp": 3.76,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.22,
+      "Bet365": 1.24,
+      "Betfair": 1.29,
+      "BetVictor": 1.22
+     },
+     "pricedAt": "2026-11-22T13:23:49Z",
+     "implied": 0.7752,
+     "pTested": 0.848,
+     "fair": 0.7445,
+     "edge": -0.0396,
+     "basis": "model",
+     "firstOdds": 1.24,
+     "lastOdds": 1.29,
+     "lastBest": 1.29,
+     "lastAt": "2026-11-22T15:14:13Z",
+     "lockPrice": {
+      "odds": 1.29,
+      "best": 1.29,
+      "book": null,
+      "at": "2026-11-22T15:14:13Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-22T13:23:42Z",
+   "archivedAt": "2026-11-22T15:14:13Z"
+  },
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.26,
+   "p": 0.4065,
+   "pFair": 0.3571,
+   "implied": 0.4431,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Beerschot VA v KRC Genk II",
+     "home": "Beerschot VA",
+     "away": "KRC Genk II",
+     "side": "h",
+     "pick": "Beerschot VA",
+     "code": "af.145",
+     "comp": "Challenger Pro League",
+     "country": "Belgium",
+     "when": "2026-11-22T15:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7573,
+     "p": 0.7573,
+     "fx": {
+      "u21Side": false,
+      "league": "af.145",
+      "leagueName": "Challenger Pro League",
+      "short": "CHA",
+      "country": "Belgium",
+      "iso": "bel",
+      "tier": 2,
+      "order": 429,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "15:00",
+      "kickoff": "2026-11-22T15:00:00Z",
+      "home": {
+       "name": "Beerschot VA",
+       "att": 1.327,
+       "def": 0.681,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 19,
+        "D": 7,
+        "L": 6,
+        "GF": 52,
+        "GA": 31,
+        "GD": 21,
+        "Pts": 64,
+        "PPG": 2.0
+       },
+       "now": {
+        "P": 10,
+        "W": 9,
+        "D": 0,
+        "L": 1,
+        "GF": 25,
+        "GA": 8,
+        "GD": 17,
+        "Pts": 27,
+        "PPG": 2.7
+       }
+      },
+      "away": {
+       "name": "KRC Genk II",
+       "att": 0.935,
+       "def": 1.148,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DLDDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 7,
+        "D": 10,
+        "L": 15,
+        "GF": 42,
+        "GA": 59,
+        "GD": -17,
+        "Pts": 31,
+        "PPG": 0.969
+       },
+       "now": {
+        "P": 10,
+        "W": 2,
+        "D": 4,
+        "L": 4,
+        "GF": 14,
+        "GA": 17,
+        "GD": -3,
+        "Pts": 10,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7573,
+       "d": 0.1574,
+       "a": 0.0854
+      },
+      "xg": [
+       2.64,
+       0.76
+      ],
+      "btts": 0.523,
+      "over25": 0.5763,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7573,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6886,
+        0.1758,
+        0.1357
+       ],
+       "best": [
+        1.33,
+        5.0,
+        6.5
+       ],
+       "avg": [
+        1.32,
+        5.19,
+        6.72
+       ],
+       "ev": [
+        0.0072,
+        -0.213,
+        -0.4449
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 10,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1574,
+     "multOnly": false,
+     "odds": 1.32,
+     "best": 1.33,
+     "books": 7,
+     "opp": 6.72,
+     "draw": 5.19,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.33
+     },
+     "margin": 1.0969,
+     "pricedAt": "2026-11-18T21:08:00Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.7576,
+     "pTested": 0.7573,
+     "fair": 0.6907,
+     "edge": -0.0883,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.32
+    },
+    {
+     "sport": "nfl",
+     "event": "Chicago Bears v New Orleans Saints",
+     "home": "Chicago Bears",
+     "away": "New Orleans Saints",
+     "pick": "Chicago Bears",
+     "comp": "NFL",
+     "when": "2026-11-22T18:00Z",
+     "date": "2026-11-22",
+     "id": "401873071",
+     "pModel": 0.8298,
+     "p": 0.8298,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873071",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T18:00Z",
+      "home": "Chicago Bears",
+      "away": "New Orleans Saints",
+      "neutral": false,
+      "pHome": 0.8298,
+      "pick": "Chicago Bears",
+      "confidence": 0.8298,
+      "tier": "Strong",
+      "eloH": 1625,
+      "eloA": 1399,
+      "gamesH": 62,
+      "gamesA": 60,
+      "hfa": 50,
+      "eloDiff": 275.2,
+      "line": {
+       "spread": -11.5,
+       "total": 48.5,
+       "mlH": -625.0,
+       "mlA": 455.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "27-24",
+        "opp": "Tampa Bay Buccaneers",
+        "home": true,
+        "date": "2026-11-09"
+       },
+       {
+        "r": "W",
+        "score": "34-17",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "30-24",
+        "opp": "New England Patriots",
+        "home": true,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "31-23",
+        "opp": "Atlanta Falcons",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "7-31",
+        "opp": "Green Bay Packers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "17-20",
+        "opp": "Carolina Panthers",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "23-22",
+        "opp": "Cleveland Browns",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "10-16",
+        "opp": "Pittsburgh Steelers",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "34-27",
+        "opp": "New York Giants",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "13-23",
+        "opp": "Minnesota Vikings",
+        "home": true,
+        "date": "2026-10-11"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-10-19",
+        "home": "Chicago Bears",
+        "away": "New Orleans Saints",
+        "score": "26-14"
+       },
+       {
+        "date": "2023-11-05",
+        "home": "New Orleans Saints",
+        "away": "Chicago Bears",
+        "score": "24-17"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.16,
+     "margin": 1.0422,
+     "opp": 5.55,
+     "src": "ESPN, DraftKings moneyline",
+     "ukChecked": true,
+     "bookOdds": {
+      "Paddy Power": 1.14,
+      "888sport": 1.12,
+      "William Hill": 1.12,
+      "Ladbrokes": 1.15,
+      "Coral": 1.15,
+      "Betway": 1.17,
+      "BetVictor": 1.14,
+      "Betfair": 1.19
+     },
+     "pricedAt": "2026-11-19T01:03:28Z",
+     "implied": 0.8621,
+     "pTested": 0.8065,
+     "fair": 0.8272,
+     "edge": -0.0645,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.16,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Dallas Cowboys v Tennessee Titans",
+     "home": "Dallas Cowboys",
+     "away": "Tennessee Titans",
+     "pick": "Dallas Cowboys",
+     "comp": "NFL",
+     "when": "2026-11-22T18:00Z",
+     "date": "2026-11-22",
+     "id": "401873073",
+     "pModel": 0.7624,
+     "p": 0.7624,
+     "hit": 0.7727,
+     "n": 66,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873073",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T18:00Z",
+      "home": "Dallas Cowboys",
+      "away": "Tennessee Titans",
+      "neutral": false,
+      "pHome": 0.7624,
+      "pick": "Dallas Cowboys",
+      "confidence": 0.7624,
+      "tier": "Strong",
+      "eloH": 1449,
+      "eloA": 1297,
+      "gamesH": 62,
+      "gamesA": 60,
+      "hfa": 50,
+      "eloDiff": 202.5,
+      "line": {
+       "spread": -8.5,
+       "total": 55.5,
+       "mlH": -380.0,
+       "mlA": 300.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7428,
+       "n": 35,
+       "cumHit": 0.7727,
+       "cumN": 66
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "40-46",
+        "opp": "San Francisco 49ers",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "27-23",
+        "opp": "Indianapolis Colts",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "30-33",
+        "opp": "Arizona Cardinals",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "W",
+        "score": "38-21",
+        "opp": "Philadelphia Eagles",
+        "home": false,
+        "date": "2026-10-27"
+       },
+       {
+        "r": "L",
+        "score": "13-23",
+        "opp": "Green Bay Packers",
+        "home": false,
+        "date": "2026-10-19"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "23-40",
+        "opp": "Jacksonville Jaguars",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "36-43",
+        "opp": "Cincinnati Bengals",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "24-27",
+        "opp": "Cleveland Browns",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "26-20",
+        "opp": "Indianapolis Colts",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "3-26",
+        "opp": "Houston Texans",
+        "home": true,
+        "date": "2026-10-11"
+       }
+      ],
+      "recordH": {
+       "w": 4,
+       "l": 6,
+       "d": 0
+      },
+      "recordA": {
+       "w": 1,
+       "l": 8,
+       "d": 0
+      },
+      "h2h": [],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.26,
+     "margin": 1.0437,
+     "opp": 4.0,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-19T01:03:28Z",
+     "implied": 0.7937,
+     "pTested": 0.7428,
+     "fair": 0.7605,
+     "edge": -0.0641,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.26,
+     "lastOdds": 1.26,
+     "lastBest": 1.26,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Denver Broncos v Las Vegas Raiders",
+     "home": "Denver Broncos",
+     "away": "Las Vegas Raiders",
+     "pick": "Denver Broncos",
+     "comp": "NFL",
+     "when": "2026-11-22T21:25Z",
+     "date": "2026-11-22",
+     "id": "401873075",
+     "pModel": 0.8484,
+     "p": 0.8484,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873075",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T21:25Z",
+      "home": "Denver Broncos",
+      "away": "Las Vegas Raiders",
+      "neutral": false,
+      "pHome": 0.8484,
+      "pick": "Denver Broncos",
+      "confidence": 0.8484,
+      "tier": "Strong",
+      "eloH": 1643,
+      "eloA": 1393,
+      "gamesH": 63,
+      "gamesA": 61,
+      "hfa": 50,
+      "eloDiff": 299.2,
+      "line": {
+       "spread": -10.0,
+       "total": 40.5,
+       "mlH": -600.0,
+       "mlA": 440.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "26-21",
+        "opp": "Carolina Panthers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "28-24",
+        "opp": "Kansas City Chiefs",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "W",
+        "score": "30-16",
+        "opp": "Arizona Cardinals",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "17-14",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-10-16"
+       },
+       {
+        "r": "W",
+        "score": "23-17",
+        "opp": "Los Angeles Chargers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "13-21",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "17-38",
+        "opp": "San Francisco 49ers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "38-33",
+        "opp": "New York Jets",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "21-35",
+        "opp": "Los Angeles Rams",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "30-33",
+        "opp": "Buffalo Bills",
+        "home": true,
+        "date": "2026-10-18"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-12-07",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "17-24"
+       },
+       {
+        "date": "2025-11-07",
+        "home": "Denver Broncos",
+        "away": "Las Vegas Raiders",
+        "score": "10-7"
+       },
+       {
+        "date": "2024-11-24",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "19-29"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.17,
+     "margin": 1.0399,
+     "opp": 5.4,
+     "src": "ESPN, DraftKings moneyline",
+     "ukChecked": true,
+     "bookOdds": {
+      "Paddy Power": 1.17,
+      "888sport": 1.15,
+      "Coral": 1.17,
+      "Ladbrokes": 1.17,
+      "William Hill": 1.15,
+      "Betway": 1.17,
+      "BetVictor": 1.15,
+      "Betfair": 1.2
+     },
+     "pricedAt": "2026-11-19T01:03:28Z",
+     "implied": 0.8547,
+     "pTested": 0.8065,
+     "fair": 0.8219,
+     "edge": -0.0564,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.17,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    }
+   ],
+   "tested": 0.3527,
+   "short": false,
+   "tiers": [
+    "list",
+    "reserve"
+   ],
+   "bestOdds": 2.27,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-19T01:02:28Z",
+   "checked": "2026-11-19T01:02:28Z",
+   "lockAt": "2026-11-22T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-22T15:14:13Z"
+  },
+  {
+   "name": "List long",
+   "risk": "On trial: the list's picks, any price",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.22,
+   "p": 0.3767,
+   "pFair": 0.3397,
+   "implied": 0.4499,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 2,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Beerschot VA v KRC Genk II",
+     "home": "Beerschot VA",
+     "away": "KRC Genk II",
+     "side": "h",
+     "pick": "Beerschot VA",
+     "code": "af.145",
+     "comp": "Challenger Pro League",
+     "country": "Belgium",
+     "when": "2026-11-22T15:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7573,
+     "p": 0.7573,
+     "fx": {
+      "u21Side": false,
+      "league": "af.145",
+      "leagueName": "Challenger Pro League",
+      "short": "CHA",
+      "country": "Belgium",
+      "iso": "bel",
+      "tier": 2,
+      "order": 429,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "15:00",
+      "kickoff": "2026-11-22T15:00:00Z",
+      "home": {
+       "name": "Beerschot VA",
+       "att": 1.327,
+       "def": 0.681,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 19,
+        "D": 7,
+        "L": 6,
+        "GF": 52,
+        "GA": 31,
+        "GD": 21,
+        "Pts": 64,
+        "PPG": 2.0
+       },
+       "now": {
+        "P": 10,
+        "W": 9,
+        "D": 0,
+        "L": 1,
+        "GF": 25,
+        "GA": 8,
+        "GD": 17,
+        "Pts": 27,
+        "PPG": 2.7
+       }
+      },
+      "away": {
+       "name": "KRC Genk II",
+       "att": 0.935,
+       "def": 1.148,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DLDDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 7,
+        "D": 10,
+        "L": 15,
+        "GF": 42,
+        "GA": 59,
+        "GD": -17,
+        "Pts": 31,
+        "PPG": 0.969
+       },
+       "now": {
+        "P": 10,
+        "W": 2,
+        "D": 4,
+        "L": 4,
+        "GF": 14,
+        "GA": 17,
+        "GD": -3,
+        "Pts": 10,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7573,
+       "d": 0.1574,
+       "a": 0.0854
+      },
+      "xg": [
+       2.64,
+       0.76
+      ],
+      "btts": 0.523,
+      "over25": 0.5763,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7573,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6881,
+        0.1761,
+        0.1358
+       ],
+       "best": [
+        1.33,
+        5.0,
+        6.5
+       ],
+       "avg": [
+        1.32,
+        5.16,
+        6.69
+       ],
+       "ev": [
+        0.0072,
+        -0.213,
+        -0.4449
+       ],
+       "src": "API-Football",
+       "books": 8
+      },
+      "rank": 9,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1574,
+     "multOnly": false,
+     "odds": 1.32,
+     "best": 1.33,
+     "books": 8,
+     "opp": 6.69,
+     "draw": 5.16,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.33,
+      "Betfair": 1.3
+     },
+     "margin": 1.1002,
+     "pricedAt": "2026-11-19T15:18:55Z",
+     "src": "API-Football, average of 8 bookmakers",
+     "implied": 0.7576,
+     "pTested": 0.7573,
+     "fair": 0.6886,
+     "edge": -0.091,
+     "basis": "model",
+     "firstOdds": 1.32
+    },
+    {
+     "sport": "football",
+     "event": "Trabzonspor v Eyüpspor",
+     "home": "Trabzonspor",
+     "away": "Eyüpspor",
+     "side": "h",
+     "pick": "Trabzonspor",
+     "code": "tr.1",
+     "comp": "Super Lig",
+     "country": "Turkey",
+     "when": "2026-11-22T16:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.8609,
+     "p": 0.8609,
+     "fx": {
+      "u21Side": false,
+      "league": "tr.1",
+      "leagueName": "Super Lig",
+      "short": "SUP",
+      "country": "Turkey",
+      "iso": "tur",
+      "tier": 1,
+      "order": 17,
+      "round": "Regular Season - 12",
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "16:00",
+      "kickoff": "2026-11-22T16:00:00Z",
+      "home": {
+       "name": "Trabzonspor",
+       "att": 1.32,
+       "def": 0.656,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Super Lig",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 36,
+        "W": 13,
+        "D": 12,
+        "L": 11,
+        "GF": 58,
+        "GA": 45,
+        "GD": 13,
+        "Pts": 51,
+        "PPG": 1.417
+       },
+       "now": {
+        "P": 11,
+        "W": 8,
+        "D": 1,
+        "L": 2,
+        "GF": 26,
+        "GA": 8,
+        "GD": 18,
+        "Pts": 25,
+        "PPG": 2.273
+       }
+      },
+      "away": {
+       "name": "Eyüpspor",
+       "att": 0.548,
+       "def": 1.375,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Super Lig",
+       "form": {
+        "pts": 0,
+        "max": 15,
+        "seq": "LLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 36,
+        "W": 15,
+        "D": 8,
+        "L": 13,
+        "GF": 52,
+        "GA": 47,
+        "GD": 5,
+        "Pts": 53,
+        "PPG": 1.472
+       },
+       "now": {
+        "P": 11,
+        "W": 1,
+        "D": 0,
+        "L": 10,
+        "GF": 3,
+        "GA": 30,
+        "GD": -27,
+        "Pts": 3,
+        "PPG": 0.273
+       }
+      },
+      "p": {
+       "h": 0.8609,
+       "d": 0.1052,
+       "a": 0.0339
+      },
+      "xg": [
+       2.93,
+       0.47
+      ],
+      "btts": 0.4658,
+      "over25": 0.5757,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.8609,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8211,
+        0.1179,
+        0.061
+       ],
+       "best": [
+        1.14,
+        8.0,
+        17.0
+       ],
+       "avg": [
+        1.14,
+        7.91,
+        15.29
+       ],
+       "ev": [
+        -0.0186,
+        -0.1584,
+        -0.4237
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 2,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8397,
+       "n": 131,
+       "cumHit": 0.8397,
+       "cumN": 131,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.8397,
+     "n": 131,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1052,
+     "multOnly": false,
+     "odds": 1.14,
+     "best": 1.14,
+     "books": 10,
+     "opp": 15.29,
+     "draw": 7.91,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.12,
+      "Bet365": 1.14,
+      "Betfair": 1.13,
+      "BetVictor": 1.12
+     },
+     "margin": 1.0721,
+     "pricedAt": "2026-11-19T15:18:55Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.8772,
+     "pTested": 0.8397,
+     "fair": 0.8182,
+     "edge": -0.0673,
+     "basis": "model",
+     "firstOdds": 1.14,
+     "lastOdds": 1.11,
+     "lastBest": 1.11,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Chicago Bears v New Orleans Saints",
+     "home": "Chicago Bears",
+     "away": "New Orleans Saints",
+     "pick": "Chicago Bears",
+     "comp": "NFL",
+     "when": "2026-11-22T18:00Z",
+     "date": "2026-11-22",
+     "id": "401873071",
+     "pModel": 0.8298,
+     "p": 0.8298,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873071",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T18:00Z",
+      "home": "Chicago Bears",
+      "away": "New Orleans Saints",
+      "neutral": false,
+      "pHome": 0.8298,
+      "pick": "Chicago Bears",
+      "confidence": 0.8298,
+      "tier": "Strong",
+      "eloH": 1625,
+      "eloA": 1399,
+      "gamesH": 62,
+      "gamesA": 60,
+      "hfa": 50,
+      "eloDiff": 275.2,
+      "line": {
+       "spread": -11.5,
+       "total": 48.5,
+       "mlH": -594.0,
+       "mlA": 443.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "27-24",
+        "opp": "Tampa Bay Buccaneers",
+        "home": true,
+        "date": "2026-11-09"
+       },
+       {
+        "r": "W",
+        "score": "34-17",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "30-24",
+        "opp": "New England Patriots",
+        "home": true,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "31-23",
+        "opp": "Atlanta Falcons",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "7-31",
+        "opp": "Green Bay Packers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "17-20",
+        "opp": "Carolina Panthers",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "23-22",
+        "opp": "Cleveland Browns",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "10-16",
+        "opp": "Pittsburgh Steelers",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "34-27",
+        "opp": "New York Giants",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "13-23",
+        "opp": "Minnesota Vikings",
+        "home": true,
+        "date": "2026-10-11"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-10-19",
+        "home": "Chicago Bears",
+        "away": "New Orleans Saints",
+        "score": "26-14"
+       },
+       {
+        "date": "2023-11-05",
+        "home": "New Orleans Saints",
+        "away": "Chicago Bears",
+        "score": "24-17"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.17,
+     "margin": 1.0389,
+     "opp": 5.43,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-19T16:49:11Z",
+     "implied": 0.8547,
+     "pTested": 0.8065,
+     "fair": 0.8227,
+     "edge": -0.0564,
+     "basis": "model",
+     "firstOdds": 1.17,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Kansas City Chiefs v Arizona Cardinals",
+     "home": "Kansas City Chiefs",
+     "away": "Arizona Cardinals",
+     "pick": "Kansas City Chiefs",
+     "comp": "NFL",
+     "when": "2026-11-22T18:00Z",
+     "date": "2026-11-22",
+     "id": "401873067",
+     "pModel": 0.8207,
+     "p": 0.8207,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873067",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T18:00Z",
+      "home": "Kansas City Chiefs",
+      "away": "Arizona Cardinals",
+      "neutral": false,
+      "pHome": 0.8207,
+      "pick": "Kansas City Chiefs",
+      "confidence": 0.8207,
+      "tier": "Strong",
+      "eloH": 1583,
+      "eloA": 1368,
+      "gamesH": 67,
+      "gamesA": 61,
+      "hfa": 50,
+      "eloDiff": 264.3,
+      "line": {
+       "spread": -15.5,
+       "total": 40.5,
+       "mlH": -1400.0,
+       "mlA": 830.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "35-13",
+        "opp": "Atlanta Falcons",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "35-12",
+        "opp": "New York Jets",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "24-28",
+        "opp": "Denver Broncos",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "3-20",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-10-26"
+       },
+       {
+        "r": "W",
+        "score": "22-6",
+        "opp": "Los Angeles Chargers",
+        "home": true,
+        "date": "2026-10-18"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "6-34",
+        "opp": "Los Angeles Rams",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "3-17",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "33-30",
+        "opp": "Dallas Cowboys",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "16-30",
+        "opp": "Denver Broncos",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "18-16",
+        "opp": "Los Angeles Rams",
+        "home": false,
+        "date": "2026-10-18"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 7,
+       "d": 0
+      },
+      "h2h": [],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.07,
+     "margin": 1.0421,
+     "opp": 9.3,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-19T16:49:11Z",
+     "implied": 0.9346,
+     "pTested": 0.8065,
+     "fair": 0.8968,
+     "edge": -0.137,
+     "basis": "model",
+     "firstOdds": 1.07,
+     "lastOdds": 1.07,
+     "lastBest": 1.07,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Denver Broncos v Las Vegas Raiders",
+     "home": "Denver Broncos",
+     "away": "Las Vegas Raiders",
+     "pick": "Denver Broncos",
+     "comp": "NFL",
+     "when": "2026-11-22T21:25Z",
+     "date": "2026-11-22",
+     "id": "401873075",
+     "pModel": 0.8484,
+     "p": 0.8484,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873075",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T21:25Z",
+      "home": "Denver Broncos",
+      "away": "Las Vegas Raiders",
+      "neutral": false,
+      "pHome": 0.8484,
+      "pick": "Denver Broncos",
+      "confidence": 0.8484,
+      "tier": "Strong",
+      "eloH": 1643,
+      "eloA": 1393,
+      "gamesH": 63,
+      "gamesA": 61,
+      "hfa": 50,
+      "eloDiff": 299.2,
+      "line": {
+       "spread": -10.0,
+       "total": 40.5,
+       "mlH": -570.0,
+       "mlA": 428.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "26-21",
+        "opp": "Carolina Panthers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "28-24",
+        "opp": "Kansas City Chiefs",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "W",
+        "score": "30-16",
+        "opp": "Arizona Cardinals",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "17-14",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-10-16"
+       },
+       {
+        "r": "W",
+        "score": "23-17",
+        "opp": "Los Angeles Chargers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "13-21",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "17-38",
+        "opp": "San Francisco 49ers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "38-33",
+        "opp": "New York Jets",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "21-35",
+        "opp": "Los Angeles Rams",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "30-33",
+        "opp": "Buffalo Bills",
+        "home": true,
+        "date": "2026-10-18"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-12-07",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "17-24"
+       },
+       {
+        "date": "2025-11-07",
+        "home": "Denver Broncos",
+        "away": "Las Vegas Raiders",
+        "score": "10-7"
+       },
+       {
+        "date": "2024-11-24",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "19-29"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.18,
+     "margin": 1.0369,
+     "opp": 5.28,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-19T16:49:11Z",
+     "implied": 0.8475,
+     "pTested": 0.8065,
+     "fair": 0.8173,
+     "edge": -0.0483,
+     "basis": "model",
+     "firstOdds": 1.18,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    }
+   ],
+   "tested": 0.3737,
+   "bestOdds": 2.24,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-19T16:49:04Z",
+   "checked": "2026-11-19T16:49:04Z",
+   "lockAt": "2026-11-22T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-22T15:14:13Z"
+  },
+  {
+   "name": "List 2x",
+   "risk": "On trial: the list's picks, 1.15+",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.24,
+   "p": 0.4142,
+   "pFair": 0.336,
+   "implied": 0.4466,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 2,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Pennarossa v Tre Penne",
+     "home": "Pennarossa",
+     "away": "Tre Penne",
+     "side": "a",
+     "pick": "Tre Penne",
+     "code": "af.404",
+     "comp": "Campionato",
+     "country": "San Marino",
+     "when": "2026-11-22T14:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7754,
+     "p": 0.7754,
+     "fx": {
+      "u21Side": false,
+      "league": "af.404",
+      "leagueName": "Campionato",
+      "short": "CAM",
+      "country": "San Marino",
+      "iso": "",
+      "tier": 2,
+      "order": 551,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "14:00",
+      "kickoff": "2026-11-22T14:00:00Z",
+      "home": {
+       "name": "Pennarossa",
+       "att": 0.886,
+       "def": 1.622,
+       "played": 8,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "WLDDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 31,
+        "W": 8,
+        "D": 8,
+        "L": 15,
+        "GF": 29,
+        "GA": 56,
+        "GD": -27,
+        "Pts": 32,
+        "PPG": 1.032
+       },
+       "now": {
+        "P": 8,
+        "W": 1,
+        "D": 2,
+        "L": 5,
+        "GF": 11,
+        "GA": 25,
+        "GD": -14,
+        "Pts": 5,
+        "PPG": 0.625
+       }
+      },
+      "away": {
+       "name": "Tre Penne",
+       "att": 1.361,
+       "def": 0.511,
+       "played": 8,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WWDDW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 35,
+        "W": 22,
+        "D": 10,
+        "L": 3,
+        "GF": 75,
+        "GA": 21,
+        "GD": 54,
+        "Pts": 76,
+        "PPG": 2.171
+       },
+       "now": {
+        "P": 8,
+        "W": 6,
+        "D": 2,
+        "L": 0,
+        "GF": 15,
+        "GA": 3,
+        "GD": 12,
+        "Pts": 20,
+        "PPG": 2.5
+       }
+      },
+      "p": {
+       "h": 0.0761,
+       "d": 0.1485,
+       "a": 0.7754
+      },
+      "xg": [
+       0.73,
+       2.71
+      ],
+      "btts": 0.5179,
+      "over25": 0.5788,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.7754,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.0966,
+        0.1816,
+        0.7218
+       ],
+       "best": [
+        8.0,
+        5.0,
+        1.27
+       ],
+       "avg": [
+        9.33,
+        4.96,
+        1.25
+       ],
+       "ev": [
+        -0.3912,
+        -0.2575,
+        -0.0152
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 6,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1485,
+     "multOnly": false,
+     "odds": 1.25,
+     "best": 1.27,
+     "books": 5,
+     "opp": 9.33,
+     "draw": 4.96,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.27
+     },
+     "margin": 1.1101,
+     "pricedAt": "2026-11-21T11:07:23Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.8,
+     "pTested": 0.7754,
+     "fair": 0.7207,
+     "edge": -0.0991,
+     "basis": "model",
+     "firstOdds": 1.25
+    },
+    {
+     "sport": "football",
+     "event": "Beerschot VA v KRC Genk II",
+     "home": "Beerschot VA",
+     "away": "KRC Genk II",
+     "side": "h",
+     "pick": "Beerschot VA",
+     "code": "af.145",
+     "comp": "Challenger Pro League",
+     "country": "Belgium",
+     "when": "2026-11-22T15:00:00Z",
+     "date": "2026-11-22",
+     "pModel": 0.7587,
+     "p": 0.7587,
+     "fx": {
+      "u21Side": false,
+      "league": "af.145",
+      "leagueName": "Challenger Pro League",
+      "short": "CHA",
+      "country": "Belgium",
+      "iso": "bel",
+      "tier": 2,
+      "order": 429,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-22",
+      "time": "15:00",
+      "kickoff": "2026-11-22T15:00:00Z",
+      "home": {
+       "name": "Beerschot VA",
+       "att": 1.331,
+       "def": 0.682,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 19,
+        "D": 7,
+        "L": 6,
+        "GF": 52,
+        "GA": 31,
+        "GD": 21,
+        "Pts": 64,
+        "PPG": 2.0
+       },
+       "now": {
+        "P": 10,
+        "W": 9,
+        "D": 0,
+        "L": 1,
+        "GF": 25,
+        "GA": 8,
+        "GD": 17,
+        "Pts": 27,
+        "PPG": 2.7
+       }
+      },
+      "away": {
+       "name": "KRC Genk II",
+       "att": 0.937,
+       "def": 1.15,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Challenger Pro League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DLDDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 7,
+        "D": 10,
+        "L": 15,
+        "GF": 42,
+        "GA": 59,
+        "GD": -17,
+        "Pts": 31,
+        "PPG": 0.969
+       },
+       "now": {
+        "P": 10,
+        "W": 2,
+        "D": 4,
+        "L": 4,
+        "GF": 14,
+        "GA": 17,
+        "GD": -3,
+        "Pts": 10,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7587,
+       "d": 0.1563,
+       "a": 0.0849
+      },
+      "xg": [
+       2.65,
+       0.76
+      ],
+      "btts": 0.5238,
+      "over25": 0.5776,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7587,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6903,
+        0.1763,
+        0.1334
+       ],
+       "best": [
+        1.33,
+        5.0,
+        7.0
+       ],
+       "avg": [
+        1.32,
+        5.15,
+        6.81
+       ],
+       "ev": [
+        0.0091,
+        -0.2185,
+        -0.4057
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 10,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1563,
+     "multOnly": false,
+     "odds": 1.32,
+     "best": 1.33,
+     "books": 9,
+     "opp": 6.81,
+     "draw": 5.15,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.3,
+      "Bet365": 1.33,
+      "Betfair": 1.3
+     },
+     "margin": 1.1008,
+     "pricedAt": "2026-11-21T11:07:23Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7576,
+     "pTested": 0.7587,
+     "fair": 0.6882,
+     "edge": -0.0916,
+     "basis": "model",
+     "firstOdds": 1.32
+    },
+    {
+     "sport": "nfl",
+     "event": "Chicago Bears v New Orleans Saints",
+     "home": "Chicago Bears",
+     "away": "New Orleans Saints",
+     "pick": "Chicago Bears",
+     "comp": "NFL",
+     "when": "2026-11-22T18:00Z",
+     "date": "2026-11-22",
+     "id": "401873071",
+     "pModel": 0.8298,
+     "p": 0.8298,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873071",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T18:00Z",
+      "home": "Chicago Bears",
+      "away": "New Orleans Saints",
+      "neutral": false,
+      "pHome": 0.8298,
+      "pick": "Chicago Bears",
+      "confidence": 0.8298,
+      "tier": "Strong",
+      "eloH": 1625,
+      "eloA": 1399,
+      "gamesH": 62,
+      "gamesA": 60,
+      "hfa": 50,
+      "eloDiff": 275.2,
+      "line": {
+       "spread": -11.5,
+       "total": 48.5,
+       "mlH": -610.0,
+       "mlA": 449.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "27-24",
+        "opp": "Tampa Bay Buccaneers",
+        "home": true,
+        "date": "2026-11-09"
+       },
+       {
+        "r": "W",
+        "score": "34-17",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-11-03"
+       },
+       {
+        "r": "W",
+        "score": "30-24",
+        "opp": "New England Patriots",
+        "home": true,
+        "date": "2026-10-23"
+       },
+       {
+        "r": "W",
+        "score": "31-23",
+        "opp": "Atlanta Falcons",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "7-31",
+        "opp": "Green Bay Packers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "17-20",
+        "opp": "Carolina Panthers",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "23-22",
+        "opp": "Cleveland Browns",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "10-16",
+        "opp": "Pittsburgh Steelers",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "34-27",
+        "opp": "New York Giants",
+        "home": false,
+        "date": "2026-10-18"
+       },
+       {
+        "r": "L",
+        "score": "13-23",
+        "opp": "Minnesota Vikings",
+        "home": true,
+        "date": "2026-10-11"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 3,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-10-19",
+        "home": "Chicago Bears",
+        "away": "New Orleans Saints",
+        "score": "26-14"
+       },
+       {
+        "date": "2023-11-05",
+        "home": "New Orleans Saints",
+        "away": "Chicago Bears",
+        "score": "24-17"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.16,
+     "margin": 1.0442,
+     "opp": 5.49,
+     "src": "ESPN, DraftKings moneyline",
+     "ukChecked": true,
+     "bookOdds": {
+      "Paddy Power": 1.14,
+      "888sport": 1.12,
+      "William Hill": 1.12,
+      "Ladbrokes": 1.15,
+      "Coral": 1.15,
+      "Betway": 1.17,
+      "BetVictor": 1.14,
+      "Betfair": 1.18
+     },
+     "pricedAt": "2026-11-21T11:09:22Z",
+     "implied": 0.8621,
+     "pTested": 0.8065,
+     "fair": 0.8256,
+     "edge": -0.0645,
+     "basis": "model",
+     "firstOdds": 1.16,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Denver Broncos v Las Vegas Raiders",
+     "home": "Denver Broncos",
+     "away": "Las Vegas Raiders",
+     "pick": "Denver Broncos",
+     "comp": "NFL",
+     "when": "2026-11-22T21:25Z",
+     "date": "2026-11-22",
+     "id": "401873075",
+     "pModel": 0.8484,
+     "p": 0.8484,
+     "hit": 0.8065,
+     "n": 31,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873075",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-22T21:25Z",
+      "home": "Denver Broncos",
+      "away": "Las Vegas Raiders",
+      "neutral": false,
+      "pHome": 0.8484,
+      "pick": "Denver Broncos",
+      "confidence": 0.8484,
+      "tier": "Strong",
+      "eloH": 1643,
+      "eloA": 1393,
+      "gamesH": 63,
+      "gamesA": 61,
+      "hfa": 50,
+      "eloDiff": 299.2,
+      "line": {
+       "spread": -10.5,
+       "total": 40.5,
+       "mlH": -581.0,
+       "mlA": 435.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8065,
+       "n": 31,
+       "cumHit": 0.8065,
+       "cumN": 31
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "26-21",
+        "opp": "Carolina Panthers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "28-24",
+        "opp": "Kansas City Chiefs",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "W",
+        "score": "30-16",
+        "opp": "Arizona Cardinals",
+        "home": false,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "W",
+        "score": "17-14",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-10-16"
+       },
+       {
+        "r": "W",
+        "score": "23-17",
+        "opp": "Los Angeles Chargers",
+        "home": false,
+        "date": "2026-10-11"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "13-21",
+        "opp": "Seattle Seahawks",
+        "home": true,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "L",
+        "score": "17-38",
+        "opp": "San Francisco 49ers",
+        "home": false,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "W",
+        "score": "38-33",
+        "opp": "New York Jets",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "21-35",
+        "opp": "Los Angeles Rams",
+        "home": true,
+        "date": "2026-10-25"
+       },
+       {
+        "r": "L",
+        "score": "30-33",
+        "opp": "Buffalo Bills",
+        "home": true,
+        "date": "2026-10-18"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 2,
+       "d": 0
+      },
+      "recordA": {
+       "w": 4,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-12-07",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "17-24"
+       },
+       {
+        "date": "2025-11-07",
+        "home": "Denver Broncos",
+        "away": "Las Vegas Raiders",
+        "score": "10-7"
+       },
+       {
+        "date": "2024-11-24",
+        "home": "Las Vegas Raiders",
+        "away": "Denver Broncos",
+        "score": "19-29"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.17,
+     "margin": 1.0416,
+     "opp": 5.35,
+     "src": "ESPN, DraftKings moneyline",
+     "ukChecked": true,
+     "bookOdds": {
+      "Paddy Power": 1.17,
+      "888sport": 1.15,
+      "Coral": 1.17,
+      "Ladbrokes": 1.17,
+      "William Hill": 1.15,
+      "Betway": 1.17,
+      "BetVictor": 1.15,
+      "Betfair": 1.2
+     },
+     "pricedAt": "2026-11-21T11:09:22Z",
+     "implied": 0.8547,
+     "pTested": 0.8065,
+     "fair": 0.8206,
+     "edge": -0.0564,
+     "basis": "model",
+     "firstOdds": 1.17,
+     "lastOdds": 1.16,
+     "lastBest": 1.16,
+     "lastAt": "2026-11-22T15:14:13Z"
+    }
+   ],
+   "tested": 0.3451,
+   "bestOdds": 2.29,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-21T11:08:17Z",
+   "checked": "2026-11-21T11:08:17Z",
+   "lockAt": "2026-11-22T14:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-22T15:14:13Z"
+  }
+ ]
+}
