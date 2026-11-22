@@ -1145,6 +1145,11 @@ button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:p
 .et-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:8px;max-width:52px}
 .et-dots i{width:8px;height:8px;border-radius:50%}
 .et-dots i.w{background:var(--edge)} .et-dots i.l{background:var(--away)}
+.et-dots i.v{background:var(--mute)}
+.skt{margin-top:18px}
+.skt .et-area{fill:var(--ink);opacity:.05}
+.et-t.rep{background:transparent;border-style:dashed}
+.et-day .skt-legs li{grid-template-columns:minmax(0,1fr) auto}
 .et-u{font:600 11.5px var(--f-num)}
 .et-u.pos,.et-day h5 .pos{color:var(--edge)} .et-u.neg,.et-day h5 .neg{color:var(--away)}
 .et-day{margin-top:10px}
@@ -6150,8 +6155,102 @@ function slipSection(date){
     <details class="how"><summary>Landed against the price, by sport and band</summary>
       <table class="tb-bands"><thead><tr><th>Sport</th><th>Price</th><th>Picks</th><th>Landed</th><th>Implied</th><th>Return a leg</th></tr></thead><tbody>${bandRows}</tbody></table>
       <p class="tb-snap">Graded picks at 62%+ with a pre-start price on the results ledger; return at the price recorded (William Hill's where it had one, else the last average). A tally of what happened, never fitted.</p></details>
+    ${slipTracker()}
   </section>`;
 }
+
+/* 22 Nov 2026 (Douglas: "I like the slip section in bets tab - but is there a
+   visual tracker for performance?"): the slip's settled record as a running
+   profit line, one unit on every slip, beside the line it was expected to
+   make (each slip's tested chance times its price, less the stake), with a
+   strip of slip days to tap through. Live slips from slip.json record.recent;
+   days before the slip went live (SLIP.from) are the rule walked forward over
+   the ledger (replayDays), marked. Reuses the Edge tracker's look. Display
+   only; nothing here is fitted. */
+const SKT = {range: "all", day: null};
+function slipTracker(){
+  if(!SLIP) return "";
+  const rec = (SLIP.record && SLIP.record.recent) || [];
+  const live = rec.map(r => ({d: r.date, st: r.state, price: r.price, ret: r.ret, chance: r.chance, legs: r.legs || [], live: true}));
+  const seen = new Set(live.map(r => r.d));
+  const rep = (SLIP.replayDays || []).filter(r => ["won", "lost", "void"].includes(r.state) && !seen.has(r.date))
+    .map(r => ({d: r.date, st: r.state, price: r.price, ret: r.ret, chance: r.chance, legs: r.legs || [], live: false}));
+  const all = rep.concat(live).sort((a, b) => a.d.localeCompare(b.d));
+  if(!all.length) return `<div class="et" id="skt"><div class="et-head"><h4>Tracker</h4></div>
+    <p class="et-note">The tracker fills once the first slip is settled, the morning after its last leg plays.</p></div>`;
+  const days = SKT.range === "14" ? all.filter(d => d.d >= isoAdd(all[all.length - 1].d, -13)) : SKT.range === "live" ? all.filter(d => d.live) : all;
+  const shown = days.length ? days : all;
+  const day = shown.find(d => d.d === SKT.day) || shown[shown.length - 1];
+  const sign = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(2);
+  const signP = x => (x >= 0 ? "+" : "\u2212") + Math.abs(Math.round(x * 1000) / 10).toFixed(1) + "%";
+  const net = d => (d.ret == null ? 0 : d.ret - 1);
+  const exp = d => d.chance != null && d.st !== "void" ? d.chance * d.price - 1 : 0;
+  let cn = 0, ce = 0;
+  const pts = [{n: 0, e: 0}].concat(shown.map(d => ({d: d.d, n: (cn += net(d)), e: (ce += exp(d)), live: d.live})));
+  const settled = shown.filter(d => d.st !== "void"), won = settled.filter(d => d.st === "won").length;
+  const expWon = settled.reduce((a, d) => a + (d.chance || 0), 0);
+  const stat = (k, v, sub, cls) => `<div class="et-s"><span>${k}</span><b${cls ? ` class="${cls}"` : ""}>${v}</b><small>${sub}</small></div>`;
+  const W = 600, H = 160, lo = Math.min(0, ...pts.map(p => Math.min(p.n, p.e))), hi = Math.max(0, ...pts.map(p => Math.max(p.n, p.e)));
+  const pad = Math.max(1, (hi - lo) * 0.08), y0 = lo - pad, y1 = hi + pad;
+  const X = i => i / Math.max(1, pts.length - 1) * W, Y = v => H - (v - y0) / (y1 - y0) * H, yp = v => (Y(v) / H * 100).toFixed(2) + "%";
+  const line = k => pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
+  const area = `${line("n")}L${W},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z`;
+  const step = (hi - lo) > 24 ? 10 : (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
+  const ticks = []; for(let v = Math.ceil(y0 / step) * step; v <= y1; v += step) ticks.push(v);
+  const liveAt = pts.findIndex(p => p.live);
+  const liveX = liveAt > 1 ? (X(liveAt - 1) + X(liveAt)) / 2 : null;
+  const cols = shown.map((d, i) => `<button class="et-col${d.d === day.d ? " on" : ""}" data-skt-day="${d.d}" style="left:${(X(i + 1) / W * 100).toFixed(2)}%;width:${(100 / Math.max(1, pts.length - 1)).toFixed(2)}%" aria-label="${fmtDay(d.d)}"></button>`).join("");
+  const selI = shown.indexOf(day) + 1, last = pts[pts.length - 1];
+  const chart = `<div class="et-chart" role="img" aria-label="Running profit, one unit a slip: ${sign(last.n)} units, against ${sign(last.e)} expected">
+      <div class="et-plot">
+        ${ticks.map(v => `<i class="et-tick${v === 0 ? " zero" : ""}" style="top:${yp(v)}"><em>${v > 0 ? "+" : v < 0 ? "\u2212" : ""}${Math.abs(v)}</em></i>`).join("")}
+        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
+          <path class="et-area" d="${area}"/>
+          <path class="et-avg" d="${line("e")}" vector-effect="non-scaling-stroke"/>
+          <path class="et-best" d="${line("n")}" vector-effect="non-scaling-stroke"/>
+        </svg>
+        ${liveX != null ? `<i class="et-live" style="left:${(liveX / W * 100).toFixed(2)}%"><em>Live</em></i>` : ""}
+        <i class="et-dot" style="left:${(X(selI) / W * 100).toFixed(2)}%;top:${yp(pts[selI].n)}"></i>
+        ${cols}
+      </div>
+      <div class="et-x"><span>${fmtShort(shown[0].d)}</span><span>${fmtShort(shown[shown.length - 1].d)}</span></div>
+    </div>`;
+  const word = st => st === "won" ? "Won" : st === "lost" ? "Lost" : "Void";
+  const tiles = shown.map(d => { const u = net(d);
+    return `<button class="et-t${d.d === day.d ? " on" : ""}${d.live ? "" : " rep"}" data-skt-day="${d.d}"><span class="et-d">${new Date(d.d + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"})}<b>${new Date(d.d + "T12:00:00").getDate()}</b></span>
+      <span class="et-dots"><i class="${d.st === "won" ? "w" : d.st === "lost" ? "l" : "v"}"></i></span>
+      <span class="et-u ${u >= 0 ? "pos" : "neg"}">${sign(u)}</span></button>`; }).join("");
+  const legRow = s => { const m = String(s).match(/^(.*)\s(\d+(?:\.\d+)?)$/);
+    return `<li><span class="et-m"><b>${ogEsc(m ? m[1] : s)}</b></span><span class="et-p">${m ? Number(m[2]).toFixed(2) : ""}</span></li>`; };
+  const dn = net(day);
+  return `<div class="et skt" id="skt">
+    <div class="et-head"><h4>Tracker <small>one unit on every slip</small></h4>
+      <div class="et-seg" role="group" aria-label="Range"><button data-skt-range="all" class="${SKT.range === "all" ? "on" : ""}">All</button><button data-skt-range="live" class="${SKT.range === "live" ? "on" : ""}">Live only</button><button data-skt-range="14" class="${SKT.range === "14" ? "on" : ""}">Last 14 days</button></div></div>
+    <div class="et-stats">
+      ${stat("Slips won", `${won}/${settled.length}`, `${expWon.toFixed(1)} expected`)}
+      ${stat("Profit", sign(last.n), `${signP(last.n / Math.max(1, shown.length))} a slip`, last.n >= 0 ? "pos" : "neg")}
+      ${stat("Expected", sign(last.e), "at each slip's tested chance")}
+      ${stat("Live slips", shown.filter(d => d.live).length, `${shown.filter(d => !d.live).length} replayed`)}
+    </div>
+    ${chart}
+    <p class="et-key"><i class="best"></i>profit <i class="avg"></i>expected · each step a slip${liveX != null ? " · left of Live: the rule walked forward over the results ledger, never published" : ""}</p>
+    <div class="et-strip" id="sktStrip">${tiles}</div>
+    <div class="et-day"><h5>${fmtDay(day.d)} · ${word(day.st)} at ${Number(day.price).toFixed(2)}${day.live ? "" : " · replayed"} <span class="${dn >= 0 ? "pos" : "neg"}">${sign(dn)} units</span></h5><ol class="skt-legs">${day.legs.map(legRow).join("")}</ol></div>
+    <p class="et-note">${settled.length < 30 ? `<b>Too few to read.</b> ${settled.length} settled slip${settled.length === 1 ? "" : "s"}: one win moves the line by two or three units. ` : ""}The slip is judged at ${((SLIP.record || {}).gate || {}).need ? SLIP.record.gate.need.n : 100} settled slips, not before.</p>
+  </div>`;
+}
+function sktDraw(){
+  const el = document.getElementById("skt"); if(!el) return;
+  el.outerHTML = slipTracker();
+  const s = document.getElementById("sktStrip"), on = s && s.querySelector(".on");
+  if(s && on) s.scrollLeft = Math.max(0, on.offsetLeft - s.offsetLeft - s.clientWidth + on.offsetWidth + 8);
+}
+document.addEventListener("click", e => {
+  const r = e.target.closest("[data-skt-range]");
+  if(r){ SKT.range = r.dataset.sktRange; SKT.day = null; sktDraw(); return; }
+  const d = e.target.closest("[data-skt-day]");
+  if(d){ SKT.day = d.dataset.sktDay; sktDraw(); }
+});
 
 function edgeSection(date){
   const games = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge)

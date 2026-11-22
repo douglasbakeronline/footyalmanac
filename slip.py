@@ -67,6 +67,12 @@ CAND_MAX = 30                  # strongest candidates searched (by chance x pric
 GATE_N, GATE_P = 100, 0.10     # the pre-registered gate
 
 
+# 22 Nov 2026 (Douglas: "is there a visual tracker for performance?"): the
+# page's tracker draws every settled slip, so slip.json keeps them all (a
+# slip a day at most: a year is 365 short rows).
+RECENT_KEEP = 400
+REPLAY_KEEP = 400
+
 def _load(path, default=None):
     try:
         if path.endswith(".gz"):
@@ -347,18 +353,20 @@ def build(now=None, here=HERE):
             if g["state"] in ("won", "lost", "void"):
                 settled.append({"date": day, "ret": g["ret"], "state": g["state"]})
                 recent.append({"date": day, "state": g["state"], "price": d["slip"]["price"], "ev": d["slip"]["ev"],
+                               "chance": d["slip"].get("chance"),
                                "ret": g["ret"], "legs": [f"{l['pick']} {l['price']:.2f}" for l in d["slip"]["legs"]]})
         if day >= (today - timedelta(days=GLANCE_DAYS)).isoformat():
             days_out.append(d)
     rp = replay(rows, LIVE_FROM)
     out = {"generated": stamp, "rule": RULE, "book": BOOK, "today": today.isoformat(), "from": LIVE_FROM,
            "replay": {k: v for k, v in rp.items() if k != "days"},
-           "replayDays": [d for d in rp["days"] if d.get("price")][-20:],
+           # 22 Nov 2026: every replayed slip, for the tracker's line (was the last 20)
+           "replayDays": [d for d in rp["days"] if d.get("price")][-REPLAY_KEEP:],
            "rule_text": {"confMin": CONF_MIN, "legRetMin": LEG_RET_MIN, "aboveMax": ABOVE_MAX, "target": TARGET,
                          "legs": LEGS, "compMax": COMP_MAX, "ratesMinN": RATES_MIN_N, "evMin": EV_MIN},
            "days": days_out, "rates": rates,
            "record": {"gate": gate(settled), "won": sum(s["state"] == "won" for s in settled),
-                      "lost": sum(s["state"] == "lost" for s in settled), "recent": recent[-30:][::-1]}}
+                      "lost": sum(s["state"] == "lost" for s in settled), "recent": recent[-RECENT_KEEP:][::-1]}}
     with open(os.path.join(here, "slip.json"), "w", encoding="utf-8") as f:
         json.dump(out, f, separators=(",", ":"), ensure_ascii=False)
     with open(os.path.join(here, "slip.js"), "w", encoding="utf-8") as f:
