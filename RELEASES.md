@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-rescheduled-postponed: postponed games back on the board when they are replayed (tag pending)
+
+**What changed for a reader.** A postponed game in La Liga, the Süper Lig, Brazil's Serie A, the Premier League, the Championship or Serie A now reaches the board, the Daily List and the Card on its new date. Before, openfootball kept it under its first date and it never came back.
+**Evidence.** The 22 Nov 11:05 UTC build's unplayed warning named Rayo Vallecano v Athletic Club (10 Oct) and Chapecoense v Vasco (29 Jul). `build.fill_untimed` only read rows up to 3 days back. These leagues play each ordered pair once a season, so an older unplayed row whose pair API-Football lists exactly once in the window is the same game rescheduled.
+**Tested.** Five cases in `tests/test_untimed.py` (moved; listed before the window, relisted by the source, listed twice, played: all left alone); nametest and the suite pass. No API-Football key in the sandbox: the first CI build is the live check.
+**Files.** `build.py` (`fill_untimed`), `tests/test_untimed.py`, `claude/rescheduled-postponed-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Leagues outside `AF_UNTIMED` / `AF_RETIME`, any model constant, Card rule, record or grade.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-slip-tracker: a performance tracker under the slip (tag pending)
 
 **What changed for a reader.** The slip on the Bets tab now ends with a tracker like the Edge picks one: running profit at one unit a slip against the line its tested chances expected, slips won v expected, All / Live only / Last 14 days, and a strip of slip days to tap for each day's legs. Days before the slip went live are its rule walked forward over the results ledger, marked and dashed.
