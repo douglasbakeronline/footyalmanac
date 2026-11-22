@@ -86,6 +86,35 @@ class TestDecisions(unittest.TestCase):
         self.assertIn("| waiting |", row(out, "The List long dropped"))
         self.assertIn("**fired**", row(out, "The Daily 2x's rule"))
 
+    def test_rule14_rows(self):
+        # 22 Nov 2026: from the record's live rule 14 the table reads rule 14 v
+        # rule 13 and rule 12, and the rows rule 14 settled become one line.
+        rec = {"cardLiveRule": 14, "cardLive": tally(3, 2, 1.2, 1.1, 6, 8.4),
+               "cardByRule": {"13": tally(4, 1, 1.5, -0.4)}}
+        rep = {"variants": {"rule13": {"vsLivePerDay": 0.52, "pWorse": 0.22, "legs": 102},
+                            "rule12": {"vsLivePerDay": -0.47, "pWorse": 0.74, "legs": 51},
+                            "tennis75": {"vsLivePerDay": 0.0, "pWorse": None, "legs": 18}}}
+        out = C.decisions_section(rec, rep, {}, today_="2026-11-22")
+        r = row(out, "Rule 14 (rule 8's constants)")
+        self.assertIn("2 of 3 won v 1.20 expected", r)
+        self.assertIn("`rule13` v live +0.52 a day, p(worse) 0.22, 102 legs", r)
+        self.assertIn("`rule12` v live -0.47 a day", r)
+        self.assertIn("**rule 13 ahead on the pool**", r)
+        self.assertIn("| waiting |", r)
+        self.assertFalse(any(l.startswith("| Rule 13 (the model alone)") for l in out))
+        self.assertFalse(any(l.startswith("| Tennis floor back") or l.startswith("| Core leagues only") for l in out))
+        self.assertTrue(any(l.startswith("Settled by rule 14") for l in out))
+        self.assertIn("Nothing due or fired", "".join(out))   # bold lead is not a due row
+        rep["variants"]["rule13"]["pWorse"] = 0.6
+        r = row(C.decisions_section(rec, rep, {}, today_="2026-11-22"), "Rule 14")
+        self.assertIn("rule 14 not behind on the pool", r)
+        self.assertIn("**due**", row(C.decisions_section(rec, rep, {}, today_="2026-11-30"), "Rule 14"))
+
+    def test_rule14_opposition_owner(self):
+        rep = {"variants": {"m7opp5": {"vsLivePerDay": -0.1, "pWorse": 0.6, "legs": 18}}}
+        r = row(C.decisions_section({"cardLiveRule": 14}, rep, {}, today_="2026-11-22"), "Opposition floor `m7opp5`")
+        self.assertIn("no Card rule change before the 30 Nov read", r)
+
 
 if __name__ == "__main__":
     unittest.main()

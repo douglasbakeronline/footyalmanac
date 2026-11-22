@@ -329,26 +329,50 @@ def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50
     fired = z is not None and _settled(k) >= floor_n and z <= floor_z
     row("The Card's floor line", f"{floor_n}+ settled groups, z {floor_z:g} or under", _tally(k),
         "**fired**" if fired else "waiting", "the page says so; the rule is Douglas's")
-    # 3. Rule 13 v rule 12 (claude/card-rule13-model-only-2026-11-17.md)
-    t13 = (rec.get("cardByRule") or {}).get("13")
-    due = days_left <= 0 or _settled(t13) >= 50
-    r12 = vs.get("rule12") or {}
-    lead = ""
-    if r12.get("pWorse") is not None:
-        lead = "; rule 12 ahead on the pool" if (r12.get("vsLivePerDay") or 0) > 0 and r12["pWorse"] <= 0.30 else "; rule 13 not behind on the pool"
-    row("Rule 13 (the model alone) v rule 12", f"{REVIEW_DAY} or 50 settled rule 13 groups; rule 12 ahead at p(worse) 0.30 or under",
-        f"{_tally(t13)}; {_pool(rep, 'rule12')}{lead}", "**due**" if due else "waiting", "Douglas (the switch was his)")
-    # 4. Tennis floor back to 75% (claude/tennis-floor-85-2026-11-11.md)
-    n_t = card_tennis_since(rec)
-    t75 = vs.get("tennis75") or {}
-    beat = t75.get("pWorse") is not None and (t75.get("vsLivePerDay") or 0) > 0 and t75["pWorse"] <= 0.30
-    row("Tennis floor back to 75%", "30 tennis Card legs under rule 10+, `tennis75` ahead at p(worse) 0.30 or under",
-        f"{n_t} tennis legs; {_pool(rep, 'tennis75')}", "**due**" if n_t >= 30 and beat else "waiting", "the next session")
-    # 5. Core leagues only again (claude/card-wider-leagues-2026-11-11.md)
-    mc = vs.get("m7core") or {}
-    beat = mc.get("pWorse") is not None and (mc.get("vsLivePerDay") or 0) > 0 and mc["pWorse"] <= 0.30
-    row("Core leagues only again", f"{REVIEW_DAY}, `m7core` ahead at p(worse) 0.30 or under", _pool(rep, "m7core"),
-        "**due**" if days_left <= 0 and beat else ("waiting (ahead)" if beat else "waiting"), "the 30 Nov review")
+    # 22 Nov 2026: the table read rule 13's decisions for three days after
+    # rule 14 (19 Nov) set rule 8's constants live: "Rule 13 v rule 12" asked
+    # about a rule no longer staked, and the tennis 75% and core-league rows
+    # waited on changes rule 14 had already made (their variants equal live).
+    # From the record's live rule (`cardLiveRule`) 14 on, the row is rule 14 v
+    # the rules it replaced, read on 30 Nov with no change before
+    # (claude/card-rule14-rule8-2026-11-19.md); the settled rows become a line.
+    live_rule = rec.get("cardLiveRule") or 0
+    settled_by14 = []
+    if live_rule >= 14:
+        t14 = rec.get("cardLive") if rec.get("cardLive") is not None else (rec.get("cardByRule") or {}).get(str(live_rule))
+        r13 = vs.get("rule13") or {}
+        lead = ""
+        if r13.get("pWorse") is not None:
+            ahead = (r13.get("vsLivePerDay") or 0) > 0 and r13["pWorse"] <= 0.30
+            lead = (f"; **rule 13 ahead on the pool** ({r13.get('legs', 0)} legs; on football-data, dropping the value demand was behind in all five seasons)"
+                    if ahead else "; rule 14 not behind on the pool")
+        row(f"Rule {live_rule} (rule 8's constants) v rule 13 and rule 12",
+            f"{REVIEW_DAY}, read beside `rule13` and `rule12` on the same days; no Card rule change before then",
+            f"{_tally(t14)}; {_pool(rep, 'rule13')}; {_pool(rep, 'rule12')}{lead}",
+            "**due**" if days_left <= 0 else "waiting", "Douglas (the switch was his)")
+        settled_by14 = ["Settled by rule 14 (19 Nov): tennis back at 75% and core leagues only, so `tennis75` and `m7core` "
+                        "equal live and their rows are retired (claude/card-rule14-rule8-2026-11-19.md)."]
+    else:
+        # 3. Rule 13 v rule 12 (claude/card-rule13-model-only-2026-11-17.md)
+        t13 = (rec.get("cardByRule") or {}).get("13")
+        due = days_left <= 0 or _settled(t13) >= 50
+        r12 = vs.get("rule12") or {}
+        lead = ""
+        if r12.get("pWorse") is not None:
+            lead = "; rule 12 ahead on the pool" if (r12.get("vsLivePerDay") or 0) > 0 and r12["pWorse"] <= 0.30 else "; rule 13 not behind on the pool"
+        row("Rule 13 (the model alone) v rule 12", f"{REVIEW_DAY} or 50 settled rule 13 groups; rule 12 ahead at p(worse) 0.30 or under",
+            f"{_tally(t13)}; {_pool(rep, 'rule12')}{lead}", "**due**" if due else "waiting", "Douglas (the switch was his)")
+        # 4. Tennis floor back to 75% (claude/tennis-floor-85-2026-11-11.md)
+        n_t = card_tennis_since(rec)
+        t75 = vs.get("tennis75") or {}
+        beat = t75.get("pWorse") is not None and (t75.get("vsLivePerDay") or 0) > 0 and t75["pWorse"] <= 0.30
+        row("Tennis floor back to 75%", "30 tennis Card legs under rule 10+, `tennis75` ahead at p(worse) 0.30 or under",
+            f"{n_t} tennis legs; {_pool(rep, 'tennis75')}", "**due**" if n_t >= 30 and beat else "waiting", "the next session")
+        # 5. Core leagues only again (claude/card-wider-leagues-2026-11-11.md)
+        mc = vs.get("m7core") or {}
+        beat = mc.get("pWorse") is not None and (mc.get("vsLivePerDay") or 0) > 0 and mc["pWorse"] <= 0.30
+        row("Core leagues only again", f"{REVIEW_DAY}, `m7core` ahead at p(worse) 0.30 or under", _pool(rep, "m7core"),
+            "**due**" if days_left <= 0 and beat else ("waiting (ahead)" if beat else "waiting"), "the 30 Nov review")
     # 6. The opposition floor again (claude/card-m7opp-2026-11-15.md, overtaken by rule 13)
     for v in ("m7opp5", "m7opp9"):
         r = vs.get(v) or {}
@@ -359,7 +383,8 @@ def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50
         fd_txt = (f"; football-data ahead in {sum(1 for _, x, _ in fd if fd_beats(x))} of {len(fd)} season(s)" if fd
                   else "; no football-data read on file")
         row(f"Opposition floor `{v}`", "beats live on both football-data seasons and the pool, 100+ legs", _pool(rep, v) + fd_txt,
-            "**due**" if pool and fd_ok else "waiting", "Douglas (rule 13 dropped it at his call)")
+            "**due**" if pool and fd_ok else "waiting",
+            "Douglas (no Card rule change before the 30 Nov read)" if live_rule >= 14 else "Douglas (rule 13 dropped it at his call)")
     # 7. The context veto (claude/context-check-2026-11-11.md)
     a = (rec.get("cardContext") or {}).get("against") or {}
     n = a.get("legs", 0)
@@ -383,7 +408,7 @@ def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50
     live = [r for r in rows if "**fired**" in r or "**due**" in r]
     tail = [f"**{len(live)} decision(s) due or fired: the next build session acts on each as its row says.**" if live
             else "Nothing due or fired; every trigger is copied from the note behind it."]
-    return head + rows + [""] + tail + [""]
+    return head + rows + [""] + tail + settled_by14 + [""]
 
 
 CHAIN_FROM = "2026-11-17"   # first full UK day of the briefing chain (16 Nov's morning predates it)
