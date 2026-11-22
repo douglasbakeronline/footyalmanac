@@ -160,3 +160,44 @@ class Pick(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class BeforeWindow(unittest.TestCase):
+    """22 Nov 2026: a round dated on its nominal Saturday (the Premier League's
+    21 Nov, Brazil's) whose games are played on the Sunday or Monday fell
+    before the window on the Sunday's build and never reached fill_untimed:
+    Liverpool v Manchester United (22 Nov 16:30), Hull v Brighton and Brentford
+    v Everton were off the board. An unplayed row up to `window` days before
+    the start now takes API-Football's date when that date is in the window."""
+    SUN = date(2026, 11, 22)
+
+    def test_nominal_saturday_moves_into_window(self):
+        rows = [row("Liverpool", "Manchester United", "2026-11-21", time="15:00"),
+                row("Brentford", "Everton", "2026-11-21", time="15:00")]
+        n, bad = B.fill_untimed(rows, [af("Liverpool", "Manchester United", "2026-11-22", "16:30"),
+                                       af("Brentford", "Everton", "2026-11-23", "20:00")],
+                                self.SUN, retime="eng")
+        self.assertEqual((n, bad), (2, []))
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-22", "16:30"))
+        self.assertEqual((rows[1]["date"], rows[1]["time"]), ("2026-11-23", "20:00"))
+
+    def test_untimed_league_before_window(self):
+        rows = [row("CA Paranaense", "Clube do Remo", "2026-11-21")]
+        n, _ = B.fill_untimed(rows, [af("Athletico Paranaense", "Remo", "2026-11-22", "19:00")], self.SUN)
+        self.assertEqual(n, 1)
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-22", "19:00"))
+
+    def test_before_window_played_day_left_alone(self):
+        # API-Football lists it before the start: played or postponed, not ours to move
+        rows = [row("Liverpool", "Manchester United", "2026-11-21", time="15:00")]
+        n, _ = B.fill_untimed(rows, [af("Liverpool", "Manchester United", "2026-11-21", "17:30")],
+                              self.SUN, retime="eng")
+        self.assertEqual(n, 0)
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-21", "15:00"))
+
+    def test_older_rows_untouched(self):
+        rows = [row("Liverpool", "Manchester United", "2026-11-18", time="15:00")]
+        n, _ = B.fill_untimed(rows, [af("Liverpool", "Manchester United", "2026-11-22", "16:30")],
+                              self.SUN, retime="eng")
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["date"], "2026-11-18")

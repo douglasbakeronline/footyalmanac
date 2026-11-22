@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-before-window-retime: Sunday's Premier League and Brazilian games back on the board (tag pending)
+
+**What changed for a reader.** A round openfootball dates on its nominal Saturday whose games are played on the Sunday or Monday now stays on the board on the Sunday's build. `build.fill_untimed` (the `AF_RETIME` and `AF_UNTIMED` leagues) also reads unplayed rows up to 3 days before the window and moves one to API-Football's date and time when that date is in the window; a row API-Football still lists before the window (played or postponed) is left alone.
+**Evidence.** The 22 Nov 07:05 UTC build warned of 52 unplayed fixtures dated before 22 Nov, among them en.1 Liverpool v Manchester United (22 Nov 16:30), Hull City v Brighton (22 Nov 14:00) and Brentford v Everton (23 Nov 20:00), and br.1 Paranaense v Remo and Botafogo v São Paulo. All five were on the 21 Nov archive with API-Football's real dates and none was on 22 Nov's: the rows are dated 21 Nov in openfootball, and `fill_untimed` only read rows dated from the start, so they were cut with the window before the retime could move them. Core-league games, so the Daily List and the Card lost them for the day.
+**Tested.** Four new cases in `tests/test_untimed.py` (nominal Saturday moved into the window, an untimed league's row, a row API-Football still lists before the window left alone, older rows untouched); nametest and the suite pass. The sandbox cannot reach API-Football, so the first CI build is the live check: its "untimed en.1" and "untimed br.1" counts should rise and the three Premier League games leave the unplayed warning.
+**Files.** `build.py`, `tests/test_untimed.py`, `claude/before-window-retime-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any model constant, Card rule, record or grade.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-round-date-results: a played match on its round's date is scored, not left on the board (tag pending)
 
 **What changed.** A La Liga or Süper Lig match played on Friday or Saturday, which openfootball dates on the round's Sunday, is now scored from ESPN on the Sunday build instead of waiting for the round date to pass. `build.fill_lagging` fills a pair's unplayed row dated up to `AHEAD_DAYS` (3) days into the build window from a result played before it, and re-dates the row to the day it was played; rows before the window still come first.
