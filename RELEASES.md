@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-calib: Calibration by band and sport, rerun (tag pending)
+
+**What changed:** a dated note only; nothing on the site moves.
+**Evidence:** `calibration_bands.py` on history (not `record.json`). Football check season 2,396 calls: 55%+ +6.6 [+3.2,+10.2], 62%+ +5.4 [+0.7,+10.2], but the fit season is on quote (+2.8, +1.1), so no refit passes Rule 3. Ice hockey check -6.1 [-8.8,-3.4] and college basketball -2.0 [-3.0,-1.0] are under quote while their fit windows are on quote; other sports inside noise.
+**Files:** `claude/calibration-rerun-2026-11-22.md`, `RELEASES.md`.
+**Not changed:** `calibration.json`, `sports.json`, code.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-22-rescheduled-postponed: postponed games back on the board when they are replayed (tag pending)
 
 **What changed for a reader.** A postponed game in La Liga, the Süper Lig, Brazil's Serie A, the Premier League, the Championship or Serie A now reaches the board, the Daily List and the Card on its new date. Before, openfootball kept it under its first date and it never came back.
