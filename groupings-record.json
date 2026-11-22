@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-22T15:41:38Z",
+ "graded": "2026-11-22T16:07:49Z",
  "overall": {
   "groups": 150,
   "settled": 146,
@@ -7,8 +7,8 @@
   "z": -1.23,
   "lost": 103,
   "pending": 4,
-  "legs": 560,
-  "legsWon": 408,
+  "legs": 561,
+  "legsWon": 409,
   "returned": 124.59,
   "staked": 146,
   "returnedBest": 129.57,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 66,
-   "won": 56,
-   "rate": 0.8485,
-   "quoted": 0.8807,
-   "returned": 60.43,
-   "ret": -0.0844
+   "n": 67,
+   "won": 57,
+   "rate": 0.8507,
+   "quoted": 0.8791,
+   "returned": 61.87,
+   "ret": -0.0766
   },
   "notAtBook": {
    "n": 139,
@@ -212,12 +212,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 18,
-     "won": 16,
-     "rate": 0.8889,
-     "quoted": 0.8646,
-     "returned": 17.88,
-     "ret": -0.0067
+     "n": 19,
+     "won": 17,
+     "rate": 0.8947,
+     "quoted": 0.86,
+     "returned": 19.32,
+     "ret": 0.0168
     },
     "notAtBook": {
      "n": 6,
@@ -1078,8 +1078,8 @@
   "z": -0.9,
   "lost": 1,
   "pending": 1,
-  "legs": 4,
-  "legsWon": 3,
+  "legs": 5,
+  "legsWon": 4,
   "returned": 0,
   "staked": 1,
   "returnedBest": 0,
@@ -1793,9 +1793,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Tre Penne",
@@ -1811,8 +1811,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7754,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-6",
        "opp": 9.33,
        "rule12Fault": null,
        "r12": false
