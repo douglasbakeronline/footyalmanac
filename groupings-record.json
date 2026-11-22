@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-22T16:07:49Z",
+ "graded": "2026-11-22T16:52:17Z",
  "overall": {
   "groups": 150,
   "settled": 146,
@@ -20,9 +20,9 @@
   "unitsReturnedBest": 151.07,
   "clv": {
    "n": 177,
-   "shortened": 70,
-   "drifted": 64,
-   "mean": 0.0012
+   "shortened": 69,
+   "drifted": 65,
+   "mean": 0.001
   }
  },
  "cardLegsBySport": {
@@ -530,7 +530,7 @@
    "ncaab|texas longhorns|southern indiana screaming eagles|2026-11-22": 0,
    "ncaab|boston college eagles|njit highlanders|2026-11-22": 0,
    "football|trabzonspor|eyüpspor|2026-11-22": 1.11,
-   "nba|new york knicks|indiana pacers|2026-11-23": 1.22,
+   "nba|new york knicks|indiana pacers|2026-11-23": 1.25,
    "ncaab|ucla bruins|delaware blue hens|2026-11-23": 0,
    "ncaab|usc trojans|louisiana ragin' cajuns|2026-11-23": 0,
    "ncaab|grambling tigers|ecclesia royals|2026-11-23": -1,
@@ -1091,9 +1091,9 @@
   "unitsReturnedBest": 0,
   "clv": {
    "n": 5,
-   "shortened": 3,
+   "shortened": 2,
    "drifted": 2,
-   "mean": 0.031
+   "mean": 0.0293
   }
  },
  "cardDaily": {
@@ -1116,9 +1116,9 @@
   "unitsReturnedBest": 3.5,
   "clv": {
    "n": 16,
-   "shortened": 7,
-   "drifted": 5,
-   "mean": 0.0076
+   "shortened": 6,
+   "drifted": 6,
+   "mean": 0.0057
   }
  },
  "cardListLong": {
@@ -1143,7 +1143,7 @@
    "n": 6,
    "shortened": 4,
    "drifted": 1,
-   "mean": 0.0389
+   "mean": 0.0375
   }
  },
  "cardByRule": {
@@ -1613,7 +1613,7 @@
        "when": "2026-11-22T18:00Z",
        "odds": 1.26,
        "best": 1.26,
-       "lastOdds": 1.26,
+       "lastOdds": 1.29,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1633,7 +1633,7 @@
        "when": "2026-11-22T21:25Z",
        "odds": 1.17,
        "best": 1.17,
-       "lastOdds": 1.16,
+       "lastOdds": 1.17,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1759,7 +1759,7 @@
        "when": "2026-11-22T21:25Z",
        "odds": 1.18,
        "best": 1.18,
-       "lastOdds": 1.16,
+       "lastOdds": 1.17,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1865,7 +1865,7 @@
        "when": "2026-11-22T21:25Z",
        "odds": 1.17,
        "best": 1.17,
-       "lastOdds": 1.16,
+       "lastOdds": 1.17,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
