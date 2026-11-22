@@ -986,8 +986,15 @@ def fill_untimed(rows, af, start, window=3, retime=None):
     primary source's times are nominal (the Premier League's every game at
     Saturday 15:00): a timed row then also takes API-Football's date and time
     when its kick-off in UTC differs, under the same rules."""
+    # 22 Nov 2026: unplayed rows up to `window` days before the start too. A
+    # round dated on its nominal Saturday whose games are played on the Sunday
+    # or Monday fell before the window on the Sunday's build and left the board
+    # (Liverpool v Manchester United, 22 Nov): such a row moves only to a date
+    # in the window, never to another day already past.
+    first = start.isoformat()
+    back = (start - timedelta(days=window)).isoformat()
     todo = [r for r in rows if r.get("hg") is None and (retime or not r.get("time"))
-            and r["date"] >= start.isoformat()]
+            and r["date"] >= back]
     if not todo or not af:
         return 0, []
     mapping, bad = _map_names(rows, af)
@@ -1003,6 +1010,8 @@ def fill_untimed(rows, af, start, window=3, retime=None):
                 if abs((date.fromisoformat(x["date"]) - d).days) <= window]
         if len(near) != 1 or not near[0].get("time"):
             continue
+        if r["date"] < first and near[0]["date"] < first:
+            continue      # before the window and still listed before it: played or postponed
         if r.get("time") and (S.kickoff_utc(r, retime)
                               == f"{near[0]['date']}T{near[0]['time'][:5]}:00Z"):
             continue      # already right
