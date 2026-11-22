@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-decisions-rule14: the Card review's decisions table reads rule 14 (tag pending)
+
+**What changed.** The nightly Card review's pre-registered decisions table had kept rule 13's rows since rule 14 went live on 19 Nov. From `cardLiveRule` 14 it now has one row, rule 14 v `rule13` and `rule12`, read on 30 Nov with no change before (Douglas acts, the switch was his), says in bold when `rule13` is ahead on the pool, retires the tennis 75% and core-league rows rule 14 already settled (one line says so), and names Douglas on the opposition-floor rows under rule 14's no-change window.
+**Evidence.** On 21 Nov's replay the new row reads `rule13` v live +0.52 units a day, p(worse) 0.219 on 102 pool legs, so the 30 Nov read has a live question; football-data had dropping the value demand behind in all five seasons, so nothing is due. `claude/card-decisions-rule14-2026-11-22.md`.
+**Files.** `tools/card_review_post.py`, `tests/test_review_decisions.py`, `claude/card-decisions-rule14-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any Card rule, record, replay or page. Before rule 14 the table reads as it did.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-21-ledger-moved: postponed fixtures re-listed later are not chased as ungraded (tag pending)
 
 **What changed.** The results ledger's ungraded report (build log, `results-ledger.json.gz` `ungraded`) no longer chases a football fixture that was postponed and re-listed more than 10 days later. `ledger.predictions` marks the earlier copy `movedTo` (the later date) when the pairing has another copy within `RESCHEDULE_DAYS` (45) days, never on a row with a result, and `ungraded` counts it apart (`moved`, `movedByComp`; the log line adds "re-listed for a later date"). A mark only: nothing is graded from the later game.
