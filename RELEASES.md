@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-isthmian: Isthmian League Premier v its quotes, second read: no test possible, no change (tag pending)
+
+**What changed:** nothing in the model. Dated note `claude/isthmian-gap-2026-11-22.md`.
+
+**Evidence:** planner's 59 of 101 (z -2.0) counts 10 draw reads against the win-or-draw expectation. Strictly 49 of 101 won (48.5%) against 51.9 expected, z -0.59. Away wins 36.6% v 27.9% quoted, draws 17.8% v 23.4%. No en.7i history and no API key here, so no paired replay (Rule 3's 250 check games unreachable); fitting on the live rows would break Rule 1.
+
+**Files:** claude/isthmian-gap-2026-11-22.md, RELEASES.md.
+
+**Not changed:** model, calibration, home advantage, grading.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-22-split-rescheduled: postponed Scottish, Greek and Czech games back on the board (tag pending)
 
 **What changed:** a postponed game in the Scottish Premiership, the Greek Super League or the Czech First League (Dundee United v Hearts, 31 Oct; Atromitos v AEK, 17 Oct) now returns to the board, the Daily List and the Card when API-Football lists it once in the build window, as #483 did for Portugal.
