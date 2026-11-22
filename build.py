@@ -966,7 +966,7 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
     return filled, [], unplaced
 
 
-def fill_untimed(rows, af, start, window=3, retime=None):
+def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False):
     """Give a league's unplayed rows with no kick-off the date and time
     API-Football lists (19 Nov 2026, #417: La Liga, the Süper Lig and Brazil's
     Serie A come from openfootball dated by round with no time, a day either
@@ -998,6 +998,9 @@ def fill_untimed(rows, af, start, window=3, retime=None):
     # older than `window` days whose pair API-Football lists exactly once in
     # the window is that game rescheduled: it moves there, time or not, unless
     # the source already holds a second unplayed row of the pair.
+    # postponed_only (22 Nov 2026, evening; sources.AF_RESCHEDULE, the Primeira
+    # Liga): only that last step, the rescheduled game, for a league whose own
+    # dates and times are real; every row inside the look-back is left alone.
     first = start.isoformat()
     back = (start - timedelta(days=window)).isoformat()
     unplayed = defaultdict(int)
@@ -1005,7 +1008,7 @@ def fill_untimed(rows, af, start, window=3, retime=None):
         if r.get("hg") is None:
             unplayed[(r["home"], r["away"])] += 1
     todo = [r for r in rows if r.get("hg") is None and (
-        (r["date"] >= back and (retime or not r.get("time")))
+        (not postponed_only and r["date"] >= back and (retime or not r.get("time")))
         or (r["date"] < back and unplayed[(r["home"], r["away"])] == 1))]
     if not todo or not af:
         return 0, []
@@ -1232,15 +1235,23 @@ def main():
     # nominal one (AF_RETIME, the Premier League): date and time from
     # API-Football, all or nothing on names, before the window is cut.
     if not args.no_topup and os.environ.get("API_FOOTBALL_KEY"):
-        for c in sorted(set(S.AF_UNTIMED) | set(S.AF_RETIME)):
+        for c in sorted(set(S.AF_UNTIMED) | set(S.AF_RETIME) | set(S.AF_RESCHEDULE)):
             if c not in fixtures:
+                continue
+            only = c in S.AF_RESCHEDULE
+            if only and not any(r.get("hg") is None and r["date"] < start.isoformat()
+                                for r in fixtures[c]):
                 continue
             rows_af = S.af_untimed_rows(c, start - timedelta(days=1), end + timedelta(days=3))
             n, bad = fill_untimed(fixtures[c], rows_af, start,
-                                  retime=E.LEAGUES[c].get("iso") if c in S.AF_RETIME else None)
+                                  retime=E.LEAGUES[c].get("iso") if c in S.AF_RETIME else None,
+                                  postponed_only=only)
             if bad:
                 print(f"::warning::{c}: API-Football kick-offs not used, club names unmatched: "
                       + "; ".join(bad[:8]), file=sys.stderr)
+            elif only:
+                print(f"    rescheduled {c}: {n} postponed fixture(s) took API-Football's new date",
+                      file=sys.stderr)
             else:
                 print(f"    untimed {c}: {n} fixture(s) took API-Football's date and time",
                       file=sys.stderr)

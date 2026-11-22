@@ -158,8 +158,6 @@ class Pick(unittest.TestCase):
         self.assertEqual(S.af_untimed_pick("es.1", [self.fx("NS", "Italy")]), [])
 
 
-if __name__ == "__main__":
-    unittest.main()
 
 
 class BeforeWindow(unittest.TestCase):
@@ -239,3 +237,74 @@ class BeforeWindow(unittest.TestCase):
         n, _ = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-25", "20:00")],
                               self.SUN)
         self.assertEqual(n, 0)
+
+
+class RescheduleOnly(unittest.TestCase):
+    """22 Nov 2026 (evening): the Primeira Liga (sources.AF_RESCHEDULE) has
+    real dates and times, so only a postponed game is moved: Braga v Gil
+    Vicente (16 Aug) and Estoril v Maritimo (8 Nov) were off the board."""
+    SUN = date(2026, 11, 22)
+
+    def test_registered_apart(self):
+        self.assertEqual(S.AF_RESCHEDULE.get("pt.1"), 94)
+        self.assertFalse(set(S.AF_RESCHEDULE) & (set(S.AF_RETIME) | set(S.AF_UNTIMED)))
+
+    def test_postponed_row_moves(self):
+        rows = [row("Sporting Clube de Braga", "Gil Vicente FC", "2026-08-16"),
+                row("GD Estoril Praia", "CS Marítimo", "2026-11-08", time="15:30")]
+        n, bad = B.fill_untimed(rows, [af("SC Braga", "Gil Vicente", "2026-11-25", "19:45"),
+                                       af("Estoril", "Maritimo", "2026-11-26", "18:00")],
+                                self.SUN, postponed_only=True)
+        self.assertEqual((n, bad), (2, []))
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-25", "19:45"))
+        self.assertEqual(rows[0]["rescheduledFrom"], "2026-08-16")
+        self.assertEqual(rows[1]["date"], "2026-11-26")
+
+    def test_rows_in_the_window_untouched(self):
+        # a timed or untimed row inside the look-back keeps its own date and time
+        rows = [row("FC Porto", "Sport Lisboa e Benfica", "2026-11-23", time="20:30"),
+                row("Rio Ave FC", "FC Arouca", "2026-11-21"),
+                row("Sporting Clube de Braga", "Gil Vicente FC", "2026-08-16")]
+        n, _ = B.fill_untimed(rows, [af("FC Porto", "Benfica", "2026-11-23", "19:00"),
+                                     af("Rio Ave", "Arouca", "2026-11-22", "15:30"),
+                                     af("SC Braga", "Gil Vicente", "2026-11-25", "19:45")],
+                              self.SUN, postponed_only=True)
+        self.assertEqual(n, 1)
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-23", "20:30"))
+        self.assertEqual((rows[1]["date"], rows[1]["time"]), ("2026-11-21", None))
+        self.assertEqual(rows[2]["date"], "2026-11-25")
+
+    def test_guards_still_hold(self):
+        # listed twice, or the source relisted it: nothing moves
+        rows = [row("Sporting Clube de Braga", "Gil Vicente FC", "2026-08-16")]
+        n, _ = B.fill_untimed(rows, [af("SC Braga", "Gil Vicente", "2026-11-23", "19:45"),
+                                     af("SC Braga", "Gil Vicente", "2026-11-25", "19:45")],
+                              self.SUN, postponed_only=True)
+        self.assertEqual(n, 0)
+        rows = [row("Sporting Clube de Braga", "Gil Vicente FC", "2026-08-16"),
+                row("Sporting Clube de Braga", "Gil Vicente FC", "2026-11-25", time="19:45")]
+        n, _ = B.fill_untimed(rows, [af("SC Braga", "Gil Vicente", "2026-11-25", "19:45")],
+                              self.SUN, postponed_only=True)
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["date"], "2026-08-16")
+
+    def test_api_football_spellings_match(self):
+        # every 2026-27 club under API-Football's usual short forms (unprobed: the
+        # sandbox has no key; the first CI build names any miss), against openfootball's file
+        of = ["Académico de Viseu FC", "CD Nacional", "CD Santa Clara", "CF Estrela da Amadora",
+              "CS Marítimo", "Casa Pia AC", "FC Alverca", "FC Arouca", "FC Famalicão", "FC Porto",
+              "GD Estoril Praia", "Gil Vicente FC", "Moreirense FC", "Rio Ave FC",
+              "Sport Lisboa e Benfica", "Sporting Clube de Braga", "Sporting Clube de Portugal",
+              "Vitória Guimarães"]
+        api = ["Academico Viseu", "Nacional", "Santa Clara", "Estrela", "Maritimo", "Casa Pia",
+               "Alverca", "Arouca", "Famalicao", "FC Porto", "Estoril", "Gil Vicente", "Moreirense",
+               "Rio Ave", "Benfica", "SC Braga", "Sporting CP", "Guimaraes"]
+        rows = [row(of[i], of[(i + 1) % len(of)], "2026-12-01") for i in range(len(of))]
+        mapping, bad = B._map_names(rows, [af(a, api[(i + 1) % len(api)], "2026-12-01", "20:00")
+                                           for i, a in enumerate(api)])
+        self.assertEqual(bad, [])
+        self.assertEqual(mapping["SC Braga"], "Sporting Clube de Braga")
+        self.assertEqual(mapping["Sporting CP"], "Sporting Clube de Portugal")
+
+if __name__ == "__main__":
+    unittest.main()

@@ -1361,13 +1361,23 @@ AF_UNTIMED = {"es.1": 140, "tr.1": 203, "br.1": 71}
 # Championship joins, and Serie A moves here from AF_UNTIMED: a retime league
 # also fills its untimed rows, so its 29 Nov round is still covered.
 AF_RETIME = {"en.1": 39, "en.2": 40, "it.1": 135}
+# 22 Nov 2026 (evening): postponed games in leagues outside the two lists
+# above stayed off the board when replayed (the Primeira Liga's Braga v Gil
+# Vicente, 16 Aug; Estoril v Marítimo, 8 Nov), as they are only ever read for
+# rescheduling, never for times (openfootball's Portuguese file carries real
+# kick-offs). build.fill_untimed(postponed_only=True) moves such a row only
+# when API-Football lists its ordered pair once, in the window. Only leagues
+# that play each ordered pair once a season, with no split: Scotland, Greece
+# and Czechia repeat pairs after their split, so the one-listing rule fails
+# there (claude/rescheduled-postponed-portugal-2026-11-22.md).
+AF_RESCHEDULE = {"pt.1": 94}
 
 
 def af_untimed_rows(code, start, end):
     """API-Football's fixtures for one AF_UNTIMED league over start..end as
     fixture rows (UTC date and time), TBD stand-in times left out. [] without
     a key or when the country is not the league's."""
-    lid = AF_UNTIMED.get(code) or AF_RETIME.get(code)
+    lid = AF_UNTIMED.get(code) or AF_RETIME.get(code) or AF_RESCHEDULE.get(code)
     if not lid or not os.environ.get("API_FOOTBALL_KEY"):
         return []
     src = af_day_pool(start, end).get(lid, [])
