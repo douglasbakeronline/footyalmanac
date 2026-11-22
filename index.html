@@ -3258,8 +3258,20 @@ function starIdOf(it, date){
   }
   return sid(it.g);
 }
-const STAR = (() => { const d = {order: "strength", sport: "all", tag: "all", open: false};
-  try { return Object.assign(d, JSON.parse(localStorage.getItem("starView") || "{}")); } catch(e){ return d; } })();
+const STAR = (() => { const d = {order: "strength", sport: "all", sports: [], tag: "all", open: false};
+  try { Object.assign(d, JSON.parse(localStorage.getItem("starView") || "{}")); } catch(e){}
+  // 22 Nov 2026 (Douglas: "select multiple sports on the filters at once"):
+  // `sports` holds the chosen sports, empty for every sport; a single `sport`
+  // saved before then carries over.
+  if(!Array.isArray(d.sports)) d.sports = [];
+  if(d.sport && d.sport !== "all" && !d.sports.length) d.sports = [d.sport];
+  delete d.sport;
+  return d; })();
+// One sport chip toggles in or out of the chosen set; "all" clears it.
+function toggleSport(list, k){
+  if(k === "all") return [];
+  return list.includes(k) ? list.filter(x => x !== k) : [...list, k];
+}
 const STAR_TAGS = [
   {k: "all", label: "Everything", test: () => true},
   {k: "list", label: "Daily List", test: it => !!it.g.list},
@@ -3278,10 +3290,10 @@ document.addEventListener("click", e => {
   const b = e.target.closest("[data-sorder],[data-ssport],[data-stag],[data-sopen],[data-sclear]"); if(!b) return;
   const d = b.dataset;
   if(d.sorder) STAR.order = d.sorder;
-  if(d.ssport) STAR.sport = d.ssport;
+  if(d.ssport) STAR.sports = toggleSport(STAR.sports, d.ssport);
   if(d.stag) STAR.tag = d.stag;
   if(d.sopen) STAR.open = d.sopen === "on";
-  if("sclear" in d){ STAR.sport = "all"; STAR.tag = "all"; BAND.starred = "all";
+  if("sclear" in d){ STAR.sports = []; STAR.tag = "all"; BAND.starred = "all";
     try { localStorage.setItem("bandBy", JSON.stringify(BAND)); } catch(e){} }
   saveStarView(); renderStarred();
 });
@@ -3338,19 +3350,19 @@ function renderStarred(){
   const spCount = {}, tagN = {};
   all.forEach(it => { const k = itemSport(it); spCount[k] = (spCount[k] || 0) + 1; });
   STAR_TAGS.forEach(t => tagN[t.k] = all.filter(t.test).length);
-  if(STAR.sport !== "all" && !spCount[STAR.sport]) STAR.sport = "all";
-  const sportOk = it => STAR.sport === "all" || itemSport(it) === STAR.sport;
+  STAR.sports = STAR.sports.filter(k => spCount[k]);   // a sport no longer starred drops out
+  const sportOk = it => !STAR.sports.length || STAR.sports.includes(itemSport(it));
   const tagOk = it => (STAR_TAGS.find(t => t.k === STAR.tag) || STAR_TAGS[0]).test(it);
   const keep = it => sportOk(it) && tagOk(it) && inBand("starred", it.g.confidence);
   if(all.length){
     const seg = (attr, now, opts) => `<div class="dayseg" role="group">${opts.map(o =>
-      `<button type="button" data-${attr}="${o.k}" aria-pressed="${o.k === now}">${o.label}${o.n != null ? `<i>${o.n}</i>` : ""}</button>`).join("")}</div>`;
+      `<button type="button" data-${attr}="${o.k}" aria-pressed="${Array.isArray(now) ? (o.k === "all" ? !now.length : now.includes(o.k)) : o.k === now}">${o.label}${o.n != null ? `<i>${o.n}</i>` : ""}</button>`).join("")}</div>`;
     const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
     const ctl = document.createElement("div");
     ctl.className = "star-ctl";
     ctl.innerHTML = `
       <div><div class="ctl-label">Order by</div>${seg("sorder", STAR.order, [{k:"strength", label:"Strongest"}, {k:"time", label:"Kick-off time"}, {k:"sport", label:"Sport"}, {k:"tag", label:"List first"}])}</div>
-      ${spKeys.length > 1 ? `<div><div class="ctl-label">Sport</div>${seg("ssport", STAR.sport, [{k:"all", label:"Every sport", n: all.length}, ...spKeys.map(k => ({k, label: sportLabel(k), n: spCount[k]}))])}</div>` : ""}
+      ${spKeys.length > 1 ? `<div><div class="ctl-label">Sport · tap more than one to combine</div>${seg("ssport", STAR.sports, [{k:"all", label:"Every sport", n: all.length}, ...spKeys.map(k => ({k, label: sportLabel(k), n: spCount[k]}))])}</div>` : ""}
       <div><div class="ctl-label">Show</div>${seg("stag", STAR.tag, STAR_TAGS.filter(t => t.k === "all" || t.k === STAR.tag || tagN[t.k]).map(t => ({k: t.k, label: t.label, n: tagN[t.k]})))}</div>
       ${bandCtl("starred", all.filter(it => sportOk(it) && tagOk(it)).map(it => it.g.confidence))}
       <div><div class="ctl-label">Full details</div>${seg("sopen", STAR.open ? "on" : "off", [{k:"off", label:"Tap to open"}, {k:"on", label:"Every row open"}])}</div>`;
@@ -3416,18 +3428,23 @@ document.addEventListener("click", e => {
   try { localStorage.setItem("listBook", LIST_BOOK_ONLY ? "hill" : "all"); } catch(e){}
   renderList();
 });
-// 22 Nov 2026 (Douglas: "the daily list needs filter by sport"): one sport at
-// a time, or every sport; remembered on this device. The ranking is unchanged.
-let LIST_SPORT = (() => { try { return localStorage.getItem("listSport") || "all"; } catch(e){ return "all"; } })();
+// 22 Nov 2026 (Douglas: "the daily list needs filter by sport"): every sport,
+// or any set of sports (the same day: "select multiple sports on the filters
+// at once"; a tap toggles a sport in or out, Every sport clears); remembered
+// on this device as a comma list ("all" or one sport, as saved before, still
+// reads). The ranking is unchanged.
+let LIST_SPORTS = (() => { try { const v = localStorage.getItem("listSport") || "all";
+  return v === "all" ? [] : v.split(",").filter(Boolean); } catch(e){ return []; } })();
+const listSportSave = () => { try { localStorage.setItem("listSport", LIST_SPORTS.length ? LIST_SPORTS.join(",") : "all"); } catch(e){} };
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lsport]"); if(!b) return;
-  LIST_SPORT = b.dataset.lsport;
-  try { localStorage.setItem("listSport", LIST_SPORT); } catch(e){}
+  LIST_SPORTS = toggleSport(LIST_SPORTS, b.dataset.lsport);
+  listSportSave();
   renderList();
 });
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-lclear]"); if(!b) return;
-  LIST_SPORT = "all"; BAND.list = "all";
+  LIST_SPORTS = []; BAND.list = "all";
   try { localStorage.setItem("listSport", "all"); localStorage.setItem("bandBy", JSON.stringify(BAND)); } catch(e){}
   renderList();
 });
@@ -3767,18 +3784,18 @@ function renderList(){
   const every = [...Object.values(byDay), ...Object.values(resDay)].flat().filter(it => !LIST_BOOK_ONLY || itemHill(it));
   const spCount = {};
   every.forEach(it => { const k = itemSport(it); spCount[k] = (spCount[k] || 0) + 1; });
-  if(LIST_SPORT !== "all" && !spCount[LIST_SPORT]) LIST_SPORT = "all";   // a sport with nothing this week
+  LIST_SPORTS = LIST_SPORTS.filter(k => spCount[k]);   // a sport with nothing this week drops out
   const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
-  const sportOk = it => LIST_SPORT === "all" || itemSport(it) === LIST_SPORT;
+  const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
   const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
-  const filtered = LIST_SPORT !== "all" || bandOf("list") !== "all";
-  if(spKeys.length > 1) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<div class="list-sport"><span class="ctl-label">Sport · list and reserve picks</span>
+  const filtered = LIST_SPORTS.length > 0 || bandOf("list") !== "all";
+  if(spKeys.length > 1) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<div class="list-sport"><span class="ctl-label">Sport · list and reserve picks · tap more than one to combine</span>
     <div class="dayseg" role="group" aria-label="Sport">
-      <button type="button" data-lsport="all" aria-pressed="${LIST_SPORT === "all"}">Every sport<i>${every.length}</i></button>
-      ${spKeys.map(k => `<button type="button" data-lsport="${k}" aria-pressed="${LIST_SPORT === k}">${sportLabel(k)}<i>${spCount[k]}</i></button>`).join("")}
+      <button type="button" data-lsport="all" aria-pressed="${!LIST_SPORTS.length}">Every sport<i>${every.length}</i></button>
+      ${spKeys.map(k => `<button type="button" data-lsport="${k}" aria-pressed="${LIST_SPORTS.includes(k)}">${sportLabel(k)}<i>${spCount[k]}</i></button>`).join("")}
     </div></div>`);
   host.querySelector(".lede").insertAdjacentHTML("beforeend", bandCtl("list", every.filter(sportOk).map(it => it.g.confidence)).replace('class="band-ctl"', 'class="band-ctl list-band"'));
-  if(filtered) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<p class="filt-note">Showing ${[LIST_SPORT !== "all" ? sportLabel(LIST_SPORT) : "", bandOf("list") !== "all" ? BANDS.find(b => b.k === bandOf("list")).label : ""].filter(Boolean).join(", ")} only. Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered.<button type="button" data-lclear>Clear filters</button></p>`);
+  if(filtered) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<p class="filt-note">Showing ${[LIST_SPORTS.length ? LIST_SPORTS.map(sportLabel).join(" + ") : "", bandOf("list") !== "all" ? BANDS.find(b => b.k === bandOf("list")).label : ""].filter(Boolean).join(", ")} only. Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered.<button type="button" data-lclear>Clear filters</button></p>`);
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
   // as daylist.strength.
@@ -3808,7 +3825,7 @@ function renderList(){
     const items = shown((LIST_BOOK_ONLY ? allItems.filter(itemHill) : allItems).sort(byStrength));
     const extra = shown((LIST_BOOK_ONLY ? allExtra.filter(itemHill) : allExtra).sort(byStrength));
     const offBook = LIST_BOOK_ONLY ? allItems.length - items.length : 0;
-    const offHill = LIST_SPORT === "all" || LIST_SPORT === "ncaab" ? (offDay[date] || []).length : 0;
+    const offHill = !LIST_SPORTS.length || LIST_SPORTS.includes("ncaab") ? (offDay[date] || []).length : 0;
     const sec = document.createElement("section");
     sec.className = "day";
     sec.id = "lday-" + date;

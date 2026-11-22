@@ -139,3 +139,42 @@ class Order(unittest.TestCase):
         a, b = DL.groups([{"confidence": 0.9}] * 7)
         self.assertEqual((len(a), len(b)), (5, 2))
         self.assertEqual(DL.groups([{"confidence": 0.8}]), ([], [{"confidence": 0.8}]))
+
+
+def fb_row(date, kickoff, pub, lst=True, home="Real Madrid", away="RC Celta de Vigo"):
+    return {"league": "es.1", "date": date, "kickoff": kickoff, "home": home, "away": away,
+            "p": {"h": 0.8, "d": 0.12, "a": 0.08}, "confidence": 0.8, "list": lst, "reserve": False,
+            "published": pub}
+
+
+class RoundDateGhost(unittest.TestCase):
+    """22 Nov 2026, Douglas: "Some games listed on Sunday were actually Saturday
+    games". La Liga and the Süper Lig were archived before 19 Nov under the
+    round's Sunday with no time (midnight), then from 19 Nov on their real
+    Saturday. The old copies kept their own key (the date is in it), so
+    Sunday's played list showed Real Madrid v Celta, Galatasaray v Samsunspor
+    and the rest as Sunday games. A football copy dated within 3 days of a
+    newer copy of the same fixture is that copy's day, not its own."""
+    SUN = datetime(2026, 11, 22, 18, 0, tzinfo=timezone.utc)
+
+    def arch(self):
+        return [("football", fb_row("2026-11-22", None, "2026-11-17T23:47:00Z")),
+                ("football", fb_row("2026-11-21", "2026-11-21T20:00:00Z", "2026-11-21T18:21:00Z"))]
+
+    def test_old_round_date_copy_not_on_sunday(self):
+        self.assertEqual(DL.pinned("2026-11-22", self.arch(), self.SUN, every=True), [])
+
+    def test_real_day_keeps_it(self):
+        out = DL.pinned("2026-11-21", self.arch(), self.SUN, every=True)
+        self.assertEqual([(i["date"], i["start"]) for i in out], [("2026-11-21", "2026-11-21T20:00:00Z")])
+
+    def test_rematch_weeks_apart_kept(self):
+        arch = [("football", fb_row("2026-11-22", "2026-11-22T15:00:00Z", "2026-11-20T10:00:00Z")),
+                ("football", fb_row("2026-12-13", "2026-12-13T15:00:00Z", "2026-12-01T10:00:00Z"))]
+        self.assertEqual(len(DL.pinned("2026-11-22", arch, self.SUN, every=True)), 1)
+
+    def test_other_fixture_same_day_untouched(self):
+        arch = self.arch() + [("football", fb_row("2026-11-22", "2026-11-22T13:00:00Z", "2026-11-21T23:54:00Z",
+                                                  home="FC Barcelona", away="Villarreal"))]
+        out = DL.pinned("2026-11-22", arch, self.SUN, every=True)
+        self.assertEqual([i["home"] for i in out], ["FC Barcelona"])

@@ -146,6 +146,9 @@ def sport_item(g):
             "published": g.get("published")}
 
 
+ROUND_DAYS = 3   # a pair's copies this close are one fixture moved off its round date (22 Nov 2026)
+
+
 def pinned(day, archives, now, every=False):
     """The day's list and reserve: per game, the latest price published before its start.
     `every` (scale.py, 15 Nov 2026) keeps the games on neither as well.
@@ -179,6 +182,27 @@ def pinned(day, archives, now, every=False):
             best[it["key"]] = it
     # a game whose newest start is on another day is that day's, not this one's
     best = {k: v for k, v in best.items() if uk_day(parse_utc(latest[k]["start"])) == day}
+    # 22 Nov 2026, Douglas: "Some games listed on Sunday were actually Saturday
+    # games". A football key carries the archive's date, so a copy written
+    # under a round's nominal date (La Liga and the Süper Lig before 19 Nov:
+    # the Sunday, no time) and the later copy on the real day were two games,
+    # and the old one showed on Sunday. A football copy is that fixture's only
+    # when no newer pre-start copy of the same pair within ROUND_DAYS sits on
+    # another day (a rematch weeks later is another fixture).
+    fx = {}
+    for it in latest.values():
+        if it["sport"] == "football":
+            fx.setdefault((it.get("league"), it["home"], it["away"]), []).append(it)
+    def ghost(it):
+        if it["sport"] != "football": return False
+        d = datetime.fromisoformat(it["date"]).date()
+        for o in fx.get((it.get("league"), it["home"], it["away"]), []):
+            if o is it or o["key"] == it["key"]: continue
+            if abs((datetime.fromisoformat(o["date"]).date() - d).days) > ROUND_DAYS: continue
+            if parse_utc(o["published"]) > parse_utc(it["published"]) and uk_day(parse_utc(o["start"])) != day:
+                return True
+        return False
+    best = {k: v for k, v in best.items() if not ghost(v)}
     out = [it for it in best.values() if every or it["list"] or it["reserve"]]
     for it in out:
         it["started"] = parse_utc(it["start"]) <= now
