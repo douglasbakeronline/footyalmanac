@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-split-rescheduled: postponed Scottish, Greek and Czech games back on the board (tag pending)
+
+**What changed:** a postponed game in the Scottish Premiership, the Greek Super League or the Czech First League (Dundee United v Hearts, 31 Oct; Atromitos v AEK, 17 Oct) now returns to the board, the Daily List and the Card when API-Football lists it once in the build window, as #483 did for Portugal.
+**Evidence:** openfootball's 2026-27 files hold each league's whole regular season and nothing after the split (sco.1 198 rows to 10 Apr, 66 repeated pairs; gr.1 182 to 20 Mar; cze.1 240 to 24 Apr), and after the ESPN fill one postponed row each is left in sco.1 and gr.1. A move never passes the file's last fixture, so the split's repeat games cannot be taken for the postponed one; pairs repeated inside the file stay refused. "Dundee Utd" reduced to Dundee, which would have refused Scotland whole: now an alias.
+**Tested:** `tests/test_untimed.py` `RescheduleSplit` (five cases), the full suite, nametest. No API-Football key here: the first CI build logs "rescheduled sco.1 / gr.1 / cze.1" or names a miss.
+**Files:** `sources.py` (`AF_RESCHEDULE`, `AF_SPLIT`, `ALIASES`), `build.py` (`fill_untimed(split=)`), `tests/test_untimed.py`, `claude/rescheduled-postponed-split-leagues-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model constant, Card rule, or row inside the look-back.
+**Roll back:** `git revert` the merge, or take the three codes out of `AF_RESCHEDULE`.
+
 ## 2026-11-22-pt-rescheduled: postponed Primeira Liga games back on the board (tag pending)
 
 **What changed:** a postponed Primeira Liga game kept under its first date (Braga v Gil Vicente, 16 Aug; Estoril v Marítimo, 8 Nov) now returns to the board, the Daily List and the Card when API-Football lists it once in the build window, as #480 did for La Liga, the Süper Lig, Brazil and the three retime leagues. Portugal's own dates and times are otherwise left alone.

@@ -1370,7 +1370,14 @@ AF_RETIME = {"en.1": 39, "en.2": 40, "it.1": 135}
 # that play each ordered pair once a season, with no split: Scotland, Greece
 # and Czechia repeat pairs after their split, so the one-listing rule fails
 # there (claude/rescheduled-postponed-portugal-2026-11-22.md).
-AF_RESCHEDULE = {"pt.1": 94}
+# 22 Nov 2026 (night): Scotland, Greece and Czechia join under AF_SPLIT. Their
+# openfootball files hold the whole regular season before the split (sco.1 33
+# rounds, gr.1 26, cze.1 30), so a pair the split repeats is either already a
+# second unplayed row in the file (refused, as before) or played after the
+# file's last fixture, which a postponed row may never move past
+# (claude/rescheduled-postponed-split-leagues-2026-11-22.md).
+AF_RESCHEDULE = {"pt.1": 94, "sco.1": 179, "gr.1": 197, "cze.1": 345}
+AF_SPLIT = {"sco.1", "gr.1", "cze.1"}
 
 
 def af_untimed_rows(code, start, end):
@@ -2114,6 +2121,10 @@ ALIASES = {
     # names that kept every en.2 row from taking its kick-off under AF_RETIME
     # (11:05 UTC build: "club names unmatched: QPR; Sheffield Utd")
     "sheffield utd": "sheffield united", "qpr": "queens park rangers",
+    # 22 Nov 2026 (night): API-Football's Scottish spelling; "Dundee Utd"
+    # otherwise reduces to "Dundee", a second club, and the matcher refuses
+    # the league whole under sources.AF_RESCHEDULE
+    "dundee utd": "dundee united",
 }
 
 
