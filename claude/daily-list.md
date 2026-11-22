@@ -228,3 +228,11 @@ Verdict: 80% stays, no per-league bars.
 Check season (2026/27): 2,318 win picks; n=68/31/22/11/6/3, hit 79.4/83.9/90.9/81.8/66.7/66.7%. Every interval spans zero except 77.5% (+8.2, 0.0 to +21.8 on 22 picks, 11 of them already in the 80% list; not evidence). Per league at 80% on the fit season: pt.1 17/22, de.1 12/15, es.1 7/7, nl.1 5/7, lva.1 5/7; the check season has at most 3 calls in any league. No league has the 30 calls a per-league bar needs.
 
 Verdict: 80% league bar stays, no per-league bars. The reopen condition (100 calls at 80% on 2026/27) is not met: 11. Findings only; no rule changed.
+
+## Replay of the league bar rerun, 22 Nov 2026 (Nina): no change
+
+`tools/list_bar_replay.py` rerun unchanged. Fit season (2025/26): 6,451 win picks; n=313/168/130/86/56/35 at 70/75/77.5/80/82.5/85%, hit 78.3/81.5/82.3/81.4/78.6/65.7%. Paired bootstrap against the 80% list: 70% -3.3 (-8.9 to +3.1), 75% +0.0 (-4.6 to +5.0), 77.5% +0.9 (-3.0 to +4.7), 82.5% -2.8 (-8.1 to +2.0), 85% -15.4 (-25.8 to -6.8). Only 85% differs, and it is worse.
+
+Check season (2026/27, 811 results filled from the ESPN cache): 2,394 win picks; n=73/34/24/12/7/3, hit 78.1/79.4/87.5/75.0/57.1/66.7%. Intervals (70% +3.1, -15.0 to +22.9; 75% +4.3, -11.8 to +22.1) span zero; 77.5% is +11.5 (+2.4 to +25.7) on 24 picks, 12 already in the 80% list, and its fit-season change is +0.9 (-3.0 to +4.7), so it fails the two-season rule. Per league at 80%: fit pt.1 17/22, de.1 12/15, es.1 7/7, nl.1 5/7, lva.1 5/7; check at most 3 calls a league. No league has the 30 calls a per-league bar needs; the 100-call reopen condition is not met (12 calls).
+
+Verdict: 80% stays, no per-league bars. Fails the gates, so a write-up, not a change.
