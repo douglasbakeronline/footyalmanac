@@ -195,9 +195,47 @@ class BeforeWindow(unittest.TestCase):
         self.assertEqual(n, 0)
         self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-21", "15:00"))
 
-    def test_older_rows_untouched(self):
-        rows = [row("Liverpool", "Manchester United", "2026-11-18", time="15:00")]
-        n, _ = B.fill_untimed(rows, [af("Liverpool", "Manchester United", "2026-11-22", "16:30")],
-                              self.SUN, retime="eng")
+    def test_older_unplayed_row_is_a_rescheduled_game(self):
+        # 22 Nov 2026 (afternoon): an unplayed row older than the window whose
+        # ordered pair API-Football lists once in the window is the postponed
+        # game replayed (these leagues play each ordered pair once a season)
+        rows = [row("Rayo Vallecano de Madrid", "Athletic Club", "2026-10-10"),
+                row("Liverpool", "Manchester United", "2026-11-18", time="15:00")]
+        n, bad = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-25", "20:00"),
+                                       af("Liverpool", "Manchester United", "2026-11-22", "16:30")],
+                                self.SUN)
+        self.assertEqual((n, bad), (2, []))
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-25", "20:00"))
+        self.assertEqual(rows[0]["rescheduledFrom"], "2026-10-10")
+        self.assertEqual(rows[1]["date"], "2026-11-22")
+
+    def test_postponed_row_left_when_listed_before_window(self):
+        rows = [row("Rayo Vallecano de Madrid", "Athletic Club", "2026-10-10")]
+        n, _ = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-20", "20:00")],
+                              self.SUN)
         self.assertEqual(n, 0)
-        self.assertEqual(rows[0]["date"], "2026-11-18")
+        self.assertEqual(rows[0]["date"], "2026-10-10")
+
+    def test_postponed_row_left_when_source_relisted_it(self):
+        # the source already holds the new date as a second row: that row is
+        # the one placed; the stale first copy stays where it is
+        rows = [row("Rayo Vallecano de Madrid", "Athletic Club", "2026-10-10"),
+                row("Rayo Vallecano de Madrid", "Athletic Club", "2026-11-25")]
+        n, _ = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-25", "20:00")],
+                              self.SUN)
+        self.assertEqual(n, 1)
+        self.assertEqual(rows[0]["date"], "2026-10-10")
+        self.assertEqual((rows[1]["date"], rows[1]["time"]), ("2026-11-25", "20:00"))
+
+    def test_postponed_row_left_when_pair_listed_twice(self):
+        rows = [row("Rayo Vallecano de Madrid", "Athletic Club", "2026-10-10")]
+        n, _ = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-23", "20:00"),
+                                     af("Rayo Vallecano", "Athletic Club", "2026-11-25", "20:00")],
+                              self.SUN)
+        self.assertEqual(n, 0)
+
+    def test_played_old_row_untouched(self):
+        rows = [row("Rayo Vallecano de Madrid", "Athletic Club", "2026-10-10", hg=1)]
+        n, _ = B.fill_untimed(rows, [af("Rayo Vallecano", "Athletic Club", "2026-11-25", "20:00")],
+                              self.SUN)
+        self.assertEqual(n, 0)

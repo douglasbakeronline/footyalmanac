@@ -991,10 +991,22 @@ def fill_untimed(rows, af, start, window=3, retime=None):
     # or Monday fell before the window on the Sunday's build and left the board
     # (Liverpool v Manchester United, 22 Nov): such a row moves only to a date
     # in the window, never to another day already past.
+    # 22 Nov 2026 (afternoon): a postponed game kept under its first date
+    # (Rayo Vallecano v Athletic Club, 10 Oct; Chapecoense v Vasco, 29 Jul)
+    # stayed off the board when it was replayed, however far back that date.
+    # These leagues play each ordered pair once a season, so an unplayed row
+    # older than `window` days whose pair API-Football lists exactly once in
+    # the window is that game rescheduled: it moves there, time or not, unless
+    # the source already holds a second unplayed row of the pair.
     first = start.isoformat()
     back = (start - timedelta(days=window)).isoformat()
-    todo = [r for r in rows if r.get("hg") is None and (retime or not r.get("time"))
-            and r["date"] >= back]
+    unplayed = defaultdict(int)
+    for r in rows:
+        if r.get("hg") is None:
+            unplayed[(r["home"], r["away"])] += 1
+    todo = [r for r in rows if r.get("hg") is None and (
+        (r["date"] >= back and (retime or not r.get("time")))
+        or (r["date"] < back and unplayed[(r["home"], r["away"])] == 1))]
     if not todo or not af:
         return 0, []
     mapping, bad = _map_names(rows, af)
@@ -1006,6 +1018,14 @@ def fill_untimed(rows, af, start, window=3, retime=None):
     changed = 0
     for r in todo:
         d = date.fromisoformat(r["date"])
+        if r["date"] < back:   # postponed: only a single listing in the window
+            near = [x for x in by_pair.get((r["home"], r["away"]), []) if x["date"] >= first]
+            if len(near) != 1 or not near[0].get("time") or len(by_pair[(r["home"], r["away"])]) != 1:
+                continue
+            r["date"], r["time"], r["utc"] = near[0]["date"], near[0]["time"], True
+            r["timeFrom"], r["rescheduledFrom"] = "apifootball", d.isoformat()
+            changed += 1
+            continue
         near = [x for x in by_pair.get((r["home"], r["away"]), [])
                 if abs((date.fromisoformat(x["date"]) - d).days) <= window]
         if len(near) != 1 or not near[0].get("time"):
