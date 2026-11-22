@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-22T18:46:01Z",
+ "graded": "2026-11-22T20:52:23Z",
  "overall": {
   "groups": 150,
   "settled": 146,
@@ -7,8 +7,8 @@
   "z": -1.23,
   "lost": 103,
   "pending": 4,
-  "legs": 564,
-  "legsWon": 412,
+  "legs": 565,
+  "legsWon": 413,
   "returned": 124.59,
   "staked": 146,
   "returnedBest": 129.57,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 68,
-   "won": 58,
-   "rate": 0.8529,
-   "quoted": 0.8774,
-   "returned": 63.17,
-   "ret": -0.071
+   "n": 70,
+   "won": 60,
+   "rate": 0.8571,
+   "quoted": 0.8773,
+   "returned": 65.23,
+   "ret": -0.0681
   },
   "notAtBook": {
    "n": 139,
@@ -256,12 +256,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 36,
-     "won": 31,
-     "rate": 0.8611,
-     "quoted": 0.8999,
-     "returned": 32.61,
-     "ret": -0.0942
+     "n": 37,
+     "won": 32,
+     "rate": 0.8649,
+     "quoted": 0.9006,
+     "returned": 33.61,
+     "ret": -0.0916
     },
     "notAtBook": {
      "n": 132,
@@ -278,12 +278,12 @@
    },
    "nfl": {
     "atBook": {
-     "n": 1,
-     "won": 1,
+     "n": 2,
+     "won": 2,
      "rate": 1.0,
-     "quoted": 0.8385,
-     "returned": 1.15,
-     "ret": 0.15
+     "quoted": 0.8296,
+     "returned": 2.21,
+     "ret": 0.105
     },
     "notAtBook": {
      "n": 0,
@@ -1128,8 +1128,8 @@
   "z": 1.15,
   "lost": 0,
   "pending": 1,
-  "legs": 6,
-  "legsWon": 6,
+  "legs": 7,
+  "legsWon": 7,
   "returned": 2.02,
   "staked": 1,
   "returnedBest": 2.13,
@@ -1667,9 +1667,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Beerschot VA",
@@ -1745,8 +1745,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8207,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "34-7",
        "opp": 9.3,
        "rule12Fault": null,
        "r12": false
