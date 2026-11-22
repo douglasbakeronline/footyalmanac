@@ -642,7 +642,7 @@
      "firstOdds": 1.24,
      "lastOdds": 1.34,
      "lastBest": 1.34,
-     "lastAt": "2026-11-22T20:51:36Z",
+     "lastAt": "2026-11-22T21:09:26Z",
      "lockPrice": {
       "odds": 1.29,
       "best": 1.29,
@@ -1389,9 +1389,9 @@
      "basis": "model",
      "tier": "list",
      "firstOdds": 1.17,
-     "lastOdds": 1.17,
-     "lastBest": 1.17,
-     "lastAt": "2026-11-22T20:51:36Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T21:09:26Z"
     }
    ],
    "tested": 0.3527,
@@ -2327,9 +2327,9 @@
      "edge": -0.0483,
      "basis": "model",
      "firstOdds": 1.18,
-     "lastOdds": 1.17,
-     "lastBest": 1.17,
-     "lastAt": "2026-11-22T20:51:36Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T21:09:26Z"
     }
    ],
    "tested": 0.3737,
@@ -3121,9 +3121,9 @@
      "edge": -0.0564,
      "basis": "model",
      "firstOdds": 1.17,
-     "lastOdds": 1.17,
-     "lastBest": 1.17,
-     "lastAt": "2026-11-22T20:51:36Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T21:09:26Z"
     }
    ],
    "tested": 0.3451,
