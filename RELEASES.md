@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-round-date-results: a played match on its round's date is scored, not left on the board (tag pending)
+
+**What changed.** A La Liga or Süper Lig match played on Friday or Saturday, which openfootball dates on the round's Sunday, is now scored from ESPN on the Sunday build instead of waiting for the round date to pass. `build.fill_lagging` fills a pair's unplayed row dated up to `AHEAD_DAYS` (3) days into the build window from a result played before it, and re-dates the row to the day it was played; rows before the window still come first.
+**Evidence.** The 22 Nov 02:11 UTC build left Athletic Club v Espanyol (played 20 Nov, 0-1) on the 22 Nov board unplayed, asked a price for it (`noFixture`), and logged 5 La Liga and 4 Süper Lig results "with no fixture to fill". On the live openfootball files and the committed ESPN cache: es.1 50 to 55 filled, tr.1 63 to 67, unplaced 9 to 0; br.1, pt.1, en.1, it.1, de.1, fr.1 unchanged. `claude/round-date-in-window-results-2026-11-22.md`.
+**Files.** `build.py`, `tests/test_lagging_results.py`, `claude/round-date-in-window-results-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** Any model constant, Card rule, record or grade. `tune.load` uses the same rule, so its check season gains the handful of matches played before a round date that sits on or after the day it runs.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-22-filters: sport and confidence filters, and a better Starred tab (tag pending)
 
 **What changed for a reader.** Douglas: "the daily list needs filter by sport", "all sports and daily list need a filter by banding", and "the starred page needs improvement to filter and also see all fixture information and links and to be able to sort by time and other tags".

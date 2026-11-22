@@ -776,6 +776,7 @@ def dedupe_cups(fixtures):
 
 
 LAG_WINDOW = 21     # days an ESPN result may sit from its scheduled date and still fill it
+AHEAD_DAYS = 3      # days into the build window a played match's nominal round date may sit (22 Nov 2026)
 
 
 def lagging_codes(fixtures, start, gaps):
@@ -906,8 +907,10 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
     rows: one league's fixture rows (openfootball spelling), filled in place.
     results: ESPN result rows ({date, home, away, hg, ag}) for the same league.
     A result fills only the unplayed fixture of the same home and away clubs
-    dated before the build window and within `window` days, and never a pair
-    already scored nearby (the primary source wins). All or nothing on names
+    dated before the build window and within `window` days (or, since 22 Nov
+    2026, dated up to AHEAD_DAYS into the window, a round's nominal date, and
+    then re-dated to the day it was played), and never a pair already scored
+    nearby (the primary source wins). All or nothing on names
     (Rule 6): one ESPN club that does not match, or two that match the same
     club, fills nothing for the league, and the names come back for the log.
     append=True (an exhausted league, 14 Nov 2026): a result for a pair the
@@ -934,8 +937,16 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
         near = [(gap, r) for gap, r in near if gap <= window]
         if any(r["hg"] is not None for _, r in near):
             continue                       # the primary source already has it
-        open_ = sorted(((gap, r["date"], r) for gap, r in near if r["date"] < cut),
-                       key=lambda t: t[:2])
+        # 22 Nov 2026: a round's nominal date can sit inside the build window
+        # after its match was played (La Liga's Friday 20 Nov game, Athletic
+        # Club v Espanyol, dated by openfootball on Sunday 22 Nov): the row
+        # stayed unplayed on the board, was asked a price (noFixture) and its
+        # result missed the ratings until the round date passed. A result from
+        # before the window now also fills that pair's row dated up to
+        # AHEAD_DAYS into it; rows before the window are still preferred.
+        open_ = sorted(((0 if r["date"] < cut else 1, gap, r["date"], r) for gap, r in near
+                        if r["date"] < cut or gap <= AHEAD_DAYS),
+                       key=lambda t: t[:3])
         if not open_:
             pair = (mapping[x["home"]], mapping[x["away"]])
             if append and not by_pair.get(pair):
@@ -946,9 +957,9 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
                 continue
             unplaced += 1
             continue
-        r = open_[0][2]
+        r = open_[0][3]
         r["hg"], r["ag"] = x["hg"], x["ag"]
-        if abs((date.fromisoformat(r["date"]) - d).days) > 1:
+        if r["date"] >= cut or abs((date.fromisoformat(r["date"]) - d).days) > 1:
             r["date"] = x["date"]          # a moved match is dated when it was played
         r["filledFrom"] = source
         filled += 1

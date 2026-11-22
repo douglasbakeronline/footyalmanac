@@ -81,6 +81,33 @@ class FillLagging(unittest.TestCase):
         self.assertEqual(len(bad), 1)
         self.assertIn("Manchester City", bad[0])
 
+    def test_round_date_inside_window_filled_and_redated(self):
+        # 22 Nov 2026: La Liga's Friday game dated by openfootball on the
+        # round's Sunday, the build day; played two days before.
+        rows = [fx("2026-11-22", "Athletic Club", "RCD Espanyol de Barcelona"),
+                fx("2026-11-22", "Real Madrid", "RC Celta de Vigo"),
+                fx("2026-11-22", "FC Barcelona", "Villarreal")]
+        n, bad, un = B.fill_lagging(rows, [res("2026-11-20", "Athletic Club", "Espanyol", 0, 1),
+                                           res("2026-11-21", "Real Madrid", "Celta Vigo", 2, 0)],
+                                    date(2026, 11, 22))
+        self.assertEqual((n, bad, un), (2, [], 0))
+        self.assertEqual((rows[0]["date"], rows[0]["hg"], rows[0]["ag"]), ("2026-11-20", 0, 1))
+        self.assertEqual(rows[1]["date"], "2026-11-21")   # a day apart, still re-dated
+        self.assertIsNone(rows[2]["hg"])
+
+    def test_window_row_beyond_ahead_days_left_alone(self):
+        rows = [fx("2026-11-26", "Chelsea", "Everton")]
+        n, _, un = B.fill_lagging(rows, [res("2026-11-20", "Chelsea", "Everton", 1, 0)],
+                                  date(2026, 11, 22))
+        self.assertEqual((n, un), (0, 1))
+        self.assertIsNone(rows[0]["hg"])
+
+    def test_row_before_window_preferred(self):
+        rows = [fx("2026-11-21", "Chelsea", "Everton"), fx("2026-11-23", "Chelsea", "Everton")]
+        B.fill_lagging(rows, [res("2026-11-21", "Chelsea", "Everton", 1, 0)], date(2026, 11, 22))
+        self.assertEqual(rows[0]["hg"], 1)
+        self.assertIsNone(rows[1]["hg"])
+
 
 class LaggingCodes(unittest.TestCase):
     def test_picks_leagues_with_blank_past_fixtures(self):
