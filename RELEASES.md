@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-list-bar: Daily List bar replayed again, no change (tag pending)
+
+**What changed:** nothing a reader sees. The league bar (80%) and per-league bars were replayed once more.
+**Evidence:** fit 2025/26, 6,451 win picks: 75% +0.0 points v the 80% list (-4.6 to +5.0), 77.5% +0.9 (-3.0 to +4.7), 85% -15.4 (-25.8 to -6.8). Check 2026/27: 77.5% +11.5 (+2.4 to +25.7) on 24 picks only, 70%/75% span zero; fails on the fit season. No league has 30 calls.
+**Files:** `claude/daily-list.md`, `RELEASES.md`.
+**Not changed:** `LIST_MIN`, any per-league bar.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-22-calib: Calibration by band and sport, rerun (tag pending)
 
 **What changed:** a dated note only; nothing on the site moves.
