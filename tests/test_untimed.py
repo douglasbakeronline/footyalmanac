@@ -306,5 +306,77 @@ class RescheduleOnly(unittest.TestCase):
         self.assertEqual(mapping["SC Braga"], "Sporting Clube de Braga")
         self.assertEqual(mapping["Sporting CP"], "Sporting Clube de Portugal")
 
+class RescheduleSplit(unittest.TestCase):
+    """22 Nov 2026 (night): Scotland, Greece and Czechia (sources.AF_SPLIT)
+    split after a regular season their openfootball files hold whole, so a
+    postponed row moves only to a date on or before the file's last fixture:
+    Dundee United v Hearts (31 Oct) and Atromitos v AEK (17 Oct) were off
+    the board."""
+    SUN = date(2026, 11, 22)
+
+    def season(self):
+        return [row("Dundee United", "Heart of Midlothian", "2026-10-31"),
+                row("Celtic", "Rangers", "2026-11-29", time="12:00"),
+                row("Aberdeen", "Hibernian", "2027-04-10", time="15:00")]
+
+    def test_registered(self):
+        self.assertEqual({c: S.AF_RESCHEDULE[c] for c in S.AF_SPLIT},
+                         {"sco.1": 179, "gr.1": 197, "cze.1": 345})
+        self.assertLessEqual(S.AF_SPLIT, set(S.AF_RESCHEDULE))
+
+    def test_postponed_row_moves_in_the_regular_season(self):
+        rows = self.season()
+        n, bad = B.fill_untimed(rows, [af("Dundee Utd", "Heart Of Midlothian", "2026-11-25", "19:45")],
+                                self.SUN, postponed_only=True, split=True)
+        self.assertEqual((n, bad), (1, []))
+        self.assertEqual((rows[0]["date"], rows[0]["rescheduledFrom"]), ("2026-11-25", "2026-10-31"))
+        self.assertEqual(rows[1]["date"], "2026-11-29")
+
+    def test_never_past_the_files_last_fixture(self):
+        # a listing after the regular season is the split's game, not this one
+        rows = self.season()
+        n, _ = B.fill_untimed(rows, [af("Dundee Utd", "Heart Of Midlothian", "2027-04-25", "15:00")],
+                              date(2027, 4, 24), postponed_only=True, split=True)
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["date"], "2026-10-31")
+        # without the split flag (Portugal) the same listing would move it
+        rows = self.season()
+        n, _ = B.fill_untimed(rows, [af("Dundee Utd", "Heart Of Midlothian", "2027-04-25", "15:00")],
+                              date(2027, 4, 24), postponed_only=True)
+        self.assertEqual(n, 1)
+
+    def test_repeat_pair_in_the_file_refused(self):
+        # Scotland's 33 rounds repeat 66 ordered pairs before the split
+        rows = self.season() + [row("Dundee United", "Heart of Midlothian", "2027-02-14", time="15:00")]
+        n, _ = B.fill_untimed(rows, [af("Dundee Utd", "Heart Of Midlothian", "2026-11-25", "19:45")],
+                              self.SUN, postponed_only=True, split=True)
+        self.assertEqual(n, 0)
+        self.assertEqual(rows[0]["date"], "2026-10-31")
+
+    def test_api_football_spellings_match(self):
+        # API-Football's usual short forms (unprobed: the first CI build names any
+        # miss) against openfootball's 2026-27 files; "Dundee Utd" had reduced to Dundee
+        cases = {
+            "sco": (["Aberdeen", "Celtic", "Dundee", "Dundee United", "Falkirk",
+                     "Heart of Midlothian", "Hibernian", "Kilmarnock", "Motherwell", "Rangers",
+                     "Saint Johnstone", "St. Mirren"],
+                    ["Aberdeen", "Celtic", "Dundee", "Dundee Utd", "Falkirk", "Heart Of Midlothian",
+                     "Hibernian", "Kilmarnock", "Motherwell", "Rangers", "ST Johnstone", "ST Mirren"]),
+            "gr": (["AEK", "Aris Thessaloniki", "Asteras Tripolis", "Atromitos", "Iraklis 1908",
+                    "Kalamata", "Kifisia", "Levadiakos", "OFI", "Olympiakos Piraeus", "PAOK",
+                    "Panathinaikos", "Panetolikos", "Volos"],
+                   ["AEK Athens FC", "Aris", "Asteras Tripolis", "Atromitos", "Iraklis", "Kalamata",
+                    "Kifisia", "Levadiakos", "OFI", "Olympiakos Piraeus", "PAOK", "Panathinaikos",
+                    "Panetolikos", "Volos NFC"]),
+        }
+        for key, (of, api) in cases.items():
+            rows = [row(of[i], of[(i + 1) % len(of)], "2026-12-01") for i in range(len(of))]
+            mapping, bad = B._map_names(rows, [af(a, api[(i + 1) % len(api)], "2026-12-01", "20:00")
+                                               for i, a in enumerate(api)])
+            self.assertEqual(bad, [], key)
+            self.assertEqual(len(set(mapping.values())), len(of), key)
+        self.assertEqual(S.match_team("Dundee Utd", {"Dundee", "Dundee United"}), "Dundee United")
+
+
 if __name__ == "__main__":
     unittest.main()

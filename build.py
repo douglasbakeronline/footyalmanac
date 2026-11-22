@@ -966,7 +966,7 @@ def fill_lagging(rows, results, before, window=LAG_WINDOW, append=False, source=
     return filled, [], unplaced
 
 
-def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False):
+def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False, split=False):
     """Give a league's unplayed rows with no kick-off the date and time
     API-Football lists (19 Nov 2026, #417: La Liga, the Süper Lig and Brazil's
     Serie A come from openfootball dated by round with no time, a day either
@@ -1001,8 +1001,13 @@ def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False):
     # postponed_only (22 Nov 2026, evening; sources.AF_RESCHEDULE, the Primeira
     # Liga): only that last step, the rescheduled game, for a league whose own
     # dates and times are real; every row inside the look-back is left alone.
+    # split (22 Nov 2026, night; sources.AF_SPLIT): a league that splits after
+    # its regular season (Scotland, Greece, Czechia) repeats pairs after the
+    # split, which the source's file does not hold yet, so a postponed row
+    # never moves past the file's last fixture date.
     first = start.isoformat()
     back = (start - timedelta(days=window)).isoformat()
+    season_end = max((r["date"] for r in rows), default=first) if split else None
     unplayed = defaultdict(int)
     for r in rows:
         if r.get("hg") is None:
@@ -1025,6 +1030,8 @@ def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False):
             near = [x for x in by_pair.get((r["home"], r["away"]), []) if x["date"] >= first]
             if len(near) != 1 or not near[0].get("time") or len(by_pair[(r["home"], r["away"])]) != 1:
                 continue
+            if season_end and near[0]["date"] > season_end:
+                continue      # after the regular season: the split's game, not this one
             r["date"], r["time"], r["utc"] = near[0]["date"], near[0]["time"], True
             r["timeFrom"], r["rescheduledFrom"] = "apifootball", d.isoformat()
             changed += 1
@@ -1245,7 +1252,7 @@ def main():
             rows_af = S.af_untimed_rows(c, start - timedelta(days=1), end + timedelta(days=3))
             n, bad = fill_untimed(fixtures[c], rows_af, start,
                                   retime=E.LEAGUES[c].get("iso") if c in S.AF_RETIME else None,
-                                  postponed_only=only)
+                                  postponed_only=only, split=c in S.AF_SPLIT)
             if bad:
                 print(f"::warning::{c}: API-Football kick-offs not used, club names unmatched: "
                       + "; ".join(bad[:8]), file=sys.stderr)
