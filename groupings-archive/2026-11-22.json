@@ -455,7 +455,7 @@
      "firstOdds": 1.48,
      "lastOdds": 1.48,
      "lastBest": 1.5,
-     "lastAt": "2026-11-22T15:14:13Z",
+     "lastAt": "2026-11-22T15:41:32Z",
      "lockPrice": {
       "odds": 1.48,
       "best": 1.5,
@@ -642,7 +642,7 @@
      "firstOdds": 1.24,
      "lastOdds": 1.29,
      "lastBest": 1.29,
-     "lastAt": "2026-11-22T15:14:13Z",
+     "lastAt": "2026-11-22T15:41:32Z",
      "lockPrice": {
       "odds": 1.29,
       "best": 1.29,
@@ -1045,9 +1045,9 @@
      "basis": "model",
      "tier": "list",
      "firstOdds": 1.16,
-     "lastOdds": 1.16,
-     "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -1204,7 +1204,7 @@
      "firstOdds": 1.26,
      "lastOdds": 1.26,
      "lastBest": 1.26,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -1391,7 +1391,7 @@
      "firstOdds": 1.17,
      "lastOdds": 1.16,
      "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     }
    ],
    "tested": 0.3527,
@@ -1829,7 +1829,7 @@
      "firstOdds": 1.14,
      "lastOdds": 1.11,
      "lastBest": 1.11,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -1996,9 +1996,9 @@
      "edge": -0.0564,
      "basis": "model",
      "firstOdds": 1.17,
-     "lastOdds": 1.16,
-     "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -2154,7 +2154,7 @@
      "firstOdds": 1.07,
      "lastOdds": 1.07,
      "lastBest": 1.07,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -2329,7 +2329,7 @@
      "firstOdds": 1.18,
      "lastOdds": 1.16,
      "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     }
    ],
    "tested": 0.3737,
@@ -2935,9 +2935,9 @@
      "edge": -0.0645,
      "basis": "model",
      "firstOdds": 1.16,
-     "lastOdds": 1.16,
-     "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastOdds": 1.15,
+     "lastBest": 1.15,
+     "lastAt": "2026-11-22T15:41:32Z"
     },
     {
      "sport": "nfl",
@@ -3123,7 +3123,7 @@
      "firstOdds": 1.17,
      "lastOdds": 1.16,
      "lastBest": 1.16,
-     "lastAt": "2026-11-22T15:14:13Z"
+     "lastAt": "2026-11-22T15:41:32Z"
     }
    ],
    "tested": 0.3451,
