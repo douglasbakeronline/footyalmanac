@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-22-pt-rescheduled: postponed Primeira Liga games back on the board (tag pending)
+
+**What changed:** a postponed Primeira Liga game kept under its first date (Braga v Gil Vicente, 16 Aug; Estoril v Marítimo, 8 Nov) now returns to the board, the Daily List and the Card when API-Football lists it once in the build window, as #480 did for La Liga, the Süper Lig, Brazil and the three retime leagues. Portugal's own dates and times are otherwise left alone.
+**Evidence:** the 22 Nov 16:05 UTC build's unplayed warning; Portugal plays each ordered pair once a season (18 clubs, no split), so one listing in the window is the replayed game. All 18 clubs match under API-Football's short forms (unprobed: the first CI build logs "rescheduled pt.1" or names a miss). Scotland, Greece and Czechia left out: their splits repeat pairs.
+**Files:** `sources.py` (`AF_RESCHEDULE`), `build.py` (`fill_untimed(postponed_only=)`, the build loop), `tests/test_untimed.py`, `claude/rescheduled-postponed-portugal-2026-11-22.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model constant, Card rule, or row inside the look-back.
+**Roll back:** `git revert` the merge, or empty `AF_RESCHEDULE`.
+
 ## 2026-11-22-list-bar: Daily List bar replayed again, no change (tag pending)
 
 **What changed:** nothing a reader sees. The league bar (80%) and per-league bars were replayed once more.
