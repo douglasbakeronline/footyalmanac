@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-23T10:33:13Z",
+ "graded": "2026-11-23T11:09:49Z",
  "overall": {
   "groups": 150,
   "settled": 150,
@@ -204,10 +204,10 @@
    "quoted": 0.9159
   },
   "unchecked": {
-   "n": 32,
-   "won": 29,
-   "rate": 0.9062,
-   "quoted": 0.8555
+   "n": 33,
+   "won": 30,
+   "rate": 0.9091,
+   "quoted": 0.8529
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 16,
-     "won": 13,
-     "rate": 0.8125,
-     "quoted": 0.7999
+     "n": 17,
+     "won": 14,
+     "rate": 0.8235,
+     "quoted": 0.7983
     }
    },
    "nba": {
@@ -535,12 +535,12 @@
    "ncaab|usc trojans|louisiana ragin' cajuns|2026-11-23": 0,
    "ncaab|grambling tigers|ecclesia royals|2026-11-23": -1,
    "ncaab|florida international panthers|long beach state beach|2026-11-23": -1,
-   "ncaab|youngstown state penguins|maryland eastern shore hawks|2026-11-23": 1.08,
+   "ncaab|youngstown state penguins|maryland eastern shore hawks|2026-11-23": 1.07,
    "nba|minnesota timberwolves|brooklyn nets|2026-11-24": 1.12,
    "nba|los angeles lakers|utah jazz|2026-11-24": 1.1,
    "nba|sacramento kings|san antonio spurs|2026-11-24": 1.18,
    "ncaab|wichita state shockers|texas a&m-corpus christi islanders|2026-11-24": -1,
-   "ncaab|illinois fighting illini|winthrop eagles|2026-11-24": -1,
+   "ncaab|illinois fighting illini|winthrop eagles|2026-11-24": 0,
    "ncaab|kansas jayhawks|denver pioneers|2026-11-24": 0,
    "ncaab|north carolina tar heels|monmouth hawks|2026-11-24": 0,
    "ncaab|california golden bears|alabama state hornets|2026-11-24": 0,
