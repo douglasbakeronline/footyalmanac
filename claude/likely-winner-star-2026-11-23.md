@@ -55,6 +55,16 @@ the tenth was a list pick bet in another market (Nasaf over 2.5, model 52%).
 - No record line for starred picks yet. If the star is kept, grade it apart
   (a `winStar` flag archived at publish) so it can be judged on its own.
 
+## Tracked, not shipped: football and tennis at 85%+ (23 Nov 2026)
+
+Looking back (28 Sep to 22 Nov), stars landed 585 of 652 (90%); football and
+tennis stars at 85%+ 460 of 496 (93%) v the stars that variant drops 125 of
+156 (80%). Football: star 144/173 (83%), 85%+ 49/54 (91%). Tennis: star 65/76
+(86%), 85%+ 35/39 (90%). Douglas: "No. But keep track". `tools/star_record.py`
+tallies the live star, the variant and unstarred list picks, replayed and live
+from 23 Nov; the nightly Card review prints it (`star_section`). Read the two
+at 14 days live; put the variant to Douglas only if it is ahead on both spans.
+
 ## Roll back
 
 `git revert` the merge. Everything is in `index.html` (`likelyWinner`,

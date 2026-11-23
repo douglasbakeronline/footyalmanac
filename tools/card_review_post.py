@@ -137,6 +137,21 @@ def edge_section(since="2026-11-11"):
                   "best-price return positive, p(loss) <= 0.30 (tools/edge_sports.py, claude/edge-sports-2026-11-10.md).", ""]
 
 
+def star_section():
+    """23 Nov 2026 (Douglas: "keep track"): the likely winner star's record,
+    the live rule beside the football-and-tennis-at-85% variant he chose not
+    to ship (tools/star_record.py, claude/likely-winner-star-2026-11-23.md).
+    Advisory: a tally for Douglas, no tripwire acts on it."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import star_record as SR
+        body = SR.lines(SR.report("."))
+    except Exception as e:   # advisory: never stop the review over it
+        return ["## Likely winner star", f"Not read: {type(e).__name__}: {e}", ""]
+    return ["## Likely winner star (live rule v football and tennis at 85%+)", ""] + body + [
+        "Read beside each other at 14 days live; the variant is put to Douglas only if it is ahead on both spans.", ""]
+
+
 def markets_section(rec):
     """14 Nov 2026: the football markets beyond the match winner
     (markets.py, markets-record.json): landed against the model, the return
@@ -787,6 +802,7 @@ def review_body():
     lines += list_book_section(load("groupings-record.json").get("listAtBook"))
     lines += funnel_section()
     lines += edge_section()
+    lines += star_section()
     lines += markets_section(load("markets-record.json"))
     lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
