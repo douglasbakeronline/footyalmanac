@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-college-tiers: college basketball picks tiered Banker, Solid, Caution, Leave out (tag pending)
+
+**What changed:** every college basketball pick at 70%+ carries one chip under its number: **Banker** (at home, favoured by 12+ points on ESPN's line), **Solid** (at home, no line posted), **Caution** (a neutral court, or favoured by 6 to 12) or **Leave out** (away, or favoured by under 6). It shows on the Daily List, the reserve, the college basketball tab and Starred, replaces the Away / Neutral mark on those rows, and the college basketball tab opens with a key giving each tier's record. A Caution or Leave out pick no longer gets the ⭐. The record tallies each tier on every build (`sports-record.json` `collegeTiers`).
+
+**Evidence:** `claude/college-tiers-2026-11-23.md`: graded college basketball 1 to 23 Nov at 70%+: Banker 95% v 90% quoted (101), Solid 89% v 85% (439), Caution 67% v 81% (57), Leave out 52% v 78% (69).
+
+**Tested:** `tests/test_sports.py` `CollegeTier` (fails on the old code), the full suite, nametest, a fast offline build rendered in Chromium at 1280 and 400 wide on the Daily List and the college basketball tab, no page errors.
+
+**Files:** `sports.py` (`college_tier`, `by_college_tier`, `collegeTiers`), `index.html` (`collegeTier`, `collegeTierChip`, `tierKey`, `.ctier`, `likelyWinner`), `tests/test_sports.py`, `claude/college-tiers-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the model, its numbers, the Daily List, any grading or Card rule. The line is display only; no bookmaker number reaches a model.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-unpriced-near: "football Card unpriced" says how many are close to the start (tag pending)
 
 **What changed:** the build log's "football Card unpriced:" line now says how many of the named legs are within 24 hours of their start, and each leg shows its hours out. `groupings.json` carries the count as `football.cardUnpricedNear`. The 20 Nov note's trigger for building a second football price source read the full count, which named core legs two and three days out on every build this week; each was priced by API-Football before its start, so the trigger was firing on legs no price gap had cost.

@@ -1473,6 +1473,19 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .resvtag{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px dashed var(--ink-2);border-radius:3px;
   font-family:var(--f-ui);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
   line-height:1.5;white-space:nowrap;color:var(--ink-2)}
+/* 23 Nov 2026: the college basketball tier (collegeTier), one chip under the
+   number: Banker filled green, Solid green outline, Caution amber outline,
+   Leave out filled red. */
+.ctier{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px solid currentColor;border-radius:3px;
+  font-family:var(--f-ui);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  line-height:1.5;white-space:nowrap;cursor:help}
+.ctier.banker{background:var(--edge);border-color:var(--edge);color:#fff}
+.ctier.solid{color:var(--edge);background:var(--edge-soft)}
+.ctier.caution{color:#7a5a12;background:var(--draw-soft)}
+.ctier.leave{background:var(--away);border-color:var(--away);color:#fff}
+.tierkey{margin:6px 0 14px;font-size:13px;line-height:1.7;color:var(--ink-2);max-width:86ch}
+.tierkey .ctier{display:inline-block;margin:0 4px 0 0;vertical-align:1px}
+.tierkey span.it{white-space:nowrap;margin-right:12px}
 .list-off{margin:2px 0 10px;font-size:13px;color:var(--mute)}
 .list-off button{font:inherit;color:inherit;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
 .list-days{margin:18px 0 4px}
@@ -4433,7 +4446,59 @@ function sideWary(g){
 }
 function sideWaryChip(g){
   const w = sideWary(g);
-  return (w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "") + trailWaryChip(g);
+  // 23 Nov 2026: a tiered college basketball row says its venue in the tier chip
+  if(w && collegeTier(g)) return collegeTierChip(g) + trailWaryChip(g);
+  return (w ? `<span class="flagged wary" title="${w.why}">${w.label}</span>` : "") + collegeTierChip(g) + trailWaryChip(g);
+}
+/* 23 Nov 2026 (Douglas: "I like the idea of signaling bankers solid and
+   caution and leave out"): a college basketball pick at 70%+ is tiered by
+   its venue and ESPN's spread for the pick (sports.college_tier, the same
+   rule; claude/college-tiers-2026-11-23.md). Graded 1 to 23 Nov, 70%+:
+   Banker (home, the line 12+) 95% v 90% quoted (101); Solid (home, no line)
+   89% v 85% (439); Caution (a neutral court, or the line 6-12) 67% v 81%
+   (57); Leave out (away, or the line under 6) 52% v 78% (69). A game with no
+   line more than TIER_WAIT_H hours out shows no tier: ESPN posts the line on
+   the day. Display only: the model's number and the Daily List are unchanged. */
+const TIER_MIN = 0.70, TIER_BANKER = 12, TIER_CAUTION = 6, TIER_WAIT_H = 18;
+const TIER_TEXT = {
+  banker: ["Banker", "At home and favoured by 12+ points on the line"],
+  solid: ["Solid", "At home, against a side so outmatched the bookmakers post no line"],
+  caution: ["Caution", "On a neutral court, or favoured by only 6 to 12 points on the line"],
+  leave: ["Leave out", "Away from home, or favoured by under 6 points on the line"]};
+const TIER_FALLBACK = {banker: {n: 101, landed: 96, quoted: 0.8956}, solid: {n: 439, landed: 392, quoted: 0.8464},
+                       caution: {n: 57, landed: 38, quoted: 0.812}, leave: {n: 69, landed: 36, quoted: 0.776}};
+function collegeTier(g){
+  if(!g || g.sport !== "ncaab" || !(g.confidence >= TIER_MIN)) return null;
+  const home = g.pick === g.home, sp = g.line && g.line.spread;
+  const by = sp == null || !isFinite(+sp) ? null : (home ? -sp : +sp);
+  if(!home && !g.neutral) return "leave";
+  if(by != null && by < TIER_CAUTION) return "leave";
+  if(g.neutral || (by != null && by < TIER_BANKER)) return "caution";
+  if(by != null) return "banker";
+  const t = Date.parse(g.when || g.start || "");
+  if(isFinite(t) && t - Date.now() > TIER_WAIT_H * 3600e3) return null;   // the line is not out yet
+  return "solid";
+}
+function tierRecord(t){
+  let rec = null; try { rec = SR; } catch(e) {}   // rows can draw before SR's let runs
+  rec = rec || window.__SPORTS_RECORD__;
+  const r = rec && rec.collegeTiers && rec.collegeTiers[t];
+  return r && r.n ? r : TIER_FALLBACK[t];
+}
+function collegeTierChip(g){
+  const t = collegeTier(g); if(!t) return "";
+  const [label, what] = TIER_TEXT[t], r = tierRecord(t);
+  const rec = r ? ` College basketball picks like this at 70%+ have landed ${r.landed} of ${r.n} (${Math.round(r.landed / r.n * 100)}%) against ${Math.round(r.quoted * 100)}% quoted.` : "";
+  return `<span class="ctier ${t}" title="${label}: ${what}.${rec} Display only: the model's number is unchanged.">${label}</span>`;
+}
+function tierKey(){
+  const items = Object.keys(TIER_TEXT).map(t => {
+    const [label, what] = TIER_TEXT[t], r = tierRecord(t);
+    return `<span class="it"><span class="ctier ${t}">${label}</span>${r ? `${Math.round(r.landed / r.n * 100)}% of ${r.n} v ${Math.round(r.quoted * 100)}% quoted` : ""}</span>`;
+  }).join("");
+  return `<p class="tierkey"><b>Tiers for picks at 70%+</b>, by venue and the bookmakers' line: ${items}<br>
+    Banker: at home, favoured by 12+ points. Solid: at home, no line posted. Caution: a neutral court, or favoured by 6 to 12.
+    Leave out: away, or favoured by under 6. Games more than ${TIER_WAIT_H} hours away show their tier once the line is out. The model's number is unchanged.</p>`;
 }
 /* A college basketball pick in November-December whose side has played three
    or more games this season and lost more than it has won is marked "Behind
@@ -4544,6 +4609,7 @@ function likelyWinner(g, sport){
   }
   if(tennisWary(g) || sideWary(g) || trailWary(g)) return false;
   if(bookGapChip(g, sport)) return false;
+  const ct = collegeTier(g); if(ct === "caution" || ct === "leave") return false;   // 23 Nov 2026
   const home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
   const c = cxFor(sport, home, away);
   return !(c && c.verdict === "against");
@@ -5060,7 +5126,7 @@ function renderSport(key){
       numbers would not mean anything.</p></div>`;
     return;
   }
-  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p></div>${tabOrderCtl()}${sp.games.length ? bandCtl(key, sp.games.map(g => g.confidence)) : ""}`;
+  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p>${key === "ncaab" ? tierKey() : ""}</div>${tabOrderCtl()}${sp.games.length ? bandCtl(key, sp.games.map(g => g.confidence)) : ""}`;
   if(!sp.games.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
     playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));

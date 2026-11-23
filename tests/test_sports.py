@@ -388,3 +388,38 @@ class SideMark(unittest.TestCase):
         self.assertNotIn("nba", t)
         few = S.by_side([row("ncaab", False, False)] * 99)
         self.assertFalse(few["ncaab"]["tripwire"])       # under WARY_TRIP_N
+
+
+class CollegeTier(unittest.TestCase):
+    """23 Nov 2026 (Douglas: "I like the idea of signaling bankers solid and
+    caution and leave out"): a college basketball pick at 70%+ is tiered by
+    venue and ESPN's spread for the pick; the record tallies each tier."""
+    def g(self, home_pick=True, spread=None, neutral=False, conf=0.85, ok=True):
+        line = None if spread is None else {"spread": -spread if home_pick else spread}
+        return {"sport": "ncaab", "home": "H", "away": "A", "pick": "H" if home_pick else "A",
+                "neutral": neutral, "line": line, "confidence": conf, "ok": ok}
+
+    def test_tiers(self):
+        self.assertEqual(S.college_tier(self.g(spread=12)), "banker")
+        self.assertEqual(S.college_tier(self.g(spread=43.5)), "banker")
+        self.assertEqual(S.college_tier(self.g()), "solid")                       # no line posted
+        self.assertEqual(S.college_tier(self.g(spread=9.5)), "caution")
+        self.assertEqual(S.college_tier(self.g(spread=16.5, neutral=True)), "caution")
+        self.assertEqual(S.college_tier(self.g(neutral=True)), "caution")
+        self.assertEqual(S.college_tier(self.g(spread=5.5)), "leave")
+        self.assertEqual(S.college_tier(self.g(spread=-3)), "leave")              # the line has the pick as underdog
+        self.assertEqual(S.college_tier(self.g(home_pick=False, spread=20)), "leave")
+        self.assertEqual(S.college_tier(self.g(spread=5.5, neutral=True)), "leave")
+        self.assertIsNone(S.college_tier(self.g(conf=0.69, spread=20)))
+        self.assertIsNone(S.college_tier(dict(self.g(spread=20), sport="cfb")))
+        self.assertIsNone(S.college_tier(dict(self.g(spread=20), sport="nba")))
+
+    def test_tally(self):
+        rows = [self.g(spread=20)] * 3 + [self.g(spread=3, ok=False)] * 2 + [self.g(conf=0.6)]
+        t = S.by_college_tier(rows)
+        self.assertEqual(t["banker"]["n"], 3)
+        self.assertEqual(t["banker"]["landed"], 3)
+        self.assertEqual(t["leave"]["landed"], 0)
+        self.assertIsNone(t["solid"])
+        self.assertIsNone(t["caution"])
+        self.assertEqual(t["rule"]["min"], 0.70)
