@@ -24,6 +24,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** `git revert` the squash commit on main (it is one commit). Releases 3 to 7 of the UX programme (day ribbon, address bar, row, ledger, Analysis) build on the bar; revert those first.
 
+## 2026-11-23-markets-spread: the football markets' gate passes read for where they come from (tag pending)
+
+**What changed:** under any football market rule that passes its gate, the nightly Card review now says where the pass comes from: each selection's picks and best-price return, how many match days and the share on the busiest three, how many William Hill priced, and that 20 rules are read at p(loss) 0.10 (about two would pass by luck alone). For over / under 2.5 it adds the same value rule on the football-data seasons (`goals-value.json`). The gate and its verdict are unchanged.
+
+**Evidence:** `claude/markets-pass-spread-2026-11-23.md`. Over / under 2.5's pass (222 picks, +11.0%) is the under side alone (160 picks +15.9%, over 62 -1.7%), 82% of it on three days, and Hill prices none of it; on football-data the same value unders lost 7.3% (2025-26, 1,184 bets) and 14.8% (2026-27, 679). The pick's team to score (194 picks, +5.0%, p(loss) 0.088) is even by side but thin. Neither should be offered yet.
+
+**Tested:** two new tests in `tests/test_markets.py` (the gate's spread fields with the verdict unchanged; the review's lines), both failing before the change; the full suite and nametest pass; the section rendered on the committed archive.
+
+**Files:** `markets.py` (`gate`: `days`, `top3`, `bySel`, `hill`; `record`: `tests`), `tools/card_review_post.py` (`market_pass_lines`, `markets_section(rec, goals)`), `tests/test_markets.py`, `claude/markets-pass-spread-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the gate's thresholds or verdict, the page, any model, any Card rule (CARD_RULE stays 14 until the 30 Nov read).
+
+**Roll back:** `git revert` the merge commit.
 ## 2026-11-23-ux1-foundations: one segmented control, spacing and type tokens, one empty state (tag pending)
 
 **What changed:** release 1 of the UX programme, nearly invisible on purpose. Every toggle group on the site now has one look, `.seg`: the football Board and Show switches, Order by, the confidence bands, the Daily List's sport filter and jump strip, Starred's controls, the glance's day tabs, the Bets and Scale day pickers, How it went's day pickers, the slip and Edge trackers' ranges and racing's board, day, meeting and race pickers. Separate buttons with a 4px gap, a 1px rule border, ink with yellow text when selected, a count slot in mono, wrapping cleanly on a phone (the glance's tabs scroll on one line, `.seg--scroll`; tracker ranges are the compact `.seg--sm`). The selected look keys off `aria-pressed` (`aria-selected` in the glance's tablist); the tracker ranges, which only set class `on`, now set `aria-pressed` too. Spacing tokens `--s1` to `--s6` (4 to 40px) and a six-step type scale `--t-xs` to `--t-xl` (11, 12.5, 14, 16, 20, 26px) in `:root`; about 200 font sizes moved onto the scale where the move is exact or at most half a pixel smaller (13 to 12.5, 11.5 to 11, 14.5 to 14, 16.5 to 16; the cover and tab bar untouched); `#100e0c` is `var(--cover-ink)` everywhere it was written out (42). One empty state, `.empty`: a boxed note in the surface colour with an optional title line (`.empty-t`, Scale's bold heading), replacing the 40px blank `.empty`, `.tb-empty` and `.sc-empty`; the "not in this build" states read "... in this build yet. It appears after the next build." (tennis no longer tells readers to run a script).
