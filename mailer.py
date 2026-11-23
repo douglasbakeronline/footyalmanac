@@ -45,6 +45,7 @@ SUPABASE_URL = "https://nangcsyicqfvfawyvkus.supabase.co"
 SUPABASE_KEY = "sb_publishable_aNDvbiKjeNgZx9iIg75tZw_vQDmP28F"   # the page's publishable key (index.html)
 RESEND_BATCH = "https://api.resend.com/emails/batch"
 SENDER = "Sports Almanac <list@sportsalmanac.bet>"
+HEADER_IMG = SITE + "email-header.png"   # the site's cover header (deploy.yml publishes it)
 UNSUB_URL = SUPABASE_URL + "/functions/v1/almanac-unsubscribe?t={t}"
 MANAGE_URL = SITE + "#mailer?manage={t}"
 TEST_TOKEN = "00000000-0000-0000-0000-000000000000"   # previews and test copies: links that change nothing
@@ -408,7 +409,7 @@ def _p(text, size=14, color=INK2, extra=""):
 def section(title, sub, inner):
     """A red day band and its body, as the site's day heads."""
     sub_h = f'<span style="font-family:{F_BODY};font-weight:normal;font-size:12px;letter-spacing:0;text-transform:none;color:#ffe9ec"> · {E(sub)}</span>' if sub else ""
-    return (f'<tr><td style="padding:22px 0 0 0">'
+    return (f'<tr><td style="padding:0">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
             f'<tr><td style="background:{RED};padding:8px 14px;font-family:{F_HEAD};font-size:15px;letter-spacing:1px;text-transform:uppercase;color:#ffffff">{E(title)}{sub_h}</td></tr>'
             f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:4px 14px 12px 14px">{inner}</td></tr>'
@@ -502,10 +503,7 @@ def wrap(title, day_line, preheader, body_rows, foot):
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{PAPER}">
 <tr><td align="center" style="padding:16px 10px 28px 10px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%">
-<tr><td style="background:{RED};padding:14px 16px 12px 16px;text-align:left">
-<div style="font-family:{F_BODY};font-size:11px;letter-spacing:3px;color:#ffe9ec">★ ★ ★ ★ ★</div>
-<div style="font-family:{F_SERIF};font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;padding-top:4px">The</div>
-<div style="font-family:{F_HEAD};font-size:30px;line-height:1.05;letter-spacing:1px;text-transform:uppercase;color:#ffffff">Sports Almanac</div></td></tr>
+<tr><td style="padding:0;background:{INK};line-height:0;font-size:0"><img src="{HEADER_IMG}" width="600" alt="The Sports Almanac · Complete sports statistics · 2026" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;background:{INK};color:#ffffff;font-family:{F_HEAD};font-size:24px;line-height:1.2"></td></tr>
 <tr><td style="background:{YELLOW};padding:7px 16px;font-family:{F_HEAD};font-size:13px;letter-spacing:1px;text-transform:uppercase;color:{INK}">{E(title)}<span style="float:right;font-family:{F_BODY};letter-spacing:0;text-transform:none;font-weight:bold">{E(day_line)}</span></td></tr>
 {''.join(body_rows)}
 {foot}
@@ -515,7 +513,7 @@ def wrap(title, day_line, preheader, body_rows, foot):
 def footer_html(links):
     a = lambda href, txt: f'<a href="{E(href)}" style="color:{INK};font-weight:bold">{E(txt)}</a>'
     lk = " · ".join(a(h, t) for t, h in links)
-    return (f'<tr><td style="padding:22px 4px 0 4px;font-family:{F_BODY};font-size:13px;line-height:1.6;color:{INK2}">'
+    return (f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:16px 14px;font-family:{F_BODY};font-size:13px;line-height:1.6;color:{INK2}">'
             f'<p style="margin:0 0 10px 0">{lk}</p>'
             f'<p style="margin:0 0 10px 0">Every pick is the model\'s own read, published before the start and graded in public on the site, losses included. Past results do not guarantee future ones.</p>'
             f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0"><tr>'
@@ -531,6 +529,77 @@ def footer_text(links):
             "\n\nEvery pick is the model's own read, published before the start and graded in public on the site, losses included. "
             "Past results do not guarantee future ones.\n\n18+. Every pick can lose. Free, confidential help: GamCare 0808 8020 133, "
             f"https://www.begambleaware.org\n\nManage your emails: {MANAGE_MARK}\nUnsubscribe: {UNSUB_MARK}\n")
+
+
+# ---------------------------------------------------------------- the welcome series (design, 23 Nov 2026)
+#
+# Three emails for a new subscriber: confirm (at sign-up, double opt-in), welcome
+# (once confirmed) and how to read the Daily List (two days later). Built here so
+# they share the shell; nothing sends them yet. CONFIRM_MARK is the row's token.
+
+CONFIRM_MARK = "%%CONFIRM_URL%%"
+CONFIRM_URL = SITE + "#mailer?confirm={t}"
+
+
+def button(href, label):
+    return (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 14px 0"><tr>'
+            f'<td style="background:{RED};border:1px solid {INK}">'
+            f'<a href="{href}" style="display:inline-block;padding:13px 22px;font-family:{F_HEAD};font-size:15px;letter-spacing:1px;'
+            f'text-transform:uppercase;color:#ffffff;text-decoration:none">{E(label)}</a></td></tr></table>')
+
+
+def key_row(term, text):
+    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid {RULE}">'
+            f'<tr><td width="112" valign="top" style="padding:10px 10px 10px 0;font-family:{F_HEAD};font-size:13px;color:{INK}">{term}</td>'
+            f'<td valign="top" style="padding:10px 0;font-family:{F_BODY};font-size:14px;line-height:1.5;color:{INK2}">{text}</td></tr></table>')
+
+
+def welcome_emails():
+    """[(name, {subject, html, text})] for the three welcome emails."""
+    links = [("Today's Daily List", SITE), ("How it went", SITE + "#results")]
+    out = []
+
+    body = [section("One tap to start", None,
+                    _p("Thanks for signing up at sportsalmanac.bet. Confirm this address and your first Daily List arrives at 07:00 tomorrow.", 15, INK, "padding-top:8px") +
+                    button(CONFIRM_MARK, "Confirm my email") +
+                    _p("If you didn't sign up, ignore this email. Nothing more will be sent to you.", 13, MUTE))]
+    out.append(("welcome-1-confirm", {
+        "subject": "Confirm your Sports Almanac emails",
+        "html": wrap("Confirm your email", "One step left", "One tap and the Daily List starts tomorrow at 07:00.", body, footer_html(links)),
+        "text": f"Confirm your Sports Almanac emails\n\nConfirm this address and your first Daily List arrives at 07:00 tomorrow:\n{CONFIRM_MARK}\n\nIf you didn't sign up, ignore this email.\n\n" + footer_text(links)}))
+
+    get = (key_row("Daily List", "Every morning at 07:00 UK: the day's strongest picks across every sport, with the price at William Hill where there is one.") +
+           key_row("Weekly Record", "Saturdays at 07:00 UK: how last week's picks landed against what was quoted, wins and misses both.") +
+           key_row("Scale", "Only if you ticked it: the day's Scale bets, a pick to win plus a second condition, inside the Daily List email."))
+    how = (_p("Every number comes from the model alone. No bookmaker's price goes into a pick; prices are shown only so you can see what you'd get.", 14, INK2, "padding-top:8px") +
+           _p("Every pick is published before the start and graded in public on the site, losses included. Nothing is taken down after the result.", 14, INK2) +
+           button(SITE, "See today's list"))
+    body = [section("What you'll get", None, get), section("How the picks are made", None, how)]
+    out.append(("welcome-2-welcome", {
+        "subject": "You're in: the Daily List starts tomorrow",
+        "html": wrap("Welcome", "You're confirmed", "What arrives, when, and how the picks are made.", body, footer_html(links)),
+        "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
+                "Every number comes from the model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
+
+    groups = (label_bar("Group A", "up to five picks at 85% or better") +
+              _p("The day's strongest calls. Only picks the model rates 85% or more get in, so some days it has two, some days none. It is never padded to make five.", 14, INK2, "padding-top:8px") +
+              label_bar("Group B", "the next five") +
+              _p("The next five by strength. Still over the bar every list pick has to clear, a step down from Group A.", 14, INK2, "padding-top:8px") +
+              label_bar("The rest", "everything else that cleared the bar") +
+              _p("Still list picks, listed strongest first.", 14, INK2, "padding-top:8px"))
+    row_key = (key_row("90%", "The model's chance the pick wins.") +
+               key_row("tested 84%", "How often picks at this level landed in testing, on games the model was never tuned on. A pick only reaches the list when that figure is 80% or better.") +
+               key_row("Hill 1.25", "William Hill's price, for reference. Avg means the average across UK books where Hill has none.") +
+               key_row("⭐", "Likely winner: a list pick that also clears a short set of extra checks, such as no bookmakers' warning against it.") +
+               key_row("Won / Lost", "Picks already played show their result, so nothing is hidden."))
+    body = [section("Groups A and B", "why the list is split", groups),
+            section("Reading a row", "the example numbers are for illustration", row_key)]
+    out.append(("welcome-3-guide", {
+        "subject": "How to read the Daily List",
+        "html": wrap("How to read it", "Two-minute guide", "Group A, Group B, the tested rate and the star, explained.", body, footer_html(links)),
+        "text": "How to read the Daily List\n\nGroup A: up to five picks at 85% or better, never padded.\nGroup B: the next five.\n"
+                "The rest: every other pick that cleared the bar.\n\n" + footer_text(links)}))
+    return out
 
 
 # ---------------------------------------------------------------- the Daily List email
@@ -979,6 +1048,9 @@ def preview(out, day, src=None, now=None):
         for ext in ("html", "txt"):
             with open(os.path.join(out, f"{name}.{ext}"), "w", encoding="utf-8") as f:
                 f.write(personalise(m["html" if ext == "html" else "text"], TEST_TOKEN))
+    for name, m in welcome_emails():
+        with open(os.path.join(out, f"{name}.html"), "w", encoding="utf-8") as f:
+            f.write(personalise(m["html"], TEST_TOKEN).replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN)))
     print(f"mailer: preview written to {out} (daily: {d['count']} list picks; weekly: {w['count']} settled list picks)")
     return 0
 
