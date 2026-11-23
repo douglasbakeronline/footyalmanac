@@ -414,7 +414,7 @@ def _p(text, size=14, color=INK2, extra=""):
 def section(title, sub, inner):
     """A red day band and its body, as the site's .day-head: Anton 17px white with an ink offset, the count in mono yellow."""
     sub_h = (f'<td align="right" valign="middle" style="padding:6px 12px 5px 8px;font-family:{F_NUM};font-size:12px;font-weight:600;'
-             f'color:{YELLOW};white-space:nowrap">{E(sub)}</td>') if sub else ""
+             f'color:{YELLOW}">{E(sub)}</td>') if sub else ""
     return (f'<tr><td style="padding:0">'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{RED};border:1px solid {INK};border-top:0">'
             f'<tr><td valign="middle" style="padding:6px 12px 5px 12px;font-family:{F_DISPLAY};font-size:17px;line-height:1.3;letter-spacing:.04em;'
