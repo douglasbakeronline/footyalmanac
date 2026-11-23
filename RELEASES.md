@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-startrack: the star's record tracked beside an 85% variant (tag pending)
+
+**What changed:** nothing on the page. `tools/star_record.py` tallies the likely winner star on the graded record (replayed from 28 Sep, live from 23 Nov) beside the variant Douglas chose not to ship (football and tennis stars only at 85%+), and the nightly Card review prints it (`star_section`). Douglas, 23 Nov 2026: "No. But keep track".
+
+**Evidence at the start:** stars 585 of 652 (90%); the variant 460 of 496 (93%); the stars it drops 125 of 156 (80%).
+
+**Tested:** `tests/test_star_record.py`, the review tests, the full suite, nametest.
+
+**Files:** `tools/star_record.py`, `tools/card_review_post.py`, `tests/test_star_record.py`, `claude/likely-winner-star-2026-11-23.md`, `RELEASES.md`.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-winstar: ⭐ likely winners and the day's Most nailed on (tag pending)
 
 **What changed:** a ⭐ now sits beside the picked side's name on every Daily List pick that also passes every check the record backs: football priced under 1.40 (where a price is known), no college pick away, neutral or behind .500, no tennis under 80%, no Bookies mark, no context check "against". It shows on every tab where the row appears. Each day on the Daily List opens with a **Most nailed on** line: the day's strongest starred pick, with its confidence and price; its row's star is a little larger. A key line in the list's intro explains the star. Douglas, 23 Nov 2026, after nine lost slips: "add a ⭐ ... next to all games that meet the likely winner conditions" and "the most nailed on team to win".
