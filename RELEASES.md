@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-unpriced-near: "football Card unpriced" says how many are close to the start (tag pending)
+
+**What changed:** the build log's "football Card unpriced:" line now says how many of the named legs are within 24 hours of their start, and each leg shows its hours out. `groupings.json` carries the count as `football.cardUnpricedNear`. The 20 Nov note's trigger for building a second football price source read the full count, which named core legs two and three days out on every build this week; each was priced by API-Football before its start, so the trigger was firing on legs no price gap had cost.
+
+**Evidence:** `claude/card-unpriced-near-2026-11-23.md`: the week's lines against the pool archive (OL Lyonnes, Vancouver, Salisbury all priced one to two days before the start).
+
+**Tested:** `tests/test_football_unpriced.py` (one new test, fails on the old code), the full suite, nametest, a fast offline build. The next CI build's log line is the live check.
+
+**Files:** `groupings.py` (`CARD_UNPRICED_NEAR_H`, `card_unpriced_near`, `card_unpriced(now=)`), `tests/test_football_unpriced.py`, `claude/card-unpriced-near-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any Card rule, price source, call order or credit spend. A report only.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-af-normaliser: the price fallback reads the build's club normaliser (tag pending)
 
 **What changed:** a football game API-Football spells another way, which the build's own club normaliser already joins (CA Mineiro and Atletico-MG, CA Paranaense and Athletico-PR), now takes its price in the one-fixture fallback. The 02:41 UTC build had CA Mineiro v SC Corinthians Paulista (Serie A, 25 Nov) under noFixture beside "Atletico-MG v Corinthians".
