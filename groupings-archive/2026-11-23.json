@@ -1,0 +1,445 @@
+{
+ "date": "2026-11-23",
+ "published": "2026-11-23T18:11:29Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.35,
+   "p": 0.4963,
+   "pFair": 0.365,
+   "implied": 0.4247,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Hammarby IF v IFK Göteborg",
+     "home": "Hammarby IF",
+     "away": "IFK Göteborg",
+     "side": "h",
+     "pick": "Hammarby IF",
+     "code": "swe.1",
+     "comp": "Allsvenskan",
+     "country": "Sweden",
+     "when": "2026-11-23T18:00:00Z",
+     "date": "2026-11-23",
+     "pModel": 0.7869,
+     "p": 0.7869,
+     "fx": {
+      "u21Side": false,
+      "league": "swe.1",
+      "leagueName": "Allsvenskan",
+      "short": "SWE",
+      "country": "Sweden",
+      "iso": "swe",
+      "tier": 1,
+      "order": 44,
+      "round": "2026-allsvenskan",
+      "cup": false,
+      "date": "2026-11-23",
+      "time": "18:00",
+      "kickoff": "2026-11-23T18:00:00Z",
+      "home": {
+       "name": "Hammarby IF",
+       "att": 1.418,
+       "def": 0.635,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 16,
+        "D": 6,
+        "L": 8,
+        "GF": 48,
+        "GA": 25,
+        "GD": 23,
+        "Pts": 54,
+        "PPG": 1.8
+       },
+       "now": {
+        "P": 28,
+        "W": 18,
+        "D": 4,
+        "L": 6,
+        "GF": 60,
+        "GA": 23,
+        "GD": 37,
+        "Pts": 58,
+        "PPG": 2.071
+       }
+      },
+      "away": {
+       "name": "IFK Göteborg",
+       "att": 0.91,
+       "def": 1.129,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Allsvenskan",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "DDDLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024 + 2025 so far",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 10,
+        "L": 13,
+        "GF": 33,
+        "GA": 43,
+        "GD": -10,
+        "Pts": 31,
+        "PPG": 1.033
+       },
+       "now": {
+        "P": 28,
+        "W": 10,
+        "D": 9,
+        "L": 9,
+        "GF": 36,
+        "GA": 46,
+        "GD": -10,
+        "Pts": 39,
+        "PPG": 1.393
+       }
+      },
+      "p": {
+       "h": 0.7869,
+       "d": 0.1431,
+       "a": 0.07
+      },
+      "xg": [
+       2.74,
+       0.7
+      ],
+      "btts": 0.5127,
+      "over25": 0.5789,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7869,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7616,
+        0.1514,
+        0.087
+       ],
+       "best": [
+        1.2,
+        6.0,
+        11.0
+       ],
+       "avg": [
+        1.22,
+        6.12,
+        10.64
+       ],
+       "ev": [
+        -0.0557,
+        -0.1414,
+        -0.23
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 1,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1431,
+     "multOnly": false,
+     "odds": 1.22,
+     "best": 1.2,
+     "books": 9,
+     "opp": 10.64,
+     "draw": 6.12,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.2,
+      "Betfair": 1.2,
+      "BetVictor": 1.2
+     },
+     "margin": 1.0798,
+     "pricedAt": "2026-11-19T19:30:10Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.8197,
+     "pTested": 0.7298,
+     "fair": 0.7591,
+     "edge": -0.1096,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.22
+    },
+    {
+     "sport": "football",
+     "event": "Ceuta v Almería",
+     "home": "Ceuta",
+     "away": "Almería",
+     "side": "a",
+     "pick": "Almería",
+     "code": "es.2",
+     "comp": "LaLiga 2",
+     "country": "Spain",
+     "when": "2026-11-23T19:30:00Z",
+     "date": "2026-11-23",
+     "pModel": 0.6307,
+     "p": 0.6307,
+     "fx": {
+      "u21Side": false,
+      "league": "es.2",
+      "leagueName": "LaLiga 2",
+      "short": "LA2",
+      "country": "Spain",
+      "iso": "esp",
+      "tier": 2,
+      "order": 7,
+      "round": "regular-season",
+      "cup": false,
+      "date": "2026-11-23",
+      "time": "19:30",
+      "kickoff": "2026-11-23T19:30:00Z",
+      "home": {
+       "name": "Ceuta",
+       "att": 0.685,
+       "def": 1.365,
+       "played": 14,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "LaLiga 2",
+       "form": {
+        "pts": 0,
+        "max": 15,
+        "seq": "LLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 12,
+        "W": 5,
+        "D": 3,
+        "L": 4,
+        "GF": 11,
+        "GA": 14,
+        "GD": -3,
+        "Pts": 18,
+        "PPG": 1.5
+       },
+       "now": {
+        "P": 14,
+        "W": 1,
+        "D": 2,
+        "L": 11,
+        "GF": 10,
+        "GA": 32,
+        "GD": -22,
+        "Pts": 5,
+        "PPG": 0.357
+       }
+      },
+      "away": {
+       "name": "Almería",
+       "att": 1.265,
+       "def": 0.822,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "LaLiga 2",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 41,
+        "W": 18,
+        "D": 12,
+        "L": 11,
+        "GF": 70,
+        "GA": 55,
+        "GD": 15,
+        "Pts": 66,
+        "PPG": 1.61
+       },
+       "now": {
+        "P": 18,
+        "W": 11,
+        "D": 4,
+        "L": 3,
+        "GF": 31,
+        "GA": 16,
+        "GD": 15,
+        "Pts": 37,
+        "PPG": 2.056
+       }
+      },
+      "p": {
+       "h": 0.1413,
+       "d": 0.228,
+       "a": 0.6307
+      },
+      "xg": [
+       0.76,
+       1.97
+      ],
+      "btts": 0.5093,
+      "over25": 0.5175,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.6307,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.2701,
+        0.2483,
+        0.4816
+       ],
+       "best": [
+        3.7,
+        3.75,
+        1.91
+       ],
+       "avg": [
+        3.44,
+        3.74,
+        1.93
+       ],
+       "ev": [
+        -0.4772,
+        -0.145,
+        0.2046
+       ],
+       "src": "API-Football",
+       "books": 8
+      },
+      "rank": 5,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.6,
+       "to": 0.65,
+       "hit": 0.7052,
+       "n": 78,
+       "cumHit": 0.7459,
+       "cumN": 181,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7459,
+     "n": 181,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.228,
+     "multOnly": true,
+     "odds": 1.93,
+     "best": 1.91,
+     "books": 8,
+     "opp": 3.44,
+     "draw": 3.74,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.91,
+      "Bet365": 1.9,
+      "Betfair": 1.91
+     },
+     "margin": 1.0775,
+     "pricedAt": "2026-11-19T19:30:10Z",
+     "src": "API-Football, average of 8 bookmakers",
+     "implied": 0.5181,
+     "pTested": 0.6307,
+     "fair": 0.4808,
+     "edge": -0.0721,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.93,
+     "lastOdds": 1.95,
+     "lastBest": 2.0,
+     "lastAt": "2026-11-23T18:11:29Z"
+    }
+   ],
+   "tested": 0.4072,
+   "short": false,
+   "tiers": [
+    "reserve"
+   ],
+   "bestOdds": 2.35,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-20T00:09:53Z",
+   "checked": "2026-11-20T00:09:53Z",
+   "lockAt": "2026-11-23T18:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-23T18:11:29Z"
+  }
+ ]
+}
