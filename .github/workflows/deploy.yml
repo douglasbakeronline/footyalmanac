@@ -520,6 +520,19 @@ jobs:
       - name: Pin today's Daily List
         run: python3 daylist.py || echo "::warning::daylist failed; today's started picks will not show"
 
+      # The emails (mailer.py, 23 Nov 2026, Douglas): the Daily List at 07:00 UK every
+      # morning and the Weekly Record on Saturdays, through Resend. After daylist.py
+      # (today's list), groupings.py, scale.py and slip.py, whose files it reads. It
+      # sends only from 07:00 to 11:59 UK (the morning briefing's build, notify.py's
+      # 07:00 slot), and once a day per email: Supabase's almanac_mail_claim answers
+      # true to the first build only. Silent without the two secrets. Never fails the deploy.
+      - name: The emails
+        continue-on-error: true
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          MAILER_SECRET: ${{ secrets.MAILER_SECRET }}
+        run: python3 mailer.py || echo "::warning::mailer failed this run"
+
       - name: Keep the API-Football cache
         if: always()
         uses: actions/cache/save@v4
