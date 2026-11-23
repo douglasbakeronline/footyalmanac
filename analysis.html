@@ -45,7 +45,10 @@
 <meta name="color-scheme" content="light">
 <style>
 /* Lifted from index.html (masthead, nav band, prose, sheets, footer) so the
-   Analysis page reads as the same annual. Keep in step by hand. */
+   Analysis page reads as the same annual. The page ships on its own, so nothing
+   is shared by file; since 23 Nov 2026 (UX release 7) tests/test_shell_sync.py
+   fails CI when this :root, the tab bar block or the .seg block differ from
+   index.html's. Change index.html first, then copy across. */
 :root{
   /* A 1950s American sports annual: aged stock, banner red, foil gold,
      and navy. The probability bar takes the cover's own three colours rather
@@ -53,7 +56,6 @@
      favours, the jacket grey for the draw, the banner red for the side it
      expects to lose. Position still says which side is home. */
   --ink:#1a1511;
-  --edge:#1c6b3a;
   --ink-2:#4b4038;
   --mute:#6e6355;        /* 4.8:1 on paper; was #867a6b at 3.4:1, too faint for small labels */
   --mute-ink:#6e6355;
@@ -61,7 +63,7 @@
      same place at the same width whether the row is football, tennis, NFL,
      basketball, baseball or rugby. The narrow middle column is football's
      predicted score; the two-sided sports keep it empty to stay aligned. */
-  --row-cols:32px 132px minmax(0,1fr) 248px 72px minmax(0,1fr) 88px;
+  --row-cols:32px 132px minmax(0,1fr) 248px 96px minmax(0,1fr) 88px;
   --rule:#c6b89e;
   --rule-soft:#ded3bd;
   --paper:#f0e8d6;
@@ -79,10 +81,30 @@
   --yellow-mid:#f8e27a;
   --yellow-soft:#fbf0bf;
   --red:#c8102e;         /* the star band and stat panel */
+  --edge:#1c6b3a;        /* the green edge flag, 10 Nov 2026 */
+  --edge-soft:#dcebdf;
   --grey:#a4a9ad;        /* the jacket */
   --cover-ink:#100e0c;
 
   --rail:6px;
+
+  /* Spacing and type scales (23 Nov 2026, UX release 1). New CSS uses these
+     rather than raw pixels; the older rules move onto them as they are
+     touched. Spacing: 4, 8, 12, 16, 24, 40. Type: the six sizes the page
+     already uses most (labels 11, controls 12.5, body 14, lead 16, section
+     heads 20, display 26). The cover keeps its own sizes. */
+  --s1:4px;
+  --s2:8px;
+  --s3:12px;
+  --s4:16px;
+  --s5:24px;
+  --s6:40px;
+  --t-xs:11px;
+  --t-sm:12.5px;
+  --t-base:14px;
+  --t-md:16px;
+  --t-lg:20px;
+  --t-xl:26px;
 
   --f-display:'Anton','Barlow Semi Condensed',sans-serif;
   --f-ui:'Barlow Semi Condensed','Barlow',system-ui,sans-serif;
@@ -317,18 +339,19 @@ details.how p{margin-top:8px;padding-left:22px}
    what the controls even mean. Styled as a band rather than as tabs, so it
    reads as part of the cover rather than as browser chrome. */
 .views{
-  display:flex;margin-top:0;border:1px solid #100e0c;border-top:0;
-  background:#100e0c;
+  display:flex;margin-top:0;border:1px solid var(--cover-ink);border-top:0;
+  background:var(--cover-ink);
 }
 /* The top-level nav sits flush under the red band above it, so no top
    border is wanted there — but the same .views class is reused for the
    standalone "How it went" sport switcher, which has nothing above it and
    needs its stroke closed on all four sides or it reads as unfinished. */
-.views.standalone{border-top:1px solid #100e0c}
+.views.standalone{border-top:1px solid var(--cover-ink)}
+.views button[hidden]{display:none}
 .views button{
   flex:1 1 0;font-family:var(--f-display);font-weight:400;font-size:clamp(13px,2.6vw,18px);
   letter-spacing:.08em;text-transform:uppercase;
-  border:0;background:#100e0c;color:var(--yellow);padding:7px 10px;cursor:pointer;
+  border:0;background:var(--cover-ink);color:var(--yellow);padding:7px 10px;cursor:pointer;
   border-right:1px solid #3a342e;min-height:44px;
 }
 .views button:last-child{border-right:0}
@@ -339,20 +362,66 @@ details.how p{margin-top:8px;padding-left:22px}
 @media (min-width:701px){ #views button,#views .hq-link{font-size:clamp(12px,1.25vw,16px);letter-spacing:.05em;white-space:nowrap;padding:7px 6px} }
 .views .hq-link{flex:1 1 0;display:flex;align-items:center;justify-content:center;font-family:var(--f-display);
   font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;text-decoration:none;
-  background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px}
+  background:var(--cover-ink);color:var(--yellow);padding:7px 10px;min-height:44px}
 .views .hq-link:hover{text-decoration:underline}
 .views .hq-link:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
-@media (max-width:700px){ #views .hq-link{flex:1 1 30%;border-bottom:1px solid #3a342e} }
-/* nine boards: three to a row on a phone rather than nine slivers */
 #views{flex-wrap:wrap;position:sticky;top:0;z-index:40;box-shadow:0 6px 14px -10px rgba(16,14,12,.55)}
-/* On a phone the nav is three rows tall; pinned, it would eat a third of
-   the screen. There it scrolls away, and so do the football filters. */
-@media (max-width:860px){ #views{position:static;box-shadow:none} .controls{position:static} }
-@media (max-width:700px){ #views button{flex:1 1 30%;border-bottom:1px solid #3a342e} }
+/* Phones (26 Oct 2026): thirteen boards used to wrap into five rows and the
+   bar was unpinned so it did not eat the screen, which left no way to change
+   board without scrolling back up. Now one compact row that scrolls
+   sideways, pinned at the top, Daily List, Bets and Starred first. The
+   football filters still scroll away. */
+@media (max-width:860px){
+  #views{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;scrollbar-width:none}
+  #views::-webkit-scrollbar{display:none}
+  #views button,#views .hq-link{flex:0 0 auto;font-size:13px;letter-spacing:.06em;padding:0 13px;min-height:44px;
+    white-space:nowrap;scroll-snap-align:start;border-bottom:0}
+  #views button:last-of-type{border-right:1px solid #3a342e}
+  #views .hq-link:last-child{border-right:0}
+  .controls{position:static}
+}
 .views button[aria-pressed="true"]{
-  background:var(--yellow);color:#100e0c;
+  background:var(--yellow);color:var(--cover-ink);
 }
 .views button:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
+
+/* ---------- the two-row nav (16 Nov 2026, Douglas: option 4 of the nav mock-ups) ----------
+   Row one, the Almanac's sections, set like the year band above it: italic Anton
+   in yellow on black, split by slashes, the open one white with a yellow
+   underline. Row two, the sports, on a yellow strip: ink type, the open one
+   reversed out. Same buttons and data-view as before, so nothing that reads
+   #views changes. Both rows centre on desktop and scroll sideways on a phone. */
+#views.almanac{display:block;background:var(--cover-ink);border:1px solid var(--cover-ink);border-top:0}
+#views.almanac .nav-sections,#views.almanac .nav-sports{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
+#views.almanac .nav-sections > *{position:relative;flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;
+  background:transparent;border:0;color:var(--yellow);font-family:var(--f-display);font-style:italic;font-weight:400;
+  font-size:22px;letter-spacing:.01em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sections > * + *::before{content:"/";position:absolute;left:-4px;color:#5a524a;font-style:normal;pointer-events:none}
+#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > [aria-current="page"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
+  text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:6px}
+#views.almanac .nav-sections > :hover{color:#fff}
+#views.almanac .nav-sports{background:var(--yellow);border-top:1px solid var(--cover-ink)}
+#views.almanac .nav-sports > *{flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;background:transparent;
+  border:0;color:var(--cover-ink);font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
+  text-decoration:none;white-space:nowrap;cursor:pointer}
+#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > [aria-current="page"],#views.almanac .nav-sports > .nav-on{background:var(--cover-ink);color:var(--yellow)}
+#views.almanac .nav-sports > :hover{text-decoration:underline;text-underline-offset:4px}
+#views.almanac button:focus-visible,#views.almanac a:focus-visible{outline:2px solid #fff;outline-offset:-4px}
+#views.almanac .nav-sports > :focus-visible{outline-color:var(--cover-ink)}
+#views.almanac [hidden]{display:none}
+@media (max-width:860px){
+  #views.almanac{overflow:visible}
+  #views.almanac .nav-sections,#views.almanac .nav-sports{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
+  #views.almanac .nav-sections::-webkit-scrollbar,#views.almanac .nav-sports::-webkit-scrollbar{display:none}
+  #views.almanac .nav-sections > *{font-size:17px;padding:0 11px}
+  #views.almanac .nav-sports > *{padding:0 11px}
+}
+/* ---------- end of the shared tab bar (23 Nov 2026, UX release 7) ----------
+   Everything from "top-level views" to here is copied word for word into
+   analysis.html, which ships as its own page. tests/test_shell_sync.py fails CI
+   when the two differ: change it here, then copy the block across. */
 
 
 .prose{max-width:78ch;font-size:14px;line-height:1.6;color:var(--ink-2);margin-top:12px}
@@ -385,38 +454,6 @@ footer a{color:var(--ink-2)}
 footer p{margin-top:10px;line-height:1.6}
 footer b{color:var(--ink-2)}
 
-/* ---------- the two-row nav (16 Nov 2026, Douglas: option 4 of the nav mock-ups) ----------
-   Row one, the Almanac's sections, set like the year band above it: italic Anton
-   in yellow on black, split by slashes, the open one white with a yellow
-   underline. Row two, the sports, on a yellow strip: ink type, the open one
-   reversed out. Same buttons and data-view as before, so nothing that reads
-   #views changes. Both rows centre on desktop and scroll sideways on a phone. */
-#views.almanac{display:block;background:#100e0c;border:1px solid #100e0c;border-top:0}
-#views.almanac .nav-sections,#views.almanac .nav-sports{display:flex;flex-wrap:wrap;justify-content:center;align-items:center}
-#views.almanac .nav-sections > *{position:relative;flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;
-  background:transparent;border:0;color:var(--yellow);font-family:var(--f-display);font-style:italic;font-weight:400;
-  font-size:22px;letter-spacing:.01em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
-#views.almanac .nav-sections > * + *::before{content:"/";position:absolute;left:-4px;color:#5a524a;font-style:normal;pointer-events:none}
-#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
-  text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:6px}
-#views.almanac .nav-sections > :hover{color:#fff}
-#views.almanac .nav-sports{background:var(--yellow);border-top:1px solid #100e0c}
-#views.almanac .nav-sports > *{flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;background:transparent;
-  border:0;color:#100e0c;font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
-  text-decoration:none;white-space:nowrap;cursor:pointer}
-#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > .nav-on{background:#100e0c;color:var(--yellow)}
-#views.almanac .nav-sports > :hover{text-decoration:underline;text-underline-offset:4px}
-#views.almanac button:focus-visible,#views.almanac a:focus-visible{outline:2px solid #fff;outline-offset:-4px}
-#views.almanac .nav-sports > :focus-visible{outline-color:#100e0c}
-#views.almanac [hidden]{display:none}
-@media (max-width:860px){
-  #views.almanac{overflow:visible}
-  #views.almanac .nav-sections,#views.almanac .nav-sports{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;
-    -webkit-overflow-scrolling:touch;overscroll-behavior-x:contain;scrollbar-width:none}
-  #views.almanac .nav-sections::-webkit-scrollbar,#views.almanac .nav-sports::-webkit-scrollbar{display:none}
-  #views.almanac .nav-sections > *{font-size:17px;padding:0 11px}
-  #views.almanac .nav-sports > *{padding:0 11px}
-}
 /* ---------- responsible gambling, at the foot of every page (16 Nov 2026, Douglas) ---------- */
 .rg{margin-top:32px;display:flex;flex-wrap:wrap;border:1px solid #100e0c;background:var(--surface)}
 .rg-age{flex:0 0 auto;display:flex;align-items:center;background:#100e0c;color:var(--yellow);font-family:var(--f-display);
@@ -471,15 +508,6 @@ footer b{color:var(--ink-2)}
 /* ---------- Almanac Analysis (6 Oct 2026) ----------
    The rest of this sheet is lifted from index.html so the page reads as part
    of the same annual. Only what follows is new. */
-.views a.nav-a,.views span.nav-on{flex:1 1 0;display:flex;align-items:center;justify-content:center;
-  font-family:var(--f-display);font-size:clamp(13px,2.6vw,18px);letter-spacing:.08em;text-transform:uppercase;
-  text-decoration:none;background:#100e0c;color:var(--yellow);padding:7px 10px;min-height:44px;border-right:1px solid #3a342e}
-.views a.nav-a:last-child{border-right:0}
-.views a.nav-a:hover{text-decoration:underline}
-.views a.nav-a:focus-visible{outline:2px solid #f4d21c;outline-offset:-4px}
-.views span.nav-on{background:var(--yellow);color:#100e0c}
-#views [hidden]{display:none}
-#views{position:static;box-shadow:none}
 .toc{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:14px;font-size:13.5px}
 .toc a{color:var(--home);font-weight:700;text-decoration:none}
 .toc a:hover{text-decoration:underline}
@@ -537,18 +565,53 @@ footer b{color:var(--ink-2)}
 .cols li{margin-top:4px}
 .daytab td.dd{font-family:var(--f-num);font-size:12.5px}
 details.more{margin-top:8px}
-.seg{display:flex;border:1px solid var(--rule);border-radius:2px;overflow:hidden;background:var(--surface)}
-.seg button{font-family:var(--f-ui);font-size:12.5px;font-weight:600;border:0;background:transparent;
-  padding:6px 10px;cursor:pointer;color:var(--ink-2);border-right:1px solid var(--rule);white-space:nowrap;min-height:36px}
-.seg button:last-child{border-right:0}
-.seg button[aria-pressed="true"]{background:var(--ink);color:var(--yellow)}
-.seg button:focus-visible{outline:2px solid var(--home);outline-offset:-2px}
+/* ---------- one segmented control (23 Nov 2026, UX release 1) ----------
+   Every toggle group on the site is a .seg: the board and Show switches,
+   Order by, the confidence bands, the sport filters, the day ribbon (UX
+   release 3, which replaced every day picker), the tracker ranges and racing's
+   meetings and races. The older class names (.boards, .et-seg) stay in the
+   markup beside it, so scripts that select by them still work; they carry no
+   look of their own. The state is aria-pressed (aria-selected in the day
+   ribbon's tablist), which is the one thing the selected look keys off.
+   Separate buttons with a gap rather than one joined bar, so a long group wraps
+   cleanly on a phone. A number after the label goes in <i> or .n (the count
+   slot). Modifiers: .seg--sm, the compact size for tracker ranges; .seg--scroll,
+   one line that scrolls sideways (the day ribbon). */
+.seg{display:flex;flex-wrap:wrap;gap:var(--s1);max-width:100%;min-width:0}
+.seg button{
+  font:600 var(--t-sm)/1.3 var(--f-ui);letter-spacing:.02em;
+  border:1px solid var(--rule);border-radius:2px;background:transparent;color:var(--ink-2);
+  padding:5px 10px;min-height:30px;cursor:pointer;white-space:nowrap;
+  display:inline-flex;align-items:center;justify-content:center;
+  transition:background .12s,color .12s,border-color .12s;
+}
+.seg button:hover{border-color:var(--ink-2)}
+.seg button[aria-pressed="true"],.seg button[aria-selected="true"]{background:var(--ink);color:var(--yellow);border-color:var(--ink)}
+.seg button:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+.seg button i,.seg button .n{font-style:normal;font:600 var(--t-xs) var(--f-num);color:var(--mute);margin-left:5px}
+.seg button[aria-pressed="true"] i,.seg button[aria-pressed="true"] .n,
+.seg button[aria-selected="true"] i,.seg button[aria-selected="true"] .n{color:var(--yellow-soft)}
+.seg button.none:not([aria-pressed="true"]):not([aria-selected="true"]){color:var(--mute);font-weight:500}
+.seg--sm button{padding:3px 9px;min-height:28px}
+.seg--scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+.seg--scroll::-webkit-scrollbar{display:none}
+.seg--scroll button{flex:0 0 auto}
 .brk{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;margin-top:12px}
-.brk .own{font-size:13.5px;color:var(--ink-2);display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.brk select{font-family:var(--f-num);font-size:13px;padding:5px 6px;border:1px solid var(--rule);background:var(--surface);color:var(--ink);border-radius:2px;min-height:36px}
-.brk select:focus-visible{outline:2px solid var(--home);outline-offset:1px}
-.brksum{margin-top:10px;font-size:14px;color:var(--ink-2)}
+/* the Confidence group as the Almanac's filter bar draws it (fbarGroup in index.html) */
+.fbar-g{min-width:0;max-width:100%}
+.fbar-g > .ctl-label{display:block;margin-bottom:var(--s1)}
+.ctl-label{font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
+.brksum{margin-top:var(--s3);font-size:var(--t-base);color:var(--ink-2);line-height:1.5}
 .brksum b{color:var(--ink)}
+.brklinks{display:inline-block;font-size:var(--t-sm)}
+.brklinks a,.blink a{color:var(--home);font-weight:700}
+.brkcum{margin-top:var(--s1);font-size:var(--t-sm);color:var(--ink-2);line-height:1.6}
+.brkcum .ctl-label{margin-right:var(--s1)}
+.brkcum b{color:var(--ink);font-family:var(--f-num);font-weight:600}
+.blink{margin:2px 0 var(--s2);font-family:var(--f-ui);font-size:var(--t-sm);color:var(--ink-2)}
+/* section links land below the pinned tab bar (UX release 7: it is sticky here too, as on the Almanac) */
+.sect,section[id]{scroll-margin-top:104px}
+@media (max-width:860px){ .seg button{min-height:44px;padding:6px 12px} .sect,section[id]{scroll-margin-top:96px} }
 details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:13.5px}
 @media (max-width:760px){
   .cols{grid-template-columns:1fr}
@@ -574,33 +637,49 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
   </div>
 </header>
 <!-- 25 Oct 2026, Douglas: the Almanac's tab bar stays as it is on this page.
-     Each tab links back to that board (index.html#<view>); sport tabs hide by
-     the same rule as on the Almanac (no games and nothing graded). -->
+     23 Nov 2026 (UX release 7): the same two rows as index.html, tab for tab and
+     in the same order, as links (this is its own page): each opens that board
+     (./#<view>, the address index.html reads), and this page is marked
+     aria-current="page" with the open tab's look. tests/test_shell_sync.py fails
+     CI when the two bars list different tabs. Sport tabs hide by the Almanac's
+     own rule (no games this week and nothing graded). -->
 <nav class="views almanac" id="views" aria-label="Boards">
  <div class="nav-sections">
-   <a href="./">Daily List</a>
+   <a href="./#list">Daily List</a>
    <a href="./#today">Bets</a>
    <a href="./#scale">Scale</a>
    <a href="./#starred">Starred</a>
    <a href="./#results">How it went</a>
-   <span class="nav-on" aria-current="page">Analysis</span>
-    <a href="./#mailer">Mailer</a>
+   <a href="analysis.html" aria-current="page">Analysis</a>
+   <a href="./#mailer">Mailer</a>
  </div>
  <div class="nav-sports">
    <a href="./#fixtures">Football</a>
    <a href="./#tennis">Tennis</a>
    <a href="./#racing">Horse racing</a>
-   <a href="./#sport:nfl" data-sport="nfl">NFL</a>
-   <a href="./#sport:nba" data-sport="nba">Basketball</a>
-   <a href="./#sport:rugby" data-sport="rugby">Rugby</a>
-   <a href="./#sport:nhl" data-sport="nhl">Ice hockey</a>
-   <a href="./#sport:cfb" data-sport="cfb">College football</a>
-   <a href="./#sport:ncaab" data-sport="ncaab">College basketball</a>
-   <a href="./#sport:nrl" data-sport="nrl">Rugby league</a>
+   <a href="./#sport:nfl">NFL</a>
+   <a href="./#sport:nba">Basketball</a>
+   <a href="./#sport:rugby">Rugby</a>
+   <a href="./#sport:nhl">Ice hockey</a>
+   <a href="./#sport:cfb">College football</a>
+   <a href="./#sport:ncaab">College basketball</a>
+   <a href="./#sport:nrl">Rugby league</a>
  </div>
 </nav>
 <script src="sports-data.js"></script>
 <script src="sports-record.js"></script>
+<script>
+/* The sport tabs hide as on the Almanac (index.html, the loop over
+   #views button[data-view^="sport:"]): no games this week and nothing graded. */
+(() => {
+  const SD = window.__SPORTS_DATA__, SR = window.__SPORTS_RECORD__;
+  document.querySelectorAll('#views a[href^="./#sport:"]').forEach(a => {
+    const k = a.getAttribute("href").slice(9), sp = SD && SD.sports && SD.sports[k];
+    const graded = SR && SR.bySport && SR.bySport[k] && SR.bySport[k].n;
+    if(!sp || (!(sp.games || []).length && !graded)) a.hidden = true;
+  });
+})();
+</script>
 <script>
 (() => {
   const SD = window.__SPORTS_DATA__, SR = window.__SPORTS_RECORD__;
@@ -712,19 +791,12 @@ details.more summary{cursor:pointer;font-weight:700;color:var(--home);font-size:
 <div class="chart" id="calchart"></div>
 
 <h2 class="sect" id="days">Day by day</h2>
-<div class="prose"><p>Every graded day, newest first, for the games in one confidence bracket. It opens on <b>70% and above</b>, the calls strong enough to matter. Pick another bracket, or set your own range. A bad day is one where the bracket landed well below its quoted chance, and it is usually a round full of draws and away wins.</p></div>
+<div class="prose"><p>Every graded day, newest first, for the games in one confidence band. The bands are the Almanac's own (90%+, 85-89%, 80-84%, 70-79%, 60-69%, under 60%), and the choice is shared with its filters: the page opens on the band last chosen there, and a band chosen here holds when you go back. A bad day is one where the band landed well below its quoted chance, and it is usually a round full of draws and away wins. A band is read on the chance before rounding, so a call at 89.6% counts in 85-89% here and shows as 90% on a row.</p></div>
 <div class="brk" id="brk">
-  <div class="seg" id="brkseg" role="group" aria-label="Confidence bracket">
-    <button data-lo="0" data-hi="100" aria-pressed="false">All</button>
-    <button data-lo="50" data-hi="100" aria-pressed="false">50%+</button>
-    <button data-lo="60" data-hi="100" aria-pressed="false">60%+</button>
-    <button data-lo="70" data-hi="100" aria-pressed="true">70%+</button>
-    <button data-lo="80" data-hi="100" aria-pressed="false">80%+</button>
-    <button data-lo="90" data-hi="100" aria-pressed="false">90%+</button>
-  </div>
-  <label class="own">Your own: from <select id="brklo" aria-label="Bracket from"></select> to <select id="brkhi" aria-label="Bracket to"></select></label>
+  <div class="fbar-g" role="group" aria-label="Confidence"><span class="ctl-label" aria-hidden="true">Confidence</span><div class="seg" id="brkseg"></div></div>
 </div>
 <div class="brksum" id="brksum"></div>
+<p class="brkcum" id="brkcum"></p>
 <div style="overflow-x:auto;margin-top:10px">
 <table class="bandtab daytab" id="daytab">
   <thead><tr><th>Day</th><th>Games</th><th>Won</th><th>Won %</th><th>Quoted</th><th class="hide-s">Draws</th><th class="hide-s">Read right %</th></tr></thead>
@@ -930,7 +1002,9 @@ function renderBands(R){
     const html = gs.length
       ? `<div class="glist"><h4>Most recent ${shown.length} of ${gs.length} in this band from the last ${days} graded days</h4><ul>${shown.map(gameLine).join("")}</ul></div>`
       : `<div class="glist"><h4>No games in this band in the last ${days} graded days</h4></div>`;
-    tr.insertAdjacentHTML("afterend", `<tr class="games"><td colspan="9">${html}</td></tr>`);
+    const sb = bandOfFrom(b.from);
+    const link = `<p class="blink">On the Almanac this band sits in the <b>${esc(sb.label)}</b> filter: today's picks on the <a href="${bandHref("list", sb.k)}">Daily List</a> · <a href="${bandHref("fixtures", sb.k)}">Football board</a></p>`;
+    tr.insertAdjacentHTML("afterend", `<tr class="games"><td colspan="9">${link}${html}</td></tr>`);
   };
   tb.addEventListener("click", e => { const tr = e.target.closest("tr.b"); if (tr) toggle(tr); });
   tb.addEventListener("keydown", e => { const tr = e.target.closest("tr.b"); if (tr && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); toggle(tr); } });
@@ -958,49 +1032,90 @@ function renderChart(R){
     <div class="legend"><span><i style="background:#1f3b5c"></i>Landed at or above the quoted chance</span><span><i style="background:#c8102e"></i>Landed below it</span><span><i style="border-top:1px dashed #1a1511;height:0;width:16px;vertical-align:3px"></i>Perfect calibration</span></div>`;
 }
 
-/* ---------- day by day, for a chosen bracket ----------
+/* ---------- day by day, for one confidence band ----------
    byDay[].b5 holds [games, won, read right, quoted sum, draws] per 5-point
-   band from 0%, so any bracket on a 5-point edge sums exactly. */
-let BRK = {lo: 70, hi: 100};
-function renderDays(R){
-  const bd = (R.byDay || []).slice().reverse(), tb = $("#daytab tbody");
-  const lo = BRK.lo / 5, hi = BRK.hi / 5;
-  const rows = bd.map(d => {
-    const c = (d.b5 || []).slice(lo, hi).reduce((a, x) => [a[0] + x[0], a[1] + x[1], a[2] + x[2], a[3] + x[3], a[4] + x[4]], [0, 0, 0, 0, 0]);
+   band from 0%, so every band on a 5-point edge sums exactly. Since 23 Nov 2026
+   (UX release 7) the control is the Almanac's own bands (BANDS, as index.html
+   defines them: the same keys, labels and edges) rather than cumulative
+   brackets, and the choice is the shared filter (localStorage almanacFilters,
+   its band key; show and order are left as they are). The cumulative 60%+,
+   70%+ and 80%+ figures stay as a line under it. */
+const BANDS = [
+  {k: "all", label: "All"},
+  {k: "90", lo: 90, hi: 101, label: "90%+"},
+  {k: "85", lo: 85, hi: 90, label: "85-89%"},
+  {k: "80", lo: 80, hi: 85, label: "80-84%"},
+  {k: "70", lo: 70, hi: 80, label: "70-79%"},
+  {k: "60", lo: 60, hi: 70, label: "60-69%"},
+  {k: "lo", lo: 0, hi: 60, label: "Under 60%"},
+];
+const FILT_KEY = "almanacFilters";
+function filtRead(){
+  try { const o = JSON.parse(localStorage.getItem(FILT_KEY) || "null"); return o && typeof o === "object" && !Array.isArray(o) ? o : {}; }
+  catch(e){ return {}; }
+}
+function filtBand(){ const k = filtRead().band; return BANDS.some(b => b.k === k) ? k : "all"; }
+function filtSave(k){ try { const o = filtRead(); o.band = k; localStorage.setItem(FILT_KEY, JSON.stringify(o)); } catch(e){} }
+// the 5-point slots a band covers in b5 (slot i is i*5% to (i+1)*5%; the top slot takes 100%)
+const bandSlots = b => b.k === "all" ? [0, 20] : [b.lo / 5, Math.min(20, Math.ceil(b.hi / 5))];
+// the Almanac's band a 5-point band of the table sits in
+const bandOfFrom = f => { const v = Math.round(f * 100); return (BANDS.find(b => b.k !== "all" && v >= b.lo && v < b.hi) || BANDS[0]); };
+const bandHref = (view, k) => `./#${view}?band=${encodeURIComponent(k)}`;
+function sumDays(bd, s){
+  return bd.map(d => {
+    const c = (d.b5 || []).slice(s[0], s[1]).reduce((a, x) => [a[0] + x[0], a[1] + x[1], a[2] + x[2], a[3] + x[3], a[4] + x[4]], [0, 0, 0, 0, 0]);
     return {date: d.date, n: c[0], won: c[1], read: c[2], q: c[0] ? c[3] / c[0] : null, draws: c[4]};
   }).filter(d => d.n);
+}
+let BAND = "all";
+function renderDays(R){
+  const bd = (R.byDay || []).slice().reverse(), tb = $("#daytab tbody");
+  const b = BANDS.find(x => x.k === BAND) || BANDS[0];
+  const rows = sumDays(bd, bandSlots(b));
   const T = rows.reduce((a, d) => ({n: a.n + d.n, won: a.won + d.won, read: a.read + d.read, q: a.q + d.q * d.n}), {n: 0, won: 0, read: 0, q: 0});
-  const label = BRK.lo === 0 && BRK.hi === 100 ? "every confidence" : BRK.hi === 100 ? `${BRK.lo}% and above` : `${BRK.lo}% to ${BRK.hi}%`;
-  $("#brksum").innerHTML = T.n
-    ? `<b>${label}:</b> ${T.n} game${T.n > 1 ? "s" : ""} on ${rows.length} day${rows.length > 1 ? "s" : ""}. Top pick won <b>${T.won} (${pct(T.won / T.n)})</b> against <b>${pct(T.q / T.n)}</b> quoted; read right ${pct(T.read / T.n)}.`
-    : `<b>${label}:</b> no graded games in this bracket yet.`;
+  const label = b.k === "all" ? "Every confidence" : b.label;
+  const links = `<span class="brklinks">Today's ${b.k === "all" ? "picks" : esc(b.label) + " picks"} on the Almanac: <a href="${bandHref("list", b.k)}">Daily List</a> · <a href="${bandHref("fixtures", b.k)}">Football board</a></span>`;
+  $("#brksum").innerHTML = (T.n
+    ? `<b>${label}:</b> ${T.n.toLocaleString("en-GB")} game${T.n > 1 ? "s" : ""} on ${rows.length} day${rows.length > 1 ? "s" : ""}. Top pick won <b>${T.won.toLocaleString("en-GB")} (${pct(T.won / T.n)})</b> against <b>${pct(T.q / T.n)}</b> quoted; read right ${pct(T.read / T.n)}.`
+    : `<b>${label}:</b> no graded games in this band yet.`) + " " + links;
   tb.innerHTML = rows.map((d, i) => {
     const w = d.won / d.n, bad = d.n >= 5 && w - d.q < -0.15;
     return `<tr${i >= 14 ? ' class="old" hidden' : ""}><td class="dd">${wkd(d.date)} ${day(d.date)}</td><td>${d.n}</td><td>${d.won}</td><td class="${bad ? "gap-neg" : ""}"><b>${pct(w, 0)}</b><span class="meter" aria-hidden="true"><i style="width:${(100 * w).toFixed(1)}%"></i><b style="left:${(100 * d.q).toFixed(1)}%"></b></span></td><td>${pct(d.q, 0)}</td><td class="hide-s">${d.draws}</td><td class="hide-s">${pct(d.read / d.n, 0)}</td></tr>`;
-  }).join("") || `<tr class="empty"><td colspan="7">No graded games in this bracket yet.</td></tr>`;
+  }).join("") || `<tr class="empty"><td colspan="7">No graded games in this band yet.</td></tr>`;
   const m = $("#daymore");
   m.open = false;
   m.hidden = rows.length <= 14;
   m.querySelector("summary").textContent = `Show all ${rows.length} days`;
 }
+// The running figures the cumulative brackets used to give: 60%+, 70%+ and 80%+ (the Daily List's bar).
+function renderCum(R){
+  const bd = R.byDay || [];
+  const parts = [60, 70, 80].map(lo => {
+    const rows = sumDays(bd, [lo / 5, 20]);
+    const n = rows.reduce((s, d) => s + d.n, 0), w = rows.reduce((s, d) => s + d.won, 0), q = rows.reduce((s, d) => s + d.q * d.n, 0);
+    return n ? `<b>${lo}%+</b> ${w.toLocaleString("en-GB")} of ${n.toLocaleString("en-GB")} won (${pct(w / n)}) v ${pct(q / n)} quoted` : `<b>${lo}%+</b> none graded`;
+  });
+  $("#brkcum").innerHTML = `<span class="ctl-label">Running figures</span> ${parts.join(" · ")}`;
+}
 function setupBracket(R){
-  const lo = $("#brklo"), hi = $("#brkhi"), seg = $("#brkseg");
-  for (let v = 0; v < 100; v += 5) lo.insertAdjacentHTML("beforeend", `<option value="${v}">${v}%</option>`);
-  for (let v = 5; v <= 100; v += 5) hi.insertAdjacentHTML("beforeend", `<option value="${v}">${v}%</option>`);
+  const seg = $("#brkseg"), bd = R.byDay || [];
+  // a band with no graded games is not offered, as on the Almanac
+  const offered = BANDS.map(b => ({b, n: sumDays(bd, bandSlots(b)).reduce((s, d) => s + d.n, 0)})).filter(x => x.b.k === "all" || x.n);
+  BAND = filtBand();
+  if(!offered.some(x => x.b.k === BAND)) BAND = "all";
+  seg.innerHTML = offered.map(x => `<button type="button" data-k="${x.b.k}" aria-pressed="false">${x.b.label}<i>${x.n.toLocaleString("en-GB")}</i></button>`).join("");
   const sync = () => {
-    lo.value = BRK.lo; hi.value = BRK.hi;
-    seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", +b.dataset.lo === BRK.lo && +b.dataset.hi === BRK.hi));
+    seg.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", b.dataset.k === BAND));
     renderDays(R);
   };
-  seg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; BRK = {lo: +b.dataset.lo, hi: +b.dataset.hi}; sync(); });
-  lo.addEventListener("change", () => { BRK.lo = +lo.value; if (BRK.hi <= BRK.lo) BRK.hi = Math.min(100, BRK.lo + 5); sync(); });
-  hi.addEventListener("change", () => { BRK.hi = +hi.value; if (BRK.lo >= BRK.hi) BRK.lo = Math.max(0, BRK.hi - 5); sync(); });
+  seg.addEventListener("click", e => { const b = e.target.closest("button"); if (!b) return; BAND = b.dataset.k; filtSave(BAND); sync(); b.focus(); });
   const m = $("#daymore");
   m.addEventListener("toggle", () => {
     $("#daytab tbody").querySelectorAll("tr.old").forEach(tr => tr.hidden = !m.open);
     const n = $("#daytab tbody").querySelectorAll("tr").length;
     m.querySelector("summary").textContent = m.open ? "Show the last 14 days" : `Show all ${n} days`;
   });
+  renderCum(R);
   sync();
 }
 

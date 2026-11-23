@@ -913,14 +913,14 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   background:transparent;border:0;color:var(--yellow);font-family:var(--f-display);font-style:italic;font-weight:400;
   font-size:22px;letter-spacing:.01em;text-transform:uppercase;text-decoration:none;white-space:nowrap;cursor:pointer}
 #views.almanac .nav-sections > * + *::before{content:"/";position:absolute;left:-4px;color:#5a524a;font-style:normal;pointer-events:none}
-#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
+#views.almanac .nav-sections > [aria-pressed="true"],#views.almanac .nav-sections > [aria-current="page"],#views.almanac .nav-sections > .nav-on{background:transparent;color:#fff;
   text-decoration:underline;text-decoration-color:var(--yellow);text-decoration-thickness:2px;text-underline-offset:6px}
 #views.almanac .nav-sections > :hover{color:#fff}
 #views.almanac .nav-sports{background:var(--yellow);border-top:1px solid var(--cover-ink)}
 #views.almanac .nav-sports > *{flex:0 0 auto;display:flex;align-items:center;min-height:44px;padding:0 13px;background:transparent;
   border:0;color:var(--cover-ink);font-family:var(--f-ui);font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;
   text-decoration:none;white-space:nowrap;cursor:pointer}
-#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > .nav-on{background:var(--cover-ink);color:var(--yellow)}
+#views.almanac .nav-sports > [aria-pressed="true"],#views.almanac .nav-sports > [aria-current="page"],#views.almanac .nav-sports > .nav-on{background:var(--cover-ink);color:var(--yellow)}
 #views.almanac .nav-sports > :hover{text-decoration:underline;text-underline-offset:4px}
 #views.almanac button:focus-visible,#views.almanac a:focus-visible{outline:2px solid #fff;outline-offset:-4px}
 #views.almanac .nav-sports > :focus-visible{outline-color:var(--cover-ink)}
@@ -933,6 +933,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
   #views.almanac .nav-sections > *{font-size:17px;padding:0 11px}
   #views.almanac .nav-sports > *{padding:0 11px}
 }
+/* ---------- end of the shared tab bar (23 Nov 2026, UX release 7) ----------
+   Everything from "top-level views" to here is copied word for word into
+   analysis.html, which ships as its own page. tests/test_shell_sync.py fails CI
+   when the two differ: change it here, then copy the block across. */
 /* the corner flash: a thin yellow ribbon at 45 degrees carrying Doc Brown's line, a quiet nod
    rather than a feature (16 Nov 2026, Douglas: "like 45 degrees and beginning and ending behind
    the black rows above and below ... quite subtle, hidden"). It runs from the 2026 band to the tab bar, so only its middle shows on the red panel.
@@ -2329,7 +2333,8 @@ const state = { leagues:new Set(), sort:"conf", open:null, board:"win",
    the number the row shows (rounded as shown, so a row reading 90% is in
    90%+). A band with no rows is not offered. Display only: nothing is
    re-ranked or regraded. Since 23 Nov 2026 one choice for every tab (FILT,
-   the filter bar below). */
+   the filter bar below). analysis.html carries a copy for its day-by-day
+   control (UX release 7; tests/test_shell_sync.py keeps the two equal). */
 const BANDS = [
   {k: "all", label: "All"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
