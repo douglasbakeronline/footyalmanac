@@ -20,6 +20,6 @@ None of the five could reach the Card: each sits under the model's 60% (`CARD_FA
 
 ## Not built
 
-A football fallback through The Odds API's soccer keys (one credit a league slate) for Card-reachable legs API-Football leaves unpriced. With 2 such legs in eleven days it would spend shared credits (15 a day, tennis and the list pass first) for almost nothing. Build it if "football Card unpriced" shows core-league legs on two or more days in a week.
+A football fallback through The Odds API's soccer keys (one credit a league slate) for Card-reachable legs API-Football leaves unpriced. With 2 such legs in eleven days it would spend shared credits (15 a day, tennis and the list pass first) for almost nothing. Build it if "football Card unpriced" shows core-league legs on two or more days in a week. (23 Nov 2026: read on the near count, legs within 24h of the start, `claude/card-unpriced-near-2026-11-23.md`; legs further out are mostly not yet priced by anyone.)
 
 No Card constant changed; `CARD_RULE` stays 14.

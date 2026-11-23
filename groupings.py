@@ -505,16 +505,54 @@ def comp_label(l):
     return f"{c} ({l['country']})" if l.get("country") else c
 
 
-def card_unpriced(L, keep=None):
+# 23 Nov 2026: a Card-reachable leg still unpriced this close to its start
+# is one a missing price can cost the Card; further out, API-Football has
+# usually not opened the market yet (claude/card-unpriced-near-2026-11-23.md).
+CARD_UNPRICED_NEAR_H = 24
+
+
+def _hours_to(l, now):
+    """Hours from `now` to a leg's start, None without a start time."""
+    try:
+        w = datetime.fromisoformat(str(l["when"]).replace("Z", "+00:00"))
+    except (KeyError, TypeError, ValueError):
+        return None
+    if w.tzinfo is None: w = w.replace(tzinfo=timezone.utc)
+    return (w - now).total_seconds() / 3600
+
+
+def card_unpriced(L, keep=None, now=None):
     """Football legs the Card could take once priced (card_reach) that no
     source priced this build, nearest first (20 Nov 2026). The one price
     gap that can cost the Card a group; the rest of "football unpriced" is
-    legs it would never take."""
+    legs it would never take. With `now`, each named leg carries its hours
+    to the start (23 Nov 2026)."""
     keep = NOFIXTURE_KEEP if keep is None else keep
     out = [l for l in L if card_reach(l) and not l.get("odds")]
     out.sort(key=lambda l: (l.get("date") or "", -(l.get("pModel") or 0)))
-    return len(out), [{"date": l.get("date"), "comp": comp_label(l), "home": l.get("home"), "away": l.get("away"),
-                       "pModel": round(l.get("pModel") or 0, 3)} for l in out[:keep]]
+    named = []
+    for l in out[:keep]:
+        m = {"date": l.get("date"), "comp": comp_label(l), "home": l.get("home"), "away": l.get("away"),
+             "pModel": round(l.get("pModel") or 0, 3)}
+        h = _hours_to(l, now) if now else None
+        if h is not None: m["hours"] = round(h, 1)
+        named.append(m)
+    return len(out), named
+
+
+def card_unpriced_near(L, now, hours=None):
+    """Card-reachable football legs no source priced that start within
+    `hours` (CARD_UNPRICED_NEAR_H) and have not started (23 Nov 2026). The
+    20 Nov note's trigger for building a second football price source reads
+    this count: the week to 23 Nov named core legs two and three days out on
+    every build, and each was priced by API-Football before its start."""
+    hours = CARD_UNPRICED_NEAR_H if hours is None else hours
+    n = 0
+    for l in L:
+        if card_reach(l) and not l.get("odds"):
+            h = _hours_to(l, now)
+            if h is not None and 0 <= h <= hours: n += 1
+    return n
 
 
 def price_football(L, dates, report):
@@ -1256,8 +1294,10 @@ def price(L, dates):
     # 20 Nov 2026: Card-reachable football legs every source left unpriced,
     # counted and named after the last source ("football Card unpriced:")
     if isinstance(report.get("football"), dict):
-        n, named = card_unpriced(L)
+        now = datetime.now(timezone.utc)
+        n, named = card_unpriced(L, now=now)
         report["football"]["cardUnpriced"] = n
+        report["football"]["cardUnpricedNear"] = card_unpriced_near(L, now)
         if named: report["football"]["cardUnpricedLegs"] = named
     for l in L:
         if not l.get("odds"):
@@ -3822,8 +3862,11 @@ def main():
             + "/".join(m["af"]) + (" (Card-reachable)" if m["card"] else "")
             for m in fm["kickoff"])[:2000], file=sys.stderr)
     if "cardUnpriced" in fm:
-        print(f"  football Card unpriced: {fm['cardUnpriced']}" + (": " + "; ".join(
-            f"{m['date']} {m['comp']}: {m['home']} v {m['away']} ({m['pModel']:.0%})"
+        near = fm.get("cardUnpricedNear")
+        print(f"  football Card unpriced: {fm['cardUnpriced']}"
+              + (f" ({near} within {CARD_UNPRICED_NEAR_H}h of the start)" if near is not None else "") + (": " + "; ".join(
+            f"{m['date']} {m['comp']}: {m['home']} v {m['away']} ({m['pModel']:.0%}"
+            + (f", {m['hours']:.0f}h out" if m.get("hours") is not None else "") + ")"
             for m in fm.get("cardUnpricedLegs") or [])[:1500] if fm.get("cardUnpricedLegs") else ""), file=sys.stderr)
     if fm.get("timed"):
         print(f"  football timed: {fm['timed']} leg(s) with no board kick-off took API-Football's", file=sys.stderr)

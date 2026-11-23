@@ -265,6 +265,24 @@ class CardUnpriced(unittest.TestCase):
         self.assertEqual(n, 5)
         self.assertEqual([m["home"] for m in named], ["H4", "H3"])   # strongest first on a day
 
+    def test_card_unpriced_near_counts_only_legs_close_to_the_start(self):
+        """23 Nov 2026: a week of "football Card unpriced" lines named core legs two and three days
+        out (Salisbury v AFC Totton from 20 Nov) that API-Football priced the day before; only a leg
+        still unpriced within CARD_UNPRICED_NEAR_H of its start can cost the Card a group."""
+        now = G.datetime(2026, 11, 23, 7, 0, tzinfo=G.timezone.utc)
+        base = {"sport": "football", "code": "en.1", "pModel": 0.65, "home": "A", "away": "B"}
+        soon = dict(base, date="2026-11-23", when="2026-11-23T19:45:00Z")
+        later = dict(base, home="C", date="2026-11-25", when="2026-11-25T19:45:00Z")
+        started = dict(base, home="D", date="2026-11-23", when="2026-11-23T06:00:00Z")
+        untimed = dict(base, home="E", date="2026-11-23")
+        priced = dict(soon, home="F", odds=1.5)
+        with mock.patch.object(G, "CARD_CORE_ONLY", True):
+            self.assertEqual(G.card_unpriced_near([soon, later, started, untimed, priced], now), 1)
+            n, named = G.card_unpriced([soon, later], now=now)
+            self.assertEqual(n, 2)
+            self.assertEqual([m.get("hours") for m in named], [12.8, 60.8])
+            self.assertEqual(G.card_unpriced_near([soon, later], now, hours=72), 2)
+
 
 class KickoffNamed(unittest.TestCase):
     """20 Nov 2026: `kickoff` legs (both names on API-Football's day, kick-offs 90+ minutes apart) are
