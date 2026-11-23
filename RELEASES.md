@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-tag-tips: tap any tag for its explanation; the black sport labels gone (tag pending)
+
+**What changed:** every tag on a row (Banker, Caution, Bookies, Away, Behind .500, Under 80, the tested rate, the William Hill price, the context check, the ⭐, the caution mark) now opens a small card explaining it when tapped, so its explanation can be read on a phone, where the hover text never showed. The tap does not open or close the row; a tap elsewhere, a scroll, Escape or the × closes it. The black sport label on each row (TENNIS, COLLEGE BASKETBALL, NCAA, NBA) is gone: the competition name and the sport's emoji stay (Douglas: "the name and emoji is enough").
+
+**Tested:** the full suite and nametest; a fast offline build in Chromium as an iPhone 13 and at 1280 wide: the card opens on a tap, the row stays closed, a tap outside closes it, no page errors, no sport labels left.
+
+**Files:** `index.html` (`TAG_SEL`, `tagTipOpen`, `tagTipClose`, `#tagtip`; the `.comp` line in `sportRow` and the pinned row), `RELEASES.md`.
+
+**Not changed:** the tags themselves, their rules or any number. Display only.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-college-tiers: college basketball picks tiered Banker, Solid, Caution, Leave out (tag pending)
 
 **What changed:** every college basketball pick at 70%+ carries one chip under its number: **Banker** (at home, favoured by 12+ points on ESPN's line), **Solid** (at home, no line posted), **Caution** (a neutral court, or favoured by 6 to 12) or **Leave out** (away, or favoured by under 6). It shows on the Daily List, the reserve, the college basketball tab and Starred, replaces the Away / Neutral mark on those rows, and the college basketball tab opens with a key giving each tier's record. A Caution or Leave out pick no longer gets the ⭐. The record tallies each tier on every build (`sports-record.json` `collegeTiers`).
