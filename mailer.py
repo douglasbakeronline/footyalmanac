@@ -577,7 +577,7 @@ def welcome_emails():
                     button(CONFIRM_MARK, "Confirm my email") +
                     _p("If you didn't sign up, ignore this email. Nothing more will be sent to you.", 13, MUTE))]
     out.append(("welcome-1-confirm", {
-        "subject": "Confirm your Sports Almanac emails",
+        "subject": "Confirm your Sports Almanac emails", "kind": "confirm",
         "html": wrap("Confirm your email", "One step left", "One tap and the Daily List starts tomorrow at 07:00.", body, footer_html(links)),
         "text": f"Confirm your Sports Almanac emails\n\nConfirm this address and your first Daily List arrives at 07:00 tomorrow:\n{CONFIRM_MARK}\n\nIf you didn't sign up, ignore this email.\n\n" + footer_text(links)}))
 
@@ -589,7 +589,7 @@ def welcome_emails():
            button(SITE, "See today's list"))
     body = [section("What you'll get", None, get), section("How the picks are made", None, how)]
     out.append(("welcome-2-welcome", {
-        "subject": "You're in: the Daily List starts tomorrow",
+        "subject": "You're in: the Daily List starts tomorrow", "kind": "welcome",
         "html": wrap("Welcome", "You're confirmed", "What arrives, when, and how the picks are made.", body, footer_html(links)),
         "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
                 "Every number comes from the Sports Almanac model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
@@ -606,7 +606,7 @@ def welcome_emails():
     body = [section("Two parts to the list", "why it is split", groups),
             section("Reading a row", "the example numbers are for illustration", row_key)]
     out.append(("welcome-3-guide", {
-        "subject": "How to read the Daily List",
+        "subject": "How to read the Daily List", "kind": "guide",
         "html": wrap("How to read it", "Two-minute guide", "The strongest picks, the tested rate and the star, explained.", body, footer_html(links)),
         "text": "How to read the Daily List\n\nStrongest today: up to five picks at 85% or better, never padded.\n"
                 "Also on the list: every other pick that cleared the bar, strongest first.\n\n" + footer_text(links)}))
@@ -750,7 +750,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
     subject = f"The Daily List, {short_day(day)}: " + (f"{n} pick{'' if n == 1 else 's'}" if n else "nothing clears the bar")
     pre = (f"{n} picks clear the bar today" + (f", led by {items[0]['pick']} at {pct(items[0]['confidence'])}." if n else ".")) if n else "Nothing clears the bar today."
     body = wrap("The Daily List", dl, pre, rows, footer_html(links))
-    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": n}
+    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": n, "kind": "daily"}
 
 
 # ---------------------------------------------------------------- the Weekly Record email
@@ -911,7 +911,7 @@ def weekly_email(day, src=None):
     subject = f"The Weekly Record, {span}: " + (f"list {tot['won']} of {tot['n']}" if tot["n"] else "the week's cards")
     pre = f"The Daily List {tot['won']} of {tot['n']} landed, and every card's week." if tot["n"] else "Every card's week."
     body = wrap("The Weekly Record", span, pre, rows, footer_html(links))
-    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": tot["n"]}
+    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": tot["n"], "kind": "weekly"}
 
 
 # ---------------------------------------------------------------- schedule
@@ -934,7 +934,9 @@ def message(to, token, mail):
     return {"from": SENDER, "to": [to], "subject": mail["subject"],
             "html": personalise(mail["html"], token), "text": personalise(mail["text"], token),
             "headers": {"List-Unsubscribe": f"<{UNSUB_URL.format(t=token)}>",
-                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"}}
+                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"},
+            # which email this is, so Resend's click and delivery events can be counted by kind (almanac.email_kpis)
+            "tags": [{"name": "kind", "value": re.sub(r"[^A-Za-z0-9_-]", "_", mail.get("kind") or "email")}]}
 
 
 def batches(xs, n=BATCH_MAX):
