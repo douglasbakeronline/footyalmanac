@@ -1,8 +1,10 @@
 name: Send test email
 
-# One test copy of the Daily List to Douglas (mailer.py --to), using today's
-# published data from sportsalmanac.bet. Runs only when this branch is pushed.
-# Touches no subscribers and makes no claim, so the 07:00 send is unaffected.
+# Test the emails without touching subscribers. On every push to mail-test it
+# renders the daily and weekly emails from today's published data and uploads
+# them as the "mail-preview" artifact. It also sends one test copy of the Daily
+# List to Douglas (mailer.py --to) when the commit message contains [send].
+# No claim is made, so the 07:00 send is unaffected.
 on:
   push:
     branches: [mail-test]
@@ -20,7 +22,14 @@ jobs:
           for f in daylist.json groupings-data.js data.json scale.json slip.json sports-data.js; do
             curl -fsSL "https://sportsalmanac.bet/$f" -o "$f" || echo "::warning::could not fetch $f"
           done
+      - name: Render previews
+        run: python3 mailer.py --preview mail-preview
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mail-preview
+          path: mail-preview/
       - name: Send the test copy
+        if: contains(github.event.head_commit.message, '[send]')
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
         run: python3 mailer.py --to douglasbakeronline@gmail.com --kind daily
