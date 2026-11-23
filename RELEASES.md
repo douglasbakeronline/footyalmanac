@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-leave-out-off-list: Leave out college picks off the Daily List (tag pending)
+
+**What changed:** a college basketball pick tiered Leave out (away, or favoured by under 6 points on the line) no longer shows on the Daily List or in its reserve fold. It stays on the college basketball tab with its red chip; the day's "left off" line and the reserve note count it. Douglas: "remove leave out from daily list".
+
+**Evidence:** `claude/college-tiers-2026-11-23.md`: Leave out picks at 70%+ landed 52% v 78% quoted since 1 Nov, and the William Hill 1.05 rule had been letting them through (6 of 8 Leave out list picks were priced 1.05+ at Hill).
+
+**Tested:** the full suite and nametest; a fast offline build in Chromium at 1280 and 400 wide: no Leave out chip on the Daily List or reserve, the notes count them, no page errors (an initialisation-order error found on the way, the tier constants read by the masthead count before they were declared, fixed by declaring them with `var`).
+
+**Files:** `index.html` (`listShown`, `listCollect`, `itemTier`, `resShown`, the reserve note), `claude/college-tiers-2026-11-23.md`, `RELEASES.md`.
+
+**Not changed:** the pick's list flag, its grading or any record; the Card, the Daily 2x and the List card already leave college sports out.
+
 ## 2026-11-23-review-close: the nightly Card review closes the nights before it (tag pending)
 
 **What changed:** once the night's Card review issue is posted, `tools/card_review_post.py` closes every older open `card-review` issue (`close_older`), so the newest review is the one open review. Fifteen had piled up (#169 to #492), one a night since 9 Nov, none ever closed. Closed issues stay readable, and the same-day refresh still finds the day's issue (it reads open and closed).
