@@ -1,12 +1,1 @@
-{
- "calibration": {
-  "candidate": {
-   "a": 1.085,
-   "b": -0.2,
-   "kind": "curve"
-  },
-  "last": "2026-11-16",
-  "passes": 1,
-  "since": "2026-11-16"
- }
-}
+{}

@@ -1,5 +1,5 @@
 {
- "generated": "2026-11-16T13:14:55+00:00",
+ "generated": "2026-11-23T15:28:08+00:00",
  "market": "over/under 2.5",
  "source": "football-data.co.uk",
  "edge": 0.05,
@@ -144,7 +144,7 @@
     }
    },
    "season": "2026-27",
-   "pricedMatches": 2305
+   "pricedMatches": 2306
   }
  },
  "valueGate": false,
