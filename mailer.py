@@ -74,10 +74,14 @@ SPORT_NAMES = {"football": "Football", "tennis": "Tennis", "nfl": "NFL", "nba": 
 # Look: the site's cover (index.html :root)
 PAPER, SURFACE, INK, INK2, MUTE, RULE = "#f0e8d6", "#fbf6ea", "#1a1511", "#4b4038", "#6e6355", "#c6b89e"
 RED, YELLOW, YELLOW_SOFT, GREEN, GREEN_SOFT = "#c8102e", "#f4d21c", "#fbf0bf", "#1c6b3a", "#dcebdf"
-F_HEAD = "'Arial Black', 'Helvetica Neue', Arial, Helvetica, sans-serif"
+# The site's three faces (index.html --f-display, --f-ui, --f-num), loaded where the mail app allows web
+# fonts (Apple Mail, iOS) and falling back to the nearest system face elsewhere (Gmail, Outlook).
+F_DISPLAY = "Anton, Impact, 'Arial Narrow Bold', 'Arial Narrow', sans-serif"
+F_UI = "'Barlow Semi Condensed', 'Arial Narrow', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+F_NUM = "'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace"
+F_HEAD, F_BODY, F_MONO = F_DISPLAY, F_UI, F_NUM
 F_SERIF = "Georgia, 'Times New Roman', serif"
-F_BODY = "'Helvetica Neue', Helvetica, Arial, sans-serif"
-F_MONO = "Menlo, Consolas, 'Courier New', monospace"
+FONTS_LINK = "https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Semi+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap"
 
 
 # ---------------------------------------------------------------- reading
@@ -408,19 +412,24 @@ def _p(text, size=14, color=INK2, extra=""):
 
 
 def section(title, sub, inner):
-    """A red day band and its body, as the site's day heads."""
-    sub_h = f'<span style="font-family:{F_BODY};font-weight:normal;font-size:12px;letter-spacing:0;text-transform:none;color:#ffe9ec"> · {E(sub)}</span>' if sub else ""
+    """A red day band and its body, as the site's .day-head: Anton 17px white with an ink offset, the count in mono yellow."""
+    sub_h = (f'<td align="right" valign="middle" style="padding:6px 12px 5px 8px;font-family:{F_NUM};font-size:12px;font-weight:600;'
+             f'color:{YELLOW};white-space:nowrap">{E(sub)}</td>') if sub else ""
     return (f'<tr><td style="padding:0">'
+            f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{RED};border:1px solid {INK};border-top:0">'
+            f'<tr><td valign="middle" style="padding:6px 12px 5px 12px;font-family:{F_DISPLAY};font-size:17px;line-height:1.3;letter-spacing:.04em;'
+            f'text-transform:uppercase;color:#ffffff;text-shadow:1.5px 1.5px 0 {INK}">{E(title)}</td>{sub_h}</tr></table>'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
-            f'<tr><td style="background:{RED};padding:8px 14px;font-family:{F_HEAD};font-size:15px;letter-spacing:1px;text-transform:uppercase;color:#ffffff">{E(title)}{sub_h}</td></tr>'
-            f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:4px 14px 12px 14px">{inner}</td></tr>'
+            f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:2px 12px 10px 12px">{inner}</td></tr>'
             f'</table></td></tr>')
 
 
 def label_bar(title, sub):
-    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:10px 0 2px 0">'
-            f'<tr><td style="background:{YELLOW};padding:4px 10px;font-family:{F_HEAD};font-size:12px;letter-spacing:1px;text-transform:uppercase;color:{INK}">{E(title)}'
-            f'<span style="font-family:{F_BODY};font-size:12px;letter-spacing:0;text-transform:none;font-weight:normal"> · {E(sub)}</span></td></tr></table>')
+    """A group label, as the site's .lgrp: small caps in the UI face, the title in ink, the count in mono."""
+    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0">'
+            f'<tr><td style="padding:12px 0 4px 0;font-family:{F_UI};font-size:11px;font-weight:700;letter-spacing:.08em;'
+            f'text-transform:uppercase;color:{MUTE};border-bottom:1px solid {INK}"><b style="color:{INK}">{E(title)}</b>'
+            f'<span style="font-family:{F_NUM};font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:{MUTE}">&nbsp;&nbsp;{E(sub)}</span></td></tr></table>')
 
 
 def row(left_top, left_bottom, main, meta, right_big, right_small, tint=None):
@@ -498,6 +507,7 @@ def wrap(title, day_line, preheader, body_rows, foot):
     return f"""<!DOCTYPE html>
 <html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light">
+<link href="{FONTS_LINK}" rel="stylesheet">
 <title>{E(title)}</title></head>
 <body style="margin:0;padding:0;background:{PAPER}">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:{PAPER}">{E(preheader)}</div>
@@ -505,7 +515,9 @@ def wrap(title, day_line, preheader, body_rows, foot):
 <tr><td align="center" style="padding:16px 10px 28px 10px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%">
 <tr><td style="padding:0;background:{INK};line-height:0;font-size:0"><img src="{HEADER_IMG}" width="600" alt="The Sports Almanac · Complete sports statistics · 2026" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;background:{INK};color:#ffffff;font-family:{F_HEAD};font-size:24px;line-height:1.2"></td></tr>
-<tr><td style="background:{YELLOW};padding:7px 16px;font-family:{F_HEAD};font-size:13px;letter-spacing:1px;text-transform:uppercase;color:{INK}">{E(title)}<span style="float:right;font-family:{F_BODY};letter-spacing:0;text-transform:none;font-weight:bold">{E(day_line)}</span></td></tr>
+<tr><td style="padding:0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{YELLOW};border:1px solid {INK};border-top:0"><tr>
+<td style="padding:12px 12px;font-family:{F_UI};font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{INK}">{E(title)}</td>
+<td align="right" style="padding:12px 12px;font-family:{F_UI};font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{INK};white-space:nowrap">{E(day_line)}</td></tr></table></td></tr>
 {''.join(body_rows)}
 {foot}
 </table></td></tr></table></body></html>"""
