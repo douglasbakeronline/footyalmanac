@@ -565,6 +565,39 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l.on{opacity:.55}
 .og-l.on .t{font-family:var(--f-ui);font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
 .og-f{margin-top:auto;padding:8px 13px 10px;font-size:var(--t-xs);color:var(--mute);border-top:1px solid var(--rule-soft)}
+/* 23 Nov 2026 (UX release 5): one row per leg. A leg is its board row
+   (.og-fx) with the leg's own facts in one line under it (.og-lx); the
+   summary line (.og-l) stays only for a leg no row can be drawn for. Every
+   leg line, substitute and "more picks" line starts with the row's star. */
+.og-l[hidden],.og-lx[hidden]{display:none}
+.og-fx .row,.og-fx .row-line > .star-btn{border-bottom:0}
+.og-l.st{grid-template-columns:30px 44px minmax(0,1fr) 88px 44px;padding-left:4px}
+.og-l .star-btn,.tb-row .star-btn,.sc-row .star-btn{border:0;background:transparent;align-self:center;width:30px;height:32px}
+.og-lx{display:flex;flex-wrap:wrap;align-items:baseline;gap:3px 14px;padding:2px 12px 10px 40px;background:var(--surface);
+  font-size:var(--t-sm);color:var(--ink-2);line-height:1.4}
+.og-lx.alt{background:#f6efdc}
+.og-lx em{font:600 var(--t-xs) var(--f-ui);font-style:normal;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-right:5px}
+.og-lx .lx-o .o{font:600 var(--t-base) var(--f-num);color:var(--ink)}
+.og-lx .lx-o .o small{display:inline;margin-left:6px;font:500 var(--t-xs) var(--f-num);color:var(--mute)}
+.og-lx .lx-o .o small.up{color:var(--away)} .og-lx .lx-o .o small.dn{color:var(--home)}
+.og-lx .lx-o .o small.best{font-family:var(--f-ui);font-weight:600;color:var(--home)}
+.og-lx .lx-o .o small.read{font-family:var(--f-ui)} .og-lx .lx-o .o small.read.stale{color:var(--away)}
+.og-lx .lx-o .o small.stale-tag{font:700 9px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--away);border:1px solid currentColor;padding:0 4px}
+.og-lx .lx-o .o.est{color:var(--ink-2);font-weight:500} .og-lx .lx-o .o.est em{display:none}
+.og-lx .og-bk{font:600 var(--t-sm) var(--f-num);color:var(--home)}
+.og-lx .og-bk em{margin-right:5px}
+.og-lx .og-bk.miss{color:var(--draw-ink,#7a5c12);font:600 var(--t-xs) var(--f-ui)}
+.og-lx .lx-src{font-size:var(--t-xs);color:var(--mute)}
+.og-lx b{font-weight:600;color:var(--ink)}
+.og-lx .opp{font-family:var(--f-num)}
+.og-lx .og-g{margin-top:0}
+.og-lx .og-cx{flex-basis:100%;margin-top:2px}
+@media (max-width:480px){
+  .og-l.st{grid-template-columns:30px 40px minmax(0,1fr) 66px 34px;padding-left:2px}
+  .og-lx{padding:2px 10px 10px 12px;gap:3px 10px}
+}
+.tb-row.st{grid-template-columns:30px 72px minmax(0,1fr) 52px;padding-left:4px}
+.tb-row.st.edge{grid-template-columns:30px 52px minmax(0,1fr) auto}
 /* 21 Oct 2026: groups for today and three days ahead, re-checked on every
    build. Each card says whether it still holds, is new, or replaced one that
    failed; each leg shows its price when the group was first published. */
@@ -1712,15 +1745,18 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-sech{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 20px;border-bottom:1px solid var(--cover-ink);padding-bottom:6px}
 .sc-h3{font-size:22px}
 .sc-h3 small{font:600 var(--t-base) var(--f-ui);letter-spacing:.04em;color:var(--ink-2);text-transform:none;margin-left:6px}
-.sc-cols,.sc-row{display:grid;grid-template-columns:52px minmax(0,1.5fr) minmax(0,.8fr) minmax(0,1.25fr) 140px 142px;gap:16px;align-items:center}
+.sc-cols,.sc-row{display:grid;grid-template-columns:30px 132px minmax(0,1.3fr) minmax(0,.8fr) minmax(0,1.25fr) 132px 132px;gap:14px;align-items:center}
 .sc-cols{padding:8px 0 6px;font:600 var(--t-xs) var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
 .sc-row{padding:9px 0;border-top:1px solid var(--rule)}
 .sc-cols + .sc-row{border-top-color:var(--rule-soft)}
-.sc-t{font-family:var(--f-num);font-size:var(--t-sm);color:var(--ink-2)}
+/* 23 Nov 2026 (UX release 5): the board row's time, competition and name type */
+.sc-t{min-width:0;line-height:1.2}
+.sc-t time{font:600 var(--t-base) var(--f-num);color:var(--ink);letter-spacing:-.02em}
+.sc-t .comp{display:flex;align-items:center;gap:5px;margin-top:3px;min-width:0;font:700 10px var(--f-ui);letter-spacing:.045em;text-transform:uppercase;color:var(--ink-2)}
+.sc-t .comp span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 .sc-m{min-width:0}
-.sc-m small{display:block;font-size:var(--t-xs);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
-.sc-m span{color:var(--ink-2)}
-.sc-m b{font-size:var(--t-md)}
+.sc-m .club{line-height:1.2}
+.sc-v{margin-top:3px;font-size:var(--t-sm);color:var(--ink-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .sc-bar{display:flex;align-items:center;gap:8px}
 .sc-bar i{flex:1 1 auto;height:8px;background:var(--rule-soft);display:block}
 .sc-bar i u{display:block;height:8px;background:var(--ink)}
@@ -1783,7 +1819,11 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-side li em.w{color:var(--edge);font-weight:600} .sc-side li em.l{color:var(--away)}
 @media (max-width:760px){
   .sc-cols{display:none}
-  .sc-row{grid-template-columns:48px minmax(0,1fr) auto;gap:6px 10px;align-items:start;padding:11px 0}
+  .sc-row{grid-template-columns:30px minmax(0,1fr) auto;gap:6px 10px;align-items:start;padding:11px 0}
+  .sc-row > .star-btn{grid-column:1;grid-row:1 / span 5;align-self:start}
+  .sc-row .sc-t{grid-column:2 / 4;display:flex;align-items:baseline;gap:8px}
+  .sc-row .sc-t time{font-size:var(--t-sm)}
+  .sc-row .sc-t .comp{margin-top:0}
   .sc-row .sc-m{grid-column:2 / 4}
   .sc-row .sc-w{grid-column:2 / 4}
   .sc-row .sc-b{grid-column:2 / 4}
@@ -3391,12 +3431,12 @@ function appendFixture(sec, g, i, dayDate, btts){
     (state.starred.has(id) ? "Remove bookmark: " : "Bookmark: ") + g.home.name + " v " + g.away.name);
   star.title = "Bookmark this fixture";
   star.textContent = starGlyph(id);
+  Object.assign(star.dataset, {star: id, own: "1", label: g.home.name + " v " + g.away.name});
   star.addEventListener("click", e=>{
     e.stopPropagation();
     state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
     saveStarred();
-    star.textContent = starGlyph(id);
-    star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
+    starSync(id);   // the same pick's star elsewhere on the page (a Bets leg, a Scale row)
     holdPlace(star, id, () => {
       if(!$("#starred").hidden) renderStarred();
       if(!$("#list").hidden) renderList();
@@ -3415,7 +3455,7 @@ function appendFixture(sec, g, i, dayDate, btts){
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
     <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span>${btts ? "" : winStar(g, "football", "a")}</div>${sideStats(g.away, g.cup)}</div>
-    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name) + bookGapChip(g, "football")}</div>`;
+    <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${btts ? (g.celtic ? `<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>` : "") : rowChips(g, "football")}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
     state.open = state.open===id ? null : id;
@@ -3581,6 +3621,97 @@ function starIdOf(it, date){
   }
   return sid(it.g);
 }
+/* 23 Nov 2026 (UX release 5, "every pick is the same row, wherever it
+   appears"): one star everywhere. Every pick Starred can draw, in the order it
+   takes them (starEach), and the pool of their bookmark ids by sport and pair
+   (starPool), so a Bets leg, a Scale row or a started row stars the same id
+   its pick has on its own board. A pick Starred could not draw gets no star
+   (starHtml(null) leaves the gap), so a star never promises a bookmark that
+   would not show. */
+function starEach(fn){
+  const {byDay, resDay, offDay} = listCollect();
+  [byDay, resDay, offDay].forEach(b => Object.keys(b).forEach(d => b[d].forEach(it => fn(d, it))));
+  upcoming.forEach(day => day.games.forEach(g => fn(g.kickoff ? localDay(g.kickoff) : day.date, {kind:"football", g, day})));
+  const others = [];
+  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
+  const TDS = window.__TENNIS_DATA__;
+  if(TDS && TDS.matches) TDS.matches.forEach(m => others.push(tennisAsGame(m)));
+  others.forEach(g => fn(localDay(g.when), {kind:"sport", g}));
+  // 21 Nov 2026: a starred game that has started leaves the board; Starred
+  // keeps it with its result (daylist.js "played").
+  const DLP = window.__DAY_LIST__;
+  if(DLP && Array.isArray(DLP.played)) DLP.played.forEach(g => fn(g.sport === "football" ? g.date : (g.day || DLP.date), {kind:"pinned", g}));
+}
+const stNm = s => String(s || "").toLowerCase();
+const stEsc = s => String(s ?? "").replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+let STAR_POOL = null;
+function starPool(){
+  if(STAR_POOL && Date.now() - STAR_POOL.at < 60e3) return STAR_POOL;
+  const ids = new Set(), byKey = new Map();
+  try {
+    starEach((date, it) => {
+      const id = starIdOf(it, date); if(!id || ids.has(id)) return;
+      ids.add(id);
+      const g = it.g, fb = it.kind === "football";
+      const k = `${itemSport(it)}|${stNm(fb ? g.home.name : g.home)}|${stNm(fb ? g.away.name : g.away)}`;
+      if(!byKey.has(k)) byKey.set(k, []);
+      byKey.get(k).push({id, date});
+    });
+  } catch(e){ /* a pool that cannot be built draws no extra stars */ }
+  return STAR_POOL = {at: Date.now(), ids, byKey};
+}
+// The bookmark id of a pick named by sport and sides (a Bets leg, a Scale
+// row): the same pair on the nearest day, or null when Starred cannot draw it.
+function starFor(sport, home, away, when){
+  const xs = starPool().byKey.get(`${sport}|${stNm(home)}|${stNm(away)}`);
+  if(!xs || !xs.length) return null;
+  const t = when ? Date.parse(localDay(when) + "T12:00:00Z") : NaN;
+  if(!isFinite(t)) return xs[0].id;
+  return xs.reduce((a, x) => Math.abs(Date.parse(x.date + "T12:00:00Z") - t) < Math.abs(Date.parse(a.date + "T12:00:00Z") - t) ? x : a).id;
+}
+// The star button for a row drawn as HTML; the delegated handler below toggles
+// it. Rows drawn as elements (appendFixture, sportRow) keep their own handler
+// and carry data-own; starSync keeps every copy of one star in step.
+function starHtml(id, label){
+  if(!id) return `<span class="star-btn pin-gap" aria-hidden="true"></span>`;
+  const on = state.starred.has(id);
+  return `<button type="button" class="star-btn" data-star="${stEsc(id)}" data-label="${stEsc(label)}" aria-pressed="${on}" aria-label="${on ? "Remove bookmark: " : "Bookmark: "}${stEsc(label)}" title="Bookmark this pick">${starGlyph(id)}</button>`;
+}
+function starSync(id){
+  const on = state.starred.has(id);
+  document.querySelectorAll("button.star-btn[data-star]").forEach(b => {
+    if(b.dataset.star !== id) return;
+    b.textContent = on ? "★" : "☆";
+    b.setAttribute("aria-pressed", on ? "true" : "false");
+    b.setAttribute("aria-label", (on ? "Remove bookmark: " : "Bookmark: ") + (b.dataset.label || ""));
+  });
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest("button.star-btn[data-star]");
+  if(!b || b.dataset.own) return;
+  const id = b.dataset.star, y = window.scrollY;
+  state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
+  saveStarred(); starSync(id);
+  // Starred lists the stars and the Daily List names the day's Most nailed on from them
+  if(!$("#starred").hidden) renderStarred();
+  if(!$("#list").hidden) renderList();
+  window.scrollTo(0, y);
+  const again = [...document.querySelectorAll("button.star-btn[data-star]")].find(x => x.dataset.star === id && x.offsetParent !== null);
+  if(again && again !== document.activeElement) try { again.focus({preventScroll: true}); } catch(err) {}
+});
+/* One chip order on every row, every sport (UX release 5): the price, the
+   Bookies mark, the context check, then the sport's own marks (Edge, Celtic's
+   Law, tennis under 80, the college venue, tier and record marks). Reserve is
+   added last where a reserve fold draws its rows. The caution mark stays on
+   the competition name, where every row carries it. */
+function rowChips(g, sport){
+  const fb = !!(g.home && typeof g.home === "object");
+  const h = fb ? g.home.name : g.home, a = fb ? g.away.name : g.away;
+  return hillChip(sport, h, a) + bookGapChip(g, sport) + cxChip(sport, h, a)
+    + (fb ? edgeFlag(g) : "")
+    + (g.celtic ? `<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>` : "")
+    + tennisWary(g) + sideWaryChip(g);
+}
 const STAR = (() => { const d = {sport: "all", sports: [], open: false};
   try { Object.assign(d, JSON.parse(localStorage.getItem("starView") || "{}")); } catch(e){}
   // 22 Nov 2026 (Douglas: "select multiple sports on the filters at once"):
@@ -3645,22 +3776,11 @@ function renderStarred(){
   // pinned from the archive and their results) and draws each with the list's
   // own row function (listPut), in the list's strength order. A bookmark that
   // is not a list or reserve pick (a board game) is drawn the same way.
-  const {byDay, resDay, offDay} = listCollect();
+  // (starEach, 23 Nov 2026: the same walk gives every other page its stars)
   const items = {}, seen = new Set();
-  const take = (date, it) => { const id = starIdOf(it, date);
+  starEach((date, it) => { const id = starIdOf(it, date);
     if(!id || seen.has(id) || !state.starred.has(id)) return;
-    seen.add(id); (items[date] = items[date] || []).push(it); };
-  [byDay, resDay, offDay].forEach(b => Object.keys(b).forEach(d => b[d].forEach(it => take(d, it))));
-  upcoming.forEach(day => day.games.forEach(g => take(g.kickoff ? localDay(g.kickoff) : day.date, {kind:"football", g, day})));
-  const others = [];
-  if(SD && SD.sports) Object.values(SD.sports).forEach(sp => (sp.games || []).forEach(g => others.push(g)));
-  const TDS = window.__TENNIS_DATA__;
-  if(TDS && TDS.matches) TDS.matches.forEach(m => others.push(tennisAsGame(m)));
-  others.forEach(g => take(localDay(g.when), {kind:"sport", g}));
-  // 21 Nov 2026: a starred game that has started leaves the board; it stays
-  // here with its result (daylist.js "played").
-  const DLP = window.__DAY_LIST__;
-  if(DLP && Array.isArray(DLP.played)) DLP.played.forEach(g => take(g.sport === "football" ? g.date : (g.day || DLP.date), {kind:"pinned", g}));
+    seen.add(id); (items[date] = items[date] || []).push(it); });
   // 22 Nov 2026 (Douglas: "the starred page needs improvement to filter and
   // also see all fixture information and links and to be able to sort by time
   // and other tags"): order, sport, confidence band and tag filters over the
@@ -4053,7 +4173,7 @@ function listPastDay(host, date, items, byTime){
   sec.id = "lday-" + date;
   sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
     <div class="count">${xs.length} on the list · ${won} won · ${lost} lost${open ? ` · ${open} not graded` : ""}<span class="sofar">The list as it stood before each game started</span></div></div>`;
-  xs.forEach((it, i) => sec.appendChild(pinnedRow(pastAsPin(it.g, date), i)));
+  xs.forEach((it, i) => sec.appendChild(pinnedRow(pastAsPin(it.g, date), i, date)));
   host.appendChild(sec);
 }
 function renderList(){
@@ -4378,7 +4498,7 @@ function playedRows(sec, name, day, items, cap, redraw, label){
     el.innerHTML = `<b>Started</b> ${items.length} ${name}${t.won + t.lost ? ` <span class="n">${t.won} won · ${t.lost} lost</span>` : ""}${t.open ? ` <span class="n">${t.open} to grade</span>` : ""}`;
     sec.appendChild(el);
   }
-  list.forEach((it, i) => sec.appendChild(pinnedRow(it, i)));
+  list.forEach((it, i) => sec.appendChild(pinnedRow(it, i, day)));
   if(items.length > cap){
     const more = document.createElement("button");
     more.className = "more";
@@ -5260,14 +5380,14 @@ document.addEventListener("visibilitychange", () => {
 // form and the Google links. Only the middle cell changes, to the status.
 function putPinned(sec, g, i, date){
   const f = g.full;
-  if(!f) return sec.appendChild(pinnedRow(g, i));
+  if(!f) return sec.appendChild(pinnedRow(g, i, date));
   const n0 = sec.children.length;
   try {
     if(g.sport === "football") appendFixture(sec, f, i, date, false);
     else sec.appendChild(sportRow(g.sport === "tennis" ? tennisAsGame(f) : f, i, true));
   } catch(e){
     while(sec.children.length > n0) sec.lastElementChild.remove();
-    return sec.appendChild(pinnedRow(g, i));
+    return sec.appendChild(pinnedRow(g, i, date));
   }
   const line = sec.children[n0], pred = line && line.querySelector(".pred");
   if(!pred) return;
@@ -5320,8 +5440,11 @@ function pastLine(g){
   if(!parts.length) return "";
   return `<div class="mkt ${hp ? "h" : "a"}" title="Bookmakers' ${q.past ? "last price before the start" : "price"} for ${g.home}${q.draw ? ", the draw" : ""} and ${g.away}${q.opp ? "" : " (only the pick's price was read)"}. Display only, never used by the model.">Bookies <span class="hda">${parts.join("<i>/</i>")}</span></div>`;
 }
-function pinnedRow(g, i){
+function pinnedRow(g, i, date){
   const k = SPORT_K[g.tier] ?? 0;
+  // 23 Nov 2026 (UX release 5): the star a started pick had on its board, when Starred can draw it
+  const pool = starPool().ids;
+  const sid = [date, g.date, g.day].filter(Boolean).map(d => starIdOf({kind: "pinned", g}, d)).find(x => x && pool.has(x)) || null;
   const [cls, label] = pinStatus(g);
   const name = g.sport === "football" ? "Football" : g.sport === "tennis" ? "Tennis"
     : (SD && SD.sports && SD.sports[g.sport] ? SD.sports[g.sport].name : String(g.sport).toUpperCase());
@@ -5333,7 +5456,7 @@ function pinnedRow(g, i){
   const line = document.createElement("div");
   line.className = "row-line";
   line.dataset.pk = lbKey(g.sport, g.home, g.away);
-  line.innerHTML = `<span class="star-btn pin-gap" aria-hidden="true"></span>
+  line.innerHTML = `${starHtml(sid, g.home + " v " + g.away)}
     <button type="button" class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}" aria-expanded="false">
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time datetime="${g.start}">${g.timed === false ? "" : localTime(g.start)}</time>
@@ -5344,7 +5467,7 @@ function pinnedRow(g, i){
     <div class="pred"><span class="pin-st ${cls}">${label}</span>${detail ? `<small>${detail}</small>` : ""}${g.sport === "tennis" && tennisSets(r.note) ? `<small class="sets">${tennisSets(r.note)}</small>` : ""}</div>
     <div class="side away"><div class="club${g.side === "a" ? " pick" : ""}"><span>${g.away}</span></div>
       <div class="stat">${r.note || (cls === "live" || cls === "due" ? "Frozen at the pre-start price" : "")}</div></div>
-    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div></button>`;
+    <div class="conf">${Math.round((g.confidence || 0)*100)}<span class="tier t${k}">${g.tier || ""}</span>${accChip(g.accuracy)}${rowChips(g, g.sport)}</div></button>`;
   liveWatch(line.querySelector(".pred"), g, g.date);
   // 21 Nov 2026 (Douglas: "Why do some cards not clickable to reveal further
   // info and links"): a started game is drawn from its pre-start copy, which
@@ -5406,12 +5529,13 @@ function sportRow(g, i, showSport, host){
   star.setAttribute("aria-pressed", state.starred.has(id) ? "true" : "false");
   star.setAttribute("aria-label", (state.starred.has(id) ? "Remove bookmark: " : "Bookmark: ") + g.home + " v " + g.away);
   star.textContent = starGlyph(id);
+  Object.assign(star.dataset, {star: id, own: "1", label: g.home + " v " + g.away});
   star.addEventListener("click", e => {
     e.stopPropagation();
     state.starred.has(id) ? state.starred.delete(id) : state.starred.add(id);
     state.starredGames = state.starredGames || {};
     state.starredGames[id] = g;
-    saveStarred(); holdPlace(star, id, rerenderOpen);
+    saveStarred(); starSync(id); holdPlace(star, id, rerenderOpen);
   });
   const btn = document.createElement("button");
   btn.className = "row trow" + (i % 2 ? " alt" : "") + (k === 0 ? " noread" : "");
@@ -5426,7 +5550,7 @@ function sportRow(g, i, showSport, host){
     <div class="pred" aria-hidden="true"></div>
     <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span>${winStar(g, g.sport, "a")}</div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
-    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div>`;
+    <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${rowChips(g, g.sport)}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", () => holdPlace(btn, id, () => { state.open = state.open === id ? null : id; rerenderOpen(); }));
   line.appendChild(star); line.appendChild(btn);
@@ -6207,6 +6331,27 @@ function ogBooks(g){
     <tbody>${rows}<tr class="sum"><td>All ${L.length}</td><td>${(+g.odds).toFixed(2)}</td>${books.map(k => `<td>${comb(k)}</td>`).join("")}</tr></tbody></table>
     <p>The best price for each pick is in blue. A dash: that bookmaker had no price at the last read.${missing.length ? ` No UK bookmaker priced ${missing.map(ogEsc).join(", ")} yet; ${missing.length === 1 ? "its" : "their"} average comes from ${missing.length === 1 ? "its" : "their"} source.` : ""}</p></div></details>`;
 }
+/* 23 Nov 2026 (UX release 5, "Bets legs drawn once"): a leg is its pick's own
+   board row (ogFill draws it into .og-fx) with the leg's facts under it in one
+   line (.og-lx): the pick to back, the slip's price with its move, best and
+   read time, the card's bookmaker, the price's source, the opposition's price,
+   the leg's chance, the Google predictions link and the context check. ogFill
+   drops the facts the row already shows (the pick, the opposition price in its
+   Bookies line, the same chance). A leg no board row can be drawn for keeps the
+   one-line summary (.og-l), which carries all of them. */
+function legStar(l){
+  const home = l.home || (l.players || [])[0] || "", away = l.away || (l.players || [])[1] || "";
+  return starHtml(starFor(l.sport, home, away, l.when), `${l.pick} (${l.event})`);
+}
+function legFacts(l, book, frozen, cx){
+  const src = l.est ? "" : String(l.src || "").replace(/^.*?, /, "");
+  return `<span class="lx-pk">Back <b>${ogEsc(l.pick)}</b></span>
+    <span class="lx-o"><em>${l.est ? "Estimate" : "Avg"}</em>${ogPrice(l, frozen)}</span>
+    ${book ? ogBook(l) : ""}${src ? `<span class="lx-src">${ogEsc(src)}</span>` : ""}
+    ${l.opp ? `<span class="lx-opp">opp <b class="opp">${(+l.opp).toFixed(2)}</b>${l.draw ? ` · draw <b class="opp">${(+l.draw).toFixed(2)}</b>` : ""}</span>` : ""}
+    <span class="lx-c">chance <b>${pct(l.p)}%</b></span>
+    ${ogSearch(l)}${cx ? ogContext(l) : ""}`;
+}
 // The substitutes: any one can replace any pick in the group and keep it in range.
 function ogBench(g){
   const b = g.bench || []; if(!b.length || g.status === "underway") return "";
@@ -6214,7 +6359,7 @@ function ogBench(g){
   return `<details class="og-bench"><summary>If a pick isn't offered: ${b.length} substitute${b.length === 1 ? "" : "s"}</summary>
     <p>Any one of these can stand in for any pick above and the group stays inside its price range and above its chance floor. Swap one in, don't merge two groups.</p>
     ${b.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
-      return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
+      return `<div class="og-l st${on ? " on" : ""}">${legStar(l)}<span class="t">${on ? "Started" : ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${ogOpp(l)}</small>${ogBook(l)}</span>
       <span class="o">${(+l.odds).toFixed(2)}</span><span class="c">${pct(l.p)}%</span></div>`; }).join("")}</details>`;
 }
@@ -6261,11 +6406,12 @@ function ogCard(g){
   const mult = g.name.startsWith("Multiplier") || card;
   const now = Date.now(), started = g.legs.filter(l => { const d = ogDate(l); return d && d.getTime() < now; }).length;
   const legs = g.legs.map(l => { const d = ogDate(l), on = d && d.getTime() < now;
-    return `<div class="og-l${on ? " on" : ""}"><span class="t">${on ? "Started" : ogTime(l)}</span>
-      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(l.src.replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${ogSearch(l)}${card || paper ? ogBook(l) : ""}${card ? ogContext(l) : ""}</span>
+    return `<div class="og-l st${on ? " on" : ""}">${legStar(l)}<span class="t">${on ? "Started" : ogTime(l)}</span>
+      <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${l.est ? "" : ` · ${ogEsc(String(l.src || "").replace(/^.*?, /, ""))}`}${ogOpp(l)}</small>${ogSearch(l)}${card || paper ? ogBook(l) : ""}${card ? ogContext(l) : ""}</span>
       ${ogPrice(l, on || g.locked)}<span class="c">${pct(l.p)}%</span></div>
       <div class="og-fx" data-fx="${OG_FX.push(l.fx || null) - 1}" data-sport="${ogEsc(l.sport)}" data-home="${ogEsc(l.home || (l.players || [])[0] || "")}" data-away="${ogEsc(l.away || (l.players || [])[1] || "")}"
-        data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>`; }).join("");
+        data-date="${ogEsc(l.date || "")}" data-id="${ogEsc(l.id || "")}"></div>
+      <div class="og-lx" hidden data-p="${pct(l.p)}" data-pick="${ogEsc(l.pick)}" data-o="${l.est ? "" : (+l.odds).toFixed(2)}" data-hill="${card || paper ? (((l.bookOdds || {})[((OG.rules || {}).card || {}).book || ""]) || "") : ""}">${legFacts(l, card || paper, on || g.locked, card)}</div>`; }).join("");
   return `<article class="og ${g.name}${g.wide ? " Wider" : ""}"><div class="og-h"><h3>${g.name}<small>${risk ? `<span class="og-risk">${risk}</span><br>` : ""}${n} picks · ${card ? (g.span ? `two days: ${ogEsc(new Date(g.span[0] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))} and ${ogEsc(new Date(g.span[1] + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}))}` : g.window === "Day" ? `today's card${g.seq > 1 ? " · second " + String(g.name).replace("Card ", "") : ""}` : `${ogEsc(g.window)} window`) : daily ? (g.short ? "today's 2x · short of 2x today" : "today's 2x · on trial") : listPaper ? "the Daily List's own picks · on trial" : paper ? "on paper · the model's own picks · not a bet" : mult ? `${g.rank === "third" ? "third" : g.rank === "alternative" ? "second" : "first"} choice · pays ${g.band[0]}x+` : g.rank === "fill" ? "wider pick" : g.rank === "alternative" ? "second choice" : "first choice"}</small></h3>
       <div class="od"><b>${g.odds.toFixed(2)}</b><span>${card && g.stake > 1 ? `${g.stake} units: ` : ""}£${(stake * (card ? g.stake || 1 : 1)) % 1 ? (stake * (card ? g.stake || 1 : 1)).toFixed(2) : stake * (card ? g.stake || 1 : 1)} returns £${(stake * (card ? g.stake || 1 : 1) * g.odds).toFixed(2)}</span>${(() => { const u = stake * (card ? g.stake || 1 : 1);
         return g.bookOdds ? `<span class="best">${g.bookOdds.toFixed(2)} at ${ogEsc(g.book || "the bookmaker")} · £${(u * g.bookOdds).toFixed(2)}</span>` : g.bestOdds && g.bestOdds > g.odds + 0.005 ? `<span class="best">${g.bestOdds.toFixed(2)} at best prices · £${(u * g.bestOdds).toFixed(2)}</span>` : ""; })()}</div></div>
@@ -6496,14 +6642,35 @@ function ogFill(host){
       // 21 Nov 2026 review: a started leg off the list and reserve (a board
       // game) is in the day's played rows, with its result once graded
       const pl = DL && (DL.played || []).find(p => p.sport === sport && nm(p.home) === nm(home) && nm(p.away) === nm(away));
-      if(pl){ ph.appendChild(pinnedRow(pl, i)); return; }
+      if(pl){ ph.appendChild(pinnedRow(pl, i, date)); return; }
       const fx = OG_FX[+ph.dataset.fx];
       if(fx){
         if(sport === "football") appendFixture(ph, fx, i, date || fx.date, false);
         else ph.appendChild(sportRow(sport === "tennis" ? tennisAsGame(fx) : fx, i, true));
       }
     } catch(e) { ph.innerHTML = ""; }
+    finally { ogLegOnce(ph); }
   });
+}
+// A leg drawn as its board row: the summary line goes, the facts line under
+// the row stays, less what the row already says (UX release 5).
+function ogLegOnce(ph){
+  const sum = ph.previousElementSibling, lx = ph.nextElementSibling;
+  if(!lx || !lx.classList.contains("og-lx") || !ph.querySelector(".row")) return;
+  if(sum && sum.classList.contains("og-l")) sum.hidden = true;
+  lx.hidden = false;
+  if(ph.querySelector(".row.alt")) lx.classList.add("alt");   // one band with its row
+  if(ph.querySelector(".mkt")) lx.querySelectorAll(".lx-opp").forEach(x => x.remove());
+  const conf = ph.querySelector(".row .conf"), n = conf && conf.firstChild && parseInt(conf.firstChild.nodeValue, 10);
+  if(n === +lx.dataset.p) lx.querySelectorAll(".lx-c").forEach(x => x.remove());
+  // the row's price chip when the facts line already gives that price (the average, or the card's book)
+  const chip = ph.querySelector(".row .conf .bkchip"), cv = chip && chip.querySelector("b");
+  if(cv){
+    const lab = chip.textContent.replace(cv.textContent, "").trim(), v = cv.textContent.trim();
+    if((lab === "Avg" && v === lx.dataset.o) || (lab === "Hill" && lx.dataset.hill && v === (+lx.dataset.hill).toFixed(2))) chip.remove();
+  }
+  const pk = ph.querySelector(".club.pick span");
+  if(pk && pk.textContent.trim() === lx.dataset.pick) lx.querySelectorAll(".lx-pk").forEach(x => x.remove());
 }
 
 /* 26 Oct 2026: the Odds tab's renderOdds() and its #odds section were removed;
@@ -6688,7 +6855,7 @@ function slipSection(date){
   } else {
     const s = day.slip, st = s.state || "open", started = Date.parse(s.first) <= Date.now();
     const legs = s.legs.map(l => { const ls = (s.legStates || {})[l.key];
-      return `<div class="tb-row slip ${ls || ""}"><span class="tb-v">${ls === "won" ? "Won" : ls === "lost" ? "Lost" : ls === "void" ? "Void" : ({football: "Football", tennis: "Tennis", ncaab: "College", cfb: "College", nba: "NBA", nfl: "NFL", rugby: "Rugby"}[l.sport] || ogEsc(l.sport))}</span>
+      return `<div class="tb-row st slip ${ls || ""}">${starHtml(starFor(l.sport, l.home, l.away, l.start), `${l.pick} (${l.home} v ${l.away})`)}<span class="tb-v">${ls === "won" ? "Won" : ls === "lost" ? "Lost" : ls === "void" ? "Void" : ({football: "Football", tennis: "Tennis", ncaab: "College", cfb: "College", nba: "NBA", nfl: "NFL", rugby: "Rugby"}[l.sport] || ogEsc(l.sport))}</span>
         <span class="tb-m"><b>${ogEsc(l.pick)}</b><small>v ${ogEsc(l.side === "h" ? l.away : l.home)} · ${ogEsc(l.comp || "")} · ${tm(l.start)}${l.list ? " · Daily List" : l.reserve ? " · reserve" : ""}</small>
           <small class="tb-why">Tested: ${ogEsc(l.basis)} landed (${Math.round(l.chance * 100)}%); model ${Math.round(l.conf * 100)}%; band ${sign(l.bandRet)} a leg at the price</small></span>
         <span class="tb-pp">${l.price.toFixed(2)}<small>${ogEsc(l.book || "")}</small></span></div>`; }).join("");
@@ -6819,7 +6986,7 @@ function edgeSection(date){
     .filter(Boolean).join("; ");
   const who = g => g.edge.side === "h" ? g.home.name : g.away.name;
   const vs = g => g.edge.side === "h" ? g.away.name : g.home.name;
-  const rows = games.map(g => `<div class="tb-row edge"><span class="tb-v">Edge</span>
+  const rows = games.map(g => `<div class="tb-row st edge">${starHtml(starFor("football", g.home.name, g.away.name, g.kickoff), `${who(g)} (${g.home.name} v ${g.away.name})`)}<span class="tb-v">Edge</span>
       <span class="tb-m"><b>${ogEsc(who(g))}</b><small>v ${ogEsc(vs(g))} · ${ogEsc(compName(g))}${g.kickoff ? " · " + new Date(g.kickoff).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"}) : ""}</small>
         <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small></span>
       <span class="tb-pp">${g.edge.odds.toFixed(2)}<small>best ${g.edge.best.toFixed(2)}</small></span></div>`).join("");
@@ -7161,7 +7328,7 @@ function cardPicksHtml(day, gs){
   if(!ps.length) return "";
   const B = ((OG.rules || {}).card || {}).book || "William Hill";
   const rows = ps.map(l => { const hill = (l.bookOdds || {})[B]; const off = (l.context || {}).verdict === "against";
-    return `<div class="og-l${off ? " cx-off" : ""}"><span class="t">${ogTime(l)}</span>
+    return `<div class="og-l st${off ? " cx-off" : ""}">${legStar(l)}<span class="t">${ogTime(l)}</span>
       <span class="m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event)} · ${ogEsc(l.comp || OG_SPORT[l.sport] || l.sport)}${off ? " · kept off by the context check" : ""}</small>${ogContext(l)}</span>
       <span class="o">${l.est ? "est. " : ""}${(+l.odds).toFixed(2)}${hill ? `<small class="read">Hill ${(+hill).toFixed(2)}</small>` : ""}</span><span class="c">${pct(l.pModel)}%</span></div>`; }).join("");
   return `<details class="tb-picks"${gs.length ? "" : " open"}><summary>${gs.length ? `${ps.length} more pick${ps.length === 1 ? "" : "s"} the model backs today` : `The model backs ${ps.length} pick${ps.length === 1 ? "" : "s"} today`}${cxPaused() ? "" : ", with the context check"}</summary>
@@ -7228,7 +7395,8 @@ function renderToday(){
   // 16 Nov 2026: the List 2x, the Daily List's own picks on paper (groupings.build_list_card)
   const isList = g => String(g.name).startsWith("List");
   const listsAll = day.groups.filter(g => isList(g) && g.name !== "Daily 2x"), lists = listsAll.filter(betsOk);
-  const other = day.groups.filter(g => !isCard(g) && !isModel(g) && !isList(g) && g.status !== "underway").filter(betsOk);
+  // (23 Nov 2026, UX release 5: the Daily 2x has its own section and is no longer drawn a second time here)
+  const other = day.groups.filter(g => !isCard(g) && !isModel(g) && !isList(g) && g.name !== "Daily 2x" && g.status !== "underway").filter(betsOk);
   const avoid = day.avoid || [];
   const nCard = d => d.groups.filter(g => isCard(g) && g.status !== "underway").length;
   const hh = h => String(h % 24).padStart(2, "0") + ":00";
@@ -7373,9 +7541,12 @@ function scRow(p){
     : p.est
     ? `<b class="sc-est" title="No price feed for this bet: an estimate from its chance less a typical bookmaker margin. Check the real price at ${scE(SCALE.book)}">≈ ${p.est.toFixed(2)}</b><small>estimate</small><small class="sc-nb">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : ""}${needs ? ` · needs ${needs}` : ""}</small>`
     : `<p class="sc-none" title="No price feed for this bet yet: this is the line to look for at ${scE(SCALE.book)}">${p.find ? scE(scMinus(p.find.charAt(0).toUpperCase() + p.find.slice(1))) : "No price on file"}${needs ? `<small class="sc-nb">needs ${needs} · no feed yet</small>` : ""}</p>`;
+  // 23 Nov 2026 (UX release 5): the board row's star, time and competition, and names
+  const comp = p.comp || scCfg(p.sport).name || "";   // the sport's emoji follows, as on the board
   return `<div class="sc-row">
-    <div class="sc-t">${p.timed === false ? "–" : scTime(p.start)}</div>
-    <div class="sc-m"><small>${scE(p.sport === "football" || p.sport === "tennis" ? scCfg(p.sport).name + " · " : "")}${scE(p.comp || "")}</small><b>${scE(p.pick)}</b> <span>v ${scE(opp)}</span></div>
+    ${starHtml(starFor(p.sport, p.home, p.away, p.start), `${p.pick} (${p.home} v ${p.away})`)}
+    <div class="sc-t"><time${p.timed === false ? "" : ` datetime="${scE(p.start)}"`}>${p.timed === false ? "–" : scTime(p.start)}</time><div class="comp" title="${scE(comp)}"><span>${scE(comp)}</span>${sportEmoji(p.sport)}</div></div>
+    <div class="sc-m"><div class="club"><span>${scE(p.pick)}</span></div><div class="sc-v">v ${scE(opp)}</div></div>
     <div class="sc-w"><div class="sc-bar"><i><u style="width:${Math.round((p.conf || 0) * 100)}%"></u></i><em>${scPct(p.conf || 0)}</em></div></div>
     <div class="sc-b"><span>${scE(p.bet)}</span><div class="sc-bar g"><i><u style="width:${Math.round((p.chance || 0) * 100)}%"></u></i><em>${scPct(p.chance || 0)}</em></div><small>${p.basis === "model" ? "the model's number" : scE(p.basis || "")}</small>${alt}</div>
     <div class="sc-p">${price}</div>
@@ -7533,7 +7704,7 @@ function renderScale(){
   const list = `${scRib}${scBar}<section class="sc-sec sc-day">
     <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3></div>
     ${day.picks.length && !day.picks.some(scKeep) ? fbEmpty("scale", "No Scale picks on this day match these filters.")
-      : day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
+      : day.picks.length ? `<div class="sc-cols"><div></div><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
       : `<div class="empty"><b class="empty-t">No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
     ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for win and both score (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
     <p class="sc-foot">Within a tier the order is the chance the Scale bet lands. Football's chance is the model's own number for the fixture and its price the best UK price on file for that bet, named; every other sport's chance is how often picks at that confidence have landed the bet in the site's record, with no price on file yet. "Needs" is the price that breaks even at the chance shown. Under each football bet is the one it replaced, to win with both teams scoring, with ${scE(S.book)}'s price.</p>
