@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-mailer-design: the emails in the site's own look, a welcome series drafted, click tracking (tag pending)
+
+**What changed:** the emails open with the site's own cover (star banner, SPORTS / ALMANAC, 2026 band; `email-header.png`, published by deploy.yml, colours corrected to the site's CSS) above the yellow strip, and the sections and footer sit flush with no gaps. The bands follow the site's own styles: red section heads as the day heads (Anton 17px, ink offset, mono yellow count), the yellow strip as the sports strip (Barlow Semi Condensed 13px bold), group labels as the list's `.lgrp`; the site's fonts load where mail apps allow (Apple Mail, iOS) and fall back elsewhere. In the email, Group A / Group B / the rest read **Strongest today · 85% or better** (same rule: up to five, never padded) and **Also on the list**; the page keeps its labels. "The model" reads "the Sports Almanac model". The ⭐ is smaller and sits on the line. Each send carries a `kind` tag (daily, weekly, confirm, welcome, guide). `welcome_emails()` drafts three welcome emails (confirm, welcome, how to read); `--preview` writes them, `--to --kind welcome|all` sends test copies; only the confirm email is sent in production, from Supabase.
+
+**Outside the repo (Douglas, 23 Nov 2026):** Resend click tracking through `links.sportsalmanac.bet` (open tracking off: inflated by Apple Mail and a tracking pixel needs consent); a Resend webhook (delivered, clicked, bounced, complained) to the Supabase edge function `almanac-email-events`, which checks Resend's signature (`RESEND_WEBHOOK_SECRET`) and logs through `almanac_log_email_event` into `almanac.email_events` (no addresses; link tokens stripped), summed by day and kind in `almanac.email_kpis`. `almanac.send_confirm` sends the confirm email in this design.
+
+**Tested:** `tests/test_mailer.py` (group order and never-padded updated to the new labels), `nametest.py`; the previews rendered at 680px and 390px on the canvas Douglas approved; test copies of all five emails to Douglas; a delivered and a clicked event landed in `almanac.email_events`.
+
+**Files:** `mailer.py`, `tests/test_mailer.py`, `email-header.png`, `.github/workflows/deploy.yml` (publishes the header), `.github/workflows/mail-test.yml` (previews on every push to `mail-test`; sends test copies to Douglas on `[send]` / `[send-one]`), `claude/mailer-2026-11-23.md`.
+
+**Not changed:** what each email holds, the schedule, the claim, the page's Group A / B labels.
+
+**Roll back:** `git revert` the squash commit; the header image then 404s in any email already sent, harmlessly.
+
 ## 2026-11-23-daily2x-day: the Daily 2x is built on its own day (tag pending)
 
 **What changed:** the Daily 2x was built when its day first came into the builds' three-day horizon and then held, so every slip from 17 to 23 Nov was chosen one to three days early, mostly from reserve picks, at prices read then (23 Nov's showed "read Thu 19:30" on a Monday while the day's ten Daily List picks never reached it). Now an unstarted Daily 2x is rebuilt on every build until 07:00 UK on its day, then held as first built until its first start, as before. The 07:40 UTC build (the morning briefing and email) is the first to hold it.

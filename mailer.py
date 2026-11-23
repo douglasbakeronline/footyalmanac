@@ -4,7 +4,7 @@ Two emails, both built from the files the build has already written, never
 from the page's HTML and never regraded:
 
 - **The Daily List** at 07:00 UK every morning, about today's UK day: the
-  Daily List (Group A, Group B, the rest; not the reserve) with the page's own
+  Daily List (Strongest today, Also on the list; not the reserve) with the page's own
   display rules, the Daily 2x, the Card (or the page's reason there is none),
   the Edge picks and, for subscribers who ticked Scale, the day's Scale bets
   from the Daily List tier and the Scale groups.
@@ -45,6 +45,7 @@ SUPABASE_URL = "https://nangcsyicqfvfawyvkus.supabase.co"
 SUPABASE_KEY = "sb_publishable_aNDvbiKjeNgZx9iIg75tZw_vQDmP28F"   # the page's publishable key (index.html)
 RESEND_BATCH = "https://api.resend.com/emails/batch"
 SENDER = "Sports Almanac <list@sportsalmanac.bet>"
+HEADER_IMG = os.environ.get("MAILER_HEADER_IMG") or SITE + "email-header.png"   # the site's cover header (deploy.yml publishes it); tests may point elsewhere
 UNSUB_URL = SUPABASE_URL + "/functions/v1/almanac-unsubscribe?t={t}"
 MANAGE_URL = SITE + "#mailer?manage={t}"
 TEST_TOKEN = "00000000-0000-0000-0000-000000000000"   # previews and test copies: links that change nothing
@@ -73,10 +74,14 @@ SPORT_NAMES = {"football": "Football", "tennis": "Tennis", "nfl": "NFL", "nba": 
 # Look: the site's cover (index.html :root)
 PAPER, SURFACE, INK, INK2, MUTE, RULE = "#f0e8d6", "#fbf6ea", "#1a1511", "#4b4038", "#6e6355", "#c6b89e"
 RED, YELLOW, YELLOW_SOFT, GREEN, GREEN_SOFT = "#c8102e", "#f4d21c", "#fbf0bf", "#1c6b3a", "#dcebdf"
-F_HEAD = "'Arial Black', 'Helvetica Neue', Arial, Helvetica, sans-serif"
+# The site's three faces (index.html --f-display, --f-ui, --f-num), loaded where the mail app allows web
+# fonts (Apple Mail, iOS) and falling back to the nearest system face elsewhere (Gmail, Outlook).
+F_DISPLAY = "Anton, Impact, 'Arial Narrow Bold', 'Arial Narrow', sans-serif"
+F_UI = "'Barlow Semi Condensed', 'Arial Narrow', 'Helvetica Neue', Helvetica, Arial, sans-serif"
+F_NUM = "'IBM Plex Mono', Menlo, Consolas, 'Courier New', monospace"
+F_HEAD, F_BODY, F_MONO = F_DISPLAY, F_UI, F_NUM
 F_SERIF = "Georgia, 'Times New Roman', serif"
-F_BODY = "'Helvetica Neue', Helvetica, Arial, sans-serif"
-F_MONO = "Menlo, Consolas, 'Courier New', monospace"
+FONTS_LINK = "https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Semi+Condensed:wght@400;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap"
 
 
 # ---------------------------------------------------------------- reading
@@ -345,12 +350,13 @@ def list_items(src, day, now):
 
 
 def groups_of(items):
-    """Group A (the strongest five at 85%+, never padded), Group B (the next five), the rest."""
+    """Strongest today (the page's Group A: up to five at 85%+, never padded), then Also on the list
+    (every other list pick, strongest first). Douglas, 23 Nov 2026: plain words in the email in place
+    of Group A / Group B / The rest; the page keeps its labels."""
     nA = min(5, sum(1 for it in items if (it.get("confidence") or 0) >= GROUP_A_MIN))
-    nB = min(len(items), nA + 5)
-    out = [("Group A", f"{nA} pick{'' if nA == 1 else 's'} at 85% or better" if nA else "none today: nothing at 85% or better", items[:nA])]
-    if nB > nA: out.append(("Group B", f"the next {nB - nA}", items[nA:nB]))
-    if len(items) > nB: out.append(("The rest", f"picks {nB + 1} to {len(items)}", items[nB:]))
+    out = [("Strongest today", f"{nA} pick{'' if nA == 1 else 's'} at 85% or better" if nA else "none today: nothing at 85% or better", items[:nA])]
+    rest = len(items) - nA
+    if rest: out.append(("Also on the list", f"{rest} more pick{'' if rest == 1 else 's'}, strongest first", items[nA:]))
     return out
 
 
@@ -367,7 +373,7 @@ def card_short_text(s):
     if why == "spread":
         c = s.get("comps") or 0
         return f"No Card group today: {n} picks clear the rule, but from {c} competition{'' if c == 1 else 's'}, and a group takes at most two from one.{tail}"
-    if why == "chance": return f"No Card group today: {n} picks clear the rule, but no set paying {lo} to {hi} has the model's combined chance high enough.{tail}"
+    if why == "chance": return f"No Card group today: {n} picks clear the rule, but no set paying {lo} to {hi} has the Sports Almanac model's combined chance high enough.{tail}"
     picks = "one pick clears" if n == 1 else f"{'no' if n == 0 else n} picks clear"
     return f"No Card group today: {picks} the rule so far, and a group needs {s.get('need') or 3}.{tail}"
 
@@ -406,19 +412,24 @@ def _p(text, size=14, color=INK2, extra=""):
 
 
 def section(title, sub, inner):
-    """A red day band and its body, as the site's day heads."""
-    sub_h = f'<span style="font-family:{F_BODY};font-weight:normal;font-size:12px;letter-spacing:0;text-transform:none;color:#ffe9ec"> · {E(sub)}</span>' if sub else ""
-    return (f'<tr><td style="padding:22px 0 0 0">'
+    """A red day band and its body, as the site's .day-head: Anton 17px white with an ink offset, the count in mono yellow."""
+    sub_h = (f'<td align="right" valign="middle" style="padding:6px 12px 5px 8px;font-family:{F_NUM};font-size:12px;font-weight:600;'
+             f'color:{YELLOW}">{E(sub)}</td>') if sub else ""
+    return (f'<tr><td style="padding:0">'
+            f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{RED};border:1px solid {INK};border-top:0">'
+            f'<tr><td valign="middle" style="padding:6px 12px 5px 12px;font-family:{F_DISPLAY};font-size:17px;line-height:1.3;letter-spacing:.04em;'
+            f'text-transform:uppercase;color:#ffffff;text-shadow:1.5px 1.5px 0 {INK}">{E(title)}</td>{sub_h}</tr></table>'
             f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">'
-            f'<tr><td style="background:{RED};padding:8px 14px;font-family:{F_HEAD};font-size:15px;letter-spacing:1px;text-transform:uppercase;color:#ffffff">{E(title)}{sub_h}</td></tr>'
-            f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:4px 14px 12px 14px">{inner}</td></tr>'
+            f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:2px 12px 10px 12px">{inner}</td></tr>'
             f'</table></td></tr>')
 
 
 def label_bar(title, sub):
-    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:10px 0 2px 0">'
-            f'<tr><td style="background:{YELLOW};padding:4px 10px;font-family:{F_HEAD};font-size:12px;letter-spacing:1px;text-transform:uppercase;color:{INK}">{E(title)}'
-            f'<span style="font-family:{F_BODY};font-size:12px;letter-spacing:0;text-transform:none;font-weight:normal"> · {E(sub)}</span></td></tr></table>')
+    """A group label, as the site's .lgrp: small caps in the UI face, the title in ink, the count in mono."""
+    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0">'
+            f'<tr><td style="padding:12px 0 4px 0;font-family:{F_UI};font-size:11px;font-weight:700;letter-spacing:.08em;'
+            f'text-transform:uppercase;color:{MUTE};border-bottom:1px solid {INK}"><b style="color:{INK}">{E(title)}</b>'
+            f'<span style="font-family:{F_NUM};font-size:11px;font-weight:600;letter-spacing:0;text-transform:none;color:{MUTE}">&nbsp;&nbsp;{E(sub)}</span></td></tr></table>')
 
 
 def row(left_top, left_bottom, main, meta, right_big, right_small, tint=None):
@@ -456,7 +467,7 @@ def status_word(it):
 
 def list_row(src, it):
     opp = it["away"] if it.get("side") == "h" else it["home"]
-    star = ' <span style="font-size:14px" title="Likely winner">⭐</span>' if it.get("star") else ""
+    star = ' <span style="font-size:11px;line-height:1;vertical-align:1px" title="Likely winner">⭐</span>' if it.get("star") else ""
     t = tested(it)
     meta = [E(it.get("comp") or "")]
     meta.append(f"tested {pct(t)}" if t else "no tested rate yet")
@@ -496,17 +507,17 @@ def wrap(title, day_line, preheader, body_rows, foot):
     return f"""<!DOCTYPE html>
 <html lang="en-GB"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light">
+<link href="{FONTS_LINK}" rel="stylesheet">
 <title>{E(title)}</title></head>
 <body style="margin:0;padding:0;background:{PAPER}">
 <div style="display:none;max-height:0;overflow:hidden;mso-hide:all;font-size:1px;line-height:1px;color:{PAPER}">{E(preheader)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{PAPER}">
 <tr><td align="center" style="padding:16px 10px 28px 10px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%">
-<tr><td style="background:{RED};padding:14px 16px 12px 16px;text-align:left">
-<div style="font-family:{F_BODY};font-size:11px;letter-spacing:3px;color:#ffe9ec">★ ★ ★ ★ ★</div>
-<div style="font-family:{F_SERIF};font-size:13px;letter-spacing:2px;text-transform:uppercase;color:#ffffff;padding-top:4px">The</div>
-<div style="font-family:{F_HEAD};font-size:30px;line-height:1.05;letter-spacing:1px;text-transform:uppercase;color:#ffffff">Sports Almanac</div></td></tr>
-<tr><td style="background:{YELLOW};padding:7px 16px;font-family:{F_HEAD};font-size:13px;letter-spacing:1px;text-transform:uppercase;color:{INK}">{E(title)}<span style="float:right;font-family:{F_BODY};letter-spacing:0;text-transform:none;font-weight:bold">{E(day_line)}</span></td></tr>
+<tr><td style="padding:0;background:{INK};line-height:0;font-size:0"><img src="{HEADER_IMG}" width="600" alt="The Sports Almanac · Complete sports statistics · 2026" style="display:block;width:100%;max-width:600px;height:auto;border:0;outline:none;text-decoration:none;background:{INK};color:#ffffff;font-family:{F_HEAD};font-size:24px;line-height:1.2"></td></tr>
+<tr><td style="padding:0"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:{YELLOW};border:1px solid {INK};border-top:0"><tr>
+<td style="padding:12px 12px;font-family:{F_UI};font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{INK}">{E(title)}</td>
+<td align="right" style="padding:12px 12px;font-family:{F_UI};font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:{INK};white-space:nowrap">{E(day_line)}</td></tr></table></td></tr>
 {''.join(body_rows)}
 {foot}
 </table></td></tr></table></body></html>"""
@@ -515,9 +526,9 @@ def wrap(title, day_line, preheader, body_rows, foot):
 def footer_html(links):
     a = lambda href, txt: f'<a href="{E(href)}" style="color:{INK};font-weight:bold">{E(txt)}</a>'
     lk = " · ".join(a(h, t) for t, h in links)
-    return (f'<tr><td style="padding:22px 4px 0 4px;font-family:{F_BODY};font-size:13px;line-height:1.6;color:{INK2}">'
+    return (f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:16px 14px;font-family:{F_BODY};font-size:13px;line-height:1.6;color:{INK2}">'
             f'<p style="margin:0 0 10px 0">{lk}</p>'
-            f'<p style="margin:0 0 10px 0">Every pick is the model\'s own read, published before the start and graded in public on the site, losses included. Past results do not guarantee future ones.</p>'
+            f'<p style="margin:0 0 10px 0">Every pick is the Sports Almanac model\'s own read, published before the start and graded in public on the site, losses included. Past results do not guarantee future ones.</p>'
             f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0"><tr>'
             f'<td valign="top" style="background:{RED};color:#ffffff;font-family:{F_HEAD};font-size:15px;padding:6px 8px">18+</td>'
             f'<td style="padding:0 0 0 10px;font-family:{F_BODY};font-size:12px;line-height:1.5;color:{INK2}">Every pick can lose. Set a limit before you bet and never chase a loss. Free, confidential help: GamCare 0808 8020 133 · '
@@ -528,9 +539,78 @@ def footer_html(links):
 
 def footer_text(links):
     return ("\n".join(f"{t}: {h}" for t, h in links) +
-            "\n\nEvery pick is the model's own read, published before the start and graded in public on the site, losses included. "
+            "\n\nEvery pick is the Sports Almanac model's own read, published before the start and graded in public on the site, losses included. "
             "Past results do not guarantee future ones.\n\n18+. Every pick can lose. Free, confidential help: GamCare 0808 8020 133, "
             f"https://www.begambleaware.org\n\nManage your emails: {MANAGE_MARK}\nUnsubscribe: {UNSUB_MARK}\n")
+
+
+# ---------------------------------------------------------------- the welcome series (design, 23 Nov 2026)
+#
+# Three emails for a new subscriber: confirm (at sign-up, double opt-in), welcome
+# (once confirmed) and how to read the Daily List (two days later). Built here so
+# they share the shell; nothing sends them yet. CONFIRM_MARK is the row's token.
+
+CONFIRM_MARK = "%%CONFIRM_URL%%"
+CONFIRM_URL = SITE + "#mailer?confirm={t}"
+
+
+def button(href, label):
+    return (f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:6px 0 14px 0"><tr>'
+            f'<td style="background:{RED};border:1px solid {INK}">'
+            f'<a href="{href}" style="display:inline-block;padding:13px 22px;font-family:{F_HEAD};font-size:15px;letter-spacing:1px;'
+            f'text-transform:uppercase;color:#ffffff;text-decoration:none">{E(label)}</a></td></tr></table>')
+
+
+def key_row(term, text):
+    return (f'<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-bottom:1px solid {RULE}">'
+            f'<tr><td width="112" valign="top" style="padding:10px 10px 10px 0;font-family:{F_HEAD};font-size:13px;color:{INK}">{term}</td>'
+            f'<td valign="top" style="padding:10px 0;font-family:{F_BODY};font-size:14px;line-height:1.5;color:{INK2}">{text}</td></tr></table>')
+
+
+def welcome_emails():
+    """[(name, {subject, html, text})] for the three welcome emails."""
+    links = [("Today's Daily List", SITE), ("How it went", SITE + "#results")]
+    out = []
+
+    body = [section("One tap to start", None,
+                    _p("Thanks for signing up at sportsalmanac.bet. Confirm this address and your first Daily List arrives at 07:00 tomorrow.", 15, INK, "padding-top:8px") +
+                    button(CONFIRM_MARK, "Confirm my email") +
+                    _p("If you didn't sign up, ignore this email. Nothing more will be sent to you.", 13, MUTE))]
+    out.append(("welcome-1-confirm", {
+        "subject": "Confirm your Sports Almanac emails", "kind": "confirm",
+        "html": wrap("Confirm your email", "One step left", "One tap and the Daily List starts tomorrow at 07:00.", body, footer_html(links)),
+        "text": f"Confirm your Sports Almanac emails\n\nConfirm this address and your first Daily List arrives at 07:00 tomorrow:\n{CONFIRM_MARK}\n\nIf you didn't sign up, ignore this email.\n\n" + footer_text(links)}))
+
+    get = (key_row("Daily List", "Every morning at 07:00 UK: the day's strongest picks across every sport, with the price at William Hill where there is one.") +
+           key_row("Weekly Record", "Saturdays at 07:00 UK: how last week's picks landed against what was quoted, wins and misses both.") +
+           key_row("Scale", "Only if you ticked it: the day's Scale bets, a pick to win plus a second condition, inside the Daily List email."))
+    how = (_p("Every number comes from the Sports Almanac model alone. No bookmaker's price goes into a pick; prices are shown only so you can see what you'd get.", 14, INK2, "padding-top:8px") +
+           _p("Every pick is published before the start and graded in public on the site, losses included. Nothing is taken down after the result.", 14, INK2) +
+           button(SITE, "See today's list"))
+    body = [section("What you'll get", None, get), section("How the picks are made", None, how)]
+    out.append(("welcome-2-welcome", {
+        "subject": "You're in: the Daily List starts tomorrow", "kind": "welcome",
+        "html": wrap("Welcome", "You're confirmed", "What arrives, when, and how the picks are made.", body, footer_html(links)),
+        "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
+                "Every number comes from the Sports Almanac model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
+
+    groups = (label_bar("Strongest today", "up to five picks at 85% or better") +
+              _p("The day's strongest calls. Only picks the Sports Almanac model rates 85% or more get in, so some days it has two, some days none. It is never padded to make five.", 14, INK2, "padding-top:8px") +
+              label_bar("Also on the list", "every other pick that cleared the bar") +
+              _p("Still list picks, strongest first. Every one has cleared the same bar to be on the list at all, a step down from the strongest.", 14, INK2, "padding-top:8px"))
+    row_key = (key_row("90%", "The Sports Almanac model's chance the pick wins.") +
+               key_row("tested 84%", "How often picks at this level landed in testing, on games the Sports Almanac model was never tuned on. A pick only reaches the list when that figure is 80% or better.") +
+               key_row("Hill 1.25", "William Hill's price, for reference. Avg means the average across UK books where Hill has none.") +
+               key_row("⭐", "Likely winner: a list pick that also clears a short set of extra checks, such as no bookmakers' warning against it.") +
+               key_row("Won / Lost", "Picks already played show their result, so nothing is hidden."))
+    body = [section("Two parts to the list", "why it is split", groups),
+            section("Reading a row", "the example numbers are for illustration", row_key)]
+    out.append(("welcome-3-guide", {
+        "subject": "How to read the Daily List", "kind": "guide",
+        "html": wrap("How to read it", "Two-minute guide", "The strongest picks, the tested rate and the star, explained.", body, footer_html(links)),
+        "text": "How to read the Daily List\n\nStrongest today: up to five picks at 85% or better, never padded.\n"
+                "Also on the list: every other pick that cleared the bar, strongest first.\n\n" + footer_text(links)}))
+    return out
 
 
 # ---------------------------------------------------------------- the Daily List email
@@ -568,7 +648,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
         if off:
             text.append(f"\n{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out.")
             inner.append(_p(f"{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out. On the college basketball tab.", 12, MUTE))
-        inner.append(_p("The percentage is the model's chance; tested is how often calls at that level landed on games never tuned on. "
+        inner.append(_p("The percentage is the Sports Almanac model's chance; tested is how often calls at that level landed on games never tuned on. "
                         "Prices are William Hill's where read (Avg: the bookmakers' average), shown only: the list never sees a price.", 12, MUTE))
         rows.append(section("The Daily List", f"{len(items)} pick{'' if len(items) == 1 else 's'} clear the bar", "".join(inner)))
     else:
@@ -584,10 +664,10 @@ def daily_email(day, src=None, with_scale=False, now=None):
     if d2:
         oh, ot = group_odds(d2)
         n = len(d2.get("legs") or [])
-        line = f"{n} picks, the model's strongest at 1.10+" + (" · <b>short of 2x today</b>" if d2.get("short") else " · on trial")
+        line = f"{n} picks, the Sports Almanac model's strongest at 1.10+" + (" · <b>short of 2x today</b>" if d2.get("short") else " · on trial")
         inner = [group_head("Today's 2x", line, oh)] + [leg_row(src, l) for l in d2.get("legs") or []]
         if d2.get("short"): inner.append(_p("Nothing more qualified today, so this slip pays under 2x.", 12, MUTE, "padding-top:8px"))
-        inner.append(_p(f"All {n} land: model {pct(d2.get('p'))}. One unit; graded on its own line.", 12, MUTE, "padding-top:8px"))
+        inner.append(_p(f"All {n} land: Sports Almanac model {pct(d2.get('p'))}. One unit; graded on its own line.", 12, MUTE, "padding-top:8px"))
         rows.append(section("The Daily 2x", "one slip a day", "".join(inner)))
         text.append(f"\nTHE DAILY 2X · {ot}{' · short of 2x today' if d2.get('short') else ''}")
         text += [f"  {uk_time(l.get('when'))}  {l.get('pick')} ({l.get('event')}) · {pct(l.get('p'))} · "
@@ -613,10 +693,10 @@ def daily_email(day, src=None, with_scale=False, now=None):
             text += [f"    {uk_time(l.get('when'))}  {l.get('pick')} ({l.get('event')}) · {pct(l.get('p'))}"
                      f"{' · Hill %.2f' % l['bookOdds'][BOOK] if (l.get('bookOdds') or {}).get(BOOK) else ' · not at Hill'}" for l in g.get("legs") or []]
         inner.append(_p("Place once, before the first start; a group can still change until then, so check the Bets tab before placing. No cash out, no topping up.", 12, MUTE, "padding-top:8px"))
-        rows.append(section("The Card", "the model's own picks, staked", "".join(inner)))
+        rows.append(section("The Card", "the Sports Almanac model's own picks, staked", "".join(inner)))
     else:
         msg = card_short_text(gd.get("cardShort"))
-        rows.append(section("The Card", "the model's own picks, staked", _p(E(msg), 14, INK2, "padding-top:10px")))
+        rows.append(section("The Card", "the Sports Almanac model's own picks, staked", _p(E(msg), 14, INK2, "padding-top:10px")))
         text.append("\nTHE CARD\n  " + msg)
 
     # 4. Edge picks
@@ -626,7 +706,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
         text.append("\nEDGE PICKS")
         for e in edges:
             inner.append(row(E(uk_time(e.get("kickoff"))), "Football", f'<b style="color:{GREEN}">{E(e["pick"])}</b> <span style="color:{MUTE}">v {E(e["opp"])}</span>',
-                             f'{E(e.get("comp") or "")} · bookmakers {pct(e.get("fair"))}, model {pct(e.get("model"))}, {E(e["opp"])} priced {float(e.get("opp") or 0):.2f}',
+                             f'{E(e.get("comp") or "")} · bookmakers {pct(e.get("fair"))}, Sports Almanac model {pct(e.get("model"))}, {E(e["opp"])} priced {float(e.get("opp") or 0):.2f}',
                              f'{float(e["odds"]):.2f}', f'best {float(e.get("best") or e["odds"]):.2f}', GREEN_SOFT))
             text.append(f"  {uk_time(e.get('kickoff'))}  {e['pick']} v {e['opp']} · {e.get('comp') or ''} · {float(e['odds']):.2f} (best {float(e.get('best') or e['odds']):.2f})")
         inner.append(_p("Football favourites at 1.15 to 1.90 whose opponent is priced 5.0 or more. Take the best price: at the average the edge is thin.", 12, MUTE, "padding-top:8px"))
@@ -670,7 +750,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
     subject = f"The Daily List, {short_day(day)}: " + (f"{n} pick{'' if n == 1 else 's'}" if n else "nothing clears the bar")
     pre = (f"{n} picks clear the bar today" + (f", led by {items[0]['pick']} at {pct(items[0]['confidence'])}." if n else ".")) if n else "Nothing clears the bar today."
     body = wrap("The Daily List", dl, pre, rows, footer_html(links))
-    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": n}
+    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": n, "kind": "daily"}
 
 
 # ---------------------------------------------------------------- the Weekly Record email
@@ -789,7 +869,7 @@ def weekly_email(day, src=None):
             opp = r["away"] if r.get("side") == "h" else r["home"]
             return f"{r.get('pick')} v {opp}", f"{sport_name(src, r.get('sport'))} · {short_day(r['date'])} · {pct(r.get('conf'))}" + (f" · {r['score']}" if r.get("score") else "")
         if wins:
-            inner.append(label_bar("Strongest wins", f"the {len(wins)} the model was surest of"))
+            inner.append(label_bar("Strongest wins", f"the {len(wins)} the Sports Almanac model was surest of"))
             for r in wins:
                 m, meta = pick_line(r)
                 inner.append(_p(f'<b style="color:{GREEN}">✓</b> <b style="color:{INK}">{E(m)}</b><br><span style="font-size:12px;color:{MUTE}">{E(meta)}</span>', 14, INK, "margin:6px 0"))
@@ -831,7 +911,7 @@ def weekly_email(day, src=None):
     subject = f"The Weekly Record, {span}: " + (f"list {tot['won']} of {tot['n']}" if tot["n"] else "the week's cards")
     pre = f"The Daily List {tot['won']} of {tot['n']} landed, and every card's week." if tot["n"] else "Every card's week."
     body = wrap("The Weekly Record", span, pre, rows, footer_html(links))
-    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": tot["n"]}
+    return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": tot["n"], "kind": "weekly"}
 
 
 # ---------------------------------------------------------------- schedule
@@ -854,7 +934,9 @@ def message(to, token, mail):
     return {"from": SENDER, "to": [to], "subject": mail["subject"],
             "html": personalise(mail["html"], token), "text": personalise(mail["text"], token),
             "headers": {"List-Unsubscribe": f"<{UNSUB_URL.format(t=token)}>",
-                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"}}
+                        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click"},
+            # which email this is, so Resend's click and delivery events can be counted by kind (almanac.email_kpis)
+            "tags": [{"name": "kind", "value": re.sub(r"[^A-Za-z0-9_-]", "_", mail.get("kind") or "email")}]}
 
 
 def batches(xs, n=BATCH_MAX):
@@ -979,6 +1061,9 @@ def preview(out, day, src=None, now=None):
         for ext in ("html", "txt"):
             with open(os.path.join(out, f"{name}.{ext}"), "w", encoding="utf-8") as f:
                 f.write(personalise(m["html" if ext == "html" else "text"], TEST_TOKEN))
+    for name, m in welcome_emails():
+        with open(os.path.join(out, f"{name}.html"), "w", encoding="utf-8") as f:
+            f.write(personalise(m["html"], TEST_TOKEN).replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN)))
     print(f"mailer: preview written to {out} (daily: {d['count']} list picks; weekly: {w['count']} settled list picks)")
     return 0
 
@@ -987,7 +1072,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--preview", metavar="DIR", help="write daily/weekly .html and .txt from the local files, no network")
     ap.add_argument("--day", help="the UK day, YYYY-MM-DD (default today)")
-    ap.add_argument("--kind", choices=["daily", "weekly"], default="daily", help="with --to: which email")
+    ap.add_argument("--kind", choices=["daily", "weekly", "welcome", "all"], default="daily", help="with --to: which email(s)")
     ap.add_argument("--to", metavar="EMAIL", help="send one test copy (needs RESEND_API_KEY), no claim")
     a = ap.parse_args(argv)
     day = a.day or datetime.now(UK).date().isoformat()
@@ -996,10 +1081,18 @@ def main(argv=None):
         key = os.environ.get("RESEND_API_KEY")
         if not key: print("mailer: not configured (RESEND_API_KEY missing); nothing sent"); return 0
         src = load()
-        m = daily_email(day, src, True) if a.kind == "daily" else weekly_email(day, src)
-        m = {**m, "subject": "[Test] " + m["subject"]}
-        st = send_batch(key, [message(a.to, TEST_TOKEN, m)], f"almanac-test-{a.kind}-{day}-{int(time.time())}")
-        print(f"mailer: test {a.kind} copy {'sent' if 200 <= st < 300 else f'failed (HTTP {st})'}")
+        mails = []
+        if a.kind in ("daily", "all"): mails.append(("daily", daily_email(day, src, True)))
+        if a.kind in ("weekly", "all"): mails.append(("weekly", weekly_email(day, src)))
+        if a.kind in ("welcome", "all"):
+            mails += [(n, {**m, "html": m["html"].replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN)),
+                           "text": m["text"].replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN))})
+                      for n, m in welcome_emails()]
+        for n, m in mails:
+            m = {**m, "subject": "[Test] " + m["subject"]}
+            st = send_batch(key, [message(a.to, TEST_TOKEN, m)], f"almanac-test-{n}-{day}-{int(time.time())}")
+            print(f"mailer: test {n} copy {'sent' if 200 <= st < 300 else f'failed (HTTP {st})'}")
+            time.sleep(RATE_GAP_S)
         return 0
     return run()
 

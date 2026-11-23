@@ -1,0 +1,43 @@
+name: Send test email
+
+# Test the emails without touching subscribers. On every push to mail-test it
+# renders the daily and weekly emails from today's published data and uploads
+# them as the "mail-preview" artifact. It also sends one test copy of the Daily
+# List to Douglas (mailer.py --to) when the commit message contains [send].
+# No claim is made, so the 07:00 send is unaffected.
+on:
+  push:
+    branches: [mail-test]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch today's published data
+        run: |
+          for f in daylist.json groupings-data.js data.json scale.json slip.json sports-data.js; do
+            curl -fsSL "https://sportsalmanac.bet/$f" -o "$f" || echo "::warning::could not fetch $f"
+          done
+      - name: Render previews
+        run: python3 mailer.py --preview mail-preview
+      - name: Print previews (gzip + base64, for reading from the log)
+        run: |
+          for f in mail-preview/*.html; do
+            echo "PREVIEW $(basename "$f") $(gzip -9c "$f" | base64 -w0)"
+          done
+      - uses: actions/upload-artifact@v4
+        with:
+          name: mail-preview
+          path: mail-preview/
+      - name: Send the test copy
+        if: contains(github.event.head_commit.message, '[send')
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          # the header image from this branch until deploy.yml publishes it on the site
+          MAILER_HEADER_IMG: https://raw.githubusercontent.com/douglasbakeronline/footyalmanac/mail-test/email-header.png
+        # [send] sends every email; [send-one] just the Daily List
+        run: python3 mailer.py --to douglasbakeronline@gmail.com --kind ${{ contains(github.event.head_commit.message, '[send-one]') && 'daily' || 'all' }}
