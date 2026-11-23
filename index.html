@@ -1445,6 +1445,16 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
   text-transform:uppercase;line-height:1.5;white-space:nowrap;
 }
 .edgeflag svg{width:9px;height:10px;flex:none}
+/* 23 Nov 2026: the likely winner star (likelyWinner / winStar) beside the
+   picked side's name, and the day's Most nailed on line under its head. */
+.winstar{font-style:normal;font-size:12px;line-height:1;flex:none}
+.winstar.top{font-size:14px}
+.nailed{display:flex;align-items:baseline;gap:8px;margin:0;padding:9px 14px;border-bottom:1px solid var(--rule);
+  background:var(--yellow-soft);font-family:var(--f-ui);font-size:13px;color:var(--ink)}
+.nailed i{font-style:normal;flex:none}
+.nailed span{min-width:0}
+.winkey{font-size:13px}
+.winkey i{font-style:normal}
 /* 10 Nov 2026: each Daily List pick at William Hill (groupings.list_books_page).
    Douglas places there and many list picks are not offered. Display only:
    the list never sees a price. 1px borders, no fills, so the chip reads as a
@@ -3093,10 +3103,10 @@ function appendFixture(sec, g, i, dayDate, btts){
   btn.innerHTML = `
     <div class="rank t${T.k}" title="${T.k ? T.name + " read" : "No read"}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time${g.kickoff?` datetime="${g.kickoff}"`:""}>${koText(g)}</time><div class="comp" title="${g.country} · ${compName(g)}">${flag(g.iso,g.country)}<span>${compName(g)}</span>${sportEmoji("football")}${cautionMark(g.league)}</div></div>
-    <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span></div>${sideStats(g.home, g.cup)}</div>
+    <div class="side"><div class="club">${flag(g.iso,g.country)}<span>${g.home.name}</span>${btts ? "" : winStar(g, "football", "h")}</div>${sideStats(g.home, g.cup)}</div>
     <div class="barcell">${btts ? bttsBar(g) : bar(g) + mktLine(g)}</div>
     <div class="pred"><b>${g.score[0]}–${g.score[1]}</b><small>${g.xg[0].toFixed(2)}–${g.xg[1].toFixed(2)}</small></div>
-    <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span></div>${sideStats(g.away, g.cup)}</div>
+    <div class="side away"><div class="club">${flag(g.iso,g.country)}<span>${g.away.name}</span>${btts ? "" : winStar(g, "football", "a")}</div>${sideStats(g.away, g.cup)}</div>
     <div class="conf">${pct(btts ? g.btts : g.confidence)}<span class="tier t${T.k}">${T.name}</span>${btts ? "" : accChip(g.accuracy)}${g.celtic?`<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>`:""}${btts ? "" : edgeFlag(g) + hillChip("football", g.home.name, g.away.name) + cxChip("football", g.home.name, g.away.name) + bookGapChip(g, "football")}</div>`;
   btn.dataset.oid = id;
   btn.addEventListener("click", ()=> holdPlace(btn, id, () => {
@@ -3742,6 +3752,7 @@ function renderList(){
         <b>"86% landed"</b> means calls in that band came off 86% of the time on games the
         model never saw. A pick just over the bar can show less than 80%.
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
+      <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. Build slips from these.</p>
       ${coverageLine()}
       <div class="list-order"><span class="ctl-label">Order by</span>
         <div class="seg" id="listSort">
@@ -3783,6 +3794,7 @@ function renderList(){
   // day still offers a full slate; on a full day it waits to be asked.
   const LIST_TARGET = 20;
   const {byDay, resDay, offDay} = listCollect();
+  computeNailed(byDay);
   // 22 Nov 2026: the sport and confidence-band filters, counted on every list
   // and reserve pick of the window (after At William Hill) so each chip says
   // how many it holds.
@@ -3840,7 +3852,7 @@ function renderList(){
     const tl = tally(items), tr = tally(extra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
+      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${nailedLine(date)}${offHill ? `
       <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no William Hill price at ${listHillMin("ncaab").toFixed(2)} or better. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
     const put = (it, i) => listPut(sec, it, i, date);
     // Group labels in strongest order: 1-5, 6-10, then the rest. A tally per
@@ -4473,6 +4485,101 @@ function bookGapChip(g, sport){
   const m = Math.round(conf * 100), f = Math.round(b.fair * 100);
   return `<span class="flagged wary gap" title="The bookmakers (${ogEsc(b.by)}) give ${ogEsc(b.pick)} ${f}%, ${m - f} points under the model's ${m}%. Since 3 Oct, picks the model rated 10+ points above the bookmakers landed 51% (193 picks), near the bookmakers' 53%, not the model's 71%. Display only: the model's number is unchanged.">Bookies ${f}</span>`;
 }
+/* 23 Nov 2026 (Douglas, after the weekend's nine lost slips: "add a ⭐ next
+   to all games that meet the likely winner conditions ... next to the team
+   name", and "the most nailed on team to win by prediction and our model").
+   The ⭐ sits beside the picked side's name on a Daily List pick that also
+   passes every check the record backs (claude/likely-winner-star-2026-11-23.md,
+   claude/bet-mistakes-proof-2026-11-23.md):
+   - on the Daily List (list 84% v reserve 67%, football since 23 Aug)
+   - football priced under 1.40 where a price is known (1.30-1.40 won 78%,
+     1.40-1.50 69% and 18% drawn, 1.50-1.70 59% and 25% drawn)
+   - not a college pick away, neutral or behind .500 (college basketball away
+     46%, neutral 62%, home 87% at 70%+)
+   - not a tennis pick under 80%, not marked Bookies (10+ points above the
+     bookmakers: 51% of 193), not a context check "against"
+   The day's strongest starred pick is its Most nailed on. Display only: no
+   pick, number or grade changes. */
+const WIN_FB_MAX = 1.40;
+function pickSide(g, sport){
+  if(sport === "football"){
+    if(!g.p) return null;
+    const mp = [g.p.h, g.p.d, g.p.a], i = mp.indexOf(Math.max(...mp));
+    return i === 0 ? "h" : i === 2 ? "a" : null;
+  }
+  return g.pick === g.home ? "h" : g.pick === g.away ? "a" : null;
+}
+// The pick's price: William Hill's, else the bookmakers' average, else football's best on file.
+function pickPrice(g, sport, side){
+  const home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
+  const pick = side === "h" ? home : away;
+  const G = window.__GROUPINGS__, q = G && G.prices && G.prices[lbKey(sport, home, away)];
+  if(q && (q.h || q.o) && (!q.p || q.p === pick)) return +(q.h || q.o);
+  const h = hillPrice(sport, home, away); if(h) return +h;
+  if(g.market && g.market.best){ const b = g.market.best[side === "h" ? 0 : 2]; if(b) return +b; }
+  return null;
+}
+function likelyWinner(g, sport){
+  if(!g || !g.list) return false;
+  sport = sport || g.sport;
+  const side = pickSide(g, sport); if(!side) return false;
+  if(sport === "football"){
+    if(g.celtic || g.unrated) return false;
+    const px = pickPrice(g, sport, side);
+    if(px && px >= WIN_FB_MAX) return false;
+  }
+  if(tennisWary(g) || sideWary(g) || trailWary(g)) return false;
+  if(bookGapChip(g, sport)) return false;
+  const home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
+  const c = cxFor(sport, home, away);
+  return !(c && c.verdict === "against");
+}
+// Each UK day's Most nailed on: the strongest likely winner of the day's
+// Daily List, the same on every tab and whatever filter is on. Keys (lbKey)
+// in NAILED, the pick by day in NAILED_DAY; worked out once from listCollect,
+// again on every renderList. var, not let: rows can draw before this line runs.
+var NAILED = null, NAILED_DAY = {};
+function nailedFor(items){
+  const ok = items.map(it => ({it, x: itemGame(it)})).filter(o => o.x && likelyWinner(o.x.g, o.x.sport));
+  ok.sort((a, b) => listByStrength({g: a.x.g}, {g: b.x.g}));
+  return ok[0] || null;
+}
+function computeNailed(byDay){
+  NAILED = new Set(); NAILED_DAY = {};
+  try {
+    byDay = byDay || listCollect().byDay;
+    Object.keys(byDay).forEach(d => {
+      const top = nailedFor(byDay[d]); if(!top) return;
+      const g = top.x.g, home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
+      NAILED.add(lbKey(top.x.sport, home, away));
+      NAILED_DAY[d] = top.x;
+    });
+  } catch(e){ /* a page without its data files: no Most nailed on, rows still draw */ }
+}
+function nailedLine(date){
+  const x = NAILED_DAY[date]; if(!x) return "";
+  const g = x.g, side = pickSide(g, x.sport);
+  const home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
+  const pick = side === "h" ? home : away, opp = side === "h" ? away : home;
+  const px = pickPrice(g, x.sport, side);
+  return `<p class="nailed"><i aria-hidden="true">⭐</i><span><b>Most nailed on:</b> ${ogEsc(pick)} to beat ${ogEsc(opp)} · ${sportLabel(x.sport)} · <b>${pct(g.confidence)}%</b>${px ? ` · ${px.toFixed(2)}` : ""}</span></p>`;
+}
+function winStar(g, sport, side){
+  if(pickSide(g, sport || g.sport) !== side || !likelyWinner(g, sport)) return "";
+  if(NAILED === null) computeNailed();
+  const home = g.home && g.home.name || g.home, away = g.away && g.away.name || g.away;
+  const top = NAILED.has(lbKey(sport || g.sport, home, away));
+  return `<i class="winstar${top ? " top" : ""}" role="img" aria-label="${top ? "Most nailed on today" : "Likely winner"}" title="${top ? "Most nailed on: the day's strongest likely winner. " : ""}Likely winner: a Daily List pick that passes every check the record backs: football under ${WIN_FB_MAX.toFixed(2)}, no college away, neutral or behind .500 pick, no tennis under 80%, no Bookies mark, no context check against.">⭐</i>`;
+}
+// The game behind a list item, with its sport (a pinned item carries its full row).
+function itemGame(it){
+  if(it.kind === "football") return {g: it.g, sport: "football"};
+  if(it.kind === "pinned"){
+    const f = it.g.full; if(!f) return null;
+    return it.g.sport === "football" ? {g: f, sport: "football"} : {g: it.g.sport === "tennis" ? tennisAsGame(f) : f, sport: it.g.sport};
+  }
+  return {g: it.g, sport: it.g.sport};
+}
 function rerenderOpen(){
   if(!$("#today").hidden) renderToday();
   if(!$("#sport").hidden && state.sportView) renderSport(state.sportView);
@@ -4854,11 +4961,11 @@ function sportRow(g, i, showSport, host){
     <div class="ko">${g.timeTbc ? `<time datetime="${g.when.slice(0,10)}" title="No order of play yet: the round starts this day and the match may be played the day after">TBC <small class="ko-local">day not confirmed</small></time>` : `<time datetime="${g.when}">${localTime(g.when)}</time>`}
       <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
         <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span>${sportEmoji(g.sport)}</div></div>
-    <div class="side"><div class="club${homePick?" pick":""}"><span>${g.home}</span></div>
+    <div class="side"><div class="club${homePick?" pick":""}"><span>${g.home}</span>${winStar(g, g.sport, "h")}</div>
       <div class="stat">${g.statH || ratingStat(g.eloH, g.gamesH, "games")}</div></div>
     <div class="barcell">${tennisBar(ph, pa)}${oppLine(g)}</div>
     <div class="pred" aria-hidden="true"></div>
-    <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span></div>
+    <div class="side away"><div class="club${!homePick?" pick":""}"><span>${g.away}</span>${winStar(g, g.sport, "a")}</div>
       <div class="stat">${g.statA || ratingStat(g.eloA, g.gamesA, "games")}</div></div>
     <div class="conf">${Math.round(g.confidence*100)}<span class="tier t${k}">${g.tier}</span>${accChip(g.accuracy)}${hillChip(g.sport, g.home, g.away)}${cxChip(g.sport, g.home, g.away)}${tennisWary(g)}${sideWaryChip(g)}${bookGapChip(g, g.sport)}</div>`;
   btn.dataset.oid = id;
