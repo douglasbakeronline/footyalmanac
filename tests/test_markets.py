@@ -164,6 +164,26 @@ class Gate(unittest.TestCase):
         self.assertEqual(M.gate(self.picks(400, 2, 1.6, 0.6))["verdict"], "fail")     # lands 50% at 1.60
         self.assertEqual(M.gate(self.picks(400, 4, 1.6, 0.8))["verdict"], "fail")     # pays, but under the bookmakers' chance
 
+    def test_spread_of_a_verdict(self):
+        """23 Nov 2026: the gate says where a verdict comes from (days, the
+        busiest three days' share, each selection, William Hill) and the
+        verdict itself is unchanged."""
+        ps = [("2026-11-21", True, {"o": 2.0, "b": 2.1, "f": 0.45, "s": "under", "h": 2.0}),
+              ("2026-11-21", True, {"o": 2.0, "b": 2.0, "f": 0.45, "s": "under"}),
+              ("2026-11-22", False, {"o": 2.0, "b": 2.0, "f": 0.45, "s": "over"}),
+              ("2026-11-23", True, {"o": 2.0, "b": 2.0, "f": 0.45, "s": "over"}),
+              ("2026-11-24", False, {"o": 2.0, "b": 2.0, "f": 0.45, "s": "under"})]
+        g = M.gate(ps)
+        self.assertEqual(g["verdict"], "wait")
+        self.assertEqual(g["days"], 4)
+        self.assertEqual(g["top3"], 0.8)                       # 2 + 1 + 1 of 5
+        self.assertEqual(g["bySel"]["under"]["n"], 3)
+        self.assertEqual(g["bySel"]["under"]["landed"], 2)
+        self.assertAlmostEqual(g["bySel"]["under"]["retBest"], (2.1 + 2.0 - 3) / 3, places=3)
+        self.assertEqual(g["bySel"]["over"]["n"], 2)
+        self.assertEqual(g["hill"], {"n": 1, "ret": 1.0})
+        self.assertEqual(M.gate(self.picks(400, 4, 1.6, 0.6))["verdict"], "pass")
+
     def test_review_section_says_a_pass_in_bold(self):
         import card_review_post as CP
         rec = {"live": {"fixtures": 3, "from": "2026-11-15"}, "replay": {"fixtures": 9}, "gate": {"n": 150, "pLoss": 0.1, "edge": 0.05},
@@ -175,6 +195,32 @@ class Gate(unittest.TestCase):
         self.assertIn("**passes**", text); self.assertIn("**Passed the value gate: Both teams to score", text)
         self.assertIn("3 of 150", text)
         self.assertEqual(CP.markets_section({}), [])
+
+    def test_review_reads_a_pass_against_its_spread(self):
+        """23 Nov 2026: under a pass, the selections, the days, William Hill
+        and the chance of a pass by luck alone; for over / under 2.5, the
+        football-data seasons from goals-value.json."""
+        import card_review_post as CP
+        val = {"n": 222, "need": 150, "verdict": "pass", "retBest": 0.11, "pLoss": 0.0, "days": 10, "top3": 0.815,
+               "bySel": {"under": {"n": 160, "landed": 85, "retBest": 0.159}, "over": {"n": 62, "landed": 29, "retBest": -0.017}},
+               "hill": {"n": 0, "ret": None}}
+        rec = {"live": {"fixtures": 3}, "replay": {"fixtures": 9}, "gate": {"n": 150, "pLoss": 0.1, "edge": 0.05}, "tests": 20,
+               "markets": {"o25": {"name": "Over / under 2.5 goals", "all": {"n": 12, "rate": 0.5, "quoted": 0.52, "z": -0.1},
+                                   "live": {"priced": 3}, "gate": {"value": val, "all": {"n": 3, "need": 150, "verdict": "wait"}}}}}
+        goals = {"seasons": {"fit": {"season": "2025-26", "roi": -0.046, "bets": 2314,
+                                     "bySide": {"under": {"bets": 1184, "roi": -0.073}, "over": {"bets": 1130, "roi": -0.018}}},
+                             "check": {"season": "2026-27", "roi": -0.123, "bets": 809,
+                                       "bySide": {"under": {"bets": 679, "roi": -0.148}, "over": {"bets": 130, "roi": 0.003}}}}}
+        text = "\n".join(CP.markets_section(rec, goals))
+        self.assertIn("under 160 picks +15.9%, over 62 picks -1.7%", text)
+        self.assertIn("10 days, 82% of the picks on the busiest three", text)
+        self.assertIn("William Hill priced none of them", text)
+        self.assertIn("20 rules are read", text)
+        self.assertIn("about 2 would pass by chance alone", text)
+        self.assertIn("2025-26 -4.6% on 2314 bets, under -7.3% (1184 bets)", text)
+        self.assertIn("2026-27 -12.3% on 809 bets, under -14.8% (679 bets)", text)
+        plain = "\n".join(CP.markets_section(rec))
+        self.assertNotIn("football-data", plain.split("Value rule")[0])
 
 
 if __name__ == "__main__":
