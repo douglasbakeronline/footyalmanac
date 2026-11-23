@@ -554,6 +554,7 @@ jobs:
           # than parsed out of the page, so they need to exist at real URLs or
           # a home-screen save falls back to a screenshot of the page.
           cp icon-*.png manifest.webmanifest _site/
+          cp email-header.png _site/             # the emails' header image (mailer.py HEADER_IMG, 23 Nov 2026)
           # Tennis: only copied if it exists, which it always will now that
           # the step above commits it back — but a defensive check costs
           # nothing and a missing file must not fail the assemble step.
