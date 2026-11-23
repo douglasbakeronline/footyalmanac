@@ -373,7 +373,7 @@ def card_short_text(s):
     if why == "spread":
         c = s.get("comps") or 0
         return f"No Card group today: {n} picks clear the rule, but from {c} competition{'' if c == 1 else 's'}, and a group takes at most two from one.{tail}"
-    if why == "chance": return f"No Card group today: {n} picks clear the rule, but no set paying {lo} to {hi} has the model's combined chance high enough.{tail}"
+    if why == "chance": return f"No Card group today: {n} picks clear the rule, but no set paying {lo} to {hi} has the Sports Almanac model's combined chance high enough.{tail}"
     picks = "one pick clears" if n == 1 else f"{'no' if n == 0 else n} picks clear"
     return f"No Card group today: {picks} the rule so far, and a group needs {s.get('need') or 3}.{tail}"
 
@@ -467,7 +467,7 @@ def status_word(it):
 
 def list_row(src, it):
     opp = it["away"] if it.get("side") == "h" else it["home"]
-    star = ' <span style="font-size:14px" title="Likely winner">⭐</span>' if it.get("star") else ""
+    star = ' <span style="font-size:11px;line-height:1;vertical-align:1px" title="Likely winner">⭐</span>' if it.get("star") else ""
     t = tested(it)
     meta = [E(it.get("comp") or "")]
     meta.append(f"tested {pct(t)}" if t else "no tested rate yet")
@@ -528,7 +528,7 @@ def footer_html(links):
     lk = " · ".join(a(h, t) for t, h in links)
     return (f'<tr><td style="background:{SURFACE};border:1px solid {RULE};border-top:0;padding:16px 14px;font-family:{F_BODY};font-size:13px;line-height:1.6;color:{INK2}">'
             f'<p style="margin:0 0 10px 0">{lk}</p>'
-            f'<p style="margin:0 0 10px 0">Every pick is the model\'s own read, published before the start and graded in public on the site, losses included. Past results do not guarantee future ones.</p>'
+            f'<p style="margin:0 0 10px 0">Every pick is the Sports Almanac model\'s own read, published before the start and graded in public on the site, losses included. Past results do not guarantee future ones.</p>'
             f'<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 10px 0"><tr>'
             f'<td valign="top" style="background:{RED};color:#ffffff;font-family:{F_HEAD};font-size:15px;padding:6px 8px">18+</td>'
             f'<td style="padding:0 0 0 10px;font-family:{F_BODY};font-size:12px;line-height:1.5;color:{INK2}">Every pick can lose. Set a limit before you bet and never chase a loss. Free, confidential help: GamCare 0808 8020 133 · '
@@ -539,7 +539,7 @@ def footer_html(links):
 
 def footer_text(links):
     return ("\n".join(f"{t}: {h}" for t, h in links) +
-            "\n\nEvery pick is the model's own read, published before the start and graded in public on the site, losses included. "
+            "\n\nEvery pick is the Sports Almanac model's own read, published before the start and graded in public on the site, losses included. "
             "Past results do not guarantee future ones.\n\n18+. Every pick can lose. Free, confidential help: GamCare 0808 8020 133, "
             f"https://www.begambleaware.org\n\nManage your emails: {MANAGE_MARK}\nUnsubscribe: {UNSUB_MARK}\n")
 
@@ -584,7 +584,7 @@ def welcome_emails():
     get = (key_row("Daily List", "Every morning at 07:00 UK: the day's strongest picks across every sport, with the price at William Hill where there is one.") +
            key_row("Weekly Record", "Saturdays at 07:00 UK: how last week's picks landed against what was quoted, wins and misses both.") +
            key_row("Scale", "Only if you ticked it: the day's Scale bets, a pick to win plus a second condition, inside the Daily List email."))
-    how = (_p("Every number comes from the model alone. No bookmaker's price goes into a pick; prices are shown only so you can see what you'd get.", 14, INK2, "padding-top:8px") +
+    how = (_p("Every number comes from the Sports Almanac model alone. No bookmaker's price goes into a pick; prices are shown only so you can see what you'd get.", 14, INK2, "padding-top:8px") +
            _p("Every pick is published before the start and graded in public on the site, losses included. Nothing is taken down after the result.", 14, INK2) +
            button(SITE, "See today's list"))
     body = [section("What you'll get", None, get), section("How the picks are made", None, how)]
@@ -592,14 +592,14 @@ def welcome_emails():
         "subject": "You're in: the Daily List starts tomorrow",
         "html": wrap("Welcome", "You're confirmed", "What arrives, when, and how the picks are made.", body, footer_html(links)),
         "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
-                "Every number comes from the model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
+                "Every number comes from the Sports Almanac model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
 
     groups = (label_bar("Strongest today", "up to five picks at 85% or better") +
-              _p("The day's strongest calls. Only picks the model rates 85% or more get in, so some days it has two, some days none. It is never padded to make five.", 14, INK2, "padding-top:8px") +
+              _p("The day's strongest calls. Only picks the Sports Almanac model rates 85% or more get in, so some days it has two, some days none. It is never padded to make five.", 14, INK2, "padding-top:8px") +
               label_bar("Also on the list", "every other pick that cleared the bar") +
               _p("Still list picks, strongest first. Every one has cleared the same bar to be on the list at all, a step down from the strongest.", 14, INK2, "padding-top:8px"))
-    row_key = (key_row("90%", "The model's chance the pick wins.") +
-               key_row("tested 84%", "How often picks at this level landed in testing, on games the model was never tuned on. A pick only reaches the list when that figure is 80% or better.") +
+    row_key = (key_row("90%", "The Sports Almanac model's chance the pick wins.") +
+               key_row("tested 84%", "How often picks at this level landed in testing, on games the Sports Almanac model was never tuned on. A pick only reaches the list when that figure is 80% or better.") +
                key_row("Hill 1.25", "William Hill's price, for reference. Avg means the average across UK books where Hill has none.") +
                key_row("⭐", "Likely winner: a list pick that also clears a short set of extra checks, such as no bookmakers' warning against it.") +
                key_row("Won / Lost", "Picks already played show their result, so nothing is hidden."))
@@ -648,7 +648,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
         if off:
             text.append(f"\n{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out.")
             inner.append(_p(f"{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out. On the college basketball tab.", 12, MUTE))
-        inner.append(_p("The percentage is the model's chance; tested is how often calls at that level landed on games never tuned on. "
+        inner.append(_p("The percentage is the Sports Almanac model's chance; tested is how often calls at that level landed on games never tuned on. "
                         "Prices are William Hill's where read (Avg: the bookmakers' average), shown only: the list never sees a price.", 12, MUTE))
         rows.append(section("The Daily List", f"{len(items)} pick{'' if len(items) == 1 else 's'} clear the bar", "".join(inner)))
     else:
@@ -664,10 +664,10 @@ def daily_email(day, src=None, with_scale=False, now=None):
     if d2:
         oh, ot = group_odds(d2)
         n = len(d2.get("legs") or [])
-        line = f"{n} picks, the model's strongest at 1.10+" + (" · <b>short of 2x today</b>" if d2.get("short") else " · on trial")
+        line = f"{n} picks, the Sports Almanac model's strongest at 1.10+" + (" · <b>short of 2x today</b>" if d2.get("short") else " · on trial")
         inner = [group_head("Today's 2x", line, oh)] + [leg_row(src, l) for l in d2.get("legs") or []]
         if d2.get("short"): inner.append(_p("Nothing more qualified today, so this slip pays under 2x.", 12, MUTE, "padding-top:8px"))
-        inner.append(_p(f"All {n} land: model {pct(d2.get('p'))}. One unit; graded on its own line.", 12, MUTE, "padding-top:8px"))
+        inner.append(_p(f"All {n} land: Sports Almanac model {pct(d2.get('p'))}. One unit; graded on its own line.", 12, MUTE, "padding-top:8px"))
         rows.append(section("The Daily 2x", "one slip a day", "".join(inner)))
         text.append(f"\nTHE DAILY 2X · {ot}{' · short of 2x today' if d2.get('short') else ''}")
         text += [f"  {uk_time(l.get('when'))}  {l.get('pick')} ({l.get('event')}) · {pct(l.get('p'))} · "
@@ -693,10 +693,10 @@ def daily_email(day, src=None, with_scale=False, now=None):
             text += [f"    {uk_time(l.get('when'))}  {l.get('pick')} ({l.get('event')}) · {pct(l.get('p'))}"
                      f"{' · Hill %.2f' % l['bookOdds'][BOOK] if (l.get('bookOdds') or {}).get(BOOK) else ' · not at Hill'}" for l in g.get("legs") or []]
         inner.append(_p("Place once, before the first start; a group can still change until then, so check the Bets tab before placing. No cash out, no topping up.", 12, MUTE, "padding-top:8px"))
-        rows.append(section("The Card", "the model's own picks, staked", "".join(inner)))
+        rows.append(section("The Card", "the Sports Almanac model's own picks, staked", "".join(inner)))
     else:
         msg = card_short_text(gd.get("cardShort"))
-        rows.append(section("The Card", "the model's own picks, staked", _p(E(msg), 14, INK2, "padding-top:10px")))
+        rows.append(section("The Card", "the Sports Almanac model's own picks, staked", _p(E(msg), 14, INK2, "padding-top:10px")))
         text.append("\nTHE CARD\n  " + msg)
 
     # 4. Edge picks
@@ -706,7 +706,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
         text.append("\nEDGE PICKS")
         for e in edges:
             inner.append(row(E(uk_time(e.get("kickoff"))), "Football", f'<b style="color:{GREEN}">{E(e["pick"])}</b> <span style="color:{MUTE}">v {E(e["opp"])}</span>',
-                             f'{E(e.get("comp") or "")} · bookmakers {pct(e.get("fair"))}, model {pct(e.get("model"))}, {E(e["opp"])} priced {float(e.get("opp") or 0):.2f}',
+                             f'{E(e.get("comp") or "")} · bookmakers {pct(e.get("fair"))}, Sports Almanac model {pct(e.get("model"))}, {E(e["opp"])} priced {float(e.get("opp") or 0):.2f}',
                              f'{float(e["odds"]):.2f}', f'best {float(e.get("best") or e["odds"]):.2f}', GREEN_SOFT))
             text.append(f"  {uk_time(e.get('kickoff'))}  {e['pick']} v {e['opp']} · {e.get('comp') or ''} · {float(e['odds']):.2f} (best {float(e.get('best') or e['odds']):.2f})")
         inner.append(_p("Football favourites at 1.15 to 1.90 whose opponent is priced 5.0 or more. Take the best price: at the average the edge is thin.", 12, MUTE, "padding-top:8px"))
@@ -869,7 +869,7 @@ def weekly_email(day, src=None):
             opp = r["away"] if r.get("side") == "h" else r["home"]
             return f"{r.get('pick')} v {opp}", f"{sport_name(src, r.get('sport'))} · {short_day(r['date'])} · {pct(r.get('conf'))}" + (f" · {r['score']}" if r.get("score") else "")
         if wins:
-            inner.append(label_bar("Strongest wins", f"the {len(wins)} the model was surest of"))
+            inner.append(label_bar("Strongest wins", f"the {len(wins)} the Sports Almanac model was surest of"))
             for r in wins:
                 m, meta = pick_line(r)
                 inner.append(_p(f'<b style="color:{GREEN}">✓</b> <b style="color:{INK}">{E(m)}</b><br><span style="font-size:12px;color:{MUTE}">{E(meta)}</span>', 14, INK, "margin:6px 0"))
