@@ -34,3 +34,7 @@ Display only. The line is a bookmaker number, so it never reaches the model or t
 ## What to watch
 
 `collegeTiers` in `sports-record.json` grades every tier forward. If Caution or Leave out land at or above their quote on 100+ new picks, the tier is not earning its place and comes off. Graded rows are tiered on their last pre-start copy, so a game whose line came out after the last build before its start is tallied as Solid.
+
+## Leave out off the Daily List (23 Nov 2026, later)
+
+Douglas: "remove leave out from daily list". A college basketball pick tiered Leave out no longer shows on the Daily List or in its reserve fold, whatever William Hill prices it at (`listShown`, `itemTier`, `resShown` in `index.html`); it stays on the college basketball tab with its chip, and the day's left-off line and the reserve note count it. The William Hill 1.05 rule was letting the closer, priced games through, so it favoured Leave out picks (6 of the 8 Leave out list picks since 1 Nov had a Hill price of 1.05+, against 8 of 223 Solid). Display only: the pick keeps its list flag and is still graded as a list pick, like the picks the 1.05 rule leaves off.
