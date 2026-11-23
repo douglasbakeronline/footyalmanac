@@ -53,6 +53,23 @@ class Daily2x(unittest.TestCase):
         held = [g for g in G.build_list_card(more + [leg(3, 1.9, 0.99, lst=True)], DAY, NOW, prev=[again], archived=[]) if G.is_daily(g["name"])][0]
         self.assertEqual({l["pick"] for l in held["legs"]}, {l["pick"] for l in again["legs"]})
 
+    def test_rebuilt_until_its_day_then_held(self):
+        # 23 Nov 2026: a full slip built before its day's 07:00 UK is rebuilt
+        # on every build; from the day's start it is held as first built
+        early = datetime(2026, 11, 15, 1, 0, tzinfo=timezone.utc)
+        two = [leg(1, 1.50, 0.80, res=True), leg(2, 1.50, 0.80, res=True)]
+        first = [g for g in G.build_list_card(two, DAY, early, archived=[]) if G.is_daily(g["name"])][0]
+        self.assertEqual(first["tiers"], ["reserve"])
+        listed = two + [leg(3, 1.45, 0.9, lst=True), leg(4, 1.45, 0.88, lst=True)]
+        later = datetime(2026, 11, 16, 22, 0, tzinfo=timezone.utc)
+        again = [g for g in G.build_list_card(listed, DAY, later, prev=[first], archived=[]) if G.is_daily(g["name"])][0]
+        self.assertEqual({l["pick"] for l in again["legs"]}, {"a3", "a4"})
+        on_day = datetime(2026, 11, 17, 7, 40, tzinfo=timezone.utc)
+        held = [g for g in G.build_list_card(listed + [leg(5, 2.1, 0.99, lst=True)], DAY, on_day, prev=[again], archived=[])
+                if G.is_daily(g["name"])][0]
+        self.assertEqual({l["pick"] for l in held["legs"]}, {"a3", "a4"})
+        self.assertEqual(held["first"], again["first"])
+
     def test_reserve_reaches_the_leg(self):
         src = open(os.path.join(HERE, "groupings.py")).read()
         self.assertEqual(src.count('"reserve": bool('), 3)
