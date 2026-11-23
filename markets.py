@@ -614,6 +614,20 @@ def gate(picks, seed=11, reps=2000):
             s += sum(xs); n += len(xs)
         bad += (s / n) <= 0
     out["pLoss"] = round(bad / reps, 3)
+    # 23 Nov 2026: where the verdict comes from, said beside it and never
+    # read by it (the gate stays as pre-registered): match days, the share
+    # on the busiest three, each selection, and William Hill's own price.
+    sizes = sorted((len(xs) for xs in days), reverse=True)
+    out["days"] = len(days)
+    out["top3"] = round(sum(sizes[:3]) / len(priced), 3)
+    sel = {}
+    for (_, ok, v), x in zip(priced, pnl):
+        t = sel.setdefault(str(v.get("s")), {"n": 0, "landed": 0, "pnl": 0.0})
+        t["n"] += 1; t["landed"] += bool(ok); t["pnl"] += x
+    out["bySel"] = {k: {"n": t["n"], "landed": t["landed"], "retBest": round(t["pnl"] / t["n"], 4)}
+                    for k, t in sorted(sel.items(), key=lambda kv: -kv[1]["n"])}
+    hill = [(1.0 if ok is None else (v["h"] if ok else 0.0)) - 1.0 for _, ok, v in priced if v.get("h")]
+    out["hill"] = {"n": len(hill), "ret": round(sum(hill) / len(hill), 4) if hill else None}
     if len(priced) < GATE_N:
         out["verdict"] = "wait"
     else:
@@ -635,6 +649,7 @@ def record(here=HERE, now=None):
     graded_replay = [(r, g) for r in replay_rows(res, skip, here) for g in [_result_for(r, res, days=0)] if g]
     out = {"generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "rule": RULE, "book": BOOK,
            "gate": {"n": GATE_N, "pLoss": GATE_P, "edge": GATE_EDGE},
+           "tests": 2 * len(MARKETS),   # rules read against the gate (value and all, each market)
            "live": {"fixtures": len(graded_live), "pending": pending,
                     "from": min((r["date"] for r, _ in graded_live), default=None),
                     "to": max((r["date"] for r, _ in graded_live), default=None)},

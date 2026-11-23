@@ -171,7 +171,41 @@ def star_section():
         "Read beside each other at 14 days live; the variant is put to Douglas only if it is ahead on both spans.", ""]
 
 
-def markets_section(rec):
+def market_pass_lines(name, mk, x, rec, goals=None):
+    """23 Nov 2026: one line under a passing market rule saying where the
+    pass comes from (each selection, the days, William Hill) and how many
+    rules the gate reads, so a pass by luck is read as one; for over / under
+    2.5, the same value rule on the football-data seasons (goals-value.json,
+    tools/goals_value.py). Advisory; the verdict is the gate's."""
+    pc = lambda v: f"{v * 100:+.1f}%" if v is not None else "n/a"
+    bits = []
+    sel = x.get("bySel") or {}
+    if sel:
+        lab = {"h": "home", "a": "away", "d": "draw"}
+        bits.append(", ".join(f"{lab.get(k, k)} {t['n']} picks {pc(t.get('retBest'))}" for k, t in sel.items()) + " at the best price")
+    if x.get("days"):
+        bits.append(f"{x['days']} days, {round((x.get('top3') or 0) * 100)}% of the picks on the busiest three")
+    h = x.get("hill")
+    if h is not None:
+        bits.append(f"{BOOK_NAME} priced none of them" if not h.get("n")
+                    else f"{BOOK_NAME} priced {h['n']} of {x.get('n')}, {pc(h.get('ret'))} at its price")
+    out = [f"- {name}: " + "; ".join(bits) + "." if bits else None]
+    seasons = ((goals or {}).get("seasons") or {}) if mk == "o25" else {}
+    fd = []
+    for s in seasons.values():
+        if not s or s.get("roi") is None: continue
+        side = ", ".join(f"{k} {pc(t.get('roi'))} ({t.get('bets')} bets)" for k, t in (s.get("bySide") or {}).items())
+        fd.append(f"{s.get('season')} {pc(s['roi'])} on {s.get('bets')} bets" + (f", {side}" if side else ""))
+    if fd:
+        out.append("  The same value rule on football-data prices (goals-value.json): " + "; ".join(fd)
+                   + ". CLAUDE.md: no goals-market bets without a goals calibration that passes the gates.")
+    return [l for l in out if l]
+
+
+BOOK_NAME = "William Hill"
+
+
+def markets_section(rec, goals=None):
     """14 Nov 2026: the football markets beyond the match winner
     (markets.py, markets-record.json): landed against the model, the return
     at the best UK price on live priced picks, and each market's gate. A
@@ -185,7 +219,7 @@ def markets_section(rec):
            "| market | landed v model (all) | priced picks | landed v bookies | average price | best price | William Hill | value rule | every pick |",
            "|---|---|---|---|---|---|---|---|---|"]
     pc = lambda x: f"{x * 100:+.1f}%" if x is not None else ""
-    passed = []
+    passed, why = [], []
     for mk, m in rec["markets"].items():
         a, l, gt = m.get("all") or {}, m.get("live") or {}, m.get("gate") or {}
         if not a.get("n"): continue
@@ -193,12 +227,21 @@ def markets_section(rec):
             if not x or not x.get("n"): return "no picks yet"
             if x["verdict"] == "wait": return f"{x['n']} of {x['need']}" + (f", {pc(x.get('retBest'))}" if x.get("retBest") is not None else "")
             return f"{'**passes**' if x['verdict'] == 'pass' else 'fails'}: {x['n']} picks, {pc(x.get('retBest'))}, p(loss) {x.get('pLoss')}"
-        if (gt.get("value") or {}).get("verdict") == "pass": passed.append(m["name"])
+        for rule in ("value", "all"):
+            if (gt.get(rule) or {}).get("verdict") == "pass":
+                if rule == "value": passed.append(m["name"])
+                why += market_pass_lines(m["name"] + ("" if rule == "value" else ", every pick"), mk, gt[rule], rec, goals)
         out.append(f"| {m['name']} | {a['rate'] * 100:.1f}% v {a['quoted'] * 100:.1f}% (n {a['n']}, z {a.get('z', 0):+.1f}) | {l.get('priced', 0)} | "
                    + (f"{l['fairRate'] * 100:.0f}% v {l['fair'] * 100:.0f}%" if l.get("fairN") else "") + f" | {pc(l.get('ret'))} | {pc(l.get('retBest'))} | "
                    + (f"{pc(l.get('retHill'))} (n {l['atHill']})" if l.get("atHill") else "") + f" | {verdict(gt.get('value'))} | {verdict(gt.get('all'))} |")
     if passed:
         out.append("**Passed the value gate: " + ", ".join(passed) + ". Ready to be offered on the Bets tab (a release, Douglas's call).**")
+    if why:
+        n = rec.get("tests") or 2 * len(rec["markets"])
+        p = g.get("pLoss", 0.1)
+        out += ["Where each pass comes from (the gate's verdict stands as pre-registered):"] + why + [
+            f"{n} rules are read against the gate at p(loss) {p}, so about {round(n * p)} would pass by chance alone; "
+            "a pass carried by one selection, a few days or a book Douglas does not use is a reason to wait."]
     return out + [f"Value rule: the model {int((g.get('edge') or 0.05) * 100)}+ points above the bookmakers' fair chance. A rule passes at "
                   f"{g.get('n', 150)}+ settled priced picks that landed above the bookmakers, a positive return at the best UK price and "
                   f"p(loss) {g.get('pLoss', 0.1)} or less (markets.py, claude/football-markets-2026-11-14.md).", ""]
@@ -822,7 +865,7 @@ def review_body():
     lines += funnel_section()
     lines += edge_section()
     lines += star_section()
-    lines += markets_section(load("markets-record.json"))
+    lines += markets_section(load("markets-record.json"), load("goals-value.json"))
     lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
     return "\n".join(lines)
