@@ -4,7 +4,7 @@ Two emails, both built from the files the build has already written, never
 from the page's HTML and never regraded:
 
 - **The Daily List** at 07:00 UK every morning, about today's UK day: the
-  Daily List (Group A, Group B, the rest; not the reserve) with the page's own
+  Daily List (Strongest today, Also on the list; not the reserve) with the page's own
   display rules, the Daily 2x, the Card (or the page's reason there is none),
   the Edge picks and, for subscribers who ticked Scale, the day's Scale bets
   from the Daily List tier and the Scale groups.
@@ -346,12 +346,13 @@ def list_items(src, day, now):
 
 
 def groups_of(items):
-    """Group A (the strongest five at 85%+, never padded), Group B (the next five), the rest."""
+    """Strongest today (the page's Group A: up to five at 85%+, never padded), then Also on the list
+    (every other list pick, strongest first). Douglas, 23 Nov 2026: plain words in the email in place
+    of Group A / Group B / The rest; the page keeps its labels."""
     nA = min(5, sum(1 for it in items if (it.get("confidence") or 0) >= GROUP_A_MIN))
-    nB = min(len(items), nA + 5)
-    out = [("Group A", f"{nA} pick{'' if nA == 1 else 's'} at 85% or better" if nA else "none today: nothing at 85% or better", items[:nA])]
-    if nB > nA: out.append(("Group B", f"the next {nB - nA}", items[nA:nB]))
-    if len(items) > nB: out.append(("The rest", f"picks {nB + 1} to {len(items)}", items[nB:]))
+    out = [("Strongest today", f"{nA} pick{'' if nA == 1 else 's'} at 85% or better" if nA else "none today: nothing at 85% or better", items[:nA])]
+    rest = len(items) - nA
+    if rest: out.append(("Also on the list", f"{rest} more pick{'' if rest == 1 else 's'}, strongest first", items[nA:]))
     return out
 
 
@@ -581,24 +582,22 @@ def welcome_emails():
         "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
                 "Every number comes from the model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
 
-    groups = (label_bar("Group A", "up to five picks at 85% or better") +
+    groups = (label_bar("Strongest today", "up to five picks at 85% or better") +
               _p("The day's strongest calls. Only picks the model rates 85% or more get in, so some days it has two, some days none. It is never padded to make five.", 14, INK2, "padding-top:8px") +
-              label_bar("Group B", "the next five") +
-              _p("The next five by strength. Still over the bar every list pick has to clear, a step down from Group A.", 14, INK2, "padding-top:8px") +
-              label_bar("The rest", "everything else that cleared the bar") +
-              _p("Still list picks, listed strongest first.", 14, INK2, "padding-top:8px"))
+              label_bar("Also on the list", "every other pick that cleared the bar") +
+              _p("Still list picks, strongest first. Every one has cleared the same bar to be on the list at all, a step down from the strongest.", 14, INK2, "padding-top:8px"))
     row_key = (key_row("90%", "The model's chance the pick wins.") +
                key_row("tested 84%", "How often picks at this level landed in testing, on games the model was never tuned on. A pick only reaches the list when that figure is 80% or better.") +
                key_row("Hill 1.25", "William Hill's price, for reference. Avg means the average across UK books where Hill has none.") +
                key_row("⭐", "Likely winner: a list pick that also clears a short set of extra checks, such as no bookmakers' warning against it.") +
                key_row("Won / Lost", "Picks already played show their result, so nothing is hidden."))
-    body = [section("Groups A and B", "why the list is split", groups),
+    body = [section("Two parts to the list", "why it is split", groups),
             section("Reading a row", "the example numbers are for illustration", row_key)]
     out.append(("welcome-3-guide", {
         "subject": "How to read the Daily List",
-        "html": wrap("How to read it", "Two-minute guide", "Group A, Group B, the tested rate and the star, explained.", body, footer_html(links)),
-        "text": "How to read the Daily List\n\nGroup A: up to five picks at 85% or better, never padded.\nGroup B: the next five.\n"
-                "The rest: every other pick that cleared the bar.\n\n" + footer_text(links)}))
+        "html": wrap("How to read it", "Two-minute guide", "The strongest picks, the tested rate and the star, explained.", body, footer_html(links)),
+        "text": "How to read the Daily List\n\nStrongest today: up to five picks at 85% or better, never padded.\n"
+                "Also on the list: every other pick that cleared the bar, strongest first.\n\n" + footer_text(links)}))
     return out
 
 

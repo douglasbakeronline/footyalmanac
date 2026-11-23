@@ -69,18 +69,18 @@ class DailyList(unittest.TestCase):
 
     def test_group_order(self):
         t = M.daily_email(DAY, src(), now=NOW)["text"]
-        a, b, r = t.index("GROUP A"), t.index("GROUP B"), t.index("THE REST")
+        a, b = t.index("STRONGEST TODAY"), t.index("ALSO ON THE LIST")
         self.assertLess(a, t.index("Home0 "))
-        self.assertLess(t.index("Home4 "), b)          # five at 85%+ in Group A
+        self.assertLess(t.index("Home4 "), b)          # five at 85%+ in Strongest today
         self.assertLess(b, t.index("Home5 "))
-        self.assertLess(t.index("Home9 "), r)
-        self.assertLess(r, t.index("Home10 "))
-        self.assertIn("GROUP A · 5 picks at 85% or better", t)
+        self.assertLess(b, t.index("Home10 "))
+        self.assertNotIn("GROUP B", t)
+        self.assertIn("STRONGEST TODAY · 5 picks at 85% or better", t)
 
     def test_group_a_never_padded(self):
         items = [{"confidence": c} for c in (0.9, 0.84, 0.83)]
         g = M.groups_of(items)
-        self.assertEqual([(n, len(x)) for n, _, x in g], [("Group A", 1), ("Group B", 2)])
+        self.assertEqual([(n, len(x)) for n, _, x in g], [("Strongest today", 1), ("Also on the list", 2)])
 
     def test_college_basketball_needs_hill(self):
         L = [pick("ncaab", "Duke", "Rival", 0.9, start="2026-11-23T23:00:00Z", full={"line": {"spread": -15}, "neutral": False}),
