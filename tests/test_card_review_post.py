@@ -279,3 +279,27 @@ class ContextPause(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CloseOlder(unittest.TestCase):
+    def run_main(self, open_issues, created={"number": 600}):
+        calls = []
+        def gh(*a):
+            calls.append(a)
+            if a and "state=open" in a[0]: return open_issues
+            if a and a[0] == "-X" and a[1] == "POST" and a[2].endswith("/issues"): return created
+            return None
+        with mock.patch.object(P, "load", return_value={}), mock.patch.object(P, "gh", side_effect=gh), \
+             mock.patch("builtins.print"):
+            P.main()
+        return [a[2].rsplit("/", 1)[1] for a in calls if a[:2] == ("-X", "PATCH") and "state=closed" in a]
+
+    def test_older_reviews_closed_once_tonights_is_posted(self):
+        title = f"Card review {P.today}"
+        got = self.run_main([{"number": 600, "title": title}, {"number": 492, "title": "Card review 2026-11-21"},
+                             {"number": 476, "title": "Card review 2026-11-22"},
+                             {"number": 500, "title": "Card integrity: 2 finding(s) on 2026-11-23"}])
+        self.assertEqual(got, ["492", "476"])
+
+    def test_nothing_closed_when_the_post_failed(self):
+        self.assertEqual(self.run_main([{"number": 476, "title": "Card review 2026-11-22"}], created=None), [])
