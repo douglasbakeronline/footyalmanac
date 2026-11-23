@@ -279,8 +279,6 @@ h1 .b{
 .lede p.cov{font-size:var(--t-sm);color:var(--mute)}
 .lede p.cov.gap{color:var(--red)}
 .lede b{color:var(--ink)}
-.list-order{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
-.list-order .seg{width:max-content}
 details.how{margin-top:8px;font-size:13.5px;color:var(--ink-2);line-height:1.55}
 details.how summary{cursor:pointer;font-weight:700;color:var(--home);list-style:none;
   display:inline-flex;align-items:center;gap:6px;font-size:13.5px}
@@ -378,8 +376,11 @@ details.how p{margin-top:8px;padding-left:22px}
 .list-past .sc{font-family:var(--f-num);font-size:12px;color:var(--ink-2);white-space:nowrap}
 
 /* ---------- controls ---------- */
+/* 23 Nov 2026 (UX release 2): no longer sticky. It holds the football board's
+   filter bar, which sits in the page like every other tab's; since the two-row
+   tab bar (16 Nov) the old top:47px had slid it half under the bar anyway. */
 .controls{
-  position:sticky;top:47px;z-index:20;background:var(--paper);
+  position:static;background:var(--paper);
   padding:10px 0 9px;border-bottom:1px solid var(--ink);
   display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;
 }
@@ -1102,21 +1103,45 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 var(--t-base) var(--f-num);text-align:right;white-space:nowrap}
-/* 21 Nov 2026: Order by on the tennis and sport tabs (tabOrderCtl) */
-.tab-order{margin:4px 0 16px}
-.band-ctl{margin:4px 0 16px}
-.star-ctl{display:grid;gap:12px;margin:18px 0 8px}
-.star-ctl .ctl-label{margin-bottom:6px}
-.star-ctl .band-ctl{margin:0}
-.band-ctl .ctl-label{margin-bottom:6px}
-#days > .band-ctl{margin-top:16px}
-.list-sport{margin:12px 0 0}
-.band-ctl.list-band{margin:12px 0 0}
-.list-sport .ctl-label{display:block;margin-bottom:6px}
-.filt-note{margin-top:10px;font-size:var(--t-sm);color:var(--ink-2)}
-.filt-note button{font:inherit;font-weight:600;background:none;border:0;padding:0 0 0 6px;text-decoration:underline;cursor:pointer;color:var(--ink)}
-.tab-order .ctl-label{margin-bottom:4px}
-.tab-order .seg{display:inline-flex}
+/* ---------- the filter bar (23 Nov 2026, UX release 2: filterBar) ----------
+   One bar on every view that filters: the groups (Sport, Confidence, Show,
+   Order by, then the page's own) and under them one summary line, the active
+   filters as chips, the count and Clear filters on the right. Under 600px the
+   groups fold behind one "Filters · n" button at the front of the summary
+   line, a disclosure that opens the groups inline below it. */
+.fbar{display:flex;flex-direction:column;gap:var(--s2);margin:var(--s4) 0}
+.fbar-body{display:flex;flex-wrap:wrap;gap:var(--s3) var(--s5);align-items:flex-start;order:0}
+.fbar-g{min-width:0;max-width:100%}
+.fbar-g > .ctl-label{display:block;margin-bottom:var(--s1)}
+.fbar-hint{letter-spacing:.04em;text-transform:none;font-weight:500}
+.fbar-sum{order:1;display:flex;align-items:center;flex-wrap:wrap;gap:var(--s2);min-height:28px;
+  padding-top:var(--s2);border-top:1px solid var(--rule-soft);font-size:var(--t-sm);color:var(--ink-2)}
+.fbar-chips{display:flex;flex-wrap:wrap;gap:var(--s1);min-width:0}
+.fbar-chip{font:600 var(--t-xs)/1.2 var(--f-ui);letter-spacing:.02em;display:inline-flex;align-items:center;gap:6px;
+  border:1px solid var(--ink);border-radius:2px;background:var(--ink);color:var(--yellow);padding:3px 6px 3px 8px;cursor:pointer;min-height:24px}
+.fbar-chip span{color:var(--yellow-soft);font-size:var(--t-sm);line-height:1}
+.fbar-chip:hover span{color:var(--yellow)}
+.fbar-end{margin-left:auto;display:flex;align-items:center;gap:var(--s3);flex-wrap:wrap}
+.fbar-count{font:500 var(--t-xs) var(--f-num);color:var(--mute);white-space:nowrap}
+.fbar-clear{font:600 var(--t-sm) var(--f-ui);background:none;border:0;padding:0;text-decoration:underline;cursor:pointer;color:var(--ink)}
+.fbar-chip:focus-visible,.fbar-clear:focus-visible,.fbar-toggle:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+.fbar-toggle{display:none}
+.fbar-note{order:2;margin:0;font-size:var(--t-sm);color:var(--ink-2)}
+.controls .fbar-slot{flex-basis:100%}
+.controls .fbar{margin:0}
+@media (max-width:600px){
+  .fbar{gap:0}
+  .fbar-sum{order:0;border-top:0;padding-top:0}
+  .fbar-toggle{display:inline-flex;align-items:center;gap:6px;font:600 var(--t-sm)/1.3 var(--f-ui);letter-spacing:.02em;
+    border:1px solid var(--ink);border-radius:2px;background:transparent;color:var(--ink);padding:6px 11px;min-height:44px;cursor:pointer}
+  .fbar.active .fbar-toggle{background:var(--ink);color:var(--yellow)}
+  .fbar-toggle .caret{color:var(--mute);transition:transform .12s}
+  .fbar-toggle[aria-expanded="true"] .caret{transform:rotate(180deg)}
+  .fbar-chip{min-height:32px}
+  .fbar:not(.open) .fbar-body{display:none}
+  .fbar.open .fbar-body{order:1;margin-top:var(--s2);padding-top:var(--s3);border-top:1px solid var(--rule-soft)}
+  .fbar-note{margin-top:var(--s2)}
+}
 button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .pdetail .why{margin-top:0;padding-top:0;border-top:0}
 /* 21 Nov 2026: the Edge tracker (edgeTracker) */
@@ -2130,35 +2155,9 @@ footer b{color:var(--ink-2)}
 <div class="note" id="note"></div>
 
 <div class="controls" id="controls">
-  <div>
-    <div class="ctl-label" style="margin-bottom:4px">Board</div>
-    <div class="seg boards" id="boards">
-      <button data-board="win" aria-pressed="true">Clear winner</button>
-      <button data-board="btts" aria-pressed="false">Both to score</button>
-    </div>
-  </div>
-  <div>
-    <div class="ctl-label" style="margin-bottom:4px">Show</div>
-    <div class="seg boards" id="show">
-      <button data-show="all" aria-pressed="true">Every fixture</button>
-      <button data-show="read" aria-pressed="false">Confident only</button>
-      <button data-show="edge" aria-pressed="false" title="Only fixtures with the green Edge flag: the favourite at 1.15 to 1.90, the other side priced 4/1 (5.0) or more">Edge only</button>
-    </div>
-  </div>
-  <div>
-    <div class="ctl-label" style="margin-bottom:4px">Competition</div>
-    <button type="button" class="comp-toggle" id="compToggle" aria-expanded="false" aria-controls="compPanel">
-      <b id="compNow">All</b><span class="caret" aria-hidden="true">▾</span></button>
-  </div>
-  <div style="margin-left:auto">
-    <div class="ctl-label" style="margin-bottom:4px">Order by</div>
-    <div class="seg" id="sort">
-      <button data-sort="conf" id="sortPrimary" aria-pressed="true">Most confident</button>
-      <button data-sort="upset" aria-pressed="false">Upsets</button>
-      <button data-sort="goals" aria-pressed="false">Goals</button>
-      <button data-sort="time" aria-pressed="false">Time</button>
-    </div>
-  </div>
+  <!-- 23 Nov 2026 (UX release 2): the football board's filter bar (filterBar), drawn by render():
+       Confidence, Show and Order, then the board's own Board and Competition controls. -->
+  <div class="fbar-slot" id="fbBar"></div>
   <!-- Collapsed by default: 300-odd competitions filled five rows of the
        sticky bar (Douglas, 30 Sep 2026). Opens full width, with a finder. -->
   <div class="comp-panel" id="compPanel" hidden>
@@ -2277,8 +2276,9 @@ const state = { leagues:new Set(), sort:"conf", open:null, board:"win",
    sports and daily list need a filter by banding"): one confidence-band filter
    for the Daily List, the football board, tennis and every sport tab, read on
    the number the row shows (rounded as shown, so a row reading 90% is in
-   90%+), each tab remembering its own choice on this device. A band with no
-   rows is not offered. Display only: nothing is re-ranked or regraded. */
+   90%+). A band with no rows is not offered. Display only: nothing is
+   re-ranked or regraded. Since 23 Nov 2026 one choice for every tab (FILT,
+   the filter bar below). */
 const BANDS = [
   {k: "all", label: "All"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
@@ -2288,26 +2288,200 @@ const BANDS = [
   {k: "60", lo: 60, hi: 70, label: "60-69%"},
   {k: "lo", lo: 0, hi: 60, label: "Under 60%"},
 ];
-const BAND = (() => { try { const v = JSON.parse(localStorage.getItem("bandBy") || "{}"); return v && typeof v === "object" ? v : {}; }
-                      catch(e){ return {}; } })();
-const bandOf = scope => BANDS.some(b => b.k === BAND[scope]) ? BAND[scope] : "all";
+/* ---------- the filter bar (23 Nov 2026, UX release 2) ----------
+   Douglas, 23 Nov 2026: "Filter and nav options consistent across pages", and
+   filters shared across tabs. One component, filterBar(view, opts), draws the
+   bar on every view that filters, in one order: Sport (pages that span sports),
+   Confidence, Show, Order, then the page's own controls; under them one summary
+   line (the active filters as removable chips, the count, Clear filters). On a
+   phone the bar folds into one "Filters" button beside the chips.
+   Confidence, Show and Order are one object (FILT, localStorage almanacFilters)
+   that holds as the reader turns pages; a value a page cannot honour (Edge on
+   tennis) shows that page's default and is left stored. Sport stays per page.
+   Display only: nothing is re-ranked or regraded. */
+const FILT_KEY = "almanacFilters";
+const SHOW_LABEL = {all: "Every pick", list: "Daily List", reserve: "Reserve", other: "Board only",
+  hill: "At William Hill", edge: "Edge", open: "Still to start", read: "Confident only"};
+const ORDER_LABEL = {strength: "Strongest", time: "Kick-off time", upset: "Upsets", goals: "Goals", sport: "Sport", tag: "List first"};
+const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
+function fClean(v){
+  const o = v && typeof v === "object" && !Array.isArray(v) ? v : {};
+  return {band: BANDS.some(b => b.k === o.band) ? o.band : "all",
+          show: own(SHOW_LABEL, o.show) ? o.show : "all",
+          order: own(ORDER_LABEL, o.order) ? o.order : "strength"};
+}
+// Once, for a reader from before 23 Nov: the per-tab keys become the shared
+// choice (the Daily List's first, as the front page). The old keys are left.
+function fMigrate(){
+  const get = k => { try { return localStorage.getItem(k); } catch(e){ return null; } };
+  const obj = k => { try { const v = JSON.parse(get(k) || "null"); return v && typeof v === "object" && !Array.isArray(v) ? v : {}; } catch(e){ return {}; } };
+  const bb = obj("bandBy"), sv = obj("starView"), d = {};
+  d.band = ["list", "fixtures", "tennis", "starred"].map(k => bb[k]).concat(Object.values(bb))
+    .find(k => k !== "all" && BANDS.some(b => b.k === k));
+  d.show = get("listBook") === "hill" ? "hill" : sv.tag;
+  d.order = get("listOrder") === "time" || get("tabOrder") === "time" ? "time" : sv.order;
+  return fClean(d);
+}
+const FILT = (() => {
+  let raw = null;
+  try { raw = localStorage.getItem(FILT_KEY); } catch(e){}
+  if(raw != null){ try { return fClean(JSON.parse(raw)); } catch(e){ return fClean(null); } }
+  const d = fMigrate();
+  try { localStorage.setItem(FILT_KEY, JSON.stringify(d)); } catch(e){}
+  return d;
+})();
+function fSave(){ try { localStorage.setItem(FILT_KEY, JSON.stringify(FILT)); } catch(e){} }
+// A page's own sport set, kept as a comma list ("all" for every sport), as listSport always was.
+function fSportLoad(key){ try { const v = localStorage.getItem(key) || "all"; return v === "all" ? [] : v.split(",").filter(Boolean); } catch(e){ return []; } }
+function fSportSave(key, xs){ try { localStorage.setItem(key, xs.length ? xs.join(",") : "all"); } catch(e){} }
+let BETS_SPORTS = fSportLoad("betsSport"), SCALE_SPORTS = fSportLoad("scaleSport");
+/* What each view can honour, and how it redraws. `show` and `order` list the
+   values the page can apply; anything else reads as the first. `sport` is the
+   page's own set; `unset` / `clear` reset the page's own filters (football's
+   competitions). Functions are read late, so later declarations are fine. */
+const FVIEWS = {
+  list: {show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
+         sport: {get: () => LIST_SPORTS, set: v => { LIST_SPORTS = v; listSportSave(); }}, redraw: () => renderList()},
+  starred: {show: ["all", "list", "reserve", "other", "hill", "edge", "open"], order: ["strength", "time", "sport", "tag"],
+            sport: {get: () => STAR.sports, set: v => { STAR.sports = v; saveStarView(); }}, redraw: () => renderStarred()},
+  fixtures: {show: ["all", "read", "list", "reserve", "edge"], order: ["strength", "upset", "goals", "time"],
+             unset: k => { if(k === "comp") fbClearComps(); }, clear: () => fbClearComps(),
+             before: a => { if(a === "show") state.open = null; }, redraw: () => render()},
+  tennis: {show: ["all", "list", "reserve"], order: ["strength", "time"], redraw: () => renderTennis()},
+  sport: {show: ["all", "list", "reserve"], order: ["strength", "time"], redraw: () => state.sportView && renderSport(state.sportView)},
+  today: {band: false, show: ["all"], order: [], sport: {get: () => BETS_SPORTS, set: v => { BETS_SPORTS = v; fSportSave("betsSport", v); }}, redraw: () => renderToday()},
+  scale: {show: ["all"], order: ["strength", "time"], sport: {get: () => SCALE_SPORTS, set: v => { SCALE_SPORTS = v; fSportSave("scaleSport", v); }}, redraw: () => renderScale()},
+  results: {show: ["all"], order: [], redraw: () => renderResults()},
+};
+const fOpts = x => (typeof x === "function" ? x() : x) || [];
+const fShow = view => fOpts((FVIEWS[view] || {}).show).includes(FILT.show) ? FILT.show : "all";
+const fOrder = view => fOpts((FVIEWS[view] || {}).order).includes(FILT.order) ? FILT.order : "strength";
+// The tag tests, one vocabulary for every row kind (a list item {g}, a football game, a sport game).
+const showTest = {
+  all: () => true,
+  list: g => !!g.list,
+  reserve: g => !!g.reserve && !g.list,
+  other: g => !g.list && !g.reserve,
+};
+const bandOf = () => FILT.band;
 function inBand(scope, conf){
   const k = bandOf(scope); if(k === "all") return true;
   const b = BANDS.find(x => x.k === k), v = Math.round((conf || 0) * 100);
   return v >= b.lo && v < b.hi;
 }
-function bandCtl(scope, confs){
-  const now = bandOf(scope), n = b => b.k === "all" ? confs.length
-    : confs.filter(c => { const v = Math.round((c || 0) * 100); return v >= b.lo && v < b.hi; }).length;
-  const chips = BANDS.filter(b => b.k === "all" || b.k === now || n(b));
-  return `<div class="band-ctl"><div class="ctl-label">Confidence</div><div class="seg dayseg" role="group" aria-label="Confidence band">${chips.map(b =>
-    `<button type="button" data-band="${b.k}" data-bscope="${scope}" aria-pressed="${b.k === now}">${b.label}<i>${n(b)}</i></button>`).join("")}</div></div>`;
+const bandN = (b, confs) => b.k === "all" ? confs.length
+  : confs.filter(c => { const v = Math.round((c || 0) * 100); return v >= b.lo && v < b.hi; }).length;
+const FB_OPEN = {};   // the phone fold, per view, kept while the bar redraws
+const fbEsc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+// One labelled toggle group: the visible label above, the buttons a .seg.
+function fbarGroup(label, buttons, hint, segAttrs){
+  return `<div class="fbar-g" role="group" aria-label="${fbEsc(label)}"><span class="ctl-label" aria-hidden="true">${fbEsc(label)}${hint ? `<span class="fbar-hint"> · ${fbEsc(hint)}</span>` : ""}</span><div class="seg"${segAttrs || ""}>${buttons}</div></div>`;
 }
+const fbBtn = (fb, k, label, on, n, title) => `<button type="button" data-fb="${fb}" data-k="${fbEsc(k)}" aria-pressed="${!!on}"${title ? ` title="${fbEsc(title)}"` : ""}>${label}${n != null ? `<i>${n}</i>` : ""}</button>`;
+/* opts: sports {opts: [{k, n}], total} (the page's set is read from FVIEWS),
+   confs [numbers] (Confidence, counted on the rows it would filter), show
+   [{k, n, label, title}], order [{k, label}], extra (the page's own groups,
+   from fbarGroup), chips [{k, label}] (the page's own active filters),
+   count {shown, total, noun}, note (a line under the summary). */
+function filterBar(view, o){
+  o = o || {};
+  const V = FVIEWS[view] || {}, groups = [], chips = [];
+  const chip = (k, label) => chips.push(`<button type="button" class="fbar-chip" data-fb="unset" data-k="${fbEsc(k)}" aria-label="Remove filter: ${fbEsc(label)}">${fbEsc(label)}<span aria-hidden="true">×</span></button>`);
+  if(o.sports && V.sport){
+    const now = V.sport.get();
+    if(o.sports.opts.length > 1 || now.length){
+      groups.push(fbarGroup("Sport", fbBtn("sport", "all", "Every sport", !now.length, o.sports.total)
+        + o.sports.opts.map(s => fbBtn("sport", s.k, fbEsc(sportLabel(s.k)), now.includes(s.k), s.n)).join(""), "tap more than one to combine"));
+      now.forEach(k => chip("sport:" + k, sportLabel(k)));
+    }
+  }
+  if(o.confs){
+    const nowB = FILT.band;
+    groups.push(fbarGroup("Confidence", BANDS.filter(b => b.k === "all" || b.k === nowB || bandN(b, o.confs))
+      .map(b => fbBtn("band", b.k, b.label, b.k === nowB, bandN(b, o.confs))).join("")));
+    if(nowB !== "all") chip("band", BANDS.find(b => b.k === nowB).label);
+  }
+  if(o.show){
+    const nowS = fShow(view);
+    const opts = o.show.filter(t => t.k === "all" || t.k === nowS || t.n == null || t.n > 0);
+    if(opts.length > 1) groups.push(fbarGroup("Show", opts.map(t => fbBtn("show", t.k, fbEsc(t.label || SHOW_LABEL[t.k]), t.k === nowS, t.n, t.title)).join("")));
+    if(nowS !== "all"){ const t = o.show.find(x => x.k === nowS); chip("show", (t && t.label) || SHOW_LABEL[nowS]); }
+  }
+  if(o.order && o.order.length > 1){
+    const nowO = fOrder(view);
+    groups.push(fbarGroup("Order by", o.order.map(t => fbBtn("order", t.k, fbEsc(t.label || ORDER_LABEL[t.k]), t.k === nowO)).join("")));
+  }
+  if(o.extra) groups.push(o.extra);
+  (o.chips || []).forEach(c => chip(c.k, c.label));
+  const n = chips.length, open = !!FB_OPEN[view], id = "fbar-" + view.replace(/[^a-z0-9]/gi, "");
+  const c = o.count, count = c && c.total != null
+    ? `${c.shown != null && c.shown !== c.total ? `${c.shown} of ` : ""}${c.total} ${c.noun || "picks"}` : "";
+  return `<div class="fbar${open ? " open" : ""}${n ? " active" : ""}" data-fview="${view}">
+    <div class="fbar-sum">
+      <button type="button" class="fbar-toggle" data-fb="toggle" aria-expanded="${open}" aria-controls="${id}">Filters${n ? `<span> · ${n}</span>` : ""}<span class="caret" aria-hidden="true">▾</span></button>
+      ${n ? `<span class="fbar-chips" aria-label="Active filters">${chips.join("")}</span>` : ""}
+      <span class="fbar-end">${count ? `<span class="fbar-count" aria-live="polite">${count}</span>` : ""}${n ? `<button type="button" class="fbar-clear" data-fb="clear">Clear filters</button>` : ""}</span>
+    </div>
+    <div class="fbar-body" id="${id}">${groups.join("")}</div>
+    ${o.note ? `<p class="fbar-note">${o.note}</p>` : ""}
+  </div>`;
+}
+// The confidence group alone, for any caller from before the bar (kept for its name).
+function bandCtl(scope, confs){ return filterBar(scope, {confs}); }
+// Clear filters, from a page's empty state (data-fclear="<view>") or the bar.
+function fClear(view){
+  const V = FVIEWS[view] || {};
+  if(V.sport) V.sport.set([]);
+  if(V.band !== false) FILT.band = "all";
+  if(fOpts(V.show).includes(FILT.show)) FILT.show = "all";
+  if(V.clear) V.clear();
+  fSave();
+}
+const fbEmpty = (view, text) => `<div class="empty">${text} <button type="button" class="fbar-clear" data-fclear="${view}">Clear filters</button></div>`;
 document.addEventListener("click", e => {
-  const b = e.target.closest("[data-band]"); if(!b) return;
-  BAND[b.dataset.bscope] = b.dataset.band;
-  try { localStorage.setItem("bandBy", JSON.stringify(BAND)); } catch(e){}
-  if(b.dataset.bscope === "fixtures") render(); else rerenderOpen();
+  const c = e.target.closest("[data-fclear]");
+  if(c){ const v = c.dataset.fclear, V = FVIEWS[v]; if(!V) return; fClear(v); V.redraw(); return; }
+  const b = e.target.closest(".fbar [data-fb]"); if(!b) return;
+  const bar = b.closest(".fbar"), view = bar.dataset.fview, V = FVIEWS[view]; if(!V) return;
+  const a = b.dataset.fb, k = b.dataset.k;
+  if(a === "toggle"){ fbToggle(bar, !bar.classList.contains("open")); return; }
+  if(V.before) V.before(a);
+  if(a === "sport" && V.sport) V.sport.set(toggleSport(V.sport.get(), k));
+  else if(a === "band") FILT.band = k;
+  else if(a === "show") FILT.show = k;
+  else if(a === "order") FILT.order = k;
+  else if(a === "clear") fClear(view);
+  else if(a === "unset"){
+    if(k === "band") FILT.band = "all";
+    else if(k === "show") FILT.show = "all";
+    else if(k.startsWith("sport:") && V.sport) V.sport.set(V.sport.get().filter(x => x !== k.slice(6)));
+    else if(V.unset) V.unset(k);
+  }
+  fSave();
+  V.redraw();
+  // the bar was redrawn: keep the keyboard where it was
+  const nb = [...document.querySelectorAll(`.fbar[data-fview="${view}"]`)].find(x => x.offsetParent !== null);
+  if(!nb) return;
+  const same = a === "unset" || a === "clear" ? null : nb.querySelector(`[data-fb="${a}"][data-k="${CSS.escape(k || "")}"]`);
+  const to = same || nb.querySelector(".fbar-toggle:not([hidden])");
+  if(to && (same || getComputedStyle(to).display !== "none")) to.focus({preventScroll: true});
+});
+function fbToggle(bar, open){
+  const view = bar.dataset.fview, t = bar.querySelector(".fbar-toggle");
+  FB_OPEN[view] = open;
+  bar.classList.toggle("open", open);
+  t.setAttribute("aria-expanded", String(open));
+  if(open){ const f = bar.querySelector(".fbar-body button"); if(f) f.focus({preventScroll: true}); }
+  else {
+    t.focus({preventScroll: true});
+    // the football competition panel opens from inside the bar, so it folds away with it
+    if(view === "fixtures" && !$("#compPanel").hidden){ $("#compPanel").hidden = true; }
+  }
+}
+document.addEventListener("keydown", e => {
+  if(e.key !== "Escape") return;
+  const bar = e.target.closest && e.target.closest(".fbar.open");
+  if(bar && getComputedStyle(bar.querySelector(".fbar-toggle")).display !== "none"){ e.preventDefault(); fbToggle(bar, false); }
 });
 // Which flags the sprite actually carries. Read once, lazily, because flag() is
 // called while building the league chips, before this file's later
@@ -2595,13 +2769,17 @@ chips.innerHTML = `<button class="chip" data-league="*" aria-pressed="true">All<
            ` title="${L.country} ${L.name}">${g?flag(g.iso,L.country):""}${L.afExtra ? L.name : L.short}</button>`;
   }).join("");
 
-const compNow = () => {
+// The competition picker's label, read by the football filter bar when it draws the toggle.
+const compLabel = () => {
   const n = state.leagues.size;
-  $("#compNow").textContent = n === 0 ? "All"
+  return n === 0 ? "All"
     : n === 1 ? (L => L.afExtra ? L.country + " " + L.name : L.name)(lname([...state.leagues][0]))
     : n + " selected";
 };
-$("#compToggle").addEventListener("click", () => {
+const compNow = () => { const el = $("#compNow"); if(el) el.textContent = compLabel(); };
+// 23 Nov 2026: the toggle is redrawn with the filter bar, so its click is delegated
+document.addEventListener("click", e => {
+  if(!e.target.closest("#compToggle")) return;
   const open = $("#compPanel").hidden;
   $("#compPanel").hidden = !open;
   $("#compToggle").setAttribute("aria-expanded", String(open));
@@ -2626,37 +2804,23 @@ chips.addEventListener("click", e=>{
   compNow();
   render();
 });
+// Clear filters and the bar's competition chip empty the picker (23 Nov 2026)
+function fbClearComps(){
+  state.leagues.clear();
+  chips.querySelectorAll("button").forEach(x => x.setAttribute("aria-pressed", x.dataset.league === "*"));
+}
 
-$("#show").addEventListener("click", e=>{
-  const b = e.target.closest("button"); if(!b) return;
-  state.show = b.dataset.show; state.open = null;
-  $("#show").querySelectorAll("button").forEach(x=>
-    x.setAttribute("aria-pressed", x.dataset.show===state.show));
-  render();
-});
-$("#boards").addEventListener("click", e=>{
-  const b=e.target.closest("button"); if(!b) return;
-  state.board=b.dataset.board; state.open=null;
-  $("#boards").querySelectorAll("button").forEach(x=>
-    x.setAttribute("aria-pressed", x.dataset.board===state.board));
-  // Each board has its own natural ordering; switching resets to it.
-  // The primary sort means something different on each board, so relabel it
-  // rather than leaving the control with nothing selected.
-  const primary = $("#sortPrimary");
-  primary.dataset.sort = state.board==="btts" ? "btts" : "conf";
-  primary.textContent  = state.board==="btts" ? "Most likely" : "Most confident";
-  state.sort = primary.dataset.sort;
-  $("#sort").querySelectorAll("button").forEach(x=>
-    x.setAttribute("aria-pressed", x.dataset.sort===state.sort));
+/* 23 Nov 2026 (UX release 2): Show and Order by are the filter bar's shared
+   controls (FILT), so render() reads them; the Board switch stays the board's
+   own, drawn in the same bar and delegated because the bar is redrawn. Each
+   board has its own natural ordering, so switching board drops the football
+   orders (Upsets, Goals) back to Strongest, as the old reset did; Kick-off
+   time holds. */
+document.addEventListener("click", e=>{
+  const b = e.target.closest("#boards [data-board]"); if(!b) return;
+  state.board = b.dataset.board; state.open = null;
+  if(FILT.order !== "time" && FILT.order !== "strength"){ FILT.order = "strength"; fSave(); }
   render(); updateReadbar();
-});
-
-$("#sort").addEventListener("click", e=>{
-  const b = e.target.closest("button"); if(!b) return;
-  state.sort = b.dataset.sort;
-  $("#sort").querySelectorAll("button").forEach(x=>
-    x.setAttribute("aria-pressed", x.dataset.sort===state.sort));
-  render();
 });
 
 /* ---------- how much to trust a number ----------
@@ -3310,7 +3474,7 @@ function starIdOf(it, date){
   }
   return sid(it.g);
 }
-const STAR = (() => { const d = {order: "strength", sport: "all", sports: [], tag: "all", open: false};
+const STAR = (() => { const d = {sport: "all", sports: [], open: false};
   try { Object.assign(d, JSON.parse(localStorage.getItem("starView") || "{}")); } catch(e){}
   // 22 Nov 2026 (Douglas: "select multiple sports on the filters at once"):
   // `sports` holds the chosen sports, empty for every sport; a single `sport`
@@ -3318,6 +3482,8 @@ const STAR = (() => { const d = {order: "strength", sport: "all", sports: [], ta
   if(!Array.isArray(d.sports)) d.sports = [];
   if(d.sport && d.sport !== "all" && !d.sports.length) d.sports = [d.sport];
   delete d.sport;
+  // 23 Nov 2026: order and tag moved to the shared filter bar (FILT, migrated from here once)
+  delete d.order; delete d.tag;
   return d; })();
 // One sport chip toggles in or out of the chosen set; "all" clears it.
 function toggleSport(list, k){
@@ -3325,7 +3491,7 @@ function toggleSport(list, k){
   return list.includes(k) ? list.filter(x => x !== k) : [...list, k];
 }
 const STAR_TAGS = [
-  {k: "all", label: "Everything", test: () => true},
+  {k: "all", label: "Every pick", test: () => true},
   {k: "list", label: "Daily List", test: it => !!it.g.list},
   {k: "reserve", label: "Reserve", test: it => !!it.g.reserve && !it.g.list},
   {k: "other", label: "Board only", test: it => !it.g.list && !it.g.reserve},
@@ -3338,15 +3504,11 @@ function starTime(it){
   return isNaN(t) ? Infinity : t;
 }
 function saveStarView(){ try { localStorage.setItem("starView", JSON.stringify(STAR)); } catch(e){} }
+// 23 Nov 2026: Sport, Confidence, Show and Order are the filter bar's (filterBar, FILT);
+// Full details stays Starred's own, drawn in the same bar.
 document.addEventListener("click", e => {
-  const b = e.target.closest("[data-sorder],[data-ssport],[data-stag],[data-sopen],[data-sclear]"); if(!b) return;
-  const d = b.dataset;
-  if(d.sorder) STAR.order = d.sorder;
-  if(d.ssport) STAR.sports = toggleSport(STAR.sports, d.ssport);
-  if(d.stag) STAR.tag = d.stag;
-  if(d.sopen) STAR.open = d.sopen === "on";
-  if("sclear" in d){ STAR.sports = []; STAR.tag = "all"; BAND.starred = "all";
-    try { localStorage.setItem("bandBy", JSON.stringify(BAND)); } catch(e){} }
+  const b = e.target.closest("[data-sopen]"); if(!b) return;
+  STAR.open = b.dataset.sopen === "on";
   saveStarView(); renderStarred();
 });
 function renderStarred(){
@@ -3404,21 +3566,20 @@ function renderStarred(){
   STAR_TAGS.forEach(t => tagN[t.k] = all.filter(t.test).length);
   STAR.sports = STAR.sports.filter(k => spCount[k]);   // a sport no longer starred drops out
   const sportOk = it => !STAR.sports.length || STAR.sports.includes(itemSport(it));
-  const tagOk = it => (STAR_TAGS.find(t => t.k === STAR.tag) || STAR_TAGS[0]).test(it);
+  const tagOk = it => (STAR_TAGS.find(t => t.k === fShow("starred")) || STAR_TAGS[0]).test(it);
   const keep = it => sportOk(it) && tagOk(it) && inBand("starred", it.g.confidence);
   if(all.length){
-    const seg = (attr, now, opts) => `<div class="seg dayseg" role="group">${opts.map(o =>
-      `<button type="button" data-${attr}="${o.k}" aria-pressed="${Array.isArray(now) ? (o.k === "all" ? !now.length : now.includes(o.k)) : o.k === now}">${o.label}${o.n != null ? `<i>${o.n}</i>` : ""}</button>`).join("")}</div>`;
     const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
-    const ctl = document.createElement("div");
-    ctl.className = "star-ctl";
-    ctl.innerHTML = `
-      <div><div class="ctl-label">Order by</div>${seg("sorder", STAR.order, [{k:"strength", label:"Strongest"}, {k:"time", label:"Kick-off time"}, {k:"sport", label:"Sport"}, {k:"tag", label:"List first"}])}</div>
-      ${spKeys.length > 1 ? `<div><div class="ctl-label">Sport · tap more than one to combine</div>${seg("ssport", STAR.sports, [{k:"all", label:"Every sport", n: all.length}, ...spKeys.map(k => ({k, label: sportLabel(k), n: spCount[k]}))])}</div>` : ""}
-      <div><div class="ctl-label">Show</div>${seg("stag", STAR.tag, STAR_TAGS.filter(t => t.k === "all" || t.k === STAR.tag || tagN[t.k]).map(t => ({k: t.k, label: t.label, n: tagN[t.k]})))}</div>
-      ${bandCtl("starred", all.filter(it => sportOk(it) && tagOk(it)).map(it => it.g.confidence))}
-      <div><div class="ctl-label">Full details</div>${seg("sopen", STAR.open ? "on" : "off", [{k:"off", label:"Tap to open"}, {k:"on", label:"Every row open"}])}</div>`;
-    host.appendChild(ctl);
+    const passed = all.filter(keep).length;
+    host.insertAdjacentHTML("beforeend", filterBar("starred", {
+      sports: {opts: spKeys.map(k => ({k, n: spCount[k]})), total: all.length},
+      confs: all.filter(it => sportOk(it) && tagOk(it)).map(it => it.g.confidence),
+      show: STAR_TAGS.map(t => ({k: t.k, label: t.label, n: t.k === "all" ? all.length : tagN[t.k]})),
+      order: [{k: "strength"}, {k: "time"}, {k: "sport"}, {k: "tag"}],
+      extra: fbarGroup("Full details", [["off", "Tap to open"], ["on", "Every row open"]].map(([k, l]) =>
+        `<button type="button" data-sopen="${k}" aria-pressed="${(STAR.open ? "on" : "off") === k}">${l}</button>`).join("")),
+      count: {shown: passed, total: all.length, noun: "starred"},
+    }));
   }
   const tagRank = it => it.g.list ? 0 : it.g.reserve ? 1 : 2;
   const order = {
@@ -3426,7 +3587,7 @@ function renderStarred(){
     time: (a, b) => starTime(a) - starTime(b) || listByStrength(a, b),
     sport: (a, b) => sportLabel(itemSport(a)).localeCompare(sportLabel(itemSport(b))) || listByStrength(a, b),
     tag: (a, b) => tagRank(a) - tagRank(b) || listByStrength(a, b),
-  }[STAR.order] || listByStrength;
+  }[fOrder("starred")] || listByStrength;
   OPEN_ALL = !!STAR.open;
   try {
     Object.keys(items).sort().forEach(date => {
@@ -3446,7 +3607,7 @@ function renderStarred(){
     });
   } finally { OPEN_ALL = false; }
   if(any && !host.querySelector("section.day")) host.insertAdjacentHTML("beforeend",
-    `<div class="empty">None of your starred picks match these filters. <button type="button" class="more" data-sclear>Clear filters</button></div>`);
+    fbEmpty("starred", "None of your starred picks match these filters."));
 
   if(!any) host.innerHTML = `<div class="empty">No bookmarks yet. Tap the star (☆) on any
     fixture to shortlist it here. The list clears itself each morning along with the
@@ -3470,45 +3631,16 @@ const GROUP_A_MIN = 0.85;   // Group A takes only picks at this level or better 
 const RESERVE_SHOW_MIN = 0.75;
 // 23 Nov 2026: a college pick tiered Leave out stays off the reserve fold too.
 const resShown = it => (it.g.confidence || 0) >= RESERVE_SHOW_MIN && itemTier(it) !== "leave";
-let LIST_ORDER = (() => { try { return localStorage.getItem("listOrder") === "time" ? "time" : "strength"; }
-                          catch(e){ return "strength"; } })();
-document.addEventListener("click", e => {
-  const b = e.target.closest("#listSort button"); if(!b) return;
-  LIST_ORDER = b.dataset.lsort;
-  try { localStorage.setItem("listOrder", LIST_ORDER); } catch(e){}
-  renderList();
-});
-
-// 10 Nov 2026: "At William Hill" shows only the picks William Hill priced
-// (hillChip's marks). Douglas places there; many list picks are not offered.
-// Remembered on this device only. The list itself is unchanged.
-let LIST_BOOK_ONLY = (() => { try { return localStorage.getItem("listBook") === "hill"; } catch(e){ return false; } })();
-document.addEventListener("click", e => {
-  const b = e.target.closest("#listBook button"); if(!b) return;
-  LIST_BOOK_ONLY = b.dataset.lbook === "hill";
-  try { localStorage.setItem("listBook", LIST_BOOK_ONLY ? "hill" : "all"); } catch(e){}
-  renderList();
-});
+// 23 Nov 2026 (UX release 2): Order by (Douglas, 1 Oct 2026: strongest first, or by kick-off to
+// plan the day) and Show's At William Hill (10 Nov 2026: only the picks William Hill priced,
+// hillChip's marks; Douglas places there) are the shared filter bar's (FILT); renderList reads them.
 // 22 Nov 2026 (Douglas: "the daily list needs filter by sport"): every sport,
 // or any set of sports (the same day: "select multiple sports on the filters
 // at once"; a tap toggles a sport in or out, Every sport clears); remembered
 // on this device as a comma list ("all" or one sport, as saved before, still
 // reads). The ranking is unchanged.
-let LIST_SPORTS = (() => { try { const v = localStorage.getItem("listSport") || "all";
-  return v === "all" ? [] : v.split(",").filter(Boolean); } catch(e){ return []; } })();
-const listSportSave = () => { try { localStorage.setItem("listSport", LIST_SPORTS.length ? LIST_SPORTS.join(",") : "all"); } catch(e){} };
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-lsport]"); if(!b) return;
-  LIST_SPORTS = toggleSport(LIST_SPORTS, b.dataset.lsport);
-  listSportSave();
-  renderList();
-});
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-lclear]"); if(!b) return;
-  LIST_SPORTS = []; BAND.list = "all";
-  try { localStorage.setItem("listSport", "all"); localStorage.setItem("bandBy", JSON.stringify(BAND)); } catch(e){}
-  renderList();
-});
+let LIST_SPORTS = fSportLoad("listSport");
+const listSportSave = () => fSportSave("listSport", LIST_SPORTS);
 const itemSport = it => it.kind === "football" ? "football" : it.g.sport;
 function sportLabel(k){
   if(k === "football") return "Football";
@@ -3844,6 +3976,7 @@ function renderList(){
   upcoming.forEach(day => _n += day.games.filter(g => g.list).length);
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => _n += (sp.games || []).filter(g => g.list && listShown(g)).length);
   if(TDL && TDL.matches) _n += TDL.matches.filter(m => m.list).length;
+  const LIST_ORDER = fOrder("list"), LIST_BOOK_ONLY = fShow("list") === "hill";
   host.innerHTML = `
     <div class="lede">
       <h2>${_n} pick${_n === 1 ? "" : "s"} this week, ${LIST_ORDER === "time" ? "by kick-off" : "strongest first"}</h2>
@@ -3854,16 +3987,6 @@ function renderList(){
         ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. Build slips from these.</p>
       ${coverageLine()}
-      <div class="list-order"><span class="ctl-label">Order by</span>
-        <div class="seg" id="listSort">
-          <button data-lsort="strength" aria-pressed="${LIST_ORDER === "strength"}">Strongest</button>
-          <button data-lsort="time" aria-pressed="${LIST_ORDER === "time"}">Kick-off time</button>
-        </div></div>
-      ${window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? `<div class="list-order"><span class="ctl-label">Show</span>
-        <div class="seg" id="listBook">
-          <button data-lbook="all" aria-pressed="${!LIST_BOOK_ONLY}">Every pick</button>
-          <button data-lbook="hill" aria-pressed="${LIST_BOOK_ONLY}" title="Only the picks William Hill priced at the last build. A pick with no UK price read yet is left out too.">At William Hill</button>
-        </div></div>` : ""}
       <details class="how"><summary>How the list works</summary>
         <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
         games the model was never tuned on. The level differs by sport because the numbers do:
@@ -3906,13 +4029,19 @@ function renderList(){
   const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
   const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
   const filtered = LIST_SPORTS.length > 0 || bandOf("list") !== "all";
-  if(spKeys.length > 1) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<div class="list-sport"><span class="ctl-label">Sport · list and reserve picks · tap more than one to combine</span>
-    <div class="seg dayseg" role="group" aria-label="Sport">
-      <button type="button" data-lsport="all" aria-pressed="${!LIST_SPORTS.length}">Every sport<i>${every.length}</i></button>
-      ${spKeys.map(k => `<button type="button" data-lsport="${k}" aria-pressed="${LIST_SPORTS.includes(k)}">${sportLabel(k)}<i>${spCount[k]}</i></button>`).join("")}
-    </div></div>`);
-  host.querySelector(".lede").insertAdjacentHTML("beforeend", bandCtl("list", every.filter(sportOk).map(it => it.g.confidence)).replace('class="band-ctl"', 'class="band-ctl list-band"'));
-  if(filtered) host.querySelector(".lede").insertAdjacentHTML("beforeend", `<p class="filt-note">Showing ${[LIST_SPORTS.length ? LIST_SPORTS.map(sportLabel).join(" + ") : "", bandOf("list") !== "all" ? BANDS.find(b => b.k === bandOf("list")).label : ""].filter(Boolean).join(", ")} only. Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered.<button type="button" data-lclear>Clear filters</button></p>`);
+  // 23 Nov 2026: the filter bar (drawn below the day strip); counted on every list and reserve pick shown
+  // in the window, the count after every filter.
+  const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
+  const hasBooks = !!(window.__GROUPINGS__ && window.__GROUPINGS__.listBooks);
+  const listBar = filterBar("list", {
+    sports: {opts: spKeys.map(k => ({k, n: spCount[k]})), total: every.length},
+    confs: every.filter(sportOk).map(it => it.g.confidence),
+    show: hasBooks ? [{k: "all", n: allPicks.length}, {k: "hill", n: allPicks.filter(it => itemHill(it)).length,
+      title: "Only the picks William Hill priced at the last build. A pick with no UK price read yet is left out too."}] : null,
+    order: [{k: "strength"}, {k: "time"}],
+    count: {shown: every.filter(keepIt).length, total: allPicks.length, noun: "picks"},
+    note: filtered ? "Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered." : "",
+  });
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
   // as daylist.strength.
@@ -3936,6 +4065,8 @@ function renderList(){
     host.insertAdjacentHTML("beforeend", `<div class="list-days"><span class="ctl-label">Jump to</span>
       <div class="seg dayseg" id="listDays">${dates.map(d => `<button type="button" data-jump="${d}">${d === today ? "Today" : fmtShort(d)}<i>${n(d)}</i></button>`).join("")}</div></div>`);
   }
+  // the filter bar sits between the days and the first day, as on every page
+  host.insertAdjacentHTML("beforeend", listBar);
   dates.forEach(date => {
     const allItems = (byDay[date] || []).filter(keepIt), resAll = (resDay[date] || []).filter(keepIt);
     const allExtra = resAll.filter(resShown), resLow = resAll.filter(it => !((it.g.confidence || 0) >= RESERVE_SHOW_MIN)).length;
@@ -3996,7 +4127,7 @@ function renderList(){
     host.appendChild(sec);
   });
   if(dates.length && filtered && !host.querySelector("section.day")){
-    host.insertAdjacentHTML("beforeend", `<div class="empty">No picks this week match these filters. <button type="button" class="more" data-lclear>Clear filters</button></div>`);
+    host.insertAdjacentHTML("beforeend", fbEmpty("list", "No picks this week match these filters."));
   }
   if(!dates.length){
     const e = document.createElement("div");
@@ -4079,19 +4210,18 @@ const PLAYED_CAP = 8, PLAYED_ALL = new Set();
    control (always strongest first), and every tab's Played today / yesterday
    ignored the order chosen. One choice for those tabs, remembered on this
    device; football keeps its own Order by. Played rows follow the tab's order. */
-let TAB_ORDER = (() => { try { return localStorage.getItem("tabOrder") === "time" ? "time" : "conf"; } catch(e){ return "conf"; } })();
-function tabOrderCtl(){
-  return `<div class="tab-order"><div class="ctl-label">Order by</div><div class="seg" role="group" aria-label="Order by">
-    <button type="button" data-torder="conf" aria-pressed="${TAB_ORDER === "conf"}">Most confident</button>
-    <button type="button" data-torder="time" aria-pressed="${TAB_ORDER === "time"}">Kick-off time</button></div></div>`;
+// 23 Nov 2026 (UX release 2): that choice is the shared filter bar's Order by (FILT.order).
+// The tennis and sport tabs' bar: Confidence, Show (Daily List, Reserve) and Order, on the tab's games.
+function tabBar(view, games, noun){
+  const ok = showTest[fShow(view)] || showTest.all;
+  return filterBar(view, {
+    confs: games.filter(ok).map(g => g.confidence),
+    show: ["all", "list", "reserve"].map(k => ({k, n: games.filter(showTest[k]).length})),
+    order: [{k: "strength"}, {k: "time"}],
+    count: {shown: games.filter(g => ok(g) && inBand(view, g.confidence)).length, total: games.length, noun},
+  });
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest("[data-torder]"); if(!b) return;
-  TAB_ORDER = b.dataset.torder;
-  try { localStorage.setItem("tabOrder", TAB_ORDER); } catch(e){}
-  rerenderOpen();
-});
-const playedByTime = name => name === "fixtures" ? state.sort === "time" : TAB_ORDER === "time";
+const playedByTime = name => name === "fixtures" ? state.sort === "time" : FILT.order === "time";
 function playedSection(name, test, host, ruler, redraw){
   const D = window.__DAY_LIST__;
   if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
@@ -4099,7 +4229,7 @@ function playedSection(name, test, host, ruler, redraw){
   const days = [...new Set(D.played.map(it => it.day || D.date))].sort().reverse();
   const secs = days.map(day => playedDay(name, test, D, day, shown, ruler, redraw)).filter(Boolean);
   // under the tab's Order by when it has one, so the control sits above every row it orders
-  let at = host.querySelector(":scope > .band-ctl") || host.querySelector(":scope > .tab-order") || host.querySelector(":scope > .lede");
+  let at = host.querySelector(":scope > .fbar") || host.querySelector(":scope > .lede");
   secs.forEach(sec => { at ? at.after(sec) : host.prepend(sec); at = sec; });
 }
 function playedDay(name, test, D, day, shown, ruler, redraw){
@@ -4148,13 +4278,13 @@ function renderTennis(){
     Elo rating on the surface, pulled toward a coin flip by the amount testing found honest.
     Under a number is how often published calls at that level have landed, once a band has
     30 of them. A match showing TBC has no order of play yet: ESPN files the round under its first
-    day, and the match may be played the day after.</p></div>${tabOrderCtl()}${bandCtl("tennis", TD.matches.map(m => m.confidence))}`;
-  const byDay = {};
-  TD.matches.filter(m => inBand("tennis", m.confidence)).forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
-  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", `<div class="empty">No matches in this confidence band. Pick <b>All</b> to see them all.</div>`);
+    day, and the match may be played the day after.</p></div>${tabBar("tennis", TD.matches, "matches")}`;
+  const byDay = {}, showOk = showTest[fShow("tennis")] || showTest.all;
+  TD.matches.filter(m => showOk(m) && inBand("tennis", m.confidence)).forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
+  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", fbEmpty("tennis", "No matches fit these filters."));
 
   Object.keys(byDay).sort().forEach(date => {
-    const games = byDay[date].slice().sort(TAB_ORDER === "time"
+    const games = byDay[date].slice().sort(fOrder("tennis") === "time"
       ? (a,b) => (a.timeTbc ? 1 : 0) - (b.timeTbc ? 1 : 0) || tennisAsGame(a).when.localeCompare(tennisAsGame(b).when) || b.confidence - a.confidence
       : (a,b)=> b.confidence - a.confidence);
     const confident = games.filter(m => m.tier !== "No read").length;
@@ -4176,7 +4306,7 @@ function renderTennis(){
     games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
     host.appendChild(sec);
   });
-  playedSection("matches", (sp, it) => sp === "tennis" && inBand("tennis", it.confidence), host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
+  playedSection("matches", (sp, it) => sp === "tennis" && (showTest[fShow("tennis")] || showTest.all)(it) && inBand("tennis", it.confidence), host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
     <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
     <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`, renderTennis);
 }
@@ -4185,19 +4315,36 @@ function render(){
   const host = $("#days");
   host.innerHTML = "";
   let shown = 0;
+  // 23 Nov 2026: Show and Order by are the shared filter bar's (FILT)
+  state.show = fShow("fixtures");
+  { const o = fOrder("fixtures"); state.sort = o === "strength" ? (state.board === "btts" ? "btts" : "conf") : o; }
   const btts0 = state.board === "btts";
   const fbConf = g => btts0 ? g.btts : g.confidence;
-  const preBand = day => {
-    const tierOf = g => btts0 ? bttsTier(g) : tier(g);
-    let games = day.games.filter(g=> state.leagues.size===0 || state.leagues.has(g.league));
-    if(state.show === "read") games = games.filter(g => tierOf(g).k >= 1);
+  const fbShowOk = g => state.show === "read" ? (btts0 ? bttsTier(g) : tier(g)).k >= 1
     // 10 Nov 2026: the green Edge flag's fixtures alone (groupings.edge_flag)
-    if(state.show === "edge") games = games.filter(g => g.edge);
-    return games;
-  };
-  // 22 Nov 2026: the confidence band, on the number the board shows
-  if(upcoming.length) host.insertAdjacentHTML("beforeend", bandCtl("fixtures", upcoming.flatMap(d => preBand(d).map(fbConf))));
+    : state.show === "edge" ? !!g.edge : (showTest[state.show] || showTest.all)(g);
+  const preBand = day => day.games.filter(g => (state.leagues.size===0 || state.leagues.has(g.league)) && fbShowOk(g));
   const banded = bandOf("fixtures") !== "all";
+  // the bar: counted on the board's fixtures (competition and Show applied, then the band)
+  const pre = upcoming.flatMap(d => preBand(d)), every = upcoming.reduce((a, d) => a + d.games.length, 0);
+  const matched = pre.filter(g => inBand("fixtures", fbConf(g))).length;
+  const showN = k => upcoming.reduce((a, d) => a + d.games.filter(g => (state.leagues.size===0 || state.leagues.has(g.league))
+    && (k === "read" ? (btts0 ? bttsTier(g) : tier(g)).k >= 1 : k === "edge" ? !!g.edge : showTest[k](g))).length, 0);
+  const compOpen = !$("#compPanel").hidden;
+  const extra = fbarGroup("Board", [["win", "Clear winner"], ["btts", "Both to score"]].map(([k, l]) =>
+      `<button type="button" data-board="${k}" aria-pressed="${state.board === k}">${l}</button>`).join(""), "", ` id="boards"`)
+    + `<div class="fbar-g"><span class="ctl-label" id="compLbl">Competition</span><div><button type="button" class="comp-toggle" id="compToggle" aria-expanded="${compOpen}" aria-controls="compPanel" aria-describedby="compLbl">
+      <b id="compNow">${fbEsc(compLabel())}</b><span class="caret" aria-hidden="true">▾</span></button></div></div>`;
+  $("#fbBar").innerHTML = upcoming.length ? filterBar("fixtures", {
+    confs: pre.map(fbConf),
+    show: [{k: "all", label: "Every fixture"}, {k: "read", n: showN("read"), title: "Firm, Strong and Lean reads only: the No read rows hidden"},
+           {k: "list", n: showN("list")}, {k: "reserve", n: showN("reserve")},
+           {k: "edge", n: showN("edge"), title: "Only fixtures with the green Edge flag: the favourite at 1.15 to 1.90, the other side priced 4/1 (5.0) or more"}],
+    order: [{k: "strength"}, {k: "upset"}, {k: "goals"}, {k: "time"}],
+    extra,
+    chips: state.leagues.size ? [{k: "comp", label: compLabel()}] : [],
+    count: {shown: matched, total: every, noun: "fixtures"},
+  }) : "";
 
   upcoming.forEach(day=>{
     const btts = state.board === "btts";
@@ -4254,17 +4401,15 @@ function render(){
 
   if(!shown) host.insertAdjacentHTML("beforeend", !upcoming.length
     ? `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`
-    : banded ? `<div class="empty">No fixtures in this confidence band for this selection. Pick <b>All</b> to see them all.</div>`
-    : (state.show === "edge"
-        ? `<div class="empty">No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 4/1 (5.0) or more, in the leagues tested on price, a handful a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.</div>`
-      : state.show === "read"
-        ? `<div class="empty">No confident reads for this selection. Switch to <b>Every fixture</b> to see them all.</div>`
-        : `<div class="empty">No fixtures match that filter. Clear a competition to see more.</div>`));
+    : state.show === "edge" && !banded && !state.leagues.size
+        ? fbEmpty("fixtures", `No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 4/1 (5.0) or more, in the leagues tested on price, a handful a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.`)
+      : fbEmpty("fixtures", `No fixtures match these filters.`));
   // 21 Nov 2026 review: the board's own filters apply (competitions, Strong
   // reads only); Edge only has no played section, as the archive keeps no flag.
   if(state.board !== "btts" && state.show !== "edge") playedSection("fixtures", (s, it) => s === "football"
     && (state.leagues.size === 0 || state.leagues.has(it.league))
-    && (state.show !== "read" || (it.tier && it.tier !== "No read")) && inBand("fixtures", it.confidence), host, `<div class="ruler">
+    && (state.show !== "read" || (it.tier && it.tier !== "No read"))
+    && (state.show === "read" || (showTest[state.show] || showTest.all)(it)) && inBand("fixtures", it.confidence), host, `<div class="ruler">
     <div>#</div><div>UK time</div><div>Home</div><div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
     <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`, render);
 }
@@ -5200,17 +5345,17 @@ function renderSport(key){
       numbers would not mean anything.</p></div>`;
     return;
   }
-  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p>${key === "ncaab" ? tierKey() : ""}</div>${tabOrderCtl()}${sp.games.length ? bandCtl(key, sp.games.map(g => g.confidence)) : ""}`;
+  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p>${key === "ncaab" ? tierKey() : ""}</div>${sp.games.length ? tabBar("sport", sp.games, "games") : ""}`;
   if(!sp.games.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
     playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));
     return;
   }
-  const byDay = {};
-  sp.games.filter(g => inBand(key, g.confidence)).forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
-  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in this confidence band. Pick <b>All</b> to see them all.</div>`);
+  const byDay = {}, showOk = showTest[fShow("sport")] || showTest.all;
+  sp.games.filter(g => showOk(g) && inBand(key, g.confidence)).forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
+  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", fbEmpty("sport", `No ${sp.name} games match these filters.`));
   Object.keys(byDay).sort().forEach(d => {
-    const games = byDay[d].slice().sort(TAB_ORDER === "time" ? (a,b) => String(a.when).localeCompare(String(b.when)) || b.confidence - a.confidence
+    const games = byDay[d].slice().sort(fOrder("sport") === "time" ? (a,b) => String(a.when).localeCompare(String(b.when)) || b.confidence - a.confidence
                                                              : (a,b) => b.confidence - a.confidence);
     const sec = document.createElement("section");
     sec.className = "day";
@@ -5220,7 +5365,7 @@ function renderSport(key){
     games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
     host.appendChild(sec);
   });
-  playedSection("games", (s, it) => s === key && inBand(key, it.confidence), host, sportRuler(), () => renderSport(key));
+  playedSection("games", (s, it) => s === key && showOk(it) && inBand(key, it.confidence), host, sportRuler(), () => renderSport(key));
 }
 
 /* sports results on "How it went": same rows as tennis */
@@ -5491,6 +5636,12 @@ function listReview(){
       <div class="conf"><span class="tier t${TK[x.tier] ?? 0}">${x.tier || ""}</span>${x.grp === "list" ? hillPast(x.sk, x.home, x.away, day.date) : ""}</div>
       ${st(x)}</div>`;
   const sports = [...new Set(day.items.map(x => x.sport))];
+  // 23 Nov 2026 (UX release 2): the shared Confidence filter, on this day's rows only; the
+  // tiles, the glance and the day's own tally stay whole.
+  const bandRows = xs => xs.filter(x => inBand("results", x.conf));
+  const items = bandRows(day.items), resItems = bandRows(day.reserve);
+  const resBar = day.items.length || day.reserve.length ? filterBar("results", {confs: day.items.concat(day.reserve).map(x => x.conf),
+    count: {shown: items.length + resItems.length, total: day.items.length + day.reserve.length, noun: "picks on this day"}}) : "";
   const ruler = `<div class="xruler lrow"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
       <div style="text-align:right">Tier</div><div></div></div>`;
   const [rwa, rna] = days.reduce((a, d) => [a[0] + d.rWon, a[1] + d.rWon + d.rLost], [0, 0]);
@@ -5498,7 +5649,7 @@ function listReview(){
       <summary><b>Reserve</b><span class="resv-score">${day.rWon} of ${day.rWon + day.rLost} landed${day.rOpen ? ` · ${day.rOpen} to finish` : ""}</span>
         <span class="resv-note">${day.reserve.length} pick${day.reserve.length === 1 ? "" : "s"} under the bar, Firm 62% or better.
         Graded as its own group, never in the list's record${rna ? `: ${rwa} of ${rna} landed across every day here` : ""}.</span><i aria-hidden="true"></i></summary>
-      ${ruler}${day.reserve.map(row).join("")}</details>` : "";
+      ${resItems.length ? ruler + resItems.map(row).join("") : ""}</details>` : "";
   return `<div class="lede" style="margin-top:22px"><h2>The Daily List, day by day</h2>
       <p>Every pick that made the Daily List, across all sports, with how it went. Only picks
       published before the start are graded; today's list stays as it stood before each game began.</p></div>
@@ -5510,10 +5661,11 @@ function listReview(){
     <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
       <div class="seg dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
         ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>
+    ${resBar}
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.items.length ? `${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}`
         : "no pick cleared the bar"}</div></div>
-    ${day.items.length ? ruler + day.items.map(row).join("") : ""}
+    ${items.length ? ruler + items.map(row).join("") : day.items.length ? fbEmpty("results", "No list pick on this day matches this confidence band.") : ""}
     ${reserve}`;
 }
 
@@ -5994,10 +6146,15 @@ const OG_LABEL = {won:"Won", lost:"Lost", pending:"Pending", void:"Void"};
 // 2x ... I want a nice, visual graphic tracker that says what we're doing".
 // The Daily 2x (groupings.daily_group) and its tracker: every day a tile, each
 // pick a dot, the slip's price and result; then the tally and what it teaches.
+// 23 Nov 2026 (UX release 2): the Bets tab's Sport filter. A group shows when any of its picks
+// is in the chosen sports, so a group is never broken apart.
+const betsOk = g => !BETS_SPORTS.length || (g.legs || []).some(l => BETS_SPORTS.includes(l.sport));
+const betsEmpty = what => fbEmpty("today", what === "Edge picks" ? "Every Edge pick is football, which is not among the sports chosen."
+  : `No ${what} on this day includes a pick from ${BETS_SPORTS.map(sportLabel).join(" or ")}.`);
 function dailySection(day){
   const g = day.groups.find(x => x.name === "Daily 2x");
   return `<section class="tb-win tb-daily"><h3 class="tb-h">Today's 2x <small>one slip a day, the model's strongest picks at 1.10+, to 2x · on trial</small></h3>
-    ${g ? `<div class="og-grid">${ogCard(g)}</div>` : `<div class="empty">No 2x for ${fmtDay(day.date)} yet: no priced pick at 1.10+ has come in. It is rebuilt on every build.</div>`}
+    ${g && !betsOk(g) ? betsEmpty("2x") : g ? `<div class="og-grid">${ogCard(g)}</div>` : `<div class="empty">No 2x for ${fmtDay(day.date)} yet: no priced pick at 1.10+ has come in. It is rebuilt on every build.</div>`}
     ${dailyTracker()}</section>`;
 }
 function dailyTracker(){
@@ -6389,6 +6546,7 @@ function slipSection(date){
                spread: "no set of legs lands between 3x and 6x"};
   let body;
   if(!day) body = `<div class="empty">No slip built for ${fmtDay(date)} yet; it is built for today and tomorrow on each build.</div>`;
+  else if(day.slip && !betsOk(day.slip)) body = betsEmpty("slip");
   else if(!day.slip){
     const off = Object.entries(day.off || {}).map(([k, n]) => `${n} ${k}`).join(", ");
     body = `<div class="empty">No slip on ${fmtDay(date)}: ${why[day.why] || day.why || "nothing qualified"}. ${day.candidates || 0} leg${day.candidates === 1 ? "" : "s"} cleared the leg rule${off ? `; left out: ${ogEsc(off)}` : ""}. An empty day stays empty.</div>`;
@@ -6514,7 +6672,9 @@ document.addEventListener("click", e => {
 });
 
 function edgeSection(date){
-  const games = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge)
+  const flagged = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge);
+  // 23 Nov 2026: the Bets tab's Sport filter (every Edge pick is football)
+  const games = flagged.filter(() => betsOk({legs: [{sport: "football"}]}))
     .sort((a, b) => (a.kickoff || "").localeCompare(b.kickoff || ""));
   const ET = D.edgeTested || {};
   const seasons = Object.keys(ET).sort();
@@ -6543,7 +6703,7 @@ function edgeSection(date){
       <p class="tb-snap"><b>Read this with the floor in mind.</b> The figures below were tested with the opposition at 9.0+. From 11 Nov the flag takes 4/1 (5.0)+, which adds picks from the bands that did worse on the same five seasons (opposition 4.0 to 6.0: lost every season; 6.0 to 9.0: about break-even). The site's own record for the new floor builds from here, by rule, in How it went.</p>
       <p class="tb-snap"><b>Over five seasons, at 9.0+</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
       ${singles ? `<p class="tb-snap">Latest seasons, singles: ${singles}.${edgeRecordText(" On this site")} Take the best price; at the average one the edge is thin, and a short run can lose.</p>` : `<p class="tb-snap">${edgeRecordText("On this site")} Take the best price; a short run can lose.</p>`}`
-      : `<div class="empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
+      : flagged.length ? betsEmpty("Edge picks") : `<div class="empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
     ${edgeTracker()}
   </section>`;
 }
@@ -6862,7 +7022,7 @@ document.addEventListener("click", e => {
 // group (three NBA picks cannot: two a competition at most). Not a bet.
 function cardPicksHtml(day, gs){
   const used = new Set(gs.flatMap(g => g.legs.map(l => l.event + "|" + l.pick)));
-  const ps = (day.cardPicks || []).filter(p => !used.has(p.event + "|" + p.pick));
+  const ps = (day.cardPicks || []).filter(p => !used.has(p.event + "|" + p.pick) && betsOk({legs: [p]}));
   if(!ps.length) return "";
   const B = ((OG.rules || {}).card || {}).book || "William Hill";
   const rows = ps.map(l => { const hill = (l.bookOdds || {})[B]; const off = (l.context || {}).verdict === "against";
@@ -6927,17 +7087,18 @@ function renderToday(){
   const isCard = g => String(g.name).startsWith("Card");
   const wins = day.windows || [{name:"Day", from:7, to:31}];
   const isModel = g => String(g.name).startsWith("Model");
-  const model = day.groups.filter(isModel);
+  const model = day.groups.filter(isModel).filter(betsOk);
   // 16 Nov 2026: the List 2x, the Daily List's own picks on paper (groupings.build_list_card)
   const isList = g => String(g.name).startsWith("List");
-  const lists = day.groups.filter(g => isList(g) && g.name !== "Daily 2x");
-  const other = day.groups.filter(g => !isCard(g) && !isModel(g) && !isList(g) && g.status !== "underway");
+  const listsAll = day.groups.filter(g => isList(g) && g.name !== "Daily 2x"), lists = listsAll.filter(betsOk);
+  const other = day.groups.filter(g => !isCard(g) && !isModel(g) && !isList(g) && g.status !== "underway").filter(betsOk);
   const avoid = day.avoid || [];
   const nCard = d => d.groups.filter(g => isCard(g) && g.status !== "underway").length;
   const hh = h => String(h % 24).padStart(2, "0") + ":00";
   const now = Date.now();
   const winHtml = w => {
-    const gs = day.groups.filter(g => isCard(g) && g.window === w.name);
+    const gsAll = day.groups.filter(g => isCard(g) && g.window === w.name), gs = gsAll.filter(betsOk);
+    if(gsAll.length && !gs.length) return `<section class="tb-win"><h3 class="tb-h">${w.name === "Day" ? "The card" : w.name}</h3>${betsEmpty("Card group")}${cardPicksHtml(day, gsAll)}</section>`;
     const lk = w.lockAt ? new Date(w.lockAt) : null, locked = lk && lk.getTime() <= now;
     const when = lk ? `${locked ? "Locked" : "Locks"} ${ogAt(w.lockAt)}` : "";
     if(w.legacy && !gs.length) return "";
@@ -6948,6 +7109,19 @@ function renderToday(){
             : cardShortText(day.cardShort)}</div>`}${cxPausedHtml()}${cardPicksHtml(day, gs)}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
+  // 23 Nov 2026 (UX release 2): Sport only on Bets, and it never breaks a group apart: a group
+  // (the Card, the Daily 2x, the List card, the slip) shows when any of its picks is in the
+  // chosen sports; the Edge picks list and the Card's other picks filter their rows.
+  const slipDay = SLIP && (SLIP.days || []).find(d => d.date === day.date);
+  const units = [...day.groups.filter(g => g.status !== "underway" || isCard(g) || isModel(g) || isList(g)).map(g => (g.legs || []).map(l => l.sport)),
+    ...(slipDay && slipDay.slip ? [slipDay.slip.legs.map(l => l.sport)] : []),
+    ...((D.days.find(d => d.date === day.date) || {games: []}).games.filter(g => g.edge).map(() => ["football"]))];
+  const bsCount = {};
+  units.forEach(u => [...new Set(u)].forEach(k => bsCount[k] = (bsCount[k] || 0) + 1));
+  BETS_SPORTS = BETS_SPORTS.filter(k => bsCount[k]);
+  const bsKeys = Object.keys(bsCount).sort((a, b) => bsCount[b] - bsCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
+  const betsBar = filterBar("today", {sports: {opts: bsKeys.map(k => ({k, n: bsCount[k]})), total: units.length},
+    count: {shown: units.filter(u => !BETS_SPORTS.length || u.some(k => BETS_SPORTS.includes(k))).length, total: units.length, noun: units.length === 1 ? "group or pick" : "groups and picks"}});
   host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}
     <details class="how tb-rule tb-part"><summary>The Card: its rule in full</summary><div class="lede">
       ${C.modelRule ? `<p><b>The model's own picks</b> (from 11 Nov 2026). ${(C.build || []).length === 1 ? `Up to three groups a day from different fixtures, each paying <b>2x or more</b> (the 3x was dropped on 11 Nov: replayed on five football seasons and the last fortnight, it lost in three seasons of four and dragged the card down), from every game
@@ -6973,12 +7147,13 @@ function renderToday(){
     <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
         return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+    ${betsBar}
     ${dailySection(day)}
     ${wins.map(winHtml).join("")}
     <!-- 17 Nov 2026, Douglas: "at least one or two cards a day just made up of the daily list picks ... having no cards is awful". The List card, in the open. -->
     <section class="tb-win tb-list"><h3 class="tb-h">The List card <small>the Daily List's own picks combined to 2x; on trial, each with its tested chance</small></h3>
       ${lists.length ? `<div class="og-grid">${lists.map(ogCard).join("")}</div>`
-        : `<div class="empty">No List card on ${fmtDay(day.date)} yet: the Daily List's priced picks (college sports left out) don't reach 2x in ten. It is rebuilt on every build as prices and picks arrive.</div>`}
+        : listsAll.length ? betsEmpty("List card") : `<div class="empty">No List card on ${fmtDay(day.date)} yet: the Daily List's priced picks (college sports left out) don't reach 2x in ten. It is rebuilt on every build as prices and picks arrive.</div>`}
       <p class="tb-snap"><b>How it is built.</b> The Daily List's picks with a bookmaker price, college sports left out, the model's strongest first, added one at a time until the slip pays 2x: the <b>List 2x</b> from picks at 1.15 or more (up to six), and when that cannot be made the <b>List long</b> from any price (up to ten). "Tested" is the chance it lands on the ledger's own landed rates by sport and price band; "Model" is the model's. The pattern review behind it (17 Nov): the list lands as quoted in every cut, by sport, side, band, price, day and time, so this is the list's winners combined, not a value rule, and every extra pick adds the bookmaker's margin again. Graded apart (List 2x and List long on their own lines); staking is yours.</p></section>
     ${slipSection(day.date)}
     ${edgeSection(day.date)}
@@ -7199,11 +7374,28 @@ function renderScale(){
   const off = day.off || [];
   const offComps = [...new Set(off.map(o => o.comp))];
   const tierNote = {list: "cleared the list's own bar", reserve: "under the bar, Firm 62% or better", else: `the model's pick at ${floor} or better, added to bring the day to ${target} games`};
-  const tierBlock = t => { const ps = day.picks.filter(p => (p.tier || "list") === t);
+  // 23 Nov 2026 (UX release 2): Sport, Confidence (the winner's chance) and Order over the
+  // day's rows; a group shows when any of its legs is in the chosen sports (as on Bets).
+  const scCount = {};
+  day.picks.forEach(p => scCount[p.sport] = (scCount[p.sport] || 0) + 1);
+  SCALE_SPORTS = SCALE_SPORTS.filter(k => scCount[k]);
+  const scSportOk = p => !SCALE_SPORTS.length || SCALE_SPORTS.includes(p.sport);
+  const scKeep = p => scSportOk(p) && inBand("scale", p.conf);
+  const scByTime = fOrder("scale") === "time";
+  const scBar = day.picks.length ? filterBar("scale", {
+    sports: {opts: Object.keys(scCount).sort((a, b) => scCount[b] - scCount[a] || sportLabel(a).localeCompare(sportLabel(b))).map(k => ({k, n: scCount[k]})), total: day.picks.length},
+    confs: day.picks.filter(scSportOk).map(p => p.conf),
+    order: [{k: "strength"}, {k: "time"}],
+    count: {shown: day.picks.filter(scKeep).length, total: day.picks.length, noun: "picks"},
+  }) : "";
+  const tierBlock = t => { const ps = day.picks.filter(p => (p.tier || "list") === t && scKeep(p));
+    if(scByTime) ps.sort((a, b) => String(a.start || "").localeCompare(String(b.start || "")));
     return ps.length ? `<div class="sc-tier ${t}"><b>${SC_TIER[t]}</b><span>${ps.length} · ${tierNote[t]}</span></div>${ps.map(scRow).join("")}` : ""; };
   const list = `<section class="sc-sec">
     <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3>${tabs}</div>
-    ${day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
+    ${scBar}
+    ${day.picks.length && !day.picks.some(scKeep) ? fbEmpty("scale", "No Scale picks on this day match these filters.")
+      : day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
       : `<div class="empty"><b class="empty-t">No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
     ${off.length ? `<details class="sc-off"><summary>Left off: ${off.length} Daily List football pick${off.length === 1 ? "" : "s"} ${scE(S.book)} does not price for win and both score (${scE(offComps.slice(0, 4).map(c => String(c).split(" · ").pop()).join(", "))}${offComps.length > 4 ? " and more" : ""})</summary><ul>${off.map(o => `<li>${scE(o.pick)}, ${scE(o.comp)}</li>`).join("")}</ul></details>` : ""}
     <p class="sc-foot">Within a tier the order is the chance the Scale bet lands. Football's chance is the model's own number for the fixture and its price the best UK price on file for that bet, named; every other sport's chance is how often picks at that confidence have landed the bet in the site's record, with no price on file yet. "Needs" is the price that breaks even at the chance shown. Under each football bet is the one it replaced, to win with both teams scoring, with ${scE(S.book)}'s price.</p>
@@ -7212,8 +7404,10 @@ function renderScale(){
   const open = day.picks.filter(p => scState(p) === "up" && (p.tier || "list") === "list").length;
   const byT = (S.replay && S.replay.byTier) || {}, tr = t => byT[t] && byT[t].n ? `${byT[t].scale.toLocaleString("en-GB")} of ${byT[t].n.toLocaleString("en-GB")} (${scOf(byT[t].scale, byT[t].n)})` : "";
   const why = tr("list") && tr("reserve") ? `<p class="sc-foot">Why Daily List picks only, outside football: across every sport on this tab their Scale bet has landed ${tr("list")} times in the site's record, the reserve's ${tr("reserve")}. Three legs at the first rate land together about one time in four; three at the second, about one in nine. Football legs come from every fixture ${scE(S.book)} offers, ranked by the model's own chance for each one.</p>` : "";
+  const scGroups = day.groups.filter(g => !SCALE_SPORTS.length || g.legs.some(k => byKey[k] && SCALE_SPORTS.includes(byKey[k].sport)));
   const groups = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scale groups<small>Daily List picks and any football fixture, the most likely to land first</small></h3>
-    ${day.groups.length ? `<div class="sc-groups">${day.groups.map(g => scCard(g, byKey)).join("")}</div>`
+    ${scGroups.length ? `<div class="sc-groups">${scGroups.map(g => scCard(g, byKey)).join("")}</div>`
+      : day.groups.length ? fbEmpty("scale", `No group on this day includes a pick from ${SCALE_SPORTS.map(sportLabel).join(" or ")}.`)
       : `<div class="empty"><b class="empty-t">No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs two legs still to start: Daily List picks, or any football fixture ${scE(S.book)} offers.`}</div>`}
     ${why}
   </section>`;
@@ -7568,6 +7762,7 @@ $("#views").addEventListener("click", e=>{
   $("#racing").hidden = v !== "racing";
   $("#mailer").hidden = v !== "mailer";
   $("#sport").hidden = !sport;
+  if(fixtures) render();   // 23 Nov 2026: the shared filters may have changed on another tab
   if(sport) renderSport(sport);
   if(list) renderList();
   if(today) renderToday();
