@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-review-close: the nightly Card review closes the nights before it (tag pending)
+
+**What changed:** once the night's Card review issue is posted, `tools/card_review_post.py` closes every older open `card-review` issue (`close_older`), so the newest review is the one open review. Fifteen had piled up (#169 to #492), one a night since 9 Nov, none ever closed. Closed issues stay readable, and the same-day refresh still finds the day's issue (it reads open and closed).
+
+**Tested:** `tests/test_card_review_post.py` `CloseOlder` (older reviews closed, tonight's and integrity issues left alone, nothing closed when the post failed), the full suite, nametest. The next 03:40 UTC review is the live check: #169 to #492 should close.
+
+**Files:** `tools/card_review_post.py`, `tests/test_card_review_post.py`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the review's content, the integrity issues, any Card rule or number.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-tag-tips: tap any tag for its explanation; the black sport labels gone (tag pending)
 
 **What changed:** every tag on a row (Banker, Caution, Bookies, Away, Behind .500, Under 80, the tested rate, the William Hill price, the context check, the ⭐, the caution mark) now opens a small card explaining it when tapped, so its explanation can be read on a phone, where the hover text never showed. The tap does not open or close the row; a tap elsewhere, a scroll, Escape or the × closes it. The black sport label on each row (TENNIS, COLLEGE BASKETBALL, NCAA, NBA) is gone: the competition name and the sport's emoji stay (Douglas: "the name and emoji is enough").

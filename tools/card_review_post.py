@@ -41,6 +41,25 @@ def posted_issue(title):
     return next((i for i in got if (i or {}).get("title") == title), None)
 
 
+def close_older(title):
+    """23 Nov 2026: one review was opened a night and none was ever closed, so
+    fifteen card-review issues sat open at once and the newest was one of
+    many. Once tonight's review is posted, every older open card-review issue
+    is closed with a line pointing to it; they stay readable, and
+    posted_issue still finds them (it reads state=all). Returns the numbers
+    closed."""
+    got = gh(f"repos/{REPO}/issues?labels=card-review&state=open&per_page=50")
+    if not isinstance(got, list): return []
+    done = []
+    for i in got:
+        i = i or {}
+        if i.get("pull_request") or not i.get("number") or i.get("title") == title: continue
+        if not str(i.get("title") or "").startswith("Card review "): continue
+        gh("-X", "PATCH", f"repos/{REPO}/issues/{i['number']}", "-f", "state=closed", "-f", "state_reason=completed")
+        done.append(i["number"])
+    return done
+
+
 def pct(x): return f"{x * 100:+.1f}%" if x is not None else "n/a"
 
 
@@ -844,7 +863,10 @@ def main():
         return
     ensure_label("card-review", "c8102e", "The nightly Card review")
     ensure_label("office-backlog", "0e8a16", "A task for the office sprint")
-    gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title={title}", "-f", f"body={body}", "-f", "labels[]=card-review")
+    posted = gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title={title}", "-f", f"body={body}", "-f", "labels[]=card-review")
+    if isinstance(posted, dict) and posted.get("number"):
+        closed = close_older(title)
+        if closed: print(f"closed the older card-review issue(s): {', '.join('#' + str(n) for n in closed)}")
     if f:
         fb = "\n".join(f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:30])
         gh("-X", "POST", f"repos/{REPO}/issues", "-f", f"title=Card integrity: {len(f)} finding(s) on {today}",
