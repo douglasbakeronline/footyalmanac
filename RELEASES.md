@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-lookback-postponed: postponed games dated in the last three days back on the board sooner (tag pending)
+
+**What changed:** a game postponed from a date in the build's three-day look-back (Brazil's CA Mineiro v Corinthians and RB Bragantino v Vasco, 21 Nov) now returns to the board, the Daily List and the Card as soon as API-Football lists it once in the window. Before, it waited until its first date was more than three days old.
+**Evidence:** the 23 Nov 00:10 UTC build's unplayed warning; `fill_untimed` matched a look-back row only to a listing within three days of its date and treated it as postponed only beyond the look-back. The "rescheduled ...: 0" lines for Scotland, Greece, Portugal and Czechia are expected (those games are not yet relisted in the window).
+**Tested:** `tests/test_untimed.py` `LookBackPostponed` (five cases, two fail on the old code), the full suite, nametest, a fast build (no fetch here). The first CI build is the live check.
+**Files:** `build.py` (`fill_untimed`), `tests/test_untimed.py`, `claude/lookback-postponed-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule, model constant or grading; under `postponed_only` a look-back row listed close by keeps the league's own date.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-22-isthmian: Isthmian League Premier v its quotes, second read: no test possible, no change (tag pending)
 
 **What changed:** nothing in the model. Dated note `claude/isthmian-gap-2026-11-22.md`.

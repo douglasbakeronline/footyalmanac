@@ -1012,9 +1012,15 @@ def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False, s
     for r in rows:
         if r.get("hg") is None:
             unplayed[(r["home"], r["away"])] += 1
+    # 23 Nov 2026: a postponed game dated inside the look-back (Brazil's CA
+    # Mineiro v Corinthians and RB Bragantino v Vasco, 21 Nov, on the 23 Nov
+    # 00:10 build's unplayed warning) waited until its first date aged past
+    # `back` before the rescheduled step saw it, so it sat off the board for
+    # up to `window` days. Such a row now takes that step when API-Football
+    # lists no game of its pair within `window` days of its date.
     todo = [r for r in rows if r.get("hg") is None and (
         (not postponed_only and r["date"] >= back and (retime or not r.get("time")))
-        or (r["date"] < back and unplayed[(r["home"], r["away"])] == 1))]
+        or (r["date"] < first and unplayed[(r["home"], r["away"])] == 1))]
     if not todo or not af:
         return 0, []
     mapping, bad = _map_names(rows, af)
@@ -1026,8 +1032,12 @@ def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False, s
     changed = 0
     for r in todo:
         d = date.fromisoformat(r["date"])
-        if r["date"] < back:   # postponed: only a single listing in the window
-            near = [x for x in by_pair.get((r["home"], r["away"]), []) if x["date"] >= first]
+        pair = by_pair.get((r["home"], r["away"]), [])
+        close = [x for x in pair if abs((date.fromisoformat(x["date"]) - d).days) <= window]
+        if r["date"] < back or (r["date"] < first and not close
+                                and unplayed[(r["home"], r["away"])] == 1):
+            # postponed: only a single listing in the window
+            near = [x for x in pair if x["date"] >= first]
             if len(near) != 1 or not near[0].get("time") or len(by_pair[(r["home"], r["away"])]) != 1:
                 continue
             if season_end and near[0]["date"] > season_end:
@@ -1036,8 +1046,9 @@ def fill_untimed(rows, af, start, window=3, retime=None, postponed_only=False, s
             r["timeFrom"], r["rescheduledFrom"] = "apifootball", d.isoformat()
             changed += 1
             continue
-        near = [x for x in by_pair.get((r["home"], r["away"]), [])
-                if abs((date.fromisoformat(x["date"]) - d).days) <= window]
+        if postponed_only:
+            continue      # a look-back row with a listing close by: the league's own date stands
+        near = close
         if len(near) != 1 or not near[0].get("time"):
             continue
         if r["date"] < first and near[0]["date"] < first:
