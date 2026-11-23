@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-winstar: ⭐ likely winners and the day's Most nailed on (tag pending)
+
+**What changed:** a ⭐ now sits beside the picked side's name on every Daily List pick that also passes every check the record backs: football priced under 1.40 (where a price is known), no college pick away, neutral or behind .500, no tennis under 80%, no Bookies mark, no context check "against". It shows on every tab where the row appears. Each day on the Daily List opens with a **Most nailed on** line: the day's strongest starred pick, with its confidence and price; its row's star is a little larger. A key line in the list's intro explains the star. Douglas, 23 Nov 2026, after nine lost slips: "add a ⭐ ... next to all games that meet the likely winner conditions" and "the most nailed on team to win".
+
+**Evidence:** `claude/bet-mistakes-proof-2026-11-23.md`: list 84% v reserve 67% (football); football 1.30-1.40 won 78%, 1.40-1.50 69% (18% drawn); college basketball away 46%, neutral 62%, home 87%; Bookies-marked picks 51% of 193. Nine of the weekend's ten losing legs were off the list, reserve or flagged.
+
+**Tested:** full unittest suite (1,362), nametest, a fast offline build checked in Chrome at 1280px and 400px: 14 stars across the week, three Most nailed on lines, no console errors.
+
+**Files:** `index.html` (`likelyWinner`, `winStar`, `pickPrice`, `computeNailed`, `nailedLine`, `.winstar` / `.nailed` CSS), `claude/likely-winner-star-2026-11-23.md`, `claude/bet-mistakes-proof-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any model number, the list rule, the reserve, the record or grading. Starred picks are not yet graded apart.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-lookback-postponed: postponed games dated in the last three days back on the board sooner (tag pending)
 
 **What changed:** a game postponed from a date in the build's three-day look-back (Brazil's CA Mineiro v Corinthians and RB Bragantino v Vasco, 21 Nov) now returns to the board, the Daily List and the Card as soon as API-Football lists it once in the window. Before, it waited until its first date was more than three days old.
