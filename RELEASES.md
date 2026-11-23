@@ -10,6 +10,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-reserve75: the Daily List's reserve trimmed to 75%+, every row marked Reserve (tag pending)
+
+**What changed:** the reserve fold under each Daily List day now shows only reserve picks at 75% or better, and each of those rows carries a dashed **Reserve** chip under its confidence, so a reserve pick never reads as a list pick. The fold's note says how many under 75% were left off and why. The Sport filter's counts skip the hidden picks. The list's intro paragraph says the same. Douglas, 23 Nov 2026: "I sometimes struggle with being drawn into the reserves", then option 2 of two offered (trim, rather than collapse behind a tap).
+
+**Evidence:** `claude/daily-list-review-2026-11-14.md`: the reserve landed 952 of 1362 (70%) against the list's 414 of 471 (88%); reserve picks at 75%+ 244 of 288 (85%), the rest about 708 of 1074 (66%).
+
+**Tested:** full unittest suite and nametest; a fast offline build checked in Chrome at 1280px and 400px (chips on every reserve row, no console errors).
+
+**Files:** `index.html` (`RESERVE_SHOW_MIN`, `resShown`, the reserve fold in `renderList`, `.resvtag`), `RELEASES.md`.
+
+**Not changed:** the reserve flag, its grading and record, How it went's reserve fold, Starred, Scale, the Daily 2x or any tab that reads the reserve. Display only.
+
+**Roll back:** `git revert` the merge, or set `RESERVE_SHOW_MIN` to 0.
 ## 2026-11-23-startrack: the star's record tracked beside an 85% variant (tag pending)
 
 **What changed:** nothing on the page. `tools/star_record.py` tallies the likely winner star on the graded record (replayed from 28 Sep, live from 23 Nov) beside the variant Douglas chose not to ship (football and tennis stars only at 85%+), and the nightly Card review prints it (`star_section`). Douglas, 23 Nov 2026: "No. But keep track".
