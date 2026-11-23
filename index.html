@@ -1483,6 +1483,16 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .ctier.solid{color:var(--edge);background:var(--edge-soft)}
 .ctier.caution{color:#7a5a12;background:var(--draw-soft)}
 .ctier.leave{background:var(--away);border-color:var(--away);color:#fff}
+/* 23 Nov 2026 (Douglas: the tags' hover text "isnt readible" on mobile): a
+   tap on any tag on a row opens its explanation in a small card (tagTip). */
+#tagtip{position:fixed;z-index:60;max-width:min(320px,calc(100vw - 32px));padding:10px 12px 11px;
+  background:var(--surface);color:var(--ink);border:1px solid var(--ink);border-radius:4px;
+  box-shadow:0 6px 20px rgba(26,21,17,.18);font:400 13.5px/1.5 var(--f-ui)}
+#tagtip[hidden]{display:none}
+#tagtip b{display:block;margin-bottom:3px;font-weight:700;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+#tagtip button{position:absolute;top:4px;right:4px;width:28px;height:28px;border:0;background:none;
+  color:var(--ink-2);font-size:18px;line-height:1;cursor:pointer}
+.conf [title],.comp [title],.club [title],.edgeflag[title]{cursor:pointer}
 .tierkey{margin:6px 0 14px;font-size:13px;line-height:1.7;color:var(--ink-2);max-width:86ch}
 .tierkey .ctier{display:inline-block;margin:0 4px 0 0;vertical-align:1px}
 .tierkey span.it{white-space:nowrap;margin-right:12px}
@@ -3564,6 +3574,49 @@ function listShown(g){   // a sport game flagged for the list: shown there, or l
   const m = G && G.listBooks && G.listBooks[`${g.sport}|${nm(g.home)}|${nm(g.away)}`];
   return !!(m && m.h && m.h >= f);
 }
+/* 23 Nov 2026 (Douglas: "make them clickable to pop up a little text modal
+   explaining what they are"): a tag's title, shown on hover on a desktop, is
+   unreadable on a phone, so a tap on any tag inside a row opens it in a small
+   card under the tag. The tap does not open or close the row. Escape, a tap
+   elsewhere, a scroll or the close button shuts it. */
+const TAG_SEL = ".conf [title], .comp [title], .club [title], .edgeflag[title], .tierkey [title]";
+function tagTipEl(){
+  let el = document.getElementById("tagtip");
+  if(!el){
+    el = document.createElement("div"); el.id = "tagtip"; el.setAttribute("role", "dialog"); el.hidden = true;
+    el.innerHTML = `<button type="button" aria-label="Close">×</button><b></b><div></div>`;
+    el.querySelector("button").addEventListener("click", () => tagTipClose());
+    document.body.appendChild(el);
+  }
+  return el;
+}
+function tagTipClose(){ const el = document.getElementById("tagtip"); if(el && !el.hidden){ el.hidden = true; el._for = null; } }
+function tagTipOpen(t){
+  const el = tagTipEl(), text = t.getAttribute("title") || "";
+  if(el._for === t && !el.hidden){ tagTipClose(); return; }
+  const label = (t.textContent || "").trim() || t.getAttribute("aria-label") || "";
+  el.querySelector("b").textContent = label.length <= 24 ? label : "";
+  el.querySelector("b").hidden = !(label && label.length <= 24);
+  el.querySelector("div").textContent = label && text.startsWith(label + ": ") ? text.slice(label.length + 2) : text;
+  el.hidden = false; el._for = t;
+  const r = t.getBoundingClientRect(), w = el.offsetWidth, h = el.offsetHeight, gut = 16;
+  let left = Math.min(Math.max(gut, r.left + r.width / 2 - w / 2), window.innerWidth - w - gut);
+  let top = r.bottom + 8;
+  if(top + h > window.innerHeight - gut && r.top - h - 8 > gut) top = r.top - h - 8;
+  el.style.left = left + "px"; el.style.top = Math.max(gut, top) + "px";
+}
+document.addEventListener("click", e => {
+  const tip = document.getElementById("tagtip");
+  if(tip && tip.contains(e.target)) return;
+  const t = e.target.closest && e.target.closest(TAG_SEL);
+  if(t && t.closest(".row, .xrow, .rrow, .tierkey")){
+    e.preventDefault(); e.stopPropagation(); tagTipOpen(t); return;
+  }
+  tagTipClose();
+}, true);
+document.addEventListener("keydown", e => { if(e.key === "Escape") tagTipClose(); });
+window.addEventListener("scroll", tagTipClose, {passive: true});
+window.addEventListener("resize", tagTipClose);
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-goview]"); if(!b) return;
   const t = document.querySelector(`#views button[data-view="${b.dataset.goview}"]`);
@@ -4494,7 +4547,7 @@ function collegeTierChip(g){
 function tierKey(){
   const items = Object.keys(TIER_TEXT).map(t => {
     const [label, what] = TIER_TEXT[t], r = tierRecord(t);
-    return `<span class="it"><span class="ctier ${t}">${label}</span>${r ? `${Math.round(r.landed / r.n * 100)}% of ${r.n} v ${Math.round(r.quoted * 100)}% quoted` : ""}</span>`;
+    return `<span class="it"><span class="ctier ${t}" title="${label}: ${what}.">${label}</span>${r ? `${Math.round(r.landed / r.n * 100)}% of ${r.n} v ${Math.round(r.quoted * 100)}% quoted` : ""}</span>`;
   }).join("");
   return `<p class="tierkey"><b>Tiers for picks at 70%+</b>, by venue and the bookmakers' line: ${items}<br>
     Banker: at home, favoured by 12+ points. Solid: at home, no line posted. Caution: a neutral court, or favoured by 6 to 12.
@@ -4957,7 +5010,7 @@ function pinnedRow(g, i){
     <button type="button" class="row trow pinned${k === 0 ? " noread" : ""}${i % 2 ? " alt" : ""}" aria-expanded="false">
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko"><time datetime="${g.start}">${g.timed === false ? "" : localTime(g.start)}</time>
-      <div class="comp"><span class="tour-chip">${name}</span><span>${g.comp || ""}</span>${sportEmoji(g.sport)}${g.sport === "football" ? cautionMark(g.league) : ""}</div></div>
+      <div class="comp"><span>${g.comp || name}</span>${sportEmoji(g.sport)}${g.sport === "football" ? cautionMark(g.league) : ""}</div></div>
     <div class="side"><div class="club${g.side === "h" ? " pick" : ""}"><span>${g.home}</span></div>
       <div class="stat">Pick: ${g.pick}</div></div>
     <div class="barcell">${barHtml}${pastLine(g)}</div>
@@ -5039,8 +5092,7 @@ function sportRow(g, i, showSport, host){
   btn.innerHTML = `
     <div class="rank t${k}">${String(i+1).padStart(2,"0")}</div>
     <div class="ko">${g.timeTbc ? `<time datetime="${g.when.slice(0,10)}" title="No order of play yet: the round starts this day and the match may be played the day after">TBC <small class="ko-local">day not confirmed</small></time>` : `<time datetime="${g.when}">${localTime(g.when)}</time>`}
-      <div class="comp"><span class="tour-chip">${showSport ? name : (g.chip || g.label)}</span>
-        <span>${showSport ? g.label : (g.sub || "")}${g.neutral ? " · neutral venue" : ""}</span>${sportEmoji(g.sport)}</div></div>
+      <div class="comp"><span>${showSport ? (g.label || name) : [g.chip || g.label, g.sub].filter(Boolean).join(" · ")}${g.neutral ? " · neutral venue" : ""}</span>${sportEmoji(g.sport)}</div></div>
     <div class="side"><div class="club${homePick?" pick":""}"><span>${g.home}</span>${winStar(g, g.sport, "h")}</div>
       <div class="stat">${g.statH || ratingStat(g.eloH, g.gamesH, "games")}</div></div>
     <div class="barcell">${tennisBar(ph, pa)}${oppLine(g)}</div>
