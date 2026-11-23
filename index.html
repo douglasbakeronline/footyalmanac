@@ -1193,18 +1193,11 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 }
 button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:pointer}
 .pdetail .why{margin-top:0;padding-top:0;border-top:0}
-/* 21 Nov 2026: the Edge tracker (edgeTracker) */
+/* 21 Nov 2026: the Edge tracker; since 23 Nov 2026 (UX release 6) the look of every card's ledger (ledger()) */
 .et{margin-top:18px;padding-top:14px;border-top:1px solid var(--rule)}
 .et-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .et-head h4{margin:0;font:400 22px/1 var(--f-display);letter-spacing:.02em;text-transform:uppercase}
 .et-head h4 small{display:block;margin-top:4px;font:500 12px var(--f-ui);letter-spacing:0;text-transform:none;color:var(--mute)}
-.et-stats{margin-top:12px;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
-.et-s{padding:10px 12px 9px;display:flex;flex-direction:column;gap:3px}
-.et-s+.et-s{border-left:1px solid var(--rule-soft)}
-.et-s span{font:600 var(--t-xs) var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute)}
-.et-s b{font:400 var(--t-xl)/1 var(--f-display);color:var(--ink)}
-.et-s b.pos{color:var(--edge)} .et-s b.neg{color:var(--away)}
-.et-s small{font:500 12px var(--f-num);color:var(--ink-2)}
 .et-chart{margin-top:14px;padding:0 10px 0 34px}
 .et-plot{position:relative;height:170px}
 .et-plot svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
@@ -1232,8 +1225,6 @@ button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:p
 .et-dots i{width:8px;height:8px;border-radius:50%}
 .et-dots i.w{background:var(--edge)} .et-dots i.l{background:var(--away)}
 .et-dots i.v{background:var(--mute)}
-.skt{margin-top:18px}
-.skt .et-area{fill:var(--ink);opacity:.05}
 .et-t.rep{background:transparent;border-style:dashed}
 .et-day .skt-legs li{grid-template-columns:minmax(0,1fr) auto}
 .et-u{font:600 var(--t-xs) var(--f-num)}
@@ -1252,12 +1243,67 @@ button.row.pinned{width:100%;text-align:left;font:inherit;color:inherit;cursor:p
 .et-note{margin:12px 0 0;font-size:var(--t-sm);line-height:1.45;color:var(--ink-2)}
 .et-note b{color:var(--ink)}
 @media (max-width:600px){
-  .et-stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .et-s:nth-child(3){border-left:0}
-  .et-s:nth-child(n+3){border-top:1px solid var(--rule-soft)}
-  .et-s b{font-size:22px}
   .et-plot{height:150px}
 }
+/* 23 Nov 2026 (UX release 6): the ledger, one tracker for every card. The headline is one
+   sentence in one pattern; the line ends on an emphasised dot with its value; the strip's
+   tiles carry the day's result as a top rule (won, lost, void, nothing that day). */
+.led-head{margin:var(--s3) 0 0;font:500 var(--t-md)/1.4 var(--f-ui);color:var(--ink)}
+.led-head b{font-weight:700}
+.led-head b.pos{color:var(--edge)} .led-head b.neg{color:var(--away)}
+.led-sub{margin:var(--s1) 0 0;font-size:var(--t-sm);line-height:1.45;color:var(--ink-2)}
+.led-chart{padding-right:64px}
+.led-end{position:absolute;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--edge);border:2px solid var(--surface);box-shadow:0 0 0 1px var(--edge);pointer-events:none}
+.led-end.neg{background:var(--away);box-shadow:0 0 0 1px var(--away)}
+.led-endv{position:absolute;left:100%;margin:-9px 0 0 9px;font:600 var(--t-sm) var(--f-num);font-style:normal;color:var(--edge);white-space:nowrap;pointer-events:none}
+.led-endv.neg{color:var(--away)}
+.led-endv.below{margin-top:4px}
+.et-dot.led-sel{border-color:var(--ink)}
+.led .et-col{transform:none}
+.led-t{border-top-width:1px;box-shadow:inset 0 3px 0 var(--rule)}
+.led-t.won{box-shadow:inset 0 3px 0 var(--edge)}
+.led-t.lost{box-shadow:inset 0 3px 0 var(--away)}
+.led-t.void{box-shadow:inset 0 3px 0 var(--mute)}
+.led-t.placed{box-shadow:inset 0 3px 0 var(--draw)}
+.led-t.on{border-color:var(--ink);background:var(--yellow-soft)}
+.led-t.empty{background:transparent;border-style:dashed;color:var(--mute);cursor:default;opacity:.7}
+.led-t.empty .et-d b{color:var(--mute)}
+.led-t:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.et-dots i.pl{background:var(--draw)}
+.led-keys{margin:var(--s1) 0 0;font-size:12px;color:var(--mute)}
+.led-keys i{display:inline-block;width:14px;height:0;border-top:3px solid var(--rule);vertical-align:middle;margin:0 4px 0 8px}
+.led-keys i:first-child{margin-left:0}
+.led-keys i.won{border-color:var(--edge)} .led-keys i.lost{border-color:var(--away)} .led-keys i.void{border-color:var(--mute)}
+.led-keys i.empty{border-top:1px dashed var(--mute);height:3px} .led-keys i.rep{border-top:1px dashed var(--ink-2);height:3px}
+.led-fold{margin-top:var(--s4);border-top:1px solid var(--rule)}
+.led-fold > summary{display:flex;flex-wrap:wrap;align-items:baseline;gap:var(--s1) var(--s3);padding:var(--s3) 0 var(--s2);cursor:pointer;list-style:none}
+.led-fold > summary::-webkit-details-marker{display:none}
+.led-fold > summary::before{content:"\25B8";font-size:var(--t-xs);color:var(--mute)}
+.led-fold[open] > summary::before{content:"\25BE"}
+.led-ft{font:400 var(--t-md)/1 var(--f-display);letter-spacing:.03em;text-transform:uppercase}
+.led-fh{font-size:var(--t-sm);color:var(--ink-2)}
+.led-fh b.pos{color:var(--edge)} .led-fh b.neg{color:var(--away)}
+.led-fold > .et{margin-top:0;padding-top:0;border-top:0}
+.led-fold > .et .et-head h4{display:none}
+.led-fold > .et .et-head{justify-content:flex-end}
+.led-fold[open] > summary .led-fh{display:none}
+.led-fold > .et .led-head{margin-top:0}
+.tb-ledger .et{margin-top:var(--s2)}
+/* the Cards board in How it went */
+.cboard{margin-top:var(--s5)}
+.cb-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.cb-tbl{min-width:640px}
+.cb-tbl th[scope=row]{font:600 var(--t-base) var(--f-ui);white-space:nowrap}
+.cb-tbl th[scope=row] a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:2px}
+.cb-tbl th small,.cb-tbl td small{display:block;font:500 var(--t-xs) var(--f-ui);color:var(--mute)}
+.cb-tbl td.n{text-align:right}
+.cb-tbl td.r{white-space:normal;min-width:150px;font-family:var(--f-ui)}
+.cb-tbl tr.quiet th,.cb-tbl tr.quiet td{color:var(--mute);font-family:var(--f-ui);white-space:normal}
+.cb-spark{display:block}
+.cb-spark line{stroke:var(--rule);stroke-width:1}
+.cb-spark polyline{fill:none;stroke-width:1.5;stroke-linejoin:round}
+.cb-spark .pos{stroke:var(--edge)} .cb-spark .neg{stroke:var(--away)}
+.cb-spark circle.pos{fill:var(--edge);stroke:none} .cb-spark circle.neg{fill:var(--away);stroke:none}
 .tb-pp small{display:block;font:500 var(--t-xs) var(--f-num);color:var(--mute)}
 /* 10 Nov 2026: "Place now" at the top of the Bets tab (signalsPanel) */
 .sig{margin:14px 0 6px;max-width:760px;border:1px solid var(--ink);background:var(--surface);padding:14px 16px 12px}
@@ -1808,15 +1854,6 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-table td.s{font-family:var(--f-num);font-weight:600;color:var(--edge);white-space:nowrap}
 .sc-table td small{display:block;font-size:12px;color:var(--mute)}
 .sc-table tr.sub td{color:var(--ink-2)}
-.sc-side{flex:1 1 280px;min-width:0;border:1px solid var(--rule);background:var(--surface);padding:12px 14px}
-.sc-side h4{margin:0;font:600 12px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
-.sc-side b.big{display:block;margin-top:8px;font-family:var(--f-display);font-weight:400;font-size:22px;text-transform:uppercase}
-.sc-side p{margin:6px 0 0;font-size:13.5px;color:var(--ink-2)}
-.sc-side ul{list-style:none;margin:8px 0 0;padding:0;font-size:13.5px}
-.sc-side li{padding:5px 0;border-top:1px solid var(--rule-soft);display:flex;gap:8px;justify-content:space-between}
-.sc-side li span{min-width:0;color:var(--ink-2)}
-.sc-side li em{font-style:normal;font-family:var(--f-num);font-size:var(--t-sm);white-space:nowrap}
-.sc-side li em.w{color:var(--edge);font-weight:600} .sc-side li em.l{color:var(--away)}
 @media (max-width:760px){
   .sc-cols{display:none}
   .sc-row{grid-template-columns:30px minmax(0,1fr) auto;gap:6px 10px;align-items:start;padding:11px 0}
@@ -2116,41 +2153,13 @@ footer b{color:var(--ink-2)}
 .m-lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1;text-transform:uppercase;margin:4px 0 0}
 .m-lede p{margin-top:10px;font-size:17px;line-height:1.5;color:var(--ink-2)}
 
-/* 17 Nov 2026: the Daily 2x and its tracker */
+/* 17 Nov 2026: the Daily 2x (its tracker is the ledger since 23 Nov 2026, UX release 6) */
 .tb-daily{border-top:4px solid var(--red,#c8102e)}
-.dx{margin-top:14px}
-.dx-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line,#ccc);border:1px solid var(--line,#ccc)}
-.dx-s{background:#fff;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
-.dx-s b{font:400 28px/1 Anton,Impact,sans-serif}
-.dx-s span{font-size:12px;text-transform:uppercase;letter-spacing:.04em}
-.dx-s small{font-size:12px;color:var(--mute,#666)}
-.dx-days{list-style:none;margin:12px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
-.dx-t{border:1px solid var(--line,#ccc);background:#fff;padding:6px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center}
-.dx-t.won{background:#e6f4ea;border-color:#1e7b34}
-.dx-t.lost{background:#fbe9e9;border-color:#b3261e}
-.dx-d{font-size:var(--t-xs);text-transform:uppercase;line-height:1}
-.dx-d b{display:block;font:400 var(--t-lg)/1.1 Anton,Impact,sans-serif}
-.dx-dots{display:flex;flex-wrap:wrap;justify-content:center;gap:3px;min-height:9px}
-.dx-dots i,.dx-key i{display:inline-block;width:9px;height:9px;border-radius:50%;background:#bbb}
-.dx-dots i.w,.dx-key i.w{background:#1e7b34}
-.dx-dots i.l,.dx-key i.l{background:#b3261e}
-.dx-o{font-weight:700;font-size:var(--t-sm)}
-.dx-r{font-size:var(--t-xs);color:var(--mute,#666)}
-.dx-key{font-size:12px;color:var(--mute,#666);margin:8px 0 0}
-.dx-key i{vertical-align:-1px;margin:0 2px 0 8px}
-.dx-none{font-size:var(--t-sm);color:var(--mute,#666)}
-@media(max-width:600px){.dx-stats{grid-template-columns:repeat(2,1fr)}.dx-s b{font-size:22px}}
 /* ---------- horse racing (19 Nov 2026, racing.py, on trial): only the new pieces ---------- */
 .rc-fit{display:inline-block;width:96px;height:9px;background:#f0f2f0;vertical-align:middle;box-shadow:inset 0 0 0 1px rgba(16,14,12,.18)}
 .rc-fit i{display:block;height:100%;background:var(--yellow)}
 .rc-fit.weak i{background:var(--red)}
 @media (max-width:700px){.rc-fit{width:64px}}
-.sc-dot.rc-placed{background:var(--yellow-mid);border-color:var(--draw)}
-.rc-days{gap:0;row-gap:10px;align-items:flex-end}
-.rc-day{display:inline-flex;flex-direction:column;align-items:center;gap:5px;padding:0 7px;border-left:1px solid var(--rule)}
-.rc-day:first-child{border-left:0;padding-left:0}
-.rc-dd{display:flex;gap:3px;align-items:center;min-height:16px}
-.rc-day small{font:500 10px var(--f-num);color:var(--mute);white-space:nowrap}
 .row.rc-nr .club{text-decoration:line-through;color:var(--mute)}
 </style>
 </head>
@@ -6049,6 +6058,8 @@ function resGrid(){
     ["football", "Football", rec(R && R.overall)], ["tennis", "Tennis", rec(TT && TT.overall)]];
   Object.entries((SD && SD.sports) || {}).forEach(([k, sp]) =>
     cells.push([k, sp.name, rec(SR && SR.bySport && SR.bySport[k])]));
+  // 23 Nov 2026 (UX release 6): every card on one table, the one place to compare them
+  cells.push(["cards", "Cards", `${LED_ORDER.filter(([id]) => LEDGER_CARDS[id].ok()).length} cards`]);
   return `<div class="views standalone resgrid" id="resSport">${cells.map(([k, label, r]) =>
     `<button data-sport="${k}" aria-pressed="${resState.sport === k}"${r ? "" : ' class="quiet"'}>${label}<i>${r || "no results yet"}</i></button>`).join("")}</div>`;
 }
@@ -6079,6 +6090,12 @@ function renderResults(){
       setDay(b.dataset.day);
       const h = host.querySelector(".day-head"); if(h) scrollClear(h);
     });
+    $("#resSport").addEventListener("click", resBoardClick);
+    return;
+  }
+
+  if(resState.sport === "cards"){
+    host.innerHTML = sportTabs + cardsBoard();
     $("#resSport").addEventListener("click", resBoardClick);
     return;
   }
@@ -6436,35 +6453,7 @@ function dailySection(day){
   const g = day.groups.find(x => x.name === "Daily 2x");
   return `<section class="tb-win tb-daily"><h3 class="tb-h">Today's 2x <small>one slip a day, the model's strongest picks at 1.10+, to 2x · on trial</small></h3>
     ${g && !betsOk(g) ? betsEmpty("2x") : g ? `<div class="og-grid">${ogCard(g)}</div>` : `<div class="empty">No 2x for ${fmtDay(day.date)} yet: no priced pick at 1.10+ has come in. It is rebuilt on every build.</div>`}
-    ${dailyTracker()}</section>`;
-}
-function dailyTracker(){
-  const days = ((OG.record || {}).days || []).map(d => ({date: d.date, g: (d.groups || []).find(x => x.name === "Daily 2x")})).filter(d => d.g)
-    .sort((a, b) => a.date < b.date ? -1 : 1).slice(-21);
-  const R = (OG.record || {}).cardDaily || {};
-  const ls = s => s === "won" ? "w" : s === "lost" ? "l" : s === "void" ? "v" : "p";
-  const tiles = days.map(({date, g}) => {
-    const st = g.status || "pending";
-    const dots = (g.legs || []).map(l => `<i class="${ls(l.status)}" title="${ogEsc(l.pick)} ${l.odds}${l.status ? " · " + l.status : ""}"></i>`).join("");
-    const dt = new Date(date + "T12:00:00Z");
-    return `<li class="dx-t ${st}"><span class="dx-d">${dt.toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"})}<b>${dt.getUTCDate()}</b></span>
-      <span class="dx-dots">${dots}</span><span class="dx-o">${Number(g.odds).toFixed(2)}${g.short ? "*" : ""}</span>
-      <span class="dx-r">${st === "won" ? "Won" : st === "lost" ? "Lost" : st === "void" ? "Void" : "To come"}</span></li>`;
-  }).join("");
-  const set = R.settled || 0, won = R.won || 0, ret = set ? (R.returned - R.staked) / R.staked : null;
-  const legsN = R.legs || 0, legsW = R.legsWon || 0;
-  const stat = (k, v, sub) => `<div class="dx-s"><b>${v}</b><span>${k}</span>${sub ? `<small>${sub}</small>` : ""}</div>`;
-  return `<div class="dx">
-    <div class="dx-stats">
-      ${stat("slips won", set ? `${won}/${set}` : "–", set ? `${Math.round(won / set * 100)}%` : "from today")}
-      ${stat("expected", set ? (R.expected || 0).toFixed(1) : "–", "on the model's chance")}
-      ${stat("return", ret == null ? "–" : `${ret >= 0 ? "+" : ""}${Math.round(ret * 100)}%`, "one unit a slip")}
-      ${stat("picks landed", legsN ? `${Math.round(legsW / legsN * 100)}%` : "–", legsN ? `${legsW} of ${legsN}` : "")}
-    </div>
-    ${tiles ? `<ol class="dx-days">${tiles}</ol>` : `<p class="dx-none">The tracker fills from today, one tile a day.</p>`}
-    <p class="dx-key"><i class="w"></i> landed <i class="l"></i> lost <i class="p"></i> to come · each tile one day's slip, its price below${days.some(d => d.g.short) ? " (* under 2x that day)" : ""}</p>
-    <p class="tb-snap"><b>What we're learning.</b> Before the tab, the same rule replayed on 3 Oct to 16 Nov: 28 slips in 33 days, 14 won (50%), +22% at the price recorded, about four picks a slip. Ranking picks by the model's strength beat ranking by the shortest price (36%) on the same picks, which is why the model picks the order. Every pick above 1.15 has landed slightly under its price, so the slip wins on the model's ordering, not on value. We judge it at 50 settled slips: won against expected, and the return.</p>
-  </div>`;
+    ${ledgerFold("daily")}</section>`;
 }
 function ogRecord(compact){
   const R = OG && OG.record;
@@ -6485,7 +6474,7 @@ function ogRecord(compact){
     const chips = d.groups.map(g => `<span class="og-chip ${g.status}" title="${g.window ? g.window + " window" : g.rank === "alternative" ? "Alternative" : "First choice"}${g.wide ? ", wider rule" : ""}${g.late ? ", added after the lock" : ""}">${g.window ? (g.window === "Day" ? "" : g.window + " ") + String(g.name).replace("Card ", "") + (g.seq > 1 ? " (2nd)" : "") : g.name}${g.rank === "alternative" ? " alt" : ""}${mark(g)} ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]}${g.status === "pending" ? ` ${g.legsWon}/${g.legs.length}` : ""}</span>`).join("");
     const groups = d.groups.map(g => `<h5>${g.window ? g.window + " · " : ""}${g.name}${g.rank === "alternative" ? " (alternative)" : ""}${mark(g)} · ${g.odds.toFixed(2)} · ${OG_LABEL[g.status]} · ${g.legsWon} won, ${g.legsLost} lost${g.legsPending ? `, ${g.legsPending} to settle` : ""}${g.status === "won" ? ` · paid ${g.paid.toFixed(2)}` : ""}</h5>
       ${g.legs.map(l => `<div class="og-rl"><span class="s ${l.status}">${OG_LABEL[l.status]}</span><span><b>${ogEsc(l.pick)}</b> <small>${ogEsc(l.event)}</small><br>${ogSearch(l)}</span>${l.est ? `<span class="o est" title="Estimated from the model, not a bookmaker price"><em>est.</em>${l.odds.toFixed(2)}</span>` : `<span class="o">${l.odds.toFixed(2)}</span>`}<span class="r" title="${ogEsc(l.result || "")}">${ogEsc(l.result || "")}</span></div>`).join("")}`).join("");
-    return `<details class="og-rd"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
+    return `<details class="og-rd" data-date="${d.date}"${i === openAt ? " open" : ""}><summary><h4>${fmtDay(d.date)}</h4>${chips}</summary><div class="og-rg">${groups}</div></details>`;
   }).join("");
   // 25 Oct 2026: on the merged Bets page the scoreboard tiles sit above
   // (tbRecord), so only the day-by-day history is drawn here.
@@ -6792,12 +6781,9 @@ function tbRecord(){
     : down ? ["warn", `Winning as often as expected (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), but that is not enough to make money at these prices.`]
     : ["ok", `Winning as often as expected or better (${zr > 0 ? "+" : ""}${zr.toFixed(1)} standard errors), and ahead. It is retired only at ${fz} under on ${fn}+ groups.`];
   const ruleLine = live ? `<p class="tb-rule-line"><b>Card rule ${C.rule}</b>${liveFrom ? `, from ${liveFrom}` : ""}: ${ogEsc(RULE_WHAT[String(C.rule)] || "the current rule")}. The figures below are this rule's own groups; every rule since 25 Oct is under More numbers.</p>` : "";
-  const head = ruleLine + (k.settled ? `<div class="tb-sum">
-      <div class="tb-sum-n"><b>${k.won}</b><span>won</span></div>
-      <div class="tb-sum-n"><b>${k.lost}</b><span>lost</span></div>
-      <div class="tb-sum-t"><p><b>${Math.round(k.won / k.settled * 100)}% of ${k.settled} groups won</b>, against ${k.expected.toFixed(1)} expected${k.pending ? `; ${k.pending} to settle` : ""}.</p>
-        <p>At the page's stakes: <b>${ret(k)}</b> units staked${k.returnedBest != null ? `; ${pc(k.returnedBest, k.staked)} at the best prices, one unit a group` : ""}.</p></div>
-    </div>
+  // 23 Nov 2026 (UX release 6): the won / lost / return headline is the Card's ledger, under the card;
+  // the verdict, the sport table and More numbers stay here.
+  const head = ruleLine + (k.settled ? `
     <p class="tb-verdict ${verdict[0]}">${verdict[1]}</p>`
     : `<p class="tb-verdict">No settled groups yet${live ? " under this rule" : ""}. A group is won only when every pick wins; a draw is a loss.</p>`);
   const sp = Object.entries((live && R.cardLiveLegsBySport) || R.cardLegsBySport || {});
@@ -6876,102 +6862,9 @@ function slipSection(date){
     <details class="how"><summary>Landed against the price, by sport and band</summary>
       <table class="tb-bands"><thead><tr><th>Sport</th><th>Price</th><th>Picks</th><th>Landed</th><th>Implied</th><th>Return a leg</th></tr></thead><tbody>${bandRows}</tbody></table>
       <p class="tb-snap">Graded picks at 62%+ with a pre-start price on the results ledger; return at the price recorded (William Hill's where it had one, else the last average). A tally of what happened, never fitted.</p></details>
-    ${slipTracker()}
+    ${ledgerFold("slip")}
   </section>`;
 }
-
-/* 22 Nov 2026 (Douglas: "I like the slip section in bets tab - but is there a
-   visual tracker for performance?"): the slip's settled record as a running
-   profit line, one unit on every slip, beside the line it was expected to
-   make (each slip's tested chance times its price, less the stake), with a
-   strip of slip days to tap through. Live slips from slip.json record.recent;
-   days before the slip went live (SLIP.from) are the rule walked forward over
-   the ledger (replayDays), marked. Reuses the Edge tracker's look. Display
-   only; nothing here is fitted. */
-const SKT = {range: "all", day: null};
-function slipTracker(){
-  if(!SLIP) return "";
-  const rec = (SLIP.record && SLIP.record.recent) || [];
-  const live = rec.map(r => ({d: r.date, st: r.state, price: r.price, ret: r.ret, chance: r.chance, legs: r.legs || [], live: true}));
-  const seen = new Set(live.map(r => r.d));
-  const rep = (SLIP.replayDays || []).filter(r => ["won", "lost", "void"].includes(r.state) && !seen.has(r.date))
-    .map(r => ({d: r.date, st: r.state, price: r.price, ret: r.ret, chance: r.chance, legs: r.legs || [], live: false}));
-  const all = rep.concat(live).sort((a, b) => a.d.localeCompare(b.d));
-  if(!all.length) return `<div class="et" id="skt"><div class="et-head"><h4>Tracker</h4></div>
-    <p class="et-note">The tracker fills once the first slip is settled, the morning after its last leg plays.</p></div>`;
-  const days = SKT.range === "14" ? all.filter(d => d.d >= isoAdd(all[all.length - 1].d, -13)) : SKT.range === "live" ? all.filter(d => d.live) : all;
-  const shown = days.length ? days : all;
-  const day = shown.find(d => d.d === SKT.day) || shown[shown.length - 1];
-  const sign = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(2);
-  const signP = x => (x >= 0 ? "+" : "\u2212") + Math.abs(Math.round(x * 1000) / 10).toFixed(1) + "%";
-  const net = d => (d.ret == null ? 0 : d.ret - 1);
-  const exp = d => d.chance != null && d.st !== "void" ? d.chance * d.price - 1 : 0;
-  let cn = 0, ce = 0;
-  const pts = [{n: 0, e: 0}].concat(shown.map(d => ({d: d.d, n: (cn += net(d)), e: (ce += exp(d)), live: d.live})));
-  const settled = shown.filter(d => d.st !== "void"), won = settled.filter(d => d.st === "won").length;
-  const expWon = settled.reduce((a, d) => a + (d.chance || 0), 0);
-  const stat = (k, v, sub, cls) => `<div class="et-s"><span>${k}</span><b${cls ? ` class="${cls}"` : ""}>${v}</b><small>${sub}</small></div>`;
-  const W = 600, H = 160, lo = Math.min(0, ...pts.map(p => Math.min(p.n, p.e))), hi = Math.max(0, ...pts.map(p => Math.max(p.n, p.e)));
-  const pad = Math.max(1, (hi - lo) * 0.08), y0 = lo - pad, y1 = hi + pad;
-  const X = i => i / Math.max(1, pts.length - 1) * W, Y = v => H - (v - y0) / (y1 - y0) * H, yp = v => (Y(v) / H * 100).toFixed(2) + "%";
-  const line = k => pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
-  const area = `${line("n")}L${W},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z`;
-  const step = (hi - lo) > 24 ? 10 : (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
-  const ticks = []; for(let v = Math.ceil(y0 / step) * step; v <= y1; v += step) ticks.push(v);
-  const liveAt = pts.findIndex(p => p.live);
-  const liveX = liveAt > 1 ? (X(liveAt - 1) + X(liveAt)) / 2 : null;
-  const cols = shown.map((d, i) => `<button class="et-col${d.d === day.d ? " on" : ""}" data-skt-day="${d.d}" style="left:${(X(i + 1) / W * 100).toFixed(2)}%;width:${(100 / Math.max(1, pts.length - 1)).toFixed(2)}%" aria-label="${fmtDay(d.d)}"></button>`).join("");
-  const selI = shown.indexOf(day) + 1, last = pts[pts.length - 1];
-  const chart = `<div class="et-chart" role="img" aria-label="Running profit, one unit a slip: ${sign(last.n)} units, against ${sign(last.e)} expected">
-      <div class="et-plot">
-        ${ticks.map(v => `<i class="et-tick${v === 0 ? " zero" : ""}" style="top:${yp(v)}"><em>${v > 0 ? "+" : v < 0 ? "\u2212" : ""}${Math.abs(v)}</em></i>`).join("")}
-        <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
-          <path class="et-area" d="${area}"/>
-          <path class="et-avg" d="${line("e")}" vector-effect="non-scaling-stroke"/>
-          <path class="et-best" d="${line("n")}" vector-effect="non-scaling-stroke"/>
-        </svg>
-        ${liveX != null ? `<i class="et-live" style="left:${(liveX / W * 100).toFixed(2)}%"><em>Live</em></i>` : ""}
-        <i class="et-dot" style="left:${(X(selI) / W * 100).toFixed(2)}%;top:${yp(pts[selI].n)}"></i>
-        ${cols}
-      </div>
-      <div class="et-x"><span>${fmtShort(shown[0].d)}</span><span>${fmtShort(shown[shown.length - 1].d)}</span></div>
-    </div>`;
-  const word = st => st === "won" ? "Won" : st === "lost" ? "Lost" : "Void";
-  const tiles = shown.map(d => { const u = net(d);
-    return `<button class="et-t${d.d === day.d ? " on" : ""}${d.live ? "" : " rep"}" data-skt-day="${d.d}"><span class="et-d">${new Date(d.d + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"})}<b>${new Date(d.d + "T12:00:00").getDate()}</b></span>
-      <span class="et-dots"><i class="${d.st === "won" ? "w" : d.st === "lost" ? "l" : "v"}"></i></span>
-      <span class="et-u ${u >= 0 ? "pos" : "neg"}">${sign(u)}</span></button>`; }).join("");
-  const legRow = s => { const m = String(s).match(/^(.*)\s(\d+(?:\.\d+)?)$/);
-    return `<li><span class="et-m"><b>${ogEsc(m ? m[1] : s)}</b></span><span class="et-p">${m ? Number(m[2]).toFixed(2) : ""}</span></li>`; };
-  const dn = net(day);
-  return `<div class="et skt" id="skt">
-    <div class="et-head"><h4>Tracker <small>one unit on every slip</small></h4>
-      <div class="seg seg--sm et-seg" role="group" aria-label="Range"><button data-skt-range="all" class="${SKT.range === "all" ? "on" : ""}" aria-pressed="${SKT.range === "all"}">All</button><button data-skt-range="live" class="${SKT.range === "live" ? "on" : ""}" aria-pressed="${SKT.range === "live"}">Live only</button><button data-skt-range="14" class="${SKT.range === "14" ? "on" : ""}" aria-pressed="${SKT.range === "14"}">Last 14 days</button></div></div>
-    <div class="et-stats">
-      ${stat("Slips won", `${won}/${settled.length}`, `${expWon.toFixed(1)} expected`)}
-      ${stat("Profit", sign(last.n), `${signP(last.n / Math.max(1, shown.length))} a slip`, last.n >= 0 ? "pos" : "neg")}
-      ${stat("Expected", sign(last.e), "at each slip's tested chance")}
-      ${stat("Live slips", shown.filter(d => d.live).length, `${shown.filter(d => !d.live).length} replayed`)}
-    </div>
-    ${chart}
-    <p class="et-key"><i class="best"></i>profit <i class="avg"></i>expected · each step a slip${liveX != null ? " · left of Live: the rule walked forward over the results ledger, never published" : ""}</p>
-    <div class="et-strip" id="sktStrip">${tiles}</div>
-    <div class="et-day"><h5>${fmtDay(day.d)} · ${word(day.st)} at ${Number(day.price).toFixed(2)}${day.live ? "" : " · replayed"} <span class="${dn >= 0 ? "pos" : "neg"}">${sign(dn)} units</span></h5><ol class="skt-legs">${day.legs.map(legRow).join("")}</ol></div>
-    <p class="et-note">${settled.length < 30 ? `<b>Too few to read.</b> ${settled.length} settled slip${settled.length === 1 ? "" : "s"}: one win moves the line by two or three units. ` : ""}The slip is judged at ${((SLIP.record || {}).gate || {}).need ? SLIP.record.gate.need.n : 100} settled slips, not before.</p>
-  </div>`;
-}
-function sktDraw(){
-  const el = document.getElementById("skt"); if(!el) return;
-  el.outerHTML = slipTracker();
-  const s = document.getElementById("sktStrip"), on = s && s.querySelector(".on");
-  if(s && on) s.scrollLeft = Math.max(0, on.offsetLeft - s.offsetLeft - s.clientWidth + on.offsetWidth + 8);
-}
-document.addEventListener("click", e => {
-  const r = e.target.closest("[data-skt-range]");
-  if(r){ SKT.range = r.dataset.sktRange; SKT.day = null; sktDraw(); return; }
-  const d = e.target.closest("[data-skt-day]");
-  if(d){ SKT.day = d.dataset.sktDay; sktDraw(); }
-});
 
 function edgeSection(date){
   const flagged = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge);
@@ -7006,101 +6899,411 @@ function edgeSection(date){
       <p class="tb-snap"><b>Over five seasons, at 9.0+</b> (2022-23 to 2026-27, football-data prices, the replay never tuned on them): the day's most likely Edge pick as a single won 388 of 459, +3.0% at the average price and +5.4% at the best; the double +0.1% and +4.6%; every Edge pick of the day as one slip won 139 of 252, +2.4% and +9.7%, ahead at the best price in four seasons of five (2022-23 lost 12%). Trebles and longer swing from -46% to +99% a season: bigger, not better.</p>
       ${singles ? `<p class="tb-snap">Latest seasons, singles: ${singles}.${edgeRecordText(" On this site")} Take the best price; at the average one the edge is thin, and a short run can lose.</p>` : `<p class="tb-snap">${edgeRecordText("On this site")} Take the best price; a short run can lose.</p>`}`
       : flagged.length ? betsEmpty("Edge picks") : `<div class="empty">No Edge picks on ${fmtDay(date)} yet. They are rare by design (about five a week, mostly at weekends) and appear as the bookmakers price the games.</div>`}
-    ${edgeTracker()}
+    ${ledgerFold("edge")}
   </section>`;
 }
 
-/* 21 Nov 2026 (Douglas: "a visual tracker performance graph underneath that
-   section. Either see all time or be able to scroll two weeks back"): the
-   Edge flag's graded record as a running profit line, one unit on every
-   flagged pick, at the best and the average archived price, with a strip of
-   days to tap through. From score.edge_record "days" (record.json, in the
-   inlined summary). Days before 10 Nov are the rule replayed on the prices
-   archived before kick-off, marked; nothing here is fitted. Display only. */
-const ETK = {range: "all", day: null};
-function edgeTracker(){
-  const all = (RS && RS.edge && RS.edge.days) || [];
-  if(!all.length) return `<div class="et" id="et"><div class="et-head"><h4>Tracker</h4></div>
-    <p class="et-note">The tracker fills once the first Edge picks are graded, the morning after they play.</p></div>`;
-  const days = ETK.range === "14" ? all.filter(d => d.d >= isoAdd(all[all.length - 1].d, -13)) : all;
-  const day = days.find(d => d.d === ETK.day) || days[days.length - 1];
-  const sign = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x).toFixed(2);
-  const signP = x => (x >= 0 ? "+" : "\u2212") + Math.abs(Math.round(x * 1000) / 10).toFixed(1) + "%";
-  const net = (ps, i) => ps.reduce((a, p) => a + (p[4] ? p[i] - 1 : -1), 0);   // i 3 best, 2 average
-  // running totals, one point a day, starting from zero before the first day
-  let cb = 0, ca = 0;
-  const pts = [{b: 0, a: 0}].concat(days.map(d => ({d: d.d, b: (cb += net(d.p, 3)), a: (ca += net(d.p, 2)), live: d.p.some(p => p[5])})));
-  const picks = days.flatMap(d => d.p), n = picks.length, won = picks.filter(p => p[4]).length;
-  const stat = (k, v, sub, cls) => `<div class="et-s"><span>${k}</span><b${cls ? ` class="${cls}"` : ""}>${v}</b><small>${sub}</small></div>`;
-  const split = (lo, hi) => { const ps = picks.filter(p => p[6] != null && p[6] >= lo && p[6] < hi);
-    return ps.length ? `${ps.filter(p => p[4]).length} of ${ps.length} won, ${signP(net(ps, 3) / ps.length)} at the best price` : "none yet"; };
-  // the chart: SVG for the lines, HTML for every label so type never stretches
-  const W = 600, H = 160, lo = Math.min(0, ...pts.map(p => Math.min(p.a, p.b))), hi = Math.max(0, ...pts.map(p => Math.max(p.a, p.b)));
-  const pad = Math.max(1, (hi - lo) * 0.08), y0 = lo - pad, y1 = hi + pad;
-  const X = i => i / (pts.length - 1) * W, Y = v => H - (v - y0) / (y1 - y0) * H, yp = v => (Y(v) / H * 100).toFixed(2) + "%";
-  const line = k => pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
-  const area = `${line("b")}L${W},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z`;
-  const step = (hi - lo) > 24 ? 10 : (hi - lo) > 10 ? 5 : (hi - lo) > 4 ? 2 : 1;
-  const ticks = []; for(let v = Math.ceil(y0 / step) * step; v <= y1; v += step) ticks.push(v);
-  const liveAt = pts.findIndex(p => p.live);
-  const liveX = liveAt > 0 ? (X(liveAt - 1) + X(liveAt)) / 2 : null;
-  const cols = days.map((d, i) => `<button class="et-col${d.d === day.d ? " on" : ""}" data-et-day="${d.d}" style="left:${(X(i + 1) / W * 100).toFixed(2)}%;width:${(100 / (pts.length - 1)).toFixed(2)}%" aria-label="${fmtDay(d.d)}"></button>`).join("");
-  const selI = days.indexOf(day) + 1;
-  const chart = `<div class="et-chart" role="img" aria-label="Running profit, one unit a pick: ${sign(pts[pts.length - 1].b)} units at the best price, ${sign(pts[pts.length - 1].a)} at the average">
+function isoAdd(iso, n){ const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+/* ---------- the ledger (23 Nov 2026, UX release 6) ----------
+   Douglas: "tracking sports and cards to remain consistent". One tracker for
+   every card, drawn the same way wherever it sits: a headline sentence in one
+   pattern ("<won> of <settled> won v <expected> expected · <return> at the
+   page's stakes", and what is still to settle), a profit line against the
+   line it was expected to make, a strip of days (a tap opens the day) and one
+   range control (All · Live · Last 14 days; Live only where a card has
+   replayed or earlier-rule days). Replaces dailyTracker, slipTracker,
+   edgeTracker, the racing glance and Scale's graded-groups panel, and gives the
+   List card one. The headline is the record's own tally wherever the record
+   carries one (groupings-record.json, slip.json, record.json edge, scale.js,
+   racing.js); the line and the strip are the day rows behind that tally.
+   Nothing is recounted another way, nothing is fitted. Display only. */
+const LED = {};                                 // per ledger: {range, day}
+let LED_FOCUS = null, LED_PENDING = null;       // the card a Cards board row opened (#today?card=daily)
+const ledSign = (x, dp) => (x >= 0 ? "+" : "−") + Math.abs(x).toFixed(dp == null ? 2 : dp);
+const ledPc = (net, staked) => staked ? `${net >= 0 ? "+" : "−"}${Math.abs(Math.round(net / staked * 100))}%` : "";
+const ledPc1 = x => (x >= 0 ? "+" : "−") + Math.abs(Math.round(x * 1000) / 10).toFixed(1) + "%";
+const ledCls = x => x >= 0 ? "pos" : "neg";
+const ledDow = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"});
+const ledDom = d => new Date(d + "T12:00:00Z").getUTCDate();
+const ledLast14 = (days, all) => { const last = (all || days).length ? (all || days)[(all || days).length - 1].d : null;
+  return last ? days.filter(x => x.d >= isoAdd(last, -13)) : days; };
+// Calendar days between the first and the last row with an empty tile where a card had nothing
+function ledFill(days){
+  if(days.length < 2) return days;
+  const by = new Map(days.map(x => [x.d, x])), out = [];
+  for(let d = days[0].d; d <= days[days.length - 1].d; d = isoAdd(d, 1)) out.push(by.get(d) || {d, st: "empty", net: {a: 0, b: 0}, dots: []});
+  return out;
+}
+// The archived groups that match, as settled day rows (groupings-record.json days: stake, paid, p, odds per group).
+function ledGroupDays(match){
+  const out = [];
+  ((OG && OG.record && OG.record.days) || []).forEach(day => {
+    const gs = (day.groups || []).filter(match);
+    const done = gs.filter(g => ["won", "lost", "void"].includes(g.status)); if(!done.length) return;
+    const u = g => g.stake || 1, real = done.filter(g => g.status !== "void");
+    const net = real.reduce((a, g) => a + u(g) * ((g.paid || 0) - 1), 0);
+    out.push({d: day.date, gs: done, live: true,
+      won: real.filter(g => g.status === "won").length, settled: real.length,
+      expW: real.reduce((a, g) => a + (g.p || 0), 0), staked: real.reduce((a, g) => a + u(g), 0),
+      returned: real.reduce((a, g) => a + u(g) * (g.paid || 0), 0),
+      net: {a: net, b: real.reduce((a, g) => a + u(g) * ((g.p || 0) * g.odds - 1), 0)},
+      st: !real.length ? "void" : net > 0 ? "won" : "lost",
+      dots: done.map(g => g.status === "won" ? "w" : g.status === "lost" ? "l" : "v")});
+  });
+  return out.sort((a, b) => a.d < b.d ? -1 : 1);
+}
+const ledSum = rows => rows.reduce((a, x) => ({won: a.won + (x.won || 0), settled: a.settled + (x.settled || 0), expW: a.expW + (x.expW || 0),
+  staked: a.staked + (x.staked || 0), returned: a.returned + (x.returned || 0)}), {won: 0, settled: 0, expW: 0, staked: 0, returned: 0});
+// a record tally (won, settled, expected, units) as the headline's numbers
+const ledTally = (t, per) => { t = t || {}; const st = t.unitsStaked != null ? t.unitsStaked : t.staked || 0, rt = t.unitsStaked != null ? t.unitsReturned : t.returned || 0;
+  return {won: t.won || 0, settled: t.settled || 0, exp: t.settled ? t.expected : null, pending: t.pending || 0, net: rt - st, staked: st, per}; };
+const ledRows = (rows, per) => { const s = ledSum(rows); return {won: s.won, settled: s.settled, exp: s.settled ? s.expW : null, pending: 0, net: s.returned - s.staked, staked: s.staked, per}; };
+// The headline: one sentence, one pattern, for every card
+function ledHead(h){
+  if(!h.settled) return `<p class="led-head">${h.none || "Nothing settled yet."}${h.pending ? ` ${h.pending} to settle.` : ""}</p>`;
+  const ret = h.ret != null ? h.ret : h.staked ? `<b class="${ledCls(h.net)}">${ledPc(h.net, h.staked)}</b> at ${h.per || "the page's stakes"} (${ledSign(h.net)} ${h.unit || "units"} on ${+h.staked.toFixed(2)})` : "";
+  return `<p class="led-head"><b>${h.won} of ${h.settled} won</b>${h.exp != null ? ` v ${h.exp.toFixed(1)} expected` : ""}${ret ? ` · ${ret}` : ""}${h.pending ? ` · ${h.pending} to settle` : ""}</p>`;
+}
+// The chart: cumulative units, the profit line (a) against the expected or second line (b), drawn to scale
+function ledChart(rows, opt){
+  const lines = opt.lines, unit = opt.unit || "units";
+  let ca = 0, cb = 0;
+  const pts = [{a: 0, b: 0}].concat(rows.map(x => ({d: x.d, a: (ca += x.net.a), b: (cb += (x.net.b || 0)), live: x.live})));
+  if(pts.length < 2) return "";
+  const ks = lines.map(l => l.k), vals = pts.flatMap(p => ks.map(k => p[k]));
+  const lo = Math.min(0, ...vals), hi = Math.max(0, ...vals), span = Math.max(hi - lo, 1);
+  const y0 = lo - span * 0.06, y1 = hi + span * 0.1;
+  const W = 600, H = 160, X = i => i / (pts.length - 1) * W, Y = v => H - (v - y0) / (y1 - y0) * H, yp = v => (Y(v) / H * 100).toFixed(2) + "%";
+  const path = k => pts.map((p, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(p[k]).toFixed(1)}`).join("");
+  const step = [1, 2, 5, 10, 20, 50, 100].find(s => span / s <= 5) || 200;
+  // labels only at values the chart reaches
+  const ticks = []; for(let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) ticks.push(Math.round(v * 100) / 100);
+  if(!ticks.includes(0)) ticks.push(0);
+  const liveAt = opt.liveSplit ? pts.findIndex((p, i) => i && p.live) : -1;
+  const liveX = liveAt > 1 ? (X(liveAt - 1) + X(liveAt)) / 2 : null;
+  const sel = Math.max(1, rows.findIndex(x => x.d === opt.sel) + 1), end = pts.length - 1, last = pts[end];
+  const cols = opt.dated === false ? "" : rows.map((x, i) => x.st === "empty" ? "" : `<button type="button" class="et-col${x.d === opt.sel ? " on" : ""}" data-led-day="${x.d}" style="left:${(X(i) / W * 100).toFixed(2)}%;width:${(100 / (pts.length - 1)).toFixed(2)}%" aria-label="${fmtDay(x.d)}" tabindex="-1"></button>`).join("");
+  const mid = pts.length > 6 && opt.dated !== false ? pts[Math.round(end / 2)].d : null;
+  const xl = opt.dated === false ? [opt.xFrom || "", "", opt.xTo || ""] : [fmtShort(rows[0].d), mid ? fmtShort(mid) : "", fmtShort(rows[rows.length - 1].d)];
+  const endTop = Y(last.a) / H * 100;
+  return `<div class="et-chart led-chart" role="img" aria-label="Running ${lines[0].label}: ${ledSign(last.a)} ${unit}${lines[1] ? `, against ${ledSign(last.b)} ${lines[1].label}` : ""}">
       <div class="et-plot">
-        ${ticks.map(v => `<i class="et-tick${v === 0 ? " zero" : ""}" style="top:${yp(v)}"><em>${v > 0 ? "+" : v < 0 ? "\u2212" : ""}${Math.abs(v)}</em></i>`).join("")}
+        ${ticks.map(v => `<i class="et-tick${v === 0 ? " zero" : ""}" style="top:${yp(v)}"><em>${v > 0 ? "+" : v < 0 ? "−" : ""}${Math.abs(v)}</em></i>`).join("")}
         <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true">
-          <path class="et-area" d="${area}"/>
-          <path class="et-avg" d="${line("a")}" vector-effect="non-scaling-stroke"/>
-          <path class="et-best" d="${line("b")}" vector-effect="non-scaling-stroke"/>
+          <path class="et-area" d="${path("a")}L${W},${Y(0).toFixed(1)}L0,${Y(0).toFixed(1)}Z"/>
+          ${lines[1] ? `<path class="et-avg" d="${path("b")}" vector-effect="non-scaling-stroke"/>` : ""}
+          <path class="et-best" d="${path("a")}" vector-effect="non-scaling-stroke"/>
         </svg>
         ${liveX != null ? `<i class="et-live" style="left:${(liveX / W * 100).toFixed(2)}%"><em>Live</em></i>` : ""}
-        <i class="et-dot" style="left:${(X(selI) / W * 100).toFixed(2)}%;top:${yp(pts[selI].b)}"></i>
+        ${sel !== end && opt.dated !== false ? `<i class="et-dot led-sel" style="left:${(X(sel) / W * 100).toFixed(2)}%;top:${yp(pts[sel].a)}"></i>` : ""}
+        <i class="led-end ${ledCls(last.a)}" style="left:100%;top:${endTop.toFixed(2)}%"></i>
+        <em class="led-endv ${ledCls(last.a)}${endTop < 18 ? " below" : ""}" style="top:${endTop.toFixed(2)}%">${ledSign(last.a)}</em>
         ${cols}
       </div>
-      <div class="et-x"><span>${fmtShort(days[0].d)}</span><span>${fmtShort(days[days.length - 1].d)}</span></div>
+      <div class="et-x"><span>${xl[0]}</span>${xl[1] ? `<span>${xl[1]}</span>` : ""}<span>${xl[2]}</span></div>
     </div>`;
-  const tiles = days.map(d => { const u = net(d.p, 3);
-    return `<button class="et-t${d.d === day.d ? " on" : ""}" data-et-day="${d.d}"><span class="et-d">${new Date(d.d + "T12:00:00").toLocaleDateString("en-GB", {weekday: "short"})}<b>${new Date(d.d + "T12:00:00").getDate()}</b></span>
-      <span class="et-dots">${d.p.map(p => `<i class="${p[4] ? "w" : "l"}"></i>`).join("")}</span>
-      <span class="et-u ${u >= 0 ? "pos" : "neg"}">${sign(u)}</span></button>`; }).join("");
-  const list = day.p.map(p => `<li class="${p[4] ? "w" : "l"}"><span class="et-r">${p[4] ? "Won" : "Lost"}</span>
-      <span class="et-m"><b>${ogEsc(p[0])}</b><small>v ${ogEsc(p[1])}${p[6] != null ? ` · opponent ${Number(p[6]).toFixed(2)}` : ""} · ${p[5] ? "live" : "replayed"}</small></span>
-      <span class="et-p">${Number(p[3]).toFixed(2)}<small>avg ${Number(p[2]).toFixed(2)}</small></span></li>`).join("");
-  const dn = net(day.p, 3);
-  return `<div class="et" id="et">
-    <div class="et-head"><h4>Tracker <small>one unit on every Edge pick</small></h4>
-      <div class="seg seg--sm et-seg" role="group" aria-label="Range"><button data-et-range="all" class="${ETK.range === "all" ? "on" : ""}" aria-pressed="${ETK.range === "all"}">All time</button><button data-et-range="14" class="${ETK.range === "14" ? "on" : ""}" aria-pressed="${ETK.range === "14"}">Last 14 days</button></div></div>
-    <div class="et-stats">
-      ${stat("Picks won", `${won}/${n}`, `${Math.round(won / n * 100)}% landed`)}
-      ${stat("Profit, best price", sign(pts[pts.length - 1].b), `${signP(pts[pts.length - 1].b / n)} a pick`, pts[pts.length - 1].b >= 0 ? "pos" : "neg")}
-      ${stat("Profit, average price", sign(pts[pts.length - 1].a), `${signP(pts[pts.length - 1].a / n)} a pick`, pts[pts.length - 1].a >= 0 ? "pos" : "neg")}
-      ${stat("Days", days.length, `${fmtShort(days[0].d)} to ${fmtShort(days[days.length - 1].d)}`)}
-    </div>
-    ${chart}
-    <p class="et-key"><i class="best"></i>best price <i class="avg"></i>average price · each step a day with Edge picks${liveX != null ? " · left of Live: the rule replayed on prices archived before kick-off" : ""}</p>
-    <div class="et-strip" id="etStrip">${tiles}</div>
-    <div class="et-day"><h5>${fmtDay(day.d)} <span class="${dn >= 0 ? "pos" : "neg"}">${sign(dn)} units</span></h5><ol>${list}</ol></div>
-    <p class="et-note"><b>By the opponent's price.</b> 9.0+: ${split(9, 1e9)}. 5.0 to 9.0: ${split(5, 9)}. The five-season test only backs 9.0+, so watch the second line.</p>
+}
+const LED_WORD = {won: "Won", lost: "Lost", void: "Void", placed: "Placed", empty: "None"};
+function ledStrip(rows, sel, unit){
+  return `<div class="et-strip led-strip">${rows.map(x => x.st === "empty"
+    ? `<span class="et-t led-t empty" title="${fmtDay(x.d)}: nothing that day"><span class="et-d">${ledDow(x.d)}<b>${ledDom(x.d)}</b></span><span class="et-dots"></span><span class="et-u">none</span></span>`
+    : `<button type="button" class="et-t led-t ${x.st}${x.live === false ? " rep" : ""}${x.d === sel ? " on" : ""}" data-led-day="${x.d}" aria-pressed="${x.d === sel}" aria-label="${fmtDay(x.d)}: ${LED_WORD[x.st] || ""} ${ledSign(x.net.a)} ${unit || "units"}${x.live === false ? ", replayed" : ""}">
+      <span class="et-d">${ledDow(x.d)}<b>${ledDom(x.d)}</b></span>
+      <span class="et-dots">${(x.dots || []).map(c => `<i class="${c}"></i>`).join("")}</span>
+      <span class="et-u ${ledCls(x.net.a)}">${ledSign(x.net.a)}</span></button>`).join("")}</div>`;
+}
+// One card's ledger. LEDGER_CARDS[id] says what it reads; LED[id] holds its range and chosen day.
+function ledger(id){
+  const C = LEDGER_CARDS[id]; if(!C || !C.ok()) return "";
+  const ranges = C.ranges().filter(Boolean);
+  const st = LED[id] || (LED[id] = {range: C.def ? C.def() : ranges[0][0], day: null});
+  if(!ranges.some(r => r[0] === st.range)) st.range = ranges[0][0];
+  const v = C.view(st.range);
+  const rows = v.rows || [], real = rows.filter(x => x.st !== "empty");
+  const sel = (real.find(x => x.d === st.day) || real[real.length - 1] || {}).d;
+  const seg = ranges.length > 1 ? `<div class="seg seg--sm et-seg" role="group" aria-label="Range">${ranges.map(([k, l]) =>
+    `<button type="button" data-led-range="${k}" class="${st.range === k ? "on" : ""}" aria-pressed="${st.range === k}">${l}</button>`).join("")}</div>` : "";
+  const h = v.head, data = {won: h.won, settled: h.settled, exp: h.exp == null ? null : +h.exp.toFixed(2), net: h.net == null ? null : +(+h.net).toFixed(2), staked: h.staked == null ? null : +(+h.staked).toFixed(2), pending: h.pending || 0};
+  const chart = v.chart === false ? "" : ledChart(v.series || rows, {lines: v.lines, unit: v.unit, sel, liveSplit: v.liveSplit, dated: v.dated, xFrom: v.xFrom, xTo: v.xTo});
+  const day = sel && C.detail && (!C.fold || st.panel === sel) ? C.detail(sel, st.range) : "";
+  return `<div class="et led" id="led-${id}" data-led="${id}" data-range="${st.range}" data-h='${JSON.stringify(data)}'>
+    <div class="et-head"><h4>${C.title} <small>${C.sub}</small></h4>${seg}</div>
+    ${ledHead(h)}${v.subline ? `<p class="led-sub">${v.subline}</p>` : ""}
+    ${chart || (v.chartNote ? `<p class="et-note">${v.chartNote}</p>` : "")}
+    ${chart ? `<p class="et-key"><i class="best"></i>${v.lines[0].label}${v.lines[1] ? ` <i class="avg"></i>${v.lines[1].label}` : ""} · ${v.step || "each step a day"}${v.liveSplit && real.some(x => x.live === false) && real.some(x => x.live) ? " · left of Live: replayed, never published" : ""}</p>` : ""}
+    ${real.length ? ledStrip(rows, sel, v.unit) : ""}
+    ${real.length ? `<p class="led-keys"><i class="won"></i>won <i class="lost"></i>lost <i class="void"></i>void${rows.some(x => x.st === "empty") ? ` <i class="empty"></i>${v.emptyWord || "nothing that day"}` : ""}${real.some(x => x.live === false) ? ` <i class="rep"></i>replayed` : ""}${C.fold ? " · tap a day for its groups" : " · tap a day to open it"}</p>` : ""}
+    ${day}
+    ${v.note ? `<p class="et-note">${v.note}</p>` : ""}
   </div>`;
 }
-function isoAdd(iso, n){ const d = new Date(iso + "T12:00:00Z"); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-function etDraw(){
-  const el = document.getElementById("et"); if(!el) return;
-  el.outerHTML = edgeTracker();
-  etScroll();
+// On Bets every ledger but the Card's sits in a closed fold under its card; the summary carries the headline.
+function ledgerFold(id){
+  const C = LEDGER_CARDS[id]; if(!C || !C.ok()) return "";
+  const html = ledger(id), m = html.match(/<p class="led-head">([\s\S]*?)<\/p>/);
+  return `<details class="led-fold" data-led-fold="${id}"><summary><span class="led-ft">${C.title}</span><span class="led-fh">${m ? m[1] : ""}</span></summary>${html}</details>`;
 }
-// keep the chosen day in view, the newest at the right of the strip
-function etScroll(){
-  const s = document.getElementById("etStrip"), on = s && s.querySelector(".on");
+function ledDraw(id, focusSel){
+  const el = document.querySelector(`.led[data-led="${id}"]`); if(!el) return;
+  el.outerHTML = ledger(id);
+  const s = document.querySelector(`.led[data-led="${id}"] .led-strip`), on = s && s.querySelector(".on");
   if(s && on) s.scrollLeft = Math.max(0, on.offsetLeft - s.offsetLeft - s.clientWidth + on.offsetWidth + 8);
+  if(focusSel){ const f = document.querySelector(`.led[data-led="${id}"] ${focusSel}`); if(f) f.focus({preventScroll: true}); }
+}
+function ledScrollAll(){
+  document.querySelectorAll(".led .led-strip").forEach(s => { const on = s.querySelector(".on");
+    if(on) s.scrollLeft = Math.max(0, on.offsetLeft - s.offsetLeft - s.clientWidth + on.offsetWidth + 8); });
+}
+// A Card day tapped: open its fold in the day-by-day results and go to it
+function ledFold(d){
+  const f = document.querySelector(`.og-rd[data-date="${d}"]`); if(!f) return false;
+  f.open = true; scrollClear(f); return true;
 }
 document.addEventListener("click", e => {
-  const r = e.target.closest("[data-et-range]");
-  if(r){ ETK.range = r.dataset.etRange; ETK.day = null; etDraw(); return; }
-  const d = e.target.closest("[data-et-day]");
-  if(d){ ETK.day = d.dataset.etDay; etDraw(); }
+  const r = e.target.closest(".led [data-led-range]");
+  if(r){ const id = r.closest(".led").dataset.led; LED[id].range = r.dataset.ledRange; LED[id].day = null; ledDraw(id, `[data-led-range="${r.dataset.ledRange}"]`); return; }
+  const b = e.target.closest(".led [data-led-day]");
+  if(b){ const id = b.closest(".led").dataset.led, d = b.dataset.ledDay; LED[id].day = d;
+    ledDraw(id, b.classList.contains("et-col") ? null : `.led-t[data-led-day="${d}"]`);
+    // the Card's days open their fold in Results, day by day; a day older than the folds shows here
+    if(LEDGER_CARDS[id].fold && !ledFold(d)){ LED[id].panel = d; ledDraw(id, `.led-t[data-led-day="${d}"]`); } }
 });
+// Open a card's ledger and go to it (a Cards board row, or an address with ?card=)
+function ledGo(id){
+  const el = document.getElementById("led-" + id); if(!el) return;
+  const f = el.closest("details"); if(f) f.open = true;
+  scrollClear(el);
+}
+// The detail under the strip for a day of groups (Daily 2x, List card)
+function ledGroupDetail(match){
+  return d => { const day = ((OG.record || {}).days || []).find(x => x.date === d); if(!day) return "";
+    const gs = day.groups.filter(match).filter(g => g.status !== "pending");
+    return `<div class="et-day">${gs.map(g => { const u = g.stake || 1, n = g.status === "void" ? 0 : u * ((g.paid || 0) - 1);
+      return `<h5>${fmtDay(d)} · ${ogEsc(g.name)} · ${OG_LABEL[g.status]} at ${Number(g.odds).toFixed(2)} <span class="${ledCls(n)}">${ledSign(n)} units</span></h5>
+      <ol>${(g.legs || []).map(l => `<li class="${l.status === "won" ? "w" : l.status === "lost" ? "l" : ""}"><span class="et-r">${OG_LABEL[l.status] || ""}</span>
+        <span class="et-m"><b>${ogEsc(l.pick)}</b><small>${ogEsc(l.event || "")}${l.result ? " · " + ogEsc(l.result) : ""}</small></span><span class="et-p">${l.est ? "est. " : ""}${Number(l.odds).toFixed(2)}</span></li>`).join("")}</ol>`; }).join("")}</div>`; };
+}
+const ledIsCard = g => String(g.name).startsWith("Card") && !g.wide && !g.late;
+const ledCardRule = () => { const R = OG && OG.record, C = (OG && OG.rules || {}).card || {};
+  return R && R.cardLive && R.cardLiveRule === C.rule ? C.rule : null; };
+
+const LEDGER_CARDS = {
+  card: {
+    title: "The Card's record", sub: "every group graded, at the page's stakes (two units a 2x, one a 3x)", view0: "today", fold: true,
+    detail: ledGroupDetail(ledIsCard),
+    ok: () => !!(OG && OG.record),
+    ranges: () => [["all", "All rules"], ledCardRule() ? ["live", `Rule ${ledCardRule()}`] : null, ["14", "Last 14 days"]],
+    def: () => ledCardRule() ? "live" : "all",
+    since: () => ledCardRule() ? (RULE_FROM[String(ledCardRule())] || "") : "25 Oct",
+    view(r){
+      const R = OG.record, rule = ledCardRule();
+      const all = ledGroupDays(ledIsCard), live = rule ? ledGroupDays(g => ledIsCard(g) && g.rule === rule) : all;
+      const rows = r === "live" ? live : r === "14" ? ledLast14(all) : all;
+      const head = r === "live" ? ledTally(R.cardLive) : r === "all" ? ledTally(R.card) : ledRows(rows);
+      head.none = r === "live" ? `No settled groups yet under rule ${rule}.` : "No settled groups yet.";
+      return {head, rows: ledFill(rows), lines: [{k: "a", label: "profit"}, {k: "b", label: "expected"}], unit: "units",
+        emptyWord: "no group that day", subline: r === "live" ? `Rule ${rule}${RULE_FROM[String(rule)] ? `, from ${RULE_FROM[String(rule)]}` : ""}: ${ogEsc(RULE_WHAT[String(rule)] || "the current rule")}.` : r === "all" ? "Every Card rule since 25 Oct; wider-rule and late groups are graded apart." : "",
+        note: "Expected is each group's chance times its price, less the stake. A group is won only when every pick wins; a draw is a loss. Each day's groups are in Results, day by day, below."};
+    }
+  },
+  daily: {
+    title: "The 2x's record", sub: "one unit a slip", view0: "today",
+    ok: () => !!(OG && OG.record && OG.record.cardDaily),
+    ranges: () => [["all", "All"], ["14", "Last 14 days"]],
+    since: () => { const r = ledGroupDays(g => g.name === "Daily 2x"); return r.length ? fmtShort(r[0].d) : ""; },
+    detail: ledGroupDetail(g => g.name === "Daily 2x"),
+    view(r){
+      const all = ledGroupDays(g => g.name === "Daily 2x"), rows = r === "14" ? ledLast14(all) : all;
+      const head = r === "all" ? ledTally(OG.record.cardDaily, "one unit a slip") : ledRows(rows, "one unit a slip");
+      head.none = "The tracker fills from the first settled slip, one tile a day.";
+      return {head, rows: ledFill(rows), lines: [{k: "a", label: "profit"}, {k: "b", label: "expected"}], unit: "units", emptyWord: "no slip that day",
+        subline: (() => { const t = OG.record.cardDaily; return t.legs ? `Picks landed: ${t.legsWon} of ${t.legs} (${Math.round(t.legsWon / t.legs * 100)}%).` : ""; })(),
+        note: `<b>What we're learning.</b> Before the tab, the same rule replayed on 3 Oct to 16 Nov: 28 slips in 33 days, 14 won (50%), +22% at the price recorded, about four picks a slip. Ranking picks by the model's strength beat ranking by the shortest price (36%) on the same picks, which is why the model picks the order. Every pick above 1.15 has landed slightly under its price, so the slip wins on the model's ordering, not on value. We judge it at 50 settled slips: won against expected, and the return.`};
+    }
+  },
+  list: {
+    title: "The List card's record", sub: "List 2x and List long together, one unit a group", view0: "today",
+    ok: () => !!(OG && OG.record && (OG.record.cardList || OG.record.cardListLong)),
+    ranges: () => [["all", "All"], ["14", "Last 14 days"]],
+    since: () => { const r = ledGroupDays(g => g.name === "List 2x" || g.name === "List long"); return r.length ? fmtShort(r[0].d) : ""; },
+    detail: ledGroupDetail(g => g.name === "List 2x" || g.name === "List long"),
+    view(r){
+      const R = OG.record, m = g => g.name === "List 2x" || g.name === "List long";
+      const all = ledGroupDays(m), rows = r === "14" ? ledLast14(all) : all;
+      const a = R.cardList || {}, b = R.cardListLong || {};
+      const sum = {won: (a.won || 0) + (b.won || 0), settled: (a.settled || 0) + (b.settled || 0), expected: (a.expected || 0) + (b.expected || 0),
+        pending: (a.pending || 0) + (b.pending || 0), unitsStaked: (a.unitsStaked || 0) + (b.unitsStaked || 0), unitsReturned: (a.unitsReturned || 0) + (b.unitsReturned || 0)};
+      const head = r === "all" ? ledTally(sum, "one unit a group") : ledRows(rows, "one unit a group");
+      head.none = "The record fills from the first settled List card.";
+      const k = (n, t) => t && t.settled ? `${n} ${t.won} of ${t.settled} won (${ledPc((t.unitsReturned || 0) - (t.unitsStaked || 0), t.unitsStaked)})` : "";
+      return {head, rows: ledFill(rows), lines: [{k: "a", label: "profit"}, {k: "b", label: "expected"}], unit: "units", emptyWord: "no List card that day",
+        subline: r === "all" ? [k("List 2x", a), k("List long", b)].filter(Boolean).join(" · ") : "",
+        note: "Read at 30 settled groups of each kind. Staking is yours; the record counts one unit a group."};
+    }
+  },
+  slip: {
+    title: "The slip's record", sub: "one unit on every slip", view0: "today",
+    ok: () => !!SLIP,
+    ranges: () => [["all", "All"], ["live", "Live"], ["14", "Last 14 days"]],
+    since: () => SLIP && SLIP.from ? fmtShort(SLIP.from) : "",
+    view(r){
+      const rec = (SLIP.record && SLIP.record.recent) || [];
+      const row = (x, live) => { const st = x.state, n = x.ret == null ? 0 : x.ret - 1;
+        return {d: x.date, st, live, price: x.price, chance: x.chance, legs: x.legs || [], won: st === "won" ? 1 : 0, settled: st === "void" ? 0 : 1, expW: st === "void" ? 0 : x.chance || 0,
+          net: {a: n, b: x.chance != null && st !== "void" ? x.chance * x.price - 1 : 0}, dots: [st === "won" ? "w" : st === "lost" ? "l" : "v"]}; };
+      const live = rec.map(x => row(x, true)), seen = new Set(live.map(x => x.d));
+      const rep = (SLIP.replayDays || []).filter(x => ["won", "lost", "void"].includes(x.state) && !seen.has(x.date)).map(x => row(x, false));
+      const all = rep.concat(live).sort((a, b) => a.d.localeCompare(b.d));
+      const rows = r === "live" ? all.filter(x => x.live) : r === "14" ? ledLast14(all) : all;
+      const s = ledSum(rows), net = rows.reduce((a, x) => a + x.net.a, 0);
+      const open = (SLIP.days || []).filter(d => d.slip && !["won", "lost", "void"].includes(d.slip.state) && !seen.has(d.date)).length;
+      const head = {won: s.won, settled: s.settled, exp: rows.length ? s.expW : null, pending: open, net, staked: rows.length,
+        ret: rows.length ? `<b class="${ledCls(net)}">${ledPc1(net / Math.max(1, rows.length))}</b> at one unit a slip (${ledSign(net)} units)` : null,
+        short: `${ledPc1(net / Math.max(1, rows.length))} a slip`,
+        none: "The tracker fills once the first slip is settled, the morning after its last leg plays."};
+      return {head, rows, lines: [{k: "a", label: "profit"}, {k: "b", label: "expected"}], unit: "units", liveSplit: true, step: "each step a slip",
+        subline: rows.length ? `${rows.filter(x => x.live).length} live, ${rows.filter(x => !x.live).length} replayed.` : "",
+        note: `${s.settled < 30 ? `<b>Too few to read.</b> ${s.settled} settled slip${s.settled === 1 ? "" : "s"}: one win moves the line by two or three units. ` : ""}The slip is judged at ${((SLIP.record || {}).gate || {}).need ? SLIP.record.gate.need.n : 100} settled slips, not before.`};
+    },
+    detail(d, r){
+      const rec = ((SLIP.record && SLIP.record.recent) || []).find(x => x.date === d) || (SLIP.replayDays || []).find(x => x.date === d);
+      if(!rec) return "";
+      const legRow = s => { const m = String(s).match(/^(.*)\s(\d+(?:\.\d+)?)$/);
+        return `<li><span class="et-m"><b>${ogEsc(m ? m[1] : s)}</b></span><span class="et-p">${m ? Number(m[2]).toFixed(2) : ""}</span></li>`; };
+      const live = ((SLIP.record && SLIP.record.recent) || []).some(x => x.date === d), n = rec.ret == null ? 0 : rec.ret - 1;
+      return `<div class="et-day"><h5>${fmtDay(d)} · ${LED_WORD[rec.state] || ""} at ${Number(rec.price).toFixed(2)}${live ? "" : " · replayed"} <span class="${ledCls(n)}">${ledSign(n)} units</span></h5><ol class="skt-legs">${(rec.legs || []).map(legRow).join("")}</ol></div>`;
+    }
+  },
+  edge: {
+    title: "Edge picks' record", sub: "one unit on every Edge pick, at the best and the average price", view0: "today",
+    ok: () => !!(RS && RS.edge && (RS.edge.days || []).length),
+    ranges: () => [["all", "All"], ["live", "Live"], ["14", "Last 14 days"]],
+    since: () => RS.edge.live && RS.edge.live.from ? fmtShort(RS.edge.live.from) : "",
+    view(r){
+      const net = (ps, i) => ps.reduce((a, p) => a + (p[4] ? p[i] - 1 : -1), 0);   // i 3 best, 2 average
+      const all = RS.edge.days.map(x => ({d: x.d, p: x.p})), pick = r === "live" ? all.map(x => ({d: x.d, p: x.p.filter(p => p[5])})).filter(x => x.p.length) : r === "14" ? ledLast14(all) : all;
+      const rows = pick.map(x => ({d: x.d, p: x.p, live: x.p.some(p => p[5]), net: {a: net(x.p, 3), b: net(x.p, 2)},
+        st: net(x.p, 3) > 0 ? "won" : "lost", dots: x.p.map(p => p[4] ? "w" : "l")}));
+      const ps = rows.flatMap(x => x.p), n = ps.length, won = ps.filter(p => p[4]).length, b = net(ps, 3), a = net(ps, 2);
+      const t = r === "all" ? RS.edge.all : r === "live" ? RS.edge.live : null;
+      const split = (lo, hi) => { const q = ps.filter(p => p[6] != null && p[6] >= lo && p[6] < hi);
+        return q.length ? `${q.filter(p => p[4]).length} of ${q.length} won, ${ledPc1(net(q, 3) / q.length)} at the best price` : "none yet"; };
+      const head = {won, settled: n, exp: t && t.n === n ? t.expected : null, pending: 0, net: b, staked: n,
+        ret: n ? `<b class="${ledCls(b)}">${ledPc1(b / n)}</b> at the best price, one unit a pick (${ledSign(b)} units); <b class="${ledCls(a)}">${ledPc1(a / n)}</b> at the average (${ledSign(a)})` : null,
+        short: n ? `${ledPc1(b / n)} best, ${ledPc1(a / n)} average` : "",
+        none: "The tracker fills once the first Edge picks are graded, the morning after they play."};
+      return {head, rows, lines: [{k: "a", label: "best price"}, {k: "b", label: "average price"}], unit: "units", liveSplit: true, step: "each step a day with Edge picks",
+        subline: n ? `${rows.length} days, ${fmtShort(rows[0].d)} to ${fmtShort(rows[rows.length - 1].d)}. Expected is the bookmakers' chance${t && t.n === n ? "" : ", not carried day by day, so it is left out of this range"}.` : "",
+        note: `<b>By the opponent's price.</b> 9.0+: ${split(9, 1e9)}. 5.0 to 9.0: ${split(5, 9)}. The five-season test only backs 9.0+, so watch the second line.`};
+    },
+    detail(d){
+      const x = RS.edge.days.find(y => y.d === d); if(!x) return "";
+      const n = x.p.reduce((a, p) => a + (p[4] ? p[3] - 1 : -1), 0);
+      return `<div class="et-day"><h5>${fmtDay(d)} <span class="${ledCls(n)}">${ledSign(n)} units</span></h5><ol>${x.p.map(p => `<li class="${p[4] ? "w" : "l"}"><span class="et-r">${p[4] ? "Won" : "Lost"}</span>
+        <span class="et-m"><b>${ogEsc(p[0])}</b><small>v ${ogEsc(p[1])}${p[6] != null ? ` · opponent ${Number(p[6]).toFixed(2)}` : ""} · ${p[5] ? "live" : "replayed"}</small></span>
+        <span class="et-p">${Number(p[3]).toFixed(2)}<small>avg ${Number(p[2]).toFixed(2)}</small></span></li>`).join("")}</ol></div>`;
+    }
+  },
+  scale: {
+    title: "Scale groups' record", sub: "the double, threefold, fourfold and fivefold together, one unit a group", view0: "scale",
+    ok: () => !!(SCALE && SCALE.record),
+    ranges: () => [["all", "All"], ["live", "Live"], ["14", "Last 14 days"]],
+    def: () => "live",
+    since: () => SCALE.from ? fmtShort(SCALE.from) : "",
+    view(r){
+      const S = SCALE, gk = (S.record && S.record.groups) || {}, bf = (S.before || {}).groups || {};
+      const all = (S.days || []).map(d => { const gs = (d.groups || []).filter(g => ["won", "lost", "void"].includes(g.state)); if(!gs.length) return null;
+        const pay = g => g.ret != null ? g.ret : g.estRet != null ? g.estRet : null, real = gs.filter(g => g.state !== "void");
+        const net = real.reduce((a, g) => a + (pay(g) == null ? 0 : pay(g) - 1), 0);
+        return {d: d.date, gs, live: d.date >= S.from, won: real.filter(g => g.state === "won").length, settled: real.length,
+          expW: real.reduce((a, g) => a + (g.chance || 0), 0), net: {a: net, b: real.reduce((a, g) => a + ((g.price || g.est) ? g.chance * (g.price || g.est) - 1 : 0), 0)},
+          st: net > 0 ? "won" : real.length ? "lost" : "void", dots: gs.map(g => g.state === "won" ? "w" : g.state === "lost" ? "l" : "v")}; }).filter(Boolean);
+      const rows = r === "live" ? all.filter(x => x.live) : r === "14" ? ledLast14(all) : all;
+      const s = ledSum(rows), sumK = o => Object.values(o).reduce((a, t) => ({n: a.n + (t.n || 0), won: a.won + (t.won || 0)}), {n: 0, won: 0});
+      const lv = sumK(gk), bq = sumK(bf);
+      // the record's own tallies for All and Live; expected from the day rows only when they hold the same groups
+      const tally = r === "live" ? lv : r === "all" ? {n: lv.n + bq.n, won: lv.won + bq.won} : {n: s.settled, won: s.won};
+      const wsum = (k, w) => { const ks = Object.values(gk).filter(t => t[w]); const n = ks.reduce((a, t) => a + t[w], 0); return n ? [ks.reduce((a, t) => a + t[k] * t[w], 0) / n, n] : null; };
+      const pr = r === "live" ? wsum("ret", "priced") : null, es = r === "live" ? wsum("estRet", "estN") : null;
+      const book = scE(S.book || "William Hill");
+      const head = {won: tally.won, settled: tally.n, exp: s.settled === tally.n && tally.n ? s.expW : null, pending: 0,
+        ret: pr || es ? [pr ? `<b class="${ledCls(pr[0])}">${ledPc(pr[0], 1)}</b> at ${book}'s price (${pr[1]} priced)` : "", es ? `≈ ${ledPc(es[0], 1)} at estimated prices (${es[1]})` : ""].filter(Boolean).join(", ") : rows.length ? `≈ <b class="${ledCls(rows.reduce((a, x) => a + x.net.a, 0))}">${ledSign(rows.reduce((a, x) => a + x.net.a, 0))}</b> units at a price or an estimate` : null,
+        none: "No groups graded yet."};
+      head.short = pr || es ? [pr ? `${ledPc(pr[0], 1)} at ${S.book || "William Hill"} (${pr[1]})` : "", es ? `≈ ${ledPc(es[0], 1)} est. (${es[1]})` : ""].filter(Boolean).join(", ") : rows.length ? `≈ ${ledSign(rows.reduce((a, x) => a + x.net.a, 0))} units` : "";
+      const kinds = Object.keys(gk).filter(k => gk[k].n).map(k => `${scE(String(gk[k].name || k).replace("Scale ", ""))} ${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : gk[k].estN ? ` · ≈ ${gk[k].estRet >= 0 ? "+" : "−"}${Math.abs(gk[k].estRet * 100).toFixed(0)}% est.` : ""}`);
+      const bks = Object.keys(bf).filter(k => bf[k].n).map(k => `${scE(String(bf[k].name).replace("Scale ", ""))} ${bf[k].won} of ${bf[k].n}`);
+      const drawnFrom = all.length ? all[0].d : null;
+      return {head, rows, lines: [{k: "a", label: "profit, at a price or an estimate"}, {k: "b", label: "expected"}], unit: "units", liveSplit: true,
+        subline: r === "live" ? (kinds.length ? `Since ${scE(scDate(S.from))}: ${kinds.join("; ").replace(/\.$/, "")}.` : "") : r === "all" ? `Live ${lv.won} of ${lv.n}; replayed before ${scE(scDate(S.from))}, no prices: ${bks.join(", ") || "none"}.${drawnFrom && bq.n ? ` The line starts ${scE(scDate(drawnFrom))}, the first day on file; replayed groups before it are counted above, not drawn.` : ""}` : "",
+        note: "A group's price is William Hill's where every leg had one, else the estimate (≈): the chance's fair price less a typical margin. An estimate says the group landed as often as its chance, not that a book would have paid it."};
+    },
+    detail(d){
+      const day = (SCALE.days || []).find(x => x.date === d); if(!day) return "";
+      return `<div class="et-day">${day.groups.filter(g => ["won", "lost", "void"].includes(g.state)).map(g => { const p = g.ret != null ? g.ret : g.estRet, n = p == null ? 0 : p - 1;
+        return `<h5>${scE(scDate(d))} · ${scE(String(g.name).replace("Scale ", ""))} · ${LED_WORD[g.state]}${g.price ? ` at ${g.price.toFixed(2)}` : g.est ? ` at ≈ ${g.est.toFixed(2)}` : ""}${d < SCALE.from ? " · replayed" : ""} <span class="${ledCls(n)}">${p == null ? "no price" : ledSign(n) + " units"}</span></h5>`; }).join("")}</div>`;
+    }
+  },
+  racing: {
+    title: "Racing tips' record", sub: "one point a tip, at the published price", view0: "racing",
+    ok: () => !!(window.RACING && window.RACING.record && window.RACING.record.tips),
+    ranges: () => [["all", "All"], ["14", "Last 14 days"]],
+    since: () => { const k = Object.keys(window.RACING.record.byDay || {}).sort(); return k.length ? fmtShort(k[0]) : ""; },
+    view(r){
+      const S = window.RACING.record, by = S.byDay || {};
+      const all = Object.keys(by).sort().map(d => { const ts = by[d], set = ts.filter(t => ["won", "placed", "lost"].includes(t.state));
+        return {d, ts, live: true, won: ts.filter(t => t.state === "won").length, settled: set.length, net: {a: 0, b: 0},
+          st: ts.some(t => t.state === "won") ? "won" : ts.some(t => t.state === "placed") ? "placed" : set.length ? "lost" : "void",
+          dots: ts.map(t => t.state === "won" ? "w" : t.state === "placed" ? "pl" : t.state === "lost" ? "l" : "v")}; });
+      const rows = r === "14" ? ledLast14(all) : all, s = ledSum(rows);
+      const head = r === "all" ? {won: S.won, settled: S.settled, exp: null, pending: S.tips - S.settled, net: S.profit, staked: S.settled,
+          ret: `<b class="${ledCls(S.profit)}">${S.profit >= 0 ? "+" : "−"}${Math.abs(S.profit)} pts</b> at one point a tip`, short: `${S.profit >= 0 ? "+" : "−"}${Math.abs(S.profit)} pts`}
+        : {won: s.won, settled: s.settled, exp: null, pending: 0, ret: "profit by day is not in the racing feed"};
+      head.none = "The tracker fills from the first graded day.";
+      const series = (S.series || []).map((v, i, a) => ({d: String(i + 1), net: {a: v - (i ? a[i - 1] : 0), b: 0}}));
+      return {head, rows, series, dated: false, xFrom: "1st tip", xTo: `tip ${series.length}`, lines: [{k: "a", label: "profit"}], unit: "pts", step: "each step a tip",
+        chart: r === "all" && series.length > 1 ? undefined : false, chartNote: r === "all" ? "The line starts once two tips have settled." : "The racing feed keeps profit by tip, not by day, so the line is drawn for All only.",
+        subline: `${S.placed} placed, not won (each-way paid)${S.beatClose == null ? "" : ` · beat the starting price on ${Math.round(S.beatClose * 100)}% of ${S.beatCloseN}`}. No expected line: the feed does not carry each tip's chance.`,
+        note: "A tile is a day: gold is placed (each-way paid), a day with a winner is green."};
+    },
+    detail(d){
+      const ts = (window.RACING.record.byDay || {})[d]; if(!ts) return "";
+      const w = {won: "Won", placed: "Placed", lost: "Lost", void: "Void"};
+      return `<div class="et-day"><h5>${fmtDay(d)} · ${ts.length} tip${ts.length === 1 ? "" : "s"}</h5><ol>${ts.map(t => `<li class="${t.state === "won" ? "w" : t.state === "lost" ? "l" : ""}"><span class="et-r">${w[t.state] || "To come"}</span><span class="et-m"><b>${rcE(t.horse || "")}</b></span><span class="et-p"></span></li>`).join("")}</ol></div>`;
+    }
+  }
+};
+// The Cards board in How it went: one row a card, the same columns, each row opening its ledger
+const LED_ORDER = [["card", "The Card"], ["daily", "Daily 2x"], ["list", "List card"], ["slip", "The slip"], ["edge", "Edge picks"], ["scale", "Scale groups"], ["racing", "Racing tips"]];
+function ledSpark(rows){
+  let c = 0; const v = [0].concat(rows.map(x => (c += x.net.a)));
+  if(v.length < 2) return `<span class="cb-nos">–</span>`;
+  const lo = Math.min(0, ...v), hi = Math.max(0, ...v), sp = Math.max(hi - lo, 1), W = 96, H = 24;
+  const X = i => i / (v.length - 1) * W, Y = y => H - 2 - (y - lo) / sp * (H - 4);
+  return `<svg class="cb-spark" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" aria-hidden="true"><line x1="0" x2="${W}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}"/><polyline class="${ledCls(c)}" points="${v.map((y, i) => X(i).toFixed(1) + "," + Y(y).toFixed(1)).join(" ")}"/><circle class="${ledCls(c)}" cx="${X(v.length - 1).toFixed(1)}" cy="${Y(c).toFixed(1)}" r="2.2"/></svg>`;
+}
+function cardsBoard(){
+  const rows = LED_ORDER.map(([id, name]) => {
+    const C = LEDGER_CARDS[id];
+    if(!C.ok()) return `<tr class="quiet"><th scope="row">${name}</th><td colspan="6">No record in this build${id === "racing" ? " (the racing feed sends no results yet)" : ""}.</td></tr>`;
+    // the live record wherever a card has one (its own rule, or its days since it went live), else everything
+    const rs = C.ranges().filter(Boolean).map(r => r[0]), def = rs.includes("live") ? "live" : C.def ? C.def() : rs[0];
+    const v = C.view(def), h = v.head, h14 = C.view("14").head;
+    const short = x => x.short != null ? x.short : x.staked ? `${ledPc(x.net, x.staked)} (${ledSign(x.net)} units)` : "";
+    const ret = short(h) || "–";
+    const href = `#${C.view0}?card=${id}`;
+    return `<tr><th scope="row"><a href="${href}" data-led-go="${id}">${name}</a>${def === "live" && id === "card" ? `<small>rule ${ledCardRule()}</small>` : def === "live" ? "<small>live only</small>" : ""}</th>
+      <td>${ogEsc(C.since() || "–")}</td><td class="n">${h.settled}${h.pending ? `<small>${h.pending} to settle</small>` : ""}</td>
+      <td class="n">${h.settled ? `${h.won} v ${h.exp != null ? h.exp.toFixed(1) : "–"}` : "–"}</td>
+      <td class="r">${h.settled ? ogEsc(ret) : "–"}</td>
+      <td class="r">${h14.settled ? `${h14.won} of ${h14.settled}${short(h14) ? `<small>${ogEsc(short(h14))}</small>` : ""}` : "–"}</td>
+      <td>${ledSpark((v.series && v.chart !== false ? v.series : v.rows || []).filter(x => x.st !== "empty"))}</td></tr>`;
+  }).join("");
+  return `<section class="cboard"><div class="day-head"><h2>Cards</h2><span class="count">every card on one table</span></div>
+    <p class="led-sub">Each card's own record, as its tracker shows it: won against the number expected, the return at the stakes its page uses, the last fortnight and its profit line. A row opens that card's tracker.</p>
+    <div class="cb-wrap"><table class="tb-tbl cb-tbl"><thead><tr><th>Card</th><th>Live since</th><th>Settled</th><th>Won v expected</th><th>Return at its stakes</th><th>Last 14 days</th><th>Profit</th></tr></thead>
+      <tbody>${rows}</tbody></table></div>
+    <p class="tb-note">Each row is the card's live record: the Card under its current rule (every rule since 25 Oct is a range on its tracker), the slip, the Edge picks and Scale since they went live (their replayed days are a range on each tracker). Read the cards side by side here, never one card's good week against another's.</p></section>`;
+}
 
 /* 10 Nov 2026, Douglas ("accurate signalled bets to put on as I'm on the
    train"): "Place now", the top of the Bets tab. Only bets that pass a rule
@@ -7454,11 +7657,13 @@ function renderToday(){
     ${betsBar}
     ${dailySection(day)}
     ${wins.map(winHtml).join("")}
+    <section class="tb-win tb-ledger">${ledger("card")}</section>
     <!-- 17 Nov 2026, Douglas: "at least one or two cards a day just made up of the daily list picks ... having no cards is awful". The List card, in the open. -->
     <section class="tb-win tb-list"><h3 class="tb-h">The List card <small>the Daily List's own picks combined to 2x; on trial, each with its tested chance</small></h3>
       ${lists.length ? `<div class="og-grid">${lists.map(ogCard).join("")}</div>`
         : listsAll.length ? betsEmpty("List card") : `<div class="empty">No List card on ${fmtDay(day.date)} yet: the Daily List's priced picks (college sports left out) don't reach 2x in ten. It is rebuilt on every build as prices and picks arrive.</div>`}
-      <p class="tb-snap"><b>How it is built.</b> The Daily List's picks with a bookmaker price, college sports left out, the model's strongest first, added one at a time until the slip pays 2x: the <b>List 2x</b> from picks at 1.15 or more (up to six), and when that cannot be made the <b>List long</b> from any price (up to ten). "Tested" is the chance it lands on the ledger's own landed rates by sport and price band; "Model" is the model's. The pattern review behind it (17 Nov): the list lands as quoted in every cut, by sport, side, band, price, day and time, so this is the list's winners combined, not a value rule, and every extra pick adds the bookmaker's margin again. Graded apart (List 2x and List long on their own lines); staking is yours.</p></section>
+      <p class="tb-snap"><b>How it is built.</b> The Daily List's picks with a bookmaker price, college sports left out, the model's strongest first, added one at a time until the slip pays 2x: the <b>List 2x</b> from picks at 1.15 or more (up to six), and when that cannot be made the <b>List long</b> from any price (up to ten). "Tested" is the chance it lands on the ledger's own landed rates by sport and price band; "Model" is the model's. The pattern review behind it (17 Nov): the list lands as quoted in every cut, by sport, side, band, price, day and time, so this is the list's winners combined, not a value rule, and every extra pick adds the bookmaker's margin again. Graded apart (List 2x and List long on their own lines); staking is yours.</p>
+      ${ledgerFold("list")}</section>
     ${slipSection(day.date)}
     ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
@@ -7483,7 +7688,7 @@ function renderToday(){
         <li>Taking the best price was worth about 3p in the pound on the archive, the one edge that needs no prediction.</li>
       </ol></details>
     <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
-  etScroll();
+  ledScrollAll();
   ogFill(host);
   sigWire(host);
   host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {
@@ -7719,6 +7924,7 @@ function renderScale(){
       : day.groups.length ? fbEmpty("scale", `No group on this day includes a pick from ${SCALE_SPORTS.map(sportLabel).join(" or ")}.`)
       : `<div class="empty"><b class="empty-t">No group ${day.date === S.today ? "today" : "this day"}</b>${day.past ? "No group was built for this day." : `A group needs two legs still to start: Daily List picks, or any football fixture ${scE(S.book)} offers.`}</div>`}
     ${why}
+    ${ledger("scale")}
   </section>`;
   // where the book prices the football bet
   const lg = S.leagues || [];
@@ -7737,19 +7943,13 @@ function renderScale(){
     + Object.keys(rb).map(s => srow(scCfg(s).name, scCfg(s).long, rb[s].all, "every graded pick at " + floor + " or better: the tally behind the chance")
       + srow(scCfg(s).name, scCfg(s).long, rb[s].strong, "of those, picks at 75% or better")).join("");
   const thead = `<thead><tr><th>Tier or sport</th><th>Scale bet</th><th>Picks</th><th>Won</th><th>Scale landed</th><th>Return at the price shown</th></tr></thead>`;
-  const gk = (S.record && S.record.groups) || {}, rec = (S.record && S.record.recent) || [];
-  const gn = Object.values(gk).reduce((a, t) => a + t.n, 0);
-  const side = `<div class="sc-side"><h4>Scale groups, graded${gn ? "" : ` at ${scE(S.book)}'s price`}</h4>
-    ${gn ? `<ul>${Object.keys(gk).filter(k => gk[k].n).map(k => `<li><span>${scE(String(gk[k].name || k).replace("Scale ", ""))}</span><em>${gk[k].won} of ${gk[k].n} won${gk[k].priced ? ` · ${gk[k].ret >= 0 ? "+" : "−"}${Math.abs(gk[k].ret * 100).toFixed(0)}%` : gk[k].estN ? ` · ≈ ${gk[k].estRet >= 0 ? "+" : "−"}${Math.abs(gk[k].estRet * 100).toFixed(0)}% est.` : ""}</em></li>`).join("")}</ul>
-      <ul>${rec.slice(0, 8).map(r => `<li><span>${scE(scDate(r.date))} · ${scE(r.name.replace("Scale ", ""))}</span><em class="${r.state === "won" ? "w" : "l"}">${r.state === "won" ? "Won" + (r.ret ? " " + r.ret.toFixed(2) : "") : "Lost"}</em></li>`).join("")}</ul>`
-      : `<b class="big">No groups graded yet</b><p>Each day's groups will be listed here with won or lost, the price taken and a running profit and loss at a one-unit stake.</p>`}
-    ${gkeys.length ? `<h4 style="margin-top:14px">Replayed before ${scE(since)}, no prices</h4><ul>${gkeys.map(k => `<li><span>${scE(String(bfG[k].name).replace("Scale ", ""))}</span><em>${bfG[k].won} of ${bfG[k].n} won</em></li>`).join("")}</ul>` : ""}</div>`;
+  // 23 Nov 2026 (UX release 6): the graded groups panel is now the ledger under Scale groups.
   const board = `<section class="sc-sec"><h3 class="sc-h3 sc-sech">Scoreboard<small>how often the winner and the Scale bet landed</small></h3>
     <div class="sc-board"><div class="sc-tablewrap"><div style="overflow-x:auto"><table class="sc-table">
       ${thead}
       <tbody>${liveRows || `<tr><td colspan="6">Nothing graded since ${scE(since)} yet.</td></tr>`}${beforeRows}</tbody></table></div>
       <p class="sc-foot">Bold rows are the Scale record, picks published on this tab before they started, by tier and by sport. The rows under them are the replay of the days before the tab: the same rule, chosen from what was published before each start, results added afterwards. They say how often the bet landed, never that it paid: there are no prices behind them.</p>
-      ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
+      ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div></div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
       <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with over 2.5 goals, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the fixture's result-and-goals bets. Groups take Daily List picks, and football from every fixture ${scE(S.book)} offers.</p></div>${tiles}</div>
     ${list}${groups}${glance}${leagues}${board}${scLadder(S.ladder)}`;
@@ -7840,31 +8040,6 @@ function rcDetail(race, r){
   </div>`;
 }
 
-function rcTracker(S){
-  const byDay = (S && S.byDay) || {}, days = Object.keys(byDay).sort().slice(-30);
-  if(!days.length) return `<p class="sc-gnote">The tracker fills from the first graded day: one column a day, each dot a tip.</p>`;
-  const cls = {won: "sc-dot won", placed: "sc-dot rc-placed", lost: "sc-dot lost", void: "sc-dot void"};
-  const cols = days.map(d => {
-    const ts = byDay[d], w = ts.filter(t => t.state === "won").length, p = ts.filter(t => t.state === "placed").length;
-    const lab = new Date(d + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short", day:"numeric"});
-    return `<span class="rc-day" title="${rcE(lab)}: ${ts.length} tip${ts.length > 1 ? "s" : ""}, ${w} won, ${p} placed"><span class="rc-dd">${ts.map(t => `<i class="${cls[t.state] || "sc-dot up"}"></i>`).join("")}</span><small>${rcE(lab)}</small></span>`;
-  }).join("");
-  return `<div class="sc-key"><span><i class="sc-dot won"></i>Won</span><span><i class="sc-dot rc-placed"></i>Placed (each-way paid)</span><span><i class="sc-dot lost"></i>Lost</span><span><i class="sc-dot void"></i>Withdrawn</span></div>
-    <div class="sc-dots rc-days" style="margin-top:10px">${cols}</div>
-    <p class="sc-gnote">One column a day, oldest first. Hover a day for its count and results.</p>`;
-}
-
-function rcRecordStrip(S){
-  if(!S || !S.tips) return "";
-  return `<div class="record"><h3>Racing tips · since launch (trial)</h3>
-    <div><span>Tips</span><b>${S.tips}</b><small>${S.settled} settled</small></div>
-    <div><span>Won</span><b>${S.won}</b><small>${S.settled ? Math.round(S.won / S.settled * 100) + "%" : "–"}</small></div>
-    <div><span>Placed, not won</span><b>${S.placed}</b><small>each-way returns</small></div>
-    <div class="${S.profit >= 0 ? "beat" : "lose"}"><span>Profit</span><b>${S.profit >= 0 ? "+" : ""}${S.profit} pts</b><small>1 point a tip, at the published price</small></div>
-    <div class="${(S.beatClose || 0) >= .5 ? "beat" : "lose"}"><span>Beat the starting price</span><b>${S.beatClose == null ? "–" : Math.round(S.beatClose * 100) + "%"}</b><small>${S.beatCloseN} tips with a starting price</small></div>
-  </div>`;
-}
-
 function rcTips(R, races){
   const tips = races.filter(r => r.tip).sort((a, b) => b.tip.p - a.tip.p);
   const groups = [[], [], []];
@@ -7875,8 +8050,7 @@ function rcTips(R, races){
   const skipped = races.filter(r => !r.tip);
   const skipRows = skipped.slice(0, 8).map(r => `<div class="tb-row avoid"><span class="tb-v">Skip</span><span class="tb-m"><b>${rcE(r.off)} ${rcE(r.course)} · ${rcE(r.name)}</b><small class="tb-why">${rcE(r.skip || "")}</small></span><span class="tb-p">–</span></div>`).join("");
   const nrs = races.filter(r => (r.nonRunners || []).length).slice(0, 6).map(r => `<div class="tb-row caution"><span class="tb-v">Runner out</span><span class="tb-m"><b>${rcE(r.off)} ${rcE(r.course)}</b><small class="tb-why">${r.nonRunners.map(x => rcE(x.horse)).join(", ")} out · ${r.field} left, ${r.places} place${r.places > 1 ? "s" : ""} each-way</small></span><span class="tb-p"></span></div>`).join("");
-  return rcRecordStrip(R.record) + `<div class="glance" aria-label="Every tip, by day">${rcTracker(R.record)}</div>
-    <ol class="tb-play">
+  return `<ol class="tb-play">
       <li><b>One horse, one race, only when it pays.</b> Most races get no tip. A tip is the horse whose price is bigger than its real chance, so over many tips the winners pay for the losers.</li>
       <li><b>Win</b> means it has to finish first. <b>Each-way</b> is two equal bets, one to win and one to finish in the places (the first 2, 3 or 4), paid at a fraction of the price. It suits a longer price with a good chance of placing.</li>
       <li><b>Take at</b> is the lowest price still worth taking. Prices move all morning; below it, skip the bet.</li>
@@ -7885,7 +8059,8 @@ function rcTips(R, races){
       `<div class="empty">No tips for this day: no horse had a clear chance at a price that pays more than it. That is the rule working, not a gap. <a href="#" data-rc-board="races">See every race</a>.</div>` :
       `<div class="empty">No tips yet: the racing feed is not sending bookmaker prices, and a tip needs a price to beat. Every race and every runner's chance is on <a href="#" data-rc-board="races">Every race</a>.</div>`) +
     (nrs ? `<h3 class="tb-h">Changes <small>non-runners since the cards were first read</small></h3><div class="tb-rows">${nrs}</div>` : "") +
-    (skipRows ? `<h3 class="tb-h">Races left alone <small>${skipped.length} of ${races.length} · Every race has each read</small></h3><div class="tb-rows">${skipRows}</div>` : "");
+    (skipRows ? `<h3 class="tb-h">Races left alone <small>${skipped.length} of ${races.length} · Every race has each read</small></h3><div class="tb-rows">${skipRows}</div>` : "") +
+    ledger("racing");
 }
 
 function rcRaceRow(r, i){
@@ -7957,15 +8132,6 @@ function rcCalibSvg(bands){
   });
   return `<svg viewBox="0 0 320 220" role="img" aria-label="Model chance against how often horses won, by band">${g}</svg>`;
 }
-function rcProfitSvg(series){
-  if(!series || series.length < 2) return `<p class="hon-foot">The line starts once two tips have settled.</p>`;
-  const lo = Math.min(0, ...series), hi = Math.max(1, ...series), X = i => 34 + i * 276 / (series.length - 1), Y = v => 196 - (v - lo) / (hi - lo) * 180;
-  let g = `<line class="hz" x1="34" x2="310" y1="${Y(0)}" y2="${Y(0)}"></line><text class="ht" x="28" y="${Y(0) + 3}" text-anchor="end">0</text>`;
-  g += `<polyline class="hl" points="${series.map((v, i) => X(i).toFixed(1) + "," + Y(v).toFixed(1)).join(" ")}"></polyline>`;
-  const last = series[series.length - 1];
-  g += `<text class="ht hv" x="${X(series.length - 1)}" y="${Y(last) - 8}" text-anchor="end">${last >= 0 ? "+" : ""}${last} pts</text><text class="ht" x="34" y="212">1st tip</text><text class="ht" x="310" y="212" text-anchor="end">tip ${series.length}</text>`;
-  return `<svg viewBox="0 0 320 220" role="img" aria-label="Running profit, one point a tip">${g}</svg>`;
-}
 function rcRecord(R){
   const S = R.record;
   if(!S || !S.runners) return `<div class="empty">The record starts with the first graded race day. Every runner's chance is checked against how often those horses win, and every tip against its price.</div>`;
@@ -7973,12 +8139,12 @@ function rcRecord(R){
   const learn = S.learn.map(c => { const z = c.z, word = c.n < 100 ? "Too few yet" : z == null ? "–" : z <= -2 ? "Model too keen" : z >= 2 ? "Worth more weight" : "On the line";
     const col = c.n < 100 ? "--mute" : z <= -2 ? "--away" : z >= 2 ? "--home" : "--ink-2";
     return `<tr><td>${rcE(c.name)}</td><td>${c.n}</td><td>${c.expected}</td><td>${c.won}</td><td style="text-align:left;font-family:var(--f-ui);font-weight:600;color:var(${col})">${word}</td></tr>`; }).join("");
-  return `<section class="honest"><h3>Is the racing model honest?</h3>
-    <p class="hon-lede">Does a horse the model gives 30% win about 30% of the time? And do the tips make money at the price published?</p>
+  // 23 Nov 2026 (UX release 6): the tips' running profit is the ledger, as on every card
+  return ledger("racing") + `<section class="honest"><h3>Is the racing model honest?</h3>
+    <p class="hon-lede">Does a horse the model gives 30% win about 30% of the time? (Whether the tips make money at the price published is the record above.)</p>
     <div class="hon-grid">
       <figure><figcaption><b>Chance v winners.</b> Every graded runner, in bands by the model's chance. A dot on the line means the chance was right; red means the model was too keen.</figcaption>${rcCalibSvg(S.bands)}
         <div class="hon-key"><span><i class="kq"></i>Perfect</span><span><i class="kd"></i>How often they won</span><span><i class="kc"></i>Margin for luck</span></div></figure>
-      <figure><figcaption><b>Running profit, 1 point a tip.</b> At the best UK price when the tip was published. ${S.beatClose == null ? "" : "Beat the starting price on " + Math.round(S.beatClose * 100) + "% of tips."}</figcaption>${rcProfitSvg(S.series)}</figure>
     </div><p class="hon-foot">${S.races} races and ${S.runners} runners graded. ${S.fitReady ? "Enough for the first refit of the blend." : "The blend is refitted at 500 graded races."}</p></section>
     <h3 class="tb-h">By model chance <small>every graded runner</small></h3>
     <div class="ladder" style="margin-top:12px"><table><tr><th>Chance</th><th>Runners</th><th>Expected wins</th><th>Won</th></tr>${bands}</table></div>
@@ -8007,6 +8173,7 @@ function renderRacing(){
     if(!RC_PICKED && !(R.days[RC_DAY] || []).some(r => r.tip)) RC_BOARD = "races";
   }
   if(rcWas && rcWas !== RC_DAY) RC_RACE = null;
+  if(LED_FOCUS === "racing" && RC_BOARD !== "tips") RC_BOARD = "record";   // a Cards board row opens the tips' record
   const races = (R.days[RC_DAY] || []).slice().sort((a, b) => (a.when || "") < (b.when || "") ? -1 : 1);
   const rcRib = dayRibbon("racing", days.map(d => { const rs = R.days[d] || [], tips = rs.filter(r => r.tip).length;
     return {d, n: RC_BOARD === "tips" ? tips : rs.length, none: !rs.length}; }), RC_DAY);
@@ -8062,7 +8229,7 @@ const navView = () => { const b = document.querySelector('#views button[aria-pre
 const navFKey = v => v.startsWith("sport:") ? "sport" : v;
 const navSeen = el => !!el && el.offsetParent !== null;
 const NAV_SPORT = /^[a-z0-9_]{1,24}$/;
-const navBoards = () => ["list", "football", "tennis"].concat(Object.keys((SD && SD.sports) || {}));
+const navBoards = () => ["list", "football", "tennis"].concat(Object.keys((SD && SD.sports) || {}), ["cards"]);
 function navHash(){
   const v = navView(), k = navFKey(v), V = FVIEWS[k], q = [];
   // the day only when the open page shows it (a page without that day shows its own default)
@@ -8078,6 +8245,8 @@ function navHash(){
   }
   if(v === "fixtures" && state.board !== "win") q.push("board=" + state.board);
   if(v === "results" && resState.sport !== "list") q.push("board=" + resState.sport);
+  // UX release 6: the card whose ledger a Cards board row opened
+  if(LED_FOCUS && LEDGER_CARDS[LED_FOCUS] && LEDGER_CARDS[LED_FOCUS].view0 === v) q.push("card=" + LED_FOCUS);
   if(v === "list" && !day && !q.length) return "";
   return "#" + v + (day ? "/" + day : "") + (q.length ? "?" + q.join("&") : "");
 }
@@ -8137,9 +8306,12 @@ function navApply(how){
     // the day: the entry's own on Back / Forward (it may be one the page did not show), else the address's
     const day = ours && history.state.day !== undefined ? history.state.day : (p.day === undefined ? null : p.day);
     if(v === "results"){ const bd = (p.q.board || "").toLowerCase(); resState.sport = navBoards().includes(bd) ? bd : "list"; }
+    // a card's ledger named in the address (UX release 6): opened and gone to once the page draws
+    const cd = (p.q.card || "").toLowerCase();
+    LED_PENDING = own(LEDGER_CARDS, cd) && LEDGER_CARDS[cd].view0 === v ? cd : null;
     RB_FOCUS = false;
     if(how === "load" || v !== was){ DAY = day; btn.click(); }   // the view switch renders and sends tab_view once
-    else setDay(day);
+    else { LED_FOCUS = LED_PENDING; LED_PENDING = null; setDay(day); if(LED_FOCUS) ledGo(LED_FOCUS); }
   } finally { NAV.applying = false; }
   navWrite(false);
 }
@@ -8160,6 +8332,8 @@ $("#views").addEventListener("click", e=>{
   const list = v === "list";
   const today = v === "today";
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
+  // UX release 6: a Cards board row (or an address with ?card=) opens that card's ledger; any other turn clears it
+  LED_FOCUS = LED_PENDING && LEDGER_CARDS[LED_PENDING].view0 === v ? LED_PENDING : null; LED_PENDING = null;
   $("#controls").hidden = !fixtures;
   $("#fbLede").hidden = !fixtures;
   // 16 Nov 2026, Douglas: "will it track tab selection?" A tab change rewrites the address without
@@ -8191,6 +8365,7 @@ $("#views").addEventListener("click", e=>{
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time
   window.scrollTo({top:0});
+  if(LED_FOCUS) ledGo(LED_FOCUS);
   navWrite(true);   // UX release 4: the address follows (a page turned, so Back returns here)
 });
 
