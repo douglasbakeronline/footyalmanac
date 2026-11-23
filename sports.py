@@ -155,6 +155,55 @@ def by_side(graded):
     return out
 
 
+# The college basketball tier (23 Nov 2026, Douglas: "I like the idea of
+# signaling bankers solid and caution and leave out"): a pick at TIER_MIN+
+# read by venue and ESPN's spread for the pick. Graded college basketball,
+# 1 to 23 Nov, 70%+: home picks the line favours by 12+ landed 95% v 90%
+# quoted (101), home picks with no line 89% v 85% (439), a neutral court or
+# a line of 6-12 67% v 81% (57, z -2.8), away or a line under 6 52% v 78%
+# (69, z -5.1). Shown on the row, never hidden; the model's number and the
+# Daily List are unchanged, as no bookmaker number reaches a model. Mirrored
+# by collegeTier in index.html. claude/college-tiers-2026-11-23.md.
+TIER_SPORTS = {"ncaab"}
+TIER_MIN = 0.70
+TIER_BANKER, TIER_CAUTION = 12.0, 6.0   # points the line favours the pick by
+TIERS_COLLEGE = ("banker", "solid", "caution", "leave")
+
+
+def college_tier(g):
+    """banker / solid / caution / leave for a college basketball pick at
+    TIER_MIN+, else None. A graded row's line is its last pre-start copy's,
+    so no line there means ESPN never posted one (mostly small-conference
+    mismatches)."""
+    if not g or g.get("sport") not in TIER_SPORTS or not (g.get("confidence") or 0) >= TIER_MIN:
+        return None
+    home = g.get("pick") == g.get("home")
+    spread = (g.get("line") or {}).get("spread")
+    by = None if spread is None else (-spread if home else spread)
+    if not home and not g.get("neutral"):
+        return "leave"
+    if by is not None and by < TIER_CAUTION:
+        return "leave"
+    if g.get("neutral") or (by is not None and by < TIER_BANKER):
+        return "caution"
+    return "solid" if by is None else "banker"
+
+
+def by_college_tier(graded):
+    """Landed v quoted for each college tier. A tally of the record, never a fit."""
+    out = {}
+    for t in TIERS_COLLEGE:
+        xs = [r for r in graded if r.get("ok") is not None and college_tier(r) == t]
+        if not xs:
+            out[t] = None
+            continue
+        n = len(xs); w = sum(bool(r["ok"]) for r in xs); q = sum(r["confidence"] for r in xs) / n
+        z = (w - q * n) / math.sqrt(max(q * (1 - q) * n, 1e-9))
+        out[t] = {"n": n, "landed": w, "quoted": round(q, 4), "rate": round(w / n, 4), "z": round(z, 2)}
+    out["rule"] = {"min": TIER_MIN, "banker": TIER_BANKER, "caution": TIER_CAUTION}
+    return out
+
+
 def list_bar(sport, found):
     """The Daily List bar for a sport: the backtest's threshold, raised to the
     sport's floor. None stays None: a floor never earns a sport a place."""
@@ -1015,6 +1064,7 @@ def score():
            "reserveTiers": {t: summ([r for r in graded if r.get("reserve") and r["tier"] == t])
                             for t in ("Strong", "Firm")},
            "bySide": by_side(graded),
+           "collegeTiers": by_college_tier(graded),
            "days": [{"date": d, **summ(by_date[d]),
                      "games": sorted(by_date[d], key=lambda r: -r["confidence"])}
                     for d in sorted(by_date, reverse=True)[:14]]}
