@@ -465,7 +465,17 @@ def af_same(af_name, board_name):
     # kick-off must still agree.
     import odds as O
     full = O.ALIASES.get((af_name or "").strip())
-    return bool(full) and same(full, board_name)
+    if full and same(full, board_name): return True
+    # 23 Nov 2026 (02:41 UTC build): CA Mineiro v SC Corinthians Paulista,
+    # Brazil's Serie A, noFixture beside "Atletico-MG v Corinthians". The
+    # build's own club normaliser (sources._norm, aliases then cities) already
+    # reduces both to "mineiro", as it does CA Paranaense and Athletico-PR, and
+    # the bulk match (odds.name_sim) reads it; the one-fixture fallback now
+    # does too. Exact equality of the normalised form only, never a fuzzy
+    # score, and a name that reduces to a bare city never counts.
+    import sources as S
+    na, nb = S._norm(af_name or ""), S._norm(board_name or "")
+    return bool(na) and na == nb and not S._bare_place(na)
 
 def card_reach(l):
     """True when a football leg could reach the Card once priced: the model

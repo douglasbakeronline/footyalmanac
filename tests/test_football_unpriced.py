@@ -321,6 +321,27 @@ class KickoffNamed(unittest.TestCase):
         self.assertEqual(r["matched"], 2)
         self.assertNotIn("miss", r)
 
+    def test_brazil_club_normaliser(self):
+        """23 Nov 2026 (02:41 UTC build): CA Mineiro v SC Corinthians Paulista, Serie A,
+        noFixture beside "Atletico-MG v Corinthians": the build's club normaliser
+        (sources._norm) reduces both to the same club, so the fallback prices it."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.90"}, {"value": "Draw", "odd": "3.4"}, {"value": "Away", "odd": "4.0"}]}]}]}]
+        L = [leg(t, "CA Mineiro", "SC Corinthians Paulista", "Serie A"),
+             leg(t, "CA Paranaense", "EC Bahia", "Serie A", hour=15)]
+        day = [fx(93, t, "Atletico-MG", "Corinthians"), fx(94, t, "Athletico-PR", "Bahia", hour=15)]
+        r = self.run_price(L, day, {93: book, 94: book})
+        self.assertEqual(r["matched"], 2)
+        self.assertNotIn("miss", r)
+
+    def test_normaliser_never_crosses_clubs(self):
+        """Equality of the normalised form only: Mineiro is not Paranaense,
+        Inter is not AC Milan."""
+        self.assertTrue(G.af_same("Atletico-MG", "CA Mineiro"))
+        self.assertFalse(G.af_same("Atletico-MG", "CA Paranaense"))
+        self.assertFalse(G.af_same("Inter", "AC Milan"))
+
     def test_alias_does_not_cross_clubs(self):
         """An alias widens a spelling, never a club: QPR is not Queen of the South."""
         self.assertTrue(G.af_same("QPR", "Queens Park Rangers"))

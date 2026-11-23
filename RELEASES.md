@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-af-normaliser: the price fallback reads the build's club normaliser (tag pending)
+
+**What changed:** a football game API-Football spells another way, which the build's own club normaliser already joins (CA Mineiro and Atletico-MG, CA Paranaense and Athletico-PR), now takes its price in the one-fixture fallback. The 02:41 UTC build had CA Mineiro v SC Corinthians Paulista (Serie A, 25 Nov) under noFixture beside "Atletico-MG v Corinthians".
+
+**Evidence:** `claude/af-normaliser-fallback-2026-11-23.md`: `sources._norm` reduces both to "mineiro"; on every November board name, no two different clubs in one league share a normalised form.
+
+**Tested:** `tests/test_football_unpriced.py` (two new tests, both fail on the old code), the full suite, nametest. The next CI build's "football noFixture:" line is the live check.
+
+**Files:** `groupings.py` (`af_same`), `tests/test_football_unpriced.py`, `claude/af-normaliser-fallback-2026-11-23.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** any Card rule, model number or grading; equality only, never a fuzzy score, and a bare city never counts.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-23-reserve75: the Daily List's reserve trimmed to 75%+, every row marked Reserve (tag pending)
 
 **What changed:** the reserve fold under each Daily List day now shows only reserve picks at 75% or better, and each of those rows carries a dashed **Reserve** chip under its confidence, so a reserve pick never reads as a list pick. The fold's note says how many under 75% were left off and why. The Sport filter's counts skip the hidden picks. The list's intro paragraph says the same. Douglas, 23 Nov 2026: "I sometimes struggle with being drawn into the reserves", then option 2 of two offered (trim, rather than collapse behind a tap).
