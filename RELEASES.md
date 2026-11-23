@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-ux1-foundations: one segmented control, spacing and type tokens, one empty state (tag pending)
+
+**What changed:** release 1 of the UX programme, nearly invisible on purpose. Every toggle group on the site now has one look, `.seg`: the football Board and Show switches, Order by, the confidence bands, the Daily List's sport filter and jump strip, Starred's controls, the glance's day tabs, the Bets and Scale day pickers, How it went's day pickers, the slip and Edge trackers' ranges and racing's board, day, meeting and race pickers. Separate buttons with a 4px gap, a 1px rule border, ink with yellow text when selected, a count slot in mono, wrapping cleanly on a phone (the glance's tabs scroll on one line, `.seg--scroll`; tracker ranges are the compact `.seg--sm`). The selected look keys off `aria-pressed` (`aria-selected` in the glance's tablist); the tracker ranges, which only set class `on`, now set `aria-pressed` too. Spacing tokens `--s1` to `--s6` (4 to 40px) and a six-step type scale `--t-xs` to `--t-xl` (11, 12.5, 14, 16, 20, 26px) in `:root`; about 200 font sizes moved onto the scale where the move is exact or at most half a pixel smaller (13 to 12.5, 11.5 to 11, 14.5 to 14, 16.5 to 16; the cover and tab bar untouched); `#100e0c` is `var(--cover-ink)` everywhere it was written out (42). One empty state, `.empty`: a boxed note in the surface colour with an optional title line (`.empty-t`, Scale's bold heading), replacing the 40px blank `.empty`, `.tb-empty` and `.sc-empty`; the "not in this build" states read "... in this build yet. It appears after the next build." (tennis no longer tells readers to run a script).
+
+**Why:** Douglas, 23 Nov 2026: "Filter and nav options consistent across pages"; the later releases (filter bar, day ribbon, ledger) build on one control, one scale and one empty state.
+
+**Tested:** the unit suite and nametest pass; the shared check opens every tab at 1280 and 400 wide with no page errors and no sideways overflow; screenshots of the Daily List, Bets, Scale, Football, the sport tabs, How it went and Racing compared with main's at both widths (same layout, the control groups now gapped, text in the ledes half a pixel smaller); a click-through checks the glance tab, the list sport filter, both tracker ranges (aria-pressed and class `on` set, ink background), the Bets and Scale day pickers and How it went's day picker, and that every selected button on the page has the same background.
+
+**Files:** `index.html` (CSS: the `.seg` block under controls, `.empty` above the footer, tokens in `:root`, the phone tap-target rules; markup: `bandCtl`, Starred's `seg`, the list sport filter and jump strip, `todayGlance`, the How it went day pickers, `slipTracker`, `edgeTracker`, the Bets day picker, Scale's days, racing's pickers, the empty states), `claude/ux-1-foundations-2026-11-23.md`, `CLAUDE.md` (a notes row), `RELEASES.md`.
+
+**Not changed:** no model, pick, rule, number or record; no script reads a class that was removed (`.dayseg`, `.boards`, `.et-seg`, `.sc-days`, `.gl-tabs` stay in the markup beside `.seg`, with no look of their own); the cover, the tab bar and the football competition chips. Inline `style=` attributes and the remaining off-scale sizes (12, 10.5, 13.5, ...) are left for later releases.
+
+**Roll back:** `git revert` the squash commit on main (it is one commit). Releases 2 to 7 of the UX programme (filter bar, day ribbon, address bar, row, ledger, Analysis) build on `.seg`, the tokens and `.empty`; revert those first.
+
 ## 2026-11-23-leave-out-off-list: Leave out college picks off the Daily List (tag pending)
 
 **What changed:** a college basketball pick tiered Leave out (away, or favoured by under 6 points on the line) no longer shows on the Daily List or in its reserve fold. It stays on the college basketball tab with its red chip; the day's "left off" line and the reserve note count it. Douglas: "remove leave out from daily list".
