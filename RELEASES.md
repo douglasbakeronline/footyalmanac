@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-reserve75: the Daily List's reserve trimmed to 75%+, every row marked Reserve (tag pending)
+
+**What changed:** the reserve fold under each Daily List day now shows only reserve picks at 75% or better, and each of those rows carries a dashed **Reserve** chip under its confidence, so a reserve pick never reads as a list pick. The fold's note says how many under 75% were left off and why. The Sport filter's counts skip the hidden picks. The list's intro paragraph says the same. Douglas, 23 Nov 2026: "I sometimes struggle with being drawn into the reserves", then option 2 of two offered (trim, rather than collapse behind a tap).
+
+**Evidence:** `claude/daily-list-review-2026-11-14.md`: the reserve landed 952 of 1362 (70%) against the list's 414 of 471 (88%); reserve picks at 75%+ 244 of 288 (85%), the rest about 708 of 1074 (66%).
+
+**Tested:** full unittest suite and nametest; a fast offline build checked in Chrome at 1280px and 400px (chips on every reserve row, no console errors).
+
+**Files:** `index.html` (`RESERVE_SHOW_MIN`, `resShown`, the reserve fold in `renderList`, `.resvtag`), `RELEASES.md`.
+
+**Not changed:** the reserve flag, its grading and record, How it went's reserve fold, Starred, Scale, the Daily 2x or any tab that reads the reserve. Display only.
+
+**Roll back:** `git revert` the merge, or set `RESERVE_SHOW_MIN` to 0.
+
 ## 2026-11-23-winstar: ⭐ likely winners and the day's Most nailed on (tag pending)
 
 **What changed:** a ⭐ now sits beside the picked side's name on every Daily List pick that also passes every check the record backs: football priced under 1.40 (where a price is known), no college pick away, neutral or behind .500, no tennis under 80%, no Bookies mark, no context check "against". It shows on every tab where the row appears. Each day on the Daily List opens with a **Most nailed on** line: the day's strongest starred pick, with its confidence and price; its row's star is a little larger. A key line in the list's intro explains the star. Douglas, 23 Nov 2026, after nine lost slips: "add a ⭐ ... next to all games that meet the likely winner conditions" and "the most nailed on team to win".

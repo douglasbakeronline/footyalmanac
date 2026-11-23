@@ -1469,6 +1469,10 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .bkchip.none{color:var(--mute);border-style:dashed;font-weight:600}
 .bkchip.past{color:var(--mute)}   /* 19 Nov 2026: the last price before a started game's kick-off */
 .conf .bkchip{display:table;margin-left:auto}
+/* 23 Nov 2026: every reserve row says so, so it never reads as a list pick. */
+.resvtag{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px dashed var(--ink-2);border-radius:3px;
+  font-family:var(--f-ui);font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+  line-height:1.5;white-space:nowrap;color:var(--ink-2)}
 .list-off{margin:2px 0 10px;font-size:13px;color:var(--mute)}
 .list-off button{font:inherit;color:inherit;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
 .list-days{margin:18px 0 4px}
@@ -3424,6 +3428,14 @@ function renderStarred(){
 // or by kick-off to plan the day. Remembered on this device only.
 const LIST_RES_OPEN = {};   // reserve fold per day, once the reader has opened or closed it
 const GROUP_A_MIN = 0.85;   // Group A takes only picks at this level or better (daylist.GROUP_A_MIN is the same)
+// 23 Nov 2026 (Douglas: "I sometimes struggle with being drawn into the
+// reserves", then option 2): the Daily List's reserve fold shows only reserve
+// picks at RESERVE_SHOW_MIN or better, each marked Reserve. On the 14 Nov
+// review the reserve landed 952 of 1362 (70%) against the list's 88%; at 75%+
+// 244 of 288 (85%), under it about two in three. Display only: the reserve
+// flag, its grading and every other tab are unchanged.
+const RESERVE_SHOW_MIN = 0.75;
+const resShown = it => (it.g.confidence || 0) >= RESERVE_SHOW_MIN;
 let LIST_ORDER = (() => { try { return localStorage.getItem("listOrder") === "time" ? "time" : "strength"; }
                           catch(e){ return "strength"; } })();
 document.addEventListener("click", e => {
@@ -3773,7 +3785,7 @@ function renderList(){
         World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.
         An international also needs the model's own number to clear the bar before the ranking moves it.</p>
         <p>Every pick that clears the bar is shown. Below them, folded away, is the <b>reserve</b>: games under
-        the bar but otherwise clean, Firm (62%) or better, ranked the same way. On a day where fewer than 20
+        the bar but otherwise clean, ranked the same way. Only reserve picks at 75% or better are shown, each marked Reserve: below that the reserve lands about two in three. On a day where fewer than 20
         picks clear the bar, the reserve opens by itself so there is still a full day to choose from. Each carries its strength tag and
         tested rate, and the reserve is graded as its own group so it never flatters the list's record.</p>
         <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in five or
@@ -3798,7 +3810,7 @@ function renderList(){
   // 22 Nov 2026: the sport and confidence-band filters, counted on every list
   // and reserve pick of the window (after At William Hill) so each chip says
   // how many it holds.
-  const every = [...Object.values(byDay), ...Object.values(resDay)].flat().filter(it => !LIST_BOOK_ONLY || itemHill(it));
+  const every = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat().filter(it => !LIST_BOOK_ONLY || itemHill(it));
   const spCount = {};
   every.forEach(it => { const k = itemSport(it); spCount[k] = (spCount[k] || 0) + 1; });
   LIST_SPORTS = LIST_SPORTS.filter(k => spCount[k]);   // a sport with nothing this week drops out
@@ -3837,7 +3849,8 @@ function renderList(){
       <div class="dayseg" id="listDays">${dates.map(d => `<button type="button" data-jump="${d}">${d === today ? "Today" : fmtShort(d)}<i>${n(d)}</i></button>`).join("")}</div></div>`);
   }
   dates.forEach(date => {
-    const allItems = (byDay[date] || []).filter(keepIt), allExtra = (resDay[date] || []).filter(keepIt);
+    const allItems = (byDay[date] || []).filter(keepIt), resAll = (resDay[date] || []).filter(keepIt);
+    const allExtra = resAll.filter(resShown), resLow = resAll.length - allExtra.length;
     if(filtered && !allItems.length && !allExtra.length) return;
     const items = shown((LIST_BOOK_ONLY ? allItems.filter(itemHill) : allItems).sort(byStrength));
     const extra = shown((LIST_BOOK_ONLY ? allExtra.filter(itemHill) : allExtra).sort(byStrength));
@@ -3884,11 +3897,12 @@ function renderList(){
       fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
       const nWary = extra.filter(it => sideWary(it.g)).length;
       fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">Under the bar, Firm (62%) or better. Weigh each by its tag and tested rate; graded separately, never in the list's record.${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
+        <span class="resv-note">Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%. Graded separately, never in the list's record.${resLow ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
       fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
       sec.appendChild(fold);
       const puts = (it, i) => listPut(fold, it, i, date);
       extra.forEach((it, j) => puts(it, items.length + j));
+      fold.querySelectorAll(".row .conf").forEach(c => c.insertAdjacentHTML("beforeend", `<span class="resvtag" title="Reserve: under the Daily List's bar. Not a list pick.">Reserve</span>`));
     }
     host.appendChild(sec);
   });
