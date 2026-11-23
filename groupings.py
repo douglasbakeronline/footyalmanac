@@ -2637,7 +2637,14 @@ def build_list_card(L, date, now, prev=None, archived=None):
         lock = first_kick(g) or lock_time(date, w)
         # 17 Nov 2026: a Daily 2x built short of 2x is rebuilt until it starts,
         # as prices for later days arrive; a full one is held as first built.
-        if is_daily(g.get("name")) and g.get("short") and not g.get("locked") and now < lock: continue
+        # 23 Nov 2026: held only from the day's own start (07:00 UK, the day's
+        # window). Before then it is rebuilt on every build: a slip first built
+        # two or three days ahead was held on that day's prices and on the
+        # picks priced then, mostly the reserve (every slip 17 to 23 Nov was
+        # built 1-3 days early; 23 Nov's took two reserve picks with ten list
+        # picks on the day), not the rule replayed. claude/daily-2x-on-its-day-2026-11-23.md
+        if (is_daily(g.get("name")) and not g.get("locked") and now < lock
+                and (g.get("short") or now < lock_time(date, w))): continue
         g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
         g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
         groups.append(g); filled.add(g["name"])

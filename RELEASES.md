@@ -10,6 +10,20 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-23-daily2x-day: the Daily 2x is built on its own day (tag pending)
+
+**What changed:** the Daily 2x was built when its day first came into the builds' three-day horizon and then held, so every slip from 17 to 23 Nov was chosen one to three days early, mostly from reserve picks, at prices read then (23 Nov's showed "read Thu 19:30" on a Monday while the day's ten Daily List picks never reached it). Now an unstarted Daily 2x is rebuilt on every build until 07:00 UK on its day, then held as first built until its first start, as before. The 07:40 UTC build (the morning briefing and email) is the first to hold it.
+
+**Why:** the rule the page states, the Daily List first, and the ledger replay that put the slip live were both the day's own list; the live slip was not that rule. On the archived pool, slips built as at 07:00 UK: 25, 12 won v 10.16 expected, +10.4%, list picks in 19 of them and reserve in 2. Over 17 to 22 Nov the on-the-day slips won 2 of 6, as the live ones did, so this is about the slip being the rule, not a claim of more return. `claude/daily-2x-on-its-day-2026-11-23.md`.
+
+**Tested:** `tests/test_daily_2x.py` `test_rebuilt_until_its_day_then_held` (a reserve slip built two days early is replaced by the list slip the evening before, then held after 07:00 UK on the day even when a stronger pick arrives; fails on the old code); the unit suite and `nametest.py`.
+
+**Files:** `groupings.py` (`build_list_card`: the hold condition), `tests/test_daily_2x.py`, `claude/daily-2x-on-its-day-2026-11-23.md`, `CLAUDE.md`.
+
+**Not changed:** no CARD_* constant, no Daily 2x constant, tier or floor, nothing in the record (only locked slips are archived). The List 2x and List long are still held as first built.
+
+**Roll back:** `git revert` the squash commit.
+
 ## 2026-11-23-mailer-send: the Daily List by email at 7 every morning, the Weekly Record on Saturdays (tag pending)
 
 **What changed:** the Mailer's sign-ups now get email. **The Daily List** arrives at 07:00 UK every morning about the day: the Daily List as the page shows it (list picks only, never the reserve; Group A, Group B and the rest, strongest first; each with its UK time, sport, competition, the pick against the opponent, the model's chance, the tested rate, William Hill's price or the bookmakers' average labelled Avg, and the ⭐ likely winner; college basketball only at Hill 1.05+ and never a Leave out pick, with a line counting those left off), then the Daily 2x (each pick, the slip's price at Hill, a short-day mark), the Card (each group, its picks, Hill prices and stake, or the page's reason there is none), the Edge picks and, for those who ticked Scale, the day's Scale bets from the Daily List tier and the Scale groups, estimates marked "≈ estimate". An empty day says so in one line. **The Weekly Record** (the form's Sunday Record) arrives on Saturdays at 07:00 UK for the Saturday-to-Friday week just ended: the Daily List landed against quoted, by sport, the five strongest wins and every miss named; each card's week (the Card, the Daily 2x, the List card, the slip, Edge picks, Scale groups) in the ledger's headline pattern; and the list at William Hill's prices since 10 Nov. Every email carries the site's links, the honesty line, 18+ and BeGambleAware, and the reader's own Manage and Unsubscribe links with a one-click List-Unsubscribe header. **The Mailer tab:** the Daily List option reads "every morning at 7" and says what the email holds; "Sunday Record" is now "Weekly Record · Saturday mornings"; the confirmation link (`#mailer?confirm=`) confirms the address and says so, or says plainly that the link failed; the Manage link (`#mailer?manage=`) shows the three emails, a pause (a week or a month) and Unsubscribe from everything.
