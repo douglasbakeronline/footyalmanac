@@ -414,16 +414,16 @@ button.chip[aria-pressed="true"]{background:var(--ink);color:var(--yellow);borde
 button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 /* ---------- one segmented control (23 Nov 2026, UX release 1) ----------
    Every toggle group on the site is a .seg: the board and Show switches,
-   Order by, the confidence bands, the sport filters, the day pickers, the
-   tracker ranges, the glance's day tabs, Scale's days and racing's meetings,
-   races and days. The older class names (.dayseg, .boards, .et-seg, .sc-days,
-   .gl-tabs) stay in the markup beside it, so scripts that select by them still
-   work; they carry no look of their own. The state is aria-pressed (aria-selected
-   in the glance's tablist), which is the one thing the selected look keys off.
+   Order by, the confidence bands, the sport filters, the day ribbon (UX
+   release 3, which replaced every day picker), the tracker ranges and racing's
+   meetings and races. The older class names (.boards, .et-seg) stay in the
+   markup beside it, so scripts that select by them still work; they carry no
+   look of their own. The state is aria-pressed (aria-selected in the day
+   ribbon's tablist), which is the one thing the selected look keys off.
    Separate buttons with a gap rather than one joined bar, so a long group wraps
    cleanly on a phone. A number after the label goes in <i> or .n (the count
    slot). Modifiers: .seg--sm, the compact size for tracker ranges; .seg--scroll,
-   one line that scrolls sideways (the glance's day tabs). */
+   one line that scrolls sideways (the day ribbon). */
 .seg{display:flex;flex-wrap:wrap;gap:var(--s1);max-width:100%;min-width:0}
 .seg button{
   font:600 var(--t-sm)/1.3 var(--f-ui);letter-spacing:.02em;
@@ -438,11 +438,26 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .seg button i,.seg button .n{font-style:normal;font:600 var(--t-xs) var(--f-num);color:var(--mute);margin-left:5px}
 .seg button[aria-pressed="true"] i,.seg button[aria-pressed="true"] .n,
 .seg button[aria-selected="true"] i,.seg button[aria-selected="true"] .n{color:var(--yellow-soft)}
-.seg button.none:not([aria-pressed="true"]){color:var(--mute);font-weight:500}
+.seg button.none:not([aria-pressed="true"]):not([aria-selected="true"]){color:var(--mute);font-weight:500}
 .seg--sm button{padding:3px 9px;min-height:28px}
 .seg--scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
 .seg--scroll::-webkit-scrollbar{display:none}
 .seg--scroll button{flex:0 0 auto}
+/* the day ribbon (23 Nov 2026, UX release 3, dayRibbon): one line of day
+   buttons between two arrows, above the filter bar on every page with days.
+   Past days in muted ink, the selected day in the .seg selected look; on a
+   narrow screen the line scrolls, with a fade on the clipped side. */
+.ribbon{display:flex;align-items:center;gap:var(--s1);margin:var(--s4) 0 var(--s2);max-width:100%;min-width:0}
+.rb-wrap{position:relative;flex:0 1 auto;min-width:0;display:flex}
+.rb-days{gap:var(--s1);flex:0 1 auto}
+.rb-days button.past[aria-selected="false"]{color:var(--mute)}
+.rb-wrap::before,.rb-wrap::after{content:"";position:absolute;top:0;bottom:0;width:28px;pointer-events:none;opacity:0;transition:opacity .15s;z-index:1}
+.rb-wrap::before{left:0;background:linear-gradient(90deg,var(--paper),rgba(240,232,214,0))}
+.rb-wrap::after{right:0;background:linear-gradient(270deg,var(--paper),rgba(240,232,214,0))}
+.rb-wrap.fl::before,.rb-wrap.fr::after{opacity:1}
+.rb-arw{font:600 18px/1 var(--f-ui);background:none;border:1px solid var(--rule);border-radius:2px;color:var(--ink-2);padding:2px 9px;min-height:30px;cursor:pointer;flex:0 0 auto}
+.rb-arw[disabled]{opacity:.35;cursor:default}
+.rb-arw:focus-visible{outline:2px solid var(--home);outline-offset:1px}
 .ctl-label{font-size:var(--t-xs);letter-spacing:.1em;text-transform:uppercase;color:var(--mute);font-weight:600}
 
 
@@ -452,6 +467,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
    Balanced and Stretch (4-20 Oct) are retired but keep their colours for
    the record. */
 .og-days{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:16px}
+.og-days .ribbon{flex:0 1 auto;margin:0}
 .og-stake{display:flex;align-items:center;gap:6px;margin-left:auto;font-size:var(--t-sm);color:var(--ink-2)}
 .og-stake input{width:70px;font:600 var(--t-base) var(--f-num);padding:5px 7px;border:1px solid var(--rule);background:var(--surface);color:var(--ink)}
 .og-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:14px;margin-top:14px}
@@ -1535,8 +1551,6 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .tierkey span.it{white-space:nowrap;margin-right:12px}
 .list-off{margin:2px 0 10px;font-size:var(--t-sm);color:var(--mute)}
 .list-off button{font:inherit;color:inherit;text-decoration:underline;background:none;border:0;padding:0;cursor:pointer}
-.list-days{margin:18px 0 4px}
-.list-days .ctl-label{display:block;margin-bottom:6px}
 .xrow .conf .bkchip{margin-top:4px}
 .scoreline .book small + small{margin-top:2px}
 /* "Is the list honest?" (listHonesty, 10 Nov 2026): two small charts in the
@@ -1584,13 +1598,6 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .gl-sum .gl-dn{font-family:var(--f-ui);text-transform:uppercase;letter-spacing:.06em;font-size:var(--t-sm);margin-right:4px}
 .gl-sum .g-won{color:var(--edge)} .gl-sum .g-lost{color:var(--away)} .gl-sum .g-live{color:#8a6a10}
 .gl-top{justify-content:space-between}
-.gl-nav{display:flex;align-items:center;gap:4px;min-width:0;max-width:100%}
-.gl-tabs{gap:2px}   /* a .seg .seg--scroll (23 Nov 2026) */
-.gl-tabs button[aria-selected="false"].past{color:var(--mute)}
-.gl-arw{font:600 18px/1 var(--f-ui);background:none;border:1px solid var(--rule);border-radius:2px;color:var(--ink-2);padding:2px 9px;min-height:30px;cursor:pointer;white-space:nowrap}
-.gl-arw[disabled]{opacity:.35;cursor:default}
-.gl-arw:focus-visible{outline:2px solid var(--home);outline-offset:1px}
-@media (max-width:560px){ .gl-nav{width:100%} .gl-tabs{flex:1} }
 .gl-ax{stroke:var(--rule);stroke-width:1}
 .gl-tk{stroke:var(--rule);stroke-width:1}
 .gl-tt{font-family:var(--f-num);font-size:var(--t-xs);fill:var(--mute)}
@@ -1690,6 +1697,7 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .sc-gs{font-family:var(--f-num);font-size:12px;color:var(--ink-2);text-align:right;padding-left:10px;white-space:nowrap}
 .sc-gnote{margin:8px 0 0;font-size:var(--t-sm);color:var(--mute)}
 .sc-sec{margin-top:30px}
+.sc-sec.sc-day{margin-top:var(--s4)}
 /* Every scale bet (scale_ladder.py, 16 Nov 2026): a tally per sport, bet and band */
 .sc-lad td{white-space:nowrap}
 .sc-lad td.r{text-align:right;font:500 var(--t-sm) var(--f-num)}
@@ -1965,7 +1973,7 @@ footer b{color:var(--ink-2)}
      a phone, 44 where the layout has room. Desktop keeps its sizes. Chips
      were ~26px, segment and day buttons ~29px, "Add to acca" an 11px link. */
   button.chip,.comp-toggle{min-height:44px;padding:6px 11px}
-  .seg button,.gl-arw{min-height:44px;padding:6px 12px}
+  .seg button,.rb-arw{min-height:44px;padding:6px 12px}
   .seg--scroll button{padding:6px 9px}
   .og-add,.og-g{display:inline-flex;align-items:center;min-height:40px;padding:0 4px;margin:0 8px 0 -4px;font-size:12px}
   .acca-a button{min-height:40px;padding:0 6px}
@@ -1981,7 +1989,6 @@ footer b{color:var(--ink-2)}
   .row .club,.row .club span{white-space:normal;overflow-wrap:anywhere}
   .conf .bkchip{font-size:9px;letter-spacing:.02em;padding:0 3px}
   .conf .bkchip b{margin-left:2px}
-  #listDays button{min-height:40px;padding:4px 10px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 /* 10 Nov 2026, Douglas: "make sure it doesn't horizontally scroll across on
@@ -2020,12 +2027,6 @@ footer b{color:var(--ink-2)}
 @keyframes rowflash{0%{box-shadow:inset 0 0 0 2px var(--red)}100%{box-shadow:inset 0 0 0 2px transparent}}
 .row-line.jumped .row{animation:rowflash 1.6s ease-out 1}
 @media (prefers-reduced-motion: reduce){.row-line.jumped .row{animation:none;box-shadow:inset 0 0 0 2px var(--red)}}
-/* the floating "Days" button */
-.to-days{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:50;min-height:44px;padding:0 16px;
-  font-family:var(--f-ui);font-size:var(--t-base);font-weight:700;letter-spacing:.06em;text-transform:uppercase;
-  background:var(--cover-ink);color:var(--yellow);border:1px solid var(--cover-ink);border-radius:22px;box-shadow:0 6px 16px -6px rgba(16,14,12,.6);cursor:pointer}
-.to-days[hidden]{display:none}
-.to-days:focus-visible{outline:2px solid var(--yellow);outline-offset:2px}
 /* the William Hill chip's short words where the confidence column is 62px */
 .bkchip .sm{display:none}
 .bkchip.px{color:var(--ink-2)}
@@ -2157,6 +2158,7 @@ footer b{color:var(--ink-2)}
 <div class="controls" id="controls">
   <!-- 23 Nov 2026 (UX release 2): the football board's filter bar (filterBar), drawn by render():
        Confidence, Show and Order, then the board's own Board and Competition controls. -->
+  <div id="fbDays"></div>
   <div class="fbar-slot" id="fbBar"></div>
   <!-- Collapsed by default: 300-odd competitions filled five rows of the
        sticky bar (Douglas, 30 Sep 2026). Opens full width, with a finder. -->
@@ -2482,6 +2484,108 @@ document.addEventListener("keydown", e => {
   if(e.key !== "Escape") return;
   const bar = e.target.closest && e.target.closest(".fbar.open");
   if(bar && getComputedStyle(bar.querySelector(".fbar-toggle")).display !== "none"){ e.preventDefault(); fbToggle(bar, false); }
+});
+
+/* ---------- the day ribbon (23 Nov 2026, UX release 3) ----------
+   One day navigator on every page with days, the review's "turning pages":
+   earlier days on the left, Today in the selected look, later days to the
+   right, each with its count, prev / next arrows at the ends. The day is
+   shared across pages like a page of a book: Tue picked on the Daily List
+   opens Football on Tue. DAY is the one variable (null: each page's own
+   default; "week": every upcoming day; else a UK date), set only through
+   setDay, which redraws the open page. A page that cannot show DAY shows its
+   own default without overwriting it (as fShow does for Show).
+   dayRibbon(view, days, sel): days are [{d, n, past, none}] in any order
+   ("week" first if present); n is the count slot ("23/25" for a past day's
+   landed of settled). One tablist: arrow keys, Home and End move the day. */
+let DAY = null;
+const ukToday = () => localDay(new Date().toISOString());
+const dayOff = d => Math.round((Date.parse(d + "T12:00:00Z") - Date.parse(ukToday() + "T12:00:00Z")) / 864e5);
+function dayLabel(d){
+  if(d === "week") return "Week";
+  const k = dayOff(d), dt = new Date(d + "T12:00:00Z");
+  if(k === 0) return "Today";
+  if(k === -1) return "Yday";
+  if(k === 1) return "Tmrw";
+  const wd = dt.toLocaleDateString("en-GB", {weekday: "short", timeZone: "UTC"}) + " " + dt.getUTCDate();
+  return Math.abs(k) <= 7 ? wd : wd + " " + dt.toLocaleDateString("en-GB", {month: "short", timeZone: "UTC"});
+}
+// The day a page shows: DAY when the page has it, else the page's default.
+const dayPick = (keys, def) => DAY != null && keys.includes(DAY) ? DAY : def;
+// Landed of settled for a past day's count slot, else the plain count.
+const dayTally = (won, lost, n) => won + lost ? `${won}/${won + lost}` : String(n);
+function dayRibbon(view, days, sel){
+  const ds = days.filter(Boolean).slice().sort((a, b) => a.d === "week" ? -1 : b.d === "week" ? 1 : a.d < b.d ? -1 : a.d > b.d ? 1 : 0);
+  if(!ds.length) return "";
+  const at = ds.findIndex(x => x.d === sel);
+  const today = ukToday();
+  const btn = (x, i) => { const on = i === at, past = x.d !== "week" && x.d < today;
+    const full = x.d === "week" ? "Every day still to come" : fmtDay(x.d);
+    return `<button type="button" role="tab" data-day="${x.d}" aria-selected="${on}" tabindex="${on || (at < 0 && i === 0) ? 0 : -1}" title="${fbEsc(full)}"${[past && "past", x.none && "none"].filter(Boolean).length ? ` class="${[past && "past", x.none && "none"].filter(Boolean).join(" ")}"` : ""}>${dayLabel(x.d)}${x.n != null && x.n !== "" ? `<i>${x.n}</i>` : ""}</button>`; };
+  queueRibbonSync();
+  return `<div class="ribbon" data-rview="${view}">
+    <button type="button" class="rb-arw" data-rbstep="-1" aria-label="Previous day"${at <= 0 ? " disabled" : ""}>‹</button>
+    <div class="rb-wrap"><div class="seg seg--scroll rb-days" role="tablist" aria-label="Day">${ds.map(btn).join("")}</div></div>
+    <button type="button" class="rb-arw" data-rbstep="1" aria-label="Next day"${at < 0 || at >= ds.length - 1 ? " disabled" : ""}>›</button>
+  </div>`;
+}
+// Redraw the open page on the chosen day; focus goes back to the ribbon when the keyboard moved it.
+let RB_FOCUS = false;
+function setDay(d, opts){
+  DAY = d;
+  RB_FOCUS = !!(opts && opts.focus);
+  const b = document.querySelector('#views button[aria-pressed="true"]'), v = b ? b.dataset.view : "list";
+  if(v === "fixtures") render();
+  else if(v === "list") renderList();
+  else if(v === "today") renderToday();
+  else if(v === "scale") renderScale();
+  else if(v === "racing") renderRacing();
+  else if(v === "starred") renderStarred();
+  else if(v === "tennis") renderTennis();
+  else if(v === "results") renderResults();
+  else if(v.startsWith("sport:")) renderSport(v.slice(6));
+  ribbonSync();
+}
+// Keep the selected day in view on a ribbon that scrolls, fade the clipped edge, and
+// put focus back after a keyboard move. Runs after every draw (queued by dayRibbon).
+let RB_RAF = 0;
+function queueRibbonSync(){ if(!RB_RAF) RB_RAF = requestAnimationFrame(() => { RB_RAF = 0; ribbonSync(); }); }
+function ribbonFade(s){
+  const w = s.closest(".rb-wrap"); if(!w) return;
+  w.classList.toggle("fl", s.scrollLeft > 2);
+  w.classList.toggle("fr", s.scrollLeft + s.clientWidth < s.scrollWidth - 2);
+}
+function ribbonSync(){
+  document.querySelectorAll(".ribbon .rb-days").forEach(s => {
+    if(s.offsetParent === null) return;
+    const on = s.querySelector('[aria-selected="true"]');
+    if(on && s.scrollWidth > s.clientWidth){
+      const l = on.offsetLeft - s.offsetLeft, r = l + on.offsetWidth;
+      if(l < s.scrollLeft || r > s.scrollLeft + s.clientWidth) s.scrollLeft = Math.max(0, l - (s.clientWidth - on.offsetWidth) / 2);
+    }
+    ribbonFade(s);
+    if(RB_FOCUS && on){ on.focus({preventScroll: true}); }
+  });
+  RB_FOCUS = false;
+}
+document.addEventListener("scroll", e => { const s = e.target; if(s && s.classList && s.classList.contains("rb-days")) ribbonFade(s); }, true);
+window.addEventListener("resize", () => queueRibbonSync());
+document.addEventListener("click", e => {
+  const b = e.target.closest(".ribbon [data-day], .ribbon [data-rbstep]"); if(!b || b.disabled) return;
+  if(b.dataset.day){ setDay(b.dataset.day); return; }
+  const tabs = [...b.closest(".ribbon").querySelectorAll("[data-day]")];
+  const at = tabs.findIndex(t => t.getAttribute("aria-selected") === "true");
+  const to = tabs[Math.max(0, Math.min(tabs.length - 1, at + +b.dataset.rbstep))];
+  if(to) setDay(to.dataset.day);
+});
+document.addEventListener("keydown", e => {
+  const t = e.target.closest && e.target.closest('.ribbon [role="tab"]'); if(!t) return;
+  const tabs = [...t.parentNode.querySelectorAll('[role="tab"]')], i = tabs.indexOf(t);
+  const j = e.key === "ArrowRight" ? i + 1 : e.key === "ArrowLeft" ? i - 1 : e.key === "Home" ? 0 : e.key === "End" ? tabs.length - 1 : null;
+  if(j == null) return;
+  e.preventDefault();
+  const to = tabs[Math.max(0, Math.min(tabs.length - 1, j))];
+  if(to && to !== t) setDay(to.dataset.day, {focus: true});
 });
 // Which flags the sprite actually carries. Read once, lazily, because flag() is
 // called while building the league chips, before this file's later
@@ -3568,6 +3672,12 @@ function renderStarred(){
   const sportOk = it => !STAR.sports.length || STAR.sports.includes(itemSport(it));
   const tagOk = it => (STAR_TAGS.find(t => t.k === fShow("starred")) || STAR_TAGS[0]).test(it);
   const keep = it => sportOk(it) && tagOk(it) && inBand("starred", it.g.confidence);
+  // 23 Nov 2026 (UX release 3): the day ribbon over the starred days, Week (all of them) first.
+  const sDates = Object.keys(items).sort(), sSel = dayPick(["week", ...sDates], "week");
+  const sShow = d => sSel === "week" || d === sSel;
+  if(all.length) host.insertAdjacentHTML("beforeend", dayRibbon("starred", [{d: "week", n: all.filter(keep).length},
+    ...sDates.map(d => { const xs = items[d].filter(keep), done = d < ukToday();
+      return {d, n: done ? dayTally(xs.filter(it => it.g.status === "won").length, xs.filter(it => it.g.status === "lost").length, xs.length) : xs.length}; })], sSel));
   if(all.length){
     const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
     const passed = all.filter(keep).length;
@@ -3578,7 +3688,8 @@ function renderStarred(){
       order: [{k: "strength"}, {k: "time"}, {k: "sport"}, {k: "tag"}],
       extra: fbarGroup("Full details", [["off", "Tap to open"], ["on", "Every row open"]].map(([k, l]) =>
         `<button type="button" data-sopen="${k}" aria-pressed="${(STAR.open ? "on" : "off") === k}">${l}</button>`).join("")),
-      count: {shown: passed, total: all.length, noun: "starred"},
+      count: sSel === "week" ? {shown: passed, total: all.length, noun: "starred"}
+        : {shown: items[sSel].filter(keep).length, total: items[sSel].length, noun: "starred on this day"},
     }));
   }
   const tagRank = it => it.g.list ? 0 : it.g.reserve ? 1 : 2;
@@ -3592,6 +3703,7 @@ function renderStarred(){
   try {
     Object.keys(items).sort().forEach(date => {
       any = true;
+      if(!sShow(date)) return;
       const xs = items[date].filter(keep).sort(order);
       if(!xs.length) return;
       const sec = document.createElement("section");
@@ -3607,7 +3719,7 @@ function renderStarred(){
     });
   } finally { OPEN_ALL = false; }
   if(any && !host.querySelector("section.day")) host.insertAdjacentHTML("beforeend",
-    fbEmpty("starred", "None of your starred picks match these filters."));
+    fbEmpty("starred", sSel === "week" ? "None of your starred picks match these filters." : `None of your starred picks on ${fmtDay(sSel)} match these filters.`));
 
   if(!any) host.innerHTML = `<div class="empty">No bookmarks yet. Tap the star (☆) on any
     fixture to shortlist it here. The list clears itself each morning along with the
@@ -3647,11 +3759,6 @@ function sportLabel(k){
   if(k === "tennis") return "Tennis";
   return SD && SD.sports && SD.sports[k] ? SD.sports[k].name : k;
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest("#listDays button"); if(!b) return;
-  const el = document.getElementById("lday-" + b.dataset.jump); if(!el) return;
-  scrollClear(el);   // below the sticky tab bar
-});
 function hillPrice(sport, home, away){
   const G = window.__GROUPINGS__, m = G && G.listBooks && G.listBooks[lbKey(sport, home, away)];
   return m && m.h ? m.h : null;
@@ -3798,7 +3905,7 @@ function glanceState(it){
    drawing is as wide in units as it is in pixels, so its text is true size at
    any width or orientation. */
 const GL_DAYS = 7;
-let GL_IDX = 0, GL_DATE = null;   // GL_DATE: the day in view, kept across redraws
+let GL_DATE = null;   // the day the glance draws ("week" or a date), kept across its live redraws
 /* 12 Nov 2026, Douglas: "I want the at a glance visual thing to also scroll
    back the last 7 days too". The days behind today come from daylist.py's
    `past` (each list as it stood before its games started, with results); the
@@ -3852,62 +3959,52 @@ function glanceDay(date, i, W, given){
       ${now >= t0 && now <= t0 + span ? `<line x1="${nowX}" x2="${nowX}" y1="${y0 + 4}" y2="86" class="gl-now"/><text x="${nowX}" y="${y0 + 10}" text-anchor="${nowX > W * .9 ? "end" : "start"}" dx="${nowX > W * .9 ? -4 : 4}" class="gl-nt">now</text>` : ""}
       ${dots}</svg></div>`};
 }
-function todayGlance(){
-  const W = glanceWidth(), days = [], today = localDay(new Date().toISOString());
-  const t0 = Date.parse(today + "T12:00:00");
-  glancePast().filter(p => p.date < today).forEach(p => {
-    const d = glanceDay(p.date, Math.round((Date.parse(p.date + "T12:00:00") - t0) / 864e5), W, p.items); if(d) days.push(d); });
+/* 23 Nov 2026 (UX release 3): the day ribbon above the list chooses the day;
+   the glance draws that one day (on Week: today, or the first day after it
+   with picks). Its own day tabs went to the ribbon; a swipe across the clock
+   still turns to the day before or after (setDay). */
+function glanceDate(sel){
+  const today = ukToday();
+  if(sel && sel !== "week") return sel;
   for(let i = 0; i < GL_DAYS; i++){
     const date = localDay(new Date(Date.now() + i * 864e5).toISOString());
-    const d = glanceDay(date, i, W); if(d) days.push(d);
+    if((listCollect().byDay[date] || []).length) return date;
   }
-  if(!days.length) return "";
-  // open on the day last in view, else today (or the first day after it)
-  const at = GL_DATE && days.findIndex(d => d.date === GL_DATE);
-  GL_IDX = at != null && at >= 0 ? at : Math.max(0, days.findIndex(d => d.i >= 0));
-  const tabs = days.length > 1 ? `<div class="gl-nav">
-      <button type="button" class="gl-arw" data-glstep="-1" aria-label="Previous day"${GL_IDX === 0 ? " disabled" : ""}>‹</button>
-      <div class="seg seg--scroll gl-tabs" role="tablist">${days.map((d, k) => `<button type="button" role="tab" data-glgo="${k}" aria-selected="${k === GL_IDX}" class="${[k === GL_IDX ? "on" : "", d.i < 0 ? "past" : ""].filter(Boolean).join(" ")}">${d.short}<i>${d.i < 0 && d.won + d.lost ? `${d.won}/${d.won + d.lost}` : d.count}</i></button>`).join("")}</div>
-      <button type="button" class="gl-arw" data-glstep="1" aria-label="Next day"${GL_IDX === days.length - 1 ? " disabled" : ""}>›</button></div>` : "";
-  return `<section class="glance" id="glance" aria-label="The days at a glance">
-    <div class="gl-top"><h3>${days.length > 1 ? "At a glance" : "Today at a glance"}</h3>${tabs}</div>
-    <div class="gl-track" tabindex="-1">${days.map(d => d.html).join("")}</div>
+  return today;
+}
+function todayGlance(sel){
+  const W = glanceWidth(), today = ukToday(), date = glanceDate(sel === undefined ? GL_DATE || "week" : sel);
+  const i = Math.round((Date.parse(date + "T12:00:00") - Date.parse(today + "T12:00:00")) / 864e5);
+  const past = date < today ? glancePast().find(p => p.date === date) : null;
+  const d = date < today ? (past ? glanceDay(date, i, W, past.items) : null) : glanceDay(date, i, W);
+  GL_DATE = sel === undefined ? GL_DATE : (sel === "week" ? "week" : date);
+  if(!d) return "";
+  return `<section class="glance" id="glance" aria-label="${d.name} at a glance">
+    <div class="gl-top"><h3>At a glance</h3></div>
+    <div class="gl-track" tabindex="-1">${d.html}</div>
     <div class="gl-key"><span><i class="gl-d won"></i>Won</span><span><i class="gl-d lost"></i>Lost</span><span><i class="gl-d ahead"></i>In play, ahead</span><span><i class="gl-d behind"></i>In play, behind</span><span><i class="gl-d play"></i>In play</span><span><i class="gl-d up"></i>To come</span></div>
   </section>`;
 }
-// keep the day in view after a redraw, the tabs in step with a swipe
+// The first draw guesses the width; redraw once if it guessed wrong, so text stays true size.
 function glanceSync(jump){
-  const el = document.getElementById("glance"); if(!el) return;
-  const tr = el.querySelector(".gl-track"); if(!tr) return;
-  const n = tr.children.length; GL_IDX = Math.max(0, Math.min(n - 1, GL_IDX));
-  if(jump){
-    // the first draw guesses the width; redraw once if it guessed wrong, so text stays true size
-    const sv = tr.querySelector("svg"), w = sv ? +sv.getAttribute("width") : 0;
-    if(w && sv.clientWidth && Math.abs(sv.clientWidth - w) > 24 && !glanceSync.again){ glanceSync.again = true; glanceRefresh(); glanceSync.again = false; return; }
-    tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: "auto"});
-  }
-  el.querySelectorAll("[data-glgo]").forEach(b => { const on = +b.dataset.glgo === GL_IDX; b.classList.toggle("on", on); b.setAttribute("aria-selected", on); });
-  const cur = tr.children[GL_IDX]; if(cur) GL_DATE = cur.dataset.gld;
-  // the day tabs scroll sideways on their own (a fortnight of tabs); keep the
-  // one in view showing without moving the page
-  const tabs = el.querySelector(".gl-tabs"), on = tabs && tabs.querySelector(".on");
-  if(on && tabs.scrollWidth > tabs.clientWidth){
-    const l = on.offsetLeft - tabs.offsetLeft, r = l + on.offsetWidth;
-    if(l < tabs.scrollLeft || r > tabs.scrollLeft + tabs.clientWidth) tabs.scrollLeft = Math.max(0, l - (tabs.clientWidth - on.offsetWidth) / 2);
-  }
-  el.querySelectorAll("[data-glstep]").forEach(b => b.disabled = (+b.dataset.glstep < 0 ? GL_IDX === 0 : GL_IDX === n - 1));
-  if(!tr.dataset.wired){ tr.dataset.wired = 1; let raf = 0;
-    tr.addEventListener("scroll", () => { if(raf) return; raf = requestAnimationFrame(() => { raf = 0;
-      const k = Math.round(tr.scrollLeft / Math.max(1, tr.clientWidth)); if(k !== GL_IDX){ GL_IDX = k; glanceSync(false); } }); }, {passive: true}); }
+  const el = document.getElementById("glance"); if(!el || !jump) return;
+  const sv = el.querySelector(".gl-track svg"), w = sv ? +sv.getAttribute("width") : 0;
+  if(w && sv.clientWidth && Math.abs(sv.clientWidth - w) > 24 && !glanceSync.again){ glanceSync.again = true; glanceRefresh(); glanceSync.again = false; }
 }
-document.addEventListener("click", e => {
-  const b = e.target.closest("#glance [data-glgo], #glance [data-glstep]"); if(!b) return;
-  const tr = document.querySelector("#glance .gl-track"); if(!tr) return;
-  GL_IDX = b.dataset.glgo != null ? +b.dataset.glgo : GL_IDX + +b.dataset.glstep;
-  GL_IDX = Math.max(0, Math.min(tr.children.length - 1, GL_IDX));
-  tr.scrollTo({left: GL_IDX * tr.clientWidth, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth"});
-  glanceSync(false);
-});
+// a swipe across the clock turns to the day before or after, on the ribbon's days
+(() => { let x0 = null, y0 = 0;
+  document.addEventListener("touchstart", e => { const t = e.target.closest && e.target.closest("#glance .gl-track");
+    x0 = t && e.touches.length === 1 ? e.touches[0].clientX : null; y0 = x0 == null ? 0 : e.touches[0].clientY; }, {passive: true});
+  document.addEventListener("touchend", e => {
+    if(x0 == null) return; const t = e.changedTouches[0], dx = t.clientX - x0, dy = t.clientY - y0; x0 = null;
+    if(Math.abs(dx) < 50 || Math.abs(dx) < 1.5 * Math.abs(dy)) return;
+    const g = document.querySelector("#glance .gl-day"), rb = document.querySelector('#list .ribbon');
+    if(!g || !rb) return;
+    const days = [...rb.querySelectorAll("[data-day]")].map(b => b.dataset.day).filter(d => d !== "week");
+    const to = days[days.indexOf(g.dataset.gld) + (dx < 0 ? 1 : -1)];
+    if(to) setDay(to);
+  }, {passive: true});
+})();
 // a turn of the phone or a resize redraws at the new width
 (() => { let t = 0; window.addEventListener("resize", () => { clearTimeout(t); t = setTimeout(() => { if(typeof glanceRefresh === "function") glanceRefresh(); }, 200); }); })();
 /* 10 Nov 2026: one way of scrolling to a place on the list, clear of the
@@ -3915,7 +4012,7 @@ document.addEventListener("click", e => {
 function scrollClear(el){
   const bar = document.getElementById("views"), off = (bar ? bar.getBoundingClientRect().height : 0) + 8;
   const dy = el.getBoundingClientRect().top - off;
-  // a long way (the Days button from deep in a busy list) goes straight there
+  // a long way (from deep in a busy list) goes straight there
   const still = matchMedia("(prefers-reduced-motion: reduce)").matches || Math.abs(dy) > 4 * window.innerHeight;
   window.scrollTo({top: dy + window.scrollY, behavior: still ? "auto" : "smooth"});
 }
@@ -3931,23 +4028,31 @@ function glanceGo(t){
 }
 document.addEventListener("click", e => glanceGo(e.target));
 document.addEventListener("keydown", e => { if((e.key === "Enter" || e.key === " ") && e.target.closest && e.target.closest("#glance [data-pk]")){ e.preventDefault(); glanceGo(e.target); } });
-// the floating "Days" button: back to the day strip from deep in a long list
-(() => {
-  const b = document.createElement("button");
-  b.type = "button"; b.id = "toDays"; b.className = "to-days"; b.hidden = true;
-  b.innerHTML = `<span aria-hidden="true">↑</span> Days`;
-  b.setAttribute("aria-label", "Back to the list of days");
-  document.body.appendChild(b);
-  b.addEventListener("click", () => { const s = document.getElementById("listDays") || document.getElementById("list"); if(s) scrollClear(s.closest(".list-days") || s); });
-  let raf = 0;
-  const check = () => { raf = 0;
-    const list = document.getElementById("list"), strip = document.getElementById("listDays");
-    const on = list && !list.hidden && strip && strip.getBoundingClientRect().bottom < -400;
-    b.hidden = !on; };
-  window.addEventListener("scroll", () => { if(!raf) raf = requestAnimationFrame(check); }, {passive: true});
-})();
+// 23 Nov 2026 (UX release 3): the floating "Days" button and the jump strip went; the ribbon turns the days.
 function glanceRefresh(){ const el = document.getElementById("glance"); if(el){ const h = todayGlance(); if(h){ el.outerHTML = h; glanceSync(true); } } }
 setInterval(() => { if(document.visibilityState === "visible") glanceRefresh(); }, 60e3);
+/* 23 Nov 2026 (UX release 3): a day behind on the Daily List, from daylist.py's
+   past lists (each list as it stood before its games started, with its
+   status), drawn with the started-pick row (pinnedRow) and Won / Lost in the
+   middle cell. The archive keeps no scores or prices for these, and no
+   reserve; the day's tally is in its head. */
+function pastAsPin(g, date){
+  const st = g.status, r = g.result || (["won", "lost", "void"].includes(st) ? {ok: st === "won", void: st === "void"} : null);
+  return {...g, result: r, side: g.side || (g.pick === g.home ? "h" : g.pick === g.away ? "a" : ""), list: true, day: date};
+}
+function listPastDay(host, date, items, byTime){
+  const xs = items.slice().sort(byTime ? (a, b) => String(a.g.start || "").localeCompare(String(b.g.start || "")) || listByStrength(a, b) : listByStrength);
+  const won = xs.filter(it => it.g.status === "won").length, lost = xs.filter(it => it.g.status === "lost").length;
+  const open = xs.length - won - lost - xs.filter(it => it.g.status === "void").length;
+  if(!xs.length) return;
+  const sec = document.createElement("section");
+  sec.className = "day";
+  sec.id = "lday-" + date;
+  sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
+    <div class="count">${xs.length} on the list · ${won} won · ${lost} lost${open ? ` · ${open} not graded` : ""}<span class="sofar">The list as it stood before each game started</span></div></div>`;
+  xs.forEach((it, i) => sec.appendChild(pinnedRow(pastAsPin(it.g, date), i)));
+  host.appendChild(sec);
+}
 function renderList(){
   const host = $("#list");
   if(!host) return;
@@ -4033,13 +4138,27 @@ function renderList(){
   // in the window, the count after every filter.
   const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
   const hasBooks = !!(window.__GROUPINGS__ && window.__GROUPINGS__.listBooks);
+  // 23 Nov 2026 (UX release 3): the day ribbon. Week (every day still to come, the default), the
+  // week behind from daylist.py's past lists (drawn as rows with their results), and each day ahead.
+  const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay), ...Object.keys(offDay)])].sort();
+  const today = ukToday(), past = glancePast().filter(p => p.date < today && !dates.includes(p.date));
+  const pastOf = d => ((past.find(p => p.date === d) || {}).items || []);
+  const sel = dayPick(["week", ...past.map(p => p.date), ...dates], "week"), one = sel !== "week";
+  const nDay = d => (byDay[d] || []).filter(it => (!LIST_BOOK_ONLY || itemHill(it)) && keepIt(it)).length;
+  const pastN = d => { const xs = pastOf(d).filter(keepIt);
+    return dayTally(xs.filter(it => it.g.status === "won").length, xs.filter(it => it.g.status === "lost").length, xs.length); };
+  const listRib = dayRibbon("list", [{d: "week", n: dates.reduce((a, d) => a + nDay(d), 0)},
+    ...past.map(p => ({d: p.date, n: pastN(p.date), past: true})), ...dates.map(d => ({d, n: nDay(d)}))], sel);
+  // the bar's count follows the day in view
+  const scope = !one ? allPicks : sel < today && !dates.includes(sel) ? pastOf(sel)
+    : [...(byDay[sel] || []), ...(resDay[sel] || []).filter(resShown)];
   const listBar = filterBar("list", {
     sports: {opts: spKeys.map(k => ({k, n: spCount[k]})), total: every.length},
     confs: every.filter(sportOk).map(it => it.g.confidence),
     show: hasBooks ? [{k: "all", n: allPicks.length}, {k: "hill", n: allPicks.filter(it => itemHill(it)).length,
       title: "Only the picks William Hill priced at the last build. A pick with no UK price read yet is left out too."}] : null,
     order: [{k: "strength"}, {k: "time"}],
-    count: {shown: every.filter(keepIt).length, total: allPicks.length, noun: "picks"},
+    count: {shown: scope.filter(it => keepIt(it) && (!LIST_BOOK_ONLY || it.past || itemHill(it))).length, total: scope.length, noun: one ? "picks on this day" : "picks"},
     note: filtered ? "Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered." : "",
   });
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
@@ -4054,20 +4173,11 @@ function renderList(){
                      return isNaN(t) ? Infinity : t; };            // no time: end of its day
   const byTime = (a,b) => (ko(a) - ko(b)) || byStrength(a,b);
   const shown = xs => LIST_ORDER === "time" ? xs.sort(byTime) : xs;
-  const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay), ...Object.keys(offDay)])].sort();
-  // 10 Nov 2026: a week of picks runs to 40,000px on a phone. A strip of the
-  // days with their pick counts jumps straight to a day; nothing is hidden.
-  host.insertAdjacentHTML("beforeend", todayGlance());
+  // Order on every page: the ribbon, the filter bar, then the day (its glance first).
+  host.insertAdjacentHTML("beforeend", listRib + listBar + todayGlance(sel));
   glanceSync(true);
-  if(dates.length > 1){
-    const today = localDay(new Date().toISOString());
-    const n = d => (byDay[d] || []).filter(it => (!LIST_BOOK_ONLY || itemHill(it)) && keepIt(it)).length;
-    host.insertAdjacentHTML("beforeend", `<div class="list-days"><span class="ctl-label">Jump to</span>
-      <div class="seg dayseg" id="listDays">${dates.map(d => `<button type="button" data-jump="${d}">${d === today ? "Today" : fmtShort(d)}<i>${n(d)}</i></button>`).join("")}</div></div>`);
-  }
-  // the filter bar sits between the days and the first day, as on every page
-  host.insertAdjacentHTML("beforeend", listBar);
-  dates.forEach(date => {
+  if(one && pastOf(sel).length) listPastDay(host, sel, pastOf(sel).filter(keepIt), LIST_ORDER === "time");
+  (one ? dates.filter(d => d === sel) : dates).forEach(date => {
     const allItems = (byDay[date] || []).filter(keepIt), resAll = (resDay[date] || []).filter(keepIt);
     const allExtra = resAll.filter(resShown), resLow = resAll.filter(it => !((it.g.confidence || 0) >= RESERVE_SHOW_MIN)).length;
     const resLeave = resAll.length - allExtra.length - resLow;
@@ -4126,10 +4236,10 @@ function renderList(){
     }
     host.appendChild(sec);
   });
-  if(dates.length && filtered && !host.querySelector("section.day")){
-    host.insertAdjacentHTML("beforeend", fbEmpty("list", "No picks this week match these filters."));
+  if((dates.length || one) && filtered && !host.querySelector("section.day")){
+    host.insertAdjacentHTML("beforeend", fbEmpty("list", one ? `No picks on ${fmtDay(sel)} match these filters.` : "No picks this week match these filters."));
   }
-  if(!dates.length){
+  if(!dates.length && !one){
     const e = document.createElement("div");
     e.className = "empty";
     e.innerHTML = `Nothing clears the bar in this window, in any sport, so nothing is served.
@@ -4222,41 +4332,74 @@ function tabBar(view, games, noun){
   });
 }
 const playedByTime = name => name === "fixtures" ? state.sort === "time" : FILT.order === "time";
-function playedSection(name, test, host, ruler, redraw){
+/* 23 Nov 2026 (UX release 3): the day ribbon replaced the Played today and
+   Played yesterday sections. Yday on the ribbon opens yesterday's started
+   games with their results; Today holds today's started games with their
+   results, under the day's games still to come (above them in kick-off
+   order). Same rows (pinnedRow), same filters and cap as before. */
+const dayShift = (d, k) => new Date(Date.parse(d + "T12:00:00Z") + k * 864e5).toISOString().slice(0, 10);
+function playedOf(day, test){
   const D = window.__DAY_LIST__;
-  if(!D || !Array.isArray(D.played) || D.date !== todayISO) return;
-  const shown = new Set([...host.querySelectorAll(".row-line[data-pk]")].map(e => e.dataset.pk));
-  const days = [...new Set(D.played.map(it => it.day || D.date))].sort().reverse();
-  const secs = days.map(day => playedDay(name, test, D, day, shown, ruler, redraw)).filter(Boolean);
-  // under the tab's Order by when it has one, so the control sits above every row it orders
-  let at = host.querySelector(":scope > .fbar") || host.querySelector(":scope > .lede");
-  secs.forEach(sec => { at ? at.after(sec) : host.prepend(sec); at = sec; });
-}
-function playedDay(name, test, D, day, shown, ruler, redraw){
-  const items = D.played.filter(it => (it.day || D.date) === day && test(it.sport, it)
-      && !shown.has(lbKey(it.sport, it.home, it.away)))
+  if(!D || !Array.isArray(D.played) || D.date !== ukToday()) return [];
+  return D.played.filter(it => (it.day || D.date) === day && test(it.sport, it))
     .sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
-  if(!items.length) return null;
+}
+function playedTally(items){
   const st = it => pinStatus(it)[0];
   const won = items.filter(it => st(it) === "won").length, lost = items.filter(it => st(it) === "lost").length;
-  const open = items.length - won - lost - items.filter(it => st(it) === "void").length;
-  // capped like the board: the most confident first, then in kick-off order when that is the order chosen
-  const key = name + "|" + day, all = PLAYED_ALL.has(key), list = (all ? items : items.slice(0, PLAYED_CAP)).slice();
+  return {won, lost, open: items.length - won - lost - items.filter(it => st(it) === "void").length};
+}
+/* The ribbon for a board tab (football, tennis, each sport): Week, Yday when
+   yesterday has played games, Today, then each day ahead. `dates` the days
+   with games still to come; `nOf(d)` a day's count after the filters; `base`
+   which played games belong to the tab, `test` the same after the filters. */
+function boardDays(view, dates, nOf, base, test){
+  const today = ukToday(), yday = dayShift(today, -1);
+  const pyAll = playedOf(yday, base), ptAll = playedOf(today, base);
+  const py = pyAll.filter(it => test(it.sport, it)), pt = ptAll.filter(it => test(it.sport, it));
+  const ahead = [...new Set([...dates, ...(ptAll.length ? [today] : [])])].sort();
+  const sel = dayPick(["week", ...(pyAll.length ? [yday] : []), ...ahead], "week");
+  const t = playedTally(py), n = d => nOf(d) + (d === today ? pt.length : 0);
+  const html = dayRibbon(view, [{d: "week", n: ahead.reduce((a, d) => a + n(d), 0)},
+    pyAll.length && {d: yday, n: dayTally(t.won, t.lost, py.length)}, ...ahead.map(d => ({d, n: n(d)}))], sel);
+  return {html, sel, today, yday, py, pt, pyAll, ptAll, show: d => sel === "week" ? d >= today : d === sel};
+}
+// Started games inside a day: a label with the tally, the rows, capped like the board.
+function playedRows(sec, name, day, items, cap, redraw, label){
+  if(!items.length) return 0;
+  const key = name + "|" + day, all = PLAYED_ALL.has(key), list = (all ? items : items.slice(0, cap)).slice();
   if(playedByTime(name)) list.sort((a, b) => String(a.start || "").localeCompare(String(b.start || "")) || (b.confidence || 0) - (a.confidence || 0));
-  const sec = document.createElement("section");
-  sec.className = "day played";
-  sec.innerHTML = `<div class="day-head"><h2>${day === D.date ? "Played today" : "Played yesterday"}</h2>
-    <div class="count">${items.length} ${name}${won + lost ? ` · ${won} won · ${lost} lost` : ""}${open ? ` · ${open} to grade` : ""}</div></div>${ruler}`;
+  const t = playedTally(items);
+  if(label){
+    const el = document.createElement("div"); el.className = "lgrp";
+    el.innerHTML = `<b>Started</b> ${items.length} ${name}${t.won + t.lost ? ` <span class="n">${t.won} won · ${t.lost} lost</span>` : ""}${t.open ? ` <span class="n">${t.open} to grade</span>` : ""}`;
+    sec.appendChild(el);
+  }
   list.forEach((it, i) => sec.appendChild(pinnedRow(it, i)));
-  if(items.length > PLAYED_CAP){
+  if(items.length > cap){
     const more = document.createElement("button");
     more.className = "more";
-    more.innerHTML = all ? `Show the top <b>${PLAYED_CAP}</b> only` : `Show all <b>${items.length}</b> played ${day === D.date ? "today" : "yesterday"}`;
+    more.innerHTML = all ? `Show the top <b>${cap}</b> only` : `Show all <b>${items.length}</b> started`;
     more.addEventListener("click", () => { all ? PLAYED_ALL.delete(key) : PLAYED_ALL.add(key); (redraw || rerenderOpen)(); });
     sec.appendChild(more);
   }
-  return sec;
+  return list.length;
 }
+// A day of started games alone (Yday; Today when nothing is still to come).
+function playedDaySec(host, name, day, items, cap, redraw, ruler){
+  if(!items.length) return 0;
+  const t = playedTally(items);
+  const sec = document.createElement("section");
+  sec.className = "day played";
+  sec.innerHTML = `<div class="day-head"><h2>${fmtDay(day)}</h2>
+    <div class="count">${items.length} ${name} played${t.won + t.lost ? ` · ${t.won} won · ${t.lost} lost` : ""}${t.open ? ` · ${t.open} to grade` : ""}</div></div>${ruler}`;
+  const n = playedRows(sec, name, day, items, cap, redraw, false);
+  host.appendChild(sec);
+  return n;
+}
+const TENNIS_RULER = `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
+    <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
+    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`;
 function renderTennis(){
   const host = $("#tennis");
   const TD = window.__TENNIS_DATA__;
@@ -4265,28 +4408,32 @@ function renderTennis(){
       fixtures appear after the next build.</div>`;
     return;
   }
-  host.innerHTML = "";
-  if(!TD.matches.length){
-    host.innerHTML = `<div class="empty">No upcoming tennis fixtures found for
-      ${TD.from} to ${TD.to}.</div>`;
-    playedSection("matches", sp => sp === "tennis", host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
-    <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
-    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`, renderTennis);
-    return;
-  }
+  const showOk = showTest[fShow("tennis")] || showTest.all;
+  const keep = m => showOk(m) && inBand("tennis", m.confidence);
+  const dayOf = m => localDay(tennisAsGame(m).when);
+  const dates = [...new Set(TD.matches.map(dayOf))].sort();
+  const R3 = boardDays("tennis", dates, d => TD.matches.filter(m => dayOf(m) === d && keep(m)).length,
+    sp => sp === "tennis", (sp, it) => sp === "tennis" && keep(it));
+  const scope = R3.sel === "week" ? TD.matches : TD.matches.filter(m => dayOf(m) === R3.sel);
   host.innerHTML = `<div class="lede"><h2>Tennis</h2><p>ATP and WTA, priced from each player's
     Elo rating on the surface, pulled toward a coin flip by the amount testing found honest.
     Under a number is how often published calls at that level have landed, once a band has
     30 of them. A match showing TBC has no order of play yet: ESPN files the round under its first
-    day, and the match may be played the day after.</p></div>${tabBar("tennis", TD.matches, "matches")}`;
-  const byDay = {}, showOk = showTest[fShow("tennis")] || showTest.all;
-  TD.matches.filter(m => showOk(m) && inBand("tennis", m.confidence)).forEach(m => { const k = localDay(tennisAsGame(m).when); (byDay[k] = byDay[k] || []).push(m); });
-  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", fbEmpty("tennis", "No matches fit these filters."));
-
-  Object.keys(byDay).sort().forEach(date => {
-    const games = byDay[date].slice().sort(fOrder("tennis") === "time"
+    day, and the match may be played the day after.</p></div>${R3.html}${tabBar("tennis", scope.concat(R3.sel === R3.yday ? R3.pyAll : R3.show(R3.today) ? R3.ptAll : []), "matches")}`;
+  if(!TD.matches.length && R3.sel === "week" && !R3.pt.length)
+    host.insertAdjacentHTML("beforeend", `<div class="empty">No upcoming tennis fixtures found for ${TD.from} to ${TD.to}.</div>`);
+  const byDay = {};
+  TD.matches.filter(keep).forEach(m => { const k = dayOf(m); (byDay[k] = byDay[k] || []).push(m); });
+  const order = fOrder("tennis") === "time";
+  let drawn = 0;
+  if(R3.sel === R3.yday) drawn += playedDaySec(host, "matches", R3.yday, R3.py, 50, renderTennis, TENNIS_RULER);
+  [...new Set([...Object.keys(byDay), ...(R3.pt.length ? [R3.today] : [])])].sort().filter(R3.show).forEach(date => {
+    const games = (byDay[date] || []).slice().sort(order
       ? (a,b) => (a.timeTbc ? 1 : 0) - (b.timeTbc ? 1 : 0) || tennisAsGame(a).when.localeCompare(tennisAsGame(b).when) || b.confidence - a.confidence
       : (a,b)=> b.confidence - a.confidence);
+    const started = date === R3.today ? R3.pt : [];
+    if(!games.length && !started.length) return;
+    if(!games.length){ drawn += playedDaySec(host, "matches", date, started, PLAYED_CAP, renderTennis, TENNIS_RULER); return; }
     const confident = games.filter(m => m.tier !== "No read").length;
     const sec = document.createElement("section");
     sec.className = "day";
@@ -4295,20 +4442,16 @@ function renderTennis(){
     sec.innerHTML = `
       <div class="day-head">
         <h2>${label}</h2>
-        <div class="count">${games.length} matches &middot; ${confident} confident</div>
-      </div>
-      <div class="ruler">
-        <div>#</div><div>UK time</div><div>Player</div>
-        <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
-        <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div>
-      </div>`;
-
+        <div class="count">${games.length} matches &middot; ${confident} confident${started.length ? ` &middot; ${started.length} started` : ""}</div>
+      </div>${TENNIS_RULER}`;
+    if(order) drawn += playedRows(sec, "matches", date, started, PLAYED_CAP, renderTennis, true);
     games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
+    if(!order) drawn += playedRows(sec, "matches", date, started, PLAYED_CAP, renderTennis, true);
+    drawn += games.length;
     host.appendChild(sec);
   });
-  playedSection("matches", (sp, it) => sp === "tennis" && (showTest[fShow("tennis")] || showTest.all)(it) && inBand("tennis", it.confidence), host, `<div class="ruler"><div>#</div><div>UK time</div><div>Player</div>
-    <div class="r-bar"><span>Win</span><span>Win</span></div><div></div>
-    <div style="text-align:right">Opponent</div><div style="text-align:right">Conf.</div></div>`, renderTennis);
+  if(!drawn && (TD.matches.length || R3.sel !== "week")) host.insertAdjacentHTML("beforeend", fbEmpty("tennis",
+    R3.sel === "week" ? "No matches fit these filters." : `No matches on ${fmtDay(R3.sel)} fit these filters.`));
 }
 
 function render(){
@@ -4335,7 +4478,21 @@ function render(){
       `<button type="button" data-board="${k}" aria-pressed="${state.board === k}">${l}</button>`).join(""), "", ` id="boards"`)
     + `<div class="fbar-g"><span class="ctl-label" id="compLbl">Competition</span><div><button type="button" class="comp-toggle" id="compToggle" aria-expanded="${compOpen}" aria-controls="compPanel" aria-describedby="compLbl">
       <b id="compNow">${fbEsc(compLabel())}</b><span class="caret" aria-hidden="true">▾</span></button></div></div>`;
-  $("#fbBar").innerHTML = upcoming.length ? filterBar("fixtures", {
+  // 23 Nov 2026 (UX release 3): the day ribbon above the bar. Started games (daylist.js "played")
+  // follow the board's own filters; Both to score and Edge only have none (the archive keeps no flag).
+  const fbPlayOk = (s, it) => s === "football" && !btts0 && state.show !== "edge"
+    && (state.leagues.size === 0 || state.leagues.has(it.league))
+    && (state.show !== "read" || (it.tier && it.tier !== "No read"))
+    && (state.show === "read" || (showTest[state.show] || showTest.all)(it)) && inBand("fixtures", it.confidence);
+  const dayN = d => { const day = upcoming.find(x => x.date === d); return day ? preBand(day).filter(g => inBand("fixtures", fbConf(g))).length : 0; };
+  const R3 = boardDays("fixtures", upcoming.map(d => d.date), dayN, s => s === "football", fbPlayOk);
+  $("#fbDays").innerHTML = R3.html;
+  const selDay = R3.sel === "week" ? null : upcoming.find(d => d.date === R3.sel);
+  const cnt = R3.sel === "week" ? {shown: matched + R3.pt.length, total: every + R3.ptAll.length}
+    : R3.sel === R3.yday ? {shown: R3.py.length, total: R3.pyAll.length}
+    : {shown: dayN(R3.sel) + (R3.sel === R3.today ? R3.pt.length : 0),
+       total: (selDay ? selDay.games.length : 0) + (R3.sel === R3.today ? R3.ptAll.length : 0)};
+  $("#fbBar").innerHTML = upcoming.length || R3.sel !== "week" ? filterBar("fixtures", {
     confs: pre.map(fbConf),
     show: [{k: "all", label: "Every fixture"}, {k: "read", n: showN("read"), title: "Firm, Strong and Lean reads only: the No read rows hidden"},
            {k: "list", n: showN("list")}, {k: "reserve", n: showN("reserve")},
@@ -4343,14 +4500,21 @@ function render(){
     order: [{k: "strength"}, {k: "upset"}, {k: "goals"}, {k: "time"}],
     extra,
     chips: state.leagues.size ? [{k: "comp", label: compLabel()}] : [],
-    count: {shown: matched, total: every, noun: "fixtures"},
+    count: {...cnt, noun: "fixtures"},
   }) : "";
 
-  upcoming.forEach(day=>{
+  const FB_RULER = `<div class="ruler">
+    <div>#</div><div>UK time</div><div>Home</div><div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
+    <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`;
+  if(R3.sel === R3.yday) shown += playedDaySec(host, "fixtures", R3.yday, R3.py, D.topPerDay || 50, render, FB_RULER);
+  if(R3.show(R3.today) && R3.pt.length && !upcoming.some(d => d.date === R3.today))
+    shown += playedDaySec(host, "fixtures", R3.today, R3.pt, PLAYED_CAP, render, FB_RULER);
+  upcoming.filter(d => R3.show(d.date)).forEach(day=>{
     const btts = state.board === "btts";
     const tierOf = g => btts ? bttsTier(g) : tier(g);
     let games = preBand(day).filter(g => inBand("fixtures", fbConf(g)));
-    if(!games.length) return;
+    const started = day.date === R3.today ? R3.pt : [];
+    if(!games.length){ if(started.length) shown += playedDaySec(host, "fixtures", day.date, started, PLAYED_CAP, render, FB_RULER); return; }
     const nRead = games.filter(g => tierOf(g).k >= 1).length;
     const nEdge = games.filter(g => g.edge).length;
     const total = games.length;
@@ -4371,7 +4535,7 @@ function render(){
     sec.innerHTML = `
       <div class="day-head">
         <h2>${fmtDay(day.date)}</h2>
-        <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident${nEdge ? ` · <span class="edgecount">${nEdge} edge</span>` : ""}</div>
+        <div class="count">${total} fixture${total===1?"":"s"} · ${nRead} confident${nEdge ? ` · <span class="edgecount">${nEdge} edge</span>` : ""}${started.length ? ` · ${started.length} started` : ""}</div>
       </div>
       <div class="ruler">
         <div>#</div><div>UK time</div><div>Home</div>
@@ -4382,6 +4546,7 @@ function render(){
         <div style="text-align:right">Away</div><div style="text-align:right">Conf.</div>
       </div>`;
 
+    if(state.sort === "time") shown += playedRows(sec, "fixtures", day.date, started, PLAYED_CAP, render, true);
     games.forEach((g,i)=> appendFixture(sec, g, i, day.date, btts));
     if(capped || (state.expanded.has(day.date) && state.leagues.size === 0
                   && state.show === "all" && !banded && total > cap)){
@@ -4396,22 +4561,18 @@ function render(){
       });
       sec.appendChild(more);
     }
+    if(state.sort !== "time") shown += playedRows(sec, "fixtures", day.date, started, PLAYED_CAP, render, true);
     host.appendChild(sec);
   });
 
-  if(!shown) host.insertAdjacentHTML("beforeend", !upcoming.length
+  if(!shown && R3.sel !== "week") host.insertAdjacentHTML("beforeend", R3.sel === R3.yday && (btts0 || state.show === "edge")
+    ? `<div class="empty">Started games show on the Clear winner board, without Edge only: the archive keeps no Both to score read or Edge flag for them.</div>`
+    : fbEmpty("fixtures", `No fixtures on ${fmtDay(R3.sel)} match these filters.`));
+  else if(!shown) host.insertAdjacentHTML("beforeend", !upcoming.length
     ? `<div class="empty">Nothing left to show. Every fixture in this build has been played.</div>`
     : state.show === "edge" && !banded && !state.leagues.size
         ? fbEmpty("fixtures", `No fixture carries the green Edge flag yet. It is rare by design: a favourite at 1.15 to 1.90 whose opponent is priced 4/1 (5.0) or more, in the leagues tested on price, a handful a week, mostly at weekends. Prices arrive through the week, so check back nearer the games.`)
       : fbEmpty("fixtures", `No fixtures match these filters.`));
-  // 21 Nov 2026 review: the board's own filters apply (competitions, Strong
-  // reads only); Edge only has no played section, as the archive keeps no flag.
-  if(state.board !== "btts" && state.show !== "edge") playedSection("fixtures", (s, it) => s === "football"
-    && (state.leagues.size === 0 || state.leagues.has(it.league))
-    && (state.show !== "read" || (it.tier && it.tier !== "No read"))
-    && (state.show === "read" || (showTest[state.show] || showTest.all)(it)) && inBand("fixtures", it.confidence), host, `<div class="ruler">
-    <div>#</div><div>UK time</div><div>Home</div><div class="r-bar"><span>Home win</span><span>Draw</span><span>Away win</span></div>
-    <div style="text-align:center">Result</div><div style="text-align:right">Away</div><div style="text-align:right">Conf.</div></div>`, render);
 }
 
 /* ---------- the review board ----------
@@ -4556,6 +4717,7 @@ function tennisResults(){
       if the pick was published before it started. This fills in after the next daily run.</div>`;
   }
   const days = TT.days;
+  resState.tday = dayPick(days.map(d => d.date), days[0].date);   // the shared day (UX release 3)
   const day = days.find(d => d.date === resState.tday) || days[0];
   const o = TT.overall, at = TT.byTour.ATP, wt = TT.byTour.WTA;
   const tierRows = ["Strong","Firm","Lean","No read"].map(name => {
@@ -4579,12 +4741,7 @@ function tennisResults(){
         <small>lower is better · 0.693 = a coin flip</small></div>
     </div>
 
-    <div style="margin-top:20px">
-      <div class="ctl-label" style="margin-bottom:6px">Completed day</div>
-      <div class="seg dayseg" id="tdayseg">${days.map(d=>
-        `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-           ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div>
-    </div>
+    ${dayRibbon("results", days.map(d => ({d: d.date, n: `${d.correct}/${d.n}`})), day.date)}
 
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
@@ -5345,27 +5502,41 @@ function renderSport(key){
       numbers would not mean anything.</p></div>`;
     return;
   }
-  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p>${key === "ncaab" ? tierKey() : ""}</div>${sp.games.length ? tabBar("sport", sp.games, "games") : ""}`;
-  if(!sp.games.length){
+  // 23 Nov 2026 (UX release 3): the day ribbon, then the bar, then the day(s); Yday and Today carry the started games.
+  const showOk = showTest[fShow("sport")] || showTest.all, keep = g => showOk(g) && inBand(key, g.confidence);
+  const redraw = () => renderSport(key);
+  const R3 = boardDays("sport", [...new Set(sp.games.map(g => localDay(g.when)))].sort(),
+    d => sp.games.filter(g => localDay(g.when) === d && keep(g)).length, s => s === key, (s, it) => s === key && keep(it));
+  const scope = (R3.sel === "week" ? sp.games : sp.games.filter(g => localDay(g.when) === R3.sel))
+    .concat(R3.sel === R3.yday ? R3.pyAll : R3.show(R3.today) ? R3.ptAll : []);
+  host.innerHTML = `<div class="lede"><h2>${sp.name}</h2><p>${sportEvidence(sp)}</p>${key === "ncaab" ? tierKey() : ""}</div>${R3.html}${sp.games.length || R3.sel !== "week" ? tabBar("sport", scope, "games") : ""}`;
+  if(!sp.games.length && R3.sel === "week" && !R3.pt.length){
     host.insertAdjacentHTML("beforeend", `<div class="empty">No ${sp.name} games in the next seven days.</div>`);
-    playedSection("games", s => s === key, host, sportRuler(), () => renderSport(key));
     return;
   }
-  const byDay = {}, showOk = showTest[fShow("sport")] || showTest.all;
-  sp.games.filter(g => showOk(g) && inBand(key, g.confidence)).forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
-  if(!Object.keys(byDay).length) host.insertAdjacentHTML("beforeend", fbEmpty("sport", `No ${sp.name} games match these filters.`));
-  Object.keys(byDay).sort().forEach(d => {
-    const games = byDay[d].slice().sort(fOrder("sport") === "time" ? (a,b) => String(a.when).localeCompare(String(b.when)) || b.confidence - a.confidence
-                                                             : (a,b) => b.confidence - a.confidence);
+  const byDay = {};
+  sp.games.filter(keep).forEach(g => (byDay[localDay(g.when)] = byDay[localDay(g.when)] || []).push(g));
+  const order = fOrder("sport") === "time";
+  let drawn = 0;
+  if(R3.sel === R3.yday) drawn += playedDaySec(host, "games", R3.yday, R3.py, 50, redraw, sportRuler());
+  [...new Set([...Object.keys(byDay), ...(R3.pt.length ? [R3.today] : [])])].sort().filter(R3.show).forEach(d => {
+    const games = (byDay[d] || []).slice().sort(order ? (a,b) => String(a.when).localeCompare(String(b.when)) || b.confidence - a.confidence
+                                                     : (a,b) => b.confidence - a.confidence);
+    const started = d === R3.today ? R3.pt : [];
+    if(!games.length){ if(started.length) drawn += playedDaySec(host, "games", d, started, PLAYED_CAP, redraw, sportRuler()); return; }
     const sec = document.createElement("section");
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(d)}</h2>
-      <div class="count">${games.length} game${games.length===1?"":"s"} · ${games.filter(g=>g.tier!=="No read").length} confident</div></div>
+      <div class="count">${games.length} game${games.length===1?"":"s"} · ${games.filter(g=>g.tier!=="No read").length} confident${started.length ? ` · ${started.length} started` : ""}</div></div>
       ${sportRuler()}`;
+    if(order) drawn += playedRows(sec, "games", d, started, PLAYED_CAP, redraw, true);
     games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
+    if(!order) drawn += playedRows(sec, "games", d, started, PLAYED_CAP, redraw, true);
+    drawn += games.length;
     host.appendChild(sec);
   });
-  playedSection("games", (s, it) => s === key && showOk(it) && inBand(key, it.confidence), host, sportRuler(), () => renderSport(key));
+  if(!drawn) host.insertAdjacentHTML("beforeend", fbEmpty("sport",
+    R3.sel === "week" ? `No ${sp.name} games match these filters.` : `No ${sp.name} games on ${fmtDay(R3.sel)} match these filters.`));
 }
 
 /* sports results on "How it went": same rows as tennis */
@@ -5387,6 +5558,7 @@ function sportsResults(only){
     const sum = (gs, label) => gs.length ? `<div class="${gs.filter(g=>g.ok).length / gs.length >= gs.reduce((a,g)=>a+g.confidence,0) / gs.length ? "good" : "bad"}">
         <span>${label}</span><b>${gs.filter(g=>g.ok).length} / ${gs.length}</b>
         <small>${pct(gs.filter(g=>g.ok).length / gs.length)}% · quoted ${pct(gs.reduce((a,g)=>a+g.confidence,0) / gs.length)}%</small></div>` : "";
+    resState.sday = dayPick(days.map(d => d.date), days[0].date);
     const day = days.find(d => d.date === resState.sday) || days[0];
     const row = (g, i) => `<div class="xrow${i%2?" alt":""}${g.ok?"":" miss"}"${rxAttr(resultDetailOther(g, (g.when || "").slice(0,10), "sport"))}>
       <div class="lg">${g.list ? "List" : g.reserve ? "Reserve" : ""}</div>
@@ -5396,9 +5568,7 @@ function sportsResults(only){
       <div class="conf"><span class="tier t${SPORT_K[g.tier] ?? 0}">${g.tier}</span></div>
       ${mark(g.ok)}</div>`;
     return `<div class="scoreline" style="margin-top:20px">${sum(all, `${nameOf(only)}: picked the winner`)}${sum(lst, "On the Daily List")}</div>
-    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">Completed day</div>
-      <div class="seg dayseg" id="sdayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-        ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div></div>
+    ${dayRibbon("results", days.map(d => ({d: d.date, n: `${d.correct}/${d.n}`})), day.date)}
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
     <div class="xruler"><div>Board</div><div>Game</div><div>Prediction</div><div>Result</div>
@@ -5410,7 +5580,9 @@ function sportsResults(only){
       NFL, baseball, basketball and rugby picks are graded once played, and only if they were
       published before the start. This fills in from the first day they are on the site.</div>`;
   }
-  const days = SR.days, day = days.find(d => d.date === resState.sday) || days[0];
+  const days = SR.days;
+  resState.sday = dayPick(days.map(d => d.date), days[0].date);
+  const day = days.find(d => d.date === resState.sday) || days[0];
   const tl = (x, label) => x ? `<div class="${x.accuracy >= x.expected ? "good" : "bad"}">
       <span>${label}</span><b>${x.correct} / ${x.n}</b>
       <small>${pct(x.accuracy)}% · quoted ${pct(x.expected)}%</small></div>` : "";
@@ -5423,9 +5595,7 @@ function sportsResults(only){
       ${mark(g.ok)}</div>`;
   return `<div class="scoreline" style="margin-top:20px">${tl(SR.overall, "Picked the winner")}
       ${Object.entries(SR.bySport).filter(([k,v]) => v).map(([k,v]) => tl(v, (SD && SD.sports[k] || {name:k}).name)).join("")}</div>
-    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">Completed day</div>
-      <div class="seg dayseg" id="sdayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-        ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div></div>
+    ${dayRibbon("results", days.map(d => ({d: d.date, n: `${d.correct}/${d.n}`})), day.date)}
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.correct} of ${day.n} picked the winner</div></div>
     <div class="xruler"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
@@ -5620,6 +5790,7 @@ function listReview(){
     return `<div class="empty" style="margin-top:20px"><b class="empty-t">No Daily List picks graded yet.</b>
       Each day's list is reviewed here once its games are played.</div>`;
   }
+  resState.lday = dayPick(days.map(d => d.date), days[0].date);
   const day = days.find(d => d.date === resState.lday) || days[0];
   const tally = ds => ds.reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);
   const ldays = days.filter(d => d.items.length);
@@ -5658,9 +5829,7 @@ function listReview(){
     ${listHonesty(days)}
     ${trustMap()}
     ${daysGlance(days, day.date)}
-    <div style="margin-top:20px"><div class="ctl-label" style="margin-bottom:6px">List day</div>
-      <div class="seg dayseg" id="ldayseg">${days.map(d => `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-        ${fmtShort(d.date)}<i>${d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–"}</i></button>`).join("")}</div></div>
+    ${dayRibbon("results", days.map(d => ({d: d.date, n: d.items.length ? `${d.won}/${d.won + d.lost}${d.open ? "+" + d.open : ""}` : "–", none: !d.items.length})), day.date)}
     ${resBar}
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.items.length ? `${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}`
@@ -5770,15 +5939,11 @@ function renderResults(){
     host.innerHTML = sportTabs + listReview();
     const rv = $("#resv");
     rv && rv.addEventListener("toggle", () => { resState.resOpen = rv.open; });
-    $("#ldayseg") && $("#ldayseg").addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.lday = b.dataset.day; renderResults();
-    });
     // Days at a glance: a day's line opens that day and goes to it
     const dg = host.querySelector(".dglance");
     dg && dg.addEventListener("click", e=>{
       const b = e.target.closest(".dg-row"); if(!b) return;
-      resState.lday = b.dataset.day; renderResults();
+      setDay(b.dataset.day);
       const h = host.querySelector(".day-head"); if(h) scrollClear(h);
     });
     $("#resSport").addEventListener("click", e=>{
@@ -5790,11 +5955,6 @@ function renderResults(){
 
   if(resState.sport !== "football" && resState.sport !== "tennis"){
     host.innerHTML = sportTabs + sportsResults(resState.sport);
-    const seg = $("#sdayseg");
-    if(seg) seg.addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.sday = b.dataset.day; renderResults();
-    });
     $("#resSport").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
       resState.sport = b.dataset.sport; resState.sday = null; renderResults();
@@ -5804,12 +5964,6 @@ function renderResults(){
 
   if(resState.sport === "tennis"){
     host.innerHTML = sportTabs + tennisResults();
-    const seg = $("#tdayseg");
-    if(seg) seg.addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.tday = b.dataset.day;
-      renderResults();
-    });
     $("#resSport").addEventListener("click", e=>{
       const b = e.target.closest("button"); if(!b) return;
       resState.sport = b.dataset.sport;
@@ -5831,17 +5985,13 @@ function renderResults(){
     });
     return;
   }
+  resState.day = dayPick(R_DAYS.map(d => d.date), R_DAYS[0].date);   // the shared day (UX release 3)
   const day = R_DAYS.find(d => d.date === resState.day) || R_DAYS[0];
   const tierLine = (day.tiers||[]).map(t =>
     `<b>${t.name}</b> ${t.correct}/${t.n}`).join(" · ");
 
   host.innerHTML = sportTabs + `
-    <div style="margin-top:20px">
-      <div class="ctl-label" style="margin-bottom:6px">Completed day</div>
-      <div class="seg dayseg" id="dayseg">${R_DAYS.map(d=>
-        `<button data-day="${d.date}" aria-pressed="${d.date===day.date}">
-           ${fmtShort(d.date)}<i>${d.correct}/${d.n}</i></button>`).join("")}</div>
-    </div>
+    ${dayRibbon("results", R_DAYS.map(d => ({d: d.date, n: `${d.correct}/${d.n}`})), day.date)}
 
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.n} graded</div></div>
@@ -5901,12 +6051,6 @@ function renderResults(){
     The <em>${R.overall.drawnOut}</em> drawn-out fixtures are the single largest category of miss,
     and no amount of confidence in a favourite protects you from one.` : ""}</p></div>`;
 
-  $("#dayseg").addEventListener("click", e=>{
-    const b = e.target.closest("button"); if(!b) return;
-    resState.day = b.dataset.day;
-    renderResults();
-    host.scrollIntoView({block:"start", behavior:"auto"});
-  });
   $("#resSport").addEventListener("click", e=>{
     const b = e.target.closest("button"); if(!b) return;
     resState.sport = b.dataset.sport;
@@ -7082,7 +7226,9 @@ function renderToday(){
     host.innerHTML = `<div class="lede"><h2>Bets</h2></div><div class="empty">No card in this build yet. It appears after the next build.</div>`;
     return;
   }
-  if(!OG_DAY || !OG.days.some(d => d.date === OG_DAY)) OG_DAY = OG.days[0].date;
+  // 23 Nov 2026 (UX release 3): the day is the shared ribbon's (DAY); OG_DAY follows it for its readers.
+  const ogKeys = OG.days.map(d => d.date);
+  OG_DAY = dayPick(ogKeys, ogKeys.includes(ukToday()) ? ukToday() : ogKeys.includes(OG_DAY) ? OG_DAY : ogKeys[0]);
   const day = OG.days.find(d => d.date === OG_DAY) || OG.days[0];
   const isCard = g => String(g.name).startsWith("Card");
   const wins = day.windows || [{name:"Day", from:7, to:31}];
@@ -7144,8 +7290,7 @@ function renderToday(){
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol></details>
     <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and, on a group you can still place, is marked <b>stale</b> after ${OG_STALE_H} hours, meaning it may have moved: check it before placing anything. A locked group keeps the price it was locked with.</p>
-    <div class="og-days"><div class="seg" id="tbDay" aria-label="Day">${OG.days.map(d => { const n = nCard(d);
-        return `<button data-d="${d.date}" aria-pressed="${d.date === day.date}"${n ? "" : ` class="none"`}>${ogDayLabel(d.date)}${n ? `<span class="n">${n}</span>` : ""}</button>`; }).join("")}</div>
+    <div class="og-days">${dayRibbon("today", OG.days.map(d => ({d: d.date, n: nCard(d), none: !nCard(d)})), day.date)}
       <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
     ${betsBar}
     ${dailySection(day)}
@@ -7184,7 +7329,6 @@ function renderToday(){
   sigWire(host);
   host.querySelectorAll(".og-placed-btn").forEach(btn => btn.onclick = () => {
     const g = day.groups.find(x => ogSlotKey(x, day.date) === btn.dataset.slot); if(g) ogTogglePlaced(g, day.date); });
-  $("#tbDay").onclick = e => { const b = e.target.closest("button"); if(!b) return; OG_DAY = b.dataset.d; renderToday(); };
   $("#tbStake").onchange = e => { const v = parseFloat(e.target.value); if(v > 0){ try { localStorage.setItem("og-stake", String(v)); } catch(err) {} renderToday(); } };
 }
 
@@ -7301,7 +7445,9 @@ function renderScale(){
     return;
   }
   const days = S.days || [];
-  if(!SC_DAY || !days.some(d => d.date === SC_DAY)) SC_DAY = (days.find(d => d.date === S.today) || days[0] || {}).date;
+  // 23 Nov 2026 (UX release 3): the day is the shared ribbon's (DAY); SC_DAY follows it for its readers.
+  const scKeys = days.map(d => d.date);
+  SC_DAY = dayPick(scKeys, scKeys.includes(S.today) ? S.today : scKeys.includes(SC_DAY) ? SC_DAY : scKeys[0]);
   const day = days.find(d => d.date === SC_DAY) || {date: S.today, picks: [], off: [], groups: []};
   const bs = (S.record && S.record.bySport) || {}, bt = (S.record && S.record.byTier) || {};
   const sum3 = o => Object.values(o).reduce((a, t) => ({n: a.n + t.n, won: a.won + t.won, scale: a.scale + t.scale}), {n:0, won:0, scale:0});
@@ -7369,8 +7515,10 @@ function renderScale(){
   </section>`;
   // the day's list, a line a tier
   const byKey = {}; day.picks.forEach(p => byKey[p.key] = p);
-  const tabDays = days.filter(d => !d.past || d.date === day.date);
-  const tabs = tabDays.length > 1 ? `<div class="seg sc-days" id="scDays">${tabDays.map(d => `<button type="button" data-d="${d.date}" aria-pressed="${d.date === day.date}">${d.date === S.today ? "Today" : scE(scDate(d.date))}<i>${d.picks.length}</i></button>`).join("")}</div>` : "";
+  // the day ribbon: every day on file, a day behind with its Scale bets landed of settled
+  const scN = d => { const st = d.picks.map(scState), sc = st.filter(s => s === "scale").length, miss = st.filter(s => s === "won" || s === "lost").length;
+    return d.date < S.today ? dayTally(sc, miss, d.picks.length) : d.picks.length; };
+  const scRib = days.length ? dayRibbon("scale", days.map(d => ({d: d.date, n: scN(d), none: !d.picks.length})), day.date) : "";
   const off = day.off || [];
   const offComps = [...new Set(off.map(o => o.comp))];
   const tierNote = {list: "cleared the list's own bar", reserve: "under the bar, Firm 62% or better", else: `the model's pick at ${floor} or better, added to bring the day to ${target} games`};
@@ -7391,9 +7539,8 @@ function renderScale(){
   const tierBlock = t => { const ps = day.picks.filter(p => (p.tier || "list") === t && scKeep(p));
     if(scByTime) ps.sort((a, b) => String(a.start || "").localeCompare(String(b.start || "")));
     return ps.length ? `<div class="sc-tier ${t}"><b>${SC_TIER[t]}</b><span>${ps.length} · ${tierNote[t]}</span></div>${ps.map(scRow).join("")}` : ""; };
-  const list = `<section class="sc-sec">
-    <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3>${tabs}</div>
-    ${scBar}
+  const list = `${scRib}${scBar}<section class="sc-sec sc-day">
+    <div class="sc-sech"><h3 class="sc-h3" id="scList">${scE(scDate(day.date, true))}<small>${day.replay ? "replayed: today's rule on what was published before each start" : "the Scale list, strongest tier first"}</small></h3></div>
     ${day.picks.length && !day.picks.some(scKeep) ? fbEmpty("scale", "No Scale picks on this day match these filters.")
       : day.picks.length ? `<div class="sc-cols"><div>UK time</div><div>Pick in bold</div><div>Winner</div><div>Scale bet and its chance</div><div>Price</div><div></div></div>${SC_TIERS.map(tierBlock).join("")}`
       : `<div class="empty"><b class="empty-t">No Scale picks ${day.date === S.today ? "today" : "this day"}</b>Nothing the model picks at ${floor} or better has a Scale bet on file yet.</div>`}
@@ -7443,13 +7590,13 @@ function renderScale(){
       ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div>${side}</div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
       <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with over 2.5 goals, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the fixture's result-and-goals bets. Groups take Daily List picks, and football from every fixture ${scE(S.book)} offers.</p></div>${tiles}</div>
-    ${glance}${list}${groups}${leagues}${board}${scLadder(S.ladder)}`;
+    ${list}${groups}${glance}${leagues}${board}${scLadder(S.ladder)}`;
   const bindLad = () => { const ls = $("#scLadSeg"); if(ls) ls.onclick = e => { const b = e.target.closest("button[data-lad]"); if(!b) return;
     SC_LAD = b.dataset.lad; const sec = $("#scLadder"); if(sec){ sec.outerHTML = scLadder(S.ladder); bindLad(); } }; };
   bindLad();
-  const dd = $("#scDays"); if(dd) dd.onclick = e => { const b = e.target.closest("button"); if(!b) return; SC_DAY = b.dataset.d; renderScale(); };
-  const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; SC_DAY = el.dataset.d; renderScale();
-    const h = $("#scList"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };
+  // a glance row opens its day: the shared day, then up to the ribbon
+  const openDay = el => { if(!el || !days.some(d => d.date === el.dataset.d)) return; setDay(el.dataset.d);
+    const h = $("#scale .ribbon"); if(h) window.scrollTo({top: h.getBoundingClientRect().top + window.scrollY - ($("#views").getBoundingClientRect().height + 16)}); };
   host.querySelectorAll(".sc-gbtn").forEach(el => { el.onclick = e => { e.preventDefault(); e.stopPropagation(); openDay(el); };
     el.onkeydown = e => { if(e.key === "Enter" || e.key === " "){ e.preventDefault(); openDay(el); } }; });
 }
@@ -7689,16 +7836,21 @@ function renderRacing(){
   const days = rcDays(R);
   // 19 Nov 2026 (Douglas: "Why are there no horse races listed?"): open on the first day with a race
   // still to run, and on Every race when that day has no tips, so the tab never opens on an empty board.
-  if(!RC_DAY || !days.includes(RC_DAY)){
+  // 23 Nov 2026 (UX release 3): the shared day (DAY) when racing has it, else as before.
+  const rcWas = RC_DAY;
+  if(DAY != null && days.includes(DAY)) RC_DAY = DAY;
+  else if(!RC_DAY || !days.includes(RC_DAY)){
     const now = Date.now();
     RC_DAY = days.find(d => (R.days[d] || []).some(r => r.when && Date.parse(r.when) > now)) || days[days.length - 1];
     if(!RC_PICKED && !(R.days[RC_DAY] || []).some(r => r.tip)) RC_BOARD = "races";
   }
+  if(rcWas && rcWas !== RC_DAY) RC_RACE = null;
   const races = (R.days[RC_DAY] || []).slice().sort((a, b) => (a.when || "") < (b.when || "") ? -1 : 1);
+  const rcRib = dayRibbon("racing", days.map(d => { const rs = R.days[d] || [], tips = rs.filter(r => r.tip).length;
+    return {d, n: RC_BOARD === "tips" ? tips : rs.length, none: !rs.length}; }), RC_DAY);
   const boards = [["tips", "Tips"], ["races", "Every race"], ["card", "Racecards"], ["record", "Record"]];
   const ctl = `<div class="controls" style="position:static">
     <div><div class="ctl-label" style="margin-bottom:4px">Board</div><div class="seg boards" id="rcBoards">${boards.map(([k, l]) => `<button type="button" data-rc-board="${k}" aria-pressed="${RC_BOARD === k}">${l}</button>`).join("")}</div></div>
-    ${days.length > 1 ? `<div><div class="ctl-label" style="margin-bottom:4px">Day</div><div class="seg">${days.map(d => `<button type="button" data-rc-day="${d}" aria-pressed="${d === RC_DAY}">${rcDayLabel(d).split(" ").slice(0, 2).join(" ")}</button>`).join("")}</div></div>` : ""}
   </div>`;
   const nTips = races.filter(r => r.tip).length;
   const sub = {tips: `${nTips} tip${nTips === 1 ? "" : "s"} from ${races.length} races on ${rcDayLabel(RC_DAY)}. A race only makes the list when a horse has a clear chance <b>and</b> the best UK price pays more than it. Most likely first.`,
@@ -7710,14 +7862,13 @@ function renderRacing(){
   // 20 Nov 2026: the feed's plan can send racecards with no prices and refuse results (the free
   // plan), so the tab says why it has no tips instead of showing "0 tips" with no reason.
   const feedNote = R.note ? `<p class="note">${rcE(R.note)}</p>` : "";
-  host.innerHTML = lede(sub) + feedNote + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
+  host.innerHTML = lede(sub) + feedNote + rcRib + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
   host.onclick = e => {
-    const b = e.target.closest("[data-rc-board],[data-rc-day],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
+    const b = e.target.closest("[data-rc-board],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
     if(!b) return;
     e.preventDefault();
     const d = b.dataset;
     if(d.rcBoard){ RC_BOARD = d.rcBoard; RC_PICKED = true; }
-    else if(d.rcDay){ RC_DAY = d.rcDay; RC_RACE = null; }
     else if(d.rcOpen) RC_OPEN = RC_OPEN === d.rcOpen ? null : d.rcOpen;
     else if(d.rcCourse){ const r = races.find(x => x.course === d.rcCourse); RC_RACE = r && r.id; RC_BOARD = "card"; }
     else if(d.rcRace){ RC_RACE = d.rcRace; RC_BOARD = "card"; RC_OPEN = null; }
