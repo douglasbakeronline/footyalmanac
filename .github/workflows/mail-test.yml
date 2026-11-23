@@ -1,0 +1,26 @@
+name: Send test email
+
+# One test copy of the Daily List to Douglas (mailer.py --to), using today's
+# published data from sportsalmanac.bet. Runs only when this branch is pushed.
+# Touches no subscribers and makes no claim, so the 07:00 send is unaffected.
+on:
+  push:
+    branches: [mail-test]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch today's published data
+        run: |
+          for f in daylist.json groupings-data.js data.json scale.json slip.json sports-data.js; do
+            curl -fsSL "https://sportsalmanac.bet/$f" -o "$f" || echo "::warning::could not fetch $f"
+          done
+      - name: Send the test copy
+        env:
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+        run: python3 mailer.py --to douglasbakeronline@gmail.com --kind daily
