@@ -2442,7 +2442,7 @@ function fClear(view){
 const fbEmpty = (view, text) => `<div class="empty">${text} <button type="button" class="fbar-clear" data-fclear="${view}">Clear filters</button></div>`;
 document.addEventListener("click", e => {
   const c = e.target.closest("[data-fclear]");
-  if(c){ const v = c.dataset.fclear, V = FVIEWS[v]; if(!V) return; fClear(v); V.redraw(); return; }
+  if(c){ const v = c.dataset.fclear, V = FVIEWS[v]; if(!V) return; fClear(v); V.redraw(); navWrite(false); return; }
   const b = e.target.closest(".fbar [data-fb]"); if(!b) return;
   const bar = b.closest(".fbar"), view = bar.dataset.fview, V = FVIEWS[view]; if(!V) return;
   const a = b.dataset.fb, k = b.dataset.k;
@@ -2461,6 +2461,7 @@ document.addEventListener("click", e => {
   }
   fSave();
   V.redraw();
+  navWrite(false);   // a filter replaces the address, it does not add a Back step (UX release 4)
   // the bar was redrawn: keep the keyboard where it was
   const nb = [...document.querySelectorAll(`.fbar[data-fview="${view}"]`)].find(x => x.offsetParent !== null);
   if(!nb) return;
@@ -2545,6 +2546,7 @@ function setDay(d, opts){
   else if(v === "results") renderResults();
   else if(v.startsWith("sport:")) renderSport(v.slice(6));
   ribbonSync();
+  navWrite(true);   // a day turned is a page turned (UX release 4)
 }
 // Keep the selected day in view on a ribbon that scrolls, fade the clipped edge, and
 // put focus back after a keyboard move. Runs after every draw (queued by dayRibbon).
@@ -2925,6 +2927,7 @@ document.addEventListener("click", e=>{
   state.board = b.dataset.board; state.open = null;
   if(FILT.order !== "time" && FILT.order !== "strength"){ FILT.order = "strength"; fSave(); }
   render(); updateReadbar();
+  navWrite(false);
 });
 
 /* ---------- how much to trust a number ----------
@@ -5908,6 +5911,12 @@ function daysGlance(days, sel){
   </section>`;
 }
 
+// A board picked is a page turned: the address takes it and Back returns (UX release 4).
+function resBoardClick(e){
+  const b = e.target.closest("button[data-sport]"); if(!b) return;
+  resState.sport = b.dataset.sport; resState.sday = null; renderResults();
+  navWrite(true);
+}
 // The board picker: the Daily List, then every sport, three to a row
 function resGrid(){
   const rec = x => x && x.n ? `${x.correct}/${x.n}` : "";
@@ -5927,7 +5936,7 @@ function renderResults(){
   // they are here the board shows a short placeholder, then draws itself.
   if(recordsState !== "ready"){
     host.innerHTML = `<div class="empty" aria-live="polite">Loading the record…</div>`;
-    loadRecords(renderResults);
+    loadRecords(() => { renderResults(); navWrite(false); });
     return;
   }
   // Two records, not one: a graded football fixture and a graded tennis
@@ -5946,29 +5955,19 @@ function renderResults(){
       setDay(b.dataset.day);
       const h = host.querySelector(".day-head"); if(h) scrollClear(h);
     });
-    $("#resSport").addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.sport = b.dataset.sport; resState.sday = null; renderResults();
-    });
+    $("#resSport").addEventListener("click", resBoardClick);
     return;
   }
 
   if(resState.sport !== "football" && resState.sport !== "tennis"){
     host.innerHTML = sportTabs + sportsResults(resState.sport);
-    $("#resSport").addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.sport = b.dataset.sport; resState.sday = null; renderResults();
-    });
+    $("#resSport").addEventListener("click", resBoardClick);
     return;
   }
 
   if(resState.sport === "tennis"){
     host.innerHTML = sportTabs + tennisResults();
-    $("#resSport").addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.sport = b.dataset.sport;
-      renderResults();
-    });
+    $("#resSport").addEventListener("click", resBoardClick);
     return;
   }
 
@@ -5978,11 +5977,7 @@ function renderResults(){
       predictions that were published before kick-off. If the site has only just
       started archiving, or the daily job has not run since the last round of
       fixtures, there is nothing honest to show here yet.</div>`;
-    $("#resSport").addEventListener("click", e=>{
-      const b = e.target.closest("button"); if(!b) return;
-      resState.sport = b.dataset.sport;
-      renderResults();
-    });
+    $("#resSport").addEventListener("click", resBoardClick);
     return;
   }
   resState.day = dayPick(R_DAYS.map(d => d.date), R_DAYS[0].date);   // the shared day (UX release 3)
@@ -6051,11 +6046,7 @@ function renderResults(){
     The <em>${R.overall.drawnOut}</em> drawn-out fixtures are the single largest category of miss,
     and no amount of confidence in a favourite protects you from one.` : ""}</p></div>`;
 
-  $("#resSport").addEventListener("click", e=>{
-    const b = e.target.closest("button"); if(!b) return;
-    resState.sport = b.dataset.sport;
-    renderResults();
-  });
+  $("#resSport").addEventListener("click", resBoardClick);
 }
 
 
@@ -7877,6 +7868,113 @@ function renderRacing(){
   };
 }
 
+/* ---------- the address bar (23 Nov 2026, UX release 4) ----------
+   The page's place in the book lives in the address: the view, the day and the
+   filters, so Back steps back through the pages a reader turned and a link
+   opens the same page. One serialiser (navHash) and one parser (navParse):
+     #<view>[/<day>][?<key>=<value>&...]
+   e.g. #fixtures/2026-11-24?band=85&order=time, #list?sport=nba,tennis,
+   #results?board=football. The day is a UK date or "week" (today, yday and
+   tmrw are read too). Keys: sport (the page's own set), band, show, order (the
+   shared FILT), board (football's Board, How it went's board). Only what
+   differs from the page's defaults is written: the plain front page is no
+   hash, and every hash the site wrote before (#today, #fixtures, #sport:nba,
+   #mailer ...) opens the same view. Unknown keys and bad values are ignored.
+   A change of view, day or How it went board pushes an entry; a filter
+   replaces the current one, so Back does not undo chip taps. Back and Forward
+   between the site's own entries (history.state.almanac) restore the view,
+   the day and the board and keep the filters as they stand (they are shared
+   and hold as pages turn); a typed or pasted address applies its filters too,
+   and they become the stored choice. NAV.applying guards against loops. */
+const NAV = {applying: false, last: null};
+const navView = () => { const b = document.querySelector('#views button[aria-pressed="true"]'); return b ? b.dataset.view : "list"; };
+const navFKey = v => v.startsWith("sport:") ? "sport" : v;
+const navSeen = el => !!el && el.offsetParent !== null;
+const NAV_SPORT = /^[a-z0-9_]{1,24}$/;
+const navBoards = () => ["list", "football", "tennis"].concat(Object.keys((SD && SD.sports) || {}));
+function navHash(){
+  const v = navView(), k = navFKey(v), V = FVIEWS[k], q = [];
+  // the day only when the open page shows it (a page without that day shows its own default)
+  let day = DAY != null && [...document.querySelectorAll('.ribbon [data-day][aria-selected="true"]')]
+    .some(b => b.dataset.day === DAY && navSeen(b)) ? DAY : null;
+  // How it went's first visit draws "Loading the record…": keep the day until the board is drawn
+  if(DAY != null && v === "results" && recordsState !== "ready") day = DAY;
+  if(V && [...document.querySelectorAll(`.fbar[data-fview="${k}"]`)].some(navSeen)){
+    if(V.sport){ const s = V.sport.get(); if(s.length) q.push("sport=" + s.join(",")); }
+    if(V.band !== false && FILT.band !== "all") q.push("band=" + FILT.band);
+    if(fShow(k) !== "all") q.push("show=" + fShow(k));
+    if(fOpts(V.order).length > 1 && fOrder(k) !== "strength") q.push("order=" + fOrder(k));
+  }
+  if(v === "fixtures" && state.board !== "win") q.push("board=" + state.board);
+  if(v === "results" && resState.sport !== "list") q.push("board=" + resState.sport);
+  if(v === "list" && !day && !q.length) return "";
+  return "#" + v + (day ? "/" + day : "") + (q.length ? "?" + q.join("&") : "");
+}
+const navCur = () => { try { return decodeURIComponent(location.hash); } catch(e){ return location.hash; } };
+// Write the place: push for a page turned (view, day, board), replace for a filter.
+function navWrite(push){
+  if(NAV.applying) return;
+  const h = navHash(), url = h || location.pathname + location.search;
+  try {
+    if(push && h !== navCur()) history.pushState({almanac: 1, day: DAY}, "", url);
+    else history.replaceState({almanac: 1, day: DAY}, "", url);
+  } catch(e){}
+  NAV.last = navCur();
+}
+function navParse(h){
+  h = String(h || "").replace(/^#/, "");
+  try { h = decodeURIComponent(h); } catch(e){}
+  const qi = h.indexOf("?"), path = qi < 0 ? h : h.slice(0, qi), qs = qi < 0 ? "" : h.slice(qi + 1);
+  const si = path.indexOf("/"), view = (si < 0 ? path : path.slice(0, si)).trim();
+  const dw = si < 0 ? "" : path.slice(si + 1).trim().toLowerCase();
+  const q = {};
+  qs.split("&").forEach(p => { const i = p.indexOf("="); if(i > 0) q[p.slice(0, i).trim().toLowerCase()] = p.slice(i + 1).trim(); });
+  let day;   // undefined: the address names no day
+  const shift = n => new Date(Date.parse(ukToday() + "T12:00:00Z") + n * 864e5).toISOString().slice(0, 10);
+  if(dw === "week") day = "week";
+  else if(dw === "today") day = shift(0);
+  else if(dw === "yday" || dw === "yesterday") day = shift(-1);
+  else if(dw === "tmrw" || dw === "tomorrow") day = shift(1);
+  else if(/^\d{4}-\d{2}-\d{2}$/.test(dw)){ const t = Date.parse(dw + "T12:00:00Z");
+    if(!isNaN(t) && new Date(t).toISOString().slice(0, 10) === dw) day = dw; }
+  return {view, day, q};
+}
+// The address's filters for view v become the shared choice, as a tap would make them.
+function navFilters(v, q){
+  const k = navFKey(v), V = FVIEWS[k];
+  if(BANDS.some(b => b.k === q.band)) FILT.band = q.band;
+  if(own(SHOW_LABEL, q.show)) FILT.show = q.show;
+  if(own(ORDER_LABEL, q.order)) FILT.order = q.order;
+  fSave();
+  if(V && V.sport && q.sport != null){
+    const xs = q.sport === "all" || q.sport === "" ? [] : [...new Set(q.sport.toLowerCase().split(",").map(x => x.trim()).filter(x => NAV_SPORT.test(x)))];
+    V.sport.set(xs);
+  }
+  if(v === "fixtures" && (q.board === "win" || q.board === "btts")) state.board = q.board;
+}
+// Apply the address: on load, and on Back, Forward or a new hash. Renders once.
+function navApply(how){
+  if(how !== "load" && navCur() === NAV.last) return;   // popstate and hashchange both fire for one change
+  const ours = how !== "load" && !!(history.state && history.state.almanac);
+  const p = navParse(location.hash);
+  const btns = [...document.querySelectorAll("#views button[data-view]")];
+  const btn = btns.find(b => b.dataset.view === p.view && !b.hidden) || btns.find(b => b.dataset.view === "list");
+  const v = btn.dataset.view, was = navView();
+  NAV.applying = true;
+  try {
+    if(!ours) navFilters(v, p.q);
+    // the day: the entry's own on Back / Forward (it may be one the page did not show), else the address's
+    const day = ours && history.state.day !== undefined ? history.state.day : (p.day === undefined ? null : p.day);
+    if(v === "results"){ const bd = (p.q.board || "").toLowerCase(); resState.sport = navBoards().includes(bd) ? bd : "list"; }
+    RB_FOCUS = false;
+    if(how === "load" || v !== was){ DAY = day; btn.click(); }   // the view switch renders and sends tab_view once
+    else setDay(day);
+  } finally { NAV.applying = false; }
+  navWrite(false);
+}
+window.addEventListener("popstate", () => navApply("pop"));
+window.addEventListener("hashchange", () => navApply("hash"));
+
 /* ---------- view switching ---------- */
 $("#views").addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -7893,7 +7991,6 @@ $("#views").addEventListener("click", e=>{
   const sport = v.startsWith("sport:") ? v.slice(6) : null;
   $("#controls").hidden = !fixtures;
   $("#fbLede").hidden = !fixtures;
-  try { history.replaceState(null, "", v === "list" ? location.pathname + location.search : "#" + v); } catch(err) {}
   // 16 Nov 2026, Douglas: "will it track tab selection?" A tab change rewrites the address without
   // loading a page, so Google Tag Manager sees it only through this event: one "tab_view" per tab
   // opened, the landing tab included (the click below). In GTM: a Custom Event trigger on tab_view.
@@ -7923,6 +8020,7 @@ $("#views").addEventListener("click", e=>{
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time
   window.scrollTo({top:0});
+  navWrite(true);   // UX release 4: the address follows (a page turned, so Back returns here)
 });
 
 $("#footer").innerHTML = `
@@ -7994,11 +8092,8 @@ document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
 // still reach the Daily List.
 // 25 Oct 2026: a tab can be opened by link (index.html#fixtures, #sport:nba),
 // so the Analysis page's tab bar lands on the same board.
-(() => {
-  const want = decodeURIComponent(location.hash.slice(1));
-  const btn = want && [...document.querySelectorAll('#views button[data-view]')].find(b => b.dataset.view === want && !b.hidden);
-  (btn || $('#views button[data-view="list"]')).click();
-})();
+// 23 Nov 2026 (UX release 4): the address carries the day and the filters too (navApply).
+navApply("load");
 })();
 </script>
 </body>
