@@ -37,4 +37,6 @@ jobs:
         if: contains(github.event.head_commit.message, '[send]')
         env:
           RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-        run: python3 mailer.py --to douglasbakeronline@gmail.com --kind daily
+          # the header image from this branch until deploy.yml publishes it on the site
+          MAILER_HEADER_IMG: https://raw.githubusercontent.com/douglasbakeronline/footyalmanac/mail-test/email-header.png
+        run: python3 mailer.py --to douglasbakeronline@gmail.com --kind all

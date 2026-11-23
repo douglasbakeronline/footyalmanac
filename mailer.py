@@ -45,7 +45,7 @@ SUPABASE_URL = "https://nangcsyicqfvfawyvkus.supabase.co"
 SUPABASE_KEY = "sb_publishable_aNDvbiKjeNgZx9iIg75tZw_vQDmP28F"   # the page's publishable key (index.html)
 RESEND_BATCH = "https://api.resend.com/emails/batch"
 SENDER = "Sports Almanac <list@sportsalmanac.bet>"
-HEADER_IMG = SITE + "email-header.png"   # the site's cover header (deploy.yml publishes it)
+HEADER_IMG = os.environ.get("MAILER_HEADER_IMG") or SITE + "email-header.png"   # the site's cover header (deploy.yml publishes it); tests may point elsewhere
 UNSUB_URL = SUPABASE_URL + "/functions/v1/almanac-unsubscribe?t={t}"
 MANAGE_URL = SITE + "#mailer?manage={t}"
 TEST_TOKEN = "00000000-0000-0000-0000-000000000000"   # previews and test copies: links that change nothing
@@ -1058,7 +1058,7 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     ap.add_argument("--preview", metavar="DIR", help="write daily/weekly .html and .txt from the local files, no network")
     ap.add_argument("--day", help="the UK day, YYYY-MM-DD (default today)")
-    ap.add_argument("--kind", choices=["daily", "weekly"], default="daily", help="with --to: which email")
+    ap.add_argument("--kind", choices=["daily", "weekly", "welcome", "all"], default="daily", help="with --to: which email(s)")
     ap.add_argument("--to", metavar="EMAIL", help="send one test copy (needs RESEND_API_KEY), no claim")
     a = ap.parse_args(argv)
     day = a.day or datetime.now(UK).date().isoformat()
@@ -1067,10 +1067,18 @@ def main(argv=None):
         key = os.environ.get("RESEND_API_KEY")
         if not key: print("mailer: not configured (RESEND_API_KEY missing); nothing sent"); return 0
         src = load()
-        m = daily_email(day, src, True) if a.kind == "daily" else weekly_email(day, src)
-        m = {**m, "subject": "[Test] " + m["subject"]}
-        st = send_batch(key, [message(a.to, TEST_TOKEN, m)], f"almanac-test-{a.kind}-{day}-{int(time.time())}")
-        print(f"mailer: test {a.kind} copy {'sent' if 200 <= st < 300 else f'failed (HTTP {st})'}")
+        mails = []
+        if a.kind in ("daily", "all"): mails.append(("daily", daily_email(day, src, True)))
+        if a.kind in ("weekly", "all"): mails.append(("weekly", weekly_email(day, src)))
+        if a.kind in ("welcome", "all"):
+            mails += [(n, {**m, "html": m["html"].replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN)),
+                           "text": m["text"].replace(CONFIRM_MARK, CONFIRM_URL.format(t=TEST_TOKEN))})
+                      for n, m in welcome_emails()]
+        for n, m in mails:
+            m = {**m, "subject": "[Test] " + m["subject"]}
+            st = send_batch(key, [message(a.to, TEST_TOKEN, m)], f"almanac-test-{n}-{day}-{int(time.time())}")
+            print(f"mailer: test {n} copy {'sent' if 200 <= st < 300 else f'failed (HTTP {st})'}")
+            time.sleep(RATE_GAP_S)
         return 0
     return run()
 
