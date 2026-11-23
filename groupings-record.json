@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-23T02:46:48Z",
+ "graded": "2026-11-23T04:41:03Z",
  "overall": {
   "groups": 150,
   "settled": 150,
@@ -7,8 +7,8 @@
   "z": -0.98,
   "lost": 104,
   "pending": 0,
-  "legs": 575,
-  "legsWon": 422,
+  "legs": 576,
+  "legsWon": 423,
   "returned": 131.31,
   "staked": 150,
   "returnedBest": 136.37,
@@ -26,6 +26,15 @@
   }
  },
  "cardLegsBySport": {
+  "nba": {
+   "legs": 48,
+   "landed": 36,
+   "expected": 34.72,
+   "rate": 0.75,
+   "quoted": 0.7233,
+   "z": 0.42,
+   "tripwire": false
+  },
   "football": {
    "legs": 47,
    "landed": 33,
@@ -33,15 +42,6 @@
    "rate": 0.7021,
    "quoted": 0.6816,
    "z": 0.31,
-   "tripwire": false
-  },
-  "nba": {
-   "legs": 47,
-   "landed": 35,
-   "expected": 33.87,
-   "rate": 0.7447,
-   "quoted": 0.7206,
-   "z": 0.37,
    "tripwire": false
   },
   "tennis": {
@@ -81,8 +81,8 @@
   "z": -0.27,
   "lost": 2,
   "pending": 0,
-  "legs": 8,
-  "legsWon": 6,
+  "legs": 9,
+  "legsWon": 7,
   "returned": 2.49,
   "staked": 3,
   "returnedBest": 2.56,
@@ -111,12 +111,12 @@
    "tripwire": false
   },
   "nba": {
-   "legs": 1,
-   "landed": 1,
-   "expected": 0.86,
+   "legs": 2,
+   "landed": 2,
+   "expected": 1.71,
    "rate": 1.0,
-   "quoted": 0.8596,
-   "z": 0.4,
+   "quoted": 0.8538,
+   "z": 0.59,
    "tripwire": false
   }
  },
@@ -190,18 +190,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 75,
-   "won": 65,
-   "rate": 0.8667,
-   "quoted": 0.8764,
-   "returned": 70.62,
-   "ret": -0.0584
+   "n": 76,
+   "won": 66,
+   "rate": 0.8684,
+   "quoted": 0.8759,
+   "returned": 71.87,
+   "ret": -0.0543
   },
   "notAtBook": {
-   "n": 142,
-   "won": 138,
-   "rate": 0.9718,
-   "quoted": 0.9157
+   "n": 143,
+   "won": 139,
+   "rate": 0.972,
+   "quoted": 0.9159
   },
   "unchecked": {
    "n": 32,
@@ -234,12 +234,12 @@
    },
    "nba": {
     "atBook": {
-     "n": 11,
-     "won": 8,
-     "rate": 0.7273,
-     "quoted": 0.8481,
-     "returned": 8.79,
-     "ret": -0.2009
+     "n": 12,
+     "won": 9,
+     "rate": 0.75,
+     "quoted": 0.8469,
+     "returned": 10.04,
+     "ret": -0.1633
     },
     "notAtBook": {
      "n": 1,
@@ -264,10 +264,10 @@
      "ret": -0.0867
     },
     "notAtBook": {
-     "n": 135,
-     "won": 131,
-     "rate": 0.9704,
-     "quoted": 0.919
+     "n": 136,
+     "won": 132,
+     "rate": 0.9706,
+     "quoted": 0.9192
     },
     "unchecked": {
      "n": 13,
@@ -536,8 +536,8 @@
    "ncaab|grambling tigers|ecclesia royals|2026-11-23": -1,
    "ncaab|florida international panthers|long beach state beach|2026-11-23": -1,
    "ncaab|youngstown state penguins|maryland eastern shore hawks|2026-11-23": -1,
-   "nba|minnesota timberwolves|brooklyn nets|2026-11-24": -1,
-   "nba|los angeles lakers|utah jazz|2026-11-24": 1.11,
+   "nba|minnesota timberwolves|brooklyn nets|2026-11-24": 1.12,
+   "nba|los angeles lakers|utah jazz|2026-11-24": 1.1,
    "nba|sacramento kings|san antonio spurs|2026-11-24": 1.18,
    "ncaab|wichita state shockers|texas a&m-corpus christi islanders|2026-11-24": -1,
    "ncaab|illinois fighting illini|winthrop eagles|2026-11-24": -1,
@@ -616,8 +616,8 @@
    "z": -0.86,
    "lost": 28,
    "pending": 0,
-   "legs": 121,
-   "legsWon": 85,
+   "legs": 122,
+   "legsWon": 86,
    "returned": 30.24,
    "staked": 41,
    "returnedBest": 30.7,
@@ -933,8 +933,8 @@
   "z": -0.4,
   "lost": 32,
   "pending": 0,
-  "legs": 140,
-  "legsWon": 94,
+  "legs": 141,
+  "legsWon": 95,
   "returned": 41.1,
   "staked": 47,
   "returnedBest": 41.71,
@@ -1311,8 +1311,8 @@
    "z": -0.27,
    "lost": 2,
    "pending": 0,
-   "legs": 8,
-   "legsWon": 6,
+   "legs": 9,
+   "legsWon": 7,
    "returned": 2.49,
    "staked": 3,
    "returnedBest": 2.56,
@@ -1338,8 +1338,8 @@
    "z": -0.1,
    "lost": 20,
    "pending": 0,
-   "legs": 91,
-   "legsWon": 65,
+   "legs": 92,
+   "legsWon": 66,
    "returned": 28.88,
    "staked": 31,
    "returnedBest": 29.27,
@@ -1482,9 +1482,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Royale Union Saint-Gilloise",
@@ -1540,8 +1540,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.848,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "113-106",
        "opp": 3.76,
        "rule12Fault": null,
        "r12": false
