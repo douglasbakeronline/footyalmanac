@@ -239,6 +239,60 @@ class BeforeWindow(unittest.TestCase):
         self.assertEqual(n, 0)
 
 
+class LookBackPostponed(unittest.TestCase):
+    """23 Nov 2026: a postponed game dated inside the look-back (Brazil's CA
+    Mineiro v Corinthians and RB Bragantino v Vasco, 21 Nov, on the 23 Nov
+    00:10 build) waited until its date aged past the look-back before the
+    rescheduled step saw it. It now moves when API-Football lists no game of
+    the pair within `window` days of its date and lists it once in the window."""
+    MON = date(2026, 11, 23)
+
+    def test_lookback_row_replayed_later_moves(self):
+        rows = [row("CA Mineiro", "SC Corinthians Paulista", "2026-11-21")]
+        n, bad = B.fill_untimed(rows, [af("Atletico-MG", "Corinthians", "2026-11-26", "00:30")], self.MON)
+        self.assertEqual((n, bad), (1, []))
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-26", "00:30"))
+        self.assertEqual(rows[0]["rescheduledFrom"], "2026-11-21")
+
+    def test_lookback_row_close_listing_uses_the_window_step(self):
+        # listed two days after its round date: the ordinary step, no rescheduledFrom
+        rows = [row("CA Mineiro", "SC Corinthians Paulista", "2026-11-21")]
+        n, _ = B.fill_untimed(rows, [af("Atletico-MG", "Corinthians", "2026-11-23", "22:00")], self.MON)
+        self.assertEqual(n, 1)
+        self.assertEqual(rows[0]["date"], "2026-11-23")
+        self.assertNotIn("rescheduledFrom", rows[0])
+
+    def test_lookback_guards(self):
+        # not listed, listed twice, or the source holds a second unplayed row: nothing moves
+        rows = [row("CA Mineiro", "SC Corinthians Paulista", "2026-11-21")]
+        self.assertEqual(B.fill_untimed(rows, [af("Palmeiras", "Flamengo", "2026-11-26", "00:30")],
+                                        self.MON)[0], 0)
+        self.assertEqual(B.fill_untimed(rows, [af("Atletico-MG", "Corinthians", "2026-11-25", "00:30"),
+                                               af("Atletico-MG", "Corinthians", "2026-11-28", "00:30")],
+                                        self.MON)[0], 0)
+        rows = [row("CA Mineiro", "SC Corinthians Paulista", "2026-11-21"),
+                row("CA Mineiro", "SC Corinthians Paulista", "2026-11-26")]
+        n, _ = B.fill_untimed(rows, [af("Atletico-MG", "Corinthians", "2026-11-26", "00:30")], self.MON)
+        self.assertEqual(rows[0]["date"], "2026-11-21")
+        self.assertEqual(rows[1]["date"], "2026-11-26")
+
+    def test_postponed_only_lookback_row(self):
+        # the Primeira Liga: a look-back row replayed in the window moves; one
+        # listed close by keeps the league's own date (RescheduleOnly)
+        rows = [row("Rio Ave FC", "FC Arouca", "2026-11-21", time="15:30")]
+        n, _ = B.fill_untimed(rows, [af("Rio Ave", "Arouca", "2026-11-27", "19:45")], self.MON,
+                              postponed_only=True)
+        self.assertEqual(n, 1)
+        self.assertEqual((rows[0]["date"], rows[0]["time"]), ("2026-11-27", "19:45"))
+
+    def test_split_cap_holds_in_the_lookback(self):
+        rows = [row("Dundee United FC", "Heart of Midlothian FC", "2026-11-22"),
+                row("Celtic FC", "Rangers FC", "2026-11-28", time="12:00", hg=None)]
+        n, _ = B.fill_untimed(rows, [af("Dundee United", "Heart Of Midlothian", "2026-11-29", "15:00")],
+                              self.MON, postponed_only=True, split=True)
+        self.assertEqual(n, 0)
+
+
 class RescheduleOnly(unittest.TestCase):
     """22 Nov 2026 (evening): the Primeira Liga (sources.AF_RESCHEDULE) has
     real dates and times, so only a postponed game is moved: Braga v Gil
