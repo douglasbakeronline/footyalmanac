@@ -2,6 +2,11 @@
 <html lang="en-GB">
 <head>
 <meta charset="utf-8">
+<!-- 23 Nov 2026: a Mailer confirm or manage link (#mailer?confirm=TOKEN, #mailer?manage=TOKEN) is read
+     here, before Tag Manager, Analytics or Cloudflare can see the address, and the token is taken out of
+     it at once. The Mailer reads it from window.__MAILER_TOKEN__; it is never written back or shown. -->
+<script>(function(){try{var m=/^#mailer\?(?:[^#]*&)?(confirm|manage)=([0-9a-fA-F-]{36})(?:&|$)/.exec(location.hash);
+if(m){window.__MAILER_TOKEN__={kind:m[1],token:m[2]};history.replaceState(null,"",location.pathname+location.search+"#mailer");}}catch(e){}})();</script>
 <!-- Google Tag Manager (16 Nov 2026, Douglas). On every page: tools/tag_pages.py adds it on deploy if missing. -->
 <script async src="https://www.googletagmanager.com/gtm.js?id=GTM-WP7C2F6B"></script>
 <script>
@@ -2152,6 +2157,13 @@ footer b{color:var(--ink-2)}
 .m-card p{margin-top:8px;font-size:var(--t-base);line-height:1.55;color:var(--ink-2)}
 .mailer [hidden]{display:none}
 .m-card a,.m-done a{color:var(--ink);text-decoration-thickness:1px;text-underline-offset:2px}
+.m-done .m-badge{align-self:flex-start}
+.m-mgr select{font-family:var(--f-body,inherit);font-size:var(--t-base);padding:10px 12px;border:1px solid var(--cover-ink);background:var(--paper);color:var(--ink);min-height:44px;max-width:100%}
+.m-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+.m-quiet{font-family:inherit;font-size:var(--t-base);background:none;border:0;padding:10px 0;min-height:44px;color:var(--away);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.m-quiet[disabled]{color:var(--mute);cursor:not-allowed}
+.m-ok{font-size:var(--t-base);padding:10px 12px;border-left:var(--rail) solid var(--edge);background:var(--edge-soft);color:#173d24}
+.m-ok[hidden]{display:none}
 .m-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
 .m-lede{margin-top:26px;max-width:92ch}
 .m-lede h2{font-family:var(--f-display);font-weight:400;font-size:clamp(28px,4vw,44px);line-height:1;text-transform:uppercase;margin:4px 0 0}
@@ -2236,7 +2248,7 @@ footer b{color:var(--ink-2)}
 <section class="m-lede">
   <div class="m-label">The Mailer</div>
   <h2>The Daily List, in your inbox</h2>
-  <p>The ten strongest picks from games UK bookies price, a suggested triple and, if you want it, the day's Scale bet. Sent at 20:00 the evening before, so the overnight US games are in it. Every pick is graded in public the morning after.</p>
+  <p>Every morning at 7: the day's Daily List, strongest first, with the Daily 2x, the Card and the Edge picks, and the day's Scale bets if you want them. Every pick is graded in public the morning after.</p>
 </section>
 
 <div class="mailer">
@@ -2247,9 +2259,9 @@ footer b{color:var(--ink-2)}
     </div>
     <fieldset style="border:0;margin:0;padding:0">
       <legend class="m-label" style="padding:0;margin-bottom:6px">What you get</legend>
-      <label class="m-opt"><input type="checkbox" name="daily" checked><span><b>The Daily List</b> <em>· every evening</em><small>The Top 10 and the suggested triple, with form, kick-off times and bookie prices.</small></span></label>
+      <label class="m-opt"><input type="checkbox" name="daily" checked><span><b>The Daily List</b> <em>· every morning at 7</em><small>The day's list picks, strongest first, with times and William Hill's prices; the Daily 2x, the Card and the Edge picks.</small></span></label>
       <label class="m-opt"><input type="checkbox" name="scale"><span><b>Scale</b><span class="m-tag">Beta</span><small>The day's bigger-odds bet, inside the daily email.</small></span></label>
-      <label class="m-opt"><input type="checkbox" name="sunday" checked><span><b>Sunday Record</b> <em>· once a week</em><small>How every pick went, and the ones you could bet at real prices.</small></span></label>
+      <label class="m-opt"><input type="checkbox" name="sunday" checked><span><b>Weekly Record</b> <em>· Saturday mornings</em><small>How the week's list went, each card's week, and the list at real prices.</small></span></label>
     </fieldset>
     <div class="m-hp" aria-hidden="true"><label>Leave this empty <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
     <div class="m-consent">
@@ -2267,14 +2279,42 @@ footer b{color:var(--ink-2)}
     <p><a href="./" data-goto="list">Back to today's Daily List</a></p>
   </section>
 
+  <!-- 23 Nov 2026: the link in the confirmation email (#mailer?confirm=TOKEN) -->
+  <section class="mailer-form m-done" id="mailerConfirm" hidden aria-live="polite">
+    <span class="m-badge" id="mcBadge">Checking</span>
+    <h2 id="mcHead">Confirming your address…</h2>
+    <p id="mcText"></p>
+    <p><a href="./" data-goto="list">Today's Daily List</a></p>
+  </section>
+
+  <!-- 23 Nov 2026: the "Manage your emails" link in every email (#mailer?manage=TOKEN) -->
+  <form class="mailer-form m-mgr" id="mailerManage" hidden novalidate>
+    <div><span class="m-badge">Your emails</span>
+      <p class="m-fine" id="mgWho" style="margin-top:10px">Loading your choices…</p></div>
+    <fieldset style="border:0;margin:0;padding:0" id="mgSet" disabled>
+      <legend class="m-label" style="padding:0;margin-bottom:6px">What you get</legend>
+      <label class="m-opt"><input type="checkbox" name="daily"><span><b>The Daily List</b> <em>· every morning at 7</em></span></label>
+      <label class="m-opt"><input type="checkbox" name="scale"><span><b>Scale</b><span class="m-tag">Beta</span><small>The day's Scale bets, inside the daily email.</small></span></label>
+      <label class="m-opt"><input type="checkbox" name="sunday"><span><b>Weekly Record</b> <em>· Saturday mornings</em></span></label>
+      <div class="m-row" style="margin-top:12px"><label class="m-label" for="mgPause">Pause</label>
+        <select id="mgPause" name="pause"><option value="">No pause</option><option value="keep" hidden>Keep the pause</option><option value="7">One week</option><option value="30">One month</option></select></div>
+    </fieldset>
+    <div class="m-consent">
+      <div class="m-msg" id="mgMsg" role="alert" hidden></div>
+      <div class="m-ok" id="mgOk" role="status" hidden></div>
+      <div class="m-row"><button class="m-submit" id="mgSave" type="submit" disabled>Save</button>
+        <button class="m-quiet" id="mgUnsub" type="button" disabled>Unsubscribe from everything</button></div>
+    </div>
+  </form>
+
   <aside class="mailer-side">
     <div class="m-card">
       <h3>What a daily email holds</h3>
       <ol>
-        <li>The Top 10, strongest first: kick-off, form, the model's chance and the best UK price.</li>
-        <li>A suggested triple: the three most likely picks paying ×1.30 or more together.</li>
-        <li>The Scale bet, if you've chosen it: the same winners with a second condition, for bigger odds.</li>
-        <li>The last three days of the Daily List, every pick and how it went.</li>
+        <li>The Daily List, Group A and Group B as on the site: time, the model's chance, the tested rate and William Hill's price.</li>
+        <li>The Daily 2x: one slip a day, each pick and the price at William Hill.</li>
+        <li>The Card, with its stake, or the reason there is none today; then the day's Edge picks.</li>
+        <li>The Scale bets, if you've chosen them: the list's winners with a second condition, for bigger odds.</li>
       </ol>
     </div>
     <div class="m-card">
@@ -8313,6 +8353,9 @@ function navApply(how){
     if(v === "results"){ const bd = (p.q.board || "").toLowerCase(); resState.sport = navBoards().includes(bd) ? bd : "list"; }
     // a card's ledger named in the address (UX release 6): opened and gone to once the page draws
     const cd = (p.q.card || "").toLowerCase();
+    // 23 Nov 2026: an email's confirm or manage link opened in a page already loaded. Read here, never
+    // written back: navWrite below leaves "#mailer" (navHash carries no token).
+    if(v === "mailer" && (p.q.confirm || p.q.manage) && window.mailerToken) window.mailerToken(p.q.confirm ? "confirm" : "manage", p.q.confirm || p.q.manage);
     LED_PENDING = own(LEDGER_CARDS, cd) && LEDGER_CARDS[cd].view0 === v ? cd : null;
     RB_FOCUS = false;
     if(how === "load" || v !== was){ DAY = day; btn.click(); }   // the view switch renders and sends tab_view once
@@ -8422,6 +8465,91 @@ document.querySelectorAll("#mailer [data-goto]").forEach(a => a.onclick = e => {
       btn.disabled = false; btn.textContent = "Join the list";
     }
   });
+})();
+
+/* 23 Nov 2026: the links in the emails. #mailer?confirm=TOKEN confirms the address
+   (almanac_confirm, true or false); #mailer?manage=TOKEN shows the choices
+   (almanac_get_preferences, one row: email_masked, daily, scale, sunday, status,
+   paused_until) and saves them (almanac_update_preferences, true or false). The
+   token is read once (the head script takes it out of the address before any
+   analytics loads; navApply hands over one typed in later), kept in this closure
+   and never written to the page, the address, storage or a log. */
+(() => {
+  const BASE = "https://nangcsyicqfvfawyvkus.supabase.co/rest/v1/rpc/";
+  const KEY = "sb_publishable_aNDvbiKjeNgZx9iIg75tZw_vQDmP28F";
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const $id = id => document.getElementById(id);
+  const rpc = async (name, body) => {
+    const r = await fetch(BASE + name, {method: "POST", headers: {"Content-Type": "application/json", "apikey": KEY}, body: JSON.stringify(body)});
+    if (!r.ok) throw new Error(String(r.status));
+    const t = await r.text(); return t ? JSON.parse(t) : null;
+  };
+  // true, or an object or one-row array saying ok
+  const yes = v => v === true || !!(v && (v.ok === true || (Array.isArray(v) && v.length && yes(v[0]))));
+  const only = el => { ["mailerForm", "mailerDone", "mailerConfirm", "mailerManage"].forEach(id => { $id(id).hidden = id !== el; }); };
+  const isoIn = n => { const d = new Date(Date.now() + n * 864e5); return d.toISOString().slice(0, 10); };
+  const fmt = d => new Date(d + "T12:00:00Z").toLocaleDateString("en-GB", {weekday: "long", day: "numeric", month: "long", timeZone: "UTC"});
+  async function confirm(token){
+    only("mailerConfirm");
+    const set = (b, h, t) => { $id("mcBadge").textContent = b; $id("mcHead").textContent = h; $id("mcText").textContent = t; };
+    set("Checking", "Confirming your address…", "");
+    try {
+      if (yes(await rpc("almanac_confirm", {p_token: token}))) {
+        set("You're on the list", "You're on the list", "Your address is confirmed. The Daily List arrives at 7 every morning and the Weekly Record on Saturdays, whichever you chose. Every email has a link to change your choices or unsubscribe.");
+        try { (window.dataLayer = window.dataLayer || []).push({event: "mailer_confirm"}); } catch (e) {}
+      } else set("Not confirmed", "That link didn't work", "It may have been used already, or the address was unsubscribed. If you want the emails, sign up again on this page and confirm from the newest email.");
+    } catch (e) {
+      set("Not confirmed", "Something went wrong", "We couldn't reach the list just now. Please open the link from your email again in a minute.");
+    }
+  }
+  async function manage(token){
+    only("mailerManage");
+    const f = $id("mailerManage"), msg = $id("mgMsg"), ok = $id("mgOk"), who = $id("mgWho");
+    const say = (el, t) => { msg.hidden = ok.hidden = true; if (el) { el.textContent = t; el.hidden = !t; } };
+    const lock = on => { $id("mgSet").disabled = on; $id("mgSave").disabled = on; $id("mgUnsub").disabled = on; };
+    let paused = null;
+    const draw = p => {
+      f.daily.checked = !!p.daily; f.scale.checked = !!p.scale; f.sunday.checked = !!p.sunday;
+      paused = p.paused_until && p.paused_until >= isoIn(0) ? p.paused_until : null;
+      const keep = f.pause.querySelector('option[value="keep"]');
+      keep.hidden = !paused; keep.textContent = paused ? `Paused until ${fmt(paused)}` : "Keep the pause";
+      f.pause.value = paused ? "keep" : "";
+      who.textContent = p.status === "unsubscribed"
+        ? `${p.email_masked || "This address"} is unsubscribed. Tick what you want and save to rejoin; we'll ask you to confirm the address again.`
+        : `Emails for ${p.email_masked || "your address"}${p.status === "pending" ? " (not confirmed yet: use the link in the confirmation email)" : ""}.`;
+    };
+    lock(true); say(null);
+    try {
+      const rows = await rpc("almanac_get_preferences", {p_token: token});
+      const p = Array.isArray(rows) ? rows[0] : rows;
+      if (!p) { who.textContent = "That link is not one we recognise. Use the Manage link in your most recent email."; return; }
+      draw(p); lock(false);
+    } catch (e) { who.textContent = "We couldn't load your choices just now. Please try the link again in a minute."; return; }
+    const save = async unsub => {
+      say(null); lock(true);
+      const pv = f.pause.value, until = pv === "keep" ? paused : pv ? isoIn(+pv) : null;
+      try {
+        const r = await rpc("almanac_update_preferences", unsub
+          ? {p_token: token, p_daily: null, p_scale: null, p_sunday: null, p_paused_until: null, p_unsubscribe: true}
+          : {p_token: token, p_daily: f.daily.checked, p_scale: f.scale.checked, p_sunday: f.sunday.checked, p_paused_until: until, p_unsubscribe: false});
+        if (!yes(r)) throw new Error("refused");
+        const rows = await rpc("almanac_get_preferences", {p_token: token}).catch(() => null);
+        const p = Array.isArray(rows) ? rows[0] : rows; if (p) draw(p);
+        say(ok, unsub ? "You're unsubscribed from every Sports Almanac email. Changed your mind? Tick what you want and save."
+          : until ? `Saved. Nothing will be sent until ${fmt(until)}.` : "Saved. Your choices are in place from the next email.");
+      } catch (e) { say(msg, "Sorry, that didn't save. Please try again in a minute."); }
+      lock(false);
+    };
+    f.onsubmit = e => { e.preventDefault(); if (!f.daily.checked && !f.scale.checked && !f.sunday.checked) { say(msg, "Choose at least one email, or use Unsubscribe."); return; } save(false); };
+    $id("mgUnsub").onclick = () => save(true);
+  }
+  // one entry point, for the head script's token and for navApply's
+  window.mailerToken = (kind, token) => {
+    if (!UUID.test(String(token || ""))) return;
+    if (kind === "confirm") confirm(token); else if (kind === "manage") manage(token);
+  };
+  const t = window.__MAILER_TOKEN__; window.__MAILER_TOKEN__ = null;
+  if (t) window.mailerToken(t.kind, t.token);
 })();
 
 render();
