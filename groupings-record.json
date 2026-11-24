@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-24T19:14:50Z",
+ "graded": "2026-11-24T21:08:49Z",
  "overall": {
   "groups": 152,
   "settled": 151,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 181,
    "shortened": 70,
-   "drifted": 68,
-   "mean": 0.0003
+   "drifted": 69,
+   "mean": 0.0002
   }
  },
  "cardLegsBySport": {
@@ -549,7 +549,7 @@
    "ncaab|michigan wolverines|creighton bluejays|2026-11-24": 0,
    "ncaab|rutgers scarlet knights|sacred heart pioneers|2026-11-24": 0,
    "ncaab|furman paladins|elon phoenix|2026-11-24": 0,
-   "ncaab|arizona wildcats|providence friars|2026-11-24": 0,
+   "ncaab|arizona wildcats|providence friars|2026-11-24": 1.29,
    "football|al ula|al-adalah|2026-11-25": 1.25,
    "ncaab|florida gators|milwaukee panthers|2026-11-25": 0,
    "ncaab|old dominion monarchs|hampton pirates|2026-11-25": 0,
@@ -586,7 +586,7 @@
    "ncaab|the citadel bulldogs|south carolina upstate spartans|2026-11-26": -1,
    "ncaab|george mason patriots|longwood lancers|2026-11-26": -1,
    "ncaab|nc state wolfpack|norfolk state spartans|2026-11-26": -1,
-   "ncaab|wisconsin badgers|northeastern huskies|2026-11-26": -1,
+   "ncaab|wisconsin badgers|northeastern huskies|2026-11-26": 0,
    "ncaab|montana state bobcats|northwest indian redhawks|2026-11-26": -1,
    "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": -1,
    "ncaab|utsa roadrunners|army black knights|2026-11-26": -1,
@@ -1133,8 +1133,8 @@
   "clv": {
    "n": 20,
    "shortened": 7,
-   "drifted": 8,
-   "mean": 0.0001
+   "drifted": 9,
+   "mean": -0.0007
   }
  },
  "cardListLong": {
@@ -1563,7 +1563,7 @@
        "when": "2026-11-25T01:00Z",
        "odds": 1.22,
        "best": 1.22,
-       "lastOdds": 1.22,
+       "lastOdds": 1.24,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
