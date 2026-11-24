@@ -283,3 +283,7 @@ Reading:
 ## Edge over the price, fifth run (24 Nov 2026)
 
 Check season 3,861 legs. Legs 2, 4 and 6 points above fair landed -1.5 / -2.1 / -1.5 on fit (n 4,120 / 2,555 / 1,555) and -1.4 / -1.6 / -1.0 on check (n 1,523 / 1,013 / 675); no cell by price, side or band is positive on both seasons with 250+ legs; the model-below-market control landed +2.3 on both. There is no edge and no value-leg rule. See `claude/odds-edge-retest-2026-11-24.md`.
+
+## Leg properties, fifth look (24 Nov 2026)
+
+No new rule. Pool: 98 settled real-priced football 65%+ legs, landed 76 v 66.5 expected; tested-below-model cell 31/34 v 24.1, tested-at-or-above 45/64 v 42.4 (wrong-signed again, tiny cells). Under the 250 the gates need. See `claude/leg-property-fifth-2026-11-24.md`.
