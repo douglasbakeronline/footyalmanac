@@ -163,7 +163,11 @@ def price_match(rating_a, rating_b, surface, surface_weight):
 # quoted-minus-landed gap at 65%+ may not widen). ATP 0.9: -0.0023 log loss,
 # p(worse) 0.03, gap 5.0 -> 1.5 pts. WTA 0.95: -0.0034, p(worse) 0.04, gap
 # 5.7 -> 1.5 pts. 0.8 was under-quoting: its 75% calls landed 85%.
-CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 0.95}
+# WTA 1.0 (no shrink), 24 Nov 2026: still under-quoting, live 28 days 244 of
+# 349 v 229.9 quoted. Fit on 2025 (n=2,674, 0.95 -> 1.0 -0.0010, p(worse)
+# 0.010), checked on 2026 (n=1,286, -0.0018, p(worse) 0.001); every 2026 band
+# lands above its quote. claude/tennis-wta-shrink-2026-11-24.md.
+CONFIDENCE_SHRINK = {"atp": 0.9, "wta": 1.0}
 ATP_RANK_LAYER = False
 
 # The Daily List. Same archive and filter, the shrink above. The shared rule
