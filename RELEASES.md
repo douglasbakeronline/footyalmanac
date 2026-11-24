@@ -12,6 +12,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-leg-property-fifth: Leg properties, fifth look (tag pending)
+
+**What changed:** nothing on the site. A note recording the fifth look at which legs land at their quote.
+
+**Evidence:** pool 30 Oct to 24 Nov, football, real price, 65%+, no draws: 98 settled, 76 landed v 66.5 expected. Tested rate at or above model 45/64 (42.4 expected); below model 31/34 (24.1). Far under the 250 legs Rule 3 needs; no fit/check split possible.
+
+**Files:** `claude/leg-property-fifth-2026-11-24.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+
+**Not changed:** every leg rule, `groupings.py`, the Card.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-edge-retest-5: Edge over the price, fifth run: still none (tag pending)
 
 **What changed:** nothing on the site. A dated note records the fifth run of the model-v-bookmaker edge test.
