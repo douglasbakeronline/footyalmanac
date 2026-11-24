@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-24T06:01:44Z",
+ "graded": "2026-11-24T07:08:28Z",
  "overall": {
   "groups": 151,
   "settled": 151,
@@ -198,10 +198,10 @@
    "ret": -0.0461
   },
   "notAtBook": {
-   "n": 151,
-   "won": 147,
-   "rate": 0.9735,
-   "quoted": 0.9154
+   "n": 152,
+   "won": 148,
+   "rate": 0.9737,
+   "quoted": 0.9156
   },
   "unchecked": {
    "n": 34,
@@ -264,10 +264,10 @@
      "ret": -0.0867
     },
     "notAtBook": {
-     "n": 144,
-     "won": 140,
-     "rate": 0.9722,
-     "quoted": 0.9185
+     "n": 145,
+     "won": 141,
+     "rate": 0.9724,
+     "quoted": 0.9186
     },
     "unchecked": {
      "n": 13,
@@ -549,6 +549,7 @@
    "ncaab|michigan wolverines|creighton bluejays|2026-11-24": 0,
    "ncaab|rutgers scarlet knights|sacred heart pioneers|2026-11-24": 0,
    "ncaab|furman paladins|elon phoenix|2026-11-24": 0,
+   "ncaab|arizona wildcats|providence friars|2026-11-24": -1,
    "football|al ula|al-adalah|2026-11-25": 1.25,
    "ncaab|florida gators|milwaukee panthers|2026-11-25": 0,
    "ncaab|old dominion monarchs|hampton pirates|2026-11-25": 0,
