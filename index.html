@@ -348,6 +348,7 @@ details.how p{margin-top:8px;padding-left:22px}
   padding:6px 15px;border-top:1px solid var(--rule-soft);font-size:13.5px;align-items:baseline;
 }
 .list-past .d{font-family:var(--f-num);font-size:12px;color:var(--mute)}
+.list-past h3 small{font-weight:500;letter-spacing:.04em;text-transform:none;margin-left:6px}
 .list-past .ok{color:var(--home);font-weight:700}
 /* started Daily List picks (pinnedRow): a status pill, no background tint */
 .row.pinned{cursor:default}
@@ -4424,17 +4425,23 @@ function renderList(){
     host.appendChild(e);
   }
 
-  // The last 30 list results: from the full record when it is loaded, else
-  // the summary's copy (build.py record_summary, the same rows in the same order).
-  const rows = Rx.listDays ? Rx.listDays.flatMap(d => d.games.map(g => ({d:d.date, ...g}))) : (Rx.listRecent || []);
+  // The last 30 list results, every sport (24 Nov 2026, Douglas: "Why is
+  // this just football games shown?"): build.list_recent_all, newest first,
+  // the score from the pick's side. Football's own record is the fallback for
+  // a page built before that summary existed.
+  const all = RS && RS.listRecentAll;
+  const rows = all && all.length ? all
+    : (Rx.listDays ? Rx.listDays.flatMap(d => d.games.map(g => ({d:d.date, ...g}))) : (Rx.listRecent || []))
+      .map(g => { const h = g.pick === "h", r = g.result || [];
+        return {d: g.d, s: "football", pick: h ? g.home : g.away, opp: h ? g.away : g.home, c: g.confidence,
+                w: fbWon(g), sc: r.length === 2 ? `${r[h ? 0 : 1]}–${r[h ? 1 : 0]}` : ""}; });
   if(rows.length){
-    const side = g => g.pick === "h" ? g.home : g.away;
     host.insertAdjacentHTML("beforeend", `
-      <div class="list-past"><h3>Recent list results</h3><ul>${rows.slice(0, 30).map(g => `
+      <div class="list-past"><h3>Recent list results <small>every sport</small></h3><ul>${rows.slice(0, 30).map(g => `
         <li><span class="d">${fmtDay(g.d).split(",")[0]}</span>
-          <span class="${fbWon(g) ? "ok" : "no"}">${fbWon(g) ? "✓" : "✗"}</span>
-          <span>${side(g)} to beat ${g.pick === "h" ? g.away : g.home} · ${pct(g.confidence)}%</span>
-          <span class="sc">${g.result[0]}–${g.result[1]}</span></li>`).join("")}</ul></div>`);
+          <span class="${g.w ? "ok" : "no"}">${g.w ? "✓" : "✗"}</span>
+          <span>${ogEsc(g.pick)} to beat ${ogEsc(g.opp)} · ${pct(g.c)}%${sportEmoji(g.s)}</span>
+          <span class="sc" title="Score from the pick's side">${ogEsc(g.sc || "")}</span></li>`).join("")}</ul></div>`);
   }
 }
 

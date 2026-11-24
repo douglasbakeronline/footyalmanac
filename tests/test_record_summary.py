@@ -64,3 +64,35 @@ class RecordSummary(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class ListResultsEverySport(unittest.TestCase):
+    """24 Nov 2026 (Douglas: "Why is this just football games shown?"): the
+    Daily List's Recent list results read football's record alone. listRecentAll
+    carries every sport's list picks, newest first, the score from the pick's side."""
+    def test_every_sport_newest_first_pick_side_score(self):
+        record = {"listDays": [{"date": "2026-11-22", "games": [
+            {"league": "x", "home": "Pennarossa", "away": "Tre Penne", "pick": "a", "actual": "a", "confidence": 0.77,
+             "result": [3, 6], "ok": True, "won": True, "drawRead": False, "kickoff": "2026-11-22T14:00:00Z"},
+            {"league": "x", "home": "A", "away": "B", "pick": "h", "actual": "d", "confidence": 0.8,
+             "result": [1, 1], "ok": False, "won": False, "drawRead": True, "kickoff": "2026-11-22T12:00:00Z"}]}]}
+        sports = {"days": [{"date": "2026-11-23", "games": [
+            {"sport": "ncaab", "when": "2026-11-23T01:00Z", "home": "USC", "away": "UL", "pick": "USC",
+             "confidence": 0.95, "list": True, "ok": True, "score": [82, 56]},
+            {"sport": "nba", "when": "2026-11-23T02:00Z", "home": "X", "away": "Y", "pick": "Y",
+             "confidence": 0.9, "list": False, "ok": True, "score": [1, 2]},
+            {"sport": "nba", "when": "2026-11-23T03:00Z", "home": "P", "away": "Q", "pick": "Q",
+             "confidence": 0.85, "list": True, "void": True, "ok": None, "score": None}]}]}
+        tennis = {"days": [{"date": "2026-11-23", "games": [
+            {"playerA": "Geerlings", "playerB": "Estevez", "pick": "Estevez", "confidence": 0.8, "list": True,
+             "void": False, "ok": False, "start": "2026-11-23T15:20:00Z",
+             "note": "Ariana Geerlings (ESP) bt Josefina Estevez (ARG) 6-2 6-3"}]}]}
+        rows = build.record_summary(record, sports, tennis)["listRecentAll"]
+        self.assertEqual([r["s"] for r in rows], ["tennis", "ncaab", "football", "football"])
+        self.assertEqual(rows[0], {"d": "2026-11-23", "s": "tennis", "pick": "Estevez", "opp": "Geerlings",
+                                   "c": 0.8, "w": False, "sc": "2-6 3-6"})
+        self.assertEqual(rows[1]["sc"], "82–56")
+        self.assertEqual(rows[2]["pick"], "Tre Penne")
+        self.assertEqual(rows[2]["sc"], "6–3")
+        self.assertTrue(rows[2]["w"])
+        self.assertFalse(rows[3]["w"])
