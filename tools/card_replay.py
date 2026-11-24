@@ -627,7 +627,12 @@ def main():
                  # group beside the one the page published (fidelity_lines)
                  "picks": sorted(l["pick"] for l in g["legs"])}
                 for d, gl in sorted(days.items()) for g in gl]
-        fg = [g for g in gs if g.get("fill")]
+            # 24 Nov 2026 (evening): each leg's Card fault at this price on the
+            # live rule's own days, so the review can say why a group the page
+            # published was not rebuilt (a pick refused at this price, a pick
+            # not in the pool, or the same legs grouped another way)
+            report["variants"][v]["legFaults"] = leg_faults(by, dates)
+        fg =[g for g in gs if g.get("fill")]
         if "_FILL" in VARIANTS[v]:
             # 10 Nov 2026 (#155): the filler's own groups, on the days live left empty
             fs = sum(g["stake"] for g in fg); fr = sum(g["stake"] * g["odds"] for g in fg if g["won"])
@@ -666,6 +671,28 @@ def main():
     if "--json" in sys.argv:
         with open(sys.argv[sys.argv.index("--json") + 1], "w") as f: json.dump(report, f, indent=1)
     return report
+
+
+def live_rule_from():
+    """The day the live CARD_RULE took over (RULES' open-ended row)."""
+    return next((a for n, v, a, b, w in reversed(RULES) if b is None), None)
+
+
+def leg_faults(by, dates, since=None):
+    """{date: {pick: fault or ""}} under the live rule, from its first live
+    day: every leg the Card could see, its sport not off the Card. The fault
+    is groupings.card_fault's reason without the pick's name; "" is clear."""
+    since = since or live_rule_from()
+    out = {}
+    for d in dates:
+        if since and d < since: continue
+        day = {}
+        for l in by.get(d) or []:
+            if l.get("listOff") or l.get("sport") in G.CARD_SPORTS_OFF: continue
+            f = G.card_fault(l) or ""
+            day[l["pick"]] = f.split(": ", 1)[1] if f.startswith(f"{l['pick']}: ") else f
+        if day: out[d] = day
+    return out
 
 
 def rules_table(variants):
