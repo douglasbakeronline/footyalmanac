@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-list-card-day: the List card built on its own day, one kind a day (tag pending)
+
+**What changed for a reader.** The List 2x and List long on the Bets tab were fixed as first built, up to three days early, and a List 2x could be published beside a List long that was already held: 21 and 22 Nov each had both, sharing two and three picks, and those four slips are the List card's whole record. Now an unstarted List slip is rebuilt on every build until 07:00 UK on its day (as the Daily 2x has been since 23 Nov), then held, and a day has one List kind: the 2x, else the long.
+**Evidence.** The archive for 21 and 22 Nov (`claude/list-card-on-its-day-2026-11-24.md`). `tests/test_list_card.py` `ListOnItsDay`, four tests that fail on the old code.
+**Files.** `groupings.py` (`build_list_card`), `tests/test_list_card.py`, `claude/list-card-on-its-day-2026-11-24.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** `LIST_KINDS`, floors, the Card, the Daily 2x, any record or archive.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-band60: the 60-69% filter back on the Daily List (tag pending)
 
 **For a reader:** the Daily List's Confidence filter offers 60-69% (and 70-79% counts every reserve pick) again. The reserve fold still opens on 75%+ by default; choose a band and every reserve pick in it shows, so the football reserve at 60-69% (67 picks on 24 Nov's local build) is one tap away. The fold's note says how to reach them.
