@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-24T09:46:53Z",
+ "graded": "2026-11-24T11:08:16Z",
  "overall": {
   "groups": 151,
   "settled": 151,
@@ -204,10 +204,10 @@
    "quoted": 0.9156
   },
   "unchecked": {
-   "n": 34,
-   "won": 31,
-   "rate": 0.9118,
-   "quoted": 0.8523
+   "n": 35,
+   "won": 32,
+   "rate": 0.9143,
+   "quoted": 0.8494
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 17,
-     "won": 14,
-     "rate": 0.8235,
-     "quoted": 0.7983
+     "n": 18,
+     "won": 15,
+     "rate": 0.8333,
+     "quoted": 0.7957
     }
    },
    "nba": {
