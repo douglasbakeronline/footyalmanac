@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-list-60up: the Daily List opens on every pick at 60%+ (tag pending)
+
+**What changed:** Douglas, 24 Nov 2026: "make the default filter show all banding from 60% upwards as the default". The Confidence filter has a new **60%+** choice, and it is the Daily List's default. The list itself is unchanged (every list pick is 75%+), but the reserve fold now opens on every reserve pick at 60% or better, where until now the default ("All") showed only the reserve's 75%+ picks. Groups A and B stay labelled under 60%+. Every other tab still opens on All. A reader's own choice still holds across tabs; Clear filters (and removing the chip) now go back to each page's default rather than All. Readers who had "All" stored (everyone, as it was the default) are moved once to the default, so the change reaches them; a band chosen before is kept.
+**Evidence:** display only, nothing regraded. Checked in a browser at 1280px and 400px on a local build: 60%+ pressed on first visit and for a reader with "All" stored, All then reload holds All (`#list?band=all`), 85-89% shows its chip, Clear returns to 60%+, the football board stays on All. Full test suite passes.
+**Files:** `index.html` (`BANDS`, `FVIEWS.list.bandDefault`, `bandOf`, `fClean`/`fBandAuto` with the `almanacFiltersV` flag, the filter bar, `fClear`, `resShown`, the reserve note, `navHash`), `analysis.html` (`BANDS` copy, kept equal by `tests/test_shell_sync.py`; its band lookup skips 60%+), `RELEASES.md`.
+**Not changed:** the list rule, the reserve rule (the 75% line is still where the reserve's default display used to stop, and choosing All restores that view), any record.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-coverage-by-rule: the Card review's Coverage line reads each rule on its own days (tag pending)
 
 **What changed:** nothing on the site. The nightly Card review's Coverage line set every live Card group since 29 Oct (rules 1 to 14, 33 on 24 Nov) against the replay's live row (rule 14 alone, 10) and blamed the gap on estimate-only legs. It now counts the record's groups by the rule each ran under and sets them beside that rule's own replay on its own live days: 33 v 13, with 21 of the 33 before 10 Nov (the estimate-only archive, 1 rebuilt) and 12 v 12 from then on.
