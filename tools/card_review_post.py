@@ -4,6 +4,7 @@ when the integrity checker found something, an office-backlog issue for the
 engineer. Run by card-review.yml; needs GH_TOKEN and REPO. Standard library
 only (gh CLI for the API)."""
 import json, os, subprocess, sys
+from collections import Counter
 from datetime import datetime, timezone
 
 REPO = os.environ.get("REPO", "douglasbakeronline/footyalmanac")
@@ -650,7 +651,85 @@ def fidelity_lines(rec, rep, rep_close=None, today_=None):
     if not parts: return []
     return [f"Fidelity (rule {rule}, {alld[0]} to {alld[-1]}, {len(alld)} settled day(s)): the page published {n_pub} group(s); "
             f"the replay's live row {'; '.join(parts)}. The replay reads a leg at one price, the page at each build's; "
-            "a gap here is the price the rule was read on, not a different rule."]
+            "a gap here is the price the rule was read on, or the page holding a group from an earlier build, not a different rule."]
+
+
+def _first_published(day, picks, archive="groupings-archive"):
+    """When the page first published the Card group with these picks, from the
+    day's archive file (`first`), or None."""
+    try:
+        with open(os.path.join(archive, f"{day}.json")) as f: arch = json.load(f)
+    except Exception:
+        return None
+    for g in arch.get("groups") or []:
+        if str(g.get("name", "")).startswith("Card") and sorted(l.get("pick") for l in g.get("legs") or []) == picks:
+            return g.get("first")
+    return None
+
+
+def _why_group(picks, faults):
+    """One group's picks read against one price's leg faults: (kind, words).
+    kind is "missing" (a pick not in the pool), "price" (a pick refused at
+    this price) or "choice" (every pick clear: the same legs grouped another
+    way)."""
+    gone = [p for p in picks if p not in faults]
+    bad = [(p, faults[p]) for p in picks if faults.get(p)]
+    if gone: return "missing", "not in the pool: " + ", ".join(gone)
+    if bad: return "price", "; ".join(f"{p} {why}" for p, why in bad)
+    return "choice", "every pick clear"
+
+
+def fidelity_why(rec, rep, rep_close=None, today_=None, archive="groupings-archive"):
+    """24 Nov 2026 (evening): why each group differs between the page and the
+    replay's live row on the live rule's settled days, read on the replay's
+    own leg faults (card_replay `legFaults`) at first and at last pre-start
+    prices. On 21 Nov the page held a group published the evening before
+    (Galatasaray, FK Mlada Boleslav, Rapid Wien) whose picks were all clear
+    at both prices: the replay grouped the same legs another way, which is
+    the page's hold (a group stands from its first build), not the price."""
+    rec, rep = rec or {}, rep or {}
+    rule = rec.get("cardLiveRule")
+    live = (rep.get("variants") or {}).get("live") or {}
+    if not rule or "legFaults" not in live or any("picks" not in g for g in live.get("groupList") or []): return []
+    start = next((r.get("from") for r in rep.get("rules") or [] if r.get("rule") == rule and r.get("from")), None)
+    if not start: return []
+    today_ = today_ or today
+    end = min(rep.get("to") or today_, today_)
+    pub, pending = _published(rec, rule, start, end)
+    alld = [d for d in sorted({x.get("date", "") for x in rec.get("days") or []}) if start <= d < today_ and d not in pending]
+    prices = [("first", live)]
+    cl = ((rep_close or {}).get("variants") or {}).get("live") or {}
+    if "legFaults" in cl and all("picks" in g for g in cl.get("groupList") or []): prices.append(("last pre-start", cl))
+    rp = {d: [sorted(g["picks"]) for g in live.get("groupList") or [] if g.get("date") == d] for d in alld}
+    tally, page_lines, rep_lines = Counter(), [], []
+    for d in alld:
+        for picks in pub.get(d, []):
+            if picks in rp[d]: continue
+            reads = []
+            for label, r in prices:
+                kind, words = _why_group(picks, (r.get("legFaults") or {}).get(d) or {})
+                if label == "first": tally[kind] += 1
+                reads.append(f"at {label} prices {words}")
+            first = _first_published(d, picks, archive)
+            page_lines.append(f"{d[5:]} {', '.join(picks)}" + (f" (first published {first[5:16].replace('T', ' ')} UTC)" if first else "")
+                              + ": " + "; ".join(reads))
+        for picks in rp[d]:
+            if picks in pub.get(d, []): continue
+            reads = []
+            for label, r in prices[1:]:
+                kind, words = _why_group(picks, (r.get("legFaults") or {}).get(d) or {})
+                reads.append(f"at {label} prices {words}")
+            rep_lines.append(f"{d[5:]} {', '.join(picks)}" + (": " + "; ".join(reads) if reads else ""))
+    if not page_lines and not rep_lines: return []
+    out = []
+    if page_lines:
+        n = sum(tally.values())
+        out.append(f"Why the replay did not rebuild {n} of the page's group(s), read at first prices: "
+                   f"{tally['price']} a pick refused at that price, {tally['choice']} every pick clear (the replay grouped the same legs "
+                   f"another way; the page holds a group from the build that first published it), {tally['missing']} a pick not in the pool.")
+        out += [f"- page: {x}" for x in page_lines]
+    out += [f"- replay at first prices, not on the page: {x}" for x in rep_lines]
+    return out
 
 
 def kelly_line(s):
@@ -890,6 +969,7 @@ def review_body():
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines += coverage_lines(rep, load("groupings-record.json"))
         lines += fidelity_lines(load("groupings-record.json"), rep, rep_close)
+        lines += fidelity_why(load("groupings-record.json"), rep, rep_close)
         lines += rule6_lines(rep)
         lines.append("")
         lines += rules_section(rep, load("groupings-record.json"))
