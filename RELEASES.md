@@ -10,6 +10,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-slip-links: research links on the slip's legs (tag pending)
+
+**What changed for a reader.** Douglas: "add those for the slip as well". Each leg of the slip on the Bets tab now ends with the same one-line links as the Edge picks: H2H, Predictions, Search and Table (Draw for a tennis leg). The bookmaker's name under a slip leg's price is no longer cut off ("William Hi").
+**Evidence.** Display only. Checked in a browser at 400 and 1280 wide.
+**Files.** `index.html` (`researchLinks`, shared with `edgeLinks`; `.tb-row.st.slip`), `RELEASES.md`.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-edge-links-short: Edge links on one line, Most nailed on banner removed (tag pending)
 
 **What changed for a reader.** Douglas: "all in one row next to each other ... H2H, Predictions, Search" and "Get rid of the nailed on banner". The Edge picks' links now read H2H, Predictions, Search, Table (the full name on hover and for screen readers) and sit on one line across the row, under the Edge chip on a phone so they fit. The Most nailed on line under each Daily List day's heading is gone; the ⭐ likely-winner marks on rows stay, and the emails are unchanged.

@@ -1147,6 +1147,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .tb-v{font:700 10.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;padding:2px 6px;border:1px solid currentColor;justify-self:start}
 .tb-row.back .tb-v{color:var(--home)}
 .tb-row.caution .tb-v{color:var(--draw-ink,#7a5c12)}
+.tb-row.st.slip{grid-template-columns:30px 72px minmax(0,1fr) auto}
 .tb-row.slip .tb-v{color:var(--ink)} .tb-row.slip.won .tb-v{color:var(--home)} .tb-row.slip.lost .tb-v{color:var(--away)}
 .tb-bands{width:100%;border-collapse:collapse;font:12px var(--f-num);margin-top:6px}
 .tb-bands th,.tb-bands td{padding:4px 8px;text-align:right;border-top:1px solid var(--rule-soft)} .tb-bands th{font:700 10.5px var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute-ink,var(--mute))}
@@ -6907,7 +6908,8 @@ function slipSection(date){
       return `<div class="tb-row st slip ${ls || ""}">${starHtml(starFor(l.sport, l.home, l.away, l.start), `${l.pick} (${l.home} v ${l.away})`)}<span class="tb-v">${ls === "won" ? "Won" : ls === "lost" ? "Lost" : ls === "void" ? "Void" : ({football: "Football", tennis: "Tennis", ncaab: "College", cfb: "College", nba: "NBA", nfl: "NFL", rugby: "Rugby"}[l.sport] || ogEsc(l.sport))}</span>
         <span class="tb-m"><b>${ogEsc(l.pick)}</b><small>v ${ogEsc(l.side === "h" ? l.away : l.home)} · ${ogEsc(l.comp || "")} · ${tm(l.start)}${l.list ? " · Daily List" : l.reserve ? " · reserve" : ""}</small>
           <small class="tb-why">Tested: ${ogEsc(l.basis)} landed (${Math.round(l.chance * 100)}%); model ${Math.round(l.conf * 100)}%; band ${sign(l.bandRet)} a leg at the price</small></span>
-        <span class="tb-pp">${l.price.toFixed(2)}<small>${ogEsc(l.book || "")}</small></span></div>`; }).join("");
+        <span class="tb-pp">${l.price.toFixed(2)}<small>${ogEsc(l.book || "")}</small></span>
+        ${researchLinks(l.home, l.away, l.comp || "", "", (l.start || "").slice(0, 10), l.sport)}</div>`; }).join("");
     body = `<div class="tb-rows">${legs}</div>
       <div class="tb-proof edge"><div><span>${s.legs.length}-fold${st === "won" ? ", won" : st === "lost" ? ", lost" : st === "void" ? ", void" : started ? ", under way" : ""}</span><b>${s.price.toFixed(2)}</b><small>tested chance it lands ${Math.round(s.chance * 100)}% · expected return <b>${pence(s.ev)}</b> in the pound${"ret" in s ? ` · returned ${s.ret.toFixed(2)}` : ""}${started ? "" : " · open until " + tm(s.first)}</small></div></div>`;
   }
@@ -6933,10 +6935,16 @@ function slipSection(date){
    here"): the football board's four research searches (detail()), in the
    Bets tab's small muted link type. */
 function edgeLinks(g){
-  const vs = g.home.name + " v " + g.away.name;
-  // 24 Nov 2026 (Douglas: "all in one row ... H2H, Predictions, Search"): short labels, one line on a phone
+  return researchLinks(g.home.name, g.away.name, compName(g), g.country, g.date, "football");
+}
+// 24 Nov 2026 (Douglas: "all in one row ... H2H, Predictions, Search"; then
+// "add those for the slip as well"): short labels, one line on a phone. Tennis
+// ends with its draw; every other sport with its table.
+function researchLinks(home, away, comp, country, date, sport){
+  const vs = home + " v " + away, last = sport === "tennis"
+    ? ["Draw", comp + " draw", comp + " draw"] : ["Table", comp + " " + (country || "") + " table", comp + " table"];
   return `<span class="tb-links">${[["H2H", vs + " head to head", "Head to head"], ["Predictions", vs + " prediction", "Predictions"],
-      ["Search", vs + (g.date ? " " + g.date : ""), "Search this fixture"], ["Table", compName(g) + " " + (g.country || "") + " table", compName(g) + " table"]]
+      ["Search", vs + (date ? " " + date : ""), "Search this fixture"], last]
     .map(([t, q, full]) => `<a href="${gSearch(q)}" target="_blank" rel="noopener" title="${ogEsc(full)}" aria-label="${ogEsc(full)} (opens Google)">${t} ↗</a>`).join('<span aria-hidden="true"> · </span>')}</span>`;
 }
 function edgeSection(date){
