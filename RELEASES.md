@@ -12,6 +12,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-wta-shrink: WTA confidence shrink 0.95 to 1.0 (tag pending)
+
+**What changed:** WTA win chances are no longer pulled toward 50% (`CONFIDENCE_SHRINK["wta"]` 0.95 to 1.0). Quoted WTA confidence rises about 0.8 points on average. ATP unchanged.
+
+**Evidence:** live WTA 28 days 244 of 349 v 229.9 quoted (z +1.6), used only to locate the gap. On history, paired bootstrap v 0.95: fit 2025 (n 2,674) -0.0010 log loss, p(worse) 0.010; check 2026 (n 1,286) -0.0018, p(worse) 0.001; every 2026 band 55%+ lands above quote. Rule 3 gates pass; the tennis-only `MIN_GAIN` 0.005 is not reached (as for the original 0.95). Surface source: still none (fifth check).
+
+**Files:** `build_tennis.py`, `claude/tennis-wta-shrink-2026-11-24.md`, `RELEASES.md`.
+
+**Not changed:** ATP shrink, surface handling, list and Card floors.
+
+**Roll back:** `git revert`, or set `CONFIDENCE_SHRINK["wta"]` back to 0.95.
+
 ## 2026-11-24-band-50-55-recheck: Football 50-55% band over its quote, re-read (tag pending)
 
 **What changed:** Nothing in the model or page. A dated note only.
