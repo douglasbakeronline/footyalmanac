@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-mailer-window: the morning email covers 07:00 to 07:00 (tag pending)
+
+**What changed for a reader.** Douglas: "Some of the games on the mailer already played ... can it be a 07.00-07.00 24 hour period for the mailer picks?". The 07:00 email took the whole UK day's list, so overnight US games (00:30, 03:00) were already played when it arrived, with their results shown. It now carries the list picks starting from 07:00 UK that day to 07:00 UK the next: today's from 07:00 on, plus the next night's overnight picks (US basketball and the like). Edge picks follow the same window. Untimed picks stay with their own day. The Daily 2x and the Card already run 07:00 to 07:00.
+**Evidence.** `tests/test_mailer.py` `SevenToSeven` (the window, the overnight picks, summer time). On today's files the overnight picks come from `daylist.json`'s new `early` list (23 next-night list picks before 07:00).
+**Files.** `mailer.py` (`window`, `in_window`, `list_items`, `edge_picks`), `daylist.py` (`early`), `tests/test_mailer.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed.** The page's Daily List, the Weekly Record, any record.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-staking-rule14-rate: the Card's bankroll read at the live rule's rate (tag pending)
 
 **What changed:** nothing on the site. The nightly Card review's live bankroll (month and season, at the page's stakes) now counts groups at the live rule's own rate once it has a week on the record, not at the rate since 11 Nov: rule 14 has built 3 groups in 5 days (0.60 a day) against 0.85 a day over rules 11, 13 and 14 together.

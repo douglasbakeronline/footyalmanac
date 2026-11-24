@@ -199,3 +199,23 @@ class Run(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class SevenToSeven(unittest.TestCase):
+    """24 Nov 2026 (Douglas: "Some of the games on the mailer already played ...
+    can it be a 07.00-07.00 24 hour period"): the 07:00 email carries the picks
+    starting from 07:00 UK that day to 07:00 UK the next, the overnight games of
+    the next UK day included (daylist.json "early")."""
+    def test_window(self):
+        L = [pick("nba", "Played", "X", 0.9, start="2026-11-23T03:00:00Z"),
+             pick("football", "Evening", "Y", 0.88, start="2026-11-23T19:00:00Z"),
+             pick("tennis", "Untimed", "Z", 0.86, start="2026-11-23T12:00:00Z", timed=False)]
+        s = src(L)
+        s["daylist"]["early"] = [pick("nba", "Overnight", "W", 0.87, start="2026-11-24T01:00:00Z"),
+                                 pick("nba", "TooLate", "V", 0.9, start="2026-11-24T07:30:00Z")]
+        items, _ = M.list_items(s, DAY, NOW)
+        self.assertEqual(sorted(i["pick"] for i in items), ["Evening", "Overnight", "Untimed"])
+
+    def test_window_in_summer_time(self):
+        self.assertEqual(M.window(DAY), (datetime(2026, 11, 23, 7, tzinfo=timezone.utc), datetime(2026, 11, 24, 7, tzinfo=timezone.utc)))
+        self.assertEqual(M.window("2026-07-01")[0], datetime(2026, 7, 1, 6, tzinfo=timezone.utc))
