@@ -36,6 +36,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 **Roll back:** delete the note.
 
+## 2026-11-24-list-70up: the Daily List's default band is 70%+, not 60%+ (tag pending)
+
+**What changed:** Douglas, the same evening: "Actually let's roll that back. Only show 70% and above." The 60%+ choice is now **70%+**, and it is the Daily List's default. List picks are all 75%+, so the visible change is the reserve fold: it opens on reserve picks at 70% or better (60%+ this afternoon, 75%+ before today). A reader with 60%+ saved goes back to the page default. Every other tab still opens on All; All still shows the reserve's 75%+ view.
+**Evidence:** display only. Browser check at 1280px and 400px on a local build: 70%+ pressed by default and for a reader with 60%+ saved, no chip, the reserve note reads "every reserve pick at 70% or better". Full test suite passes.
+**Files:** `index.html` (`BANDS`, `FVIEWS.list.bandDefault`, the list's `filtered` test, the reserve note), `analysis.html` (`BANDS` copy and its band lookup), `RELEASES.md`.
+**Roll back:** `git revert` the merge (back to 60%+), or revert both 24 Nov merges for the old All default.
+
 ## 2026-11-24-list-60up: the Daily List opens on every pick at 60%+ (tag pending)
 
 **What changed:** Douglas, 24 Nov 2026: "make the default filter show all banding from 60% upwards as the default". The Confidence filter has a new **60%+** choice, and it is the Daily List's default. The list itself is unchanged (every list pick is 75%+), but the reserve fold now opens on every reserve pick at 60% or better, where until now the default ("All") showed only the reserve's 75%+ picks. Groups A and B stay labelled under 60%+. Every other tab still opens on All. A reader's own choice still holds across tabs; Clear filters (and removing the chip) now go back to each page's default rather than All. Readers who had "All" stored (everyone, as it was the default) are moved once to the default, so the change reaches them; a band chosen before is kept.

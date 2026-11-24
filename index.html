@@ -2383,9 +2383,9 @@ const state = { leagues:new Set(), sort:"conf", open:null, board:"win",
    control (UX release 7; tests/test_shell_sync.py keeps the two equal). */
 const BANDS = [
   {k: "all", label: "All"},
-  // 24 Nov 2026 (Douglas: "make the default filter show all banding from 60% upwards"): one band
+  // 24 Nov 2026 (Douglas: "make the default filter show all banding from 60% upwards", then 70%+ the same evening): one band
   // spanning the rest, the Daily List's default (FVIEWS.list.bandDefault, read through bandOf).
-  {k: "60up", lo: 60, hi: 101, label: "60%+"},
+  {k: "70up", lo: 70, hi: 101, label: "70%+"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
   {k: "85", lo: 85, hi: 90, label: "85-89%"},
   {k: "80", lo: 80, hi: 85, label: "80-84%"},
@@ -2428,7 +2428,7 @@ function fMigrate(){
   return fClean(d);
 }
 /* 24 Nov 2026: Confidence "auto" means no band chosen, so each page shows its own default
-   (bandOf; the Daily List 60%+, every other page All). Once, a stored "All" from before
+   (bandOf; the Daily List 70%+, every other page All). Once, a stored "All" from before
    this day becomes "auto", as every reader had "All" stored whether chosen or not. */
 const FILT_V = "almanacFiltersV";
 function fBandAuto(f){
@@ -2458,7 +2458,7 @@ let BETS_SPORTS = fSportLoad("betsSport"), SCALE_SPORTS = fSportLoad("scaleSport
    page's own set; `unset` / `clear` reset the page's own filters (football's
    competitions). Functions are read late, so later declarations are fine. */
 const FVIEWS = {
-  list: {bandDefault: "60up", show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
+  list: {bandDefault: "70up", show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
          sport: {get: () => LIST_SPORTS, set: v => { LIST_SPORTS = v; listSportSave(); }}, redraw: () => renderList()},
   starred: {show: ["all", "list", "reserve", "other", "hill", "edge", "open"], order: ["strength", "time", "sport", "tag"],
             sport: {get: () => STAR.sports, set: v => { STAR.sports = v; saveStarView(); }}, redraw: () => renderStarred()},
@@ -2515,7 +2515,7 @@ function filterBar(view, o){
     }
   }
   if(o.confs){
-    // a page's own default band (Daily List 60%+) is pressed but carries no chip: Clear returns to it
+    // a page's own default band (Daily List 70%+) is pressed but carries no chip: Clear returns to it
     const nowB = bandOf(view);
     groups.push(fbarGroup("Confidence", BANDS.filter(b => b.k === "all" || b.k === nowB || bandN(b, o.confs))
       .map(b => fbBtn("band", b.k, b.label, b.k === nowB, bandN(b, o.confs))).join("")));
@@ -4339,8 +4339,8 @@ function renderList(){
   const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
   const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
   const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
-  // 60%+ keeps every list pick (the bar is 75%+), so it leaves Groups A and B labelled
-  const filtered = LIST_SPORTS.length > 0 || !["all", "60up"].includes(bandOf("list"));
+  // 70%+ keeps every list pick (the bar is 75%+), so it leaves Groups A and B labelled
+  const filtered = LIST_SPORTS.length > 0 || !["all", "70up"].includes(bandOf("list"));
   // 23 Nov 2026: the filter bar (drawn below the day strip); counted on every list and reserve pick shown
   // in the window, the count after every filter.
   const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
@@ -4436,7 +4436,7 @@ function renderList(){
       fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
       const nWary = extra.filter(it => sideWary(it.g)).length;
       fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">${bandOf("list") === "all" ? `Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%.` : `${bandOf("list") === "60up" ? "Under the bar, every reserve pick at 60% or better." : "Under the bar, in the band chosen above."} At 75%+ the reserve lands about 85%; under 75% about two in three.`} Graded separately, never in the list's record.${resLow && bandOf("list") === "all" ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three. Choose 60-69% or 70-79% under Confidence to see them.` : ""}${resLeave ? ` ${resLeave} college pick${resLeave === 1 ? "" : "s"} tiered Leave out left off.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
+        <span class="resv-note">${bandOf("list") === "all" ? `Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%.` : `${bandOf("list") === "70up" ? "Under the bar, every reserve pick at 70% or better." : "Under the bar, in the band chosen above."} At 75%+ the reserve lands about 85%; under 75% about two in three.`} Graded separately, never in the list's record.${resLow && bandOf("list") === "all" ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three. Choose 60-69% or 70-79% under Confidence to see them.` : ""}${resLeave ? ` ${resLeave} college pick${resLeave === 1 ? "" : "s"} tiered Leave out left off.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
       fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
       sec.appendChild(fold);
       const puts = (it, i) => listPut(fold, it, i, date);
