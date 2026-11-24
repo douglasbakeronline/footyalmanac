@@ -203,6 +203,7 @@ How they fit this repo:
 | `claude/card-decisions-table-2026-11-18.md` | The nightly review's table of every pre-registered Card decision (`card_review_post.decisions_section`): trigger, tonight's standing, waiting / due / fired, who acts; the opposition floor's auto-adopt now goes to Douglas under rule 13. Since 22 Nov 2026 it reads the live rule (`cardLiveRule`): under rule 14, one row rule 14 v `rule13` and `rule12` for 30 Nov, the tennis 75% and core-league rows retired (`claude/card-decisions-rule14-2026-11-22.md`). Read before the 30 Nov review or acting on any Card tripwire. |
 | `claude/card-rule12-fault-recheck-2026-11-18.md` | `recheck_card` dropped `rule12Fault`, so no rule 13 group reached the archive with it; now re-asked on each re-check, and archived legs without it read from the frozen leg (`rule12_fault`, `r12` "derived"). The four rule 13 groups to 18 Nov all hold a rule-13-only pick. |
 | `claude/list-card-2026-11-17.md` | The Daily List pattern review (lands as quoted in every cut, no cut beats the price) and the List card in the open: List 2x (1.15+, six) else List long (any price, ten), college out, Tested chance from the ledger, own record lines, the 30-group review rule. Read before touching `LIST_KINDS` or claiming a pattern in the list's winners. |
+| `claude/list-card-on-its-day-2026-11-24.md` | The List 2x and List long rebuilt until 07:00 UK on their day, then held, and one List kind a day (21 and 22 Nov each published both, sharing picks: the List card's whole record). Read before touching how the List card is held. |
 | `claude/card-opp5-list2x-2026-11-16.md` | The Card's rule 12 (football opposition 5.0+, set live as the owner's call before its gate; pool +34% v rule 11's -4%) and the List 2x on paper (`build_list_card`, `cardList`): why the Daily List's success does not carry into groups. Read before touching `CARD_MODEL_OPP_MIN` or the List 2x. |
 | `claude/card-comp3-2026-11-16.md` | The two-picks-a-competition cap (`COMP_MAX` 2) on the model's-picks Card: NBA-only nights build nothing (16 Nov: four clear NBA picks, no group); `comp3` added to the football-data replay so the gate has both sides; identical to live on the settled pool so far. Read before touching `COMP_MAX`. |
 | `claude/qa-review-2026-11-16.md` | The QA review of the 15-16 Nov work: a frozen Scale group losing a leg (#347), ten releases untagged (#348), half-time scores only from 16 Nov (#349), the checks that passed, MLB K 3 on the grid's edge. Read before the next QA pass. |
@@ -635,7 +636,7 @@ far, on `groupings-record.json` at 9 Nov (41 full-rule groups) and
   long**, any price to 2x in ten (`LIST_KINDS`, college sports out,
   `LIST_SPORTS_OFF`), each with a Tested chance from the ledger's band rates
   (`list_tested`), on their own record lines (`cardList`, `cardListLong`);
-  staked by Douglas, never pushed; read at 30 settled groups each
+  staked by Douglas, never pushed; since 24 Nov 2026 rebuilt until 07:00 UK on its day, then held, and never a List 2x beside a held List long (`claude/list-card-on-its-day-2026-11-24.md`); read at 30 settled groups each
   (`claude/card-opp5-list2x-2026-11-16.md`, `claude/list-card-2026-11-17.md`).
 - **The Card on the model alone (CARD_RULE 13, 17 Nov 2026, Douglas: "forget
   about comparison to bookies... let's just follow the model", "just drop both
