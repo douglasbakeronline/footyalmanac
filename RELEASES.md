@@ -10,6 +10,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-edge-links-short: Edge links on one line, Most nailed on banner removed (tag pending)
+
+**What changed for a reader.** Douglas: "all in one row next to each other ... H2H, Predictions, Search" and "Get rid of the nailed on banner". The Edge picks' links now read H2H, Predictions, Search, Table (the full name on hover and for screen readers) and sit on one line across the row, under the Edge chip on a phone so they fit. The Most nailed on line under each Daily List day's heading is gone; the ⭐ likely-winner marks on rows stay, and the emails are unchanged.
+**Evidence.** Display only. Checked in a browser at 400 and 1280 wide.
+**Files.** `index.html` (`edgeLinks`, `.tb-links`, the list day head), `RELEASES.md`.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-edge-links: research links on every Edge pick (tag pending)
 
 **What changed for a reader.** Douglas: "add the standard google search links to every row here". Each Edge pick on the Bets tab now carries the football board's four searches: Head to head, Predictions, Search this fixture and the league table, in the section's small muted type (12px, underlined in the rule colour, the home blue on hover). One line with dots between on desktop; one link a line on a phone, so each is easy to tap.
