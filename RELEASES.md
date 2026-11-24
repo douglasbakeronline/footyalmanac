@@ -12,6 +12,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-band-50-55-recheck: Football 50-55% band over its quote, re-read (tag pending)
+
+**What changed:** Nothing in the model or page. A dated note only.
+
+**Evidence:** live 50-55% calls 494 of 875 v 460.2 quoted (z +2.3). Before 17 Nov 432 of 761 v 400.2 (z +2.3); from 17 Nov 62 of 114 v 60.1 (z +0.4), so the gap is October's and is not growing. The 17 Nov bend test (fit 2025-26, check 2026-27, gain -0.0003, p(worse) 0.94) already rejected a band-specific fix; the weekly gated refit moved the line on 23 Nov (a 1.085, b -0.20, gain -0.0009, p(worse) 0.00).
+
+**Files:** `claude/band-50-55-recheck-2026-11-24.md`.
+
+**Not changed:** `calibration.json`, the engine, the page.
+
+**Roll back:** delete the note.
+
 ## 2026-11-24-list-60up: the Daily List opens on every pick at 60%+ (tag pending)
 
 **What changed:** Douglas, 24 Nov 2026: "make the default filter show all banding from 60% upwards as the default". The Confidence filter has a new **60%+** choice, and it is the Daily List's default. The list itself is unchanged (every list pick is 75%+), but the reserve fold now opens on every reserve pick at 60% or better, where until now the default ("All") showed only the reserve's 75%+ picks. Groups A and B stay labelled under 60%+. Every other tab still opens on All. A reader's own choice still holds across tabs; Clear filters (and removing the chip) now go back to each page's default rather than All. Readers who had "All" stored (everyone, as it was the default) are moved once to the default, so the change reaches them; a band chosen before is kept.
