@@ -31,6 +31,12 @@ jobs:
       - name: Card replay on the archive (every variant)
         continue-on-error: true
         run: python3 tools/card_replay.py --since 2026-10-29 --json card-replay.json | tee card-replay.log
+      - name: Card replay at last pre-start prices
+        # 24 Nov 2026: the live rule reads the price (rule 14's value demand)
+        # and the page builds on each build's price, so the review reads the
+        # replay at the last pre-start price too
+        continue-on-error: true
+        run: python3 tools/card_replay.py --since 2026-10-29 --closing --json card-replay-closing.json > card-replay-closing.log
       - name: Price timing and bookmakers
         continue-on-error: true
         run: python3 tools/price_timing.py --json price-timing.json > /dev/null
@@ -45,6 +51,7 @@ jobs:
             integrity.log
             card-replay.json
             card-replay.log
+            card-replay-closing.json
             price-timing.json
             staking.json
       - name: Post the review
