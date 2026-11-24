@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-replay-last-price: the Card review reads the replay at the last pre-start price too (tag pending)
+
+**What changed:** nothing on the site. The nightly Card review now runs the pool replay twice, at each leg's first real price (as before) and at its last pre-start price, and the 30 Nov decision row (rule 14 v `rule13` and `rule12`) shows both. A new Fidelity line sets the replay's live row beside the Card the page actually published on the live rule's days.
+**Evidence:** the first price is often three days before the start, and rule 14's value demand reads the price: Hammarby (23 Nov) passed at 1.22 and failed at 1.16, so the replay built a group the page refused. `rule13` v live is +0.23 a day (p(worse) 0.32) at first prices and -0.31 (p(worse) 0.69) at last prices. On rule 14's days the last-price replay agreed with the page on every day's having a group; the first-price replay did not (23 Nov). `claude/card-replay-price-fidelity-2026-11-24.md`; `tests/test_review_fidelity.py` (three tests).
+**Files:** `.github/workflows/card-review.yml` (a `--closing` replay step), `tools/card_review_post.py` (`fidelity_lines`, `decisions_section(rep_close=)`), `tools/card_replay.py` (`picks` in `groupList`), the test, the note, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule (`CARD_RULE` 14 until the 30 Nov read), the record, the first-price replay table.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-mailer-window: the morning email covers 07:00 to 07:00 (tag pending)
 
 **What changed for a reader.** Douglas: "Some of the games on the mailer already played ... can it be a 07.00-07.00 24 hour period for the mailer picks?". The 07:00 email took the whole UK day's list, so overnight US games (00:30, 03:00) were already played when it arrived, with their results shown. It now carries the list picks starting from 07:00 UK that day to 07:00 UK the next: today's from 07:00 on, plus the next night's overnight picks (US basketball and the like). Edge picks follow the same window. Untimed picks stay with their own day. The Daily 2x and the Card already run 07:00 to 07:00.

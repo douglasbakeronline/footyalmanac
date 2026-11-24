@@ -381,7 +381,7 @@ def card_tennis_since(rec, rule=10):
     return n
 
 
-def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50):
+def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50, rep_close=None):
     """The pre-registered decisions table: decision, trigger, where it stands,
     status (waiting / **due** / **fired**) and who acts."""
     today_ = today_ or today
@@ -423,9 +423,18 @@ def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50
             ahead = (r13.get("vsLivePerDay") or 0) > 0 and r13["pWorse"] <= 0.30
             lead = (f"; **rule 13 ahead on the pool** ({r13.get('legs', 0)} legs; on football-data, dropping the value demand was behind in all five seasons)"
                     if ahead else "; rule 14 not behind on the pool")
+        # 24 Nov 2026: the same pairs at each leg's last pre-start price. Rule
+        # 14's value demand is read on the price, and the first price is often
+        # three days out: Hammarby (23 Nov) passed at 1.22 and failed at 1.16,
+        # so the replay at first prices built a group the page refused, while
+        # rule 13 (no value demand) barely moves. Read both before the 30 Nov
+        # call (claude/card-replay-price-fidelity-2026-11-24.md).
+        close = ""
+        if (rep_close or {}).get("variants"):
+            close = (f"; at the last pre-start price: {_pool(rep_close, 'rule13')}; {_pool(rep_close, 'rule12')}")
         row(f"Rule {live_rule} (rule 8's constants) v rule 13 and rule 12",
             f"{REVIEW_DAY}, read beside `rule13` and `rule12` on the same days; no Card rule change before then",
-            f"{_tally(t14)}; {_pool(rep, 'rule13')}; {_pool(rep, 'rule12')}{lead}",
+            f"{_tally(t14)}; {_pool(rep, 'rule13')}; {_pool(rep, 'rule12')}{lead}{close}",
             "**due**" if days_left <= 0 else "waiting", "Douglas (the switch was his)")
         settled_by14 = ["Settled by rule 14 (19 Nov): tennis back at 75% and core leagues only, so `tennis75` and `m7core` "
                         "equal live and their rows are retired (claude/card-rule14-rule8-2026-11-19.md)."]
@@ -542,6 +551,60 @@ def coverage_lines(rep, record):
     return [f"Coverage: the record holds **{held}** live Card groups over these days; the replay rebuilt {live['groups']}. "
             "The gap is legs archived only as estimates (every leg from 10 Nov carries its first real price), so the replay "
             "reads the rules against each other on the legs it has, not the live Card's own return."]
+
+
+def _published(rec, rule, start, end):
+    """{date: [picks]} of the record's full-rule Card groups under `rule`,
+    settled days only (a pending leg is not in the replay's pool)."""
+    out, pending = {}, set()
+    for d in rec.get("days") or []:
+        day = d.get("date", "")
+        if not (start <= day <= end): continue
+        for g in d.get("groups") or []:
+            if not str(g.get("name", "")).startswith("Card") or g.get("wide") or g.get("late") or g.get("rule") != rule:
+                continue
+            if g.get("status") not in ("won", "lost"): pending.add(day); continue
+            out.setdefault(day, []).append(sorted(l.get("pick") for l in g.get("legs") or []))
+    return out, pending
+
+
+def fidelity_lines(rec, rep, rep_close=None, today_=None):
+    """24 Nov 2026: the replay's live row against the Card the page published
+    on the live rule's own days, at first and at last pre-start prices. The
+    pool replay reads each leg at its first real price, written up to three
+    days before the start; the page rebuilds every group until its first
+    kick-off on that build's prices. A rule that reads the price (rule 14's
+    value demand) can pass a leg at the first price that the page refused
+    later, so the replay's live row is not the page's Card. This names how
+    often they agree, so the 30 Nov read knows which price to trust."""
+    rec, rep = rec or {}, rep or {}
+    rule = rec.get("cardLiveRule")
+    if not rule or not (rep.get("variants") or {}).get("live"): return []
+    start = next((r.get("from") for r in rep.get("rules") or [] if r.get("rule") == rule and r.get("from")), None)
+    if not start: return []
+    today_ = today_ or today
+    end = min(rep.get("to") or today_, today_)
+    pub, pending = _published(rec, rule, start, end)
+    # every settled day of the live rule counts, a day with no group included
+    alld = [d for d in sorted({x.get("date", "") for x in rec.get("days") or []}) if start <= d < today_ and d not in pending]
+    if not alld: return []
+    n_pub = sum(len(pub.get(d, [])) for d in alld)
+    parts = []
+    for label, r in (("first", rep), ("last pre-start", rep_close)):
+        gl = ((r or {}).get("variants") or {}).get("live", {}).get("groupList")
+        if gl is None: continue
+        if any("picks" not in g for g in gl): continue
+        rp = {}
+        for g in gl:
+            if g.get("date") in alld: rp.setdefault(g["date"], []).append(sorted(g["picks"]))
+        same = sum(1 for d in alld for p in rp.get(d, []) if p in pub.get(d, []))
+        off = [d for d in alld if bool(rp.get(d)) != bool(pub.get(d))]
+        parts.append(f"at {label} prices {sum(len(v) for v in rp.values())} group(s), {same} with the page's picks"
+                     + (f", a group on one side only on {', '.join(d[5:] for d in off)}" if off else ""))
+    if not parts: return []
+    return [f"Fidelity (rule {rule}, {alld[0]} to {alld[-1]}, {len(alld)} settled day(s)): the page published {n_pub} group(s); "
+            f"the replay's live row {'; '.join(parts)}. The replay reads a leg at one price, the page at each build's; "
+            "a gap here is the price the rule was read on, not a different rule."]
 
 
 def kelly_line(s):
@@ -756,11 +819,12 @@ def review_body():
     """The review's markdown, built from the files on disk (16 Nov 2026:
     split from main so a later run can refresh the day's issue)."""
     integ, rep, pt, st = load("integrity.json"), load("card-replay.json"), load("price-timing.json"), load("staking.json")
+    rep_close = load("card-replay-closing.json")   # 24 Nov 2026: the same replay at last pre-start prices
     lines = [f"# Card review {today}", ""]
     f = integ.get("findings", [])
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
     lines += live_days_section()
-    lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"))
+    lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"), rep_close=rep_close)
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
                   "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]
@@ -779,6 +843,7 @@ def review_body():
                          f"{', closing prices' if src.get('closing') else ''}; football-data archive rows before that. "
                          "A leg archived before any bookmaker priced it counts only once its first real price is on file (`priced`, 9 Nov 2026).")
         lines += coverage_lines(rep, load("groupings-record.json"))
+        lines += fidelity_lines(load("groupings-record.json"), rep, rep_close)
         lines += rule6_lines(rep)
         lines.append("")
         lines += rules_section(rep, load("groupings-record.json"))

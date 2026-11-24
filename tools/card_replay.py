@@ -619,7 +619,10 @@ def main():
             # football only, a Card the page no longer builds)
             report["variants"][v]["groupList"] = [
                 {"date": g.get("date") or d, "name": g["name"], "p": round(g["p"], 4), "odds": round(g["odds"], 3),
-                 "stake": g["stake"], "won": bool(g["won"]), "legs": len(g["legs"])}
+                 "stake": g["stake"], "won": bool(g["won"]), "legs": len(g["legs"]),
+                 # 24 Nov 2026: the picks, so the review can set each replayed
+                 # group beside the one the page published (fidelity_lines)
+                 "picks": sorted(l["pick"] for l in g["legs"])}
                 for d, gl in sorted(days.items()) for g in gl]
         fg = [g for g in gs if g.get("fill")]
         if "_FILL" in VARIANTS[v]:
