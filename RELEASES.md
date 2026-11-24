@@ -11,6 +11,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-24-edge-retest-5: Edge over the price, fifth run: still none (tag pending)
+
+**What changed:** nothing on the site. A dated note records the fifth run of the model-v-bookmaker edge test.
+**Evidence:** football-data.co.uk average prices, fit 2025-26 (12,510 legs), check 2026-27 (3,861), bootstrap of landed minus fair chance. Legs 4+ points above fair: -2.1 fit (n 2,555), -1.6 check (n 1,013); 2+ and 6+ the same sign; no cell with 250+ legs positive on both seasons; the below-market control +2.3 on both.
+**Files:** `claude/odds-edge-retest-2026-11-24.md`, `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `MAX_ABOVE_BOOK`, the Card, any model or group rule.
+**Roll back:** `git revert` the merge commit.
+
 ## 2026-11-24-tennis-surface-5: tennis surface, fifth check, nothing to ship (tag pending)
 
 **What changed:** a note only. No source gives ESPN tennis results a surface; the name map was rejected on 13 Oct.
