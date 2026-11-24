@@ -86,9 +86,35 @@ RATE_FROM = "2026-11-11"
 RATE_MIN_DAYS = 7
 
 
-def groups_from_record(rate_from=RATE_FROM):
+# 24 Nov 2026: CARD_RULE 14 (19 Nov) went back to rule 8's constants (core
+# leagues, the value demand, no two-day groups), so the Card builds fewer
+# groups than rules 11 and 13 did: 3 over 19-23 Nov (0.6 a day) against 11
+# over 11-23 Nov (0.85 a day) under RATE_FROM. The rate now comes from the
+# live rule's own start, read from the same run's card-replay.json (`rules`,
+# the row whose variant is "live", tools/card_replay.RULES), once that span
+# reaches RATE_MIN_DAYS; until then, and without the file, RATE_FROM stands.
+def live_rule_from():
+    """The live CARD_RULE's first day, from card-replay.json's rules table."""
+    try: d = json.load(open(os.path.join(HERE, "card-replay.json")))
+    except Exception: return None
+    for r in d.get("rules") or []:
+        if r.get("variant") == "live" and r.get("from"): return r["from"]
+    return None
+
+
+def record_rate_from(last):
+    """The live rule's start when it has RATE_MIN_DAYS to the record's last
+    day, else RATE_FROM."""
+    lr = live_rule_from()
+    if lr and last and lr > RATE_FROM and (_d(last) - _d(lr)).days + 1 >= RATE_MIN_DAYS: return lr
+    return RATE_FROM
+
+
+def groups_from_record(rate_from=None):
     try: r = json.load(open(os.path.join(HERE, "groupings-record.json")))
     except Exception: return [], None, None
+    if rate_from is None:
+        rate_from = record_rate_from(max((d["date"] for d in r.get("days", [])), default=None))
     gs, dates, recent, last = [], set(), 0, None
     for d in r.get("days", []):
         last = max(last or d["date"], d["date"])
