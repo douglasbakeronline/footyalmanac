@@ -543,6 +543,8 @@ def coverage_lines(rep, record):
     nothing. Full-rule groups only: the wider-rule filler and late groups apart."""
     live = (rep.get("variants") or {}).get("live")
     if not live or not rep.get("from") or not rep.get("to"): return []
+    by_rule = rule_coverage(rep, record)
+    if by_rule is not None: return by_rule
     held = sum(1 for d in record.get("days") or [] if rep["from"] <= d.get("date", "") <= rep["to"]
                for g in d.get("groups") or [] if str(g.get("name", "")).startswith("Card") and not g.get("wide") and not g.get("late"))
     if not held: return []
@@ -551,6 +553,50 @@ def coverage_lines(rep, record):
     return [f"Coverage: the record holds **{held}** live Card groups over these days; the replay rebuilt {live['groups']}. "
             "The gap is legs archived only as estimates (every leg from 10 Nov carries its first real price), so the replay "
             "reads the rules against each other on the legs it has, not the live Card's own return."]
+
+
+POOL_REAL_FROM = "2026-11-10"  # every pool leg from here carries its first real price
+
+
+def rule_coverage(rep, record, today_=None):
+    """24 Nov 2026: the record's Card groups beside the replay of the rule each
+    one ran under, on that rule's own live days. The old line set every live
+    group over the window (rules 1 to 14) against the replay's live row (rule
+    14 alone) and blamed the gap on estimate-only legs: 33 v 10 on 24 Nov, when
+    most of the gap was the rule. None when the replay predates `groupDays`."""
+    rules = rep.get("rules") or []
+    if not rules or any("groupDays" not in r for r in rules): return None
+    today_ = today_ or today
+    lo, hi = rep["from"], min(rep["to"], today_)
+    held, pending = {}, set()
+    for d in record.get("days") or []:
+        day = d.get("date", "")
+        if not (lo <= day < hi): continue
+        for g in d.get("groups") or []:
+            if not str(g.get("name", "")).startswith("Card") or g.get("wide") or g.get("late"): continue
+            if g.get("status") not in ("won", "lost"): pending.add(day); continue
+            held.setdefault(g.get("rule"), []).append(day)
+    if not held: return []
+    spans = {r["rule"]: r for r in rules}
+    parts, n_held, n_rep, early = [], 0, 0, 0
+    for rule in sorted(held, key=lambda x: (x is None, x if isinstance(x, int) else 0)):
+        days = held[rule]; r = spans.get(rule)
+        if not r:
+            parts.append(f"rule {rule} {len(days)} v not replayed"); n_held += len(days); continue
+        a, b = max(r["from"], lo), min(r["to"] or hi, hi)
+        live_days = {d for d in r["groupDays"] if a <= d <= b and d < hi and d not in pending}
+        h = sum(1 for d in days if a <= d <= b)
+        out = len(days) - h  # held on a day outside the rule's own span (a group built the day before a switch)
+        k = sum(r["groupDays"][d] for d in live_days)
+        n_held += len(days); n_rep += k
+        early += sum(1 for d in days if d < POOL_REAL_FROM)
+        parts.append(f"rule {rule} {len(days)} v {k}" + (f" ({out} dated outside its span)" if out else ""))
+    last = max(d for v in held.values() for d in v)
+    return [f"Coverage, by the rule each day ran: the record holds {n_held} settled live Card group(s) from {lo} to {last}; the replay of the rule live that day rebuilt {n_rep} on the same days ({'; '.join(parts)}). "
+            + (f"{early} of the record's groups fall before {POOL_REAL_FROM}, when most legs were archived only as estimates, "
+               "so the replay misses them; from then on a gap is the price the rule was read on (the Fidelity line). "
+               if early else "")
+            + "The variant table reads the rules against each other on the legs the pool has, not the live Card's own return."]
 
 
 def _published(rec, rule, start, end):

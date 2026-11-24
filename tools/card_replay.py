@@ -62,7 +62,7 @@ before; `--closing` prices each pool leg at its last pre-start price instead;
 at their last price with the typical margin (approximate, see pool_market).
 """
 import gzip, json, math, os, random, sys
-from collections import defaultdict
+from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "tools"))
@@ -612,7 +612,10 @@ def main():
                                  "expected": round(sum(g["p"] for g in gs), 2), "units": st,
                                  "return": round(rt / st, 3) if st else None, "emptyDays": len(dates) - len(days),
                                  # 10 Nov 2026: the legs, for the decision gate (100+ legs, CLAUDE.md)
-                                 "legs": sum(len(g["legs"]) for g in gs), "legsWon": sum(l["won"] for g in gs for l in g["legs"])}
+                                 "legs": sum(len(g["legs"]) for g in gs), "legsWon": sum(l["won"] for g in gs for l in g["legs"]),
+                                 # 24 Nov 2026: groups by day, so the review can set each rule's
+                                 # replay beside the record on the days that rule ran (coverage_lines)
+                                 "groupDays": dict(sorted(Counter(g.get("date") or d for d, gl in days.items() for g in gl).items()))}
         if v == "live":
             # 18 Nov 2026: the live rule's own groups, for tools/staking.py's
             # bankroll (it had read the football-data `card` key, rule 5/6
@@ -675,7 +678,7 @@ def rules_table(variants):
         rows.append({"rule": n, "variant": v, "from": a, "to": b, "what": what,
                      "groups": r.get("groups", 0), "won": r.get("won", 0), "expected": r.get("expected", 0),
                      "return": r.get("return") or 0, "legs": r.get("legs", 0), "emptyDays": r.get("emptyDays"),
-                     "vsLivePerDay": r.get("vsLivePerDay"), "pWorse": r.get("pWorse")})
+                     "vsLivePerDay": r.get("vsLivePerDay"), "pWorse": r.get("pWorse"), "groupDays": r.get("groupDays") or {}})
     return rows
 
 

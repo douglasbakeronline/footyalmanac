@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-coverage-by-rule: the Card review's Coverage line reads each rule on its own days (tag pending)
+
+**What changed:** nothing on the site. The nightly Card review's Coverage line set every live Card group since 29 Oct (rules 1 to 14, 33 on 24 Nov) against the replay's live row (rule 14 alone, 10) and blamed the gap on estimate-only legs. It now counts the record's groups by the rule each ran under and sets them beside that rule's own replay on its own live days: 33 v 13, with 21 of the 33 before 10 Nov (the estimate-only archive, 1 rebuilt) and 12 v 12 from then on.
+**Evidence:** `claude/card-review-coverage-by-rule-2026-11-24.md`; `tests/test_rule_coverage.py` (five).
+**Files:** `tools/card_replay.py` (`groupDays` on every variant and `rules` row), `tools/card_review_post.py` (`rule_coverage`, `POOL_REAL_FROM`), the test, the note, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule (`CARD_RULE` 14 until the 30 Nov read), the record, the replay's numbers.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-replay-last-price: the Card review reads the replay at the last pre-start price too (tag pending)
 
 **What changed:** nothing on the site. The nightly Card review now runs the pool replay twice, at each leg's first real price (as before) and at its last pre-start price, and the 30 Nov decision row (rule 14 v `rule13` and `rule12`) shows both. A new Fidelity line sets the replay's live row beside the Card the page actually published on the live rule's days.
