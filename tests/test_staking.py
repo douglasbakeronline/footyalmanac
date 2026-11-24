@@ -109,6 +109,47 @@ class Sources(unittest.TestCase):
         self.assertEqual(len(out), 3)                # two days on file: the whole span's rate
         self.assertAlmostEqual(out[1], 1.0)
 
+    def _rule14_record(self):
+        """Rules 11 and 13 built more groups than rule 14 (19 Nov 2026)."""
+        return {"days": [
+            {"date": "2026-11-25", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "won", "rule": 14}]},
+            {"date": "2026-11-21", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "lost", "rule": 14}]},
+            {"date": "2026-11-15", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "lost", "rule": 11}] * 3},
+            {"date": "2026-11-12", "groups": [{"name": "Card 2x", "p": 0.45, "odds": 2.1, "status": "won", "rule": 11}] * 3}]}
+
+    def _write(self, d, rec, replay_from):
+        json.dump(rec, open(os.path.join(d, "groupings-record.json"), "w"))
+        if replay_from:
+            json.dump({"rules": [{"rule": 13, "variant": "rule13", "from": "2026-11-17"},
+                                 {"rule": 14, "variant": "live", "from": replay_from}]},
+                      open(os.path.join(d, "card-replay.json"), "w"))
+
+    def test_record_rate_from_the_live_rules_start(self):
+        """24 Nov 2026: the rate comes from the live rule's first day
+        (card-replay.json `rules`) once it has RATE_MIN_DAYS; outcomes still
+        from every settled group."""
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            self._write(d, self._rule14_record(), "2026-11-19")
+            gs, rate, per_season, frm = S.groups_from_record()
+        self.assertEqual(frm, "2026-11-19")
+        self.assertAlmostEqual(rate, 2 / 7)          # 19 to 25 Nov, two groups
+        self.assertEqual(len(gs), 8)                 # every settled group
+
+    def test_record_rate_keeps_rate_from_until_the_rule_has_a_week(self):
+        rec = self._rule14_record()
+        rec["days"] = rec["days"][1:]                # last day 21 Nov: three days of rule 14
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            self._write(d, rec, "2026-11-19")
+            out = S.groups_from_record()
+        self.assertEqual(out[3], S.RATE_FROM)
+        self.assertAlmostEqual(out[1], 7 / 11)       # 11 to 21 Nov, seven groups
+
+    def test_record_rate_without_the_replay_file(self):
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(S, "HERE", d):
+            self._write(d, self._rule14_record(), None)
+            out = S.groups_from_record()
+        self.assertEqual(out[3], S.RATE_FROM)
+
     def test_report_says_too_few(self):
         r = S.report({"replay": ([], None, None)})
         self.assertEqual(r["replay"], {"groups": 0, "note": "too few groups"})

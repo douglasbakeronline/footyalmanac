@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-staking-rule14-rate: the Card's bankroll read at the live rule's rate (tag pending)
+
+**What changed:** nothing on the site. The nightly Card review's live bankroll (month and season, at the page's stakes) now counts groups at the live rule's own rate once it has a week on the record, not at the rate since 11 Nov: rule 14 has built 3 groups in 5 days (0.60 a day) against 0.85 a day over rules 11, 13 and 14 together.
+**Evidence:** `groupings-record.json` to 23 Nov; `claude/card-staking-rule14-rate-2026-11-24.md`. Three tests in `tests/test_staking.py`, one failing on the old code.
+**Files:** `tools/staking.py` (`live_rule_from`, `record_rate_from`), `tests/test_staking.py`, the note, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule, `CARD_STAKE`, the record, the replay rows.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-leg-property-fifth: Leg properties, fifth look (tag pending)
 
 **What changed:** nothing on the site. A note recording the fifth look at which legs land at their quote.
