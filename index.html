@@ -1159,10 +1159,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 /* 10 Nov 2026: the Edge section of the Bets tab (edgeSection) */
 .tb-edge .tb-h{border-bottom-color:var(--edge)}
 .tb-edge .tb-snap b{color:var(--ink)}
-.tb-links{display:block;margin-top:5px;font:500 12px/1.9 var(--f-ui);color:var(--mute)}
+.tb-links{display:block;grid-column:3 / -1;margin-top:-2px;font:500 12px/1.6 var(--f-ui);color:var(--mute)}
 .tb-links a{color:var(--mute);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px;white-space:nowrap}
 .tb-links a:hover{color:var(--home);text-decoration-color:currentColor}
-@media (max-width:600px){.tb-links>span{display:none}.tb-links a{display:table;line-height:2.1}}
+@media (max-width:600px){.tb-links{grid-column:2 / -1}.tb-links a{display:inline-block;padding:7px 0}}
 .tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 var(--t-base) var(--f-num);text-align:right;white-space:nowrap}
@@ -4384,7 +4384,7 @@ function renderList(){
     const tl = tally(items), tr = tally(extra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${nailedLine(date)}${offHill ? `
+      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
       <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no William Hill price at ${listHillMin("ncaab").toFixed(2)} or better${(offDay[date] || []).some(it => itemTier(it) === "leave") ? `, or tiered Leave out` : ""}. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
     const put = (it, i) => listPut(sec, it, i, date);
     // Group labels in strongest order: 1-5, 6-10, then the rest. A tally per
@@ -6934,9 +6934,10 @@ function slipSection(date){
    Bets tab's small muted link type. */
 function edgeLinks(g){
   const vs = g.home.name + " v " + g.away.name;
-  return `<span class="tb-links">${[["Head to head", vs + " head to head"], ["Predictions", vs + " prediction"],
-      ["Search this fixture", vs + (g.date ? " " + g.date : "")], [compName(g) + " table", compName(g) + " " + (g.country || "") + " table"]]
-    .map(([t, q]) => `<a href="${gSearch(q)}" target="_blank" rel="noopener">${ogEsc(t)} ↗</a>`).join('<span aria-hidden="true"> · </span>')}</span>`;
+  // 24 Nov 2026 (Douglas: "all in one row ... H2H, Predictions, Search"): short labels, one line on a phone
+  return `<span class="tb-links">${[["H2H", vs + " head to head", "Head to head"], ["Predictions", vs + " prediction", "Predictions"],
+      ["Search", vs + (g.date ? " " + g.date : ""), "Search this fixture"], ["Table", compName(g) + " " + (g.country || "") + " table", compName(g) + " table"]]
+    .map(([t, q, full]) => `<a href="${gSearch(q)}" target="_blank" rel="noopener" title="${ogEsc(full)}" aria-label="${ogEsc(full)} (opens Google)">${t} ↗</a>`).join('<span aria-hidden="true"> · </span>')}</span>`;
 }
 function edgeSection(date){
   const flagged = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge);
@@ -6953,9 +6954,9 @@ function edgeSection(date){
   const vs = g => g.edge.side === "h" ? g.away.name : g.home.name;
   const rows = games.map(g => `<div class="tb-row st edge">${starHtml(starFor("football", g.home.name, g.away.name, g.kickoff), `${who(g)} (${g.home.name} v ${g.away.name})`)}<span class="tb-v">Edge</span>
       <span class="tb-m"><b>${ogEsc(who(g))}</b><small>v ${ogEsc(vs(g))} · ${ogEsc(compName(g))}${g.kickoff ? " · " + new Date(g.kickoff).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"}) : ""}</small>
-        <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small>
-        ${edgeLinks(g)}</span>
-      <span class="tb-pp">${g.edge.odds.toFixed(2)}<small>best ${g.edge.best.toFixed(2)}</small></span></div>`).join("");
+        <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small></span>
+      <span class="tb-pp">${g.edge.odds.toFixed(2)}<small>best ${g.edge.best.toFixed(2)}</small></span>
+      ${edgeLinks(g)}</div>`).join("");
   const slip = (label, legs, k) => {
     if(legs.length < 2) return "";
     const o = legs.reduce((a, g) => a * g.edge.odds, 1), b = legs.reduce((a, g) => a * g.edge.best, 1);
