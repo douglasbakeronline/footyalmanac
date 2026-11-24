@@ -10,6 +10,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-band60: the 60-69% filter back on the Daily List (tag pending)
+
+**For a reader:** the Daily List's Confidence filter offers 60-69% (and 70-79% counts every reserve pick) again. The reserve fold still opens on 75%+ by default; choose a band and every reserve pick in it shows, so the football reserve at 60-69% (67 picks on 24 Nov's local build) is one tap away. The fold's note says how to reach them.
+
+**Why:** Douglas, 24 Nov 2026: "Can we get the 60-70 filter back in - I think we're going to miss too many football games otherwise". The 23 Nov fold cut (`RESERVE_SHOW_MIN` 0.75) also took the under-75% reserve out of the filter's counts, and a band with no rows is not offered.
+
+**Files:** `index.html` (`resAny`, `resShown` reads `FILT.band`, the list bar's `confs`, the fold's note).
+
+**Not changed:** the default view, the reserve flag, grading, every other tab.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-24-list-results-every-sport: Recent list results show every sport (tag pending)
 
 **What changed for a reader.** Douglas: "Why is this just football games shown?". The Daily List's Recent list results read football's record alone, a leftover from before the list covered every sport. It now shows the last 30 graded list picks from every sport (football, tennis, NBA, NFL, college basketball, rugby), newest first, each with its sport's emoji. The score is now written from the pick's side: an away pick read "Tre Penne to beat Pennarossa 3–6" with a tick, which looked like a loss; it now reads 6–3. Tennis shows the sets the same way. Void games are left out.
