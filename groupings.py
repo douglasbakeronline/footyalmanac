@@ -2622,8 +2622,10 @@ def list_group(L, used, after, name=LIST_KINDS[0][0], target=LIST_KINDS[0][1], o
 
 def build_list_card(L, date, now, prev=None, archived=None):
     """The List 2x for one UK date (16 Nov 2026), on paper, as the Model card
-    was: built once, held as first built until its first start (no re-check:
-    paper is graded as published), then frozen and archived."""
+    was: rebuilt on every build until the day's own start (07:00 UK, 23 Nov
+    2026 for the Daily 2x, 24 Nov for the List kinds), then held as first
+    built until its first start (no re-check: paper is graded as published),
+    then frozen and archived. One List kind a day: the 2x, else the long."""
     stamp = iso(now); after = now + timedelta(minutes=20)
     w = CARD_WINDOWS[0][0]
     if archived is None:
@@ -2643,8 +2645,12 @@ def build_list_card(L, date, now, prev=None, archived=None):
         # picks priced then, mostly the reserve (every slip 17 to 23 Nov was
         # built 1-3 days early; 23 Nov's took two reserve picks with ten list
         # picks on the day), not the rule replayed. claude/daily-2x-on-its-day-2026-11-23.md
-        if (is_daily(g.get("name")) and not g.get("locked") and now < lock
-                and (g.get("short") or now < lock_time(date, w))): continue
+        # 24 Nov 2026: the List 2x and List long the same way (both 21 and 22
+        # Nov had a List long built one to three days early and then a List 2x
+        # beside it on the day, sharing two and three picks).
+        # claude/list-card-on-its-day-2026-11-24.md
+        if (not g.get("locked") and now < lock
+                and (now < lock_time(date, w) or (is_daily(g.get("name")) and g.get("short")))): continue
         g = dict(g, locked=bool(g.get("locked") or now >= lock), lockAt=g.get("lockAt") or iso(lock))
         g["status"] = ("underway" if underway(g, now) else "locked") if g["locked"] else "holding"
         groups.append(g); filled.add(g["name"])
@@ -2664,6 +2670,9 @@ def build_list_card(L, date, now, prev=None, archived=None):
             if name in filled: continue
             # the List long is built only when the 2x cannot be (the same picks would be in both)
             if is_list_long(name) and any(not is_list_long(n) and not is_daily(n) for n in filled): continue
+            # 24 Nov 2026: and no List 2x beside a List long already held from the
+            # day's start: one List slip a day, the one published stands
+            if not is_list_long(name) and any(is_list_long(n) for n in filled): continue
             g = list_group(day_legs, taken, after, name, target, odds_min, legs_max)
             if not g: continue
             taken |= {l["event"] for l in g["legs"]}

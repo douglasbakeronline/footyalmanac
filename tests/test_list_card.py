@@ -93,3 +93,36 @@ class ListLong(unittest.TestCase):
         g = G.list_group(L, set(), NOW)
         self.assertIn("tested", g)
         self.assertTrue(g["tested"] is None or 0 < g["tested"] <= 1)
+
+
+class ListOnItsDay(unittest.TestCase):
+    """24 Nov 2026: the List kinds rebuilt until 07:00 UK on their day, then
+    held; never a List 2x beside a held List long."""
+    EARLY = datetime(2026, 11, 16, 22, 0, tzinfo=timezone.utc)
+    ON_DAY = datetime(2026, 11, 17, 7, 40, tzinfo=timezone.utc)
+    LONG = [leg(i, 1.10, 0.95 - i * 0.01) for i in range(1, 9)]          # only the long can be built
+    TWO = [leg(20, 1.50, 0.97), leg(21, 1.50, 0.96)]                   # later prices make a 2x
+
+    def test_long_built_early_gives_way_to_2x_before_the_day(self):
+        first = nodaily(G.build_list_card(self.LONG, DAY, self.EARLY, archived=[]))
+        self.assertEqual([g["name"] for g in first], ["List long"])
+        again = nodaily(G.build_list_card(self.LONG + self.TWO, DAY, self.EARLY, prev=first, archived=[]))
+        self.assertEqual([g["name"] for g in again], ["List 2x"])
+
+    def test_long_held_from_the_day_no_2x_beside_it(self):
+        first = nodaily(G.build_list_card(self.LONG, DAY, self.ON_DAY, archived=[]))
+        again = nodaily(G.build_list_card(self.LONG + self.TWO, DAY, self.ON_DAY, prev=first, archived=[]))
+        self.assertEqual([g["name"] for g in again], ["List long"])
+        self.assertEqual(again[0]["first"], first[0]["first"])
+
+    def test_archived_long_blocks_a_2x(self):
+        first = nodaily(G.build_list_card(self.LONG, DAY, self.ON_DAY, archived=[]))
+        locked = [dict(first[0], locked=True)]
+        again = nodaily(G.build_list_card(self.LONG + self.TWO, DAY, self.ON_DAY, archived=locked))
+        self.assertEqual([g["name"] for g in again], ["List long"])
+
+    def test_2x_rebuilt_until_the_day(self):
+        first = nodaily(G.build_list_card(self.TWO, DAY, self.EARLY, archived=[]))
+        better = [leg(30, 1.50, 0.995), leg(31, 1.50, 0.99)]
+        again = nodaily(G.build_list_card(self.TWO + better, DAY, self.EARLY, prev=first, archived=[]))
+        self.assertEqual({l["pick"] for l in again[0]["legs"]}, {"a30", "a31"})
