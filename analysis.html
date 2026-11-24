@@ -1042,6 +1042,9 @@ function renderChart(R){
    70%+ and 80%+ figures stay as a line under it. */
 const BANDS = [
   {k: "all", label: "All"},
+  // 24 Nov 2026 (Douglas: "make the default filter show all banding from 60% upwards"): one band
+  // spanning the rest, the Daily List's default (FVIEWS.list.bandDefault, read through bandOf).
+  {k: "60up", lo: 60, hi: 101, label: "60%+"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
   {k: "85", lo: 85, hi: 90, label: "85-89%"},
   {k: "80", lo: 80, hi: 85, label: "80-84%"},
@@ -1059,7 +1062,7 @@ function filtSave(k){ try { const o = filtRead(); o.band = k; localStorage.setIt
 // the 5-point slots a band covers in b5 (slot i is i*5% to (i+1)*5%; the top slot takes 100%)
 const bandSlots = b => b.k === "all" ? [0, 20] : [b.lo / 5, Math.min(20, Math.ceil(b.hi / 5))];
 // the Almanac's band a 5-point band of the table sits in
-const bandOfFrom = f => { const v = Math.round(f * 100); return (BANDS.find(b => b.k !== "all" && v >= b.lo && v < b.hi) || BANDS[0]); };
+const bandOfFrom = f => { const v = Math.round(f * 100); return (BANDS.find(b => b.k !== "all" && b.k !== "60up" && v >= b.lo && v < b.hi) || BANDS[0]); };
 const bandHref = (view, k) => `./#${view}?band=${encodeURIComponent(k)}`;
 function sumDays(bd, s){
   return bd.map(d => {

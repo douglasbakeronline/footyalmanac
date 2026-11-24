@@ -2383,6 +2383,9 @@ const state = { leagues:new Set(), sort:"conf", open:null, board:"win",
    control (UX release 7; tests/test_shell_sync.py keeps the two equal). */
 const BANDS = [
   {k: "all", label: "All"},
+  // 24 Nov 2026 (Douglas: "make the default filter show all banding from 60% upwards"): one band
+  // spanning the rest, the Daily List's default (FVIEWS.list.bandDefault, read through bandOf).
+  {k: "60up", lo: 60, hi: 101, label: "60%+"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
   {k: "85", lo: 85, hi: 90, label: "85-89%"},
   {k: "80", lo: 80, hi: 85, label: "80-84%"},
@@ -2408,7 +2411,7 @@ const ORDER_LABEL = {strength: "Strongest", time: "Kick-off time", upset: "Upset
 const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
 function fClean(v){
   const o = v && typeof v === "object" && !Array.isArray(v) ? v : {};
-  return {band: BANDS.some(b => b.k === o.band) ? o.band : "all",
+  return {band: o.band === "auto" || BANDS.some(b => b.k === o.band) ? o.band : "auto",
           show: own(SHOW_LABEL, o.show) ? o.show : "all",
           order: own(ORDER_LABEL, o.order) ? o.order : "strength"};
 }
@@ -2424,12 +2427,25 @@ function fMigrate(){
   d.order = get("listOrder") === "time" || get("tabOrder") === "time" ? "time" : sv.order;
   return fClean(d);
 }
+/* 24 Nov 2026: Confidence "auto" means no band chosen, so each page shows its own default
+   (bandOf; the Daily List 60%+, every other page All). Once, a stored "All" from before
+   this day becomes "auto", as every reader had "All" stored whether chosen or not. */
+const FILT_V = "almanacFiltersV";
+function fBandAuto(f){
+  let v = null;
+  try { v = localStorage.getItem(FILT_V); } catch(e){}
+  if(v !== "2"){
+    if(f.band === "all") f.band = "auto";
+    try { localStorage.setItem(FILT_V, "2"); localStorage.setItem(FILT_KEY, JSON.stringify(f)); } catch(e){}
+  }
+  return f;
+}
 const FILT = (() => {
   let raw = null;
   try { raw = localStorage.getItem(FILT_KEY); } catch(e){}
-  if(raw != null){ try { return fClean(JSON.parse(raw)); } catch(e){ return fClean(null); } }
+  if(raw != null){ let f; try { f = fClean(JSON.parse(raw)); } catch(e){ f = fClean(null); } return fBandAuto(f); }
   const d = fMigrate();
-  try { localStorage.setItem(FILT_KEY, JSON.stringify(d)); } catch(e){}
+  try { localStorage.setItem(FILT_KEY, JSON.stringify(d)); localStorage.setItem(FILT_V, "2"); } catch(e){}
   return d;
 })();
 function fSave(){ try { localStorage.setItem(FILT_KEY, JSON.stringify(FILT)); } catch(e){} }
@@ -2442,7 +2458,7 @@ let BETS_SPORTS = fSportLoad("betsSport"), SCALE_SPORTS = fSportLoad("scaleSport
    page's own set; `unset` / `clear` reset the page's own filters (football's
    competitions). Functions are read late, so later declarations are fine. */
 const FVIEWS = {
-  list: {show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
+  list: {bandDefault: "60up", show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
          sport: {get: () => LIST_SPORTS, set: v => { LIST_SPORTS = v; listSportSave(); }}, redraw: () => renderList()},
   starred: {show: ["all", "list", "reserve", "other", "hill", "edge", "open"], order: ["strength", "time", "sport", "tag"],
             sport: {get: () => STAR.sports, set: v => { STAR.sports = v; saveStarView(); }}, redraw: () => renderStarred()},
@@ -2465,7 +2481,8 @@ const showTest = {
   reserve: g => !!g.reserve && !g.list,
   other: g => !g.list && !g.reserve,
 };
-const bandOf = () => FILT.band;
+// The band a page applies: the reader's choice, else the page's default (24 Nov 2026).
+const bandOf = scope => FILT.band !== "auto" ? FILT.band : ((FVIEWS[scope] || {}).bandDefault || "all");
 function inBand(scope, conf){
   const k = bandOf(scope); if(k === "all") return true;
   const b = BANDS.find(x => x.k === k), v = Math.round((conf || 0) * 100);
@@ -2498,10 +2515,11 @@ function filterBar(view, o){
     }
   }
   if(o.confs){
-    const nowB = FILT.band;
+    // a page's own default band (Daily List 60%+) is pressed but carries no chip: Clear returns to it
+    const nowB = bandOf(view);
     groups.push(fbarGroup("Confidence", BANDS.filter(b => b.k === "all" || b.k === nowB || bandN(b, o.confs))
       .map(b => fbBtn("band", b.k, b.label, b.k === nowB, bandN(b, o.confs))).join("")));
-    if(nowB !== "all") chip("band", BANDS.find(b => b.k === nowB).label);
+    if(FILT.band !== "auto" && nowB !== "all") chip("band", BANDS.find(b => b.k === nowB).label);
   }
   if(o.show){
     const nowS = fShow(view);
@@ -2534,7 +2552,7 @@ function bandCtl(scope, confs){ return filterBar(scope, {confs}); }
 function fClear(view){
   const V = FVIEWS[view] || {};
   if(V.sport) V.sport.set([]);
-  if(V.band !== false) FILT.band = "all";
+  if(V.band !== false) FILT.band = "auto";
   if(fOpts(V.show).includes(FILT.show)) FILT.show = "all";
   if(V.clear) V.clear();
   fSave();
@@ -2554,7 +2572,7 @@ document.addEventListener("click", e => {
   else if(a === "order") FILT.order = k;
   else if(a === "clear") fClear(view);
   else if(a === "unset"){
-    if(k === "band") FILT.band = "all";
+    if(k === "band") FILT.band = "auto";
     else if(k === "show") FILT.show = "all";
     else if(k.startsWith("sport:") && V.sport) V.sport.set(V.sport.get().filter(x => x !== k.slice(6)));
     else if(V.unset) V.unset(k);
@@ -3930,7 +3948,7 @@ const RESERVE_SHOW_MIN = 0.75;
 // 75%+, but a Confidence band chosen in the filter bar shows every reserve pick
 // in it, so 60-69% (where most football reserve picks sit) is one tap away.
 const resAny = it => itemTier(it) !== "leave";
-const resShown = it => resAny(it) && ((it.g.confidence || 0) >= RESERVE_SHOW_MIN || FILT.band !== "all");
+const resShown = it => resAny(it) && ((it.g.confidence || 0) >= RESERVE_SHOW_MIN || bandOf("list") !== "all");
 // 23 Nov 2026 (UX release 2): Order by (Douglas, 1 Oct 2026: strongest first, or by kick-off to
 // plan the day) and Show's At William Hill (10 Nov 2026: only the picks William Hill priced,
 // hillChip's marks; Douglas places there) are the shared filter bar's (FILT); renderList reads them.
@@ -4321,7 +4339,8 @@ function renderList(){
   const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
   const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
   const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
-  const filtered = LIST_SPORTS.length > 0 || bandOf("list") !== "all";
+  // 60%+ keeps every list pick (the bar is 75%+), so it leaves Groups A and B labelled
+  const filtered = LIST_SPORTS.length > 0 || !["all", "60up"].includes(bandOf("list"));
   // 23 Nov 2026: the filter bar (drawn below the day strip); counted on every list and reserve pick shown
   // in the window, the count after every filter.
   const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
@@ -4417,7 +4436,7 @@ function renderList(){
       fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
       const nWary = extra.filter(it => sideWary(it.g)).length;
       fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">${FILT.band === "all" ? `Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%.` : `Under the bar, in the band chosen above. At 75%+ the reserve lands about 85%; under 75% about two in three.`} Graded separately, never in the list's record.${resLow && FILT.band === "all" ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three. Choose 60-69% or 70-79% under Confidence to see them.` : ""}${resLeave ? ` ${resLeave} college pick${resLeave === 1 ? "" : "s"} tiered Leave out left off.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
+        <span class="resv-note">${bandOf("list") === "all" ? `Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%.` : `${bandOf("list") === "60up" ? "Under the bar, every reserve pick at 60% or better." : "Under the bar, in the band chosen above."} At 75%+ the reserve lands about 85%; under 75% about two in three.`} Graded separately, never in the list's record.${resLow && bandOf("list") === "all" ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three. Choose 60-69% or 70-79% under Confidence to see them.` : ""}${resLeave ? ` ${resLeave} college pick${resLeave === 1 ? "" : "s"} tiered Leave out left off.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
       fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
       sec.appendChild(fold);
       const puts = (it, i) => listPut(fold, it, i, date);
@@ -8321,7 +8340,7 @@ function navHash(){
   if(DAY != null && v === "results" && recordsState !== "ready") day = DAY;
   if(V && [...document.querySelectorAll(`.fbar[data-fview="${k}"]`)].some(navSeen)){
     if(V.sport){ const s = V.sport.get(); if(s.length) q.push("sport=" + s.join(",")); }
-    if(V.band !== false && FILT.band !== "all") q.push("band=" + FILT.band);
+    if(V.band !== false && FILT.band !== "auto") q.push("band=" + FILT.band);
     if(fShow(k) !== "all") q.push("show=" + fShow(k));
     if(fOpts(V.order).length > 1 && fOrder(k) !== "strength") q.push("order=" + fOrder(k));
   }
