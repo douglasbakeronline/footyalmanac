@@ -1159,6 +1159,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 /* 10 Nov 2026: the Edge section of the Bets tab (edgeSection) */
 .tb-edge .tb-h{border-bottom-color:var(--edge)}
 .tb-edge .tb-snap b{color:var(--ink)}
+.tb-links{display:block;margin-top:5px;font:500 12px/1.9 var(--f-ui);color:var(--mute)}
+.tb-links a{color:var(--mute);text-decoration:underline;text-decoration-color:var(--rule);text-underline-offset:2px;white-space:nowrap}
+.tb-links a:hover{color:var(--home);text-decoration-color:currentColor}
+@media (max-width:600px){.tb-links>span{display:none}.tb-links a{display:table;line-height:2.1}}
 .tb-row.edge{grid-template-columns:52px minmax(0,1fr) auto}
 .tb-row.edge .tb-v{color:var(--edge)}
 .tb-pp{font:600 var(--t-base) var(--f-num);text-align:right;white-space:nowrap}
@@ -6925,6 +6929,15 @@ function slipSection(date){
   </section>`;
 }
 
+/* 24 Nov 2026 (Douglas: "add the standard google search links to every row
+   here"): the football board's four research searches (detail()), in the
+   Bets tab's small muted link type. */
+function edgeLinks(g){
+  const vs = g.home.name + " v " + g.away.name;
+  return `<span class="tb-links">${[["Head to head", vs + " head to head"], ["Predictions", vs + " prediction"],
+      ["Search this fixture", vs + (g.date ? " " + g.date : "")], [compName(g) + " table", compName(g) + " " + (g.country || "") + " table"]]
+    .map(([t, q]) => `<a href="${gSearch(q)}" target="_blank" rel="noopener">${ogEsc(t)} ↗</a>`).join('<span aria-hidden="true"> · </span>')}</span>`;
+}
 function edgeSection(date){
   const flagged = (D.days.find(d => d.date === date) || {games: []}).games.filter(g => g.edge);
   // 23 Nov 2026: the Bets tab's Sport filter (every Edge pick is football)
@@ -6940,7 +6953,8 @@ function edgeSection(date){
   const vs = g => g.edge.side === "h" ? g.away.name : g.home.name;
   const rows = games.map(g => `<div class="tb-row st edge">${starHtml(starFor("football", g.home.name, g.away.name, g.kickoff), `${who(g)} (${g.home.name} v ${g.away.name})`)}<span class="tb-v">Edge</span>
       <span class="tb-m"><b>${ogEsc(who(g))}</b><small>v ${ogEsc(vs(g))} · ${ogEsc(compName(g))}${g.kickoff ? " · " + new Date(g.kickoff).toLocaleTimeString("en-GB", {hour: "2-digit", minute: "2-digit", timeZone: "Europe/London"}) : ""}</small>
-        <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small></span>
+        <small class="tb-why">Bookmakers ${pct(g.edge.fair)}%, model ${pct(g.edge.model)}%, ${ogEsc(vs(g))} priced ${g.edge.opp.toFixed(2)}</small>
+        ${edgeLinks(g)}</span>
       <span class="tb-pp">${g.edge.odds.toFixed(2)}<small>best ${g.edge.best.toFixed(2)}</small></span></div>`).join("");
   const slip = (label, legs, k) => {
     if(legs.length < 2) return "";

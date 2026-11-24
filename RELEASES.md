@@ -10,6 +10,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-edge-links: research links on every Edge pick (tag pending)
+
+**What changed for a reader.** Douglas: "add the standard google search links to every row here". Each Edge pick on the Bets tab now carries the football board's four searches: Head to head, Predictions, Search this fixture and the league table, in the section's small muted type (12px, underlined in the rule colour, the home blue on hover). One line with dots between on desktop; one link a line on a phone, so each is easy to tap.
+**Evidence.** Display only. Checked in a browser at 400 and 1280 wide.
+**Files.** `index.html` (`edgeLinks`, `.tb-links`), `RELEASES.md`.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-list-card-day: the List card built on its own day, one kind a day (tag pending)
 
 **What changed for a reader.** The List 2x and List long on the Bets tab were fixed as first built, up to three days early, and a List 2x could be published beside a List long that was already held: 21 and 22 Nov each had both, sharing two and three picks, and those four slips are the List card's whole record. Now an unstarted List slip is rebuilt on every build until 07:00 UK on its day (as the Daily 2x has been since 23 Nov), then held, and a day has one List kind: the 2x, else the long.
