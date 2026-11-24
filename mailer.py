@@ -326,12 +326,35 @@ def tested(it):
     return a.get("cumHit") or a.get("hit")
 
 
+def window(day):
+    """07:00 UK on `day` to 07:00 UK the next day, in UTC (24 Nov 2026, Douglas:
+    "Some of the games on the mailer already played ... can it be a 07.00-07.00
+    24 hour period"): the email goes at 07:00, so a game before then has started."""
+    d = date.fromisoformat(day)
+    lo = datetime(d.year, d.month, d.day, 7, tzinfo=UK)
+    n = d + timedelta(days=1)
+    hi = datetime(n.year, n.month, n.day, 7, tzinfo=UK)
+    return lo.astimezone(timezone.utc), hi.astimezone(timezone.utc)
+
+
+def in_window(it, lo, hi, key="start"):
+    """A pick starting inside the window; an untimed one stays with its own day."""
+    t = parse_utc(it.get(key))
+    if it.get("timed") is False or t is None:
+        return True
+    return lo <= t < hi
+
+
 def list_items(src, day, now):
     """The Daily List as the page shows it for the day: list picks only (never the
     reserve), college basketball only at Hill 1.05+, Leave out tier off, strongest
     first. Returns (items, left_off)."""
     DL, G = src.get("daylist") or {}, src.get("groupings") or {}
-    if DL.get("date") == day: raw = DL.get("list") or []
+    if DL.get("date") == day:
+        # 07:00 to 07:00: today's from 07:00 and the next UK day's overnight games
+        lo, hi = window(day)
+        raw = [it for it in DL.get("list") or [] if in_window(it, lo, hi)] + \
+              [it for it in DL.get("early") or [] if it.get("timed") is not False and in_window(it, lo, hi)]
     else: raw = next((p.get("list") or [] for p in DL.get("past") or [] if p.get("date") == day), [])
     items, off = [], 0
     for it in raw:
@@ -384,7 +407,11 @@ def g_day(src, day):
 
 def edge_picks(src, day):
     D = src.get("data") or {}
-    games = next((d.get("games") or [] for d in D.get("days") or [] if d.get("date") == day), [])
+    lo, hi = window(day)
+    nxt = (date.fromisoformat(day) + timedelta(days=1)).isoformat()
+    games = [g for d in D.get("days") or [] if d.get("date") in (day, nxt) for g in d.get("games") or []
+             if (d.get("date") == day and (not g.get("kickoff") or in_window(g, lo, hi, "kickoff")))
+             or (d.get("date") == nxt and g.get("kickoff") and in_window(g, lo, hi, "kickoff"))]
     out = []
     for g in games:
         e = g.get("edge")

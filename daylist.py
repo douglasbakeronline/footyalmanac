@@ -468,7 +468,14 @@ def build(now=None, here=HERE, fetch=True):
     summary = {k: {"n": len(xs), "won": count(xs, "won"), "lost": count(xs, "lost"), "void": count(xs, "void"),
                    "started": count(xs, "started"), "upcoming": count(xs, "upcoming")}
                for k, xs in (("list", lst), ("reserve", res), *zip(("groupA", "groupB"), groups(lst)))}
-    return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary,
+    # 24 Nov 2026: the next UK day's list picks starting before 07:00 UK, for
+    # the morning email's 07:00-to-07:00 window (mailer.window); the page ignores it.
+    nxt = (datetime.fromisoformat(day).date() + timedelta(days=1)).isoformat()
+    cut = datetime.fromisoformat(nxt + "T07:00:00").replace(tzinfo=UK)
+    early = [i for i in pinned(nxt, archives, now) if i["list"] and parse_utc(i["start"]) < cut]
+    attach_full(early, archives, _load(os.path.join(here, "data.json"), {}), {})
+    for it in early: it.pop("published", None)
+    return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary, "early": early,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
             "past": past_days(now, here, records),
             "played": played_today(day, archives, now, records, here)}
