@@ -279,3 +279,7 @@ Reading:
 - Per-band samples are 2 to 25 groups. None meets the 100-group bar the gates need, so no band rule is shown to improve the hit rate at the same odds. A replay of the retired rules on past days is not possible on the scoreboard (rule 1) and the pool archive starts 30 Oct 2026, after these kinds stopped being built.
 - The shortfall repeats the singles result: a group's stated chance multiplies leg chances that each already land at or just under quote, so over-statement compounds by leg count (Steady and Stretch carry the most legs).
 - No code change. Live groups are the Card, graded under its own rules (`cardByRule`); its replay is `tools/card_replay.py` and the 30 Nov review. Reopen this when a retired kind is rebuilt or a band reaches 100 settled groups.
+
+## Edge over the price, fifth run (24 Nov 2026)
+
+Check season 3,861 legs. Legs 2, 4 and 6 points above fair landed -1.5 / -2.1 / -1.5 on fit (n 4,120 / 2,555 / 1,555) and -1.4 / -1.6 / -1.0 on check (n 1,523 / 1,013 / 675); no cell by price, side or band is positive on both seasons with 250+ legs; the model-below-market control landed +2.3 on both. There is no edge and no value-leg rule. See `claude/odds-edge-retest-2026-11-24.md`.
