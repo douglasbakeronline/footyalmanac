@@ -10,6 +10,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-edge-links: research links on every Edge pick (tag pending)
+
+**What changed for a reader.** Douglas: "add the standard google search links to every row here". Each Edge pick on the Bets tab now carries the football board's four searches: Head to head, Predictions, Search this fixture and the league table, in the section's small muted type (12px, underlined in the rule colour, the home blue on hover). One line with dots between on desktop; one link a line on a phone, so each is easy to tap.
+**Evidence.** Display only. Checked in a browser at 400 and 1280 wide.
+**Files.** `index.html` (`edgeLinks`, `.tb-links`), `RELEASES.md`.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-24-list-results-every-sport: Recent list results show every sport (tag pending)
 
 **What changed for a reader.** Douglas: "Why is this just football games shown?". The Daily List's Recent list results read football's record alone, a leftover from before the list covered every sport. It now shows the last 30 graded list picks from every sport (football, tennis, NBA, NFL, college basketball, rugby), newest first, each with its sport's emoji. The score is now written from the pick's side: an away pick read "Tre Penne to beat Pennarossa 3–6" with a tick, which looked like a loss; it now reads 6–3. Tennis shows the sets the same way. Void games are left out.
