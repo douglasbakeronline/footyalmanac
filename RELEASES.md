@@ -10,6 +10,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-24-tennis-surface-5: tennis surface, fifth check, nothing to ship (tag pending)
+
+**What changed:** a note only. No source gives ESPN tennis results a surface; the name map was rejected on 13 Oct.
+**Evidence:** Sackmann 2026 files 404, tennis-data.co.uk 2026 files 403 (24 Nov); map test WTA +0.0024 (p 0.88, n 2,686), ATP +0.0031 (p 0.95, n 1,523) worse.
+**Files:** `claude/tennis-surface-fifth-check-2026-11-24.md`.
+**Not changed:** `build_tennis.py`, ratings, the Daily List rule.
+**Roll back:** delete the note and this entry.
+
 ## 2026-11-24-slip-links: research links on the slip's legs (tag pending)
 
 **What changed for a reader.** Douglas: "add those for the slip as well". Each leg of the slip on the Bets tab now ends with the same one-line links as the Edge picks: H2H, Predictions, Search and Table (Draw for a tennis leg). The bookmaker's name under a slip leg's price is no longer cut off ("William Hi").
