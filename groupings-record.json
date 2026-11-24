@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-24T05:20:49Z",
+ "graded": "2026-11-24T06:01:44Z",
  "overall": {
   "groups": 151,
   "settled": 151,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 77,
-   "won": 67,
-   "rate": 0.8701,
-   "quoted": 0.8755,
-   "returned": 73.05,
-   "ret": -0.0513
+   "n": 79,
+   "won": 69,
+   "rate": 0.8734,
+   "quoted": 0.8748,
+   "returned": 75.36,
+   "ret": -0.0461
   },
   "notAtBook": {
    "n": 151,
@@ -234,12 +234,12 @@
    },
    "nba": {
     "atBook": {
-     "n": 13,
-     "won": 10,
-     "rate": 0.7692,
-     "quoted": 0.8466,
-     "returned": 11.22,
-     "ret": -0.1369
+     "n": 15,
+     "won": 12,
+     "rate": 0.8,
+     "quoted": 0.8469,
+     "returned": 13.53,
+     "ret": -0.098
     },
     "notAtBook": {
      "n": 1,
