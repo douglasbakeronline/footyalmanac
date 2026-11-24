@@ -10,6 +10,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-24-list-results-every-sport: Recent list results show every sport (tag pending)
+
+**What changed for a reader.** Douglas: "Why is this just football games shown?". The Daily List's Recent list results read football's record alone, a leftover from before the list covered every sport. It now shows the last 30 graded list picks from every sport (football, tennis, NBA, NFL, college basketball, rugby), newest first, each with its sport's emoji. The score is now written from the pick's side: an away pick read "Tre Penne to beat Pennarossa 3–6" with a tick, which looked like a loss; it now reads 6–3. Tennis shows the sets the same way. Void games are left out.
+**Evidence.** On the committed records at 24 Nov the 30 rows are 15 college basketball, 5 football, 4 NFL, 3 tennis and 3 NBA. `tests/test_record_summary.py` (order, sports, pick-side scores, voids and off-list picks left out). Checked in a browser at 400 and 1280 wide.
+**Files.** `build.py` (`list_recent_all`, `listRecentAll` in the inlined summary), `index.html` (the panel), `tests/test_record_summary.py`, `RELEASES.md`.
+**Not changed.** Any record, grade or the list itself.
+**Roll back.** `git revert` the merge.
+
 ## 2026-11-23-mailer-design: the emails in the site's own look, a welcome series drafted, click tracking (tag pending)
 
 **What changed:** the emails open with the site's own cover (star banner, SPORTS / ALMANAC, 2026 band; `email-header.png`, published by deploy.yml, colours corrected to the site's CSS) above the yellow strip, and the sections and footer sit flush with no gaps. The bands follow the site's own styles: red section heads as the day heads (Anton 17px, ink offset, mono yellow count), the yellow strip as the sports strip (Barlow Semi Condensed 13px bold), group labels as the list's `.lgrp`; the site's fonts load where mail apps allow (Apple Mail, iOS) and fall back elsewhere. In the email, Group A / Group B / the rest read **Strongest today · 85% or better** (same rule: up to five, never padded) and **Also on the list**; the page keeps its labels. "The model" reads "the Sports Almanac model". The ⭐ is smaller and sits on the line. Each send carries a `kind` tag (daily, weekly, confirm, welcome, guide). `welcome_emails()` drafts three welcome emails (confirm, welcome, how to read); `--preview` writes them, `--to --kind welcome|all` sends test copies; only the confirm email is sent in production, from Supabase.

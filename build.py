@@ -322,6 +322,49 @@ def unpredictable_leagues(by_league, min_n=CAUTION_MIN_N, z_max=CAUTION_Z):
     return out
 
 
+def list_recent_all(record, sports=None, tennis=None, n=LIST_RECENT):
+    """The Daily List's last results across every sport, newest first (24 Nov
+    2026, Douglas: "Why is this just football games shown?": Recent list
+    results read football's record alone). One compact row a graded list pick:
+    d (UK day), s (sport), pick, opp, c (confidence), w (won), sc (the score
+    from the pick's side; tennis its sets). Voids are left out."""
+    import re
+    rows = []
+    for day in (record or {}).get("listDays") or []:
+        for g in day.get("games") or []:
+            h = g.get("pick") == "h"
+            res = g.get("result") or [None, None]
+            won = g.get("won") if g.get("won") is not None else bool(g.get("ok") and not g.get("drawRead"))
+            rows.append((day.get("date"), g.get("kickoff") or "", {
+                "d": day.get("date"), "s": "football", "pick": g["home"] if h else g["away"],
+                "opp": g["away"] if h else g["home"], "c": g.get("confidence"), "w": bool(won),
+                "sc": f"{res[0 if h else 1]}–{res[1 if h else 0]}" if None not in res else ""}))
+    for day in (sports or {}).get("days") or []:
+        for g in day.get("games") or []:
+            if not g.get("list") or g.get("void") or g.get("ok") is None:
+                continue
+            h = g.get("pick") == g.get("home")
+            sc = g.get("score") or []
+            rows.append((day.get("date"), g.get("when") or "", {
+                "d": day.get("date"), "s": g.get("sport"), "pick": g.get("pick"),
+                "opp": g.get("away") if h else g.get("home"), "c": g.get("confidence"), "w": bool(g.get("ok")),
+                "sc": f"{sc[0 if h else 1]}–{sc[1 if h else 0]}" if len(sc) == 2 else ""}))
+    for day in (tennis or {}).get("days") or []:
+        for g in day.get("games") or []:
+            if not g.get("list") or g.get("void") or g.get("ok") is None:
+                continue
+            a = g.get("pick") == g.get("playerA")
+            sets = re.findall(r"\b(\d+)-(\d+)", g.get("note") or "")
+            # the note gives the winner's games first; turn them to the pick's side
+            sets = [f"{x}-{y}" if g.get("ok") else f"{y}-{x}" for x, y in sets]
+            rows.append((day.get("date"), g.get("start") or "", {
+                "d": day.get("date"), "s": "tennis", "pick": g.get("pick"),
+                "opp": g.get("playerB") if a else g.get("playerA"), "c": g.get("confidence"),
+                "w": bool(g.get("ok")), "sc": " ".join(sets)}))
+    rows.sort(key=lambda r: (r[0] or "", r[1][:16]), reverse=True)
+    return [r[2] for r in rows[:n]]
+
+
 def record_summary(record, sports=None, tennis=None):
     """The inlined slice of record.json (plus the list records of the sports
     and tennis files) that index.html reads on first paint."""
@@ -344,6 +387,9 @@ def record_summary(record, sports=None, tennis=None):
                 break
         out["listRecent"] = recent
         out["caution"] = unpredictable_leagues(record.get("byLeague"))
+    rows = list_recent_all(record, sports, tennis)
+    if rows:
+        out["listRecentAll"] = rows
     if sports:
         out["sports"] = {"list": sports.get("list"),
                          "bySport": {k: ({"n": v.get("n"), "correct": v.get("correct")} if isinstance(v, dict) else v)
