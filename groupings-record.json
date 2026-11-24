@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-24T17:52:31Z",
+ "graded": "2026-11-24T18:21:31Z",
  "overall": {
   "groups": 152,
   "settled": 151,
@@ -22,7 +22,7 @@
    "n": 181,
    "shortened": 70,
    "drifted": 68,
-   "mean": 0.0004
+   "mean": 0.0003
   }
  },
  "cardLegsBySport": {
@@ -1134,7 +1134,7 @@
    "n": 20,
    "shortened": 7,
    "drifted": 8,
-   "mean": 0.0007
+   "mean": 0.0001
   }
  },
  "cardListLong": {
@@ -1543,7 +1543,7 @@
        "when": "2026-11-24T19:45:00Z",
        "odds": 1.43,
        "best": 1.44,
-       "lastOdds": 1.56,
+       "lastOdds": 1.58,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
