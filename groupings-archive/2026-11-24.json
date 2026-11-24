@@ -1,0 +1,721 @@
+{
+ "date": "2026-11-24",
+ "published": "2026-11-24T15:55:47Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.81,
+   "p": 0.2605,
+   "pFair": 0.27,
+   "implied": 0.3561,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "tennis",
+     "event": "Laura Samson v Victoria Bosio",
+     "pick": "Laura Samson",
+     "tour": "WTA",
+     "tournament": "IEB+ Argentina Open",
+     "players": [
+      "Laura Samson",
+      "Victoria Bosio"
+     ],
+     "comp": "IEB+ Argentina Open Round 1",
+     "when": "2026-11-24T14:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-24",
+     "id": "186819",
+     "fx": {
+      "id": "186819",
+      "espn": [
+       "Laura Samson",
+       "Victoria Bosio"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-24",
+      "time": "14:00",
+      "timeTbc": false,
+      "tournament": "IEB+ Argentina Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Laura Samson",
+      "playerB": "Victoria Bosio",
+      "ratingA": {
+       "elo": 2036,
+       "matches": 147,
+       "surfaceElo": 1807
+      },
+      "ratingB": {
+       "elo": 1826,
+       "matches": 235,
+       "surfaceElo": 1682
+      },
+      "p": {
+       "a": 0.7311,
+       "b": 0.2689
+      },
+      "pick": "Laura Samson",
+      "confidence": 0.7311,
+      "tier": "Strong",
+      "rankA": 110,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.6706,
+       "n": 85,
+       "cumHit": 0.6706,
+       "cumN": 85,
+       "quoted": 0.7238,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": false,
+      "reserve": true
+     },
+     "pModel": 0.7311,
+     "p": 0.7311,
+     "hit": 0.6706,
+     "n": 85,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.15,
+     "best": 1.15,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 5.58,
+     "draw": null,
+     "margin": 1.0511,
+     "pricedAt": "2026-11-24T06:01:26Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.8696,
+     "pTested": 0.6706,
+     "fair": 0.8273,
+     "edge": -0.2288,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.15
+    },
+    {
+     "sport": "football",
+     "event": "Carlisle v Tamworth",
+     "home": "Carlisle",
+     "away": "Tamworth",
+     "side": "h",
+     "pick": "Carlisle",
+     "code": "en.5",
+     "comp": "National League",
+     "country": "England",
+     "when": "2026-11-24T19:45:00Z",
+     "date": "2026-11-24",
+     "pModel": 0.7061,
+     "p": 0.7061,
+     "fx": {
+      "u21Side": false,
+      "league": "en.5",
+      "leagueName": "National League",
+      "short": "NLG",
+      "country": "England",
+      "iso": "eng",
+      "tier": 5,
+      "order": 4.5,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-24",
+      "time": "19:45",
+      "kickoff": "2026-11-24T19:45:00Z",
+      "home": {
+       "name": "Carlisle",
+       "att": 1.23,
+       "def": 0.828,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League",
+       "form": {
+        "pts": 15,
+        "max": 15,
+        "seq": "WWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 47,
+        "W": 29,
+        "D": 9,
+        "L": 9,
+        "GF": 88,
+        "GA": 52,
+        "GD": 36,
+        "Pts": 96,
+        "PPG": 2.043
+       },
+       "now": {
+        "P": 18,
+        "W": 9,
+        "D": 5,
+        "L": 4,
+        "GF": 36,
+        "GA": 23,
+        "GD": 13,
+        "Pts": 32,
+        "PPG": 1.778
+       }
+      },
+      "away": {
+       "name": "Tamworth",
+       "att": 0.99,
+       "def": 1.241,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League",
+       "form": {
+        "pts": 3,
+        "max": 15,
+        "seq": "LWLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 17,
+        "D": 11,
+        "L": 18,
+        "GF": 63,
+        "GA": 71,
+        "GD": -8,
+        "Pts": 62,
+        "PPG": 1.348
+       },
+       "now": {
+        "P": 17,
+        "W": 5,
+        "D": 2,
+        "L": 10,
+        "GF": 27,
+        "GA": 37,
+        "GD": -10,
+        "Pts": 17,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7061,
+       "d": 0.1705,
+       "a": 0.1233
+      },
+      "xg": [
+       2.66,
+       1.03
+      ],
+      "btts": 0.5642,
+      "over25": 0.5972,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.7061,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6513,
+        0.1921,
+        0.1567
+       ],
+       "best": [
+        1.4,
+        5.0,
+        6.0
+       ],
+       "avg": [
+        1.4,
+        4.75,
+        5.82
+       ],
+       "ev": [
+        -0.0115,
+        -0.1475,
+        -0.2602
+       ],
+       "src": "API-Football",
+       "books": 10
+      },
+      "rank": 2,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1705,
+     "multOnly": false,
+     "odds": 1.4,
+     "best": 1.4,
+     "books": 10,
+     "opp": 5.82,
+     "draw": 4.75,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.4,
+      "Betfair": 1.36,
+      "BetVictor": 1.4
+     },
+     "margin": 1.096,
+     "pricedAt": "2026-11-24T05:59:58Z",
+     "src": "API-Football, average of 10 bookmakers",
+     "implied": 0.7143,
+     "pTested": 0.7061,
+     "fair": 0.6517,
+     "edge": -0.0876,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.4,
+     "lastOdds": 1.4,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-24T15:55:47Z"
+    },
+    {
+     "sport": "football",
+     "event": "Salisbury v AFC Totton",
+     "home": "Salisbury",
+     "away": "AFC Totton",
+     "side": "h",
+     "pick": "Salisbury",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-24T19:45:00Z",
+     "date": "2026-11-24",
+     "pModel": 0.6945,
+     "p": 0.6945,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-24",
+      "time": "19:45",
+      "kickoff": "2026-11-24T19:45:00Z",
+      "home": {
+       "name": "Salisbury",
+       "att": 1.1,
+       "def": 0.737,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "DWWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 50,
+        "GA": 65,
+        "GD": -15,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 16,
+        "W": 9,
+        "D": 5,
+        "L": 2,
+        "GF": 30,
+        "GA": 13,
+        "GD": 17,
+        "Pts": 32,
+        "PPG": 2.0
+       }
+      },
+      "away": {
+       "name": "AFC Totton",
+       "att": 0.788,
+       "def": 1.168,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "WWLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 20,
+        "D": 6,
+        "L": 20,
+        "GF": 60,
+        "GA": 79,
+        "GD": -19,
+        "Pts": 66,
+        "PPG": 1.435
+       },
+       "now": {
+        "P": 17,
+        "W": 6,
+        "D": 1,
+        "L": 10,
+        "GF": 17,
+        "GA": 30,
+        "GD": -13,
+        "Pts": 19,
+        "PPG": 1.118
+       }
+      },
+      "p": {
+       "h": 0.6945,
+       "d": 0.1964,
+       "a": 0.1091
+      },
+      "xg": [
+       2.19,
+       0.73
+      ],
+      "btts": 0.5088,
+      "over25": 0.5354,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6945,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6372,
+        0.2066,
+        0.1563
+       ],
+       "best": [
+        1.44,
+        4.5,
+        6.5
+       ],
+       "avg": [
+        1.43,
+        4.4,
+        5.82
+       ],
+       "ev": [
+        0.0001,
+        -0.1162,
+        -0.2908
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 3,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1964,
+     "multOnly": false,
+     "odds": 1.43,
+     "best": 1.44,
+     "books": 9,
+     "opp": 5.82,
+     "draw": 4.4,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.42,
+      "Betfair": 1.4,
+      "BetVictor": 1.4
+     },
+     "margin": 1.0991,
+     "pricedAt": "2026-11-24T05:59:58Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6993,
+     "pTested": 0.6945,
+     "fair": 0.6362,
+     "edge": -0.0902,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.43,
+     "lastOdds": 1.56,
+     "lastBest": 1.57,
+     "lastAt": "2026-11-24T15:55:47Z"
+    },
+    {
+     "sport": "nba",
+     "event": "Washington Wizards v Boston Celtics",
+     "home": "Washington Wizards",
+     "away": "Boston Celtics",
+     "pick": "Boston Celtics",
+     "comp": "NBA",
+     "when": "2026-11-25T01:00Z",
+     "date": "2026-11-25",
+     "id": "401909315",
+     "pModel": 0.7266,
+     "p": 0.7266,
+     "hit": 0.8042,
+     "n": 475,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401909315",
+      "sport": "nba",
+      "label": "NBA",
+      "feed": "basketball/nba",
+      "when": "2026-11-25T01:00Z",
+      "home": "Washington Wizards",
+      "away": "Boston Celtics",
+      "neutral": false,
+      "pHome": 0.2734,
+      "pick": "Boston Celtics",
+      "confidence": 0.7266,
+      "tier": "Strong",
+      "eloH": 1391,
+      "eloA": 1598,
+      "gamesH": 264,
+      "gamesA": 300,
+      "hfa": 25,
+      "eloDiff": -182.1,
+      "line": {
+       "spread": 10.5,
+       "total": 217.5,
+       "mlH": 351.0,
+       "mlA": -453.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.7741,
+       "n": 177,
+       "cumHit": 0.8042,
+       "cumN": 475
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "116-96",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-23"
+       },
+       {
+        "r": "W",
+        "score": "98-94",
+        "opp": "Chicago Bulls",
+        "home": false,
+        "date": "2026-11-21"
+       },
+       {
+        "r": "W",
+        "score": "103-99",
+        "opp": "Toronto Raptors",
+        "home": false,
+        "date": "2026-11-19"
+       },
+       {
+        "r": "L",
+        "score": "120-136",
+        "opp": "Memphis Grizzlies",
+        "home": true,
+        "date": "2026-11-17"
+       },
+       {
+        "r": "L",
+        "score": "119-147",
+        "opp": "Houston Rockets",
+        "home": true,
+        "date": "2026-11-16"
+       }
+      ],
+      "formA": [
+       {
+        "r": "L",
+        "score": "87-88",
+        "opp": "Golden State Warriors",
+        "home": false,
+        "date": "2026-11-23"
+       },
+       {
+        "r": "L",
+        "score": "96-97",
+        "opp": "Sacramento Kings",
+        "home": false,
+        "date": "2026-11-22"
+       },
+       {
+        "r": "L",
+        "score": "101-105",
+        "opp": "Denver Nuggets",
+        "home": false,
+        "date": "2026-11-19"
+       },
+       {
+        "r": "L",
+        "score": "105-115",
+        "opp": "Orlando Magic",
+        "home": true,
+        "date": "2026-11-17"
+       },
+       {
+        "r": "W",
+        "score": "131-94",
+        "opp": "Dallas Mavericks",
+        "home": true,
+        "date": "2026-11-15"
+       }
+      ],
+      "recordH": {
+       "w": 7,
+       "l": 11,
+       "d": 0
+      },
+      "recordA": {
+       "w": 11,
+       "l": 6,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2026-03-14",
+        "home": "Boston Celtics",
+        "away": "Washington Wizards",
+        "score": "111-100"
+       },
+       {
+        "date": "2025-12-05",
+        "home": "Washington Wizards",
+        "away": "Boston Celtics",
+        "score": "101-146"
+       },
+       {
+        "date": "2025-11-06",
+        "home": "Boston Celtics",
+        "away": "Washington Wizards",
+        "score": "136-107"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.22,
+     "margin": 1.0414,
+     "opp": 4.51,
+     "src": "ESPN, DraftKings moneyline",
+     "bookOdds": {
+      "William Hill": 1.2,
+      "Betfair": 1.22,
+      "BetVictor": 1.18
+     },
+     "pricedAt": "2026-11-24T06:01:42Z",
+     "implied": 0.8197,
+     "pTested": 0.7266,
+     "fair": 0.7871,
+     "edge": -0.1135,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.22,
+     "lastOdds": 1.22,
+     "lastBest": 1.22,
+     "lastAt": "2026-11-24T15:55:47Z"
+    }
+   ],
+   "tested": 0.3483,
+   "short": false,
+   "tiers": [
+    "reserve"
+   ],
+   "bestOdds": 2.83,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-24T06:00:59Z",
+   "checked": "2026-11-24T06:00:59Z",
+   "lockAt": "2026-11-24T14:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-24T15:55:47Z"
+  }
+ ]
+}
