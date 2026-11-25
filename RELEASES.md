@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-pool-replay-done: backlog #154 already shipped; note only (tag pending)
+
+**What changed:** nothing in code. `tools/card_replay.py` has replayed every variant on the archived pool from 30 Oct 2026 since 9 Nov 2026; a dated note records the check.
+**Evidence:** `main()` reads `pool_legs()` from `POOL_FROM`, football-data rows before; the named variants are in `VARIANTS`; `tests/test_card_pool_replay.py` (13 tests, synthetic pool file) passes.
+**Files:** `claude/card-replay-pool-source-done-2026-11-25.md`, `RELEASES.md`.
+**Not changed:** the replay, any Card rule (`CARD_RULE` 14), the model, the page.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-25-kickoff-board-right: Bolivia's GV San José priced; Serie B and Greece left off the retime list (tag pending)
 
 **What changed:** board name "GV San José" (Bolivia's División Profesional) is matched to API-Football's "Gualberto Villarroel SJ" (`groupings.AF_SPELLINGS`), so GV San José v Real Potosí (28 Nov) can be priced. A note records that the two kick-off misses on the price log (Palermo v Benevento, Serie B; Iraklis 1908 v Panetolikos, Greece) are API-Football's error, not the board's, so neither league joins `sources.AF_RETIME`.
