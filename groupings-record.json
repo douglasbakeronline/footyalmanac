@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T07:08:40Z",
+ "graded": "2026-11-25T08:22:21Z",
  "overall": {
   "groups": 152,
   "settled": 152,
@@ -198,10 +198,10 @@
    "ret": -0.0419
   },
   "notAtBook": {
-   "n": 178,
-   "won": 171,
-   "rate": 0.9607,
-   "quoted": 0.9153
+   "n": 179,
+   "won": 172,
+   "rate": 0.9609,
+   "quoted": 0.9149
   },
   "unchecked": {
    "n": 35,
@@ -264,10 +264,10 @@
      "ret": -0.0772
     },
     "notAtBook": {
-     "n": 171,
-     "won": 164,
-     "rate": 0.9591,
-     "quoted": 0.9179
+     "n": 172,
+     "won": 165,
+     "rate": 0.9593,
+     "quoted": 0.9175
     },
     "unchecked": {
      "n": 13,
@@ -597,6 +597,7 @@
    "ncaab|illinois fighting illini|western kentucky hilltoppers|2026-11-27": -1,
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": -1,
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1,
+   "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": -1,
    "football|boreham wood|gateshead|2026-11-28": 1.1,
    "nba|detroit pistons|milwaukee bucks|2026-11-28": -1,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": -1,
