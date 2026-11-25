@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-kickoff-board-right: Bolivia's GV San José priced; Serie B and Greece left off the retime list (tag pending)
+
+**What changed:** board name "GV San José" (Bolivia's División Profesional) is matched to API-Football's "Gualberto Villarroel SJ" (`groupings.AF_SPELLINGS`), so GV San José v Real Potosí (28 Nov) can be priced. A note records that the two kick-off misses on the price log (Palermo v Benevento, Serie B; Iraklis 1908 v Panetolikos, Greece) are API-Football's error, not the board's, so neither league joins `sources.AF_RETIME`.
+**Why:** after 20 Nov a named kick-off miss led to a league joining `AF_RETIME`; here the published listings agree with the board (18:30 and 19:00 UTC) and retiming would have moved both games four hours early. The guard left them unpriced, which is right.
+**Evidence:** the last 25 deploy logs (Serie B named on 10 builds, Greece on 4); listings in `claude/kickoff-board-right-2026-11-25.md`. `tests/test_football_unpriced.py` `test_af_spelling_bolivia` (fails without the spelling); full suite OK; nametest clear.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `claude/kickoff-board-right-2026-11-25.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `AF_RETIME`, any Card rule (`CARD_RULE` 14), the model, the page.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-25-results-crosscheck: graded football results checked against API-Football (tag pending)
 
 **What changed:** `periods.py` already matched every graded football fixture to API-Football's cached day file for its half-time score, and threw away any whose full time disagreed with the graded result, counting it only. It now names each one in `periods/disagree.json` (both scores, API-Football's fixture id and names, how closely the names match) and in the build log, keeps it while the record grades the fixture the same way, and drops it and looks again when the record is regraded (the half time is then kept). The nightly Card review's integrity check raises `result-disagrees` when a settled football leg of a slip Douglas stakes (the Card, the Daily 2x, the List card) is one of them, with both names at 0.8+ similarity.

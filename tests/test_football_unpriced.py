@@ -132,6 +132,16 @@ class FootballUnpriced(unittest.TestCase):
         self.assertEqual(r["matched"], 3)
         self.assertNotIn("miss", r)
 
+    def test_af_spelling_bolivia(self):
+        """25 Nov 2026 16:05 build: GV San José beside API-Football's Gualberto Villarroel SJ."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.70"}, {"value": "Draw", "odd": "3.8"}, {"value": "Away", "odd": "4.5"}]}]}]}]
+        r = self.run_price([leg(t, "GV San José", "Real Potosí", "División Profesional")],
+                           [fx(95, t, "Gualberto Villarroel SJ", "Real Potosí")], {95: book})
+        self.assertEqual(r["matched"], 1)
+        self.assertNotIn("miss", r)
+
     def test_af_spellings_second_read(self):
         """19 Nov 2026 07:13 build: six more board names beside their fixture under another spelling."""
         t = date.today().isoformat()
