@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-card-short-log: the page keeps its own read of each Card day (tag pending)
+
+**What changed:** every build now logs, for each day it builds, what the page saw of the Card: whether a group stood (and its picks) or `card_short`'s reason (few, spread, long, short, chance), and the picks clear of the rule at that build's prices. A day's entry is added only when that changed, kept 30 days in `groupings-archive/card-short.json` (committed with the archive). The nightly Card review's Fidelity block reads it for every group the replay built and the page did not: whether the page ever had those picks clear together, else how often each was clear, and the last read.
+**Why:** on 23 and 24 Nov the pool replay built groups at first prices (Hammarby IF, Oklahoma City Thunder, San Antonio Spurs; Boston Celtics, Salisbury, Torquay) and the page left both days empty, and nothing kept what the page saw build by build. The 30 Nov read of rule 14 against `rule13` rests on how far the replay's live row is the page's Card; this answers it from the page's side from today.
+**Evidence:** a logging change, no rule read. `tests/test_card_short_log.py` (nine); full suite OK; nametest clear; a local fast build and `groupings.py` run wrote the log.
+**Files:** `groupings.py` (`card_cands`, `short_entry`, `log_short`, `SHORT_LOG*`; `card_short` reads `card_cands`, worked once a day a build), `tools/card_review_post.py` (`_page_read` in `fidelity_why`), the test, `claude/card-short-log-2026-11-25.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule (`CARD_RULE` 14), the page, the record, the model.
+**Roll back:** `git revert` the merge; the log file can stay or be deleted.
+
 ## 2026-11-25-settle-rematch: football legs settle only from their own fixture (tag pending)
 
 **What changed:** a football leg (Card, Daily 2x, List card, the pool replay and every tool that settles pool legs) is settled only by a result of the same ordered pair within 3 days of its date, nearest first. Before, a miss fell back to any meeting of the pair in the record: the replay had settled five unplayed MLS and Liga MX play-off games (26 to 28 Nov) from league games up to two months old, and two retired groups (4 and 18 Oct) took the result of a postponed game played weeks later; those legs are now voided by the grader, as a bookmaker would.

@@ -687,6 +687,27 @@ def _why_group(picks, faults):
     return "choice", "every pick clear"
 
 
+def _page_read(day, picks, archive="groupings-archive"):
+    """25 Nov 2026: what the page saw of a replay-only group's picks, from the
+    empty-day log (groupings.log_short, groupings-archive/card-short.json):
+    whether any build had them all clear of the rule together, else how many
+    builds each was clear at, and the last build's reason. None when the log
+    has no entry for the day (days before it was kept)."""
+    try:
+        with open(os.path.join(archive, "card-short.json")) as f: es = (json.load(f) or {}).get(day) or []
+    except Exception:
+        return None
+    if not es: return None
+    clear = [{c[0] for c in e.get("clear") or []} for e in es]
+    together = sum(1 for c in clear if set(picks) <= c)
+    head = f"the page's own reads, {len(es)} logged from {es[0]['at'][5:16].replace('T', ' ')} UTC"
+    last = es[-1].get("why")
+    if together:
+        return f"{head}: all clear together at {together} (the page grouped them another way or held a group); last read {last}"
+    each = ", ".join(f"{p} {sum(1 for c in clear if p in c)}" for p in picks)
+    return f"{head}: never all clear together (clear in: {each}); last read {last}"
+
+
 def fidelity_why(rec, rep, rep_close=None, today_=None, archive="groupings-archive"):
     """24 Nov 2026 (evening): why each group differs between the page and the
     replay's live row on the live rule's settled days, read on the replay's
@@ -727,6 +748,8 @@ def fidelity_why(rec, rep, rep_close=None, today_=None, archive="groupings-archi
             for label, r in prices[1:]:
                 kind, words = _why_group(picks, (r.get("legFaults") or {}).get(d) or {})
                 reads.append(f"at {label} prices {words}")
+            pr = _page_read(d, picks, archive)
+            if pr: reads.append(pr)
             rep_lines.append(f"{d[5:]} {', '.join(picks)}" + (": " + "; ".join(reads) if reads else ""))
     if not page_lines and not rep_lines: return []
     out = []
