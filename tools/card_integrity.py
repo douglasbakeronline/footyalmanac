@@ -37,6 +37,11 @@ Checks:
                         two-day group and a 15 Nov group built after
                         midnight). Read from TWICE_FROM, the day the build
                         began carrying the day before's two-day picks.
+  result-disagrees      a settled football leg of a staked slip whose graded
+                        score API-Football's day file gives another way
+                        (periods/disagree.json, 25 Nov 2026, #472), both names
+                        matching closely (DISAGREE_SIM): a wrong grade would
+                        misstate the Card's record. Read from DISAGREE_FROM.
 """
 import gzip, json, os, sys
 from datetime import datetime, timedelta, timezone
@@ -46,6 +51,8 @@ import groupings as G
 
 now = datetime.now(timezone.utc)
 TWICE_FROM = "2026-11-16"   # groupings.span_held, 15 Nov 2026; 15 Nov's own double is in claude/card-span-held-2026-11-15.md
+DISAGREE_FROM = "2026-11-25"   # periods.py names disagreements from this release
+DISAGREE_SIM = 0.8             # both names at least this close (odds.name_sim): a looser pair may be another fixture
 PRICED_FROM = "2026-11-10"   # archive_pool writes `priced` from the 9 Nov 2026 release; rows first written before carry none
 
 
@@ -138,6 +145,28 @@ def picks_twice(groups_by_day, since=TWICE_FROM):
     return out
 
 
+def result_disagrees(rec_days, dis, since=DISAGREE_FROM):
+    """Settled football legs of staked slips whose graded score a second source
+    (API-Football, via periods.py) gives another way."""
+    out, seen = [], set()
+    for d in rec_days:
+        if d.get("date", "") < since: continue
+        for g in d.get("groups", []):
+            if not staked(g.get("name")): continue
+            for l in g.get("legs", []):
+                if l.get("sport") != "football" or l.get("status") not in ("won", "lost"): continue
+                x = full_leg(d["date"], l)
+                e = dis.get((x.get("date"), x.get("home"), x.get("away")))
+                if not e or min(e.get("sim") or [0]) < DISAGREE_SIM: continue
+                k = (x.get("date"), x.get("home"), x.get("away"), g.get("name"))
+                if k in seen: continue
+                seen.add(k)
+                out.append({"check": "result-disagrees", "date": d["date"], "group": g["name"], "pick": l.get("pick"),
+                            "event": l.get("event"), "graded": "-".join(map(str, e.get("graded") or [])),
+                            "apiFootball": "-".join(map(str, e.get("af") or [])), "fid": e.get("fid")})
+    return out
+
+
 _ARCH = {}
 
 
@@ -207,6 +236,8 @@ def main():
     cov, (have, total) = card_coverage(by_day)
     findings += cov
     findings += picks_twice(by_day)
+    import periods
+    findings += result_disagrees(rec.get("days", []), periods.disagreements())
     if total: print(f"Card legs since {PRICED_FROM} the pool can replay at a real price: {have} of {total}")
     for f in findings: print(" ".join(f"{k}={v}" for k, v in f.items()))
     print(f"{len(findings)} finding(s)")
