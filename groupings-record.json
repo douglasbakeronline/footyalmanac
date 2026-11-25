@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T16:50:14Z",
+ "graded": "2026-11-25T17:40:40Z",
  "overall": {
   "groups": 154,
   "settled": 153,
@@ -7,8 +7,8 @@
   "z": -1.01,
   "lost": 106,
   "pending": 1,
-  "legs": 581,
-  "legsWon": 426,
+  "legs": 583,
+  "legsWon": 428,
   "returned": 133.66,
   "staked": 153,
   "returnedBest": 138.72,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 186,
    "shortened": 71,
-   "drifted": 71,
-   "mean": 0.0
+   "drifted": 72,
+   "mean": -0.0002
   }
  },
  "cardLegsBySport": {
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 80,
-   "won": 70,
-   "rate": 0.875,
-   "quoted": 0.8748,
-   "returned": 76.65,
-   "ret": -0.0419
+   "n": 81,
+   "won": 71,
+   "rate": 0.8765,
+   "quoted": 0.8744,
+   "returned": 77.9,
+   "ret": -0.0383
   },
   "notAtBook": {
    "n": 179,
@@ -212,12 +212,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 21,
-     "won": 19,
-     "rate": 0.9048,
-     "quoted": 0.8552,
-     "returned": 21.73,
-     "ret": 0.0348
+     "n": 22,
+     "won": 20,
+     "rate": 0.9091,
+     "quoted": 0.8548,
+     "returned": 22.98,
+     "ret": 0.0445
     },
     "notAtBook": {
      "n": 6,
@@ -590,8 +590,8 @@
    "ncaab|montana state bobcats|northwest indian redhawks|2026-11-26": -1,
    "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": 0,
    "ncaab|utsa roadrunners|army black knights|2026-11-26": -1,
-   "football|real estelí|rancho santana|2026-11-26": 1.1,
-   "football|managua|walter ferretti|2026-11-26": 1.57,
+   "football|real estelí|rancho santana|2026-11-26": 1.11,
+   "football|managua|walter ferretti|2026-11-26": 1.62,
    "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": -1,
    "ncaab|missouri tigers|arkansas-pine bluff golden lions|2026-11-27": -1,
    "ncaab|lafayette leopards|niagara purple eagles|2026-11-27": -1,
@@ -1145,8 +1145,8 @@
   "z": -0.32,
   "lost": 6,
   "pending": 0,
-  "legs": 29,
-  "legsWon": 22,
+  "legs": 30,
+  "legsWon": 23,
   "returned": 8.08,
   "staked": 9,
   "returnedBest": 8.12,
@@ -1170,8 +1170,8 @@
   "z": 1.72,
   "lost": 0,
   "pending": 1,
-  "legs": 10,
-  "legsWon": 10,
+  "legs": 11,
+  "legsWon": 11,
   "returned": 4.24,
   "staked": 2,
   "returnedBest": 4.37,
@@ -1184,8 +1184,8 @@
   "clv": {
    "n": 9,
    "shortened": 4,
-   "drifted": 3,
-   "mean": 0.0206
+   "drifted": 4,
+   "mean": 0.0169
   }
  },
  "cardByRule": {
@@ -1517,9 +1517,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "FC Gifu",
@@ -1555,8 +1555,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8503,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-0",
        "opp": 8.07,
        "rule12Fault": null,
        "r12": false
@@ -1603,9 +1603,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 3,
      "legs": [
       {
        "pick": "Al Ula",
@@ -1621,8 +1621,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8503,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-0",
        "opp": 8.01,
        "rule12Fault": null,
        "r12": false
@@ -1655,7 +1655,7 @@
        "when": "2026-11-26T01:00:00Z",
        "odds": 1.1,
        "best": 1.14,
-       "lastOdds": 1.1,
+       "lastOdds": 1.11,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1675,7 +1675,7 @@
        "when": "2026-11-26T01:00:00Z",
        "odds": 1.52,
        "best": 1.57,
-       "lastOdds": 1.55,
+       "lastOdds": 1.59,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,

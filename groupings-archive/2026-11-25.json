@@ -598,7 +598,7 @@
      "firstOdds": 1.41,
      "lastOdds": 1.38,
      "lastBest": 1.38,
-     "lastAt": "2026-11-25T16:50:03Z"
+     "lastAt": "2026-11-25T17:39:42Z"
     }
    ],
    "tested": 0.4308,
@@ -929,7 +929,7 @@
      "firstOdds": 1.02,
      "lastOdds": 1.06,
      "lastBest": 1.06,
-     "lastAt": "2026-11-25T16:50:03Z"
+     "lastAt": "2026-11-25T17:39:42Z"
     },
     {
      "sport": "football",
@@ -1127,9 +1127,9 @@
      "edge": -0.1117,
      "basis": "model",
      "firstOdds": 1.1,
-     "lastOdds": 1.1,
+     "lastOdds": 1.11,
      "lastBest": 1.14,
-     "lastAt": "2026-11-25T16:50:03Z"
+     "lastAt": "2026-11-25T17:39:42Z"
     },
     {
      "sport": "football",
@@ -1327,9 +1327,9 @@
      "edge": -0.0932,
      "basis": "model",
      "firstOdds": 1.52,
-     "lastOdds": 1.55,
-     "lastBest": 1.57,
-     "lastAt": "2026-11-25T16:50:03Z"
+     "lastOdds": 1.59,
+     "lastBest": 1.62,
+     "lastAt": "2026-11-25T17:39:42Z"
     }
    ],
    "tested": 0.365,
