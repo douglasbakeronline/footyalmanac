@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T19:04:35Z",
+ "graded": "2026-11-25T20:31:31Z",
  "overall": {
   "groups": 154,
   "settled": 153,
@@ -7,8 +7,8 @@
   "z": -1.01,
   "lost": 106,
   "pending": 1,
-  "legs": 583,
-  "legsWon": 428,
+  "legs": 584,
+  "legsWon": 429,
   "returned": 133.66,
   "staked": 153,
   "returnedBest": 138.72,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 81,
-   "won": 71,
-   "rate": 0.8765,
-   "quoted": 0.8744,
-   "returned": 77.9,
-   "ret": -0.0383
+   "n": 82,
+   "won": 72,
+   "rate": 0.878,
+   "quoted": 0.8752,
+   "returned": 78.96,
+   "ret": -0.0371
   },
   "notAtBook": {
    "n": 179,
@@ -256,12 +256,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 40,
-     "won": 35,
-     "rate": 0.875,
-     "quoted": 0.8996,
-     "returned": 36.91,
-     "ret": -0.0772
+     "n": 41,
+     "won": 36,
+     "rate": 0.878,
+     "quoted": 0.9005,
+     "returned": 37.97,
+     "ret": -0.0739
     },
     "notAtBook": {
      "n": 172,
@@ -592,6 +592,7 @@
    "ncaab|utsa roadrunners|army black knights|2026-11-26": -1,
    "football|real estelí|rancho santana|2026-11-26": 1.11,
    "football|managua|walter ferretti|2026-11-26": 1.62,
+   "football|diriangén|matagalpa|2026-11-27": 0,
    "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": -1,
    "ncaab|missouri tigers|arkansas-pine bluff golden lions|2026-11-27": -1,
    "ncaab|lafayette leopards|niagara purple eagles|2026-11-27": -1,
@@ -1170,8 +1171,8 @@
   "z": 1.72,
   "lost": 0,
   "pending": 1,
-  "legs": 11,
-  "legsWon": 11,
+  "legs": 12,
+  "legsWon": 12,
   "returned": 4.24,
   "staked": 2,
   "returnedBest": 4.37,
@@ -1603,9 +1604,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 3,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Al Ula",
@@ -1641,8 +1642,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8563,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "Maria Lourdes Carle (ARG) bt Sol Ailin Larraya Guidi (ARG) 6-3 6-1",
        "opp": 17.16,
        "rule12Fault": null,
        "r12": false
