@@ -12,6 +12,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-replay-differs: the Card review counts the days a variant differs from live (tag pending)
+
+**What changed:** nothing on the site. The nightly Card review's archive table has a "differs: days / legs" column: the days a replay variant's groups are not live's, and its legs on them. A p(worse) on few differing days is thin: `m7cap160` read p(worse) 0.0 on 27 legs, from two differing days and three legs. Rule 13, the only variant at the 100-leg gate, differs on 21 days and all 120 legs, so its read stands.
+
+**Evidence:** `claude/card-replay-differs-2026-11-25.md` (the pool replay from 29 Oct re-run, numbers identical to the 24 Nov review); `tests/test_card_replay_differs.py` (five).
+
+**Files:** `tools/card_replay.py` (`pair_days`, `daysDiffer` / `legsDiffer`), `tools/card_review_post.py` (`differs`, the column and the watch line), the test, the note, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** the decision gate, any Card rule (`CARD_RULE` 14 until the 30 Nov read), the record, the replay's numbers.
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-24-fidelity-why: the Card review says why the page and the replay differ (tag pending)
 
 **What changed:** nothing on the site. Under the nightly Card review's Fidelity line, each Card group the page published that the replay's live row did not rebuild is now read pick by pick at the first and the last pre-start price (refused at that price, every pick clear, or not in the pool), with when the page first published it; the replay's groups the page did not publish are read at the last price. On 19 to 23 Nov: one of the page's two unrebuilt groups is the price (21 Nov's Ascoli / Lazio / 76ers passed only on the morning's prices), the other is the page's hold (Galatasaray / Mlada Boleslav / Rapid Wien, published the evening before, every pick clear at both prices; the replay grouped the same legs with Alianza Lima instead); 23 Nov's empty page is Hammarby's price shortening out of value.

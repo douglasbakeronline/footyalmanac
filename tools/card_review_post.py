@@ -83,6 +83,14 @@ def gate_legs(r):
     return ((r.get("fill") or {}).get("legs") or 0) if "fill" in r else (r.get("legs") or 0)
 
 
+def differs(r):
+    """25 Nov 2026: the days a variant's groups differ from live's and its legs
+    on them (`daysDiffer`, `legsDiffer` from card_replay.pair_days); blank for
+    live and for a replay written before the field existed."""
+    if r.get("daysDiffer") is None: return ""
+    return f"{r['daysDiffer']} / {r['legsDiffer']}"
+
+
 def fill_lines(rep):
     """10 Nov 2026 (#155): each empty-day filler on its own days. fillwide is
     the page's fallback today; a filler is worth its place only if its own
@@ -952,9 +960,10 @@ def review_body():
     lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"), rep_close=rep_close)
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
-                  "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) |", "|---|---|---|---|---|---|---|---|---|"]
+                  "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) | differs: days / legs |", "|---|---|---|---|---|---|---|---|---|---|"]
         for v, r in rep["variants"].items():
-            lines.append(f"| {v} | {r['groups']} | {r['won']} | {r['expected']} | {r.get('legs', '')} | {pct((r['return'] or 1) - 1) if r['return'] else 'n/a'} | {r['emptyDays']} | {r.get('vsLivePerDay', '')} | {r.get('pWorse', '')} |")
+            lines.append(f"| {v} | {r['groups']} | {r['won']} | {r['expected']} | {r.get('legs', '')} | {pct((r['return'] or 1) - 1) if r['return'] else 'n/a'} | {r['emptyDays']} | {r.get('vsLivePerDay', '')} | {r.get('pWorse', '')} | {differs(r)} |")
+        lines += ["`differs`: the days a variant's groups are not live's and its legs on them (25 Nov 2026). A p(worse) on few differing days is thin, however low.", ""]
         src = rep.get("source") or {}
         if src.get("pool"):
             # 9 Nov 2026: the legs come from the archived pool from poolFrom
@@ -985,7 +994,7 @@ def review_body():
                 and (r.get("vsLivePerDay") or 0) > 0 and (v, r) not in cands and gate_legs(r) > 0]
         empty = [v for v, r in rep["variants"].items() if v != "live" and (r.get("vsLivePerDay") or 0) > 0 and not gate_legs(r)]
         if near:
-            lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({gate_legs(rep['variants'][v])} legs)" for v in near) + ".", ""]
+            lines += ["Ahead of live but under the 100-leg gate (watch, do not act): " + ", ".join(f"{v} ({gate_legs(rep['variants'][v])} legs" + (f", differs on {rep['variants'][v]['daysDiffer']} day(s), {rep['variants'][v]['legsDiffer']} legs" if rep['variants'][v].get('daysDiffer') is not None else "") + ")" for v in near) + ".", ""]
         if empty:
             lines += ["Built nothing on these days, so ahead of live only by live's losses (not a read): " + ", ".join(empty) + ".", ""]
         lines += fd_gate_lines(rep, load("card-legs-history.json"))

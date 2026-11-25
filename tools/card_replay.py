@@ -646,15 +646,17 @@ def main():
             else: print("         filler alone: no groups on the empty days")
     pairs = [(v, "live") for v in VARIANTS if v != "live"] + [(v, "rule6") for v in sorted(RULE6_FAMILY - {"rule6"})]
     for v, base in pairs:
-        a, b = out[base], out[v]
-        alld = sorted(set(a) | set(b)); diffs = []
-        for d in alld:
-            ra = sum(g["stake"] * g["odds"] for g in a.get(d, []) if g["won"]) - sum(g["stake"] for g in a.get(d, []))
-            rb = sum(g["stake"] * g["odds"] for g in b.get(d, []) if g["won"]) - sum(g["stake"] for g in b.get(d, []))
-            diffs.append(rb - ra)
+        alld, diffs, ddays, dlegs = pair_days(out[base], out[v])
         if not diffs: continue
         keys = ("vsLivePerDay", "pWorse") if base == "live" else ("vsRule6PerDay", "pWorseVsRule6")
         if v in RULE6_FAMILY: report["variants"][v]["base"] = "rule6"
+        if base == "live":
+            # 25 Nov 2026: the days and legs the variant actually differs from
+            # live on. p(worse) and the 100-leg gate were read on every leg the
+            # variant built, most of them shared with live: m7cap160 read
+            # p(worse) 0.0 on 27 legs from the few days it differs
+            # (claude/card-replay-differs-2026-11-25.md)
+            report["variants"][v].update({"daysDiffer": ddays, "legsDiffer": dlegs})
         if not any(diffs):
             print(f"paired {v} - {base} on {len(alld)} days: identical to {base}")
             report["variants"][v].update({keys[0]: 0.0, keys[1]: None}); continue
@@ -676,6 +678,24 @@ def main():
 def live_rule_from():
     """The day the live CARD_RULE took over (RULES' open-ended row)."""
     return next((a for n, v, a, b, w in reversed(RULES) if b is None), None)
+
+
+def pair_days(a, b):
+    """25 Nov 2026: a variant's days (b) against its base's (a), day by day.
+    Returns the days either built on, each day's profit difference (b - a, a
+    unit a stake), the days whose groups differ (by their picks or stake) and the
+    variant's legs on those days. A day whose groups are the same picks adds
+    nothing to the comparison, so `daysDiffer` / `legsDiffer` say how much
+    evidence a p(worse) rests on."""
+    def sig(gl): return sorted((g["stake"],) + tuple(sorted((l.get("event") or "", l["pick"]) for l in g["legs"])) for g in gl)
+    def pnl(gl): return sum(g["stake"] * g["odds"] for g in gl if g["won"]) - sum(g["stake"] for g in gl)
+    alld = sorted(set(a) | set(b)); diffs, ddays, dlegs = [], 0, 0
+    for d in alld:
+        ga, gb = a.get(d, []), b.get(d, [])
+        diffs.append(pnl(gb) - pnl(ga))
+        if sig(ga) != sig(gb):
+            ddays += 1; dlegs += sum(len(g["legs"]) for g in gb)
+    return alld, diffs, ddays, dlegs
 
 
 def leg_faults(by, dates, since=None):
