@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T05:00:30Z",
+ "graded": "2026-11-25T07:08:40Z",
  "overall": {
   "groups": 152,
   "settled": 152,
@@ -198,9 +198,9 @@
    "ret": -0.0419
   },
   "notAtBook": {
-   "n": 177,
-   "won": 170,
-   "rate": 0.9605,
+   "n": 178,
+   "won": 171,
+   "rate": 0.9607,
    "quoted": 0.9153
   },
   "unchecked": {
@@ -264,9 +264,9 @@
      "ret": -0.0772
     },
     "notAtBook": {
-     "n": 170,
-     "won": 163,
-     "rate": 0.9588,
+     "n": 171,
+     "won": 164,
+     "rate": 0.9591,
      "quoted": 0.9179
     },
     "unchecked": {
@@ -574,21 +574,21 @@
    "ncaab|florida state seminoles|unc asheville bulldogs|2026-11-25": 0,
    "ncaab|st. john's red storm|oregon ducks|2026-11-25": 0,
    "ncaab|kansas state wildcats|gonzaga bulldogs|2026-11-25": 0,
-   "ncaab|miami (oh) redhawks|eastern kentucky colonels|2026-11-25": 0,
-   "ncaab|columbia lions|saint peter's peacocks|2026-11-25": 0,
+   "ncaab|miami (oh) redhawks|eastern kentucky colonels|2026-11-25": 1.05,
+   "ncaab|columbia lions|saint peter's peacocks|2026-11-25": 1.05,
    "ncaab|oklahoma state cowboys|jackson state tigers|2026-11-25": -1,
    "ncaab|utah tech trailblazers|bethesda flames|2026-11-25": -1,
-   "ncaab|lsu new orleans privateers|grambling tigers|2026-11-25": -1,
+   "ncaab|lsu new orleans privateers|grambling tigers|2026-11-25": 0,
    "ncaab|nebraska cornhuskers|southern jaguars|2026-11-25": 0,
    "ncaab|texas state bobcats|alcorn state braves|2026-11-25": 0,
    "ncaab|dartmouth big green|holy cross crusaders|2026-11-25": 0,
    "ncaab|syracuse orange|ualbany great danes|2026-11-25": 0,
-   "ncaab|the citadel bulldogs|south carolina upstate spartans|2026-11-26": -1,
+   "ncaab|the citadel bulldogs|south carolina upstate spartans|2026-11-26": 0,
    "ncaab|george mason patriots|longwood lancers|2026-11-26": 0,
    "ncaab|nc state wolfpack|norfolk state spartans|2026-11-26": 0,
    "ncaab|wisconsin badgers|northeastern huskies|2026-11-26": 0,
    "ncaab|montana state bobcats|northwest indian redhawks|2026-11-26": -1,
-   "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": -1,
+   "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": 0,
    "ncaab|utsa roadrunners|army black knights|2026-11-26": -1,
    "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": -1,
    "ncaab|missouri tigers|arkansas-pine bluff golden lions|2026-11-27": -1,
