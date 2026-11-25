@@ -153,6 +153,13 @@ class Sending(unittest.TestCase):
 
 
 class Run(unittest.TestCase):
+    def setUp(self):   # 25 Nov 2026: a sent daily email is kept (mailer.keep); never in the repo's folder from a test
+        import tempfile
+        self._tmp = tempfile.TemporaryDirectory(); self._old = M.MAIL_ARCHIVE; M.MAIL_ARCHIVE = self._tmp.name
+
+    def tearDown(self):
+        M.MAIL_ARCHIVE = self._old; self._tmp.cleanup()
+
     def test_silent_without_secrets(self):
         out = io.StringIO()
         with redirect_stdout(out):
