@@ -16,6 +16,12 @@ The full time is kept beside the half time so a mismatch shows (it must equal
 the graded result; `check` counts any that do not). Only graded fixtures are
 kept, so the files stay small (about 40 KB a month at today's volume).
 
+A graded fixture whose day file scores it another way is not kept as a half
+time; since 25 Nov 2026 (#472, a second source for the graded results) it is
+named in periods/disagree.json (both scores, API-Football's names and how
+closely they match) and in the build log, and dropped again when the record is
+regraded. tools/card_integrity.py reads it for the legs Douglas stakes.
+
 The US sports, rugby and college sports keep their points by period in
 history-sports/ (sports._game, `hp` / `ap`); tennis keeps every set score in
 tennis-record.json's notes. So this file is football's only.
@@ -34,6 +40,8 @@ OUT_DIR = os.path.join(HERE, "periods")
 LOOKBACK = 180       # days of graded fixtures looked for on each run (10 until 16 Nov 2026: sources
                      # now fills older day files' half times once, HT_BACK_DAYS, so the season fills in)
 MISSED = "missed.json"   # fixtures tried against a day file with half times and not matched: never tried again
+DISAGREE = "disagree.json"  # 25 Nov 2026 (#472): graded results API-Football scores another way, named
+LOG_NAMES = 5            # disagreements named in the build log
 
 
 def _load(path, default=None):
@@ -42,6 +50,28 @@ def _load(path, default=None):
             return json.load(f)
     except Exception:
         return default
+
+
+def _write(path, obj):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path + ".tmp", "w", encoding="utf-8") as f:
+        json.dump(dict(sorted(obj.items())), f, separators=(",", ":"), ensure_ascii=False)
+    os.replace(path + ".tmp", path)
+
+
+def want_keys(games):
+    return [key_of(g) for g in games]
+
+
+def disagreements(here=HERE):
+    """{(date, home, away): entry} from periods/disagree.json: graded football
+    results API-Football's day file scores another way (25 Nov 2026, #472).
+    Keyed without the league so a Card leg (which keeps no league code) finds it."""
+    out = {}
+    for k, v in (_load(os.path.join(here, "periods", DISAGREE), {}) or {}).items():
+        _, d, h, a = (k.split("|") + ["", "", "", ""])[:4]
+        out[(d, h, a)] = dict(v, league=k.split("|")[0])
+    return out
 
 
 def key_of(g):
@@ -105,7 +135,18 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
         os.replace(path + ".tmp", path)
     mpath = os.path.join(here, "periods", MISSED)
     missed = {k: d for k, d in (_load(mpath, {}) or {}).items() if d >= since}
-    want = [g for g in graded if key_of(g) not in have and key_of(g) not in missed]
+    # 25 Nov 2026 (#472): a disagreement is kept while the record still grades the
+    # fixture as it did; a regrade (or the fixture leaving the window) drops it and
+    # the fixture is looked for again, so a corrected result can take its half time.
+    dpath = os.path.join(here, "periods", DISAGREE)
+    results = {key_of(g): list(g["result"]) for g in graded}
+    old_dis = _load(dpath, {}) or {}
+    disagree = {k: v for k, v in old_dis.items() if results.get(k) == list(v.get("graded") or [])}
+    retry = {k for k in old_dis if k not in disagree and k in results}
+    missed = {k: d for k, d in missed.items() if k not in retry}
+    want = [g for g in graded if key_of(g) not in have and key_of(g) not in missed and key_of(g) not in disagree]
+    if disagree != old_dis:
+        _write(dpath, disagree)
     if not want:
         return 0, 0, []
     dates = {date.fromisoformat(g["date"]) + timedelta(days=o) for g in want for o in (-1, 0, 1)}
@@ -130,15 +171,25 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
         g = want[i]
         t, h, a, ht, ft = days[fid]
         if list(ft) != list(g["result"]):
-            bad += 1                # the full time disagrees with the graded result: a wrong match, not kept
+            # the full time disagrees with the graded result: not kept as a half
+            # time, but named (25 Nov 2026, #472) as a second source's read of the
+            # score: a wrong grade, or a wrong match, for a person to tell apart
+            bad += 1
+            disagree[key_of(g)] = {"graded": list(g["result"]), "af": list(ft), "fid": int(fid),
+                                   "afHome": h, "afAway": a, "sim": [round(O.name_sim(g["home"], h), 2),
+                                                                    round(O.name_sim(g["away"], a), 2)]}
             continue
         path = os.path.join(here, "periods", f"football-{g['date'][:7]}.json")
         files[path][key_of(g)] = [ht[0], ht[1], ft[0], ft[1], int(fid)]
         touched.add(path)
         found += 1
     for i, g in enumerate(want):
+        if key_of(g) in disagree:
+            continue
         if key_of(g) not in files[os.path.join(here, "periods", f"football-{g['date'][:7]}.json")]:
             missed[key_of(g)] = g["date"]
+    if bad:
+        _write(dpath, disagree)
     os.makedirs(os.path.join(here, "periods"), exist_ok=True)
     with open(mpath + ".tmp", "w", encoding="utf-8") as f:
         json.dump(dict(sorted(missed.items())), f, separators=(",", ":"), ensure_ascii=False)
@@ -150,6 +201,12 @@ def build(here=HERE, today=None, cache_dir=None, log=None):
         os.replace(tmp, path)
     log.append(f"periods: {found} of {len(want)} graded football fixtures given a half-time score"
                + (f", {bad} refused (full time disagreed)" if bad else ""))
+    named = [k for k in want_keys(want) if k in disagree][:LOG_NAMES]
+    if named:
+        log.append("periods: API-Football scores these graded results another way: " + "; ".join(
+            f"{k.split('|')[2]} v {k.split('|')[3]} {k.split('|')[1]} graded {disagree[k]['graded'][0]}-{disagree[k]['graded'][1]}, "
+            f"API-Football {disagree[k]['af'][0]}-{disagree[k]['af'][1]} ({disagree[k]['afHome']} v {disagree[k]['afAway']})"
+            for k in named))
     return len(want), found, sorted(touched)
 
 

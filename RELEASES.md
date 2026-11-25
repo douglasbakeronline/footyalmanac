@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-results-crosscheck: graded football results checked against API-Football (tag pending)
+
+**What changed:** `periods.py` already matched every graded football fixture to API-Football's cached day file for its half-time score, and threw away any whose full time disagreed with the graded result, counting it only. It now names each one in `periods/disagree.json` (both scores, API-Football's fixture id and names, how closely the names match) and in the build log, keeps it while the record grades the fixture the same way, and drops it and looks again when the record is regraded (the half time is then kept). The nightly Card review's integrity check raises `result-disagrees` when a settled football leg of a slip Douglas stakes (the Card, the Daily 2x, the List card) is one of them, with both names at 0.8+ similarity.
+**Why:** #472 asks for a second source on the graded results. A wrong grade on a Card leg misstates the Card's record, and nothing compared the record with an independent score; the data to do it was already read every build and discarded.
+**Evidence:** a check, no rule read. `tests/test_results_crosscheck.py` (three: named, not marked missed, dropped on regrade; raised only for staked, settled, football, closely named legs from today); full suite (1,454) OK; nametest clear; the integrity check on today's record: 0 findings. The sandbox has no API-Football cache, so the first CI build's "periods:" lines are the first read.
+**Files:** `periods.py` (`DISAGREE`, `disagreements`, `_write`), `tools/card_integrity.py` (`result_disagrees`, `DISAGREE_FROM`, `DISAGREE_SIM`), the test, `claude/results-crosscheck-2026-11-25.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any grade (nothing regrades from API-Football; a person tells a wrong grade from a wrong match), any Card rule (`CARD_RULE` 14), the page, the model. Disagreements found before today sit in `periods/missed.json` and are not looked at again.
+**Roll back:** `git revert` the merge; `periods/disagree.json` can stay or be deleted.
+
 ## 2026-11-25-card-short-log: the page keeps its own read of each Card day (tag pending)
 
 **What changed:** every build now logs, for each day it builds, what the page saw of the Card: whether a group stood (and its picks) or `card_short`'s reason (few, spread, long, short, chance), and the picks clear of the rule at that build's prices. A day's entry is added only when that changed, kept 30 days in `groupings-archive/card-short.json` (committed with the archive). The nightly Card review's Fidelity block reads it for every group the replay built and the page did not: whether the page ever had those picks clear together, else how often each was clear, and the last read.
