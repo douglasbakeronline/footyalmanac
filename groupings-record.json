@@ -1,21 +1,21 @@
 {
- "graded": "2026-11-24T21:39:24Z",
+ "graded": "2026-11-25T00:41:40Z",
  "overall": {
   "groups": 152,
-  "settled": 151,
+  "settled": 152,
   "won": 47,
-  "z": -0.89,
-  "lost": 104,
-  "pending": 1,
-  "legs": 579,
+  "z": -0.93,
+  "lost": 105,
+  "pending": 0,
+  "legs": 581,
   "legsWon": 426,
   "returned": 133.66,
-  "staked": 151,
+  "staked": 152,
   "returnedBest": 138.72,
   "returnedLock": 16.44,
   "stakedLock": 19,
-  "expected": 52.1,
-  "unitsStaked": 180,
+  "expected": 52.36,
+  "unitsStaked": 181,
   "unitsReturned": 154.96,
   "unitsReturnedBest": 160.22,
   "clv": {
@@ -190,24 +190,24 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 79,
-   "won": 69,
-   "rate": 0.8734,
+   "n": 80,
+   "won": 70,
+   "rate": 0.875,
    "quoted": 0.8748,
-   "returned": 75.36,
-   "ret": -0.0461
+   "returned": 76.65,
+   "ret": -0.0419
   },
   "notAtBook": {
-   "n": 152,
-   "won": 148,
-   "rate": 0.9737,
-   "quoted": 0.9156
+   "n": 153,
+   "won": 149,
+   "rate": 0.9739,
+   "quoted": 0.9154
   },
   "unchecked": {
-   "n": 35,
+   "n": 36,
    "won": 32,
-   "rate": 0.9143,
-   "quoted": 0.8494
+   "rate": 0.8889,
+   "quoted": 0.8469
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 18,
+     "n": 19,
      "won": 15,
-     "rate": 0.8333,
-     "quoted": 0.7957
+     "rate": 0.7895,
+     "quoted": 0.7937
     }
    },
    "nba": {
@@ -256,18 +256,18 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 39,
-     "won": 34,
-     "rate": 0.8718,
-     "quoted": 0.9002,
-     "returned": 35.62,
-     "ret": -0.0867
+     "n": 40,
+     "won": 35,
+     "rate": 0.875,
+     "quoted": 0.8996,
+     "returned": 36.91,
+     "ret": -0.0772
     },
     "notAtBook": {
-     "n": 145,
-     "won": 141,
-     "rate": 0.9724,
-     "quoted": 0.9186
+     "n": 146,
+     "won": 142,
+     "rate": 0.9726,
+     "quoted": 0.9184
     },
     "unchecked": {
      "n": 13,
@@ -596,7 +596,29 @@
    "ncaab|kansas jayhawks|villanova wildcats|2026-11-27": -1,
    "ncaab|illinois fighting illini|western kentucky hilltoppers|2026-11-27": -1,
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": -1,
-   "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1
+   "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1,
+   "nba|detroit pistons|milwaukee bucks|2026-11-28": -1,
+   "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": -1,
+   "ncaab|northwestern wildcats|northeastern huskies|2026-11-28": -1,
+   "ncaab|nc state wolfpack|elon phoenix|2026-11-28": -1,
+   "ncaab|georgia tech yellow jackets|alcorn state braves|2026-11-28": -1,
+   "ncaab|columbia lions|north florida ospreys|2026-11-28": -1,
+   "ncaab|north carolina a&t aggies|delaware state hornets|2026-11-28": -1,
+   "ncaab|iowa hawkeyes|prairie view a&m panthers|2026-11-28": -1,
+   "ncaab|high point panthers|the citadel bulldogs|2026-11-28": -1,
+   "ncaab|george mason patriots|marist red foxes|2026-11-28": -1,
+   "ncaab|coastal carolina chanticleers|western illinois leathernecks|2026-11-28": -1,
+   "ncaab|ut martin skyhawks|kentucky christian knights|2026-11-28": -1,
+   "ncaab|utah valley wolverines|san josé state spartans|2026-11-28": -1,
+   "ncaab|furman paladins|austin peay governors|2026-11-28": -1,
+   "ncaab|san diego toreros|northern colorado bears|2026-11-28": -1,
+   "ncaab|lafayette leopards|maine black bears|2026-11-28": -1,
+   "ncaab|uc riverside highlanders|lincoln (ca) oaklanders|2026-11-28": -1,
+   "ncaab|cal state fullerton titans|weber state wildcats|2026-11-28": -1,
+   "ncaab|cal state bakersfield roadrunners|northern arizona lumberjacks|2026-11-28": -1,
+   "ncaab|pennsylvania quakers|bucknell bison|2026-11-28": -1,
+   "ncaab|richmond spiders|vmi keydets|2026-11-28": -1,
+   "ncaab|middle tennessee blue raiders|toccoa falls eagles|2026-11-28": -1
   }
  },
  "cardContext": {
@@ -1114,20 +1136,20 @@
  },
  "cardDaily": {
   "groups": 8,
-  "settled": 7,
+  "settled": 8,
   "won": 3,
-  "z": 0.21,
-  "lost": 4,
-  "pending": 1,
-  "legs": 25,
+  "z": 0.01,
+  "lost": 5,
+  "pending": 0,
+  "legs": 27,
   "legsWon": 21,
   "returned": 8.08,
-  "staked": 7,
+  "staked": 8,
   "returnedBest": 8.12,
   "returnedLock": 0,
   "stakedLock": 0,
-  "expected": 2.73,
-  "unitsStaked": 7,
+  "expected": 2.99,
+  "unitsStaked": 8,
   "unitsReturned": 8.08,
   "unitsReturnedBest": 8.12,
   "clv": {
@@ -1480,7 +1502,7 @@
      "wideRule": null,
      "odds": 2.81,
      "p": 0.2605,
-     "status": "pending",
+     "status": "lost",
      "stake": 1,
      "wide": false,
      "late": false,
@@ -1492,8 +1514,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 1,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Laura Samson",
@@ -1529,8 +1551,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7061,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "1-2",
        "opp": 5.82,
        "rule12Fault": null,
        "r12": false
@@ -1549,8 +1571,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.6945,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "1-1",
        "opp": 5.82,
        "rule12Fault": null,
        "r12": false
