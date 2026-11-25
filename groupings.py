@@ -449,6 +449,10 @@ AF_SPELLINGS = {
     # 21 Nov 2026 (16:05 UTC build): Washington Spirit v Kansas City Current,
     # NWSL, noFixture beside "Washington Spirit W v Kansas City W".
     "Kansas City Current": "Kansas City W",                # NWSL
+    # 25 Nov 2026 (16:05 UTC build): GV San José v Real Potosí, Bolivia's
+    # División Profesional, noFixture beside "Gualberto Villarroel SJ v Real
+    # Potosí" (claude/kickoff-board-right-2026-11-25.md).
+    "GV San José": "Gualberto Villarroel SJ",              # Bolivia
 }
 
 
