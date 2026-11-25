@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T04:09:11Z",
+ "graded": "2026-11-25T04:52:38Z",
  "overall": {
   "groups": 152,
   "settled": 152,
@@ -7,8 +7,8 @@
   "z": -0.93,
   "lost": 105,
   "pending": 0,
-  "legs": 582,
-  "legsWon": 427,
+  "legs": 580,
+  "legsWon": 426,
   "returned": 133.66,
   "staked": 152,
   "returnedBest": 138.72,
@@ -198,16 +198,16 @@
    "ret": -0.0419
   },
   "notAtBook": {
-   "n": 175,
-   "won": 168,
-   "rate": 0.96,
-   "quoted": 0.915
+   "n": 177,
+   "won": 170,
+   "rate": 0.9605,
+   "quoted": 0.9153
   },
   "unchecked": {
-   "n": 36,
+   "n": 35,
    "won": 32,
-   "rate": 0.8889,
-   "quoted": 0.8469
+   "rate": 0.9143,
+   "quoted": 0.8494
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 19,
+     "n": 18,
      "won": 15,
-     "rate": 0.7895,
-     "quoted": 0.7937
+     "rate": 0.8333,
+     "quoted": 0.7957
     }
    },
    "nba": {
@@ -264,10 +264,10 @@
      "ret": -0.0772
     },
     "notAtBook": {
-     "n": 168,
-     "won": 161,
-     "rate": 0.9583,
-     "quoted": 0.9176
+     "n": 170,
+     "won": 163,
+     "rate": 0.9588,
+     "quoted": 0.9179
     },
     "unchecked": {
      "n": 13,
@@ -597,6 +597,7 @@
    "ncaab|illinois fighting illini|western kentucky hilltoppers|2026-11-27": -1,
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": -1,
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1,
+   "football|boreham wood|gateshead|2026-11-28": 1.1,
    "nba|detroit pistons|milwaukee bucks|2026-11-28": -1,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": -1,
    "ncaab|northwestern wildcats|northeastern huskies|2026-11-28": -1,
@@ -822,7 +823,7 @@
    "z": -0.03,
    "lost": 12,
    "pending": 0,
-   "legs": 85,
+   "legs": 84,
    "legsWon": 64,
    "returned": 20.87,
    "staked": 17,
@@ -847,8 +848,8 @@
    "z": -1.57,
    "lost": 14,
    "pending": 0,
-   "legs": 74,
-   "legsWon": 50,
+   "legs": 73,
+   "legsWon": 49,
    "returned": 7.11,
    "staked": 15,
    "returnedBest": 7.46,
@@ -1470,8 +1471,8 @@
   "z": -1.52,
   "lost": 30,
   "pending": 0,
-  "legs": 188,
-  "legsWon": 144,
+  "legs": 187,
+  "legsWon": 143,
   "returned": 32.11,
   "staked": 39,
   "returnedBest": 34.32,
@@ -10868,7 +10869,7 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 4,
+     "legsWon": 3,
      "legsLost": 1,
      "legsPending": 0,
      "legs": [
@@ -10926,8 +10927,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7398,
-       "status": "won",
-       "result": "2-0",
+       "status": "void",
+       "result": "no result",
        "opp": null,
        "rule12Fault": null,
        "r12": false
@@ -17247,7 +17248,7 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 1,
-     "legsLost": 4,
+     "legsLost": 3,
      "legsPending": 0,
      "legs": [
       {
@@ -17284,8 +17285,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7117,
-       "status": "lost",
-       "result": "0-0",
+       "status": "void",
+       "result": "no result",
        "opp": null,
        "rule12Fault": null,
        "r12": false
