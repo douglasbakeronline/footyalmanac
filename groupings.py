@@ -2842,7 +2842,9 @@ def results_index():
     for date, g in rows:
         if g.get("result"):
             fb[(date, norm(g["home"]), norm(g["away"]))] = g["result"]
-            fb.setdefault((None, norm(g["home"]), norm(g["away"])), g["result"])
+            # 25 Nov 2026: no dateless key. It settled a leg from any meeting
+            # of the pair (an MLS play-off from a September league game);
+            # settle() looks SETTLE_NEAR_DAYS either side instead (_near_result)
     tn = {str(g.get("key")): g for g in trec.get("graded") or []} or \
          {str(g.get("key")): g for d in trec.get("days") or [] for g in d.get("games") or []}
     try:
@@ -2988,10 +2990,30 @@ def dead_fixtures(dates):
                 out.add((d, norm(h), norm(a)))
     return out
 
+SETTLE_NEAR_DAYS = 3   # a football result this close to a leg's date is its fixture (score.NEAR_DAYS, 25 Nov 2026)
+
+def _near_result(fb, date, home, away, days=SETTLE_NEAR_DAYS):
+    """The result of this ordered pair dated nearest the leg's own date, up to
+    `days` either side, the day before first on a tie (a result dated on the
+    UTC day, a round's nominal date). Until 25 Nov 2026 a miss fell back to
+    any meeting of the pair in the record: the pool replay settled five
+    unplayed MLS and Liga MX play-off games (26-28 Nov) from regular-season
+    results two months old, and 19 pool legs and two archived groups took a
+    result 5+ days from their date (claude/settle-rematch-2026-11-25.md)."""
+    r = fb.get((date, home, away))
+    if r or not date: return r
+    try: d0 = datetime.fromisoformat(str(date)[:10])
+    except ValueError: return None
+    for k in range(1, days + 1):
+        for s in (-k, k):
+            r = fb.get(((d0 + timedelta(days=s)).strftime("%Y-%m-%d"), home, away))
+            if r: return r
+    return None
+
 def settle(l, idx, dead=None):
     fb, tn, sp = idx
     if l["sport"] == "football":
-        r = fb.get((l["date"], norm(l["home"]), norm(l["away"]))) or fb.get((None, norm(l["home"]), norm(l["away"])))
+        r = _near_result(fb, l.get("date"), norm(l["home"]), norm(l["away"]))
         if not r:
             # 25 Oct 2026: a fixture the source marks postponed, cancelled or
             # abandoned is void, as a bookmaker settles it, and drops out of

@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-settle-rematch: football legs settle only from their own fixture (tag pending)
+
+**What changed:** a football leg (Card, Daily 2x, List card, the pool replay and every tool that settles pool legs) is settled only by a result of the same ordered pair within 3 days of its date, nearest first. Before, a miss fell back to any meeting of the pair in the record: the replay had settled five unplayed MLS and Liga MX play-off games (26 to 28 Nov) from league games up to two months old, and two retired groups (4 and 18 Oct) took the result of a postponed game played weeks later; those legs are now voided by the grader, as a bookmaker would.
+**Evidence:** `claude/settle-rematch-2026-11-25.md`. Pool replay from 29 Oct: 2,217 to 2,208 settled legs, the window ends 24 Nov (not 28 Nov); live unchanged (11 groups, 5 won v 4.53, +12.5%); `rule12` 25 to 24 groups; `m7under5` 7 to 8 of 19 won. `tests/test_settle_rematch.py` (six); full suite 1,442 OK; nametest clear.
+**Files:** `groupings.py` (`SETTLE_NEAR_DAYS`, `_near_result`, `results_index`, `settle`), the test, the note, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule (`CARD_RULE` 14), the model, tennis and US-sport settling, the archives (nothing edited by hand).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-25-nfl-shrink: NFL confidence shrink tested and rejected (tag pending)
 
 **What changed:** nothing on the site. A dated note only: the weakest other sport on the live record is NFL (73 of 116, 62.9% v 65.9% quoted, about -0.8 standard errors); a one-parameter confidence shrink was tested on history.
