@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-nfl-shrink: NFL confidence shrink tested and rejected (tag pending)
+
+**What changed:** nothing on the site. A dated note only: the weakest other sport on the live record is NFL (73 of 116, 62.9% v 65.9% quoted, about -0.8 standard errors); a one-parameter confidence shrink was tested on history.
+**Evidence:** paired bootstrap on log loss against live, shrink 0.8 to 1.1. Fit 2024-25 (n 285) prefers no shrink (+0.0025 at 0.90, p(worse) 0.86); check 2025-26 (n 317) gains only -0.0012 at 0.90 with p(worse) 0.31, over the 0.30 gate and under the fit season's sign. Fails Rule 3.
+**Files:** `claude/nfl-shrink-2026-11-25.md`, `RELEASES.md`.
+**Not changed:** `sports.py`, `sports.json`, every model number and the Daily List bars.
+**Roll back:** `git revert` the merge; no behaviour to undo.
+
 ## 2026-11-25-replay-differs: the Card review counts the days a variant differs from live (tag pending)
 
 **What changed:** nothing on the site. The nightly Card review's archive table has a "differs: days / legs" column: the days a replay variant's groups are not live's, and its legs on them. A p(worse) on few differing days is thin: `m7cap160` read p(worse) 0.0 on 27 legs, from two differing days and three legs. Rule 13, the only variant at the 100-leg gate, differs on 21 days and all 120 legs, so its read stands.
