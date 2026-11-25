@@ -3495,6 +3495,20 @@ def card_picks(L, date, now):
         out.append({k: l.get(k) for k in ("pick", "event", "sport", "comp", "when", "odds", "pModel", "fair", "bookOdds", "est", "context")})
     return sorted(out, key=lambda x: x.get("when") or "9")
 
+def card_cands(L, date, now, used=()):
+    """The day's picks the Card could group this build: placed on `date` by
+    UK start, not held by another day's group (`used`), clear of card_fault,
+    starting 20+ minutes out; one a fixture, most likely first (as_card).
+    card_short reads these; so does the empty-day log (25 Nov 2026)."""
+    after = now + timedelta(minutes=20)
+    c = [as_card(l) for l in L if (uk_slot(l) or (None,))[0] == date and l["event"] not in used
+         and card_fault(l) is None and (parse(l.get("when") or "") or after) >= after]
+    seen, cands = set(), []
+    for l in sorted(c, key=lambda l: -l["p"]):
+        if l["event"] in seen: continue
+        seen.add(l["event"]); cands.append(l)
+    return cands
+
 def card_short(L, date, now, used=()):
     """13 Nov 2026: why a day with no Card group has none, for the page. The
     day's picks that pass the Card's rule and have not started (the ones
@@ -3508,13 +3522,7 @@ def card_short(L, date, now, used=()):
     together, over the 2x band's 3.00."""
     name = built_kinds()[0][0]
     lo, hi = CARD_RANGE[name]
-    after = now + timedelta(minutes=20)
-    c = [as_card(l) for l in L if (uk_slot(l) or (None,))[0] == date and l["event"] not in used
-         and card_fault(l) is None and (parse(l.get("when") or "") or after) >= after]
-    seen, cands = set(), []
-    for l in sorted(c, key=lambda l: -l["p"]):
-        if l["event"] in seen: continue
-        seen.add(l["event"]); cands.append(l)
+    cands = card_cands(L, date, now, used)
     out = {"kind": name, "band": [lo, hi], "picks": len(cands), "comps": len({l.get("comp") for l in cands}),
            "need": min(CARD_LEGS), "best": None, "why": "few"}
     if len(cands) < min(CARD_LEGS): return out
@@ -3532,6 +3540,62 @@ def card_short(L, date, now, used=()):
     elif max(prices) < lo: out.update(why="short", best=round(max(prices), 2))
     else: out["why"] = "chance"      # sets on both sides of the band, none inside it
     return out
+
+# 25 Nov 2026: the page's own read of each Card day, build by build. The
+# pool replay reads every leg at its first real price, written days apart,
+# so on 23 and 24 Nov it built groups (Hammarby IF, Oklahoma City Thunder,
+# San Antonio Spurs; Boston Celtics, Salisbury, Torquay) the page never
+# published, and nothing kept what the page saw at each build to say why.
+# Each build appends, for every day it builds, the picks clear of the Card's
+# rule at that build's prices and whether a group stood (or card_short's
+# reason), only when that changed since the last entry.
+# claude/card-short-log-2026-11-25.md
+SHORT_LOG = "card-short.json"
+SHORT_LOG_DAYS = 30        # days of entries kept
+SHORT_LOG_KEEP = 40        # entries kept a day
+
+def short_entry(L, date, now, groups, used=(), short=False):
+    """One build's read of a Card day: `built` (the Card groups standing, each
+    its picks) or card_short's `why`, and the picks clear of the rule.
+    `short`, when given, is card_short's answer already worked this build."""
+    cards = [g for g in groups or [] if is_card(g.get("name")) and not g.get("wide")]
+    e = {"at": iso(now)}
+    if cards:
+        e["why"] = "built"
+        e["groups"] = [sorted(l.get("pick") for l in g.get("legs") or []) for g in cards]
+    else:
+        s_ = (card_short(L, date, now, used=used) if short is False else short) or {}
+        e["why"] = s_.get("why") or "none"
+        if s_.get("best") is not None: e["best"] = s_["best"]
+    e["clear"] = [[l.get("pick"), l.get("odds"), round(l.get("pModel") or l.get("p") or 0, 3)]
+                  for l in card_cands(L, date, now, used)]
+    return e
+
+def _short_same(a, b):
+    return {k: v for k, v in a.items() if k != "at"} == {k: v for k, v in b.items() if k != "at"}
+
+def log_short(entries, now, archive=None):
+    """Append {date: entry} to groupings-archive/card-short.json when a day's
+    read changed, trimmed to SHORT_LOG_DAYS days and SHORT_LOG_KEEP entries a
+    day. Returns the log. Never raises: a log is not worth a failed build."""
+    path = os.path.join(archive or ARCHIVE, SHORT_LOG)
+    try:
+        with open(path) as f: log = json.load(f)
+        if not isinstance(log, dict): log = {}
+    except Exception:
+        log = {}
+    for d, e in entries.items():
+        day = log.setdefault(d, [])
+        if day and _short_same(day[-1], e): continue
+        day.append(e); del day[:-SHORT_LOG_KEEP]
+    cut = (now.date() - timedelta(days=SHORT_LOG_DAYS)).isoformat()
+    log = {d: v for d, v in sorted(log.items()) if d >= cut}
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f: json.dump(log, f, separators=(",", ":"))
+    except Exception as ex:
+        print(f"groupings: card-short log not written ({type(ex).__name__}: {ex})", file=sys.stderr)
+    return log
 
 def context_record(idx, pool_dir=None):
     """11 Nov 2026 (CARD_CONTEXT): the context check graded forward. Every
@@ -3792,6 +3856,7 @@ def main():
     # 15 Nov 2026: the first day also respects the day before's two-day group
     yday = (today - timedelta(days=1)).isoformat()
     days, span_taken = [], span_held(dates[0], prev=(prev.get(yday) or {}).get("groups"))
+    short_log = {}
     for d in dates:
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
@@ -3802,6 +3867,10 @@ def main():
         groups = build_card(L, d, now, prev=pd.get("groups"), log=log, taken=span_taken)
         # 12 Nov 2026 (CARD_SPAN): the next day's picks a two-day group holds
         span_taken = {l["event"] for g in groups if g.get("span") for l in g["legs"]}
+        # 25 Nov 2026: what the page saw of this Card day at this build (log_short)
+        short = None if any(is_card(g.get("name")) for g in groups) else card_short(L, d, now, used=span_taken_in)
+        try: short_log[d] = short_entry(L, d, now, groups, used=span_taken_in, short=short)
+        except Exception as e: report.setdefault("errors", []).append(f"card-short: {type(e).__name__}: {str(e)[:120]}")
         # 11 Nov 2026: under CARD_RULE 7 the Card is the model's own picks, so the paper Model card stops
         if not CARD_MODEL_RULE: groups += build_model_card(L, d, now, prev=pd.get("groups"))
         # 16 Nov 2026: the List 2x on paper beside the Card (cardList)
@@ -3819,7 +3888,7 @@ def main():
                      # verdict, shown when they make no group (or more than the groups use)
                      "cardPicks": card_picks(L, d, now),
                      # 13 Nov 2026: why a day has no group, said plainly on the page
-                     "cardShort": None if any(is_card(g.get("name")) for g in groups) else card_short(L, d, now, used=span_taken_in),
+                     "cardShort": short,
                      "review": {s: sum(1 for g in groups if g.get("status") == s)
                                 for s in ("new", "holding", "replacement", "underway", "locked", "late")},
                      "previously": len(pd.get("groups") or []) if pd else None,
@@ -3862,6 +3931,7 @@ def main():
     json.dump(full, open(os.path.join(HERE, "groupings.json"), "w"), separators=(",", ":"))
     # 25 Oct 2026: the record is the locked Card, archived as each window locks.
     for d in days: archive_locked(d, out["generated"])
+    log_short(short_log, now)
     archive_pool(L, now, dates)
     update_closing(L, now, [(today + timedelta(days=i)).isoformat() for i in (-1, 0, 1)])
     record = grade()
