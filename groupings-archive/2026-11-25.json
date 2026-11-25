@@ -596,9 +596,9 @@
      "basis": "model",
      "tier": "reserve",
      "firstOdds": 1.41,
-     "lastOdds": 1.42,
-     "lastBest": 1.42,
-     "lastAt": "2026-11-25T12:54:42Z"
+     "lastOdds": 1.38,
+     "lastBest": 1.38,
+     "lastAt": "2026-11-25T15:38:23Z"
     }
    ],
    "tested": 0.4308,
@@ -623,6 +623,732 @@
    "stake": 0,
    "bookOdds": 2.45,
    "archivedAt": "2026-11-25T11:08:19Z"
+  },
+  {
+   "name": "List long",
+   "risk": "On trial: the list's picks, any price",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.17,
+   "p": 0.4601,
+   "pFair": 0.3378,
+   "implied": 0.4617,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 2,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Al Ula v Al-Adalah",
+     "home": "Al Ula",
+     "away": "Al-Adalah",
+     "side": "h",
+     "pick": "Al Ula",
+     "code": "af.308",
+     "comp": "Division 1",
+     "country": "Saudi Arabia",
+     "when": "2026-11-25T15:10:00Z",
+     "date": "2026-11-25",
+     "pModel": 0.8503,
+     "p": 0.8503,
+     "fx": {
+      "u21Side": false,
+      "league": "af.308",
+      "leagueName": "Division 1",
+      "short": "DIV",
+      "country": "Saudi Arabia",
+      "iso": "sau",
+      "tier": 2,
+      "order": 552,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-25",
+      "time": "15:10",
+      "kickoff": "2026-11-25T15:10:00Z",
+      "home": {
+       "name": "Al Ula",
+       "att": 1.6,
+       "def": 0.642,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Division 1",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WDWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 35,
+        "W": 21,
+        "D": 10,
+        "L": 4,
+        "GF": 74,
+        "GA": 32,
+        "GD": 42,
+        "Pts": 73,
+        "PPG": 2.086
+       },
+       "now": {
+        "P": 10,
+        "W": 9,
+        "D": 1,
+        "L": 0,
+        "GF": 25,
+        "GA": 6,
+        "GD": 19,
+        "Pts": 28,
+        "PPG": 2.8
+       }
+      },
+      "away": {
+       "name": "Al-Adalah",
+       "att": 1.113,
+       "def": 1.242,
+       "played": 11,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Division 1",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "DWLDD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 8,
+        "D": 9,
+        "L": 17,
+        "GF": 44,
+        "GA": 70,
+        "GD": -26,
+        "Pts": 33,
+        "PPG": 0.971
+       },
+       "now": {
+        "P": 11,
+        "W": 3,
+        "D": 5,
+        "L": 3,
+        "GF": 18,
+        "GA": 17,
+        "GD": 1,
+        "Pts": 14,
+        "PPG": 1.273
+       }
+      },
+      "p": {
+       "h": 0.8503,
+       "d": 0.0965,
+       "a": 0.0533
+      },
+      "xg": [
+       3.57,
+       0.91
+      ],
+      "btts": 0.556,
+      "over25": 0.6414,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8503,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7184,
+        0.1679,
+        0.1137
+       ],
+       "best": [
+        1.3,
+        5.5,
+        9.0
+       ],
+       "avg": [
+        1.27,
+        5.42,
+        8.01
+       ],
+       "ev": [
+        0.1054,
+        -0.4692,
+        -0.5203
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 3,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.85,
+       "to": null,
+       "hit": 0.8997,
+       "n": 628,
+       "cumHit": 0.8997,
+       "cumN": 628,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8997,
+     "n": 628,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.0965,
+     "multOnly": false,
+     "odds": 1.27,
+     "best": 1.3,
+     "books": 9,
+     "opp": 8.01,
+     "draw": 5.42,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.25,
+      "Bet365": 1.3,
+      "Betfair": 1.25,
+      "BetVictor": 1.25
+     },
+     "margin": 1.0986,
+     "pricedAt": "2026-11-25T11:07:09Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7874,
+     "pTested": 0.8503,
+     "fair": 0.7167,
+     "edge": -0.0898,
+     "basis": "model",
+     "firstOdds": 1.27
+    },
+    {
+     "sport": "tennis",
+     "event": "Maria Lourdes Carle v Sol Ailin Larraya Guidi",
+     "pick": "Maria Lourdes Carle",
+     "tour": "WTA",
+     "tournament": "IEB+ Argentina Open",
+     "players": [
+      "Maria Lourdes Carle",
+      "Sol Ailin Larraya Guidi"
+     ],
+     "comp": "IEB+ Argentina Open Round 1",
+     "when": "2026-11-25T18:00:00Z",
+     "timeEst": false,
+     "date": "2026-11-25",
+     "id": "186828",
+     "fx": {
+      "id": "186828",
+      "espn": [
+       "Maria Lourdes Carle",
+       "Sol Ailin Larraya Guidi"
+      ],
+      "tour": "WTA",
+      "date": "2026-11-25",
+      "time": "18:00",
+      "timeTbc": false,
+      "tournament": "IEB+ Argentina Open",
+      "round": "Round 1",
+      "surface": "Hard",
+      "playerA": "Maria Lourdes Carle",
+      "playerB": "Sol Ailin Larraya Guidi",
+      "ratingA": {
+       "elo": 1902,
+       "matches": 495,
+       "surfaceElo": 1741
+      },
+      "ratingB": {
+       "elo": 1544,
+       "matches": 66,
+       "surfaceElo": 1544
+      },
+      "p": {
+       "a": 0.8563,
+       "b": 0.1437
+      },
+      "pick": "Maria Lourdes Carle",
+      "confidence": 0.8563,
+      "tier": "Strong",
+      "rankA": null,
+      "rankB": null,
+      "rankAdjusted": false,
+      "accuracy": {
+       "from": 0.85,
+       "to": 0.9,
+       "hit": 0.9459,
+       "n": 37,
+       "cumHit": 0.9459,
+       "cumN": 37,
+       "quoted": 0.8721,
+       "rateSource": "live"
+      },
+      "rateSource": "live",
+      "list": true,
+      "reserve": false
+     },
+     "pModel": 0.8563,
+     "p": 0.8563,
+     "hit": 0.9459,
+     "n": 37,
+     "list": true,
+     "reserve": false,
+     "multOnly": true,
+     "listOff": false,
+     "tennisListOff": false,
+     "odds": 1.02,
+     "best": 1.02,
+     "bestBook": "Pinnacle",
+     "books": 1,
+     "opp": 17.16,
+     "draw": null,
+     "margin": 1.0358,
+     "pricedAt": "2026-11-25T11:09:01Z",
+     "src": "Pinnacle (PinnWire)",
+     "implied": 0.9804,
+     "pTested": 0.8563,
+     "fair": 0.9465,
+     "edge": -0.1266,
+     "basis": "model",
+     "firstOdds": 1.02,
+     "lastOdds": 1.02,
+     "lastBest": 1.02,
+     "lastAt": "2026-11-25T15:38:23Z"
+    },
+    {
+     "sport": "football",
+     "event": "Real Estelí v Rancho Santana",
+     "home": "Real Estelí",
+     "away": "Rancho Santana",
+     "side": "h",
+     "pick": "Real Estelí",
+     "code": "af.396",
+     "comp": "Primera Division",
+     "country": "Nicaragua",
+     "when": "2026-11-26T01:00:00Z",
+     "date": "2026-11-26",
+     "pModel": 0.8211,
+     "p": 0.8211,
+     "fx": {
+      "u21Side": false,
+      "league": "af.396",
+      "leagueName": "Primera Division",
+      "short": "PRI",
+      "country": "Nicaragua",
+      "iso": "nic",
+      "tier": 2,
+      "order": 538,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-26",
+      "time": "01:00",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "home": {
+       "name": "Real Estelí",
+       "att": 1.206,
+       "def": 0.69,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "LWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 43,
+        "W": 22,
+        "D": 14,
+        "L": 7,
+        "GF": 75,
+        "GA": 39,
+        "GD": 36,
+        "Pts": 80,
+        "PPG": 1.86
+       },
+       "now": {
+        "P": 17,
+        "W": 10,
+        "D": 4,
+        "L": 3,
+        "GF": 32,
+        "GA": 16,
+        "GD": 16,
+        "Pts": 34,
+        "PPG": 2.0
+       }
+      },
+      "away": {
+       "name": "Rancho Santana",
+       "att": 0.711,
+       "def": 1.326,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LLDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 36,
+        "W": 9,
+        "D": 6,
+        "L": 21,
+        "GF": 37,
+        "GA": 90,
+        "GD": -53,
+        "Pts": 33,
+        "PPG": 0.917
+       },
+       "now": {
+        "P": 17,
+        "W": 3,
+        "D": 4,
+        "L": 10,
+        "GF": 16,
+        "GA": 32,
+        "GD": -16,
+        "Pts": 13,
+        "PPG": 0.765
+       }
+      },
+      "p": {
+       "h": 0.8211,
+       "d": 0.1254,
+       "a": 0.0535
+      },
+      "xg": [
+       2.84,
+       0.62
+      ],
+      "btts": 0.4993,
+      "over25": 0.5807,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.8211,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8339,
+        0.1093,
+        0.0568
+       ],
+       "best": [
+        1.14,
+        9.0,
+        16.17
+       ],
+       "avg": [
+        1.1,
+        8.4,
+        16.17
+       ],
+       "ev": [
+        -0.0639,
+        0.1286,
+        -0.1347
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 4,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.8075,
+       "n": 644,
+       "cumHit": 0.853,
+       "cumN": 1272,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.853,
+     "n": 1272,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1254,
+     "multOnly": false,
+     "odds": 1.1,
+     "best": 1.14,
+     "books": 7,
+     "opp": 16.17,
+     "draw": 8.4,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.1,
+      "Bet365": 1.14,
+      "BetVictor": 1.08
+     },
+     "margin": 1.0891,
+     "pricedAt": "2026-11-25T11:07:11Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.9091,
+     "pTested": 0.8075,
+     "fair": 0.8347,
+     "edge": -0.1117,
+     "basis": "model",
+     "firstOdds": 1.1,
+     "lastOdds": 1.1,
+     "lastBest": 1.14,
+     "lastAt": "2026-11-25T15:38:23Z"
+    },
+    {
+     "sport": "football",
+     "event": "Managua v Walter Ferretti",
+     "home": "Managua",
+     "away": "Walter Ferretti",
+     "side": "h",
+     "pick": "Managua",
+     "code": "af.396",
+     "comp": "Primera Division",
+     "country": "Nicaragua",
+     "when": "2026-11-26T01:00:00Z",
+     "date": "2026-11-26",
+     "pModel": 0.7696,
+     "p": 0.7696,
+     "fx": {
+      "u21Side": false,
+      "league": "af.396",
+      "leagueName": "Primera Division",
+      "short": "PRI",
+      "country": "Nicaragua",
+      "iso": "nic",
+      "tier": 2,
+      "order": 538,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-26",
+      "time": "01:00",
+      "kickoff": "2026-11-26T01:00:00Z",
+      "home": {
+       "name": "Managua",
+       "att": 1.584,
+       "def": 0.674,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WLWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 41,
+        "W": 20,
+        "D": 9,
+        "L": 12,
+        "GF": 59,
+        "GA": 39,
+        "GD": 20,
+        "Pts": 69,
+        "PPG": 1.683
+       },
+       "now": {
+        "P": 17,
+        "W": 14,
+        "D": 2,
+        "L": 1,
+        "GF": 50,
+        "GA": 15,
+        "GD": 35,
+        "Pts": 44,
+        "PPG": 2.588
+       }
+      },
+      "away": {
+       "name": "Walter Ferretti",
+       "att": 1.208,
+       "def": 1.099,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 8,
+        "max": 15,
+        "seq": "WWDLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 38,
+        "W": 12,
+        "D": 12,
+        "L": 14,
+        "GF": 50,
+        "GA": 58,
+        "GD": -8,
+        "Pts": 48,
+        "PPG": 1.263
+       },
+       "now": {
+        "P": 17,
+        "W": 6,
+        "D": 4,
+        "L": 7,
+        "GF": 35,
+        "GA": 29,
+        "GD": 6,
+        "Pts": 22,
+        "PPG": 1.294
+       }
+      },
+      "p": {
+       "h": 0.7696,
+       "d": 0.1372,
+       "a": 0.0933
+      },
+      "xg": [
+       3.09,
+       1.04
+      ],
+      "btts": 0.5714,
+      "over25": 0.6241,
+      "score": [
+       3,
+       1
+      ],
+      "confidence": 0.7696,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5978,
+        0.2231,
+        0.1791
+       ],
+       "best": [
+        1.57,
+        4.33,
+        5.75
+       ],
+       "avg": [
+        1.52,
+        4.06,
+        5.06
+       ],
+       "ev": [
+        0.2083,
+        -0.4059,
+        -0.4635
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 6,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1372,
+     "multOnly": false,
+     "odds": 1.52,
+     "best": 1.57,
+     "books": 7,
+     "opp": 5.06,
+     "draw": 4.06,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.57,
+      "Bet365": 1.53,
+      "BetVictor": 1.44
+     },
+     "margin": 1.1028,
+     "pricedAt": "2026-11-25T11:07:11Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.6579,
+     "pTested": 0.7696,
+     "fair": 0.5966,
+     "edge": -0.0932,
+     "basis": "model",
+     "firstOdds": 1.52,
+     "lastOdds": 1.55,
+     "lastBest": 1.57,
+     "lastAt": "2026-11-25T15:38:23Z"
+    }
+   ],
+   "tested": 0.365,
+   "bestOdds": 2.37,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-25T11:08:19Z",
+   "checked": "2026-11-25T11:08:19Z",
+   "lockAt": "2026-11-25T15:10:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-25T15:38:23Z"
   }
  ]
 }
