@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T20:46:59Z",
+ "graded": "2026-11-25T21:08:05Z",
  "overall": {
   "groups": 154,
   "settled": 153,
@@ -22,7 +22,7 @@
    "n": 186,
    "shortened": 71,
    "drifted": 72,
-   "mean": -0.0002
+   "mean": 0.0001
   }
  },
  "cardLegsBySport": {
@@ -198,10 +198,10 @@
    "ret": -0.0371
   },
   "notAtBook": {
-   "n": 179,
-   "won": 172,
-   "rate": 0.9609,
-   "quoted": 0.9149
+   "n": 180,
+   "won": 173,
+   "rate": 0.9611,
+   "quoted": 0.9152
   },
   "unchecked": {
    "n": 36,
@@ -264,10 +264,10 @@
      "ret": -0.0739
     },
     "notAtBook": {
-     "n": 172,
-     "won": 165,
-     "rate": 0.9593,
-     "quoted": 0.9175
+     "n": 173,
+     "won": 166,
+     "rate": 0.9595,
+     "quoted": 0.9178
     },
     "unchecked": {
      "n": 13,
@@ -1161,7 +1161,7 @@
    "n": 22,
    "shortened": 8,
    "drifted": 9,
-   "mean": 0.0004
+   "mean": 0.0021
   }
  },
  "cardListLong": {
@@ -1570,7 +1570,7 @@
        "when": "2026-11-26T03:00Z",
        "odds": 1.41,
        "best": 1.41,
-       "lastOdds": 1.38,
+       "lastOdds": 1.33,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
