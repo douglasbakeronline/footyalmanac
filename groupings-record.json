@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T03:10:37Z",
+ "graded": "2026-11-25T04:09:11Z",
  "overall": {
   "groups": 152,
   "settled": 152,
@@ -7,8 +7,8 @@
   "z": -0.93,
   "lost": 105,
   "pending": 0,
-  "legs": 581,
-  "legsWon": 426,
+  "legs": 582,
+  "legsWon": 427,
   "returned": 133.66,
   "staked": 152,
   "returnedBest": 138.72,
@@ -198,10 +198,10 @@
    "ret": -0.0419
   },
   "notAtBook": {
-   "n": 173,
-   "won": 166,
-   "rate": 0.9595,
-   "quoted": 0.9152
+   "n": 175,
+   "won": 168,
+   "rate": 0.96,
+   "quoted": 0.915
   },
   "unchecked": {
    "n": 36,
@@ -264,10 +264,10 @@
      "ret": -0.0772
     },
     "notAtBook": {
-     "n": 166,
-     "won": 159,
-     "rate": 0.9578,
-     "quoted": 0.9179
+     "n": 168,
+     "won": 161,
+     "rate": 0.9583,
+     "quoted": 0.9176
     },
     "unchecked": {
      "n": 13,
@@ -1141,8 +1141,8 @@
   "z": 0.01,
   "lost": 5,
   "pending": 0,
-  "legs": 27,
-  "legsWon": 21,
+  "legs": 28,
+  "legsWon": 22,
   "returned": 8.08,
   "staked": 8,
   "returnedBest": 8.12,
@@ -1513,9 +1513,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 2,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Laura Samson",
@@ -1591,8 +1591,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7266,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "116-131",
        "opp": 4.51,
        "rule12Fault": null,
        "r12": false
