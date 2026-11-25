@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-25-card-ties: the Card review names two-legged ties and play-off series (tag pending)
+
+**What changed:** the nightly Card review has a new table, "Two-legged ties and play-off series": football legs at 60%+ in a league the Card may take, split into tie legs (the same league holds the reverse fixture 1 to 8 days away: play-offs, two-legged rounds, best-of-three series; first and second legs apart) and the rest, landed against the model and the bookmakers, for every leg and for those clear of the live rule. Any open Card group holding a tie leg still to start is named in bold.
+**Why:** tonight's Card group for 25 Nov holds Toluca v Atlas, the first leg of a Liga MX Liguilla tie (Atlas v Toluca on 29 Nov). The Card keeps cups out, but a league's own play-offs arrive under its code, and the model cannot see an aggregate. 180 such fixtures in Card leagues since 1 Nov; nothing measured them.
+**Evidence:** a watch, no rule read. Pool: 3 settled tie legs at 60%+, 2 landed; graded record at 60%+: 4. Too few to act; a `notie` variant is pre-registered at 30 settled tie legs clear of the live rule. `tests/test_card_ties.py` (six); full suite OK; nametest clear.
+**Files:** `tools/card_ties.py` (new), `tools/card_review_post.py` (`ties_section`), the test, `claude/card-ties-2026-11-25.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card rule (`CARD_RULE` 14), the page, the record, the model.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-25-pool-replay-done: backlog #154 already shipped; note only (tag pending)
 
 **What changed:** nothing in code. `tools/card_replay.py` has replayed every variant on the archived pool from 30 Oct 2026 since 9 Nov 2026; a dated note records the check.

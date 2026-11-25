@@ -180,6 +180,17 @@ def star_section():
         "Read beside each other at 14 days live; the variant is put to Douglas only if it is ahead on both spans.", ""]
 
 
+def ties_section():
+    """25 Nov 2026: Card-league football legs on a two-legged tie or play-off
+    series (tools/card_ties.py, claude/card-ties-2026-11-25.md). Watch only."""
+    try:
+        sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+        import card_ties as CT
+        return CT.section()
+    except Exception as e:   # advisory: never stop the review over it
+        return ["## Two-legged ties and play-off series", f"Not read: {type(e).__name__}: {e}", ""]
+
+
 def market_pass_lines(name, mk, x, rec, goals=None):
     """23 Nov 2026: one line under a passing market rule saying where the
     pass comes from (each selection, the days, William Hill) and how many
@@ -1088,6 +1099,7 @@ def review_body():
     lines += funnel_section()
     lines += edge_section()
     lines += star_section()
+    lines += ties_section()
     lines += markets_section(load("markets-record.json"), load("goals-value.json"))
     lines += briefing_section(load("groupings-archive/briefed.json"), today_=today)
     lines += ["Artifacts: integrity.json, card-replay.json, price-timing.json, staking.json on this run. Advisory: nothing here changes a rule."]
