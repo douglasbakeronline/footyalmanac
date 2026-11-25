@@ -20,6 +20,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** the replay, any Card rule (`CARD_RULE` 14), the model, the page.
 **Roll back:** `git revert` the merge.
 
+## 2026-11-25-mailer-emails: the last seven mornings' emails on the Mailer tab (tag pending)
+
+**What changed:** under the Mailer tab's sign-up form, the emails that went out, newest first, in a horizontal scroll (a week back): each with a summary strip (list landed, the Daily 2x and the Card as Won / Lost, Edge landed), a line on what it recommended and how that went, and every pick marked ✓ / ✗ / • as on How it went, with a 2x, Card or Edge tag where a pick was in a group. Under it, the week's Daily List landed rate by day against the model's chance and each card's running units. From today each sent email is kept as `mail-archive/<day>.json` and shown "As sent"; 23 to 25 Nov are rebuilt from the records and marked "Rebuilt".
+**Why:** Douglas, 25 Nov 2026: the emails on the page, a tick or a cross on each pick, a summary, a chart over a week.
+**Evidence:** `tests/test_mail_page.py` (six: the days shown, kept once and never rewritten, results joined from the record, the 07:00 to 07:00 window and college price on a rebuilt day, units at the page's stakes); the mailer's run tests now keep into a temporary folder; full suite OK; nametest clear; rendered at 1280 and 400 wide (no page overflow).
+**Files:** `mail_page.py` (new), `mailer.py` (`snapshot`, `keep`, `MAIL_ARCHIVE`), `index.html` (`renderMailbox`, `.mb-*`), `.github/workflows/deploy.yml` (keep the sent email, `mail_page.py`, publish `mailbox.js`), `.gitignore`, the tests, `claude/mailer-emails-on-the-page-2026-11-25.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the emails, the sign-up form, any record or card rule.
+**Roll back:** `git revert` the merge; `mail-archive/` can stay.
+
 ## 2026-11-25-kickoff-board-right: Bolivia's GV San José priced; Serie B and Greece left off the retime list (tag pending)
 
 **What changed:** board name "GV San José" (Bolivia's División Profesional) is matched to API-Football's "Gualberto Villarroel SJ" (`groupings.AF_SPELLINGS`), so GV San José v Real Potosí (28 Nov) can be priced. A note records that the two kick-off misses on the price log (Palermo v Benevento, Serie B; Iraklis 1908 v Panetolikos, Greece) are API-Football's error, not the board's, so neither league joins `sources.AF_RETIME`.

@@ -2168,6 +2168,80 @@ footer b{color:var(--ink-2)}
 .m-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center}
 .m-quiet{font-family:inherit;font-size:var(--t-base);background:none;border:0;padding:10px 0;min-height:44px;color:var(--away);text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .m-quiet[disabled]{color:var(--mute);cursor:not-allowed}
+/* ---------- the emails on the Mailer tab (25 Nov 2026, Douglas: "the emails that we send out in a
+   horizontal scroll format ... a tick or a cross ... 1 week back"): mail_page.py's mailbox.js.
+   ✓ / ✗ as on How it went (.mark), Won / Lost as on started rows (.pin-st). Display only. ---------- */
+.mb{margin-top:40px;border-top:1px solid var(--cover-ink);padding-top:22px}
+.mb-head{display:flex;flex-wrap:wrap;gap:12px 24px;align-items:flex-end;justify-content:space-between}
+.mb-head h2{font-family:var(--f-display);font-weight:400;font-size:30px;line-height:1;text-transform:uppercase;margin:6px 0 0}
+.mb-lede{margin:8px 0 0;font-size:var(--t-base);line-height:1.5;color:var(--ink-2)}
+.mb-nav{display:flex;gap:8px}
+.mb-nav button{font:700 var(--t-sm)/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;min-height:44px;padding:0 14px;
+  border:1px solid var(--cover-ink);background:var(--surface);color:var(--cover-ink);cursor:pointer}
+.mb-nav button[disabled]{color:var(--mute);border-color:var(--rule);cursor:default}
+.mb-track{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scroll-padding:0 2px;padding:16px 2px 18px;margin-top:6px;
+  overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;scrollbar-width:thin;align-items:flex-start}
+.mb-track:focus-visible{outline:2px solid var(--home);outline-offset:2px}
+.mb-mail{flex:0 0 min(380px,86vw);scroll-snap-align:start;background:var(--surface);border:1px solid var(--cover-ink);
+  box-shadow:4px 4px 0 var(--cover-ink);display:flex;flex-direction:column;min-width:0}
+.mb-top{background:var(--cover-ink);color:var(--paper);padding:12px 14px 10px;display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 10px}
+.mb-top .k{font:700 var(--t-xs)/1 var(--f-ui);letter-spacing:.12em;text-transform:uppercase;color:var(--yellow);flex-basis:100%}
+.mb-top b{font-family:var(--f-display);font-weight:400;font-size:24px;letter-spacing:.02em;text-transform:uppercase}
+.mb-top .src{margin-left:auto;font:var(--t-xs)/1.2 var(--f-num);color:#cfc5b3}
+.mb-sum{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--cover-ink)}
+.mb-sum > div{padding:10px 8px;border-right:1px solid var(--rule);min-width:0}
+.mb-sum > div:last-child{border-right:0}
+.mb-sum .l{display:block;font:700 10.5px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--mute)}
+.mb-sum .v{display:block;font:600 var(--t-md)/1.1 var(--f-num);margin-top:6px;color:var(--ink)}
+.mb-sum .v small{display:block;font:400 11px/1.3 var(--f-ui);color:var(--ink-2);margin-top:3px}
+.mb-sum .pin-st{margin-top:5px}
+.mb-rec{margin:0;padding:10px 14px;font-size:var(--t-sm);line-height:1.45;color:var(--ink-2);border-bottom:1px solid var(--rule-soft);background:var(--paper)}
+.mb-sec{padding:10px 14px 4px}
+.mb-sec h3{display:flex;align-items:center;gap:8px;margin:4px 0 4px;font-family:var(--f-display);font-weight:400;font-size:17px;letter-spacing:.03em;text-transform:uppercase}
+.mb-sec h3 .o{margin-left:auto;font:600 var(--t-sm)/1 var(--f-num);letter-spacing:0;text-transform:none}
+.mb-sec h3 .pin-st{font-size:10px}
+.mb-sec .why{margin:2px 0 8px;font-size:var(--t-sm);line-height:1.45;color:var(--ink-2)}
+.mb-row{display:grid;grid-template-columns:18px 40px minmax(0,1fr) auto;gap:2px 8px;align-items:baseline;padding:6px 0;border-top:1px solid var(--rule-soft)}
+.mb-row .mark{font-size:14px}
+.mb-row .mark.op{color:var(--mute)}
+.mb-row .t{font:var(--t-xs)/1.3 var(--f-num);color:var(--mute)}
+.mb-row .w{min-width:0;font-size:var(--t-sm);line-height:1.3}
+.mb-row .w b{font-weight:700;color:var(--ink)}
+.mb-row .w .v{color:var(--mute)}
+.mb-row .w small{display:block;font-size:11.5px;color:var(--mute);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mb-row .c{font:600 var(--t-sm)/1 var(--f-num);color:var(--ink);text-align:right}
+.mb-row.lost .w b{color:var(--away)}
+.mb-tag{display:inline-block;font:700 9.5px/1 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;padding:2px 4px;margin-left:4px;
+  border:1px solid var(--cover-ink);vertical-align:1px;color:var(--cover-ink);background:var(--yellow-soft)}
+.mb-tag.edge{background:var(--edge-soft);border-color:var(--edge);color:var(--edge)}
+.mb-more summary{cursor:pointer;min-height:40px;display:flex;align-items:center;font:700 var(--t-xs)/1 var(--f-ui);letter-spacing:.08em;
+  text-transform:uppercase;color:var(--ink-2);border-top:1px solid var(--rule-soft)}
+.mb-foot{margin-top:auto;padding:10px 14px 12px;font-size:11.5px;line-height:1.4;color:var(--mute);border-top:1px solid var(--rule-soft)}
+.mb-empty{padding:18px;border:1px dashed var(--rule);color:var(--ink-2);background:var(--surface)}
+.mb-trend{margin-top:18px;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,2fr);gap:18px}
+.mb-chart{background:var(--surface);border:1px solid var(--rule);padding:14px 14px 10px;min-width:0}
+.mb-chart h3{margin:0;font:700 var(--t-xs)/1.2 var(--f-ui);letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.mb-chart p{margin:4px 0 8px;font-size:var(--t-sm);line-height:1.45;color:var(--ink-2)}
+.mb-chart svg{display:block;width:100%;height:auto;overflow:visible}
+.mb-chart svg text{font-family:var(--f-num);font-size:11px;fill:var(--mute)}
+.mb-chart svg .val{fill:var(--ink);font-weight:600}
+.mb-key{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--ink-2);margin-top:6px}
+.mb-key i{display:inline-block;width:12px;height:8px;margin-right:5px;vertical-align:0;background:var(--home);border-radius:2px}
+.mb-key i.tick{height:2px;background:var(--cover-ink);vertical-align:3px}
+.mb-mult{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.mb-mult > div{min-width:0}
+.mb-mult b{display:block;font:700 var(--t-xs)/1.2 var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.mb-mult .n{display:block;font:600 var(--t-md)/1.2 var(--f-num);margin:2px 0 4px}
+.mb-mult .n.up{color:var(--edge)} .mb-mult .n.down{color:var(--away)}
+.mb-mult small{display:block;font-size:11.5px;color:var(--mute);line-height:1.35}
+@media (max-width:760px){
+  .mb-trend{grid-template-columns:minmax(0,1fr)}
+  .mb-head h2{font-size:26px}
+  .mb-nav{display:none}
+}
+@media (max-width:420px){ .mb-mult{grid-template-columns:minmax(0,1fr)} .mb-mult svg{max-width:240px} }
+.mb-chart svg .in{fill:#fff;font-weight:600}
+.mb-mult svg{max-width:220px}
 .m-ok{font-size:var(--t-base);padding:10px 12px;border-left:var(--rail) solid var(--edge);background:var(--edge-soft);color:#173d24}
 .m-ok[hidden]{display:none}
 .m-hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
@@ -2329,6 +2403,17 @@ footer b{color:var(--ink-2)}
     </div>
   </aside>
 </div>
+<!-- 25 Nov 2026, Douglas: the emails that went out, a week back, with how each pick went (mail_page.py) -->
+<section class="mb" id="mailbox" aria-labelledby="mbHead">
+  <div class="mb-head">
+    <div><div class="m-label">The emails</div><h2 id="mbHead">The last seven mornings</h2>
+      <p class="mb-lede">Each morning's email, with how every pick went: <b class="mark ok" style="display:inline">✓</b> landed,
+        <b class="mark no" style="display:inline">✗</b> lost, <b style="color:var(--mute)">•</b> still to play. Newest first; scroll for older.</p></div>
+    <div class="mb-nav"><button type="button" id="mbNewer" aria-controls="mbTrack">‹ Newer</button><button type="button" id="mbOlder" aria-controls="mbTrack">Older ›</button></div>
+  </div>
+  <div class="mb-track" id="mbTrack" tabindex="0" role="region" aria-label="The emails, newest first"><div class="mb-empty">Loading the emails…</div></div>
+  <div class="mb-trend" id="mbTrend"></div>
+</section>
 </section>
 
 <footer id="footer"></footer>
@@ -8465,6 +8550,7 @@ $("#views").addEventListener("click", e=>{
   if(today) renderToday();
   if(v === "scale") renderScale();
   if(v === "racing") renderRacing();
+  if(v === "mailer") renderMailbox();
   if(starred) renderStarred();
   if(tennis) renderTennis();
   if(v === "results") renderResults();   // fetches the records the first time
@@ -8488,6 +8574,142 @@ $("#footer").innerHTML = `
   <p>This is a model, not a tip sheet. It is the model's own independent read; the betting market
   sees team news it does not, and on average prices matches better.</p>`;
 
+/* ---------- the emails on the Mailer tab (25 Nov 2026, Douglas) ----------
+   mailbox.js (mail_page.py): the last seven mornings' emails, each as sent (mail-archive/)
+   or rebuilt from the records before the archive began, every pick with its result.
+   A horizontal carousel, newest first, then the week's trend. Display only. */
+let MB_STATE = null;
+function renderMailbox(){
+  const track = document.getElementById("mbTrack"), trend = document.getElementById("mbTrend");
+  if(!track) return;
+  if(!window.__MAILBOX__){
+    if(MB_STATE === "loading") return;
+    MB_STATE = "loading";
+    const s = document.createElement("script");
+    s.src = "mailbox.js?v=" + Math.floor(Date.now() / 3e5); s.async = true;
+    s.onload = () => { MB_STATE = "ready"; renderMailbox(); };
+    s.onerror = () => { MB_STATE = "missing";
+      track.innerHTML = `<div class="mb-empty">The emails could not be loaded just now. The sign-up form above still works.</div>`; };
+    document.head.appendChild(s);
+    return;
+  }
+  const MB = window.__MAILBOX__, days = MB.days || [];
+  const esc = x => String(x == null ? "" : x).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const pc = x => x == null ? "" : Math.round(x * 100) + "%";
+  const hm = iso => { const t = Date.parse(iso || ""); return isNaN(t) ? "TBC" : new Date(t).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"}); };
+  const dayName = d => new Date(d + "T12:00:00").toLocaleDateString("en-GB", {weekday:"short", day:"numeric", month:"short"});
+  const MARK = {won: ["ok", "✓", "landed"], lost: ["no", "✗", "lost"], void: ["op", "–", "void"]};
+  const mk = st => { const m = MARK[st] || ["op", "•", st === "live" ? "in play" : "still to play"];
+    return `<span class="mark ${m[0]}" role="img" aria-label="${m[2]}" title="${m[2]}">${m[1]}</span>`; };
+  const PILL = {won: ["won", "Won"], lost: ["lost", "Lost"], void: ["void", "Void"]};
+  const pill = st => { const p = PILL[st] || ["up", "To play"]; return `<span class="pin-st ${p[0]}">${p[1]}</span>`; };
+  const opp = it => it.pick === it.home ? it.away : it.home;
+  const legKey = l => (l.pick || "") + "|" + (l.event || "");
+  const sumTile = (label, v) => `<div><span class="l">${label}</span>${v}</div>`;
+  const tally = t => t.won + t.lost ? `<span class="v">${t.won} / ${t.won + t.lost}<small>${t.open ? `landed · ${t.open} to play` : "landed"}</small></span>`
+    : `<span class="v">${t.n ? "–" : "0"}<small>${t.n ? `${t.n} to play` : "none"}</small></span>`;
+
+  const mail = d => {
+    const s = d.summary, inGroup = {};
+    (d.daily ? [d.daily] : []).forEach(g => g.legs.forEach(l => { inGroup[l.pick] = (inGroup[l.pick] || []).concat("2x"); }));
+    (d.cards || []).forEach(g => g.legs.forEach(l => { inGroup[l.pick] = (inGroup[l.pick] || []).concat("Card"); }));
+    (d.edge || []).forEach(e => { inGroup[e.pick] = (inGroup[e.pick] || []).concat("Edge"); });
+    const tags = p => (inGroup[p] || []).filter((x, i, a) => a.indexOf(x) === i).map(x => `<span class="mb-tag${x === "Edge" ? " edge" : ""}">${x}</span>`).join("");
+    const row = (st, t, main, sub, c) => `<div class="mb-row ${st}">${mk(st)}<span class="t">${t}</span><span class="w">${main}${sub ? `<small>${sub}</small>` : ""}</span><span class="c">${c}</span></div>`;
+    const lrow = it => row(it.st, it.timed === false ? "TBC" : hm(it.start),
+      `<b>${esc(it.pick)}</b>${it.star ? " ⭐" : ""}${tags(it.pick)} <span class="v">v ${esc(opp(it))}</span>`,
+      [sportEmoji(it.sport), esc(it.comp || ""), it.score ? esc(it.score) : ""].filter(Boolean).join(" · "), pc(it.conf));
+    const L = d.list || [], first = L.slice(0, 8), rest = L.slice(8);
+    const grp = (title, g) => {
+      const odds = g.hill ? `${(+g.hill).toFixed(2)} Hill` : g.odds ? `${(+g.odds).toFixed(2)} avg` : "";
+      return `<section class="mb-sec"><h3>${title} ${pill(g.st)}<span class="o">${odds}</span></h3>
+        ${g.legs.map(l => row(l.st, hm(l.when), `<b>${esc(l.pick)}</b>`, [sportEmoji(l.sport), esc(l.event || "")].filter(Boolean).join(" · "),
+          l.hill ? (+l.hill).toFixed(2) : l.odds ? (+l.odds).toFixed(2) : "")).join("")}
+        <p class="why">${g.legs.length} picks${g.stake > 1 ? ` · ${g.stake} units` : " · 1 unit"}${g.st === "won" && g.paid ? ` · paid ${(+g.paid).toFixed(2)}` : ""}${g.short ? " · short of 2x that day" : ""}</p></section>`;
+    };
+    // the summary: what the email recommended, and how it went
+    const rec = [];
+    if(d.daily) rec.push(`the Daily 2x (${d.daily.legs.length} picks) ${d.daily.st === "won" ? "won" : d.daily.st === "lost" ? "lost" : "is still to finish"}`);
+    (d.cards || []).forEach(g => rec.push(`the ${esc(g.name)} ${g.st === "won" ? "won" : g.st === "lost" ? "lost" : "is still to finish"}`));
+    if(!(d.cards || []).length) rec.push("no Card group");
+    if((d.edge || []).length) rec.push(`${s.edge.won} of ${s.edge.won + s.edge.lost || s.edge.n} Edge pick${s.edge.n === 1 ? "" : "s"} landed`);
+    const lt = s.list.won + s.list.lost;
+    const lead = L.length ? `${L.length} list pick${L.length === 1 ? "" : "s"}${lt ? `, ${s.list.won} of ${lt} landed` : ""}` : "no list picks";
+    const cardSum = (d.cards || []).length ? d.cards.map(g => pill(g.st)).join(" ") : `<span class="v">None<small>no group</small></span>`;
+    return `<article class="mb-mail" aria-label="The email for ${dayName(d.day)}">
+      <header class="mb-top"><span class="k">The Daily List</span><b>${dayName(d.day)}</b>
+        <span class="src" title="${d.source === "sent" ? "The email's own contents, kept when it went out" : "Rebuilt from the archives: the email as sent was kept from 26 Nov 2026"}">${d.source === "sent" ? "As sent " + hm(d.sentAt) : "Rebuilt"}</span></header>
+      <div class="mb-sum">
+        ${sumTile("List", tally(s.list))}
+        ${sumTile("Daily 2x", d.daily ? pill(d.daily.st) : `<span class="v">None</span>`)}
+        ${sumTile("Card", cardSum)}
+        ${sumTile("Edge", (d.edge || []).length ? tally(s.edge) : `<span class="v">None</span>`)}
+      </div>
+      <p class="mb-rec">${lead}; ${rec.join(", ")}.</p>
+      <section class="mb-sec"><h3>The Daily List<span class="o">${L.length}</span></h3>
+        ${L.length ? first.map(lrow).join("") : `<p class="why">Nothing cleared the bar.</p>`}
+        ${rest.length ? `<details class="mb-more"><summary>${rest.length} more pick${rest.length === 1 ? "" : "s"}</summary>${rest.map(lrow).join("")}</details>` : ""}</section>
+      ${d.daily ? grp("The Daily 2x", d.daily) : ""}
+      ${(d.cards || []).map(g => grp(esc(g.name), g)).join("") || `<section class="mb-sec"><h3>The Card</h3><p class="why">${esc(d.cardShort || "No Card group that day.")}</p></section>`}
+      ${(d.edge || []).length ? `<section class="mb-sec"><h3>Edge picks<span class="o">${d.edge.length}</span></h3>${d.edge.map(e =>
+        row(e.st, e.kickoff ? hm(e.kickoff) : "", `<b>${esc(e.pick)}</b> <span class="v">v ${esc(e.opp)}</span>`, sportEmoji("football") + " " + esc(e.comp || "Football"),
+          e.best ? (+e.best).toFixed(2) : e.odds ? (+e.odds).toFixed(2) : "")).join("")}</section>` : ""}
+      <div class="mb-foot">${d.source === "sent" ? "As it went out at 7" : "Rebuilt from the archives: close to the email as sent, not the copy itself"}. Results from the record; % is the model's chance.</div>
+    </article>`;
+  };
+  track.innerHTML = days.length ? days.map(mail).join("")
+    : `<div class="mb-empty">No emails yet. The first goes out at 7 tomorrow morning.</div>`;
+
+  // Newer / Older: one email a press
+  const step = dir => { const c = track.querySelector(".mb-mail"); if(!c) return;
+    track.scrollBy({left: dir * (c.getBoundingClientRect().width + 16), behavior: "smooth"}); };
+  const nb = document.getElementById("mbNewer"), ob = document.getElementById("mbOlder");
+  const sync = () => { nb.disabled = track.scrollLeft < 8; ob.disabled = track.scrollLeft + track.clientWidth > track.scrollWidth - 8; };
+  nb.onclick = () => step(-1); ob.onclick = () => step(1);
+  track.onscroll = sync; sync();
+  track.onkeydown = e => { if(e.key === "ArrowRight"){ e.preventDefault(); step(1); } if(e.key === "ArrowLeft"){ e.preventDefault(); step(-1); } };
+
+  // the trend: the list's landed rate against the model's chance by day, then each card's running units
+  const T = MB.trend || {}, TD = T.days || [];
+  if(!TD.length){ trend.innerHTML = ""; return; }
+  const span = (MB.trendDays || 7) >= 28 ? "the last month" : "the last week";
+  const W = 320, H = 150, pad = {l: 30, r: 6, t: 14, b: 22}, iw = W - pad.l - pad.r, ih = H - pad.t - pad.b;
+  const n = TD.length, bw = Math.min(30, iw / n * 0.56), x0 = i => pad.l + iw / n * (i + .5);
+  const y = v => pad.t + ih * (1 - v);
+  const bars = (T.list || []).map((r, i) => {
+    const rate = r.n ? r.won / r.n : null, tip = `${dayName(r.day)}: ${r.won} of ${r.n} landed${r.quoted != null ? `, the model said ${pc(r.quoted)}` : ""}${r.open ? `, ${r.open} to play` : ""}`;
+    return `<g><title>${tip}</title><rect x="${x0(i) - bw / 2 - 4}" y="${pad.t}" width="${bw + 8}" height="${ih}" fill="transparent"/>
+      ${rate != null ? `<path d="M${x0(i) - bw / 2},${y(0)} V${y(rate) + 4} q0,-4 4,-4 h${bw - 8} q4,0 4,4 V${y(0)} Z" fill="var(--home)"/>
+        <text class="in" x="${x0(i)}" y="${Math.min(y(rate) + 14, y(0) - 4)}" text-anchor="middle">${rate >= .12 ? pc(rate) : ""}</text>` : `<text x="${x0(i)}" y="${y(0) - 4}" text-anchor="middle">–</text>`}
+      ${r.quoted != null ? `<line x1="${x0(i) - bw / 2 - 3}" x2="${x0(i) + bw / 2 + 3}" y1="${y(r.quoted)}" y2="${y(r.quoted)}" stroke="var(--cover-ink)" stroke-width="2"/>` : ""}
+      <text x="${x0(i)}" y="${H - 6}" text-anchor="middle">${new Date(r.day + "T12:00:00").toLocaleDateString("en-GB", {day:"numeric", month:"short"})}</text></g>`;
+  }).join("");
+  const grid = [0, .5, 1].map(v => `<line x1="${pad.l}" x2="${W - pad.r}" y1="${y(v)}" y2="${y(v)}" stroke="var(--rule-soft)"/><text x="${pad.l - 4}" y="${y(v) + 4}" text-anchor="end">${v * 100}%</text>`).join("");
+  const listT = (T.list || []).reduce((a, r) => [a[0] + r.won, a[1] + r.n, a[2] + (r.quoted || 0) * r.n], [0, 0, 0]);
+  const spark = (key, name, unitWord) => {
+    const xs = T[key] || []; let c = 0; const pts = xs.map(r => (c += r.net || 0));
+    const staked = xs.reduce((a, r) => a + (r.staked || 0), 0), settled = xs.filter(r => r.staked).length;
+    if(!settled) return `<div><b>${name}</b><span class="n">–</span><small>Nothing settled in ${span}.</small></div>`;
+    const sw = 150, sh = 56, lo = Math.min(0, ...pts), hi = Math.max(0, ...pts), rg = (hi - lo) || 1;
+    const sx = i => 4 + (sw - 8) * (n === 1 ? .5 : i / (n - 1)), sy = v => 4 + (sh - 8) * (1 - (v - lo) / rg);
+    const line = pts.map((v, i) => `${i ? "L" : "M"}${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(" ");
+    const dots = pts.map((v, i) => `<circle cx="${sx(i)}" cy="${sy(v)}" r="4" fill="var(--home)" stroke="var(--surface)" stroke-width="2"><title>${dayName(xs[i].day)}: ${xs[i].st ? xs[i].st + ", " : ""}${(xs[i].net >= 0 ? "+" : "") + (xs[i].net || 0).toFixed(2)} units, running ${(v >= 0 ? "+" : "") + v.toFixed(2)}</title></circle>`).join("");
+    const end = pts[pts.length - 1];
+    return `<div><b>${name}</b><span class="n ${end > 0 ? "up" : end < 0 ? "down" : ""}">${(end >= 0 ? "+" : "−") + Math.abs(end).toFixed(2)} units</span>
+      <svg viewBox="0 0 ${sw} ${sh}" role="img" aria-label="${name}: ${(end >= 0 ? "up " : "down ") + Math.abs(end).toFixed(2)} units over ${span}">
+        <line x1="0" x2="${sw}" y1="${sy(0)}" y2="${sy(0)}" stroke="var(--rule)" stroke-dasharray="3 3"/>
+        <path d="${line}" fill="none" stroke="var(--home)" stroke-width="2" stroke-linejoin="round"/>${dots}</svg>
+      <small>${staked.toFixed(staked % 1 ? 1 : 0)} ${unitWord} staked over ${settled} day${settled === 1 ? "" : "s"}${staked ? `, ${(end / staked * 100 >= 0 ? "+" : "−") + Math.abs(end / staked * 100).toFixed(0)}% on stakes` : ""}</small></div>`;
+  };
+  trend.innerHTML = `
+    <div class="mb-chart"><h3>The Daily List by day · ${span}</h3>
+      <p>${listT[1] ? `${listT[0]} of ${listT[1]} settled picks landed (${pc(listT[0] / listT[1])}), against the model's ${pc(listT[2] / listT[1])}.` : "No settled list picks yet."}</p>
+      <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="The Daily List's landed rate by day against the model's chance">${grid}${bars}</svg>
+      <div class="mb-key"><span><i></i>Landed</span><span><i class="tick"></i>The model's chance</span></div></div>
+    <div class="mb-chart"><h3>Each card, running units · ${span}</h3>
+      <p>Profit or loss at the page's stakes, settled days only: the Daily 2x one unit, the Card its stake, Edge picks one unit each at the best price.</p>
+      <div class="mb-mult">${spark("daily", "Daily 2x", "units")}${spark("card", "The Card", "units")}${spark("edge", "Edge picks", "units")}</div></div>`;
+}
 // 16 Nov 2026: the Mailer tab's links back into the page
 document.querySelectorAll("#mailer [data-goto]").forEach(a => a.onclick = e => { e.preventDefault();
   const b = $(`#views button[data-view="${a.dataset.goto}"]`); if(b) b.click(); });

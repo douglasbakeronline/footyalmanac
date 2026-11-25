@@ -533,6 +533,42 @@ jobs:
           MAILER_SECRET: ${{ secrets.MAILER_SECRET }}
         run: python3 mailer.py || echo "::warning::mailer failed this run"
 
+      # The emails on the Mailer tab (25 Nov 2026, Douglas: the last seven mornings'
+      # emails in a carousel, every pick with a tick or a cross). mailer.py keeps each
+      # sent Daily List email as mail-archive/<day>.json (once, never rewritten); it runs
+      # after the archive commit above, so the kept copy is committed here on its own.
+      # mail_page.py then writes mailbox.js for the page. Neither ever fails the deploy.
+      - name: Keep the sent email
+        continue-on-error: true
+        env:
+          APP_TOKEN: ${{ steps.app.outputs.token }}
+        run: |
+          [ -d mail-archive ] || exit 0
+          # In a separate worktree: this checkout holds the rebuilt dashboard.html
+          # (tracked) that the site is assembled from below, so it is never reset.
+          git config --global user.name  "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if [ -n "$APP_TOKEN" ]; then
+            git config --local --unset-all http.https://github.com/.extraheader || true
+            DEST="https://x-access-token:${APP_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          else DEST=origin; fi
+          for attempt in 1 2 3; do
+            git fetch origin main
+            rm -rf /tmp/mailwt; git worktree prune
+            git worktree add --detach /tmp/mailwt origin/main
+            mkdir -p /tmp/mailwt/mail-archive
+            cp -rn mail-archive/. /tmp/mailwt/mail-archive/
+            git -C /tmp/mailwt add mail-archive
+            if git -C /tmp/mailwt diff --staged --quiet; then echo "nothing new to keep"; exit 0; fi
+            git -C /tmp/mailwt commit -m "Keep the Daily List email for $(date +%F) [skip ci]"
+            if git -C /tmp/mailwt push "$DEST" HEAD:main; then exit 0; fi
+            sleep $((attempt * 5))
+          done
+          echo "::warning::could not push the kept email; the Mailer tab rebuilds that day from the records"
+
+      - name: The emails on the Mailer tab
+        run: python3 mail_page.py || echo "::warning::mailbox failed; the Mailer tab shows its empty state"
+
       - name: Keep the API-Football cache
         if: always()
         uses: actions/cache/save@v4
@@ -550,6 +586,7 @@ jobs:
           cp markets-record.json _site/markets-record.json 2>/dev/null || true   # the football markets record (markets.py)
           cp analysis.html _site/analysis.html   # Almanac Analysis, reads record.json (6 Oct 2026)
           cp mailer.html _site/mailer.html       # the Mailer sign-up page (16 Nov 2026)
+          cp mailbox.js _site/ 2>/dev/null || echo "::warning::no mailbox.js this run: the Mailer tab's emails will not show"   # 25 Nov 2026
           # The touch icons and the manifest are fetched by the device rather
           # than parsed out of the page, so they need to exist at real URLs or
           # a home-screen save falls back to a screenshot of the page.

@@ -780,6 +780,56 @@ def daily_email(day, src=None, with_scale=False, now=None):
     return {"subject": subject, "html": body, "text": "\n".join(text) + "\n\n" + footer_text(links), "count": n, "kind": "daily"}
 
 
+# ---------------------------------------------------------------- the email as sent, kept
+
+MAIL_ARCHIVE = os.path.join(HERE, "mail-archive")   # mail_page.py reads it for the Mailer tab (25 Nov 2026)
+
+
+def _leg(l):
+    hill = (l.get("bookOdds") or {}).get(BOOK)
+    return {"pick": l.get("pick"), "event": l.get("event"), "sport": l.get("sport"), "comp": l.get("comp"),
+            "when": l.get("when"), "p": l.get("p"), "odds": l.get("odds"), "hill": hill, "est": bool(l.get("est"))}
+
+
+def _group(g):
+    return {"name": g.get("name"), "seq": g.get("seq") or 1, "odds": g.get("odds"), "hill": g.get("bookOdds"),
+            "stake": g.get("stake") or 1, "p": g.get("p"), "short": bool(g.get("short")),
+            "legs": [_leg(l) for l in g.get("legs") or []]}
+
+
+def snapshot(day, src, now=None, mail=None):
+    """What the morning email for `day` held, as data (25 Nov 2026, Douglas: the Mailer tab shows each
+    email with a tick or a cross): the same reads as daily_email, the plain variant (no Scale)."""
+    now = now or datetime.now(timezone.utc)
+    items, _ = list_items(src, day, now)
+    nA = min(5, sum(1 for it in items if (it.get("confidence") or 0) >= GROUP_A_MIN))
+    gd = g_day(src, day) or {}
+    groups = gd.get("groups") or []
+    d2 = next((g for g in groups if g.get("name") == "Daily 2x"), None)
+    cards = [g for g in groups if str(g.get("name", "")).startswith("Card") and not g.get("wide")]
+    return {"day": day, "sentAt": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "subject": (mail or {}).get("subject"),
+            "list": [{"sport": it.get("sport"), "home": it.get("home"), "away": it.get("away"), "pick": it.get("pick"),
+                      "comp": it.get("comp"), "start": it.get("start"), "timed": it.get("timed", True),
+                      "conf": it.get("confidence"), "tested": tested(it), "px": it.get("px"), "star": bool(it.get("star")),
+                      "A": i < nA} for i, it in enumerate(items)],
+            "daily": _group(d2) if d2 else None,
+            "cards": [_group(g) for g in cards],
+            "cardShort": None if cards else card_short_text(gd.get("cardShort")),
+            "edge": [{"pick": e["pick"], "opp": e["opp"], "comp": e.get("comp"), "kickoff": e.get("kickoff"),
+                      "odds": e.get("odds"), "best": e.get("best")} for e in edge_picks(src, day)]}
+
+
+def keep(day, src, now=None, mail=None, folder=None):
+    """Write mail-archive/<day>.json once, the first time the day's email goes; never rewritten."""
+    folder = folder or globals()["MAIL_ARCHIVE"]
+    path = os.path.join(folder, f"{day}.json")
+    if os.path.exists(path): return path
+    os.makedirs(folder, exist_ok=True)
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(snapshot(day, src, now, mail), f, ensure_ascii=False, indent=1)
+    return path
+
+
 # ---------------------------------------------------------------- the Weekly Record email
 
 def week_of(day):
@@ -1073,7 +1123,9 @@ def run(now=None, env=None, post=_http, sleep=time.sleep, log=print, src=None):
             if not recipients: log(f"mailer: {kind} {day}: nobody on the list"); continue
             if not mail_claim(secret, kind, day, post):
                 log(f"mailer: {kind} {day} already claimed by another build; nothing sent"); continue
-            send(key, kind, day, recipients, mails, post, sleep, log)
+            sent, _ = send(key, kind, day, recipients, mails, post, sleep, log)
+            if kind == "daily" and sent:
+                log(f"mailer: kept {os.path.relpath(keep(day, src, now, mails['plain']), HERE)}")
         except Exception as e:   # one kind failing never stops the other, never fails the build
             log(f"mailer: {kind} failed: {type(e).__name__}: {str(e)[:120]}")
     return 0

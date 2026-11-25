@@ -27,3 +27,6 @@ scale.js
 slip.json
 slip.js
 racing.js
+# The Mailer tab's emails, rebuilt by mailbox.py on every deploy (mail-archive/ is what is kept)
+mailbox.json
+mailbox.js
