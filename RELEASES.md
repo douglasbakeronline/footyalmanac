@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-mlb-recheck: MLB above quote, third look (tag pending)
+
+**What changed:** nothing on the page. A dated note only.
+**Evidence:** live MLB still 27 of 40 v 22.15 expected (z +1.5), the identical 40 games as 19 Nov (offseason); history lands under quote; settings refitted 12 Nov.
+**Files:** `claude/mlb-above-quote-recheck-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** `sports.py`, `sports.json`, calibration.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-stale-unplayed-newest: the build's postponed-fixture warning names the newest first (tag pending)
 
 **What changed:** nothing a reader sees. The build's warning for unplayed fixtures dated before the board's window named the first 12 in league order, so on 26 Nov four leftovers from 2024 and 2025 (Australia's af.191, Belarus's af.118) took places while 16 of the 28 went unnamed. It now names the 12 newest first, says how many more there are, and counts rows dated over 180 days back apart as most likely a past season's file. Every row is still counted (Rule 6).
