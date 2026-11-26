@@ -337,6 +337,15 @@ jobs:
       - name: The slip
         run: python3 slip.py || echo "::warning::slip failed; the Bets tab keeps the last slip"
 
+      # The publication log (publog.py, 26 Nov 2026): every group (the Card,
+      # Daily 2x, List and Model cards), Scale pick and group, slip and Edge
+      # pick this build showed, first and last sight, changes, withdrawals, one
+      # file a UK day in groupings-archive/published/, committed with the
+      # archive below. Five published groups were lost from 28 Oct to 25 Nov;
+      # this is the record that keeps every one. Allowed to fail.
+      - name: Log what was published
+        run: python3 publog.py || echo "::warning::publog failed; nothing logged this run"
+
       # Horse racing (racing.py, 19 Nov 2026, on trial): UK and Irish racecards
       # from The Racing API, a chance for every runner, the day's few tips, each
       # race frozen at its off in predictions-racing/, graded into

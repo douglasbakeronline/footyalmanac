@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-publication-log: every published item logged, and no group lost to a late start (tag pending)
+
+**What changed:** (1) a day stays in the build for as long as any group the page showed for it is still open, at any hour, so every group locks and reaches the archive (`groupings.card_dates(prev=)`, `open_group`); #545 kept the day before only until 07:00 UK. (2) `publog.py`, run after the slip in every build: every group (Card, Daily 2x, List, Model), Scale pick and group, slip and Edge pick the page showed, logged a UK day at a time in `groupings-archive/published/` with first and last sight, snapshots, changes and withdrawals, seeded from everything already kept; `python3 publog.py --day YYYY-MM-DD` reads a day. (3) The nightly integrity check raises `group-unarchived` for a published group that started and is not in the archive.
+**Evidence:** the deploy logs' last build of each day from 28 Oct to 25 Nov: five groups open and never archived (2 and 4 Nov Model 3x, 13 Nov Card 2x, 17 Nov a List slip, 25 Nov Card 2x). Scale, the slip and Edge picks were not affected.
+**Files:** `groupings.py`, `publog.py`, `tools/card_integrity.py`, `.github/workflows/deploy.yml` (one step), `tests/test_publog.py`, `tests/test_card_overnight.py`, `groupings-archive/published/` (the seed), `claude/card-overnight-day-2026-11-26.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the record (the lost groups are logged as lost, never graded), any Card constant (`CARD_RULE` 14).
+**Roll back:** revert the commit; the log directory can stay, nothing reads it but the integrity check.
+
 ## 2026-11-26-card-overnight: the Card's day kept until 07:00, so overnight groups reach the record (tag pending)
 
 **What changed:** the build now keeps making the day before's cards until that day's window ends at 07:00 UK (`groupings.card_dates`). A Card group whose picks all start between midnight and 07:00 (NBA, the Americas) used to be dropped by the first build after midnight, never locked and never archived; it now holds, locks at its first kick-off and is archived under its own day. The List card and Daily 2x the same. The Bets tab shows a Yday chip until 07:00 UK and still opens on Today.

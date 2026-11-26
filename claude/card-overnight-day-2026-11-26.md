@@ -53,3 +53,49 @@ is built in the evening, holds at 00:10, locks after its first kick-off and is
 archived under its own day; nothing new is built once the window has ended.
 `main()` run offline at a frozen 00:10 UTC on 26 Nov carries 25 Nov in
 `groupings.json`; the Bets tab checked at 1280 and 400 wide.
+
+## How many were lost (26 Nov 2026, second read)
+
+The deploy logs print, for each day a build covers, how many of its groups
+are holding, new, replaced and underway. A group still holding at the last
+build of its day could never lock, so it never reached the archive. From
+28 Oct to 25 Nov, for the last build of each day:
+
+| day | open at the last build | kind (by elimination against the day's archive) |
+|---|---|---|
+| 2 Nov | 1 | Model 3x (paper; the Model 2x was archived) |
+| 4 Nov | 1 | Model 3x (paper) |
+| 13 Nov | 1 | Card 2x (staked; the day has no archive file) |
+| 17 Nov | 1 | List 2x or List long (paper; Card 2x and Daily 2x archived) |
+| 25 Nov | 1 | Card 2x (staked): Warriors, Grizzlies, Toluca |
+
+Five groups in 29 days: two staked Card groups, three paper slips. Only 25
+Nov's picks survive (card-short.json); 13 Nov's picks are not kept anywhere.
+Scale and the slip were not affected: they write their archive on every
+build, so the last published version is always on file. Edge picks are in
+predictions/.
+
+## The second fix: a day stays until its groups lock
+
+The first fix kept the day before only until 07:00 UK. A group whose first
+pick starts after the last build before then (a 06:30 start before the 07:40
+build, or a build GitHub runs late or sheds) would still be lost.
+`card_dates(dates, now, prev)` now also keeps any earlier day the last build
+showed with a group not yet locked (`open_group`), at any hour, until each
+one locks (and is archived) or is withdrawn by its re-check.
+
+## The publication log (`publog.py`)
+
+Every build, after slip.py, logs every item the page put forward to
+`groupings-archive/published/<day>.json`: every group (Card, Daily 2x, List,
+Model), every Scale pick and group, the slip, every Edge pick. Each item
+keeps its first and last sight, how many builds showed it, its first and last
+snapshot (picks, prices, chances, status), each status or price change, and
+`gone` when a build that still covered the day stopped showing it. Seeded
+once from everything kept (154 archived groups, 665 Scale picks and groups,
+9 slips, 59 Edge picks, and the five lost groups as `build-log` entries).
+`python3 publog.py --day YYYY-MM-DD` prints a day. Nothing is graded from it.
+
+The nightly integrity check now raises `group-unarchived` for any group a
+build logged, not withdrawn, whose first pick started two hours ago or more
+and which is not in the archive.

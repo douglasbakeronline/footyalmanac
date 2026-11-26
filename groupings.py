@@ -2047,7 +2047,7 @@ def window_end(date, window):
     base = datetime(d.year, d.month, d.day, tzinfo=UK) + timedelta(hours=end)
     return base.astimezone(timezone.utc)
 
-def card_dates(dates, now):
+def card_dates(dates, now, prev=None):
     """The UK days the build makes cards for: the board's dates, led by the
     day before while its window is still open (until 07:00 UK, 26 Nov 2026).
     The Card's day runs 07:00 to 07:00, but the build began at today's UK
@@ -2059,9 +2059,23 @@ def card_dates(dates, now):
     record shows the day empty. claude/card-overnight-day-2026-11-26.md"""
     first = datetime.fromisoformat(dates[0]).date()
     yday = (first - timedelta(days=1)).isoformat()
+    keep = set()
     if any(now < window_end(yday, w) for w, _, _ in CARD_WINDOWS):
-        return [yday] + list(dates)
-    return list(dates)
+        keep.add(yday)
+    # 26 Nov 2026 (second fix): any earlier day the last build still showed
+    # with a group not yet locked stays until each one locks (and is archived)
+    # or is withdrawn, at any hour. A group whose first pick starts after the
+    # last build of its window (a 06:30 start before the 07:40 build, or a
+    # build GitHub ran late or skipped) was lost the same way: from 28 Oct to
+    # 25 Nov five groups were open at the last build of their day (build logs).
+    for d, day in (prev or {}).items():
+        if d < dates[0] and any(open_group(g) for g in day.get("groups") or []):
+            keep.add(d)
+    return sorted(keep) + list(dates)
+
+def open_group(g):
+    """A published group that has not locked: it still has to reach the archive."""
+    return not g.get("locked") and g.get("status") not in ("underway", "locked", "late")
 
 # 25 Oct 2026, Douglas: "There is no daytime and evening bets. There needs to
 # be some even if they update on later rebuilds." When the full rule fills
@@ -3858,13 +3872,14 @@ def main():
     # Days are the board's own dates (UK days on the football board).
     today = now.astimezone(ZoneInfo("Europe/London")).date()
     dates = [(today + timedelta(days=i)).isoformat() for i in range(DAYS_AHEAD + 1)]
-    # 26 Nov 2026: the cards also hold the day before until its window ends (card_dates)
-    cdates = card_dates(dates, now)
     L = legs(set(dates))
     report = price(L, set(dates))
     if probe:
         print(json.dumps(report, indent=1)); return
     prev = previous()
+    # 26 Nov 2026: the cards also hold the day before until its window ends,
+    # and any earlier day with a group still open (card_dates)
+    cdates = card_dates(dates, now, prev)
     # 11 Nov 2026 (CARD_CONTEXT): read every pick the Card's rule admits before
     # the Card is built, so an "against" pick is never put forward
     try:

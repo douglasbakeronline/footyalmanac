@@ -238,6 +238,13 @@ def main():
     findings += picks_twice(by_day)
     import periods
     findings += result_disagrees(rec.get("days", []), periods.disagreements())
+    # 26 Nov 2026: a group the page published that started and never reached
+    # the archive (publog.py; five were lost from 28 Oct to 25 Nov)
+    try:
+        import publog
+        findings += publog.unarchived(now)
+    except Exception as e:
+        print(f"publog check skipped: {type(e).__name__}: {e}")
     if total: print(f"Card legs since {PRICED_FROM} the pool can replay at a real price: {have} of {total}")
     for f in findings: print(" ".join(f"{k}={v}" for k, v in f.items()))
     print(f"{len(findings)} finding(s)")

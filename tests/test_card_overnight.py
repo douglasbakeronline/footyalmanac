@@ -42,6 +42,37 @@ class CardDates(unittest.TestCase):
         self.assertEqual(G.card_dates(dates, at(D2, 22, 15)), dates)
 
 
+class OpenGroupKept(unittest.TestCase):
+    """A day stays in the build while the last build showed one of its groups open."""
+    dates = [D2.isoformat()]
+
+    def test_open_group_keeps_the_day_after_seven(self):
+        prev = {D1.isoformat(): {"groups": [{"name": "Card 2x", "locked": False, "status": "holding"}]}}
+        self.assertEqual(G.card_dates(self.dates, at(D2, 7, 40), prev), [D1.isoformat()] + self.dates)
+
+    def test_locked_or_underway_groups_let_it_go(self):
+        prev = {D1.isoformat(): {"groups": [{"name": "Card 2x", "locked": True, "status": "underway"},
+                                            {"name": "List long", "locked": True, "status": "locked"}]}}
+        self.assertEqual(G.card_dates(self.dates, at(D2, 7, 40), prev), self.dates)
+
+    def test_older_day_kept_too(self):
+        d0 = (D1 - timedelta(days=1)).isoformat()
+        prev = {d0: {"groups": [{"name": "Daily 2x", "status": "holding"}]}}
+        self.assertEqual(G.card_dates(self.dates, at(D2, 7, 40), prev), [d0] + self.dates)
+
+    def test_six_thirty_start_locks_at_the_late_build(self):
+        with mock.patch.object(G, "ARCHIVE", tempfile.mkdtemp()), mock.patch.object(G, "CARD_SPAN", False):
+            L = [leg(10, D2, 6), leg(11, D2, 6), leg(12, D2, 6)]
+            for l in L: l["when"] = l["when"].replace("T06:00", "T06:30")
+            first = G.build_card(L, D1.isoformat(), at(D2, 5, 15), log=[])
+            self.assertEqual(len(first), 1)
+            prev = {D1.isoformat(): {"groups": first}}
+            self.assertIn(D1.isoformat(), G.card_dates(self.dates, at(D2, 7, 40), prev))
+            late = G.build_card(L, D1.isoformat(), at(D2, 7, 40), prev=first, log=[])
+            self.assertTrue(late[0]["locked"])
+            self.assertEqual(G.archive_locked({"date": D1.isoformat(), "groups": late}, "x"), 1)
+
+
 class OvernightGroup(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory(); self.addCleanup(self.tmp.cleanup)
