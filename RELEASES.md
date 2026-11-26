@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-card-overnight: the Card's day kept until 07:00, so overnight groups reach the record (tag pending)
+
+**What changed:** the build now keeps making the day before's cards until that day's window ends at 07:00 UK (`groupings.card_dates`). A Card group whose picks all start between midnight and 07:00 (NBA, the Americas) used to be dropped by the first build after midnight, never locked and never archived; it now holds, locks at its first kick-off and is archived under its own day. The List card and Daily 2x the same. The Bets tab shows a Yday chip until 07:00 UK and still opens on Today.
+**Evidence:** 25 Nov's Card 2x (Warriors, Grizzlies, Toluca, starts 01:00 to 03:00 UTC on 26 Nov) was built on every build of 25 Nov (`groupings-archive/card-short.json`) and is absent from the archive; none of the 35 archived Day-window Card groups since 29 Oct has a first kick-off after midnight.
+**Files:** `groupings.py`, `tests/test_card_overnight.py`, `claude/card-overnight-day-2026-11-26.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card constant (`CARD_RULE` 14), the record (25 Nov's lost group is not added by hand), prices, pool and grading dates.
+**Roll back:** revert the commit; the build goes back to today's UK date onwards.
+
 ## 2026-11-26-office-review: office review and next week's priorities (tag pending)
 
 **What changed:** a note only, `claude/office-review-2026-11-26.md`: what shipped 18 to 26 Nov, what was rejected, where accuracy stands, three tasks (Kofi, Susie, Hannah).
