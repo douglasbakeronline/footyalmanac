@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-group-bands-reread: group bands against their stated chance, re-read (tag pending)
+
+**What changed:** nothing on the page. A dated section in `claude/odds-groupings.md`.
+**Evidence:** `groupings-record.json` `byBand`: Steady 4 of 25 v 9.65 expected (z -2.37), Stretch 1 of 15 v 3.56, Balanced 5 of 17 v 5.05, Card 2x 13 of 41 v 15.66 (z -0.86), Card 3x 7 of 16 v 4.25. No band has 100 settled groups; the retired rules cannot be replayed without the scoreboard (rule 1).
+**Files:** `claude/odds-groupings.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any rule or constant.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-mlb-recheck: MLB above quote, third look (tag pending)
 
 **What changed:** nothing on the page. A dated note only.
