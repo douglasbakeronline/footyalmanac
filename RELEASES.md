@@ -18,6 +18,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Evidence:** `tests/test_stale_unplayed_line.py` (newest first, old rows counted apart, overflow counted, only-old days).
 **Files:** `build.py` (`stale_unplayed_line`, `STALE_SHOW`, `STALE_OLD_DAYS`), `tests/test_stale_unplayed_line.py`, `RELEASES.md`.
 **Not changed:** which fixtures reach the board, the model, the Card.
+## 2026-11-26-next-card-group: an empty Card day names the next day with a group (tag pending)
+
+**What changed:** on the Bets tab, a day with no Card group now says when the next one is, under the reason it is empty: "The next Card group: Saturday 28 November, Al Ahli, FC Bayern München, PSV at (its price). Show that day", and the button turns the day ribbon to it. On 26 Nov today and tomorrow were empty while Saturday already held a group, visible only by turning the ribbon (Douglas, 17 Nov: "having no cards is awful"). Nothing shows when no later day has an open Card group.
+**Evidence:** display only. Rendered at 1280 and 400 wide on a build with a later-day group: the line sits inside the empty box, the button opens that day with its group drawn, no page errors. `nametest.py` and 1,487 tests pass.
+**Files:** `index.html` (`nextCardGroup`, `nextCardHtml`, `.tb-next`, `.tb-go`), `RELEASES.md`.
+**Not changed:** how groups are built, the record and every Card constant; `CARD_RULE` stays 14.
 **Roll back:** `git revert` the merge.
 
 ## 2026-11-26-grading-audit: Grading audit, 26 Nov (tag pending)
