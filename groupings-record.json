@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-26T01:00:33Z",
+ "graded": "2026-11-26T02:25:17Z",
  "overall": {
   "groups": 154,
   "settled": 153,
@@ -198,9 +198,9 @@
    "ret": -0.0371
   },
   "notAtBook": {
-   "n": 186,
-   "won": 177,
-   "rate": 0.9516,
+   "n": 191,
+   "won": 182,
+   "rate": 0.9529,
    "quoted": 0.9158
   },
   "unchecked": {
@@ -264,9 +264,9 @@
      "ret": -0.0739
     },
     "notAtBook": {
-     "n": 179,
-     "won": 170,
-     "rate": 0.9497,
+     "n": 184,
+     "won": 175,
+     "rate": 0.9511,
      "quoted": 0.9183
     },
     "unchecked": {
@@ -645,7 +645,8 @@
    "ncaab|stanford cardinal|portland pilots|2026-11-29": -1,
    "ncaab|american university eagles|hampton pirates|2026-11-29": -1,
    "ncaab|texas state bobcats|nicholls colonels|2026-11-29": -1,
-   "ncaab|ohio state buckeyes|lipscomb bisons|2026-11-29": -1
+   "ncaab|ohio state buckeyes|lipscomb bisons|2026-11-29": -1,
+   "ncaab|florida state seminoles|west florida argonauts|2026-11-29": -1
   }
  },
  "cardContext": {
