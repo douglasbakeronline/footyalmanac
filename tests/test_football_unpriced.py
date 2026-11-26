@@ -142,6 +142,23 @@ class FootballUnpriced(unittest.TestCase):
         self.assertEqual(r["matched"], 1)
         self.assertNotIn("miss", r)
 
+    def test_af_spellings_26_nov(self):
+        """26 Nov 2026 00:14 build: four board names noFixture beside their fixture
+        (WSG Wattens, Rennes, Los Angeles FC, Dynamo), each club's every pool row
+        since 30 Oct archived as an estimate."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.70"}, {"value": "Draw", "odd": "3.8"}, {"value": "Away", "odd": "4.5"}]}]}]}]
+        pairs = [(("Sturm Graz", "WSG Wattens"), ("Sturm Graz", "WSG Tirol", "Bundesliga")),
+                 (("Toulouse", "Rennes"), ("Toulouse", "Stade Rennais FC 1901", "Ligue 1")),
+                 (("Los Angeles FC", "St. Louis City"), ("LAFC", "St. Louis CITY", "Major League Soccer")),
+                 (("Krylia Sovetov", "Dynamo"), ("Krylia Sovetov", "Dinamo Moscow", "Premier League"))]
+        day = [fx(110 + i, t, h, a, hour=10 + i) for i, ((h, a), _) in enumerate(pairs)]
+        L = [leg(t, h, a, c, hour=10 + i) for i, (_, (h, a, c)) in enumerate(pairs)]
+        r = self.run_price(L, day, {110 + i: book for i in range(len(pairs))})
+        self.assertEqual(r["matched"], len(pairs))
+        self.assertNotIn("miss", r)
+
     def test_af_spellings_second_read(self):
         """19 Nov 2026 07:13 build: six more board names beside their fixture under another spelling."""
         t = date.today().isoformat()

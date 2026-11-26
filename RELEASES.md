@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-af-spellings: Rennes, WSG Tirol, LAFC and Dinamo Moscow priced by API-Football (tag pending)
+
+**What changed:** four board names are matched to API-Football's spelling in the one-fixture price fallback (`groupings.AF_SPELLINGS`): WSG Tirol (WSG Wattens), Stade Rennais FC 1901 (Rennes), LAFC (Los Angeles FC), Dinamo Moscow (Dynamo).
+**Why:** the 26 Nov 00:14 UTC build named all four under `noFixture` beside their own fixture, and every pool row of these clubs since 30 Oct was archived as an estimate. Ligue 1 and the Austrian Bundesliga are Card leagues.
+**Evidence:** `tests/test_football_unpriced.py` `test_af_spellings_26_nov` (0 of 4 matched before, 4 after); full suite (1,468) OK; nametest clear. An `odds.ALIASES` entry for LAFC was tried and left out: it scores "LAFC" 1.0 against Los Angeles Galaxy in the bulk match. `claude/af-spellings-2026-11-26.md`.
+**Files:** `groupings.py`, `tests/test_football_unpriced.py`, `claude/af-spellings-2026-11-26.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `odds.ALIASES`, any Card rule (`CARD_RULE` 14), the model, the page.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-25-card-ties: the Card review names two-legged ties and play-off series (tag pending)
 
 **What changed:** the nightly Card review has a new table, "Two-legged ties and play-off series": football legs at 60%+ in a league the Card may take, split into tie legs (the same league holds the reverse fixture 1 to 8 days away: play-offs, two-legged rounds, best-of-three series; first and second legs apart) and the rest, landed against the model and the bookmakers, for every leg and for those clear of the live rule. Any open Card group holding a tie leg still to start is named in bold.
