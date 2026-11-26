@@ -927,7 +927,54 @@ def empty_card_days(since, today_, archive="groupings-archive"):
     return {x for x in days if x not in have}
 
 
-def live_days_section(archive="groupings-archive", today_=None, days=14, record=None):
+def _gid(g):
+    """publog.gid: a group's identity, its sorted event>pick pairs."""
+    return "|".join(sorted(f"{l.get('event')}>{l.get('pick')}" for l in (g or {}).get("legs") or [] if isinstance(l, dict)))
+
+
+def shown_not_archived(archive, span, got, now=None):
+    """26 Nov 2026: staked Card groups the page showed that the day archive
+    never received, read from the publication log (publog.py,
+    `<archive>/published/<day>.json`). Two kinds: the groups the build logs
+    show were lost before the log existed (`lost`, seeded: 13 and 25 Nov), and
+    build-logged groups, not withdrawn (`gone`), whose first pick started two
+    hours or more before `now` and whose legs match no archived group (the
+    integrity check's `group-unarchived`). A build-logged group not yet
+    started is still open, not lost. Only the full-rule Card (name "Card ",
+    not `wide`), as the rest of the section. Returns ({day: [(name, picks)]},
+    {day: [(name, picks, start)]}). A tally of what the page showed; nothing
+    here enters the record (Rule 1)."""
+    from datetime import datetime as _dt, timedelta as _td, timezone as _tz
+    t_now = _dt.fromisoformat(str(now).replace("Z", "+00:00")) if now else _dt.now(_tz.utc)
+    if t_now.tzinfo is None: t_now = t_now.replace(tzinfo=_tz.utc)
+    shown, still = {}, {}
+    for d in span:
+        doc = load(os.path.join(archive, "published", f"{d}.json"))
+        if not isinstance(doc, dict): continue
+        have = {_gid(g) for g in got.get(d, [])}
+        try: have |= {_gid(g) for g in (load(os.path.join(archive, f"{d}.json")).get("groups") or [])}
+        except AttributeError: pass
+        for e in (doc.get("items") or {}).values():
+            if not isinstance(e, dict) or e.get("kind") != "card" or e.get("gone"): continue
+            last = e.get("last") or {}
+            name = str(last.get("name") or e.get("name") or "")
+            if not name.startswith("Card ") or last.get("wide"): continue
+            if e.get("lost"):
+                shown.setdefault(d, []).append((name, list(e.get("picks") or [])))
+                continue
+            if e.get("source") != "build" or _gid(last) in have: continue
+            picks = [str(l.get("pick")) for l in last.get("legs") or [] if isinstance(l, dict)]
+            try: st = _dt.fromisoformat(str(e.get("start")).replace("Z", "+00:00"))
+            except ValueError: continue
+            if st.tzinfo is None: st = st.replace(tzinfo=_tz.utc)
+            if t_now - st >= _td(hours=2):
+                shown.setdefault(d, []).append((name, picks))
+            elif st > t_now:
+                still.setdefault(d, []).append((name, picks, e.get("start")))
+    return shown, still
+
+
+def live_days_section(archive="groupings-archive", today_=None, days=14, record=None, now=None):
     """13 Nov 2026: the live Card's own output, day by day. The Card has built
     nothing since 10 Nov (rule 6's last group; rules 7 to 11 went live on
     11 Nov), and nothing in the review said so: the replay tables read rules
@@ -950,9 +997,10 @@ def live_days_section(archive="groupings-archive", today_=None, days=14, record=
         if gs:
             last = d
             if d in got or d >= span[0]: got[d] = gs
+    shown, still = shown_not_archived(archive, span, got, now)
     run = 0
     for d in reversed(span):
-        if d in got: break
+        if d in got or d in shown or d in still: break
         run += 1
     built = sum(1 for d in span if d in got)
     lines = [f"## The live Card, {span[0]} to {span[-1]}", "",
@@ -975,6 +1023,13 @@ def live_days_section(archive="groupings-archive", today_=None, days=14, record=
                 f"{done} settled, {won} won v {exp:.2f} expected")
         line += f", {pct(ur / us - 1)} at the page's stakes." if us else "; none settled yet."
         lines.append(line)
+    if shown:
+        named = "; ".join(f"{d} {nm} ({', '.join(p) if p else 'picks not kept'})" for d in sorted(shown) for nm, p in shown[d])
+        lines.append(f"The page also showed {sum(len(v) for v in shown.values())} Card group(s) that never reached the archive "
+                     f"(the publication log, `groupings-archive/published/`): {named}. They are not in the record or the "
+                     "counts above (Rule 1: the archive is written by the build); their days are not counted as empty.")
+    for d in sorted(still):
+        lines.append(f"Still open from {d}: " + "; ".join(f"{nm} ({', '.join(p)}), first start {st}" for nm, p, st in still[d]) + ".")
     if run >= 3:
         lines.append(f"**{run} days running with no Card group (to {span[-1]}).** Empty days stay empty by Douglas's decision "
                      "(11 Nov, `CARD_FILLER` False); the funnel below names the condition that costs them, and every volume "

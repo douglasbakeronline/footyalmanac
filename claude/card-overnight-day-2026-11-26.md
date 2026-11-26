@@ -99,3 +99,15 @@ once from everything kept (154 archived groups, 665 Scale picks and groups,
 The nightly integrity check now raises `group-unarchived` for any group a
 build logged, not withdrawn, whose first pick started two hours ago or more
 and which is not in the archive.
+
+## The review reads the log (26 Nov 2026, later)
+
+The nightly review's live-days section had counted only the day archives, so
+26 Nov's review called 25 Nov empty and flagged "3 days running with no Card
+group". `card_review_post.shown_not_archived` now reads the publication log
+for the same span: seeded `lost` Card groups, and build-logged Card groups
+(not `gone`, first start two or more hours past, legs matching no archived
+group) are named with their picks, and their days are not counted as empty.
+A group from the day before that has not started yet is shown as still open.
+On 26 Nov's files it names 13 Nov (picks not kept) and 25 Nov (Warriors,
+Grizzlies, Toluca). Nothing enters the record from it.
