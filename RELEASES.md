@@ -12,6 +12,18 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-grading-audit: Grading audit, 26 Nov (tag pending)
+
+**What changed:** nothing a reader sees. A dated audit note in `claude/results-review-board.md`.
+
+**Evidence:** 490 recent results checked against ESPN: football 413 of 413 full-time scores agree, sports 40 of 40, tennis 37 of 37 non-void winners; `ok` consistent on every row. Walkovers void, retirements graded, shootouts graded on the 90-minute score. One neutral-court game had ESPN's home/away labels flipped since archiving; the grade is right.
+
+**Files:** `claude/results-review-board.md`, `RELEASES.md`.
+
+**Not changed:** graders, model, record files.
+
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-26-europe-skips: Swiss and Monaco European ties out of the blind spot; their blind spots named (tag pending)
 
 **What changed:** `python3 eurotest.py --skips` prints every European tie the league-strength fit could not price, by league and club, and a new workflow (`.github/workflows/eurotest.yml`, by hand or on a pull request touching `eurotest.py` or `sources.py`) runs it with the report and a dry-run refit, since the sandbox cannot reach the domestic sources. A tie with a side outside the fit carries Celtic's Law, so each club named is a European tie the Daily List cannot take (Ajax v Thun on 26 Nov: Switzerland is not in `europe.json`).

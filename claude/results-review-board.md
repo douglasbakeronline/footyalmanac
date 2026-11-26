@@ -234,3 +234,15 @@ drop the stale `be.1` source line so it cannot return as phantom fixtures.
 **Observation, a policy question for Douglas, not a bug:** a retirement stands as a graded result, as the module documents. Of 53 graded retirements, 12 came before the first set was finished (scores like 4-1 ret, 5-2 ret): 5 of those picks landed, 7 did not. UK bookmakers usually void a match retired from before a set is complete, so on those 12 the record shows a loss (or win) a bettor would have had refunded. Rule 1 and the owner's standing decision keep the grading as is; if he wants first-set retirements void, the change is in `score_tennis.outcome` (about 1% of tennis rows, 12 of 1,493), and would only touch the model-record, not any rating (the Elo still takes the result).
 
 **Not changed:** any grader, model, record file.
+
+## Grading audit, 26 November 2026 (Susie, Results Auditor)
+
+**Sample and method:** 413 football games graded 19-25 Nov (of 1,702; the rest are leagues or spellings ESPN's all-competitions scoreboard does not carry, not guessed at), 40 sports games drawn at random from 19-25 Nov (ESPN summary by game id) and every tennis row dated 19-25 Nov (38, one void). 490 results checked in all. ESPN is also the grading feed, so this tests storage, orientation and the grading code, not the feed.
+
+**Result: 0 grading errors.** Football full-time score v ESPN 413 of 413 (411 STATUS_FULL_TIME, 2 STATUS_FINAL_PEN); stored `actual` and `ok` consistent with the score on every row. Sports: 40 of 40 winners agree and `ok` equals `winner == pick`. Tennis: 37 of 37 non-void winners agree, `ok` equals `winner == pick`; status mix 34 final, 3 retired (graded, as documented), 1 walkover (void).
+
+**Edge cases:** the one apparent mismatch was a neutral-court college game (Saint Louis v Grand Canyon, 401911253) where ESPN's feed now lists the home and away labels the other way round from when the pick was archived. The stored score [88, 91] is in the archived orientation (Saint Louis 88, Grand Canyon 91), the winner is Grand Canyon either way, and the grade is right. Not a bug; a reminder that for neutral games a checker must match by team, not by home/away slot. Shootout ties: the grader uses the 90-minute score (Partick Thistle v East Kilbride stored 3-3, a draw; Talleres de Remedios v Real Pilar 1-0), as `tests/test_grading.py` pins. Postponed, abandoned, suspended and forfeited football and sports games are never results; tennis walkovers and cancellations are void.
+
+**No grading bug found, no code changed.** The 18 Nov note's open policy question (first-set retirements) stands for Douglas.
+
+**Not changed:** any grader, model, record file.
