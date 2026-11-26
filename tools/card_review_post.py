@@ -943,7 +943,8 @@ def shown_not_archived(archive, span, got, now=None):
     started is still open, not lost. Only the full-rule Card (name "Card ",
     not `wide`), as the rest of the section. Returns ({day: [(name, picks)]},
     {day: [(name, picks, start)]}). A tally of what the page showed; nothing
-    here enters the record (Rule 1)."""
+    here enters the record (Rule 1). A build-logged pick is (name, start)
+    where the log kept the leg's start, so `shown_results` reads that game."""
     from datetime import datetime as _dt, timedelta as _td, timezone as _tz
     t_now = _dt.fromisoformat(str(now).replace("Z", "+00:00")) if now else _dt.now(_tz.utc)
     if t_now.tzinfo is None: t_now = t_now.replace(tzinfo=_tz.utc)
@@ -963,18 +964,58 @@ def shown_not_archived(archive, span, got, now=None):
                 shown.setdefault(d, []).append((name, list(e.get("picks") or [])))
                 continue
             if e.get("source") != "build" or _gid(last) in have: continue
-            picks = [str(l.get("pick")) for l in last.get("legs") or [] if isinstance(l, dict)]
+            picks = [(str(l.get("pick")), l.get("when")) if l.get("when") else str(l.get("pick"))
+                     for l in last.get("legs") or [] if isinstance(l, dict)]
             try: st = _dt.fromisoformat(str(e.get("start")).replace("Z", "+00:00"))
             except ValueError: continue
             if st.tzinfo is None: st = st.replace(tzinfo=_tz.utc)
             if t_now - st >= _td(hours=2):
                 shown.setdefault(d, []).append((name, picks))
             elif st > t_now:
-                still.setdefault(d, []).append((name, picks, e.get("start")))
+                still.setdefault(d, []).append((name, [x[0] if isinstance(x, tuple) else x for x in picks], e.get("start")))
     return shown, still
 
 
-def live_days_section(archive="groupings-archive", today_=None, days=14, record=None, now=None):
+def _ledger_rows(path="results-ledger.json.gz"):
+    """The results ledger's rows (ledger.py), or [] when it is not on disk."""
+    import gzip
+    try:
+        with gzip.open(path, "rt") as f: return json.load(f).get("rows") or []
+    except Exception:
+        return []
+
+
+def shown_results(day, picks, rows):
+    """26 Nov 2026: each pick of a Card group the archive never received,
+    looked up on the results ledger: the row with that pick whose start falls
+    in the Card's day (07:00 UK on `day` to 07:00 UK the next morning, read as
+    06:00 to 08:00 UTC to allow for summer time), or at the leg's own start
+    when the publication log kept one (`picks` items are names or (name,
+    when)). Returns [(pick, "won" | "lost" | "void" | None)], None for no
+    result yet or no row. A tally of what the page showed; nothing here
+    enters the record (Rule 1)."""
+    from datetime import date as _date, timedelta as _td
+    lo, hi = f"{day}T06:00:00Z", f"{(_date.fromisoformat(day) + _td(days=1)).isoformat()}T08:00:00Z"
+    out = []
+    for item in picks:
+        name, when = (item if isinstance(item, (tuple, list)) else (item, None))
+        cand = [r for r in rows if r.get("pick") == name and r.get("result") != "duplicate"
+                and (r.get("start") == when if when else lo <= str(r.get("start") or "") < hi)]
+        cand.sort(key=lambda r: str(r.get("start") or ""))
+        res = cand[0].get("result") if cand else None
+        out.append((name, res if res in ("won", "lost", "void") else None))
+    return out
+
+
+def group_verdict(res):
+    """A group's result from its picks' (shown_results): lost once any pick
+    lost, won when every pick that played won (voids drop out), else None."""
+    if any(r == "lost" for _, r in res): return "lost"
+    if res and all(r in ("won", "void") for _, r in res) and any(r == "won" for _, r in res): return "won"
+    return None
+
+
+def live_days_section(archive="groupings-archive", today_=None, days=14, record=None, now=None, ledger=None):
     """13 Nov 2026: the live Card's own output, day by day. The Card has built
     nothing since 10 Nov (rule 6's last group; rules 7 to 11 went live on
     11 Nov), and nothing in the review said so: the replay tables read rules
@@ -1024,10 +1065,23 @@ def live_days_section(archive="groupings-archive", today_=None, days=14, record=
         line += f", {pct(ur / us - 1)} at the page's stakes." if us else "; none settled yet."
         lines.append(line)
     if shown:
-        named = "; ".join(f"{d} {nm} ({', '.join(p) if p else 'picks not kept'})" for d in sorted(shown) for nm, p in shown[d])
+        # 26 Nov 2026: each named group with its picks' results from the
+        # results ledger, so the review says how the lost groups went
+        rows = _ledger_rows() if ledger is None else ledger
+        tally, named = Counter(), []
+        for d in sorted(shown):
+            for nm, p in shown[d]:
+                if not p:
+                    named.append(f"{d} {nm} (picks not kept)"); tally["unknown"] += 1; continue
+                res = shown_results(d, p, rows)
+                v = group_verdict(res)
+                tally[v or "open"] += 1
+                named.append(f"{d} {nm} ({', '.join(f'{n} {r or 'pending'}' for n, r in res)}): "
+                             + (v or "not settled"))
         lines.append(f"The page also showed {sum(len(v) for v in shown.values())} Card group(s) that never reached the archive "
-                     f"(the publication log, `groupings-archive/published/`): {named}. They are not in the record or the "
-                     "counts above (Rule 1: the archive is written by the build); their days are not counted as empty.")
+                     f"(the publication log, `groupings-archive/published/`): {'; '.join(named)}. They are not in the record or the "
+                     "counts above (Rule 1: the archive is written by the build); their days are not counted as empty. "
+                     f"On the results ledger: {tally['won']} won, {tally['lost']} lost, {tally['open'] + tally['unknown']} not settled.")
     for d in sorted(still):
         lines.append(f"Still open from {d}: " + "; ".join(f"{nm} ({', '.join(p)}), first start {st}" for nm, p, st in still[d]) + ".")
     if run >= 3:
