@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-stale-unplayed-newest: the build's postponed-fixture warning names the newest first (tag pending)
+
+**What changed:** nothing a reader sees. The build's warning for unplayed fixtures dated before the board's window named the first 12 in league order, so on 26 Nov four leftovers from 2024 and 2025 (Australia's af.191, Belarus's af.118) took places while 16 of the 28 went unnamed. It now names the 12 newest first, says how many more there are, and counts rows dated over 180 days back apart as most likely a past season's file. Every row is still counted (Rule 6).
+**Evidence:** `tests/test_stale_unplayed_line.py` (newest first, old rows counted apart, overflow counted, only-old days).
+**Files:** `build.py` (`stale_unplayed_line`, `STALE_SHOW`, `STALE_OLD_DAYS`), `tests/test_stale_unplayed_line.py`, `RELEASES.md`.
+**Not changed:** which fixtures reach the board, the model, the Card.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-grading-audit: Grading audit, 26 Nov (tag pending)
 
 **What changed:** nothing a reader sees. A dated audit note in `claude/results-review-board.md`.
