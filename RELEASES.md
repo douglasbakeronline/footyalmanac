@@ -12,6 +12,15 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-europe-skips: Swiss and Monaco European ties out of the blind spot; their blind spots named (tag pending)
+
+**What changed:** `python3 eurotest.py --skips` prints every European tie the league-strength fit could not price, by league and club, and a new workflow (`.github/workflows/eurotest.yml`, by hand or on a pull request touching `eurotest.py` or `sources.py`) runs it with the report and a dry-run refit, since the sandbox cannot reach the domestic sources. A tie with a side outside the fit carries Celtic's Law, so each club named is a European tie the Daily List cannot take (Ajax v Thun on 26 Nov: Switzerland is not in `europe.json`).
+**Evidence:** 2025-26: 619 European ties, 367 priced; inside the fit, 70%+ calls landed 80% (2025-26) and 93% (2024-25), above quote. Domestic cups were checked and stay off: on this year's check ties, 80%+ raw cup calls landed 76% of 46 (quoted 87%), so none can pass the list's 80%-in-testing rule.
+**Refit:** `europe.json` refitted in CI (fit 2024-25, 797 ties; check 2025-26, 471 ties): log loss -0.0281, p(worse) 0.001; 70%+ calls landed 80% of 30 (quoted 76.5%). Switzerland joins the fit (46 to 47 leagues), so Swiss ties (Ajax v Thun) lose the flag and list at 80%; Monaco's ties enter the fit (country tag mapped). Committed by hand at Douglas's instruction (Rule 5). Israel and leagues with no file stay outside, named by `--skips`.
+**Files:** `eurotest.py`, `europe.json`, `.github/workflows/eurotest.yml`, `claude/european-blind-spot-2026-11-26.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the model's league code, the list rule, domestic cups (the replay must still pass; it has not).
+**Roll back:** revert the commit.
+
 ## 2026-11-26-review-shown-days: the Card review names groups the page showed and the archive never received (tag pending)
 
 **What changed:** the nightly Card review's live-days section (`tools/card_review_post.live_days_section`) now also reads the publication log (`groupings-archive/published/`, `shown_not_archived`). A staked Card group the page showed that never reached the day archive (the seeded `lost` entries, or a build-logged group, not withdrawn, two hours past its first start, matching no archived group) is named with its picks, and its day no longer counts toward the "days running with no Card group" warning. A group from yesterday not yet started is shown as still open. The counts and the record are unchanged: the archive is still the only source of graded groups (Rule 1).
