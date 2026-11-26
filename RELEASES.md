@@ -18,6 +18,8 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Evidence:** 2025-26: 619 European ties, 367 priced; inside the fit, 70%+ calls landed 80% (2025-26) and 93% (2024-25), above quote. Domestic cups were checked and stay off: on this year's check ties, 80%+ raw cup calls landed 76% of 46 (quoted 87%), so none can pass the list's 80%-in-testing rule.
 **Files:** `eurotest.py`, `.github/workflows/eurotest.yml`, `RELEASES.md`.
 **Not changed:** `europe.json`, the model, the list rule. A refit is committed by hand after it passes its gate (Rule 5).
+**Roll back:** revert the commit.
+
 ## 2026-11-26-review-shown-days: the Card review names groups the page showed and the archive never received (tag pending)
 
 **What changed:** the nightly Card review's live-days section (`tools/card_review_post.live_days_section`) now also reads the publication log (`groupings-archive/published/`, `shown_not_archived`). A staked Card group the page showed that never reached the day archive (the seeded `lost` entries, or a build-logged group, not withdrawn, two hours past its first start, matching no archived group) is named with its picks, and its day no longer counts toward the "days running with no Card group" warning. A group from yesterday not yet started is shown as still open. The counts and the record are unchanged: the archive is still the only source of graded groups (Rule 1).
