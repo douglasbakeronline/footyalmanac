@@ -53,7 +53,10 @@ CC = {"ENG": "en.1", "ESP": "es.1", "ITA": "it.1", "GER": "de.1", "POR": "pt.1",
       "MDA": "mda.1", "LVA": "lva.1", "ISR": "isr.1", "BIH": "bih.1", "FIN": "fin.1",
       "BLR": "blr.1", "CRO": "hrv.1", "NIR": "nir.1", "LTU": "ltu.1", "EST": "est.1",
       "FRO": "fro.1", "GEO": "geo.1", "WAL": "wal.1", "MLT": "mlt.1", "MNE": "mne.1",
-      "LUX": "lux.1", "ALB": "alb.1", "MKD": "mkd.1"}
+      "LUX": "lux.1", "ALB": "alb.1", "MKD": "mkd.1",
+      # 26 Nov 2026: Monaco plays in Ligue 1; its European ties (10 a season)
+      # had no league and sat outside the fit
+      "MON": "fr.1", "MCO": "fr.1"}
 _TAG = re.compile(r"\s*\(([A-Z]{3})\)\s*$")
 
 

@@ -7,6 +7,11 @@
 name: Europe fit
 on:
   workflow_dispatch:
+    inputs:
+      write:
+        description: "Run the real fit (writes europe.json in the runner only if the gate passes) and print the file"
+        type: boolean
+        default: false
   pull_request:
     paths:
       - eurotest.py
@@ -29,6 +34,13 @@ jobs:
           set -o pipefail
           { python3 eurotest.py --skips; python3 eurotest.py --report; python3 eurotest.py --fit --dry-run; } 2>&1 | tee europe-fit.log
         timeout-minutes: 60
+      # By hand only: the file is printed, never committed by the workflow (Rule 5)
+      - if: ${{ inputs.write }}
+        shell: bash
+        run: |
+          python3 eurotest.py --fit
+          echo "----- europe.json -----"
+          cat europe.json
       - uses: actions/upload-artifact@v4
         if: always()
         with:
