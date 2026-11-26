@@ -12,6 +12,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-championship-early-temper: Championship early-season flattening, rejected (tag pending)
+
+**What changed:** a note and the test tool only. Extra temperature on en.2 while a side has under N games is rejected.
+**Evidence:** fit 2025-26 -0.0037 (N 8, k 0.4, p(worse) 0.00) but 2024-25 +0.0020 (p 0.92), 2023-24 -0.0005 (p 0.35); confirm 2026-27 -0.0045 on 95 fixtures (p 0.28), under the 250 gate. Sign not held across seasons.
+**Files:** `tools/championship_early_temper.py`, `claude/championship-early-temper-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** any model constant, `calibration.json`.
+**Roll back:** revert the commit.
 ## 2026-11-26-card-return-gap: The Card's 0.800 a unit read, no rule change (tag pending)
 
 **What changed:** a note only. The Card's groups land on quote (11 of 34 v 12.3 expected, z -0.5), so the 0.800 is margin plus luck, not a losing class of leg.
