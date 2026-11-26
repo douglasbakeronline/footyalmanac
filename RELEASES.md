@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-review-shown-days: the Card review names groups the page showed and the archive never received (tag pending)
+
+**What changed:** the nightly Card review's live-days section (`tools/card_review_post.live_days_section`) now also reads the publication log (`groupings-archive/published/`, `shown_not_archived`). A staked Card group the page showed that never reached the day archive (the seeded `lost` entries, or a build-logged group, not withdrawn, two hours past its first start, matching no archived group) is named with its picks, and its day no longer counts toward the "days running with no Card group" warning. A group from yesterday not yet started is shown as still open. The counts and the record are unchanged: the archive is still the only source of graded groups (Rule 1).
+**Evidence:** this morning's review (#544) said in bold "3 days running with no Card group (to 2026-11-25)", but 25 Nov's Card 2x (Warriors, Grizzlies, Toluca) was on the page all day and lost overnight (#545). Read on today's files the section now names 13 Nov and 25 Nov and drops the bold line (23 and 24 Nov are the only empty days in the run).
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `claude/card-overnight-day-2026-11-26.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card constant (`CARD_RULE` stays 14), the record, the archive, the decisions table.
+**Roll back:** revert the commit.
+
 ## 2026-11-26-publog-seeded: the publication log reads its seeded entries (tag pending)
 
 **What changed:** `publog.py` crashed on the first live build (08:15 UTC) when a build showed an item the seed had logged (`builds` None); it now counts from there and tracks the item as the build's own (`seeded` keeps where it came from), so withdrawals and `group-unarchived` cover it too.

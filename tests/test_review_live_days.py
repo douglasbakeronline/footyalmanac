@@ -55,5 +55,53 @@ class TestLiveDays(unittest.TestCase):
         self.assertNotIn("model's-picks", out)
 
 
+def pub(d, items, folder):
+    os.makedirs(os.path.join(folder, "published"), exist_ok=True)
+    with open(os.path.join(folder, "published", f"{d}.json"), "w") as f: json.dump({"day": d, "items": items}, f)
+
+
+def leg(event, pick): return {"event": event, "pick": pick}
+
+
+class TestShownNotArchived(unittest.TestCase):
+    """26 Nov 2026: a Card group the page showed that never reached the
+    archive (publog.py) is named, and its day is not counted as empty."""
+
+    def test_lost_and_unarchived_groups_break_the_empty_run(self):
+        with tempfile.TemporaryDirectory() as t:
+            day("2026-11-20", [{"name": "Card 2x", "rule": 14}], t)
+            pub("2026-11-22", {"lost|Card 2x|1": {"kind": "card", "source": "build-log", "lost": True,
+                                                   "name": "Card 2x", "picks": ["Golden State Warriors", "Toluca"]}}, t)
+            # a build-logged Card group, its first pick long started, not in the (missing) day archive
+            pub("2026-11-23", {"card|x": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z",
+                                          "last": {"name": "Card 2x", "legs": [leg("A v B", "A"), leg("C v D", "D")]}}}, t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-25", days=5, now="2026-11-25T04:00:00Z"))
+        self.assertIn("Days with a group: 1 of 5;", out)
+        self.assertIn("The page also showed 2 Card group(s) that never reached the archive", out)
+        self.assertIn("2026-11-22 Card 2x (Golden State Warriors, Toluca)", out)
+        self.assertIn("2026-11-23 Card 2x (A, D)", out)
+        self.assertNotIn("days running", out)   # 24 Nov alone is empty
+
+    def test_archived_withdrawn_paper_and_open_groups_are_not_named(self):
+        g = {"name": "Card 2x", "rule": 14, "legs": [leg("A v B", "A"), leg("C v D", "D")]}
+        with tempfile.TemporaryDirectory() as t:
+            day("2026-11-23", [g], t)
+            pub("2026-11-23", {
+                "card|in": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z", "last": g},
+                "card|gone": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z", "gone": "2026-11-23T10:00:00Z",
+                              "last": {"name": "Card 2x", "legs": [leg("E v F", "E")]}},
+                "list|x": {"kind": "list", "source": "build", "start": "2026-11-23T15:00:00Z",
+                           "last": {"name": "List 2x", "legs": [leg("G v H", "G")]}},
+                "card|wide": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z",
+                              "last": {"name": "Card 2x", "wide": True, "legs": [leg("I v J", "I")]}}}, t)
+            # yesterday's group starting after the run: still open, its day not empty, not named as lost
+            pub("2026-11-24", {"card|open": {"kind": "card", "source": "build", "start": "2026-11-25T05:30:00Z",
+                                             "last": {"name": "Card 2x", "legs": [leg("K v L", "K")]}}}, t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-25", days=2, now="2026-11-25T04:00:00Z"))
+        self.assertIn("Days with a group: 1 of 2;", out)
+        self.assertNotIn("never reached the archive", out)
+        self.assertIn("Still open from 2026-11-24: Card 2x (K), first start 2026-11-25T05:30:00Z.", out)
+
+
 if __name__ == "__main__":
     unittest.main()
