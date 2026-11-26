@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-championship-early-temper: Championship early-season flattening, rejected (tag pending)
+
+**What changed:** a note and the test tool only. Extra temperature on en.2 while a side has under N games is rejected.
+**Evidence:** fit 2025-26 -0.0037 (N 8, k 0.4, p(worse) 0.00) but 2024-25 +0.0020 (p 0.92), 2023-24 -0.0005 (p 0.35); confirm 2026-27 -0.0045 on 95 fixtures (p 0.28), under the 250 gate. Sign not held across seasons.
+**Files:** `tools/championship_early_temper.py`, `claude/championship-early-temper-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** any model constant, `calibration.json`.
+**Roll back:** revert the commit.
+
 ## 2026-11-26-europe-skips: Swiss and Monaco European ties out of the blind spot; their blind spots named (tag pending)
 
 **What changed:** `python3 eurotest.py --skips` prints every European tie the league-strength fit could not price, by league and club, and a new workflow (`.github/workflows/eurotest.yml`, by hand or on a pull request touching `eurotest.py` or `sources.py`) runs it with the report and a dry-run refit, since the sandbox cannot reach the domestic sources. A tie with a side outside the fit carries Celtic's Law, so each club named is a European tie the Daily List cannot take (Ajax v Thun on 26 Nov: Switzerland is not in `europe.json`).
