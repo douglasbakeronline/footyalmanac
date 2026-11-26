@@ -1,21 +1,21 @@
 {
- "graded": "2026-11-26T15:18:43Z",
+ "graded": "2026-11-26T16:08:54Z",
  "overall": {
   "groups": 155,
-  "settled": 154,
+  "settled": 155,
   "won": 47,
-  "z": -1.08,
-  "lost": 107,
-  "pending": 1,
-  "legs": 587,
+  "z": -1.16,
+  "lost": 108,
+  "pending": 0,
+  "legs": 588,
   "legsWon": 431,
   "returned": 133.66,
-  "staked": 154,
+  "staked": 155,
   "returnedBest": 138.72,
   "returnedLock": 16.44,
   "stakedLock": 19,
-  "expected": 53.29,
-  "unitsStaked": 183,
+  "expected": 53.75,
+  "unitsStaked": 184,
   "unitsReturned": 154.96,
   "unitsReturnedBest": 160.22,
   "clv": {
@@ -204,10 +204,10 @@
    "quoted": 0.9163
   },
   "unchecked": {
-   "n": 37,
+   "n": 38,
    "won": 34,
-   "rate": 0.9189,
-   "quoted": 0.847
+   "rate": 0.8947,
+   "quoted": 0.8445
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 20,
+     "n": 21,
      "won": 17,
-     "rate": 0.85,
-     "quoted": 0.7966
+     "rate": 0.8095,
+     "quoted": 0.7945
     }
    },
    "nba": {
@@ -1164,20 +1164,20 @@
  },
  "cardDaily": {
   "groups": 10,
-  "settled": 9,
+  "settled": 10,
   "won": 3,
-  "z": -0.32,
-  "lost": 6,
-  "pending": 1,
-  "legs": 31,
+  "z": -0.6,
+  "lost": 7,
+  "pending": 0,
+  "legs": 32,
   "legsWon": 24,
   "returned": 8.08,
-  "staked": 9,
+  "staked": 10,
   "returnedBest": 8.12,
   "returnedLock": 0,
   "stakedLock": 0,
-  "expected": 3.46,
-  "unitsStaked": 9,
+  "expected": 3.91,
+  "unitsStaked": 10,
   "unitsReturned": 8.08,
   "unitsReturnedBest": 8.12,
   "clv": {
@@ -1530,7 +1530,7 @@
      "wideRule": null,
      "odds": 2.73,
      "p": 0.4557,
-     "status": "pending",
+     "status": "lost",
      "stake": 1,
      "wide": false,
      "late": false,
@@ -1542,8 +1542,8 @@
      "paidBest": 0,
      "paidLock": null,
      "legsWon": 0,
-     "legsLost": 0,
-     "legsPending": 3,
+     "legsLost": 1,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Ural",
@@ -1559,8 +1559,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7572,
-       "status": "pending",
-       "result": null,
+       "status": "lost",
+       "result": "1-1",
        "opp": 7.32,
        "rule12Fault": null,
        "r12": false
