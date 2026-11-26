@@ -37,6 +37,16 @@ class Merge(unittest.TestCase):
         self.assertNotIn("gone", doc["items"][key])
         self.assertTrue(doc["items"][key]["changes"][-1].get("back"))
 
+    def test_seeded_item_seen_by_a_build(self):
+        # 26 Nov 2026: seeded entries carry builds None; the first live build crashed on them
+        doc = {"day": "d", "items": {"scale-pick|k": {"kind": "scale-pick", "source": "scale-archive", "builds": None,
+                                                      "first": {"price": 1.4}, "last": {"price": 1.4}, "changes": []}}}
+        P.merge(doc, {"scale-pick|k": ("scale-pick", {"price": 1.5})}, {"scale-pick"}, "t1")
+        e = doc["items"]["scale-pick|k"]
+        self.assertEqual((e["builds"], e["source"], e["seeded"], e["last"]["price"]), (1, "build", "scale-archive", 1.5))
+        P.merge(doc, {}, {"scale-pick"}, "t2")
+        self.assertEqual(doc["items"]["scale-pick|k"]["gone"], "t2")
+
     def test_uncovered_kind_is_not_marked_gone(self):
         doc = {"day": "d", "items": {}}
         P.merge(doc, {"edge|x": ("edge", {"start": "s"})}, {"edge"}, "t1")
