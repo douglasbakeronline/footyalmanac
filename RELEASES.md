@@ -12,6 +12,17 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-grading-audit: Grading audit, 26 Nov (tag pending)
+
+**What changed:** nothing a reader sees. A dated audit note in `claude/results-review-board.md`.
+
+**Evidence:** 490 recent results checked against ESPN: football 413 of 413 full-time scores agree, sports 40 of 40, tennis 37 of 37 non-void winners; `ok` consistent on every row. Walkovers void, retirements graded, shootouts graded on the 90-minute score. One neutral-court game had ESPN's home/away labels flipped since archiving; the grade is right.
+
+**Files:** `claude/results-review-board.md`, `RELEASES.md`.
+
+**Not changed:** graders, model, record files.
+
+**Roll back:** `git revert` this commit.
 ## 2026-11-26-shown-groups-results: the Card review says how the groups it lost went (tag pending)
 
 **What changed:** the nightly Card review's line naming Card groups the page showed but the archive never received (#548) now gives each pick's result from the results ledger and the group's verdict (won, lost, not settled), with a tally. On today's files: 25 Nov's Card 2x, Warriors won, Grizzlies won, Toluca pending; 13 Nov kept no picks.
