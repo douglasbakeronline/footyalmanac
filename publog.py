@@ -167,12 +167,16 @@ def merge(doc, seen, covered, at, source="build"):
             items[key] = {"kind": kind, "source": source, "firstSeen": at, "lastSeen": at, "builds": 1,
                           "start": start_of(snap), "first": snap, "last": snap, "changes": []}
             continue
+        e.setdefault("changes", [])
         diff = changed(e.get("last") or {}, snap)
         if e.get("gone"):
             e["changes"].append({"at": at, "back": True}); e.pop("gone", None)
         if diff:
             e["changes"].append({"at": at, **diff}); e["changes"] = e["changes"][-CHANGES_MAX:]
-        e.update(lastSeen=at, builds=e.get("builds", 0) + 1, last=snap, start=start_of(snap) or e.get("start"))
+        e.update(lastSeen=at, builds=(e.get("builds") or 0) + 1, last=snap, start=start_of(snap) or e.get("start"))
+        if e.get("source") != source:      # a seeded item a build now shows: tracked from here on
+            e["seeded"] = e.get("source"); e["source"] = source
+        e.setdefault("changes", [])
     for key, e in items.items():
         if key not in seen and e["kind"] in covered and not e.get("gone") and e.get("source") == "build":
             e["gone"] = at

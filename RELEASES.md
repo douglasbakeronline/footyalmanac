@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-publog-seeded: the publication log reads its seeded entries (tag pending)
+
+**What changed:** `publog.py` crashed on the first live build (08:15 UTC) when a build showed an item the seed had logged (`builds` None); it now counts from there and tracks the item as the build's own (`seeded` keeps where it came from), so withdrawals and `group-unarchived` cover it too.
+**Evidence:** deploy run 45781556130, `TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'` in `merge`; the step is allowed to fail, so the build published as normal and nothing was logged that run.
+**Files:** `publog.py`, `tests/test_publog.py`, `RELEASES.md`.
+**Not changed:** anything else.
+**Roll back:** revert the commit.
+
 ## 2026-11-26-publication-log: every published item logged, and no group lost to a late start (tag pending)
 
 **What changed:** (1) a day stays in the build for as long as any group the page showed for it is still open, at any hour, so every group locks and reaches the archive (`groupings.card_dates(prev=)`, `open_group`); #545 kept the day before only until 07:00 UK. (2) `publog.py`, run after the slip in every build: every group (Card, Daily 2x, List, Model), Scale pick and group, slip and Edge pick the page showed, logged a UK day at a time in `groupings-archive/published/` with first and last sight, snapshots, changes and withdrawals, seeded from everything already kept; `python3 publog.py --day YYYY-MM-DD` reads a day. (3) The nightly integrity check raises `group-unarchived` for a published group that started and is not in the archive.
