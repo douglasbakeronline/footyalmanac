@@ -12,6 +12,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-stale-unplayed-newest: the build's postponed-fixture warning names the newest first (tag pending)
+
+**What changed:** nothing a reader sees. The build's warning for unplayed fixtures dated before the board's window named the first 12 in league order, so on 26 Nov four leftovers from 2024 and 2025 (Australia's af.191, Belarus's af.118) took places while 16 of the 28 went unnamed. It now names the 12 newest first, says how many more there are, and counts rows dated over 180 days back apart as most likely a past season's file. Every row is still counted (Rule 6).
+**Evidence:** `tests/test_stale_unplayed_line.py` (newest first, old rows counted apart, overflow counted, only-old days).
+**Files:** `build.py` (`stale_unplayed_line`, `STALE_SHOW`, `STALE_OLD_DAYS`), `tests/test_stale_unplayed_line.py`, `RELEASES.md`.
+**Not changed:** which fixtures reach the board, the model, the Card.
 ## 2026-11-26-next-card-group: an empty Card day names the next day with a group (tag pending)
 
 **What changed:** on the Bets tab, a day with no Card group now says when the next one is, under the reason it is empty: "The next Card group: Saturday 28 November, Al Ahli, FC Bayern München, PSV at (its price). Show that day", and the button turns the day ribbon to it. On 26 Nov today and tomorrow were empty while Saturday already held a group, visible only by turning the ribbon (Douglas, 17 Nov: "having no cards is awful"). Nothing shows when no later day has an open Card group.

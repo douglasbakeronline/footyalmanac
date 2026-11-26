@@ -1988,10 +1988,7 @@ def main():
         print(f"  {dropped_unrated} fixture(s) dropped: no rating on file for a side "
               f"(unrated is now a publish gate, not just a display flag)", file=sys.stderr)
     if stale_unplayed:
-        print(f"::warning::{len(stale_unplayed)} unplayed fixture(s) dated before {start} "
-              f"are not on the board; the source may hold a postponed date: "
-              + "; ".join(f"{c} {d} {h} v {a}" for c, d, h, a in stale_unplayed[:12]),
-              file=sys.stderr)
+        print(stale_unplayed_line(stale_unplayed, start), file=sys.stderr)
 
     # Backstop against the same fixture arriving from two competitions or two
     # sources. Keyed on the teams and the date, so a genuine two-legged tie on
@@ -2193,6 +2190,29 @@ def main():
     total = sum(d["count"] for d in days)
     print(f"wrote {out}: {total} fixtures across {len(days)} days", file=sys.stderr)
 
+
+
+STALE_SHOW = 12       # rows named in the warning
+STALE_OLD_DAYS = 180  # older than this: most likely a past season's leftover
+
+
+def stale_unplayed_line(rows, start):
+    """The warning for unplayed fixtures dated before the window, newest first
+    (26 Nov 2026: it named the first 12 in league order, so two 2024 and 2025
+    Australian and Belarusian leftovers took places while this month's
+    postponements, Shakhtar v Livyi Bereh among them, went unnamed). Rows over
+    STALE_OLD_DAYS before the window are counted apart; every row is counted."""
+    rows = sorted(rows, key=lambda r: r[1], reverse=True)
+    cut = (start - timedelta(days=STALE_OLD_DAYS)).isoformat()
+    recent = [r for r in rows if r[1] >= cut]
+    old = len(rows) - len(recent)
+    named = "; ".join(f"{c} {d} {h} v {a}" for c, d, h, a in recent[:STALE_SHOW])
+    more = len(recent) - min(len(recent), STALE_SHOW)
+    tail = (f"; and {more} more" if more else "") + (
+        f"; {old} more dated over {STALE_OLD_DAYS} days back (most likely a past season's file)" if old else "")
+    return (f"::warning::{len(rows)} unplayed fixture(s) dated before {start} "
+            f"are not on the board; the source may hold a postponed date: "
+            + (named or "none recent") + tail)
 
 if __name__ == "__main__":
     main()
