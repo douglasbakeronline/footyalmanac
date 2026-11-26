@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-25T21:08:05Z",
+ "graded": "2026-11-26T00:18:42Z",
  "overall": {
   "groups": 154,
   "settled": 153,
@@ -22,7 +22,7 @@
    "n": 186,
    "shortened": 71,
    "drifted": 72,
-   "mean": 0.0001
+   "mean": -0.0005
   }
  },
  "cardLegsBySport": {
@@ -198,10 +198,10 @@
    "ret": -0.0371
   },
   "notAtBook": {
-   "n": 180,
-   "won": 173,
-   "rate": 0.9611,
-   "quoted": 0.9152
+   "n": 186,
+   "won": 177,
+   "rate": 0.9516,
+   "quoted": 0.9158
   },
   "unchecked": {
    "n": 36,
@@ -264,10 +264,10 @@
      "ret": -0.0739
     },
     "notAtBook": {
-     "n": 173,
-     "won": 166,
-     "rate": 0.9595,
-     "quoted": 0.9178
+     "n": 179,
+     "won": 170,
+     "rate": 0.9497,
+     "quoted": 0.9183
     },
     "unchecked": {
      "n": 13,
@@ -591,7 +591,7 @@
    "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": 0,
    "ncaab|utsa roadrunners|army black knights|2026-11-26": -1,
    "football|real estelí|rancho santana|2026-11-26": 1.11,
-   "football|managua|walter ferretti|2026-11-26": 1.62,
+   "football|managua|walter ferretti|2026-11-26": 1.83,
    "football|diriangén|matagalpa|2026-11-27": 0,
    "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": -1,
    "ncaab|missouri tigers|arkansas-pine bluff golden lions|2026-11-27": -1,
@@ -623,7 +623,29 @@
    "ncaab|cal state bakersfield roadrunners|northern arizona lumberjacks|2026-11-28": -1,
    "ncaab|pennsylvania quakers|bucknell bison|2026-11-28": -1,
    "ncaab|richmond spiders|vmi keydets|2026-11-28": -1,
-   "ncaab|middle tennessee blue raiders|toccoa falls eagles|2026-11-28": -1
+   "ncaab|middle tennessee blue raiders|toccoa falls eagles|2026-11-28": -1,
+   "football|slavia praha|baník ostrava|2026-11-29": 1.25,
+   "nfl|cincinnati bengals|new orleans saints|2026-11-29": 1.2,
+   "nba|portland trail blazers|new orleans pelicans|2026-11-29": -1,
+   "ncaab|santa clara broncos|utah tech trailblazers|2026-11-29": -1,
+   "ncaab|duquesne dukes|south carolina state bulldogs|2026-11-29": -1,
+   "ncaab|notre dame fighting irish|stonehill skyhawks|2026-11-29": -1,
+   "ncaab|app state mountaineers|dartmouth big green|2026-11-29": -1,
+   "ncaab|uic flames|canisius golden griffins|2026-11-29": -1,
+   "ncaab|oregon state beavers|milwaukee panthers|2026-11-29": -1,
+   "ncaab|tulsa golden hurricane|iu indianapolis jaguars|2026-11-29": -1,
+   "ncaab|sacred heart pioneers|njit highlanders|2026-11-29": -1,
+   "ncaab|tulane green wave|ul monroe warhawks|2026-11-29": -1,
+   "ncaab|charlotte 49ers|western carolina catamounts|2026-11-29": -1,
+   "ncaab|longwood lancers|maryland eastern shore hawks|2026-11-29": -1,
+   "ncaab|wyoming cowboys|eastern washington eagles|2026-11-29": -1,
+   "ncaab|oklahoma state cowboys|tennessee state tigers|2026-11-29": -1,
+   "ncaab|houston cougars|queens university royals|2026-11-29": -1,
+   "ncaab|southern miss golden eagles|grambling tigers|2026-11-29": -1,
+   "ncaab|stanford cardinal|portland pilots|2026-11-29": -1,
+   "ncaab|american university eagles|hampton pirates|2026-11-29": -1,
+   "ncaab|texas state bobcats|nicholls colonels|2026-11-29": -1,
+   "ncaab|ohio state buckeyes|lipscomb bisons|2026-11-29": -1
   }
  },
  "cardContext": {
@@ -1186,7 +1208,7 @@
    "n": 9,
    "shortened": 4,
    "drifted": 4,
-   "mean": 0.0169
+   "mean": 0.0045
   }
  },
  "cardByRule": {
@@ -1676,7 +1698,7 @@
        "when": "2026-11-26T01:00:00Z",
        "odds": 1.52,
        "best": 1.57,
-       "lastOdds": 1.59,
+       "lastOdds": 1.8,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
