@@ -287,3 +287,20 @@ Check season 3,861 legs. Legs 2, 4 and 6 points above fair landed -1.5 / -2.1 / 
 ## Leg properties, fifth look (24 Nov 2026)
 
 No new rule. Pool: 98 settled real-priced football 65%+ legs, landed 76 v 66.5 expected; tested-below-model cell 31/34 v 24.1, tested-at-or-above 45/64 v 42.4 (wrong-signed again, tiny cells). Under the 250 the gates need. See `claude/leg-property-fifth-2026-11-24.md`.
+
+## Group bands against their stated chance, re-read (26 Nov 2026, Jade)
+
+Same read as 18 Nov, `groupings-record.json` `byBand` (published chance summed as `expected`, flat stake at the average price). Nothing refitted.
+
+| Band | Settled | Won | Expected | z | Return |
+|---|---|---|---|---|---|
+| Steady (retired) | 25 | 4 | 9.65 | -2.37 | -57% |
+| Balanced (retired) | 17 | 5 | 5.05 | -0.03 | +23% |
+| Stretch (retired) | 15 | 1 | 3.56 | -1.57 | -53% |
+| Banker (retired) | 2 | 1 | 0.76 | 0.35 | -9% |
+| Wider Treble / Fourfold | 4 / 3 | 2 / 1 | 1.55 / 1.08 | 0.46 / -0.09 | +2% / -30% |
+| Multiplier | 3 | 1 | 0.85 | 0.19 | -2% |
+| Card 2x | 41 | 13 | 15.66 | -0.86 | -26% |
+| Card 3x (not built since rule 8) | 16 | 7 | 4.25 | +1.56 | +41% |
+
+Changes since 18 Nov: only the Card 2x grew (36 to 41 settled, 31% v 38% stated, still inside noise). The retired bands are frozen, so their numbers cannot move. No band has 100 settled groups, the gate for a rule change, and a replay of the retired 65% / 30 tested-rate and spread rules on past days is still not possible without using the scoreboard (rule 1) or pre-30 Oct prices. Verdict: no rule change clearly improves the hit rate at the same odds; write-up only, no code touched.
