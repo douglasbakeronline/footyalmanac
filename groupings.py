@@ -453,6 +453,13 @@ AF_SPELLINGS = {
     # División Profesional, noFixture beside "Gualberto Villarroel SJ v Real
     # Potosí" (claude/kickoff-board-right-2026-11-25.md).
     "GV San José": "Gualberto Villarroel SJ",              # Bolivia
+    # 26 Nov 2026 (00:14 UTC build): four noFixture legs on 29 Nov, each
+    # beside its fixture in `near`; every pool row of these clubs since 30 Oct
+    # was archived as an estimate.
+    "WSG Tirol": "WSG Wattens",                            # Austria
+    "Stade Rennais FC 1901": "Rennes",                     # Ligue 1
+    "LAFC": "Los Angeles FC",                              # MLS
+    "Dinamo Moscow": "Dynamo",                             # Russia
 }
 
 
