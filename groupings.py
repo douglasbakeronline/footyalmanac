@@ -2047,6 +2047,22 @@ def window_end(date, window):
     base = datetime(d.year, d.month, d.day, tzinfo=UK) + timedelta(hours=end)
     return base.astimezone(timezone.utc)
 
+def card_dates(dates, now):
+    """The UK days the build makes cards for: the board's dates, led by the
+    day before while its window is still open (until 07:00 UK, 26 Nov 2026).
+    The Card's day runs 07:00 to 07:00, but the build began at today's UK
+    date, so from midnight to 07:00 the day before was no longer built: a
+    group whose picks all start in those hours (NBA, the Americas) was never
+    held to its first kick-off, never locked and never archived. On 25 Nov
+    the page built Warriors, Grizzlies and Toluca (01:00 to 03:00 UTC on the
+    26th) on every build of the day; the 00:10 build dropped it and the
+    record shows the day empty. claude/card-overnight-day-2026-11-26.md"""
+    first = datetime.fromisoformat(dates[0]).date()
+    yday = (first - timedelta(days=1)).isoformat()
+    if any(now < window_end(yday, w) for w, _, _ in CARD_WINDOWS):
+        return [yday] + list(dates)
+    return list(dates)
+
 # 25 Oct 2026, Douglas: "There is no daytime and evening bets. There needs to
 # be some even if they update on later rebuilds." When the full rule fills
 # neither kind in a window, the window takes the best group under the wider
@@ -3842,6 +3858,8 @@ def main():
     # Days are the board's own dates (UK days on the football board).
     today = now.astimezone(ZoneInfo("Europe/London")).date()
     dates = [(today + timedelta(days=i)).isoformat() for i in range(DAYS_AHEAD + 1)]
+    # 26 Nov 2026: the cards also hold the day before until its window ends (card_dates)
+    cdates = card_dates(dates, now)
     L = legs(set(dates))
     report = price(L, set(dates))
     if probe:
@@ -3854,7 +3872,7 @@ def main():
         cands = []
         for l in L:
             s_ = uk_slot(l)
-            if not s_ or s_[0] not in dates: continue
+            if not s_ or s_[0] not in cdates: continue
             card = card_fault(l) is None
             # 12 Nov 2026 (Douglas): Daily List picks at 75%+ are read too,
             # within the daily cap, after the Card's (context_review.priority)
@@ -3865,10 +3883,10 @@ def main():
     except Exception as e:
         report.setdefault("errors", []).append(f"context: {type(e).__name__}: {str(e)[:120]}")
     # 15 Nov 2026: the first day also respects the day before's two-day group
-    yday = (today - timedelta(days=1)).isoformat()
-    days, span_taken = [], span_held(dates[0], prev=(prev.get(yday) or {}).get("groups"))
+    before = (datetime.fromisoformat(cdates[0]).date() - timedelta(days=1)).isoformat()
+    days, span_taken = [], span_held(cdates[0], prev=(prev.get(before) or {}).get("groups"))
     short_log = {}
-    for d in dates:
+    for d in cdates:
         dl = [l for l in L if l["date"] == d]
         pd = prev.get(d) or {}
         log = list(pd.get("log") or [])
