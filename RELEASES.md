@@ -23,6 +23,13 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Not changed:** graders, model, record files.
 
 **Roll back:** `git revert` this commit.
+## 2026-11-26-card-return-gap: The Card's 0.800 a unit read, no rule change (tag pending)
+
+**What changed:** a note only. The Card's groups land on quote (11 of 34 v 12.3 expected, z -0.5), so the 0.800 is margin plus luck, not a losing class of leg.
+**Evidence:** legs NBA 36/48 (z +0.42), football 33/47 (z +0.31), tennis at today's 75% floor 11/15 v 11.9 expected; CLV -0.4% on 104 legs; every split under 20 groups or 50 legs, short of the 100-leg gate.
+**Files:** `claude/card-return-gap-read-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** `CARD_RULE` 14 and every constant; no variant added (it would be fitted on the scoreboard).
+**Roll back:** `git revert` the merge.
 
 ## 2026-11-26-europe-skips: Swiss and Monaco European ties out of the blind spot; their blind spots named (tag pending)
 
