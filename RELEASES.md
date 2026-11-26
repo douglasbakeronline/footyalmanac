@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-shown-groups-results: the Card review says how the groups it lost went (tag pending)
+
+**What changed:** the nightly Card review's line naming Card groups the page showed but the archive never received (#548) now gives each pick's result from the results ledger and the group's verdict (won, lost, not settled), with a tally. On today's files: 25 Nov's Card 2x, Warriors won, Grizzlies won, Toluca pending; 13 Nov kept no picks.
+**Evidence:** `tests/test_review_live_days.py` (a lost group read by its day, a build-logged leg read at its own start, a void dropping out, a lost leg losing the group); the section run on main's files.
+**Files:** `tools/card_review_post.py` (`shown_results`, `group_verdict`, `_ledger_rows`; `live_days_section(ledger=)`), `tests/test_review_live_days.py`, `claude/card-overnight-day-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** the record, `groupings-record.json` and every Card constant; `CARD_RULE` stays 14. Nothing graded here enters the record (Rule 1).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-card-return-gap: The Card's 0.800 a unit read, no rule change (tag pending)
 
 **What changed:** a note only. The Card's groups land on quote (11 of 34 v 12.3 expected, z -0.5), so the 0.800 is margin plus luck, not a losing class of leg.
