@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-tennis-card-legs-3: Card tennis legs, third read, nothing to ship (tag pending)
+
+**What changed:** a note only. The planner's 8 of 15 is the same pre-floor population read on 13, 19 and 20 Nov.
+**Evidence:** `cardLegsBySport.tennis` 41 legs, 23 landed v 29.1 expected (z -2.13), unchanged since 14 Nov; at the 75% floor 15 legs, 11 landed v 11.9 (z -0.57); tripwire needs 50+ at the floor. No tennis price history to run Rule 3 gates on.
+**Files:** `claude/tennis-card-legs-reread-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** `CARD_SPORTS_OFF`, any Card constant, the model.
+**Roll back:** revert the commit.
+
 ## 2026-11-26-af-spellings: Rennes, WSG Tirol, LAFC and Dinamo Moscow priced by API-Football (tag pending)
 
 **What changed:** four board names are matched to API-Football's spelling in the one-fixture price fallback (`groupings.AF_SPELLINGS`): WSG Tirol (WSG Wattens), Stade Rennais FC 1901 (Rennes), LAFC (Los Angeles FC), Dinamo Moscow (Dynamo).
