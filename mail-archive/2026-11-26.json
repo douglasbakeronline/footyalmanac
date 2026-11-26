@@ -1,0 +1,138 @@
+{
+ "day": "2026-11-26",
+ "sentAt": "2026-11-26T07:11:00Z",
+ "subject": "The Daily List, Thu 26 Nov: 5 picks",
+ "list": [
+  {
+   "sport": "ncaab",
+   "home": "UTSA Roadrunners",
+   "away": "Army Black Knights",
+   "pick": "UTSA Roadrunners",
+   "comp": "NCAA",
+   "start": "2026-11-26T17:00:00Z",
+   "timed": true,
+   "conf": 0.9007,
+   "tested": 0.9201,
+   "px": {
+    "label": "Hill",
+    "price": 1.06
+   },
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "football",
+   "home": "Robin Hood",
+   "away": "Flora",
+   "pick": "Robin Hood",
+   "comp": "Suriname Eerste Divisie",
+   "start": "2026-11-26T23:00:00Z",
+   "timed": true,
+   "conf": 0.8819,
+   "tested": 0.8997,
+   "px": null,
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "football",
+   "home": "Diriangén",
+   "away": "Matagalpa",
+   "pick": "Diriangén",
+   "comp": "Nicaragua Primera Division",
+   "start": "2026-11-27T00:00:00Z",
+   "timed": true,
+   "conf": 0.8423,
+   "tested": 0.853,
+   "px": {
+    "label": "Hill",
+    "price": 1.22
+   },
+   "star": false,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Bentonit Ijevan",
+   "away": "Shirak II",
+   "pick": "Bentonit Ijevan",
+   "comp": "Armenia First League",
+   "start": "2026-11-26T10:00:00Z",
+   "timed": true,
+   "conf": 0.8115,
+   "tested": 0.853,
+   "px": {
+    "label": "Avg",
+    "price": 1.07,
+    "not_hill": false
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Ural",
+   "away": "Arsenal Tula",
+   "pick": "Ural",
+   "comp": "Russia First League",
+   "start": "2026-11-26T14:00:00Z",
+   "timed": true,
+   "conf": 0.7572,
+   "tested": 0.8229,
+   "px": {
+    "label": "Avg",
+    "price": 1.38,
+    "not_hill": false
+   },
+   "star": true,
+   "A": false
+  }
+ ],
+ "daily": {
+  "name": "Daily 2x",
+  "seq": 1,
+  "odds": 2.73,
+  "hill": null,
+  "stake": 1,
+  "p": 0.4557,
+  "short": false,
+  "legs": [
+   {
+    "pick": "Ural",
+    "event": "Ural v Arsenal Tula",
+    "sport": "football",
+    "comp": "First League",
+    "when": "2026-11-26T14:00:00Z",
+    "p": 0.7572,
+    "odds": 1.38,
+    "hill": null,
+    "est": false
+   },
+   {
+    "pick": "Diriangén",
+    "event": "Diriangén v Matagalpa",
+    "sport": "football",
+    "comp": "Primera Division",
+    "when": "2026-11-27T00:00:00Z",
+    "p": 0.8423,
+    "odds": 1.19,
+    "hill": null,
+    "est": false
+   },
+   {
+    "pick": "Buffalo Bills",
+    "event": "Buffalo Bills v Kansas City Chiefs",
+    "sport": "nfl",
+    "comp": "NFL",
+    "when": "2026-11-27T01:20Z",
+    "p": 0.7145,
+    "odds": 1.66,
+    "hill": null,
+    "est": false
+   }
+  ]
+ },
+ "cards": [],
+ "cardShort": "No Card group today: no picks clear the rule so far, and a group needs 3. A blank day is the rule working.",
+ "edge": []
+}
