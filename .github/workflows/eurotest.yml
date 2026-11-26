@@ -1,0 +1,36 @@
+# The European league-strength fit (eurotest.py), run by hand or on any pull
+# request touching it, the name matcher or this file (26 Nov 2026, Douglas:
+# "remove the blind spot"). Prints every tie the fit could not price by league
+# and club (--skips), the gated report, and a dry-run refit. Writes nothing to
+# the repo: europe.json is committed by hand after a passing fit (Rule 5).
+# The cloud sandbox cannot reach football-data.co.uk or ESPN, so this runs here.
+name: Europe fit
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - eurotest.py
+      - sources.py
+      - .github/workflows/eurotest.yml
+permissions:
+  contents: read
+jobs:
+  europe:
+    runs-on: ubuntu-latest
+    env:
+      API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - shell: bash
+        run: |
+          set -o pipefail
+          { python3 eurotest.py --skips; python3 eurotest.py --report; python3 eurotest.py --fit --dry-run; } 2>&1 | tee europe-fit.log
+        timeout-minutes: 60
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: europe-fit
+          path: europe-fit.log

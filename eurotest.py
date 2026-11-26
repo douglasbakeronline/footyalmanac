@@ -307,6 +307,35 @@ def report():
         print(f"europe.json in force, on {s} vs shipped: {mu:+.4f} (sd {sd:.4f}, p worse {pw:.2f})")
 
 
+def skips(seasons=None):
+    """Every European tie the fit could not price, by reason, league and
+    club (26 Nov 2026, Douglas: "remove the blind spot"). A tie with a side
+    outside the fit carries Celtic's Law on the board (build.py fitted_pair),
+    so each club named here is a tie the Daily List cannot take. "no league"
+    is a country with no domestic league in engine.LEAGUES (the code is the
+    tag on the European fixture); "not matched" is a club the domestic
+    season on file did not match, a spelling for sources.LIVE_NAMES or a
+    league whose source did not answer."""
+    from collections import Counter
+    pair = pair_of_seasons()
+    eus = seasons or ([p[0] for p in pair] if pair else [])
+    for euro in eus:
+        rater, nolg, unm, clubs = Rater(euro), Counter(), Counter(), defaultdict(Counter)
+        allt = ties(euro)
+        for t in allt:
+            for name, code in (t["home"], t["away"]):
+                if code not in E.LEAGUES:
+                    nolg[code or "?"] += 1; clubs["no league " + str(code)][name] += 1
+                elif rater.rating(name, code, t["date"]) is None:
+                    unm[code] += 1; clubs[code][name] += 1
+        print(f"{euro}: {len(allt)} ties")
+        print("  no domestic league on file: " + ", ".join(f"{c} {n}" for c, n in nolg.most_common()))
+        print("  club not matched: " + ", ".join(f"{c} {n}" for c, n in unm.most_common()))
+        for c, cnt in sorted(clubs.items(), key=lambda kv: -sum(kv[1].values())):
+            print(f"    {c}: " + "; ".join(f"{k} ({v})" for k, v in cnt.most_common()))
+    print("leagues in europe.json: " + ", ".join(sorted(E.CONTINENTAL_FITTED)))
+
+
 def do_fit(dry=False):
     pair = pair_of_seasons()
     if not pair:
@@ -353,7 +382,10 @@ if __name__ == "__main__":
     ap.add_argument("--report", action="store_true")
     ap.add_argument("--fit", action="store_true")
     ap.add_argument("--dry-run", action="store_true")
+    ap.add_argument("--skips", action="store_true", help="every tie the fit could not price, by league and club")
     a = ap.parse_args()
+    if a.skips:
+        sys.exit(skips())
     if a.fit:
         sys.exit(do_fit(a.dry_run))
     report()
