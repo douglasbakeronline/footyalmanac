@@ -1,0 +1,617 @@
+{
+ "date": "2026-11-26",
+ "published": "2026-11-26T15:17:53Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.73,
+   "p": 0.4557,
+   "pFair": 0.2967,
+   "implied": 0.3668,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Ural v Arsenal Tula",
+     "home": "Ural",
+     "away": "Arsenal Tula",
+     "side": "h",
+     "pick": "Ural",
+     "code": "af.236",
+     "comp": "First League",
+     "country": "Russia",
+     "when": "2026-11-26T14:00:00Z",
+     "date": "2026-11-26",
+     "pModel": 0.7572,
+     "p": 0.7572,
+     "fx": {
+      "u21Side": false,
+      "league": "af.236",
+      "leagueName": "First League",
+      "short": "FIR",
+      "country": "Russia",
+      "iso": "rus",
+      "tier": 2,
+      "order": 549,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-26",
+      "time": "14:00",
+      "kickoff": "2026-11-26T14:00:00Z",
+      "home": {
+       "name": "Ural",
+       "att": 1.237,
+       "def": 0.617,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "First League",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "LWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 18,
+        "D": 7,
+        "L": 9,
+        "GF": 51,
+        "GA": 31,
+        "GD": 20,
+        "Pts": 61,
+        "PPG": 1.794
+       },
+       "now": {
+        "P": 18,
+        "W": 11,
+        "D": 4,
+        "L": 3,
+        "GF": 31,
+        "GA": 11,
+        "GD": 20,
+        "Pts": 37,
+        "PPG": 2.056
+       }
+      },
+      "away": {
+       "name": "Arsenal Tula",
+       "att": 0.958,
+       "def": 1.349,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "First League",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LWLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 8,
+        "D": 15,
+        "L": 11,
+        "GF": 42,
+        "GA": 44,
+        "GD": -2,
+        "Pts": 39,
+        "PPG": 1.147
+       },
+       "now": {
+        "P": 18,
+        "W": 5,
+        "D": 5,
+        "L": 8,
+        "GF": 22,
+        "GA": 37,
+        "GD": -15,
+        "Pts": 20,
+        "PPG": 1.111
+       }
+      },
+      "p": {
+       "h": 0.7572,
+       "d": 0.1692,
+       "a": 0.0736
+      },
+      "xg": [
+       2.34,
+       0.58
+      ],
+      "btts": 0.4845,
+      "over25": 0.5354,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7572,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6689,
+        0.2051,
+        0.126
+       ],
+       "best": [
+        1.38,
+        4.49,
+        7.32
+       ],
+       "avg": [
+        1.38,
+        4.49,
+        7.32
+       ],
+       "ev": [
+        0.0434,
+        -0.2396,
+        -0.4614
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 5,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1692,
+     "multOnly": false,
+     "odds": 1.38,
+     "best": 1.38,
+     "books": 5,
+     "opp": 7.32,
+     "draw": 4.49,
+     "bestBook": null,
+     "bookOdds": {},
+     "margin": 1.0849,
+     "pricedAt": "2026-11-26T04:10:05Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.7246,
+     "pTested": 0.7572,
+     "fair": 0.6679,
+     "edge": -0.0783,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.38
+    },
+    {
+     "sport": "football",
+     "event": "Diriangén v Matagalpa",
+     "home": "Diriangén",
+     "away": "Matagalpa",
+     "side": "h",
+     "pick": "Diriangén",
+     "code": "af.396",
+     "comp": "Primera Division",
+     "country": "Nicaragua",
+     "when": "2026-11-27T00:00:00Z",
+     "date": "2026-11-27",
+     "pModel": 0.8423,
+     "p": 0.8423,
+     "fx": {
+      "u21Side": false,
+      "league": "af.396",
+      "leagueName": "Primera Division",
+      "short": "PRI",
+      "country": "Nicaragua",
+      "iso": "nic",
+      "tier": 2,
+      "order": 538,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-27",
+      "time": "00:00",
+      "kickoff": "2026-11-27T00:00:00Z",
+      "home": {
+       "name": "Diriangén",
+       "att": 1.296,
+       "def": 0.703,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 9,
+        "max": 15,
+        "seq": "WWLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 44,
+        "W": 27,
+        "D": 12,
+        "L": 5,
+        "GF": 101,
+        "GA": 37,
+        "GD": 64,
+        "Pts": 93,
+        "PPG": 2.114
+       },
+       "now": {
+        "P": 17,
+        "W": 11,
+        "D": 3,
+        "L": 3,
+        "GF": 32,
+        "GA": 17,
+        "GD": 15,
+        "Pts": 36,
+        "PPG": 2.118
+       }
+      },
+      "away": {
+       "name": "Matagalpa",
+       "att": 0.636,
+       "def": 1.277,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera Division",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "DLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 40,
+        "W": 14,
+        "D": 11,
+        "L": 15,
+        "GF": 64,
+        "GA": 58,
+        "GD": 6,
+        "Pts": 53,
+        "PPG": 1.325
+       },
+       "now": {
+        "P": 17,
+        "W": 3,
+        "D": 1,
+        "L": 13,
+        "GF": 9,
+        "GA": 37,
+        "GD": -28,
+        "Pts": 10,
+        "PPG": 0.588
+       }
+      },
+      "p": {
+       "h": 0.8423,
+       "d": 0.1148,
+       "a": 0.0429
+      },
+      "xg": [
+       2.88,
+       0.55
+      ],
+      "btts": 0.4837,
+      "over25": 0.5784,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.8423,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7704,
+        0.1533,
+        0.0763
+       ],
+       "best": [
+        1.2,
+        6.5,
+        13.0
+       ],
+       "avg": [
+        1.19,
+        5.97,
+        12.0
+       ],
+       "ev": [
+        0.0108,
+        -0.2538,
+        -0.4423
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 2,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.8075,
+       "n": 644,
+       "cumHit": 0.853,
+       "cumN": 1272,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.853,
+     "n": 1272,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1148,
+     "multOnly": false,
+     "odds": 1.19,
+     "best": 1.2,
+     "books": 5,
+     "opp": 12.0,
+     "draw": 5.97,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.2,
+      "BetVictor": 1.15
+     },
+     "margin": 1.0926,
+     "pricedAt": "2026-11-26T04:10:08Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.8403,
+     "pTested": 0.8075,
+     "fair": 0.7691,
+     "edge": -0.0848,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.19,
+     "lastOdds": 1.23,
+     "lastBest": 1.25,
+     "lastAt": "2026-11-26T15:17:53Z"
+    },
+    {
+     "sport": "nfl",
+     "event": "Buffalo Bills v Kansas City Chiefs",
+     "home": "Buffalo Bills",
+     "away": "Kansas City Chiefs",
+     "pick": "Buffalo Bills",
+     "comp": "NFL",
+     "when": "2026-11-27T01:20Z",
+     "date": "2026-11-27",
+     "id": "401873082",
+     "pModel": 0.7145,
+     "p": 0.7145,
+     "hit": 0.7217,
+     "n": 115,
+     "list": false,
+     "reserve": true,
+     "multOnly": true,
+     "listOff": false,
+     "fx": {
+      "id": "401873082",
+      "sport": "nfl",
+      "label": "NFL",
+      "feed": "football/nfl",
+      "when": "2026-11-27T01:20Z",
+      "home": "Buffalo Bills",
+      "away": "Kansas City Chiefs",
+      "neutral": false,
+      "pHome": 0.7145,
+      "pick": "Buffalo Bills",
+      "confidence": 0.7145,
+      "tier": "Strong",
+      "eloH": 1703,
+      "eloA": 1594,
+      "gamesH": 68,
+      "gamesA": 68,
+      "hfa": 50,
+      "eloDiff": 159.3,
+      "line": {
+       "spread": -3.0,
+       "total": 45.5,
+       "mlH": -151.0,
+       "mlA": 127.0,
+       "by": "DraftKings"
+      },
+      "wary": null,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.75,
+       "hit": 0.653,
+       "n": 49,
+       "cumHit": 0.7217,
+       "cumN": 115
+      },
+      "formH": [
+       {
+        "r": "W",
+        "score": "26-9",
+        "opp": "Miami Dolphins",
+        "home": true,
+        "date": "2026-11-22"
+       },
+       {
+        "r": "W",
+        "score": "31-12",
+        "opp": "New York Jets",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "23-6",
+        "opp": "Minnesota Vikings",
+        "home": false,
+        "date": "2026-11-10"
+       },
+       {
+        "r": "W",
+        "score": "36-10",
+        "opp": "Baltimore Ravens",
+        "home": true,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "W",
+        "score": "33-30",
+        "opp": "Las Vegas Raiders",
+        "home": false,
+        "date": "2026-10-18"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "34-7",
+        "opp": "Arizona Cardinals",
+        "home": true,
+        "date": "2026-11-22"
+       },
+       {
+        "r": "W",
+        "score": "35-13",
+        "opp": "Atlanta Falcons",
+        "home": false,
+        "date": "2026-11-15"
+       },
+       {
+        "r": "W",
+        "score": "35-12",
+        "opp": "New York Jets",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "24-28",
+        "opp": "Denver Broncos",
+        "home": false,
+        "date": "2026-11-01"
+       },
+       {
+        "r": "L",
+        "score": "3-20",
+        "opp": "Seattle Seahawks",
+        "home": false,
+        "date": "2026-10-26"
+       }
+      ],
+      "recordH": {
+       "w": 9,
+       "l": 1,
+       "d": 0
+      },
+      "recordA": {
+       "w": 8,
+       "l": 2,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-11-02",
+        "home": "Buffalo Bills",
+        "away": "Kansas City Chiefs",
+        "score": "28-21"
+       },
+       {
+        "date": "2025-01-26",
+        "home": "Kansas City Chiefs",
+        "away": "Buffalo Bills",
+        "score": "32-29"
+       },
+       {
+        "date": "2024-11-17",
+        "home": "Buffalo Bills",
+        "away": "Kansas City Chiefs",
+        "score": "30-21"
+       }
+      ],
+      "list": false,
+      "reserve": true
+     },
+     "odds": 1.66,
+     "margin": 1.0429,
+     "opp": 2.27,
+     "src": "ESPN, DraftKings moneyline",
+     "pricedAt": "2026-11-26T04:57:21Z",
+     "implied": 0.6024,
+     "pTested": 0.653,
+     "fair": 0.5776,
+     "edge": -0.0412,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.66,
+     "lastOdds": 1.65,
+     "lastBest": 1.65,
+     "lastAt": "2026-11-26T15:17:53Z"
+    }
+   ],
+   "tested": 0.3259,
+   "short": false,
+   "tiers": [
+    "list",
+    "reserve"
+   ],
+   "bestOdds": 2.75,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-26T04:56:38Z",
+   "checked": "2026-11-26T04:56:38Z",
+   "lockAt": "2026-11-26T14:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-26T15:17:53Z"
+  }
+ ]
+}

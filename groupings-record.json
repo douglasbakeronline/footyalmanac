@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-26T11:09:14Z",
+ "graded": "2026-11-26T15:18:43Z",
  "overall": {
-  "groups": 154,
+  "groups": 155,
   "settled": 154,
   "won": 47,
   "z": -1.08,
   "lost": 107,
-  "pending": 0,
+  "pending": 1,
   "legs": 587,
   "legsWon": 431,
   "returned": 133.66,
@@ -19,10 +19,10 @@
   "unitsReturned": 154.96,
   "unitsReturnedBest": 160.22,
   "clv": {
-   "n": 186,
-   "shortened": 71,
-   "drifted": 72,
-   "mean": -0.0005
+   "n": 188,
+   "shortened": 72,
+   "drifted": 73,
+   "mean": -0.0007
   }
  },
  "cardLegsBySport": {
@@ -204,10 +204,10 @@
    "quoted": 0.9163
   },
   "unchecked": {
-   "n": 36,
-   "won": 33,
-   "rate": 0.9167,
-   "quoted": 0.8482
+   "n": 37,
+   "won": 34,
+   "rate": 0.9189,
+   "quoted": 0.847
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 19,
-     "won": 16,
-     "rate": 0.8421,
-     "quoted": 0.7962
+     "n": 20,
+     "won": 17,
+     "rate": 0.85,
+     "quoted": 0.7966
     }
    },
    "nba": {
@@ -589,7 +589,7 @@
    "ncaab|wisconsin badgers|northeastern huskies|2026-11-26": 0,
    "ncaab|montana state bobcats|northwest indian redhawks|2026-11-26": -1,
    "ncaab|new mexico lobos|mississippi valley state delta devils|2026-11-26": 0,
-   "ncaab|utsa roadrunners|army black knights|2026-11-26": 1.06,
+   "ncaab|utsa roadrunners|army black knights|2026-11-26": 1.1,
    "football|real estelí|rancho santana|2026-11-26": 1.11,
    "football|managua|walter ferretti|2026-11-26": 1.83,
    "football|diriangén|matagalpa|2026-11-27": 1.22,
@@ -601,7 +601,7 @@
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": -1,
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1,
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
-   "football|boreham wood|gateshead|2026-11-28": 1.12,
+   "football|boreham wood|gateshead|2026-11-28": 1.11,
    "nba|detroit pistons|milwaukee bucks|2026-11-28": -1,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": -1,
    "ncaab|northwestern wildcats|northeastern huskies|2026-11-28": -1,
@@ -1163,12 +1163,12 @@
   }
  },
  "cardDaily": {
-  "groups": 9,
+  "groups": 10,
   "settled": 9,
   "won": 3,
   "z": -0.32,
   "lost": 6,
-  "pending": 0,
+  "pending": 1,
   "legs": 31,
   "legsWon": 24,
   "returned": 8.08,
@@ -1181,10 +1181,10 @@
   "unitsReturned": 8.08,
   "unitsReturnedBest": 8.12,
   "clv": {
-   "n": 22,
-   "shortened": 8,
-   "drifted": 9,
-   "mean": 0.0021
+   "n": 24,
+   "shortened": 9,
+   "drifted": 10,
+   "mean": 0.0008
   }
  },
  "cardListLong": {
@@ -1517,6 +1517,98 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-26",
+   "published": "2026-11-26T15:17:53Z",
+   "groups": [
+    {
+     "name": "Daily 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 1,
+     "wideRule": null,
+     "odds": 2.73,
+     "p": 0.4557,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-26T14:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Ural",
+       "event": "Ural v Arsenal Tula",
+       "sport": "football",
+       "comp": "First League",
+       "when": "2026-11-26T14:00:00Z",
+       "odds": 1.38,
+       "best": 1.38,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7572,
+       "status": "pending",
+       "result": null,
+       "opp": 7.32,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Diriangén",
+       "event": "Diriangén v Matagalpa",
+       "sport": "football",
+       "comp": "Primera Division",
+       "when": "2026-11-27T00:00:00Z",
+       "odds": 1.19,
+       "best": 1.2,
+       "lastOdds": 1.23,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8423,
+       "status": "pending",
+       "result": null,
+       "opp": 12.0,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Buffalo Bills",
+       "event": "Buffalo Bills v Kansas City Chiefs",
+       "sport": "nfl",
+       "comp": "NFL",
+       "when": "2026-11-27T01:20Z",
+       "odds": 1.66,
+       "best": 1.66,
+       "lastOdds": 1.65,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7145,
+       "status": "pending",
+       "result": null,
+       "opp": 2.27,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-25",
    "published": "2026-11-25T11:08:19Z",
