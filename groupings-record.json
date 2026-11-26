@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-26T17:56:29Z",
+ "graded": "2026-11-26T20:11:25Z",
  "overall": {
   "groups": 155,
   "settled": 155,
@@ -22,7 +22,7 @@
    "n": 188,
    "shortened": 72,
    "drifted": 73,
-   "mean": -0.0006
+   "mean": -0.0007
   }
  },
  "cardLegsBySport": {
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 84,
+   "n": 85,
    "won": 73,
-   "rate": 0.869,
-   "quoted": 0.8733,
+   "rate": 0.8588,
+   "quoted": 0.8734,
    "returned": 80.07,
-   "ret": -0.0468
+   "ret": -0.058
   },
   "notAtBook": {
    "n": 193,
@@ -256,12 +256,12 @@
    },
    "ncaab": {
     "atBook": {
-     "n": 41,
+     "n": 42,
      "won": 36,
-     "rate": 0.878,
-     "quoted": 0.9005,
+     "rate": 0.8571,
+     "quoted": 0.9001,
      "returned": 37.97,
-     "ret": -0.0739
+     "ret": -0.096
     },
     "notAtBook": {
      "n": 186,
@@ -602,7 +602,7 @@
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": -1,
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
    "football|boreham wood|gateshead|2026-11-28": 1.11,
-   "nba|detroit pistons|milwaukee bucks|2026-11-28": -1,
+   "nba|detroit pistons|milwaukee bucks|2026-11-28": 1.18,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": -1,
    "ncaab|northwestern wildcats|northeastern huskies|2026-11-28": -1,
    "ncaab|nc state wolfpack|elon phoenix|2026-11-28": -1,
@@ -1184,7 +1184,7 @@
    "n": 24,
    "shortened": 9,
    "drifted": 10,
-   "mean": 0.0011
+   "mean": 0.0008
   }
  },
  "cardListLong": {
@@ -1593,7 +1593,7 @@
        "when": "2026-11-27T01:20Z",
        "odds": 1.66,
        "best": 1.66,
-       "lastOdds": 1.64,
+       "lastOdds": 1.65,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
