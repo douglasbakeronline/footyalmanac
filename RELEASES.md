@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-racing-plan-line: a racing plan refusal is a log line, not a warning (tag pending)
+
+**What changed:** nothing on the page. Every build on The Racing API's free plan raised `::warning::racing results failed: HTTP Error 401` because the plan does not send results; the page's feed note already says nothing can be graded. A refusal (401 / 403) after the racecards answered from a lower plan now prints a plain line (`racing.results_failed_line`); any other failure, or a refusal with no racecards answered, stays a warning, so a real fault still shows.
+**Evidence:** the 26 Nov 20:06 UTC deploy log: racecards from `racecards/free`, results 401, the only non-routine warning in the run.
+**Files:** `racing.py`, `tests/test_racing.py`, `RELEASES.md`.
+**Not changed:** what racing fetches, grades or shows; any Card rule (CARD_RULE stays 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-group-bands-reread: group bands against their stated chance, re-read (tag pending)
 
 **What changed:** nothing on the page. A dated section in `claude/odds-groupings.md`.

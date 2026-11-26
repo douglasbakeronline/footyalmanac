@@ -266,3 +266,18 @@ class FeedNote(unittest.TestCase):
     def test_prices_but_no_results(self):
         note = racing.feed_note({"plan": "basic", "prices": True, "results": False})
         self.assertEqual(note, "The Racing API's basic plan sends no results, so nothing can be graded.")
+
+
+class ResultsFailedLine(unittest.TestCase):
+    """26 Nov 2026: a plan refusal of results is a plain log line, not a warning."""
+
+    def test_free_plan_refusal_is_plain(self):
+        line = racing.results_failed_line("HTTP Error 401: Unauthorized", True, "racecards/free")
+        self.assertFalse(line.startswith("::warning::"))
+        self.assertIn("not on the free plan", line)
+
+    def test_other_failures_stay_warnings(self):
+        for err, refused, path in (("timed out", False, "racecards/free"),
+                                   ("HTTP Error 401", True, None),
+                                   ("HTTP Error 401", True, "racecards/standard")):
+            self.assertTrue(racing.results_failed_line(err, refused, path).startswith("::warning::"))

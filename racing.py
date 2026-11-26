@@ -615,6 +615,19 @@ def freeze(day, races, now):
     return out
 
 
+def results_failed_line(err, refused, card_path):
+    """The build log's line for a results call that failed (26 Nov 2026). A
+    plan refusal (401 / 403) after the racecards answered from a lower plan is
+    the plan, not a fault: every build on the free plan raised a warning for
+    it, which taught the log's reader to skip racing warnings. That case is a
+    plain line (the page's feed note already says nothing can be graded); any
+    other failure, or a refusal with no racecards answered, stays a warning."""
+    plan = (card_path or "").rsplit("/", 1)[-1]
+    if refused and plan and plan != "standard":
+        return f"racing: results not on the {plan} plan ({err}); nothing graded, the page says so"
+    return f"::warning::racing results failed: {err}"
+
+
 def feed_of(days, results_refused):
     """What the plan in use sends (20 Nov 2026): the racecard endpoint that
     answered, whether any runner carried a bookies' price, whether results
@@ -757,7 +770,7 @@ def main(argv=None):
             results[rid] = (finish, sp)
     except Exception as e:
         refused = isinstance(e, urllib.error.HTTPError) and e.code in (401, 403)
-        print(f"::warning::racing results failed: {e}")
+        print(results_failed_line(e, refused, _card_path[0]))
 
     runners, tips = grade(archive, results)
     summary = summarise(runners, tips)
