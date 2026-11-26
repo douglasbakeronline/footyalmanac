@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-office-review: office review and next week's priorities (tag pending)
+
+**What changed:** a note only, `claude/office-review-2026-11-26.md`: what shipped 18 to 26 Nov, what was rejected, where accuracy stands, three tasks (Kofi, Susie, Hannah).
+**Evidence:** `record.json` (list 215 picks 82.3% v 82.1% quoted; reserve 67.0% v 68.3%), `groupings-record.json` (rule 14 1 of 3 won v 1.23 expected; tennis Card legs z -2.13).
+**Files:** `claude/office-review-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** code, model, Card constants.
+**Roll back:** revert the commit.
+
 ## 2026-11-26-tennis-card-legs-3: Card tennis legs, third read, nothing to ship (tag pending)
 
 **What changed:** a note only. The planner's 8 of 15 is the same pre-floor population read on 13, 19 and 20 Nov.
