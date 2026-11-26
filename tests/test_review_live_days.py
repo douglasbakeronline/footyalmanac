@@ -75,11 +75,12 @@ class TestShownNotArchived(unittest.TestCase):
             # a build-logged Card group, its first pick long started, not in the (missing) day archive
             pub("2026-11-23", {"card|x": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z",
                                           "last": {"name": "Card 2x", "legs": [leg("A v B", "A"), leg("C v D", "D")]}}}, t)
-            out = "\n".join(C.live_days_section(t, today_="2026-11-25", days=5, now="2026-11-25T04:00:00Z"))
+            out = "\n".join(C.live_days_section(t, today_="2026-11-25", days=5, now="2026-11-25T04:00:00Z", ledger=[]))
         self.assertIn("Days with a group: 1 of 5;", out)
         self.assertIn("The page also showed 2 Card group(s) that never reached the archive", out)
-        self.assertIn("2026-11-22 Card 2x (Golden State Warriors, Toluca)", out)
-        self.assertIn("2026-11-23 Card 2x (A, D)", out)
+        self.assertIn("2026-11-22 Card 2x (Golden State Warriors pending, Toluca pending): not settled", out)
+        self.assertIn("2026-11-23 Card 2x (A pending, D pending): not settled", out)
+        self.assertIn("On the results ledger: 0 won, 0 lost, 2 not settled.", out)
         self.assertNotIn("days running", out)   # 24 Nov alone is empty
 
     def test_archived_withdrawn_paper_and_open_groups_are_not_named(self):
@@ -101,6 +102,34 @@ class TestShownNotArchived(unittest.TestCase):
         self.assertIn("Days with a group: 1 of 2;", out)
         self.assertNotIn("never reached the archive", out)
         self.assertIn("Still open from 2026-11-24: Card 2x (K), first start 2026-11-25T05:30:00Z.", out)
+
+
+    def test_lost_groups_read_on_the_ledger(self):
+        rows = [
+            {"pick": "Golden State Warriors", "start": "2026-11-26T03:00:00Z", "result": "won"},
+            {"pick": "Golden State Warriors", "start": "2026-11-24T03:00:00Z", "result": "lost"},   # the day before: not this group
+            {"pick": "Memphis Grizzlies", "start": "2026-11-26T01:00:00Z", "result": "won"},
+            {"pick": "Toluca", "start": "2026-11-26T01:00:00Z", "result": None},
+            {"pick": "A", "start": "2026-11-23T15:00:00Z", "result": "won"},
+            {"pick": "A", "start": "2026-11-23T19:00:00Z", "result": "lost"},   # same name, another start: the leg's own start wins
+            {"pick": "D", "start": "2026-11-23T17:00:00Z", "result": "lost"},
+            {"pick": "E", "start": "2026-11-24T12:00:00Z", "result": "won"},
+            {"pick": "F", "start": "2026-11-24T13:00:00Z", "result": "void"},
+        ]
+        with tempfile.TemporaryDirectory() as t:
+            day("2026-11-20", [{"name": "Card 2x", "rule": 14}], t)
+            pub("2026-11-25", {"lost|Card 2x|1": {"kind": "card", "source": "build-log", "lost": True, "name": "Card 2x",
+                                                   "picks": ["Golden State Warriors", "Memphis Grizzlies", "Toluca"]}}, t)
+            pub("2026-11-23", {"card|x": {"kind": "card", "source": "build", "start": "2026-11-23T15:00:00Z",
+                                          "last": {"name": "Card 2x", "legs": [dict(leg("A v B", "A"), when="2026-11-23T15:00:00Z"),
+                                                                                leg("C v D", "D")]}}}, t)
+            pub("2026-11-24", {"lost|Card 2x|2": {"kind": "card", "source": "build-log", "lost": True, "name": "Card 2x",
+                                                   "picks": ["E", "F"]}}, t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-26", days=6, now="2026-11-26T12:00:00Z", ledger=rows))
+        self.assertIn("2026-11-23 Card 2x (A won, D lost): lost", out)
+        self.assertIn("2026-11-24 Card 2x (E won, F void): won", out)
+        self.assertIn("2026-11-25 Card 2x (Golden State Warriors won, Memphis Grizzlies won, Toluca pending): not settled", out)
+        self.assertIn("On the results ledger: 1 won, 1 lost, 1 not settled.", out)
 
 
 if __name__ == "__main__":

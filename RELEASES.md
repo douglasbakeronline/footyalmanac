@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-26-shown-groups-results: the Card review says how the groups it lost went (tag pending)
+
+**What changed:** the nightly Card review's line naming Card groups the page showed but the archive never received (#548) now gives each pick's result from the results ledger and the group's verdict (won, lost, not settled), with a tally. On today's files: 25 Nov's Card 2x, Warriors won, Grizzlies won, Toluca pending; 13 Nov kept no picks.
+**Evidence:** `tests/test_review_live_days.py` (a lost group read by its day, a build-logged leg read at its own start, a void dropping out, a lost leg losing the group); the section run on main's files.
+**Files:** `tools/card_review_post.py` (`shown_results`, `group_verdict`, `_ledger_rows`; `live_days_section(ledger=)`), `tests/test_review_live_days.py`, `claude/card-overnight-day-2026-11-26.md`, `RELEASES.md`.
+**Not changed:** the record, `groupings-record.json` and every Card constant; `CARD_RULE` stays 14. Nothing graded here enters the record (Rule 1).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-26-championship-early-temper: Championship early-season flattening, rejected (tag pending)
 
 **What changed:** a note and the test tool only. Extra temperature on en.2 while a side has under N games is rejected.

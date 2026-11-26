@@ -111,3 +111,20 @@ group) are named with their picks, and their days are not counted as empty.
 A group from the day before that has not started yet is shown as still open.
 On 26 Nov's files it names 13 Nov (picks not kept) and 25 Nov (Warriors,
 Grizzlies, Toluca). Nothing enters the record from it.
+
+## How the lost groups went (26 Nov 2026, afternoon)
+
+Naming a lost group did not say whether it would have won. Each group the
+review names as shown but never archived now carries its picks' results from
+the results ledger (`card_review_post.shown_results`, `group_verdict`): the
+row with the pick's name whose start falls in the Card's day (07:00 UK to
+07:00 UK, read as 06:00 to 08:00 UTC), or the leg's own start when the
+publication log kept it (`when`); a group is lost once any pick lost, won
+when every pick that played won (voids drop out), else not settled. A
+one-line tally follows (won, lost, not settled).
+
+On 26 Nov's files: 25 Nov's Card 2x had the Warriors and the Grizzlies win
+(the 01:00 and 03:00 UTC tips on 26 Nov); Toluca's game has no result on the
+ledger yet, so the group is not settled. 13 Nov's group kept no picks. These
+results stay out of the record and its counts (Rule 1); they say only what
+the page's lost groups would have done.
