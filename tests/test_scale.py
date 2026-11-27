@@ -373,7 +373,7 @@ class Wiring(unittest.TestCase):
     def test_the_page_has_the_tab_and_loads_its_data(self):
         here = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
         html = open(os.path.join(here, "index.html"), encoding="utf-8").read()
-        for bit in ('<button data-view="scale"', '<section id="scale" hidden>', '<script src="scale.js"></script>',
+        for bit in ('<button data-view="scale"', '<section id="scale" hidden>', '["scale.js", "__SCALE__"]',   # loaded after the first paint since 27 Nov 2026 (LATE_FILES)
                     'if(v === "scale") renderScale();', "window.__SCALE__"):
             self.assertIn(bit, html)
 
