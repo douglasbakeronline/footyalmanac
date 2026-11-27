@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-27T16:08:29Z",
+ "graded": "2026-11-27T17:43:00Z",
  "overall": {
   "groups": 156,
   "settled": 156,
@@ -204,10 +204,10 @@
    "quoted": 0.9162
   },
   "unchecked": {
-   "n": 39,
-   "won": 35,
-   "rate": 0.8974,
-   "quoted": 0.8454
+   "n": 40,
+   "won": 36,
+   "rate": 0.9,
+   "quoted": 0.8471
   },
   "bySport": {
    "football": {
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 22,
-     "won": 18,
-     "rate": 0.8182,
-     "quoted": 0.7984
+     "n": 23,
+     "won": 19,
+     "rate": 0.8261,
+     "quoted": 0.8034
     }
    },
    "nba": {
@@ -602,8 +602,10 @@
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": 0,
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
    "football|boreham wood|gateshead|2026-11-28": 1.1,
-   "football|aliağa faş|kastamonuspor|2026-11-28": 0,
+   "football|aliağa faş|kastamonuspor|2026-11-28": 1.07,
+   "football|boeung ket|national defense|2026-11-28": 0,
    "football|şanlıurfaspor|somaspor|2026-11-28": 0,
+   "football|cosmos|san giovanni|2026-11-28": 0,
    "nba|detroit pistons|milwaukee bucks|2026-11-28": 1.2,
    "rugby|stade francais paris|vannes|2026-11-28": 0,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": 0,
