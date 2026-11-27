@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-27-groupings-get-retry: The pricing step's ESPN and API-Football reads retry a blip (tag pending)
+
+**What changed:** `groupings.get`, the one JSON read behind the ESPN scoreboards the pricing step uses (US sports, football slugs) and its API-Football calls, had no retry: one timeout or 503 left that day's games unpriced for the whole build, with nothing printed. It now retries a timeout, reset, cut-off body, 5xx or 429 twice with backoff (1.5s, 3s); a 4xx is raised at once; after 4 calls in a row that failed every try it stops retrying for the run, so an outage costs seconds. The last error is still raised (callers already skip the leg and keep the cached price), and a "failed after 3 tries" line is printed.
+**Evidence:** the other sources (openfootball, football-data, ESPN football/tennis/sports days, API-Football, rankings, The Odds API ledger) already retry or fall back to a last good copy; this was the unprotected one. New `tests/test_groupings_get_retry.py` (fake failing source): blip then success, 404 not retried, gives up loudly, outage stops retrying, success resets the count.
+**Files:** groupings.py, tests/test_groupings_get_retry.py, RELEASES.md.
+**Not changed:** the model, any price, the Odds API credit-spending call (`_odds_get`), the Card rule.
+**Roll back:** git revert.
+
 ## 2026-11-27-integrity-audit: Fixture audit of 27 Nov (tag pending)
 
 **What changed:** a dated note only; nothing on the site changes.
