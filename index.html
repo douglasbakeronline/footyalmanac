@@ -2548,9 +2548,9 @@ let BETS_SPORTS = fSportLoad("betsSport"), SCALE_SPORTS = fSportLoad("scaleSport
    page's own set; `unset` / `clear` reset the page's own filters (football's
    competitions). Functions are read late, so later declarations are fine. */
 const FVIEWS = {
-  list: {bandDefault: "70up", show: () => window.__GROUPINGS__ && window.__GROUPINGS__.listBooks ? ["all", "hill"] : ["all"], order: ["strength", "time"],
+  list: {bandDefault: "70up", show: ["all"], order: ["strength", "time"],
          sport: {get: () => LIST_SPORTS, set: v => { LIST_SPORTS = v; listSportSave(); }}, redraw: () => renderList()},
-  starred: {show: ["all", "list", "reserve", "other", "hill", "edge", "open"], order: ["strength", "time", "sport", "tag"],
+  starred: {show: ["all", "list", "reserve", "other", "edge", "open"], order: ["strength", "time", "sport", "tag"],
             sport: {get: () => STAR.sports, set: v => { STAR.sports = v; saveStarView(); }}, redraw: () => renderStarred()},
   fixtures: {show: ["all", "read", "list", "reserve", "edge"], order: ["strength", "upset", "goals", "time"],
              unset: k => { if(k === "comp") fbClearComps(); }, clear: () => fbClearComps(),
@@ -3901,7 +3901,6 @@ const STAR_TAGS = [
   {k: "list", label: "Daily List", test: it => !!it.g.list},
   {k: "reserve", label: "Reserve", test: it => !!it.g.reserve && !it.g.list},
   {k: "other", label: "Board only", test: it => !it.g.list && !it.g.reserve},
-  {k: "hill", label: "At William Hill", test: it => !!itemHill(it)},
   {k: "edge", label: "Edge", test: it => !!(it.g.edge || (it.g.full && it.g.full.edge))},
   {k: "open", label: "Still to start", test: it => starTime(it) > Date.now()},
 ];
@@ -4098,7 +4097,7 @@ function listCollect(){
   // 11 Nov 2026 (Douglas: "move to the college basketball tab unless there is
   // a clear 1.05 or above"): of 46 college basketball list picks checked at
   // William Hill on 10-11 Nov, 30 had no UK price, 11 were not at Hill and the
-  // 5 at Hill paid 1.00-1.01. A sport with a listHillMin floor stays on the list only
+  // 5 at Hill paid 1.00-1.01. A sport with a listPriceMin floor stays on the list only
   // when Hill's price read before the start is at least its floor; the rest
   // stay on the sport's own tab. Display only: the pick, its flag and its
   // grading are unchanged (the record still counts it as a list pick).
@@ -4106,8 +4105,8 @@ function listCollect(){
   const spOf = it => it.kind === "football" ? "football" : it.g.sport;
   Object.keys(byDay).forEach(d => {
     const keep = [];
-    byDay[d].forEach(it => { const f = listHillMin(spOf(it));
-      (f && !((itemHill(it) || 0) >= f)) || itemTier(it) === "leave" ? (offDay[d] = offDay[d] || []).push(it) : keep.push(it); });
+    byDay[d].forEach(it => { const f = listPriceMin(spOf(it));
+      (f && !((itemPrice(it) || 0) >= f)) || itemTier(it) === "leave" ? (offDay[d] = offDay[d] || []).push(it) : keep.push(it); });
     byDay[d] = keep;
   });
   return {byDay, resDay, offDay};
@@ -4120,16 +4119,22 @@ function itemTier(it){
   return collegeTier(g);
 }
 // A function, so the masthead's count (computed earlier in the script) can use it.
-function listHillMin(sport){ return ({ncaab: 1.05})[sport] || 0; }
+function listPriceMin(sport){ return ({ncaab: 1.05})[sport] || 0; }
+/* 27 Nov 2026 (Douglas: "I just want estimated odds from whatever sources we
+   have"): the floor reads the pick's price from any source (pickPrice: William
+   Hill, else the bookmakers' average, else football's best on file), not
+   William Hill alone. A pick with no price on file still stays on its tab. */
+function itemPrice(it){
+  const g = it.g, sp = it.kind === "football" ? "football" : g.sport;
+  const side = pickSide(g, sp); return side ? pickPrice(g, sp, side) : null;
+}
 function listShown(g){   // a sport game flagged for the list: shown there, or left on its tab
   // 23 Nov 2026 (Douglas: "remove leave out from daily list"): a college pick
   // tiered Leave out (away, or favoured by under 6 on the line; 52% v 78%
   // quoted since 1 Nov) stays on its tab, whatever William Hill prices it at.
   if(collegeTier(g) === "leave") return false;
-  const f = listHillMin(g.sport); if(!f) return true;
-  const G = window.__GROUPINGS__, nm = x => String(x && x.name || x || "").toLowerCase();
-  const m = G && G.listBooks && G.listBooks[`${g.sport}|${nm(g.home)}|${nm(g.away)}`];
-  return !!(m && m.h && m.h >= f);
+  const f = listPriceMin(g.sport); if(!f) return true;
+  return (itemPrice({kind: "sport", g}) || 0) >= f;
 }
 /* 23 Nov 2026 (Douglas: "make them clickable to pop up a little text modal
    explaining what they are"): a tag's title, shown on hover on a desktop, is
@@ -4216,8 +4221,13 @@ function glanceWidth(){
   const w = el ? el.clientWidth - 32 : (document.documentElement.clientWidth || 400) - 56;
   return Math.round(Math.min(1600, Math.max(280, w)));
 }
+/* 27 Nov 2026 (Douglas: "why am I seeing dots for fixtures that aren't on
+   screen?"): the glance used to plot the day's whole list whatever the filter
+   bar hid. renderList sets GL_KEEP to its own Sport and Confidence test, so a
+   dot is always a row on the page. */
+let GL_KEEP = () => true;
 function glanceDay(date, i, W, given){
-  const items = given || (listCollect().byDay[date] || []);
+  const items = (given || (listCollect().byDay[date] || [])).filter(it => GL_KEEP(it));
   const day0 = new Date(date + "T00:00:00"), t0 = day0.getTime(), span = 864e5;
   // a past day's pick with no result yet reads "result due", never "in play"
   const pts = items.map(it => { const s = glanceState(it); if(it.past && !["won", "lost", "void"].includes(s.st)) s.st = "due";
@@ -4377,7 +4387,7 @@ function renderList(){
   upcoming.forEach(day => _n += day.games.filter(g => g.list).length);
   if(SD && SD.sports) Object.values(SD.sports).forEach(sp => _n += (sp.games || []).filter(g => g.list && listShown(g)).length);
   if(TDL && TDL.matches) _n += TDL.matches.filter(m => m.list).length;
-  const LIST_ORDER = fOrder("list"), LIST_BOOK_ONLY = fShow("list") === "hill";
+  const LIST_ORDER = fOrder("list");
   host.innerHTML = `
     <div class="lede">
       <h2>${_n} pick${_n === 1 ? "" : "s"} this week, ${LIST_ORDER === "time" ? "by kick-off" : "strongest first"}</h2>
@@ -4420,28 +4430,28 @@ function renderList(){
   const {byDay, resDay, offDay} = listCollect();
   computeNailed(byDay);
   // 22 Nov 2026: the sport and confidence-band filters, counted on every list
-  // and reserve pick of the window (after At William Hill) so each chip says
+  // and reserve pick of the window so each chip says
   // how many it holds.
-  const every = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat().filter(it => !LIST_BOOK_ONLY || itemHill(it));
+  const every = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
   const spCount = {};
   every.forEach(it => { const k = itemSport(it); spCount[k] = (spCount[k] || 0) + 1; });
   LIST_SPORTS = LIST_SPORTS.filter(k => spCount[k]);   // a sport with nothing this week drops out
   const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
   const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
   const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
+  GL_KEEP = keepIt;   // the glance plots the same picks the list shows
   // 70%+ keeps every list pick (the bar is 75%+), so it leaves Groups A and B labelled
   const filtered = LIST_SPORTS.length > 0 || !["all", "70up"].includes(bandOf("list"));
   // 23 Nov 2026: the filter bar (drawn below the day strip); counted on every list and reserve pick shown
   // in the window, the count after every filter.
   const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
-  const hasBooks = !!(window.__GROUPINGS__ && window.__GROUPINGS__.listBooks);
   // 23 Nov 2026 (UX release 3): the day ribbon. Week (every day still to come, the default), the
   // week behind from daylist.py's past lists (drawn as rows with their results), and each day ahead.
   const dates = [...new Set([...Object.keys(byDay), ...Object.keys(resDay), ...Object.keys(offDay)])].sort();
   const today = ukToday(), past = glancePast().filter(p => p.date < today && !dates.includes(p.date));
   const pastOf = d => ((past.find(p => p.date === d) || {}).items || []);
   const sel = dayPick(["week", ...past.map(p => p.date), ...dates], "week"), one = sel !== "week";
-  const nDay = d => (byDay[d] || []).filter(it => (!LIST_BOOK_ONLY || itemHill(it)) && keepIt(it)).length;
+  const nDay = d => (byDay[d] || []).filter(keepIt).length;
   const pastN = d => { const xs = pastOf(d).filter(keepIt);
     return dayTally(xs.filter(it => it.g.status === "won").length, xs.filter(it => it.g.status === "lost").length, xs.length); };
   const listRib = dayRibbon("list", [{d: "week", n: dates.reduce((a, d) => a + nDay(d), 0)},
@@ -4453,11 +4463,9 @@ function renderList(){
     sports: {opts: spKeys.map(k => ({k, n: spCount[k]})), total: every.length},
     // counted on every reserve pick, so a band under 75% is offered while the fold hides it
     confs: [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resAny))].flat()
-      .filter(it => (!LIST_BOOK_ONLY || itemHill(it)) && sportOk(it)).map(it => it.g.confidence),
-    show: hasBooks ? [{k: "all", n: allPicks.length}, {k: "hill", n: allPicks.filter(it => itemHill(it)).length,
-      title: "Only the picks William Hill priced at the last build. A pick with no UK price read yet is left out too."}] : null,
+      .filter(sportOk).map(it => it.g.confidence),
     order: [{k: "strength"}, {k: "time"}],
-    count: {shown: scope.filter(it => keepIt(it) && (!LIST_BOOK_ONLY || it.past || itemHill(it))).length, total: scope.length, noun: one ? "picks on this day" : "picks"},
+    count: {shown: scope.filter(keepIt).length, total: scope.length, noun: one ? "picks on this day" : "picks"},
     note: filtered ? "Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered." : "",
   });
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
@@ -4481,9 +4489,8 @@ function renderList(){
     const allExtra = resAll.filter(resShown), resLow = resAll.filter(it => !((it.g.confidence || 0) >= RESERVE_SHOW_MIN)).length;
     const resLeave = resAll.filter(it => !resAny(it)).length;
     if(filtered && !allItems.length && !allExtra.length) return;
-    const items = shown((LIST_BOOK_ONLY ? allItems.filter(itemHill) : allItems).sort(byStrength));
-    const extra = shown((LIST_BOOK_ONLY ? allExtra.filter(itemHill) : allExtra).sort(byStrength));
-    const offBook = LIST_BOOK_ONLY ? allItems.length - items.length : 0;
+    const items = shown(allItems.sort(byStrength));
+    const extra = shown(allExtra.sort(byStrength));
     const offHill = !LIST_SPORTS.length || LIST_SPORTS.includes("ncaab") ? (offDay[date] || []).length : 0;
     const sec = document.createElement("section");
     sec.className = "day";
@@ -4494,8 +4501,8 @@ function renderList(){
     const tl = tally(items), tr = tally(extra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${LIST_BOOK_ONLY ? " at William Hill" : ""}${offBook ? ` · ${offBook} not there` : ""}${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
-      <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no William Hill price at ${listHillMin("ncaab").toFixed(2)} or better${(offDay[date] || []).some(it => itemTier(it) === "leave") ? `, or tiered Leave out` : ""}. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
+      <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
+      <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no price at ${listPriceMin("ncaab").toFixed(2)} or better on file${(offDay[date] || []).some(it => itemTier(it) === "leave") ? `, or tiered Leave out` : ""}. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
     const put = (it, i) => listPut(sec, it, i, date);
     // Group labels in strongest order: 1-5, 6-10, then the rest. A tally per
     // group once results are in, from the pinned rows.

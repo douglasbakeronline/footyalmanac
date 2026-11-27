@@ -39,7 +39,7 @@ MAIL_FROM = "2026-11-23"   # the first Daily List email (mailer.py, 23 Nov 2026)
 DAYS = 7                   # the carousel: today and the six days before (Douglas: "1 week back")
 TREND_DAYS = 7             # the chart's span; a month (30) once there are a month of emails
 ARCHIVE = "mail-archive"
-COLLEGE_MIN = 1.05         # mailer.LIST_HILL_MIN for a rebuilt day, read off the ledger's price
+COLLEGE_MIN = 1.05         # mailer.LIST_PRICE_MIN for a rebuilt day, read off the ledger's price
 
 
 def _json(path, default=None):
