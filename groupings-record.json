@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-27T01:00:12Z",
+ "graded": "2026-11-27T02:25:12Z",
  "overall": {
   "groups": 155,
   "settled": 155,
@@ -7,8 +7,8 @@
   "z": -1.16,
   "lost": 108,
   "pending": 0,
-  "legs": 588,
-  "legsWon": 431,
+  "legs": 589,
+  "legsWon": 432,
   "returned": 133.66,
   "staked": 155,
   "returnedBest": 138.72,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 85,
-   "won": 73,
-   "rate": 0.8588,
-   "quoted": 0.8734,
-   "returned": 80.07,
-   "ret": -0.058
+   "n": 86,
+   "won": 74,
+   "rate": 0.8605,
+   "quoted": 0.8731,
+   "returned": 81.29,
+   "ret": -0.0548
   },
   "notAtBook": {
    "n": 193,
@@ -212,12 +212,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 24,
-     "won": 21,
-     "rate": 0.875,
-     "quoted": 0.8499,
-     "returned": 24.09,
-     "ret": 0.0037
+     "n": 25,
+     "won": 22,
+     "rate": 0.88,
+     "quoted": 0.8496,
+     "returned": 25.31,
+     "ret": 0.0124
     },
     "notAtBook": {
      "n": 6,
@@ -603,6 +603,7 @@
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
    "football|boreham wood|gateshead|2026-11-28": 1.1,
    "football|aliağa faş|kastamonuspor|2026-11-28": 0,
+   "football|şanlıurfaspor|somaspor|2026-11-28": 0,
    "nba|detroit pistons|milwaukee bucks|2026-11-28": 1.22,
    "rugby|stade francais paris|vannes|2026-11-28": 0,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": 0,
@@ -1176,8 +1177,8 @@
   "z": -0.6,
   "lost": 7,
   "pending": 0,
-  "legs": 32,
-  "legsWon": 24,
+  "legs": 33,
+  "legsWon": 25,
   "returned": 8.08,
   "staked": 10,
   "returnedBest": 8.12,
@@ -1548,9 +1549,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 1,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Ural",
@@ -1586,8 +1587,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8423,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "4-0",
        "opp": 12.0,
        "rule12Fault": null,
        "r12": false
