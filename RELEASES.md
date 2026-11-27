@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-27-integrity-audit: Fixture audit of 27 Nov (tag pending)
+
+**What changed:** a dated note only; nothing on the site changes.
+**Evidence:** 1,657 rows: 0 duplicates, 0 cross-league twins, 0 date/kick-off mismatches, 0 unrated, 0 spelling splits; 5 known reschedule pairs; 1 row with no kick-off (AF_UNTIMED league).
+**Files:** claude/data-integrity.md, RELEASES.md.
+**Not changed:** matcher, LIVE_NAMES, nametest.py.
+**Roll back:** git revert.
+
 ## 2026-11-27-eurotest-tests: tests for eurotest.py (tag pending)
 
 **What changed:** nothing a reader sees. `eurotest.py` (394 lines, the European league-strength fit behind `europe.json`) had no tests; 13 now pin its pure helpers.

@@ -330,3 +330,11 @@ rescheduled same-teams pairs in `archive_predictions`) stays open, Douglas's cal
 1,779 rows, dated 20 to 26 Nov. Clean: no duplicate (league, teams, date), 0 unrated, 0 rows whose kick-off UTC day differs from the row date, 1 row without a kick-off. Same-direction pairs on two dates (15) are all two different matches or reschedules within a league; same-name clubs across competitions (Rangers, Chelsea, Paris, Guadalajara, women's v men's) are distinct.
 
 **One real fault:** `af.144` repeated `be.1`: 9 Belgian Pro League games twice at the same kick-off under different spellings (Genk / KRC Genk, Anderlecht / RSC Anderlecht). The 4 Oct note predicted it once `be.1` carried fixtures. Fixed: `af.144` added to `engine.AF_DUPLICATES` (`nametest.py` guards it). `af.202` (Tunisia) is the sole Tunisian feed (`tn.1` has no fixtures), so it stays. If `tn.1` ever carries fixtures, add `af.202`.
+
+## 27 November 2026: fixture audit of `predictions/2026-11-27.json`
+
+1,657 rows, dated 27 Nov to 3 Dec. Clean: no duplicate (league, teams, date), no same teams and kick-off under two leagues (the `af.144` / `be.1` class stays fixed), 0 unrated, 0 rows whose kick-off UTC day differs from the row date, no spelling split inside a league (names folded to letters). One row has no kick-off (br.1 Chapecoense AF v SE Palmeiras, 28 Nov; Brazil's Serie A is in `AF_UNTIMED`, the Card refuses a leg with no start time).
+
+Same league and teams on two dates (5): SKU Amstetten v SKN St. Polten (27 to 28 Nov), Chernomorets 1919 Burgas v Lokomotiv G. Oryahovitsa (28 to 30 Nov), Sport Huancayo v Universitario (28 to 29 Nov), Yesilyurt v Agri 1970 (27 to 29 Nov), Bamboutos v FAP (28 to 29 Nov, af.813). Each is the known reschedule case: the 15:06-16:07 UTC copy carries the new API-Football date and the earlier copy the old one; no pair is a genuine two-leg fixture. Left alone (the 28 Oct suggestion to collapse them in `archive_predictions` stays Douglas's call).
+
+No matcher, `LIVE_NAMES` or `nametest.py` change: nothing real to fix. A note, not a change, because the evidence found no fault.
