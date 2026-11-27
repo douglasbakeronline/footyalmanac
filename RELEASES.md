@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-tie-legs: second legs of ties and play-off series marked on the board (tag pending)
+
+**What changed:** a football row that is a leg of a two-legged tie or play-off series carries a mark: "1st leg", or "2nd leg" with the first meeting's result from the pick's side ("won 1st 4-0"). The hover says the model rates it as a league game and cannot see the aggregate. Cruz Azul v León on 30 Nov shows 67% with Cruz Azul already 4-0 up from the first leg, and nothing on the page said so.
+**Evidence:** `build.tie_marks` uses `tools/card_ties.py`'s rule (the reverse fixture in the same league 1 to 8 days away) on the build's season fixture list. On the 27 Nov archive it marks 14 legs from 27 to 30 Nov (Liga MX 4, MLS 8, Série B 2). Drawn in Chromium at 1280px and 400px from that archive: no script errors, the mark fits the confidence column. `tests/test_tie_marks.py` (10 tests); the full suite and `nametest.py` pass.
+**Files:** `build.py` (`tie_marks`, `TIE_DAYS`), `index.html` (`tieChip`, `.flagged.tie`), `tests/test_tie_marks.py`, `claude/tie-legs-on-the-page-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any pick, flag, grade, record or Card condition (`CARD_RULE` stays 14); the mark is not archived.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-boards-bands: the sport tabs, the football board and Starred by band (tag pending)
 
 **What changed:** in strongest order, every sport tab, Tennis, the football winner board and Starred lay each day out in the Daily List's confidence bands (`bandBoard`, `bandedDay` with a `tab`), with band chips under the day head. A sport tab's band header carries that sport's own record across its whole board (`daylist.band_records` "every": landed v quoted, the return at the price); Starred and the football board likewise. The 90%, 85% and 80% bands open, the 75% band on a thin day, the rest fold, so the football board's No read rows (under 60%) start folded. By kick-off time, and on the Both to score board, a day stays one run as before. The football board's Started block is set apart from the band above it.

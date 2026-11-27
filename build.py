@@ -279,6 +279,60 @@ LIST_RECENT_KEYS = ("league", "home", "away", "pick", "actual", "confidence", "t
                     "k", "result", "ok", "won", "drawRead")
 
 
+TIE_DAYS = 8   # as tools/card_ties.TIE_DAYS (tests/test_tie_marks.py keeps them equal)
+
+
+def tie_marks(games, rows_by_league, days=TIE_DAYS):
+    """27 Nov 2026: mark the legs of two-legged ties and play-off series.
+
+    A fixture is a tie leg when its league's fixture list (played and to
+    come) holds the reverse fixture 1 to `days` days away, the rule
+    tools/card_ties.py uses on the archive. The model rates each leg as a
+    league game and cannot see the aggregate: Cruz Azul v León on 30 Nov
+    showed 67% with Cruz Azul already 4-0 up from the first leg. A second leg
+    whose first leg is played carries that score and the pick's standing.
+    Display only: no pick, rule, grade or Card condition reads it.
+
+    `games` are the build's day rows (g["league"], g["date"], g["home"]["name"],
+    g["away"]["name"], g["pick"]); `rows_by_league` maps a league to dicts with
+    date, home, away, hg, ag. Sets g["tie"] on each tie leg; returns the count."""
+    rev = {}
+    for code, rows in rows_by_league.items():
+        for r in rows or []:
+            if r.get("date") and r.get("home") and r.get("away"):
+                rev.setdefault((code, r["home"], r["away"]), {})
+                # a played copy of a date wins over an unplayed one
+                old = rev[(code, r["home"], r["away"])].get(r["date"])
+                if old is None or (old.get("hg") is None and r.get("hg") is not None):
+                    rev[(code, r["home"], r["away"])][r["date"]] = r
+    n = 0
+    for g in games:
+        try:
+            h, a, d = g["home"]["name"], g["away"]["name"], date.fromisoformat(g["date"])
+        except (KeyError, TypeError, ValueError):
+            continue
+        best = None
+        for od, r in (rev.get((g.get("league"), a, h)) or {}).items():
+            try: gap = (date.fromisoformat(od) - d).days
+            except ValueError: continue
+            if 1 <= abs(gap) <= days and (best is None or abs(gap) < abs(best[0])):
+                best = (gap, od, r)
+        if not best:
+            continue
+        gap, od, r = best
+        mark = {"leg": 1 if gap > 0 else 2, "other": od}
+        if mark["leg"] == 2 and r.get("hg") is not None and r.get("ag") is not None:
+            # the earlier meeting had this row's away side at home
+            mark["first"] = f"{a} {r['hg']}-{r['ag']} {h}"
+            pick = g.get("pick")
+            if pick in ("h", "a"):
+                mine, theirs = (r["ag"], r["hg"]) if pick == "h" else (r["hg"], r["ag"])
+                mark["lead"] = [mine, theirs]
+        g["tie"] = mark
+        n += 1
+    return n
+
+
 def edge_tested(path=None):
     """{season label: edgeAccas} from card-legs-history.json, or {}: what the
     Bets tab's Edge section quotes for singles, doubles and whole-day
@@ -2118,6 +2172,14 @@ def main():
                 g["edge"] = GR.edge_flag(g)
     except Exception as e:
         print(f"edge flag skipped: {type(e).__name__}: {e}", file=sys.stderr)
+
+    # 27 Nov 2026: two-legged ties and play-off series (tie_marks), display only
+    try:
+        n_tie = tie_marks([g for d in days for g in d["games"]],
+                          {c: list(fixtures.get(c, [])) + season_so_far.get(c, []) for c in fixtures})
+        print(f"tie legs marked: {n_tie}", file=sys.stderr)
+    except Exception as e:
+        print(f"tie marks skipped: {type(e).__name__}: {e}", file=sys.stderr)
 
     # Archive what was predicted, so score.py can grade it once results land.
     # Without this the site can never say how it is actually doing.
