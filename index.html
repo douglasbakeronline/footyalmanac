@@ -1109,6 +1109,22 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .shortpx{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px solid var(--away);border-radius:3px;
   font:700 10px var(--f-ui);letter-spacing:.04em;text-transform:uppercase;color:var(--away);white-space:nowrap}
 @media (prefers-reduced-motion: reduce){.lband i{transition:none}}
+.bandtab{margin:22px 0 6px;border:1px solid var(--rule);background:var(--surface);padding:14px 16px}
+.bandtab h3{font-family:var(--f-display);font-size:18px;font-weight:400;text-transform:uppercase;letter-spacing:.01em;margin:0}
+.bandtab p{margin:4px 0 10px;font-size:var(--t-sm);color:var(--ink-2)}
+.bandtab .bt-flag{color:var(--away)}
+.bt-wrap{overflow-x:auto}
+.bandtab table{border-collapse:collapse;width:100%;min-width:520px}
+.bandtab th,.bandtab td{padding:7px 8px;border-bottom:1px solid var(--rule-soft);text-align:right;vertical-align:top}
+.bandtab thead th{font:700 var(--t-xs) var(--f-ui);letter-spacing:.06em;text-transform:uppercase;color:var(--mute);border-bottom:1px solid var(--ink)}
+.bandtab th[scope=row],.bandtab thead th:first-child{text-align:left;font:600 var(--t-sm) var(--f-ui);color:var(--ink);text-transform:none;letter-spacing:0}
+.bandtab td b{display:block;font:700 15px var(--f-num);color:var(--ink)}
+.bandtab td small{font:500 var(--t-xs) var(--f-num);color:var(--mute);white-space:nowrap}
+.bandtab td.bt-thin b{color:var(--mute)}
+.bandtab td.bt-low{background:var(--away-soft)} .bandtab td.bt-low b{color:var(--away)}
+.bandtab td.bt-none{color:var(--rule)}
+.bandtab th[scope=row]{position:sticky;left:0;background:var(--surface);z-index:1}
+.bandtab tr.bt-all th,.bandtab tr.bt-all td{border-bottom:1px solid var(--ink)}
 .resv{margin-top:18px;border-top:1px solid var(--ink)}
 .resv>summary{list-style:none;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
   gap:2px 10px;padding:12px 40px 10px 12px;min-height:44px;font-family:var(--f-ui);font-size:var(--t-sm);
@@ -6193,6 +6209,45 @@ function trustMap(){
       <span class="tr-how">Each cell: landed, then quoted and the number of picks.</span></div>
   </section>`;
 }
+/* 27 Nov 2026 (Douglas: "how can we prove better results?"): every sport's
+   Daily List and reserve picks by confidence band on the results ledger
+   (daylist.band_records "pick"): landed against quoted, with the count. A
+   band two standard errors or more under its quote on 30+ picks is marked,
+   so a weak spot (away college picks sank college basketball's 75-79% band)
+   shows here before it shows in a slip. A tally, never a fit. */
+function bandTable(){
+  const B = window.__DAY_LIST__ && window.__DAY_LIST__.bands && window.__DAY_LIST__.bands.pick;
+  if(!B || !B.all) return "";
+  const cols = LBANDS.filter(b => ["90", "85", "80", "75", "70"].includes(b.k));
+  const sports = Object.keys(B).filter(k => k !== "all" && cols.some(b => B[k][b.k] && B[k][b.k].n >= 10))
+    .sort((a, c) => cols.reduce((t, b) => t + ((B[c][b.k] || {}).n || 0), 0) - cols.reduce((t, b) => t + ((B[a][b.k] || {}).n || 0), 0));
+  let flagged = 0;
+  const cell = r => {
+    if(!r || !r.n) return `<td class="bt-none">–</td>`;
+    const rate = r.won / r.n, z = (r.won - r.n * r.quoted) / Math.sqrt(r.n * r.quoted * (1 - r.quoted) || 1);
+    const low = r.n >= 30 && z <= -2; if(low) flagged++;
+    const thin = r.n < 30;
+    return `<td class="${low ? "bt-low" : thin ? "bt-thin" : ""}" title="${r.won} of ${r.n} landed; quoted ${Math.round(100 * r.quoted)}%${r.priced >= 20 && r.ret != null ? `; ${lbSigned(r.ret)} at the price on ${r.priced} priced` : ""}${thin ? "; under 30 picks, read lightly" : ""}${low ? "; two standard errors or more under its quote" : ""}"><b>${Math.round(100 * rate)}%</b><small>of ${r.n} · q ${Math.round(100 * r.quoted)}</small></td>`;
+  };
+  const rowFor = (k, name) => `<tr${k === "all" ? ' class="bt-all"' : ""}><th scope="row">${name}</th>${cols.map(b => cell(B[k][b.k])).join("")}</tr>`;
+  const body = rowFor("all", "Every sport") + sports.map(k => rowFor(k, sportLabel(k))).join("");
+  return `<section class="bandtab" aria-label="The Daily List by sport and confidence band">
+    <h3>By sport and band</h3>
+    <p>How often Daily List and reserve picks landed, against what they were quoted (q), on every graded pick. Lighter cells hold under 30 picks.${flagged ? ` <b class="bt-flag">${flagged} band${flagged === 1 ? "" : "s"} marked</b>: two standard errors or more under quote.` : " No band is two standard errors under its quote."}</p>
+    <div class="bt-wrap"><table><thead><tr><th scope="col">Sport</th>${cols.map(b => `<th scope="col">${b.label}</th>`).join("")}</tr></thead><tbody>${body}</tbody></table></div>
+  </section>`;
+}
+// How it went's day, by the Daily List's bands: list and reserve together, reserve marked
+function reviewBands(items, resItems, row){
+  const all = [...items.map(x => ({x, r: false})), ...resItems.map(x => ({x, r: true}))].sort((p, q) => (q.x.conf || 0) - (p.x.conf || 0));
+  let i = 0;
+  return LBANDS.map(b => {
+    const xs = all.filter(o => lbOf(o.x.conf).k === b.k); if(!xs.length) return "";
+    const w = xs.filter(o => o.x.status === "won").length, l = xs.filter(o => o.x.status === "lost").length, nr = xs.filter(o => o.r).length;
+    return `<div class="lgrp rv-band"><b>${b.label}</b> <span class="n">${w + l ? `${w} of ${w + l} landed` : "none settled"}${nr ? ` · ${nr} reserve` : ""}</span></div>`
+      + xs.map(o => { const h = row(o.x, i++); return o.r ? h.replace('<div class="conf">', '<div class="conf"><span class="resvtag" title="Reserve: graded apart from the list">Reserve</span>') : h; }).join("");
+  }).join("");
+}
 function listReview(){
   const days = listReviewDays();
   if(!days.length){
@@ -6224,17 +6279,12 @@ function listReview(){
     count: {shown: items.length + resItems.length, total: day.items.length + day.reserve.length, noun: "picks on this day"}}) : "";
   const ruler = `<div class="xruler lrow"><div>Sport</div><div>Game</div><div>Prediction</div><div>Result</div>
       <div style="text-align:right">Tier</div><div></div></div>`;
-  const [rwa, rna] = days.reduce((a, d) => [a[0] + d.rWon, a[1] + d.rWon + d.rLost], [0, 0]);
-  const reserve = day.reserve.length ? `<details class="resv" id="resv"${resState.resOpen ? " open" : ""}>
-      <summary><b>Reserve</b><span class="resv-score">${day.rWon} of ${day.rWon + day.rLost} landed${day.rOpen ? ` · ${day.rOpen} to finish` : ""}</span>
-        <span class="resv-note">${day.reserve.length} pick${day.reserve.length === 1 ? "" : "s"} under the bar, Firm 62% or better.
-        Graded as its own group, never in the list's record${rna ? `: ${rwa} of ${rna} landed across every day here` : ""}.</span><i aria-hidden="true"></i></summary>
-      ${resItems.length ? ruler + resItems.map(row).join("") : ""}</details>` : "";
   return `<div class="lede" style="margin-top:22px"><h2>The Daily List, day by day</h2>
       <p>Every pick that made the Daily List, across all sports, with how it went. Only picks
       published before the start are graded; today's list stays as it stood before each game began.</p></div>
     <div class="scoreline" style="margin-top:14px">${tile("Last 7 list days", w7, n7)}${tile("Every list day here", wa, na)}
       ${tile(fmtShort(day.date), day.won, day.won + day.lost, day.open ? `${day.open} still to finish` : "")}${bookTile()}</div>
+    ${bandTable()}
     ${listHonesty(days)}
     ${trustMap()}
     ${daysGlance(days, day.date)}
@@ -6243,8 +6293,7 @@ function listReview(){
     <div class="day-head" style="margin-top:22px"><h2>${fmtDay(day.date)}</h2>
       <div class="count">${day.items.length ? `${day.won} of ${day.won + day.lost} landed${day.open ? ` · ${day.open} to finish` : ""} · ${sports.join(", ")}`
         : "no pick cleared the bar"}</div></div>
-    ${items.length ? ruler + items.map(row).join("") : day.items.length ? fbEmpty("results", "No list pick on this day matches this confidence band.") : ""}
-    ${reserve}`;
+    ${items.length || resItems.length ? ruler + reviewBands(items, resItems, row) : day.items.length ? fbEmpty("results", "No list pick on this day matches this confidence band.") : ""}`;
 }
 
 /* ---------- days at a glance (10 Nov 2026, Douglas: "add the Today at a

@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-bands-email-review: the email and How it went on the Daily List's bands (tag pending)
+
+**What changed:** (1) The 07:00 Daily List email groups its picks by the page's confidence bands (`mailer.bands_of`, `BANDS`), each band headed with its record from `daylist.json` `bands` (landed v quoted, the return at the price), in place of Strongest today / Also on the list; a pick priced under 1.05 is marked Short (`is_short`); the welcome guide explains the bands. (2) How it went's Daily List board opens with **By sport and band**: every sport's list and reserve picks by band, landed v quoted with the count, cells under 30 picks lighter, a band two standard errors or more under its quote on 30+ picks marked (`bandTable`). (3) Each day on that board lists its picks by band, list and reserve together, the reserve marked (`reviewBands`), in place of the list rows and a reserve fold.
+**Evidence:** the email previewed from a local build of 27 Nov (`mailer.py --preview`): bands in order, records on each, text and HTML. The page drawn in Chrome at 1100px and 400px: the table and banded day draw, no script errors. `tests/test_mailer.py` (band order, whole-percent banding, the record line, the Short mark).
+**Files:** `mailer.py`, `tests/test_mailer.py`, `index.html` (`bandTable`, `reviewBands`, `listReview`), `RELEASES.md`.
+**Not changed:** which picks the email sends (list picks, 07:00 to 07:00), grading, the records, the morning push.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-list-bands: the Daily List by confidence band (tag pending)
 
 **What changed:** each day of the Daily List is laid out by confidence band (90%+, 85-89%, 80-84%, 75-79%, 70-74%, then lower), not Group A / Group B / the rest and a folded reserve (Douglas, 27 Nov 2026: "staggered by percentage banding"). Every band header carries its record on the results ledger (landed v quoted, and a level stake's return at the price published before the start, from `daylist.band_records`, a sport's own when one sport is filtered) and stays pinned under the tab bar while its picks scroll. Reserve picks sit in their band marked Reserve, still graded apart. Picks keep one strength rank across the day. Settled picks drop to the foot of their band. 90%, 85% and 80% open; 75% opens on a thin day (under 10 picks above it); the rest fold. A row of band chips under each day head jumps to a band. A pick priced under 1.05 carries a Short mark. The intro is one paragraph; the star key, the coverage line and the rules moved into How the list works. Past days use the same bands.
