@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-tie-legs: second legs of ties and play-off series marked on the board (tag pending)
+
+**What changed:** a football row that is a leg of a two-legged tie or play-off series carries a mark: "1st leg", or "2nd leg" with the first meeting's result from the pick's side ("won 1st 4-0"). The hover says the model rates it as a league game and cannot see the aggregate. Cruz Azul v León on 30 Nov shows 67% with Cruz Azul already 4-0 up from the first leg, and nothing on the page said so.
+**Evidence:** `build.tie_marks` uses `tools/card_ties.py`'s rule (the reverse fixture in the same league 1 to 8 days away) on the build's season fixture list. On the 27 Nov archive it marks 14 legs from 27 to 30 Nov (Liga MX 4, MLS 8, Série B 2). Drawn in Chromium at 1280px and 400px from that archive: no script errors, the mark fits the confidence column. `tests/test_tie_marks.py` (10 tests); the full suite and `nametest.py` pass.
+**Files:** `build.py` (`tie_marks`, `TIE_DAYS`), `index.html` (`tieChip`, `.flagged.tie`), `tests/test_tie_marks.py`, `claude/tie-legs-on-the-page-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any pick, flag, grade, record or Card condition (`CARD_RULE` stays 14); the mark is not archived.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-bands-email-review: the email and How it went on the Daily List's bands (tag pending)
 
 **What changed:** (1) The 07:00 Daily List email groups its picks by the page's confidence bands (`mailer.bands_of`, `BANDS`), each band headed with its record from `daylist.json` `bands` (landed v quoted, the return at the price), in place of Strongest today / Also on the list; a pick priced under 1.05 is marked Short (`is_short`); the welcome guide explains the bands. (2) How it went's Daily List board opens with **By sport and band**: every sport's list and reserve picks by band, landed v quoted with the count, cells under 30 picks lighter, a band two standard errors or more under its quote on 30+ picks marked (`bandTable`). (3) Each day on that board lists its picks by band, list and reserve together, the reserve marked (`reviewBands`), in place of the list rows and a reserve fold.

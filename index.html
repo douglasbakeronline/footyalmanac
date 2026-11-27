@@ -1582,7 +1582,8 @@ table.sheet td.rD{color:var(--mute);font-weight:700}
 .cxchip.clear{color:var(--edge)}
 .cxchip.caution{color:#7a5a12}
 .cxchip.against{color:#fff;background:var(--away);border-color:var(--away)}
-.flagged.gap{white-space:nowrap}   /* the Bookies mark (bookGapChip), one line on a phone */
+.flagged.gap{white-space:nowrap}
+.flagged.tie{line-height:1.35;text-align:right}   /* the Bookies mark (bookGapChip), one line on a phone */
 .slip .og-cx{margin-top:6px}
 .tb-picks{margin-top:12px}
 .tb-picks>summary{cursor:pointer;font-weight:700;font-size:13.5px;padding:6px 0}
@@ -3915,11 +3916,33 @@ document.addEventListener("click", e => {
    Law, tennis under 80, the college venue, tier and record marks). Reserve is
    added last where a reserve fold draws its rows. The caution mark stays on
    the competition name, where every row carries it. */
+/* 27 Nov 2026: a leg of a two-legged tie or play-off series (build.tie_marks:
+   the reverse fixture 1 to 8 days away in the same league). The model rates
+   it as a league game and cannot see the aggregate; a second leg says where
+   the pick stands after the first. Display only. */
+function tieChip(g){
+  const t = g && g.tie; if(!t) return "";
+  const dl = s => { const d = new Date(s + "T12:00:00Z"); return isNaN(d) ? s : d.toLocaleDateString("en-GB", {day: "numeric", month: "short", timeZone: "UTC"}); };
+  const blind = " The model rates this as a league game: it cannot see the aggregate, so a side protecting a lead or resting players is outside what it knows. Weigh it before using this pick in a group.";
+  if(t.leg === 1)
+    return `<span class="flagged wary tie" title="First leg of a tie or play-off series: the same sides meet again on ${dl(t.other)}.${blind}">1st leg</span>`;
+  let lab = "2nd leg", note = `the first meeting, on ${dl(t.other)}, is not scored here yet.`;
+  if(t.first){
+    note = `the first meeting, on ${dl(t.other)}, finished ${t.first}.`;
+    if(t.lead){
+      const [m, o] = t.lead;
+      // the first meeting from the pick's side: true of an aggregate tie and
+      // of a best-of-three series alike (MLS's first round), where "4-0 up" is not
+      lab += `<br>${m > o ? "won" : m < o ? "lost" : "drew"} 1st ${m}-${o}`;
+    }
+  }
+  return `<span class="flagged wary tie" title="Second leg of a tie or play-off series: ${note}${blind}">${lab}</span>`;
+}
 function rowChips(g, sport){
   const fb = !!(g.home && typeof g.home === "object");
   const h = fb ? g.home.name : g.home, a = fb ? g.away.name : g.away;
   return hillChip(sport, h, a) + bookGapChip(g, sport) + cxChip(sport, h, a)
-    + (fb ? edgeFlag(g) : "")
+    + (fb ? edgeFlag(g) + tieChip(g) : "")
     + (g.celtic ? `<span class="flagged" title="Celtic's Law: the model is working partly blind here, so this fixture is dropped one tier. Tap the row for why.">flagged</span>` : "")
     + tennisWary(g) + sideWaryChip(g);
 }
