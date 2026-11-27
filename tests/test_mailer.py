@@ -67,26 +67,13 @@ class DailyList(unittest.TestCase):
         self.assertNotIn("ResHome", m["html"])
         self.assertNotIn("ResHome", m["text"])
 
-    def test_bands_in_order(self):
-        # 27 Nov 2026: the email's list is in the page's confidence bands
+    def test_one_list_strongest_first(self):
+        # 27 Nov 2026 (afternoon): no bands, no groups; one list, strongest first
         t = M.daily_email(DAY, src(), now=NOW)["text"]
-        heads = [l.split(" · ")[0].strip() for l in t.splitlines() if l.strip()[:2].isdigit() and "%" in l.split(" · ")[0]]
-        order = ["90%+", "85-89%", "80-84%", "75-79%", "70-74%"]
-        self.assertTrue(heads, t)
-        self.assertEqual(heads, [h for h in order if h in heads])
-        self.assertNotIn("STRONGEST TODAY", t)
-
-    def test_band_of_reads_whole_percent(self):
-        self.assertEqual(M.band_of(0.895)[0], "90")
-        self.assertEqual(M.band_of(0.849)[0], "85")
-        self.assertEqual(M.band_of(0.84)[0], "80")
-
-    def test_band_record_line(self):
-        s = {"daylist": {"bands": {"pick": {"all": {"90": {"n": 200, "won": 190, "quoted": 0.94, "priced": 100, "ret": -0.023}}}}}}
-        g = M.bands_of([{"confidence": 0.93}, {"confidence": 0.86}], s)
-        self.assertEqual([x[0] for x in g], ["90%+", "85-89%"])
-        self.assertIn("landed 95% of 200, quoted 94%, -2.3% at the price", g[0][1])
-        self.assertEqual(g[1][1], "1 pick")
+        self.assertLess(t.index("Home0 "), t.index("Home5 "))
+        self.assertLess(t.index("Home5 "), t.index("Home11 "))
+        for gone in ("90%+ ·", "85-89%", "STRONGEST TODAY", "ALSO ON THE LIST"):
+            self.assertNotIn(gone, t)
 
     def test_short_price_marked(self):
         self.assertTrue(M.is_short({"px": {"price": 1.02}}))

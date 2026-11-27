@@ -4,7 +4,7 @@ Two emails, both built from the files the build has already written, never
 from the page's HTML and never regraded:
 
 - **The Daily List** at 07:00 UK every morning, about today's UK day: the
-  Daily List (by confidence band since 27 Nov 2026, as the page; not the reserve) with the page's own
+  Daily List (one list, strongest first; not the reserve) with the page's own
   display rules, the Daily 2x, the Card (or the page's reason there is none),
   the Edge picks and, for subscribers who ticked Scale, the day's Scale bets
   from the Daily List tier and the Scale groups.
@@ -377,39 +377,10 @@ def list_items(src, day, now):
     return out, off
 
 
-# 27 Nov 2026 (Douglas: the page and the email by confidence band, "staggered
-# by percentage banding"): the email's list sections are the page's bands
-# (index.html LBANDS), each with the band's record from daylist.json "bands".
-BANDS = (("90", 0.90, "90%+"), ("85", 0.85, "85-89%"), ("80", 0.80, "80-84%"), ("75", 0.75, "75-79%"),
-         ("70", 0.70, "70-74%"), ("60", 0.60, "60-69%"), ("0", 0.0, "Under 60%"))
+# 27 Nov 2026: a price under 1.05 is marked Short in the email as on the page. The
+# confidence bands the email carried that morning went with the page's that
+# afternoon (Douglas: "I don't like the percentage banding"): one list again.
 SHORT_PRICE = 1.05                  # SHORT_PRICE: lands as quoted, pays too little to matter in a slip
-
-
-def band_of(conf):
-    v = round((conf or 0) * 100)
-    return next(b for b in BANDS if v >= round(b[1] * 100))
-
-
-def band_line(src, k):
-    """The band's record, as the page's band header words it (lbRecord)."""
-    r = (((src.get("daylist") or {}).get("bands") or {}).get("pick") or {}).get("all", {}).get(k)
-    if not r or not r.get("n"): return ""
-    out = f"landed {round(100 * r['won'] / r['n'])}% of {r['n']}, quoted {round(100 * r['quoted'])}%"
-    if (r.get("priced") or 0) >= 20 and r.get("ret") is not None:
-        out += f", {'+' if r['ret'] >= 0 else '-'}{abs(r['ret']) * 100:.1f}% at the price"
-    return out
-
-
-def bands_of(items, src=None):
-    """The list picks in the page's bands, strongest band first, strongest first within each:
-    [(title, sub, picks)], only bands with picks."""
-    out = []
-    for k, _, label in BANDS:
-        xs = [it for it in items if band_of(it.get("confidence"))[0] == k]
-        if not xs: continue
-        rec = band_line(src or {}, k)
-        out.append((label, f"{len(xs)} pick{'' if len(xs) == 1 else 's'}" + (f" · {rec}" if rec else ""), xs))
-    return out
 
 
 def is_short(it):
@@ -656,8 +627,8 @@ def welcome_emails():
         "text": "You're in. The Daily List arrives every morning at 07:00 UK; the Weekly Record on Saturdays.\n\n"
                 "Every number comes from the Sports Almanac model alone, published before the start and graded in public, losses included.\n\n" + footer_text(links)}))
 
-    groups = (label_bar("90%+ · 85-89% · 80-84%", "each band with its own record") +
-              _p("The list is grouped by the Sports Almanac model's chance: 90% and up, 85-89%, 80-84% and so on. Every band carries its own record, how often its picks have landed against what they were quoted, so you can see what each level is worth.", 14, INK2, "padding-top:8px") +
+    groups = (label_bar("One list", "strongest first") +
+              _p("Every pick that cleared the Daily List's bar, the Sports Almanac model's strongest first, each with how often calls at its level landed in testing.", 14, INK2, "padding-top:8px") +
               label_bar("Short", "a price under 1.05") +
               _p("A short pick lands as often as quoted but pays so little it adds almost nothing to a slip.", 14, INK2, "padding-top:8px"))
     row_key = (key_row("90%", "The Sports Almanac model's chance the pick wins.") +
@@ -665,13 +636,12 @@ def welcome_emails():
                key_row("Hill 1.25", "William Hill's price, for reference. Avg means the average across UK books where Hill has none.") +
                key_row("⭐", "Likely winner: a list pick that also clears a short set of extra checks, such as no bookmakers' warning against it.") +
                key_row("Won / Lost", "Picks already played show their result, so nothing is hidden."))
-    body = [section("Bands", "why the list is grouped", groups),
+    body = [section("The list", "how it is ordered", groups),
             section("Reading a row", "the example numbers are for illustration", row_key)]
     out.append(("welcome-3-guide", {
         "subject": "How to read the Daily List", "kind": "guide",
-        "html": wrap("How to read it", "Two-minute guide", "The bands, the tested rate and the star, explained.", body, footer_html(links)),
-        "text": "How to read the Daily List\n\nThe list is grouped by the model's chance: 90% and up, 85-89%, 80-84% and so on, "
-                "each band with how often its picks have landed against what they were quoted.\n"
+        "html": wrap("How to read it", "Two-minute guide", "The order, the tested rate and the star, explained.", body, footer_html(links)),
+        "text": "How to read the Daily List\n\nOne list, the model's strongest pick first, each with how often calls at its level landed in testing.\n"
                 "Short: a price under 1.05, which lands as quoted but adds little to a slip.\n\n" + footer_text(links)}))
     return out
 
@@ -692,17 +662,15 @@ def daily_email(day, src=None, with_scale=False, now=None):
     if items:
         inner = []
         text.append(f"THE DAILY LIST · {len(items)} pick{'' if len(items) == 1 else 's'} clear the bar")
-        for title, sub, xs in bands_of(items, src):
-            inner.append(label_bar(title, sub))
-            text.append(f"\n{title.upper()} · {sub}")
-            for it in xs:
-                inner.append(list_row(src, it))
-                opp = it["away"] if it.get("side") == "h" else it["home"]
-                t = tested(it)
-                st = status_word(it)
-                text.append(f"  {uk_time(it.get('start')) if it.get('timed', True) else 'TBC'}  {it.get('pick')}{' *' if it.get('star') else ''} v {opp}"
-                            f" · {sport_name(src, it.get('sport'))} · {it.get('comp') or ''} · {pct(it.get('confidence'))}"
-                            f"{f' · tested {pct(t)}' if t else ''} · {price_text(it.get('px'))}{' (short)' if is_short(it) else ''}{f' · {st}' if st else ''}")
+        text.append("")
+        for it in items:
+            inner.append(list_row(src, it))
+            opp = it["away"] if it.get("side") == "h" else it["home"]
+            t = tested(it)
+            st = status_word(it)
+            text.append(f"  {uk_time(it.get('start')) if it.get('timed', True) else 'TBC'}  {it.get('pick')}{' *' if it.get('star') else ''} v {opp}"
+                        f" · {sport_name(src, it.get('sport'))} · {it.get('comp') or ''} · {pct(it.get('confidence'))}"
+                        f"{f' · tested {pct(t)}' if t else ''} · {price_text(it.get('px'))}{' (short)' if is_short(it) else ''}{f' · {st}' if st else ''}")
         nailed = next((it for it in items if it.get("star")), None)
         if any(it.get("star") for it in items):
             inner.append(_p(f"⭐ marks a likely winner: a list pick that passes every check the record backs (football under {WIN_FB_MAX:.2f}, "
@@ -711,8 +679,7 @@ def daily_email(day, src=None, with_scale=False, now=None):
         if off:
             text.append(f"\n{off} college basketball pick{'' if off == 1 else 's'} left off: no price at 1.05 or better on file, or tiered Leave out.")
             inner.append(_p(f"{off} college basketball pick{'' if off == 1 else 's'} left off: no price at 1.05 or better on file, or tiered Leave out. On the college basketball tab.", 12, MUTE))
-        inner.append(_p("Picks are grouped by the Sports Almanac model's chance, each band with how often its picks have landed against what they were quoted, and what a level stake returned at the price. "
-                        "Tested is how often calls at that level landed on games never tuned on. "
+        inner.append(_p("Strongest first. The percentage is the Sports Almanac model's chance; tested is how often calls at that level landed on games never tuned on. "
                         f"Prices are William Hill's where read (Avg: the bookmakers' average), shown only: the list never sees a price. Short: under {SHORT_PRICE:.2f}, it pays too little to add much to a slip.", 12, MUTE))
         rows.append(section("The Daily List", f"{len(items)} pick{'' if len(items) == 1 else 's'} clear the bar", "".join(inner)))
     else:

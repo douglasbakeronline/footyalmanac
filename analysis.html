@@ -1045,6 +1045,10 @@ const BANDS = [
   // 24 Nov 2026 (Douglas: "make the default filter show all banding from 60% upwards", then 70%+ the same evening): one band
   // spanning the rest, the Daily List's default (FVIEWS.list.bandDefault, read through bandOf).
   {k: "70up", lo: 70, hi: 101, label: "70%+"},
+  // 27 Nov 2026 (Douglas: the Daily List's confidence "60% plus, 70% plus, 80% plus, 90% plus, and that's it"):
+  // the cumulative bands the Daily List offers (FVIEWS.list.bands); other pages keep BAND_KEYS.
+  {k: "60up", lo: 60, hi: 101, label: "60%+"},
+  {k: "80up", lo: 80, hi: 101, label: "80%+"},
   {k: "90", lo: 90, hi: 101, label: "90%+"},
   {k: "85", lo: 85, hi: 90, label: "85-89%"},
   {k: "80", lo: 80, hi: 85, label: "80-84%"},
@@ -1062,7 +1066,7 @@ function filtSave(k){ try { const o = filtRead(); o.band = k; localStorage.setIt
 // the 5-point slots a band covers in b5 (slot i is i*5% to (i+1)*5%; the top slot takes 100%)
 const bandSlots = b => b.k === "all" ? [0, 20] : [b.lo / 5, Math.min(20, Math.ceil(b.hi / 5))];
 // the Almanac's band a 5-point band of the table sits in
-const bandOfFrom = f => { const v = Math.round(f * 100); return (BANDS.find(b => b.k !== "all" && b.k !== "70up" && v >= b.lo && v < b.hi) || BANDS[0]); };
+const bandOfFrom = f => { const v = Math.round(f * 100); return (BANDS.find(b => b.k !== "all" && !/up$/.test(b.k) && v >= b.lo && v < b.hi) || BANDS[0]); };
 const bandHref = (view, k) => `./#${view}?band=${encodeURIComponent(k)}`;
 function sumDays(bd, s){
   return bd.map(d => {
