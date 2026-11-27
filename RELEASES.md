@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-tabs-tidy: Bets puts today's slips first; Scale, Racing and the Mailer say plainly what they are (tag pending)
+
+**What changed:** (1) **Bets** opens with a line on what it holds, then the day's slips in order (the 2x, the Card, the List card, the slip, Edge picks), each with its own record; the Card's rule in full, the old-rule and paper groups, the re-check log, the scoreboard (now linking every card's record on How it went's Cards board) and the October rules move into one fold at the foot, "Rules, logs and the scoreboard". (2) **Scale** opens with its live record (`scHonest`: groups won v expected since the tab went live, from the Scale ledger) and says most of its prices are estimates. (3) **Horse racing**'s feed note is a marked box at the top ("Limited feed"): on the current plan the feed sends no prices and no results, so no tips and nothing graded. (4) **The Mailer** shows the last seven mornings' emails above the sign-up form, so a visitor sees what arrives first; its copy describes the bands. (5) Issue #569 asks the office to replay the Daily 2x and the List card choosing by confidence band, for Douglas to decide on the numbers.
+**Evidence:** drawn in Chrome at 1100px and 400px on a local build of 27 Nov (a stand-in feed for the racing note): no script errors on any tab.
+**Files:** `index.html` (`renderToday`, `scHonest`, `renderScale`, `renderRacing`, the Mailer section), `RELEASES.md`.
+**Not changed:** any card, rule, stake, price or record; Horse racing and Scale stay as tabs.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-tie-legs: second legs of ties and play-off series marked on the board (tag pending)
 
 **What changed:** a football row that is a leg of a two-legged tie or play-off series carries a mark: "1st leg", or "2nd leg" with the first meeting's result from the pick's side ("won 1st 4-0"). The hover says the model rates it as a league game and cannot see the aggregate. Cruz Azul v León on 30 Nov shows 67% with Cruz Azul already 4-0 up from the first leg, and nothing on the page said so.
