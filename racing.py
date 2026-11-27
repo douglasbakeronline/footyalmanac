@@ -105,26 +105,49 @@ _last_call = [0.0]
 _card_path = [None]                # the racecard endpoint the plan allows, once found
 
 
+# A 429 (too many requests) is asked once more after the wait the API names
+# (Retry-After, capped), 27 Nov 2026: one 429 in eight builds had cost the
+# whole run, the tab keeping its last page. Any other error is not retried.
+RETRY_429 = 1
+RETRY_DEFAULT_S = 5.0
+RETRY_MAX_S = 20.0
+
+
+def retry_wait(header):
+    """Seconds to wait before asking again after a 429."""
+    try:
+        s = float(header)
+    except (TypeError, ValueError):
+        return RETRY_DEFAULT_S
+    return min(max(s, GAP_S), RETRY_MAX_S)
+
+
 def fetch(path, params=None, auth=None):
     """One GET against The Racing API. Repeated keys (region) are allowed.
-    An HTTP error carries the API's own message into the build log."""
-    wait = GAP_S - (time.monotonic() - _last_call[0])
-    if wait > 0:
-        time.sleep(wait)
-    _last_call[0] = time.monotonic()
+    An HTTP error carries the API's own message into the build log; a 429
+    is asked again up to RETRY_429 times."""
     q = urllib.parse.urlencode(params or [], doseq=True)
-    req = urllib.request.Request(f"{API}/{path}" + (f"?{q}" if q else ""),
-                                 headers={"Authorization": auth, "User-Agent": "sportsalmanac"})
-    try:
-        with urllib.request.urlopen(req, timeout=40) as r:
-            return json.load(r)
-    except urllib.error.HTTPError as e:
+    for attempt in range(RETRY_429 + 1):
+        wait = GAP_S - (time.monotonic() - _last_call[0])
+        if wait > 0:
+            time.sleep(wait)
+        _last_call[0] = time.monotonic()
+        req = urllib.request.Request(f"{API}/{path}" + (f"?{q}" if q else ""),
+                                     headers={"Authorization": auth, "User-Agent": "sportsalmanac"})
         try:
-            body = e.read().decode("utf-8", "replace")[:300]
-        except Exception:
-            body = ""
-        print(f"racing: {path} answered {e.code}: {body}")
-        raise
+            with urllib.request.urlopen(req, timeout=40) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            try:
+                body = e.read().decode("utf-8", "replace")[:300]
+            except Exception:
+                body = ""
+            print(f"racing: {path} answered {e.code}: {body}")
+            if e.code != 429 or attempt >= RETRY_429:
+                raise
+            pause = retry_wait(e.headers.get("Retry-After") if e.headers else None)
+            print(f"racing: {path} rate-limited, asking again in {pause:.0f}s")
+            time.sleep(pause)
 
 
 def fetch_cards(params, auth):

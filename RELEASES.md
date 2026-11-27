@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-racing-429: the racing feed asks again after a rate limit (tag pending)
+
+**What changed:** the Horse racing tab is less likely to keep a stale page. `racing.fetch` answered a 429 (too many requests) from The Racing API by failing the whole run; it now waits the time the API names (`Retry-After`, at least the 1.2s request gap, at most `RETRY_MAX_S` 20s, `RETRY_DEFAULT_S` 5s when absent) and asks once more (`RETRY_429` 1). Any other error (the plan's 401s, a 422) is not retried, as before.
+**Evidence:** the 27 Nov 08:13 UTC build logged "racing feed failed: HTTP Error 429: Too Many Requests" after the racecards had loaded; the seven builds before it did not. `tests/test_racing.py` `FetchRetryTest` (4 tests: a 429 then success retries once, two 429s raise, a 401 is not retried, the wait is capped).
+**Files:** `racing.py`, `tests/test_racing.py`, `RELEASES.md`.
+**Not changed:** the racing model, tips, grading, any Card constant (`CARD_RULE` stays 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-review-agenda: the 30 Nov Card review's agenda, and Celta Fortuna priced (tag pending)
 
 **What changed:** nothing on the page. (1) `claude/card-review-agenda-2026-11-30.md` gathers every item 41 notes leave for the 30 Nov review: the rule 14 v rule 13 / rule 12 read (Douglas's), the gates a session acts on, the re-reads asked for, and what rule 14 already settled, each with its trigger and the 27 Nov standing. (2) Real Oviedo v RC Celta Fortuna (LaLiga 2, 30 Nov) sat noFixture on six builds beside "Oviedo v Celta de Vigo II"; `AF_SPELLINGS` now reads it.
