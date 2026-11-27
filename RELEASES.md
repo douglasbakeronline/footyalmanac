@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-list-card-order: the Daily 2x and List card replayed by confidence alone (tag pending)
+
+**What changed:** nothing on the page. `tools/list_card_replay.py` (#569) replays the Daily 2x and the List card as live and under the pre-registered `confidence` variant (reserve picks read as list picks, one tier ordered by the model's number, every floor and price rule unchanged), on the results ledger and the archived pool, built as at 07:00 UK, paired by day.
+**Evidence:** Daily 2x: ledger 19/46 v 18/46 live, +0.05 a day, differs on 8 days / 33 legs; pool identical bar one day. List card: ledger 16/38 v 5/12 live, +0.01 a day, p(worse) 0.48 on 124 differing legs; pool -0.28 a day, p(worse) 0.89 on 22. Gate not met on either; nothing set live. `claude/list-card-confidence-order-2026-11-27.md`.
+**Files:** `tools/list_card_replay.py`, `tests/test_list_card_replay.py`, `claude/list-card-confidence-order-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `daily_group`, `build_list_card`, any constant, record or archive.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-days-glance-bands: Days at a glance on the Daily List glance's confidence scale (tag pending)
 
 **What changed:** How it went's Days at a glance draws every day's line on the same height scale as the Daily List's At a glance (Douglas, 27 Nov 2026: "match the new at a glance style ... the percentage banding as well"): 60% at the foot to 100% at the top, dashed guides at 70%, 80%, 90% and 100% labelled on the left, each dot at its start time across and its confidence up. Dots that would overlap step sideways and never leave the frame; the old stacks with "+n" labels are gone. Which picks are drawn is unchanged (list and reserve at the Daily List's band).
