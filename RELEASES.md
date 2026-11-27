@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-boards-bands: the sport tabs, the football board and Starred by band (tag pending)
+
+**What changed:** in strongest order, every sport tab, Tennis, the football winner board and Starred lay each day out in the Daily List's confidence bands (`bandBoard`, `bandedDay` with a `tab`), with band chips under the day head. A sport tab's band header carries that sport's own record across its whole board (`daylist.band_records` "every": landed v quoted, the return at the price); Starred and the football board likewise. The 90%, 85% and 80% bands open, the 75% band on a thin day, the rest fold, so the football board's No read rows (under 60%) start folded. By kick-off time, and on the Both to score board, a day stays one run as before. The football board's Started block is set apart from the band above it.
+**Evidence:** drawn in Chrome at 1100px and 400px on a local build of 27 Nov: the college basketball tab's 90%+ band reads "College basketball landed 96% of 231 · quoted 94% · -2.8% at the price" with four Short 1.00-1.02 rows; the football board's bands, chips and folds; Starred with six stars set. No script errors on any tab.
+**Files:** `index.html` (`bandBoard`, `bandedDay`, `bandChips`, `lbId`, `renderSport`, `renderTennis`, `render`, `renderStarred`), `RELEASES.md`.
+**Not changed:** which games each board shows, their order inside a band, the tiers, grading.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-bands-email-review: the email and How it went on the Daily List's bands (tag pending)
 
 **What changed:** (1) The 07:00 Daily List email groups its picks by the page's confidence bands (`mailer.bands_of`, `BANDS`), each band headed with its record from `daylist.json` `bands` (landed v quoted, the return at the price), in place of Strongest today / Also on the list; a pick priced under 1.05 is marked Short (`is_short`); the welcome guide explains the bands. (2) How it went's Daily List board opens with **By sport and band**: every sport's list and reserve picks by band, landed v quoted with the count, cells under 30 picks lighter, a band two standard errors or more under its quote on 30+ picks marked (`bandTable`). (3) Each day on that board lists its picks by band, list and reserve together, the reserve marked (`reviewBands`), in place of the list rows and a reserve fold.

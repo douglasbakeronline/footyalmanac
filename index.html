@@ -1106,6 +1106,7 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .lband:hover .lb-name{text-decoration:underline;text-decoration-thickness:1px}
 .lband:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
 .lb-done{border-top:1px dashed var(--rule);margin-top:6px}
+.lbsec+.lgrp,.lbsec+.xruler+.lgrp{margin-top:18px;border-top:1px solid var(--ink);padding-top:12px}
 .shortpx{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px solid var(--away);border-radius:3px;
   font:700 10px var(--f-ui);letter-spacing:.04em;text-transform:uppercase;color:var(--away);white-space:nowrap}
 @media (prefers-reduced-motion: reduce){.lband i{transition:none}}
@@ -4044,10 +4045,16 @@ function renderStarred(){
       sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
         <div class="count">${xs.length} starred${xs.length < items[date].length ? ` of ${items[date].length}` : ""}<span data-livetally="${date}"></span></div></div>`;
       // a row whose detail cannot be drawn is drawn closed rather than lost
-      xs.forEach((it, i) => { const n0 = sec.children.length;
-        try { listPut(sec, it, i, date); }
-        catch(e){ while(sec.children.length > n0) sec.lastElementChild.remove();
-          OPEN_ALL = false; try { listPut(sec, it, i, date); } finally { OPEN_ALL = !!STAR.open; } } });
+      const safePut = (host2, it, i, d) => { const n0 = host2.children.length;
+        try { listPut(host2, it, i, d); }
+        catch(e){ while(host2.children.length > n0) host2.lastElementChild.remove();
+          OPEN_ALL = false; try { listPut(host2, it, i, d); } finally { OPEN_ALL = !!STAR.open; } } };
+      // 27 Nov 2026: in strongest order, by the Daily List's bands
+      if(fOrder("starred") === "strength"){
+        const rows = xs.map(it => ({it, reserve: !!it.g.reserve && !it.g.list}));
+        sec.insertAdjacentHTML("beforeend", bandChips(date, rows, "starred"));
+        bandedDay(sec, rows, date, {tab: "starred", scope: "all", kind: "every", byStrength: listByStrength, byTime: listByStrength, time: false, put: safePut});
+      } else xs.forEach((it, i) => safePut(sec, it, i, date));
       host.appendChild(sec);
     });
   } finally { OPEN_ALL = false; }
@@ -4084,7 +4091,7 @@ const LB_ALWAYS = ["90", "85", "80"], LB_THIN = 10;   // open bands; the next op
 const SHORT_PRICE = 1.05;    // under this a pick pays too little to matter in a slip
 // whole percentages, as the confidence filter and the row read them (inBand)
 const lbOf = c => { const v = Math.round((c || 0) * 100); return LBANDS.find(b => v >= Math.round(b.lo * 100)) || LBANDS[LBANDS.length - 1]; };
-const lbId = (date, k) => `lb-${date}-${k}`;
+const lbId = (date, k, tab) => `lb-${tab && tab !== "list" ? tab.replace(/[^a-z0-9]/gi, "") + "-" : ""}${date}-${k}`;
 const lbSigned = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x * 100).toFixed(1) + "%";
 // the band's record line: from daylist.js bands, the sport's own when one sport is in view
 function lbRecord(k, scope, kind){
@@ -4098,9 +4105,9 @@ function lbRecord(k, scope, kind){
   return `${who}landed <b>${Math.round(100 * r.won / r.n)}%</b> of ${r.n} · quoted ${Math.round(100 * r.quoted)}%${ret}`;
 }
 // one chip per band holding picks today, each a jump to its band
-function bandChips(date, rows){
+function bandChips(date, rows, tab){
   const n = {}; rows.forEach(r => { const k = lbOf(r.it.g.confidence).k; n[k] = (n[k] || 0) + 1; });
-  const chips = LBANDS.filter(b => n[b.k]).map(b => `<button type="button" class="lbchip" data-lbjump="${lbId(date, b.k)}">${b.label}<i>${n[b.k]}</i></button>`).join("");
+  const chips = LBANDS.filter(b => n[b.k]).map(b => `<button type="button" class="lbchip" data-lbjump="${lbId(date, b.k, tab)}">${b.label}<i>${n[b.k]}</i></button>`).join("");
   return chips ? `<nav class="lbchips" aria-label="Jump to a band">${chips}</nav>` : "";
 }
 const lbSettled = it => it.kind === "pinned" && ["won", "lost", "void"].includes(it.g.status);
@@ -4111,14 +4118,14 @@ function bandedDay(sec, rows, date, o){
   const topN = LB_ALWAYS.reduce((a, k) => a + (by[k] || []).length, 0);
   LBANDS.forEach(b => {
     const xs = by[b.k]; if(!xs || !xs.length) return;
-    const key = date + "|" + b.k;
+    const key = date + "|" + b.k + "|" + (o.tab || "list");
     const fold = document.createElement("details");
-    fold.className = "lbsec"; fold.id = lbId(date, b.k);
+    fold.className = "lbsec"; fold.id = lbId(date, b.k, o.tab);
     fold.open = key in LB_OPEN ? LB_OPEN[key] : LB_ALWAYS.includes(b.k) || (b.k === "75" && topN < LB_THIN);
     const live = o.past ? xs.slice() : xs.filter(r => !lbSettled(r.it)), done = o.past ? [] : xs.filter(r => lbSettled(r.it));
     const order = (p, q) => o.time ? o.byTime(p.it, q.it) : rank.get(p.it) - rank.get(q.it);
     live.sort(order); done.sort(order);
-    const nRes = xs.filter(r => r.reserve).length, rec = lbRecord(b.k, o.scope);
+    const nRes = xs.filter(r => r.reserve).length, rec = lbRecord(b.k, o.scope, o.kind);
     fold.innerHTML = `<summary class="lband"><span class="lb-name">${b.label}</span><span class="lb-n">${xs.length} pick${xs.length === 1 ? "" : "s"}${nRes ? ` · ${nRes} reserve` : ""}</span>${rec ? `<span class="lb-rec">${rec}</span>` : ""}<i aria-hidden="true"></i></summary>`;
     fold.addEventListener("toggle", () => { LB_OPEN[key] = fold.open; });
     const put = r => {
@@ -4141,6 +4148,14 @@ function bandedDay(sec, rows, date, o){
     }
     sec.appendChild(fold);
   });
+}
+/* 27 Nov 2026: the sport tabs, the football board and Starred in the same
+   bands as the Daily List, in strongest order only (by kick-off a day stays
+   one run). The band record there is the sport's whole board ("every"). */
+function bandBoard(sec, games, date, tab, scope, put, cmp){
+  bandedDay(sec, games.map(g => ({it: scope === "football" ? {kind: "football", g} : {g}, reserve: false})), date, {tab, scope, kind: "every",
+    byStrength: cmp ? (a, b) => cmp(a.g, b.g) : (a, b) => (b.g.confidence || 0) - (a.g.confidence || 0), byTime: () => 0, time: false,
+    put: (fold, it, i, d) => put(fold, it.g, i, d)});
 }
 // a band chip opens its band and scrolls to it, clear of the tab bar
 document.addEventListener("click", e => {
@@ -4864,9 +4879,10 @@ function renderTennis(){
       <div class="day-head">
         <h2>${label}</h2>
         <div class="count">${games.length} matches &middot; ${confident} confident${started.length ? ` &middot; ${started.length} started` : ""}</div>
-      </div>${TENNIS_RULER}`;
+      </div>${order ? "" : bandChips(date, games.map(g => ({it: {g}})), "tennis")}${TENNIS_RULER}`;
     if(order) drawn += playedRows(sec, "matches", date, started, PLAYED_CAP, renderTennis, true);
-    games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
+    if(order) games.forEach((m, i) => sec.appendChild(sportRow(tennisAsGame(m), i, false)));
+    else bandBoard(sec, games, date, "tennis", "tennis", (f, m, i) => f.appendChild(sportRow(tennisAsGame(m), i, false)));
     if(!order) drawn += playedRows(sec, "matches", date, started, PLAYED_CAP, renderTennis, true);
     drawn += games.length;
     host.appendChild(sec);
@@ -4968,7 +4984,11 @@ function render(){
       </div>`;
 
     if(state.sort === "time") shown += playedRows(sec, "fixtures", day.date, started, PLAYED_CAP, render, true);
-    games.forEach((g,i)=> appendFixture(sec, g, i, day.date, btts));
+    // 27 Nov 2026: by band on the winner board in strongest order, the No read rows folded under 60%
+    if(state.sort === "conf" && !btts){
+      sec.querySelector(".day-head").insertAdjacentHTML("afterend", bandChips(day.date, games.map(g => ({it: {g}})), "fixtures"));
+      bandBoard(sec, games, day.date, "fixtures", "football", (f, g, i, d) => appendFixture(f, g, i, d, false), rank.conf);
+    } else games.forEach((g,i)=> appendFixture(sec, g, i, day.date, btts));
     if(capped || (state.expanded.has(day.date) && state.leagues.size === 0
                   && state.show === "all" && !banded && total > cap)){
       const more = document.createElement("button");
@@ -5953,9 +5973,10 @@ function renderSport(key){
     sec.className = "day";
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(d)}</h2>
       <div class="count">${games.length} game${games.length===1?"":"s"} · ${games.filter(g=>g.tier!=="No read").length} confident${started.length ? ` · ${started.length} started` : ""}</div></div>
-      ${sportRuler()}`;
+      ${order ? "" : bandChips(d, games.map(g => ({it: {g}})), "sport" + key)}${sportRuler()}`;
     if(order) drawn += playedRows(sec, "games", d, started, PLAYED_CAP, redraw, true);
-    games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
+    if(order) games.forEach((g,i) => sec.appendChild(sportRow(g, i, false)));
+    else bandBoard(sec, games, d, "sport" + key, key, (f, g, i) => f.appendChild(sportRow(g, i, false)));
     if(!order) drawn += playedRows(sec, "games", d, started, PLAYED_CAP, redraw, true);
     drawn += games.length;
     host.appendChild(sec);
