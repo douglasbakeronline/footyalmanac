@@ -1,0 +1,110 @@
+{
+ "day": "2026-11-27",
+ "sentAt": "2026-11-27T07:11:44Z",
+ "subject": "The Daily List, Fri 27 Nov: 3 picks",
+ "list": [
+  {
+   "sport": "football",
+   "home": "Betlemi",
+   "away": "Varketili",
+   "pick": "Varketili",
+   "comp": "Georgia Liga 3",
+   "start": "2026-11-27T14:00:00Z",
+   "timed": true,
+   "conf": 0.9119,
+   "tested": 0.8997,
+   "px": null,
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "football",
+   "home": "Istiqlol",
+   "away": "Istaravshan",
+   "pick": "Istiqlol",
+   "comp": "Tajikistan Vysshaya Liga",
+   "start": "2026-11-27T12:00:00Z",
+   "timed": true,
+   "conf": 0.8766,
+   "tested": 0.8997,
+   "px": null,
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "nba",
+   "home": "Detroit Pistons",
+   "away": "Milwaukee Bucks",
+   "pick": "Detroit Pistons",
+   "comp": "NBA",
+   "start": "2026-11-28T00:30:00Z",
+   "timed": true,
+   "conf": 0.8613,
+   "tested": 0.8816,
+   "px": {
+    "label": "Hill",
+    "price": 1.22
+   },
+   "star": true,
+   "A": true
+  }
+ ],
+ "daily": {
+  "name": "Daily 2x",
+  "seq": 1,
+  "odds": 2.23,
+  "hill": 2.25,
+  "stake": 1,
+  "p": 0.3563,
+  "short": false,
+  "legs": [
+   {
+    "pick": "Buxoro",
+    "event": "Buxoro v Mash'al",
+    "sport": "football",
+    "comp": "Super League",
+    "when": "2026-11-27T12:00:00Z",
+    "p": 0.7274,
+    "odds": 1.25,
+    "hill": 1.25,
+    "est": false
+   },
+   {
+    "pick": "Al Qadsiah",
+    "event": "Al Qadsiah v Al Fayha",
+    "sport": "football",
+    "comp": "Pro League",
+    "when": "2026-11-27T14:20:00Z",
+    "p": 0.7743,
+    "odds": 1.19,
+    "hill": 1.2,
+    "est": false
+   },
+   {
+    "pick": "Detroit Pistons",
+    "event": "Detroit Pistons v Milwaukee Bucks",
+    "sport": "nba",
+    "comp": "NBA",
+    "when": "2026-11-28T00:30Z",
+    "p": 0.8613,
+    "odds": 1.24,
+    "hill": 1.25,
+    "est": false
+   },
+   {
+    "pick": "Denver Nuggets",
+    "event": "Utah Jazz v Denver Nuggets",
+    "sport": "nba",
+    "comp": "NBA",
+    "when": "2026-11-28T02:30Z",
+    "p": 0.7344,
+    "odds": 1.21,
+    "hill": 1.2,
+    "est": false
+   }
+  ]
+ },
+ "cards": [],
+ "cardShort": "No Card group today: 5 picks clear the rule, but every set of them pays more than a Card 2x can (the cheapest 3.38, over its 3.00 top). A blank day is the rule working.",
+ "edge": []
+}
