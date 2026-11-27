@@ -60,7 +60,7 @@ RETRIES = 2                         # a 429, a 5xx or a lost connection, twice m
 
 # The page's display rules (index.html), kept equal by hand: see each comment.
 GROUP_A_MIN = 0.85                  # GROUP_A_MIN
-LIST_HILL_MIN = {"ncaab": 1.05}     # listHillMin
+LIST_PRICE_MIN = {"ncaab": 1.05}    # listPriceMin: the best price on file, any source (27 Nov 2026)
 WIN_FB_MAX = 1.40                   # WIN_FB_MAX
 BOOK_GAP = 0.10                     # BOOK_GAP
 TIER_MIN, TIER_BANKER, TIER_CAUTION, TIER_WAIT_H = 0.70, 12, 6, 18   # collegeTier
@@ -347,7 +347,7 @@ def in_window(it, lo, hi, key="start"):
 
 def list_items(src, day, now):
     """The Daily List as the page shows it for the day: list picks only (never the
-    reserve), college basketball only at Hill 1.05+, Leave out tier off, strongest
+    reserve), college basketball only at 1.05+ from any price on file, Leave out tier off, strongest
     first. Returns (items, left_off)."""
     DL, G = src.get("daylist") or {}, src.get("groupings") or {}
     if DL.get("date") == day:
@@ -359,9 +359,14 @@ def list_items(src, day, now):
     items, off = [], 0
     for it in raw:
         if not it.get("list"): continue
-        floor = LIST_HILL_MIN.get(it.get("sport"), 0)
-        hill = (((G.get("listBooks") or {}).get(lb_key(it.get("sport"), it.get("home"), it.get("away"))) or {}).get("h"))
-        if (floor and not ((hill or 0) >= floor)) or college_tier(tier_game(it), now) == "leave":
+        floor = LIST_PRICE_MIN.get(it.get("sport"), 0)
+        px = None
+        if floor:
+            # the slim pinned copy names the pick; its full row may carry the market
+            g, sport = {**(it.get("full") or {}), **it}, it.get("sport")
+            side = pick_side(g, sport)
+            px = pick_price(g, sport, side, G) if side else None
+        if (floor and not ((px or 0) >= floor)) or college_tier(tier_game(it), now) == "leave":
             off += 1; continue
         items.append(it)
     items.sort(key=strength, reverse=True)
@@ -673,8 +678,8 @@ def daily_email(day, src=None, with_scale=False, now=None):
                             "no college away, neutral or behind .500 pick, no tennis under 80%, no Bookies mark, no context check against).", 12, MUTE, "padding-top:10px"))
             text.append(f"\n* likely winner. Most nailed on: {nailed['pick']} ({pct(nailed['confidence'])}).")
         if off:
-            text.append(f"\n{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out.")
-            inner.append(_p(f"{off} college basketball pick{'' if off == 1 else 's'} left off: no William Hill price at 1.05 or better, or tiered Leave out. On the college basketball tab.", 12, MUTE))
+            text.append(f"\n{off} college basketball pick{'' if off == 1 else 's'} left off: no price at 1.05 or better on file, or tiered Leave out.")
+            inner.append(_p(f"{off} college basketball pick{'' if off == 1 else 's'} left off: no price at 1.05 or better on file, or tiered Leave out. On the college basketball tab.", 12, MUTE))
         inner.append(_p("The percentage is the Sports Almanac model's chance; tested is how often calls at that level landed on games never tuned on. "
                         "Prices are William Hill's where read (Avg: the bookmakers' average), shown only: the list never sees a price.", 12, MUTE))
         rows.append(section("The Daily List", f"{len(items)} pick{'' if len(items) == 1 else 's'} clear the bar", "".join(inner)))

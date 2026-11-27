@@ -12,6 +12,30 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-glance-reland: the two glance changes back, without stopping the page (tag pending)
+
+**What changed:** #560 and #561 shipped again after their revert (#562). Live, #560 stopped the whole page: the masthead's list count calls `listShown` while the page is still loading, and `listShown` had been made to read prices through `pickPrice`, which reads `lbKey`, a const not yet defined there ("Cannot access 'lbKey' before initialization"), so no list rows, no glance, and the tab bar dead (Douglas, 27 Nov 2026). `itemPrice` now reads the price files itself, in `pickPrice`'s order, calling only hoisted functions, and `GL_KEEP` is a `var`.
+**Evidence:** the 27 Nov build loaded in Chrome with a college basketball list pick: #560's page throws on load with no rows and tabs that do not switch; this page loads with no errors at 1100px and 400px, rows and glance dots drawn, Bets, Starred and the Daily List switch. `tests/test_early_list_count.py` fails on #560's `itemPrice` and passes here; 1,504 tests pass.
+**Files:** `index.html` (`itemPrice`, `GL_KEEP`), `tests/test_early_list_count.py`, `RELEASES.md`.
+**Not changed:** what #560 and #561 do.
+**Roll back:** `git revert` the merge.
+
+## 2026-11-27-glance-bands: At a glance plots each pick at its confidence (tag pending)
+
+**What changed:** the Daily List's At a glance chart has a banded y-axis (Douglas, 27 Nov 2026: "100 at the top, then 90, then 80, then 70, then 60"): each dot sits at its start time across and its confidence up, with dashed lines and labels at 100%, 90%, 80% and 70% and the 60% line as the base (anything under 60% rests on it). Dots that would overlap step sideways, never up, so a dot's height always reads as its band. The chart is taller (162 units, was 104) with a left margin for the labels.
+**Evidence:** drawn at 1100px and 400px in Chrome on a test slate (a cluster of four at 15:00, three at 12:30): every label clear, no dot off its band.
+**Files:** `index.html` (`glanceDay`, `.gl-grid`), `RELEASES.md`.
+**Not changed:** which picks are plotted, their colours, the key, the tap-to-row link, any pick or grade.
+**Roll back:** `git revert` the merge.
+
+## 2026-11-27-glance-matches-list: the glance plots only the list's shown picks; At William Hill filter gone (tag pending)
+
+**What changed:** (1) The Daily List's "At a glance" chart plots only the picks the list shows under the filter bar's Sport and Confidence choices (`GL_KEEP`, set by `renderList` to its own `keepIt`). It had drawn the day's whole list whatever the bar hid, so a saved filter left dots with no row (Douglas, 27 Nov 2026: "why am I seeing dots for fixtures that aren't on screen?"). (2) The "At William Hill" Show filter is gone from the Daily List and Starred (Douglas: "I just want estimated odds from whatever sources we have"); a reader's stored choice reads as Every pick. (3) College basketball's 1.05 list floor reads the pick's price from any source on file (`itemPrice` / `pickPrice`: William Hill, else the bookmakers' average, else football's best), not William Hill alone, on the page (`listPriceMin`, was `listHillMin`) and in the email (`mailer.LIST_PRICE_MIN`). A pick with no price on file still stays on its tab.
+**Evidence:** the glance read `listCollect().byDay` unfiltered while the rows took `keepIt` and `LIST_BOOK_ONLY`. `tests/test_mailer.py` `test_college_basketball_needs_a_price` (an average price lets a pick on); 1,500 tests pass.
+**Files:** `index.html`, `mailer.py`, `mail_page.py` (comment), `tests/test_mailer.py`, `RELEASES.md`.
+**Not changed:** any pick, flag, grade or record; the price chips on rows; the Card (`CARD_RULE` stays 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-racing-429: the racing feed asks again after a rate limit (tag pending)
 
 **What changed:** the Horse racing tab is less likely to keep a stale page. `racing.fetch` answered a 429 (too many requests) from The Racing API by failing the whole run; it now waits the time the API names (`Retry-After`, at least the 1.2s request gap, at most `RETRY_MAX_S` 20s, `RETRY_DEFAULT_S` 5s when absent) and asks once more (`RETRY_429` 1). Any other error (the plan's 401s, a 422) is not retried, as before.
