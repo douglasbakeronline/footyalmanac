@@ -159,6 +159,21 @@ class FootballUnpriced(unittest.TestCase):
         self.assertEqual(r["matched"], len(pairs))
         self.assertNotIn("miss", r)
 
+    def test_celta_fortuna_spelling(self):
+        """27 Nov 2026: Real Oviedo v RC Celta Fortuna, LaLiga 2, noFixture on six
+        builds beside "Oviedo v Celta de Vigo II" (Celta's reserve side)."""
+        t = date.today().isoformat()
+        book = [{"bookmakers": [{"name": "Book A", "bets": [{"id": 1, "values": [
+            {"value": "Home", "odd": "1.70"}, {"value": "Draw", "odd": "3.8"}, {"value": "Away", "odd": "4.5"}]}]}]}]
+        r = self.run_price([leg(t, "Real Oviedo", "RC Celta Fortuna", "LaLiga 2")],
+                           [fx(120, t, "Oviedo", "Celta de Vigo II")], {120: book})
+        self.assertEqual(r["matched"], 1)
+        self.assertNotIn("miss", r)
+        # the first team on the board is never read as the reserve side's
+        # fixture (the reverse is guarded by the other name and the kick-off,
+        # as for every spelling: test_af_spelling_still_needs_both_names_and_kickoff)
+        self.assertFalse(G.af_same("Celta de Vigo II", "RC Celta"))
+
     def test_af_spellings_second_read(self):
         """19 Nov 2026 07:13 build: six more board names beside their fixture under another spelling."""
         t = date.today().isoformat()
