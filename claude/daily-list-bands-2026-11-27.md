@@ -1,4 +1,4 @@
-# The Daily List by confidence band, and the tabs tidied (27 Nov 2026)
+# The Daily List by confidence band, then all together, and the tabs tidied (27 Nov 2026)
 
 Douglas, 27 Nov 2026, after a review of the Daily List page: Group A had an
 "85% or better" label, Group B and "the rest" had none, and the reserve sat in
@@ -74,3 +74,32 @@ offline build makes a realistic page: `python3 build.py --days 7 --no-topup
 are committed). Load `index.html` from that copy in Chrome (Playwright, the
 network blocked) and open every tab at 1100px and 400px, collecting page
 errors.
+
+## The afternoon: the bands taken out (release 2026-11-27-list-together)
+
+Douglas, 13:55: "I don't like the percentage banding ... remove that completely,
+and let's just have all the fixtures all together ... from 70% upwards. And I
+want the at a glance infographic to match all of the fixtures at 70% upwards
+... retro implement that as well ... the subscribe box at the top ... amend
+the days at a glance infographic on the How It Went tab ... 60% plus, 70% plus,
+80% plus, 90% plus, and that's it."
+
+- A day of the Daily List is one run (`dayRows`): list and reserve together,
+  the reserve marked, one strength rank across the day, or by kick-off. No
+  band headers, folds or chips; the sport tabs, the football board, Tennis
+  and Starred are back to their own runs. The Short mark stays.
+- The Daily List's confidence filter offers only 60%+, 70%+ (default), 80%+
+  and 90%+ (`FVIEWS.list.bands`, `bandKeys`; `60up` / `80up` added to
+  `BANDS`, copied to analysis.html, whose `bandOfFrom` skips the cumulative
+  keys). Other pages keep `BAND_KEYS`; a band one page cannot offer reads as
+  that page's default (`bandOf`).
+- At a glance plots the day's list and reserve picks in the filter (`glanceDay`,
+  with `resShown` and `resAny`), so dots and rows agree on every day and band
+  (checked: today 23 = 23, tomorrow 44 = 44, 21 Nov 93 = 93 at 70%+, 142 = 142
+  at 60%+). Past days carry the reserve (`daylist.past_days` "reserve", apart
+  from "list", which the emails read), so the week behind shows the same.
+- How it went: Days at a glance takes each day's list and reserve picks in
+  the Daily List's band, and a day's rows are one run (`reviewRows`). The
+  table by sport and band (`bandTable`) stays: it is a record, not a layout.
+- The email is one list, strongest first (no bands).
+- The Mailer: the sign-up form at the top again, the last seven emails under it.

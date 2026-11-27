@@ -436,7 +436,7 @@ def past_days(now, here=HERE, records=None, n=PAST_DAYS):
     """The last n UK days' Daily Lists, oldest first, as they stood before each
     game started, with each pick's result: what At a glance draws for the days
     behind today. The same membership and results as today's pin; list picks
-    only, the fields the glance reads."""
+    and, apart, the reserve (since 27 Nov 2026), the fields the glance reads."""
     records = records or tuple(_load(os.path.join(here, f), {}) for f in ("record.json", "tennis-record.json", "sports-record.json"))
     today = datetime.fromisoformat(uk_day(now)).date()
     keep = ("sport", "start", "date", "comp", "chip", "home", "away", "pick", "confidence", "tier", "status")
@@ -444,12 +444,15 @@ def past_days(now, here=HERE, records=None, n=PAST_DAYS):
     for k in range(n, 0, -1):
         day = (today - timedelta(days=k)).isoformat()
         try:
-            items = [i for i in pinned(day, read_archives(day, here), now) if i["list"]]
+            items = [i for i in pinned(day, read_archives(day, here), now) if i["list"] or i["reserve"]]
             attach_results(items, *records)
         except Exception as e:      # a bad old archive never stops today's list
             print(f"day list: {day} skipped ({e})", file=sys.stderr); continue
         items.sort(key=strength)
-        out.append({"date": day, "list": [{f: i.get(f) for f in keep} for i in items]})
+        # 27 Nov 2026 (Douglas: the Daily List "all together ... from 70% upwards", "retro implement
+        # that as well"): the reserve too, kept apart so "list" stays the list (the emails read it)
+        out.append({"date": day, "list": [{f: i.get(f) for f in keep} for i in items if i["list"]],
+                    "reserve": [{f: i.get(f) for f in keep} for i in items if i["reserve"] and not i["list"]]})
     return out
 
 

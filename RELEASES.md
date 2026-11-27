@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-list-together: the Daily List all together from 70% up; the bands taken out (tag pending)
+
+**What changed:** Douglas, 27 Nov 2026 afternoon: "I don't like the percentage banding ... let's just have all the fixtures all together ... from 70% upwards". (1) Each day of the Daily List is one run, list and reserve picks together with the reserve marked, strongest first (or by kick-off), no band headers, folds or chips (`dayRows`); the sport tabs, the football board, Tennis and Starred are back to one run each. (2) The Daily List's confidence filter offers 60%+, 70%+ (default), 80%+ and 90%+ only (`FVIEWS.list.bands`, `bandKeys`, `60up` / `80up` in `BANDS`, analysis.html in step). (3) At a glance plots exactly the day's rows, reserve included, at the chosen band (`glanceDay`); past days now keep the reserve (`daylist.past_days` "reserve") so the week behind matches too, Leave out college picks off as today. (4) How it went's Days at a glance takes each day's list and reserve picks in the Daily List's band; a day's rows are one run (`reviewRows`). (5) The email is one list again. (6) The Mailer's sign-up form is back at the top, the last seven emails under it.
+**Evidence:** in Chrome on a local build of 27 Nov: glance dots equal the day's rows today (23), tomorrow (44) and on 21 Nov at every band (93 at 70%+, 142 at 60%+, 46 at 80%+, 19 at 90%+); the filter shows the four options in order; every tab draws at 1100px and 400px with no script errors. `tests/test_mailer.py` (one list), `tests/test_shell_sync.py` (BANDS in step).
+**Files:** `index.html`, `analysis.html` (BANDS, `bandOfFrom`), `daylist.py` (`past_days`), `mailer.py`, `tests/test_mailer.py`, `claude/daily-list-bands-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** which picks qualify, the list / reserve flags, grading and records, the Short mark, How it went's table by sport and band.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-late-load: Scale and Racing data load after the first paint; notes for the banded list (tag pending)
 
 **What changed:** `scale.js` (about 360 KB on 27 Nov) and `racing.js` no longer load before the page draws: they are fetched once the first view is up (`LATE_FILES`, `loadLate`, on idle), and the open Scale, Horse racing or How it went tab redraws when they arrive (`SCALE` is now a `let`). Every reader already handled them missing. Also the handover note for the day's work, `claude/daily-list-bands-2026-11-27.md` (the evidence, what shipped, the morning's load-order outage, how to check a page change offline), and CLAUDE.md brought up to date (the Daily List's bands, the At William Hill filter's removal, the college floor on any price).
