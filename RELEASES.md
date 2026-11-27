@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-27-eurotest-tests: tests for eurotest.py (tag pending)
+
+**What changed:** nothing a reader sees. `eurotest.py` (394 lines, the European league-strength fit behind `europe.json`) had no tests; 13 now pin its pure helpers.
+
+**Evidence:** no module over 300 lines had fewer; the tests cover `domestic_seasons` (split-year, calendar-year, century rollover), `CC` (every country code maps to a league in `engine.LEAGUES`, Monaco to `fr.1`), `outcome`, `hand`, `paired` (deterministic, sign and p(worse) on clear gains and losses) and `bands` (counts, rates, edge in the upper band). No bug found.
+
+**Files:** `tests/test_eurotest.py`, `RELEASES.md`.
+
+**Not changed:** `eurotest.py`, `europe.json`, any model number.
+
+**Roll back:** `git revert` the merge commit.
+
 
 
 
