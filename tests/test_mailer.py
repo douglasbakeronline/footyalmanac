@@ -67,20 +67,31 @@ class DailyList(unittest.TestCase):
         self.assertNotIn("ResHome", m["html"])
         self.assertNotIn("ResHome", m["text"])
 
-    def test_group_order(self):
+    def test_bands_in_order(self):
+        # 27 Nov 2026: the email's list is in the page's confidence bands
         t = M.daily_email(DAY, src(), now=NOW)["text"]
-        a, b = t.index("STRONGEST TODAY"), t.index("ALSO ON THE LIST")
-        self.assertLess(a, t.index("Home0 "))
-        self.assertLess(t.index("Home4 "), b)          # five at 85%+ in Strongest today
-        self.assertLess(b, t.index("Home5 "))
-        self.assertLess(b, t.index("Home10 "))
-        self.assertNotIn("GROUP B", t)
-        self.assertIn("STRONGEST TODAY · 5 picks at 85% or better", t)
+        heads = [l.split(" · ")[0].strip() for l in t.splitlines() if l.strip()[:2].isdigit() and "%" in l.split(" · ")[0]]
+        order = ["90%+", "85-89%", "80-84%", "75-79%", "70-74%"]
+        self.assertTrue(heads, t)
+        self.assertEqual(heads, [h for h in order if h in heads])
+        self.assertNotIn("STRONGEST TODAY", t)
 
-    def test_group_a_never_padded(self):
-        items = [{"confidence": c} for c in (0.9, 0.84, 0.83)]
-        g = M.groups_of(items)
-        self.assertEqual([(n, len(x)) for n, _, x in g], [("Strongest today", 1), ("Also on the list", 2)])
+    def test_band_of_reads_whole_percent(self):
+        self.assertEqual(M.band_of(0.895)[0], "90")
+        self.assertEqual(M.band_of(0.849)[0], "85")
+        self.assertEqual(M.band_of(0.84)[0], "80")
+
+    def test_band_record_line(self):
+        s = {"daylist": {"bands": {"pick": {"all": {"90": {"n": 200, "won": 190, "quoted": 0.94, "priced": 100, "ret": -0.023}}}}}}
+        g = M.bands_of([{"confidence": 0.93}, {"confidence": 0.86}], s)
+        self.assertEqual([x[0] for x in g], ["90%+", "85-89%"])
+        self.assertIn("landed 95% of 200, quoted 94%, -2.3% at the price", g[0][1])
+        self.assertEqual(g[1][1], "1 pick")
+
+    def test_short_price_marked(self):
+        self.assertTrue(M.is_short({"px": {"price": 1.02}}))
+        self.assertFalse(M.is_short({"px": {"price": 1.08}}))
+        self.assertFalse(M.is_short({"px": {"price": 1.02}, "status": "won"}))
 
     def test_college_basketball_needs_a_price(self):
         L = [pick("ncaab", "Duke", "Rival", 0.9, start="2026-11-23T23:00:00Z", full={"line": {"spread": -15}, "neutral": False}),
