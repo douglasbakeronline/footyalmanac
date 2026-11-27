@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-27T04:18:33Z",
+ "graded": "2026-11-27T04:50:53Z",
  "overall": {
   "groups": 155,
   "settled": 155,
@@ -7,8 +7,8 @@
   "z": -1.16,
   "lost": 108,
   "pending": 0,
-  "legs": 589,
-  "legsWon": 432,
+  "legs": 590,
+  "legsWon": 433,
   "returned": 133.66,
   "staked": 155,
   "returnedBest": 138.72,
@@ -198,10 +198,10 @@
    "ret": -0.0548
   },
   "notAtBook": {
-   "n": 193,
-   "won": 184,
-   "rate": 0.9534,
-   "quoted": 0.9163
+   "n": 194,
+   "won": 185,
+   "rate": 0.9536,
+   "quoted": 0.9162
   },
   "unchecked": {
    "n": 39,
@@ -264,10 +264,10 @@
      "ret": -0.096
     },
     "notAtBook": {
-     "n": 186,
-     "won": 177,
-     "rate": 0.9516,
-     "quoted": 0.9187
+     "n": 187,
+     "won": 178,
+     "rate": 0.9519,
+     "quoted": 0.9186
     },
     "unchecked": {
      "n": 13,
@@ -593,7 +593,7 @@
    "football|real estelí|rancho santana|2026-11-26": 1.11,
    "football|managua|walter ferretti|2026-11-26": 1.83,
    "football|diriangén|matagalpa|2026-11-27": 1.22,
-   "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": 0,
+   "ncaab|vanderbilt commodores|southern jaguars|2026-11-27": 1.0,
    "ncaab|missouri tigers|arkansas-pine bluff golden lions|2026-11-27": 0,
    "ncaab|lafayette leopards|niagara purple eagles|2026-11-27": 0,
    "ncaab|kansas jayhawks|villanova wildcats|2026-11-27": 0,
@@ -1177,8 +1177,8 @@
   "z": -0.6,
   "lost": 7,
   "pending": 0,
-  "legs": 33,
-  "legsWon": 25,
+  "legs": 34,
+  "legsWon": 26,
   "returned": 8.08,
   "staked": 10,
   "returnedBest": 8.12,
@@ -1549,9 +1549,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 1,
+     "legsPending": 0,
      "legs": [
       {
        "pick": "Ural",
@@ -1607,8 +1607,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7145,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "13-10",
        "opp": 2.27,
        "rule12Fault": null,
        "r12": false
