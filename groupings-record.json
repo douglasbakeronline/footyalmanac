@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-27T12:43:32Z",
+ "graded": "2026-11-27T12:57:34Z",
  "overall": {
   "groups": 156,
   "settled": 155,
@@ -1192,7 +1192,7 @@
    "n": 27,
    "shortened": 11,
    "drifted": 11,
-   "mean": 0.0014
+   "mean": 0.0011
   }
  },
  "cardListLong": {
@@ -1601,7 +1601,7 @@
        "when": "2026-11-28T00:30Z",
        "odds": 1.24,
        "best": 1.24,
-       "lastOdds": 1.25,
+       "lastOdds": 1.26,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
