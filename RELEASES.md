@@ -18,6 +18,7 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Evidence:** drawn in Chrome at 1100px and 400px on a local build of 27 Nov (a stand-in feed for the racing note): no script errors on any tab.
 **Files:** `index.html` (`renderToday`, `scHonest`, `renderScale`, `renderRacing`, the Mailer section), `RELEASES.md`.
 **Not changed:** any card, rule, stake, price or record; Horse racing and Scale stay as tabs.
+**Roll back:** `git revert` the merge.
 
 ## 2026-11-27-tie-legs: second legs of ties and play-off series marked on the board (tag pending)
 
