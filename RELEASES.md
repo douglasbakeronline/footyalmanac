@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-late-load: Scale and Racing data load after the first paint; notes for the banded list (tag pending)
+
+**What changed:** `scale.js` (about 360 KB on 27 Nov) and `racing.js` no longer load before the page draws: they are fetched once the first view is up (`LATE_FILES`, `loadLate`, on idle), and the open Scale, Horse racing or How it went tab redraws when they arrive (`SCALE` is now a `let`). Every reader already handled them missing. Also the handover note for the day's work, `claude/daily-list-bands-2026-11-27.md` (the evidence, what shipped, the morning's load-order outage, how to check a page change offline), and CLAUDE.md brought up to date (the Daily List's bands, the At William Hill filter's removal, the college floor on any price).
+**Evidence:** in Chrome on a local build of 27 Nov, opening the page on the Daily List, straight on `#scale`, `#racing` and `#results?board=cards`: each draws, the late files arrive and the open tab redraws, no script errors. `tests/test_scale.py` reads the new loader.
+**Files:** `index.html` (`LATE_FILES`, `loadLate`, `SCALE`), `tests/test_scale.py`, `claude/daily-list-bands-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the data in either file, the Scale or Horse racing tabs, analysis.html (which loads scale.js itself).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-tabs-tidy: Bets puts today's slips first; Scale, Racing and the Mailer say plainly what they are (tag pending)
 
 **What changed:** (1) **Bets** opens with a line on what it holds, then the day's slips in order (the 2x, the Card, the List card, the slip, Edge picks), each with its own record; the Card's rule in full, the old-rule and paper groups, the re-check log, the scoreboard (now linking every card's record on How it went's Cards board) and the October rules move into one fold at the foot, "Rules, logs and the scoreboard". (2) **Scale** opens with its live record (`scHonest`: groups won v expected since the tab went live, from the Scale ledger) and says most of its prices are estimates. (3) **Horse racing**'s feed note is a marked box at the top ("Limited feed"): on the current plan the feed sends no prices and no results, so no tips and nothing graded. (4) **The Mailer** shows the last seven mornings' emails above the sign-up form, so a visitor sees what arrives first; its copy describes the bands. (5) Issue #569 asks the office to replay the Daily 2x and the List card choosing by confidence band, for Douglas to decide on the numbers.

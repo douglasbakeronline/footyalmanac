@@ -2488,8 +2488,6 @@ footer b{color:var(--ink-2)}
 <script src="sports-data.js"></script>
 <script src="groupings-data.js"></script>
 <script src="daylist.js"></script>
-<script src="scale.js"></script>
-<script src="racing.js"></script>
 <script src="slip.js"></script>
 <!-- The graded records (record-data.js, tennis-record.js, sports-record.js:
      several MB raw) are loaded by loadRecords() the first time "How it went"
@@ -8116,7 +8114,7 @@ function renderToday(){
    games. Football only where William Hill prices win and both score; tennis
    in straight sets and the NBA, NFL and rugby by a margin, tracked without
    a price. Display only. claude/scale-tiers-2026-11-15.md ---------- */
-const SCALE = window.__SCALE__ || null;
+let SCALE = window.__SCALE__ || null;   // let: scale.js arrives after the first paint (loadLate)
 let SC_DAY = null;
 const scE = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const scTime = s => new Date(s).toLocaleTimeString("en-GB", {hour:"2-digit", minute:"2-digit", timeZone:"Europe/London"});
@@ -9088,6 +9086,29 @@ document.querySelectorAll('#views button[data-view^="sport:"]').forEach(b => {
 // so the Analysis page's tab bar lands on the same board.
 // 23 Nov 2026 (UX release 4): the address carries the day and the filters too (navApply).
 navApply("load");
+/* 27 Nov 2026 (the page review: "the first load quicker, especially on a phone"):
+   scale.js (about 360 KB) and racing.js are read only by the Scale and Horse
+   racing tabs and How it went's Cards board, so they load after the first
+   paint instead of before it. Every reader already handles them missing (a
+   failed build leaves them out), and the open tab redraws when they land. */
+const LATE_FILES = [["scale.js", "__SCALE__"], ["racing.js", "RACING"]];
+function loadLate(){
+  LATE_FILES.forEach(([src, key]) => {
+    if(window[key]) return;
+    const s = document.createElement("script");
+    s.src = src; s.async = true;
+    s.onload = () => {
+      if(key === "__SCALE__") SCALE = window.__SCALE__ || null;
+      try {
+        if(key === "__SCALE__" && !$("#scale").hidden) renderScale();
+        if(key === "RACING" && !$("#racing").hidden) renderRacing();
+        if(!$("#results").hidden) renderResults();
+      } catch(e){ console.warn("late file redraw:", src, e); }
+    };
+    document.head.appendChild(s);
+  });
+}
+(window.requestIdleCallback ? f => requestIdleCallback(f, {timeout: 1500}) : f => setTimeout(f, 300))(loadLate);
 })();
 </script>
 </body>
