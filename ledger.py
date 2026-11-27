@@ -45,6 +45,7 @@ UNGRADED_DAYS = 3             # pending this long after the start: report it
 UNGRADED_STALE = 14           # pending this long: counted apart, unlikely to settle
 MOVE_DAYS = 10                # two copies of one pairing this close are one fixture, moved
 TENNIS_MOVE_DAYS = 2          # tennis: a moved match is a day or two late, a rematch is days later
+REMATCH_DAYS = 2              # football: a copy this far after a graded copy's start, published after it, is the next meeting
 RESCHEDULE_DAYS = 45          # football: a later copy of the pairing this close marks an unplayed one moved
 MATCH_DAYS = 2                # a price joins a prediction within this many days of its start
 BANDS = (0.95, 0.90, 0.85, 0.80, 0.75, 0.70, 0.62, 0.0)
@@ -126,10 +127,29 @@ def _sport(g):
 FOLDERS = (("predictions", _football), ("predictions-tennis", _tennis), ("predictions-sports", _sport))
 
 
-def predictions(here=HERE):
+def predictions(here=HERE, played=None):
     """Every prediction: per fixture, the latest copy published before its
     start, a moved fixture once (its latest placement). Each row carries the
-    football archive's prices from every pre-start copy (`_prices`)."""
+    football archive's prices from every pre-start copy (`_prices`).
+
+    `played` (27 Nov 2026): the football (date, comp, home, away) keys the
+    record graded. A copy published after a graded copy of the same pair
+    kicked off, on another date, is the next meeting, never the same fixture
+    moved: Andorra's Inter Club d'Escaldes v Casa de Portugal (21 and 29 Nov)
+    and Peru's Sport Huancayo v Universitario (22 and 28 Nov) had been one
+    fixture, so the second game took the first game's result before it was
+    played and the first was counted again under its own date."""
+    played = played or set()
+
+    def rematch(r, c):
+        if r["sport"] != "football": return False
+        pub = parse_utc(r.get("published"))
+        for x in c:
+            xs = parse_utc(x["start"])
+            if (parse_utc(r["start"]) - xs).total_seconds() < REMATCH_DAYS * 86400: continue
+            if (x["date"], x.get("comp"), low(x["home"]), low(x["away"])) not in played: continue
+            if pub and pub > xs: return True
+        return False
     copies = {}          # (sport, home, away) -> [row]
     for folder, norm in FOLDERS:
         for path in sorted(glob.glob(os.path.join(here, folder, "*.json"))):
@@ -161,7 +181,8 @@ def predictions(here=HERE):
                 # two copies with different ids are two matches (the same
                 # players a week apart at two tournaments, 3 and 11 Oct 2026)
                 ids_ok = not r.get("id") or all(not x.get("id") or x["id"] == r["id"] for x in c)
-                if ids_ok and abs((parse_utc(c[-1]["start"]) - parse_utc(r["start"])).days) <= window:
+                if ids_ok and abs((parse_utc(c[-1]["start"]) - parse_utc(r["start"])).days) <= window \
+                        and not rematch(r, c):
                     c.append(r); break
             else:
                 clusters.append([r])
@@ -360,18 +381,46 @@ def band(conf):
     return f"{int(lo * 100)}+" if i == 0 else f"{int(lo * 100)}-{int(BANDS[i - 1] * 100)}"
 
 
-def merge(old_rows, new_rows):
+def _pair(r):
+    return (r.get("sport"), low(r.get("home")), low(r.get("away")))
+
+
+def merge(old_rows, new_rows, now=None):
     """Old rows kept; a new row replaces its fields, a result once known is
     never lost to a later pending read, and prices keep the earliest first
-    and the latest pre-start last."""
-    rows = {r["key"]: r for r in old_rows or []}
+    and the latest pre-start last.
+
+    27 Nov 2026: a key carries the fixture's start date, so a fixture whose
+    latest copy moved to another date (a round's nominal date, then the day
+    it was played) left its earlier key behind as a pending row for good
+    (199 football rows on 26 Nov, most of the ungraded report's "chase").
+    An old pending row whose key the build no longer writes is dropped when
+    the build has a row of the same pairing within MOVE_DAYS of it: that row
+    is the same fixture under its new date. A row with a result is never
+    dropped. And a result is never kept for a start still to come: one can
+    only have come from another meeting (the rematch fix in predictions)."""
+    now = now or datetime.now(timezone.utc)
+    new_keys = {n["key"] for n in new_rows}
+    near = {}
+    for n in new_rows:
+        if n.get("start"): near.setdefault(_pair(n), []).append(parse_utc(n["start"]))
+    rows = {}
+    for r in old_rows or []:
+        if r["key"] not in new_keys and r.get("result") is None and "|id|" not in r["key"]:
+            t = parse_utc(r.get("start"))
+            if t and any(abs((t2 - t).days) <= MOVE_DAYS for t2 in near.get(_pair(r), [])):
+                continue
+        rows[r["key"]] = r
     for n in new_rows:
         o = rows.get(n["key"])
         if not o:
             rows[n["key"]] = n; continue
         m = {**o, **{k: v for k, v in n.items() if v is not None}}
-        if n.get("result") is None and o.get("result") is not None:
+        start = parse_utc(n.get("start") or o.get("start"))
+        if n.get("result") is None and o.get("result") is not None and not (start and start > now):
             m["result"], m["score"] = o["result"], o.get("score")
+        elif n.get("result") is None:
+            m["result"], m["score"] = None, None
         m["first"] = _earlier(o.get("first"), n.get("first"))
         m["last"] = _later(o.get("last"), n.get("last"))
         rows[n["key"]] = m
@@ -383,7 +432,8 @@ def build_rows(here=HERE):
     pool, book = pool_prices(here)
     board = board_prices(here)
     out = []
-    for r in predictions(here):
+    played = {k for k, g in look[0].items() if g.get("result")}
+    for r in predictions(here, played=played):
         res, score = result_of(r, look)
         first, last = attach_prices(r, pool, board)
         if res is not None: r = {k: v for k, v in r.items() if k != "movedTo"}   # played: not moved
@@ -492,7 +542,7 @@ def write(now=None, here=HERE, path=None):
     path = path or os.path.join(here, os.path.basename(LEDGER))
     new, book = build_rows(here)
     old = (_load(path, {}) or {}).get("rows") or []
-    rows = merge(old, new)
+    rows = merge(old, new, now=now)
     ug = ungraded(rows, now)
     out = {"generated": iso(now), "book": book, "n": len(rows),
            "summary": summary(rows), "priceCover": price_cover(rows), "ungraded": ug, "rows": rows}
