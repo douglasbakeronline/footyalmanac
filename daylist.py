@@ -453,6 +453,49 @@ def past_days(now, here=HERE, records=None, n=PAST_DAYS):
     return out
 
 
+# 27 Nov 2026 (Douglas: the Daily List "staggered by percentage banding"):
+# each confidence band's record on the results ledger, so the page can show it
+# on the band's header. "pick" is list and reserve together (the Daily List's
+# rows), "every" adds the rest of the board (the sport tabs). A tally of
+# published picks against their results, never a fit.
+PAGE_BANDS = (("90", ("90-95", "95+")), ("85", ("85-90",)), ("80", ("80-85",)),
+              ("75", ("75-80",)), ("70", ("70-75",)), ("60", ("62-70",)), ("0", ("0-62",)))
+
+
+def band_records(here=HERE):
+    import gzip
+    try:
+        with gzip.open(os.path.join(here, "results-ledger.json.gz"), "rt", encoding="utf-8") as f:
+            summ = json.load(f).get("summary") or {}
+    except (OSError, ValueError):
+        return {}
+    cells = {}
+    for key, v in summ.items():
+        sport, tier, band = (key.split("|") + ["", "", ""])[:3]
+        cells.setdefault(sport, {}).setdefault(tier, {})[band] = v
+
+    def merge(vs):
+        vs = [v for v in vs if v and v.get("n")]
+        n = sum(v["n"] for v in vs)
+        if not n: return None
+        priced = sum(v.get("priced") or 0 for v in vs)
+        out = {"n": n, "won": sum(v["won"] for v in vs),
+               "quoted": round(sum(v["quoted"] * v["n"] for v in vs) / n, 4), "priced": priced}
+        if priced:
+            out["ret"] = round(sum((v.get("ret") or 0) * (v.get("priced") or 0) for v in vs) / priced, 4)
+        return out
+
+    out = {"pick": {}, "every": {}}
+    for sport, tiers in cells.items():
+        for kind, tier_names in (("pick", ("list", "reserve")), ("every", ("list", "reserve", "board"))):
+            row = {}
+            for page_band, ledger_bands in PAGE_BANDS:
+                m = merge([tiers.get(t, {}).get(b) for t in tier_names for b in ledger_bands])
+                if m: row[page_band] = m
+            if row: out[kind][sport] = row
+    return out
+
+
 def build(now=None, here=HERE, fetch=True):
     now = now or datetime.now(timezone.utc)
     day = uk_day(now)
@@ -477,7 +520,7 @@ def build(now=None, here=HERE, fetch=True):
     for it in early: it.pop("published", None)
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary, "early": early,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
-            "past": past_days(now, here, records),
+            "past": past_days(now, here, records), "bands": band_records(here),
             "played": played_today(day, archives, now, records, here)}
 
 

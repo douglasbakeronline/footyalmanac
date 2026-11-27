@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-list-bands: the Daily List by confidence band (tag pending)
+
+**What changed:** each day of the Daily List is laid out by confidence band (90%+, 85-89%, 80-84%, 75-79%, 70-74%, then lower), not Group A / Group B / the rest and a folded reserve (Douglas, 27 Nov 2026: "staggered by percentage banding"). Every band header carries its record on the results ledger (landed v quoted, and a level stake's return at the price published before the start, from `daylist.band_records`, a sport's own when one sport is filtered) and stays pinned under the tab bar while its picks scroll. Reserve picks sit in their band marked Reserve, still graded apart. Picks keep one strength rank across the day. Settled picks drop to the foot of their band. 90%, 85% and 80% open; 75% opens on a thin day (under 10 picks above it); the rest fold. A row of band chips under each day head jumps to a band. A pick priced under 1.05 carries a Short mark. The intro is one paragraph; the star key, the coverage line and the rules moved into How the list works. Past days use the same bands.
+**Evidence:** the results ledger at 27 Nov: at each confidence the list and the reserve land alike (80-84%: 84.4% of 154 v 84.1% of 189; 75-79%: 75.8% v 77.0%); Group A's cap of five put 120 picks at 85%+ in Group B (94.2% landed) and 203 in the rest (90.6%). Drawn in Chrome at 1100px and 400px on a local build of 27 Nov's data: no script errors, every tab switches, band chips open and scroll, sport filter, kick-off order and past days drawn. `tests/test_daylist_bands.py`.
+**Files:** `index.html` (`bandedDay`, `bandChips`, `lbRecord`, `LBANDS`, `listPastDay`, the lede), `daylist.py` (`band_records`, `bands` in `daylist.js`), `tests/test_daylist_bands.py`, `RELEASES.md`.
+**Not changed:** which picks qualify, the list / reserve flags, grading, the records, the glance, the email (next release).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-glance-reland: the two glance changes back, without stopping the page (tag pending)
 
 **What changed:** #560 and #561 shipped again after their revert (#562). Live, #560 stopped the whole page: the masthead's list count calls `listShown` while the page is still loading, and `listShown` had been made to read prices through `pickPrice`, which reads `lbKey`, a const not yet defined there ("Cannot access 'lbKey' before initialization"), so no list rows, no glance, and the tab bar dead (Douglas, 27 Nov 2026). `itemPrice` now reads the price files itself, in `pickPrice`'s order, calling only hoisted functions, and `GL_KEEP` is a `var`.
