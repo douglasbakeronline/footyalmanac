@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-glance-matches-list: the glance plots only the list's shown picks; At William Hill filter gone (tag pending)
+
+**What changed:** (1) The Daily List's "At a glance" chart plots only the picks the list shows under the filter bar's Sport and Confidence choices (`GL_KEEP`, set by `renderList` to its own `keepIt`). It had drawn the day's whole list whatever the bar hid, so a saved filter left dots with no row (Douglas, 27 Nov 2026: "why am I seeing dots for fixtures that aren't on screen?"). (2) The "At William Hill" Show filter is gone from the Daily List and Starred (Douglas: "I just want estimated odds from whatever sources we have"); a reader's stored choice reads as Every pick. (3) College basketball's 1.05 list floor reads the pick's price from any source on file (`itemPrice` / `pickPrice`: William Hill, else the bookmakers' average, else football's best), not William Hill alone, on the page (`listPriceMin`, was `listHillMin`) and in the email (`mailer.LIST_PRICE_MIN`). A pick with no price on file still stays on its tab.
+**Evidence:** the glance read `listCollect().byDay` unfiltered while the rows took `keepIt` and `LIST_BOOK_ONLY`. `tests/test_mailer.py` `test_college_basketball_needs_a_price` (an average price lets a pick on); 1,500 tests pass.
+**Files:** `index.html`, `mailer.py`, `mail_page.py` (comment), `tests/test_mailer.py`, `RELEASES.md`.
+**Not changed:** any pick, flag, grade or record; the price chips on rows; the Card (`CARD_RULE` stays 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-racing-429: the racing feed asks again after a rate limit (tag pending)
 
 **What changed:** the Horse racing tab is less likely to keep a stale page. `racing.fetch` answered a 429 (too many requests) from The Racing API by failing the whole run; it now waits the time the API names (`Retry-After`, at least the 1.2s request gap, at most `RETRY_MAX_S` 20s, `RETRY_DEFAULT_S` 5s when absent) and asks once more (`RETRY_429` 1). Any other error (the plan's 401s, a 422) is not retried, as before.
