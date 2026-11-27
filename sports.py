@@ -630,17 +630,32 @@ def _logit(p):
 # See claude/ncaab-season-phase-2026-11-05.md.
 PHASE_MONTHS = {"ncaab": (11, 12)}
 
+# A neutral court takes the curve without its intercept (27 Nov 2026). The
+# curve's "a" is a home-side term: the early-season one is +0.31 in log-odds
+# for college basketball, and it was handed to whichever side ESPN lists first
+# on a neutral court. A sport here fits its curve on venue games only and
+# applies "b" alone at a neutral site (the cal carries "neutral0"). Evidence,
+# the live early-K replay, curve fitted on 2024-25: check 2025-26 +0.0009 log
+# loss, p(worse) 0.03 on 5,814 games, 65%+ gap 0.020 unchanged; the 2026-27
+# games to 27 Nov +0.0024, p(worse) 0.11 on 1,175. Live neutral picks at 70%+
+# had landed 48 of 76 v 79% quoted. Inert until a --tune run writes the flag
+# into sports.json (rule 5). tools/ncaab_neutral_eval.py,
+# claude/ncaab-neutral-intercept-2026-11-27.md.
+NEUTRAL0 = {"ncaab"}
 
-def calibrate(p, cal, when=None):
+
+def calibrate(p, cal, when=None, neutral=False):
     """Raw Elo probability -> calibrated. cal = {"a", "b"}: logistic in the
     log-odds, two parameters, as football's temperature line. None = as is.
     A cal with "early" and "months" uses that curve for games in those months
-    (needs `when`, an ISO date string)."""
+    (needs `when`, an ISO date string). A cal with "neutral0" drops the
+    intercept for a game at a neutral site."""
     if not cal:
         return p
+    drop = bool(neutral and cal.get("neutral0"))
     if when and cal.get("early") and int(when[5:7]) in cal.get("months", ()):
         cal = cal["early"]
-    z = cal["a"] + cal["b"] * _logit(p)
+    z = (0.0 if drop else cal["a"]) + cal["b"] * _logit(p)
     return 1 / (1 + math.exp(-max(min(z, 30), -30)))
 
 
@@ -666,13 +681,20 @@ def fit_calibration(preds, win):
     return {"a": round(a, 4), "b": round(b, 4)}
 
 
-def fit_phase_calibration(preds, win, months):
+def fit_phase_calibration(preds, win, months, neutral0=False):
     """The late-season curve as the base ("a", "b") and the early one under
-    "early", each fitted on the window only."""
+    "early", each fitted on the window only. neutral0: fitted on games at a
+    venue only, and the cal says so (`calibrate` then drops "a" at a neutral
+    site)."""
+    if neutral0:
+        preds = [x for x in preds if not x[0].get("neutral")]
     early = [x for x in preds if int(x[0]["when"][5:7]) in months]
     late = [x for x in preds if int(x[0]["when"][5:7]) not in months]
-    return {**fit_calibration(late, win), "early": fit_calibration(early, win),
-            "months": list(months)}
+    out = {**fit_calibration(late, win), "early": fit_calibration(early, win),
+           "months": list(months)}
+    if neutral0:
+        out["neutral0"] = True
+    return out
 
 
 def losses(preds, win, cal=None):
@@ -682,7 +704,7 @@ def losses(preds, win, cal=None):
     for g, ph, warm in preds:
         if not warm or not in_window(g, win):
             continue
-        ph = calibrate(ph, cal, g["when"])
+        ph = calibrate(ph, cal, g["when"], g.get("neutral"))
         y = 1 if g["hs"] > g["as"] else (0 if g["hs"] < g["as"] else None)
         conf = max(ph, 1 - ph)
         pick_home = ph >= 0.5
@@ -772,7 +794,7 @@ def tune_sport(sport, verbose=True):
         return abs(sum(r[0] for r in g) / len(g) - sum(r[1] for r in g) / len(g)) if g else 0.0
     if sport in PHASE_MONTHS:
         # season-phase curve instead of the single one, same gates
-        cal = fit_phase_calibration(preds, FIT, PHASE_MONTHS[sport])
+        cal = fit_phase_calibration(preds, FIT, PHASE_MONTHS[sport], neutral0=sport in NEUTRAL0)
         ll_cal, rows_chk_cal = losses(preds, CHECK, cal)
         m_c, sd_c, pw_c = paired(ll_cal, ll_new) if n else (0, 0, 1)
     gap_raw, gap_cal = top_gap(rows_chk), top_gap(rows_chk_cal)
@@ -801,6 +823,7 @@ def tune_sport(sport, verbose=True):
                                            "vsHome": round(m_b, 4), "pWorseVsHome": round(pw_b, 3)},
             "publish": beats_home, "listMin": list_min,
             "cal": cal if use_cal else None, "calTested": {"a": cal["a"], "b": cal["b"], **({"early": cal["early"]} if "early" in cal else {}),
+                                                           **({"neutral0": True} if cal.get("neutral0") else {}),
                                                            "delta": round(m_c, 4), "pWorse": round(pw_c, 3),
                                                            "topGapRaw": round(gap_raw, 4), "topGapCal": round(gap_cal, 4)},
             "bandsFit": b_fit, "bandsCheck": b_chk,
@@ -910,7 +933,7 @@ def build(start=None):
             if not eh or not ea or eh[2] < MIN_GAMES or ea[2] < MIN_GAMES:
                 continue   # a team without enough history is not priced, as football
             raw, eh, ea = elo.predict(g)
-            ph = calibrate(raw, sp.get("cal"), g["when"])
+            ph = calibrate(raw, sp.get("cal"), g["when"], g["neutral"])
             conf = max(ph, 1 - ph)
             row = {"id": g["id"], "sport": sport, "label": g["label"], "feed": g["feed"], "when": g["when"],
                    "home": g["hn"], "away": g["an"], "neutral": g["neutral"],

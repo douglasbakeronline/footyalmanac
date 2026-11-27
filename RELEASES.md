@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-27-ncaab-neutral: the neutral court and college basketball's home term, ready to switch on (tag pending)
+
+**What changed:** nothing a reader sees yet. College basketball's November-December calibration adds +0.31 log-odds to the home side; on a neutral court it went to whichever team ESPN lists first. `sports.NEUTRAL0` fits the curve on venue games and drops the intercept at a neutral site, inert until a `sports.py --tune --only ncaab` run writes `neutral0` into `sports.json` (rule 5, Douglas's step).
+**Evidence:** `tools/ncaab_neutral_eval.py`, live parameters, curve fitted on 2024-25: check 2025-26 +0.0009 log loss, p(worse) 0.03 on 5,814 games, 65%+ gap 0.020 unchanged (passes rule 3); this season to 27 Nov +0.0021, p(worse) 0.15 on 1,197. Live neutral picks at 70%+ 48 of 76 v 79% quoted; the change mends part of it (this season's neutral 65-85% picks 54% to 58% landed v 73% quoted). The 16 Nov early K is not the cause (this season 0.5003 to 0.4932, p(worse) 0.001). `claude/ncaab-neutral-intercept-2026-11-27.md`.
+**Files:** `sports.py`, `tools/ncaab_neutral_eval.py`, `tests/test_sports_neutral_cal.py`, `claude/ncaab-neutral-intercept-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `sports.json`, any board number, the Card, the Neutral mark, `WARY_TRIP_*`.
+**Roll back:** `git revert` the merge (after a refit, rerun `sports.py --tune --only ncaab` on the reverted code).
+
 ## 2026-11-27-scout: free-source check for uncovered leagues (tag pending)
 
 **What changed:** nothing a reader sees. A dated line in `claude/data-expansion-plan.md`.
