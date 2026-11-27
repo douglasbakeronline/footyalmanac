@@ -281,3 +281,62 @@ class ResultsFailedLine(unittest.TestCase):
                                    ("HTTP Error 401", True, None),
                                    ("HTTP Error 401", True, "racecards/standard")):
             self.assertTrue(racing.results_failed_line(err, refused, path).startswith("::warning::"))
+
+
+class FetchRetryTest(unittest.TestCase):
+    """27 Nov 2026: one 429 from The Racing API had cost the whole run (the
+    tab kept its last page); fetch now waits and asks once more."""
+
+    def setUp(self):
+        import io
+        import urllib.error
+        self.io, self.err = io, urllib.error
+        self._open, self._sleep = racing.urllib.request.urlopen, racing.time.sleep
+        self.slept = []
+        racing.time.sleep = lambda s: self.slept.append(s)
+
+    def tearDown(self):
+        racing.urllib.request.urlopen, racing.time.sleep = self._open, self._sleep
+
+    def _answers(self, *codes):
+        calls = []
+        io, err = self.io, self.err
+
+        class Resp(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        def fake(req, timeout=None):
+            code = codes[len(calls)]
+            calls.append(req.full_url)
+            if code == 200:
+                return Resp(b'{"ok": 1}')
+            raise err.HTTPError(req.full_url, code, "x", {"Retry-After": "3"}, io.BytesIO(b"slow down"))
+        racing.urllib.request.urlopen = fake
+        return calls
+
+    def test_429_then_ok_retries_once(self):
+        calls = self._answers(429, 200)
+        self.assertEqual(racing.fetch("results", auth="a"), {"ok": 1})
+        self.assertEqual(len(calls), 2)
+        self.assertIn(3.0, self.slept)
+
+    def test_429_twice_raises(self):
+        calls = self._answers(429, 429, 200)
+        with self.assertRaises(self.err.HTTPError):
+            racing.fetch("results", auth="a")
+        self.assertEqual(len(calls), 1 + racing.RETRY_429)
+
+    def test_401_not_retried(self):
+        calls = self._answers(401, 200)
+        with self.assertRaises(self.err.HTTPError):
+            racing.fetch("racecards/standard", auth="a")
+        self.assertEqual(len(calls), 1)
+
+    def test_retry_after_capped(self):
+        self.assertEqual(racing.retry_wait("600"), racing.RETRY_MAX_S)
+        self.assertEqual(racing.retry_wait(None), racing.RETRY_DEFAULT_S)
+        self.assertEqual(racing.retry_wait("junk"), racing.RETRY_DEFAULT_S)
