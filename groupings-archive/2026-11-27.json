@@ -417,7 +417,7 @@
      "firstOdds": 1.19,
      "lastOdds": 1.17,
      "lastBest": 1.18,
-     "lastAt": "2026-11-27T12:57:01Z"
+     "lastAt": "2026-11-27T13:07:47Z"
     },
     {
      "sport": "nba",
@@ -599,7 +599,7 @@
      "firstOdds": 1.24,
      "lastOdds": 1.26,
      "lastBest": 1.26,
-     "lastAt": "2026-11-27T12:57:01Z"
+     "lastAt": "2026-11-27T13:07:47Z"
     },
     {
      "sport": "nba",
@@ -779,9 +779,9 @@
      "basis": "model",
      "tier": "reserve",
      "firstOdds": 1.21,
-     "lastOdds": 1.2,
-     "lastBest": 1.2,
-     "lastAt": "2026-11-27T12:57:01Z"
+     "lastOdds": 1.21,
+     "lastBest": 1.21,
+     "lastAt": "2026-11-27T13:07:47Z"
     }
    ],
    "tested": 0.3876,
