@@ -1126,6 +1126,11 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .bandtab td.bt-none{color:var(--rule)}
 .bandtab th[scope=row]{position:sticky;left:0;background:var(--surface);z-index:1}
 .bandtab tr.bt-all th,.bandtab tr.bt-all td{border-bottom:1px solid var(--ink)}
+.sc-honest{margin:10px 0 4px;padding:10px 14px;border-left:3px solid var(--gold);background:var(--surface);font-size:var(--t-sm);color:var(--ink-2);line-height:1.5}
+.sc-honest b{color:var(--ink)} .sc-honest-k{text-transform:uppercase;letter-spacing:.06em;font-family:var(--f-ui);font-size:var(--t-xs);margin-right:4px}
+.rc-warn{margin:12px 0 6px;padding:10px 14px;border:1px solid var(--away);border-left-width:3px;background:var(--away-soft);font-size:var(--t-sm);color:var(--ink);line-height:1.5}
+.rc-warn b{color:var(--away);text-transform:uppercase;letter-spacing:.06em;font-family:var(--f-ui);font-size:var(--t-xs);margin-right:4px}
+.tb-tail{margin-top:26px}
 .resv{margin-top:18px;border-top:1px solid var(--ink)}
 .resv>summary{list-style:none;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
   gap:2px 10px;padding:12px 40px 10px 12px;min-height:44px;font-family:var(--f-ui);font-size:var(--t-sm);
@@ -2378,9 +2383,20 @@ footer b{color:var(--ink-2)}
 <section class="m-lede">
   <div class="m-label">The Mailer</div>
   <h2>The Daily List, in your inbox</h2>
-  <p>Every morning at 7: the day's Daily List, strongest first, with the Daily 2x, the Card and the Edge picks, and the day's Scale bets if you want them. Every pick is graded in public the morning after.</p>
+  <p>Every morning at 7: the day's Daily List in its confidence bands, with the Daily 2x, the Card and the Edge picks, and the day's Scale bets if you want them. Every pick is graded in public the morning after.</p>
 </section>
 
+<!-- 25 Nov 2026, Douglas: the emails that went out, a week back, with how each pick went (mail_page.py); above the form since 27 Nov 2026, so a visitor sees what arrives before signing up -->
+<section class="mb" id="mailbox" aria-labelledby="mbHead">
+  <div class="mb-head">
+    <div><div class="m-label">The emails</div><h2 id="mbHead">The last seven mornings</h2>
+      <p class="mb-lede">Each morning's email, with how every pick went: <b class="mark ok" style="display:inline">✓</b> landed,
+        <b class="mark no" style="display:inline">✗</b> lost, <b style="color:var(--mute)">•</b> still to play. Newest first; scroll for older.</p></div>
+    <div class="mb-nav"><button type="button" id="mbNewer" aria-controls="mbTrack">‹ Newer</button><button type="button" id="mbOlder" aria-controls="mbTrack">Older ›</button></div>
+  </div>
+  <div class="mb-track" id="mbTrack" tabindex="0" role="region" aria-label="The emails, newest first"><div class="mb-empty">Loading the emails…</div></div>
+  <div class="mb-trend" id="mbTrend"></div>
+</section>
 <div class="mailer">
   <form class="mailer-form" id="mailerForm" novalidate>
     <div>
@@ -2441,7 +2457,7 @@ footer b{color:var(--ink-2)}
     <div class="m-card">
       <h3>What a daily email holds</h3>
       <ol>
-        <li>The Daily List, Group A and Group B as on the site: time, the model's chance, the tested rate and William Hill's price.</li>
+        <li>The Daily List in the site's confidence bands, each with its record: time, the model's chance, the tested rate and William Hill's price, short prices marked.</li>
         <li>The Daily 2x: one slip a day, each pick and the price at William Hill.</li>
         <li>The Card, with its stake, or the reason there is none today; then the day's Edge picks.</li>
         <li>The Scale bets, if you've chosen them: the list's winners with a second condition, for bigger odds.</li>
@@ -2453,17 +2469,6 @@ footer b{color:var(--ink-2)}
     </div>
   </aside>
 </div>
-<!-- 25 Nov 2026, Douglas: the emails that went out, a week back, with how each pick went (mail_page.py) -->
-<section class="mb" id="mailbox" aria-labelledby="mbHead">
-  <div class="mb-head">
-    <div><div class="m-label">The emails</div><h2 id="mbHead">The last seven mornings</h2>
-      <p class="mb-lede">Each morning's email, with how every pick went: <b class="mark ok" style="display:inline">✓</b> landed,
-        <b class="mark no" style="display:inline">✗</b> lost, <b style="color:var(--mute)">•</b> still to play. Newest first; scroll for older.</p></div>
-    <div class="mb-nav"><button type="button" id="mbNewer" aria-controls="mbTrack">‹ Newer</button><button type="button" id="mbOlder" aria-controls="mbTrack">Older ›</button></div>
-  </div>
-  <div class="mb-track" id="mbTrack" tabindex="0" role="region" aria-label="The emails, newest first"><div class="mb-empty">Loading the emails…</div></div>
-  <div class="mb-trend" id="mbTrend"></div>
-</section>
 </section>
 
 <footer id="footer"></footer>
@@ -8034,7 +8039,25 @@ function renderToday(){
   const bsKeys = Object.keys(bsCount).sort((a, b) => bsCount[b] - bsCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
   const betsBar = filterBar("today", {sports: {opts: bsKeys.map(k => ({k, n: bsCount[k]})), total: units.length},
     count: {shown: units.filter(u => !BETS_SPORTS.length || u.some(k => BETS_SPORTS.includes(k))).length, total: units.length, noun: units.length === 1 ? "group or pick" : "groups and picks"}});
-  host.innerHTML = `<div class="lede"><h2>Bets</h2></div>${weekNext()}
+  host.innerHTML = `<div class="lede"><h2>Bets</h2><p>Today's slips first: the 2x, the Card, the List card, the slip and Edge picks, each with its record. The rules, the logs and the full scoreboard are folded at the foot.</p></div>${weekNext()}
+    <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and, on a group you can still place, is marked <b>stale</b> after ${OG_STALE_H} hours, meaning it may have moved: check it before placing anything. A locked group keeps the price it was locked with.</p>
+    <div class="og-days">${dayRibbon("today", OG.days.map(d => ({d: d.date, n: nCard(d), none: !nCard(d)})), day.date)}
+      <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
+    ${betsBar}
+    ${dailySection(day)}
+    ${wins.map(winHtml).join("")}
+    <section class="tb-win tb-ledger">${ledger("card")}</section>
+    <!-- 17 Nov 2026, Douglas: "at least one or two cards a day just made up of the daily list picks ... having no cards is awful". The List card, in the open. -->
+    <section class="tb-win tb-list"><h3 class="tb-h">The List card <small>the Daily List's own picks combined to 2x; on trial, each with its tested chance</small></h3>
+      ${lists.length ? `<div class="og-grid">${lists.map(ogCard).join("")}</div>`
+        : listsAll.length ? betsEmpty("List card") : `<div class="empty">No List card on ${fmtDay(day.date)} yet: the Daily List's priced picks (college sports left out) don't reach 2x in ten. It is rebuilt on every build as prices and picks arrive.</div>`}
+      <p class="tb-snap"><b>How it is built.</b> The Daily List's picks with a bookmaker price, college sports left out, the model's strongest first, added one at a time until the slip pays 2x: the <b>List 2x</b> from picks at 1.15 or more (up to six), and when that cannot be made the <b>List long</b> from any price (up to ten). "Tested" is the chance it lands on the ledger's own landed rates by sport and price band; "Model" is the model's. The pattern review behind it (17 Nov): the list lands as quoted in every cut, by sport, side, band, price, day and time, so this is the list's winners combined, not a value rule, and every extra pick adds the bookmaker's margin again. Graded apart (List 2x and List long on their own lines); staking is yours.</p>
+      ${ledgerFold("list")}</section>
+    ${slipSection(day.date)}
+    ${edgeSection(day.date)}
+    <!-- 27 Nov 2026 (Douglas: the Bets tab tidied, what to place first): the Card's rule, the
+         old-rule and paper groups, the re-check log, the scoreboard and the October rules sit in one fold. -->
+    <details class="how tb-tail"><summary>Rules, logs and the scoreboard</summary>
     <details class="how tb-rule tb-part"><summary>The Card: its rule in full</summary><div class="lede">
       ${C.modelRule ? `<p><b>The model's own picks</b> (from 11 Nov 2026). ${(C.build || []).length === 1 ? `Up to three groups a day from different fixtures, each paying <b>2x or more</b> (the 3x was dropped on 11 Nov: replayed on five football seasons and the last fortnight, it lost in three seasons of four and dragged the card down), from every game
       kicking off between 07:00 and 07:00 the next morning, three to five picks each.` : `Up to six groups a day from different fixtures, paying <b>2x or more</b> or <b>3x or more</b>, from every game
@@ -8055,21 +8078,6 @@ function renderToday(){
       <li><b>Best price.</b> Use the bookmaker shown beside each pick.</li>
       <li><b>Review weekly.</b> Read the scoreboard on Mondays; change nothing mid-week.</li>
     </ol></details>
-    <p class="tb-snap">Prices are a snapshot: each shows when it was read (UK time) and, on a group you can still place, is marked <b>stale</b> after ${OG_STALE_H} hours, meaning it may have moved: check it before placing anything. A locked group keeps the price it was locked with.</p>
-    <div class="og-days">${dayRibbon("today", OG.days.map(d => ({d: d.date, n: nCard(d), none: !nCard(d)})), day.date)}
-      <label class="og-stake">Stake £<input id="tbStake" type="number" min="1" step="1" value="${ogStake()}" inputmode="decimal"></label></div>
-    ${betsBar}
-    ${dailySection(day)}
-    ${wins.map(winHtml).join("")}
-    <section class="tb-win tb-ledger">${ledger("card")}</section>
-    <!-- 17 Nov 2026, Douglas: "at least one or two cards a day just made up of the daily list picks ... having no cards is awful". The List card, in the open. -->
-    <section class="tb-win tb-list"><h3 class="tb-h">The List card <small>the Daily List's own picks combined to 2x; on trial, each with its tested chance</small></h3>
-      ${lists.length ? `<div class="og-grid">${lists.map(ogCard).join("")}</div>`
-        : listsAll.length ? betsEmpty("List card") : `<div class="empty">No List card on ${fmtDay(day.date)} yet: the Daily List's priced picks (college sports left out) don't reach 2x in ten. It is rebuilt on every build as prices and picks arrive.</div>`}
-      <p class="tb-snap"><b>How it is built.</b> The Daily List's picks with a bookmaker price, college sports left out, the model's strongest first, added one at a time until the slip pays 2x: the <b>List 2x</b> from picks at 1.15 or more (up to six), and when that cannot be made the <b>List long</b> from any price (up to ten). "Tested" is the chance it lands on the ledger's own landed rates by sport and price band; "Model" is the model's. The pattern review behind it (17 Nov): the list lands as quoted in every cut, by sport, side, band, price, day and time, so this is the list's winners combined, not a value rule, and every extra pick adds the bookmaker's margin again. Graded apart (List 2x and List long on their own lines); staking is yours.</p>
-      ${ledgerFold("list")}</section>
-    ${slipSection(day.date)}
-    ${edgeSection(day.date)}
     ${other.length ? `<details class="tb-older"><summary>${other.length} group${other.length === 1 ? "" : "s"} from the old rules, published before the card (not recommended)</summary>
       <div class="og-grid">${other.map(ogCard).join("")}</div></details>` : ""}
     <!-- 11 Nov 2026: the Card is the model's own picks (rule 7), so the paper Model card is no longer built; the fold shows only on a day that still has one. -->
@@ -8080,7 +8088,7 @@ function renderToday(){
 
     <!-- 10 Nov 2026, Douglas: Leave these out, Check a slip and the Accumulator removed ("Remove these sections"). -->
     ${ogLog(day)}
-    <h3 class="tb-h">Is it working? <small>read on Mondays</small></h3>
+    <h3 class="tb-h">Is it working? <small>read on Mondays · every card side by side on <a href="./#results?board=cards" data-goto="results">How it went</a></small></h3>
     ${tbRecord()}
     ${ogRecord(true)}
     <details class="how tb-why-rules"><summary>Why these rules: the weekend of 24-25 October</summary>
@@ -8091,6 +8099,7 @@ function renderToday(){
         <li>Checking in mid-game led to cash-outs and new bets on the fly; a locked card placed once removes that.</li>
         <li>Taking the best price was worth about 3p in the pound on the archive, the one edge that needs no prediction.</li>
       </ol></details>
+    </details>
     <p class="tb-foot">Built ${ogAt(OG.generated)}. This is the model's read, not betting advice. If betting stops being fun, GamCare is free and confidential on 0808 8020 133.</p>`;
   ledScrollAll();
   ogFill(host);
@@ -8356,7 +8365,7 @@ function renderScale(){
       ${tallyRows ? `<details class="sc-off"><summary>The tallies behind the chances</summary><div style="overflow-x:auto"><table class="sc-table">${thead}<tbody>${tallyRows}</tbody></table></div></details>` : ""}</div></div></section>`;
   host.innerHTML = `<div class="sc-head"><div class="lede"><h2>Scale <span class="sc-trial">On trial</span></h2>
       <p>The model's winners with a second condition added to scale the price: <b>football</b> to win with over 2.5 goals, <b>tennis</b> in straight sets, the <b>NBA</b> by 10 or more, the <b>NFL</b> by 7 or more, <b>rugby</b> by 8 or more. Daily List picks first, then the reserve, then everything else at ${floor} or better until the day has ${target} games. Football is shown only where ${scE(S.book)} prices the fixture's result-and-goals bets. Groups take Daily List picks, and football from every fixture ${scE(S.book)} offers.</p></div>${tiles}</div>
-    ${list}${groups}${glance}${leagues}${board}${scLadder(S.ladder)}`;
+    ${scHonest()}${list}${groups}${glance}${leagues}${board}${scLadder(S.ladder)}`;
   const bindLad = () => { const ls = $("#scLadSeg"); if(ls) ls.onclick = e => { const b = e.target.closest("button[data-lad]"); if(!b) return;
     SC_LAD = b.dataset.lad; const sec = $("#scLadder"); if(sec){ sec.outerHTML = scLadder(S.ladder); bindLad(); } }; };
   bindLad();
@@ -8556,6 +8565,16 @@ function rcRecord(R){
     <div class="ladder" style="margin-top:12px"><table><tr><th>Condition</th><th>Runners</th><th>Expected</th><th>Won</th><th style="text-align:left">Read</th></tr>${learn}</table></div>`;
 }
 
+/* 27 Nov 2026 (Douglas, the page review): Scale says at the top how its groups have
+   done since the tab went live, and that most of its prices are estimates. */
+function scHonest(){
+  try {
+    const v = LEDGER_CARDS.scale.view("live"), h = v.head;
+    const since = SCALE && SCALE.from ? fmtShort(SCALE.from) : "";
+    const rec = h && h.settled ? `<b>${h.won} of ${h.settled} groups won</b>${h.exp != null ? ` against ${h.exp.toFixed(1)} expected` : ""} since ${since || "the tab began"}` : `No group settled since ${since || "the tab began"} yet`;
+    return `<p class="sc-honest"><b class="sc-honest-k">So far.</b> ${rec}. Few of these bets have a real price: most show an estimate (≈), which says how often they landed, not what a bookmaker would have paid. Treat Scale as a trial, not a plan.</p>`;
+  } catch(e){ return ""; }
+}
 function renderRacing(){
   const host = $("#racing"), R = window.RACING;
   const lede = sub => `<section class="lede"><h2>Horse racing <span class="m-tag">Trial</span></h2><p>${sub}</p>
@@ -8594,7 +8613,7 @@ function renderRacing(){
     : RC_BOARD === "tips" ? rcTips(R, races) : RC_BOARD === "races" ? rcEvery(races) : RC_BOARD === "card" ? rcCard(races) : rcRecord(R);
   // 20 Nov 2026: the feed's plan can send racecards with no prices and refuse results (the free
   // plan), so the tab says why it has no tips instead of showing "0 tips" with no reason.
-  const feedNote = R.note ? `<p class="note">${rcE(R.note)}</p>` : "";
+  const feedNote = R.note ? `<div class="rc-warn" role="status"><b>Limited feed.</b> ${rcE(R.note)}</div>` : "";
   host.innerHTML = lede(sub) + feedNote + rcRib + ctl + body + `<p class="tb-foot">Updated ${rcE((R.updated || "").replace("T", " "))}. Racecards and results from The Racing API; prices are the UK bookies' on that feed.</p>`;
   host.onclick = e => {
     const b = e.target.closest("[data-rc-board],[data-rc-open],[data-rc-race],[data-rc-course],[data-rc-runner]");
@@ -8807,7 +8826,7 @@ function renderMailbox(){
     s.src = "mailbox.js?v=" + Math.floor(Date.now() / 3e5); s.async = true;
     s.onload = () => { MB_STATE = "ready"; renderMailbox(); };
     s.onerror = () => { MB_STATE = "missing";
-      track.innerHTML = `<div class="mb-empty">The emails could not be loaded just now. The sign-up form above still works.</div>`; };
+      track.innerHTML = `<div class="mb-empty">The emails could not be loaded just now. The sign-up form below still works.</div>`; };
     document.head.appendChild(s);
     return;
   }
