@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-glance-bands: At a glance plots each pick at its confidence (tag pending)
+
+**What changed:** the Daily List's At a glance chart has a banded y-axis (Douglas, 27 Nov 2026: "100 at the top, then 90, then 80, then 70, then 60"): each dot sits at its start time across and its confidence up, with dashed lines and labels at 100%, 90%, 80% and 70% and the 60% line as the base (anything under 60% rests on it). Dots that would overlap step sideways, never up, so a dot's height always reads as its band. The chart is taller (162 units, was 104) with a left margin for the labels.
+**Evidence:** drawn at 1100px and 400px in Chrome on a test slate (a cluster of four at 15:00, three at 12:30): every label clear, no dot off its band.
+**Files:** `index.html` (`glanceDay`, `.gl-grid`), `RELEASES.md`.
+**Not changed:** which picks are plotted, their colours, the key, the tap-to-row link, any pick or grade.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-glance-matches-list: the glance plots only the list's shown picks; At William Hill filter gone (tag pending)
 
 **What changed:** (1) The Daily List's "At a glance" chart plots only the picks the list shows under the filter bar's Sport and Confidence choices (`GL_KEEP`, set by `renderList` to its own `keepIt`). It had drawn the day's whole list whatever the bar hid, so a saved filter left dots with no row (Douglas, 27 Nov 2026: "why am I seeing dots for fixtures that aren't on screen?"). (2) The "At William Hill" Show filter is gone from the Daily List and Starred (Douglas: "I just want estimated odds from whatever sources we have"); a reader's stored choice reads as Every pick. (3) College basketball's 1.05 list floor reads the pick's price from any source on file (`itemPrice` / `pickPrice`: William Hill, else the bookmakers' average, else football's best), not William Hill alone, on the page (`listPriceMin`, was `listHillMin`) and in the email (`mailer.LIST_PRICE_MIN`). A pick with no price on file still stays on its tab.
