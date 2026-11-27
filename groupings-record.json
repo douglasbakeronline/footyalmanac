@@ -1,12 +1,12 @@
 {
- "graded": "2026-11-27T11:30:40Z",
+ "graded": "2026-11-27T12:19:09Z",
  "overall": {
-  "groups": 155,
+  "groups": 156,
   "settled": 155,
   "won": 47,
   "z": -1.16,
   "lost": 108,
-  "pending": 0,
+  "pending": 1,
   "legs": 590,
   "legsWon": 433,
   "returned": 133.66,
@@ -19,10 +19,10 @@
   "unitsReturned": 154.96,
   "unitsReturnedBest": 160.22,
   "clv": {
-   "n": 188,
-   "shortened": 72,
-   "drifted": 73,
-   "mean": -0.0007
+   "n": 191,
+   "shortened": 74,
+   "drifted": 74,
+   "mean": -0.0006
   }
  },
  "cardLegsBySport": {
@@ -1171,12 +1171,12 @@
   }
  },
  "cardDaily": {
-  "groups": 10,
+  "groups": 11,
   "settled": 10,
   "won": 3,
   "z": -0.6,
   "lost": 7,
-  "pending": 0,
+  "pending": 1,
   "legs": 34,
   "legsWon": 26,
   "returned": 8.08,
@@ -1189,10 +1189,10 @@
   "unitsReturned": 8.08,
   "unitsReturnedBest": 8.12,
   "clv": {
-   "n": 24,
-   "shortened": 9,
-   "drifted": 10,
-   "mean": 0.0008
+   "n": 27,
+   "shortened": 11,
+   "drifted": 11,
+   "mean": 0.0014
   }
  },
  "cardListLong": {
@@ -1525,6 +1525,118 @@
   }
  },
  "days": [
+  {
+   "date": "2026-11-27",
+   "published": "2026-11-27T12:18:54Z",
+   "groups": [
+    {
+     "name": "Daily 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 1,
+     "wideRule": null,
+     "odds": 2.23,
+     "p": 0.3563,
+     "status": "pending",
+     "stake": 1,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-27T12:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 4,
+     "legs": [
+      {
+       "pick": "Buxoro",
+       "event": "Buxoro v Mash'al",
+       "sport": "football",
+       "comp": "Super League",
+       "when": "2026-11-27T12:00:00Z",
+       "odds": 1.25,
+       "best": 1.25,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7274,
+       "status": "pending",
+       "result": null,
+       "opp": 10.04,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Al Qadsiah",
+       "event": "Al Qadsiah v Al Fayha",
+       "sport": "football",
+       "comp": "Pro League",
+       "when": "2026-11-27T14:20:00Z",
+       "odds": 1.19,
+       "best": 1.2,
+       "lastOdds": 1.17,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7743,
+       "status": "pending",
+       "result": null,
+       "opp": 10.14,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Detroit Pistons",
+       "event": "Detroit Pistons v Milwaukee Bucks",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-28T00:30Z",
+       "odds": 1.24,
+       "best": 1.24,
+       "lastOdds": 1.25,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.8613,
+       "status": "pending",
+       "result": null,
+       "opp": 4.22,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Denver Nuggets",
+       "event": "Utah Jazz v Denver Nuggets",
+       "sport": "nba",
+       "comp": "NBA",
+       "when": "2026-11-28T02:30Z",
+       "odds": 1.21,
+       "best": 1.21,
+       "lastOdds": 1.2,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7344,
+       "status": "pending",
+       "result": null,
+       "opp": 4.61,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    }
+   ]
+  },
   {
    "date": "2026-11-26",
    "published": "2026-11-26T15:17:53Z",
