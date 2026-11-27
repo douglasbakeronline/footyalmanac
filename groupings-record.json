@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-27T17:49:26Z",
+ "graded": "2026-11-27T19:59:14Z",
  "overall": {
   "groups": 156,
   "settled": 156,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 191,
    "shortened": 74,
-   "drifted": 73,
-   "mean": -0.0005
+   "drifted": 74,
+   "mean": -0.0006
   }
  },
  "cardLegsBySport": {
@@ -601,12 +601,12 @@
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": 0,
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": 0,
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
-   "football|boreham wood|gateshead|2026-11-28": 1.1,
+   "football|boreham wood|gateshead|2026-11-28": 1.08,
    "football|aliağa faş|kastamonuspor|2026-11-28": 1.07,
    "football|boeung ket|national defense|2026-11-28": 0,
    "football|şanlıurfaspor|somaspor|2026-11-28": 0,
    "football|cosmos|san giovanni|2026-11-28": 0,
-   "nba|detroit pistons|milwaukee bucks|2026-11-28": 1.2,
+   "nba|detroit pistons|milwaukee bucks|2026-11-28": 1.22,
    "rugby|stade francais paris|vannes|2026-11-28": 0,
    "ncaab|houston cougars|oakland golden grizzlies|2026-11-28": 0,
    "ncaab|northwestern wildcats|northeastern huskies|2026-11-28": 0,
@@ -1193,8 +1193,8 @@
   "clv": {
    "n": 27,
    "shortened": 11,
-   "drifted": 10,
-   "mean": 0.002
+   "drifted": 11,
+   "mean": 0.0014
   }
  },
  "cardListLong": {
@@ -1623,7 +1623,7 @@
        "when": "2026-11-28T02:30Z",
        "odds": 1.21,
        "best": 1.21,
-       "lastOdds": 1.21,
+       "lastOdds": 1.23,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
