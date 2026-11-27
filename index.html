@@ -1083,6 +1083,32 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .lgrp{display:flex;align-items:baseline;gap:10px;padding:10px 12px 4px;font:700 10.5px var(--f-ui);
   letter-spacing:.08em;text-transform:uppercase;color:var(--mute-ink,var(--mute))}
 .lgrp b{color:var(--ink)} .lgrp .n{font:600 var(--t-xs) var(--f-num);letter-spacing:0;text-transform:none;color:var(--mute-ink,var(--mute))}
+/* the Daily List by confidence band (27 Nov 2026): jump chips under the day
+   head, then one fold per band whose header stays pinned under the tab bar */
+.lbchips{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0 4px}
+.lbchip{font:600 var(--t-xs) var(--f-ui);letter-spacing:.04em;color:var(--ink);background:var(--surface);
+  border:1px solid var(--rule);border-radius:999px;padding:5px 10px;min-height:32px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.lbchip i{font:600 var(--t-xs) var(--f-num);font-style:normal;color:var(--mute)}
+.lbchip:hover{border-color:var(--ink)}
+.lbchip:focus-visible{outline:2px solid var(--ink);outline-offset:1px}
+.lbsec{margin-top:14px}
+.lbsec>.lband{list-style:none;cursor:pointer;position:sticky;top:var(--lbstick,0px);z-index:5;
+  display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 12px;padding:9px 40px 8px 12px;min-height:44px;
+  background:var(--paper);border-top:1px solid var(--ink);border-bottom:1px solid var(--rule-soft)}
+.lbsec>.lband::-webkit-details-marker{display:none}
+.lband .lb-name{font-family:var(--f-display);font-size:20px;line-height:1.1;text-transform:uppercase;letter-spacing:.01em;color:var(--ink)}
+.lband .lb-n{font:600 var(--t-xs) var(--f-num);color:var(--ink-2)}
+.lband .lb-rec{flex-basis:100%;font-size:var(--t-sm);color:var(--mute);line-height:1.4}
+.lband .lb-rec b{color:var(--ink);font-weight:700}
+.lband i{position:absolute;right:16px;top:17px;width:8px;height:8px;
+  border-right:1px solid var(--ink);border-bottom:1px solid var(--ink);transform:rotate(45deg);transition:transform .15s}
+.lbsec[open]>.lband i{transform:rotate(-135deg);top:21px}
+.lband:hover .lb-name{text-decoration:underline;text-decoration-thickness:1px}
+.lband:focus-visible{outline:2px solid var(--ink);outline-offset:-2px}
+.lb-done{border-top:1px dashed var(--rule);margin-top:6px}
+.shortpx{display:table;margin:3px 0 0 auto;padding:0 5px;border:1px solid var(--away);border-radius:3px;
+  font:700 10px var(--f-ui);letter-spacing:.04em;text-transform:uppercase;color:var(--away);white-space:nowrap}
+@media (prefers-reduced-motion: reduce){.lband i{transition:none}}
 .resv{margin-top:18px;border-top:1px solid var(--ink)}
 .resv>summary{list-style:none;cursor:pointer;position:relative;display:flex;flex-wrap:wrap;align-items:baseline;
   gap:2px 10px;padding:12px 40px 10px 12px;min-height:44px;font-family:var(--f-ui);font-size:var(--t-sm);
@@ -4023,8 +4049,97 @@ function renderStarred(){
    exactly what was shown. */
 // The Daily List's order (Douglas, 1 Oct 2026): strongest first by default,
 // or by kick-off to plan the day. Remembered on this device only.
-const LIST_RES_OPEN = {};   // reserve fold per day, once the reader has opened or closed it
-const GROUP_A_MIN = 0.85;   // Group A takes only picks at this level or better (daylist.GROUP_A_MIN is the same)
+/* 27 Nov 2026 (Douglas: "staggered by percentage banding"; the review the
+   same morning): the Daily List's day is laid out by confidence band, not by
+   Group A / Group B / the rest and a reserve fold. On the results ledger a
+   pick lands at its confidence whether it is on the list or the reserve
+   (80-84%: list 84.4% of 154, reserve 84.1% of 189), and Group A's cap of
+   five pushed 85%+ picks into Group B and the rest. Each band carries its own
+   record (daylist.band_records: landed v quoted and the return at the price),
+   reserve picks sit in their band marked Reserve and are still graded apart,
+   picks keep their strength rank, settled picks drop to the foot of their
+   band, and the lower bands fold. Display only: no pick, flag or grade changes. */
+const LBANDS = [
+  {k: "90", lo: .90, label: "90%+"}, {k: "85", lo: .85, label: "85-89%"}, {k: "80", lo: .80, label: "80-84%"},
+  {k: "75", lo: .75, label: "75-79%"}, {k: "70", lo: .70, label: "70-74%"}, {k: "60", lo: .60, label: "60-69%"},
+  {k: "0", lo: 0, label: "Under 60%"}];
+const LB_OPEN = {};          // a band's fold per day, once the reader has opened or closed it
+const LB_ALWAYS = ["90", "85", "80"], LB_THIN = 10;   // open bands; the next opens when these hold fewer picks
+const SHORT_PRICE = 1.05;    // under this a pick pays too little to matter in a slip
+// whole percentages, as the confidence filter and the row read them (inBand)
+const lbOf = c => { const v = Math.round((c || 0) * 100); return LBANDS.find(b => v >= Math.round(b.lo * 100)) || LBANDS[LBANDS.length - 1]; };
+const lbId = (date, k) => `lb-${date}-${k}`;
+const lbSigned = x => (x >= 0 ? "+" : "\u2212") + Math.abs(x * 100).toFixed(1) + "%";
+// the band's record line: from daylist.js bands, the sport's own when one sport is in view
+function lbRecord(k, scope, kind){
+  const B = window.__DAY_LIST__ && window.__DAY_LIST__.bands, all = B && B[kind || "pick"];
+  if(!all) return "";
+  const own = scope && scope !== "all" && all[scope] && all[scope][k];
+  const r = own || (all.all && all.all[k]);
+  if(!r || !r.n) return "";
+  const who = own ? sportLabel(scope) + " " : "";
+  const ret = r.priced >= 20 && r.ret != null ? ` · <span title="A level stake on every priced pick in this band, at the price published before the start (${r.priced} priced)">${lbSigned(r.ret)} at the price</span>` : "";
+  return `${who}landed <b>${Math.round(100 * r.won / r.n)}%</b> of ${r.n} · quoted ${Math.round(100 * r.quoted)}%${ret}`;
+}
+// one chip per band holding picks today, each a jump to its band
+function bandChips(date, rows){
+  const n = {}; rows.forEach(r => { const k = lbOf(r.it.g.confidence).k; n[k] = (n[k] || 0) + 1; });
+  const chips = LBANDS.filter(b => n[b.k]).map(b => `<button type="button" class="lbchip" data-lbjump="${lbId(date, b.k)}">${b.label}<i>${n[b.k]}</i></button>`).join("");
+  return chips ? `<nav class="lbchips" aria-label="Jump to a band">${chips}</nav>` : "";
+}
+const lbSettled = it => it.kind === "pinned" && ["won", "lost", "void"].includes(it.g.status);
+function bandedDay(sec, rows, date, o){
+  const all = rows.slice().sort((a, b) => o.byStrength(a.it, b.it));
+  const rank = new Map(all.map((r, i) => [r.it, i]));
+  const by = {}; all.forEach(r => (by[lbOf(r.it.g.confidence).k] = by[lbOf(r.it.g.confidence).k] || []).push(r));
+  const topN = LB_ALWAYS.reduce((a, k) => a + (by[k] || []).length, 0);
+  LBANDS.forEach(b => {
+    const xs = by[b.k]; if(!xs || !xs.length) return;
+    const key = date + "|" + b.k;
+    const fold = document.createElement("details");
+    fold.className = "lbsec"; fold.id = lbId(date, b.k);
+    fold.open = key in LB_OPEN ? LB_OPEN[key] : LB_ALWAYS.includes(b.k) || (b.k === "75" && topN < LB_THIN);
+    const live = o.past ? xs.slice() : xs.filter(r => !lbSettled(r.it)), done = o.past ? [] : xs.filter(r => lbSettled(r.it));
+    const order = (p, q) => o.time ? o.byTime(p.it, q.it) : rank.get(p.it) - rank.get(q.it);
+    live.sort(order); done.sort(order);
+    const nRes = xs.filter(r => r.reserve).length, rec = lbRecord(b.k, o.scope);
+    fold.innerHTML = `<summary class="lband"><span class="lb-name">${b.label}</span><span class="lb-n">${xs.length} pick${xs.length === 1 ? "" : "s"}${nRes ? ` · ${nRes} reserve` : ""}</span>${rec ? `<span class="lb-rec">${rec}</span>` : ""}<i aria-hidden="true"></i></summary>`;
+    fold.addEventListener("toggle", () => { LB_OPEN[key] = fold.open; });
+    const put = r => {
+      const n0 = fold.children.length;
+      (o.put || listPut)(fold, r.it, rank.get(r.it), date);
+      for(let j = n0; j < fold.children.length; j++){
+        const c = fold.children[j].querySelector(".conf"); if(!c) continue;
+        if(r.reserve) c.insertAdjacentHTML("beforeend", `<span class="resvtag" title="Reserve: just under its sport's bar for the Daily List. Graded apart from the list.">Reserve</span>`);
+        const px = itemPrice(r.it);
+        if(px && px < SHORT_PRICE && !lbSettled(r.it)) c.insertAdjacentHTML("beforeend", `<span class="shortpx" title="Priced ${px.toFixed(2)}: it lands about as often as quoted, but pays too little to add much to a slip.">Short ${px.toFixed(2)}</span>`);
+      }
+    };
+    live.forEach(put);
+    if(done.length){
+      const w = done.filter(r => r.it.g.status === "won").length, l = done.filter(r => r.it.g.status === "lost").length;
+      const el = document.createElement("div"); el.className = "lgrp lb-done";
+      el.innerHTML = `<b>Settled</b> <span class="n">${w} won · ${l} lost</span>`;
+      fold.appendChild(el);
+      done.forEach(put);
+    }
+    sec.appendChild(fold);
+  });
+}
+// a band chip opens its band and scrolls to it, clear of the tab bar
+document.addEventListener("click", e => {
+  const c = e.target.closest && e.target.closest("[data-lbjump]"); if(!c) return;
+  const el = document.getElementById(c.dataset.lbjump); if(!el) return;
+  if(el.tagName === "DETAILS" && !el.open) el.open = true;
+  scrollClear(el);
+});
+// the sticky band header sits under the tab bar when the bar itself is sticky
+function lbStick(){
+  const bar = document.getElementById("views");
+  const h = bar && getComputedStyle(bar).position === "sticky" ? Math.round(bar.getBoundingClientRect().height) : 0;
+  document.documentElement.style.setProperty("--lbstick", h + "px");
+}
+window.addEventListener("resize", () => { clearTimeout(lbStick.t); lbStick.t = setTimeout(lbStick, 150); });
 // 23 Nov 2026 (Douglas: "I sometimes struggle with being drawn into the
 // reserves", then option 2): the Daily List's reserve fold shows only reserve
 // picks at RESERVE_SHOW_MIN or better, each marked Reserve. On the 14 Nov
@@ -4365,16 +4480,19 @@ function pastAsPin(g, date){
   return {...g, result: r, side: g.side || (g.pick === g.home ? "h" : g.pick === g.away ? "a" : ""), list: true, day: date};
 }
 function listPastDay(host, date, items, byTime){
-  const xs = items.slice().sort(byTime ? (a, b) => String(a.g.start || "").localeCompare(String(b.g.start || "")) || listByStrength(a, b) : listByStrength);
+  const xs = items.slice();
   const won = xs.filter(it => it.g.status === "won").length, lost = xs.filter(it => it.g.status === "lost").length;
   const open = xs.length - won - lost - xs.filter(it => it.g.status === "void").length;
   if(!xs.length) return;
   const sec = document.createElement("section");
   sec.className = "day";
   sec.id = "lday-" + date;
+  const rows = xs.map(it => ({it, reserve: false}));
   sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-    <div class="count">${xs.length} on the list · ${won} won · ${lost} lost${open ? ` · ${open} not graded` : ""}<span class="sofar">The list as it stood before each game started</span></div></div>`;
-  xs.forEach((it, i) => sec.appendChild(pinnedRow(pastAsPin(it.g, date), i, date)));
+    <div class="count">${xs.length} on the list · ${won} won · ${lost} lost${open ? ` · ${open} not graded` : ""}<span class="sofar">The list as it stood before each game started</span></div></div>${bandChips(date, rows)}`;
+  const byT = (a, b) => String(a.g.start || "").localeCompare(String(b.g.start || "")) || listByStrength(a, b);
+  bandedDay(sec, rows, date, {byStrength: listByStrength, byTime: byT, time: byTime, scope: "all", past: true,
+    put: (fold, it, i, d) => fold.appendChild(pinnedRow(pastAsPin(it.g, d), i, d))});
   host.appendChild(sec);
 }
 function renderList(){
@@ -4409,14 +4527,11 @@ function renderList(){
   host.innerHTML = `
     <div class="lede">
       <h2>${_n} pick${_n === 1 ? "" : "s"} this week, ${LIST_ORDER === "time" ? "by kick-off" : "strongest first"}</h2>
-      <p>Every pick here clears its sport's bar: in testing, calls from that level up landed at least
-        <b>four times in five</b>. Each row shows its own tested rate, for picks at its own level only:
-        <b>"86% landed"</b> means calls in that band came off 86% of the time on games the
-        model never saw. A pick just over the bar can show less than 80%.
-        ${liveN ? `Live so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
-      <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. Build slips from these.</p>
-      ${coverageLine()}
+      <p>Each day is grouped by how sure the model is, strongest band first. Every band shows how often its picks have landed against what they were quoted, and what a level stake returned at the price.${liveN ? ` The list so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <details class="how"><summary>How the list works</summary>
+        <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. <b>Short</b> marks a price under ${SHORT_PRICE.toFixed(2)}: it lands as often as quoted but adds little to a slip.</p>
+        <p>Each row shows its own tested rate, for picks at its own level only: <b>"86% landed"</b> means calls at that level came off 86% of the time on games the model never saw.</p>
+        ${coverageLine()}
         <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
         games the model was never tuned on. The level differs by sport because the numbers do:
         ${thresholds.join(", ")}.${absent.length ? ` Not on the list: ${absent.join(", ")}, whose strongest calls do not land often enough.` : ""}</p>
@@ -4424,10 +4539,9 @@ function renderList(){
         clubs with no prior season) and never picks a draw. Tennis leaves out qualifying rounds.
         World rankings feed in where testing showed they help: FIFA for internationals, ATP for men's tennis.
         An international also needs the model's own number to clear the bar before the ranking moves it.</p>
-        <p>Every pick that clears the bar is shown. Below them, folded away, is the <b>reserve</b>: games under
-        the bar but otherwise clean, ranked the same way. Only reserve picks at 75% or better are shown, each marked Reserve: below that the reserve lands about two in three. On a day where fewer than 20
-        picks clear the bar, the reserve opens by itself so there is still a full day to choose from. Each carries its strength tag and
-        tested rate, and the reserve is graded as its own group so it never flatters the list's record.</p>
+        <p>Every pick that clears the bar is shown, and beside them the <b>reserve</b>: games just under
+        their sport's bar but otherwise clean, each marked Reserve. On the record a pick lands at its confidence whether it is on the list or the reserve, so both sit in their band, numbered in strength order across the day.
+        The reserve is still graded as its own group, so it never flatters the list's record. The 90%, 85% and 80% bands open by themselves; the lower bands fold, and the 75% band opens on a thin day. Started picks drop to the foot of their band once settled.</p>
         <p>Everything is the model's own read, with no bookmaker input. Roughly one pick in five or
         six will still miss; that is sport, and no bar removes it.
         ${liveN ? "" : "The list's live record starts from its first graded day."}</p>
@@ -4438,13 +4552,11 @@ function renderList(){
   // first, then confidence. Confidence alone would not compare fairly: a
   // football number is one of three outcomes, the others one of two.
   // Every pick that clears the bar is shown: the records grade every one, so
-  // a cap would hide graded picks (10 Oct 2026 had 36). Below them, in a
-  // fold, the reserve: games under the bar but otherwise clean, Firm or
-  // better, flagged by each pipeline before kick-off and graded as their own
-  // group by strength tag (record.json "reserve"), never in the list's record.
-  // The fold opens by itself on a thin day (under LIST_TARGET picks), so a
-  // day still offers a full slate; on a full day it waits to be asked.
-  const LIST_TARGET = 20;
+  // a cap would hide graded picks (10 Oct 2026 had 36). Beside them the
+  // reserve: games under the bar but otherwise clean, Firm or better, flagged
+  // by each pipeline before kick-off and graded as their own group
+  // (record.json "reserve"), never in the list's record. Since 27 Nov 2026
+  // both sit in their confidence band (bandedDay).
   const {byDay, resDay, offDay} = listCollect();
   computeNailed(byDay);
   // 22 Nov 2026: the sport and confidence-band filters, counted on every list
@@ -4484,7 +4596,6 @@ function renderList(){
       .filter(sportOk).map(it => it.g.confidence),
     order: [{k: "strength"}, {k: "time"}],
     count: {shown: scope.filter(keepIt).length, total: scope.length, noun: one ? "picks on this day" : "picks"},
-    note: filtered ? "Groups A and B are the day's strongest picks across every sport, so they are not shown while filtered." : "",
   });
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
@@ -4501,14 +4612,12 @@ function renderList(){
   // Order on every page: the ribbon, the filter bar, then the day (its glance first).
   host.insertAdjacentHTML("beforeend", listRib + listBar + todayGlance(sel));
   glanceSync(true);
+  lbStick();
   if(one && pastOf(sel).length) listPastDay(host, sel, pastOf(sel).filter(keepIt), LIST_ORDER === "time");
   (one ? dates.filter(d => d === sel) : dates).forEach(date => {
     const allItems = (byDay[date] || []).filter(keepIt), resAll = (resDay[date] || []).filter(keepIt);
-    const allExtra = resAll.filter(resShown), resLow = resAll.filter(it => !((it.g.confidence || 0) >= RESERVE_SHOW_MIN)).length;
-    const resLeave = resAll.filter(it => !resAny(it)).length;
+    const allExtra = resAll.filter(resShown);
     if(filtered && !allItems.length && !allExtra.length) return;
-    const items = shown(allItems.sort(byStrength));
-    const extra = shown(allExtra.sort(byStrength));
     const offHill = !LIST_SPORTS.length || LIST_SPORTS.includes("ncaab") ? (offDay[date] || []).length : 0;
     const sec = document.createElement("section");
     sec.className = "day";
@@ -4516,48 +4625,14 @@ function renderList(){
     const tally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result);
       const w = d.filter(it => it.g.status === "won").length, l = d.filter(it => it.g.status === "lost").length;
       return w + l ? `${w} won, ${l} lost` : ""; };
-    const tl = tally(items), tr = tally(extra);
+    const tl = tally(allItems), tr = tally(allExtra);
     const sofar = tl || tr ? `<span class="sofar">So far: list ${tl || "none settled"}${tr ? ` · reserve ${tr}` : ""}</span>` : "";
+    const rows = [...allItems.map(it => ({it, reserve: false})), ...allExtra.map(it => ({it, reserve: true}))];
     sec.innerHTML = `<div class="day-head"><h2>${fmtDay(date)}</h2>
-      <div class="count">${items.length} clear the bar${extra.length ? ` · ${extra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>${offHill ? `
+      <div class="count">${allItems.length} clear the bar${allExtra.length ? ` · ${allExtra.length} reserve` : ""}${sofar}<span data-livetally="${date}"></span></div></div>
+      ${bandChips(date, rows)}${offHill ? `
       <p class="list-off">${offHill} college basketball pick${offHill === 1 ? "" : "s"} left off: no price at ${listPriceMin("ncaab").toFixed(2)} or better on file${(offDay[date] || []).some(it => itemTier(it) === "leave") ? `, or tiered Leave out` : ""}. <button type="button" data-goview="sport:ncaab">On the college basketball tab</button></p>` : ""}`;
-    const put = (it, i) => listPut(sec, it, i, date);
-    // Group labels in strongest order: 1-5, 6-10, then the rest. A tally per
-    // group once results are in, from the pinned rows.
-    const grpTally = xs => { const d = xs.filter(it => it.kind === "pinned" && it.g.result && !it.g.result.void);
-      const w = d.filter(it => it.g.status === "won").length;
-      return d.length ? `${w} of ${d.length} landed` : ""; };
-    const label = (title, range, xs) => { const el = document.createElement("div"); el.className = "lgrp";
-      const t = grpTally(xs); el.innerHTML = `<b>${title}</b> ${range}${t ? ` <span class="n">${t}</span>` : ""}`; return el; };
-    // Group A is the day's strongest five at GROUP_A_MIN or better, and no
-    // more: on the record since 29 Sep, list picks at 85%+ landed 55 of 61
-    // (90%) against 83% for 80-85%, so a short Group A beats a padded one
-    // (Douglas, 28 Oct 2026: the top of the list near perfect). Group B is
-    // the next five in order; The rest follows.
-    const grouped = LIST_ORDER !== "time" && items.length > 0 && !filtered;
-    const nA = Math.min(5, items.filter(it => (it.g.confidence || 0) >= GROUP_A_MIN).length);
-    const nB = Math.min(items.length, nA + 5);
-    items.forEach((it, i) => {
-      if(grouped && i === 0) sec.appendChild(nA
-        ? label("Group A", `${nA} pick${nA === 1 ? "" : "s"} at ${pct(GROUP_A_MIN)}% or better`, items.slice(0, nA))
-        : label("Group A", `none today: nothing at ${pct(GROUP_A_MIN)}% or better`, []));
-      if(grouped && i === nA) sec.appendChild(label("Group B", `the next ${nB - nA}`, items.slice(nA, nB)));
-      if(grouped && i === nB && nB < items.length) sec.appendChild(label("The rest", `picks ${nB + 1} to ${items.length}`, items.slice(nB)));
-      put(it, i);
-    });
-    if(extra.length){
-      const fold = document.createElement("details");
-      fold.className = "resv";
-      fold.open = date in LIST_RES_OPEN ? LIST_RES_OPEN[date] : items.length < LIST_TARGET;
-      const nWary = extra.filter(it => sideWary(it.g)).length;
-      fold.innerHTML = `<summary><b>Reserve</b><span class="resv-score">${extra.length} pick${extra.length === 1 ? "" : "s"}${tr ? ` · ${tr}` : ""}</span>
-        <span class="resv-note">${bandOf("list") === "all" ? `Under the bar, at ${pct(RESERVE_SHOW_MIN)}% or better: the reserve's strongest, landing about 85% against the list's 88%.` : `${bandOf("list") === "70up" ? "Under the bar, every reserve pick at 70% or better." : "Under the bar, in the band chosen above."} At 75%+ the reserve lands about 85%; under 75% about two in three.`} Graded separately, never in the list's record.${resLow && bandOf("list") === "all" ? ` ${resLow} reserve pick${resLow === 1 ? "" : "s"} under ${pct(RESERVE_SHOW_MIN)}% left off: they land about two in three. Choose 60-69% or 70-79% under Confidence to see them.` : ""}${resLeave ? ` ${resLeave} college pick${resLeave === 1 ? "" : "s"} tiered Leave out left off.` : ""}${nWary ? ` ${nWary} college pick${nWary === 1 ? " is" : "s are"} away or neutral, marked: in testing those land as quoted or under it, home picks above.` : ""}</span><i aria-hidden="true"></i></summary>`;
-      fold.addEventListener("toggle", () => { LIST_RES_OPEN[date] = fold.open; });
-      sec.appendChild(fold);
-      const puts = (it, i) => listPut(fold, it, i, date);
-      extra.forEach((it, j) => puts(it, items.length + j));
-      fold.querySelectorAll(".row .conf").forEach(c => c.insertAdjacentHTML("beforeend", `<span class="resvtag" title="Reserve: under the Daily List's bar. Not a list pick.">Reserve</span>`));
-    }
+    bandedDay(sec, rows, date, {byStrength, byTime, time: LIST_ORDER === "time", scope: LIST_SPORTS.length === 1 ? LIST_SPORTS[0] : "all"});
     host.appendChild(sec);
   });
   if((dates.length || one) && filtered && !host.querySelector("section.day")){
