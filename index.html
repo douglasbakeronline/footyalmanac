@@ -4125,9 +4125,20 @@ function listPriceMin(sport){ return ({ncaab: 1.05})[sport] || 0; }
    have"): the floor reads the pick's price from any source (pickPrice: William
    Hill, else the bookmakers' average, else football's best on file), not
    William Hill alone. A pick with no price on file still stays on its tab. */
+/* Safe to call while the page is still loading: the masthead's list count
+   (listShown) runs before lbKey and the other consts exist, so this reads the
+   files directly, in pickPrice's order, and calls only hoisted functions
+   (27 Nov 2026: calling pickPrice here stopped the whole script). */
 function itemPrice(it){
   const g = it.g, sp = it.kind === "football" ? "football" : g.sport;
-  const side = pickSide(g, sp); return side ? pickPrice(g, sp, side) : null;
+  const side = pickSide(g, sp); if(!side) return null;
+  const nm = x => String(x && x.name || x || ""), home = nm(g.home), away = nm(g.away);
+  const key = `${sp}|${home.toLowerCase()}|${away.toLowerCase()}`, pick = side === "h" ? home : away;
+  const G = window.__GROUPINGS__, q = G && G.prices && G.prices[key], m = G && G.listBooks && G.listBooks[key];
+  if(q && (q.h || q.o) && (!q.p || q.p === pick)) return +(q.h || q.o);
+  if(m && m.h) return +m.h;
+  const b = g.market && g.market.best && g.market.best[side === "h" ? 0 : 2];
+  return b ? +b : null;
 }
 function listShown(g){   // a sport game flagged for the list: shown there, or left on its tab
   // 23 Nov 2026 (Douglas: "remove leave out from daily list"): a college pick
@@ -4226,7 +4237,7 @@ function glanceWidth(){
    screen?"): the glance used to plot the day's whole list whatever the filter
    bar hid. renderList sets GL_KEEP to its own Sport and Confidence test, so a
    dot is always a row on the page. */
-let GL_KEEP = () => true;
+var GL_KEEP = () => true;   // var, not let: never in a temporal dead zone however early a redraw runs
 function glanceDay(date, i, W, given){
   const items = (given || (listCollect().byDay[date] || [])).filter(it => GL_KEEP(it));
   const day0 = new Date(date + "T00:00:00"), t0 = day0.getTime(), span = 864e5;

@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-glance-reland: the two glance changes back, without stopping the page (tag pending)
+
+**What changed:** #560 and #561 shipped again after their revert (#562). Live, #560 stopped the whole page: the masthead's list count calls `listShown` while the page is still loading, and `listShown` had been made to read prices through `pickPrice`, which reads `lbKey`, a const not yet defined there ("Cannot access 'lbKey' before initialization"), so no list rows, no glance, and the tab bar dead (Douglas, 27 Nov 2026). `itemPrice` now reads the price files itself, in `pickPrice`'s order, calling only hoisted functions, and `GL_KEEP` is a `var`.
+**Evidence:** the 27 Nov build loaded in Chrome with a college basketball list pick: #560's page throws on load with no rows and tabs that do not switch; this page loads with no errors at 1100px and 400px, rows and glance dots drawn, Bets, Starred and the Daily List switch. `tests/test_early_list_count.py` fails on #560's `itemPrice` and passes here; 1,504 tests pass.
+**Files:** `index.html` (`itemPrice`, `GL_KEEP`), `tests/test_early_list_count.py`, `RELEASES.md`.
+**Not changed:** what #560 and #561 do.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-glance-bands: At a glance plots each pick at its confidence (tag pending)
 
 **What changed:** the Daily List's At a glance chart has a banded y-axis (Douglas, 27 Nov 2026: "100 at the top, then 90, then 80, then 70, then 60"): each dot sits at its start time across and its confidence up, with dashed lines and labels at 100%, 90%, 80% and 70% and the 60% line as the base (anything under 60% rests on it). Dots that would overlap step sideways, never up, so a dot's height always reads as its band. The chart is taller (162 units, was 104) with a left margin for the labels.
