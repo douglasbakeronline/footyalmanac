@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-days-glance-bands: Days at a glance on the Daily List glance's confidence scale (tag pending)
+
+**What changed:** How it went's Days at a glance draws every day's line on the same height scale as the Daily List's At a glance (Douglas, 27 Nov 2026: "match the new at a glance style ... the percentage banding as well"): 60% at the foot to 100% at the top, dashed guides at 70%, 80%, 90% and 100% labelled on the left, each dot at its start time across and its confidence up. Dots that would overlap step sideways and never leave the frame; the old stacks with "+n" labels are gone. Which picks are drawn is unchanged (list and reserve at the Daily List's band).
+**Evidence:** drawn in Chrome at 1100px and 400px on a local build of 27 Nov: 15 days, 695 dots, every dot inside its frame, no script errors.
+**Files:** `index.html` (`daysGlance`, `.dg-pc`), `claude/daily-list-bands-2026-11-27.md`, `RELEASES.md`.
+**Not changed:** the day tallies, the tap-to-open, the key, any pick or grade.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-list-together: the Daily List all together from 70% up; the bands taken out (tag pending)
 
 **What changed:** Douglas, 27 Nov 2026 afternoon: "I don't like the percentage banding ... let's just have all the fixtures all together ... from 70% upwards". (1) Each day of the Daily List is one run, list and reserve picks together with the reserve marked, strongest first (or by kick-off), no band headers, folds or chips (`dayRows`); the sport tabs, the football board, Tennis and Starred are back to one run each. (2) The Daily List's confidence filter offers 60%+, 70%+ (default), 80%+ and 90%+ only (`FVIEWS.list.bands`, `bandKeys`, `60up` / `80up` in `BANDS`, analysis.html in step). (3) At a glance plots exactly the day's rows, reserve included, at the chosen band (`glanceDay`); past days now keep the reserve (`daylist.past_days` "reserve") so the week behind matches too, Leave out college picks off as today. (4) How it went's Days at a glance takes each day's list and reserve picks in the Daily List's band; a day's rows are one run (`reviewRows`). (5) The email is one list again. (6) The Mailer's sign-up form is back at the top, the last seven emails under it.

@@ -1931,6 +1931,7 @@ circle.gl-d.behind,circle.gl-d.flost{fill:var(--away-soft);stroke:var(--away);st
 .dg-day b{font-family:var(--f-ui);font-size:var(--t-sm);font-weight:700;letter-spacing:.02em}
 .dg-day i{font-style:normal;font-family:var(--f-num);font-size:12px;color:var(--ink-2)}
 .dg-day i.g-won{color:var(--edge)} .dg-day i.g-lost{color:var(--away)}
+.dg-pc{font-size:9px}
 .dg-day small{font-size:10.5px;color:var(--mute)}
 .dg-more{font-family:var(--f-num);font-size:10.5px;font-weight:700;fill:var(--ink-2)} .dg-more.w{fill:var(--edge)}
 .dg-row:hover,.dg-row:focus-visible{background:rgba(16,14,12,.035)}
@@ -6274,7 +6275,12 @@ function daysGlance(days, sel){
   if(!ds.length) return "";
   const phone = matchMedia("(max-width:860px)").matches;
   // drawn at about the width it shows at, so the hour labels keep their size
-  const W = phone ? 260 : 1000, M = 10, GAP = phone ? 9 : 12, DY = phone ? 9 : 11;
+  const W = phone ? 260 : 1000, M = 10, ML = phone ? 26 : 38;
+  // 27 Nov 2026 (Douglas: "match the new at a glance style on the daily list ... the percentage banding as well"):
+  // each day's line has the Daily List glance's height scale, 60% at the foot to 100% at the top, so a dot
+  // sits at its confidence; dots that would overlap step sideways, never up (glanceDay's rule)
+  const YT = 8, YB = phone ? 62 : 78, LO = 60, HI = 100, R = phone ? 3.5 : 4.5, STEP = phone ? 5 : 7;
+  const Y = c => { const v = Math.min(HI, Math.max(LO, (c || 0) * 100)); return YB - (v - LO) / (HI - LO) * (YB - YT); };
   const parse = x => x ? Date.parse(/[zZ]|[+-]\d\d:?\d\d$/.test(x) ? x : x + "Z") : NaN;
   // the axis runs from midnight to midnight, local time, and on to 06:00 the
   // next morning when any day has a pick that late (US games, late tennis)
@@ -6285,7 +6291,7 @@ function daysGlance(days, sel){
   });
   const late = rows.some(r => r.pts.some(p => p.h >= 24));
   const H0 = 0, H1 = late ? 30 : 24;
-  const X = h => M + Math.min(1, Math.max(0, (h - H0) / (H1 - H0))) * (W - 2 * M);
+  const X = h => ML + Math.min(1, Math.max(0, (h - H0) / (H1 - H0))) * (W - ML - M);
   const word = {won:"Won", lost:"Lost", void:"Void", started:"Not yet graded", upcoming:"To come"};
   const cls = st => ({won:"won", lost:"lost", void:"void"}[st] || "up");
   const step = phone ? [0, 6, 12, 18, 24].concat(late ? [30] : []) : [0, 3, 6, 9, 12, 15, 18, 21, 24].concat(late ? [27, 30] : []);
@@ -6293,35 +6299,22 @@ function daysGlance(days, sel){
     `<text x="${X(h)}" y="12" text-anchor="${h === H0 ? "start" : h === H1 ? "end" : "middle"}" class="gl-tt">${String(h % 24).padStart(2, "0")}:00</text>`).join("")}</svg>`;
   const line = r => {
     const drawn = r.pts.filter(p => !isNaN(p.t)).sort((a, b) => a.t - b.t), off = r.pts.length - drawn.length;
-    // picks within 12 units of a column's first start share it; a column
-    // shows at most CAP dots, losses and voids first so they are never the
-    // ones hidden, and says how many more there are (15 college basketball
-    // tip-offs at 00:00 on 3 Nov made one day's line 180px tall)
-    const CAP = 6, rank = {lost: 0, void: 1, started: 2, upcoming: 2, won: 3};
-    const cols = [];
-    drawn.forEach(p => { const cx = X(p.h), c = cols[cols.length - 1];
-      if(c && cx - c.x < GAP) c.ps.push(p); else cols.push({x: cx, ps: [p]}); });
-    const placed = [], more = [];
-    cols.forEach(c => {
-      const ps = c.ps.slice().sort((a, b) => (rank[a.x.status] ?? 2) - (rank[b.x.status] ?? 2) || a.t - b.t);
-      ps.slice(0, CAP).forEach((p, k) => placed.push({...p, cx: c.x, k}));
-      const rest = ps.slice(CAP);
-      if(!rest.length) return;
-      // labels closer than a label's width are one label, at the first column
-      const m = more[more.length - 1], allWon = rest.every(p => p.x.status === "won");
-      if(m && c.x - m.x < (phone ? 34 : 44)){ m.n += rest.length; m.allWon = m.allWon && allWon; }
-      else more.push({x: c.x, n: rest.length, allWon});
+    const taken = [], placed = drawn.map(p => {
+      const base = X(p.h), cy = +Y(p.x.conf).toFixed(1); let cx = base, k = 0;
+      const inside = v => Math.min(W - M - R, Math.max(ML + R, v));   // a busy hour spreads, but never off the frame
+      while(k < 40 && taken.some(q => Math.abs(q.x - cx) < STEP && Math.abs(q.y - cy) < STEP)){ k++; cx = inside(base + (k % 2 ? 1 : -1) * Math.ceil(k / 2) * STEP); }
+      taken.push({x: cx, y: cy}); return {...p, cx, cy};
     });
-    const depth = Math.max(0, ...placed.map(p => p.k)) + (more.length ? 1 : 0), Hh = 26 + depth * DY, base = Hh - 9;
-    const extra = more.map(m => `<text x="${m.x.toFixed(1)}" y="${base - CAP * DY + 3}" text-anchor="${m.x < 30 ? "start" : "middle"}" class="dg-more${m.allWon ? " w" : ""}">+${m.n}${m.allWon ? " won" : ""}</text>`).join("");
-    const grid = step.map(h => `<line x1="${X(h)}" x2="${X(h)}" y1="${base - 4}" y2="${base + 4}" class="gl-tk"/>`).join("");
+    const Hh = YB + 6;
+    const bands = [100, 90, 80, 70, 60].map(b => `<line x1="${ML}" x2="${W - M}" y1="${Y(b / 100)}" y2="${Y(b / 100)}" class="${b === LO ? "gl-ax" : "gl-grid"}"/><text x="${ML - 5}" y="${Y(b / 100) + 3.5}" text-anchor="end" class="gl-tt dg-pc">${b}%</text>`).join("");
+    const grid = step.map(h => `<line x1="${X(h)}" x2="${X(h)}" y1="${YB}" y2="${YB + 4}" class="gl-tk"/>`).join("");
     const dots = placed.map(p => { const x = p.x;
-      return `<circle cx="${p.cx.toFixed(1)}" cy="${base - p.k * DY}" r="${phone ? 4 : 5}" class="gl-d ${cls(x.status)}"><title>${localTime(new Date(p.t).toISOString())} · ${x.pick} to beat ${x.pick === x.home ? x.away : x.home} · ${x.sport} · ${pct(x.conf)}% · ${word[x.status] || x.status}${x.small ? " · " + x.small : ""}</title></circle>`; }).join("");
+      return `<circle cx="${p.cx.toFixed(1)}" cy="${p.cy}" r="${R}" class="gl-d ${cls(x.status)}"><title>${localTime(new Date(p.t).toISOString())} · ${x.pick} to beat ${x.pick === x.home ? x.away : x.home} · ${x.sport} · ${pct(x.conf)}% · ${word[x.status] || x.status}${x.small ? " · " + x.small : ""}</title></circle>`; }).join("");
     const d = r.d, n = d.won + d.lost, rate = n ? d.won / n : null;
     return `<button type="button" class="dg-row" data-day="${d.date}" aria-pressed="${d.date === sel}"
         aria-label="${fmtShort(d.date)}: ${d.won} of ${n} landed${d.open ? `, ${d.open} to settle` : ""}. Open this day.">
       <span class="dg-day"><b>${fmtShort(d.date)}</b><i class="${rate == null ? "" : rate >= .8 ? "g-won" : "g-lost"}">${n ? `${d.won}/${n}` : "–"}${d.open ? ` +${d.open}` : ""}</i>${off ? `<small>${off} no time</small>` : ""}</span>
-      <svg viewBox="0 0 ${W} ${Hh}" role="img" aria-hidden="true"><line x1="${M}" x2="${W - M}" y1="${base}" y2="${base}" class="gl-ax"/>${grid}${dots}${extra}</svg>
+      <svg viewBox="0 0 ${W} ${Hh}" role="img" aria-hidden="true">${bands}${grid}${dots}</svg>
     </button>`;
   };
   const all = ds.reduce((a, d) => [a[0] + d.won, a[1] + d.won + d.lost], [0, 0]);

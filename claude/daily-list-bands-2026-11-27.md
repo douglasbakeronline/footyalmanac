@@ -103,3 +103,8 @@ the days at a glance infographic on the How It Went tab ... 60% plus, 70% plus,
   table by sport and band (`bandTable`) stays: it is a record, not a layout.
 - The email is one list, strongest first (no bands).
 - The Mailer: the sign-up form at the top again, the last seven emails under it.
+
+Later the same afternoon (release 2026-11-27-days-glance-bands): How it went's
+Days at a glance took the Daily List glance's height scale, each day's line
+60-100% with labelled guides, dots stepping sideways inside the frame
+(`daysGlance`: `Y`, `STEP`, `inside`).
