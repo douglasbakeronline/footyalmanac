@@ -460,6 +460,9 @@ AF_SPELLINGS = {
     "Stade Rennais FC 1901": "Rennes",                     # Ligue 1
     "LAFC": "Los Angeles FC",                              # MLS
     "Dinamo Moscow": "Dynamo",                             # Russia
+    # 27 Nov 2026 (six builds 22:15 to 04:13 UTC): Real Oviedo v RC Celta
+    # Fortuna, LaLiga 2, 30 Nov, noFixture beside "Oviedo v Celta de Vigo II".
+    "RC Celta Fortuna": "Celta de Vigo II",                # LaLiga 2
 }
 
 

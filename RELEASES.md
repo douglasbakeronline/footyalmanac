@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-review-agenda: the 30 Nov Card review's agenda, and Celta Fortuna priced (tag pending)
+
+**What changed:** nothing on the page. (1) `claude/card-review-agenda-2026-11-30.md` gathers every item 41 notes leave for the 30 Nov review: the rule 14 v rule 13 / rule 12 read (Douglas's), the gates a session acts on, the re-reads asked for, and what rule 14 already settled, each with its trigger and the 27 Nov standing. (2) Real Oviedo v RC Celta Fortuna (LaLiga 2, 30 Nov) sat noFixture on six builds beside "Oviedo v Celta de Vigo II"; `AF_SPELLINGS` now reads it.
+**Evidence:** the 27 Nov Card review (#557): nothing due or fired, `rule13` and `rule12` behind live at both prices. The noFixture line in every deploy log from 26 Nov 22:15 to 27 Nov 04:13 UTC. `tests/test_football_unpriced.py` (`test_celta_fortuna_spelling`); 1,497 tests and `nametest.py` pass.
+**Files:** `claude/card-review-agenda-2026-11-30.md`, `groupings.py` (`AF_SPELLINGS`), `tests/test_football_unpriced.py`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any Card constant (`CARD_RULE` stays 14), the model, the record.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-ledger-rematch: the results ledger keeps rematches apart and drops re-dated rows (tag pending)
 
 **What changed:** nothing on the page. `ledger.py` read two meetings of a pair within 10 days as one fixture moved, so a later meeting took the first one's result (Inter Club d'Escaldes v Casa de Portugal 29 Nov and Sport Huancayo v Universitario 28 Nov settled before kick-off; Tahiti v Cook Islands 17 Nov graded 4-0 won, it was 3-3) and 15 cup ties beside league games were never counted. A copy published after a graded copy of the pair kicked off, two or more days later, is now the next meeting (`predictions(played=)`, `REMATCH_DAYS`). And a fixture re-dated to the day it was played left its old key pending for good (199 rows); `merge` now drops an old pending row when the build has the same pairing within `MOVE_DAYS`, never a row with a result, and never keeps a result for a start still to come.
