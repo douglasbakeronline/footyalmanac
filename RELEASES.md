@@ -12,6 +12,19 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+
+## 2026-11-27-card-fillers-third: empty Card days, fillers read a third time (tag pending)
+
+**What changed:** nothing for a reader. A dated note records why no empty-day filler ships.
+
+**Evidence:** `fillopp7` and `fillshort` fill zero empty days; `fillrule5` 4 groups, 12 legs, +12%, p(worse) 0.30 (under the 100-leg gate); `fillwide` 2 of 12 v 4.14 expected. The page's short log shows recent empty days are `few` (0 or 1 clear pick) or `long`, so there is nothing near-miss to fill from.
+
+**Files:** `claude/card-empty-days-fillers-third-2026-11-27.md`, `RELEASES.md`.
+
+**Not changed:** `CARD_FILLER` (False, owner's call 11 Nov), any Card constant.
+
+**Roll back:** revert the commit.
+
 ## 2026-11-27-list-card-order: the Daily 2x and List card replayed by confidence alone (tag pending)
 
 **What changed:** nothing on the page. `tools/list_card_replay.py` (#569) replays the Daily 2x and the List card as live and under the pre-registered `confidence` variant (reserve picks read as list picks, one tier ordered by the model's number, every floor and price rule unchanged), on the results ledger and the archived pool, built as at 07:00 UK, paired by day.
