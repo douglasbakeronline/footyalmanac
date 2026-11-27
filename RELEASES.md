@@ -12,6 +12,14 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 
 
 
+## 2026-11-27-ledger-rematch: the results ledger keeps rematches apart and drops re-dated rows (tag pending)
+
+**What changed:** nothing on the page. `ledger.py` read two meetings of a pair within 10 days as one fixture moved, so a later meeting took the first one's result (Inter Club d'Escaldes v Casa de Portugal 29 Nov and Sport Huancayo v Universitario 28 Nov settled before kick-off; Tahiti v Cook Islands 17 Nov graded 4-0 won, it was 3-3) and 15 cup ties beside league games were never counted. A copy published after a graded copy of the pair kicked off, two or more days later, is now the next meeting (`predictions(played=)`, `REMATCH_DAYS`). And a fixture re-dated to the day it was played left its old key pending for good (199 rows); `merge` now drops an old pending row when the build has the same pairing within `MOVE_DAYS`, never a row with a result, and never keeps a result for a start still to come.
+**Evidence:** rebuilt on the 26 Nov files: rows 20,292 to 20,112, pending 2,822 to 2,625, ungraded to chase 193 to 86, 22 results changed (19 gained, 2 future cleared, 1 flipped), no pair left with two settled rows of one score. `claude/ledger-rematch-redated-2026-11-27.md`.
+**Files:** `ledger.py`, `tests/test_ledger.py` (4 tests), `claude/ledger-rematch-redated-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `score.py`, the record, any grade on the page, any Card rule (CARD_RULE stays 14).
+**Roll back:** `git revert` the merge; the next build rewrites the ledger (re-dated rows come back as pending).
+
 ## 2026-11-26-racing-plan-line: a racing plan refusal is a log line, not a warning (tag pending)
 
 **What changed:** nothing on the page. Every build on The Racing API's free plan raised `::warning::racing results failed: HTTP Error 401` because the plan does not send results; the page's feed note already says nothing can be graded. A refusal (401 / 403) after the racecards answered from a lower plan now prints a plain line (`racing.results_failed_line`); any other failure, or a refusal with no racecards answered, stays a warning, so a real fault still shows.

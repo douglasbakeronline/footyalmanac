@@ -164,6 +164,60 @@ class Ledger(unittest.TestCase):
                                        L.parse_utc("2026-11-02T15:00:00Z")))
 
 
+class Rematch(unittest.TestCase):
+    """27 Nov 2026: a second meeting of a pair within MOVE_DAYS is its own
+    fixture once the first was graded (Andorra, Peru, cup and league ties)."""
+    NOW = datetime(2026, 11, 27, 1, tzinfo=timezone.utc)
+
+    def setUp(self):
+        self.r = Repo()
+        self.r.put("predictions/2026-11-20.json", [fb("2026-11-21", "Inter Club", "Casa de Portugal", 0.8, "2026-11-20T05:00:00Z")])
+        self.r.put("record-graded.json", {"graded": [
+            {"date": "2026-11-21", "league": "en.1", "home": "Inter Club", "away": "Casa de Portugal", "result": [4, 3], "won": True}]})
+        self.r.put("sports-graded.json", {"graded": []}); self.r.put("tennis-record.json", {"graded": []})
+
+    def tearDown(self): self.r.close()
+
+    def test_next_meeting_is_not_given_the_first_result(self):
+        self.r.put("predictions/2026-11-26.json", [fb("2026-11-29", "Inter Club", "Casa de Portugal", 0.8, "2026-11-26T21:00:00Z")])
+        path = os.path.join(self.r.dir, "results-ledger.json.gz")
+        out = L.write(now=self.NOW, here=self.r.dir, path=path)
+        rows = {r["key"]: r for r in out["rows"]}
+        self.assertEqual(rows["football|inter club|casa de portugal|2026-11-21"]["result"], "won")
+        self.assertIsNone(rows["football|inter club|casa de portugal|2026-11-29"]["result"])
+
+    def test_old_borrowed_result_on_a_future_start_is_cleared(self):
+        # the ledger as written before the fix: the next meeting carried the first's result
+        self.r.put("predictions/2026-11-26.json", [fb("2026-11-29", "Inter Club", "Casa de Portugal", 0.8, "2026-11-26T21:00:00Z")])
+        old = [{"key": "football|inter club|casa de portugal|2026-11-29", "sport": "football", "home": "Inter Club",
+                "away": "Casa de Portugal", "start": "2026-11-29T15:00:00Z", "result": "won", "score": "4-3"}]
+        path = os.path.join(self.r.dir, "results-ledger.json.gz")
+        with gzip.open(path, "wt") as f: json.dump({"rows": old}, f)
+        rows = {r["key"]: r for r in L.write(now=self.NOW, here=self.r.dir, path=path)["rows"]}
+        self.assertIsNone(rows["football|inter club|casa de portugal|2026-11-29"]["result"])
+        self.assertEqual(rows["football|inter club|casa de portugal|2026-11-21"]["result"], "won")
+
+    def test_same_game_listed_hours_later_stays_one_fixture(self):
+        # Atletico Hidalgo, 6 and 7 Nov: an 00:00 copy written after the game is the same game
+        self.r.put("predictions/2026-11-21.json", [fb("2026-11-22", "Inter Club", "Casa de Portugal", 0.8, "2026-11-21T23:00:00Z",
+                                                      kickoff="2026-11-22T00:00:00Z")])
+        rows = L.predictions(self.r.dir, played={("2026-11-21", "en.1", "inter club", "casa de portugal")})
+        self.assertEqual(len(rows), 1)
+
+
+class MergeRedated(unittest.TestCase):
+    def test_redated_pending_row_dropped_settled_kept(self):
+        new = [{"key": "football|a|b|2026-11-22", "sport": "football", "home": "A", "away": "B",
+                "start": "2026-11-22T16:30:00Z", "result": "won", "score": "4-0"}]
+        old = [{"key": "football|a|b|2026-11-21", "sport": "football", "home": "A", "away": "B",
+                "start": "2026-11-21T15:00:00Z", "result": None},          # the nominal Saturday's copy
+               {"key": "football|a|b|2026-09-01", "sport": "football", "home": "A", "away": "B",
+                "start": "2026-09-01T15:00:00Z", "result": None},          # another meeting: kept
+               {"key": "football|c|d|2026-11-21", "sport": "football", "home": "C", "away": "D",
+                "start": "2026-11-21T15:00:00Z", "result": "lost"}]        # a result is never dropped
+        keys = [r["key"] for r in L.merge(old, new, now=datetime(2026, 11, 27, tzinfo=timezone.utc))]
+        self.assertEqual(sorted(keys), ["football|a|b|2026-09-01", "football|a|b|2026-11-22", "football|c|d|2026-11-21"])
+
 class Merge(unittest.TestCase):
     def test_result_never_lost_prices_widen(self):
         old = [{"key": "k", "result": "won", "score": "1-0", "first": {"o": 1.4, "t": "2026-11-01T00:00:00Z"},
