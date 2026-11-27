@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-27-scout: free-source check for uncovered leagues (tag pending)
+
+**What changed:** nothing a reader sees. A dated line in `claude/data-expansion-plan.md`.
+**Evidence:** openfootball 2026-27 `de.3.json` and `pt.2.json` 404; ESPN `ger.3` and `uae.1` scoreboards 400. Same as 20 Nov.
+**Files:** `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** no source, model or list rule.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-integrity-audit: Fixture audit of 27 Nov (tag pending)
 
 **What changed:** a dated note only; nothing on the site changes.
