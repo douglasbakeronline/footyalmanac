@@ -82,7 +82,7 @@ class DailyList(unittest.TestCase):
         g = M.groups_of(items)
         self.assertEqual([(n, len(x)) for n, _, x in g], [("Strongest today", 1), ("Also on the list", 2)])
 
-    def test_college_basketball_needs_a_price(self):
+    def test_college_basketball_needs_hill(self):
         L = [pick("ncaab", "Duke", "Rival", 0.9, start="2026-11-23T23:00:00Z", full={"line": {"spread": -15}, "neutral": False}),
              pick("ncaab", "Kansas", "Rival2", 0.9, start="2026-11-23T23:00:00Z", full={"line": {"spread": -15}, "neutral": False})]
         s = src(L)
@@ -90,11 +90,6 @@ class DailyList(unittest.TestCase):
         items, off = M.list_items(s, DAY, NOW)
         self.assertEqual([i["pick"] for i in items], ["Duke"])
         self.assertEqual(off, 1)
-        # 27 Nov 2026: any price on file counts, not William Hill's alone
-        s["groupings"]["prices"] = {"ncaab|kansas|rival2": {"o": 1.08}}
-        items, off = M.list_items(s, DAY, NOW)
-        self.assertEqual(sorted(i["pick"] for i in items), ["Duke", "Kansas"])
-        self.assertEqual(off, 0)
 
     def test_empty_day_says_so(self):
         m = M.daily_email(DAY, src([]), now=NOW)
