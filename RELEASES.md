@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-withdrawn-on-page: a withdrawn Card group named on the Bets tab (tag pending)
+
+**What changed:** a day whose Card box is empty now says when the page had shown a Card group for it and withdrew it before its first start: the kind, price, picks, when it was shown and withdrawn, and why, with "a bet already placed stands as placed; withdrawn groups are not graded". Each Card re-check log entry keeps when the group was first shown (`first`).
+**Evidence:** 27 Nov's Card 2x (Al Qadsiah, 76ers, Pistons at 2.55) was shown from 20:11 the night before over 11 builds and withdrawn at 07:10 on a sub-point value-demand miss; all three won, and the box read only "A blank day is the rule working". `claude/card-withdrawn-on-the-page-2026-11-28.md`.
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `claude/card-withdrawn-on-the-page-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the record, the re-check rule, any Card constant (`CARD_RULE` 14). Log entries from before this release have no `first`, so the notice starts with the next withdrawal.
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-28-hold-band-row: the hold-band follow-up measured in the review's decisions table (tag pending)
 
 **What changed:** nothing on the page. The nightly Card review's decisions table gains "Hold band for published Card groups": every Card group withdrawn before its first start since 26 Nov, settled on the ledger, due for a pre-registered hold-band variant at 10 settled landing at or above the model's number.
