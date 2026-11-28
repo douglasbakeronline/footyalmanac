@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-28T12:57:10Z",
+ "graded": "2026-11-28T14:14:56Z",
  "overall": {
   "groups": 159,
   "settled": 156,
@@ -7,8 +7,8 @@
   "z": -1.21,
   "lost": 109,
   "pending": 3,
-  "legs": 594,
-  "legsWon": 436,
+  "legs": 598,
+  "legsWon": 440,
   "returned": 133.66,
   "staked": 156,
   "returnedBest": 138.72,
@@ -21,8 +21,8 @@
   "clv": {
    "n": 198,
    "shortened": 76,
-   "drifted": 75,
-   "mean": -0.0005
+   "drifted": 78,
+   "mean": -0.0008
   }
  },
  "cardLegsBySport": {
@@ -95,8 +95,8 @@
   "clv": {
    "n": 7,
    "shortened": 0,
-   "drifted": 2,
-   "mean": -0.0078
+   "drifted": 4,
+   "mean": -0.0141
   }
  },
  "cardLiveRule": 14,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 88,
-   "won": 76,
-   "rate": 0.8636,
-   "quoted": 0.8739,
-   "returned": 83.51,
-   "ret": -0.051
+   "n": 90,
+   "won": 78,
+   "rate": 0.8667,
+   "quoted": 0.8721,
+   "returned": 85.88,
+   "ret": -0.0458
   },
   "notAtBook": {
    "n": 202,
@@ -212,12 +212,12 @@
   "bySport": {
    "football": {
     "atBook": {
-     "n": 25,
-     "won": 22,
-     "rate": 0.88,
-     "quoted": 0.8496,
-     "returned": 25.31,
-     "ret": 0.0124
+     "n": 27,
+     "won": 24,
+     "rate": 0.8889,
+     "quoted": 0.8454,
+     "returned": 27.68,
+     "ret": 0.0252
     },
     "notAtBook": {
      "n": 6,
@@ -601,7 +601,7 @@
    "ncaab|indiana hoosiers|bowling green falcons|2026-11-27": 0,
    "ncaab|pennsylvania quakers|towson tigers|2026-11-27": 0,
    "ncaab|alabama crimson tide|kansas state wildcats|2026-11-27": 0,
-   "football|boreham wood|gateshead|2026-11-28": 1.08,
+   "football|boreham wood|gateshead|2026-11-28": 0,
    "football|aliağa faş|kastamonuspor|2026-11-28": 1.07,
    "football|boeung ket|national defense|2026-11-28": 1.2,
    "football|şanlıurfaspor|somaspor|2026-11-28": 1.17,
@@ -712,8 +712,8 @@
    "clv": {
     "n": 92,
     "shortened": 28,
-    "drifted": 34,
-    "mean": -0.006
+    "drifted": 36,
+    "mean": -0.0065
    }
   },
   "Card 3x": {
@@ -1029,8 +1029,8 @@
   "clv": {
    "n": 106,
    "shortened": 35,
-   "drifted": 41,
-   "mean": -0.0043
+   "drifted": 43,
+   "mean": -0.0047
   }
  },
  "cardWide": {
@@ -1192,8 +1192,8 @@
   "z": -0.79,
   "lost": 8,
   "pending": 1,
-  "legs": 38,
-  "legsWon": 29,
+  "legs": 40,
+  "legsWon": 31,
   "returned": 8.08,
   "staked": 11,
   "returnedBest": 8.12,
@@ -1217,8 +1217,8 @@
   "z": 0.86,
   "lost": 1,
   "pending": 1,
-  "legs": 14,
-  "legsWon": 13,
+  "legs": 16,
+  "legsWon": 15,
   "returned": 4.24,
   "staked": 3,
   "returnedBest": 4.37,
@@ -1231,8 +1231,8 @@
   "clv": {
    "n": 13,
    "shortened": 5,
-   "drifted": 5,
-   "mean": 0.003
+   "drifted": 6,
+   "mean": 0.0015
   }
  },
  "cardByRule": {
@@ -1407,8 +1407,8 @@
    "clv": {
     "n": 7,
     "shortened": 0,
-    "drifted": 2,
-    "mean": -0.0078
+    "drifted": 4,
+    "mean": -0.0141
    }
   }
  },
@@ -1434,8 +1434,8 @@
    "clv": {
     "n": 60,
     "shortened": 17,
-    "drifted": 23,
-    "mean": -0.0025
+    "drifted": 25,
+    "mean": -0.0033
    }
   },
   "Daytime": {
@@ -1564,9 +1564,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1582,8 +1582,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7759,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-2",
        "opp": 11.9,
        "rule12Fault": null,
        "r12": false
@@ -1602,8 +1602,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8106,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-1",
        "opp": 8.76,
        "rule12Fault": null,
        "r12": false
@@ -1670,9 +1670,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 0,
+     "legsWon": 2,
      "legsLost": 0,
-     "legsPending": 6,
+     "legsPending": 4,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1688,8 +1688,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7759,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-2",
        "opp": 11.9,
        "rule12Fault": null,
        "r12": false
@@ -1708,8 +1708,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8106,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-1",
        "opp": 8.76,
        "rule12Fault": null,
        "r12": false
@@ -1762,7 +1762,7 @@
        "when": "2026-11-28T15:00:00Z",
        "odds": 1.07,
        "best": 1.09,
-       "lastOdds": 1.07,
+       "lastOdds": 1.09,
        "lockOdds": null,
        "lockBest": null,
        "lockBook": null,
@@ -1848,7 +1848,7 @@
        "when": "2026-11-28T15:00:00Z",
        "odds": 1.35,
        "best": 1.4,
-       "lastOdds": 1.35,
+       "lastOdds": 1.36,
        "lockOdds": 1.35,
        "lockBest": 1.4,
        "lockBook": "William Hill",
@@ -1868,7 +1868,7 @@
        "when": "2026-11-28T23:30:00Z",
        "odds": 1.55,
        "best": 1.6,
-       "lastOdds": 1.55,
+       "lastOdds": 1.61,
        "lockOdds": 1.55,
        "lockBest": 1.6,
        "lockBook": "Bet365",

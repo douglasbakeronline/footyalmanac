@@ -812,8 +812,8 @@
      "tier": "reserve",
      "firstOdds": 1.41,
      "lastOdds": 1.4,
-     "lastBest": 1.44,
-     "lastAt": "2026-11-28T12:54:59Z"
+     "lastBest": 1.4,
+     "lastAt": "2026-11-28T14:14:45Z"
     }
    ],
    "tested": 0.3435,
@@ -1841,9 +1841,9 @@
      "edge": -0.1015,
      "basis": "model",
      "firstOdds": 1.07,
-     "lastOdds": 1.07,
+     "lastOdds": 1.09,
      "lastBest": 1.09,
-     "lastAt": "2026-11-28T12:54:59Z"
+     "lastAt": "2026-11-28T14:14:45Z"
     },
     {
      "sport": "rugby",
@@ -2012,7 +2012,7 @@
      "firstOdds": 1.04,
      "lastOdds": 1.04,
      "lastBest": 1.04,
-     "lastAt": "2026-11-28T12:54:59Z"
+     "lastAt": "2026-11-28T14:14:45Z"
     }
    ],
    "tested": 0.3553,
@@ -2479,9 +2479,9 @@
      "edge": -0.102,
      "basis": "model",
      "firstOdds": 1.46,
-     "lastOdds": 1.35,
-     "lastBest": 1.4,
-     "lastAt": "2026-11-28T12:54:59Z",
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-28T14:14:45Z",
      "lockPrice": {
       "odds": 1.35,
       "best": 1.4,
@@ -2686,9 +2686,9 @@
      "edge": -0.0808,
      "basis": "model",
      "firstOdds": 1.44,
-     "lastOdds": 1.55,
-     "lastBest": 1.6,
-     "lastAt": "2026-11-28T12:54:59Z",
+     "lastOdds": 1.61,
+     "lastBest": 1.61,
+     "lastAt": "2026-11-28T14:14:45Z",
      "lockPrice": {
       "odds": 1.55,
       "best": 1.6,
