@@ -430,9 +430,65 @@ def groups(lst):
 
 
 PAST_DAYS = 7         # 12 Nov 2026 (Douglas): At a glance scrolls back a week
+PX_NEAR_DAYS = 2      # a ledger price joins a pick whose start is within this many days
 
 
-def past_days(now, here=HERE, records=None, n=PAST_DAYS):
+# 28 Nov 2026 (Douglas, on the Prime filter: "on all previous days too"): the
+# page holds prices for today and yesterday only (groupings-data.js), so a
+# filter that reads a pick's price had nothing to read on the days behind.
+# Each pinned and past pick now carries `px`, its pre-start price on the
+# results ledger, read as the page reads a price: William Hill, else the
+# bookmakers' average, from the last read before the start, else the first.
+# Display only; nothing is graded or ranked from it.
+def ledger_prices(here=HERE):
+    """{(sport, home, away): [(start, pick, price)]} from results-ledger.json.gz;
+    {} when the file is missing or unreadable."""
+    import gzip
+    try:
+        with gzip.open(os.path.join(here, "results-ledger.json.gz"), "rt", encoding="utf-8") as f:
+            rows = json.load(f).get("rows") or []
+    except (OSError, ValueError):
+        return {}
+    out = {}
+    for r in rows:
+        if r.get("duplicate") or r.get("movedTo"): continue
+        px = None
+        for k in ("last", "first"):
+            p = r.get(k)
+            if isinstance(p, dict) and (p.get("h") or p.get("o")):
+                px = p.get("h") or p["o"]; break
+        try: px = float(px)
+        except (TypeError, ValueError): continue
+        if px < 1: continue
+        key = (r.get("sport"), str(r.get("home") or "").lower(), str(r.get("away") or "").lower())
+        out.setdefault(key, []).append((r.get("start") or "", r.get("pick"), px))
+    return out
+
+
+def price_of(item, prices):
+    """The ledger's price for this pick: the same sport, pair and picked side,
+    the copy starting nearest the item's start and within PX_NEAR_DAYS (a
+    rematch days later is another game). None when there is none."""
+    xs = prices.get((item.get("sport"), str(item.get("home") or "").lower(), str(item.get("away") or "").lower()))
+    if not xs: return None
+    t, best = parse_utc(item.get("start")), None
+    for start, pick, px in xs:
+        if pick != item.get("pick"): continue
+        s = parse_utc(start)
+        if not (s and t): continue
+        gap = abs((s - t).total_seconds())
+        if gap <= PX_NEAR_DAYS * 86400 and (best is None or gap < best[0]): best = (gap, px)
+    return best[1] if best else None
+
+
+def attach_prices(items, prices):
+    for i in items:
+        px = price_of(i, prices) if prices else None
+        if px: i["px"] = px
+    return items
+
+
+def past_days(now, here=HERE, records=None, n=PAST_DAYS, prices=None):
     """The last n UK days' Daily Lists, oldest first, as they stood before each
     game started, with each pick's result: what At a glance draws for the days
     behind today. The same membership and results as today's pin; list picks
@@ -440,19 +496,22 @@ def past_days(now, here=HERE, records=None, n=PAST_DAYS):
     records = records or tuple(_load(os.path.join(here, f), {}) for f in ("record.json", "tennis-record.json", "sports-record.json"))
     today = datetime.fromisoformat(uk_day(now)).date()
     keep = ("sport", "start", "date", "comp", "chip", "home", "away", "pick", "confidence", "tier", "status")
+    slim = lambda i: {**{f: i.get(f) for f in keep}, **({"px": i["px"]} if i.get("px") else {})}
+    prices = ledger_prices(here) if prices is None else prices
     out = []
     for k in range(n, 0, -1):
         day = (today - timedelta(days=k)).isoformat()
         try:
             items = [i for i in pinned(day, read_archives(day, here), now) if i["list"] or i["reserve"]]
             attach_results(items, *records)
+            attach_prices(items, prices)
         except Exception as e:      # a bad old archive never stops today's list
             print(f"day list: {day} skipped ({e})", file=sys.stderr); continue
         items.sort(key=strength)
         # 27 Nov 2026 (Douglas: the Daily List "all together ... from 70% upwards", "retro implement
         # that as well"): the reserve too, kept apart so "list" stays the list (the emails read it)
-        out.append({"date": day, "list": [{f: i.get(f) for f in keep} for i in items if i["list"]],
-                    "reserve": [{f: i.get(f) for f in keep} for i in items if i["reserve"] and not i["list"]]})
+        out.append({"date": day, "list": [slim(i) for i in items if i["list"]],
+                    "reserve": [slim(i) for i in items if i["reserve"] and not i["list"]]})
     return out
 
 
@@ -507,6 +566,8 @@ def build(now=None, here=HERE, fetch=True):
     attach_full(items, archives, _load(os.path.join(here, "data.json"), {}), previous_full(day, fetch))
     records = tuple(_load(os.path.join(here, f), {}) for f in ("record.json", "tennis-record.json", "sports-record.json"))
     attach_results(items, *records)
+    prices = ledger_prices(here)
+    attach_prices(items, prices)     # 28 Nov 2026: each pick's pre-start price (`px`), for the Prime filter
     items.sort(key=strength)
     for it in items: it.pop("published", None)
     lst, res = [i for i in items if i["list"]], [i for i in items if i["reserve"]]
@@ -523,7 +584,7 @@ def build(now=None, here=HERE, fetch=True):
     for it in early: it.pop("published", None)
     return {"date": day, "generated": now.strftime("%Y-%m-%dT%H:%M:%SZ"), "summary": summary, "early": early,
             "coverage": coverage(day, archives, here, now), "list": lst, "reserve": res,
-            "past": past_days(now, here, records), "bands": band_records(here),
+            "past": past_days(now, here, records, prices=prices), "bands": band_records(here),
             "played": played_today(day, archives, now, records, here)}
 
 

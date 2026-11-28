@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-prime-filter: Prime, a filter in the Daily List's Sport row (tag pending)
+
+**What changed:** the Daily List's filter bar has a **Prime** button at the end of its Sport row, on or off like the sports beside it. It applies to the rows, the day ribbon's counts and At a glance, on the days ahead and on each of the seven days behind: every pinned and past pick now carries its pre-start price from the results ledger (`px`, `daylist.py`), since the page's own prices reach back to yesterday only. Prime keeps only Daily List picks (never the reserve) at 80%+, priced 1.10 to 1.40 at the price the row shows, with the college sports left out. It carries a chip, the count, a line saying what it is and how it has landed, and the address `#list?show=prime`; the glance and the day ribbon follow it. A pick with no price on file is not Prime.
+**Evidence:** Douglas, 28 Nov, after a week of lost accumulators. On the results ledger, list picks 29 Oct to 27 Nov: college basketball at 1.10+ landed 40 of 61 (-15.8%); other sports at 1.10 to 1.40 and 80%+ landed 49 of 54 (+6.9%), under 80% 23 of 29 (-4.3%). Whole ledger to 27 Nov: 53 of 61, +2.6%; the second half of the month flat. A read of the scoreboard, not a tested rule, and the page says so. Checked in Chrome at 1280 and 400 on seeded prices (the sandbox cannot price). `claude/prime-filter-2026-11-28.md`.
+**Files:** `index.html`, `daylist.py`, `tests/test_prime_filter.py`, `tests/test_daylist_px.py`, `claude/prime-filter-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any pick, the list rule, the order, the record, the star, the cards, the emails, any model. No other page offers Prime.
+**Roll back:** `git revert` the merge; a stored Prime choice then reads as Every pick.
+
 ## 2026-11-28-ncaab-neutral-slope: Reserve below quote is college neutral courts; flatter slope rejected (tag pending)
 
 **What changed:** nothing on the page. A dated note and an advisory tool.
