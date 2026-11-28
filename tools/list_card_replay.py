@@ -21,6 +21,14 @@ the list first:
               form one tier ordered by the model's number. Floors, prices,
               leg caps, targets, the later football and any-sport tiers and
               the college exclusion are unchanged.
+  nobookies   pre-registered 28 Nov 2026 (claude/bookies-mark-2026-11-20.md,
+              "the next step is a rule, not a mark"): live, with every pick
+              the model rates GAP (10 points) or more above the bookmakers'
+              fair chance left out, the page's Bookies mark as a veto. The
+              fair chance is the leg's own where the pool kept one, else
+              1 / price / LEDGER_MARGIN (tools/market_gap.py's rule: the
+              ledger keeps the pick's price only). On the ledger 328 such
+              picks at 60%+ landed 53.7% v the model's 72% (28 Nov).
 
 Two sources, each built as at 07:00 UK on the slip's day (the hour the
 slips are held from since 23 and 24 Nov 2026):
@@ -48,16 +56,34 @@ sys.path.insert(0, HERE); sys.path.insert(0, os.path.join(HERE, "tools"))
 import groupings as G  # noqa: E402
 
 LEDGER = os.path.join(HERE, "results-ledger.json.gz")
-VARIANTS = ("live", "confidence")
+VARIANTS = ("live", "confidence", "nobookies")
+from market_gap import GAP_WARN as GAP, LEDGER_MARGIN  # noqa: E402
 CARDS = ("daily", "list")
 GATE_LEGS = 100
 GATE_P = 0.30
 
 
+def fair_of(l):
+    """The bookmakers' fair chance of a leg: its own when kept, else the
+    price's implied chance less LEDGER_MARGIN (tools/market_gap.py)."""
+    if l.get("fair") is not None: return l["fair"]
+    o = l.get("odds")
+    imp = l.get("implied") or (1 / o if o and o > 1 else None)
+    return imp / LEDGER_MARGIN if imp else None
+
+
+def marked(l):
+    """The page's Bookies mark: the model GAP or more above the fair chance."""
+    f = fair_of(l)
+    return f is not None and (l.get("pModel") or 0) - f >= GAP
+
+
 def merged(day_legs, variant):
     """The legs a variant builds from: under `confidence` a reserve pick is
-    read as a list pick (one tier, the model's number orders it)."""
+    read as a list pick (one tier, the model's number orders it); under
+    `nobookies` a Bookies-marked pick is left out."""
     if variant == "live": return day_legs
+    if variant == "nobookies": return [l for l in day_legs if not marked(l)]
     return [dict(l, list=True) if l.get("reserve") and not l.get("list") else l for l in day_legs]
 
 
@@ -155,7 +181,7 @@ def main():
         for src, by in sources.items():
             out = run(by, card)
             r = {v: tally(out[v]) for v in VARIANTS}
-            r["paired"] = paired(out["live"], out["confidence"])
+            r["paired"] = {v: paired(out["live"], out[v]) for v in VARIANTS if v != "live"}
             r["from"], r["to"] = (min(by), max(by)) if by else (None, None)
             report["cards"][card][src] = r
             print(f"\n{'Daily 2x' if card == 'daily' else 'List card'} on the {src} ({r['from']} to {r['to']}):")
@@ -164,13 +190,16 @@ def main():
                 ret = f"{t['return'] * 100:+.1f}%" if t["return"] is not None else "n/a"
                 print(f"  {v:<11} {t['slips']:>3} slips, {t['won']:>3} won v {t['expected']:>6} expected, return {ret}, "
                       f"legs {t['legsWon']}/{t['legs']} ({t['reserveLegs']} reserve), short {t['short']}")
-            p = r["paired"]
-            print(f"  confidence v live: {p['perDay']:+.3f} a day on {p['days']} days, p(worse) {p['pWorse']}, "
-                  f"differs on {p['daysDiffer']} days / {p['legsDiffer']} legs")
-        pairs = [report["cards"][card][s]["paired"] for s in sources]
-        report["cards"][card]["gate"] = gate(pairs) if len(pairs) == 2 else None
-        print(f"  gate (both sources, {GATE_LEGS}+ differing legs, p(worse) <= {GATE_P}): "
-              f"{'pass, for Douglas' if report['cards'][card]['gate'] else 'not met'}")
+            for v, p in r["paired"].items():
+                print(f"  {v} v live: {p['perDay']:+.3f} a day on {p['days']} days, p(worse) {p['pWorse']}, "
+                      f"differs on {p['daysDiffer']} days / {p['legsDiffer']} legs")
+        report["cards"][card]["gate"] = {}
+        for v in VARIANTS[1:]:
+            pairs = [report["cards"][card][s]["paired"][v] for s in sources]
+            ok = gate(pairs) if len(pairs) == 2 else None
+            report["cards"][card]["gate"][v] = ok
+            print(f"  {v} gate (both sources, {GATE_LEGS}+ differing legs, p(worse) <= {GATE_P}): "
+                  f"{'pass, for Douglas' if ok else 'not met'}")
     if "--json" in sys.argv:
         with open(sys.argv[sys.argv.index("--json") + 1], "w") as f: json.dump(report, f, indent=1)
     return report
