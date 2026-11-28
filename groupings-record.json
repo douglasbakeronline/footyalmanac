@@ -1,14 +1,14 @@
 {
- "graded": "2026-11-28T14:14:56Z",
+ "graded": "2026-11-28T16:10:16Z",
  "overall": {
-  "groups": 159,
+  "groups": 161,
   "settled": 156,
   "won": 47,
   "z": -1.21,
   "lost": 109,
-  "pending": 3,
-  "legs": 598,
-  "legsWon": 440,
+  "pending": 5,
+  "legs": 601,
+  "legsWon": 443,
   "returned": 133.66,
   "staked": 156,
   "returnedBest": 138.72,
@@ -19,10 +19,10 @@
   "unitsReturned": 154.96,
   "unitsReturnedBest": 160.22,
   "clv": {
-   "n": 198,
-   "shortened": 76,
-   "drifted": 78,
-   "mean": -0.0008
+   "n": 201,
+   "shortened": 77,
+   "drifted": 79,
+   "mean": -0.001
   }
  },
  "cardLegsBySport": {
@@ -75,12 +75,12 @@
   }
  },
  "cardLive": {
-  "groups": 4,
+  "groups": 6,
   "settled": 3,
   "won": 1,
   "z": -0.27,
   "lost": 2,
-  "pending": 1,
+  "pending": 3,
   "legs": 9,
   "legsWon": 7,
   "returned": 2.49,
@@ -93,10 +93,10 @@
   "unitsReturned": 4.98,
   "unitsReturnedBest": 5.12,
   "clv": {
-   "n": 7,
-   "shortened": 0,
-   "drifted": 4,
-   "mean": -0.0141
+   "n": 10,
+   "shortened": 1,
+   "drifted": 5,
+   "mean": -0.0139
   }
  },
  "cardLiveRule": 14,
@@ -190,12 +190,12 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 90,
-   "won": 78,
-   "rate": 0.8667,
-   "quoted": 0.8721,
-   "returned": 85.88,
-   "ret": -0.0458
+   "n": 92,
+   "won": 80,
+   "rate": 0.8696,
+   "quoted": 0.871,
+   "returned": 88.3,
+   "ret": -0.0402
   },
   "notAtBook": {
    "n": 202,
@@ -204,20 +204,20 @@
    "quoted": 0.9161
   },
   "unchecked": {
-   "n": 41,
-   "won": 37,
-   "rate": 0.9024,
-   "quoted": 0.8468
+   "n": 42,
+   "won": 38,
+   "rate": 0.9048,
+   "quoted": 0.8447
   },
   "bySport": {
    "football": {
     "atBook": {
-     "n": 27,
-     "won": 24,
-     "rate": 0.8889,
-     "quoted": 0.8454,
-     "returned": 27.68,
-     "ret": 0.0252
+     "n": 29,
+     "won": 26,
+     "rate": 0.8966,
+     "quoted": 0.8437,
+     "returned": 30.1,
+     "ret": 0.0379
     },
     "notAtBook": {
      "n": 6,
@@ -226,10 +226,10 @@
      "quoted": 0.8575
     },
     "unchecked": {
-     "n": 24,
-     "won": 20,
-     "rate": 0.8333,
-     "quoted": 0.8046
+     "n": 25,
+     "won": 21,
+     "rate": 0.84,
+     "quoted": 0.8027
     }
    },
    "nba": {
@@ -631,6 +631,7 @@
    "ncaab|middle tennessee blue raiders|toccoa falls eagles|2026-11-28": -1,
    "football|tornado pekanbaru|persiba balikpapan|2026-11-29": 0,
    "football|slavia praha|baník ostrava|2026-11-29": 1.25,
+   "football|virtus|cailungo|2026-11-29": 0,
    "nfl|cincinnati bengals|new orleans saints|2026-11-29": 1.2,
    "nba|portland trail blazers|new orleans pelicans|2026-11-29": -1,
    "ncaab|santa clara broncos|utah tech trailblazers|2026-11-29": 0,
@@ -692,12 +693,12 @@
  },
  "byBand": {
   "Card 2x": {
-   "groups": 42,
+   "groups": 44,
    "settled": 41,
    "won": 13,
    "z": -0.86,
    "lost": 28,
-   "pending": 1,
+   "pending": 3,
    "legs": 122,
    "legsWon": 86,
    "returned": 30.24,
@@ -710,10 +711,10 @@
    "unitsReturned": 51.54,
    "unitsReturnedBest": 52.2,
    "clv": {
-    "n": 92,
-    "shortened": 28,
-    "drifted": 36,
-    "mean": -0.0065
+    "n": 95,
+    "shortened": 29,
+    "drifted": 37,
+    "mean": -0.0067
    }
   },
   "Card 3x": {
@@ -1009,12 +1010,12 @@
   }
  },
  "card": {
-  "groups": 48,
+  "groups": 50,
   "settled": 47,
   "won": 15,
   "z": -0.4,
   "lost": 32,
-  "pending": 1,
+  "pending": 3,
   "legs": 141,
   "legsWon": 95,
   "returned": 41.1,
@@ -1027,10 +1028,10 @@
   "unitsReturned": 60.31,
   "unitsReturnedBest": 61.12,
   "clv": {
-   "n": 106,
-   "shortened": 35,
-   "drifted": 43,
-   "mean": -0.0047
+   "n": 109,
+   "shortened": 36,
+   "drifted": 44,
+   "mean": -0.005
   }
  },
  "cardWide": {
@@ -1192,8 +1193,8 @@
   "z": -0.79,
   "lost": 8,
   "pending": 1,
-  "legs": 40,
-  "legsWon": 31,
+  "legs": 41,
+  "legsWon": 32,
   "returned": 8.08,
   "staked": 11,
   "returnedBest": 8.12,
@@ -1217,8 +1218,8 @@
   "z": 0.86,
   "lost": 1,
   "pending": 1,
-  "legs": 16,
-  "legsWon": 15,
+  "legs": 18,
+  "legsWon": 17,
   "returned": 4.24,
   "staked": 3,
   "returnedBest": 4.37,
@@ -1387,12 +1388,12 @@
    }
   },
   "14": {
-   "groups": 4,
+   "groups": 6,
    "settled": 3,
    "won": 1,
    "z": -0.27,
    "lost": 2,
-   "pending": 1,
+   "pending": 3,
    "legs": 9,
    "legsWon": 7,
    "returned": 2.49,
@@ -1405,21 +1406,21 @@
    "unitsReturned": 4.98,
    "unitsReturnedBest": 5.12,
    "clv": {
-    "n": 7,
-    "shortened": 0,
-    "drifted": 4,
-    "mean": -0.0141
+    "n": 10,
+    "shortened": 1,
+    "drifted": 5,
+    "mean": -0.0139
    }
   }
  },
  "cardByWindow": {
   "Day": {
-   "groups": 32,
+   "groups": 34,
    "settled": 31,
    "won": 11,
    "z": -0.1,
    "lost": 20,
-   "pending": 1,
+   "pending": 3,
    "legs": 92,
    "legsWon": 66,
    "returned": 28.88,
@@ -1432,10 +1433,10 @@
    "unitsReturned": 48.09,
    "unitsReturnedBest": 48.68,
    "clv": {
-    "n": 60,
-    "shortened": 17,
-    "drifted": 25,
-    "mean": -0.0033
+    "n": 63,
+    "shortened": 18,
+    "drifted": 26,
+    "mean": -0.0038
    }
   },
   "Daytime": {
@@ -1564,9 +1565,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 2,
+     "legsWon": 3,
      "legsLost": 0,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1622,8 +1623,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7591,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "1-0",
        "opp": 7.13,
        "rule12Fault": null,
        "r12": false
@@ -1670,9 +1671,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 2,
+     "legsWon": 4,
      "legsLost": 0,
-     "legsPending": 4,
+     "legsPending": 2,
      "legs": [
       {
        "pick": "Şanlıurfaspor",
@@ -1728,8 +1729,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8842,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "3-0",
        "opp": 21.7,
        "rule12Fault": null,
        "r12": false
@@ -1748,8 +1749,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.7591,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "1-0",
        "opp": 7.13,
        "rule12Fault": null,
        "r12": false
@@ -1877,6 +1878,178 @@
        "status": "pending",
        "result": null,
        "opp": 4.57,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 1,
+     "rule": 14,
+     "wideRule": null,
+     "odds": 2.17,
+     "p": 0.4514,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-28T14:30:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "FC Bayern München",
+       "event": "Hamburger v FC Bayern München",
+       "sport": "football",
+       "comp": "Bundesliga",
+       "when": "2026-11-28T14:30:00Z",
+       "odds": 1.31,
+       "best": 1.33,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.7775,
+       "status": "pending",
+       "result": null,
+       "opp": 8.05,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Al Ahli",
+       "event": "Al Ahli v Al Taawoun",
+       "sport": "football",
+       "comp": "Pro League",
+       "when": "2026-11-28T17:30:00Z",
+       "odds": 1.37,
+       "best": 1.42,
+       "lastOdds": 1.35,
+       "lockOdds": 1.35,
+       "lockBest": 1.42,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.7386,
+       "status": "pending",
+       "result": null,
+       "opp": 6.57,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "PSV",
+       "event": "PSV v Go Ahead Eagles",
+       "sport": "football",
+       "comp": "Eredivisie",
+       "when": "2026-11-28T17:45:00Z",
+       "odds": 1.21,
+       "best": 1.22,
+       "lastOdds": 1.21,
+       "lockOdds": 1.21,
+       "lockBest": 1.22,
+       "lockBook": "Bet365",
+       "est": false,
+       "p": 0.7861,
+       "status": "pending",
+       "result": null,
+       "opp": 10.35,
+       "rule12Fault": null,
+       "r12": false
+      }
+     ]
+    },
+    {
+     "name": "Card 2x",
+     "rank": "Day",
+     "window": "Day",
+     "seq": 3,
+     "rule": 14,
+     "wideRule": null,
+     "odds": 2.69,
+     "p": 0.3569,
+     "status": "pending",
+     "stake": 2,
+     "wide": false,
+     "late": false,
+     "locked": true,
+     "lockAt": "2026-11-28T15:00:00Z",
+     "span": null,
+     "basis": "model",
+     "paid": 0,
+     "paidBest": 0,
+     "paidLock": null,
+     "legsWon": 0,
+     "legsLost": 0,
+     "legsPending": 3,
+     "legs": [
+      {
+       "pick": "Dorking Wanderers",
+       "event": "Dorking Wanderers v Farnborough",
+       "sport": "football",
+       "comp": "National League South",
+       "when": "2026-11-28T15:00:00Z",
+       "odds": 1.4,
+       "best": 1.4,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.797,
+       "status": "pending",
+       "result": null,
+       "opp": 5.25,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "Oxford City",
+       "event": "Oxford City v Southport",
+       "sport": "football",
+       "comp": "National League North",
+       "when": "2026-11-28T15:00:00Z",
+       "odds": 1.4,
+       "best": 1.4,
+       "lastOdds": null,
+       "lockOdds": null,
+       "lockBest": null,
+       "lockBook": null,
+       "est": false,
+       "p": 0.6771,
+       "status": "pending",
+       "result": null,
+       "opp": 6.0,
+       "rule12Fault": null,
+       "r12": false
+      },
+      {
+       "pick": "UPNFM",
+       "event": "UPNFM v Juticalpa",
+       "sport": "football",
+       "comp": "Liga Nacional",
+       "when": "2026-11-29T01:00:00Z",
+       "odds": 1.37,
+       "best": 1.4,
+       "lastOdds": 1.45,
+       "lockOdds": 1.45,
+       "lockBest": 1.5,
+       "lockBook": "Betfair",
+       "est": false,
+       "p": 0.6614,
+       "status": "pending",
+       "result": null,
+       "opp": 6.91,
        "rule12Fault": null,
        "r12": false
       }
