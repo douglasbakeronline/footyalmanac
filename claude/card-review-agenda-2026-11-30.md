@@ -38,6 +38,7 @@ No rule changed. `CARD_RULE` stays 14 until the read.
 | `m7opp5` / `m7opp9` | both football-data seasons and the pool, 100+ legs, p(worse) <= 0.30 | 33 and 9 pool legs | `card-m7opp-2026-11-15.md` |
 | `modelcard` | pool 100+ legs at p(worse) <= 0.30 and `cardModel` not worse on both seasons | pool 48 legs, p(worse) 0.85 | `card-modelcard-2026-11-10.md` |
 | Fillers (`fillwide`, `fillrule5`) | filler's own legs 100+ | 30 and 18 | `card-fillers-2026-11-10.md` |
+| Hold band for published groups (added 28 Nov) | 10 settled withdrawn groups at or above the model | 1 settled, 1 won v 0.48 | `card-hold-band-row-2026-11-28.md` |
 
 None is due at 30 Nov on today's numbers. The rule-change items (`m7opp5`,
 `modelcard`) name Douglas while the rule 14 read stands ("no Card rule change

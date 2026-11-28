@@ -180,6 +180,29 @@ class TestWithdrawn(unittest.TestCase):
         out = "\n".join(C.live_days_section("/nonexistent", today_="2026-11-28", days=3, ledger=[]))
         self.assertNotIn("Withdrawn", out)
 
+    def test_tally_and_decisions_row(self):
+        """28 Nov 2026 (15:17 slot): the hold-band follow-up measured in the
+        decisions table (claude/card-hold-band-row-2026-11-28.md)."""
+        rows = [{"pick": "Q", "start": "2026-11-27T14:20:00Z", "result": "won"},
+                {"pick": "P", "start": "2026-11-28T00:30:00Z", "result": "won"}]
+        with tempfile.TemporaryDirectory() as t:
+            self._setup(t)
+            w = C.withdrawn_tally(t, today_="2026-11-28", now="2026-11-28T09:00:00Z", ledger=rows)
+        self.assertEqual((w["groups"], w["settled"], w["won"]), (1, 1, 1))
+        self.assertAlmostEqual(w["expected"], 0.483)
+        self.assertAlmostEqual(w["unitsReturned"] / w["unitsStaked"], 2.55)
+        out = "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=w))
+        self.assertIn("| Hold band for published Card groups | 10 settled withdrawn groups", out)
+        self.assertIn("1 of 1 won v 0.48 expected", out)
+        self.assertIn("| waiting |", out)
+        # ten settled at or above the model: due; under it: reviewed
+        due = dict(w, settled=10, won=6, expected=5.0)
+        self.assertIn("**due**", "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=due)))
+        low = dict(w, settled=10, won=4, expected=5.0)
+        self.assertIn("reviewed, no hold band", "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=low)))
+        # no tally passed: no row
+        self.assertNotIn("Hold band", "\n".join(C.decisions_section({}, {}, today_="2026-11-28")))
+
     def test_instant(self):
         self.assertEqual(C._instant("2026-11-28T00:30Z"), C._instant("2026-11-28T00:30:00Z"))
         self.assertIsNone(C._instant("not a time"))
