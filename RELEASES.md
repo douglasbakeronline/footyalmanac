@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-tennis-legs-5: tennis group legs, fifth read, nothing to ship (tag pending)
+
+**What changed:** a note only. The planner's 38 of 61 tennis group legs (z -1.9) is the same pre-floor population read on 13, 19 and 26 Nov.
+**Evidence:** `cardLegsBySport.tennis` 23/41 (z -2.13) unchanged since 14 Nov; at the 75% floor 11/15 v 11.9 (z -0.57). No attribute separates the misses; no tennis price history before 30 Oct, so Rule 3 gates cannot run.
+**Files:** `claude/tennis-legs-gap-2026-11-28.md`, `RELEASES.md`.
+**Not changed:** the Card rule, `CARD_SPORTS_OFF`, the model.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-28-list-nobookies: the Bookies mark tried as a veto on the Daily 2x and List card (tag pending)
 
 **What changed:** nothing on the page. `tools/list_card_replay.py` gains the pre-registered `nobookies` variant (the Daily 2x and List card built without picks the model rates 10+ points above the bookmakers' fair chance, the Bookies mark as a veto), and pairs and gates every variant on its own.
