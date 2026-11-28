@@ -985,6 +985,94 @@ def _ledger_rows(path="results-ledger.json.gz"):
         return []
 
 
+def _instant(s):
+    """An ISO time as an aware UTC datetime, or None ("2026-11-28T00:30Z" and
+    "2026-11-28T00:30:00Z" are the same instant)."""
+    from datetime import datetime as _dt, timezone as _tz
+    try: t = _dt.fromisoformat(str(s).replace("Z", "+00:00"))
+    except ValueError: return None
+    return t if t.tzinfo else t.replace(tzinfo=_tz.utc)
+
+
+def withdrawn_card_groups(archive, span, now=None):
+    """28 Nov 2026: staked Card groups the page published and then took off
+    before their first pick started (the publication log's `gone`), and whose
+    picks no archived group of the day holds. The rule re-checks a published
+    group on every build and withdraws it when a pick fails (the value demand
+    re-read at each build's price), so a reader who backed the group at a
+    briefing still holds a bet the record never sees: 27 Nov's Al Qadsiah,
+    Philadelphia 76ers and Detroit Pistons, published at 20:11 UTC the night
+    before, withdrawn at 07:10 when Al Qadsiah's fair chance passed the
+    model's by a fraction of a point, won all three. Why, from the page's own
+    read (card-short.json): the picks that were no longer clear of the rule at
+    the build that withdrew it. Returns [{day, name, picks, first, gone,
+    builds, price, stake, p, why}], picks as (name, when) where the log kept a
+    start. A tally of what the page showed; nothing enters the record (Rule 1).
+    claude/card-withdrawn-groups-2026-11-28.md"""
+    t_now = _instant(now) if now else None
+    short = load(os.path.join(archive, "card-short.json"))
+    short = short if isinstance(short, dict) else {}
+    out = []
+    for d in span:
+        doc = load(os.path.join(archive, "published", f"{d}.json"))
+        if not isinstance(doc, dict): continue
+        try: have = {_gid(g) for g in (load(os.path.join(archive, f"{d}.json")).get("groups") or [])}
+        except AttributeError: have = set()
+        for e in (doc.get("items") or {}).values():
+            if not isinstance(e, dict) or e.get("kind") != "card" or e.get("source") != "build" or not e.get("gone"): continue
+            last = e.get("last") or {}
+            name = str(last.get("name") or "")
+            if not name.startswith("Card ") or last.get("wide") or _gid(last) in have: continue
+            gone, st = _instant(e.get("gone")), _instant(e.get("start"))
+            if gone is None or st is None or gone >= st: continue      # off after its start: underway, not withdrawn
+            if t_now is not None and gone > t_now: continue
+            legs = [l for l in last.get("legs") or [] if isinstance(l, dict)]
+            seen = _instant(e.get("lastSeen"))
+            reads = [x for x in short.get(d) or [] if isinstance(x, dict) and _instant(x.get("at"))
+                     and (seen is None or _instant(x.get("at")) > seen) and _instant(x.get("at")) <= gone]
+            why = None
+            if reads:
+                r = reads[-1]
+                clear = {c[0] for c in r.get("clear") or [] if isinstance(c, (list, tuple)) and c}
+                off = [str(l.get("pick")) for l in legs if l.get("pick") not in clear]
+                why = (", ".join(off) + " no longer clear of the rule") if off else \
+                    ("every pick still clear; regrouped" if r.get("why") == "built" else f"every pick still clear ({r.get('why')})")
+            out.append({"day": d, "name": name, "first": e.get("firstSeen"), "gone": e.get("gone"), "builds": e.get("builds"),
+                        "picks": [(str(l.get("pick")), l.get("when")) if l.get("when") else str(l.get("pick")) for l in legs],
+                        "price": last.get("bookOdds") or last.get("odds"), "book": last.get("book"),
+                        "stake": last.get("stake") or 1, "p": last.get("p"), "why": why})
+    return out
+
+
+def withdrawn_lines(span, archive="groupings-archive", now=None, ledger=None):
+    """The review's line for withdrawn_card_groups, each group with its picks'
+    results on the ledger and the return at the last price the page showed."""
+    w = withdrawn_card_groups(archive, span, now)
+    if not w: return []
+    rows = _ledger_rows() if ledger is None else ledger
+    tally, named, staked, back, exp = Counter(), [], 0.0, 0.0, 0.0
+    for g in w:
+        res = shown_results(g["day"], g["picks"], rows)
+        v = group_verdict(res)
+        tally[v or "open"] += 1
+        if v in ("won", "lost"):
+            staked += g["stake"]; exp += g["p"] or 0
+            if v == "won" and g["price"]: back += g["stake"] * g["price"]
+        hm = lambda s: str(s or "")[5:16].replace("T", " ")
+        named.append(f"{g['day']} {g['name']} ({', '.join(f'{n} {r or 'pending'}' for n, r in res)})"
+                     + (f" at {g['price']:.2f}" if g["price"] else "")
+                     + (f", shown {hm(g['first'])}" if g["first"] else ", shown") + f" to its withdrawal {hm(g['gone'])} UTC"
+                     + (f" over {g['builds']} build(s)" if g["builds"] else "")
+                     + (f": {g['why']}" if g["why"] else "") + f": {v or 'not settled'}")
+    line = (f"Withdrawn after publication: {len(w)} Card group(s) the page published and took off before the first pick "
+            f"started, its picks in no archived group (the publication log's `gone`): {'; '.join(named)}. A reader who backed "
+            "one when it was shown still holds it; none is in the record or the counts above (Rule 1). On the results ledger: "
+            f"{tally['won']} won, {tally['lost']} lost, {tally['open']} not settled")
+    if staked:
+        line += f"; settled {tally['won']} won v {exp:.2f} expected, {pct(back / staked - 1)} at the page's stakes and last shown price"
+    return [line + "."]
+
+
 def shown_results(day, picks, rows):
     """26 Nov 2026: each pick of a Card group the archive never received,
     looked up on the results ledger: the row with that pick whose start falls
@@ -999,8 +1087,11 @@ def shown_results(day, picks, rows):
     out = []
     for item in picks:
         name, when = (item if isinstance(item, (tuple, list)) else (item, None))
+        # 28 Nov 2026: compared as instants, as the publication log keeps some
+        # legs' starts without seconds ("00:30Z") where the ledger writes "00:30:00Z"
+        at = _instant(when) if when else None
         cand = [r for r in rows if r.get("pick") == name and r.get("result") != "duplicate"
-                and (r.get("start") == when if when else lo <= str(r.get("start") or "") < hi)]
+                and ((at is not None and _instant(r.get("start")) == at) if when else lo <= str(r.get("start") or "") < hi)]
         cand.sort(key=lambda r: str(r.get("start") or ""))
         res = cand[0].get("result") if cand else None
         out.append((name, res if res in ("won", "lost", "void") else None))
@@ -1082,6 +1173,7 @@ def live_days_section(archive="groupings-archive", today_=None, days=14, record=
                      f"(the publication log, `groupings-archive/published/`): {'; '.join(named)}. They are not in the record or the "
                      "counts above (Rule 1: the archive is written by the build); their days are not counted as empty. "
                      f"On the results ledger: {tally['won']} won, {tally['lost']} lost, {tally['open'] + tally['unknown']} not settled.")
+    lines += withdrawn_lines(span, archive, now, ledger)
     for d in sorted(still):
         lines.append(f"Still open from {d}: " + "; ".join(f"{nm} ({', '.join(p)}), first start {st}" for nm, p, st in still[d]) + ".")
     if run >= 3:
