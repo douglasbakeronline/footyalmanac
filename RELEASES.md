@@ -3,6 +3,13 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-log-shrink: Log-space rating shrinkage tested and rejected (tag pending)
+
+**What changed:** nothing in the model. A dated note and the test harness only.
+**Evidence:** geometric shrinkage (`raw**w`) v the live linear shrink, fit 2025/26 (6,474), check 2026/27 (2,496), paired: k=4 +0.0002 / +0.0001 (p(worse) 0.88 / 0.60); k=3 +0.0005 / -0.0009 (refit +0.0003); k=6 +0.0003 / +0.0024. Gates failed.
+**Files:** `claude/log-shrink-2026-11-28.md`, `tools/log_shrink_eval.py`.
+**Not changed:** `engine.py`, calibration.
+**Roll back:** `git revert` the commit.
 ## 2026-11-27-groupings-get-retry: The pricing step's ESPN and API-Football reads retry a blip (tag pending)
 
 **What changed:** `groupings.get`, the one JSON read behind the ESPN scoreboards the pricing step uses (US sports, football slugs) and its API-Football calls, had no retry: one timeout or 503 left that day's games unpriced for the whole build, with nothing printed. It now retries a timeout, reset, cut-off body, 5xx or 429 twice with backoff (1.5s, 3s); a 4xx is raised at once; after 4 calls in a row that failed every try it stops retrying for the run, so an outage costs seconds. The last error is still raised (callers already skip the leg and keep the cached price), and a "failed after 3 tries" line is printed.
