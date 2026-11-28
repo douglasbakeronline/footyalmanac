@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-log-shrink: Log-space rating shrinkage tested and rejected (tag pending)
+
+**What changed:** nothing in the model. A dated note and the test harness only.
+**Evidence:** geometric shrinkage (`raw**w`) v the live linear shrink, fit 2025/26 (6,474), check 2026/27 (2,496), paired: k=4 +0.0002 / +0.0001 (p(worse) 0.88 / 0.60); k=3 +0.0005 / -0.0009 (refit +0.0003); k=6 +0.0003 / +0.0024. Gates failed.
+**Files:** `claude/log-shrink-2026-11-28.md`, `tools/log_shrink_eval.py`.
+**Not changed:** `engine.py`, calibration.
+**Roll back:** `git revert` the commit.
+
 ## 2026-11-28-tennis-legs-5: tennis group legs, fifth read, nothing to ship (tag pending)
 
 **What changed:** a note only. The planner's 38 of 61 tennis group legs (z -1.9) is the same pre-floor population read on 13, 19 and 26 Nov.
