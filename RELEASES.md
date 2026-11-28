@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-ncaab-neutral-slope: Reserve below quote is college neutral courts; flatter slope rejected (tag pending)
+
+**What changed:** nothing on the page. A dated note and an advisory tool.
+**Evidence:** reserve picks since 31 Oct on `sports-graded.json`: college basketball neutral 62 of 112 (55% v 71%, z -3.8); every other group on quote (ncaab unmarked 74.2% v 74.3%, cfb +0.2 z, nba +0.4). A neutral-site slope of 0.71 (early months) gains +0.00028 log loss on the 2025-26 check season (p(worse) 0.24), under the 0.0005 bar; this season +0.0033.
+**Files:** `claude/ncaab-neutral-slope-2026-11-28.md`, `tools/ncaab_neutral_slope_eval.py`, `RELEASES.md`.
+**Not changed:** the model, the reserve rule, `sports.json` (the `NEUTRAL0` refit remains Douglas's by-hand step).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-28-withdrawn-on-page: a withdrawn Card group named on the Bets tab (tag pending)
 
 **What changed:** a day whose Card box is empty now says when the page had shown a Card group for it and withdrew it before its first start: the kind, price, picks, when it was shown and withdrawn, and why, with "a bet already placed stands as placed; withdrawn groups are not graded". Each Card re-check log entry keeps when the group was first shown (`first`).
