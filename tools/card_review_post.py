@@ -364,6 +364,8 @@ def context_section(r):
 # in the row; nothing here decides anything, and the counts are the record's
 # (a tally of the scoreboard, never a fit, Rule 1) or the pool replay's.
 REVIEW_DAY = "2026-11-30"
+WITHDRAWN_FROM = "2026-11-26"   # the publication log records withdrawals from here (publog.py)
+HOLD_REVIEW_AT = 10             # settled withdrawn groups before a hold band is pre-registered
 
 
 def _settled(t): return (t or {}).get("settled", 0) or 0
@@ -401,7 +403,7 @@ def card_tennis_since(rec, rule=10):
     return n
 
 
-def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50, rep_close=None):
+def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50, rep_close=None, withdrawn=None):
     """The pre-registered decisions table: decision, trigger, where it stands,
     status (waiting / **due** / **fired**) and who acts."""
     today_ = today_ or today
@@ -508,6 +510,21 @@ def decisions_section(rec, rep, hist=None, today_=None, floor_z=-2.0, floor_n=50
                             ("cardListLong", "The List long dropped", "30 settled, under the stake")):
         t = rec.get(key) or {}
         row(name, rule, _tally(t), "**due**" if _settled(t) >= 30 else "waiting", "the next session reads it; a stake line is Douglas's")
+    # 10. A hold band for published groups (28 Nov 2026). Rule 14 re-reads the
+    # value demand at each build's price and withdraws a published group when a
+    # pick fails by any margin (27 Nov: three winners withdrawn on a sub-point
+    # miss). The pool replay reads one price a leg, so it cannot test a hold;
+    # the withdrawn groups themselves are the evidence. At HOLD_REVIEW_AT
+    # settled, landing at or above the model's number, the next session
+    # pre-registers a hold-band variant (claude/card-withdrawn-groups-2026-11-28.md,
+    # claude/card-hold-band-row-2026-11-28.md). A tally, nothing fitted (Rule 1).
+    if withdrawn is not None:
+        n, won, exp = _settled(withdrawn), withdrawn.get("won", 0), withdrawn.get("expected", 0) or 0
+        st = ("**due**" if won >= exp else "reviewed, no hold band") if n >= HOLD_REVIEW_AT else "waiting"
+        row("Hold band for published Card groups",
+            f"{HOLD_REVIEW_AT} settled withdrawn groups (the publication log, from {WITHDRAWN_FROM}) landing at or above the model's number",
+            f"{withdrawn.get('groups', 0)} withdrawn; " + (f"{won} of {n} won v {exp:.2f} expected, {_ret(withdrawn)}" if n else "none settled"),
+            st, "the next session pre-registers the variant; a rule change is Douglas's")
     head = [f"## Pre-registered decisions ({REVIEW_DAY} review in {days_left} day(s))" if days_left > 0
             else f"## Pre-registered decisions (the {REVIEW_DAY} review is due)", "",
             "| decision | trigger | now | status | who acts |", "|---|---|---|---|---|"]
@@ -1044,13 +1061,10 @@ def withdrawn_card_groups(archive, span, now=None):
     return out
 
 
-def withdrawn_lines(span, archive="groupings-archive", now=None, ledger=None):
-    """The review's line for withdrawn_card_groups, each group with its picks'
-    results on the ledger and the return at the last price the page showed."""
-    w = withdrawn_card_groups(archive, span, now)
-    if not w: return []
-    rows = _ledger_rows() if ledger is None else ledger
-    tally, named, staked, back, exp = Counter(), [], 0.0, 0.0, 0.0
+def _withdrawn_settled(w, rows):
+    """Each withdrawn group with its picks' results and verdict, and the
+    totals: (items [(g, res, v)], tally, staked, returned, expected)."""
+    items, tally, staked, back, exp = [], Counter(), 0.0, 0.0, 0.0
     for g in w:
         res = shown_results(g["day"], g["picks"], rows)
         v = group_verdict(res)
@@ -1058,6 +1072,34 @@ def withdrawn_lines(span, archive="groupings-archive", now=None, ledger=None):
         if v in ("won", "lost"):
             staked += g["stake"]; exp += g["p"] or 0
             if v == "won" and g["price"]: back += g["stake"] * g["price"]
+        items.append((g, res, v))
+    return items, tally, staked, back, exp
+
+
+def withdrawn_tally(archive="groupings-archive", today_=None, now=None, ledger=None):
+    """28 Nov 2026: every withdrawn Card group since the publication log began
+    recording withdrawals (WITHDRAWN_FROM) to today, in the record's tally
+    shape (groups, settled, won, expected, unitsStaked, unitsReturned) for the
+    decisions table's hold-band row. A tally of what the page showed (Rule 1)."""
+    from datetime import date as _date, timedelta as _td
+    a, b = _date.fromisoformat(WITHDRAWN_FROM), _date.fromisoformat(today_ or today)
+    span = [(a + _td(days=i)).isoformat() for i in range((b - a).days + 1)]
+    w = withdrawn_card_groups(archive, span, now)
+    rows = (_ledger_rows() if ledger is None else ledger) if w else []
+    _, tally, staked, back, exp = _withdrawn_settled(w, rows)
+    return {"groups": len(w), "settled": tally["won"] + tally["lost"], "won": tally["won"], "expected": round(exp, 4),
+            "unitsStaked": staked, "unitsReturned": back}
+
+
+def withdrawn_lines(span, archive="groupings-archive", now=None, ledger=None):
+    """The review's line for withdrawn_card_groups, each group with its picks'
+    results on the ledger and the return at the last price the page showed."""
+    w = withdrawn_card_groups(archive, span, now)
+    if not w: return []
+    rows = _ledger_rows() if ledger is None else ledger
+    items, tally, staked, back, exp = _withdrawn_settled(w, rows)
+    named = []
+    for g, res, v in items:
         hm = lambda s: str(s or "")[5:16].replace("T", " ")
         named.append(f"{g['day']} {g['name']} ({', '.join(f'{n} {r or 'pending'}' for n, r in res)})"
                      + (f" at {g['price']:.2f}" if g["price"] else "")
@@ -1192,7 +1234,8 @@ def review_body():
     f = integ.get("findings", [])
     lines += [f"## Integrity: {len(f)} finding(s)"] + [f"- `{x['check']}` " + " ".join(f"{k}={v}" for k, v in x.items() if k != "check") for x in f[:20]] + [""]
     lines += live_days_section()
-    lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"), rep_close=rep_close)
+    lines += decisions_section(load("groupings-record.json"), rep, load("card-legs-history.json"), rep_close=rep_close,
+                               withdrawn=withdrawn_tally(now=datetime.now(timezone.utc).isoformat()))
     if rep.get("variants"):
         lines += [f"## The Card on the archive, {rep['from']} to {rep['to']} ({rep['days']} days)", "",
                   "| variant | groups | won | expected | legs | return | empty days | v live / day | p(worse) | differs: days / legs |", "|---|---|---|---|---|---|---|---|---|---|"]

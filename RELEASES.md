@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-hold-band-row: the hold-band follow-up measured in the review's decisions table (tag pending)
+
+**What changed:** nothing on the page. The nightly Card review's decisions table gains "Hold band for published Card groups": every Card group withdrawn before its first start since 26 Nov, settled on the ledger, due for a pre-registered hold-band variant at 10 settled landing at or above the model's number.
+**Evidence:** 1 withdrawn (27 Nov), 1 of 1 won v 0.48 expected, +155.0% at the page's stakes. Waiting. `claude/card-hold-band-row-2026-11-28.md`.
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `claude/card-hold-band-row-2026-11-28.md`, `claude/card-review-agenda-2026-11-30.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, the record, any Card constant (`CARD_RULE` 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-28-card-withdrawn: the nightly review names Card groups withdrawn after publication (tag pending)
 
 **What changed:** nothing on the page. The nightly Card review now names every Card group the page published and withdrew before its first start, with the pick that left the rule, each pick's result and the return at the page's stake. It also fixes the review's lookup of a leg's result when the publication log kept its start without seconds.
