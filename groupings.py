@@ -109,7 +109,7 @@ the groups landed 11 of 58 (19%). They stay in the record under their names.
 
 Standard library only.
 """
-import gzip, itertools, json, math, os, re, sys, time, unicodedata, urllib.request
+import gzip, itertools, json, math, os, re, sys, time, unicodedata, urllib.error, urllib.request
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 from difflib import SequenceMatcher
@@ -244,10 +244,41 @@ def same(a, b):
     if not a or not b: return False
     return a == b or a in b or b in a or SequenceMatcher(None, a, b).ratio() >= 0.8
 
-def get(url, headers=None, timeout=40):
+GET_TRIES = 3            # one read plus two retries on a transient failure
+GET_DOWN_AFTER = 4       # consecutive calls that failed every try: stop retrying this run
+_GET_DOWN = {"run": 0}
+
+
+def get(url, headers=None, timeout=40, tries=None, pause=1.5):
+    """One JSON read. A timeout, reset, 5xx or 429 is retried with backoff
+    (a blip used to leave a game unpriced for the whole build); a 4xx is an
+    answer and raised at once. After GET_DOWN_AFTER calls in a row that failed
+    every try the source is treated as down and each call gets one try, so an
+    outage costs seconds, not a build. The last error is always raised, never
+    swallowed: callers keep yesterday's data (Rule 9)."""
+    tries = GET_TRIES if tries is None else tries
+    if _GET_DOWN["run"] >= GET_DOWN_AFTER:
+        tries = 1
     req = urllib.request.Request(url, headers=dict(UA, **(headers or {})))
-    with urllib.request.urlopen(req, timeout=timeout) as r:
-        return json.loads(r.read())
+    err = None
+    for attempt in range(max(1, tries)):
+        try:
+            with urllib.request.urlopen(req, timeout=timeout) as r:
+                out = json.loads(r.read())
+            _GET_DOWN["run"] = 0
+            return out
+        except urllib.error.HTTPError as e:
+            if 400 <= e.code < 500 and e.code != 429:
+                _GET_DOWN["run"] = 0     # the host answered
+                raise
+            err = e
+        except (OSError, ValueError) as e:      # timeouts, resets, a cut-off body
+            err = e
+        if attempt + 1 < tries:
+            time.sleep(pause * (2 ** attempt))
+    _GET_DOWN["run"] += 1
+    print(f"  groupings: {url.split('?')[0]} failed after {max(1, tries)} tries ({err})", file=sys.stderr)
+    raise err
 
 def read_js(name):
     path = os.path.join(HERE, name)
