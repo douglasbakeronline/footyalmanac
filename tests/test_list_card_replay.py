@@ -41,6 +41,24 @@ class ListCardReplay(unittest.TestCase):
         self.assertGreater(p["perDay"], 0)
         self.assertFalse(R.gate([p, p]))   # two legs is far under the 100-leg gate
 
+    def test_nobookies_leaves_out_marked_picks(self):
+        # 1.45 -> implied 0.690, fair 0.657 at the ledger margin: 0.80 is 14 points above, 0.70 is 4
+        L = [leg(1, 1.45, 0.80, lst=True), leg(2, 1.45, 0.70, lst=True), leg(3, 1.45, 0.69, lst=True)]
+        self.assertTrue(R.marked(L[0])); self.assertFalse(R.marked(L[1]))
+        live = R.build_daily(L, AFTER, "live")[0]; nob = R.build_daily(L, AFTER, "nobookies")[0]
+        self.assertIn("a1", {l["pick"] for l in live["legs"]})
+        self.assertEqual({l["pick"] for l in nob["legs"]}, {"a2", "a3"})
+
+    def test_nobookies_reads_a_kept_fair_chance_first(self):
+        l = dict(leg(1, 1.45, 0.80, lst=True), fair=0.75)
+        self.assertFalse(R.marked(l))      # 5 points over the kept fair chance
+        self.assertAlmostEqual(R.fair_of(leg(2, 2.0, 0.6)), 0.5 / 1.05, places=4)
+
+    def test_every_variant_paired(self):
+        L = [leg(1, 1.45, 0.80, lst=True), leg(2, 1.45, 0.70, lst=True), leg(3, 1.45, 0.69, lst=True)]
+        out = R.run({DAY: L}, "daily")
+        self.assertEqual(set(out), set(R.VARIANTS))
+
     def test_ledger_legs_settled_and_priced_only(self):
         rows = [{"key": "k1", "sport": "nba", "pick": "x", "start": f"{DAY}T15:00:00Z", "date": DAY, "conf": 0.8,
                  "reserve": True, "result": "won", "first": {"o": 1.4}, "last": {"o": 1.5}},

@@ -3,6 +3,18 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-list-nobookies: the Bookies mark tried as a veto on the Daily 2x and List card (tag pending)
+
+**What changed:** nothing on the page. `tools/list_card_replay.py` gains the pre-registered `nobookies` variant (the Daily 2x and List card built without picks the model rates 10+ points above the bookmakers' fair chance, the Bookies mark as a veto), and pairs and gates every variant on its own.
+
+**Evidence:** on the Daily 2x the veto is behind live on both sources at both prices: ledger -0.05 a day (p(worse) 0.68; last price -0.12, 0.96), pool -0.25 (0.90; 0.92), 9 of 29 pool slips won v live's 12. Marked picks inside live slips landed 18 of 26 v the bookmakers' ~62%: the mark's losses are college basketball, which both slips already leave out. Gate not met.
+
+**Files:** `tools/list_card_replay.py`, `tests/test_list_card_replay.py`, `claude/list-card-nobookies-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** `daily_group`, `build_list_card`, the Bookies mark, any Card constant (`CARD_RULE` 14).
+
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-27-ncaab-neutral: the neutral court and college basketball's home term, ready to switch on (tag pending)
 
 **What changed:** nothing a reader sees yet. College basketball's November-December calibration adds +0.31 log-odds to the home side; on a neutral court it went to whichever team ESPN lists first. `sports.NEUTRAL0` fits the curve on venue games and drops the intercept at a neutral site, inert until a `sports.py --tune --only ncaab` run writes `neutral0` into `sports.json` (rule 5, Douglas's step).
