@@ -30,3 +30,5 @@ racing.js
 # The Mailer tab's emails, rebuilt by mailbox.py on every deploy (mail-archive/ is what is kept)
 mailbox.json
 mailbox.js
+# The model's record on every team, rebuilt by teamrecord.py on every deploy (28 Nov 2026)
+team-record.js

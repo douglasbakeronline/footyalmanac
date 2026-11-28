@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-team-record: the model's record on every team, in the open row (tag pending)
+
+**What changed:** open any row, any sport, and under the team sheets there is now "The model's record on each side": for each club, side or player, every graded fixture it has played in, how many the model called right against how many it expected to at its quotes, how its picks of that side did, and the last ten calls as dots. Green at or above what the model expected, red under, grey with "too few to read" under 10 fixtures. Douglas: "every team in sports fixtures has an accuracy rating of how the model performed for them in every fixture they've played".
+**Evidence:** 4,528 football identities, 613 tennis players and 650 sides in the other sports tallied from the three graded files, nothing regraded. Clubs are joined across spellings, cups and Europe only on evidence (14 spelling joins checked by hand; men's and women's sides, FC Andorra and Andorra CF kept apart); ten record rows graded under two competition codes are counted once. Walk-forward on the record (`teamrecord.py --check`): picks whose two sides the model had run 10+ points above quote on landed 71.2% v 65.1% quoted (257, z +2.08), 10+ under 62.2% v 61.7% (111): a lean, about one standard error between the bands, so display only. `claude/team-record-2026-11-28.md`.
+**Files:** `teamrecord.py`, `index.html`, `tests/test_teamrecord.py`, `.github/workflows/deploy.yml`, `.gitignore`, `claude/team-record-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model, the Daily List, any card, the record files, the closed row (no new chip).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-28-hold-band-row: the hold-band follow-up measured in the review's decisions table (tag pending)
 
 **What changed:** nothing on the page. The nightly Card review's decisions table gains "Hold band for published Card groups": every Card group withdrawn before its first start since 26 Nov, settled on the ledger, due for a pre-registered hold-band variant at 10 settled landing at or above the model's number.

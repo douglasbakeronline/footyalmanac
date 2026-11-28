@@ -1461,6 +1461,29 @@ table.sheet td:first-child{text-align:left;font-family:var(--f-ui);font-size:13.
 }
 .flag.carry{background:var(--draw-soft);color:#5f4715}
 .flag.live{background:var(--home-soft);color:#0d443f}
+/* 28 Nov 2026 (Douglas: "every team ... has an accuracy rating of how the model
+   performed for them"): the model's record on each side, in an open row
+   (teamRecBlock, from teamrecord.py's team-record.js). Tiles in the scoreline's
+   idiom; a call is a dot, oldest first. Display only. */
+.trec-wrap{margin-top:16px;padding-top:14px;border-top:1px solid var(--rule)}
+.trec-wrap>h3 small{font:500 var(--t-xs) var(--f-num);letter-spacing:0;text-transform:none;color:var(--mute);margin-left:6px}
+.trec-name{font:600 var(--t-base) var(--f-ui);color:var(--ink);margin-bottom:6px;display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.trec-name small{font:500 var(--t-xs) var(--f-num);color:var(--mute)}
+.trec-wrap .detail-grid>div{display:flex;flex-direction:column}
+.trec{flex:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--rule-soft);border:1px solid var(--rule)}
+.trec>div{background:var(--surface);padding:9px 11px;min-width:0}
+.trec span{display:block;font:700 9.5px var(--f-ui);letter-spacing:.11em;text-transform:uppercase;color:var(--mute);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trec b{display:block;font:600 21px/1 var(--f-num);letter-spacing:-.03em;color:var(--ink)}
+.trec small{display:block;font:400 var(--t-xs)/1.35 var(--f-num);color:var(--mute);margin-top:4px}
+.trec .good b{color:#2f6b52}
+.trec .bad b{color:var(--away)}
+.trec .thin b{color:var(--mute)}
+.trec-dots{display:flex;flex-wrap:wrap;gap:3px;min-height:21px;align-items:center}
+.trec-dots i{width:8px;height:8px;border-radius:50%;background:var(--red);flex:none}
+.trec-dots i.ok{background:#2f6b52}
+.trec-none{font-size:var(--t-sm);color:var(--mute);padding:9px 11px;background:var(--surface);border:1px solid var(--rule)}
+.trec-note{margin-top:10px;font-size:var(--t-sm);line-height:1.5;color:var(--mute);max-width:82ch}
+@media (max-width:1100px){ .trec{grid-template-columns:repeat(2,minmax(0,1fr))} }
 
 
 /* tested accuracy under the confidence number: what calls at this level
@@ -3543,6 +3566,7 @@ function detail(g){
       </div>`;
     return `<div class="detail">${research}${bv}
       <div class="detail-grid" style="margin-top:16px">${teamSheet(g.home,"Home")}${teamSheet(g.away,"Away")}</div>
+      ${teamRecBlock("football", g.league, g.home.name, g.away.name)}
     </div>`;
   }
   const T = tier(g);
@@ -3607,6 +3631,7 @@ function detail(g){
       ${teamSheet(g.home,"Home")}
       ${teamSheet(g.away,"Away")}
     </div>
+    ${teamRecBlock("football", g.league, g.home.name, g.away.name)}
     <div class="why">${why}</div>
     ${cl}
   </div>`;
@@ -5434,6 +5459,60 @@ function rerenderOpen(){
   if(!$("#starred").hidden) renderStarred();
 }
 
+/* ---------- the model's record on each side (teamrecord.py, 28 Nov 2026) ----------
+   Douglas: "every team in sports fixtures has an accuracy rating of how the
+   model performed for them in every fixture they've played". For each side of
+   an open row: the graded fixtures it played in, how many the model called
+   right (the picked result happened) against how many it expected to (the sum
+   of its quoted chances), how its picks of that side did, and the last ten
+   calls, oldest first. team-record.js arrives after the first paint
+   (LATE_FILES), so this reads window.__TEAM_RECORD__ when called and draws
+   nothing until it is there. A tally of the record: no model reads it, and
+   under minRead fixtures no verdict is coloured. Keys: football
+   "f|<competition code>|<name>", any other sport "<sport>|<name>". */
+function teamRec(key){
+  const T = window.__TEAM_RECORD__;
+  if(!T || !T.keys || !T.rows || !(key in T.keys)) return null;
+  const r = T.rows[T.keys[key]];
+  return r ? {n:r[0], right:r[1], quoted:r[2], backed:r[3], backedWon:r[4], against:r[5], againstRight:r[6], last:String(r[7] || ""), from:r[8]} : null;
+}
+function teamRecCard(name, r, min){
+  const head = (extra) => `<div class="trec-name">${ogEsc(name)}${extra ? `<small>${extra}</small>` : ""}</div>`;
+  if(!r || !r.n) return `<div>${head("")}<div class="trec-none">No graded fixture on the record yet.</div></div>`;
+  const few = r.n < min, rate = r.right / r.n, exp = r.quoted / r.n;
+  const cls = few ? "thin" : rate >= exp ? "good" : "bad";
+  const hits = (r.last.match(/1/g) || []).length;
+  const dots = [...r.last].map(c => `<i${c === "1" ? ` class="ok"` : ""}></i>`).join("");
+  return `<div>${head(`${r.n} graded since ${fmtShort(r.from)}`)}
+    <div class="trec">
+      <div class="${cls}"><span>Called right</span><b>${Math.round(rate * 100)}%</b><small>${r.right} of ${r.n}${few ? " · too few to read" : ""}</small></div>
+      <div><span>Model expected</span><b>${Math.round(exp * 100)}%</b><small>${r.quoted.toFixed(1)} of ${r.n} at its quotes</small></div>
+      <div><span>When backed</span><b>${r.backed ? `${r.backedWon} / ${r.backed}` : "–"}</b><small>${r.backed ? "won as the pick" : "never the pick"}</small>${r.against ? `<small>picked against: ${r.againstRight} of ${r.against} right</small>` : ""}</div>
+      <div><span>Last ${r.last.length}</span><div class="trec-dots" role="img" aria-label="Last ${r.last.length} calls, oldest first: ${hits} right">${dots}</div><small>${hits} right, newest last</small></div>
+    </div></div>`;
+}
+function teamRecBlock(sport, code, home, away){
+  const T = window.__TEAM_RECORD__;
+  if(!T || !T.keys) return "";
+  const key = n => sport === "football" ? `f|${code}|${n}` : `${sport}|${n}`;
+  const a = teamRec(key(home)), b = teamRec(key(away));
+  if(!a && !b) return "";
+  const min = T.minRead || 10, who = sport === "tennis" ? "player" : "side";
+  return `<div class="trec-wrap"><h3>The model's record on each ${who}<small>every graded ${sport === "tennis" ? "match" : "fixture"} each has played in</small></h3>
+    <div class="detail-grid">${teamRecCard(home, a, min)}${teamRecCard(away, b, min)}</div>
+    <p class="trec-note">Right means the result the model picked happened, whichever ${who} that was. Model expected is what its quoted chances
+    added up to, so a ${who} above it has been easier to call than the numbers said, and one below it harder. This is the record, not a forecast:
+    the model never reads it, and under ${min} ${sport === "tennis" ? "matches" : "fixtures"} it says very little.</p></div>`;
+}
+/* team-record.js has landed: an open row is redrawn with its record, held in place */
+function teamRecLanded(){
+  const redraw = () => { render(); rerenderOpen(); };
+  if(state.open){
+    const b = [...document.querySelectorAll("[data-oid]")].find(x => x.dataset.oid === state.open && x.offsetParent !== null);
+    b ? holdPlace(b, state.open, redraw) : redraw();
+  } else if(STAR.open && !$("#starred").hidden) renderStarred();
+}
+
 function formLines(f){
   if(!f || !f.length) return `<div class="stat">no recent games on file</div>`;
   return `<div class="tscroll"><table class="sheet"><tr><th>Last ${f.length}</th><th>Score</th><th></th></tr>${f.map(x =>
@@ -5463,7 +5542,7 @@ function sportDetail(g){
       <div><h3>${g.away} · ${rec(g.recordA)}</h3>${formLines(g.formA)}</div></div>` : "";
   const h2h = g.h2h && g.h2h.length ? `<div class="why"><b>Last meetings.</b> ${g.h2h.map(m =>
       `${m.home} ${m.score} ${m.away} <em>${m.date}</em>`).join(" · ")}</div>` : "";
-  return `<div class="detail">${research}${verdict}${why}${sheets}${h2h}</div>`;
+  return `<div class="detail">${research}${verdict}${why}${sheets}${teamRecBlock(g.sport, "", g.home, g.away)}${h2h}</div>`;
 }
 
 // A Daily List pick that has started: frozen as published before the start,
@@ -9003,7 +9082,7 @@ navApply("load");
    racing tabs and How it went's Cards board, so they load after the first
    paint instead of before it. Every reader already handles them missing (a
    failed build leaves them out), and the open tab redraws when they land. */
-const LATE_FILES = [["scale.js", "__SCALE__"], ["racing.js", "RACING"]];
+const LATE_FILES = [["scale.js", "__SCALE__"], ["racing.js", "RACING"], ["team-record.js", "__TEAM_RECORD__"]];   // 28 Nov 2026: the model's record on each side (teamrecord.py), read only by an open row
 function loadLate(){
   LATE_FILES.forEach(([src, key]) => {
     if(window[key]) return;
@@ -9012,6 +9091,7 @@ function loadLate(){
     s.onload = () => {
       if(key === "__SCALE__") SCALE = window.__SCALE__ || null;
       try {
+        if(key === "__TEAM_RECORD__"){ teamRecLanded(); return; }
         if(key === "__SCALE__" && !$("#scale").hidden) renderScale();
         if(key === "RACING" && !$("#racing").hidden) renderRacing();
         if(!$("#results").hidden) renderResults();
