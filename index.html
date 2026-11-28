@@ -2552,7 +2552,7 @@ const BANDS = [
    Display only: nothing is re-ranked or regraded. */
 const FILT_KEY = "almanacFilters";
 const SHOW_LABEL = {all: "Every pick", list: "Daily List", reserve: "Reserve", other: "Board only",
-  hill: "At William Hill", edge: "Edge", open: "Still to start", read: "Confident only"};
+  hill: "At William Hill", edge: "Edge", open: "Still to start", read: "Confident only", prime: "Prime"};
 const ORDER_LABEL = {strength: "Strongest", time: "Kick-off time", upset: "Upsets", goals: "Goals", sport: "Sport", tag: "List first"};
 const own = (o, k) => typeof k === "string" && Object.prototype.hasOwnProperty.call(o, k);
 function fClean(v){
@@ -2604,7 +2604,7 @@ let BETS_SPORTS = fSportLoad("betsSport"), SCALE_SPORTS = fSportLoad("scaleSport
    page's own set; `unset` / `clear` reset the page's own filters (football's
    competitions). Functions are read late, so later declarations are fine. */
 const FVIEWS = {
-  list: {bandDefault: "70up", bands: ["60up", "70up", "80up", "90"], show: ["all"], order: ["strength", "time"],
+  list: {bandDefault: "70up", bands: ["60up", "70up", "80up", "90"], show: ["all", "prime"], order: ["strength", "time"],
          sport: {get: () => LIST_SPORTS, set: v => { LIST_SPORTS = v; listSportSave(); }}, redraw: () => renderList()},
   starred: {show: ["all", "list", "reserve", "other", "edge", "open"], order: ["strength", "time", "sport", "tag"],
             sport: {get: () => STAR.sports, set: v => { STAR.sports = v; saveStarView(); }}, redraw: () => renderStarred()},
@@ -2674,7 +2674,7 @@ function filterBar(view, o){
   }
   if(o.show){
     const nowS = fShow(view);
-    const opts = o.show.filter(t => t.k === "all" || t.k === nowS || t.n == null || t.n > 0);
+    const opts = o.show.filter(t => t.k === "all" || t.k === nowS || t.keep || t.n == null || t.n > 0);
     if(opts.length > 1) groups.push(fbarGroup("Show", opts.map(t => fbBtn("show", t.k, fbEsc(t.label || SHOW_LABEL[t.k]), t.k === nowS, t.n, t.title)).join("")));
     if(nowS !== "all"){ const t = o.show.find(x => x.k === nowS); chip("show", (t && t.label) || SHOW_LABEL[nowS]); }
   }
@@ -4261,6 +4261,32 @@ function itemPrice(it){
   const b = g.market && g.market.best && g.market.best[side === "h" ? 0 : 2];
   return b ? +b : null;
 }
+/* 28 Nov 2026 (Douglas, after a week of lost accumulators: "add a tab on the
+   filters ... by the percentage bracketing ... give it a name. Something short
+   and cool"): Prime, a Show option on the Daily List beside Confidence. A pick
+   is Prime when it is on the Daily List (never the reserve), reads 80%+, is
+   not a college sport, and its price on file is 1.10 to 1.40. On the results
+   ledger to 27 Nov those picks landed 53 of 61 at an average 1.18 (49 of 54
+   over 29 Oct to 27 Nov), where college basketball list picks at 1.10+ landed
+   40 of 61 in that month (claude/prime-filter-2026-11-28.md). A month's read of the scoreboard, so
+   display only: a filter, never a rule, a chip or a model input. A pick with
+   no price on file is not Prime (prices are kept for today and yesterday). */
+const PRIME = {conf: 80, lo: 1.10, hi: 1.40, off: ["ncaab", "cfb"]};
+function primePrice(it){
+  const px = itemPrice(it); if(px) return px;
+  // a past day's slim pick names its pick and carries no chances, so itemPrice has no side for it
+  const g = it.g, sp = itemSport(it), nm = x => String(x && x.name || x || ""), home = nm(g.home), away = nm(g.away);
+  if(!g.pick || (g.pick !== home && g.pick !== away)) return null;
+  const G = window.__GROUPINGS__, q = G && G.prices && G.prices[`${sp}|${home.toLowerCase()}|${away.toLowerCase()}`];
+  return q && (q.h || q.o) && (!q.p || q.p === g.pick) ? +(q.h || q.o) : null;
+}
+function primeOk(it){
+  if(!it || !it.g || it.reserve || !(it.past || it.g.list)) return false;
+  if(PRIME.off.includes(itemSport(it))) return false;
+  if(Math.round((it.g.confidence || 0) * 100) < PRIME.conf) return false;
+  const px = primePrice(it);
+  return !!px && px >= PRIME.lo && px <= PRIME.hi;
+}
 function listShown(g){   // a sport game flagged for the list: shown there, or left on its tab
   // 23 Nov 2026 (Douglas: "remove leave out from daily list"): a college pick
   // tiered Leave out (away, or favoured by under 6 on the line; 52% v 78%
@@ -4542,6 +4568,7 @@ function renderList(){
       <p>Every pick from 70% up, strongest first: the Daily List and, marked Reserve, the picks just under its bar. The confidence filter takes it to 60%, 80% or 90% and up.${liveN ? ` The list so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <details class="how"><summary>How the list works</summary>
         <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. <b>Short</b> marks a price under ${SHORT_PRICE.toFixed(2)}: it lands as often as quoted but adds little to a slip.</p>
+        <p><b>Prime</b>, under Show in the filters, keeps only Daily List picks at ${PRIME.conf}%+ priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, with the college sports left out: likely enough to land and priced enough to matter. A filter on past results, not a tested rule.</p>
         <p>Each row shows its own tested rate, for picks at its own level only: <b>"86% landed"</b> means calls at that level came off 86% of the time on games the model never saw.</p>
         ${coverageLine()}
         <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
@@ -4580,10 +4607,11 @@ function renderList(){
   LIST_SPORTS = LIST_SPORTS.filter(k => spCount[k]);   // a sport with nothing this week drops out
   const spKeys = Object.keys(spCount).sort((a, b) => spCount[b] - spCount[a] || sportLabel(a).localeCompare(sportLabel(b)));
   const sportOk = it => !LIST_SPORTS.length || LIST_SPORTS.includes(itemSport(it));
-  const keepIt = it => sportOk(it) && inBand("list", it.g.confidence);
+  const primeOn = fShow("list") === "prime";   // 28 Nov 2026: Prime, the Show option (primeOk)
+  const keepIt = it => sportOk(it) && inBand("list", it.g.confidence) && (!primeOn || primeOk(it));
   GL_KEEP = keepIt;   // the glance plots the same picks the list shows
   // 70%+ keeps every list pick (the bar is 75%+), so it leaves Groups A and B labelled
-  const filtered = LIST_SPORTS.length > 0 || !["all", "70up"].includes(bandOf("list"));
+  const filtered = LIST_SPORTS.length > 0 || !["all", "70up"].includes(bandOf("list")) || primeOn;
   // 23 Nov 2026: the filter bar (drawn below the day strip); counted on every list and reserve pick shown
   // in the window, the count after every filter.
   const allPicks = [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resShown))].flat();
@@ -4608,8 +4636,12 @@ function renderList(){
     // counted on every reserve pick, so a band under 75% is offered while the fold hides it
     confs: [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resAny))].flat()
       .filter(sportOk).map(it => it.g.confidence),
+    // counted on the days still to come, whatever the other filters: what Prime holds this week
+    show: [{k: "all"}, {k: "prime", keep: true, n: Object.values(byDay).flat().filter(primeOk).length,
+            title: `Daily List picks at ${PRIME.conf}%+ priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, college sports left out`}],
     order: [{k: "strength"}, {k: "time"}],
     count: {shown: scope.filter(pastKeep).length, total: scope.length, noun: one ? "picks on this day" : "picks"},
+    note: primeOn ? `<b>Prime</b>: Daily List picks at ${PRIME.conf}%+, priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, college sports left out. On the record to 27 Nov they landed 53 of 61. A read of past results, not a tested rule: expect about one in eight to miss.` : "",
   });
   // Confidence first, tested rate second (28 Oct 2026; was the reverse, which
   // ranked band tables from different families against each other). Same key
@@ -4631,7 +4663,8 @@ function renderList(){
     const allItems = (byDay[date] || []).filter(keepIt), resAll = (resDay[date] || []).filter(keepIt);
     const allExtra = resAll.filter(resShown);
     if(filtered && !allItems.length && !allExtra.length) return;
-    const offHill = !LIST_SPORTS.length || LIST_SPORTS.includes("ncaab") ? (offDay[date] || []).length : 0;
+    // Prime leaves the college sports out, so their left-off line would only be noise under it
+    const offHill = !primeOn && (!LIST_SPORTS.length || LIST_SPORTS.includes("ncaab")) ? (offDay[date] || []).length : 0;
     const sec = document.createElement("section");
     sec.className = "day";
     sec.id = "lday-" + date;
@@ -4649,7 +4682,9 @@ function renderList(){
     host.appendChild(sec);
   });
   if((dates.length || one) && filtered && !host.querySelector("section.day")){
-    host.insertAdjacentHTML("beforeend", fbEmpty("list", one ? `No picks on ${fmtDay(sel)} match these filters.` : "No picks this week match these filters."));
+    const pastSel = one && sel < today && !dates.includes(sel);
+    host.insertAdjacentHTML("beforeend", fbEmpty("list", primeOn && pastSel ? `No Prime picks to show on ${fmtDay(sel)}: Prime needs a price, and prices are kept for today and yesterday.`
+      : one ? `No picks on ${fmtDay(sel)} match these filters.` : "No picks this week match these filters."));
   }
   if(!dates.length && !one){
     const e = document.createElement("div");
