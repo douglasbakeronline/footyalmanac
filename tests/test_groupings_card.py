@@ -115,6 +115,11 @@ class Build(unittest.TestCase):
         log = []
         again = G.build_card(moved, DATE, EARLY + timedelta(hours=2), prev=gs, log=log)
         self.assertTrue(any(e["name"] == g0["name"] for e in log))
+        # 28 Nov 2026: the entry keeps when the page first showed the group,
+        # so an empty day can say a published group was withdrawn
+        e = next(e for e in log if e["name"] == g0["name"])
+        self.assertEqual(e["first"], g0["first"])
+        self.assertTrue(e["first"])
 
     def test_price_outage_keeps_the_last_price_for_an_unlocked_group(self):
         # 25 Oct 2026 (review bug 8): the price source fails on the next build,
