@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-oscar-price-coverage: Odds tab pricing re-read, no change (tag pending)
+
+**What changed:** nothing on the site. A dated note records why no price source was added.
+**Evidence:** pool archive 26 to 29 Nov, 518 football rows: 142 priced first, 184 priced later, 192 never priced; the 192 are leagues no UK book lists (Zambia, Lesotho, Tajikistan, Tercera RFEF, Oberligen, Serie D). A better match or free source cannot price a game nobody offers.
+**Files:** `claude/price-coverage-oscar-2026-11-28.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any model, the rule that prices never feed a model.
+**Roll back:** `git revert` this commit.
+
 ## 2026-11-28-tennis-legs-5: tennis group legs, fifth read, nothing to ship (tag pending)
 
 **What changed:** a note only. The planner's 38 of 61 tennis group legs (z -1.9) is the same pre-floor population read on 13, 19 and 26 Nov.
