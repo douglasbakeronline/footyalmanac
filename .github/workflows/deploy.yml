@@ -307,6 +307,15 @@ jobs:
       - name: Write the results ledger
         run: python3 ledger.py || echo "::warning::ledger failed; keeping the last one"
 
+      # The model's record on every team (teamrecord.py, 28 Nov 2026): for each
+      # club, side and player, the graded fixtures it played in, how many the
+      # model called right against how many it expected to, and the last ten.
+      # Read from the three graded files score.py, score_tennis.py and
+      # sports.py have just written; shown in an open row. A tally, never an
+      # input. Allowed to fail: an open row then shows no record block.
+      - name: Tally the model's record by team
+        run: python3 teamrecord.py || echo "::warning::team record failed; open rows will show no record block"
+
       # Football markets beyond the match winner (markets.py, 14 Nov 2026):
       # both teams to score, goals lines, win and both score, win to nil,
       # double chance, draw no bet. The model's number and the bookmakers'
@@ -619,6 +628,8 @@ jobs:
             echo "::warning::no scale files this run — the Scale tab will show its empty state"
           cp racing.js _site/ 2>/dev/null || \
             echo "::warning::no racing.js this run — the Horse racing tab will show its empty state"
+          cp team-record.js _site/ 2>/dev/null || \
+            echo "::warning::no team-record.js this run: open rows will show no record block"   # 28 Nov 2026
 
       # 16 Nov 2026, Douglas: Google Tag Manager on every page, future pages included.
       # The pages carry it in their source; this adds it to any published page that does not.
