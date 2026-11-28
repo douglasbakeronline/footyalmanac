@@ -3,6 +3,14 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
+## 2026-11-28-card-withdrawn: the nightly review names Card groups withdrawn after publication (tag pending)
+
+**What changed:** nothing on the page. The nightly Card review now names every Card group the page published and withdrew before its first start, with the pick that left the rule, each pick's result and the return at the page's stake. It also fixes the review's lookup of a leg's result when the publication log kept its start without seconds.
+**Evidence:** 27 Nov's Card 2x (Al Qadsiah, Philadelphia 76ers, Detroit Pistons, Hill 2.55) was shown from 20:11 UTC the night before over 11 builds and withdrawn at 07:10 when Al Qadsiah's fair chance passed the model's by under a point (rule 14's value demand). All three won (+155% at two units). The record and the review showed 27 Nov as empty. `claude/card-withdrawn-groups-2026-11-28.md`.
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `claude/card-withdrawn-groups-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, the record, the empty-day count, any Card constant (`CARD_RULE` 14).
+**Roll back:** `git revert` the merge.
+
 ## 2026-11-28-oscar-price-coverage: Odds tab pricing re-read, no change (tag pending)
 
 **What changed:** nothing on the site. A dated note records why no price source was added.
