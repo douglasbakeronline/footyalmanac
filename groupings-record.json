@@ -1,5 +1,5 @@
 {
- "graded": "2026-11-28T02:15:33Z",
+ "graded": "2026-11-28T03:18:22Z",
  "overall": {
   "groups": 156,
   "settled": 156,
@@ -7,8 +7,8 @@
   "z": -1.21,
   "lost": 109,
   "pending": 0,
-  "legs": 592,
-  "legsWon": 434,
+  "legs": 593,
+  "legsWon": 435,
   "returned": 133.66,
   "staked": 156,
   "returnedBest": 138.72,
@@ -190,18 +190,18 @@
   "book": "William Hill",
   "from": "2026-11-10",
   "atBook": {
-   "n": 87,
-   "won": 75,
-   "rate": 0.8621,
-   "quoted": 0.8742,
-   "returned": 82.29,
-   "ret": -0.0541
+   "n": 88,
+   "won": 76,
+   "rate": 0.8636,
+   "quoted": 0.8739,
+   "returned": 83.51,
+   "ret": -0.051
   },
   "notAtBook": {
-   "n": 200,
-   "won": 190,
-   "rate": 0.95,
-   "quoted": 0.916
+   "n": 202,
+   "won": 192,
+   "rate": 0.9505,
+   "quoted": 0.9161
   },
   "unchecked": {
    "n": 40,
@@ -234,12 +234,12 @@
    },
    "nba": {
     "atBook": {
-     "n": 15,
-     "won": 12,
-     "rate": 0.8,
-     "quoted": 0.8469,
-     "returned": 13.53,
-     "ret": -0.098
+     "n": 16,
+     "won": 13,
+     "rate": 0.8125,
+     "quoted": 0.8466,
+     "returned": 14.75,
+     "ret": -0.0781
     },
     "notAtBook": {
      "n": 1,
@@ -264,10 +264,10 @@
      "ret": -0.0937
     },
     "notAtBook": {
-     "n": 193,
-     "won": 183,
-     "rate": 0.9482,
-     "quoted": 0.9183
+     "n": 195,
+     "won": 185,
+     "rate": 0.9487,
+     "quoted": 0.9184
     },
     "unchecked": {
      "n": 13,
@@ -1191,8 +1191,8 @@
   "z": -0.79,
   "lost": 8,
   "pending": 0,
-  "legs": 36,
-  "legsWon": 27,
+  "legs": 37,
+  "legsWon": 28,
   "returned": 8.08,
   "staked": 11,
   "returnedBest": 8.12,
@@ -1563,9 +1563,9 @@
      "paid": 0,
      "paidBest": 0,
      "paidLock": null,
-     "legsWon": 1,
+     "legsWon": 2,
      "legsLost": 1,
-     "legsPending": 2,
+     "legsPending": 1,
      "legs": [
       {
        "pick": "Buxoro",
@@ -1621,8 +1621,8 @@
        "lockBook": null,
        "est": false,
        "p": 0.8613,
-       "status": "pending",
-       "result": null,
+       "status": "won",
+       "result": "113-98",
        "opp": 4.22,
        "rule12Fault": null,
        "r12": false
