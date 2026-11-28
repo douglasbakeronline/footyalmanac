@@ -6,21 +6,45 @@ by the percentage bracketing ... give it a name. Something short and cool."
 
 ## What it is
 
-**Prime**, an on/off button at the end of the Daily List's **Order by** row
-(`FVIEWS.list.show`, `SHOW_LABEL.prime`). First shipped to the branch as a
-Show row of its own after Confidence; the same evening Douglas asked for it
-"on the order by filter list", which also saves a row on a phone. It is still
-a filter, not an order: it works with Strongest or Kick-off time, a second tap
-turns it off (`showtoggle` in the bar's click handler), and the choice is the
-same `FILT.show` (`showInOrder` on the list's `filterBar` call draws a page's
-Show options in the Order by row). A pick is Prime (`primeOk` in `index.html`, constants in `PRIME`) when it is
+**Prime**, an on/off button at the end of the Daily List's **Sport** row
+(`FVIEWS.list.show`, `SHOW_LABEL.prime`). On the branch it was first a Show
+row of its own, then the end of the Order by row; Douglas's last word the same
+evening: "move it into the sports filter". The Sport row is already a row of
+on/off buttons ("tap more than one to combine"), so it sits there naturally:
+it combines with any sports, a second tap turns it off (`showtoggle` in the
+bar's click handler), and the choice is the same `FILT.show` (`showIn:
+"sport"` on the list's `filterBar` call draws a page's Show options in the
+Sport row, which is then drawn even with one sport). A pick is Prime (`primeOk` in `index.html`, constants in `PRIME`) when it is
 
 - on the Daily List, never the reserve;
 - 80%+ as the row reads (rounded, as the bands are);
 - not a college sport (`ncaab`, `cfb`);
 - priced 1.10 to 1.40, both ends in, at the price the row shows (`itemPrice`:
-  William Hill, else the average, else football's best; `primePrice` adds the
-  by-name read a past day's slim pick needs). No price on file: not Prime.
+  William Hill, else the average, else football's best). No price on file: not
+  Prime.
+
+## Every day, and the glance
+
+Douglas: "Make sure it will update the data vis too to meet the rules, and on
+all previous days too." The list's one keep test (`keepIt` in `renderList`)
+carries Prime, and At a glance (`GL_KEEP`), the day ribbon's counts and a past
+day's rows all read that test, so they already followed it. What was missing
+was the price: `groupings-data.js` holds prices for today and yesterday only,
+so on the days behind nothing could be Prime.
+
+`daylist.py` now gives every pinned and past pick `px`, its pre-start price on
+the results ledger (`ledger_prices`, `price_of`, `attach_prices`): the same
+sport, pair and picked side, the copy starting nearest the pick's start within
+`PX_NEAR_DAYS` (2), read as the page reads a price (William Hill, else the
+average; the last read before the start, else the first). A pick with no
+ledger price has no `px` key. `primePrice` reads `px` first on a past day (the
+page's price for that pair could be a later meeting's) and after the page's
+own price on today's rows. daylist.py runs after ledger.py in deploy.yml, so
+it reads the same build's ledger. Display only: nothing is graded, ranked or
+listed from `px`.
+
+First read on the real files, 21 to 27 Nov: 120 of 139 list picks carry a
+price; Prime picks by day 4, 3, 1, 3, 1, 2, 1 (15, of which 14 won).
 
 Chosen, it behaves as every other filter: a removable chip, the count, Clear
 filters, the address (`#list?show=prime`), the glance and the day ribbon's
@@ -78,9 +102,12 @@ bets tried on the month (doubles 11 of 14, trebles 7 of 9 at 80%+), paying
 `nametest.py`; the unit suite (1,566, plus `tests/test_prime_filter.py`); the
 fast build (football-data and ESPN partly blocked in the sandbox, so no
 football list picks locally and no `groupings-data.js`: prices were seeded for
-the check, never committed). In Chrome at 1280 and 400: Order by reading
-"Strongest, Kick-off time, Prime 8" on one row; Prime with Kick-off time
-together; a second tap turning it off; Tennis's bar unchanged; chosen, exactly the eight seeded picks at 1.10 to
+the check, never committed). In Chrome at 1280 and 400, with `daylist.js`
+built from the real archives and ledger: Prime at the end of the Sport row;
+on each of the seven past days the rows, the ribbon's count (4/4, 2/3, 1/1,
+3/3, 1/1, 2/2, 1/1) and the glance's dots all equal the Prime picks counted
+from the ledger, and today's three; a second tap turning it off (24 Nov back
+to 34 dots); chosen on the days ahead, exactly the eight seeded picks at 1.10 to
 1.40 (1.05 and 1.55 left out, the ends kept, college and reserve picks at 1.20
 left out); chip, note, count "8 of 198 picks", `#list?show=prime`; held over a
 reload; Tennis shows its default with `prime` still stored; the chip clears

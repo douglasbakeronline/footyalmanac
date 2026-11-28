@@ -43,12 +43,16 @@ class PrimeFilter(unittest.TestCase):
         self.assertIn("(!primeOn || primeOk(it))", r)
         self.assertIn('{k: "prime", keep: true', r)
 
-    def test_drawn_in_the_order_row_as_a_toggle(self):
-        self.assertIn("showInOrder: true,", body("renderList"))
+    def test_drawn_in_the_sport_row_as_a_toggle(self):
+        self.assertIn('showIn: "sport",', body("renderList"))
         bar = body("filterBar")
         self.assertIn('fbBtn("showtoggle", t.k,', bar)
-        self.assertIn('fbarGroup("Order by",', bar)
+        self.assertIn('.join("") + showInSport, "tap more than one to combine"', bar)
         self.assertIn('else if(a === "showtoggle") FILT.show = FILT.show === k ? "all" : k;', PAGE)
+
+    def test_a_past_day_reads_the_ledger_price_first(self):
+        px = body("primePrice")
+        self.assertLess(px.index("if(it.past && it.g.px) return +it.g.px;"), px.index("itemPrice(it)"))
 
 
 if __name__ == "__main__":
