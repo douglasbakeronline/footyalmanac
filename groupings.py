@@ -2536,13 +2536,15 @@ def build_card(L, date, now, prev=None, log=None, archived=None, taken=None):
         if g.get("wide"): continue    # rebuilt below: a full-rule group takes its place when one can be made
         if not g.get("locked") and {l["event"] for l in g["legs"]} & taken:
             if log is not None:
-                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
+                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"), "first": g.get("first"),
                             "picks": [l["pick"] for l in g["legs"]], "why": ["a pick is held by the day before's two-day group"]})
             continue
         ng, why = recheck_card(g, by_win[g["window"]] + (nxt if g.get("span") else []))
         if ng is None:
             if log is not None:
-                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"),
+                # 28 Nov 2026: "first" (when the page first showed the group) lets
+                # an empty day say a published group was withdrawn (cardWithdrawnHtml)
+                log.append({"at": stamp, "name": g["name"], "rank": g["window"], "odds": g.get("odds"), "first": g.get("first"),
                             "picks": [l["pick"] for l in g["legs"]], "why": why})
             continue
         ng["checked"] = stamp; ng["bench"] = []; ng["lockAt"] = iso(first_kick(ng) or lock)

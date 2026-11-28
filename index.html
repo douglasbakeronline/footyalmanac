@@ -627,6 +627,10 @@ button.chip:focus-visible{outline:2px solid var(--home);outline-offset:2px}
 .og-l .o.est em,.og-rl .o.est em{display:block;font:700 9.5px var(--f-ui);letter-spacing:.08em;text-transform:uppercase;font-style:normal;color:var(--mute-ink,var(--mute))}
 .tb-snap{margin-top:10px;font-size:var(--t-sm);color:var(--mute-ink,var(--mute))}
 .tb-snap b{color:var(--away)}
+.og-gone{display:block;margin-top:var(--s2);padding-top:var(--s2);border-top:1px solid var(--rule-soft);color:var(--ink);font-size:13px;line-height:1.45}
+.og-gone ul{margin:6px 0 0;padding:0;list-style:none}
+.og-gone li{margin-top:4px}
+.og-gone li small{display:block;color:var(--mute-ink,var(--mute))}
 .og-chk{margin-top:12px;font-size:12px;color:var(--ink-2)}
 .og-chk summary{cursor:pointer;font-weight:600}
 .og-chk ul{margin:6px 0 0;padding:0;list-style:none;border:1px solid var(--rule);background:var(--surface)}
@@ -7929,6 +7933,18 @@ function cxPausedHtml(){
   const d = cxPaused(); if(!d) return "";
   return `<p class="cx-paused">The context check is paused until ${d}: its API allowance is used up for the month. No pick is being read, so none is kept off for news.</p>`;
 }
+// 28 Nov 2026: a Card group the page published and withdrew before its first
+// start (the re-check log, groupings.build_card). 27 Nov's Card 2x (Al Qadsiah,
+// 76ers, Pistons at 2.55) was shown from 20:11 the night before and taken off at
+// 07:10 on a sub-point value-demand miss; the day then read as simply empty,
+// though a reader may have placed it. The empty box now says so. Display only:
+// nothing here is graded (Rule 1: the record is the archive).
+function cardWithdrawnHtml(day){
+  const gone = (day.log || []).filter(e => String(e.name).startsWith("Card") && e.first);
+  if(!gone.length) return "";
+  const one = e => `<li><b>${ogEsc(e.name)}</b> at ${(+e.odds || 0).toFixed(2)} (${(e.picks || []).map(ogEsc).join(", ")}), shown from ${ogAt(e.first)}, withdrawn ${ogAt(e.at)}: <small>${(e.why || []).map(ogEsc).join(". ")}.</small></li>`;
+  return `<div class="og-gone"><b>Withdrawn before its first start.</b> The page showed ${gone.length === 1 ? "a Card group" : `${gone.length} Card groups`} for this day and then took ${gone.length === 1 ? "it" : "them"} off when a pick no longer cleared the rule at the latest prices. A bet already placed stands as placed; withdrawn groups are not graded in the record.<ul>${gone.map(one).join("")}</ul></div>`;
+}
 // 13 Nov 2026: why a day has no group, from groupings.card_short. On 13 Nov
 // the page said "too few picks" when three qualified and together paid 3.51,
 // over the 2x group's 3.00 top.
@@ -8012,7 +8028,7 @@ function renderToday(){
         <small>${w.legacy ? "locked under the old three-window card; placed? leave it" : lk ? `${when}${locked ? " · placed? leave it" : " · place it once it locks"}` : "each group is open until its first kick-off; place any time before"}</small></h3>
       ${gs.length ? `<div class="og-grid">${gs.map(ogCard).join("")}</div>`
         : `<div class="empty">${locked ? "Nothing qualified before the card locked. Sitting it out is the right call."
-            : cardShortText(day.cardShort)}${nextCardHtml(OG.days, day.date)}</div>`}${cxPausedHtml()}${cardPicksHtml(day, gs)}</section>`;
+            : cardShortText(day.cardShort)}${cardWithdrawnHtml(day)}${nextCardHtml(OG.days, day.date)}</div>`}${cxPausedHtml()}${cardPicksHtml(day, gs)}</section>`;
   };
   const R = OG.rules || {}, C = R.card || {};
   // 23 Nov 2026 (UX release 2): Sport only on Bets, and it never breaks a group apart: a group

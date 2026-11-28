@@ -611,7 +611,7 @@
      "firstOdds": 1.34,
      "lastOdds": 1.33,
      "lastBest": 1.36,
-     "lastAt": "2026-11-28T11:07:51Z"
+     "lastAt": "2026-11-28T12:54:59Z"
     },
     {
      "sport": "football",
@@ -813,7 +813,7 @@
      "firstOdds": 1.41,
      "lastOdds": 1.4,
      "lastBest": 1.44,
-     "lastAt": "2026-11-28T11:07:51Z"
+     "lastAt": "2026-11-28T12:54:59Z"
     }
    ],
    "tested": 0.3435,
@@ -1644,7 +1644,7 @@
      "firstOdds": 1.34,
      "lastOdds": 1.33,
      "lastBest": 1.36,
-     "lastAt": "2026-11-28T11:07:51Z"
+     "lastAt": "2026-11-28T12:54:59Z"
     },
     {
      "sport": "football",
@@ -1843,7 +1843,7 @@
      "firstOdds": 1.07,
      "lastOdds": 1.07,
      "lastBest": 1.09,
-     "lastAt": "2026-11-28T11:07:51Z"
+     "lastAt": "2026-11-28T12:54:59Z"
     },
     {
      "sport": "rugby",
@@ -2012,7 +2012,7 @@
      "firstOdds": 1.04,
      "lastOdds": 1.04,
      "lastBest": 1.04,
-     "lastAt": "2026-11-28T11:07:51Z"
+     "lastAt": "2026-11-28T12:54:59Z"
     }
    ],
    "tested": 0.3553,
@@ -2032,6 +2032,674 @@
    "stake": 0,
    "bookOdds": null,
    "archivedAt": "2026-11-28T11:07:51Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 14,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 2,
+   "first": "2026-11-26T02:24:28Z",
+   "lockAt": "2026-11-28T12:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "La Rochelle",
+     "event": "La Rochelle v Perpignan",
+     "sport": "rugby",
+     "comp": "Top 14",
+     "when": "2026-11-28T15:35Z",
+     "date": "2026-11-28",
+     "odds": 1.16,
+     "best": 1.16,
+     "bestBook": "Pinnacle",
+     "bookOdds": null,
+     "p": 0.8234,
+     "pModel": 0.8234,
+     "fair": 0.8102,
+     "hit": 0.9007,
+     "src": "Pinnacle (PinnWire)",
+     "pricedAt": "2026-11-28T11:09:23Z",
+     "id": "604427",
+     "home": "La Rochelle",
+     "away": "Perpignan",
+     "players": null,
+     "opp": 4.97,
+     "draw": null
+    }
+   ],
+   "bookOdds": 3.04,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.91,
+   "p": 0.3641,
+   "implied": 0.3438,
+   "bestOdds": 3.14,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Hertha Berlin v Karlsruher",
+     "home": "Hertha Berlin",
+     "away": "Karlsruher",
+     "side": "h",
+     "pick": "Hertha Berlin",
+     "code": "de.2",
+     "comp": "2. Bundesliga",
+     "country": "Germany",
+     "when": "2026-11-28T12:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7177,
+     "p": 0.7177,
+     "fx": {
+      "u21Side": false,
+      "league": "de.2",
+      "leagueName": "2. Bundesliga",
+      "short": "BU2",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 2,
+      "order": 9,
+      "round": "2026-27-german-2-bundesliga",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "12:00",
+      "kickoff": "2026-11-28T12:00:00Z",
+      "home": {
+       "name": "Hertha Berlin",
+       "att": 1.287,
+       "def": 0.692,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Bundesliga",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "DWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 12,
+        "D": 8,
+        "L": 14,
+        "GF": 49,
+        "GA": 51,
+        "GD": -2,
+        "Pts": 44,
+        "PPG": 1.294
+       },
+       "now": {
+        "P": 12,
+        "W": 11,
+        "D": 1,
+        "L": 0,
+        "GF": 29,
+        "GA": 9,
+        "GD": 20,
+        "Pts": 34,
+        "PPG": 2.833
+       }
+      },
+      "away": {
+       "name": "Karlsruher",
+       "att": 0.962,
+       "def": 1.16,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Bundesliga",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WLWLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 14,
+        "D": 10,
+        "L": 10,
+        "GF": 57,
+        "GA": 55,
+        "GD": 2,
+        "Pts": 52,
+        "PPG": 1.529
+       },
+       "now": {
+        "P": 12,
+        "W": 3,
+        "D": 3,
+        "L": 6,
+        "GF": 15,
+        "GA": 24,
+        "GD": -9,
+        "Pts": 12,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7177,
+       "d": 0.1709,
+       "a": 0.1114
+      },
+      "xg": [
+       2.58,
+       0.92
+      ],
+      "btts": 0.5468,
+      "over25": 0.5832,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7177,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6543,
+        0.1889,
+        0.1568
+       ],
+       "best": [
+        1.44,
+        5.25,
+        6.4
+       ],
+       "avg": [
+        1.4,
+        4.85,
+        5.84
+       ],
+       "ev": [
+        0.0335,
+        -0.1028,
+        -0.287
+       ]
+      },
+      "rank": 29,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1709,
+     "multOnly": false,
+     "odds": 1.39,
+     "best": 1.4,
+     "books": 9,
+     "opp": 6.23,
+     "draw": 5.0,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.38,
+      "Betfair": 1.36,
+      "BetVictor": 1.36
+     },
+     "margin": 1.0799,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7194,
+     "pTested": 0.7177,
+     "fair": 0.6662,
+     "edge": -0.074,
+     "basis": "model",
+     "firstOdds": 1.41
+    },
+    {
+     "sport": "football",
+     "event": "Buxton v Spennymoor Town",
+     "home": "Buxton",
+     "away": "Spennymoor Town",
+     "side": "h",
+     "pick": "Buxton",
+     "code": "en.6n",
+     "comp": "National League North",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7286,
+     "p": 0.7286,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6n",
+      "leagueName": "National League North",
+      "short": "NLN",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 174,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Buxton",
+       "att": 1.211,
+       "def": 1.092,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WWDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 48,
+        "W": 23,
+        "D": 7,
+        "L": 18,
+        "GF": 87,
+        "GA": 64,
+        "GD": 23,
+        "Pts": 76,
+        "PPG": 1.583
+       },
+       "now": {
+        "P": 18,
+        "W": 8,
+        "D": 3,
+        "L": 7,
+        "GF": 33,
+        "GA": 31,
+        "GD": 2,
+        "Pts": 27,
+        "PPG": 1.5
+       }
+      },
+      "away": {
+       "name": "Spennymoor Town",
+       "att": 0.715,
+       "def": 1.33,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "WLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 19,
+        "D": 11,
+        "L": 16,
+        "GF": 62,
+        "GA": 69,
+        "GD": -7,
+        "Pts": 68,
+        "PPG": 1.478
+       },
+       "now": {
+        "P": 18,
+        "W": 2,
+        "D": 5,
+        "L": 11,
+        "GF": 15,
+        "GA": 40,
+        "GD": -25,
+        "Pts": 11,
+        "PPG": 0.611
+       }
+      },
+      "p": {
+       "h": 0.7286,
+       "d": 0.1588,
+       "a": 0.1126
+      },
+      "xg": [
+       2.81,
+       1.03
+      ],
+      "btts": 0.5671,
+      "over25": 0.607,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.7286,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6633,
+        0.1934,
+        0.1433
+       ],
+       "best": [
+        1.4,
+        4.75,
+        6.5
+       ],
+       "avg": [
+        1.35,
+        4.64,
+        6.27
+       ],
+       "ev": [
+        0.02,
+        -0.2457,
+        -0.2681
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 25,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1588,
+     "multOnly": false,
+     "odds": 1.35,
+     "best": 1.4,
+     "books": 9,
+     "opp": 6.27,
+     "draw": 4.64,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.36,
+      "Betfair": 1.33,
+      "BetVictor": 1.33
+     },
+     "margin": 1.1135,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7407,
+     "pTested": 0.718,
+     "fair": 0.6652,
+     "edge": -0.102,
+     "basis": "model",
+     "firstOdds": 1.46,
+     "lastOdds": 1.35,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-28T12:54:59Z",
+     "lockPrice": {
+      "odds": 1.35,
+      "best": 1.4,
+      "book": "William Hill",
+      "at": "2026-11-28T12:54:59Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "Colo Colo v La Serena",
+     "home": "Colo Colo",
+     "away": "La Serena",
+     "side": "h",
+     "pick": "Colo Colo",
+     "code": "cl.1",
+     "comp": "Primera División",
+     "country": "Chile",
+     "when": "2026-11-28T23:30:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.6963,
+     "p": 0.6963,
+     "fx": {
+      "u21Side": false,
+      "league": "cl.1",
+      "leagueName": "Primera División",
+      "short": "CHI",
+      "country": "Chile",
+      "iso": "chl",
+      "tier": 1,
+      "order": 86,
+      "round": "2026-primera-division-de-chile",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "23:30",
+      "kickoff": "2026-11-28T23:30:00Z",
+      "home": {
+       "name": "Colo Colo",
+       "att": 1.433,
+       "def": 0.811,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera División",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "LDWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 12,
+        "D": 8,
+        "L": 10,
+        "GF": 46,
+        "GA": 36,
+        "GD": 10,
+        "Pts": 44,
+        "PPG": 1.467
+       },
+       "now": {
+        "P": 28,
+        "W": 20,
+        "D": 4,
+        "L": 4,
+        "GF": 62,
+        "GA": 30,
+        "GD": 32,
+        "Pts": 64,
+        "PPG": 2.286
+       }
+      },
+      "away": {
+       "name": "La Serena",
+       "att": 1.014,
+       "def": 1.111,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera División",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "LWDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 6,
+        "L": 17,
+        "GF": 32,
+        "GA": 52,
+        "GD": -20,
+        "Pts": 27,
+        "PPG": 0.9
+       },
+       "now": {
+        "P": 28,
+        "W": 10,
+        "D": 10,
+        "L": 8,
+        "GF": 42,
+        "GA": 43,
+        "GD": -1,
+        "Pts": 40,
+        "PPG": 1.429
+       }
+      },
+      "p": {
+       "h": 0.6963,
+       "d": 0.1797,
+       "a": 0.1239
+      },
+      "xg": [
+       2.51,
+       0.96
+      ],
+      "btts": 0.5513,
+      "over25": 0.5809,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6963,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5926,
+        0.2062,
+        0.2013
+       ],
+       "best": [
+        1.6,
+        4.6,
+        5.0
+       ],
+       "avg": [
+        1.55,
+        4.46,
+        4.57
+       ],
+       "ev": [
+        0.1141,
+        -0.1734,
+        -0.3805
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 36,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1797,
+     "multOnly": false,
+     "odds": 1.55,
+     "best": 1.6,
+     "books": 9,
+     "opp": 4.57,
+     "draw": 4.46,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.55,
+      "Bet365": 1.6,
+      "Betfair": 1.5,
+      "BetVictor": 1.53
+     },
+     "margin": 1.0881,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6452,
+     "pTested": 0.6963,
+     "fair": 0.593,
+     "edge": -0.0808,
+     "basis": "model",
+     "firstOdds": 1.44,
+     "lastOdds": 1.55,
+     "lastBest": 1.6,
+     "lastAt": "2026-11-28T12:54:59Z",
+     "lockPrice": {
+      "odds": 1.55,
+      "best": 1.6,
+      "book": "Bet365",
+      "at": "2026-11-28T12:54:59Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-28T11:07:51Z",
+   "archivedAt": "2026-11-28T12:54:59Z"
   }
  ]
 }

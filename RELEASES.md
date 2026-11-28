@@ -9,6 +9,12 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Evidence:** 4,528 football identities, 613 tennis players and 650 sides in the other sports tallied from the three graded files, nothing regraded. Clubs are joined across spellings, cups and Europe only on evidence (14 spelling joins checked by hand; men's and women's sides, FC Andorra and Andorra CF kept apart); ten record rows graded under two competition codes are counted once. Walk-forward on the record (`teamrecord.py --check`): picks whose two sides the model had run 10+ points above quote on landed 71.2% v 65.1% quoted (257, z +2.08), 10+ under 62.2% v 61.7% (111): a lean, about one standard error between the bands, so display only. `claude/team-record-2026-11-28.md`.
 **Files:** `teamrecord.py`, `index.html`, `tests/test_teamrecord.py`, `.github/workflows/deploy.yml`, `.gitignore`, `claude/team-record-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
 **Not changed:** any model, the Daily List, any card, the record files, the closed row (no new chip).
+## 2026-11-28-withdrawn-on-page: a withdrawn Card group named on the Bets tab (tag pending)
+
+**What changed:** a day whose Card box is empty now says when the page had shown a Card group for it and withdrew it before its first start: the kind, price, picks, when it was shown and withdrawn, and why, with "a bet already placed stands as placed; withdrawn groups are not graded". Each Card re-check log entry keeps when the group was first shown (`first`).
+**Evidence:** 27 Nov's Card 2x (Al Qadsiah, 76ers, Pistons at 2.55) was shown from 20:11 the night before over 11 builds and withdrawn at 07:10 on a sub-point value-demand miss; all three won, and the box read only "A blank day is the rule working". `claude/card-withdrawn-on-the-page-2026-11-28.md`.
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `claude/card-withdrawn-on-the-page-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the record, the re-check rule, any Card constant (`CARD_RULE` 14). Log entries from before this release have no `first`, so the notice starts with the next withdrawal.
 **Roll back:** `git revert` the merge.
 
 ## 2026-11-28-hold-band-row: the hold-band follow-up measured in the review's decisions table (tag pending)
