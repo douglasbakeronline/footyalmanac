@@ -2672,15 +2672,21 @@ function filterBar(view, o){
       .map(b => fbBtn("band", b.k, b.label, b.k === nowB, bandN(b, o.confs))).join("")));
     if(FILT.band !== "auto" && nowB !== "all") chip("band", BANDS.find(b => b.k === nowB).label);
   }
+  // 28 Nov 2026 (Douglas: "add the tab on the order by filter list"): with o.showInOrder a page's Show
+  // options sit at the end of its Order by row as on/off buttons (showtoggle), not in a row of their own;
+  // the choice, its chip and the address are the same FILT.show either way.
+  let showInOrder = "";
   if(o.show){
     const nowS = fShow(view);
     const opts = o.show.filter(t => t.k === "all" || t.k === nowS || t.keep || t.n == null || t.n > 0);
-    if(opts.length > 1) groups.push(fbarGroup("Show", opts.map(t => fbBtn("show", t.k, fbEsc(t.label || SHOW_LABEL[t.k]), t.k === nowS, t.n, t.title)).join("")));
+    if(o.showInOrder) showInOrder = opts.filter(t => t.k !== "all")
+      .map(t => fbBtn("showtoggle", t.k, fbEsc(t.label || SHOW_LABEL[t.k]), t.k === nowS, t.n, t.title)).join("");
+    else if(opts.length > 1) groups.push(fbarGroup("Show", opts.map(t => fbBtn("show", t.k, fbEsc(t.label || SHOW_LABEL[t.k]), t.k === nowS, t.n, t.title)).join("")));
     if(nowS !== "all"){ const t = o.show.find(x => x.k === nowS); chip("show", (t && t.label) || SHOW_LABEL[nowS]); }
   }
-  if(o.order && o.order.length > 1){
+  if((o.order && o.order.length > 1) || showInOrder){
     const nowO = fOrder(view);
-    groups.push(fbarGroup("Order by", o.order.map(t => fbBtn("order", t.k, fbEsc(t.label || ORDER_LABEL[t.k]), t.k === nowO)).join("")));
+    groups.push(fbarGroup("Order by", (o.order || []).map(t => fbBtn("order", t.k, fbEsc(t.label || ORDER_LABEL[t.k]), t.k === nowO)).join("") + showInOrder));
   }
   if(o.extra) groups.push(o.extra);
   (o.chips || []).forEach(c => chip(c.k, c.label));
@@ -2720,6 +2726,7 @@ document.addEventListener("click", e => {
   if(a === "sport" && V.sport) V.sport.set(toggleSport(V.sport.get(), k));
   else if(a === "band") FILT.band = k;
   else if(a === "show") FILT.show = k;
+  else if(a === "showtoggle") FILT.show = FILT.show === k ? "all" : k;   // an on/off Show option in the Order by row
   else if(a === "order") FILT.order = k;
   else if(a === "clear") fClear(view);
   else if(a === "unset"){
@@ -4263,7 +4270,8 @@ function itemPrice(it){
 }
 /* 28 Nov 2026 (Douglas, after a week of lost accumulators: "add a tab on the
    filters ... by the percentage bracketing ... give it a name. Something short
-   and cool"): Prime, a Show option on the Daily List beside Confidence. A pick
+   and cool"; that evening: "add the tab on the order by filter list"): Prime,
+   a Show option on the Daily List, drawn at the end of its Order by row. A pick
    is Prime when it is on the Daily List (never the reserve), reads 80%+, is
    not a college sport, and its price on file is 1.10 to 1.40. On the results
    ledger to 27 Nov those picks landed 53 of 61 at an average 1.18 (49 of 54
@@ -4568,7 +4576,7 @@ function renderList(){
       <p>Every pick from 70% up, strongest first: the Daily List and, marked Reserve, the picks just under its bar. The confidence filter takes it to 60%, 80% or 90% and up.${liveN ? ` The list so far: <b>${liveC} of ${liveN}</b> landed (${pc(liveC/liveN)}).` : ""}</p>
       <details class="how"><summary>How the list works</summary>
         <p class="winkey"><i aria-hidden="true">⭐</i> beside a name marks a <b>likely winner</b>: a list pick that also passes every check the record backs. Football under ${WIN_FB_MAX.toFixed(2)}, no college pick away, neutral or behind .500, no tennis under 80%, nothing the bookmakers rate 10+ points lower. <b>Short</b> marks a price under ${SHORT_PRICE.toFixed(2)}: it lands as often as quoted but adds little to a slip.</p>
-        <p><b>Prime</b>, under Show in the filters, keeps only Daily List picks at ${PRIME.conf}%+ priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, with the college sports left out: likely enough to land and priced enough to matter. A filter on past results, not a tested rule.</p>
+        <p><b>Prime</b>, beside Order by in the filters, keeps only Daily List picks at ${PRIME.conf}%+ priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, with the college sports left out: likely enough to land and priced enough to matter. A filter on past results, not a tested rule.</p>
         <p>Each row shows its own tested rate, for picks at its own level only: <b>"86% landed"</b> means calls at that level came off 86% of the time on games the model never saw.</p>
         ${coverageLine()}
         <p>A pick qualifies only if calls at its level landed at least 80% of the time in testing, on
@@ -4637,6 +4645,7 @@ function renderList(){
     confs: [...Object.values(byDay), ...Object.values(resDay).map(xs => xs.filter(resAny))].flat()
       .filter(sportOk).map(it => it.g.confidence),
     // counted on the days still to come, whatever the other filters: what Prime holds this week
+    showInOrder: true,
     show: [{k: "all"}, {k: "prime", keep: true, n: Object.values(byDay).flat().filter(primeOk).length,
             title: `Daily List picks at ${PRIME.conf}%+ priced ${PRIME.lo.toFixed(2)} to ${PRIME.hi.toFixed(2)}, college sports left out`}],
     order: [{k: "strength"}, {k: "time"}],

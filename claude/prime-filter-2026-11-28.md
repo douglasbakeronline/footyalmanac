@@ -6,9 +6,14 @@ by the percentage bracketing ... give it a name. Something short and cool."
 
 ## What it is
 
-**Prime**, a second option in the Daily List's filter bar under **Show**, the
-group straight after Confidence (`FVIEWS.list.show`, `SHOW_LABEL.prime`). A
-pick is Prime (`primeOk` in `index.html`, constants in `PRIME`) when it is
+**Prime**, an on/off button at the end of the Daily List's **Order by** row
+(`FVIEWS.list.show`, `SHOW_LABEL.prime`). First shipped to the branch as a
+Show row of its own after Confidence; the same evening Douglas asked for it
+"on the order by filter list", which also saves a row on a phone. It is still
+a filter, not an order: it works with Strongest or Kick-off time, a second tap
+turns it off (`showtoggle` in the bar's click handler), and the choice is the
+same `FILT.show` (`showInOrder` on the list's `filterBar` call draws a page's
+Show options in the Order by row). A pick is Prime (`primeOk` in `index.html`, constants in `PRIME`) when it is
 
 - on the Daily List, never the reserve;
 - 80%+ as the row reads (rounded, as the bands are);
@@ -19,8 +24,8 @@ pick is Prime (`primeOk` in `index.html`, constants in `PRIME`) when it is
 
 Chosen, it behaves as every other filter: a removable chip, the count, Clear
 filters, the address (`#list?show=prime`), the glance and the day ribbon's
-counts. A line under the bar says what it is and how it has landed. The Show
-group is always drawn on the list, Prime with its count even at 0 (`keep` on a
+counts. A line under the bar says what it is and how it has landed. The
+button is always drawn on the list, with its count even at 0 (`keep` on a
 Show option, new in `filterBar`). The college left-off line is hidden under it.
 `FILT.show` is shared across tabs, and no other page lists `prime`, so every
 other tab shows its own default and the choice comes back on the list.
@@ -73,8 +78,9 @@ bets tried on the month (doubles 11 of 14, trebles 7 of 9 at 80%+), paying
 `nametest.py`; the unit suite (1,566, plus `tests/test_prime_filter.py`); the
 fast build (football-data and ESPN partly blocked in the sandbox, so no
 football list picks locally and no `groupings-data.js`: prices were seeded for
-the check, never committed). In Chrome at 1280 and 400: the Show group with
-"Every pick" and "Prime 8"; chosen, exactly the eight seeded picks at 1.10 to
+the check, never committed). In Chrome at 1280 and 400: Order by reading
+"Strongest, Kick-off time, Prime 8" on one row; Prime with Kick-off time
+together; a second tap turning it off; Tennis's bar unchanged; chosen, exactly the eight seeded picks at 1.10 to
 1.40 (1.05 and 1.55 left out, the ends kept, college and reserve picks at 1.20
 left out); chip, note, count "8 of 198 picks", `#list?show=prime`; held over a
 reload; Tennis shows its default with `prime` still stored; the chip clears

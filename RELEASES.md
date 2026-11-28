@@ -3,9 +3,9 @@
 Newest first. Every release is an annotated git tag (`release-YYYY-MM-DD`,
 with `-2`, `-3` for a second release the same day) and an entry here.
 
-## 2026-11-28-prime-filter: Prime, a Show filter on the Daily List (tag pending)
+## 2026-11-28-prime-filter: Prime, a filter on the Daily List's Order by row (tag pending)
 
-**What changed:** the Daily List's filter bar has a **Show** group straight after Confidence: Every pick, and **Prime**. Prime keeps only Daily List picks (never the reserve) at 80%+, priced 1.10 to 1.40 at the price the row shows, with the college sports left out. It carries a chip, the count, a line saying what it is and how it has landed, and the address `#list?show=prime`; the glance and the day ribbon follow it. A pick with no price on file is not Prime.
+**What changed:** the Daily List's filter bar has a **Prime** button at the end of its Order by row (Strongest, Kick-off time, Prime), on or off with either order. Prime keeps only Daily List picks (never the reserve) at 80%+, priced 1.10 to 1.40 at the price the row shows, with the college sports left out. It carries a chip, the count, a line saying what it is and how it has landed, and the address `#list?show=prime`; the glance and the day ribbon follow it. A pick with no price on file is not Prime.
 **Evidence:** Douglas, 28 Nov, after a week of lost accumulators. On the results ledger, list picks 29 Oct to 27 Nov: college basketball at 1.10+ landed 40 of 61 (-15.8%); other sports at 1.10 to 1.40 and 80%+ landed 49 of 54 (+6.9%), under 80% 23 of 29 (-4.3%). Whole ledger to 27 Nov: 53 of 61, +2.6%; the second half of the month flat. A read of the scoreboard, not a tested rule, and the page says so. Checked in Chrome at 1280 and 400 on seeded prices (the sandbox cannot price). `claude/prime-filter-2026-11-28.md`.
 **Files:** `index.html`, `tests/test_prime_filter.py`, `claude/prime-filter-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
 **Not changed:** any pick, the list rule, the order, the record, the star, the cards, the emails, any model. No other page offers Prime.

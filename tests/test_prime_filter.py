@@ -43,6 +43,13 @@ class PrimeFilter(unittest.TestCase):
         self.assertIn("(!primeOn || primeOk(it))", r)
         self.assertIn('{k: "prime", keep: true', r)
 
+    def test_drawn_in_the_order_row_as_a_toggle(self):
+        self.assertIn("showInOrder: true,", body("renderList"))
+        bar = body("filterBar")
+        self.assertIn('fbBtn("showtoggle", t.k,', bar)
+        self.assertIn('fbarGroup("Order by",', bar)
+        self.assertIn('else if(a === "showtoggle") FILT.show = FILT.show === k ? "all" : k;', PAGE)
+
 
 if __name__ == "__main__":
     unittest.main()
