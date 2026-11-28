@@ -1,0 +1,614 @@
+{
+ "day": "2026-11-28",
+ "sentAt": "2026-11-28T07:14:07Z",
+ "subject": "The Daily List, Sat 28 Nov: 20 picks",
+ "list": [
+  {
+   "sport": "ncaab",
+   "home": "Pennsylvania Quakers",
+   "away": "Bucknell Bison",
+   "pick": "Pennsylvania Quakers",
+   "comp": "NCAA",
+   "start": "2026-11-28T23:00:00Z",
+   "timed": true,
+   "conf": 0.9508,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.06,
+    "not_hill": true
+   },
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "ncaab",
+   "home": "Cal State Fullerton Titans",
+   "away": "Weber State Wildcats",
+   "pick": "Cal State Fullerton Titans",
+   "comp": "NCAA",
+   "start": "2026-11-28T22:00:00Z",
+   "timed": true,
+   "conf": 0.9444,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.15,
+    "not_hill": true
+   },
+   "star": false,
+   "A": true
+  },
+  {
+   "sport": "ncaab",
+   "home": "Columbia Lions",
+   "away": "North Florida Ospreys",
+   "pick": "Columbia Lions",
+   "comp": "NCAA",
+   "start": "2026-11-28T19:00:00Z",
+   "timed": true,
+   "conf": 0.9064,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.07,
+    "not_hill": true
+   },
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "football",
+   "home": "Boreham Wood",
+   "away": "Gateshead",
+   "pick": "Boreham Wood",
+   "comp": "England National League",
+   "start": "2026-11-28T15:00:00Z",
+   "timed": true,
+   "conf": 0.8986,
+   "tested": 0.8397,
+   "px": {
+    "label": "Hill",
+    "price": 1.08
+   },
+   "star": true,
+   "A": true
+  },
+  {
+   "sport": "ncaab",
+   "home": "North Carolina A&T Aggies",
+   "away": "Delaware State Hornets",
+   "pick": "North Carolina A&T Aggies",
+   "comp": "NCAA",
+   "start": "2026-11-28T19:00:00Z",
+   "timed": true,
+   "conf": 0.8901,
+   "tested": 0.9201,
+   "px": {
+    "label": "Hill",
+    "price": 1.12
+   },
+   "star": false,
+   "A": true
+  },
+  {
+   "sport": "football",
+   "home": "Aliağa FAŞ",
+   "away": "Kastamonuspor",
+   "pick": "Aliağa FAŞ",
+   "comp": "Turkey 2. Lig",
+   "start": "2026-11-28T12:30:00Z",
+   "timed": true,
+   "conf": 0.8842,
+   "tested": 0.8997,
+   "px": {
+    "label": "Hill",
+    "price": 1.07
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "ncaab",
+   "home": "San Diego Toreros",
+   "away": "Northern Colorado Bears",
+   "pick": "San Diego Toreros",
+   "comp": "NCAA",
+   "start": "2026-11-28T21:00:00Z",
+   "timed": true,
+   "conf": 0.8832,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.07,
+    "not_hill": true
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "ncaab",
+   "home": "Furman Paladins",
+   "away": "Austin Peay Governors",
+   "pick": "Furman Paladins",
+   "comp": "NCAA",
+   "start": "2026-11-28T21:00:00Z",
+   "timed": true,
+   "conf": 0.8828,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.33,
+    "not_hill": true
+   },
+   "star": false,
+   "A": false
+  },
+  {
+   "sport": "ncaab",
+   "home": "Richmond Spiders",
+   "away": "VMI Keydets",
+   "pick": "Richmond Spiders",
+   "comp": "NCAA",
+   "start": "2026-11-28T23:00:00Z",
+   "timed": true,
+   "conf": 0.8718,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.06,
+    "not_hill": true
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Pipinsried",
+   "away": "Schalding-Heining",
+   "pick": "Pipinsried",
+   "comp": "Germany Oberliga - Bayern Süd",
+   "start": "2026-11-28T13:00:00Z",
+   "timed": true,
+   "conf": 0.8597,
+   "tested": 0.8997,
+   "px": null,
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "ncaab",
+   "home": "Lafayette Leopards",
+   "away": "Maine Black Bears",
+   "pick": "Lafayette Leopards",
+   "comp": "NCAA",
+   "start": "2026-11-28T21:30:00Z",
+   "timed": true,
+   "conf": 0.8567,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.38,
+    "not_hill": true
+   },
+   "star": false,
+   "A": false
+  },
+  {
+   "sport": "ncaab",
+   "home": "Coastal Carolina Chanticleers",
+   "away": "Western Illinois Leathernecks",
+   "pick": "Coastal Carolina Chanticleers",
+   "comp": "NCAA",
+   "start": "2026-11-28T20:00:00Z",
+   "timed": true,
+   "conf": 0.8525,
+   "tested": 0.9201,
+   "px": {
+    "label": "Avg",
+    "price": 1.13,
+    "not_hill": true
+   },
+   "star": false,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Shan United",
+   "away": "Sagaing United",
+   "pick": "Shan United",
+   "comp": "Myanmar National League",
+   "start": "2026-11-28T08:30:00Z",
+   "timed": true,
+   "conf": 0.8244,
+   "tested": 0.853,
+   "px": null,
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "rugby",
+   "home": "La Rochelle",
+   "away": "Perpignan",
+   "pick": "La Rochelle",
+   "comp": "Top 14",
+   "start": "2026-11-28T15:35:00Z",
+   "timed": true,
+   "conf": 0.8234,
+   "tested": 0.9007,
+   "px": null,
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "rugby",
+   "home": "Stade Francais Paris",
+   "away": "Vannes",
+   "pick": "Stade Francais Paris",
+   "comp": "Top 14",
+   "start": "2026-11-28T15:35:00Z",
+   "timed": true,
+   "conf": 0.8214,
+   "tested": 0.9007,
+   "px": {
+    "label": "Avg",
+    "price": 1.04,
+    "not_hill": true
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Boeung Ket",
+   "away": "National Defense",
+   "pick": "Boeung Ket",
+   "comp": "Cambodia C-League",
+   "start": "2026-11-28T11:00:00Z",
+   "timed": true,
+   "conf": 0.8106,
+   "tested": 0.853,
+   "px": {
+    "label": "Hill",
+    "price": 1.2
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Cham",
+   "away": "Stadeln",
+   "pick": "Cham",
+   "comp": "Germany Oberliga - Bayern Nord",
+   "start": "2026-11-28T14:00:00Z",
+   "timed": true,
+   "conf": 0.7856,
+   "tested": 0.8229,
+   "px": null,
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Şanlıurfaspor",
+   "away": "Somaspor",
+   "pick": "Şanlıurfaspor",
+   "comp": "Turkey 2. Lig",
+   "start": "2026-11-28T10:00:00Z",
+   "timed": true,
+   "conf": 0.7759,
+   "tested": 0.8229,
+   "px": {
+    "label": "Hill",
+    "price": 1.17
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Cosmos",
+   "away": "San Giovanni",
+   "pick": "Cosmos",
+   "comp": "San Marino Campionato",
+   "start": "2026-11-28T14:00:00Z",
+   "timed": true,
+   "conf": 0.7591,
+   "tested": 0.8229,
+   "px": {
+    "label": "Avg",
+    "price": 1.34,
+    "not_hill": true
+   },
+   "star": true,
+   "A": false
+  },
+  {
+   "sport": "football",
+   "home": "Lokomotive Leipzig",
+   "away": "Luckenwalde",
+   "pick": "Lokomotive Leipzig",
+   "comp": "Germany Regionalliga - Nordost",
+   "start": "2026-11-28T13:00:00Z",
+   "timed": true,
+   "conf": 0.7578,
+   "tested": 0.8229,
+   "px": null,
+   "star": true,
+   "A": false
+  }
+ ],
+ "daily": {
+  "name": "Daily 2x",
+  "seq": 1,
+  "odds": 2.63,
+  "hill": null,
+  "stake": 1,
+  "p": 0.3805,
+  "short": false,
+  "legs": [
+   {
+    "pick": "Şanlıurfaspor",
+    "event": "Şanlıurfaspor v Somaspor",
+    "sport": "football",
+    "comp": "2. Lig",
+    "when": "2026-11-28T10:00:00Z",
+    "p": 0.7759,
+    "odds": 1.16,
+    "hill": 1.17,
+    "est": false
+   },
+   {
+    "pick": "Boeung Ket",
+    "event": "Boeung Ket v National Defense",
+    "sport": "football",
+    "comp": "C-League",
+    "when": "2026-11-28T11:00:00Z",
+    "p": 0.8106,
+    "odds": 1.2,
+    "hill": 1.2,
+    "est": false
+   },
+   {
+    "pick": "Cosmos",
+    "event": "Cosmos v San Giovanni",
+    "sport": "football",
+    "comp": "Campionato",
+    "when": "2026-11-28T14:00:00Z",
+    "p": 0.7591,
+    "odds": 1.34,
+    "hill": null,
+    "est": false
+   },
+   {
+    "pick": "Dorking Wanderers",
+    "event": "Dorking Wanderers v Farnborough",
+    "sport": "football",
+    "comp": "National League South",
+    "when": "2026-11-28T15:00:00Z",
+    "p": 0.797,
+    "odds": 1.41,
+    "hill": 1.44,
+    "est": false
+   }
+  ]
+ },
+ "cards": [
+  {
+   "name": "Card 2x",
+   "seq": 1,
+   "odds": 2.16,
+   "hill": 2.11,
+   "stake": 2,
+   "p": 0.4503,
+   "short": false,
+   "legs": [
+    {
+     "pick": "FC Bayern München",
+     "event": "Hamburger v FC Bayern München",
+     "sport": "football",
+     "comp": "Bundesliga",
+     "when": "2026-11-28T14:30:00Z",
+     "p": 0.7775,
+     "odds": 1.31,
+     "hill": 1.3,
+     "est": false
+    },
+    {
+     "pick": "Al Ahli",
+     "event": "Al Ahli v Al Taawoun",
+     "sport": "football",
+     "comp": "Pro League",
+     "when": "2026-11-28T17:30:00Z",
+     "p": 0.7368,
+     "odds": 1.36,
+     "hill": 1.35,
+     "est": false
+    },
+    {
+     "pick": "PSV",
+     "event": "PSV v Go Ahead Eagles",
+     "sport": "football",
+     "comp": "Eredivisie",
+     "when": "2026-11-28T17:45:00Z",
+     "p": 0.7861,
+     "odds": 1.21,
+     "hill": 1.2,
+     "est": false
+    }
+   ]
+  },
+  {
+   "name": "Card 2x",
+   "seq": 2,
+   "odds": 2.91,
+   "hill": 3.04,
+   "stake": 2,
+   "p": 0.3641,
+   "short": false,
+   "legs": [
+    {
+     "pick": "Hertha Berlin",
+     "event": "Hertha Berlin v Karlsruher",
+     "sport": "football",
+     "comp": "2. Bundesliga",
+     "when": "2026-11-28T12:00:00Z",
+     "p": 0.7177,
+     "odds": 1.39,
+     "hill": 1.4,
+     "est": false
+    },
+    {
+     "pick": "Buxton",
+     "event": "Buxton v Spennymoor Town",
+     "sport": "football",
+     "comp": "National League North",
+     "when": "2026-11-28T15:00:00Z",
+     "p": 0.7286,
+     "odds": 1.36,
+     "hill": 1.4,
+     "est": false
+    },
+    {
+     "pick": "Colo Colo",
+     "event": "Colo Colo v La Serena",
+     "sport": "football",
+     "comp": "Primera División",
+     "when": "2026-11-28T23:30:00Z",
+     "p": 0.6963,
+     "odds": 1.54,
+     "hill": 1.55,
+     "est": false
+    }
+   ]
+  },
+  {
+   "name": "Card 2x",
+   "seq": 3,
+   "odds": 2.69,
+   "hill": null,
+   "stake": 2,
+   "p": 0.3569,
+   "short": false,
+   "legs": [
+    {
+     "pick": "Dorking Wanderers",
+     "event": "Dorking Wanderers v Farnborough",
+     "sport": "football",
+     "comp": "National League South",
+     "when": "2026-11-28T15:00:00Z",
+     "p": 0.797,
+     "odds": 1.41,
+     "hill": 1.44,
+     "est": false
+    },
+    {
+     "pick": "Oxford City",
+     "event": "Oxford City v Southport",
+     "sport": "football",
+     "comp": "National League North",
+     "when": "2026-11-28T15:00:00Z",
+     "p": 0.6771,
+     "odds": 1.39,
+     "hill": 1.4,
+     "est": false
+    },
+    {
+     "pick": "UPNFM",
+     "event": "UPNFM v Juticalpa",
+     "sport": "football",
+     "comp": "Liga Nacional",
+     "when": "2026-11-29T01:00:00Z",
+     "p": 0.6614,
+     "odds": 1.37,
+     "hill": null,
+     "est": false
+    }
+   ]
+  }
+ ],
+ "cardShort": null,
+ "edge": [
+  {
+   "pick": "FC Bayern München",
+   "opp": 9.28,
+   "comp": "Bundesliga",
+   "kickoff": "2026-11-28T14:30:00Z",
+   "odds": 1.25,
+   "best": 1.28
+  },
+  {
+   "pick": "1. FSV Mainz 05",
+   "opp": 5.7,
+   "comp": "Bundesliga",
+   "kickoff": "2026-11-28T14:30:00Z",
+   "odds": 1.49,
+   "best": 1.52
+  },
+  {
+   "pick": "Stockport County",
+   "opp": 6.8,
+   "comp": "League One",
+   "kickoff": "2026-11-28T15:00:00Z",
+   "odds": 1.38,
+   "best": 1.4
+  },
+  {
+   "pick": "Carlisle",
+   "opp": 5.54,
+   "comp": "National League",
+   "kickoff": "2026-11-28T15:00:00Z",
+   "odds": 1.46,
+   "best": 1.5
+  },
+  {
+   "pick": "Rangers",
+   "opp": 9.88,
+   "comp": "Premiership",
+   "kickoff": "2026-11-28T15:00:00Z",
+   "odds": 1.23,
+   "best": 1.25
+  },
+  {
+   "pick": "Salford City",
+   "opp": 5.96,
+   "comp": "League Two",
+   "kickoff": "2026-11-28T15:00:00Z",
+   "odds": 1.46,
+   "best": 1.5
+  },
+  {
+   "pick": "Club Atlético de Madrid",
+   "opp": 6.2,
+   "comp": "La Liga",
+   "kickoff": "2026-11-28T17:30:00Z",
+   "odds": 1.45,
+   "best": 1.49
+  },
+  {
+   "pick": "PSV",
+   "opp": 9.33,
+   "comp": "Eredivisie",
+   "kickoff": "2026-11-28T17:45:00Z",
+   "odds": 1.22,
+   "best": 1.25
+  },
+  {
+   "pick": "FC Internazionale Milano",
+   "opp": 9.06,
+   "comp": "Serie A",
+   "kickoff": "2026-11-28T19:45:00Z",
+   "odds": 1.3,
+   "best": 1.33
+  },
+  {
+   "pick": "Paris Saint-Germain",
+   "opp": 12.25,
+   "comp": "Ligue 1",
+   "kickoff": "2026-11-28T19:45:00Z",
+   "odds": 1.2,
+   "best": 1.23
+  }
+ ]
+}

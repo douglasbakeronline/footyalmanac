@@ -132,5 +132,81 @@ class TestShownNotArchived(unittest.TestCase):
         self.assertIn("On the results ledger: 1 won, 1 lost, 1 not settled.", out)
 
 
+class TestWithdrawn(unittest.TestCase):
+    """28 Nov 2026: a Card group published and withdrawn before its first
+    start is named with why and its result (claude/card-withdrawn-groups-2026-11-28.md)."""
+
+    def _setup(self, t):
+        day("2026-11-20", [{"name": "Card 2x", "rule": 14, "legs": [leg("X v Y", "X")]}], t)
+        legs = [dict(leg("Q v F", "Q"), when="2026-11-27T14:20:00Z"), dict(leg("I v P", "P"), when="2026-11-28T00:30Z")]
+        pub("2026-11-27", {
+            "card|w": {"kind": "card", "source": "build", "firstSeen": "2026-11-26T20:11:46Z", "lastSeen": "2026-11-27T04:51:19Z",
+                       "builds": 11, "start": "2026-11-27T14:20:00Z", "gone": "2026-11-27T07:10:16Z",
+                       "last": {"name": "Card 2x", "odds": 2.43, "bookOdds": 2.55, "stake": 2, "p": 0.483, "legs": legs}},
+            # off after its start: underway, not withdrawn
+            "card|late": {"kind": "card", "source": "build", "start": "2026-11-27T12:00:00Z", "gone": "2026-11-27T13:00:00Z",
+                          "last": {"name": "Card 2x", "legs": [leg("A v B", "A")]}},
+            "daily|w": {"kind": "daily", "source": "build", "start": "2026-11-27T14:20:00Z", "gone": "2026-11-27T07:10:16Z",
+                        "last": {"name": "Daily 2x", "legs": [leg("Q v F", "Q")]}}}, t)
+        # withdrawn but the same picks were archived: it came back
+        pub("2026-11-20", {"card|back": {"kind": "card", "source": "build", "start": "2026-11-20T15:00:00Z",
+                                         "gone": "2026-11-20T09:00:00Z", "last": {"name": "Card 2x", "legs": [leg("X v Y", "X")]}}}, t)
+        with open(os.path.join(t, "card-short.json"), "w") as f:
+            json.dump({"2026-11-27": [
+                {"at": "2026-11-27T04:50:43Z", "why": "built", "clear": [["Q", 1.19, 0.77], ["P", 1.65, 0.72]]},
+                {"at": "2026-11-27T07:07:34Z", "why": "long", "clear": [["P", 1.65, 0.72], ["Z", 1.25, 0.86]]},
+                {"at": "2026-11-27T12:57:01Z", "why": "long", "clear": []}]}, f)
+
+    def test_named_with_why_result_and_return(self):
+        rows = [{"pick": "Q", "start": "2026-11-27T14:20:00Z", "result": "won"},
+                {"pick": "P", "start": "2026-11-28T00:30:00Z", "result": "won"}]   # seconds the log left out
+        with tempfile.TemporaryDirectory() as t:
+            self._setup(t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-28", days=8, now="2026-11-28T09:00:00Z", ledger=rows))
+        self.assertIn("Withdrawn after publication: 1 Card group(s)", out)
+        self.assertIn("2026-11-27 Card 2x (Q won, P won) at 2.55, shown 11-26 20:11 to its withdrawal 11-27 07:10 UTC "
+                      "over 11 build(s): Q no longer clear of the rule: won", out)
+        self.assertIn("1 won, 0 lost, 0 not settled; settled 1 won v 0.48 expected, +155.0% at the page's stakes", out)
+        self.assertNotIn("never reached the archive", out)
+
+    def test_pending_and_none(self):
+        with tempfile.TemporaryDirectory() as t:
+            self._setup(t)
+            out = "\n".join(C.live_days_section(t, today_="2026-11-28", days=8, now="2026-11-28T09:00:00Z", ledger=[]))
+            self.assertIn("(Q pending, P pending) at 2.55", out)
+            self.assertIn("0 won, 0 lost, 1 not settled.", out)
+            # before the withdrawal, nothing to name
+            self.assertEqual(C.withdrawn_card_groups(t, ["2026-11-27"], now="2026-11-27T05:00:00Z"), [])
+        out = "\n".join(C.live_days_section("/nonexistent", today_="2026-11-28", days=3, ledger=[]))
+        self.assertNotIn("Withdrawn", out)
+
+    def test_tally_and_decisions_row(self):
+        """28 Nov 2026 (15:17 slot): the hold-band follow-up measured in the
+        decisions table (claude/card-hold-band-row-2026-11-28.md)."""
+        rows = [{"pick": "Q", "start": "2026-11-27T14:20:00Z", "result": "won"},
+                {"pick": "P", "start": "2026-11-28T00:30:00Z", "result": "won"}]
+        with tempfile.TemporaryDirectory() as t:
+            self._setup(t)
+            w = C.withdrawn_tally(t, today_="2026-11-28", now="2026-11-28T09:00:00Z", ledger=rows)
+        self.assertEqual((w["groups"], w["settled"], w["won"]), (1, 1, 1))
+        self.assertAlmostEqual(w["expected"], 0.483)
+        self.assertAlmostEqual(w["unitsReturned"] / w["unitsStaked"], 2.55)
+        out = "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=w))
+        self.assertIn("| Hold band for published Card groups | 10 settled withdrawn groups", out)
+        self.assertIn("1 of 1 won v 0.48 expected", out)
+        self.assertIn("| waiting |", out)
+        # ten settled at or above the model: due; under it: reviewed
+        due = dict(w, settled=10, won=6, expected=5.0)
+        self.assertIn("**due**", "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=due)))
+        low = dict(w, settled=10, won=4, expected=5.0)
+        self.assertIn("reviewed, no hold band", "\n".join(C.decisions_section({}, {}, today_="2026-11-28", withdrawn=low)))
+        # no tally passed: no row
+        self.assertNotIn("Hold band", "\n".join(C.decisions_section({}, {}, today_="2026-11-28")))
+
+    def test_instant(self):
+        self.assertEqual(C._instant("2026-11-28T00:30Z"), C._instant("2026-11-28T00:30:00Z"))
+        self.assertIsNone(C._instant("not a time"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,3998 @@
+{
+ "date": "2026-11-28",
+ "published": "2026-11-28T11:07:51Z",
+ "groups": [
+  {
+   "name": "Daily 2x",
+   "risk": "On trial: one 2x a day, strongest picks first",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.63,
+   "p": 0.3805,
+   "pFair": 0.2495,
+   "implied": 0.3802,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 1,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Şanlıurfaspor v Somaspor",
+     "home": "Şanlıurfaspor",
+     "away": "Somaspor",
+     "side": "h",
+     "pick": "Şanlıurfaspor",
+     "code": "af.205",
+     "comp": "2. Lig",
+     "country": "Turkey",
+     "when": "2026-11-28T10:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7759,
+     "p": 0.7759,
+     "fx": {
+      "u21Side": false,
+      "league": "af.205",
+      "leagueName": "2. Lig",
+      "short": "2. ",
+      "country": "Turkey",
+      "iso": "tur",
+      "tier": 2,
+      "order": 608,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "10:00",
+      "kickoff": "2026-11-28T10:00:00Z",
+      "home": {
+       "name": "Şanlıurfaspor",
+       "att": 1.262,
+       "def": 0.805,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WLWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 19,
+        "D": 9,
+        "L": 10,
+        "GF": 64,
+        "GA": 45,
+        "GD": 19,
+        "Pts": 66,
+        "PPG": 1.737
+       },
+       "now": {
+        "P": 13,
+        "W": 7,
+        "D": 4,
+        "L": 2,
+        "GF": 29,
+        "GA": 15,
+        "GD": 14,
+        "Pts": 25,
+        "PPG": 1.923
+       }
+      },
+      "away": {
+       "name": "Somaspor",
+       "att": 0.738,
+       "def": 1.216,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DWLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 6,
+        "D": 6,
+        "L": 20,
+        "GF": 35,
+        "GA": 68,
+        "GD": -33,
+        "Pts": 24,
+        "PPG": 0.75
+       },
+       "now": {
+        "P": 13,
+        "W": 3,
+        "D": 3,
+        "L": 7,
+        "GF": 13,
+        "GA": 24,
+        "GD": -11,
+        "Pts": 12,
+        "PPG": 0.923
+       }
+      },
+      "p": {
+       "h": 0.7759,
+       "d": 0.1472,
+       "a": 0.0769
+      },
+      "xg": [
+       2.71,
+       0.75
+      ],
+      "btts": 0.5219,
+      "over25": 0.5807,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7759,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7816,
+        0.1424,
+        0.076
+       ],
+       "best": [
+        1.18,
+        6.0,
+        13.0
+       ],
+       "avg": [
+        1.16,
+        6.35,
+        11.9
+       ],
+       "ev": [
+        -0.0844,
+        -0.1168,
+        -0.0003
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 16,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1472,
+     "multOnly": false,
+     "odds": 1.16,
+     "best": 1.18,
+     "books": 7,
+     "opp": 11.9,
+     "draw": 6.35,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.17,
+      "Bet365": 1.18
+     },
+     "margin": 1.1058,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.8621,
+     "pTested": 0.7759,
+     "fair": 0.7796,
+     "edge": -0.1,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.16
+    },
+    {
+     "sport": "football",
+     "event": "Boeung Ket v National Defense",
+     "home": "Boeung Ket",
+     "away": "National Defense",
+     "side": "h",
+     "pick": "Boeung Ket",
+     "code": "af.410",
+     "comp": "C-League",
+     "country": "Cambodia",
+     "when": "2026-11-28T11:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.8106,
+     "p": 0.8106,
+     "fx": {
+      "u21Side": false,
+      "league": "af.410",
+      "leagueName": "C-League",
+      "short": "C-L",
+      "country": "Cambodia",
+      "iso": "khm",
+      "tier": 2,
+      "order": 438,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "11:00",
+      "kickoff": "2026-11-28T11:00:00Z",
+      "home": {
+       "name": "Boeung Ket",
+       "att": 0.946,
+       "def": 0.935,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "C-League",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LLWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 30,
+        "W": 15,
+        "D": 8,
+        "L": 7,
+        "GF": 44,
+        "GA": 29,
+        "GD": 15,
+        "Pts": 53,
+        "PPG": 1.767
+       },
+       "now": {
+        "P": 7,
+        "W": 2,
+        "D": 2,
+        "L": 3,
+        "GF": 11,
+        "GA": 15,
+        "GD": -4,
+        "Pts": 8,
+        "PPG": 1.143
+       }
+      },
+      "away": {
+       "name": "National Defense",
+       "att": 0.711,
+       "def": 1.789,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "C-League",
+       "form": {
+        "pts": 0,
+        "max": 15,
+        "seq": "LLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 28,
+        "W": 5,
+        "D": 6,
+        "L": 17,
+        "GF": 28,
+        "GA": 76,
+        "GD": -48,
+        "Pts": 21,
+        "PPG": 0.75
+       },
+       "now": {
+        "P": 7,
+        "W": 0,
+        "D": 0,
+        "L": 7,
+        "GF": 7,
+        "GA": 29,
+        "GD": -22,
+        "Pts": 0,
+        "PPG": 0.0
+       }
+      },
+      "p": {
+       "h": 0.8106,
+       "d": 0.1209,
+       "a": 0.0685
+      },
+      "xg": [
+       3.16,
+       0.88
+      ],
+      "btts": 0.5483,
+      "over25": 0.619,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8106,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7474,
+        0.1501,
+        0.1025
+       ],
+       "best": [
+        1.3,
+        5.8,
+        10.0
+       ],
+       "avg": [
+        1.2,
+        5.99,
+        8.76
+       ],
+       "ev": [
+        0.0538,
+        -0.2988,
+        -0.315
+       ],
+       "src": "API-Football",
+       "books": 6
+      },
+      "rank": 8,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.8075,
+       "n": 644,
+       "cumHit": 0.853,
+       "cumN": 1272,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.853,
+     "n": 1272,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1209,
+     "multOnly": false,
+     "odds": 1.2,
+     "best": 1.3,
+     "books": 6,
+     "opp": 8.76,
+     "draw": 5.99,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.2,
+      "Bet365": 1.3
+     },
+     "margin": 1.1132,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 6 bookmakers",
+     "implied": 0.8333,
+     "pTested": 0.8075,
+     "fair": 0.7486,
+     "edge": -0.1017,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.2
+    },
+    {
+     "sport": "football",
+     "event": "Cosmos v San Giovanni",
+     "home": "Cosmos",
+     "away": "San Giovanni",
+     "side": "h",
+     "pick": "Cosmos",
+     "code": "af.404",
+     "comp": "Campionato",
+     "country": "San Marino",
+     "when": "2026-11-28T14:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7591,
+     "p": 0.7591,
+     "fx": {
+      "u21Side": false,
+      "league": "af.404",
+      "leagueName": "Campionato",
+      "short": "CAM",
+      "country": "San Marino",
+      "iso": "smr",
+      "tier": 2,
+      "order": 551,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "14:00",
+      "kickoff": "2026-11-28T14:00:00Z",
+      "home": {
+       "name": "Cosmos",
+       "att": 1.173,
+       "def": 0.636,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 33,
+        "W": 12,
+        "D": 11,
+        "L": 10,
+        "GF": 33,
+        "GA": 23,
+        "GD": 10,
+        "Pts": 47,
+        "PPG": 1.424
+       },
+       "now": {
+        "P": 9,
+        "W": 6,
+        "D": 1,
+        "L": 2,
+        "GF": 21,
+        "GA": 7,
+        "GD": 14,
+        "Pts": 19,
+        "PPG": 2.111
+       }
+      },
+      "away": {
+       "name": "San Giovanni",
+       "att": 0.697,
+       "def": 1.153,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "LDWDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 10,
+        "L": 13,
+        "GF": 24,
+        "GA": 43,
+        "GD": -19,
+        "Pts": 31,
+        "PPG": 1.033
+       },
+       "now": {
+        "P": 9,
+        "W": 2,
+        "D": 2,
+        "L": 5,
+        "GF": 8,
+        "GA": 17,
+        "GD": -9,
+        "Pts": 8,
+        "PPG": 0.889
+       }
+      },
+      "p": {
+       "h": 0.7591,
+       "d": 0.1721,
+       "a": 0.0688
+      },
+      "xg": [
+       2.26,
+       0.52
+      ],
+      "btts": 0.4715,
+      "over25": 0.5231,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7591,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6683,
+        0.2057,
+        0.126
+       ],
+       "best": [
+        1.36,
+        4.5,
+        7.0
+       ],
+       "avg": [
+        1.34,
+        4.37,
+        7.13
+       ],
+       "ev": [
+        0.0324,
+        -0.2256,
+        -0.5184
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 20,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1721,
+     "multOnly": false,
+     "odds": 1.34,
+     "best": 1.36,
+     "books": 5,
+     "opp": 7.13,
+     "draw": 4.37,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.36,
+      "Betfair": 1.33
+     },
+     "margin": 1.1133,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.7463,
+     "pTested": 0.7591,
+     "fair": 0.6703,
+     "edge": -0.1018,
+     "basis": "model",
+     "tier": "list",
+     "firstOdds": 1.34,
+     "lastOdds": 1.33,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-28T12:54:59Z"
+    },
+    {
+     "sport": "football",
+     "event": "Dorking Wanderers v Farnborough",
+     "home": "Dorking Wanderers",
+     "away": "Farnborough",
+     "side": "h",
+     "pick": "Dorking Wanderers",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.797,
+     "p": 0.797,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Dorking Wanderers",
+       "att": 1.354,
+       "def": 1.021,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 48,
+        "W": 24,
+        "D": 10,
+        "L": 14,
+        "GF": 82,
+        "GA": 65,
+        "GD": 17,
+        "Pts": 82,
+        "PPG": 1.708
+       },
+       "now": {
+        "P": 16,
+        "W": 7,
+        "D": 7,
+        "L": 2,
+        "GF": 36,
+        "GA": 25,
+        "GD": 11,
+        "Pts": 28,
+        "PPG": 1.75
+       }
+      },
+      "away": {
+       "name": "Farnborough",
+       "att": 0.824,
+       "def": 1.402,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 72,
+        "GA": 92,
+        "GD": -20,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 18,
+        "W": 5,
+        "D": 3,
+        "L": 10,
+        "GF": 18,
+        "GA": 40,
+        "GD": -22,
+        "Pts": 18,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.797,
+       "d": 0.1239,
+       "a": 0.0792
+      },
+      "xg": [
+       3.24,
+       1.0
+      ],
+      "btts": 0.5676,
+      "over25": 0.6301,
+      "score": [
+       3,
+       1
+      ],
+      "confidence": 0.797,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6371,
+        0.1926,
+        0.1703
+       ],
+       "best": [
+        1.44,
+        4.8,
+        5.75
+       ],
+       "avg": [
+        1.41,
+        4.67,
+        5.28
+       ],
+       "ev": [
+        0.1477,
+        -0.4053,
+        -0.5446
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 10,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1239,
+     "multOnly": false,
+     "odds": 1.41,
+     "best": 1.44,
+     "books": 9,
+     "opp": 5.28,
+     "draw": 4.67,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.44,
+      "Bet365": 1.4,
+      "Betfair": 1.4,
+      "BetVictor": 1.4
+     },
+     "margin": 1.1117,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7092,
+     "pTested": 0.7298,
+     "fair": 0.6379,
+     "edge": -0.1006,
+     "basis": "model",
+     "tier": "reserve",
+     "firstOdds": 1.41,
+     "lastOdds": 1.4,
+     "lastBest": 1.4,
+     "lastAt": "2026-11-28T14:14:45Z"
+    }
+   ],
+   "tested": 0.3435,
+   "short": false,
+   "tiers": [
+    "list",
+    "reserve"
+   ],
+   "bestOdds": 3.0,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-28T03:56:24Z",
+   "checked": "2026-11-28T03:56:24Z",
+   "lockAt": "2026-11-28T10:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-28T11:07:51Z"
+  },
+  {
+   "name": "List long",
+   "risk": "On trial: the list's picks, any price",
+   "band": [
+    2.0,
+    null
+   ],
+   "minChance": 0,
+   "odds": 2.2,
+   "p": 0.3116,
+   "pFair": 0.2583,
+   "implied": 0.4545,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 2,
+   "wide": false,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Şanlıurfaspor v Somaspor",
+     "home": "Şanlıurfaspor",
+     "away": "Somaspor",
+     "side": "h",
+     "pick": "Şanlıurfaspor",
+     "code": "af.205",
+     "comp": "2. Lig",
+     "country": "Turkey",
+     "when": "2026-11-28T10:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7759,
+     "p": 0.7759,
+     "fx": {
+      "u21Side": false,
+      "league": "af.205",
+      "leagueName": "2. Lig",
+      "short": "2. ",
+      "country": "Turkey",
+      "iso": "tur",
+      "tier": 2,
+      "order": 608,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "10:00",
+      "kickoff": "2026-11-28T10:00:00Z",
+      "home": {
+       "name": "Şanlıurfaspor",
+       "att": 1.262,
+       "def": 0.805,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "WLWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 38,
+        "W": 19,
+        "D": 9,
+        "L": 10,
+        "GF": 64,
+        "GA": 45,
+        "GD": 19,
+        "Pts": 66,
+        "PPG": 1.737
+       },
+       "now": {
+        "P": 13,
+        "W": 7,
+        "D": 4,
+        "L": 2,
+        "GF": 29,
+        "GA": 15,
+        "GD": 14,
+        "Pts": 25,
+        "PPG": 1.923
+       }
+      },
+      "away": {
+       "name": "Somaspor",
+       "att": 0.738,
+       "def": 1.216,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "DWLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 32,
+        "W": 6,
+        "D": 6,
+        "L": 20,
+        "GF": 35,
+        "GA": 68,
+        "GD": -33,
+        "Pts": 24,
+        "PPG": 0.75
+       },
+       "now": {
+        "P": 13,
+        "W": 3,
+        "D": 3,
+        "L": 7,
+        "GF": 13,
+        "GA": 24,
+        "GD": -11,
+        "Pts": 12,
+        "PPG": 0.923
+       }
+      },
+      "p": {
+       "h": 0.7759,
+       "d": 0.1472,
+       "a": 0.0769
+      },
+      "xg": [
+       2.71,
+       0.75
+      ],
+      "btts": 0.5219,
+      "over25": 0.5807,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7759,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7816,
+        0.1424,
+        0.076
+       ],
+       "best": [
+        1.18,
+        6.0,
+        13.0
+       ],
+       "avg": [
+        1.16,
+        6.35,
+        11.9
+       ],
+       "ev": [
+        -0.0844,
+        -0.1168,
+        -0.0003
+       ],
+       "src": "API-Football",
+       "books": 7
+      },
+      "rank": 16,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1472,
+     "multOnly": false,
+     "odds": 1.16,
+     "best": 1.18,
+     "books": 7,
+     "opp": 11.9,
+     "draw": 6.35,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.17,
+      "Bet365": 1.18
+     },
+     "margin": 1.1058,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 7 bookmakers",
+     "implied": 0.8621,
+     "pTested": 0.7759,
+     "fair": 0.7796,
+     "edge": -0.1,
+     "basis": "model",
+     "firstOdds": 1.16
+    },
+    {
+     "sport": "football",
+     "event": "Boeung Ket v National Defense",
+     "home": "Boeung Ket",
+     "away": "National Defense",
+     "side": "h",
+     "pick": "Boeung Ket",
+     "code": "af.410",
+     "comp": "C-League",
+     "country": "Cambodia",
+     "when": "2026-11-28T11:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.8106,
+     "p": 0.8106,
+     "fx": {
+      "u21Side": false,
+      "league": "af.410",
+      "leagueName": "C-League",
+      "short": "C-L",
+      "country": "Cambodia",
+      "iso": "khm",
+      "tier": 2,
+      "order": 438,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "11:00",
+      "kickoff": "2026-11-28T11:00:00Z",
+      "home": {
+       "name": "Boeung Ket",
+       "att": 0.946,
+       "def": 0.935,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "C-League",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LLWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 30,
+        "W": 15,
+        "D": 8,
+        "L": 7,
+        "GF": 44,
+        "GA": 29,
+        "GD": 15,
+        "Pts": 53,
+        "PPG": 1.767
+       },
+       "now": {
+        "P": 7,
+        "W": 2,
+        "D": 2,
+        "L": 3,
+        "GF": 11,
+        "GA": 15,
+        "GD": -4,
+        "Pts": 8,
+        "PPG": 1.143
+       }
+      },
+      "away": {
+       "name": "National Defense",
+       "att": 0.711,
+       "def": 1.789,
+       "played": 7,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "C-League",
+       "form": {
+        "pts": 0,
+        "max": 15,
+        "seq": "LLLLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 28,
+        "W": 5,
+        "D": 6,
+        "L": 17,
+        "GF": 28,
+        "GA": 76,
+        "GD": -48,
+        "Pts": 21,
+        "PPG": 0.75
+       },
+       "now": {
+        "P": 7,
+        "W": 0,
+        "D": 0,
+        "L": 7,
+        "GF": 7,
+        "GA": 29,
+        "GD": -22,
+        "Pts": 0,
+        "PPG": 0.0
+       }
+      },
+      "p": {
+       "h": 0.8106,
+       "d": 0.1209,
+       "a": 0.0685
+      },
+      "xg": [
+       3.16,
+       0.88
+      ],
+      "btts": 0.5483,
+      "over25": 0.619,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8106,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7474,
+        0.1501,
+        0.1025
+       ],
+       "best": [
+        1.3,
+        5.8,
+        10.0
+       ],
+       "avg": [
+        1.2,
+        5.99,
+        8.76
+       ],
+       "ev": [
+        0.0538,
+        -0.2988,
+        -0.315
+       ],
+       "src": "API-Football",
+       "books": 6
+      },
+      "rank": 8,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.8075,
+       "n": 644,
+       "cumHit": 0.853,
+       "cumN": 1272,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.853,
+     "n": 1272,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1209,
+     "multOnly": false,
+     "odds": 1.2,
+     "best": 1.3,
+     "books": 6,
+     "opp": 8.76,
+     "draw": 5.99,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.2,
+      "Bet365": 1.3
+     },
+     "margin": 1.1132,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 6 bookmakers",
+     "implied": 0.8333,
+     "pTested": 0.8075,
+     "fair": 0.7486,
+     "edge": -0.1017,
+     "basis": "model",
+     "firstOdds": 1.2
+    },
+    {
+     "sport": "football",
+     "event": "Aliağa FAŞ v Kastamonuspor",
+     "home": "Aliağa FAŞ",
+     "away": "Kastamonuspor",
+     "side": "h",
+     "pick": "Aliağa FAŞ",
+     "code": "af.205",
+     "comp": "2. Lig",
+     "country": "Turkey",
+     "when": "2026-11-28T12:30:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.8842,
+     "p": 0.8842,
+     "fx": {
+      "u21Side": false,
+      "league": "af.205",
+      "leagueName": "2. Lig",
+      "short": "2. ",
+      "country": "Turkey",
+      "iso": "tur",
+      "tier": 2,
+      "order": 608,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "12:30",
+      "kickoff": "2026-11-28T12:30:00Z",
+      "home": {
+       "name": "Aliağa FAŞ",
+       "att": 1.263,
+       "def": 0.791,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 8,
+        "max": 15,
+        "seq": "LDDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 19,
+        "D": 8,
+        "L": 7,
+        "GF": 76,
+        "GA": 33,
+        "GD": 43,
+        "Pts": 65,
+        "PPG": 1.912
+       },
+       "now": {
+        "P": 13,
+        "W": 9,
+        "D": 2,
+        "L": 2,
+        "GF": 25,
+        "GA": 16,
+        "GD": 9,
+        "Pts": 29,
+        "PPG": 2.231
+       }
+      },
+      "away": {
+       "name": "Kastamonuspor",
+       "att": 0.684,
+       "def": 1.597,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Lig",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 36,
+        "W": 11,
+        "D": 9,
+        "L": 16,
+        "GF": 44,
+        "GA": 56,
+        "GD": -12,
+        "Pts": 42,
+        "PPG": 1.167
+       },
+       "now": {
+        "P": 13,
+        "W": 2,
+        "D": 2,
+        "L": 9,
+        "GF": 10,
+        "GA": 43,
+        "GD": -33,
+        "Pts": 8,
+        "PPG": 0.615
+       }
+      },
+      "p": {
+       "h": 0.8842,
+       "d": 0.082,
+       "a": 0.0338
+      },
+      "xg": [
+       3.52,
+       0.67
+      ],
+      "btts": 0.5131,
+      "over25": 0.6272,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8842,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8577,
+        0.1004,
+        0.0419
+       ],
+       "best": [
+        1.1,
+        9.5,
+        21.7
+       ],
+       "avg": [
+        1.06,
+        9.06,
+        21.7
+       ],
+       "ev": [
+        -0.0274,
+        -0.221,
+        -0.2665
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 3,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.85,
+       "to": null,
+       "hit": 0.8997,
+       "n": 628,
+       "cumHit": 0.8997,
+       "cumN": 628,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8997,
+     "n": 628,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.082,
+     "multOnly": false,
+     "odds": 1.06,
+     "best": 1.1,
+     "books": 5,
+     "opp": 21.7,
+     "draw": 9.06,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.07,
+      "Bet365": 1.1
+     },
+     "margin": 1.0999,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.9434,
+     "pTested": 0.8842,
+     "fair": 0.8577,
+     "edge": -0.0908,
+     "basis": "model",
+     "firstOdds": 1.06,
+     "lastOdds": 1.07,
+     "lastBest": 1.1,
+     "lastAt": "2026-11-28T11:07:51Z"
+    },
+    {
+     "sport": "football",
+     "event": "Cosmos v San Giovanni",
+     "home": "Cosmos",
+     "away": "San Giovanni",
+     "side": "h",
+     "pick": "Cosmos",
+     "code": "af.404",
+     "comp": "Campionato",
+     "country": "San Marino",
+     "when": "2026-11-28T14:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7591,
+     "p": 0.7591,
+     "fx": {
+      "u21Side": false,
+      "league": "af.404",
+      "leagueName": "Campionato",
+      "short": "CAM",
+      "country": "San Marino",
+      "iso": "smr",
+      "tier": 2,
+      "order": 551,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "14:00",
+      "kickoff": "2026-11-28T14:00:00Z",
+      "home": {
+       "name": "Cosmos",
+       "att": 1.173,
+       "def": 0.636,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 33,
+        "W": 12,
+        "D": 11,
+        "L": 10,
+        "GF": 33,
+        "GA": 23,
+        "GD": 10,
+        "Pts": 47,
+        "PPG": 1.424
+       },
+       "now": {
+        "P": 9,
+        "W": 6,
+        "D": 1,
+        "L": 2,
+        "GF": 21,
+        "GA": 7,
+        "GD": 14,
+        "Pts": 19,
+        "PPG": 2.111
+       }
+      },
+      "away": {
+       "name": "San Giovanni",
+       "att": 0.697,
+       "def": 1.153,
+       "played": 9,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Campionato",
+       "form": {
+        "pts": 5,
+        "max": 15,
+        "seq": "LDWDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 10,
+        "L": 13,
+        "GF": 24,
+        "GA": 43,
+        "GD": -19,
+        "Pts": 31,
+        "PPG": 1.033
+       },
+       "now": {
+        "P": 9,
+        "W": 2,
+        "D": 2,
+        "L": 5,
+        "GF": 8,
+        "GA": 17,
+        "GD": -9,
+        "Pts": 8,
+        "PPG": 0.889
+       }
+      },
+      "p": {
+       "h": 0.7591,
+       "d": 0.1721,
+       "a": 0.0688
+      },
+      "xg": [
+       2.26,
+       0.52
+      ],
+      "btts": 0.4715,
+      "over25": 0.5231,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7591,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6683,
+        0.2057,
+        0.126
+       ],
+       "best": [
+        1.36,
+        4.5,
+        7.0
+       ],
+       "avg": [
+        1.34,
+        4.37,
+        7.13
+       ],
+       "ev": [
+        0.0324,
+        -0.2256,
+        -0.5184
+       ],
+       "src": "API-Football",
+       "books": 5
+      },
+      "rank": 20,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7832,
+       "n": 964,
+       "cumHit": 0.8229,
+       "cumN": 2236,
+       "season": "2025, wider leagues"
+      },
+      "edge": null
+     },
+     "hit": 0.8229,
+     "n": 2236,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.1721,
+     "multOnly": false,
+     "odds": 1.34,
+     "best": 1.36,
+     "books": 5,
+     "opp": 7.13,
+     "draw": 4.37,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.36,
+      "Betfair": 1.33
+     },
+     "margin": 1.1133,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.7463,
+     "pTested": 0.7591,
+     "fair": 0.6703,
+     "edge": -0.1018,
+     "basis": "model",
+     "firstOdds": 1.34,
+     "lastOdds": 1.33,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-28T12:54:59Z"
+    },
+    {
+     "sport": "football",
+     "event": "Boreham Wood v Gateshead",
+     "home": "Boreham Wood",
+     "away": "Gateshead",
+     "side": "h",
+     "pick": "Boreham Wood",
+     "code": "en.5",
+     "comp": "National League",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.8986,
+     "p": 0.8986,
+     "fx": {
+      "u21Side": false,
+      "league": "en.5",
+      "leagueName": "National League",
+      "short": "NLG",
+      "country": "England",
+      "iso": "eng",
+      "tier": 5,
+      "order": 4.5,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Boreham Wood",
+       "att": 1.565,
+       "def": 0.801,
+       "played": 19,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "WWDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 49,
+        "W": 27,
+        "D": 12,
+        "L": 10,
+        "GF": 98,
+        "GA": 61,
+        "GD": 37,
+        "Pts": 93,
+        "PPG": 1.898
+       },
+       "now": {
+        "P": 19,
+        "W": 16,
+        "D": 3,
+        "L": 0,
+        "GF": 53,
+        "GA": 22,
+        "GD": 31,
+        "Pts": 51,
+        "PPG": 2.684
+       }
+      },
+      "away": {
+       "name": "Gateshead",
+       "att": 0.601,
+       "def": 1.33,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League",
+       "form": {
+        "pts": 3,
+        "max": 15,
+        "seq": "LLLLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 8,
+        "L": 24,
+        "GF": 54,
+        "GA": 90,
+        "GD": -36,
+        "Pts": 50,
+        "PPG": 1.087
+       },
+       "now": {
+        "P": 18,
+        "W": 2,
+        "D": 1,
+        "L": 15,
+        "GF": 12,
+        "GA": 40,
+        "GD": -28,
+        "Pts": 7,
+        "PPG": 0.389
+       }
+      },
+      "p": {
+       "h": 0.8986,
+       "d": 0.0739,
+       "a": 0.0275
+      },
+      "xg": [
+       3.58,
+       0.6
+      ],
+      "btts": 0.5006,
+      "over25": 0.6273,
+      "score": [
+       3,
+       0
+      ],
+      "confidence": 0.8986,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.8476,
+        0.097,
+        0.0554
+       ],
+       "best": [
+        1.1,
+        9.44,
+        16.53
+       ],
+       "avg": [
+        1.08,
+        9.44,
+        16.53
+       ],
+       "ev": [
+        -0.0115,
+        -0.3024,
+        -0.5454
+       ]
+      },
+      "rank": 2,
+      "list": true,
+      "why": null,
+      "reserve": false,
+      "accuracy": {
+       "from": 0.8,
+       "to": null,
+       "hit": 0.8397,
+       "n": 131,
+       "cumHit": 0.8397,
+       "cumN": 131,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.8397,
+     "n": 131,
+     "list": true,
+     "reserve": false,
+     "pDraw": 0.0739,
+     "multOnly": false,
+     "odds": 1.07,
+     "best": 1.09,
+     "books": 8,
+     "opp": 18.95,
+     "draw": 10.25,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.08,
+      "Bet365": 1.09,
+      "Betfair": 1.07,
+      "BetVictor": 1.06
+     },
+     "margin": 1.0823,
+     "pricedAt": "2026-11-28T03:55:16Z",
+     "src": "API-Football, average of 8 bookmakers",
+     "implied": 0.9346,
+     "pTested": 0.8397,
+     "fair": 0.8635,
+     "edge": -0.1015,
+     "basis": "model",
+     "firstOdds": 1.07,
+     "lastOdds": 1.09,
+     "lastBest": 1.09,
+     "lastAt": "2026-11-28T14:14:45Z"
+    },
+    {
+     "sport": "rugby",
+     "event": "Stade Francais Paris v Vannes",
+     "home": "Stade Francais Paris",
+     "away": "Vannes",
+     "pick": "Stade Francais Paris",
+     "comp": "Top 14",
+     "when": "2026-11-28T15:35Z",
+     "date": "2026-11-28",
+     "id": "604429",
+     "pModel": 0.8214,
+     "p": 0.8214,
+     "hit": 0.9007,
+     "n": 141,
+     "list": true,
+     "reserve": false,
+     "multOnly": false,
+     "listOff": false,
+     "fx": {
+      "id": "604429",
+      "sport": "rugby",
+      "label": "Top 14",
+      "feed": "rugby/270559",
+      "when": "2026-11-28T15:35Z",
+      "home": "Stade Francais Paris",
+      "away": "Vannes",
+      "neutral": false,
+      "pHome": 0.8214,
+      "pick": "Stade Francais Paris",
+      "confidence": 0.8214,
+      "tier": "Strong",
+      "eloH": 1553,
+      "eloA": 1388,
+      "gamesH": 103,
+      "gamesA": 39,
+      "hfa": 100,
+      "eloDiff": 265.1,
+      "wary": null,
+      "accuracy": {
+       "from": 0.8,
+       "to": 0.85,
+       "hit": 0.8923,
+       "n": 65,
+       "cumHit": 0.9007,
+       "cumN": 141
+      },
+      "formH": [
+       {
+        "r": "L",
+        "score": "23-43",
+        "opp": "Toulon",
+        "home": false,
+        "date": "2026-11-07"
+       },
+       {
+        "r": "W",
+        "score": "43-24",
+        "opp": "La Rochelle",
+        "home": true,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "L",
+        "score": "8-16",
+        "opp": "Castres Olympique",
+        "home": false,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "W",
+        "score": "30-22",
+        "opp": "Montpellier Herault",
+        "home": true,
+        "date": "2026-10-10"
+       },
+       {
+        "r": "L",
+        "score": "32-35",
+        "opp": "Bayonne",
+        "home": false,
+        "date": "2026-10-03"
+       }
+      ],
+      "formA": [
+       {
+        "r": "W",
+        "score": "23-14",
+        "opp": "Bordeaux Begles",
+        "home": true,
+        "date": "2026-11-08"
+       },
+       {
+        "r": "L",
+        "score": "25-48",
+        "opp": "Lyon",
+        "home": false,
+        "date": "2026-10-31"
+       },
+       {
+        "r": "W",
+        "score": "27-26",
+        "opp": "Clermont Auvergne",
+        "home": true,
+        "date": "2026-10-24"
+       },
+       {
+        "r": "L",
+        "score": "12-21",
+        "opp": "Perpignan",
+        "home": false,
+        "date": "2026-10-10"
+       },
+       {
+        "r": "L",
+        "score": "40-43",
+        "opp": "Pau",
+        "home": true,
+        "date": "2026-10-03"
+       }
+      ],
+      "recordH": {
+       "w": 23,
+       "l": 18,
+       "d": 1
+      },
+      "recordA": {
+       "w": 2,
+       "l": 7,
+       "d": 0
+      },
+      "h2h": [
+       {
+        "date": "2025-01-25",
+        "home": "Vannes",
+        "away": "Stade Francais Paris",
+        "score": "33-28"
+       },
+       {
+        "date": "2024-09-14",
+        "home": "Stade Francais Paris",
+        "away": "Vannes",
+        "score": "34-31"
+       }
+      ],
+      "list": true,
+      "reserve": false
+     },
+     "odds": 1.04,
+     "best": 1.04,
+     "bestBook": "Betfair",
+     "books": 4,
+     "margin": 1.0787,
+     "opp": 10.0,
+     "bookOdds": {
+      "Bet365": 1.03,
+      "Betfair": 1.04
+     },
+     "pricedAt": "2026-11-28T03:57:13Z",
+     "src": "API-Sports, average of 4 bookmakers",
+     "implied": 0.9615,
+     "pTested": 0.8214,
+     "fair": 0.8914,
+     "edge": -0.1457,
+     "basis": "model",
+     "firstOdds": 1.04,
+     "lastOdds": 1.04,
+     "lastBest": 1.04,
+     "lastAt": "2026-11-28T14:14:45Z"
+    }
+   ],
+   "tested": 0.3553,
+   "bestOdds": 2.6,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-28T03:56:24Z",
+   "checked": "2026-11-28T03:56:24Z",
+   "lockAt": "2026-11-28T10:00:00Z",
+   "locked": true,
+   "late": false,
+   "status": "underway",
+   "paper": true,
+   "bench": [],
+   "book": "William Hill",
+   "stake": 0,
+   "bookOdds": null,
+   "archivedAt": "2026-11-28T11:07:51Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 14,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 2,
+   "first": "2026-11-26T02:24:28Z",
+   "lockAt": "2026-11-28T12:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "La Rochelle",
+     "event": "La Rochelle v Perpignan",
+     "sport": "rugby",
+     "comp": "Top 14",
+     "when": "2026-11-28T15:35Z",
+     "date": "2026-11-28",
+     "odds": 1.16,
+     "best": 1.16,
+     "bestBook": "Pinnacle",
+     "bookOdds": null,
+     "p": 0.8234,
+     "pModel": 0.8234,
+     "fair": 0.8102,
+     "hit": 0.9007,
+     "src": "Pinnacle (PinnWire)",
+     "pricedAt": "2026-11-28T11:09:23Z",
+     "id": "604427",
+     "home": "La Rochelle",
+     "away": "Perpignan",
+     "players": null,
+     "opp": 4.97,
+     "draw": null
+    }
+   ],
+   "bookOdds": 3.04,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.91,
+   "p": 0.3641,
+   "implied": 0.3438,
+   "bestOdds": 3.14,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Hertha Berlin v Karlsruher",
+     "home": "Hertha Berlin",
+     "away": "Karlsruher",
+     "side": "h",
+     "pick": "Hertha Berlin",
+     "code": "de.2",
+     "comp": "2. Bundesliga",
+     "country": "Germany",
+     "when": "2026-11-28T12:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7177,
+     "p": 0.7177,
+     "fx": {
+      "u21Side": false,
+      "league": "de.2",
+      "leagueName": "2. Bundesliga",
+      "short": "BU2",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 2,
+      "order": 9,
+      "round": "2026-27-german-2-bundesliga",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "12:00",
+      "kickoff": "2026-11-28T12:00:00Z",
+      "home": {
+       "name": "Hertha Berlin",
+       "att": 1.287,
+       "def": 0.692,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Bundesliga",
+       "form": {
+        "pts": 13,
+        "max": 15,
+        "seq": "DWWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 12,
+        "D": 8,
+        "L": 14,
+        "GF": 49,
+        "GA": 51,
+        "GD": -2,
+        "Pts": 44,
+        "PPG": 1.294
+       },
+       "now": {
+        "P": 12,
+        "W": 11,
+        "D": 1,
+        "L": 0,
+        "GF": 29,
+        "GA": 9,
+        "GD": 20,
+        "Pts": 34,
+        "PPG": 2.833
+       }
+      },
+      "away": {
+       "name": "Karlsruher",
+       "att": 0.962,
+       "def": 1.16,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "2. Bundesliga",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WLWLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2024/25 + 2025/26 so far",
+       "last": {
+        "P": 34,
+        "W": 14,
+        "D": 10,
+        "L": 10,
+        "GF": 57,
+        "GA": 55,
+        "GD": 2,
+        "Pts": 52,
+        "PPG": 1.529
+       },
+       "now": {
+        "P": 12,
+        "W": 3,
+        "D": 3,
+        "L": 6,
+        "GF": 15,
+        "GA": 24,
+        "GD": -9,
+        "Pts": 12,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.7177,
+       "d": 0.1709,
+       "a": 0.1114
+      },
+      "xg": [
+       2.58,
+       0.92
+      ],
+      "btts": 0.5468,
+      "over25": 0.5832,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7177,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6543,
+        0.1889,
+        0.1568
+       ],
+       "best": [
+        1.44,
+        5.25,
+        6.4
+       ],
+       "avg": [
+        1.4,
+        4.85,
+        5.84
+       ],
+       "ev": [
+        0.0335,
+        -0.1028,
+        -0.287
+       ]
+      },
+      "rank": 29,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1709,
+     "multOnly": false,
+     "odds": 1.39,
+     "best": 1.4,
+     "books": 9,
+     "opp": 6.23,
+     "draw": 5.0,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.38,
+      "Betfair": 1.36,
+      "BetVictor": 1.36
+     },
+     "margin": 1.0799,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7194,
+     "pTested": 0.7177,
+     "fair": 0.6662,
+     "edge": -0.074,
+     "basis": "model",
+     "firstOdds": 1.41
+    },
+    {
+     "sport": "football",
+     "event": "Buxton v Spennymoor Town",
+     "home": "Buxton",
+     "away": "Spennymoor Town",
+     "side": "h",
+     "pick": "Buxton",
+     "code": "en.6n",
+     "comp": "National League North",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7286,
+     "p": 0.7286,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6n",
+      "leagueName": "National League North",
+      "short": "NLN",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 174,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Buxton",
+       "att": 1.211,
+       "def": 1.092,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "WWDLL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 48,
+        "W": 23,
+        "D": 7,
+        "L": 18,
+        "GF": 87,
+        "GA": 64,
+        "GD": 23,
+        "Pts": 76,
+        "PPG": 1.583
+       },
+       "now": {
+        "P": 18,
+        "W": 8,
+        "D": 3,
+        "L": 7,
+        "GF": 33,
+        "GA": 31,
+        "GD": 2,
+        "Pts": 27,
+        "PPG": 1.5
+       }
+      },
+      "away": {
+       "name": "Spennymoor Town",
+       "att": 0.715,
+       "def": 1.33,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "WLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 19,
+        "D": 11,
+        "L": 16,
+        "GF": 62,
+        "GA": 69,
+        "GD": -7,
+        "Pts": 68,
+        "PPG": 1.478
+       },
+       "now": {
+        "P": 18,
+        "W": 2,
+        "D": 5,
+        "L": 11,
+        "GF": 15,
+        "GA": 40,
+        "GD": -25,
+        "Pts": 11,
+        "PPG": 0.611
+       }
+      },
+      "p": {
+       "h": 0.7286,
+       "d": 0.1588,
+       "a": 0.1126
+      },
+      "xg": [
+       2.81,
+       1.03
+      ],
+      "btts": 0.5671,
+      "over25": 0.607,
+      "score": [
+       2,
+       1
+      ],
+      "confidence": 0.7286,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6633,
+        0.1934,
+        0.1433
+       ],
+       "best": [
+        1.4,
+        4.75,
+        6.5
+       ],
+       "avg": [
+        1.35,
+        4.64,
+        6.27
+       ],
+       "ev": [
+        0.02,
+        -0.2457,
+        -0.2681
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 25,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1588,
+     "multOnly": false,
+     "odds": 1.35,
+     "best": 1.4,
+     "books": 9,
+     "opp": 6.27,
+     "draw": 4.64,
+     "bestBook": "William Hill",
+     "bookOdds": {
+      "William Hill": 1.4,
+      "Bet365": 1.36,
+      "Betfair": 1.33,
+      "BetVictor": 1.33
+     },
+     "margin": 1.1135,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7407,
+     "pTested": 0.718,
+     "fair": 0.6652,
+     "edge": -0.102,
+     "basis": "model",
+     "firstOdds": 1.46,
+     "lastOdds": 1.36,
+     "lastBest": 1.36,
+     "lastAt": "2026-11-28T14:14:45Z",
+     "lockPrice": {
+      "odds": 1.35,
+      "best": 1.4,
+      "book": "William Hill",
+      "at": "2026-11-28T12:54:59Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "Colo Colo v La Serena",
+     "home": "Colo Colo",
+     "away": "La Serena",
+     "side": "h",
+     "pick": "Colo Colo",
+     "code": "cl.1",
+     "comp": "Primera División",
+     "country": "Chile",
+     "when": "2026-11-28T23:30:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.6963,
+     "p": 0.6963,
+     "fx": {
+      "u21Side": false,
+      "league": "cl.1",
+      "leagueName": "Primera División",
+      "short": "CHI",
+      "country": "Chile",
+      "iso": "chl",
+      "tier": 1,
+      "order": 86,
+      "round": "2026-primera-division-de-chile",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "23:30",
+      "kickoff": "2026-11-28T23:30:00Z",
+      "home": {
+       "name": "Colo Colo",
+       "att": 1.433,
+       "def": 0.811,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera División",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "LDWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 12,
+        "D": 8,
+        "L": 10,
+        "GF": 46,
+        "GA": 36,
+        "GD": 10,
+        "Pts": 44,
+        "PPG": 1.467
+       },
+       "now": {
+        "P": 28,
+        "W": 20,
+        "D": 4,
+        "L": 4,
+        "GF": 62,
+        "GA": 30,
+        "GD": 32,
+        "Pts": 64,
+        "PPG": 2.286
+       }
+      },
+      "away": {
+       "name": "La Serena",
+       "att": 1.014,
+       "def": 1.111,
+       "played": 28,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Primera División",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "LWDWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025",
+       "last": {
+        "P": 30,
+        "W": 7,
+        "D": 6,
+        "L": 17,
+        "GF": 32,
+        "GA": 52,
+        "GD": -20,
+        "Pts": 27,
+        "PPG": 0.9
+       },
+       "now": {
+        "P": 28,
+        "W": 10,
+        "D": 10,
+        "L": 8,
+        "GF": 42,
+        "GA": 43,
+        "GD": -1,
+        "Pts": 40,
+        "PPG": 1.429
+       }
+      },
+      "p": {
+       "h": 0.6963,
+       "d": 0.1797,
+       "a": 0.1239
+      },
+      "xg": [
+       2.51,
+       0.96
+      ],
+      "btts": 0.5513,
+      "over25": 0.5809,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6963,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.5926,
+        0.2062,
+        0.2013
+       ],
+       "best": [
+        1.6,
+        4.6,
+        5.0
+       ],
+       "avg": [
+        1.55,
+        4.46,
+        4.57
+       ],
+       "ev": [
+        0.1141,
+        -0.1734,
+        -0.3805
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 36,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1797,
+     "multOnly": false,
+     "odds": 1.55,
+     "best": 1.6,
+     "books": 9,
+     "opp": 4.57,
+     "draw": 4.46,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.55,
+      "Bet365": 1.6,
+      "Betfair": 1.5,
+      "BetVictor": 1.53
+     },
+     "margin": 1.0881,
+     "pricedAt": "2026-11-28T11:06:57Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.6452,
+     "pTested": 0.6963,
+     "fair": 0.593,
+     "edge": -0.0808,
+     "basis": "model",
+     "firstOdds": 1.44,
+     "lastOdds": 1.61,
+     "lastBest": 1.61,
+     "lastAt": "2026-11-28T16:27:31Z",
+     "lockPrice": {
+      "odds": 1.55,
+      "best": 1.6,
+      "book": "Bet365",
+      "at": "2026-11-28T12:54:59Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-28T11:07:51Z",
+   "archivedAt": "2026-11-28T12:54:59Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 14,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 1,
+   "first": "2026-11-25T00:40:23Z",
+   "lockAt": "2026-11-28T14:30:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "Maidstone Utd",
+     "event": "Maidstone Utd v Chesham United",
+     "sport": "football",
+     "comp": "National League South",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "odds": 1.5,
+     "best": 1.5,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.5
+     },
+     "p": 0.6283,
+     "pModel": 0.6283,
+     "fair": 0.6003,
+     "hit": 0.7459,
+     "src": "API-Football, average of 1 bookmaker",
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "id": null,
+     "home": "Maidstone Utd",
+     "away": "Chesham United",
+     "players": null,
+     "opp": 5.0,
+     "draw": 4.1
+    }
+   ],
+   "bookOdds": 2.12,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.17,
+   "p": 0.4514,
+   "implied": 0.4605,
+   "bestOdds": 2.3,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Hamburger v FC Bayern München",
+     "home": "Hamburger",
+     "away": "FC Bayern München",
+     "side": "a",
+     "pick": "FC Bayern München",
+     "code": "de.1",
+     "comp": "Bundesliga",
+     "country": "Germany",
+     "when": "2026-11-28T14:30:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7775,
+     "p": 0.7775,
+     "fx": {
+      "u21Side": false,
+      "league": "de.1",
+      "leagueName": "Bundesliga",
+      "short": "BUN",
+      "country": "Germany",
+      "iso": "deu",
+      "tier": 1,
+      "order": 8,
+      "round": "Matchday 11",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:30",
+      "kickoff": "2026-11-28T14:30:00Z",
+      "home": {
+       "name": "Hamburger",
+       "att": 0.723,
+       "def": 1.174,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Bundesliga",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "WLLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 9,
+        "D": 11,
+        "L": 14,
+        "GF": 40,
+        "GA": 54,
+        "GD": -14,
+        "Pts": 38,
+        "PPG": 1.118
+       },
+       "now": {
+        "P": 10,
+        "W": 4,
+        "D": 0,
+        "L": 6,
+        "GF": 10,
+        "GA": 24,
+        "GD": -14,
+        "Pts": 12,
+        "PPG": 1.2
+       }
+      },
+      "away": {
+       "name": "FC Bayern München",
+       "att": 1.712,
+       "def": 0.699,
+       "played": 10,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Bundesliga",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WWDWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 28,
+        "D": 5,
+        "L": 1,
+        "GF": 122,
+        "GA": 36,
+        "GD": 86,
+        "Pts": 89,
+        "PPG": 2.618
+       },
+       "now": {
+        "P": 10,
+        "W": 6,
+        "D": 4,
+        "L": 0,
+        "GF": 30,
+        "GA": 10,
+        "GD": 20,
+        "Pts": 22,
+        "PPG": 2.2
+       }
+      },
+      "p": {
+       "h": 0.0845,
+       "d": 0.1381,
+       "a": 0.7775
+      },
+      "xg": [
+       0.92,
+       2.97
+      ],
+      "btts": 0.5528,
+      "over25": 0.6101,
+      "score": [
+       0,
+       2
+      ],
+      "confidence": 0.7775,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.1014,
+        0.1457,
+        0.7529
+       ],
+       "best": [
+        11.0,
+        7.0,
+        1.28
+       ],
+       "avg": [
+        9.28,
+        6.46,
+        1.25
+       ],
+       "ev": [
+        -0.0705,
+        -0.0333,
+        -0.0048
+       ]
+      },
+      "rank": 10,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": {
+       "side": "a",
+       "odds": 1.25,
+       "best": 1.28,
+       "opp": 9.28,
+       "fair": 0.7529,
+       "model": 0.7775,
+       "rule": 2
+      }
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1381,
+     "multOnly": false,
+     "odds": 1.31,
+     "best": 1.33,
+     "books": 9,
+     "opp": 8.05,
+     "draw": 5.89,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.3,
+      "Bet365": 1.33,
+      "Betfair": 1.3,
+      "BetVictor": 1.29
+     },
+     "margin": 1.0574,
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7634,
+     "pTested": 0.7298,
+     "fair": 0.722,
+     "edge": -0.0542,
+     "basis": "model",
+     "firstOdds": 1.25
+    },
+    {
+     "sport": "football",
+     "event": "Al Ahli v Al Taawoun",
+     "home": "Al Ahli",
+     "away": "Al Taawoun",
+     "side": "h",
+     "pick": "Al Ahli",
+     "code": "sa.1",
+     "comp": "Pro League",
+     "country": "Saudi Arabia",
+     "when": "2026-11-28T17:30:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7386,
+     "p": 0.7386,
+     "fx": {
+      "u21Side": false,
+      "league": "sa.1",
+      "leagueName": "Pro League",
+      "short": "SPL",
+      "country": "Saudi Arabia",
+      "iso": "sau",
+      "tier": 1,
+      "order": 97,
+      "round": "2026-27-saudi-pro-league",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "17:30",
+      "kickoff": "2026-11-28T17:30:00Z",
+      "home": {
+       "name": "Al Ahli",
+       "att": 1.487,
+       "def": 0.91,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 12,
+        "max": 15,
+        "seq": "WWWLW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 25,
+        "D": 6,
+        "L": 3,
+        "GF": 71,
+        "GA": 25,
+        "GD": 46,
+        "Pts": 81,
+        "PPG": 2.382
+       },
+       "now": {
+        "P": 12,
+        "W": 8,
+        "D": 0,
+        "L": 4,
+        "GF": 31,
+        "GA": 20,
+        "GD": 11,
+        "Pts": 24,
+        "PPG": 2.0
+       }
+      },
+      "away": {
+       "name": "Al Taawoun",
+       "att": 0.714,
+       "def": 1.032,
+       "played": 12,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Pro League",
+       "form": {
+        "pts": 2,
+        "max": 15,
+        "seq": "LDLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 15,
+        "D": 8,
+        "L": 11,
+        "GF": 59,
+        "GA": 46,
+        "GD": 13,
+        "Pts": 53,
+        "PPG": 1.559
+       },
+       "now": {
+        "P": 12,
+        "W": 0,
+        "D": 5,
+        "L": 7,
+        "GF": 6,
+        "GA": 20,
+        "GD": -14,
+        "Pts": 5,
+        "PPG": 0.417
+       }
+      },
+      "p": {
+       "h": 0.7386,
+       "d": 0.1625,
+       "a": 0.0989
+      },
+      "xg": [
+       2.63,
+       0.86
+      ],
+      "btts": 0.5398,
+      "over25": 0.5835,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.7386,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6666,
+        0.194,
+        0.1393
+       ],
+       "best": [
+        1.42,
+        5.0,
+        7.0
+       ],
+       "avg": [
+        1.37,
+        4.72,
+        6.57
+       ],
+       "ev": [
+        0.0488,
+        -0.1875,
+        -0.3077
+       ],
+       "src": "API-Football",
+       "books": 9
+      },
+      "rank": 17,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.7,
+       "to": 0.8,
+       "hit": 0.718,
+       "n": 39,
+       "cumHit": 0.7347,
+       "cumN": 49,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7347,
+     "n": 49,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1625,
+     "multOnly": false,
+     "odds": 1.37,
+     "best": 1.42,
+     "books": 9,
+     "opp": 6.57,
+     "draw": 4.72,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.36,
+      "Bet365": 1.42,
+      "Betfair": 1.36,
+      "BetVictor": 1.36
+     },
+     "margin": 1.0917,
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.7299,
+     "pTested": 0.718,
+     "fair": 0.6686,
+     "edge": -0.084,
+     "basis": "model",
+     "firstOdds": 1.44,
+     "lastOdds": 1.35,
+     "lastBest": 1.42,
+     "lastAt": "2026-11-28T16:27:31Z",
+     "lockPrice": {
+      "odds": 1.35,
+      "best": 1.42,
+      "book": "Bet365",
+      "at": "2026-11-28T16:08:33Z"
+     }
+    },
+    {
+     "sport": "football",
+     "event": "PSV v Go Ahead Eagles",
+     "home": "PSV",
+     "away": "Go Ahead Eagles",
+     "side": "h",
+     "pick": "PSV",
+     "code": "nl.1",
+     "comp": "Eredivisie",
+     "country": "Netherlands",
+     "when": "2026-11-28T17:45:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.7861,
+     "p": 0.7861,
+     "fx": {
+      "u21Side": false,
+      "league": "nl.1",
+      "leagueName": "Eredivisie",
+      "short": "ERE",
+      "country": "Netherlands",
+      "iso": "nld",
+      "tier": 1,
+      "order": 14,
+      "round": "Matchday 14",
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "18:45",
+      "kickoff": "2026-11-28T17:45:00Z",
+      "home": {
+       "name": "PSV",
+       "att": 1.635,
+       "def": 0.761,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eredivisie",
+       "form": {
+        "pts": 10,
+        "max": 15,
+        "seq": "LDWWW"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 27,
+        "D": 3,
+        "L": 4,
+        "GF": 101,
+        "GA": 45,
+        "GD": 56,
+        "Pts": 84,
+        "PPG": 2.471
+       },
+       "now": {
+        "P": 13,
+        "W": 9,
+        "D": 2,
+        "L": 2,
+        "GF": 44,
+        "GA": 16,
+        "GD": 28,
+        "Pts": 29,
+        "PPG": 2.231
+       }
+      },
+      "away": {
+       "name": "Go Ahead Eagles",
+       "att": 0.974,
+       "def": 1.052,
+       "played": 13,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "Eredivisie",
+       "form": {
+        "pts": 6,
+        "max": 15,
+        "seq": "LWLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 34,
+        "W": 8,
+        "D": 14,
+        "L": 12,
+        "GF": 54,
+        "GA": 53,
+        "GD": 1,
+        "Pts": 38,
+        "PPG": 1.118
+       },
+       "now": {
+        "P": 13,
+        "W": 4,
+        "D": 5,
+        "L": 4,
+        "GF": 24,
+        "GA": 28,
+        "GD": -4,
+        "Pts": 17,
+        "PPG": 1.308
+       }
+      },
+      "p": {
+       "h": 0.7861,
+       "d": 0.1287,
+       "a": 0.0851
+      },
+      "xg": [
+       3.2,
+       1.03
+      ],
+      "btts": 0.571,
+      "over25": 0.6293,
+      "score": [
+       3,
+       1
+      ],
+      "confidence": 0.7861,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.7651,
+        0.1349,
+        0.1
+       ],
+       "best": [
+        1.25,
+        7.5,
+        11.0
+       ],
+       "avg": [
+        1.22,
+        6.92,
+        9.33
+       ],
+       "ev": [
+        -0.0174,
+        -0.0347,
+        -0.0639
+       ]
+      },
+      "rank": 8,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": {
+       "side": "h",
+       "odds": 1.22,
+       "best": 1.25,
+       "opp": 9.33,
+       "fair": 0.7651,
+       "model": 0.7861,
+       "rule": 2
+      }
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1287,
+     "multOnly": false,
+     "odds": 1.21,
+     "best": 1.22,
+     "books": 9,
+     "opp": 10.35,
+     "draw": 7.03,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "William Hill": 1.2,
+      "Bet365": 1.22,
+      "Betfair": 1.18,
+      "BetVictor": 1.2
+     },
+     "margin": 1.0674,
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "src": "API-Football, average of 9 bookmakers",
+     "implied": 0.8264,
+     "pTested": 0.7298,
+     "fair": 0.7742,
+     "edge": -0.1169,
+     "basis": "model",
+     "firstOdds": 1.23,
+     "lastOdds": 1.21,
+     "lastBest": 1.22,
+     "lastAt": "2026-11-28T16:27:31Z",
+     "lockPrice": {
+      "odds": 1.21,
+      "best": 1.22,
+      "book": "Bet365",
+      "at": "2026-11-28T16:08:33Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-28T14:14:45Z",
+   "archivedAt": "2026-11-28T16:08:33Z"
+  },
+  {
+   "name": "Card 2x",
+   "risk": "Pays 2x+",
+   "band": [
+    2.0,
+    3.0
+   ],
+   "minChance": 0.3,
+   "estimates": 0,
+   "basis": "model",
+   "rule": 14,
+   "wide": false,
+   "window": "Day",
+   "rank": "Day",
+   "seq": 3,
+   "first": "2026-11-26T04:10:59Z",
+   "lockAt": "2026-11-28T15:00:00Z",
+   "locked": true,
+   "late": false,
+   "bench": [
+    {
+     "pick": "La Rochelle",
+     "event": "La Rochelle v Perpignan",
+     "sport": "rugby",
+     "comp": "Top 14",
+     "when": "2026-11-28T15:35Z",
+     "date": "2026-11-28",
+     "odds": 1.18,
+     "best": 1.18,
+     "bestBook": "Pinnacle",
+     "bookOdds": null,
+     "p": 0.8234,
+     "pModel": 0.8234,
+     "fair": 0.7971,
+     "hit": 0.9007,
+     "src": "Pinnacle (PinnWire)",
+     "pricedAt": "2026-11-28T14:14:52Z",
+     "id": "604427",
+     "home": "La Rochelle",
+     "away": "Perpignan",
+     "players": null,
+     "opp": 4.62,
+     "draw": null
+    }
+   ],
+   "bookOdds": null,
+   "book": "William Hill",
+   "stake": 2,
+   "odds": 2.69,
+   "p": 0.3569,
+   "implied": 0.3724,
+   "bestOdds": 2.74,
+   "legs": [
+    {
+     "sport": "football",
+     "event": "Dorking Wanderers v Farnborough",
+     "home": "Dorking Wanderers",
+     "away": "Farnborough",
+     "side": "h",
+     "pick": "Dorking Wanderers",
+     "code": "en.6s",
+     "comp": "National League South",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.797,
+     "p": 0.797,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6s",
+      "leagueName": "National League South",
+      "short": "NLS",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 175,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Dorking Wanderers",
+       "att": 1.354,
+       "def": 1.021,
+       "played": 16,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 11,
+        "max": 15,
+        "seq": "WDWWD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 48,
+        "W": 24,
+        "D": 10,
+        "L": 14,
+        "GF": 82,
+        "GA": 65,
+        "GD": 17,
+        "Pts": 82,
+        "PPG": 1.708
+       },
+       "now": {
+        "P": 16,
+        "W": 7,
+        "D": 7,
+        "L": 2,
+        "GF": 36,
+        "GA": 25,
+        "GD": 11,
+        "Pts": 28,
+        "PPG": 1.75
+       }
+      },
+      "away": {
+       "name": "Farnborough",
+       "att": 0.824,
+       "def": 1.402,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League South",
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 14,
+        "D": 11,
+        "L": 21,
+        "GF": 72,
+        "GA": 92,
+        "GD": -20,
+        "Pts": 53,
+        "PPG": 1.152
+       },
+       "now": {
+        "P": 18,
+        "W": 5,
+        "D": 3,
+        "L": 10,
+        "GF": 18,
+        "GA": 40,
+        "GD": -22,
+        "Pts": 18,
+        "PPG": 1.0
+       }
+      },
+      "p": {
+       "h": 0.797,
+       "d": 0.1239,
+       "a": 0.0792
+      },
+      "xg": [
+       3.24,
+       1.0
+      ],
+      "btts": 0.5676,
+      "over25": 0.6301,
+      "score": [
+       3,
+       1
+      ],
+      "confidence": 0.797,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6338,
+        0.1972,
+        0.169
+       ],
+       "best": [
+        1.4,
+        4.5,
+        5.25
+       ],
+       "avg": [
+        1.4,
+        4.5,
+        5.25
+       ],
+       "ev": [
+        0.1158,
+        -0.4425,
+        -0.5842
+       ],
+       "src": "API-Football",
+       "books": 1
+      },
+      "rank": 6,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.75,
+       "to": 0.8,
+       "hit": 0.7298,
+       "n": 111,
+       "cumHit": 0.7893,
+       "cumN": 242,
+       "season": "2025-26"
+      },
+      "edge": null
+     },
+     "hit": 0.7893,
+     "n": 242,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1239,
+     "multOnly": false,
+     "odds": 1.4,
+     "best": 1.4,
+     "books": 1,
+     "opp": 5.25,
+     "draw": 4.5,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.4
+     },
+     "margin": 1.127,
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "src": "API-Football, average of 1 bookmaker",
+     "implied": 0.7143,
+     "pTested": 0.7298,
+     "fair": 0.6338,
+     "edge": -0.1127,
+     "basis": "model",
+     "firstOdds": 1.44
+    },
+    {
+     "sport": "football",
+     "event": "Oxford City v Southport",
+     "home": "Oxford City",
+     "away": "Southport",
+     "side": "h",
+     "pick": "Oxford City",
+     "code": "en.6n",
+     "comp": "National League North",
+     "country": "England",
+     "when": "2026-11-28T15:00:00Z",
+     "date": "2026-11-28",
+     "pModel": 0.6771,
+     "p": 0.6771,
+     "fx": {
+      "u21Side": false,
+      "league": "en.6n",
+      "leagueName": "National League North",
+      "short": "NLN",
+      "country": "England",
+      "iso": "eng",
+      "tier": 6,
+      "order": 174,
+      "round": null,
+      "cup": false,
+      "date": "2026-11-28",
+      "time": "15:00",
+      "kickoff": "2026-11-28T15:00:00Z",
+      "home": {
+       "name": "Oxford City",
+       "att": 1.07,
+       "def": 0.779,
+       "played": 18,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 4,
+        "max": 15,
+        "seq": "LDLWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 15,
+        "D": 11,
+        "L": 20,
+        "GF": 62,
+        "GA": 67,
+        "GD": -5,
+        "Pts": 56,
+        "PPG": 1.217
+       },
+       "now": {
+        "P": 18,
+        "W": 9,
+        "D": 4,
+        "L": 5,
+        "GF": 30,
+        "GA": 17,
+        "GD": 13,
+        "Pts": 31,
+        "PPG": 1.722
+       }
+      },
+      "away": {
+       "name": "Southport",
+       "att": 0.796,
+       "def": 1.212,
+       "played": 17,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": "National League North",
+       "form": {
+        "pts": 2,
+        "max": 15,
+        "seq": "DLLDL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": "2025/26",
+       "last": {
+        "P": 46,
+        "W": 16,
+        "D": 12,
+        "L": 18,
+        "GF": 64,
+        "GA": 71,
+        "GD": -7,
+        "Pts": 60,
+        "PPG": 1.304
+       },
+       "now": {
+        "P": 17,
+        "W": 2,
+        "D": 5,
+        "L": 10,
+        "GF": 17,
+        "GA": 33,
+        "GD": -16,
+        "Pts": 11,
+        "PPG": 0.647
+       }
+      },
+      "p": {
+       "h": 0.6771,
+       "d": 0.1995,
+       "a": 0.1234
+      },
+      "xg": [
+       2.22,
+       0.81
+      ],
+      "btts": 0.5236,
+      "over25": 0.5452,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6771,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "market": {
+       "p": [
+        0.6383,
+        0.2128,
+        0.1489
+       ],
+       "best": [
+        1.4,
+        4.2,
+        6.0
+       ],
+       "avg": [
+        1.4,
+        4.2,
+        6.0
+       ],
+       "ev": [
+        -0.0521,
+        -0.1621,
+        -0.2596
+       ],
+       "src": "API-Football",
+       "books": 1
+      },
+      "rank": 32,
+      "list": false,
+      "why": "below",
+      "reserve": true,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "reserve": true,
+     "pDraw": 0.1995,
+     "multOnly": false,
+     "odds": 1.4,
+     "best": 1.4,
+     "books": 1,
+     "opp": 6.0,
+     "draw": 4.2,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.4
+     },
+     "margin": 1.119,
+     "pricedAt": "2026-11-28T14:13:41Z",
+     "src": "API-Football, average of 1 bookmaker",
+     "implied": 0.7143,
+     "pTested": 0.6771,
+     "fair": 0.6383,
+     "edge": -0.1064,
+     "basis": "model",
+     "firstOdds": 1.48
+    },
+    {
+     "sport": "football",
+     "event": "UPNFM v Juticalpa",
+     "home": "UPNFM",
+     "away": "Juticalpa",
+     "side": "h",
+     "pick": "UPNFM",
+     "code": "hn.1",
+     "comp": "Liga Nacional",
+     "country": "Honduras",
+     "when": "2026-11-29T01:00:00Z",
+     "date": "2026-11-29",
+     "pModel": 0.6614,
+     "p": 0.6614,
+     "fx": {
+      "u21Side": false,
+      "league": "hn.1",
+      "leagueName": "Liga Nacional",
+      "short": "HON",
+      "country": "Honduras",
+      "iso": "hnd",
+      "tier": 1,
+      "order": 162,
+      "round": "torneo-apertura-2026",
+      "cup": false,
+      "date": "2026-11-29",
+      "time": "01:00",
+      "kickoff": "2026-11-29T01:00:00Z",
+      "home": {
+       "name": "UPNFM",
+       "att": 0.887,
+       "def": 0.915,
+       "played": 15,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": null,
+       "form": {
+        "pts": 7,
+        "max": 15,
+        "seq": "LWDWL"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": null,
+       "last": null,
+       "now": {
+        "P": 15,
+        "W": 5,
+        "D": 4,
+        "L": 6,
+        "GF": 16,
+        "GA": 17,
+        "GD": -1,
+        "Pts": 19,
+        "PPG": 1.267
+       }
+      },
+      "away": {
+       "name": "Juticalpa",
+       "att": 0.774,
+       "def": 1.536,
+       "played": 15,
+       "unrated": false,
+       "noPrior": false,
+       "carriedFrom": null,
+       "league": null,
+       "form": {
+        "pts": 1,
+        "max": 15,
+        "seq": "LLLLD"
+       },
+       "adj": null,
+       "out": null,
+       "outFactors": null,
+       "lastSeason": null,
+       "last": null,
+       "now": {
+        "P": 15,
+        "W": 2,
+        "D": 1,
+        "L": 12,
+        "GF": 12,
+        "GA": 39,
+        "GD": -27,
+        "Pts": 7,
+        "PPG": 0.467
+       }
+      },
+      "p": {
+       "h": 0.6614,
+       "d": 0.2086,
+       "a": 0.13
+      },
+      "xg": [
+       2.13,
+       0.8
+      ],
+      "btts": 0.5202,
+      "over25": 0.5365,
+      "score": [
+       2,
+       0
+      ],
+      "confidence": 0.6614,
+      "evidence": "current",
+      "unrated": false,
+      "rankAdjusted": false,
+      "modelConfidence": null,
+      "celtic": null,
+      "rank": 53,
+      "list": false,
+      "why": "below",
+      "reserve": false,
+      "accuracy": {
+       "from": 0.65,
+       "to": 0.7,
+       "hit": 0.8148,
+       "n": 54,
+       "cumHit": 0.7767,
+       "cumN": 103,
+       "season": "2026-27"
+      },
+      "edge": null
+     },
+     "hit": 0.7767,
+     "n": 103,
+     "list": false,
+     "reserve": false,
+     "pDraw": 0.2086,
+     "multOnly": false,
+     "odds": 1.37,
+     "best": 1.4,
+     "books": 5,
+     "opp": 6.91,
+     "draw": 4.3,
+     "bestBook": "Bet365",
+     "bookOdds": {
+      "Bet365": 1.4,
+      "BetVictor": 1.36
+     },
+     "pricedAt": "2026-11-28T14:14:45Z",
+     "margin": 1.1093,
+     "src": "API-Football, average of 5 bookmakers",
+     "implied": 0.7299,
+     "pTested": 0.6614,
+     "fair": 0.658,
+     "edge": -0.0985,
+     "basis": "model",
+     "firstOdds": 1.4,
+     "lastOdds": 1.45,
+     "lastBest": 1.5,
+     "lastAt": "2026-11-28T16:27:31Z",
+     "lockPrice": {
+      "odds": 1.45,
+      "best": 1.5,
+      "book": "Betfair",
+      "at": "2026-11-28T16:08:33Z"
+     }
+    }
+   ],
+   "status": "underway",
+   "checked": "2026-11-28T14:14:45Z",
+   "archivedAt": "2026-11-28T16:08:33Z"
+  }
+ ]
+}

@@ -10,6 +10,79 @@ with `-2`, `-3` for a second release the same day) and an entry here.
 **Files:** groupings.py, tests/test_groupings_get_retry.py, RELEASES.md.
 **Not changed:** the model, any price, the Odds API credit-spending call (`_odds_get`), the Card rule.
 **Roll back:** git revert.
+## 2026-11-28-team-record: the model's record on every team, in the open row (tag pending)
+
+**What changed:** open any row, any sport, and under the team sheets there is now "The model's record on each side": for each club, side or player, every graded fixture it has played in, how many the model called right against how many it expected to at its quotes, how its picks of that side did, and the last ten calls as dots. Green at or above what the model expected, red under, grey with "too few to read" under 10 fixtures. Douglas: "every team in sports fixtures has an accuracy rating of how the model performed for them in every fixture they've played".
+**Evidence:** 4,528 football identities, 613 tennis players and 650 sides in the other sports tallied from the three graded files, nothing regraded. Clubs are joined across spellings, cups and Europe only on evidence (14 spelling joins checked by hand; men's and women's sides, FC Andorra and Andorra CF kept apart); ten record rows graded under two competition codes are counted once. Walk-forward on the record (`teamrecord.py --check`): picks whose two sides the model had run 10+ points above quote on landed 71.2% v 65.1% quoted (257, z +2.08), 10+ under 62.2% v 61.7% (111): a lean, about one standard error between the bands, so display only. `claude/team-record-2026-11-28.md`.
+**Files:** `teamrecord.py`, `index.html`, `tests/test_teamrecord.py`, `.github/workflows/deploy.yml`, `.gitignore`, `claude/team-record-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** any model, the Daily List, any card, the record files, the closed row (no new chip).
+## 2026-11-28-withdrawn-on-page: a withdrawn Card group named on the Bets tab (tag pending)
+
+**What changed:** a day whose Card box is empty now says when the page had shown a Card group for it and withdrew it before its first start: the kind, price, picks, when it was shown and withdrawn, and why, with "a bet already placed stands as placed; withdrawn groups are not graded". Each Card re-check log entry keeps when the group was first shown (`first`).
+**Evidence:** 27 Nov's Card 2x (Al Qadsiah, 76ers, Pistons at 2.55) was shown from 20:11 the night before over 11 builds and withdrawn at 07:10 on a sub-point value-demand miss; all three won, and the box read only "A blank day is the rule working". `claude/card-withdrawn-on-the-page-2026-11-28.md`.
+**Files:** `groupings.py`, `index.html`, `tests/test_groupings_card.py`, `claude/card-withdrawn-on-the-page-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** the record, the re-check rule, any Card constant (`CARD_RULE` 14). Log entries from before this release have no `first`, so the notice starts with the next withdrawal.
+**Roll back:** `git revert` the merge.
+
+## 2026-11-28-hold-band-row: the hold-band follow-up measured in the review's decisions table (tag pending)
+
+**What changed:** nothing on the page. The nightly Card review's decisions table gains "Hold band for published Card groups": every Card group withdrawn before its first start since 26 Nov, settled on the ledger, due for a pre-registered hold-band variant at 10 settled landing at or above the model's number.
+**Evidence:** 1 withdrawn (27 Nov), 1 of 1 won v 0.48 expected, +155.0% at the page's stakes. Waiting. `claude/card-hold-band-row-2026-11-28.md`.
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `claude/card-hold-band-row-2026-11-28.md`, `claude/card-review-agenda-2026-11-30.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, the record, any Card constant (`CARD_RULE` 14).
+**Roll back:** `git revert` the merge.
+
+## 2026-11-28-card-withdrawn: the nightly review names Card groups withdrawn after publication (tag pending)
+
+**What changed:** nothing on the page. The nightly Card review now names every Card group the page published and withdrew before its first start, with the pick that left the rule, each pick's result and the return at the page's stake. It also fixes the review's lookup of a leg's result when the publication log kept its start without seconds.
+**Evidence:** 27 Nov's Card 2x (Al Qadsiah, Philadelphia 76ers, Detroit Pistons, Hill 2.55) was shown from 20:11 UTC the night before over 11 builds and withdrawn at 07:10 when Al Qadsiah's fair chance passed the model's by under a point (rule 14's value demand). All three won (+155% at two units). The record and the review showed 27 Nov as empty. `claude/card-withdrawn-groups-2026-11-28.md`.
+**Files:** `tools/card_review_post.py`, `tests/test_review_live_days.py`, `claude/card-withdrawn-groups-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, the record, the empty-day count, any Card constant (`CARD_RULE` 14).
+**Roll back:** `git revert` the merge.
+
+## 2026-11-28-oscar-price-coverage: Odds tab pricing re-read, no change (tag pending)
+
+**What changed:** nothing on the site. A dated note records why no price source was added.
+**Evidence:** pool archive 26 to 29 Nov, 518 football rows: 142 priced first, 184 priced later, 192 never priced; the 192 are leagues no UK book lists (Zambia, Lesotho, Tajikistan, Tercera RFEF, Oberligen, Serie D). A better match or free source cannot price a game nobody offers.
+**Files:** `claude/price-coverage-oscar-2026-11-28.md`, `RELEASES.md`.
+**Not changed:** `groupings.py`, any model, the rule that prices never feed a model.
+**Roll back:** `git revert` this commit.
+
+## 2026-11-28-tennis-legs-5: tennis group legs, fifth read, nothing to ship (tag pending)
+
+**What changed:** a note only. The planner's 38 of 61 tennis group legs (z -1.9) is the same pre-floor population read on 13, 19 and 26 Nov.
+**Evidence:** `cardLegsBySport.tennis` 23/41 (z -2.13) unchanged since 14 Nov; at the 75% floor 11/15 v 11.9 (z -0.57). No attribute separates the misses; no tennis price history before 30 Oct, so Rule 3 gates cannot run.
+**Files:** `claude/tennis-legs-gap-2026-11-28.md`, `RELEASES.md`.
+**Not changed:** the Card rule, `CARD_SPORTS_OFF`, the model.
+**Roll back:** `git revert` the commit.
+
+## 2026-11-28-list-nobookies: the Bookies mark tried as a veto on the Daily 2x and List card (tag pending)
+
+**What changed:** nothing on the page. `tools/list_card_replay.py` gains the pre-registered `nobookies` variant (the Daily 2x and List card built without picks the model rates 10+ points above the bookmakers' fair chance, the Bookies mark as a veto), and pairs and gates every variant on its own.
+
+**Evidence:** on the Daily 2x the veto is behind live on both sources at both prices: ledger -0.05 a day (p(worse) 0.68; last price -0.12, 0.96), pool -0.25 (0.90; 0.92), 9 of 29 pool slips won v live's 12. Marked picks inside live slips landed 18 of 26 v the bookmakers' ~62%: the mark's losses are college basketball, which both slips already leave out. Gate not met.
+
+**Files:** `tools/list_card_replay.py`, `tests/test_list_card_replay.py`, `claude/list-card-nobookies-2026-11-28.md`, `CLAUDE.md`, `RELEASES.md`.
+
+**Not changed:** `daily_group`, `build_list_card`, the Bookies mark, any Card constant (`CARD_RULE` 14).
+
+**Roll back:** `git revert` the merge.
+
+## 2026-11-27-ncaab-neutral: the neutral court and college basketball's home term, ready to switch on (tag pending)
+
+**What changed:** nothing a reader sees yet. College basketball's November-December calibration adds +0.31 log-odds to the home side; on a neutral court it went to whichever team ESPN lists first. `sports.NEUTRAL0` fits the curve on venue games and drops the intercept at a neutral site, inert until a `sports.py --tune --only ncaab` run writes `neutral0` into `sports.json` (rule 5, Douglas's step).
+**Evidence:** `tools/ncaab_neutral_eval.py`, live parameters, curve fitted on 2024-25: check 2025-26 +0.0009 log loss, p(worse) 0.03 on 5,814 games, 65%+ gap 0.020 unchanged (passes rule 3); this season to 27 Nov +0.0021, p(worse) 0.15 on 1,197. Live neutral picks at 70%+ 48 of 76 v 79% quoted; the change mends part of it (this season's neutral 65-85% picks 54% to 58% landed v 73% quoted). The 16 Nov early K is not the cause (this season 0.5003 to 0.4932, p(worse) 0.001). `claude/ncaab-neutral-intercept-2026-11-27.md`.
+**Files:** `sports.py`, `tools/ncaab_neutral_eval.py`, `tests/test_sports_neutral_cal.py`, `claude/ncaab-neutral-intercept-2026-11-27.md`, `CLAUDE.md`, `RELEASES.md`.
+**Not changed:** `sports.json`, any board number, the Card, the Neutral mark, `WARY_TRIP_*`.
+**Roll back:** `git revert` the merge (after a refit, rerun `sports.py --tune --only ncaab` on the reverted code).
+
+## 2026-11-27-scout: free-source check for uncovered leagues (tag pending)
+
+**What changed:** nothing a reader sees. A dated line in `claude/data-expansion-plan.md`.
+**Evidence:** openfootball 2026-27 `de.3.json` and `pt.2.json` 404; ESPN `ger.3` and `uae.1` scoreboards 400. Same as 20 Nov.
+**Files:** `claude/data-expansion-plan.md`, `RELEASES.md`.
+**Not changed:** no source, model or list rule.
+**Roll back:** `git revert` the merge.
 
 ## 2026-11-27-integrity-audit: Fixture audit of 27 Nov (tag pending)
 
